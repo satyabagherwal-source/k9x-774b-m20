@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
-    "lastHarvestedAt": "2026-10-18T02:48:20.287Z",
+    "contentHash": "ffe1125495a650d113616e22f8856014674d2aeb010155161bed52e9b0088b4e",
+    "lastHarvestedAt": "2026-10-19T11:36:19.670Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "d961b09c",
+    "sourceVersion": "bcfbd7af",
     "license": "NOASSERTION",
-    "contentHash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
-    "lastHarvestedAt": "2026-10-18T22:29:35.119Z",
+    "contentHash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
+    "lastHarvestedAt": "2026-10-19T11:35:20.721Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "b8e6f814",
+    "sourceVersion": "dd4598bc",
     "license": "Apache-2.0",
-    "contentHash": "4476c12054e123c107499988d6eb5825a30c53a05503daa4260e3cf84eba390c",
-    "lastHarvestedAt": "2026-10-18T23:14:25.711Z",
+    "contentHash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
+    "lastHarvestedAt": "2026-10-19T11:35:15.629Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "f02cfa8f",
+    "sourceVersion": "12b576f6",
     "license": "NOASSERTION",
-    "contentHash": "55ce1c8809d577dd09d50d317b9bc823f1e9bc9b0145b027252a39b3ed0fe575",
-    "lastHarvestedAt": "2026-10-19T00:22:45.393Z",
+    "contentHash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
+    "lastHarvestedAt": "2026-10-19T11:36:17.193Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -7898,5 +7898,25 @@
     "contentHash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
     "lastHarvestedAt": "2026-10-19T11:27:55.229Z",
     "learningId": "learn-github-darrylmorley-whatcable"
+  },
+  "xcodesorg-xcodesapp": {
+    "repository": "XcodesOrg/XcodesApp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/XcodesOrg/XcodesApp",
+    "sourceVersion": "45722c72",
+    "license": "MIT",
+    "contentHash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
+    "lastHarvestedAt": "2026-10-19T11:35:13.750Z",
+    "learningId": "learn-github-xcodesorg-xcodesapp"
+  },
+  "lapce-lapce": {
+    "repository": "lapce/lapce",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lapce/lapce",
+    "sourceVersion": "f66ffaa9",
+    "license": "Apache-2.0",
+    "contentHash": "b18183a19c66b49013f16df58fb98d49c3b34d89a6f28823dfb3ce82d35cda5c",
+    "lastHarvestedAt": "2026-10-19T11:36:17.935Z",
+    "learningId": "learn-github-lapce-lapce"
   }
 }

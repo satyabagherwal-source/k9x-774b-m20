@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T11:28:57.255Z",
-  "total_cycles_completed": 3171,
-  "total_learnings_persisted": 3171,
-  "total_rules_promoted": 2329,
+  "last_updated": "2026-10-19T11:36:19.673Z",
+  "total_cycles_completed": 3177,
+  "total_learnings_persisted": 3177,
+  "total_rules_promoted": 2338,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:11:10.677Z",
-      "repository": "bitnami/sealed-secrets",
-      "learningId": "learn-github-bitnami-sealed-secrets",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:11:16.754Z",
-      "repository": "run-llama/llama_index",
-      "learningId": "learn-github-run-llama-llama_index",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:12:23.981Z",
-      "repository": "vercel-labs/opensrc",
-      "learningId": "learn-github-vercel-labs-opensrc",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:12:29.922Z",
-      "repository": "tremorlabs/tremor",
-      "learningId": "learn-github-tremorlabs-tremor",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:12:47.867Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:18:57.270Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:18:57.451Z",
       "repository": "alexpasmantier/television",
@@ -1403,6 +1361,48 @@
       "repository": "zai-org/GLM-5.2",
       "learningId": "learn-huggingface-zai-org-glm-5-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:35:13.754Z",
+      "repository": "XcodesOrg/XcodesApp",
+      "learningId": "learn-github-xcodesorg-xcodesapp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:35:15.633Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:35:20.726Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:36:17.197Z",
+      "repository": "microsoft/fluentui",
+      "learningId": "learn-github-microsoft-fluentui",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:36:17.940Z",
+      "repository": "lapce/lapce",
+      "learningId": "learn-github-lapce-lapce",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:36:19.673Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

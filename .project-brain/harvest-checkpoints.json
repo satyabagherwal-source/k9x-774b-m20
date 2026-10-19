@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T11:28:57.259Z",
+  "last_updated": "2026-10-19T11:36:19.676Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1219,14 +1219,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
-      "verified_at": "2026-10-18T02:48:20.290Z",
+      "content_hash": "ffe1125495a650d113616e22f8856014674d2aeb010155161bed52e9b0088b4e",
+      "verified_at": "2026-10-19T11:36:19.676Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:48:20.290Z"
+      "last_updated": "2026-10-19T11:36:19.676Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -4608,14 +4608,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
-      "verified_at": "2026-10-18T22:29:35.125Z",
+      "content_hash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
+      "verified_at": "2026-10-19T11:35:20.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:29:35.125Z"
+      "last_updated": "2026-10-19T11:35:20.728Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -5208,14 +5208,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "4476c12054e123c107499988d6eb5825a30c53a05503daa4260e3cf84eba390c",
-      "verified_at": "2026-10-18T23:14:25.716Z",
+      "content_hash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
+      "verified_at": "2026-10-19T11:35:15.635Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:14:25.716Z"
+      "last_updated": "2026-10-19T11:35:15.635Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -6093,14 +6093,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-fluentui",
-      "content_hash": "55ce1c8809d577dd09d50d317b9bc823f1e9bc9b0145b027252a39b3ed0fe575",
-      "verified_at": "2026-10-19T00:22:45.397Z",
+      "content_hash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
+      "verified_at": "2026-10-19T11:36:17.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:22:45.397Z"
+      "last_updated": "2026-10-19T11:36:17.199Z"
     },
     "o2sh/onefetch": {
       "repository": "o2sh/onefetch",
@@ -11876,6 +11876,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T11:27:55.235Z"
+    },
+    "XcodesOrg/XcodesApp": {
+      "repository": "XcodesOrg/XcodesApp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xcodesorg-xcodesapp",
+      "content_hash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
+      "verified_at": "2026-10-19T11:35:13.756Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:35:13.756Z"
+    },
+    "lapce/lapce": {
+      "repository": "lapce/lapce",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lapce-lapce",
+      "content_hash": "b18183a19c66b49013f16df58fb98d49c3b34d89a6f28823dfb3ce82d35cda5c",
+      "verified_at": "2026-10-19T11:36:17.943Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:36:17.943Z"
     }
   },
   "repos": {

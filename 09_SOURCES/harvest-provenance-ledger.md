@@ -3201,3 +3201,9 @@ Every entry in this ledger must capture:
 | `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `58e588ab` | Multi-dimensional audit evidence | 2026-10-19T11:27:55.229Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8d6bc495` | Multi-dimensional audit evidence | 2026-10-19T11:28:05.012Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-19T11:28:57.252Z |
+| `learn-github-xcodesorg-xcodesapp` | `https://github.com/XcodesOrg/XcodesApp` | `45722c72` | Multi-dimensional audit evidence | 2026-10-19T11:35:13.750Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `dd4598bc` | Multi-dimensional audit evidence | 2026-10-19T11:35:15.629Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `bcfbd7af` | Multi-dimensional audit evidence | 2026-10-19T11:35:20.721Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `12b576f6` | Multi-dimensional audit evidence | 2026-10-19T11:36:17.193Z |
+| `learn-github-lapce-lapce` | `https://github.com/lapce/lapce` | `f66ffaa9` | Multi-dimensional audit evidence | 2026-10-19T11:36:17.935Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-19T11:36:19.670Z |

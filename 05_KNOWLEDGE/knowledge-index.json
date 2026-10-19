@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:28:57.184Z",
-  "total_verified_learnings": 804,
+  "last_updated": "2026-10-19T11:36:19.624Z",
+  "total_verified_learnings": 806,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -22099,7 +22099,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
+      "content_hash": "ffe1125495a650d113616e22f8856014674d2aeb010155161bed52e9b0088b4e",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [
@@ -22154,6 +22154,16 @@
           "number": 1294,
           "title": "Latent Space Normalization & VAE Decode Boundary",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2548,
+          "title": "Invariant Coordinate Alignment in Axial Multi-Dimensional RoPE",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2549,
+          "title": "Timestep Coordinate Trajectory Invariant in Rectified Flow Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22174,7 +22184,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0"
       ],
-      "verified_at": "2026-10-18T02:48:20.240Z",
+      "verified_at": "2026-10-19T11:36:19.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27212,22 +27222,40 @@
     "learn-github-lapce-lapce": {
       "learning_id": "learn-github-lapce-lapce",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lapce-lapce",
+      "source": "lapce/lapce",
+      "repository": "lapce/lapce",
       "slug": "lapce-lapce",
       "platform": "github",
       "source_url": "https://github.com/lapce/lapce",
-      "source_version": "HEAD",
-      "content_hash": "4ad5389e11a8081e7591d35333a76e6050b51f20b8401227bfc6ced6eaf33400",
+      "source_version": "f66ffaa9",
+      "content_hash": "b18183a19c66b49013f16df58fb98d49c3b34d89a6f28823dfb3ce82d35cda5c",
       "dossier_path": "07_PROJECT_LEARNING/lapce-lapce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lapce-lapce-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2546,
+          "title": "Invariant Dual-De-Registration of Reactive Ephemeral UI Components",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2547,
+          "title": "Bidirectional Code-Point Invariant Boundary for LSP Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.964Z"
+      "verified_at": "2026-10-19T11:36:17.877Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-larlarua-autocve": {
       "learning_id": "learn-github-larlarua-autocve",
@@ -27741,8 +27769,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "d961b09c",
-      "content_hash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
+      "source_version": "bcfbd7af",
+      "content_hash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -27757,7 +27785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:29:35.083Z",
+      "verified_at": "2026-10-19T11:35:20.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29493,14 +29521,29 @@
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "f02cfa8f",
-      "content_hash": "55ce1c8809d577dd09d50d317b9bc823f1e9bc9b0145b027252a39b3ed0fe575",
+      "source_version": "12b576f6",
+      "content_hash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
         {
           "number": 1909,
           "title": "react-charts): handle stale legend overflow counts (#36691)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2543,
+          "title": "Host-Decoupled DOM Context Encapsulation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2544,
+          "title": "Multi-Dimensional Array Shape Dimension and Allocation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2545,
+          "title": "Whitespace-Stripping URL Protocol Sanitization",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29509,7 +29552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:22:45.344Z",
+      "verified_at": "2026-10-19T11:36:17.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38008,14 +38051,19 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "b8e6f814",
-      "content_hash": "4476c12054e123c107499988d6eb5825a30c53a05503daa4260e3cf84eba390c",
+      "source_version": "dd4598bc",
+      "content_hash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
         {
           "number": 1834,
           "title": "MCP instructions: route suspect resources to diagnose, conclude on the cause, fi",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2542,
+          "title": "Rename the issue category network_policy_block to network_policy_denied (#2212)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -38024,7 +38072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:14:25.683Z",
+      "verified_at": "2026-10-19T11:35:15.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43108,22 +43156,35 @@
     "learn-github-xcodesorg-xcodesapp": {
       "learning_id": "learn-github-xcodesorg-xcodesapp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "xcodesorg-xcodesapp",
+      "source": "XcodesOrg/XcodesApp",
+      "repository": "XcodesOrg/XcodesApp",
       "slug": "xcodesorg-xcodesapp",
       "platform": "github",
       "source_url": "https://github.com/XcodesOrg/XcodesApp",
-      "source_version": "HEAD",
-      "content_hash": "aa36ac3eea98fe28d1c1cfdf3be62e43cda4156a74330a4f30637d4ec3e3b83f",
+      "source_version": "45722c72",
+      "content_hash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
       "dossier_path": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2541,
+          "title": "notify on new Xcode version identity, not array-count growth",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.356Z"
+      "verified_at": "2026-10-19T11:35:13.695Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-xerj-org-xerj": {
       "learning_id": "learn-github-xerj-org-xerj",
@@ -86304,6 +86365,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:28:57.166Z"
+    },
+    "rule-2541": {
+      "learning_id": "rule-2541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2541,
+      "title": "notify on new Xcode version identity, not array-count growth",
+      "source_url": "https://github.com/XcodesOrg/XcodesApp",
+      "source_version": "45722c72",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:35:13.695Z"
+    },
+    "rule-2542": {
+      "learning_id": "rule-2542",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2542,
+      "title": "Rename the issue category network_policy_block to network_policy_denied (#2212)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "dd4598bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:35:15.573Z"
+    },
+    "rule-2543": {
+      "learning_id": "rule-2543",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2543,
+      "title": "Host-Decoupled DOM Context Encapsulation",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "12b576f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:17.137Z"
+    },
+    "rule-2544": {
+      "learning_id": "rule-2544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2544,
+      "title": "Multi-Dimensional Array Shape Dimension and Allocation Guard",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "12b576f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:17.137Z"
+    },
+    "rule-2545": {
+      "learning_id": "rule-2545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2545,
+      "title": "Whitespace-Stripping URL Protocol Sanitization",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "12b576f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:17.137Z"
+    },
+    "rule-2546": {
+      "learning_id": "rule-2546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2546,
+      "title": "Invariant Dual-De-Registration of Reactive Ephemeral UI Components",
+      "source_url": "https://github.com/lapce/lapce",
+      "source_version": "f66ffaa9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:17.877Z"
+    },
+    "rule-2547": {
+      "learning_id": "rule-2547",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2547,
+      "title": "Bidirectional Code-Point Invariant Boundary for LSP Synchronization",
+      "source_url": "https://github.com/lapce/lapce",
+      "source_version": "f66ffaa9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:17.877Z"
+    },
+    "rule-2548": {
+      "learning_id": "rule-2548",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2548,
+      "title": "Invariant Coordinate Alignment in Axial Multi-Dimensional RoPE",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:19.612Z"
+    },
+    "rule-2549": {
+      "learning_id": "rule-2549",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2549,
+      "title": "Timestep Coordinate Trajectory Invariant in Rectified Flow Models",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:36:19.612Z"
     }
   },
   "aliases": {

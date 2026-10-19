@@ -3194,3 +3194,9 @@
 | `CYCLE-20261019-7C61` | `2026-10-19T11:27:55.225Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2536` | Yes (`72c9c2d3...`) |
 | `CYCLE-20261019-7JPT` | `2026-10-19T11:28:05.009Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2537` | Yes (`8f4de18d...`) |
 | `CYCLE-20261019-8O0X` | `2026-10-19T11:28:57.249Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2538, Rule 2539, Rule 2540` | Yes (`b04765bd...`) |
+| `CYCLE-20261019-GQJ8` | `2026-10-19T11:35:13.748Z` | `XcodesOrg/XcodesApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2541` | Yes (`ca601c7d...`) |
+| `CYCLE-20261019-GRZE` | `2026-10-19T11:35:15.626Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2542` | Yes (`9aaaf393...`) |
+| `CYCLE-20261019-GVWU` | `2026-10-19T11:35:20.718Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`1c85e525...`) |
+| `CYCLE-20261019-I3HI` | `2026-10-19T11:36:17.190Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2543, Rule 2544, Rule 2545` | Yes (`8f461ae6...`) |
+| `CYCLE-20261019-I423` | `2026-10-19T11:36:17.931Z` | `lapce/lapce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2546, Rule 2547` | Yes (`b18183a1...`) |
+| `CYCLE-20261019-I5EB` | `2026-10-19T11:36:19.667Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2548, Rule 2549` | Yes (`ffe11254...`) |

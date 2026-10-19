@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-NXLR",
-    "timestamp": "2026-10-19T00:28:58.719Z",
-    "repository": "orbitinghail/sqlsync",
-    "learningId": "learn-github-orbitinghail-sqlsync",
-    "contentHash": "786d800c12b4008d97d97c00878d4d0ba68b0487a5ec71e6a7828dc8d1caddcc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VMTW",
-    "timestamp": "2026-10-19T00:34:58.004Z",
-    "repository": "ant-design/ant-design-mobile",
-    "learningId": "learn-github-ant-design-ant-design-mobile",
-    "contentHash": "8ba15e2b41ce8ec8093461b1efdf47a2fff6b6796aefc02b1bd75c4833357a94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VNO3",
-    "timestamp": "2026-10-19T00:34:59.091Z",
-    "repository": "imsnif/bandwhich",
-    "learningId": "learn-github-imsnif-bandwhich",
-    "contentHash": "672442d6f2933ce5487e4815d97be95ee6b1783f6de5f8d7fe4592e07de023dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VR08",
-    "timestamp": "2026-10-19T00:35:03.416Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "bc6c814e5167671ad44abbda353ab4689e815c1f46a3d87b0af818b3ba3f48be",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VT01",
-    "timestamp": "2026-10-19T00:35:06.001Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "08c6c1c0229139377baa34e36a7acce156bfb6e44aaaf82119a18f5e9c3044a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VTL2",
-    "timestamp": "2026-10-19T00:35:06.758Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-VX86",
     "timestamp": "2026-10-19T00:35:11.478Z",
     "repository": "gluesql/gluesql",
@@ -7492,6 +7402,96 @@
     "contentHash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-GQJ8",
+    "timestamp": "2026-10-19T11:35:13.748Z",
+    "repository": "XcodesOrg/XcodesApp",
+    "learningId": "learn-github-xcodesorg-xcodesapp",
+    "contentHash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-GRZE",
+    "timestamp": "2026-10-19T11:35:15.626Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-GVWU",
+    "timestamp": "2026-10-19T11:35:20.718Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I3HI",
+    "timestamp": "2026-10-19T11:36:17.190Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I423",
+    "timestamp": "2026-10-19T11:36:17.931Z",
+    "repository": "lapce/lapce",
+    "learningId": "learn-github-lapce-lapce",
+    "contentHash": "b18183a19c66b49013f16df58fb98d49c3b34d89a6f28823dfb3ce82d35cda5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I5EB",
+    "timestamp": "2026-10-19T11:36:19.667Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "ffe1125495a650d113616e22f8856014674d2aeb010155161bed52e9b0088b4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
