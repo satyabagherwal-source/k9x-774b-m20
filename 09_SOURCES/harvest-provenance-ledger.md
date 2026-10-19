@@ -2844,3 +2844,9 @@ Every entry in this ledger must capture:
 | `learn-github-goss-org-goss` | `https://github.com/goss-org/goss` | `26d35a47` | Multi-dimensional audit evidence | 2026-10-19T03:13:59.286Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-19T03:14:01.766Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `158cf605` | Multi-dimensional audit evidence | 2026-10-19T03:14:05.517Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-19T03:20:17.645Z |
+| `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `0936dc40` | Multi-dimensional audit evidence | 2026-10-19T03:20:17.721Z |
+| `learn-github-gitui-org-gitui` | `https://github.com/gitui-org/gitui` | `d7214ecc` | Multi-dimensional audit evidence | 2026-10-19T03:20:18.666Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `d155cd08` | Multi-dimensional audit evidence | 2026-10-19T03:20:23.841Z |
+| `learn-github-diggerhq-digger` | `https://github.com/diggerhq/digger` | `853f6abf` | Multi-dimensional audit evidence | 2026-10-19T03:20:26.353Z |
+| `learn-github-pingcap-talent-plan` | `https://github.com/pingcap/talent-plan` | `18d81c90` | Multi-dimensional audit evidence | 2026-10-19T03:20:31.485Z |

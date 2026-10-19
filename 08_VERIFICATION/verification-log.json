@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-APAT",
-    "timestamp": "2026-10-17T23:07:02.165Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "d6c116fb7765e712582d25df0f065eb8ad48eed00e5e887e97bb60ff777f3053",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-ESE6",
-    "timestamp": "2026-10-17T23:10:12.798Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "3efb3455deb90fa3180b17801383e4c6e009adf5f772f169ed70297080b50a1a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-J4IM",
-    "timestamp": "2026-10-17T23:13:35.134Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "a33c5aa391c22452700dda7757d6a04706f5e3d542df2c5fb005c4ca303c0606",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-NI2J",
-    "timestamp": "2026-10-17T23:16:59.324Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "02ce73219cfa311186e1115d6d1b41c2c521d97463e3a02fb7bccd4994f8a8c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-RA3P",
-    "timestamp": "2026-10-17T23:19:55.621Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-VO5X",
-    "timestamp": "2026-10-17T23:23:20.469Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "1d64a93ad9fe5da8e44d1405d2933f81b8f1ff1ba720979a7c376744d047e9ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-ZP30",
     "timestamp": "2026-10-17T23:26:28.284Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7490,6 +7400,96 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-S8VD",
+    "timestamp": "2026-10-19T03:20:17.641Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-S8XD",
+    "timestamp": "2026-10-19T03:20:17.713Z",
+    "repository": "lobehub/lobe-ui",
+    "learningId": "learn-github-lobehub-lobe-ui",
+    "contentHash": "4582b1af249d8f61ac846a47a94b827f1a33d5e598b826e802af86049990b527",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-S9NN",
+    "timestamp": "2026-10-19T03:20:18.659Z",
+    "repository": "gitui-org/gitui",
+    "learningId": "learn-github-gitui-org-gitui",
+    "contentHash": "9ca9f9ca3645e881e0a9f518229c5721e843bb04dced279d02042a3761ef5754",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SDNE",
+    "timestamp": "2026-10-19T03:20:23.834Z",
+    "repository": "ZSeven-W/openpencil",
+    "learningId": "learn-github-zseven-w-openpencil",
+    "contentHash": "78a1500325814fff85a5c8731bf225e8fe34699c776863f68bed7fe038201b60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SFL4",
+    "timestamp": "2026-10-19T03:20:26.344Z",
+    "repository": "diggerhq/digger",
+    "learningId": "learn-github-diggerhq-digger",
+    "contentHash": "4eabdcfda588d8c2823457d2e4b3a030170aa85baa28ca2488e10acbd0e0dce6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SJJQ",
+    "timestamp": "2026-10-19T03:20:31.478Z",
+    "repository": "pingcap/talent-plan",
+    "learningId": "learn-github-pingcap-talent-plan",
+    "contentHash": "e092cb5bb7a0d5461cb1feafb2d53b42499f0d818036a85a0af2ef47bd2b784e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

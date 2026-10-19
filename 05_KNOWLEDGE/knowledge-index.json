@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:14:05.479Z",
-  "total_verified_learnings": 544,
+  "last_updated": "2026-10-19T03:20:31.439Z",
+  "total_verified_learnings": 549,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5968,22 +5968,35 @@
     "learn-github-diggerhq-digger": {
       "learning_id": "learn-github-diggerhq-digger",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "diggerhq-digger",
+      "source": "diggerhq/digger",
+      "repository": "diggerhq/digger",
       "slug": "diggerhq-digger",
       "platform": "github",
       "source_url": "https://github.com/diggerhq/digger",
-      "source_version": "HEAD",
-      "content_hash": "8fc4a5ccd4322feb4fe0d97b5076a29e36c0551e0005b8f4a4709687931cfcde",
+      "source_version": "853f6abf",
+      "content_hash": "4eabdcfda588d8c2823457d2e4b3a030170aa85baa28ca2488e10acbd0e0dce6",
       "dossier_path": "07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2069,
+          "title": "allow digger apply when digger/apply is the sole required blocking check (#2661)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.620Z"
+      "verified_at": "2026-10-19T03:20:26.298Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dimillian-icecubesapp": {
       "learning_id": "learn-github-dimillian-icecubesapp",
@@ -8937,22 +8950,35 @@
     "learn-github-gitui-org-gitui": {
       "learning_id": "learn-github-gitui-org-gitui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gitui-org-gitui",
+      "source": "gitui-org/gitui",
+      "repository": "gitui-org/gitui",
       "slug": "gitui-org-gitui",
       "platform": "github",
       "source_url": "https://github.com/gitui-org/gitui",
-      "source_version": "HEAD",
-      "content_hash": "7d3ac12c300ed8d4e3473a1f4fe6c9d3e036173b8741fb03ce344272b80a5066",
+      "source_version": "d7214ecc",
+      "content_hash": "9ca9f9ca3645e881e0a9f518229c5721e843bb04dced279d02042a3761ef5754",
       "dossier_path": "07_PROJECT_LEARNING/gitui-org-gitui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitui-org-gitui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2067,
+          "title": "avoid index-out-of-bounds panic in staging apply_selection (#2955)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.079Z"
+      "verified_at": "2026-10-19T03:20:18.612Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -18317,7 +18343,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "02b34fd9c1997874cf759bf7ce16f075ad503443421ff83a89c11e07edc0f010",
+      "content_hash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [],
@@ -18339,7 +18365,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-10-17T22:36:10.173Z",
+      "verified_at": "2026-10-19T03:20:17.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25497,22 +25523,35 @@
     "learn-github-lobehub-lobe-ui": {
       "learning_id": "learn-github-lobehub-lobe-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lobehub-lobe-ui",
+      "source": "lobehub/lobe-ui",
+      "repository": "lobehub/lobe-ui",
       "slug": "lobehub-lobe-ui",
       "platform": "github",
       "source_url": "https://github.com/lobehub/lobe-ui",
-      "source_version": "HEAD",
-      "content_hash": "3fa065b8ab9b10b1b2a1a568ab007143b6b142950813487724d3d3e6299d1d5c",
+      "source_version": "0936dc40",
+      "content_hash": "4582b1af249d8f61ac846a47a94b827f1a33d5e598b826e802af86049990b527",
       "dossier_path": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2066,
+          "title": "🐛 fix: drop leftover ant- class names and the antd eslint bans (#749)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.062Z"
+      "verified_at": "2026-10-19T03:20:17.665Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lodyai-lody": {
       "learning_id": "learn-github-lodyai-lody",
@@ -30963,22 +31002,35 @@
     "learn-github-pingcap-talent-plan": {
       "learning_id": "learn-github-pingcap-talent-plan",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pingcap-talent-plan",
+      "source": "pingcap/talent-plan",
+      "repository": "pingcap/talent-plan",
       "slug": "pingcap-talent-plan",
       "platform": "github",
       "source_url": "https://github.com/pingcap/talent-plan",
-      "source_version": "HEAD",
-      "content_hash": "5150964f0e7e782a44f3cf1a526ed4cbe7b26522f74de990114225bc234f6cc0",
+      "source_version": "18d81c90",
+      "content_hash": "e092cb5bb7a0d5461cb1feafb2d53b42499f0d818036a85a0af2ef47bd2b784e",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-talent-plan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-talent-plan-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2070,
+          "title": "clippy error (#414)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.036Z"
+      "verified_at": "2026-10-19T03:20:31.431Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pingcap-tidb": {
       "learning_id": "learn-github-pingcap-tidb",
@@ -40026,22 +40078,35 @@
     "learn-github-zseven-w-openpencil": {
       "learning_id": "learn-github-zseven-w-openpencil",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zseven-w-openpencil",
+      "source": "ZSeven-W/openpencil",
+      "repository": "ZSeven-W/openpencil",
       "slug": "zseven-w-openpencil",
       "platform": "github",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "HEAD",
-      "content_hash": "459847f54f203b299988489aae598b904d17dd99d739b699933d230f1f2c46f9",
+      "source_version": "d155cd08",
+      "content_hash": "78a1500325814fff85a5c8731bf225e8fe34699c776863f68bed7fe038201b60",
       "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2068,
+          "title": "agent): route every Studio task family to the design pipeline",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.586Z"
+      "verified_at": "2026-10-19T03:20:23.788Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zulip-zulip": {
       "learning_id": "learn-github-zulip-zulip",
@@ -75164,6 +75229,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:14:05.467Z"
+    },
+    "rule-2066": {
+      "learning_id": "rule-2066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2066,
+      "title": "🐛 fix: drop leftover ant- class names and the antd eslint bans (#749)",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "0936dc40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:20:17.665Z"
+    },
+    "rule-2067": {
+      "learning_id": "rule-2067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2067,
+      "title": "avoid index-out-of-bounds panic in staging apply_selection (#2955)",
+      "source_url": "https://github.com/gitui-org/gitui",
+      "source_version": "d7214ecc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:20:18.612Z"
+    },
+    "rule-2068": {
+      "learning_id": "rule-2068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2068,
+      "title": "agent): route every Studio task family to the design pipeline",
+      "source_url": "https://github.com/ZSeven-W/openpencil",
+      "source_version": "d155cd08",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:20:23.788Z"
+    },
+    "rule-2069": {
+      "learning_id": "rule-2069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2069,
+      "title": "allow digger apply when digger/apply is the sole required blocking check (#2661)",
+      "source_url": "https://github.com/diggerhq/digger",
+      "source_version": "853f6abf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:20:26.298Z"
+    },
+    "rule-2070": {
+      "learning_id": "rule-2070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2070,
+      "title": "clippy error (#414)",
+      "source_url": "https://github.com/pingcap/talent-plan",
+      "source_version": "18d81c90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:20:31.431Z"
     }
   },
   "aliases": {

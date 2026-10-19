@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T03:14:05.521Z",
-  "total_cycles_completed": 2814,
-  "total_learnings_persisted": 2814,
-  "total_rules_promoted": 1848,
+  "last_updated": "2026-10-19T03:20:31.489Z",
+  "total_cycles_completed": 2820,
+  "total_learnings_persisted": 2820,
+  "total_rules_promoted": 1853,
   "history": [
-    {
-      "timestamp": "2026-10-18T23:39:06.951Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:39:11.053Z",
-      "repository": "wix/Detox",
-      "learningId": "learn-github-wix-detox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:39:14.622Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:39:15.979Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:39:18.357Z",
-      "repository": "neural-maze/ava-whatsapp-agent-course",
-      "learningId": "learn-github-neural-maze-ava-whatsapp-agent-course",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:39:22.128Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T23:45:22.589Z",
       "repository": "internet-development/www-sacred",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T03:14:05.521Z",
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T03:20:17.648Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T03:20:17.725Z",
+      "repository": "lobehub/lobe-ui",
+      "learningId": "learn-github-lobehub-lobe-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T03:20:18.669Z",
+      "repository": "gitui-org/gitui",
+      "learningId": "learn-github-gitui-org-gitui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T03:20:23.844Z",
+      "repository": "ZSeven-W/openpencil",
+      "learningId": "learn-github-zseven-w-openpencil",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T03:20:26.364Z",
+      "repository": "diggerhq/digger",
+      "learningId": "learn-github-diggerhq-digger",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T03:20:31.489Z",
+      "repository": "pingcap/talent-plan",
+      "learningId": "learn-github-pingcap-talent-plan",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

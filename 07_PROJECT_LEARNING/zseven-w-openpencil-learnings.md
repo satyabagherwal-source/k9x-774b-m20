@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
+> **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
+> **Source Version**: `d155cd08`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:20:23.610Z  
+> **Learning ID**: `learn-github-zseven-w-openpencil`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): ZSeven-W/openpencil
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:49:33.645Z  
+> **Harvest Timestamp**: 2026-10-19T03:20:23.601Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6078 stars
+- **Stars / Engagement**: 6243 stars
 
 ---
 
@@ -1776,386 +1790,6 @@ pub struct Account {
 /// [`S
 ```
 
-### Core Architecture Module: `crates/op-chrome-extension-core/src/delivery.rs`
-```
-//! Where a capture goes: the local editor, or the signed-in account.
-//!
-//! This is a two-value enum and one resolution rule, and it is in Rust for
-//! the same reason the endpoint whitelist is: the *destination of a page
-//! capture* is the one decision in this extension that must not be reachable
-//! by accident. A stored value from a future build, a session that expired
-//! between the popup opening and the button being pressed, a target the
-//! server side does not exist for yet — every one of those has to collapse to
-//! "the loopback editor the user configured", and [`resolve`] is where that
-//! collapse happens, once, with tests.
-//!
-//! # The account target is wired
-//!
-//! op-hub grew the snapshot inbox this flag was waiting on:
-//! `POST /api/v1/snapshots` (`op-hub/backend/internal/httpapi/snapshot_routes.go`),
-//! authenticated by the session cookie plus `X-CSRF-Token`, with the
-//! extension's own origin explicitly admitted
-//! (`auth.ExtensionCapableMutation`). [`ACCOUNT_AVAILABLE`] is therefore
-//! `true`, the popup's delivery row offers the account as a selectable
-//! destination, and [`resolve`] returns [`Target::Account`] — but still only
-//! for a user who is signed in *right now*.
-//!
-//! The request, the size ceiling and the reply classification live in
-//! [`crate::hub`] and [`crate::hub_reply`]; this module remains what it always
-//! was, the single place that decides where a capture is allowed to go.
-
-/// Whether delivery to the signed-in account is implemented end to end.
-///
-/// A client that offers the target against a hub that 404s it is worse than
-/// one that says "coming soon", so this stays true only while BOTH regional
-/// hubs answer the inbox route. A `404` from a hub that has the route
-/// unconfigured is still handled — it surfaces as
-/// [`crate::hub_reply::CreateFailure::Unavailable`] — but that is a fallback,
-/// not the plan.
-pub const ACCOUNT_AVAILABLE: bool = true;
-
-/// A delivery destination.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum Target {
-    /// The OpenPencil listening on the configured loopback endpoint.
-    #[default]
-    Local,
-    /// The signed-in user's OpenPencil account.
-    Account,
-}
-
-impl Target {
-    /// Persisted spelling.
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Target::Local => "local",
-            Target::Account => "account",
-        }
-    }
-
-    /// Parse a stored value; anything unrecognised is [`Target::Local`].
-    pub fn from_stored(raw: &str) -> Target {
-        match raw.trim() {
-            "account" => Target::Account,
-            _ => Target::Local,
-        }
-    }
-}
-
-/// The target actually used for the next capture.
-///
-/// `stored` is what the user last chose, `signed_in` whether a Hub session
-/// was observed *in this popup session*. The account target survives only
-/// when it is implemented and there is an account to deliver to; in every
-/// other case the capture goes where it has always gone.
-pub fn resolve(stored: &str, signed_in: bool) -> Target {
-    match Target::from_stored(stored) {
-        Target::Account if ACCOUNT_AVAILABLE && signed_in => Target::Account,
-        _ => Target::Local,
-    }
-}
-
-/// Whether the popup should render the delivery row at all.
-///
-/// Signed out there is exactly one destination, and a picker with one option
-/// is noise. Signed in the row appears with both destinations selectable.
-pub fn row_visible(signed_in: bool) -> bool {
-    signed_in
-}
-
-```
-
-### Core Architecture Module: `crates/op-chrome-extension-core/src/design_md.rs`
-```
-//! Intelligent and deterministic `design.md` extraction contracts.
-//!
-//! The browser-facing request has two deliberately separate paths:
-//!
-//! * the paired desktop host may turn the bounded evidence into a richer guide
-//!   with the user's selected model;
-//! * this module can always render the same evidence locally, without a model
-//!   or a browser engine, so an old/offline host never loses the capture.
-//!
-//! Both paths are trust boundaries. A captured page controls every string in
-//! the evidence and a loopback process controls every reply, so sizes, shapes,
-//! and display text are checked again here before anything is downloaded.
-
-use std::collections::BTreeSet;
-
-use serde_json::{Map, Value};
-
-use crate::js_text::js_trim;
-
-/// Maximum UTF-8 request body accepted by both the extension and host.
-pub const MAX_EVIDENCE_BYTES: usize = 256 * 1024;
-
-const MAX_COLORS: usize = 64;
-const MAX_TYPOGRAPHY: usize = 64;
-const MAX_SPACING: usize = 64;
-const MAX_RADII: usize = 64;
-const MAX_SHADOWS: usize = 32;
-const MAX_COMPONENTS: usize = 64;
-const MAX_COMPONENT_SAMPLES: usize = 4;
-const MAX_GRADIENTS: usize = 32;
-const MAX_MEDIA_QUERIES: usize = 32;
-const MAX_CSS_VARIABLES: usize = 64;
-const MAX_COUNT: u64 = 10_000_000;
-const MAX_CSS_LENGTH: f64 = 100_000.0;
-
-/// Convert extractor evidence into a deterministic corpus-compatible guide.
-pub fn evidence_to_design_md(json: &str) -> Result<String, EvidenceError> {
-    if json.len() > MAX_EVIDENCE_BYTES {
-        return Err(EvidenceError::TooLarge);
-    }
-    let value: Value = serde_json::from_str(json).map_err(|_| EvidenceError::Malformed("json"))?;
-    let evidence = Evidence::parse(&value)?;
-    Ok(crate::design_md_render::render(&evidence))
-}
-
-/// Why deterministic extraction refused an evidence document.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum EvidenceError {
-    TooLarge,
-    Malformed(&'static str),
-}
-
-impl std::fmt::Display for EvidenceError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::TooLarge => f.write_str("design evidence exceeds 256 KiB"),
-            Self::Malformed(field) => write!(f, "design evidence is malformed: {field}"),
-        }
-    }
-}
-
-impl std::error::Error for EvidenceError {}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct Evidence {
-    pub title: String,
-    pub viewport_width: u32,
-    pub viewport_height: u32,
-    pub viewport_dpr: f64,
-    pub color_scheme: Option<String>,
-    pub page_background: Option<String>,
-    pub colors: Vec<ColorEvidence>,
-    pub typography: Vec<TypographyEvidence>,
-    pub spacing: Vec<SpacingEvidence>,
-    pub radii: Vec<RadiusEvidence>,
-    pub shadows: Vec<CountedText>,
-    pub components: Vec<ComponentEvidence>,
-    pub gradients: Vec<CountedText>,
-    pub media_queries: Vec<String>,
-    pub css_variables: Vec<CssVariableEvidence>,
-    pub element_count: u64,
-    pub truncated: bool,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct ColorEvidence {
-    pub value: String,
-    pub usage: String,
-    pub count: u64,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct TypographyEvidence {
-    pub role: String,
-    pub family: String,
-    pub size: f64,
-    pub weight: u16,
-    pub line_height: Option<f64>,
-    pub count: u64,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct SpacingEvidence {
-    pub property: String,
-    pub value: f64,
-    pub count: u64,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct RadiusEvidence {
-    pub value: u32,
-    pub count: u64,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct CountedText {
-    pub value: String,
-    pub count: u64,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct ComponentEvidence {
-    pub kind: String,
-    pub count: u64,
-    pub samples: Vec<ComponentSample>,
-}
-
-#[derive(Debug, Clone, Default, PartialEq)]
-pub(super) struct ComponentSample {
-    pub background: Option<String>,
-    pub color: Option<String>,
-    pub font_family: Option<String>,
-    pub font_size: Option<f64>,
-    pub font_weight: Option<u16>,
-    pub line_height: Option<f64>,
-    pub padding: Option<String>,
-    pub gap: Option<f64>,
-    pub radius: Option<u32>,
-    pub border: Option<String>,
-    pub shadow: Option<String>,
-    pub width: Option<u32>,
-    pub height: Option<u32>,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub(super) struct CssVariableEvidence {
-    pub name: String,
-    pub value: String,
-    pub kind: String,
-}
-
-impl Evidence {
-    fn parse(value: &Value) -> Result<Self, EvidenceError> {
-        let root = as_object(value, "root")?;
-        if integer(root.get("version"), "version")? != 1 {
-            return Err(EvidenceError::Malformed("version"));
-        }
-        let title = text(root.get("title"), 120, "title")?;
-        let viewport = as_object(required(root, "viewport")?, "viewport")?;
-        let viewport_width = bounded_u32(viewport.get("width"), 1, 100_000, "viewport.width")?;
-        let viewport_height = bounded_u32(viewport.get("height"), 1, 100_000, "viewport.height")?;
-        let viewport_dpr = match viewport.get("dpr") {
-            Some(value) => bounded_number(Some(value), 0.1, 16.0, "viewport.dpr")?,
-            None => 1.0,
-        };
-        let color_scheme = optional_text(root.get("colorScheme"), 16, "colorScheme")?;
-        let page_background = match root.get("pageBackground") {
-            Some(Value::Null) => None,
-            Some(value) => Some(hex_color(value, "pageBackground")?),
-            None => return Err(EvidenceError::Malformed("pageBackground")),
-        };
-
-        Ok(Self {
-            title,
-            viewport_width,
-            viewport_height,
-            viewport_dpr,
-            color_scheme,
-            page_background,
-            colors: parse_colors(required(root, "colors")?)?,
-            typography: parse_typography(required(root, "typography")?)?,
-            spacing: parse_spacing(required(root, "spacing")?)?,
-            radii: parse_radii(required(root, "radii")?)?,
-            shadows: parse_counted_text(required(root, "shadows")?, MAX_SHADOWS, 160, "shadows")?,
-            components: parse_components(required(root, "components")?)?,
-            gradients: parse_counted_text(
-                required(root, "gradients")?,
-                MAX_GRADIENTS,
-                200,
-                "gradients",
-            )?,
-            media_queries: parse_text_array(
-                required(root, "mediaQueries")?,
-                MAX_MEDIA_QUERIES,
-                160,
-                "mediaQueries",
-            )?,
-            css_variables: parse_css_variables(required(root, "cssVariables")?)?,
-            element_count: match root.get("elementCount") {
-                Some(value) => bounded_integer(Some(value), 0, MAX_COUNT, "elementCount")?,
-                None => 0,
-            },
-            truncated: match root.get("truncated") {
-                Some(value) => value
-                    .as_bool()
-                    .ok_or(EvidenceError::Malformed("truncated"))?,
-                None => false,
-            },
-        })
-    }
-}
-
-fn parse_colors(value: &Value) -> Result<Vec<ColorEvidence>, EvidenceError> {
-    let values = bounded_array(value, MAX_COLORS, "colors")?;
-    values
-        .iter()
-        .map(|value| {
-            let object = as_object(value, "colors[]")?;
-            let usage = color_usage(object)?;
-            if !matches!(
-                usage.as_str(),
-                "text" | "background" | "border" | "shadow" | "gradient"
-            ) {
-                return Err(EvidenceError::Malformed("colors[].usage"));
-            }
-            Ok(ColorEvidence {
-                value: hex_color(required(object, "value")?, "colors[].value")?,
-                usage,
-                count: count(object.get("count"), "colors[].count")?,
-            })
-        })
-        .collect()
-}
-
-fn color_usage(object: &Map<String, Value>) -> Result<String, EvidenceError> {
-    if object.contains_key("usage") {
-        return text(object.get("usage"), 16, "colors[].usage");
-    }
-    let uses = bounded_array(required(object, "uses")?, 8, "colors[].uses")?;
-    let mut present = BTreeSet::new();
-    for value in uses {
-        present.insert(text(Some(value), 16, "colors[].uses[]")?);
-    }
-    ["text", "background", "border", "gradient", "shadow"]
-        .into_iter()
-        .find(|usage| present.contains(*usage))
-        .map(str::to_owned)
-        .ok_or(EvidenceError::Malformed("colors[].uses"))
-}
-
-fn parse_typography(value: &Value) -> Result<Vec<TypographyEvidence>, EvidenceError> {
-    let values = bounded_array(value, MAX_TYPOGRAPHY, "typography")?;
-    values
-        .iter()
-        .map(|value| {
-            let object = as_object(value, "typography[]")?;
-            let role = text(object.get("role"), 16, "typography[].role")?;
-            if !matches!(
-                role.as_str(),
-                "display" | "heading" | "body" | "label" | "control" | "code"
-            ) {
-                return Err(EvidenceError::Malformed("typography[].role"));
-            }
-            Ok(TypographyEvidence {
-                role,
-                family: text(object.get("family"), 96, "typography[].family")?,
-                size: bounded_number(object.get("size"), 1.0, 1_000.0, "typography[].size")?,
-                weight: bounded_u32(object.get("weight"), 1, 1_000, "typography[].weight")? as u16,
-                line_height: optional_number(
-                    object.get("lineHeight"),
-                    1.0,
-                    2_048.0,
-                    "typography[].lineHeight",
-                )?,
-                count: count(object.get("count"), "typography[].count")?,
-            })
-        })
-        .collect()
-}
-
-fn parse_spacing(value: &Value) -> Result<Vec<SpacingEvidence>, EvidenceError> {
-    let values = bounded_array(value, MAX_SPACING, "spacing")?;
-    values
-        .iter()
-        .map(|value| {
-            let object = as_object(value, "spacing[]")?;
-            let 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2172,35 +1806,6 @@ fn parse_spacing(value: &Value) -> Result<Vec<SpacingEvidence>, EvidenceError> {
   **Post-Mortem & Fix Analysis**:
   > Bro, this isn't our project. Check out this post instead: https://x.com/FiniYang/status/2085410613581451267  Our interface doesn't look like this.
 
-- **Issue #229** (2026-09-21): **Windows: Codex agent fails with os error 10106 because SystemRoot/windir are dropped**
-  *Symptoms*: ### Version  0.8.4  ### Platform  Windows (native desktop)  ### Bug Description  The Codex CLI works correctly when launched directly from a terminal, but fails when launched as an agent inside OpenPencil.  OpenPencil displays:  ```text error: orchestration failed: Reconnecting... 2/5 (stream disconnected before completion: The requested service provider could not be loaded or initialized. (os error 10106)) ```  The Chinese Windows error text is:  ```text 无法加载或初始化请求的服务提供程序。(os error 10106) ```  Error 10106 is `WSAEPROVIDERFAILEDINIT`.  This is separate from #189: the extensionless npm-shim problem was bypassed by explicitly resolving the native `codex.exe`, after which this later network-initialization failure appeared.  ### Steps to Reproduce  1. Install and authenticate Codex CLI on Windows using a ChatGPT subscription. 2. Confirm that the native `codex.exe` works directly from a terminal. 3. Ensure OpenPencil resolves the native `codex.exe` rather than the extensionless npm shim described in #189. 4. Connect Codex CLI in OpenPencil. 5. Send a simple prompt from the Agent panel. 6. The request reconnects several times and terminates with `os error 10106`.  The same native Codex executable and the same HTTP proxy settings succeed outside OpenPencil.  ### Expected Behavior  OpenPencil should preserve the Windows environment required for Winsock initialization when launching Codex, and the agent request should complete normally.  ### Screenshots / Recordings  <img width="2520"
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the detailed report and diagnosis. Confirmed: the current `v0.8.5` branch still filters the Codex child environment with case-sensitive key matching and does not preserve `WINDIR`, so this is not fixed yet.  We will update the Windows filtering to preserve the required variables case-insensitively and add regression coverage for mixed-case `SystemRoot`, `windir`, `ComSpec`, and `Path`.
-
-- **Issue #219** (2026-08-27): **通过 MCP 创建 text 节点导致桌面应用崩溃**
-  *Symptoms*: ### Version  崩溃地址 MSVCP140.dll + 0x18c34，异常码 0xc0000005  ### Platform  Windows (native desktop)  ### Bug Description  使用dsh 接入mcp 创建设计，只要是创建text节点就会崩溃，连续3次都是，应用安装版本是最新的0.8.4  ### Steps to Reproduce  1、打开应用 2、在dsh中“帮我创建一个液态玻璃卡片” 3、调用mcp ，创建text节点，程序崩溃  ### Expected Behavior  什么原因导致的  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > 感谢报告。先请做一个最省事的判别实验:  **1. 不用 dsh/MCP,直接在应用里用文本工具(快捷键 T)在画布上点一个文本** —— 也崩吗?  如果也崩,说明问题与 MCP/dsh 无关,而是 Windows 上文字排版路径本身。这个签名(0xc0000005 崩在 MSVCP140.dll 内部、仅 text 触发、每次必崩)高度符合 VC++ 运行时版本不匹配:我们的 Windows 包用较新的 MSVC 工具链构建,动态依赖系统的 MSVCP140.dll;当机器上的 VC++ Redistributable 较旧时,首次进入文字整形的 C++ 路径就会在运行时库内部访问违例 —— 创建 text 节点正是首次触发这条路径的操作,所以 frame/矩形都正常、text 必崩。  **2. 安装最新 VC++ 运行时后重试**:https://aka.ms/vs/17/release/vc_redist.x64.exe (装完建议重启)。  **3. 回帖时请带上**: - `C:\Windows\System32\msvcp140.dll` 右键属性 → 详细信息里的文件版本(重点看是否低于 14.40); - 通过 MCP 创建 frame / rectangle 是否正常(即确认只有 text 崩); - 如果更新运行时后仍崩:`%LOCALAPPDATA%\CrashDumps` 下 openpencil 相关的 .dmp 文件。 
-  > <img width="739" height="920" alt="Image" src="https://github.com/user-attachments/assets/70f5d64e-6e7a-43d9-9b91-0a0b7667654d" /> 使用最新VC++ 后不会存在该问题，MCP调用正常。感谢
-
-- **Issue #218** (2026-09-03): **TypeError: undefined is not an object (evaluating 'n.offset.x')**
-  *Symptoms*: ### Version  Version 0.14.0 (0.14.0)  ### Platform  macOS (native desktop)  ### Bug Description   I got an error that made it impossible to move the scene. It happened after I asked to add blur to some design elements.  <img width="1392" height="912" alt="Image" src="https://github.com/user-attachments/assets/f10262ac-8e94-4831-af83-9739ff5ab925" />  ### Steps to Reproduce  1. Use AI   2. Ask the AI to add blur   3. You may get an error  ### Expected Behavior  The blur should be applied to the selected design elements without affecting scene movement.  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Bro, this isn't our project. Check out this post instead: https://x.com/FiniYang/status/2085410613581451267  We have version v0.8.5 - give our version a try instead of this garbage
-
-- **Issue #211** (2026-08-29): **【字体】获取字体的地方有bug**
-  *Symptoms*: ### Version  v0.8.4  ### Platform  Windows (native desktop)  ### Bug Description  Windows 11，系统自带 msyh.ttc，选择字体可见 Microsoft YaHei UI，但不可见 Microsoft YaHei，打开使用 YaHei 的设计时提示 缺失字体。  ### Steps to Reproduce  打开一个带有 Microsoft YaHei 字体的文件。 （我用CodeX调MCP做的文件默认用的这个字体）  ### Expected Behavior  应该不报字体缺失。  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Fix proposed in #216. Missing-font detection now treats Microsoft YaHei and Microsoft YaHei UI as names for the same installed file (msyh.ttc), so opening a YaHei design no longer reports a missing font when Windows only lists YaHei UI. Other Windows UI faces stay distinct.
-
-- **Issue #209** (2026-08-29): **关于模型工具调用失败**
-  *Symptoms*: ### Version  0.8.3  ### Platform  Windows (native desktop)  ### Bug Description  1、编辑时的调用会出现偶发性修改工具掉落的情况。具体的反应如下 -使用任一模型时都会出现 -出现后，除非关闭程序，新开一个正常的文件，才会恢复，并且加载工具掉落的那个文件的时候，工具会继续掉落。这里我个人技术力有限，无法拆开调查，让ai反馈给我之后，原因为下图所示 -这种情况不是罕见偶发，而是存在一定的复现可能，但由于我个人时间原因，我无法提供更多的测试反馈，这里附上图片与目前百分百导入后就会失灵的op文件 希望能够处理并修复这个问题   [untitled.zip](https://github.com/user-attachments/files/30943451/untitled.zip)  "Image" src="https://github.com/user-attachments/assets/ff12644b-a3b9-4aa5-9c60-5894e53bfe98" />  ### Steps to Reproduce  由于我无法稳定复现，此处无法提供对应的复现步骤  ### Expected Behavior  编辑类工具无法调用，而其余可读类文件却可以  ### Screenshots / Recordings  <img width="1470" height="524" alt="Image" src="https://github.com/user-attachments/assets/505cd1b1-fb63-4c25-9387-201b35854414" />  ### Additional Context  使用操作系统：window11  对应版本：25H2 
-  **Post-Mortem & Fix Analysis**:
-  > 好的，感谢反馈，我们安排处理
-
-- **Issue #204** (2026-08-09): **MCP screenshot result is returned as text instead of ImageContent**
-  *Symptoms*: ### Version  0.8.2  ### Platform  Linux (native desktop)  ### Bug Description  The MCP screenshot tool does not expose the captured PNG to MCP clients as an MCP `ImageContent` block.  When using OpenPencil's MCP server from GitHub Copilot in VS Code with a vision-capable model, the screenshot returned by the screenshot tool arrives in the tool result as serialized JSON/base64 text. Copilot therefore treats the screenshot bytes as text rather than as an image input.  This makes the screenshot effectively unusable for visual reasoning: the model receives a large base64 string instead of the image.  ### Steps to Reproduce  1. Run and connect MCP to chat client 3. Use a vision-capable model. 4. Invoke the screenshot MCP tool (`get_screenshot` is what the server reports). 5. Inspect the tool result received by Copilot. 6. Witness base64-encoded image in json  ### Expected Behavior  The screenshot tool should return the PNG as a typed MCP image content block:  ```json {   "content": [     {       "type": "image",       "data": "<base64-encoded PNG bytes>",       "mimeType": "image/png"     }   ] } ```  The base64 encoding itself is expected by MCP. The important part is that the base64 data is contained in an MCP ImageContent block (type: "image"), rather than being serialized into a text/JSON tool result.  This allows MCP clients such as GitHub Copilot to preserve the image as multimodal content and pass it to vision-capable models.  ### Screenshots / Recordings  <img width="468" 
-
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
 
@@ -2216,690 +1821,243 @@ fn parse_spacing(value: &Value) -> Result<Vec<SpacingEvidence>, EvidenceError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e55570d` (2026-09-22)
-**Commit Message**: docs(readme): update Fluxion AI sponsor banner
+### Incident Patch 1: `243c27f5` (2026-09-15)
+**Commit Message**: fix(agent): route every Studio task family to the design pipeline
 
+The intent classifier's keyword list grew up around app and web briefs,
+so the 演示文稿 / 图文卡片 / 截图教程 / 信息图 / 活动海报 wrappers matched
+nothing and five of the seven task families answered as plain chat: a
+five-page deck brief produced one empty starter frame and a collapsed
+thinking block. Add the deliverable nouns and the 做一份/一套/一张/一篇
+verb forms, and pin every wrapper with a test so a new family cannot
+slip through the same gap.
 
+Three unrelated reds fixed alongside, each measured:
 
----
+- The image-provider menu's expected height was a literal 176, which the
+  Atlas Cloud provider (#227) invalidated the moment it took the list
+  from four entries to five. Derive it from the list's length.
+- The pointer-clock tests fold the PROCESS-GLOBAL agent indicator
+  registry through `next_animation_deadline_ms`, so a concurrent test
+  registering a reveal made an idle engine report a deadline it did not
+  own: green single-threaded, three failures in parallel. Hold the
+  registry's own test guard, the way the desktop indicator tests do.
+- A rejected provider response now optionally goes to a local file named
+  by OPENPENCIL_DEBUG_HTTP_E
 
-### Incident Patch 2: `4fbe3a42` (2026-09-21)
-**Commit Message**: docs(readme): add Fluxion AI sponsor block alongside Infistar in all locales
-
-**File**: `README.de.md` (modified, +11/-0)
+**File**: `crates/op-chat-agent/src/backoff.rs` (modified, +59/-0)
 ```diff
-@@ -35,6 +35,17 @@
- 
- ## Warum OpenPencil
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.es.md` (modified, +11/-0)
-```diff
-@@ -35,6 +35,17 @@
- 
- ## Por Qué OpenPencil
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.fr.md` (modified, +11/-0)
-```diff
-@@ -35,6 +35,17 @@
- 
- ## Pourquoi OpenPencil
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.hi.md` (modified, +11/-0)
-```diff
-@@ -35,6 +35,17 @@
- 
- ## OpenPencil क्यों
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.id.md` (modified, +11/-0)
-```diff
-@@ -35,6 +35,17 @@
- 
- ## Mengapa OpenPencil
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.ja.md` (modified, +11/-0)
-```diff
-@@ -35,6 +35,17 @@
- 
- ## Why OpenPencil
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.ko.md` (modified, +11/-0)
-```diff
-@@ -35,6 +35,17 @@
- 
- ## OpenPencil을 선택하는 이유
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
-**File**: `README.md` (modified, +11/-0)
-```diff
-@@ -48,6 +48,17 @@
- - 🎨 **赋能 AI 原生矢量设计：** 适用于提示词生成设计、画布内容修改、多模型协同、图片生成及设计方案迭代，让 AI Agent 更高效地完成从创意到成稿的全过程。
- - 🎁 **OpenPencil 用户专属福利：** 通过 [专属推广链接](https://www.infistar.cc/register?aff=LLZC3RLG&ref_source=link) 注册并完成首次调用，即可领取 **5 美元等值测试额度 / 首充专属优惠**！
- 
-+<a href="https://fluxionai.world/register?source=github&amp;campaign=github-openpencil&amp;promo=OPENPENCIL" title="Fluxion AI">
-+  <img src="./screenshot/fluxion-ai-sponsor-banner.png" alt="Fluxion AI — reliable, cost-efficient access to GPT, Claude, and other leading AI models through one unified API" width="100%" />
-+</a>
-+
-+### [OpenPencil × Fluxion AI | One unified API for GPT, Claude, and more](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL)
-+
-+Thanks to [Fluxion AI](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL) for sponsoring OpenPencil!
-+
-+- ⚡ **Reliable, cost-efficient access:** GPT, Claude, and other leading AI models through one unified API — save up to 70% compared with official API pricing.
-+- 🎁 **OpenPencil user bonus:** get **$1 in API credits** when you [sign up through this link](https://fluxionai.world/register?source=github&campaign=github-openpencil&promo=OPENPENCIL).
-+
- <table>
- <tr>
- <td width="50%">
-```
-
----
-
-### Incident Patch 3: `4c9f73fb` (2026-09-17)
-**Commit Message**: fix(ai): ride out provider 429s in the headless smoke client
-
-The direct openai-compat client (OPENPENCIL_SMOKE_DIRECT=1) gave up after a
-single POST, while op_orchestrator::retry deliberately treats `http 429` as
-non-retryable so the subtask ladder stops there. Together those two turned one
-rate limit from a shared provider pool into a permanently lost subtask: an
-arena batch against OpenRouter'''s stealth channel took 11 x 429 on one task and
-lost 7 of 11 subtasks, which reads as a model that produced nothing.
-
-Route the call through production'''s own ladder (send_with_backoff: same
-throttle, same adaptive gap, same Retry-After handling) instead of a second
-copy of that policy. OPENPENCIL_SMOKE_HTTP_MAX_RETRIES raises the ladder for a
-heavily shared free pool, and the whole-call deadline gains head-room for the
-ladder'''s own sleeps so the last attempt still gets to dial.
-
-Same task re-run with the ladder: 0 x 429, 120 -> 238 nodes, all three screens
-complete.
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -4958,6 +4958,7 @@ dependencies = [
-  "jian-ops-schema",
-  "op-ai",
-  "op-ai-skills",
-+ "op-chat-agent",
-  "op-editor-core",
-  "op-host-services",
-  "op-image-enrich",
-```
-
-**File**: `crates/op-smoke/Cargo.toml` (modified, +5/-0)
-```diff
-@@ -46,6 +46,11 @@ op-mcp = { path = "../op-mcp" }
- # loop-mode dump uses the SAME `serde_json::to_string_pretty(&state.doc)` path as
- # the orchestrator mode. Both crates already build raster-only (no winit/GL).
- op-host-services = { path = "../op-host-services" }
-+# Production's HTTP retry/throttle ladder (`send_with_backoff`) — the direct
-+# openai-compat client below rides out provider 429s with the same posture the
-+# desktop uses instead of turning a shared-pool rate limit into a failed subtask.
-+op-chat-agent = { path = "../op-chat-agent" }
-+
- op-ai = { path = "../op-ai" }
- # System prompt for the design agent loop (parity with the desktop design loop).
- op-ai-skills = { path = "../op-ai-skills" }
-```
-
-**File**: `crates/op-smoke/src/llm_clients.rs` (modified, +51/-8)
-```diff
-@@ -17,6 +17,7 @@ use agent::query::QueryEngine;
- use agent::stream::Event;
- use futures::channel::mpsc;
- use futures::StreamExt;
-+use op_chat_agent::backoff::{send_with_backoff, BUILTIN_HTTP_MAX_RETRIES};
- use op_host_services::chat_builtin_http::apply_reasoning_wire_control;
- use op_orchestrator::{CallRequest, LlmChunk, LlmClient, LlmError};
- 
-@@ -261,17 +262,30 @@ impl LlmClient for DirectOpenAiClient {
-             // lines while it works, so a stuck generation never goes idle
-             // (web-05 sat 32 min in Planning on 2026-09-08). Cap the whole
-             // call; the orchestrator's retry loop takes it from there.
-+            let max_retries = smoke_http_max_retries();
-             let total_budget = total_call_budget(
-                 op_orchestrator::resolve_model_profile(&model).timeout_multiplier,
--            );
-+            ) + retry_ladder_budget(max_retries);
-+            // Rate limits are a transport concern, not a model verdict: a
-+            // shared-pool provider (OpenRouter's stealth channel, measured
-+            // 2026-09-17) answers 429 on most subtasks of a 12-task suite, and
-+            // `op_orchestrator::retry::is_non_retryable` deliberately stops the
-+            // subtask ladder on `http 429` — so without a ladder HERE the run
-+            // reads as a model that produced nothing. `send_with_backoff` is
-+            // production's own ladder (same throttle, same adaptive gap, same
-+            // Retry-After handling); the harness differs only in that the
-+            // provider's error body stays reachable via the opt-in
-+            // `OPENPENCIL_DEBUG_HTTP_ERROR_BODY` file.
-             let call = async {
--                let resp = client
--                    .post(&url)
--                    .bearer_auth(&key)
--                    .json(&body)
--                    .send()
--                    .await
--                    .map_err(|e| format!("POST {url}: {e}"))?;
-+                let resp = send_with_backoff(
-+                    "smoke direct",
-+                    &url,
-+                    max_retries,
-+                    op_chat_agent::backoff::builtin_http_min_gap(),
-+                    || client.post(&url).bearer_auth(&key).json(&body),
-+                )
-+                .await
-+                .map_err(|e| e.to_string())?;
-                 let status = resp.status();
-                 let text = resp.text().await.unwrap_or_default();
-                 Ok::<_, String>((status, text))
-@@ -331,6 +345,27 @@ impl LlmClient for DirectOpenAiClient {
-     }
+@@ -121,6 +121,50 @@ pub fn default_backoff_knobs() -> (u32, Duration) {
+     (BUILTIN_HTTP_MAX_RETRIES, builtin_http_min_gap())
  }
  
-+/// Retries the harness's direct provider POST rides out before giving up.
++/// Append a rejected response's status and body to the file named by
++/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
 +///
-+/// Defaults to production's ladder ([`BUILTIN_HTTP_MAX_RETRIES`]); a batch
-+/// against a heavily shared free pool raises it with
-+/// `OPENPENCIL_SMOKE_HTTP_MAX_RETRIES`.
-+fn smoke_http_max_retries() -> u32 {
-+    std::env::var("OPENPENCIL_SMOKE_HTTP_MAX_RETRIES")
-+        .ok()
-+        .and_then(|raw| raw.trim().parse::<u32>().ok())
-+        .unwrap_or(BUILTIN_HTTP_MAX_RETRIES)
++/// Off by default and never wired into chat, SSE, or stdout: a provider
++/// error body is untrusted and can echo the request's own headers, so it
++/// stays out of every channel the user or a browser can read. With the
++/// env var set it goes to that one file and nowhere else, which is what
++/// turns "http 400 Bad Request" from a dead end into a diagnosis
++/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
++/// unreachable from inside the app).
++async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
++    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
++        return;
++    };
++    if path.is_empty() {
++        return;
++    }
++    let body = resp.text().await.unwrap_or_default();
++    let line = format!(
++        "[{}] {label} http {} {}\n{}\n",
++        chrono_like_stamp(),
++        status.as_u16(),
++        status.canonical_reason().unwrap_or(""),
++        body.chars().take(4_000).collect::<String>()
++    );
++    use std::io::Write as _;
++    if let Ok(mut file) = std::fs::OpenOptions::new()
++        .create(true)
++        .append(true)
++        .open(&path)
++    {
++        let _ = file.write_all(line.as_bytes());
++    }
 +}
 +
-+/// Head-room the whole-call deadline needs for the retry ladder's own sleeps.
-+///
-+/// Without it the ladder eats the generation budget: `RETRY_AFTER_MAX` caps one
-+/// wait at 30 s, so `max_retries` waits are the worst case the deadline has to
-+/// absorb before the last attempt even dials.
-+fn retry_ladder_budget(max_retries: u32) -> std::time::Duration {
-+    std::time::Duration::from_secs(30 * u64::from(max_retries))
++/// Seconds since the UNIX epoch — enough to line a dump up against the
++/// app log without pulling a date crate into this leaf.
++fn chrono_like_stamp() -> u64 {
++    std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .map(|d| d.as_secs())
++        .unwrap_or(0)
 +}
 +
- /// Whole-call budget for the non-streaming provider path: 15 min scaled by
- /// the model profile's timeout multiplier, or `OPENPENCIL_SMOKE_LLM_TOTAL_BUDGET_SECS`
- /// when set (the harness tests use it to make the deadline observable).
-@@ -350,6 +385,14 @@ mod tests {
-     use super::*;
-     use serde_json::json;
- 
+ pub async fn send_with_backoff(
+     label: &str,
+     url: &str,
+@@ -164,6 +208,10 @@ pub async fn send_with_backoff(
+                 // Provider error bodies are untrusted and can echo request
+                 // headers. Never relay them into chat/SSE where credentials
+                 // could be reflected back into logs or browser responses.
++                // They ARE the only way to tell WHY a provider rejected a
++                // request, so an explicit opt-in writes them to a local file
++                // the developer named — never to the transcript.
++                dump_error_body(label, status, resp).await;
+                 return Err(BuiltinHttpError::HttpStatus {
+                     label: label.to_string(),
+                     status,
+@@ -292,3 +340,14 @@ pub fn apply_reasoning_wire_control_anthropic(
+         obj.insert("thinking".into(), serde_json::json!({ "type": "disabled" }));
+     }
+ }
++
++#[cfg(test)]
++mod http_error_dump_tests {
 +    #[test]
-+    fn retry_ladder_budget_covers_the_worst_case_waits() {
-+        // RETRY_AFTER_MAX (30 s) per retry — the deadline must outlast the
-+        // ladder, or the last attempt never dials.
-+        assert_eq!(retry_ladder_budget(0).as_secs(), 0);
-+        assert_eq!(retry_ladder_budget(5).as_secs(), 150);
++    fn the_dump_is_off_unless_the_env_var_names_a_file() {
++        unsafe {
++            std::env::remove_var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY");
++        }
++        assert!(std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY").is_err());
++    }
++}
+```
+
+**File**: `crates/op-editor-ui/src/widgets/agent_settings_images.rs` (modified, +7/-2)
+```diff
+@@ -268,11 +268,16 @@ mod touch_tests {
+         let closed_row = profile_row_rect_for_ui(content, &closed, 0, true);
+         let open_row = profile_row_rect_for_ui(content, &open, 0, true);
+ 
+-        assert_eq!(open_row.size.y - closed_row.size.y, 176.0);
++        // One 44 px row per entry of `ImageGenProvider::ALL`. The Atlas
++        // Cloud provider took the list from four to five, so the
++        // expanded profile grew 176 → 220; the constant here is the
++        // list's length, not a free number.
++        const EXPANDED_H: f32 = 44.0 * ImageGenProvider::ALL.len() as f32;
++        assert_eq!(open_row.size.y - closed_row.size.y, EXPANDED_H);
+         assert_eq!(
+             content_height_for_ui(&open, content.size.x, true)
+                 - content_height_for_ui(&closed, content.size.x, true),
+-            176.0
++            EXPANDED_H
+         );
+         let api = profile_input_rect_for_ui(open_row, &open, 0, ImageGenField::ApiKey, true);
+         for (option_index, expected) in ImageGenProvider::ALL.iter().enumerate() {
+```
+
+**File**: `crates/op-engine-ffi/src/editor_pointer_clock_tests.rs` (modified, +21/-0)
+```diff
+@@ -183,6 +183,13 @@ fn app_state_string(engine: &mut OpEngine, key: &str) -> Option<String> {
+ /// times (fresh host clock is 0).
+ #[test]
+ fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
++    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
++    // indicator registry, so a concurrent test that registers a reveal
++    // makes this idle engine report a deadline it does not own. Hold the
++    // registry's own test guard for the whole body, the way the desktop
++    // indicator tests do.
++    let _indicators = op_editor_core::agent_indicators::test_guard();
++    op_editor_core::agent_indicators::clear();
+     let mut engine = swipe_engine();
+     let pointer = &mut engine as *mut OpEngine;
+     // The preview no longer pins a blanket `now + 33` wake: an idle session
+@@ -252,6 +259,13 @@ fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
+ /// `onSwipe` runs exactly once.
+ #[test]
+ fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta() {
++    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
++    // indicator registry, so a concurrent test that registers a reveal
++    // makes this idle engine report a deadline it does not own. Hold the
++    // registry's own test guard for the whole body, the way the desktop
++    // indicator tests do.
++    let _indicators = op_editor_core::agent_indicators::test_guard();
++    op_editor_core::agent_indicators::clear();
+     let mut engine = swipe_engine();
+     let pointer = &mut engine as *mut OpEngine;
+ 
+@@ -315,6 +329,13 @@ fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta
+ /// (monotonically) and never move them backward.
+ #[test]
+ fn cancel_and_early_returns_advance_global_clocks_monotonically() {
++    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
++    // indicator registry, so a concurrent test that registers a reveal
++    // makes this idle engine report a deadline it does not own. Hold the
++    // registry's own test guard for the whole body, the way the desktop
++    // indicator tests do.
++    let _indicators = op_editor_core::agent_indicators::test_guard();
++    op_editor_core::agent_indicators::clear();
+     let mut engine = swipe_engine();
+     let pointer = &mut engine as *mut OpEngine;
+ 
+```
+
+**File**: `crates/op-orchestrator/src/intent.rs` (modified, +42/-0)
+```diff
+@@ -73,6 +73,29 @@ const DESIGN_KEYWORDS: &[&str] = &[
+     "网页",
+     "小程序",
+     "后台",
++    // 中文动词 —— 量词形式。Studio 首页的七类任务包装语都用"做一份/
++    // 一套/一张/一篇"起头，而旧表只有"做一个/做个"，于是演示文稿、图文
++    // 卡片、截图教程、信息图、活动海报五类全部落到 chat。
++    "做一份",
++    "做一套",
++    "做一张",
++    "做一篇",
++    "做份",
++    "做套",
++    "做张",
++    // 中文设计名词 —— 交付物形态。与上面的页面类名词同理：在设计工具
++    // 语境里这些词几乎总是"造一个 X"。
++    "演示文稿",
++    "幻灯片",
++    "ppt",
++    "slides",
++    "图文卡片",
++    "卡片",
++    "海报",
++    "信息图",
++    "长图",
++    "截图教程",
++    "排版",
+ ];
+ 
+ /// 把用户消息分类为 [`Intent::Design`] 或 [`Intent::Chat`]。
+@@ -114,6 +137,25 @@ mod tests {
+         }
+     }
+ 
++    /// Every Studio Home task wrapper must classify as Design. The
++    /// deliverable is already chosen by the task card, so a wrapper that
++    /// reads as chat silently answers the user in prose instead of
++    /// drawing (measured 2026-09-13 on 演示文稿).
++    #[test]
++    fn every_studio_home_task_wrapper_classifies_as_design() {
++        for p in [
++            "请设计一套可编辑的高保真手机 App 界面（mobile app，375×812）。",
++            "请设计一个完整的纵向滚动网站页面（landing page，1440 宽）。",
++            "请做一份 5 页的 PPT 演示文稿（slides，16:9）。封面、正文与结束页风格统一。",
++            "请做一套图文卡片（card，竖版 3:4，多页轮播）。保持统一排版与视觉系统。",
++            "请做一篇截图教程图文（card，竖版，截图配上步骤说明）。",
++            "请做一张数据对比信息图长图（card，竖版图文长图）。",
++            "请做一套活动海报（card，主海报竖版 + 社交方图）。",
++        ] {
++            assert_eq!(classify_intent(p), Intent::Design, "{p}");
++        }
 +    }
 +
      #[test]
-     fn total_call_budget_scales_with_the_profile_multiplier() {
-         std::env::remove_var("OPENPENCIL_SMOKE_LLM_TOTAL_BUDGET_SECS");
+     fn questions_classify_as_chat() {
+         for p in [
 ```
 
 ---
 
-### Incident Patch 4: `dd2bb56d` (2026-09-16)
-**Commit Message**: fix(editor): make Home's avatar and model picker actually usable
-
-Three defects the founder hit on Home, all from the takeover carrying
-only half of what the professional chrome carries.
-
-The avatar hovered but did nothing when signed in. It opens one of two
-things, and Home painted and routed only the signed-OUT half: the
-account menu went `open = true` and appeared nowhere. Home now paints it
-and owns its presses, and the menu anchors off HOME's avatar instead of
-the professional TopBar's, which is a different place on the same
-window.
-
-The model picker showed 接入更多模型 twice. It was an external row
-painted BELOW the card, from before the picker grew its own footer.
-Removed: the card is the whole footprint now.
-
-And the picker dismissed on hover-out, so the cursor could not reach
-that footer without the card vanishing on the way — the external row
-sat across a gap that read as leaving the popover. A click-opened
-popover closes on a click outside, which the press path already does;
-hover only tracks the row under the cursor.
-
-Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
-
-**File**: `crates/op-editor-ui/src/widgets/home_surface_model.rs` (modified, +9/-9)
-```diff
-@@ -52,12 +52,19 @@ pub fn model_chip_width(label: &str) -> f32 {
- /// The picker card anchored above the submit row's model button plus
- /// the trailing connect-more row under it. `None` when the button is
- /// not laid out (zero-width) or the viewport cannot hold the card.
-+/// The Home-anchored model picker's card.
-+///
-+/// It used to return a second rect for an external 接入更多模型 row
-+/// painted BELOW the card. The picker carries that action as its own
-+/// footer now, so the external row was the same thing twice — and
-+/// because it sat outside the card, crossing the gap to reach it read as
-+/// leaving the popover.
- pub fn home_model_picker_rects(
-     layout: &HomeLayout,
-     viewport_w: f32,
-     models: &[ModelEntry],
-     search: &str,
--) -> Option<(Rect, Rect)> {
-+) -> Option<Rect> {
-     let chip = layout.model_chip;
-     if chip.size.x <= 0.0 {
-         return None;
-@@ -67,14 +74,7 @@ pub fn home_model_picker_rects(
-     let top = (bottom - height).max(8.0);
-     let x = (chip.origin.x + chip.size.x / 2.0 - HOME_MODEL_PICKER_W / 2.0)
-         .clamp(8.0, (viewport_w - HOME_MODEL_PICKER_W - 8.0).max(8.0));
--    let card = Rect::xywh(x, top, HOME_MODEL_PICKER_W, height);
--    let connect_row = Rect::xywh(
--        x,
--        card.origin.y + card.size.y + CONNECT_MORE_ROW_GAP,
--        HOME_MODEL_PICKER_W,
--        CONNECT_MORE_ROW_H,
--    );
--    Some((card, connect_row))
-+    Some(Rect::xywh(x, top, HOME_MODEL_PICKER_W, height))
- }
- 
- /// Paint the model button: a 38 px outline pill with the green status
-```
-
-**File**: `crates/op-editor-ui/src/widgets/touch_overlay_geometry.rs` (modified, +15/-0)
-```diff
-@@ -18,6 +18,21 @@ pub fn account_anchor(state: &EditorState, viewport_w: f32) -> Rect {
-         let bar = host_canvas_geometry::touch_app_bar_rect(state, viewport_w);
-         return MobileAppBar::overflow_rect(bar);
-     }
-+    // Home is a takeover with its own top bar, so the menu has to hang
-+    // off ITS avatar. Anchoring to the professional TopBar's position
-+    // put the menu somewhere Home has no avatar at all.
-+    if state.editor_ui.home.visible {
-+        // The top-bar rects are anchored off the viewport's right edge
-+        // and depend on nothing else, so the task and chip width here
-+        // cannot change the answer.
-+        return crate::widgets::home_surface::layout::layout_for(
-+            viewport_w,
-+            1.0,
-+            state.editor_ui.home.task,
-+            0.0,
-+        )
-+        .account;
-+    }
-     let top_bar = Rect::xywh(0.0, 0.0, viewport_w, TOP_BAR_HEIGHT);
-     TopBar::for_editor_ui(&state.editor_ui).account_button_rect(top_bar)
- }
-```
-
-**File**: `crates/op-host-native/src/widget_host/home_overlays.rs` (modified, +52/-29)
-```diff
-@@ -14,7 +14,7 @@ use crate::backend::NativeFrameBackend;
- use op_editor_ui::widgets::ai_chat_model_picker::{
-     max_picker_scroll, model_picker_hit, paint_model_picker, search_clear_hit, SelectHit,
- };
--use op_editor_ui::widgets::home_surface::{home_model_picker_rects, paint_connect_more_row};
-+use op_editor_ui::widgets::home_surface::home_model_picker_rects;
- use op_editor_ui::widgets::{HomeSurface, PaintCx, Widget};
- use op_editor_ui::{Point2D, Rect, RenderBackend};
- 
-@@ -31,11 +31,12 @@ impl WidgetHostNative {
-         if !self.home_visible() {
-             return None;
-         }
--        let (settings_open, login_open, account_ui) = {
-+        let (settings_open, login_open, account_menu_open, account_ui) = {
-             let ui = &self.editor_state.editor_ui;
-             (
-                 ui.agent_settings_open,
-                 ui.login_modal_open && (ui.account_ui_available || ui.touch_chrome()),
-+                ui.account_menu_open && ui.account_ui_available,
-                 ui.chat_model_picker.open,
-             )
-         };
-@@ -50,15 +51,23 @@ impl WidgetHostNative {
-             self.dispatch_login_modal_press(x, y, viewport_width, viewport_height);
-             return Some(true);
-         }
-+        // The signed-in half of what Home's avatar opens. Without this
-+        // the menu painted and then swallowed nothing: every press fell
-+        // through to the surface underneath and the menu never closed.
-+        if account_menu_open {
-+            self.dispatch_account_menu_press(x, y, viewport_width, viewport_height);
-+            return Some(true);
-+        }
-         if account_ui {
-             return self.press_home_model_picker(x, y, viewport_width, viewport_height);
-         }
-         None
-     }
- 
-     /// Paint the Home-opened overlays above the takeover: the agent-
--    /// settings modal, the sign-in modal, then the Home-anchored model
--    /// picker with its trailing connect-more row.
-+    /// settings modal, the sign-in modal, the signed-in account menu,
-+    /// then the Home-anchored model picker with its trailing
-+    /// connect-more row.
-     pub(in crate::widget_host) fn paint_home_overlays(
-         &mut self,
-         frame: &mut NativeFrameBackend<'_>,
-@@ -70,9 +79,39 @@ impl WidgetHostNative {
-         }
-         self.paint_agent_settings_modal_overlay(frame, viewport_width, viewport_height);
-         self.paint_login_modal_overlay(frame, viewport_width, viewport_height);
-+        self.paint_account_menu_overlay(frame, viewport_width, viewport_height);
-         self.paint_home_model_picker(frame, viewport_width, viewport_height);
-     }
- 
-+    /// The signed-in account dropdown. Home paints it for the same
-+    /// reason it paints the sign-in modal: its avatar opens one of the
-+    /// two, and a takeover that draws only the signed-OUT half leaves a
-+    /// signed-in user clicking an avatar that does nothing.
-+    pub(in crate::widget_host) fn paint_account_menu_overlay(
-+        &self,
-+        frame: &mut NativeFrameBackend<'_>,
-+        viewport_width: f32,
-+        _viewport_height: f32,
-+    ) {
-+        let ui = &self.editor_state.editor_ui;
-+        if !ui.account_ui_available || !ui.account_menu_open {
-+            return;
-+        }
-+        use op_editor_ui::widgets::account_menu::AccountMenu;
-+        let Some(menu) = AccountMenu::for_editor_ui(ui) else {
-+            return;
-+        };
-+        let menu_rect = op_editor_ui::widgets::touch_overlay_geometry::account_menu_rect(
-+            &self.editor_state,
-+            &menu,
-+            viewport_width,
-+        );
-+        let mut cx = op_editor_ui::widgets::PaintCx {
-+            backend: &mut *frame,
-+        };
-+        menu.paint(&mut cx, menu_rect);
-+    }
-+
-     /// The sign-in modal: full-viewport scrim + centred card. Extracted
-     /// from the normal-path paint so Home can share the exact card.
-     pub(in crate::widget_host) fn paint_login_modal_overlay(
-@@ -140,16 +179,13 @@ impl WidgetHostNative {
-         if !self.editor_state.editor_ui.chat_model_picker.open {
-             return;
-         }
--        let Some((card, connect_row)) =
--            self.home_model_picker_geometry(viewport_width, viewport_height)
--        else {
-+        let Some(card) = self.home_model_picker_geometry(viewport_width, viewport_height) else {
-             return;
-         };
-         let ui = &self.editor_state.editor_ui;
-         let models = &self.editor_state.chat.available_models;
-         let selected = self.editor_state.chat.selected_model;
-         let locale = ui.locale;
--        let connect_label = op_i18n::translate(locale, "home.connectMoreModels");
-         let mut cx = PaintCx {
-             backend: &mut *frame,
-         };
-@@ -164,15 +200,14 @@ impl WidgetHostNative {
-             self.now_ms,
-             locale,
-         );
--        paint_connect_more_row(&mut cx, &self.theme, connect_row, connect_label, false);
-     }
- 
-     /// Resolve the Home-anchored picker rects from the live
-```
-
-**File**: `crates/op-host-native/src/widget_host/home_overlays_tests.rs` (modified, +79/-10)
-```diff
-@@ -136,7 +136,7 @@ fn picking_a_row_from_the_home_picker_selects_that_model() {
-     let mut host = host_with_usable_agent();
-     let chip = chip_center(&host);
-     assert!(host.apply_press(chip.x, chip.y, W, H));
--    let (card, _connect_row) = host
-+    let card = host
-         .home_model_picker_geometry(W, H)
-         .expect("picker geometry resolves above the chip");
-     // Second row of the single Claude Code group: search strip + pad +
-@@ -169,21 +169,44 @@ fn pressing_outside_the_home_picker_closes_it_without_touching_home() {
- }
- 
- #[test]
--fn the_home_picker_connect_row_opens_agent_settings_on_the_agents_tab() {
-+fn the_home_picker_connect_row_lives_inside_the_card_now() {
-+    // The action used to be an external row BELOW the card, which meant
-+    // Home showed 接入更多模型 twice (the picker carries its own footer)
-+    // and the cursor had to leave the popover to reach it.
-     let mut host = host_with_usable_agent();
-     let chip = chip_center(&host);
-     assert!(host.apply_press(chip.x, chip.y, W, H));
--    let (_card, connect_row) = host
-+    let card = host
-         .home_model_picker_geometry(W, H)
-         .expect("picker geometry resolves");
--    let point = center(connect_row);
--    assert!(host.apply_press(point.x, point.y, W, H));
--    assert!(host.editor_state().editor_ui.agent_settings_open);
--    assert_eq!(
--        host.editor_state().editor_ui.agent_settings.tab,
--        op_editor_core::AgentSettingsTab::Agents
--    );
-+    // Nothing hangs below the card any more: a press just under it is
-+    // an outside press and closes the picker.
-+    let below = Point2D::new(card.origin.x + 24.0, card.origin.y + card.size.y + 20.0);
-+    assert!(host.apply_press(below.x, below.y, W, H));
-     assert!(!host.editor_state().editor_ui.chat_model_picker.open);
-+    assert!(!host.editor_state().editor_ui.agent_settings_open);
-+}
-+
-+/// Hover must never dismiss a click-opened popover: moving the cursor
-+/// off the card used to close it, so its own footer row was unreachable.
-+#[test]
-+fn moving_the_cursor_off_the_home_picker_keeps_it_open() {
-+    let mut host = host_with_usable_agent();
-+    let chip = chip_center(&host);
-+    assert!(host.apply_press(chip.x, chip.y, W, H));
-+    let card = host.home_model_picker_geometry(W, H).expect("picker open");
-+    assert!(host.editor_state().editor_ui.chat_model_picker.open);
-+    for point in [
-+        Point2D::new(card.origin.x - 40.0, card.origin.y + 20.0),
-+        Point2D::new(card.origin.x + 24.0, card.origin.y + card.size.y + 30.0),
-+        Point2D::new(W - 20.0, H - 20.0),
-+    ] {
-+        host.apply_cursor_move(point.x, point.y);
-+        assert!(
-+            host.editor_state().editor_ui.chat_model_picker.open,
-+            "hover at {point:?} must not dismiss"
-+        );
-+    }
- }
- 
- #[test]
-@@ -218,3 +241,49 @@ fn home_and_top_bar_avatars_open_the_same_account_entry() {
-     );
-     assert!(!host.editor_state().editor_ui.account_menu_open);
- }
-+
-+/// Home's avatar opens one of two things, and the takeover has to draw
-+/// and route BOTH — a signed-in user clicking it got an account menu
-+/// that existed in state and appeared nowhere.
-+#[test]
-+fn home_routes_the_signed_in_account_menu_as_well_as_the_sign_in_modal() {
-+    let mut host = WidgetHostNative::new();
-+    host.editor_state_mut().editor_ui.home.visible = true;
-+    host.editor_state_mut().editor_ui.account_ui_available = true;
-+    // Signed out: the avatar opens the sign-in modal, and Home owns the press.
-+    assert!(host.open_account_entry());
-+    assert!(host.editor_state().editor_ui.login_modal_open);
-+    assert_eq!(
-+        host.press_home_overlays(400.0, 400.0, 1440.0, 900.0),
-+        Some(true),
-+        "the modal owns presses over the takeover"
-+    );
-+
-+    // Signed in: the menu opens instead, and Home owns its presses too.
-+    host.editor_state_mut().editor_ui.login_modal_open = false;
-+    host.editor_state_mut().editor_ui.account_menu_open = true;
-+    assert_eq!(
-+        host.press_home_overlays(400.0, 400.0, 1440.0, 900.0),
-+        Some(true),
-+        "an open account menu must not let presses fall through Home"
-+    );
-+}
-+
-+/// ...and the menu hangs off HOME's avatar, not the professional top
-+/// bar's, which is a different place on the same window.
-+#[test]
-+fn the_account_menu_anchors_to_homes_own_avatar() {
-+    let mut state = op_editor_core::EditorState::new();
-+    state.editor_ui.account_ui_available = true;
-+    let pro = op_editor_ui::widgets::touch_overlay_geometry::account_anchor(&state, 1440.0);
-+    state.editor_ui.home.visible = true;
-+    let home = op_editor_ui::widgets::touch_overlay_geometry::account_anchor(&state, 1440.0);
-+    assert_ne!(
-+        pro.origin.x, home.origin.x,
-+        "different avatars, different anchors"
-+    );
-+    // The anchor sits in Home's top bar, left of its 打开文件 button.
-+    assert!(home.size.x > 0.0 && home.size.y > 0.0);
-+    assert!(home.origin.y < 60.0, "in the top bar: {home:?}");
-+    as
-```
-
-**File**: `crates/op-host-native/src/widget_host/overlay_rects.rs` (modified, +4/-8)
-```diff
-@@ -377,14 +377,10 @@ impl WidgetHostNative {
-             return None;
-         }
-         if self.editor_state.editor_ui.home.visible {
--            return self.home_model_picker_geometry(viewport_w, viewport_h).map(
--                |(card, _connect_row)| {
--                    // The connect row is part of the picker's footprint,
--                    // but the row-based scroll/hover math inside gates
--                    // only understands the card.
--                    card
--                },
--            );
-+            // The card IS the whole footprint now: the external connect
-+            // row that used to hang below it is gone, folded into the
-+            // picker's own footer.
-+            return self.home_model_picker_geometry(viewport_w, viewport_h);
-         }
-         let chat_rect = self.ai_chat_rect(viewport_w, viewport_h)?;
-         AIChatPlaceholder::from_editor(&self.editor_state).model_picker_bounds(chat_rect)
-```
-
----
-
-### Incident Patch 5: `49100c2c` (2026-09-16)
+### Incident Patch 2: `49100c2c` (2026-09-16)
 **Commit Message**: fix(i18n): carry the catalog size into the exporter, and split the settings tests
 
 Two reds the first CI run that actually executed on this branch caught,
@@ -3245,722 +2403,7 @@ Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
 
 ---
 
-### Incident Patch 6: `243c27f5` (2026-09-15)
-**Commit Message**: fix(agent): route every Studio task family to the design pipeline
-
-The intent classifier's keyword list grew up around app and web briefs,
-so the 演示文稿 / 图文卡片 / 截图教程 / 信息图 / 活动海报 wrappers matched
-nothing and five of the seven task families answered as plain chat: a
-five-page deck brief produced one empty starter frame and a collapsed
-thinking block. Add the deliverable nouns and the 做一份/一套/一张/一篇
-verb forms, and pin every wrapper with a test so a new family cannot
-slip through the same gap.
-
-Three unrelated reds fixed alongside, each measured:
-
-- The image-provider menu's expected height was a literal 176, which the
-  Atlas Cloud provider (#227) invalidated the moment it took the list
-  from four entries to five. Derive it from the list's length.
-- The pointer-clock tests fold the PROCESS-GLOBAL agent indicator
-  registry through `next_animation_deadline_ms`, so a concurrent test
-  registering a reveal made an idle engine report a deadline it did not
-  own: green single-threaded, three failures in parallel. Hold the
-  registry's own test guard, the way the desktop indicator tests do.
-- A rejected provider response now optionally goes to a local file named
-  by OPENPENCIL_DEBUG_HTTP_E
-
-**File**: `crates/op-chat-agent/src/backoff.rs` (modified, +59/-0)
-```diff
-@@ -121,6 +121,50 @@ pub fn default_backoff_knobs() -> (u32, Duration) {
-     (BUILTIN_HTTP_MAX_RETRIES, builtin_http_min_gap())
- }
- 
-+/// Append a rejected response's status and body to the file named by
-+/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
-+///
-+/// Off by default and never wired into chat, SSE, or stdout: a provider
-+/// error body is untrusted and can echo the request's own headers, so it
-+/// stays out of every channel the user or a browser can read. With the
-+/// env var set it goes to that one file and nowhere else, which is what
-+/// turns "http 400 Bad Request" from a dead end into a diagnosis
-+/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
-+/// unreachable from inside the app).
-+async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
-+    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
-+        return;
-+    };
-+    if path.is_empty() {
-+        return;
-+    }
-+    let body = resp.text().await.unwrap_or_default();
-+    let line = format!(
-+        "[{}] {label} http {} {}\n{}\n",
-+        chrono_like_stamp(),
-+        status.as_u16(),
-+        status.canonical_reason().unwrap_or(""),
-+        body.chars().take(4_000).collect::<String>()
-+    );
-+    use std::io::Write as _;
-+    if let Ok(mut file) = std::fs::OpenOptions::new()
-+        .create(true)
-+        .append(true)
-+        .open(&path)
-+    {
-+        let _ = file.write_all(line.as_bytes());
-+    }
-+}
-+
-+/// Seconds since the UNIX epoch — enough to line a dump up against the
-+/// app log without pulling a date crate into this leaf.
-+fn chrono_like_stamp() -> u64 {
-+    std::time::SystemTime::now()
-+        .duration_since(std::time::UNIX_EPOCH)
-+        .map(|d| d.as_secs())
-+        .unwrap_or(0)
-+}
-+
- pub async fn send_with_backoff(
-     label: &str,
-     url: &str,
-@@ -164,6 +208,10 @@ pub async fn send_with_backoff(
-                 // Provider error bodies are untrusted and can echo request
-                 // headers. Never relay them into chat/SSE where credentials
-                 // could be reflected back into logs or browser responses.
-+                // They ARE the only way to tell WHY a provider rejected a
-+                // request, so an explicit opt-in writes them to a local file
-+                // the developer named — never to the transcript.
-+                dump_error_body(label, status, resp).await;
-                 return Err(BuiltinHttpError::HttpStatus {
-                     label: label.to_string(),
-                     status,
-@@ -292,3 +340,14 @@ pub fn apply_reasoning_wire_control_anthropic(
-         obj.insert("thinking".into(), serde_json::json!({ "type": "disabled" }));
-     }
- }
-+
-+#[cfg(test)]
-+mod http_error_dump_tests {
-+    #[test]
-+    fn the_dump_is_off_unless_the_env_var_names_a_file() {
-+        unsafe {
-+            std::env::remove_var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY");
-+        }
-+        assert!(std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY").is_err());
-+    }
-+}
-```
-
-**File**: `crates/op-editor-ui/src/widgets/agent_settings_images.rs` (modified, +7/-2)
-```diff
-@@ -268,11 +268,16 @@ mod touch_tests {
-         let closed_row = profile_row_rect_for_ui(content, &closed, 0, true);
-         let open_row = profile_row_rect_for_ui(content, &open, 0, true);
- 
--        assert_eq!(open_row.size.y - closed_row.size.y, 176.0);
-+        // One 44 px row per entry of `ImageGenProvider::ALL`. The Atlas
-+        // Cloud provider took the list from four to five, so the
-+        // expanded profile grew 176 → 220; the constant here is the
-+        // list's length, not a free number.
-+        const EXPANDED_H: f32 = 44.0 * ImageGenProvider::ALL.len() as f32;
-+        assert_eq!(open_row.size.y - closed_row.size.y, EXPANDED_H);
-         assert_eq!(
-             content_height_for_ui(&open, content.size.x, true)
-                 - content_height_for_ui(&closed, content.size.x, true),
--            176.0
-+            EXPANDED_H
-         );
-         let api = profile_input_rect_for_ui(open_row, &open, 0, ImageGenField::ApiKey, true);
-         for (option_index, expected) in ImageGenProvider::ALL.iter().enumerate() {
-```
-
-**File**: `crates/op-engine-ffi/src/editor_pointer_clock_tests.rs` (modified, +21/-0)
-```diff
-@@ -183,6 +183,13 @@ fn app_state_string(engine: &mut OpEngine, key: &str) -> Option<String> {
- /// times (fresh host clock is 0).
- #[test]
- fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
-     // The preview no longer pins a blanket `now + 33` wake: an idle session
-@@ -252,6 +259,13 @@ fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
- /// `onSwipe` runs exactly once.
- #[test]
- fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
- 
-@@ -315,6 +329,13 @@ fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta
- /// (monotonically) and never move them backward.
- #[test]
- fn cancel_and_early_returns_advance_global_clocks_monotonically() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
- 
-```
-
-**File**: `crates/op-orchestrator/src/intent.rs` (modified, +42/-0)
-```diff
-@@ -73,6 +73,29 @@ const DESIGN_KEYWORDS: &[&str] = &[
-     "网页",
-     "小程序",
-     "后台",
-+    // 中文动词 —— 量词形式。Studio 首页的七类任务包装语都用"做一份/
-+    // 一套/一张/一篇"起头，而旧表只有"做一个/做个"，于是演示文稿、图文
-+    // 卡片、截图教程、信息图、活动海报五类全部落到 chat。
-+    "做一份",
-+    "做一套",
-+    "做一张",
-+    "做一篇",
-+    "做份",
-+    "做套",
-+    "做张",
-+    // 中文设计名词 —— 交付物形态。与上面的页面类名词同理：在设计工具
-+    // 语境里这些词几乎总是"造一个 X"。
-+    "演示文稿",
-+    "幻灯片",
-+    "ppt",
-+    "slides",
-+    "图文卡片",
-+    "卡片",
-+    "海报",
-+    "信息图",
-+    "长图",
-+    "截图教程",
-+    "排版",
- ];
- 
- /// 把用户消息分类为 [`Intent::Design`] 或 [`Intent::Chat`]。
-@@ -114,6 +137,25 @@ mod tests {
-         }
-     }
- 
-+    /// Every Studio Home task wrapper must classify as Design. The
-+    /// deliverable is already chosen by the task card, so a wrapper that
-+    /// reads as chat silently answers the user in prose instead of
-+    /// drawing (measured 2026-09-13 on 演示文稿).
-+    #[test]
-+    fn every_studio_home_task_wrapper_classifies_as_design() {
-+        for p in [
-+            "请设计一套可编辑的高保真手机 App 界面（mobile app，375×812）。",
-+            "请设计一个完整的纵向滚动网站页面（landing page，1440 宽）。",
-+            "请做一份 5 页的 PPT 演示文稿（slides，16:9）。封面、正文与结束页风格统一。",
-+            "请做一套图文卡片（card，竖版 3:4，多页轮播）。保持统一排版与视觉系统。",
-+            "请做一篇截图教程图文（card，竖版，截图配上步骤说明）。",
-+            "请做一张数据对比信息图长图（card，竖版图文长图）。",
-+            "请做一套活动海报（card，主海报竖版 + 社交方图）。",
-+        ] {
-+            assert_eq!(classify_intent(p), Intent::Design, "{p}");
-+        }
-+    }
-+
-     #[test]
-     fn questions_classify_as_chat() {
-         for p in [
-```
-
----
-
-### Incident Patch 7: `195aad29` (2026-09-15)
-**Commit Message**: fix(desktop): persist the chosen chat model row, not just the provider
-
-Picking a built-in or ACP model in the picker never moved the provider
-index, so the persisted provider name alone put every relaunch back on
-the first catalog row. The chosen row's catalog value is now saved and
-resolved after the catalog is rebuilt on load.
-
-Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
-
-**File**: `crates/op-editor-host-core/src/settings_io.rs` (modified, +39/-0)
-```diff
-@@ -73,6 +73,7 @@ pub struct Fingerprint {
-     preferred_agent_team_size: u32,
-     entry_surface: op_editor_core::EntrySurface,
-     chat_agent: String,
-+    chat_model: String,
- }
- 
- pub fn fingerprint(state: &EditorState) -> Fingerprint {
-@@ -96,6 +97,7 @@ pub fn fingerprint(state: &EditorState) -> Fingerprint {
-         preferred_agent_team_size: eui.preferred_agent_team_size,
-         entry_surface: eui.entry_surface,
-         chat_agent: selected_chat_agent_name(eui),
-+        chat_model: selected_chat_model_value(state),
-     }
- }
- 
-@@ -115,6 +117,20 @@ fn selected_chat_agent_name(eui: &op_editor_core::EditorUiState) -> String {
- /// Resolve a persisted agent name back to its `AgentProvider::ALL`
- /// index; unknown names (a provider renamed or removed by a newer
- /// build) fall back to index 0 rather than dangling.
-+/// The picker row the user last chose, by the catalog entry's wire
-+/// `value` (`builtin:<agent id>:<model>` for API-key agents, the model id
-+/// for CLI providers, the agent id for ACP agents). `chat_agent` alone
-+/// cannot carry this: a built-in or ACP choice never moves
-+/// `chat_selected_agent`, so without this field every relaunch fell back
-+/// to the first catalog row.
-+fn selected_chat_model_value(state: &EditorState) -> String {
-+    state
-+        .chat
-+        .selected_model_entry()
-+        .map(|entry| entry.value.clone())
-+        .unwrap_or_default()
-+}
-+
- fn chat_agent_index_for_name(name: &str) -> usize {
-     op_editor_core::AgentProvider::ALL
-         .iter()
-@@ -188,6 +204,10 @@ struct SettingsPayload {
-     /// `selected_chat_agent_name`); older settings keep index 0.
-     #[serde(default)]
-     chat_agent: Option<String>,
-+    /// The last chosen picker row by catalog `value` (see
-+    /// `selected_chat_model_value`); resolved after the catalog is rebuilt.
-+    #[serde(default)]
-+    chat_model: Option<String>,
- }
- 
- /// Resolve the platform-specific settings path. `None` when no
-@@ -262,6 +282,7 @@ fn to_payload(state: &EditorState) -> SettingsPayload {
-         preferred_agent_team_size: Some(eui.preferred_agent_team_size),
-         entry_surface: Some(eui.entry_surface.as_str().into()),
-         chat_agent: Some(selected_chat_agent_name(eui)),
-+        chat_model: Some(selected_chat_model_value(state)),
-     }
- }
- 
-@@ -274,6 +295,7 @@ fn apply_payload_with_options(
-     payload: SettingsPayload,
-     dedupe_builtins: bool,
- ) {
-+    let chat_model = payload.chat_model.clone();
-     if payload.version != SETTINGS_VERSION {
-         return;
-     }
-@@ -394,6 +416,19 @@ fn apply_payload_with_options(
-     // empty this early, so this is a no-op until discovery lands and
-     // `ModelProbe::poll_into` rebuilds again against the same mask.
-     state.rebuild_chat_models();
-+    // Now that the catalog exists, land on the row the user last chose.
-+    // Later rebuilds (model discovery) preserve the selection by the same
-+    // provider + value + built-in id triple.
-+    if let Some(value) = chat_model.as_deref().filter(|v| !v.is_empty()) {
-+        if let Some(index) = state
-+            .chat
-+            .available_models
-+            .iter()
-+            .position(|entry| entry.value == value)
-+        {
-+            state.chat.selected_model = index;
-+        }
-+    }
- }
- 
- /// Remove the retired Gemini CLI slot from positional v1 settings without
-@@ -716,3 +751,7 @@ mod settings_io_chat_agent_tests;
- #[cfg(test)]
- #[path = "settings_io_guard_tests.rs"]
- mod settings_io_guard_tests;
-+
-+#[cfg(test)]
-+#[path = "settings_io_chat_model_tests.rs"]
-+mod settings_io_chat_model_tests;
-```
-
-**File**: `crates/op-editor-host-core/src/settings_io_chat_model_tests.rs` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+//! Chat-model persistence: the picker row (built-in / ACP included) survives
-+//! a save + load cycle. Sibling of `settings_io_chat_agent_tests.rs`.
-+
-+use super::*;
-+use op_editor_core::{BuiltinAgentConfig, BuiltinAgentKind, BuiltinAgentPresetKey};
-+
-+fn glm_agent() -> BuiltinAgentConfig {
-+    BuiltinAgentConfig {
-+        id: "builtin-6".into(),
-+        preset: BuiltinAgentPresetKey::GlmCoding,
-+        display_name: "GLM Coding Plan".into(),
-+        kind: BuiltinAgentKind::OpenAiCompat,
-+        api_key: "k".into(),
-+        models: vec!["glm-5.3".into(), "glm-5.3-flash".into()],
-+        base_url: "https://open.bigmodel.cn/api/coding/paas/v4".into(),
-+        enabled: true,
-+    }
-+}
-+
-+#[test]
-+fn a_builtin_model_choice_survives_save_and_load() {
-+    let mut src = EditorState::new();
-+    src.editor_ui
-+        .agent_settings
-+        .builtin_agents
-+        .push(glm_agent());
-+    src.rebuild_chat_models();
-+    let flash = src
-+        .chat
-+        .available_models
-+        .iter()
-+        .position(|entry| entry.value == "builtin:builtin-6:glm-5.3-flash")
-+        .expect("the flash row is in the catalog");
-+    let before = fingerprint(&src);
-+    src.select_chat_model(flash);
-+    assert_ne!(
-+        before,
-+        fingerprint(&src),
-+        "changing the row must dirty the fingerprint"
-+    );
-+
-+    let json = serde_json::to_string(&to_payload(&src)).unwrap();
-+    assert!(
-+        json.contains("\"chat_model\":\"builtin:builtin-6:glm-5.3-flash\""),
-+        "{json}"
-+    );
-+
-+    let payload: SettingsPayload = serde_json::from_str(&json).unwrap();
-+    let mut dst = EditorState::new();
-+    apply_payload(&mut dst, payload);
-+    assert_eq!(
-+        dst.chat
-+            .selected_model_entry()
-+            .map(|entry| entry.value.as_str()),
-+        Some("builtin:builtin-6:glm-5.3-flash"),
-+        "the relaunch lands on the row the user chose, not the first one"
-+    );
-+}
-+
-+#[test]
-+fn a_missing_or_stale_chat_model_keeps_the_default_row() {
-+    let legacy = serde_json::json!({ "version": 1, "chat_model": "builtin:gone:nope" });
-+    let payload: SettingsPayload = serde_json::from_value(legacy).unwrap();
-+    let mut dst = EditorState::new();
-+    apply_payload(&mut dst, payload);
-+    assert_eq!(dst.chat.selected_model, 0);
-+}
-```
-
-**File**: `crates/op-editor-host-core/src/settings_io_checked.rs` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ pub(super) fn validate_payload_fields(raw: &serde_json::Value) -> Result<()> {
-             "preferred_agent_team_size",
-             "entry_surface",
-             "chat_agent",
-+            "chat_model",
-         ],
-         "root",
-     )?;
-```
-
----
-
-### Incident Patch 8: `a172041d` (2026-09-15)
-**Commit Message**: fix(desktop): never overwrite a settings file the startup load rejected
-
-The lenient startup load fell back to defaults when settings.json did
-not parse, and the next save then wrote those defaults over the user's
-file — every API key gone. A rejected file is now copied to a
-settings.json.corrupt-<time> sibling and every later save to that path
-is refused with RejectedLoad.
-
-Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
-
-**File**: `crates/op-editor-host-core/src/settings_io.rs` (modified, +70/-14)
-```diff
-@@ -132,6 +132,12 @@ const SETTINGS_VERSION: u32 = 1;
- const APP_DIR: &str = "openpencil";
- const FILE_NAME: &str = "settings.json";
- static SETTINGS_TEMP_SEQUENCE: AtomicU64 = AtomicU64::new(0);
-+/// Settings paths whose file existed but did not parse at startup. Every
-+/// save to one of these is refused for the rest of the process: the
-+/// alternative — writing this process's defaults over a file we could not
-+/// read — is exactly how a user loses every API key after a build mismatch
-+/// or a truncated write.
-+static REJECTED_SETTINGS_PATHS: std::sync::Mutex<Vec<PathBuf>> = std::sync::Mutex::new(Vec::new());
- 
- #[derive(Debug, Serialize, Deserialize)]
- struct SettingsPayload {
-@@ -178,16 +184,16 @@ struct SettingsPayload {
-     /// First-launch surface; older settings default to Home.
-     #[serde(default)]
-     entry_surface: Option<String>,
-+    /// The chat agent's stable provider name (see
-+    /// `selected_chat_agent_name`); older settings keep index 0.
-+    #[serde(default)]
-+    chat_agent: Option<String>,
- }
- 
- /// Resolve the platform-specific settings path. `None` when no
- /// usable config base exists — load/save become silent no-ops.
- ///
- /// An embedded shell (the mobile FFI hosts) selects its private
--    /// The chat agent's stable provider name (see
--    /// `selected_chat_agent_name`); older settings keep index 0.
--    #[serde(default)]
--    chat_agent: Option<String>,
- /// app-sandbox directory through `op_config_store::configure_user_root`
- /// before engine construction; `settings.json` then lives next to the
- /// other per-user config files in that root. Desktop never configures an
-@@ -255,13 +261,13 @@ fn to_payload(state: &EditorState) -> SettingsPayload {
-         ),
-         preferred_agent_team_size: Some(eui.preferred_agent_team_size),
-         entry_surface: Some(eui.entry_surface.as_str().into()),
-+        chat_agent: Some(selected_chat_agent_name(eui)),
-     }
- }
- 
- fn apply_payload(state: &mut EditorState, payload: SettingsPayload) {
-     apply_payload_with_options(state, payload, true);
- }
--        chat_agent: Some(selected_chat_agent_name(eui)),
- 
- fn apply_payload_with_options(
-     state: &mut EditorState,
-@@ -368,17 +374,17 @@ fn apply_payload_with_options(
-     if let Some(surface) = payload.entry_surface.as_deref() {
-         eui.entry_surface = op_editor_core::EntrySurface::from_str(surface);
-     }
-+    // Restore the chat agent by name — `rebuild_chat_models` further
-+    // down re-derives the model catalog against this selection.
-+    if let Some(name) = payload.chat_agent.as_deref() {
-+        eui.chat_selected_agent = chat_agent_index_for_name(name);
-+    }
-     // Seed tab 0's ⚡Nx from the persisted preference — `load` runs before
-     // any tab has been created beyond the default single tab, so this is
-     // the ONE spot that reconnects "what the user last set" across a full
-     // app restart (`ChatSessions::new_tab` handles the SAME continuity
-     // within a running session, carrying the active tab's current value
-     // forward). Captured into a local before the last `eui` use ends the
--    // Restore the chat agent by name — `rebuild_chat_models` further
--    // down re-derives the model catalog against this selection.
--    if let Some(name) = payload.chat_agent.as_deref() {
--        eui.chat_selected_agent = chat_agent_index_for_name(name);
--    }
-     // mutable borrow of `state.editor_ui`, so `state.chat` can be written
-     // next.
-     let preferred_agent_team_size = eui.preferred_agent_team_size;
-@@ -519,14 +525,54 @@ pub fn load(state: &mut EditorState) {
-     // detected locale instead of leaving the EnUs default.
-     seed_system_locale(state);
-     if let Some(path) = settings_path() {
--        if let Ok(bytes) = std::fs::read(&path) {
--            if let Ok(payload) = serde_json::from_slice::<SettingsPayload>(&bytes) {
--                apply_payload(state, payload);
-+        load_lenient_from_path(state, &path);
-+    }
-+}
-+
-+/// The lenient startup load behind [`load`]. A missing file is a normal
-+/// first run. A file that exists but does not parse is NOT silently
-+/// replaced by defaults: its bytes are copied to a `settings.json.corrupt-…`
-+/// sibling and the path is pinned so every later save is refused (see
-+/// [`SettingsIoError::RejectedLoad`]). Returns `false` when the file was
-+/// rejected.
-+pub fn load_lenient_from_path(state: &mut EditorState, path: &Path) -> bool {
-+    let Ok(bytes) = std::fs::read(path) else {
-+        return true;
-+    };
-+    match serde_json::from_slice::<SettingsPayload>(&bytes) {
-+        Ok(payload) => {
-+            apply_payload(state, payload);
-+            true
-+        }
-+        Err(_) => {
-+            let _ = std::fs::write(corrupt_backup_path(path), &bytes);
-+            if let Ok(mut rejected) = REJECTED_SETTINGS_PATHS.lock() {
-+                rejected.push(path.to_path_buf());
-             }
-+            false
-         }
-     }
- }
- 
-+fn corrupt_backup_path(path: &Path) -> PathBuf 
-```
-
-**File**: `crates/op-editor-host-core/src/settings_io_error.rs` (modified, +7/-0)
-```diff
-@@ -79,6 +79,10 @@ pub enum SettingsIoError {
-     /// 128 candidate temporary names were all taken — a stuck directory
-     /// rather than a transient collision.
-     TempAllocExhausted,
-+    /// The lenient startup load found the file unreadable, backed it up and
-+    /// pinned the path: saving over it now would replace whatever the user
-+    /// had (API keys included) with this process's defaults.
-+    RejectedLoad,
-     /// Writing the encoded JSON into the temporary file failed.
-     WriteTemp { detail: String },
-     /// The completed temporary file could not be renamed over the real
-@@ -105,6 +109,9 @@ impl fmt::Display for SettingsIoError {
-                 write!(f, "unknown settings field in {context}")
-             }
-             SettingsIoError::Lossy => f.write_str("settings file cannot be loaded losslessly"),
-+            SettingsIoError::RejectedLoad => f.write_str(
-+                "settings file was rejected at load and backed up; refusing to overwrite it",
-+            ),
-             SettingsIoError::UnsupportedCredentialEntry => {
-                 f.write_str("unsupported settings credential entry")
-             }
-```
-
-**File**: `crates/op-editor-host-core/src/settings_io_guard_tests.rs` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+//! The corrupt-file guard: an unreadable settings file is backed up and
-+//! never overwritten by this process.
-+
-+use super::{load_lenient_from_path, save_checked_to_path, SettingsIoError};
-+use op_editor_core::EditorState;
-+
-+fn temp_settings_path(tag: &str) -> std::path::PathBuf {
-+    let dir = std::env::temp_dir().join(format!(
-+        "op-settings-guard-{tag}-{}-{}",
-+        std::process::id(),
-+        std::time::SystemTime::now()
-+            .duration_since(std::time::UNIX_EPOCH)
-+            .map(|d| d.as_nanos())
-+            .unwrap_or(0)
-+    ));
-+    std::fs::create_dir_all(&dir).expect("temp dir");
-+    dir.join("settings.json")
-+}
-+
-+#[test]
-+fn an_unparseable_settings_file_is_backed_up_and_never_overwritten() {
-+    let path = temp_settings_path("corrupt");
-+    let garbage = b"{ \"version\": 1, \"builtin_agents\": [ truncated";
-+    std::fs::write(&path, garbage).expect("write garbage");
-+
-+    let mut state = EditorState::new();
-+    assert!(
-+        !load_lenient_from_path(&mut state, &path),
-+        "the file must be rejected"
-+    );
-+
-+    let backups: Vec<_> = std::fs::read_dir(path.parent().unwrap())
-+        .unwrap()
-+        .filter_map(|entry| entry.ok())
-+        .filter(|entry| {
-+            entry
-+                .file_name()
-+                .to_string_lossy()
-+                .starts_with("settings.json.corrupt-")
-+        })
-+        .collect();
-+    assert_eq!(backups.len(), 1, "exactly one corrupt backup is written");
-+    assert_eq!(std::fs::read(backups[0].path()).unwrap(), garbage);
-+
-+    assert!(matches!(
-+        save_checked_to_path(&state, &path),
-+        Err(SettingsIoError::RejectedLoad)
-+    ));
-+    assert_eq!(
-+        std::fs::read(&path).unwrap(),
-+        garbage,
-+        "the original bytes stay on disk for the user to recover"
-+    );
-+}
-+
-+#[test]
-+fn a_missing_or_valid_settings_file_keeps_saves_working() {
-+    let path = temp_settings_path("clean");
-+    let mut state = EditorState::new();
-+    assert!(
-+        load_lenient_from_path(&mut state, &path),
-+        "a missing file is a first run"
-+    );
-+    save_checked_to_path(&state, &path).expect("first save writes the file");
-+    assert!(
-+        load_lenient_from_path(&mut state, &path),
-+        "the file we wrote loads back"
-+    );
-+    save_checked_to_path(&state, &path).expect("saving a valid file is still allowed");
-+}
-```
-
----
-
-### Incident Patch 9: `17d7cf42` (2026-09-14)
-**Commit Message**: fix(html): stop a non-ascii css prelude from panicking the import (#240)
-
-at_keyword bounded its read with get(..name.len() + 1) but then byte-indexed prefix[0..1], which is not a char boundary when the prelude opens on a multi-byte character. An inline <style> reaches the scanner without the BOM stripping decode_css_bytes gives a linked sheet, so a BOM ahead of @charset unwound the whole HTML import.
-
-**File**: `crates/op-html/src/resources_css_imports.rs` (modified, +37/-1)
-```diff
-@@ -226,7 +226,7 @@ fn at_keyword(prelude: &str, name: &str) -> bool {
-     let expected_len = name.len() + 1;
-     prelude
-         .get(..expected_len)
--        .is_some_and(|prefix| prefix[0..1].eq("@") && prefix[1..].eq_ignore_ascii_case(name))
-+        .is_some_and(|prefix| prefix.starts_with('@') && prefix[1..].eq_ignore_ascii_case(name))
-         && prelude[expected_len..]
-             .chars()
-             .next()
-@@ -432,4 +432,40 @@ mod tests {
-         assert!(output.contains(".主题{color:red}"));
-         assert!(output.contains(r#".按钮{content:"你好"}"#));
-     }
-+
-+    #[test]
-+    fn a_prelude_opening_on_a_non_ascii_character_is_not_an_at_keyword() {
-+        // The three non-ASCII cases above all keep an ASCII byte first. A
-+        // stylesheet may open on a multi-byte one instead — a UTF-8 BOM
-+        // ahead of `@charset` is the everyday shape, and `decode_css_bytes`
-+        // only strips it from a linked sheet, not from an inline `<style>`.
-+        // None of these are at-rules this scanner handles; each must simply
-+        // say so and leave the sheet alone.
-+        let fetcher = |_: &str| None;
-+        for source in [
-+            "\u{feff}@charset \"utf-8\";.root{color:red}",
-+            "\u{feff}@layer base;.root{color:red}",
-+            "\u{feff}@import 'a.css';.root{color:red}",
-+            "中文;.root{color:red}",
-+        ] {
-+            let (output, _) = expand(source, &fetcher);
-+            assert!(
-+                output.contains(".root{color:red}"),
-+                "source: {source:?}, output: {output:?}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn ascii_charset_and_layer_preludes_keep_their_meaning() {
-+        let fetcher = |_: &str| Some(b".imported{color:red}".to_vec());
-+        let (output, warnings) = expand(
-+            "@charset \"utf-8\";@layer base;@import 'a.css';.root{color:blue}",
-+            &fetcher,
-+        );
-+        assert!(warnings.is_empty(), "{warnings:?}");
-+        assert!(output.starts_with("@charset \"utf-8\";@layer base;"));
-+        assert!(output.contains(".imported{color:red}"));
-+        assert!(output.contains(".root{color:blue}"));
-+    }
- }
-```
-
----
-
-### Incident Patch 10: `6f0f176b` (2026-09-14)
+### Incident Patch 3: `6f0f176b` (2026-09-14)
 **Commit Message**: fix(ai): keep the radius context cut on a char boundary (#241)
 
 px_values capped each number's context at 48 bytes. That is a boundary only for Latin script; a CJK or Hangul radius sentence puts three bytes on most characters, so the cut landed mid-character and tail[..end] panicked. floor_char_boundary is a no-op on ASCII, where every index is already a boundary.
@@ -4019,619 +2462,13 @@ px_values capped each number's context at 48 bytes. That is a boundary only for 
 +}
 ```
 
----
-
-### Incident Patch 11: `d147d5e9` (2026-09-14)
-**Commit Message**: fix(agent): keep the natively-cased Windows vars for guarded CLIs (#233)
-
-`allowed_env` matched its uppercase COMMON list with `contains`, but
-Windows environment keys are case-insensitive and arrive in their native
-casing — `Path`, `SystemRoot`, `windir`, `ComSpec`, `ProgramData`. None
-of them matched, so Antigravity, Grok, dsh and the OpenCode probe were
-launched with no PATH at all and no Winsock provider root.
-
-`append_isolated_env` had the same defect twice over: its `SYSTEMROOT`
-lookup never fired, so the private-HOME sandbox PATH always fell back to
-the hard-coded `C:\Windows`, and the private-key strip left the host
-`Path` in place beside the sandbox `PATH` it then pushed.
-
-`chat_spawn::scrubbed_child_env` already compares this way; route the
-three list matches through one helper that does the same.
-
-Co-authored-by: kevin9327 <[REDACTED_EMAIL]>
-
-**File**: `crates/op-host-services/src/chat_subprocess_safety.rs` (modified, +14/-3)
-```diff
-@@ -320,11 +320,11 @@ pub fn append_isolated_env(env: &mut Vec<(String, String)>, turn: Option<&Isolat
-         #[cfg(windows)]
-         let safe_path = env
-             .iter()
--            .find(|(key, _)| key == "SYSTEMROOT")
-+            .find(|(key, _)| key.eq_ignore_ascii_case("SYSTEMROOT"))
-             .map(|(_, root)| format!(r"{root}\System32;{root}"))
-             .unwrap_or_else(|| r"C:\Windows\System32;C:\Windows".to_string());
-         const PRIVATE_KEYS: &[&str] = &["PATH", "TMPDIR", "TMP", "TEMP"];
--        env.retain(|(key, _)| !PRIVATE_KEYS.contains(&key.as_str()));
-+        env.retain(|(key, _)| !env_key_listed(PRIVATE_KEYS, key));
-         let value = |path: &Path| path.to_string_lossy().into_owned();
-         env.extend([
-             ("PATH".to_string(), safe_path),
-@@ -563,6 +563,17 @@ where
-         .collect()
- }
- 
-+/// Windows environment keys are case-insensitive and the OS hands them to a
-+/// process in their native casing — `Path`, `SystemRoot`, `windir`, `ComSpec`,
-+/// `ProgramData`. Matching an uppercase list with `contains` therefore drops
-+/// every one of them: a guarded CLI then starts with no `Path` and no
-+/// `SystemRoot`, and a child that cannot reach `%SystemRoot%\System32` fails
-+/// Winsock initialization with `WSAEPROVIDERFAILEDINIT` (os error 10106).
-+/// `chat_spawn::scrubbed_child_env` already compares this way.
-+fn env_key_listed(list: &[&str], key: &str) -> bool {
-+    list.iter().any(|entry| entry.eq_ignore_ascii_case(key))
-+}
-+
- fn allowed_env(cli: CliName, key: &str) -> bool {
-     const COMMON: &[&str] = &[
-         "HOME",
-@@ -596,7 +607,7 @@ fn allowed_env(cli: CliName, key: &str) -> bool {
-         "REQUESTS_CA_BUNDLE",
-         "CURL_CA_BUNDLE",
-     ];
--    if COMMON.contains(&key) || key.starts_with("LC_") {
-+    if env_key_listed(COMMON, key) || key.starts_with("LC_") {
-         return true;
-     }
-     match cli {
-```
-
-**File**: `crates/op-host-services/src/chat_subprocess_safety_tests.rs` (modified, +79/-0)
-```diff
-@@ -205,3 +205,82 @@ fn antigravity_keeps_linux_keyring_session_but_grok_does_not() {
-         assert!(!allowed_env(CliName::GrokBuild, key), "{key}");
-     }
- }
-+
-+/// Windows hands the environment over in its native casing, so an uppercase
-+/// allowlist matched with `contains` drops `Path`, `SystemRoot`, `windir`,
-+/// `ComSpec` and `ProgramData` — the guarded CLI then starts with no PATH and
-+/// no Winsock provider root.
-+#[test]
-+fn guarded_child_env_keeps_windows_native_key_casing() {
-+    let vars = vec![
-+        ("Path".to_string(), r"C:\Windows\System32".to_string()),
-+        ("SystemRoot".to_string(), r"C:\Windows".to_string()),
-+        ("windir".to_string(), r"C:\Windows".to_string()),
-+        (
-+            "ComSpec".to_string(),
-+            r"C:\Windows\System32\cmd.exe".to_string(),
-+        ),
-+        ("ProgramData".to_string(), r"C:\ProgramData".to_string()),
-+        ("UserProfile".to_string(), r"C:\Users\dev".to_string()),
-+        ("DATABASE_URL".to_string(), "secret".to_string()),
-+    ];
-+
-+    for cli in [CliName::GrokBuild, CliName::Antigravity, CliName::Dsh] {
-+        let keys: Vec<String> = filtered_env(cli, vars.clone())
-+            .into_iter()
-+            .map(|(key, _)| key)
-+            .collect();
-+        assert_eq!(
-+            keys,
-+            vec![
-+                "Path",
-+                "SystemRoot",
-+                "windir",
-+                "ComSpec",
-+                "ProgramData",
-+                "UserProfile",
-+            ],
-+            "{cli:?} dropped natively-cased Windows keys"
-+        );
-+    }
-+}
-+
-+/// The private-HOME rewrite has to find `SystemRoot` in its real casing to
-+/// build the sandbox PATH, and has to strip the inherited `Path` rather than
-+/// leave a second, host-valued entry behind it.
-+#[test]
-+#[cfg(windows)]
-+fn isolated_env_reads_native_cased_system_root_and_strips_host_path() {
-+    let turn = IsolatedTurn::prepare_for(
-+        Some(CliName::Antigravity),
-+        "return only JavaScript",
-+        &[],
-+        TurnPurpose::Generation,
-+        None,
-+    )
-+    .unwrap()
-+    .unwrap();
-+
-+    let mut env = vec![
-+        ("Path".to_string(), r"C:\host\tools".to_string()),
-+        ("SystemRoot".to_string(), r"D:\Windows".to_string()),
-+        ("TEMP".to_string(), r"C:\host\temp".to_string()),
-+    ];
-+    append_isolated_env(&mut env, Some(&turn));
-+
-+    let path_entries: Vec<&(String, String)> = env
-+        .iter()
-+        .filter(|(key, _)| key.eq_ignore_ascii_case("PATH"))
-+        .collect();
-+    assert_eq!(
-+        path_entries.len(),
-+        1,
-+        "the host PATH must be replaced, not shadowed: {env:?}"
-+    );
-+    assert_eq!(path_entries[0].1, r"D:\Windows\System32;D:\Windows");
-+    let temp = env
-+        .iter()
-+        .find(|(key, _)| key == "TEMP")
-+        .expect("private TEMP");
-+    assert!(Path::new(&temp.1).starts_with(turn.cwd()), "{temp:?}");
-+}
-```
-
----
-
-### Incident Patch 12: `414a16e8` (2026-09-14)
-**Commit Message**: fix(agent): match the Codex env allowlist case-insensitively (#232)
-
-Windows environment keys are case-insensitive and the OS hands them to a
-process in their native casing — `SystemRoot`, `windir`, `ComSpec`,
-`SystemDrive`, `Path`. The Codex allowlist compared them with an exact
-`contains`, so on Windows it dropped every host variable and left the
-child with only `OPENAI_*` / `CODEX_*`. Without `SystemRoot` the child
-cannot load the Winsock service providers under `%SystemRoot%\System32`
-and the turn dies with `WSAEPROVIDERFAILEDINIT` (os error 10106).
-
-`WINDIR` was missing from the list outright. `op_acp::client` already
-normalizes its own allowlist for exactly this reason; do the same here.
-The `env_key` opt-ins and the `OPENAI_` / `CODEX_` prefixes stay exact —
-those are provider names the user spells out, not host variables.
-
-Closes #229
-
-Co-authored-by: kevin9327 <[REDACTED_EMAIL]>
-
-**File**: `crates/op-host-services/src/chat_subprocess_quirks.rs` (modified, +101/-8)
-```diff
-@@ -49,8 +49,11 @@ const CODEX_ENV_ALLOWLIST: &[&str] = &[
-     "http_proxy",
-     "https_proxy",
-     "no_proxy",
--    // Windows-essential vars
-+    // Windows-essential vars. Matched case-insensitively (see
-+    // `codex_env_allowed`) because Windows reports these in their native
-+    // casing, e.g. `SystemRoot` / `windir` / `ComSpec` / `SystemDrive`.
-     "SYSTEMROOT",
-+    "WINDIR",
-     "COMSPEC",
-     "USERPROFILE",
-     "APPDATA",
-@@ -118,16 +121,37 @@ fn load_codex_config_env_keys() -> Vec<String> {
- /// prefixes + config.toml `env_key` opt-ins (TS `filterCodexEnv`).
- pub fn codex_child_env() -> Vec<(String, String)> {
-     let extra = load_codex_config_env_keys();
--    std::env::vars()
--        .filter(|(k, _)| {
--            CODEX_ENV_ALLOWLIST.contains(&k.as_str())
--                || extra.iter().any(|e| e == k)
--                || k.starts_with("OPENAI_")
--                || k.starts_with("CODEX_")
--        })
-+    filter_codex_env(std::env::vars(), &extra)
-+}
-+
-+fn filter_codex_env<I>(vars: I, extra: &[String]) -> Vec<(String, String)>
-+where
-+    I: IntoIterator<Item = (String, String)>,
-+{
-+    vars.into_iter()
-+        .filter(|(key, _)| codex_env_allowed(key, extra))
-         .collect()
- }
- 
-+/// Windows environment keys are case-insensitive, and the OS hands them to a
-+/// process in their native casing — `SystemRoot`, `windir`, `ComSpec`,
-+/// `SystemDrive`, `Path`. An exact match against the uppercase allowlist
-+/// therefore dropped every one of them, and a Codex child launched without
-+/// `SystemRoot` cannot load the Winsock service providers under
-+/// `%SystemRoot%\System32`: the turn dies with `WSAEPROVIDERFAILEDINIT`
-+/// (os error 10106). Compare the system allowlist case-insensitively, the way
-+/// `op_acp::client::local_env_allowed` already does. The `env_key` opt-ins and
-+/// the `OPENAI_` / `CODEX_` prefixes stay exact: those are provider names the
-+/// user spells out, not host variables.
-+fn codex_env_allowed(key: &str, extra: &[String]) -> bool {
-+    CODEX_ENV_ALLOWLIST
-+        .iter()
-+        .any(|allowed| allowed.eq_ignore_ascii_case(key))
-+        || extra.iter().any(|e| e == key)
-+        || key.starts_with("OPENAI_")
-+        || key.starts_with("CODEX_")
-+}
-+
- /// Budget for the one-shot `codex exec --help` capability probe. Generous
- /// on purpose: the result is cached per binary path for the process
- /// lifetime — including a TimedOut-as-unsupported verdict — so a single
-@@ -415,6 +439,75 @@ pub fn codex_reasoning_effort(thinking: ThinkingMode, effort: EffortLevel) -> Op
- mod tests {
-     use super::*;
- 
-+    fn owned(pairs: &[(&str, &str)]) -> Vec<(String, String)> {
-+        pairs
-+            .iter()
-+            .map(|(k, v)| ((*k).to_string(), (*v).to_string()))
-+            .collect()
-+    }
-+
-+    /// Windows hands the environment over in its native casing, so the
-+    /// allowlist has to match case-insensitively. Losing `SystemRoot` here is
-+    /// what made the Codex turn fail Winsock init with os error 10106.
-+    #[test]
-+    fn codex_env_keeps_windows_native_key_casing() {
-+        let kept = filter_codex_env(
-+            owned(&[
-+                ("SystemRoot", r"C:\Windows"),
-+                ("windir", r"C:\Windows"),
-+                ("ComSpec", r"C:\Windows\System32\cmd.exe"),
-+                ("SystemDrive", "C:"),
-+                ("Path", r"C:\Windows\System32"),
-+                ("PathExt", ".COM;.EXE;.BAT;.CMD"),
-+                ("UserProfile", r"C:\Users\dev"),
-+            ]),
-+            &[],
-+        );
-+        let names: Vec<&str> = kept.iter().map(|(k, _)| k.as_str()).collect();
-+        assert_eq!(
-+            names,
-+            vec![
-+                "SystemRoot",
-+                "windir",
-+                "ComSpec",
-+                "SystemDrive",
-+                "Path",
-+                "PathExt",
-+                "UserProfile",
-+            ]
-+        );
-+    }
-+
-+    /// The relaxed casing must not widen the secret boundary: only the
-+    /// allowlist, the `OPENAI_` / `CODEX_` prefixes and the config.toml
-+    /// `env_key` opt-ins get through.
-+    #[test]
-+    fn codex_env_still_filters_secrets_and_honours_opt_ins() {
-+        let kept = filter_codex_env(
-+            owned(&[
-+                ("SystemRoot", r"C:\Windows"),
-+                ("ANTHROPIC_API_KEY", "secret"),
-+                ("GITHUB_TOKEN", "secret"),
-+                ("AWS_SECRET_ACCESS_KEY", "secret"),
-+                ("ALL_PROXY", "socks5://127.0.0.1:7897"),
-+                ("OPENAI_API_KEY", "sk-test"),
-+                ("CODEX_HOME", "/tmp/codex"),
-+                ("MY_PROVIDER_KEY", "opted-in"),
-+            ]),
-+            &["MY_PROVIDER_KEY".to_string()],
-+        );
-+        let names: Vec<&str> = kept.iter().map(|(k, _)| k.as_str()).collect();
-+        assert_eq!(
-+            names,
-+            vec![
-+                "SystemRoot",
-+                "OPENAI_API_KEY",
-+                "CODEX_HOME",
-+                "MY_PROVIDER_KEY
-```
-
----
-
-### Incident Patch 13: `51a99f97` (2026-09-14)
-**Commit Message**: fix(editor): address restored blobs with git's path separator (#235)
-
-`restore` builds a `<rev>:<path>` revspec out of `rel_to_workdir`, which
-returns an OS path. Git addresses tree entries with `/` on every
-platform, so on Windows the lookup asked for `designs\home.op` and
-libgit2 answered "the path does not exist in the given tree" — the git
-panel's "restore this version" failed for every document except one
-sitting in the repository root, which has no separator to get wrong.
-
-`git_session::tracked_relpath` already normalizes for this reason, and
-`blob_at_commit` is safe only because its caller feeds it that value.
-
-Co-authored-by: kevin9327 <[REDACTED_EMAIL]>
-
-**File**: `crates/op-git/src/status.rs` (modified, +8/-0)
-```diff
-@@ -225,6 +225,14 @@ impl GitRepo {
-         let Some(rel_str) = rel.to_str() else {
-             return Ok(());
-         };
-+        // `<rev>:<path>` addresses a *tree* entry, and git tree entries are
-+        // `/`-separated on every platform. `rel_to_workdir` hands back an OS
-+        // path, so on Windows this is `designs\home.op` and the lookup misses
-+        // for anything below the repository root — only a root-level file, which
-+        // has no separator, resolves. `git_session::tracked_relpath` normalizes
-+        // for the same reason; `MAIN_SEPARATOR` keeps a literal backslash in a
-+        // Unix filename intact.
-+        let rel_str = rel_str.replace(std::path::MAIN_SEPARATOR, "/");
-         let object = repo.revparse_single(&format!("{commit}:{rel_str}"))?;
-         let blob = object.peel_to_blob()?;
-         let abs = self.workdir().join(&rel);
-```
-
-**File**: `crates/op-git/src/tests_repo.rs` (modified, +24/-0)
-```diff
-@@ -143,6 +143,30 @@ fn restore_reverts_a_modified_file() {
-     assert_eq!(content, "committed");
- }
- 
-+/// The git panel restores through `git_session.tracked_file()`, an absolute
-+/// path, so `rel_to_workdir` yields an OS-separated relative path. A `<rev>:
-+/// <path>` revspec only understands `/`, so on Windows every document below
-+/// the repository root failed to resolve — root-level files happened to work
-+/// because they carry no separator, which is why both existing tests missed it.
-+#[test]
-+fn restore_reverts_a_file_below_the_repository_root() {
-+    let Some(tr) = TempRepo::new("restore-subdir") else {
-+        return;
-+    };
-+    std::fs::create_dir_all(tr.dir.join("designs")).expect("mkdir");
-+    tr.write("designs/a.op", "committed");
-+    tr.repo.stage_all().expect("stage");
-+    tr.repo.commit("init").expect("commit");
-+
-+    let absolute = tr.dir.join("designs").join("a.op");
-+    std::fs::write(&absolute, "scratch edit").expect("write");
-+    assert!(!tr.repo.status().expect("status").is_clean());
-+
-+    tr.repo.restore(&absolute, "HEAD").expect("restore");
-+    assert_eq!(std::fs::read_to_string(&absolute).unwrap(), "committed");
-+    assert!(tr.repo.status().expect("status").is_clean());
-+}
-+
- #[test]
- fn restore_rolls_a_file_back_to_an_older_commit() {
-     let Some(tr) = TempRepo::new("restore-commit") else {
-```
-
----
-
-### Incident Patch 14: `955a6d7b` (2026-09-14)
-**Commit Message**: fix(cli): decode a percent-encoded resource name before the disk lookup (#242)
-
-The importer resolves relative hrefs through Url::join, which
-percent-encodes spaces and non-ASCII path bytes, so a local
-`hero style.css` reaches the fetcher as `hero%20style.css` and misses
-the file on disk. The import still reports ok and only records
-"external stylesheet skipped" for a file that is not external.
-
-Decode before building the path, as the desktop importer already does,
-and keep the component and canonical containment checks on the decoded
-name so encoded separators and `..` still cannot escape the directory.
-
-**File**: `crates/op-cli/src/html_cli.rs` (modified, +118/-0)
-```diff
-@@ -203,8 +203,17 @@ pub(super) fn run_import_snapshot(json_path: &str, out_path: &str) -> Result<Str
- 
- fn local_resource_fetch(dir: &Path, href: &str) -> Option<Vec<u8>> {
-     let href = href.split(['?', '#']).next()?.trim_start_matches('/');
-+    // `Url::join` percent-encodes spaces and non-ASCII path bytes before the
-+    // importer calls this fetcher, so `hero style.css` arrives as
-+    // `hero%20style.css` and misses the file on disk. Decode first and keep
-+    // the component + canonical containment checks below as the security
-+    // boundary, so encoded separators and `..` still cannot escape `dir`
-+    // (mirrors `html_import_session.rs`'s local fetch).
-+    let href = percent_decode_path(href)?;
-+    let href = href.as_str();
-     let relative = Path::new(href);
-     if href.is_empty()
-+        || href.contains('\0')
-         || relative.is_absolute()
-         || relative.components().any(|component| {
-             matches!(
-@@ -222,6 +231,35 @@ fn local_resource_fetch(dir: &Path, href: &str) -> Option<Vec<u8>> {
-         .flatten()
- }
- 
-+/// Percent-decode a resolved resource path. A stray `%` that is not followed
-+/// by two hex digits, or bytes that are not UTF-8, reject the lookup.
-+fn percent_decode_path(encoded: &str) -> Option<String> {
-+    let source = encoded.as_bytes();
-+    let mut decoded = Vec::with_capacity(source.len());
-+    let mut index = 0;
-+    while index < source.len() {
-+        if source[index] != b'%' {
-+            decoded.push(source[index]);
-+            index += 1;
-+            continue;
-+        }
-+        let high = hex_value(*source.get(index + 1)?)?;
-+        let low = hex_value(*source.get(index + 2)?)?;
-+        decoded.push((high << 4) | low);
-+        index += 3;
-+    }
-+    String::from_utf8(decoded).ok()
-+}
-+
-+fn hex_value(byte: u8) -> Option<u8> {
-+    match byte {
-+        b'0'..=b'9' => Some(byte - b'0'),
-+        b'a'..=b'f' => Some(byte - b'a' + 10),
-+        b'A'..=b'F' => Some(byte - b'A' + 10),
-+        _ => None,
-+    }
-+}
-+
- fn count_nodes(nodes: &[PenNode]) -> usize {
-     nodes
-         .iter()
-@@ -391,6 +429,86 @@ mod tests {
-         );
-     }
- 
-+    fn temp_html_dir(tag: &str) -> std::path::PathBuf {
-+        let nanos = std::time::SystemTime::now()
-+            .duration_since(std::time::UNIX_EPOCH)
-+            .map(|duration| duration.as_nanos())
-+            .unwrap_or_default();
-+        let dir =
-+            std::env::temp_dir().join(format!("op-cli-html-{tag}-{}-{nanos}", std::process::id()));
-+        std::fs::create_dir_all(&dir).expect("create fixture dir");
-+        dir
-+    }
-+
-+    /// The importer resolves every relative href through `Url::join`, which
-+    /// percent-encodes spaces and non-ASCII bytes, so a stylesheet saved as
-+    /// `hero style.css` reaches the fetcher as `hero%20style.css`.
-+    #[test]
-+    fn local_import_reads_a_percent_encoded_resource_name() {
-+        let dir = temp_html_dir("encoded");
-+        std::fs::write(dir.join("hero style.css"), "p{color:#00ff00}").expect("write stylesheet");
-+        let input = dir.join("page.html");
-+        std::fs::write(
-+            &input,
-+            concat!(
-+                "<html><head><link rel=\"stylesheet\" href=\"hero style.css\">",
-+                "</head><body><p>Hi</p></body></html>"
-+            ),
-+        )
-+        .expect("write HTML fixture");
-+        let output = dir.join("page.op");
-+
-+        let result = super::run_import_html(
-+            input.to_str().expect("UTF-8 input path"),
-+            output.to_str().expect("UTF-8 output path"),
-+            None,
-+        )
-+        .expect("import HTML");
-+        let document = std::fs::read_to_string(&output).expect("read imported document");
-+
-+        let _ = std::fs::remove_dir_all(&dir);
-+        assert_eq!(
-+            result.matches("skipped").count(),
-+            0,
-+            "a local stylesheet must not be reported as skipped: {result}"
-+        );
-+        assert!(
-+            document.contains("#00ff00"),
-+            "the stylesheet must style the imported text: {document}"
-+        );
-+    }
-+
-+    /// The decode must not widen what the fetcher accepts: encoded separators
-+    /// and encoded `..` stay outside the resource directory.
-+    #[test]
-+    fn local_resource_fetch_rejects_escapes_however_they_are_encoded() {
-+        let dir = temp_html_dir("escape");
-+        std::fs::write(dir.join("inside.css"), "p{color:#0000ff}").expect("write stylesheet");
-+        std::fs::write(dir.join("outside.css"), "p{color:#ff0000}")
-+            .expect("write outside stylesheet");
-+        let nested = dir.join("nested");
-+        std::fs::create_dir_all(&nested).expect("create nested dir");
-+
-+        let inside = super::local_resource_fetch(&dir, "inside.css");
-+        let parent = super::local_resource_fetch(&nested, "../outside.css");
-+        let encoded_parent = super::local_resource_fetch(&nested, "%2e%2e/outside.css");
-+        let encoded_root = super::local_resource_
-```
-
----
-
-### Incident Patch 15: `835a93cd` (2026-09-14)
-**Commit Message**: fix(design-lint): guard the transparent-alpha test against a non-ascii fill (#243)
-
-is_transparent_hex checks a byte length and then slices at byte 7, so a
-nine-byte fill color that is not ASCII panics the contrast detector.
-Three CJK characters are exactly nine bytes, and a fill color is an
-unvalidated model-authored string, so a generated color name such as
-深蓝色 takes down the pre-validation pass.
-
-Add the is_ascii() term the sibling copies in empty_filled_panel.rs and
-top_anchored_bars.rs already carry; that also makes the doc comment's
-"9-char" true, since for ASCII nine bytes is nine chars.
-
-**File**: `crates/op-design-lint/src/detectors/typography.rs` (modified, +52/-1)
-```diff
-@@ -327,7 +327,7 @@ fn first_solid_color(fills: Option<&Vec<PenFill>>) -> Option<String> {
- /// True for a 9-char `#RRGGBBAA` hex whose alpha pair is `00` — a fully
- /// transparent solid, treated the same as `opacity == 0`.
- fn is_transparent_hex(color: &str) -> bool {
--    color.len() == 9 && color[7..].eq_ignore_ascii_case("00")
-+    color.len() == 9 && color.is_ascii() && color[7..].eq_ignore_ascii_case("00")
- }
- 
- /// Port of `isLargeText` (`detectors-typography.ts:87-99`). WCAG 2.x large
-@@ -437,6 +437,57 @@ mod tests {
-         );
-     }
- 
-+    /// A fill color the model wrote as a name rather than a hex must not
-+    /// panic the detector. `深蓝色` is nine UTF-8 bytes, so the byte-length
-+    /// test in `is_transparent_hex` accepts it and the `[7..]` slice lands
-+    /// inside the last character.
-+    #[test]
-+    fn tolerates_a_non_ascii_fill_color() {
-+        let root = node(json!({
-+            "type": "frame", "id": "page",
-+            "fill": [{"type": "solid", "color": "#FFFFFF"}],
-+            "children": [
-+                {
-+                    "type": "text", "id": "t1", "content": "Hello",
-+                    "fill": [{"type": "solid", "color": "深蓝色"}]
-+                }
-+            ]
-+        }));
-+        // The color does not resolve, so the node is skipped — but the walk
-+        // must finish instead of panicking.
-+        assert!(
-+            detect_text_bg_contrast(&root, &doc(json!({"version": "1.0", "children": []})))
-+                .is_empty()
-+        );
-+    }
-+
-+    /// The transparent-alpha skip itself is unchanged: a `#RRGGBBAA` fill
-+    /// with alpha `00` is passed over so the next fill supplies the color.
-+    #[test]
-+    fn skips_a_zero_alpha_fill_for_the_next_one() {
-+        let root = node(json!({
-+            "type": "frame", "id": "page",
-+            "fill": [{"type": "solid", "color": "#FFFFFF"}],
-+            "children": [
-+                {
-+                    "type": "text", "id": "t1", "content": "Hello",
-+                    "fill": [
-+                        {"type": "solid", "color": "#00000000"},
-+                        {"type": "solid", "color": "#FCFCFC"}
-+                    ]
-+                }
-+            ]
-+        }));
-+        let issues =
-+            detect_text_bg_contrast(&root, &doc(json!({"version": "1.0", "children": []})));
-+        assert_eq!(issues.len(), 1);
-+        assert!(
-+            issues[0].reason.contains("text=#FCFCFC"),
-+            "the zero-alpha fill must be skipped: {}",
-+            issues[0].reason
-+        );
-+    }
-+
-     /// An `opacity:0` wrapper fill is skipped so contrast is computed against
-     /// the real bg behind it — a white wrapper with opacity 0 over a cream
-     /// page must NOT mask the cream-on-cream failure.
-```
-
 #### Recent Merged Pull Requests:
+- **PR #252** (2026-10-08): fix(web): isolate managed editor config and repair native CI (@finiking)
 - **PR #248** (closed): feat(agent): add packaged browser snapshot capture tool (@caniko)
 - **PR #243** (2026-09-14): fix(design-lint): guard the transparent-alpha test against a non-ascii fill (@kevin9327)
 - **PR #242** (2026-09-14): fix(cli): decode a percent-encoded resource name before the disk lookup (@kevin9327)
 - **PR #241** (2026-09-14): fix(ai): keep the radius context cut on a char boundary (@kevin9327)
 - **PR #240** (2026-09-14): fix(html): stop a non-ascii css prelude from panicking the import (@kevin9327)
-- **PR #235** (2026-09-14): fix(editor): address restored blobs with git's path separator (@kevin9327)
-- **PR #233** (2026-09-14): fix(agent): keep the natively-cased Windows vars for guarded CLIs (@kevin9327)
-- **PR #232** (2026-09-14): fix(agent): match the Codex env allowlist case-insensitively (@kevin9327)
 
 ---
 
@@ -4645,3 +2482,60 @@ top_anchored_bars.rs already carry; that also makes the doc comment's
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. agent): route every Studio task family to the design pipeline
+
+**RULE**:
+When implementing operations in `crates/op-chat-agent/src/backoff.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `243c27f5`: agent): route every Studio task family to the design pipeline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-chat-agent/src/backoff.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// Append a rejected response's status and body to the file named by
+/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
+///
+/// Off by default and never wired into chat, SSE, or stdout: a provider
+/// error body is untrusted and can echo the request's own headers, so it
+/// stays out of every channel the user or a browser can read. With the
+/// env var set it goes to that one file and nowhere else, which is what
+/// turns "http 400 Bad Request" from a dead end into a diagnosis
+/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
+/// unreachable from inside the app).
+async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
+    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
+        return;
+    };
+    if path.is_empty() {
+        return;
+    }
+    let body = resp.text().await.unwrap_or_default();
+    let line = format!(
+        "[{}] {label} http {} {}\n{}\n",
+        chrono_like_stamp(),
+        status.as_u16(),
+        status.canonical_reason().unwrap_or(""),
+        body.chars().take(4_000).collect::<String>()
+    );
+    use std::io::Write as _;
+    if let Ok(mut file) = std::fs::OpenOptions::new(
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `243c27f5` are properly handled with clean fallback behavior.

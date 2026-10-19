@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "02b34fd9c1997874cf759bf7ce16f075ad503443421ff83a89c11e07edc0f010",
-    "lastHarvestedAt": "2026-10-17T22:36:10.202Z",
+    "contentHash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
+    "lastHarvestedAt": "2026-10-19T03:20:17.645Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -5228,5 +5228,55 @@
     "contentHash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
     "lastHarvestedAt": "2026-10-19T03:14:05.517Z",
     "learningId": "learn-github-starrocks-starrocks"
+  },
+  "lobehub-lobe-ui": {
+    "repository": "lobehub/lobe-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lobehub/lobe-ui",
+    "sourceVersion": "0936dc40",
+    "license": "MIT",
+    "contentHash": "4582b1af249d8f61ac846a47a94b827f1a33d5e598b826e802af86049990b527",
+    "lastHarvestedAt": "2026-10-19T03:20:17.721Z",
+    "learningId": "learn-github-lobehub-lobe-ui"
+  },
+  "gitui-org-gitui": {
+    "repository": "gitui-org/gitui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gitui-org/gitui",
+    "sourceVersion": "d7214ecc",
+    "license": "MIT",
+    "contentHash": "9ca9f9ca3645e881e0a9f518229c5721e843bb04dced279d02042a3761ef5754",
+    "lastHarvestedAt": "2026-10-19T03:20:18.666Z",
+    "learningId": "learn-github-gitui-org-gitui"
+  },
+  "zseven-w-openpencil": {
+    "repository": "ZSeven-W/openpencil",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ZSeven-W/openpencil",
+    "sourceVersion": "d155cd08",
+    "license": "MIT",
+    "contentHash": "78a1500325814fff85a5c8731bf225e8fe34699c776863f68bed7fe038201b60",
+    "lastHarvestedAt": "2026-10-19T03:20:23.841Z",
+    "learningId": "learn-github-zseven-w-openpencil"
+  },
+  "diggerhq-digger": {
+    "repository": "diggerhq/digger",
+    "platform": "github",
+    "sourceUrl": "https://github.com/diggerhq/digger",
+    "sourceVersion": "853f6abf",
+    "license": "MIT",
+    "contentHash": "4eabdcfda588d8c2823457d2e4b3a030170aa85baa28ca2488e10acbd0e0dce6",
+    "lastHarvestedAt": "2026-10-19T03:20:26.353Z",
+    "learningId": "learn-github-diggerhq-digger"
+  },
+  "pingcap-talent-plan": {
+    "repository": "pingcap/talent-plan",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pingcap/talent-plan",
+    "sourceVersion": "18d81c90",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "e092cb5bb7a0d5461cb1feafb2d53b42499f0d818036a85a0af2ef47bd2b784e",
+    "lastHarvestedAt": "2026-10-19T03:20:31.485Z",
+    "learningId": "learn-github-pingcap-talent-plan"
   }
 }
