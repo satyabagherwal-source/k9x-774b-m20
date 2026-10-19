@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-23BU",
-    "timestamp": "2026-10-18T22:48:00.858Z",
-    "repository": "sayanarijit/xplr",
-    "learningId": "learn-github-sayanarijit-xplr",
-    "contentHash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-27EX",
-    "timestamp": "2026-10-18T22:48:06.153Z",
-    "repository": "danilowoz/react-content-loader",
-    "learningId": "learn-github-danilowoz-react-content-loader",
-    "contentHash": "fe40e1ab35d90a579b04de1740a3e3cc0d7e569bc1d9dd8f7d8ad3d2ea1ad401",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-29QN",
-    "timestamp": "2026-10-18T22:48:09.167Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-2C11",
-    "timestamp": "2026-10-18T22:48:12.133Z",
-    "repository": "sorintlab/stolon",
-    "learningId": "learn-github-sorintlab-stolon",
-    "contentHash": "82a3b77b42131d2c757ca7e1407f6229ae2c5e152a0c8926c651602886e30b4a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-2CWC",
-    "timestamp": "2026-10-18T22:48:13.260Z",
-    "repository": "lunasec-io/lunasec",
-    "learningId": "learn-github-lunasec-io-lunasec",
-    "contentHash": "0fc76fcb9db68b2ce86fddf18a4d7e3611cac92cd7f6dd5174b645cd59c4dbf1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-2DUJ",
     "timestamp": "2026-10-18T22:48:14.491Z",
     "repository": "matrixorigin/matrixone",
@@ -7492,6 +7417,81 @@
     "contentHash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ADCL",
+    "timestamp": "2026-10-19T08:14:19.413Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-AJSI",
+    "timestamp": "2026-10-19T08:14:27.762Z",
+    "repository": "bgreenwell/doxx",
+    "learningId": "learn-github-bgreenwell-doxx",
+    "contentHash": "d221548a0fb3d6c5303b2b74ff9af184a8eb530dc74267b2f62f4fd29e59cc0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-AM6Z",
+    "timestamp": "2026-10-19T08:14:30.875Z",
+    "repository": "go-kratos/kratos",
+    "learningId": "learn-github-go-kratos-kratos",
+    "contentHash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ANLB",
+    "timestamp": "2026-10-19T08:14:32.687Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-B0AC",
+    "timestamp": "2026-10-19T08:14:49.140Z",
+    "repository": "SeaQL/sea-orm",
+    "learningId": "learn-github-seaql-sea-orm",
+    "contentHash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

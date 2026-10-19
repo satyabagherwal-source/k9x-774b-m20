@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "23ebb001257d55a86b848a58463dd0c2631eb027a9f36ddd8dbbeff892447082",
-    "lastHarvestedAt": "2026-10-18T00:58:05.857Z",
+    "contentHash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
+    "lastHarvestedAt": "2026-10-19T08:14:19.416Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -7208,5 +7208,45 @@
     "contentHash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
     "lastHarvestedAt": "2026-10-19T08:07:13.341Z",
     "learningId": "learn-github-valeriansaliou-sonic"
+  },
+  "bgreenwell-doxx": {
+    "repository": "bgreenwell/doxx",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bgreenwell/doxx",
+    "sourceVersion": "062819a1",
+    "license": "MIT",
+    "contentHash": "d221548a0fb3d6c5303b2b74ff9af184a8eb530dc74267b2f62f4fd29e59cc0a",
+    "lastHarvestedAt": "2026-10-19T08:14:27.765Z",
+    "learningId": "learn-github-bgreenwell-doxx"
+  },
+  "go-kratos-kratos": {
+    "repository": "go-kratos/kratos",
+    "platform": "github",
+    "sourceUrl": "https://github.com/go-kratos/kratos",
+    "sourceVersion": "668db92c",
+    "license": "MIT",
+    "contentHash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
+    "lastHarvestedAt": "2026-10-19T08:14:30.877Z",
+    "learningId": "learn-github-go-kratos-kratos"
+  },
+  "tencent-tds-kuiklyui": {
+    "repository": "Tencent-TDS/KuiklyUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
+    "sourceVersion": "b7ee272a",
+    "license": "NOASSERTION",
+    "contentHash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
+    "lastHarvestedAt": "2026-10-19T08:14:32.689Z",
+    "learningId": "learn-github-tencent-tds-kuiklyui"
+  },
+  "seaql-sea-orm": {
+    "repository": "SeaQL/sea-orm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SeaQL/sea-orm",
+    "sourceVersion": "0c14cae4",
+    "license": "Apache-2.0",
+    "contentHash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
+    "lastHarvestedAt": "2026-10-19T08:14:49.142Z",
+    "learningId": "learn-github-seaql-sea-orm"
   }
 }

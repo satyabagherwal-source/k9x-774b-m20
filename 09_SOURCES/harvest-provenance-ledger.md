@@ -3087,3 +3087,8 @@ Every entry in this ledger must capture:
 | `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `3a10b125` | Multi-dimensional audit evidence | 2026-10-19T08:07:01.884Z |
 | `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `1960f3c2` | Multi-dimensional audit evidence | 2026-10-19T08:07:12.102Z |
 | `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `85238906` | Multi-dimensional audit evidence | 2026-10-19T08:07:13.341Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T08:14:19.416Z |
+| `learn-github-bgreenwell-doxx` | `https://github.com/bgreenwell/doxx` | `062819a1` | Multi-dimensional audit evidence | 2026-10-19T08:14:27.765Z |
+| `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `668db92c` | Multi-dimensional audit evidence | 2026-10-19T08:14:30.877Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `b7ee272a` | Multi-dimensional audit evidence | 2026-10-19T08:14:32.689Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `0c14cae4` | Multi-dimensional audit evidence | 2026-10-19T08:14:49.142Z |

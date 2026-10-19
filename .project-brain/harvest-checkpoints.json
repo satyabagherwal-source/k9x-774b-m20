@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T08:07:13.347Z",
+  "last_updated": "2026-10-19T08:14:49.146Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "23ebb001257d55a86b848a58463dd0c2631eb027a9f36ddd8dbbeff892447082",
-      "verified_at": "2026-10-18T00:58:05.860Z",
+      "content_hash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
+      "verified_at": "2026-10-19T08:14:19.427Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:58:05.860Z"
+      "last_updated": "2026-10-19T08:14:19.427Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -10856,6 +10856,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T08:07:13.347Z"
+    },
+    "bgreenwell/doxx": {
+      "repository": "bgreenwell/doxx",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-bgreenwell-doxx",
+      "content_hash": "d221548a0fb3d6c5303b2b74ff9af184a8eb530dc74267b2f62f4fd29e59cc0a",
+      "verified_at": "2026-10-19T08:14:27.769Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:14:27.769Z"
+    },
+    "go-kratos/kratos": {
+      "repository": "go-kratos/kratos",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-go-kratos-kratos",
+      "content_hash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
+      "verified_at": "2026-10-19T08:14:30.882Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:14:30.882Z"
+    },
+    "Tencent-TDS/KuiklyUI": {
+      "repository": "Tencent-TDS/KuiklyUI",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tencent-tds-kuiklyui",
+      "content_hash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
+      "verified_at": "2026-10-19T08:14:32.693Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:14:32.693Z"
+    },
+    "SeaQL/sea-orm": {
+      "repository": "SeaQL/sea-orm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-seaql-sea-orm",
+      "content_hash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
+      "verified_at": "2026-10-19T08:14:49.146Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:14:49.146Z"
     }
   },
   "repos": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:07:13.292Z",
-  "total_verified_learnings": 735,
+  "last_updated": "2026-10-19T08:14:49.112Z",
+  "total_verified_learnings": 739,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3286,22 +3286,45 @@
     "learn-github-bgreenwell-doxx": {
       "learning_id": "learn-github-bgreenwell-doxx",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bgreenwell-doxx",
+      "source": "bgreenwell/doxx",
+      "repository": "bgreenwell/doxx",
       "slug": "bgreenwell-doxx",
       "platform": "github",
       "source_url": "https://github.com/bgreenwell/doxx",
-      "source_version": "HEAD",
-      "content_hash": "97dac4a8660e97c0fc524f675d704818bb179374d95c2df1f95f945d612c230d",
+      "source_version": "062819a1",
+      "content_hash": "d221548a0fb3d6c5303b2b74ff9af184a8eb530dc74267b2f62f4fd29e59cc0a",
       "dossier_path": "07_PROJECT_LEARNING/bgreenwell-doxx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bgreenwell-doxx-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2379,
+          "title": "Invariant Word-Boundary Accumulator for Styled Terminal Spans",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2380,
+          "title": "Zero-System-Dependency Default Pruning in Cross-Platform Crates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2381,
+          "title": "Archive Entry Interleaving for Dual-Stream Deserialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.075Z"
+      "verified_at": "2026-10-19T08:14:27.717Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-biomejs-biome": {
       "learning_id": "learn-github-biomejs-biome",
@@ -10037,22 +10060,45 @@
     "learn-github-go-kratos-kratos": {
       "learning_id": "learn-github-go-kratos-kratos",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "go-kratos-kratos",
+      "source": "go-kratos/kratos",
+      "repository": "go-kratos/kratos",
       "slug": "go-kratos-kratos",
       "platform": "github",
       "source_url": "https://github.com/go-kratos/kratos",
-      "source_version": "HEAD",
-      "content_hash": "0c1d3e6807874107a0380d7e775ae147259e65fec172464883cc8ed50929f0df",
+      "source_version": "668db92c",
+      "content_hash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
       "dossier_path": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2382,
+          "title": "Context Decoupling for Graceful Shutdown Routines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2383,
+          "title": "Guarded Type Assertion on Polymorphic Dynamic Config Payloads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2384,
+          "title": "Asymmetric Codec Framing Parity in Multiplexed Streaming Transports",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.105Z"
+      "verified_at": "2026-10-19T08:14:30.842Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-go-nunu-nunu": {
       "learning_id": "learn-github-go-nunu-nunu",
@@ -16994,7 +17040,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "23ebb001257d55a86b848a58463dd0c2631eb027a9f36ddd8dbbeff892447082",
+      "content_hash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -17011,6 +17057,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt",
           "verified_at": "2026-10-12T02:13:09.913Z"
+        },
+        {
+          "number": 2377,
+          "title": "Special Token Masking Invariant in Token-Level Discriminative Loss",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2378,
+          "title": "Numerical Stability and Epsilon Clamping in Low-Precision LayerNorm",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17031,7 +17087,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-18T00:58:05.818Z",
+      "verified_at": "2026-10-19T08:14:19.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35847,22 +35903,45 @@
     "learn-github-seaql-sea-orm": {
       "learning_id": "learn-github-seaql-sea-orm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "seaql-sea-orm",
+      "source": "SeaQL/sea-orm",
+      "repository": "SeaQL/sea-orm",
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "HEAD",
-      "content_hash": "83affc5c7fafc7ea34769159c8b738cde6cda62fbd5b4a14fda1d5cedfa53a53",
+      "source_version": "0c14cae4",
+      "content_hash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2388,
+          "title": "Dialect-Complete DDL Syntax Parameterization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2389,
+          "title": "Dual-Engine Macro & Sync-Stream Parity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2390,
+          "title": "Proxy Type Bridge Null-Safety & Sign Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.422Z"
+      "verified_at": "2026-10-19T08:14:49.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-searchkit-searchkit": {
       "learning_id": "learn-github-searchkit-searchkit",
@@ -39030,22 +39109,45 @@
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tencent-tds-kuiklyui",
+      "source": "Tencent-TDS/KuiklyUI",
+      "repository": "Tencent-TDS/KuiklyUI",
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "HEAD",
-      "content_hash": "82afa3121c2a92cfdaa6da600eae93a835c3a61e4a711c3f369502bf1b392a13",
+      "source_version": "b7ee272a",
+      "content_hash": "26719e222d6f658fc9e1da01a9f7863b9f6e59e47cd9d8ec816a43bc81494792",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2385,
+          "title": "Snapshot Read Observation Isolation in Measure Passes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2386,
+          "title": "Host Document EventTarget Polyfilling in Sandbox Runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2387,
+          "title": "Critically Damped Gesture-Fling Spring Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.913Z"
+      "verified_at": "2026-10-19T08:14:32.656Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tensorchord-pgvecto-rs": {
       "learning_id": "learn-github-tensorchord-pgvecto-rs",
@@ -82632,6 +82734,202 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:07:13.275Z"
+    },
+    "rule-2377": {
+      "learning_id": "rule-2377",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2377,
+      "title": "Special Token Masking Invariant in Token-Level Discriminative Loss",
+      "source_url": "https://huggingface.co/google/electra-base-discriminator",
+      "source_version": "hf-google-electra-base-discriminator",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:19.358Z"
+    },
+    "rule-2378": {
+      "learning_id": "rule-2378",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2378,
+      "title": "Numerical Stability and Epsilon Clamping in Low-Precision LayerNorm",
+      "source_url": "https://huggingface.co/google/electra-base-discriminator",
+      "source_version": "hf-google-electra-base-discriminator",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:19.358Z"
+    },
+    "rule-2379": {
+      "learning_id": "rule-2379",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2379,
+      "title": "Invariant Word-Boundary Accumulator for Styled Terminal Spans",
+      "source_url": "https://github.com/bgreenwell/doxx",
+      "source_version": "062819a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:27.717Z"
+    },
+    "rule-2380": {
+      "learning_id": "rule-2380",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2380,
+      "title": "Zero-System-Dependency Default Pruning in Cross-Platform Crates",
+      "source_url": "https://github.com/bgreenwell/doxx",
+      "source_version": "062819a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:27.717Z"
+    },
+    "rule-2381": {
+      "learning_id": "rule-2381",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2381,
+      "title": "Archive Entry Interleaving for Dual-Stream Deserialization",
+      "source_url": "https://github.com/bgreenwell/doxx",
+      "source_version": "062819a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:27.717Z"
+    },
+    "rule-2382": {
+      "learning_id": "rule-2382",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2382,
+      "title": "Context Decoupling for Graceful Shutdown Routines",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "668db92c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:30.842Z"
+    },
+    "rule-2383": {
+      "learning_id": "rule-2383",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2383,
+      "title": "Guarded Type Assertion on Polymorphic Dynamic Config Payloads",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "668db92c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:30.842Z"
+    },
+    "rule-2384": {
+      "learning_id": "rule-2384",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2384,
+      "title": "Asymmetric Codec Framing Parity in Multiplexed Streaming Transports",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "668db92c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:30.842Z"
+    },
+    "rule-2385": {
+      "learning_id": "rule-2385",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2385,
+      "title": "Snapshot Read Observation Isolation in Measure Passes",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "b7ee272a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:32.656Z"
+    },
+    "rule-2386": {
+      "learning_id": "rule-2386",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2386,
+      "title": "Host Document EventTarget Polyfilling in Sandbox Runtimes",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "b7ee272a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:32.656Z"
+    },
+    "rule-2387": {
+      "learning_id": "rule-2387",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2387,
+      "title": "Critically Damped Gesture-Fling Spring Decoupling",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "b7ee272a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:32.656Z"
+    },
+    "rule-2388": {
+      "learning_id": "rule-2388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2388,
+      "title": "Dialect-Complete DDL Syntax Parameterization",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "0c14cae4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:49.104Z"
+    },
+    "rule-2389": {
+      "learning_id": "rule-2389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2389,
+      "title": "Dual-Engine Macro & Sync-Stream Parity Invariant",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "0c14cae4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:49.104Z"
+    },
+    "rule-2390": {
+      "learning_id": "rule-2390",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2390,
+      "title": "Proxy Type Bridge Null-Safety & Sign Preservation",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "0c14cae4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:14:49.104Z"
     }
   },
   "aliases": {
