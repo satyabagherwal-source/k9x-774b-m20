@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T06:04:56.202Z",
-  "total_cycles_completed": 2970,
-  "total_learnings_persisted": 2970,
-  "total_rules_promoted": 2006,
+  "last_updated": "2026-10-19T06:12:47.867Z",
+  "total_cycles_completed": 2976,
+  "total_learnings_persisted": 2976,
+  "total_rules_promoted": 2016,
   "history": [
-    {
-      "timestamp": "2026-10-19T02:19:23.662Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:27:40.649Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:27:41.577Z",
-      "repository": "sharkdp/pastel",
-      "learningId": "learn-github-sharkdp-pastel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:27:46.117Z",
-      "repository": "ivpusic/react-native-image-crop-picker",
-      "learningId": "learn-github-ivpusic-react-native-image-crop-picker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:27:48.930Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:27:53.534Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T02:29:05.552Z",
       "repository": "arco-design/arco-design",
@@ -1403,6 +1361,48 @@
       "repository": "pathwaycom/serviette",
       "learningId": "learn-github-pathwaycom-serviette",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:11:09.072Z",
+      "repository": "amir1376/ab-download-manager",
+      "learningId": "learn-github-amir1376-ab-download-manager",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:11:10.677Z",
+      "repository": "bitnami/sealed-secrets",
+      "learningId": "learn-github-bitnami-sealed-secrets",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:11:16.754Z",
+      "repository": "run-llama/llama_index",
+      "learningId": "learn-github-run-llama-llama_index",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:12:23.981Z",
+      "repository": "vercel-labs/opensrc",
+      "learningId": "learn-github-vercel-labs-opensrc",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:12:29.922Z",
+      "repository": "tremorlabs/tremor",
+      "learningId": "learn-github-tremorlabs-tremor",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:12:47.867Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

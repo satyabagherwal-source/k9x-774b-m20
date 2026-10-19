@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:04:56.173Z",
-  "total_verified_learnings": 669,
+  "last_updated": "2026-10-19T06:12:47.823Z",
+  "total_verified_learnings": 674,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1338,22 +1338,35 @@
     "learn-github-amir1376-ab-download-manager": {
       "learning_id": "learn-github-amir1376-ab-download-manager",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "amir1376-ab-download-manager",
+      "source": "amir1376/ab-download-manager",
+      "repository": "amir1376/ab-download-manager",
       "slug": "amir1376-ab-download-manager",
       "platform": "github",
       "source_url": "https://github.com/amir1376/ab-download-manager",
-      "source_version": "HEAD",
-      "content_hash": "5cc0d112850fb87a61f154e4bf7b88608b753c95c5e0c76b92feb449b9c4b51f",
+      "source_version": "e329495b",
+      "content_hash": "6be36476f49e04587c6826d6bd70e810d6065792d7c6044e730401bb85c5c64f",
       "dossier_path": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2221,
+          "title": "directory picker crash on linux (#1479)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.764Z"
+      "verified_at": "2026-10-19T06:11:09.013Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-amosgyamfi-open-swiftui-animations": {
       "learning_id": "learn-github-amosgyamfi-open-swiftui-animations",
@@ -3201,22 +3214,29 @@
     "learn-github-bitnami-sealed-secrets": {
       "learning_id": "learn-github-bitnami-sealed-secrets",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bitnami-sealed-secrets",
+      "source": "bitnami/sealed-secrets",
+      "repository": "bitnami/sealed-secrets",
       "slug": "bitnami-sealed-secrets",
       "platform": "github",
       "source_url": "https://github.com/bitnami/sealed-secrets",
-      "source_version": "HEAD",
-      "content_hash": "47baa85a9dd029716bb48fe24da2809f2a424fb607f6319b3fcb1b909becfdb4",
+      "source_version": "19227f36",
+      "content_hash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
       "dossier_path": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.087Z"
+      "verified_at": "2026-10-19T06:11:10.620Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -21752,7 +21772,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "33a0a4804878d9a374d82647bc8ef92c395ea62e3f8a098608368ea2f8609ca4",
+      "content_hash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -21805,6 +21825,16 @@
           "number": 1491,
           "title": "Separation of Base Model and Speculative Decoding Heads",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2229,
+          "title": "Speculative Decoding Multi-Token Prediction (MTP) Header Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2230,
+          "title": "Rate-Constrained Quantization (GSQ-RCO) Divergence Budgeting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21825,7 +21855,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-18T00:02:49.602Z",
+      "verified_at": "2026-10-19T06:12:47.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34205,22 +34235,35 @@
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "run-llama-llama_index",
+      "source": "run-llama/llama_index",
+      "repository": "run-llama/llama_index",
       "slug": "run-llama-llama_index",
       "platform": "github",
       "source_url": "https://github.com/run-llama/llama_index",
-      "source_version": "HEAD",
-      "content_hash": "d5be23703c659b57947a2734c16a6c8cf5a91dddb1eae964dfa37d988972bfb4",
+      "source_version": "619d7466",
+      "content_hash": "70167becc74e332526d6380b5d5a13251c347933868569e322a8a942754ad10c",
       "dossier_path": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2222,
+          "title": "openai-like): support `llama-index-llms-openai` `0.8.x` (#23249)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.326Z"
+      "verified_at": "2026-10-19T06:11:16.699Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-run-llama-rags": {
       "learning_id": "learn-github-run-llama-rags",
@@ -38795,22 +38838,45 @@
     "learn-github-tremorlabs-tremor": {
       "learning_id": "learn-github-tremorlabs-tremor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tremorlabs-tremor",
+      "source": "tremorlabs/tremor",
+      "repository": "tremorlabs/tremor",
       "slug": "tremorlabs-tremor",
       "platform": "github",
       "source_url": "https://github.com/tremorlabs/tremor",
-      "source_version": "HEAD",
-      "content_hash": "36d9fe02e4e8738e621c92d140f10cc4206fb2e0efbc387fb0b21ef57e188517",
+      "source_version": "ca4d588f",
+      "content_hash": "7ad415214bbfc05aea4ce23dc64731037eca41b0004834dc7357f073cdd28c22",
       "dossier_path": "07_PROJECT_LEARNING/tremorlabs-tremor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tremorlabs-tremor-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2226,
+          "title": "Slot-Child ForwardRef Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2227,
+          "title": "Modern CSS Transform vs Independent Transform Translation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2228,
+          "title": "Portal-Overlay-Content Scoping Separation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.051Z"
+      "verified_at": "2026-10-19T06:12:29.866Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tremorlabs-tremor-npm": {
       "learning_id": "learn-github-tremorlabs-tremor-npm",
@@ -39643,22 +39709,45 @@
     "learn-github-vercel-labs-opensrc": {
       "learning_id": "learn-github-vercel-labs-opensrc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vercel-labs-opensrc",
+      "source": "vercel-labs/opensrc",
+      "repository": "vercel-labs/opensrc",
       "slug": "vercel-labs-opensrc",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/opensrc",
-      "source_version": "HEAD",
-      "content_hash": "af917415236c993a7bf6eef1a758b8441db862d2f77e8e5edc693d354f085ac6",
+      "source_version": "b51de608",
+      "content_hash": "6895b0744dc7167adc87dc8560aaab5f0c4e070e6d9c0462a9e1871d934c8c28",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-opensrc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-opensrc-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2223,
+          "title": "Atomic State Serialization with Automated Corrupt-File Quarantine",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2224,
+          "title": "Suffix-Anchored Checksum Verification for Multi-Binary Manifests",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2225,
+          "title": "Complete Lifecycle Synchronization of Agent Instruction Markers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.209Z"
+      "verified_at": "2026-10-19T06:12:23.925Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vercel-swr": {
       "learning_id": "learn-github-vercel-swr",
@@ -79119,6 +79208,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:04:56.166Z"
+    },
+    "rule-2221": {
+      "learning_id": "rule-2221",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2221,
+      "title": "directory picker crash on linux (#1479)",
+      "source_url": "https://github.com/amir1376/ab-download-manager",
+      "source_version": "e329495b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:11:09.013Z"
+    },
+    "rule-2222": {
+      "learning_id": "rule-2222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2222,
+      "title": "openai-like): support `llama-index-llms-openai` `0.8.x` (#23249)",
+      "source_url": "https://github.com/run-llama/llama_index",
+      "source_version": "619d7466",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:11:16.699Z"
+    },
+    "rule-2223": {
+      "learning_id": "rule-2223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2223,
+      "title": "Atomic State Serialization with Automated Corrupt-File Quarantine",
+      "source_url": "https://github.com/vercel-labs/opensrc",
+      "source_version": "b51de608",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:23.925Z"
+    },
+    "rule-2224": {
+      "learning_id": "rule-2224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2224,
+      "title": "Suffix-Anchored Checksum Verification for Multi-Binary Manifests",
+      "source_url": "https://github.com/vercel-labs/opensrc",
+      "source_version": "b51de608",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:23.925Z"
+    },
+    "rule-2225": {
+      "learning_id": "rule-2225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2225,
+      "title": "Complete Lifecycle Synchronization of Agent Instruction Markers",
+      "source_url": "https://github.com/vercel-labs/opensrc",
+      "source_version": "b51de608",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:23.925Z"
+    },
+    "rule-2226": {
+      "learning_id": "rule-2226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2226,
+      "title": "Slot-Child ForwardRef Contract Invariant",
+      "source_url": "https://github.com/tremorlabs/tremor",
+      "source_version": "ca4d588f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:29.866Z"
+    },
+    "rule-2227": {
+      "learning_id": "rule-2227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2227,
+      "title": "Modern CSS Transform vs Independent Transform Translation Invariant",
+      "source_url": "https://github.com/tremorlabs/tremor",
+      "source_version": "ca4d588f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:29.866Z"
+    },
+    "rule-2228": {
+      "learning_id": "rule-2228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2228,
+      "title": "Portal-Overlay-Content Scoping Separation Invariant",
+      "source_url": "https://github.com/tremorlabs/tremor",
+      "source_version": "ca4d588f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:29.866Z"
+    },
+    "rule-2229": {
+      "learning_id": "rule-2229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2229,
+      "title": "Speculative Decoding Multi-Token Prediction (MTP) Header Decoupling Invariant",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:47.813Z"
+    },
+    "rule-2230": {
+      "learning_id": "rule-2230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2230,
+      "title": "Rate-Constrained Quantization (GSQ-RCO) Divergence Budgeting Invariant",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:12:47.813Z"
     }
   },
   "aliases": {

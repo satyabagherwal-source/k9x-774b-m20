@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T06:04:56.204Z",
+  "last_updated": "2026-10-19T06:12:47.869Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -724,14 +724,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "33a0a4804878d9a374d82647bc8ef92c395ea62e3f8a098608368ea2f8609ca4",
-      "verified_at": "2026-10-18T00:02:49.650Z",
+      "content_hash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
+      "verified_at": "2026-10-19T06:12:47.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:02:49.650Z"
+      "last_updated": "2026-10-19T06:12:47.869Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
@@ -9864,6 +9864,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T06:04:49.211Z"
+    },
+    "amir1376/ab-download-manager": {
+      "repository": "amir1376/ab-download-manager",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-amir1376-ab-download-manager",
+      "content_hash": "6be36476f49e04587c6826d6bd70e810d6065792d7c6044e730401bb85c5c64f",
+      "verified_at": "2026-10-19T06:11:09.075Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:11:09.075Z"
+    },
+    "bitnami/sealed-secrets": {
+      "repository": "bitnami/sealed-secrets",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-bitnami-sealed-secrets",
+      "content_hash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
+      "verified_at": "2026-10-19T06:11:10.679Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:11:10.679Z"
+    },
+    "run-llama/llama_index": {
+      "repository": "run-llama/llama_index",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-run-llama-llama_index",
+      "content_hash": "70167becc74e332526d6380b5d5a13251c347933868569e322a8a942754ad10c",
+      "verified_at": "2026-10-19T06:11:16.756Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:11:16.756Z"
+    },
+    "vercel-labs/opensrc": {
+      "repository": "vercel-labs/opensrc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vercel-labs-opensrc",
+      "content_hash": "6895b0744dc7167adc87dc8560aaab5f0c4e070e6d9c0462a9e1871d934c8c28",
+      "verified_at": "2026-10-19T06:12:23.983Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:12:23.983Z"
+    },
+    "tremorlabs/tremor": {
+      "repository": "tremorlabs/tremor",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tremorlabs-tremor",
+      "content_hash": "7ad415214bbfc05aea4ce23dc64731037eca41b0004834dc7357f073cdd28c22",
+      "verified_at": "2026-10-19T06:12:29.925Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:12:29.925Z"
     }
   },
   "repos": {

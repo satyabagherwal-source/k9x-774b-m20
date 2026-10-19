@@ -2993,3 +2993,9 @@
 | `CYCLE-20261019-NR5D` | `2026-10-19T06:04:45.745Z` | `ResoCoder/flutter-tdd-clean-architecture-course` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2218` | Yes (`aa651298...`) |
 | `CYCLE-20261019-NTTG` | `2026-10-19T06:04:49.204Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2219` | Yes (`8d0f240b...`) |
 | `CYCLE-20261019-NZ7Q` | `2026-10-19T06:04:56.198Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2220` | Yes (`7fa1d91a...`) |
+| `CYCLE-20261019-VYX6` | `2026-10-19T06:11:09.066Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2221` | Yes (`6be36476...`) |
+| `CYCLE-20261019-W05R` | `2026-10-19T06:11:10.671Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md` | Yes (`e0f54001...`) |
+| `CYCLE-20261019-W4UJ` | `2026-10-19T06:11:16.747Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2222` | Yes (`70167bec...`) |
+| `CYCLE-20261019-XKPZ` | `2026-10-19T06:12:23.975Z` | `vercel-labs/opensrc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2223, Rule 2224, Rule 2225` | Yes (`6895b074...`) |
+| `CYCLE-20261019-XPB0` | `2026-10-19T06:12:29.916Z` | `tremorlabs/tremor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2226, Rule 2227, Rule 2228` | Yes (`7ad41521...`) |
+| `CYCLE-20261019-Y35H` | `2026-10-19T06:12:47.861Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2229, Rule 2230` | Yes (`6f7c0286...`) |

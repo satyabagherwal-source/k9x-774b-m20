@@ -3000,3 +3000,9 @@ Every entry in this ledger must capture:
 | `learn-github-resocoder-flutter-tdd-clean-architecture-course` | `https://github.com/ResoCoder/flutter-tdd-clean-architecture-course` | `6c515614` | Multi-dimensional audit evidence | 2026-10-19T06:04:45.747Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `fdd50121` | Multi-dimensional audit evidence | 2026-10-19T06:04:49.207Z |
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `e2a7a09b` | Multi-dimensional audit evidence | 2026-10-19T06:04:56.200Z |
+| `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `e329495b` | Multi-dimensional audit evidence | 2026-10-19T06:11:09.069Z |
+| `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `19227f36` | Multi-dimensional audit evidence | 2026-10-19T06:11:10.673Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `619d7466` | Multi-dimensional audit evidence | 2026-10-19T06:11:16.750Z |
+| `learn-github-vercel-labs-opensrc` | `https://github.com/vercel-labs/opensrc` | `b51de608` | Multi-dimensional audit evidence | 2026-10-19T06:12:23.978Z |
+| `learn-github-tremorlabs-tremor` | `https://github.com/tremorlabs/tremor` | `ca4d588f` | Multi-dimensional audit evidence | 2026-10-19T06:12:29.919Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-19T06:12:47.863Z |

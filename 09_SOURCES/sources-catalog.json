@@ -575,8 +575,8 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "33a0a4804878d9a374d82647bc8ef92c395ea62e3f8a098608368ea2f8609ca4",
-    "lastHarvestedAt": "2026-10-18T00:02:49.647Z",
+    "contentHash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
+    "lastHarvestedAt": "2026-10-19T06:12:47.863Z",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
@@ -6528,5 +6528,55 @@
     "contentHash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
     "lastHarvestedAt": "2026-10-19T06:04:56.200Z",
     "learningId": "learn-github-pathwaycom-serviette"
+  },
+  "amir1376-ab-download-manager": {
+    "repository": "amir1376/ab-download-manager",
+    "platform": "github",
+    "sourceUrl": "https://github.com/amir1376/ab-download-manager",
+    "sourceVersion": "e329495b",
+    "license": "Apache-2.0",
+    "contentHash": "6be36476f49e04587c6826d6bd70e810d6065792d7c6044e730401bb85c5c64f",
+    "lastHarvestedAt": "2026-10-19T06:11:09.069Z",
+    "learningId": "learn-github-amir1376-ab-download-manager"
+  },
+  "bitnami-sealed-secrets": {
+    "repository": "bitnami/sealed-secrets",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bitnami/sealed-secrets",
+    "sourceVersion": "19227f36",
+    "license": "Apache-2.0",
+    "contentHash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
+    "lastHarvestedAt": "2026-10-19T06:11:10.673Z",
+    "learningId": "learn-github-bitnami-sealed-secrets"
+  },
+  "run-llama-llama_index": {
+    "repository": "run-llama/llama_index",
+    "platform": "github",
+    "sourceUrl": "https://github.com/run-llama/llama_index",
+    "sourceVersion": "619d7466",
+    "license": "MIT",
+    "contentHash": "70167becc74e332526d6380b5d5a13251c347933868569e322a8a942754ad10c",
+    "lastHarvestedAt": "2026-10-19T06:11:16.750Z",
+    "learningId": "learn-github-run-llama-llama_index"
+  },
+  "vercel-labs-opensrc": {
+    "repository": "vercel-labs/opensrc",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vercel-labs/opensrc",
+    "sourceVersion": "b51de608",
+    "license": "Apache-2.0",
+    "contentHash": "6895b0744dc7167adc87dc8560aaab5f0c4e070e6d9c0462a9e1871d934c8c28",
+    "lastHarvestedAt": "2026-10-19T06:12:23.978Z",
+    "learningId": "learn-github-vercel-labs-opensrc"
+  },
+  "tremorlabs-tremor": {
+    "repository": "tremorlabs/tremor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tremorlabs/tremor",
+    "sourceVersion": "ca4d588f",
+    "license": "Apache-2.0",
+    "contentHash": "7ad415214bbfc05aea4ce23dc64731037eca41b0004834dc7357f073cdd28c22",
+    "lastHarvestedAt": "2026-10-19T06:12:29.919Z",
+    "learningId": "learn-github-tremorlabs-tremor"
   }
 }
