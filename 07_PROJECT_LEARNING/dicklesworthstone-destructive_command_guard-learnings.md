@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `2680518d`  
+> **Source Version**: `f6fdf447`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:18:59.710Z  
+> **Timestamp**: 2026-10-19T20:16:48.511Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:18:59.700Z  
+> **Harvest Timestamp**: 2026-10-19T20:16:48.240Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Destructive Command Guard (dcg) is for blocking dangerous git and shell commands from being executed by agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6186 stars
+- **Stars / Engagement**: 6189 stars
 
 ---
 
@@ -1479,8 +1479,8 @@ pub(crate) fn classify_embedded_credential_file_writes(
 #[cfg(test)]
 mod source_ownership_tests {
     use super::{
-        classify_embedded_credential_file_writes, scan_extracted, scan_outer_writer_arguments, shell,
-        word_splitting,
+        classify_embedded_credential_file_writes, scan_extracted, scan_outer_writer_arguments,
+        shell, word_splitting,
     };
     use crate::heredoc::{ExtractionLimits, ExtractionResult, extract_content};
     use crate::normalize::ShellDialect;
@@ -1515,7 +1515,9 @@ mod source_ownership_tests {
     fn data_program(interpreter: &str, tail: &str) -> String {
         let body = match interpreter {
             "python3" => "note = \"IFS=@; it's `tool --help`; $DEST; élève\"\nprint(note)",
-            "node" => "const note = \"IFS=@; it's `tool --help`; $DEST; élève\";\nconsole.log(note);",
+            "node" => {
+                "const note = \"IFS=@; it's `tool --help`; $DEST; élève\";\nconsole.log(note);"
+            }
             _ => panic!("unsupported test interpreter"),
         };
         format!("{interpreter} - <<'CODE'\n{body}\n{tail}\nCODE")
@@ -1531,8 +1533,10 @@ mod source_ownership_tests {
             assert!(!word_splitting::candidate(outer.as_ref()));
             assert!(scan_outer_writer_arguments(&command, ShellDialect::Posix).is_empty());
             assert!(
-                classify_embedded_credential_file_writes(&command, ShellDialect::Posix, |_, _| false)
-                    .is_empty(),
+                classify_embedded_credential_file_writes(&command, ShellDialect::Posix, |_, _| {
+                    false
+                })
+                .is_empty(),
                 "literal interpreter data is not a protected write: {command}"
             );
         }
@@ -1543,7 +1547,10 @@ mod source_ownership_tests {
         let writer = "IFS=@; tee $UNRESOLVED";
         for interpreter in ["python3", "node"] {
             let program = data_program(interpreter, "");
-            for command in [format!("{writer}\n{program}"), format!("{program}\n{writer}")] {
+            for command in [
+                format!("{writer}\n{program}"),
+                format!("{program}\n{writer}"),
+            ] {
                 let start = command.find("tee $UNRESOLVED").unwrap();
                 let expected_span = start..start + "tee $UNRESOLVED".len();
                 // Even an explicit interpreter exemption must not grant a
@@ -1593,12 +1600,14 @@ mod source_ownership_tests {
         ] {
             let command = data_program(interpreter, tail);
             let outer = crate::heredoc::mask_inert_interpreter_stdin(&command);
-            assert!(!outer.contains(tail), "the test must exercise a masked body");
-            let hits = classify_embedded_credential_file_writes(
-                &command,
-                ShellDialect::Posix,
-                |_, _| false,
+            assert!(
+                !outer.contains(tail),
+                "the test must exercise a masked body"
             );
+            let hits =
+                classify_embedded_credential_file_writes(&command, ShellDialect::Posix, |_, _| {
+                    false
+                });
             assert!(
                 hits.iter()
                     .any(|hit| hit.rule == rule && command.get(hit.span.clone()).is_some()),
@@ -1618,14 +1627,7 @@ mod source_ownership_tests {
             let original = word_splitting::scan(command, ShellDialect::Posix);
             let outer = scan_outer_writer_arguments(command, ShellDialect::Posix);
             assert_eq!(
-                outer, original,
-                "unproved source must not gain a mask: {command}"
-            );
-        }
-    }
-
-    #[test]
-    fn unknown_
+     
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -2480,1203 +2482,745 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b1d5bf3` (2026-10-15)
-**Commit Message**: fix(config): preserve trusted-policy failures and restore verified #568 publication
+### Incident Patch 1: `ad98f9f4` (2026-10-19)
+**Commit Message**: fix(hooks): keep diagnostic commands safe to copy
 
-The #568 publication workflow required a candidate patch that was absent from
-the repository, after its former seven-blob verified extraction step had been
-removed. Recover that useful candidate from its real immutable Git objects,
-preserve the incoming nine-host process coverage, and land the runtime repair
-itself so ordinary main builds consume the corrected policy behavior.
+Command text containing shell expansions or quote boundaries could change the meaning of copied diagnostic hints. Emit dcg explain -- only for complete arguments from a conservative literal subset. Direct complex or long input to dcg test --stdin --explain and show a separately bounded JSON preview with exact elision accounting. Apply the same policy to the human warning footer.
 
-Keep the actual read/open outcome of each configuration layer. Missing optional
-files remain optional, while a missing explicit file, rejected trusted source,
-unreadable content, invalid UTF-8, malformed TOML, or oversized trusted content
-sets a runtime-only configuration error. Preserve that failure through later
-merges and compiled overrides, before allow overrides, quick paths, persistent
-grants, or fail-open environment choices can authorize a command. Automatically
-discovered repository policy retains its existing untrusted, monotonic scope;
-its malformed text does not manufacture a global trusted-policy failure.
+Add six regression tests, including actual POSIX-shell argv capture with harmless canaries, and update only the intended end-of-options separator in three denial goldens. Include an equivalent boolean simplification for the unlink classifier's Clippy finding.
 
-Use the shared CLI/config precedence loader and retain recovery/diagnostic
-commands. Bare hooks keep each h
+Record the native-input, quoted-unlink, and diagnostic-safety evidence in beads. Track the independently reproduced enabled-guardrails global-option defect as an open P1 follow-up without changing the default pack policy.
 
-**File**: `.github/patches/config-load-568.patch` (added, +864/-0)
+Validation: 183 hook unit tests, 167 executable protocol integrations, three denial goldens, and all 50 harness-matrix cases passed. Locked all-target cargo check and formatting of all eight touched Rust files passed. The full diagnostic Clippy scan has no remaining findings introd
+
+**File**: `.beads/issues.jsonl` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,864 @@
-+diff --git a/src/config.rs b/src/config.rs
-+--- a/src/config.rs
-++++ b/src/config.rs
-+@@ -61,50 +61,89 @@
-+ /// the subsequent read and prevents a FIFO from wedging the hook before its
-+ /// file type can be rejected.
-+ pub(crate) fn read_config_file_bounded(path: &Path, source: ConfigSource) -> Option<String> {
-++    read_config_file_result(path, source).ok()
-++}
-++
-++/// Preserve the outcome of the actual open/read. A later filesystem restat is
-++/// useful for diagnostics, but must not decide whether required policy vanished.
-++#[derive(Debug)]
-++enum ConfigReadFailure {
-++    Missing,
-++    #[cfg_attr(unix, allow(dead_code))]
-++    Unsupported,
-++    Rejected(String),
-++    Content(String),
-++}
-++
-++impl ConfigReadFailure {
-++    fn blocks_trusted_layer(&self, source: ConfigSource, layer: ConfigFileLayer) -> bool {
-++        if source == ConfigSource::AutoProject {
-++            return false;
-++        }
-++        match self {
-++            Self::Missing => layer == ConfigFileLayer::Explicit,
-++            Self::Unsupported => false,
-++            // A system path that failed its ownership/path trust checks is not
-++            // administrator policy. Keep ignoring it, including on Windows.
-++            Self::Rejected(_) => source == ConfigSource::Untrusted,
-++            // Content failures occur AFTER the source's handle was validated.
-++            Self::Content(_) => true,
-++        }
-++    }
-++
-++    fn detail(&self) -> &str {
-++        match self {
-++            Self::Missing => "the explicitly selected configuration file does not exist",
-++            Self::Unsupported => "this configuration source is unsupported on this platform",
-++            Self::Rejected(detail) | Self::Content(detail) => detail,
-++        }
-++    }
-++}
-++
-++fn read_config_file_result(path: &Path, source: ConfigSource) -> Result<String, ConfigReadFailure> {
-+     #[cfg(not(unix))]
-+     if non_unix_source_is_unsupported(source) {
-+         warn_and_ignore_non_unix_restricted_config(path, source);
-+-        return None;
-++        return Err(ConfigReadFailure::Unsupported);
-+     }
-+
-+     let mut file = match open_config_file_for_source(path, source) {
-+-        Ok(f) => f,
-+-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return None,
-+-        Err(e) => {
-++        Ok(file) => file,
-++        Err(error) if error.kind() == io::ErrorKind::NotFound => {
-++            return Err(ConfigReadFailure::Missing);
-++        }
-++        Err(error) => {
-+             crate::emit_stderr!(
-+                 "Warning: refusing to load config file '{}': {}",
-+                 path.display(),
-+-                e
-++                error
-+             );
-+-            return None;
-++            return Err(ConfigReadFailure::Rejected(error.to_string()));
-+         }
-+     };
-+-
-+-    // `take(MAX_CONFIG_BYTES + 1)` lets us tell "exactly cap" (allowed) from
-+-    // "more than cap" (rejected) without reading unbounded bytes either way.
-+-    let mut buf = String::new();
-+-    if let Err(e) = file
-++    let mut content = String::new();
-++    if let Err(error) = file
-+         .by_ref()
-+         .take(MAX_CONFIG_BYTES + 1)
-+-        .read_to_string(&mut buf)
-++        .read_to_string(&mut content)
-+     {
-+         crate::emit_stderr!(
-+             "Warning: Failed to read config file '{}': {}",
-+             path.display(),
-+-            e
-+-        );
-+-        return None;
-+-    }
-+-    if buf.len() as u64 > MAX_CONFIG_BYTES {
-++            error
-++        );
-++        return Err(ConfigReadFailure::Content(error.to_string()));
-++    }
-++    if content.len() as u64 > MAX_CONFIG_BYTES {
-++        let detail = format!("configuration exceeds the {MAX_CONFIG_BYTES}-byte limit");
-+         crate::emit_stderr!(
-+-            "Warning: refusing to load config '{}' — exceeds {}-byte cap",
-++            "Warning: refusing to load config '{}': {}",
-+             path.display(),
-+-            MAX_CONFIG_BYTES
-+-        );
-+-        return None;
-+-    }
-+-
-+-    Some(buf)
-++            detail
-++        );
-++        return Err(ConfigReadFailure::Content(detail));
-++    }
-++    Ok(content)
-+ }
-+
-+ /// Render a TOML error from an automatically discovered repository config
-+@@ -2982,6 +3021,12 @@
-+ #[derive(Debug, Clone, Default, Serialize, Deserialize, schemars::JsonSchema)]
-+ #[serde(default)]
-+ pub struct OverridesConfig {
-++    /// Runtime-only failure of a required trusted config layer (#568).
-++    /// Neither TOML nor an automatic project policy can manufacture or clear it.
-++    #[serde(skip)]
-++    #[schemars(skip)]
-++    pub configuration_error: Option<String>,
-++
-+     /// Patterns to allow that would otherwise be blocked.
-+     #[serde(default)]
-+     pub allow: Vec<AllowOverride>,
-+@@ -3834,6 +3879,8 @@
-+ /// evaluations. It eliminates per-command regex compilation overhead.
-+ #[derive(Debug, Default)]
-+ pub struct CompiledOverrides {
-++    /// Fatal trusted-config failure, checked before every authorization pa
+@@ -74,6 +74,7 @@
+ {"id":"bd-f16f","title":"Segment-scope overrides.allow matching: naive substring patterns allow chained unrelated destruction (#327 sharp edge)","status":"closed","priority":2,"issue_type":"task","created_at":"2026-08-20T18:11:54.866705Z","created_by":"jemanuel","updated_at":"2026-09-22T18:21:24.894261767Z","closed_at":"2026-09-22T18:21:24.878665477Z","close_reason":"Already implemented under #340: CompiledOverrides::check_allow is segment-scoped, so an allow entry must cover every segment. Pinned by src/config.rs tests unanchored_allow_override_does_not_launder_later_segments (&&, ;, ||, |), allow_override_does_not_launder_command_substitution, allow_override_permits_fully_covered_compound.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
+ {"id":"bd-fg8f","title":"P4.7: Update scan command progress and results display","status":"closed","priority":2,"issue_type":"task","created_at":"2026-01-19T21:12:05.227501776Z","created_by":"ubuntu","updated_at":"2026-01-21T21:53:05.030745430Z","closed_at":"2026-01-21T21:53:05.030657314Z","source_repo":".","compaction_level":0,"original_size":0,"dependencies":[{"issue_id":"bd-fg8f","depends_on_id":"bd-2cvj","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2e8p","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2jp9","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2loz","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""}]}
+ {"id":"bd-git-backslash-attribution-ptpo","title":"Windows-separator .git paths deny under the escaped-path rule, not git-internals","status":"closed","priority":2,"issue_type":"bug","created_at":"2026-09-24T16:23:11.237677557Z","created_by":"ubuntu","updated_at":"2026-09-24T17:50:29.885365887Z","closed_at":"2026-09-24T17:50:29.884650196Z","close_reason":"Measured; converted to GitHub #492. The attribution is POSIX-correct (> .git\\config opens .gitconfig there), so the live defect is grantability, not naming: allowlisting the High redirect-truncate-dynamic-path also grants the Windows-separator spellings of two Critical rules. Repair changes existing allowlist meaning, so it is a maintainer decision, filed with options and a recommendation.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
++{"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg allowlist add core.git:reset-hard --reason approved -> deny; dcg --robot allowlist add core.git:reset-hard --reason approved -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg uninstall --yes -> deny; dcg --robot uninstall --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-bypass-or-uninstall.\n\n## Retained reproduction evidence\n\nThe six results are retained in /tmp/dcg-guardrails-repro-f5f64oyl/results.json. Recorded binary SHA-256: a735d6be7fea590c1dd8472e9a92658e35b73471b7a07692b58fa4c40ee6ea00. Probe invocation: dcg test --stdin --config <empty isolated config> --with-packs careful_company_running_windows.guardrails --format json, with isolated HOME/config/state. All three direct forms exited 1 with the expected denial rule; all three --robot-prefixed forms exited 0 with decision allow. The inputs were inert fixture strings: target commands were never executed.\n\n## Code evidence and scope\n\nThe guardrails rules in src/packs/careful_company_running_windows/guardrails.rs require dcg (or dcg.exe) immediately followed by uninstall, allow-once, allow, or allowlist add/add-command/import. src/cli.rs declares robot as a global CLI argument, so --robot before a subcommand is valid but defeats those adjacent-token patterns. Verify supported global-option positions using actual CLI argv semantics; do not solve this by treating arbitrary argument text as an executed dcg subcommand.\n\nThis is a correctness defect in an explicitly enabled protection. The separate default-on/self-approval policy question remains tracked by bd-hgm5; resolving that policy
 ```
 
-**File**: `.github/workflows/config-load-568.yml` (modified, +18/-7)
+**File**: `src/hook.rs` (modified, +302/-40)
 ```diff
-@@ -15,7 +15,10 @@ on:
-       - src/main.rs
-       - src/cli.rs
-       - src/evaluator.rs
-+      - src/config_load_regression_tests.rs
-       - tests/repro_568_config_load.rs
-+      - scripts/apply_config_load_candidate.py
-+      - scripts/test_apply_config_load_candidate.py
-       - .github/workflows/config-load-568.yml
-       - .github/patches/config-load-568.patch
+@@ -3240,25 +3240,98 @@ pub fn configure_colors() {
+ /// ordinary commands are untouched and stay copy-pasteable.
+ const MAX_EXPLAIN_HINT_COMMAND: usize = 400;
  
-@@ -31,10 +34,11 @@ jobs:
-     runs-on: ubuntu-latest
-     timeout-minutes: 45
-     steps:
--      - uses: actions/checkout@v4
-+      - uses: actions/checkout@v7
-         with:
-           ref: ${{ github.sha }}
--          fetch-depth: 1
-+          # The candidate tests read its real immutable source preimages.
-+          fetch-depth: 0
-       - name: Record exact source for review
-         shell: bash
-         run: |
-@@ -51,16 +55,21 @@ jobs:
-       - name: Apply reviewed diff on explicitly requested publication
-         if: github.event_name == 'workflow_dispatch' && inputs.publish
-         run: |
--          test -f .github/patches/config-load-568.patch
--          git apply --check .github/patches/config-load-568.patch
--          git apply .github/patches/config-load-568.patch
-+          python3 scripts/apply_config_load_candidate.py
-           git diff --check
-+      - name: Candidate acquisition and refusal regressions
-+        run: python3 -m unittest discover -s scripts -p test_apply_config_load_candidate.py -v
-       - name: Install the repository-pinned Rust toolchain
-         run: rustup show active-toolchain
-       - uses: Swatinem/rust-cache@v2
-       - name: Format publication candidate
-         if: github.event_name == 'workflow_dispatch' && inputs.publish
--        run: cargo fmt
-+        # Format only the exact paths the publisher will commit. The final
-+        # whole-tree check must still reject unrelated baseline formatting.
-+        run: >-
-+          rustfmt --edition 2024 --config skip_children=true
-+          src/config.rs src/evaluator.rs src/main.rs src/cli.rs
-+          src/config_load_regression_tests.rs tests/repro_568_config_load.rs
-       - name: Trusted-policy process regressions
-         run: cargo test --locked --test repro_568_config_load -- --test-threads=1
-       - name: Configuration and hook unit regressions
-@@ -83,12 +92,14 @@ jobs:
-           base=$(git rev-parse HEAD)
-           remote=$(git ls-remote origin refs/heads/main | cut -f1)
-           test "$base" = "$remote" || { echo 'main advanced; refusing to publish a stale candidate'; exit 1; }
-+          master=$(git ls-remote origin refs/heads/master | cut -f1)
-+          test "$base" = "$master" || { echo 'master differs from main; refusing an unreviewed mirror update'; exit 1; }
-           git diff --check
-           git config user.name 'github-actions[bot]'
-           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-           git add src/config.rs src/evaluator.rs src/main.rs src/cli.rs tests/repro_568_config_load.rs
-           if test -f src/config_load_regression_tests.rs; then git add src/config_load_regression_tests.rs; fi
-           git diff --cached --quiet && { echo 'No source changes to publish'; exit 1; }
-           git commit -m 'fix(config): preserve trusted policy failures across evaluation and hook protocols (#568)'
--          git push origin HEAD:main
-+          git push --atomic origin HEAD:refs/heads/main HEAD:refs/heads/master
-           echo "Published $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
-```
-
-**File**: `scripts/apply_config_load_candidate.py` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+#!/usr/bin/env python3
-+"""Apply the immutable #568 candidate only to its reviewed source preimages.
+-/// Format the explain hint line for copy-paste convenience.
++const EXPLAIN_STDIN_COMMAND: &str = "dcg test --stdin --explain";
++const EXPLAIN_STDIN_INSTRUCTION: &str = "Pass the original command on stdin as data.";
 +
-+The patch recovers the candidate archive whose Git blob is
-+8a8202da56093d3bb8c56303ddaee1a0706ca0af (SHA256
-+88ff782aba402680dc5115acd5fa1d5a6bdbf6fe82c1dd3e282c6fbe15bcee64).
-+Its original seven-blob transport is retained in commit 17982f8d. The Rust
-+changes preserve the original producer's output plus the batch config-error
-+protocol repair, formatted with the pinned rustfmt;
-+the newer process/protocol regressions remain in the checkout, not overwritten.
-+This command neither compiles code nor publishes any Git objects or refs.
-+"""
-+from __future__ import annotations
-+
-+import argparse
-+import hashlib
-+from pathlib import Path
-+import subprocess
-+import sys
-+
-+ROOT = Path(__file__).resolve().parents[1]
-+PATCH = Path(".github/patches/config-load-568.patch")
-+PATCH_SHA256 = "82a4bbd07e3a6dde87a6ba7ff33f3f65f21b535f184c493ac9b0aded0400077e"
-+PREIMAGES = {
-+    "src/config.rs": "44c7948ee5fdd599a087bb8544bc77689ce1a5574aff7a4c613734abb59a10dd",
-+    "src/main.rs": "839736558a4b48014333134da237cc5af644460af0feb86051bd7e7b24d55731",
-+    "src/evaluator.rs": "dea96cdb666685172a563a63bf9973817bf9aa0dded78c08f1c17f0fdca4955a",
-+    "src/cli.rs": "9cae3d022a29fd2073b2fea1ff9513ebb06a49c5008512e7891651fa8f247e8f",
-+}
-+REGRESSION = Path("tests/repro_568_config_load.rs")
-+REGRESSION_SHA256 = "4ee42816b1b610202c96d68f81929a0c7b5f371079fb636da1870f181bae06d4"
-+NEW_UNIT_TESTS = Path("src/config_load_regression_tests.rs")
-+
-+
-+def regular_bytes(root: Path, relative: Path) -> bytes:
-+    path = root / relative
-+    # Reject symlinks in the path as well as at the leaf. All candidate inputs
-+    # must be the actual checkout bytes, not files reached outside the checkout.
-+    if any((root / Path(*relative.parts[:i])).is_symlink()
-+           for i in range(1, len(relative.parts) + 1)):
-+        raise ValueError(f"candidate input must not be a symlink: {relative}")
-+    if not path.is_file():
-+        raise ValueError(f"missing regular candidate input: {relative}")
-+    return path.read_bytes()
-+
-+
-+def apply_candidate(root: Path, *, check: bool = False) -> None:
-+    patch = regular_bytes(root, PATCH)
-+    if not patch or hashlib.sha256(patch).hexdigest() != PATCH_SHA256:
-+        raise ValueError("candidate patch SHA256 mismatch; refusing unreviewed payload")
-+    for name, expected in PREIMAGES.items():
-+        content = regular_bytes(root, Path(name))
-+        actual = hashlib.sha256(content).hexdigest()
-+        if actual != expected:
-+            raise ValueError(f"{name}: source preimage mismatch; refusing source drift")
-+    regression = regular_bytes(root, REGRESSION)
-+    if hashlib.sha256(regression).hexdigest() != REGRESSION_SHA256:
-+        raise ValueError("process/protocol regression preimage mismatch")
-+    unit_tests = root / NEW_UNIT_TESTS
-+    if unit_tests.exists() or unit_tests.is_symlink():
-+        raise ValueError(f"refusing to overwrite existing unit regressions: {NEW_UNIT_TESTS}")
-+    # Feed the bytes that were hashed, so a patch-path replacement between the
-+    # guard and git apply cannot substitute a different candidate payload.
-+    subprocess.run(["git", "apply", "--check", "--whitespace=error-all", "-"],
-+                   input=patch, cwd=root, check=True, timeout=30)
-+    if not check:
-+        subprocess.run(["git", "apply", "--whitespace=error-all", "-"],
-+                       input=patch, cwd=root, check=True, timeout=30)
-+    print("Verified #568 candidate preimages" + (" (check only)." if check else "; applied five source/test paths."))
-+
-+
-+def main() -> int:
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("--root", type=Path, default=ROOT,
-+                        help="checkout/export to validate and apply (default: repository)")
-+    parser.add_argument("--check", action="store_true", help="validate without changing source")
-+    args = parser.parse_args()
-+    try:
-+        apply_candidate(args.root.resolve(), check=args.check)
-+    except (OSError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
-+        print(f"#568 candidate refused: {error}", file=sys.stderr)
-+        return 1
-+    return 0
-+
-+
-+if __name__ == "__main__":
-+    raise SystemExit(main())
-```
-
-**File**: `scripts/test_apply_config_load_candidate.py` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+"""Exercise the production #568 patch consumer with real Git blobs and git apply.
-+
-+Run: python3 -m unittest discover -s scripts -p test_apply_config_load_candidate.py -v
-+No compiler, executable DCG, network, install, publication, or user config is used.
-+The baseline files come from actual immutable objects in the repository history;
-+this remains a producer/application test, not config-runtime acceptance.
-+"""
-+from __future__ import annotations
-+
-+import hashlib
-+import os
-+from pathlib import Path
-+import shutil
-+import subprocess
-+import sys
-+import tempfile
-+import unittest
-+
-+import apply_config_load_candidate as candidate
-+
-+SOURCE_BLOBS = {
-+    "src/config.rs": "18953a0a7eb22ac5c6e3c757113bec605017f596",
-+    "src/main.rs": "7a90d3f8cd48693a3f441968bb8f28b28357dfbd",
-+    "src/evaluator.rs": "d46131c2734cbf6a1ae60f8b48aec122b1f65db1",
-+    "src/cli.rs": "dd003d861a725e4fbf51e37ea7eb1886474a9d6e",
-+}
-+
-+POSTIMAGES = {
-+    "src/config.rs": "720d6e408cdcd75a71007bd954e2d99c9d774aee342979559808827714fa9a6f",
-+    "src/main.rs": "7357563616f1d30165cf6ff09f18b75a702770908eea997262ffaae2347c05ba",
-+    "src/evaluator.rs": "0f38d575dafd611f9ef831a3cad2a26118949b4e57f1a3c4897abb997c6cb0c1",
-+    "src/cli.rs": "ed9f63206037ba50d1ec2fd7059cec3063e18bf6573352b9d7c61dce3a741109",
-+    "src/config_load_regression_tests.rs": "f7e097798629c7338655564f55c990ee1261a2c4de40a34aa45366cb9d9aeea8",
-+}
-+
-+
-+class CandidateApplicationTests(unittest.TestCase):
-+    def setUp(self) -> None:
-+        self.directory = tempfile.TemporaryDirectory(prefix="dcg-568-")
-+        self.addCleanup(self.directory.cleanup)
-+        self.root = Path(self.directory.name)
-+        for name, oid in SOURCE_BLOBS.items():
-+            data = subprocess.check_output(["git", "cat-file", "blob", oid],
-+                                           cwd=candidate.ROOT, timeout=30)
-+            path = self.root / name
-+            path.parent.mkdir(parents=True, exist_ok=True)
-+            path.write_bytes(data)
-+        for name in [candidate.PATCH, candidate.REGRESSION]:
-+            path = self.root / name
-+            path.parent.mkdir(parents=True, exist_ok=True)
-+            shutil.copyfile(candidate.ROOT / name, path)
-+
-+    def snapshot(self) -> dict[str, bytes]:
-+        return {str(path.relative_to(self.root)): path.read_bytes()
-+                for path in self.root.rglob("*") if path.is_file()}
-+
-+    def run_consumer(self, *args: str) -> subprocess.CompletedProcess:
-+        return subprocess.run(
-+            [sys.executable, str(candidate.ROOT / "scripts/apply_config_load_candidate.py"),
-+             "--root", str(self.root), *args],
-+            capture_output=True, text=True, check=False, timeout=30,
-+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
-+        )
-+
-+    def assert_refused_without_changes(self, message: str) -> None:
-+        before = self.snapshot()
-+        result = self.run_consumer()
-+        self.assertNotEqual(result.returncode, 0, result)
-+        self.assertIn(message, result.stderr)
-+        self.assertEqual(self.snapshot(), before)
-+
-+    def test_real_candidate_applies_exact_reviewed_source_and_unit_regressions(self):
-+        regression = (self.root / candidate.REGRESSION).read_bytes()
-+        result = self.run_consumer()
-+        self.assertEqual(result.returncode, 0, result.stderr)
-+        for name, expected in POSTIMAGES.items():
-+            self.assertEqual(hashlib.sha256((self.root / name).read_bytes()).hexdigest(), expected, name)
-+        self.assertEqual((self.root / candidate.REGRESSION).read_bytes(), regression)
-+        self.assertIn(b'#[path = "config_load_regression_tests.rs"]',
-+                      (self.root / "src/config.rs").read_bytes())
-+
-+    def test_check_only_proves_real_apply_without_changing_files(self):
-+        before = self.snapshot()
-+        result = self.run_consumer("--check")
-+        self.assertEqual(result.returncode, 0, result.stderr)
-+        self.assertEqual(self.snapshot(), before)
-+
-+    def test_tampered_patch_fails_before_source_modification(self):
-+        with (self.root / candidate.PATCH).open("ab") as patch:
-+            patch.write(b"\n# unreviewed payload\n")
-+        self.assert_refused_without_changes("patch SHA256 mismatch")
-+
-+    def test_empty_patch_is_not_a_candidate(self):
-+        (self.root / candidate.PATCH).write_bytes(b"")
-+        self.assert_refused_without_changes("patch SHA256 mismatch")
-+
-+    def test_missing_patch_fails_before_source_modification(self):
-+        (self.root / candidate.PATCH).rename(self.root / "retained-patch")
-+        self.assert_refused_without_changes("missing regular candidate input")
-+
-+    def test_wrong_base_outside_patch_context_still_refuses(self):
-+        with (self.root / "src/config.rs").open("ab") as source:
-+            source.write(b"\n// useful intervening source work\n")
-+        self.assert_refused_without_changes("source preimage mismatch")
-+
-+    def test_existi
-```
-
-**File**: `src/cli.rs` (modified, +73/-11)
-```diff
-@@ -2434,9 +2434,40 @@ pub fn run_command(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
-     let (config, config_sources) = if needs_config_trace {
-         let loaded_config = Config::load_with_report();
-         (loaded_config.config, Some(loaded_config.sources))
-+    } else if let Some(Command::TestCommand {
-+        config: Some(path), ..
-+    }) = &cli.command
-+    {
-+        (Config::load_with_explicit_path(path), None)
-     } else {
-         (Config::load(), None)
-     };
-+    // Diagnostics and repair-oriented config commands remain available. Other
-+    // CLI operations must not report success using partially loaded policy.
-+    // Explicit batch hooks have their own indexed JSONL denial contract.
-+    if let Some(reason) = config.configuration_error() {
-+        if !matches!(
-+            &cli.command,
-+            Some(
-+                Command::Doctor { .. }
-+                    | Command::ShowConfig { .. }
-+                    | Command::Completions { .. }
-+                    | Command::Hook(_)
-+            )
-+        ) {
-+            crate::emit_stdout!(
-+                "{}",
-+                serde_json::json!({
-+                    "schema_version": 1,
-+                    "decision": "deny",
-+                    "error": { "kind": "configuration_error", "message": reason },
-+                    "reason": reason,
-+                })
-+            );
-+            crate::emit_stderr!("Error: {reason}");
-+            std::process::exit(crate::exit_codes::EXIT_CONFIG_ERROR);
-+        }
-+    }
-     crate::output::install_theme_config(&config);
-     let verbosity = Verbosity::from_cli(&cli);
-     let explicit_omp_agent = is_explicit_omp_agent(cli.agent.as_deref());
-@@ -2558,7 +2589,7 @@ pub fn run_command(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
-         Some(Command::TestCommand {
-             command,
-             stdin,
--            config: config_path,
-+            config: _,
-             with_packs,
-             explain,
-             format,
-@@ -2578,16 +2609,9 @@ pub fn run_command(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
-             validate_omp_bridge_output_agent(omp_bridge_output, robot_mode, explicit_omp_agent)?;
-             let effective_format = if robot_mode { TestFormat::Json } else { format };
- 
--            // Load specific config file if provided, otherwise use default
--            let effective_config = if let Some(ref path) = config_path {
--                Config::load_from_file(path).unwrap_or_else(|| {
--                    eprintln!("Warning: Failed to load config from {}", path.display());
--                    config.clone()
--                })
--            } else {
--                config.clone()
--            };
--
-+            // The shared loader already selected --config, preserving
-+            // system policy, environment overrides and fatal load failures.
-+            let effective_config = config.clone();
-             let command = if stdin {
-                 read_test_command_from_stdin(
-                     effective_config.general.max_command_bytes(),
-@@ -2900,6 +2924,13 @@ fn write_completions(shell: CompletionShell) -> Result<(), Box<dyn std::error::E
- fn run_hook_command(config: &Config, cmd: &HookCommand) -> Result<i32, Box<dyn std::error::Error>> {
-     use std::io::{self, BufRead, Write};
- 
-+    // A broken trusted layer must deny before allowlists, external packs or
-+    // policy modes can authorize a line. Preserve the batch protocol instead
-+    // of emitting the generic CLI error or a host-specific hook envelope.
-+    if let Some(reason) = config.configuration_error() {
-+        return run_hook_configuration_error(reason);
-+    }
-+
-     // `dcg hook` reads JSONL hook payloads from stdin and writes one result
-     // line per (non-empty) input line. `--batch` is accepted for explicitness
-     // but is no longer required — a single JSON object on stdin is processed as
-@@ -3156,6 +3187,37 @@ fn run_hook_command(config: &Config, cmd: &HookCommand) -> Result<i32, Box<dyn s
-     Ok(exit_code)
- }
- 
-+/// Refuse each nonblank input with the established batch JSONL/exit-1 contract.
-+/// Even malformed or non-UTF-8 inputs cannot hide a missing trusted policy.
-+fn run_hook_configuration_error(reason: &str) -> Result<i32, Box<dyn std::error::Error>> {
-+    use std::io::{self, BufRead, Write};
-+
-+    let stdin = io::stdin();
-+    let stdout = io::stdout();
-+    let mut output = stdout.lock();
-+    let mut index = 0usize;
-+    for line in stdin.lock().lines() {
-+        if line.as_ref().is_ok_and(|text| text.trim().is_empty()) {
-+            continue;
-+        }
-+        let can_continue = batch_read_can_continue(&line);
-+        // Keep `error` a string for existing batch clients; the additive kind
-+        // lets callers distinguish a configuration failure without parsing it.
-+        let verdict = serde_json::json!({
-+            "index": index,
-+            "decision": "deny",
-+            "error_kind": "configuration_error"
-```
-
-**File**: `src/config.rs` (modified, +235/-70)
-```diff
-@@ -61,50 +61,89 @@ pub(crate) enum ConfigSource {
- /// the subsequent read and prevents a FIFO from wedging the hook before its
- /// file type can be rejected.
- pub(crate) fn read_config_file_bounded(path: &Path, source: ConfigSource) -> Option<String> {
-+    read_config_file_result(path, source).ok()
-+}
-+
-+/// Preserve the outcome of the actual open/read. A later filesystem restat is
-+/// useful for diagnostics, but must not decide whether required policy vanished.
-+#[derive(Debug)]
-+enum ConfigReadFailure {
-+    Missing,
-+    #[cfg_attr(unix, allow(dead_code))]
-+    Unsupported,
-+    Rejected(String),
-+    Content(String),
-+}
-+
-+impl ConfigReadFailure {
-+    fn blocks_trusted_layer(&self, source: ConfigSource, layer: ConfigFileLayer) -> bool {
-+        if source == ConfigSource::AutoProject {
-+            return false;
-+        }
-+        match self {
-+            Self::Missing => layer == ConfigFileLayer::Explicit,
-+            Self::Unsupported => false,
-+            // A system path that failed its ownership/path trust checks is not
-+            // administrator policy. Keep ignoring it, including on Windows.
-+            Self::Rejected(_) => source == ConfigSource::Untrusted,
-+            // Content failures occur AFTER the source's handle was validated.
-+            Self::Content(_) => true,
-+        }
-+    }
-+
-+    fn detail(&self) -> &str {
-+        match self {
-+            Self::Missing => "the explicitly selected configuration file does not exist",
-+            Self::Unsupported => "this configuration source is unsupported on this platform",
-+            Self::Rejected(detail) | Self::Content(detail) => detail,
-+        }
-+    }
-+}
-+
-+fn read_config_file_result(path: &Path, source: ConfigSource) -> Result<String, ConfigReadFailure> {
-     #[cfg(not(unix))]
-     if non_unix_source_is_unsupported(source) {
-         warn_and_ignore_non_unix_restricted_config(path, source);
--        return None;
-+        return Err(ConfigReadFailure::Unsupported);
-     }
- 
-     let mut file = match open_config_file_for_source(path, source) {
--        Ok(f) => f,
--        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return None,
--        Err(e) => {
-+        Ok(file) => file,
-+        Err(error) if error.kind() == io::ErrorKind::NotFound => {
-+            return Err(ConfigReadFailure::Missing);
-+        }
-+        Err(error) => {
-             crate::emit_stderr!(
-                 "Warning: refusing to load config file '{}': {}",
-                 path.display(),
--                e
-+                error
-             );
--            return None;
-+            return Err(ConfigReadFailure::Rejected(error.to_string()));
-         }
-     };
--
--    // `take(MAX_CONFIG_BYTES + 1)` lets us tell "exactly cap" (allowed) from
--    // "more than cap" (rejected) without reading unbounded bytes either way.
--    let mut buf = String::new();
--    if let Err(e) = file
-+    let mut content = String::new();
-+    if let Err(error) = file
-         .by_ref()
-         .take(MAX_CONFIG_BYTES + 1)
--        .read_to_string(&mut buf)
-+        .read_to_string(&mut content)
-     {
-         crate::emit_stderr!(
-             "Warning: Failed to read config file '{}': {}",
-             path.display(),
--            e
-+            error
-         );
--        return None;
-+        return Err(ConfigReadFailure::Content(error.to_string()));
-     }
--    if buf.len() as u64 > MAX_CONFIG_BYTES {
-+    if content.len() as u64 > MAX_CONFIG_BYTES {
-+        let detail = format!("configuration exceeds the {MAX_CONFIG_BYTES}-byte limit");
-         crate::emit_stderr!(
--            "Warning: refusing to load config '{}' — exceeds {}-byte cap",
-+            "Warning: refusing to load config '{}': {}",
-             path.display(),
--            MAX_CONFIG_BYTES
-+            detail
-         );
--        return None;
-+        return Err(ConfigReadFailure::Content(detail));
-     }
--
--    Some(buf)
-+    Ok(content)
- }
- 
- /// Render a TOML error from an automatically discovered repository config
-@@ -2982,6 +3021,12 @@ pub fn take_rule_target_suppressions() -> Vec<RuleTargetSuppression> {
- #[derive(Debug, Clone, Default, Serialize, Deserialize, schemars::JsonSchema)]
- #[serde(default)]
- pub struct OverridesConfig {
-+    /// Runtime-only failure of a required trusted config layer (#568).
-+    /// Neither TOML nor an automatic project policy can manufacture or clear it.
-+    #[serde(skip)]
-+    #[schemars(skip)]
-+    pub configuration_error: Option<String>,
-+
-     /// Patterns to allow that would otherwise be blocked.
-     #[serde(default)]
-     pub allow: Vec<AllowOverride>,
-@@ -3834,6 +3879,8 @@ impl CompiledBlockOverride {
- /// evaluations. It eliminates per-command regex compilation overhead.
- #[derive(Debug, Default)]
- pub struct CompiledOverrides {
-+    /// Fatal trusted-config failure, checked before every authorization path.
-+    pub configuration_error: Option<String>,
-     /// Compiled allow overrides.
-     pub allow: Vec<CompiledAllowOverride>,
-     /// Com
-```
-
-**File**: `src/config_load_regression_tests.rs` (added, +187/-0)
-```diff
-@@ -0,0 +1,187 @@
-+//! Regression coverage for loss of trusted policy on config errors (#568).
-+use super::*;
-+use crate::allowlist::LayeredAllowlist;
-+use crate::evaluator::{EvaluationDecision, evaluate_command_with_pack_order};
-+
-+fn load(path: &Path, source: ConfigSource, layer: ConfigFileLayer) -> Option<ConfigLayer> {
-+    Config::load_layer_from_file_with_outcome(
-+        path,
-+        source,
-+        layer,
-+        if source == ConfigSource::AutoProject {
-+            ConfigFileAuthority::EnforcementOnly
-+        } else {
-+            ConfigFileAuthority::Full
-+        },
-+        false,
-+    )
-+    .0
-+}
-+
-+#[test]
-+fn malformed_trusted_layers_retain_errors_without_diagnostic_tracing() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let path = dir.path().join("config.toml");
-+    for content in [
-+        "[general",
-+        "[policy.rules]\n\"core.git:reset-hard\" = \"not-a-mode\"",
-+    ] {
-+        fs::write(&path, content).unwrap();
-+        for layer in [ConfigFileLayer::User, ConfigFileLayer::Explicit] {
-+            let mut config = Config::default();
-+            config.merge_layer(load(&path, ConfigSource::Untrusted, layer).unwrap());
-+            let reason = config.configuration_error().unwrap();
-+            assert!(reason.contains("config.toml"));
-+            assert!(reason.contains("line"));
-+            assert!(reason.contains("dcg doctor --strict"));
-+            assert!(config.is_fail_closed());
-+            assert!(config.unverified_denies());
-+        }
-+    }
-+}
-+
-+#[test]
-+fn missing_optional_sources_are_not_missing_explicit_sources() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let path = dir.path().join("absent.toml");
-+    assert!(load(&path, ConfigSource::Untrusted, ConfigFileLayer::User).is_none());
-+    assert!(load(&path, ConfigSource::System, ConfigFileLayer::System).is_none());
-+    assert!(
-+        load(
-+            &path,
-+            ConfigSource::AutoProject,
-+            ConfigFileLayer::AutomaticProject
-+        )
-+        .is_none()
-+    );
-+    let mut config = Config::default();
-+    config.merge_layer(load(&path, ConfigSource::Untrusted, ConfigFileLayer::Explicit).unwrap());
-+    assert!(
-+        config
-+            .configuration_error()
-+            .unwrap()
-+            .contains("does not exist")
-+    );
-+}
-+
-+#[test]
-+fn trusted_read_failures_cannot_fall_back_to_defaults() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let path = dir.path().join("config.toml");
-+    for content in [vec![0xff, 0xfe], vec![b' '; MAX_CONFIG_BYTES as usize + 1]] {
-+        fs::write(&path, content).unwrap();
-+        let mut config = Config::default();
-+        config.merge_layer(load(&path, ConfigSource::Untrusted, ConfigFileLayer::User).unwrap());
-+        assert!(config.configuration_error().is_some());
-+        assert!(
-+            load(
-+                &path,
-+                ConfigSource::AutoProject,
-+                ConfigFileLayer::AutomaticProject
-+            )
-+            .is_none()
-+        );
-+    }
-+}
-+
-+#[test]
-+fn system_trust_rejection_and_post_validation_content_failure_are_distinct() {
-+    let rejected = ConfigReadFailure::Rejected("untrusted ownership".into());
-+    assert!(!rejected.blocks_trusted_layer(ConfigSource::System, ConfigFileLayer::System));
-+    assert!(rejected.blocks_trusted_layer(ConfigSource::Untrusted, ConfigFileLayer::User));
-+    let unreadable = ConfigReadFailure::Content("invalid UTF-8 after trusted open".into());
-+    assert!(unreadable.blocks_trusted_layer(ConfigSource::System, ConfigFileLayer::System));
-+    assert!(
-+        !unreadable
-+            .blocks_trusted_layer(ConfigSource::AutoProject, ConfigFileLayer::AutomaticProject)
-+    );
-+}
-+
-+#[test]
-+fn later_allow_policy_cannot_erase_a_required_layer_failure() {
-+    let mut config = Config::default();
-+    config.merge_layer(Config::failed_config_layer(
-+        Path::new("admin.toml"),
-+        "invalid policy",
-+    ));
-+    config.merge_layer(
-+        toml::from_str::<ConfigLayer>(
-+            "[overrides]\nallow = [\".*\"]\n[policy]\ndefault_mode = \"log\"",
-+        )
-+        .unwrap(),
-+    );
-+    let compiled = config.overrides.compile();
-+    assert!(compiled.check_allow("git reset --hard"));
-+    for command in ["", "git status", "printf dcg-protected", "git reset --hard"] {
-+        let result = evaluate_command_with_pack_order(
-+            command,
-+            &[],
-+            &[],
-+            None,
-+            &compiled,
-+            &LayeredAllowlist::default(),
-+            &HeredocSettings::default(),
-+        );
-+        assert_eq!(result.decision, EvaluationDecision::Deny, "{command}");
-+        assert!(result.reason().unwrap().contains("admin.toml"));
-+        assert!(!result.quick_rejected);
-+    }
-+}
-+
-+#[test]
-+fn automatic_malformed_policy_is_ignored_not_promoted_to_global_failure() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let path = dir.path().join(".dcg.toml");
-+    fs::write(
-+        &path,
-+        
-```
-
-**File**: `src/evaluator.rs` (modified, +10/-0)
-```diff
-@@ -14079,6 +14079,11 @@ fn evaluate_command_with_pack_order_deadline_at_path_inner(
-     nested_command_depth: usize,
-     inherited_automated_stdin: bool,
- ) -> EvaluationResult {
-+    // Required trusted policy must be intact before any authorization path (#568).
-+    if let Some(reason) = compiled_overrides.configuration_error.as_deref() {
-+        return EvaluationResult::denied_by_config(reason.to_string());
-+    }
-+
-     let scope = crate::packs::regex_engine::RegexEvaluationScope::enter();
-     let mut result = evaluate_command_in_dialect_union(
-         command,
-@@ -30668,6 +30673,11 @@ where
-     S: LegacySafePattern,
-     D: LegacyDestructivePattern,
- {
-+    // Required trusted policy must be intact before any authorization path (#568).
-+    if let Some(reason) = compiled_overrides.configuration_error.as_deref() {
-+        return EvaluationResult::denied_by_config(reason.to_string());
-+    }
-+
-     // Empty commands are allowed (no-op)
-     if command.is_empty() {
-         return EvaluationResult::allowed();
-```
-
----
-
-### Incident Patch 2: `450a2897` (2026-10-14)
-**Commit Message**: fix(omp): honor strict unverified posture on missing verdicts and beat host timeout
-
-Close the #564 fail-open path in the generated OMP bridge. An exit code
-0 or 2 without an explicit parseable robot allow verdict is now an
-infrastructure failure, not an unconditional allow. Empty, malformed and
-unknown stdout always produce a diagnostic and pass through the configured
-DCG_UNVERIFIED_DECISION posture. Preserve valid JSON allows, blocking
-witnesses, exit-one blocks, signal/crash handling and stdout-only authority.
-
-Fix #563: lower the child's parent timeout to 25 seconds, with 250 ms
-pipe-drain grace terms bringing the observation watchdog to 25.5 seconds.
-Keep 4.5 seconds of headroom under OMP's default 30-second tool_call
-handler ceiling, and encode a >=4-second margin assertion.
-
-Update the existing transition and generated-bridge regression oracles,
-retain the single-cell deny-to-allow mutation witness, and add eight
-mocked OMP callback replay cases for default visible failures and strict
-blocks on 0/2 x empty/malformed/unknown outputs. Preserve native stdout
-and stderr roles and all other outcome cells.
-
-Validation: source-level comparison and complete 42-cell transition matrix
-
-**File**: `src/cli.rs` (modified, +76/-22)
-```diff
-@@ -15516,9 +15516,11 @@ pub(crate) const OMP_EXTENSION_MARKER: &str = "dcg-omp-extension";
- ///
- /// dcg's ordinary evaluator deadline is 1 second and the broad Windows preset
- /// defaults to 3 seconds, but an operator may configure a larger deadline.
--/// Keep this pathological-hang backstop generous enough not to compete with
--/// those evaluator budgets while still bounding a wedged child at the bridge.
--pub(crate) const OMP_CHILD_EVALUATION_TIMEOUT_MS: u64 = 30_000;
-+/// Keep this pathological-hang backstop generous enough for those budgets,
-+/// but shorter than OMP's default 30-second tool_call handler deadline. Its
-+/// own watchdog must fire first so an operator sees dcg's failure diagnostic
-+/// rather than a generic host handler timeout (#563).
-+pub(crate) const OMP_CHILD_EVALUATION_TIMEOUT_MS: u64 = 25_000;
- 
- /// Maximum time to drain stdout/stderr after Bun reports child termination.
- ///
-@@ -15533,7 +15535,8 @@ pub(crate) const OMP_CHILD_PIPE_DRAIN_GRACE_MS: u64 = 250;
- /// Bun's native child timeout normally settles first. The extra two drain
- /// windows cover signal/reap propagation plus one bounded post-exit drain; if
- /// the exit capability itself never settles, this outer watchdog still closes
--/// the local observation boundary.
-+/// the local observation boundary. Total is 25_500 ms, leaving 4_500 ms for
-+/// the handler to finish under OMP's default 30_000 ms ceiling.
- pub(crate) const OMP_CHILD_OBSERVATION_TIMEOUT_MS: u64 =
-     OMP_CHILD_EVALUATION_TIMEOUT_MS + 2 * OMP_CHILD_PIPE_DRAIN_GRACE_MS;
- 
-@@ -15868,12 +15871,15 @@ const DCG_OBSERVATION_ABORTED = Symbol("dcg-child-observation-aborted");
- // that the unverified posture may still turn into a block. A dcg that started
- // and then died (a signal, or an exit status dcg never uses for a verdict)
- // without a blocking verdict is a "crash": it blocks unless
--// DCG_BRIDGE_CRASH_DECISION=allow.
-+// DCG_BRIDGE_CRASH_DECISION=allow. Exit 0/2 with empty, malformed or unknown
-+// stdout is UNVERIFIED, not an allow: only an explicit robot JSON allow is
-+// proof of a clean decision. The infrastructure row logs the failure and
-+// honors DCG_UNVERIFIED_DECISION=deny (#564).
- const DCG_CHILD_TRANSITIONS: Record<DcgChildOutcome, Record<DcgParsedVerdict, DcgBridgeAction>> = {{
-   "spawn-throw": {{ empty: "infrastructure", malformed: "infrastructure", allow: "infrastructure", deny: "block", ask: "block", indeterminate: "block", unknown: "infrastructure" }},
--  "exit-0": {{ empty: "allow", malformed: "allow", allow: "allow", deny: "block", ask: "block", indeterminate: "block", unknown: "allow" }},
-+  "exit-0": {{ empty: "infrastructure", malformed: "infrastructure", allow: "allow", deny: "block", ask: "block", indeterminate: "block", unknown: "infrastructure" }},
-   "exit-1": {{ empty: "block", malformed: "block", allow: "block", deny: "block", ask: "block", indeterminate: "block", unknown: "block" }},
--  "exit-2": {{ empty: "allow", malformed: "allow", allow: "allow", deny: "block", ask: "block", indeterminate: "block", unknown: "allow" }},
-+  "exit-2": {{ empty: "infrastructure", malformed: "infrastructure", allow: "allow", deny: "block", ask: "block", indeterminate: "block", unknown: "infrastructure" }},
-   "exit-other": {{ empty: "crash", malformed: "crash", allow: "crash", deny: "block", ask: "block", indeterminate: "block", unknown: "crash" }},
-   "signal": {{ empty: "crash", malformed: "crash", allow: "crash", deny: "block", ask: "block", indeterminate: "block", unknown: "crash" }},
- }};
-@@ -24859,9 +24865,14 @@ if ($errors.Count -ne 0) {
-                     > crate::perf::CAREFUL_COMPANY_HOOK_EVALUATION_BUDGET_MS,
-                 "the bridge backstop must leave headroom above the largest shipped evaluator default"
-             );
-+            // OMP's default tool_call timeout is 30_000ms; reserve at least
-+            // four seconds for the extension to finish after its watchdog.
-+            const OMP_DEFAULT_HANDLER_TIMEOUT_MS: u64 = 30_000;
-+            const REQUIRED_HANDLER_MARGIN_MS: u64 = 4_000;
-             assert!(
--                OMP_CHILD_EVALUATION_TIMEOUT_MS <= 60_000,
--                "a wedged evaluator must not stall an OMP bash call for more than one minute"
-+                OMP_CHILD_OBSERVATION_TIMEOUT_MS + REQUIRED_HANDLER_MARGIN_MS
-+                    <= OMP_DEFAULT_HANDLER_TIMEOUT_MS,
-+                "the generated guard watchdog must beat OMP's host handler timeout"
-             );
-         }
-         assert!(source.contains(&format!(
-@@ -25256,9 +25267,9 @@ if ($errors.Count -ne 0) {
-         assert!(source.contains("const DCG_CHILD_TRANSITIONS:"));
-         for row in [
-             r#""spawn-throw": { empty: "infrastructure", malformed: "infrastructure", allow: "infrastructure", deny: "block", ask: "block", indeterminate: "block", unknown: "infrastructure" }"#,
--            r#""exit-0": { empty: "allow", malformed: "allow", allow: "allow", deny: "block", ask: "block", indeterminate: "block", unknown
-```
-
----
-
-### Incident Patch 3: `dec8bcb4` (2026-10-14)
-**Commit Message**: fix(python): apply rmtree policy to static reflective invocations
-
-The default receiver pattern does not match immediate invocations through
-getattr, module __dict__ lookup, or rmtree.__call__. Add fourteen structural
-forms covering literal member names, both quote styles, qualified getter
-calls and a grouped callee. Reuse the registered recursive-deletion rule
-and its outer-call target refinement rather than harvesting receiver data.
-
-Compose these findings in the default CLI/hook matcher, deduplicate only
-supplemental findings, retain source order, and apply the existing tempfile
-factory/dependency proof to the combined results. Use remaining explicit
-budgets and propagate incomplete supplemental analysis as an error, not an
-empty success. Keep custom corpora, core path policy and #560 source views
-unchanged. This does not resolve dynamic names or captured default aliases.
-
-Add 36 shared fixtures (23 deny, 13 allow), three unit tests and two tests
-in the existing hermetic CLI/hook harness. Four Python launch forms define
-288 new authored CLI/hook verdict checks. All existing fixtures/tests remain.
-
-Validation performed: official native ast-grep 0.45.3 (matching DCG's
-locked core 
-
-**File**: `src/ast_matcher.rs` (modified, +168/-4)
-```diff
-@@ -47,12 +47,12 @@ impl DefaultPolicyMatcher {
-         language: ScriptLanguage,
-     ) -> Result<Vec<PatternMatch>, MatchError> {
-         let matches = source_analysis::DEFAULT_MATCHER.find_matches(code, language)?;
--        Ok(tempfile_provenance::validate(
-+        complete_python_deletion_matches(
-             code,
-             language,
-             matches,
-             source_analysis::protected_scan_budget(),
--        ))
-+        )
-     }
- 
-     /// Match source with an explicit budget. The producer proof uses only the
-@@ -70,12 +70,12 @@ impl DefaultPolicyMatcher {
-         let started = Instant::now();
-         let matches = source_analysis::DEFAULT_MATCHER
-             .find_matches_with_timeout(code, language, timeout)?;
--        Ok(tempfile_provenance::validate(
-+        complete_python_deletion_matches(
-             code,
-             language,
-             matches,
-             timeout.saturating_sub(started.elapsed()),
--        ))
-+        )
-     }
- 
-     /// Return the first blocking match from the complete default policy.
-@@ -88,6 +88,90 @@ impl DefaultPolicyMatcher {
-     }
- }
- 
-+// These are invocations of a statically named deletion member, not mere
-+// lookups. Keep both quote spellings explicit: matching must not depend on a
-+// grammar's treatment of quote tokens. Like the existing $M.rmtree pattern,
-+// the receiver is deliberately not restricted to one module variable name.
-+const PYTHON_REFLECTIVE_DELETE_CALLEES: [&str; 7] = [
-+    "getattr($M, 'rmtree')",
-+    "getattr($M, \"rmtree\")",
-+    "$B.getattr($M, 'rmtree')",
-+    "$B.getattr($M, \"rmtree\")",
-+    "$M.__dict__['rmtree']",
-+    "$M.__dict__[\"rmtree\"]",
-+    "$M.rmtree.__call__",
-+];
-+
-+static PYTHON_REFLECTIVE_DELETE_MATCHER: LazyLock<AstMatcher> = LazyLock::new(|| {
-+    // Reuse the registered rule, including its target refinement, rather than
-+    // harvesting a receiver's first literal ('rmtree') as the deletion path.
-+    // Explicit user-created AstMatcher corpora remain unchanged.
-+    let meta = source_analysis::default_patterns()
-+        .remove(&ScriptLanguage::Python)
-+        .and_then(|patterns| {
-+            patterns
-+                .into_iter()
-+                .find(|meta| meta.rule_id == "heredoc.python.shutil_rmtree")
++/// Quote a complete argument only when it is literal in every supported shell.
++///
++/// The output APIs do not know which shell will receive a pasted hint. POSIX
++/// single-quote escaping is not portable to PowerShell or cmd.exe, and double
++/// quotes alone still expand substitutions and variables. Keep the convenient
++/// inline form for a conservative ASCII subset; other commands use stdin.
++fn inline_explain_command(command: &str, max_argument_bytes: usize) -> Option<String> {
++    if command.is_empty()
++        || command.len() > max_argument_bytes.saturating_sub(2)
++        || !command.bytes().all(|byte| {
++            byte.is_ascii_alphanumeric()
++                || matches!(
++                    byte,
++                    b' ' | b'/' | b'.' | b'_' | b'-' | b':' | b'+' | b'=' | b',' | b'@' | b'~'
++                )
 +        })
-+        .expect("the default Python corpus registers its recursive-deletion rule");
-+    let mut patterns = Vec::new();
-+    for callee in PYTHON_REFLECTIVE_DELETE_CALLEES {
-+        for pattern in [format!("{callee}($$$)"), format!("({callee})($$$)")] {
-+            let mut pattern_meta = meta.clone();
-+            pattern_meta.pattern_str = pattern;
-+            patterns.push(pattern_meta);
-+        }
-+    }
-+    AstMatcher::with_patterns(std::collections::HashMap::from([(
-+        ScriptLanguage::Python,
-+        patterns,
-+    )]))
-+});
-+
-+fn complete_python_deletion_matches(
-+    code: &str,
-+    language: ScriptLanguage,
-+    mut matches: Vec<PatternMatch>,
-+    budget: Duration,
-+) -> Result<Vec<PatternMatch>, MatchError> {
-+    let started = Instant::now();
-+    if language == ScriptLanguage::Python
-+        && code.contains("rmtree")
-+        && ["getattr", "__dict__", "__call__"]
-+            .iter()
-+            .any(|name| code.contains(name))
 +    {
-+        // The ordinary AST worker supplies byte bounds, cancellation and the
-+        // error contract. An incomplete extra scan is not an empty success.
-+        let extra = PYTHON_REFLECTIVE_DELETE_MATCHER.find_matches_with_timeout(
-+            code,
-+            language,
-+            budget.saturating_sub(started.elapsed()),
-+        )?;
-+        let mut seen: std::collections::HashSet<_> = matches
-+            .iter()
-+            .map(|hit| (hit.start, hit.end, hit.rule_id.clone()))
-+            .collect();
-+        for hit in extra {
-+            if seen.insert((hit.start, hit.end, hit.rule_id.clone())) {
-+                matches.push(hit);
-+            }
-+        }
-+        // Keep the original finding's precedence on a tie. The supplemental
-+        // corpus also resolves imported aliases; do not duplicate those hits.
-+        matches.sort_by_key(|hit| hit.start);
++        return None;
 +    }
-+    // A reflected call gets exactly the existing descendant and factory
-+    // policies. New .temp matches must not bypass factory/dependency proofs.
-+    // Share the remaining budget; do not grant the proof a fresh deadline.
-+    Ok(tempfile_provenance::validate(
-+        code,
-+        language,
-+        matches,
-+        budget.saturating_sub(started.elapsed()),
-+    ))
++
++    // Quoting keeps spaces in one argument; `--` also keeps a leading hyphen
++    // in command data instead of letting Clap interpret it as a dcg option.
++    Some(format!("dcg explain -- \"{command}\""))
 +}
 +
- /// Recover literal shell values only from source with execution evidence.
++fn json_character_bytes(character: char) -> usize {
++    match character {
++        '"' | '\\' | '\n' | '\r' | '\t' | '\u{8}' | '\u{c}' => 2,
++        '\u{0}'..='\u{1f}' => 6,
++        _ => character.len_utf8(),
++    }
++}
++
++/// Bound the encoded display preview without ever slicing an escape sequence.
++fn explain_command_preview(command: &str) -> (String, usize) {
++    let fits = command
++        .chars()
++        .try_fold(2_usize, |bytes, character| {
++            let next = bytes + json_character_bytes(character);
++            (next <= MAX_EXPLAIN_HINT_COMMAND).then_some(next)
++        })
++        .is_some();
++
++    let included = if fits {
++        command.len()
++    } else {
++        // Reserve the JSON quotes and the display-only ellipsis. Count the
++        // encoded size first, then serialize the whole retained source slice.
++        let mut bytes = 5;
++        let mut end = 0;
++        for (offset, character) in command.char_indices() {
++            bytes += json_character_bytes(character);
++            if bytes > MAX_EXPLAIN_HINT_COMMAND {
++                break;
++            }
++            end = offset + character.len_utf8();
++        }
++        end
++    };
++    let elided = command.len() - included;
++    let mut preview = command[..included].to_string();
++    if elided != 0 {
++        preview.push_str("...");
++    }
++    (serde_json::Value::String(preview).to_string(), elided)
++}
++
++/// Format a copyable diagnostic invocation without interpolating shell source.
+ fn format_explain_hint(command: &str) -> String {
+-    // Escape double quotes in command for safe copy-paste
+-    let escaped = command.replace('"', "\\\"");
+-    if escaped.len() <= MAX_EXPLAIN_HINT_COMMAND {
+-        return format!("Tip: dcg explain \"{escaped}\"");
+-    }
+-
+-    // Past the cap the tip cannot be copy-pasteable anyway, so spend the
+-    // bytes on the head of the command and say how much was dropped. The
+-    // elided byte count is the useful signal here, not the elided bytes.
+-    let head = truncate_for_display(&escaped, MAX_EXPLAIN_HINT_COMMAND);
+-    let total = command.len();
+-    let elided = total.saturating_sub(MAX_EXPLAIN_HINT_COMMAND);
+-    format!(
+-        "Tip: dcg explain \"{head}\"\n\
+-         (command truncated for this report: {elided} of {total} bytes elided; \
+-         rerun `dcg explain` against the full command for the complete report)"
+-    )
++    if let Some(invocation) = inline_explain_command(command, MAX_EXPLAIN_HINT_COMMAND) {
++        return format!("Tip: {invocation}");
++    }
++
++    let (preview, elided) = explain_command_preview(command);
++    let mut hint = format!(
++        "Tip: {EXPLAIN_STDIN_COMMAND}\n\
++         {EXPLAIN_STDIN_INSTRUCTION}\n\
++         Command preview (JSON string): {preview}"
++    );
++    if elided != 0 {
++        use std::fmt::Write as _;
++        let total = command.len();
++        let _ = write!(
++            hint,
++            "\n(command truncated for this report: {elided} of {total} bytes elided; \
++             supply the full command on stdin for the complete report)"
++        );
++    }
++    hint
+ }
+ 
+ fn build_rule_id(pack: Option<&str>, pattern: Option<&str>) -> Option<String> {
+@@ -3397,12 +3470,12 @@ fn format_matched_message(
+         |rule| format!("Rule: {rule}\n\n"),
+     );
+ 
+-    // The command deliberately appears ONCE, inside the `Tip:` line. A hook
++    // The command deliberately appears ONCE, in the hint or its preview. A hook
+     // decision lands in the agent's transcript and is
+```
+
+**File**: `src/packs/mod.rs` (modified, +3/-3)
+```diff
+@@ -1068,12 +1068,12 @@ impl Pack {
+ 
+     fn check_single(&self, cmd: &str) -> Option<DestructiveMatch> {
+         // Quick reject if no keywords match
+-        if !self.might_match(cmd)
+-            && !(self.id == "core.filesystem"
++        if !(self.might_match(cmd)
++            || (self.id == "core.filesystem"
+                 && crate::packs::core::filesystem::filesystem_semantic_scan_required(
+                     cmd,
+                     crate::normalize::ShellDialect::Unknown,
+-                ))
++                )))
+         {
+             return None;
+         }
+```
+
+**File**: `tests/golden/hook/deny_filesystem.json` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@
+   "hookSpecificOutput": {
+     "hookEventName": "PreToolUse",
+     "permissionDecision": "deny",
+-    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain \"rm -rf /\"\n\nReason: rm -rf on root or home paths is EXTREMELY DANGEROUS. This command will NOT be executed. Ask the user to run it manually if truly needed.\n\nExplanation: This command would recursively delete files starting from the root filesystem (/) or home directory (~). This is catastrophic and will destroy:\n             \n             - Your entire operating system\n             - All installed applications and libraries\n             - All user data, documents, and configurations\n             - Boot files, making the system unbootable\n             \n             There is NO recovery without backups. Even with backups, full restoration takes hours to days.\n             \n             dcg auto-allows recursive deletion only for literal temp paths:\n               rm -rf /tmp/<subdir>/scratch\n             \n             For any other directory, preview first, then either delete interactively or move the tree aside (dcg allows all three forms):\n               find /path/to/directory -type f | head -20\n               rm -ri /path/to/directory   # needs a terminal; with stdin closed it deletes nothing and exits 0\n               mv /path/to/directory ~/.Trash/            # macOS soft-delete, recoverable\n               mv /path/to/directory ~/.local/share/Trash/ # Linux soft-delete, recoverable\n             \n             Under a home directory, prefer the Trash move: relocating into /tmp is itself denied there (`mv-sensitive-source-root-home`), because relocate-then-delete is the bypass that rule exists to stop.\n\nRule: core.filesystem:rm-rf-root-home\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
++    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain -- \"rm -rf /\"\n\nReason: rm -rf on root or home paths is EXTREMELY DANGEROUS. This command will NOT be executed. Ask the user to run it manually if truly needed.\n\nExplanation: This command would recursively delete files starting from the root filesystem (/) or home directory (~). This is catastrophic and will destroy:\n             \n             - Your entire operating system\n             - All installed applications and libraries\n             - All user data, documents, and configurations\n             - Boot files, making the system unbootable\n             \n             There is NO recovery without backups. Even with backups, full restoration takes hours to days.\n             \n             dcg auto-allows recursive deletion only for literal temp paths:\n               rm -rf /tmp/<subdir>/scratch\n             \n             For any other directory, preview first, then either delete interactively or move the tree aside (dcg allows all three forms):\n               find /path/to/directory -type f | head -20\n               rm -ri /path/to/directory   # needs a terminal; with stdin closed it deletes nothing and exits 0\n               mv /path/to/directory ~/.Trash/            # macOS soft-delete, recoverable\n               mv /path/to/directory ~/.local/share/Trash/ # Linux soft-delete, recoverable\n             \n             Under a home directory, prefer the Trash move: relocating into /tmp is itself denied there (`mv-sensitive-source-root-home`), because relocate-then-delete is the bypass that rule exists to stop.\n\nRule: core.filesystem:rm-rf-root-home\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
+     "allowOnceCode": "<DYNAMIC>",
+     "allowOnceFullHash": "<DYNAMIC>",
+     "ruleId": "core.filesystem:rm-rf-root-home",
+@@ -15,4 +15,4 @@
+       "allowOnceCommand": "dcg allow-once <DYNAMIC>"
+     }
+   }
+-}
+\ No newline at end of file
++}
+```
+
+**File**: `tests/golden/hook/deny_git.json` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@
+   "hookSpecificOutput": {
+     "hookEventName": "PreToolUse",
+     "permissionDecision": "deny",
+-    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain \"git push --force origin main\"\n\nReason: Force push can destroy remote history. Use --force-with-lease if necessary.\n\nExplanation: git push --force overwrites remote history with your local history. This can permanently destroy commits that others have already pulled, causing data loss for your entire team. Collaborators may lose work, and recovering requires manual intervention from everyone affected.\n             \n             What can go wrong:\n             - Commits others pushed are deleted from remote\n             - Team members get diverged histories\n             - CI/CD pipelines may reference deleted commits\n             \n             Safer alternative:\n             - git push --force-with-lease: Only forces if remote matches your last fetch\n             \n             Check remote state first:\n               git fetch && git log origin/<branch>..HEAD\n\nRule: core.git:push-force-long\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
++    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain -- \"git push --force origin main\"\n\nReason: Force push can destroy remote history. Use --force-with-lease if necessary.\n\nExplanation: git push --force overwrites remote history with your local history. This can permanently destroy commits that others have already pulled, causing data loss for your entire team. Collaborators may lose work, and recovering requires manual intervention from everyone affected.\n             \n             What can go wrong:\n             - Commits others pushed are deleted from remote\n             - Team members get diverged histories\n             - CI/CD pipelines may reference deleted commits\n             \n             Safer alternative:\n             - git push --force-with-lease: Only forces if remote matches your last fetch\n             \n             Check remote state first:\n               git fetch && git log origin/<branch>..HEAD\n\nRule: core.git:push-force-long\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
+     "allowOnceCode": "<DYNAMIC>",
+     "allowOnceFullHash": "<DYNAMIC>",
+     "ruleId": "core.git:push-force-long",
+@@ -15,4 +15,4 @@
+       "allowOnceCommand": "dcg allow-once <DYNAMIC>"
+     }
+   }
+-}
+\ No newline at end of file
++}
+```
+
+**File**: `tests/golden/hook/deny_git_reset.json` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@
+   "hookSpecificOutput": {
+     "hookEventName": "PreToolUse",
+     "permissionDecision": "deny",
+-    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain \"git reset --hard\"\n\nReason: git reset --hard destroys uncommitted changes. Use 'git stash' first.\n\nExplanation: git reset --hard discards ALL uncommitted changes in your working directory AND staging area. This is one of the most dangerous git commands because changes that were never committed cannot be recovered by any means.\n             \n             What gets destroyed:\n             - All modified files revert to the target commit\n             - All staged changes are lost\n             - Untracked files remain (use git clean to remove those)\n             \n             Safer alternatives:\n             - git reset --soft <ref>: Move HEAD but keep all changes staged\n             - git reset --mixed <ref>: Move HEAD, unstage changes, keep working dir (default)\n             - git stash: Save changes before resetting\n             \n             Preview what would be lost:\n               git status && git diff\n\nRule: core.git:reset-hard\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
++    "permissionDecisionReason": "BLOCKED by dcg\n\nTip: dcg explain -- \"git reset --hard\"\n\nReason: git reset --hard destroys uncommitted changes. Use 'git stash' first.\n\nExplanation: git reset --hard discards ALL uncommitted changes in your working directory AND staging area. This is one of the most dangerous git commands because changes that were never committed cannot be recovered by any means.\n             \n             What gets destroyed:\n             - All modified files revert to the target commit\n             - All staged changes are lost\n             - Untracked files remain (use git clean to remove those)\n             \n             Safer alternatives:\n             - git reset --soft <ref>: Move HEAD but keep all changes staged\n             - git reset --mixed <ref>: Move HEAD, unstage changes, keep working dir (default)\n             - git stash: Save changes before resetting\n             \n             Preview what would be lost:\n               git status && git diff\n\nRule: core.git:reset-hard\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.\n\nTo permit this single command once, the user can approve it with: dcg allow-once <DYNAMIC>",
+     "allowOnceCode": "<DYNAMIC>",
+     "allowOnceFullHash": "<DYNAMIC>",
+     "ruleId": "core.git:reset-hard",
+@@ -15,4 +15,4 @@
+       "allowOnceCommand": "dcg allow-once <DYNAMIC>"
+     }
+   }
+-}
+\ No newline at end of file
++}
+```
+
+---
+
+### Incident Patch 2: `10bc819c` (2026-10-19)
+**Commit Message**: fix(hooks): retain native commands across aliases and malformed input
+
+Evaluate every distinct command-bearing argument alias independently so harmless, warning, or unfinished-string siblings cannot hide a destructive command. Keep explicit non-shell tool data out of the evaluation stream.
+
+Recover native Antigravity commands from bounded malformed and oversized JSON prefixes, including escaped keys, stringified args, and Unicode surrogate pairs. Infer the native denial protocol only from structurally attributable envelopes while preserving established agent and batch precedence, scan limits, and malformed-input policy.
+
+Validation on the current locked dependency graph: 177 hook unit tests, 65 executable protocol regressions, and the focused main agent-precedence test passed. cargo check --locked --all-targets passed. Changed files pass formatting and diff checks; unrelated repository-wide formatting and Clippy findings remain documented baseline issues.
+
+**File**: `src/hook.rs` (modified, +714/-40)
+```diff
+@@ -1311,20 +1311,20 @@ fn commands_in_displaced_alias_value(canonical: &str, value: &serde_json::Value)
+             .and_then(|tool_input| extract_command_from_tool_input(&tool_input))
+             .into_iter()
+             .collect(),
+-        "tool_args" => extract_command_from_tool_args(value).into_iter().collect(),
++        "tool_args" => extract_commands_from_tool_args(value),
+         "tool_call" => serde_json::from_value::<ToolCall>(value.clone())
+             .ok()
+-            .and_then(|tool_call| extract_command_from_tool_call(&tool_call))
+-            .into_iter()
+-            .collect(),
++            .filter(is_batch_shell_call)
++            .map(|tool_call| extract_commands_from_tool_call(&tool_call))
++            .unwrap_or_default(),
+         "tool_calls" => value
+             .as_array()
+             .map(|entries| {
+                 entries
+                     .iter()
+                     .filter_map(|entry| serde_json::from_value::<ToolCall>(entry.clone()).ok())
+                     .filter(is_batch_shell_call)
+-                    .filter_map(|call| extract_command_from_tool_call(&call))
++                    .flat_map(|call| extract_commands_from_tool_call(&call))
+                     .collect()
+             })
+             .unwrap_or_default(),
+@@ -1356,12 +1356,29 @@ fn commands_in_displaced_alias_value(canonical: &str, value: &serde_json::Value)
+ /// whose structure it does not trust — malformed escapes, raw control
+ /// characters inside the string, a non-string value — is dropped rather than
+ /// guessed at, and an empty result keeps the caller's historic fail-open
+-/// behavior. Escaped occurrences of the key inside string values
+-/// (`\"command\"`) never match because the scan requires the unescaped
+-/// `"command"` byte sequence.
++/// behavior. Native Antigravity envelopes instead recover command fields
++/// from the actual top-level `toolCall` / `tool_call` object. Their
++/// `CommandLine` spelling must survive the same read errors, but unrelated
++/// metadata must not become a command merely because a shell was identified.
+ #[must_use]
+ pub fn extract_commands_from_truncated_json(prefix: &str) -> Vec<String> {
+-    extract_string_values_for_key(prefix, "\"command\"")
++    let Some(native_commands) = native_commands_from_json_prefix(prefix) else {
++        return extract_string_values_for_key(prefix, "\"command\"");
++    };
++    if !extract_tool_names_from_truncated_json(prefix)
++        .iter()
++        .any(|name| is_supported_shell_tool(Some(name)))
++    {
++        return native_commands;
++    }
++
++    // Keep the legacy all-occurrences rule when a mixed envelope also names
++    // a legacy shell tool. Neither spelling may conceal a sibling command.
++    let mut commands = extract_string_values_for_key(prefix, "\"command\"");
++    for command in native_commands {
++        append_recovered_command(&mut commands, command);
++    }
++    commands
+ }
+ 
+ /// Best-effort extraction of the hook envelope's tool name(s) from a truncated
+@@ -1386,10 +1403,12 @@ pub fn extract_tool_names_from_truncated_json(prefix: &str) -> Vec<String> {
  ///
- /// #560 was caused by promoting every unowned string containing backticks or
-@@ -299,6 +383,86 @@ fn literal_execution_name(name: &str) -> bool {
- mod literal_execution_evidence_tests {
-     use super::*;
+ /// Returns the recognized shell tool name and the dialect it implies, using
+ /// exactly the same recognition and dialect mapping as the normal parsed path
+-/// ([`is_supported_shell_tool`] / [`shell_dialect_for_tool_name`]). Returns
+-/// `None` when the prefix carries no tool name at all, or only tool names that
+-/// are not shell tools — the caller must then fail open rather than deny a
+-/// payload it cannot attribute to a shell.
++/// ([`is_supported_shell_tool`] / [`shell_dialect_for_tool_name`]).
++/// Native Antigravity's `toolCall.name = "run_command"` is also recognized,
++/// including the nameless-with-args form accepted by the parsed path. The
++/// native tool name is read only from the real top-level envelope; a `name`
++/// planted in metadata or a string cannot manufacture shell attribution.
++/// Returns `None` when neither envelope can be attributed to a shell.
+ ///
+ /// The first *recognized* name wins, so a decoy non-shell tool name planted
+ /// ahead of the real one cannot suppress evaluation.
+@@ -1402,6 +1421,13 @@ pub fn shell_tool_from_truncated_json(prefix: &str) -> Option<(String, ShellDial
+             let dialect = shell_dialect_for_tool_name(Some(&name));
+             (name, dialect)
+         })
++        .or_else(|| {
++            json_object_prefix_fields(prefix)
++                .filter(|(key, _)| matches!(key.as_str(), "toolCall" | "tool_call"))
++                .filter_map(|(_, value)| truncated_tool_call(value))
++                .any(|call| call.native_shell)
++                .then(|| ("run_command".to_string(), ShellDialect::Unknown))
++        })
+ }
+ 
+ /// The hook protocol a truncated or undecodable payload declares through its
+@@ -1415,9 +1441,32 @@ pub fn shell_tool_from_truncated_json(prefix: &str) -> Option<(String, ShellDial
+ /// `event`, a `toolArgs` *object*, and no `tool_input` (which would make it
+ /// Cru
+```
+
+**File**: `src/main.rs` (modified, +44/-13)
+```diff
+@@ -278,7 +278,8 @@ fn blocking_verdict_exit_code(protocol: hook::HookProtocol, delivery: io::Result
+ /// back to the Claude shape, which answers with exit 0, and a host that reads
+ /// only the exit status takes exit 0 as a pass. That is the ordinary case for
+ /// Reasonix (#358): it sets no env marker, and process-ancestry detection is
+-/// Unix-only. So when the agent is unknown, the envelope markers still
++/// Unix-only. Antigravity also needs its native JSON response when its env
++/// marker is absent. So when the agent is unknown, the envelope markers still
+ /// readable in the raw `prefix` decide instead
+ /// ([`hook::protocol_from_truncated_json`]). They never override an
+ /// identified agent: a planted marker must not be able to switch, say,
+@@ -563,22 +564,26 @@ fn push_oversized_scan_windows(out: &mut Vec<String>, command: &str, max_command
+ /// Padding a destructive command past `max_hook_input_bytes` used to skip
+ /// every pack: the oversized input failed open (by default) without any
+ /// evaluation. The JSON prefix that WAS read usually still contains
+-/// `tool_input.command`, so extract it leniently and run it through the
+-/// normal evaluation pipeline. A proven Deny/Ask publishes the ordinary
+-/// protocol response and returns `true`; every other outcome — nothing
+-/// extractable, benign command, warn/log match, deadline exhausted — returns
+-/// `false` so the caller keeps the historic fail-open warning path.
++/// `tool_input.command` or native Antigravity `toolCall.args.CommandLine`,
++/// so extract commands leniently and run them through the normal evaluation
++/// pipeline. A proven Deny/Ask publishes the ordinary blocking response;
++/// deadline exhaustion publishes an indeterminate response. Both return the
++/// protocol's exit status. Nothing extractable, a benign command, or a
++/// warn/log match returns `None` to keep the historic fail-open warning path.
+ ///
+ /// Two attribution rules keep this from over-denying and from under-scanning:
+-/// - The prefix must name a recognized SHELL tool (`tool_name`/`toolName`).
++/// - The prefix must name a recognized SHELL tool (`tool_name`/`toolName` or
++///   native `toolCall.name`). Antigravity's nameless-with-args form is also
++///   accepted, as on the parsed path.
+ ///   An oversized `Write`/`Read` envelope that happens to carry a
+ ///   command-shaped field is not a shell request and must fail open; so does
+-///   a prefix with no tool name at all — dcg never denies what it cannot
+-///   attribute to a shell.
+-/// - EVERY `"command"` occurrence in the prefix is evaluated, not just the
+-///   first: `serde_json` is last-wins on duplicate keys and an earlier
+-///   unrelated object can carry a decoy, so judging one occurrence would let
+-///   a benign decoy suppress the real command.
++///   an unattributable prefix — dcg never denies what it cannot attribute to
++///   a shell.
++/// - EVERY recovered command is evaluated independently. Legacy envelopes
++///   retain the all-occurrences `"command"` scan. Native envelopes recover
++///   their accepted command aliases only from command-bearing envelope
++///   fields, keeping unrelated metadata inert. Neither a duplicate key nor
++///   a benign alias may suppress another command.
+ ///
+ /// Only called under fail-open; fail-closed unparseable input still denies
+ /// unconditionally in `handle_unparseable_hook_input` (issue #160).
+@@ -2739,6 +2744,32 @@ mod tests {
+         }
+     }
  
 +    #[test]
-+    fn python_reflective_rmtree_uses_the_existing_path_policy() {
-+        #[derive(serde::Deserialize)]
-+        struct Case {
-+            id: Strin
++    fn antigravity_recovery_protocol_never_overrides_an_identified_agent() {
++        let prefix = r#"{"toolCall":{"name":"run_command","args":{"CommandLine":"git reset --hard"#;
++        assert_eq!(
++            payloadless_hook_protocol(&Agent::Unknown, Some(prefix)),
++            hook::HookProtocol::Antigravity
++        );
++        assert_eq!(
++            payloadless_hook_protocol(&Agent::Custom("unknown-host".into()), Some(prefix)),
++            hook::HookProtocol::Antigravity
++        );
++        for agent in [
++            Agent::Antigravity,
++            Agent::CodexCli,
++            Agent::ClaudeCode,
++            Agent::GeminiCli,
++            Agent::Reasonix,
++        ] {
++            assert_eq!(
++                payloadless_hook_protocol(&agent, Some(prefix)),
++                hook_protocol_for_agent(&agent),
++                "native markers must preserve explicit agent {agent:?}"
++            );
++        }
++    }
++
+     #[test]
+     fn indeterminate_reason_uses_configured_budget_and_stage() {
+         let reason = format_indeterminate_reason("pre_evaluation", Duration::from_millis(1_500));
 ```
 
-**File**: `tests/fixtures/python_reflective_rmtree.json` (added, +38/-0)
+**File**: `tests/agent_hook_output.rs` (modified, +88/-0)
 ```diff
-@@ -0,0 +1,38 @@
-+[
-+  {"id":"getattr_single_root","decision":"deny","source":"import shutil\ngetattr(shutil, 'rmtree')('/tmp')"},
-+  {"id":"getattr_double_root","decision":"deny","source":"import shutil\ngetattr(shutil, \"rmtree\")('/tmp')"},
-+  {"id":"qualified_getattr_single_root","decision":"deny","source":"import builtins, shutil\nbuiltins.getattr(shutil, 'rmtree')('/tmp')"},
-+  {"id":"qualified_getattr_double_root","decision":"deny","source":"import builtins, shutil\nbuiltins.getattr(shutil, \"rmtree\")('/tmp')"},
-+  {"id":"dictionary_single_root","decision":"deny","source":"import shutil\nshutil.__dict__['rmtree']('/tmp')"},
-+  {"id":"dictionary_double_root","decision":"deny","source":"import shutil\nshutil.__dict__[\"rmtree\"]('/tmp')"},
-+  {"id":"dunder_call_root","decision":"deny","source":"import shutil\nshutil.rmtree.__call__('/tmp')"},
-+  {"id":"grouped_getattr_single_root","decision":"deny","source":"import shutil\n(getattr(shutil, 'rmtree'))('/tmp')"},
-+  {"id":"grouped_getattr_double_root","decision":"deny","source":"import shutil\n(getattr(shutil, \"rmtree\"))('/tmp')"},
-+  {"id":"grouped_qualified_getattr_single_root","decision":"deny","source":"import builtins, shutil\n(builtins.getattr(shutil, 'rmtree'))('/tmp')"},
-+  {"id":"grouped_qualified_getattr_double_root","decision":"deny","source":"import builtins, shutil\n(builtins.getattr(shutil, \"rmtree\"))('/tmp')"},
-+  {"id":"grouped_dictionary_single_root","decision":"deny","source":"import shutil\n(shutil.__dict__['rmtree'])('/tmp')"},
-+  {"id":"grouped_dictionary_double_root","decision":"deny","source":"import shutil\n(shutil.__dict__[\"rmtree\"])('/tmp')"},
-+  {"id":"grouped_dunder_call_root","decision":"deny","source":"import shutil\n(shutil.rmtree.__call__)('/tmp')"},
-+  {"id":"getattr_single_child","decision":"allow","source":"import shutil as fs\ngetattr(fs, 'rmtree')('/tmp/build')"},
-+  {"id":"getattr_double_child","decision":"allow","source":"import shutil as fs\ngetattr(fs, \"rmtree\")('/tmp/build')"},
-+  {"id":"qualified_getattr_single_child","decision":"allow","source":"import builtins as b, shutil as fs\nb.getattr(fs, 'rmtree')('/tmp/build')"},
-+  {"id":"qualified_getattr_double_child","decision":"allow","source":"import builtins as b, shutil as fs\nb.getattr(fs, \"rmtree\")('/tmp/build')"},
-+  {"id":"dictionary_single_child","decision":"allow","source":"import shutil as fs\nfs.__dict__['rmtree']('/tmp/build')"},
-+  {"id":"dictionary_double_child","decision":"allow","source":"import shutil as fs\nfs.__dict__[\"rmtree\"]('/tmp/build')"},
-+  {"id":"dunder_call_child","decision":"allow","source":"import shutil as fs\nfs.rmtree.__call__('/tmp/build')"},
-+  {"id":"var_tmp_root_alias","decision":"deny","source":"import shutil\ngetattr(shutil, 'rmtree')('/var//tmp/.')"},
-+  {"id":"private_tmp_root_alias","decision":"deny","source":"import shutil\nshutil.__dict__['rmtree']('/private/./tmp/')"},
-+  {"id":"private_var_tmp_root_alias","decision":"deny","source":"import shutil\nshutil.rmtree.__call__('/private/var/tmp/.')"},
-+  {"id":"getattr_root_traversal","decision":"deny","source":"import shutil\ngetattr(shutil, 'rmtree')('/tmp/build/..')"},
-+  {"id":"dictionary_sensitive_traversal","decision":"deny","source":"import shutil\nshutil.__dict__['rmtree']('/tmp/build/../../etc')"},
-+  {"id":"keyword_root_callback","decision":"deny","source":"import shutil, tempfile\ngetattr(shutil, 'rmtree')(path='/tmp/', onerror=lambda *args: tempfile.mkdtemp())"},
-+  {"id":"receiver_literal_cannot_exempt_root","decision":"deny","source":"import shutil\ndef receiver(value):\n    return shutil\ngetattr(receiver('/tmp/build'), 'rmtree')('/tmp')"},
-+  {"id":"reflected_spoofed_factory","decision":"deny","source":"import shutil\ndef mkdtemp():\n    return '/tmp'\ngetattr(shutil, 'rmtree')(mkdtemp())"},
-+  {"id":"dunder_call_genuine_factory","decision":"allow","source":"import shutil, tempfile\nshutil.rmtree.__call__(tempfile.mkdtemp())"},
-+  {"id":"lookup_without_invocation","decision":"allow","source":"import shutil\ncleanup = getattr(shutil, 'rmtree')"},
-+  {"id":"dictionary_without_invocation","decision":"allow","source":"import shutil\ncleanup = shutil.__dict__['rmtree']"},
-+  {"id":"inert_reflected_call_text","decision":"allow","source":"print(\"getattr(shutil, 'rmtree')('/tmp')\")"},
-+  {"id":"inert_reflected_call_comment","decision":"allow","source":"# shutil.rmtree.__call__('/tmp')\nprint('ready')"},
-+  {"id":"safe_sibling_cannot_exempt_reflected_root","decision":"deny","source":"import shutil\nshutil.rmtree('/tmp/build')\ngetattr(shutil, 'rmtree')('/tmp')"},
-+  {"id":"other_member_is_not_recursive_delete","decision":"allow","source":"import shutil\ngetattr(shutil, 'copy')('/tmp/input', '/tmp/output')"}
-+]
-```
-
-**File**: `tests/repro_549_tempfile_provenance.rs` (modified, +29/-0)
-```diff
-@@ -93,6 +93,35 @@ fn check_cases(hook: bool) {
+@@ -767,6 +767,94 @@ fn test_antigravity_warning_preserves_ordinary_permission_checks() {
      }
  }
  
-+fn check_reflective_cases(hook: bool) {
-+    let cases: Vec<Case> = serde_json::from_str(include_str!(
-+        "fixtures/python_reflective_rmtree.json"
-+    ))
-+    .expect("valid reflective-deletion fixtures");
-+    assert!(!cases.is_empty());
-+    for case in cases {
-+        let quoted = format!("'{}'", case.source.replace('\'', "'\\''"));
-+        for command in [
-+            format!("python3 -c {quoted}"),
-+            format!("python3 -I -c {quoted}"),
-+            format!("python3 - <<'PY'\n{}\nPY", case.source),
-+            format!("python3 -I - <<'PY'\n{}\nPY", case.source),
-+        ] {
-+            assert_verdict(&case, &command, hook);
-+        }
++#[test]
++fn test_antigravity_command_keys_cannot_hide_a_destructive_native_command() {
++    for decoy in ["echo harmless", "git stash drop", "echo '", "echo \\"] {
++        let input = serde_json::json!({
++            "toolCall": {
++                "name": "run_command",
++                "args": {"command": decoy, "CommandLine": "git reset --hard"}
++            }
++        })
++        .to_string();
++        let (stdout, stderr, exit_code) = run_hook_mode_raw(&input);
++        let denial = assert_antigravity_denial(&stdout, &stderr, exit_code);
++        assert!(
++            denial.reason.contains("core.git:reset-hard"),
++            "a harmless, warning, or unfinished alias cannot hide the native command: {decoy:?}\n{}",
++            denial.reason
++        );
 +    }
 +}
 +
 +#[test]
-+fn reflective_rmtree_cli_verdicts() {
-+    check_reflective_cases(false);
++fn test_antigravity_displaced_tool_call_retains_all_command_keys() {
++    let input = serde_json::json!({
++        "tool_call": {"name": "run_command", "args": {"CommandLine": "echo primary"}},
++        "toolCall": {
++            "name": "run_command",
++            "args": {"command": "echo alias", "CommandLine": "git reset --hard"}
++        }
++    })
++    .to_string();
++    let (stdout, stderr, exit_code) = run_hook_mode_raw(&input);
++    let denial = assert_antigravity_denial(&stdout, &stderr, exit_code);
++    assert!(denial.reason.contains("core.git:reset-hard"));
 +}
 +
 +#[test]
-+fn reflective_rmtree_hook_verdicts() {
-+    check_reflective_cases(true);
++fn test_antigravity_benign_command_aliases_preserve_permissions() {
++    for args in [
++        serde_json::json!({"command": "echo first", "CommandLine": "git status"}),
++        serde_json::json!({"command": "git status", "CommandLine": "git status"}),
++        serde_json::json!({"command": "", "CommandLine": "git status"}),
++        serde_json::json!({"command": "echo 'git reset --hard'", "CommandLine": "git status"}),
++    ] {
++        let input =
++            serde_json::json!({"toolCall": {"name": "run_command", "args": args}}).to_string();
++        let (stdout, stderr, exit_code) = run_hook_mode_raw(&input);
++        assert_eq!(exit_code, 0, "{input}\nstderr: {stderr}");
++        assert!(
++            stdout.is_empty(),
++            "benign aliases must not decide host permission: {stdout}"
++        );
++        assert!(
++            stderr.is_empty(),
++            "benign aliases must remain silent: {stderr}"
++        );
++    }
++}
++
++#[test]
++fn test_stringified_args_cannot_hide_command_aliases() {
++    let args =
++        serde_json::json!({"command": "echo harmless", "Command": "git reset --hard"}).to_string();
++    let cases = [
++        (
++            serde_json::json!({"toolCalls": [{"name": "bash", "args": args}]}),
++            "/hookSpecificOutput/permissionDecision",
++        ),
++        (
++            serde_json::json!({"event": "pre-tool-use", "toolName": "bash", "toolArgs": args}),
++            "/permissionDecision",
++        ),
++    ];
++    for (input, decision_pointer) in cases {
++        let (stdout, stderr, exit_code) = run_hook_mode_raw(&input.to_string());
++        assert_eq!(exit_code, 0, "{input}\nstderr: {stderr}");
++        let output: serde_json::Value = serde_json::from_str(&stdout)
++            .unwrap_or_else(|error| panic!("missing denial for {input}: {error}\n{stderr}"));
++        assert_eq!(
++            output
++                .pointer(decision_pointer)
++                .and_then(serde_json::Value::as_str),
++            Some("deny"),
++            "{output}"
++        );
++        assert!(stdout.contains("core.git:reset-hard"), "{output}");
++    }
 +}
 +
  #[test]
- fn tempfile_provenance_cli_verdicts() {
-     check_cases(false);
+ fn test_antigravity_warning_does_not_mask_destructive_companion() {
+     let input = antigravity_payload("git stash drop; git reset --hard");
+```
+
+**File**: `tests/repro_290_oversized_hook_input.rs` (modified, +318/-1)
+```diff
+@@ -14,7 +14,7 @@
+ use std::fs;
+ use std::io::Write;
+ use std::path::{Path, PathBuf};
+-use std::process::{Command, Stdio};
++use std::process::{Command, Output, Stdio};
+ 
+ /// Payload size safely past the default 256 KiB `max_hook_input_bytes`.
+ const PADDING_BYTES: usize = 300 * 1024;
+@@ -515,3 +515,320 @@ fn issue_290_normal_size_deny_unchanged() {
+         "deny"
+     );
+ }
++
++// Native Antigravity recovery must work before a HookInput exists, including
++// when the host sets its real marker and when only the stdin shape identifies
++// it. Every command below is fixture data sent to dcg, never executed.
++#[derive(Clone, Copy, Debug)]
++enum NativeRecoveryAgent {
++    NoMarker,
++    Environment,
++    Forced(&'static str),
++}
++
++fn run_native_recovery(
++    input: &[u8],
++    home: &Path,
++    agent: NativeRecoveryAgent,
++    fail_closed: bool,
++) -> Output {
++    let config =
++        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/e2e/fixtures/configs/minimal.toml");
++    let mut command = Command::new(dcg_binary());
++    command.env_clear();
++    // Preserve executable/platform lookup only; no caller agent markers,
++    // allowlists, size limits, or fail-closed overrides enter these cases.
++    for key in ["PATH", "SystemRoot", "WINDIR"] {
++        if let Some(value) = std::env::var_os(key) {
++            command.env(key, value);
++        }
++    }
++    command
++        .current_dir(home)
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .env("HOME", home)
++        .env("USERPROFILE", home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("XDG_DATA_HOME", home.join(".local/share"))
++        .env("APPDATA", home.join("AppData/Roaming"))
++        .env("LOCALAPPDATA", home.join("AppData/Local"))
++        .env("ProgramData", home)
++        .env("TMPDIR", home)
++        .env("TEMP", home)
++        .env("TMP", home)
++        .env("DCG_CONFIG", config)
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_ALLOW_ONCE_PATH", home.join("allow-once.jsonl"))
++        .env("DCG_PENDING_EXCEPTIONS_PATH", home.join("pending.jsonl"))
++        .env("DCG_HISTORY_DISABLED", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HOOK_TIMEOUT_MS", "30000")
++        .env("NO_COLOR", "1");
++    match agent {
++        NativeRecoveryAgent::NoMarker => {}
++        NativeRecoveryAgent::Environment => {
++            command.env("ANTIGRAVITY_CONVERSATION_ID", "native-recovery-test");
++        }
++        NativeRecoveryAgent::Forced(name) => {
++            command
++                .env("ANTIGRAVITY_CONVERSATION_ID", "native-recovery-test")
++                .args(["--agent", name]);
++        }
++    }
++    if fail_closed {
++        command.env("DCG_FAIL_CLOSED", "1");
++    }
++    let mut child = command.spawn().expect("spawn native recovery hook");
++    child
++        .stdin
++        .take()
++        .expect("hook stdin")
++        .write_all(input)
++        .expect("write native fixture bytes");
++    child.wait_with_output().expect("wait for native recovery")
++}
++
++fn native_recovery_payload(command: &str) -> String {
++    serde_json::json!({
++        "toolCall": {
++            "name": "run_command",
++            "args": {"CommandLine": command, "Cwd": "/repo", "WaitMsBeforeAsync": 500}
++        },
++        "conversationId": "native-recovery-test",
++        "stepIdx": 1
++    })
++    .to_string()
++}
++
++fn malformed_native_payloads(payload: &str) -> Vec<(&'static str, Vec<u8>)> {
++    let mut non_utf8 = payload.as_bytes().to_vec();
++    non_utf8.push(0xff);
++    vec![
++        (
++            "json truncation",
++            payload.as_bytes()[..payload.len() - 1].to_vec(),
++        ),
++        (
++            "malformed suffix",
++            format!("{payload} trailing").into_bytes(),
++        ),
++        ("invalid UTF-8", non_utf8),
++    ]
++}
++
++fn assert_native_recovery_denial(output: &Output, context: &str) -> String {
++    #[derive(Debug, serde::Deserialize)]
++    #[serde(deny_unknown_fields)]
++    struct NativeDenial {
++        decision: String,
++        reason: String,
++    }
++
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert_eq!(output.status.code(), Some(0), "{context}: {stderr}");
++    let root: serde_json::Value = serde_json::from_slice(&output.stdout)
++        .unwrap_or_else(|err| panic!("{context}: invalid denial ({err}): {output:?}"));
++    assert!(
++        root.is_object(),
++        "{context}: expected JSON object, got {root}"
++    );
++    // Deserialize the original bytes so duplicate keys cannot be hidden by
++    // Value's last-wins map; String rejects structured enum lookalikes.
++    let denial: NativeDenial = serde_json::from_slice(&output.stdout)
++        .unwrap_or_else(|err| panic!("{context}: native protocol rejected denial ({err}): {root}"));
++    assert_eq!(denial.decision, "deny", "{context}: {root}");
++    assert!(!denial.reason.trim().is_empty(), "{context}: {root}");
++    denial.reason
++}
+
+```
+
+---
+
+### Incident Patch 3: `cdf17b49` (2026-10-19)
+**Commit Message**: fix(deps): align ast-grep core with the vendored language adapter
+
+The standalone core update introduced incompatible 0.51 and 0.45.3 trait definitions. DCG passes the vendored SupportLang into the direct core's AST and pattern APIs, so current main fails with LanguageExt and Language trait errors.
+
+Require the compatible 0.45.3 core and remove the unused 0.51 lock entry. Retain the published vendored language/Bash grammar contract and every unrelated dependency update and lock edge.
+
+Reproduced the compiler failure before the correction; all-target compilation succeeds after aligning the pair.
+
+**File**: `Cargo.lock` (modified, +2/-14)
+```diff
+@@ -148,23 +148,11 @@ dependencies = [
+  "tree-sitter",
+ ]
+ 
+-[[package]]
+-name = "ast-grep-core"
+-version = "0.51.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "dea8fe60a16a988662ebb1b14aafc94e03260a987fb909a54525555188473269"
+-dependencies = [
+- "bit-set 0.11.1",
+- "regex",
+- "thiserror",
+- "tree-sitter",
+-]
+-
+ [[package]]
+ name = "ast-grep-language-dcg"
+ version = "0.45.3"
+ dependencies = [
+- "ast-grep-core 0.45.3",
++ "ast-grep-core",
+  "ignore",
+  "serde",
+  "tree-sitter",
+@@ -955,7 +943,7 @@ version = "0.15.3"
+ dependencies = [
+  "aho-corasick",
+  "assert_cmd",
+- "ast-grep-core 0.51.0",
++ "ast-grep-core",
+  "ast-grep-language-dcg",
+  "async-trait",
+  "base64",
+```
+
+**File**: `Cargo.toml` (modified, +4/-1)
+```diff
+@@ -65,7 +65,10 @@ tokio = { version = "1.52", features = ["rt-multi-thread"] }
+ rayon = { version = "1.11", optional = true }
+ 
+ # AST-based pattern matching for heredoc/inline-script content
+-ast-grep-core = "0.51"
++# SupportLang crosses this crate's Language/LanguageExt trait boundary. Keep
++# the core compatible with the vendored language adapter below; two semver
++# incompatible core versions produce distinct traits and cannot interoperate.
++ast-grep-core = "0.45.3"
+ # The Bash grammar carries dcg's #442/#461 fixes (scanner memory safety on glibc;
+ # explicit stdin descriptors and mixed file/here-string redirections). It used to
+ # arrive through `[patch.crates-io]`, which `cargo publish` drops, so a crates.io
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #581** (2026-10-19): deps(deps): bump ast-grep-core from 0.45.3 to 0.51.0 (@dependabot[bot])
+- **PR #580** (2026-10-19): deps(deps): bump serde_json from 1.0.151 to 1.0.154 in the serde group (@dependabot[bot])
+- **PR #579** (2026-10-19): deps(deps): bump the rust-minor-patch group with 5 updates (@dependabot[bot])
+- **PR #578** (2026-10-19): ci(deps): bump the actions group with 2 updates (@dependabot[bot])
 - **PR #559** (closed): deps(deps): bump ast-grep-core from 0.45.3 to 0.50.0 (@dependabot[bot])
 - **PR #557** (2026-10-14): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
-- **PR #556** (2026-10-14): ci(deps): bump dtolnay/rust-toolchain from 7e38f4b43b4db5c8dd498af069a4f6196df1d067 to e2a55d2ffb04f378e9626c28d38b36d230d1e12f in the actions group (@dependabot[bot])
-- **PR #535** (2026-10-05): ci(deps): bump dtolnay/rust-toolchain from 02cb101ec7c40f2c49e1d9714d64511d8e1b74de to 7e38f4b43b4db5c8dd498af069a4f6196df1d067 in the actions group (@dependabot[bot])
-- **PR #507** (2026-09-28): deps(deps): bump the rust-minor-patch group with 2 updates (@dependabot[bot])
-- **PR #506** (2026-09-28): ci(deps): bump the actions group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -3696,51 +3240,21 @@ locked core
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): preserve trusted-policy failures and restore verified #568 publication
+## X. hooks): keep diagnostic commands safe to copy
 
 **RULE**:
-When implementing operations in `.github/patches/config-load-568.patch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.beads/issues.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b1d5bf3`: config): preserve trusted-policy failures and restore verified #568 publication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad98f9f4`: hooks): keep diagnostic commands safe to copy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/patches/config-load-568.patch`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.beads/issues.jsonl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-diff --git a/src/config.rs b/src/config.rs
---- a/src/config.rs
-@@ -61,50 +61,89 @@
- /// the subsequent read and prevents a FIFO from wedging the hook before its
- /// file type can be rejected.
- pub(crate) fn read_config_file_bounded(path: &Path, source: ConfigSource) -> Option<String> {
-+    read_config_file_result(path, source).ok()
-+}
-+
-+/// Preserve the outcome of the actual open/read. A later filesystem restat is
-+/// useful for diagnostics, but must not decide whether required policy vanished.
-+#[derive(Debug)]
-+enum ConfigReadFailure {
-+    Missing,
-+    #[cfg_attr(unix, allow(dead_code))]
-+    Unsupported,
-+    Rejected(String),
-+    Content(String),
-+}
-+
-+impl ConfigReadFailure {
-+    fn blocks_trusted_layer(&self, source: ConfigSource, layer: ConfigFileLayer) -> bool {
-+        if source == ConfigSource::AutoProject {
-+            return false;
-+        }
-+        match self {
-+            Self::Missing => layer == ConfigFileLayer::Explicit,
-+            Self::Unsupported => false,
-+            // A system path that failed its ownership/path trust checks is not
-+            // administrator policy. Keep ignoring it, including on Windows.
-+            Self::Rejected(_) => s
+{"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg allowlist add core.git:reset-hard --reason approved -> deny; dcg --robot allowlist add core.git:reset-hard --reason approved -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg uninstall --yes -> deny; dcg --robot uninstall --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-bypass-or-uninstall.\n\n## Retained reproduction evidence\n\nThe six results are retained in /tmp/dcg-guardrails-repro-f5f64o
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3750,4 +3264,4 @@ diff --git a/src/config.rs b/src/config.rs
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b1d5bf3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad98f9f4` are properly handled with clean fallback behavior.

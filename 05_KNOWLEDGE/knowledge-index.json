@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:10:37.608Z",
-  "total_verified_learnings": 905,
+  "last_updated": "2026-10-19T20:16:52.880Z",
+  "total_verified_learnings": 907,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7048,14 +7048,19 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "2680518d",
-      "content_hash": "bd6c64876c849ed85f29ecb1f0a8146dcd8e32731866d9d915806ed6cbc40b5c",
+      "source_version": "f6fdf447",
+      "content_hash": "c75ace10df7830004477907df322d72db9dbda862174084e8ae6a4659e366ae2",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
         {
           "number": 2171,
           "title": "config): preserve trusted-policy failures and restore verified #568 publication",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2790,
+          "title": "hooks): keep diagnostic commands safe to copy",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7064,7 +7069,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:18:59.893Z",
+      "verified_at": "2026-10-19T20:16:48.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29738,14 +29743,19 @@
       "slug": "megabit-blazorise",
       "platform": "github",
       "source_url": "https://github.com/Megabit/Blazorise",
-      "source_version": "f5ef5fbf",
-      "content_hash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
+      "source_version": "14553676",
+      "content_hash": "4933eac28216e5d7e1fd549047b8c84e69b96bce5fe165e003ce7ec7c66a5bc2",
       "dossier_path": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "promoted_rules": [
         {
           "number": 2473,
           "title": "FilePicker: support @bind-Files and preloaded files (#6857)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2789,
+          "title": "Tooltip: fix form layout and show delay regressions (#6865)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29754,7 +29764,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:41:56.729Z",
+      "verified_at": "2026-10-19T20:16:47.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42465,22 +42475,35 @@
     "learn-github-touchlab-kermit": {
       "learning_id": "learn-github-touchlab-kermit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "touchlab-kermit",
+      "source": "touchlab/Kermit",
+      "repository": "touchlab/Kermit",
       "slug": "touchlab-kermit",
       "platform": "github",
       "source_url": "https://github.com/touchlab/Kermit",
-      "source_version": "HEAD",
-      "content_hash": "3b85019172b58e0da38998418585a2a3a847816178fbd019c1bbebb4f1031282",
+      "source_version": "3a4042f3",
+      "content_hash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2792,
+          "title": "fixed issues with rolling file and thread interruption (#483)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.024Z"
+      "verified_at": "2026-10-19T20:16:52.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-touchlab-skie": {
       "learning_id": "learn-github-touchlab-skie",
@@ -56040,22 +56063,36 @@
     "learn-github-sundios-seo-dashboard": {
       "learning_id": "learn-github-sundios-seo-dashboard",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sundios/SEO-Dashboard",
       "repository": "sundios/SEO-Dashboard",
       "slug": "sundios-seo-dashboard",
       "platform": "github",
       "source_url": "https://github.com/sundios/SEO-Dashboard",
-      "source_version": "main",
-      "content_hash": "20f09a580614b264655ddafb79aa31060989dc8b91e805da65fbdc5959b7c8d3",
+      "source_version": "8ca76eb6",
+      "content_hash": "b1d5ffd9dfcb29ed9428a2a96b2388ef76c6dcf1e634d324223b2006e33855c1",
       "dossier_path": "07_PROJECT_LEARNING/sundios-seo-dashboard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sundios-seo-dashboard-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2791,
+          "title": "Remove legacy old-dashboard and add 2026 algo updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:16:51.423Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gatenlp-ultimate-sitemap-parser": {
       "learning_id": "learn-github-gatenlp-ultimate-sitemap-parser",
@@ -91983,6 +92020,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:10:37.600Z"
+    },
+    "rule-2789": {
+      "learning_id": "rule-2789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2789,
+      "title": "Tooltip: fix form layout and show delay regressions (#6865)",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "14553676",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:16:47.373Z"
+    },
+    "rule-2790": {
+      "learning_id": "rule-2790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2790,
+      "title": "hooks): keep diagnostic commands safe to copy",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "f6fdf447",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:16:48.727Z"
+    },
+    "rule-2791": {
+      "learning_id": "rule-2791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2791,
+      "title": "Remove legacy old-dashboard and add 2026 algo updates",
+      "source_url": "https://github.com/sundios/SEO-Dashboard",
+      "source_version": "8ca76eb6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:16:51.423Z"
+    },
+    "rule-2792": {
+      "learning_id": "rule-2792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2792,
+      "title": "fixed issues with rolling file and thread interruption (#483)",
+      "source_url": "https://github.com/touchlab/Kermit",
+      "source_version": "3a4042f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:16:52.868Z"
     }
   },
   "aliases": {

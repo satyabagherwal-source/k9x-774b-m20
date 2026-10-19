@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/touchlab-kermit-learnings.md`  
+> **Source**: github ([https://github.com/touchlab/Kermit](https://github.com/touchlab/Kermit))  
+> **Source Version**: `3a4042f3`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T20:16:52.644Z  
+> **Learning ID**: `learn-github-touchlab-kermit`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): touchlab/Kermit
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/touchlab-kermit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/touchlab/Kermit](https://github.com/touchlab/Kermit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:10:01.843Z  
+> **Harvest Timestamp**: 2026-10-19T20:16:52.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Kermit by Touchlab is a Kotlin Multiplatform centralized logging utility. 
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1039 stars
+- **Stars / Engagement**: 1041 stars
 
 ---
 
@@ -430,111 +444,6 @@ actual fun mutableLoggerConfigInit(logWriters: List<LogWriter>): MutableLoggerCo
 
 ```
 
-### Core Architecture Module: `kermit-core/src/commonMain/kotlin/co/touchlab/kermit/AtomicMutableLoggerConfig.kt`
-```
-/*
- * Copyright (c) 2026 Touchlab
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- */
-
-package co.touchlab.kermit
-
-import kotlin.concurrent.atomics.AtomicReference
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
-
-@OptIn(ExperimentalAtomicApi::class)
-internal class AtomicMutableLoggerConfig(logWriters: List<LogWriter>) : MutableLoggerConfig {
-    @Suppress("ktlint:standard:backing-property-naming")
-    private val _minSeverity = AtomicReference(DEFAULT_MIN_SEVERITY)
-
-    @Suppress("ktlint:standard:backing-property-naming")
-    private val _loggerList = AtomicReference(logWriters)
-
-    override var minSeverity: Severity
-        get() = _minSeverity.load()
-        set(value) {
-            _minSeverity.store(value)
-        }
-    override var logWriterList: List<LogWriter>
-        get() = _loggerList.load()
-        set(value) {
-            _loggerList.store(value)
-        }
-}
-
-```
-
-### Core Architecture Module: `kermit-core/src/commonMain/kotlin/co/touchlab/kermit/BaseLogger.kt`
-```
-/*
- * Copyright (c) 2021 Touchlab
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-package co.touchlab.kermit
-
-typealias MessageBlock = () -> String
-
-/**
- * Base class for public Logger API. Extend to implement your own logger API.
- */
-@Suppress("unused")
-open class BaseLogger(open val config: LoggerConfig) {
-    val mutableConfig: MutableLoggerConfig
-        get() = config.let {
-            if (it !is MutableLoggerConfig) {
-                throw IllegalStateException("Logger config is not mutable")
-            }
-            it
-        }
-
-    inline fun logBlock(severity: Severity, tag: String, throwable: Throwable?, message: MessageBlock) {
-        if (config.minSeverity <= severity) {
-            processLog(
-                severity,
-                tag,
-                throwable,
-                message(),
-            )
-        }
-    }
-
-    inline fun log(severity: Severity, tag: String, throwable: Throwable?, message: String) {
-        if (config.minSeverity <= severity) {
-            processLog(
-                severity,
-                tag,
-                throwable,
-                message,
-            )
-        }
-    }
-
-    fun processLog(severity: Severity, tag: String, throwable: Throwable?, message: String) {
-        config.logWriterList.forEach {
-            if (it.isLoggable(tag, severity)) {
-                it.log(severity, message, tag, throwable)
-            }
-        }
-    }
-}
-
-internal val DEFAULT_MIN_SEVERITY = Severity.Verbose
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -546,12 +455,6 @@ internal val DEFAULT_MIN_SEVERITY = Severity.Verbose
 
 - **Issue #105** (2022-09-09): **bugsnag not writing dual crash report**
   *Symptoms*: Similar issue to Crashlytics. We should get a handled and an unhandled report for each uncaught kotlin crash, but not seeing them. Likely a config issue of some type in the sample app.
-
-- **Issue #104** (2021-08-02): **Crashlytics not writing dual crash report**
-  *Symptoms*: Probably something with the config. Crashlytics doesn't get the handled kotlin crash on hard crashes
-
-- **Issue #84** (2021-06-22): **Figure out and fix iOS sample build issue**
-  *Symptoms*: The ios Sample doesnt currently build for some reason. Fix that 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -568,83 +471,7 @@ internal val DEFAULT_MIN_SEVERITY = Severity.Verbose
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d15aabde` (2026-09-15)
-**Commit Message**: Improving Karma config to avoid timeout errors on KotlinJS tests (#488)
-
-* importing karma config with same configs from KJWT to attempt to avoid timeout errors on KotlinJS tests
-
-* manually pointing to karma config
-
-**File**: `convention-plugins/src/main/kotlin/kermit.multiplatform-library.gradle.kts` (modified, +3/-0)
-```diff
-@@ -1,3 +1,4 @@
-+import kermit.configureTests
- import org.gradle.kotlin.dsl.withType
- import org.jetbrains.kotlin.gradle.dsl.JvmTarget
- import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-@@ -49,6 +50,8 @@ kotlin {
-             }
-         }
-     }
-+
-+    configureTests()
- }
- 
- project.afterEvaluate {
-```
-
-**File**: `convention-plugins/src/main/kotlin/kermit/tests.kt` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+/*
-+ * Copyright (c) 2026 Touchlab
-+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-+ */
-+
-+package kermit
-+
-+import org.gradle.kotlin.dsl.withType
-+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-+
-+fun KotlinMultiplatformExtension.configureTests() {
-+    configureJSTests()
-+}
-+
-+private fun KotlinMultiplatformExtension.configureJSTests() {
-+    targets.withType<KotlinJsIrTarget>().configureEach {
-+        whenBrowserConfigured {
-+            testTask {
-+                useKarma {
-+                    useConfigDirectory(project.rootProject.rootDir.resolve("karma.config.d"))
-+                    useChromeHeadless()
-+                }
-+            }
-+        }
-+    }
-+}
-```
-
-**File**: `karma.config.d/config.js` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+// Taken from https://github.com/touchlab/kjwt/blob/main/karma.config.d/config.js
-+
-+config.client = config.client || {}
-+config.client.mocha = config.client.mocha || {}
-+config.client.mocha.timeout = '6000s'
-+config.browserNoActivityTimeout = 6000000
-+config.browserDisconnectTimeout = 6000000
-```
-
----
-
-### Incident Patch 2: `a745cc37` (2026-08-14)
+### Incident Patch 1: `a745cc37` (2026-08-14)
 **Commit Message**: fixed issues with rolling file and thread interruption (#483)
 
 **File**: `kermit-io/src/commonJvmMain/kotlin/co/touchlab/kermit/io/ChannelSend.kt` (added, +32/-0)
@@ -906,6 +733,82 @@ Observed empirical fixes and code patches:
 
 ---
 
+### Incident Patch 2: `d15aabde` (2026-09-15)
+**Commit Message**: Improving Karma config to avoid timeout errors on KotlinJS tests (#488)
+
+* importing karma config with same configs from KJWT to attempt to avoid timeout errors on KotlinJS tests
+
+* manually pointing to karma config
+
+**File**: `convention-plugins/src/main/kotlin/kermit.multiplatform-library.gradle.kts` (modified, +3/-0)
+```diff
+@@ -1,3 +1,4 @@
++import kermit.configureTests
+ import org.gradle.kotlin.dsl.withType
+ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+@@ -49,6 +50,8 @@ kotlin {
+             }
+         }
+     }
++
++    configureTests()
+ }
+ 
+ project.afterEvaluate {
+```
+
+**File**: `convention-plugins/src/main/kotlin/kermit/tests.kt` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (c) 2026 Touchlab
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
++ */
++
++package kermit
++
++import org.gradle.kotlin.dsl.withType
++import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
++import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
++
++fun KotlinMultiplatformExtension.configureTests() {
++    configureJSTests()
++}
++
++private fun KotlinMultiplatformExtension.configureJSTests() {
++    targets.withType<KotlinJsIrTarget>().configureEach {
++        whenBrowserConfigured {
++            testTask {
++                useKarma {
++                    useConfigDirectory(project.rootProject.rootDir.resolve("karma.config.d"))
++                    useChromeHeadless()
++                }
++            }
++        }
++    }
++}
+```
+
+**File**: `karma.config.d/config.js` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++// Taken from https://github.com/touchlab/kjwt/blob/main/karma.config.d/config.js
++
++config.client = config.client || {}
++config.client.mocha = config.client.mocha || {}
++config.client.mocha.timeout = '6000s'
++config.browserNoActivityTimeout = 6000000
++config.browserDisconnectTimeout = 6000000
+```
+
+---
+
 ### Incident Patch 3: `f644468a` (2026-02-12)
 **Commit Message**: Fix `Logger.a` for Android target (#465)
 
@@ -952,845 +855,6 @@ Observed empirical fixes and code patches:
      }
 ```
 
----
-
-### Incident Patch 4: `d30c9f22` (2025-11-05)
-**Commit Message**: Global logger overload resolution ambiguity (#459)
-
-* Update Logger.kt
-
-* Updating kermit API
-
-**File**: `kermit/api/android/kermit.api` (modified, +0/-12)
-```diff
-@@ -55,23 +55,11 @@ public class co/touchlab/kermit/Logger : co/touchlab/kermit/BaseLogger {
- }
- 
- public final class co/touchlab/kermit/Logger$Companion : co/touchlab/kermit/Logger {
--	public final fun a (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun a$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- 	public final fun addLogWriter ([Lco/touchlab/kermit/LogWriter;)V
--	public final fun d (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun d$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
--	public final fun e (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun e$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- 	public fun getTag ()Ljava/lang/String;
--	public final fun i (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun i$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- 	public final fun setLogWriters (Ljava/util/List;)V
- 	public final fun setLogWriters ([Lco/touchlab/kermit/LogWriter;)V
- 	public final fun setMinSeverity (Lco/touchlab/kermit/Severity;)V
- 	public final fun setTag (Ljava/lang/String;)V
--	public final fun v (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun v$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
--	public final fun w (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun w$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- }
- 
-```
-
-**File**: `kermit/api/jvm/kermit.api` (modified, +0/-12)
-```diff
-@@ -55,23 +55,11 @@ public class co/touchlab/kermit/Logger : co/touchlab/kermit/BaseLogger {
- }
- 
- public final class co/touchlab/kermit/Logger$Companion : co/touchlab/kermit/Logger {
--	public final fun a (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun a$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- 	public final fun addLogWriter ([Lco/touchlab/kermit/LogWriter;)V
--	public final fun d (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun d$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
--	public final fun e (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun e$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- 	public fun getTag ()Ljava/lang/String;
--	public final fun i (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun i$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- 	public final fun setLogWriters (Ljava/util/List;)V
- 	public final fun setLogWriters ([Lco/touchlab/kermit/LogWriter;)V
- 	public final fun setMinSeverity (Lco/touchlab/kermit/Severity;)V
- 	public final fun setTag (Ljava/lang/String;)V
--	public final fun v (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun v$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
--	public final fun w (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
--	public static synthetic fun w$default (Lco/touchlab/kermit/Logger$Companion;Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
- }
- 
-```
-
-**File**: `kermit/src/commonMain/kotlin/co/touchlab/kermit/Logger.kt` (modified, +0/-78)
-```diff
-@@ -225,84 +225,6 @@ open class Logger(config: LoggerConfig, open val tag: String = "") : BaseLogger(
-         fun setTag(tag: String) {
-             defaultTag = tag
-         }
--
--        /**
--         * Log a message with [Severity.Verbose] using the global logger.
--         *
--         * @param tag Tag to associate with the log message.
--         * @param throwable Optional throwable to log.
--         * @param message Lambda returning the message to log.
--         */
--        fun v(tag: String, throwable: Throwable? = null, message: () -> String) {
--            if (config.minSeverity <= Severity.Verbose) {
--                log(Severity.Verbose, tag, throwable, message())
--            }
--        }
--
--        /**
--         * Log a message with [Severity.Debug] using the global logger.
--         *
--         * @param tag Tag to associate with the log message.
--         * @param throwable Optional throwable to log.
--         * @param message Lambda returning the message to log.
--         */
--        fun d(tag: String, throwable: Throwable? = null, message: () -> String) {
--            if (config.minSeverity <= Severity.Debug) {
--                log(Severity.Debug, tag, throwable, message())
--            }
--        }
--
--        /**
--         * Log a message with [Severity.Info] using the global logger.
--         *
--         * @param tag Tag to associate with the log message.
--         * @param throwable Optional throwable to log.
--         * @param message Lambda returning the message to log.
--         */
--        fun i(tag: String, throwable: Throwable? = null, message: () -> String) {
--            if (config.minSeverity <= Severity.Info) {
--                log(Severity.Info, tag, throwable, message())
--            }
--        }
--
--        /**
--         * Log a message with [Severity.Warn] using the global logger.
--         *
--         * @param tag Tag to associate with the log message.
--         * @param throwable Optional throwable to log.
--         * @param message Lambda returning the message to log.
--         */
--        fun w(tag: String, throwable: Throwable? = null, message: () -> String) {
--            if (config.minSeverity <= Severity.Warn) {
--                log(Severity.Warn, tag, throwable, message())
--            }
--        }
--
--        /**
--         * Log a message with [Severity.Error] using the global logger.
--         *
--         * @param tag Tag to associate with the log message.
--         * @param throwable Optional throwable to log.
--         * @param message Lambda returning the message to log.
--         */
--        fun e(tag: String, throwable: Throwable? = null, message: () -> String) {
--            if (config.minSeverity <= Severity.Error) {
--                log(Severity.Error, tag, throwable, message())
--            }
--        }
--
--        /**
--         * Log a message with [Severity.Assert] using the global logger.
--         *
--         * @param tag Tag to associate with the log message.
--         * @param throwable Optional throwable to log.
--         * @param message Lambda returning the message to log.
--         */
--        fun a(tag: String, throwable: Throwable? = null, message: () -> String) {
--            if (config.minSeverity <= Severity.Assert) {
--                log(Severity.Assert, tag, throwable, message())
--            }
--        }
-     }
- }
- 
-```
-
----
-
-### Incident Patch 5: `5bb62125` (2024-12-16)
-**Commit Message**: Fix androidMain and jsAndWasmJsMain platformLogWriter implementation (#430)
-
-* add messageStringFormatter in platformLogWriter androidMain implementation for LogcatWriter
-
-* add messageStringFormatter in platformLogWriter jsAndWasmJsMain implementation for ConsoleWriter
-
-**File**: `kermit-core/src/androidMain/kotlin/co/touchlab/kermit/platformLogWriter.kt` (modified, +1/-1)
-```diff
-@@ -10,4 +10,4 @@
- 
- package co.touchlab.kermit
- 
--actual fun platformLogWriter(messageStringFormatter: MessageStringFormatter): LogWriter = LogcatWriter()
-+actual fun platformLogWriter(messageStringFormatter: MessageStringFormatter): LogWriter = LogcatWriter(messageStringFormatter)
-```
-
-**File**: `kermit-core/src/jsAndWasmJsMain/kotlin/co/touchlab/kermit/platformLogWriter.kt` (modified, +1/-1)
-```diff
-@@ -10,4 +10,4 @@
- 
- package co.touchlab.kermit
- 
--actual fun platformLogWriter(messageStringFormatter: MessageStringFormatter): LogWriter = ConsoleWriter()
-\ No newline at end of file
-+actual fun platformLogWriter(messageStringFormatter: MessageStringFormatter): LogWriter = ConsoleWriter(messageStringFormatter)
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 6: `1650e695` (2024-11-07)
-**Commit Message**: Revert "Enable KLib ABI validation (#402)" (#411)
-
-This reverts commit 4a0ea162771cbb0f9e0ae770db3cb9a71758dce9.
-
-**File**: `build.gradle.kts` (modified, +0/-5)
-```diff
-@@ -26,11 +26,6 @@ plugins {
- 
- }
- apiValidation {
--    @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
--    klib {
--        enabled = true
--    }
--
-     nonPublicMarkers.add("co.touchlab.kermit.ExperimentalKermitApi")
- //    ignoredProjects.addAll(listOf("kermit-gradle-plugin", "kermit-ir-plugin", "kermit-ir-plugin-native"))
- }
-```
-
-**File**: `extensions/kermit-bugsnag/api/kermit-bugsnag.klib.api` (removed, +0/-8)
-```diff
-@@ -1,8 +0,0 @@
--// Klib ABI Dump
--// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
--// Rendering settings:
--// - Signature version: 2
--// - Show manifest properties: true
--// - Show declarations: true
--
--// Library unique name: <co.touchlab:kermit-bugsnag>
-```
-
-**File**: `extensions/kermit-crashlytics/api/kermit-crashlytics.klib.api` (removed, +0/-8)
-```diff
-@@ -1,8 +0,0 @@
--// Klib ABI Dump
--// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
--// Rendering settings:
--// - Signature version: 2
--// - Show manifest properties: true
--// - Show declarations: true
--
--// Library unique name: <co.touchlab:kermit-crashlytics>
-```
-
-**File**: `extensions/kermit-koin/api/kermit-koin.klib.api` (removed, +0/-16)
-```diff
-@@ -1,16 +0,0 @@
--// Klib ABI Dump
--// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm64, watchosSimulatorArm64, watchosX64]
--// Rendering settings:
--// - Signature version: 2
--// - Show manifest properties: true
--// - Show declarations: true
--
--// Library unique name: <co.touchlab:kermit-koin>
--final class co.touchlab.kermit.koin/KermitKoinLogger : org.koin.core.logger/Logger { // co.touchlab.kermit.koin/KermitKoinLogger|null[0]
--    constructor <init>(co.touchlab.kermit/Logger) // co.touchlab.kermit.koin/KermitKoinLogger.<init>|<init>(co.touchlab.kermit.Logger){}[0]
--
--    final fun display(org.koin.core.logger/Level, kotlin/String) // co.touchlab.kermit.koin/KermitKoinLogger.display|display(org.koin.core.logger.Level;kotlin.String){}[0]
--}
--
--final fun co.touchlab.kermit.koin/kermitLoggerModule(co.touchlab.kermit/Logger): org.koin.core.module/Module // co.touchlab.kermit.koin/kermitLoggerModule|kermitLoggerModule(co.touchlab.kermit.Logger){}[0]
--final inline fun <#A: reified co.touchlab.kermit/Logger> (org.koin.core.scope/Scope).co.touchlab.kermit.koin/getLoggerWithTag(kotlin/String): #A // co.touchlab.kermit.koin/getLoggerWithTag|getLoggerWithTag@org.koin.core.scope.Scope(kotlin.String){0§<co.touchlab.kermit.Logger>}[0]
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ compileSdk = "34"
- 
- # Dependencies
- kotlin = "1.9.22"
--binaryCompatability = "0.16.3"
-+binaryCompatability = "0.13.2"
- 
- androidx-core = "1.12.0"
- androidx-appcompat = "1.6.1"
-```
-
-**File**: `kermit-core/api/kermit-core.klib.api` (removed, +0/-190)
-```diff
-@@ -1,190 +0,0 @@
--// Klib ABI Dump
--// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
--// Alias: androidNative => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86]
--// Alias: apple => [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
--// Rendering settings:
--// - Signature version: 2
--// - Show manifest properties: true
--// - Show declarations: true
--
--// Library unique name: <co.touchlab:kermit-core>
--open annotation class co.touchlab.kermit/ExperimentalKermitApi : kotlin/Annotation { // co.touchlab.kermit/ExperimentalKermitApi|null[0]
--    constructor <init>() // co.touchlab.kermit/ExperimentalKermitApi.<init>|<init>(){}[0]
--}
--
--final enum class co.touchlab.kermit/Severity : kotlin/Enum<co.touchlab.kermit/Severity> { // co.touchlab.kermit/Severity|null[0]
--    enum entry Assert // co.touchlab.kermit/Severity.Assert|null[0]
--    enum entry Debug // co.touchlab.kermit/Severity.Debug|null[0]
--    enum entry Error // co.touchlab.kermit/Severity.Error|null[0]
--    enum entry Info // co.touchlab.kermit/Severity.Info|null[0]
--    enum entry Verbose // co.touchlab.kermit/Severity.Verbose|null[0]
--    enum entry Warn // co.touchlab.kermit/Severity.Warn|null[0]
--
--    final val entries // co.touchlab.kermit/Severity.entries|#static{}entries[0]
--        final fun <get-entries>(): kotlin.enums/EnumEntries<co.touchlab.kermit/Severity> // co.touchlab.kermit/Severity.entries.<get-entries>|<get-entries>#static(){}[0]
--
--    final fun valueOf(kotlin/String): co.touchlab.kermit/Severity // co.touchlab.kermit/Severity.valueOf|valueOf#static(kotlin.String){}[0]
--    final fun values(): kotlin/Array<co.touchlab.kermit/Severity> // co.touchlab.kermit/Severity.values|values#static(){}[0]
--}
--
--abstract interface co.touchlab.kermit/LoggerConfig { // co.touchlab.kermit/LoggerConfig|null[0]
--    abstract val logWriterList // co.touchlab.kermit/LoggerConfig.logWriterList|{}logWriterList[0]
--        abstract fun <get-logWriterList>(): kotlin.collections/List<co.touchlab.kermit/LogWriter> // co.touchlab.kermit/LoggerConfig.logWriterList.<get-logWriterList>|<get-logWriterList>(){}[0]
--    abstract val minSeverity // co.touchlab.kermit/LoggerConfig.minSeverity|{}minSeverity[0]
--        abstract fun <get-minSeverity>(): co.touchlab.kermit/Severity // co.touchlab.kermit/LoggerConfig.minSeverity.<get-minSeverity>|<get-minSeverity>(){}[0]
--}
--
--abstract interface co.touchlab.kermit/MessageStringFormatter { // co.touchlab.kermit/MessageStringFormatter|null[0]
--    open fun formatMessage(co.touchlab.kermit/Severity?, co.touchlab.kermit/Tag?, co.touchlab.kermit/Message): kotlin/String // co.touchlab.kermit/MessageStringFormatter.formatMessage|formatMessage(co.touchlab.kermit.Severity?;co.touchlab.kermit.Tag?;co.touchlab.kermit.Message){}[0]
--    open fun formatSeverity(co.touchlab.kermit/Severity): kotlin/String // co.touchlab.kermit/MessageStringFormatter.formatSeverity|formatSeverity(co.touchlab.kermit.Severity){}[0]
--    open fun formatTag(co.touchlab.kermit/Tag): kotlin/String // co.touchlab.kermit/MessageStringFormatter.formatTag|formatTag(co.touchlab.kermit.Tag){}[0]
--}
--
--abstract interface co.touchlab.kermit/MutableLoggerConfig : co.touchlab.kermit/LoggerConfig { // co.touchlab.kermit/MutableLoggerConfig|null[0]
--    abstract var logWriterList // co.touchlab.kermit/MutableLoggerConfig.logWriterList|{}logWriterList[0]
--        abstract fun <get-logWriterList>(): kotlin.collections/List<co.touchlab.kermit/LogWriter> // co.touchlab.kermit/MutableLoggerConfig.logWriterList.<get-logWriterList>|<get-logWriterList>(){}[0]
--        abstract fun <set-logWriterList>(kotlin.collections/List<co.touchlab.kermit/LogWriter>) // co.touchlab.kermit/MutableLoggerConfig.logWriterList.<set-logWriterList>|<set-logWriterList>(kotlin.collections.List<co.touchlab.kermit.LogWriter>){}[0]
--    abstract var minSeverity // co.touchlab.kermit/MutableLoggerConfig.minSeverity|{}minSeverity[0]
--        abstract fun <get-minSeverity>(): co.touchlab.kermit/Severity // co.touchlab.kermit/MutableLoggerConfig.minSeverity.<get-minSeverity>|<get-minSeverity>(){}[0]
--        abstract fun <set-minSeverity>(co.touchlab.kermit/Severity) // co.touchlab.kermit/MutableLoggerConfig.minSeverity.<set-minSeverity>|<set-minSeverity>(co.touchlab.kermit.Severity){}[0]
--}
--
--abstract class co.touchlab.kermit/LogWriter { // co.touchlab.kermit/LogWriter|null[0]
--    constructor <init>() // co.touchlab.kermit/LogWriter.<init>|<init>(){}[0]
--
--    abstract fun log(co.touchlab.kermit/Severity, kotlin/String, kotlin/String, kotlin/Throwable? =...) // co.touchlab.kermit/LogWr
-```
-
-**File**: `kermit-simple/api/kermit-simple.klib.api` (removed, +0/-57)
-```diff
-@@ -1,57 +0,0 @@
--// Klib ABI Dump
--// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
--// Rendering settings:
--// - Signature version: 2
--// - Show manifest properties: true
--// - Show declarations: true
--
--// Library unique name: <co.touchlab:kermit-simple>
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/a(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/a|a@co.touchlab.kermit.Logger(kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/a(kotlin/String) // co.touchlab.kermit/a|a@co.touchlab.kermit.Logger(kotlin.String){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/a(kotlin/String, kotlin/Throwable) // co.touchlab.kermit/a|a@co.touchlab.kermit.Logger(kotlin.String;kotlin.Throwable){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/a(kotlin/Throwable, kotlin/Function0<kotlin/String>) // co.touchlab.kermit/a|a@co.touchlab.kermit.Logger(kotlin.Throwable;kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/d(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/d|d@co.touchlab.kermit.Logger(kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/d(kotlin/String) // co.touchlab.kermit/d|d@co.touchlab.kermit.Logger(kotlin.String){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/d(kotlin/String, kotlin/Throwable) // co.touchlab.kermit/d|d@co.touchlab.kermit.Logger(kotlin.String;kotlin.Throwable){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/d(kotlin/Throwable, kotlin/Function0<kotlin/String>) // co.touchlab.kermit/d|d@co.touchlab.kermit.Logger(kotlin.Throwable;kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/e(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/e|e@co.touchlab.kermit.Logger(kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/e(kotlin/String) // co.touchlab.kermit/e|e@co.touchlab.kermit.Logger(kotlin.String){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/e(kotlin/String, kotlin/Throwable) // co.touchlab.kermit/e|e@co.touchlab.kermit.Logger(kotlin.String;kotlin.Throwable){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/e(kotlin/Throwable, kotlin/Function0<kotlin/String>) // co.touchlab.kermit/e|e@co.touchlab.kermit.Logger(kotlin.Throwable;kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/i(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/i|i@co.touchlab.kermit.Logger(kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/i(kotlin/String) // co.touchlab.kermit/i|i@co.touchlab.kermit.Logger(kotlin.String){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/i(kotlin/String, kotlin/Throwable) // co.touchlab.kermit/i|i@co.touchlab.kermit.Logger(kotlin.String;kotlin.Throwable){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/i(kotlin/Throwable, kotlin/Function0<kotlin/String>) // co.touchlab.kermit/i|i@co.touchlab.kermit.Logger(kotlin.Throwable;kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/v(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/v|v@co.touchlab.kermit.Logger(kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/v(kotlin/String) // co.touchlab.kermit/v|v@co.touchlab.kermit.Logger(kotlin.String){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/v(kotlin/String, kotlin/Throwable) // co.touchlab.kermit/v|v@co.touchlab.kermit.Logger(kotlin.String;kotlin.Throwable){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/v(kotlin/Throwable, kotlin/Function0<kotlin/String>) // co.touchlab.kermit/v|v@co.touchlab.kermit.Logger(kotlin.Throwable;kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/w(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/w|w@co.touchlab.kermit.Logger(kotlin.Function0<kotlin.String>){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/w(kotlin/String) // co.touchlab.kermit/w|w@co.touchlab.kermit.Logger(kotlin.String){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/w(kotlin/String, kotlin/Throwable) // co.touchlab.kermit/w|w@co.touchlab.kermit.Logger(kotlin.String;kotlin.Throwable){}[0]
--final fun (co.touchlab.kermit/Logger).co.touchlab.kermit/w(kotlin/Throwable, kotlin/Function0<kotlin/String>) // co.touchlab.kermit/w|w@co.touchlab.kermit.Logger(kotlin.Throwable;kotlin.Function0<kotlin.String>){}[0]
--final fun co.touchlab.kermit/a(kotlin/Function0<kotlin/String>) // co.touchlab.kermit/a|a(kotli
-```
-
-**File**: `kermit-test/api/kermit-test.klib.api` (removed, +0/-8)
-```diff
-@@ -1,8 +0,0 @@
--// Klib ABI Dump
--// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
--// Rendering settings:
--// - Signature version: 2
--// - Show manifest properties: true
--// - Show declarations: true
--
--// Library unique name: <co.touchlab:kermit-test>
-```
-
----
-
-### Incident Patch 7: `f124f6f9` (2024-06-07)
-**Commit Message**: Dont sign test builds (#398)
-
-* Don't sign the local publish in tests
-
-* Update workflow
-
-**File**: `.github/workflows/build.yml` (modified, +1/-3)
-```diff
-@@ -62,10 +62,8 @@ jobs:
-           CI: "true"
-       - name: Local Publish For Samples
-         if: matrix.os == 'macOS-latest'
--        run: ./gradlew publishToMavenLocal --no-daemon --stacktrace --build-cache
-+        run: ./gradlew publishToMavenLocal --no-daemon --stacktrace --build-cache -PRELEASE_SIGNING_ENABLED=false
-         env:
--          ORG_GRADLE_PROJECT_SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
--          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-           S3_BUILD_CACHE_AWS_REGION: ${{ secrets.S3_BUILD_CACHE_AWS_REGION }}
-           S3_BUILD_CACHE_BUCKET_NAME: ${{ secrets.S3_BUILD_CACHE_BUCKET_NAME }}
-           S3_BUILD_CACHE_ACCESS_KEY_ID: ${{ secrets.S3_BUILD_CACHE_ACCESS_KEY_ID }}
-```
-
-**File**: `gradle/gradle-mvn-mpp-push.gradle` (modified, +7/-1)
-```diff
-@@ -19,10 +19,16 @@ def getAwsSecretKey() {
-   return hasProperty('AWS_SECRET_KEY') ? AWS_SECRET_KEY :
-           ""
- }
-+
- def isReleaseBuild() {
-   return VERSION_NAME.contains("SNAPSHOT") == false
- }
- 
-+def releaseSigningRequired() {
-+  def enabled = hasProperty('RELEASE_SIGNING_ENABLED') ? RELEASE_SIGNING_ENABLED : false
-+  return isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") && enabled
-+}
-+
- def getReleaseRepositoryUrl() {
-   return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL :
-           "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-@@ -53,7 +59,7 @@ def getGpgKey() {
- }
- 
- signing {
--  required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-+  required { releaseSigningRequired() }
-   def gpgKey = getGpgKey()
-   if(gpgKey != "") {
-     useInMemoryPgpKeys(getGpgKey(), "")
-```
-
----
-
-### Incident Patch 8: `175edb8b` (2023-09-20)
-**Commit Message**: Fix website deployment (#368)
-
-**File**: `.github/workflows/websitedeploy.yml` (modified, +2/-2)
-```diff
-@@ -11,7 +11,7 @@ jobs:
-       - uses: actions/setup-java@v2
-         with:
-           distribution: "adopt"
--          java-version: "11"
-+          java-version: "17"
- 
-       - name: Validate Gradle Wrapper
-         uses: gradle/wrapper-validation-action@v1
-@@ -31,7 +31,7 @@ jobs:
-       - name: Build Dokka
-         run: ./gradlew dokkaHtmlMultiModule --no-daemon --stacktrace
-         env:
--          GRADLE_OPTS: -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=512m"
-+          GRADLE_OPTS: -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=512m"
- 
-       - name: Copy Dokka
-         run: |
-```
-
----
-
-### Incident Patch 9: `ae2b4e88` (2023-09-20)
-**Commit Message**: Formatting fixes (#367)
-
-**File**: `gradle/libs.versions.toml` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@ androidx-navigationUI = "2.7.2"
- androidx-coordinatorLayout = "1.2.0"
- 
- android-gradle-plugin = "8.1.1"
--android-test-runner="1.5.2"
-+android-test-runner = "1.5.2"
- 
- google-services = "4.3.15"
- 
-@@ -55,7 +55,7 @@ google-services = { module = "com.google.gms:google-services", version.ref = "go
- crashkios-crashlytics = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashkios" }
- crashkios-bugsnag = { module = "co.touchlab.crashkios:bugsnag", version.ref = "crashkios" }
- bugsnag-android = { module = "com.bugsnag:bugsnag-android", version.ref = "bugsnag" }
--stately-collections = { module = "co.touchlab:stately-collections", version.ref = "stately"}
-+stately-collections = { module = "co.touchlab:stately-collections", version.ref = "stately" }
- testhelp = { module = "co.touchlab:testhelp", version.ref = "testhelp" }
- 
- koin = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
-```
-
-**File**: `kermit-core/build.gradle.kts` (modified, +4/-1)
-```diff
-@@ -50,7 +50,7 @@ kotlin {
-     androidNativeArm64()
-     androidNativeX86()
-     androidNativeX64()
--    
-+
-     sourceSets {
-         val commonMain by getting
-         val commonTest by getting {
-@@ -115,14 +115,17 @@ kotlin {
-                         val linuxMain by getting
-                         linuxMain
-                     }
-+
-                     konanTarget.family == org.jetbrains.kotlin.konan.target.Family.MINGW -> {
-                         val mingwMain by getting
-                         mingwMain
-                     }
-+
-                     konanTarget.family == org.jetbrains.kotlin.konan.target.Family.ANDROID -> {
-                         val androidNativeMain by getting
-                         androidNativeMain
-                     }
-+
-                     else -> nativeMain
-                 }
-             )
-```
-
-**File**: `kermit-core/src/androidMain/kotlin/co/touchlab/kermit/LogcatWriter.kt` (modified, +4/-4)
-```diff
-@@ -22,17 +22,17 @@ class LogcatWriter(private val messageStringFormatter: MessageStringFormatter =
-     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-         val formattedMessage = messageStringFormatter.formatMessage(null, null, Message(message))
-         try {
--            if(throwable == null){
--                when(severity){
-+            if (throwable == null) {
-+                when (severity) {
-                     Severity.Verbose -> Log.v(tag, formattedMessage)
-                     Severity.Debug -> Log.d(tag, formattedMessage)
-                     Severity.Info -> Log.i(tag, formattedMessage)
-                     Severity.Warn -> Log.w(tag, formattedMessage)
-                     Severity.Error -> Log.e(tag, formattedMessage)
-                     Severity.Assert -> Log.wtf(tag, formattedMessage)
-                 }
--            }else{
--                when(severity){
-+            } else {
-+                when (severity) {
-                     Severity.Verbose -> Log.v(tag, formattedMessage, throwable)
-                     Severity.Debug -> Log.d(tag, formattedMessage, throwable)
-                     Severity.Info -> Log.i(tag, formattedMessage, throwable)
-```
-
-**File**: `kermit-core/src/androidUnitTest/kotlin/co/touchlab/kermit/LogcatLoggerTest.kt` (modified, +2/-2)
-```diff
-@@ -84,8 +84,8 @@ class LogcatLoggerTest {
- 
-         ShadowLog.getLogs().apply {
-             assert(size > 0)
--            assertNotNull(find { it?.throwable?.message?.contains("Root Exception Message")?:false })
--            assertNotNull(find { it?.throwable?.cause?.message?.contains("Cause Exception Message")?:false })
-+            assertNotNull(find { it?.throwable?.message?.contains("Root Exception Message") ?: false })
-+            assertNotNull(find { it?.throwable?.cause?.message?.contains("Cause Exception Message") ?: false })
-         }
-     }
- }
-```
-
-**File**: `kermit-core/src/commonJvmMain/kotlin/co/touchlab/kermit/KermitConfig.kt` (modified, +2/-1)
-```diff
-@@ -13,4 +13,5 @@
- 
- package co.touchlab.kermit
- 
--actual fun mutableLoggerConfigInit(logWriters: List<LogWriter>): MutableLoggerConfig = JvmMutableLoggerConfig(logWriters)
-\ No newline at end of file
-+actual fun mutableLoggerConfigInit(logWriters: List<LogWriter>): MutableLoggerConfig =
-+    JvmMutableLoggerConfig(logWriters)
-\ No newline at end of file
-```
-
-**File**: `kermit-core/src/commonJvmTest/kotlin/co/touchlab/kermit/LoggerFunctionsTest.kt` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ class LoggerFunctionsTest {
- 
-     @Test
-     @Ignore
--    fun tagsWork(){
-+    fun tagsWork() {
-         TODO()
-         /*val testLogWriter = getTestLogWriter()
-         Logger.apply {
-```
-
-**File**: `kermit-core/src/commonMain/kotlin/co/touchlab/kermit/BaseLogger.kt` (modified, +1/-3)
-```diff
-@@ -10,11 +10,9 @@
-  * or implied. See the License for the specific language governing permissions and limitations under
-  * the License.
-  */
--@file:Suppress("NOTHING_TO_INLINE")
--
- package co.touchlab.kermit
- 
--typealias MessageBlock = ()->String
-+typealias MessageBlock = () -> String
- 
- /**
-  * Base class for public Logger API. Extend to implement your own logger API.
-```
-
-**File**: `kermit-core/src/commonMain/kotlin/co/touchlab/kermit/ExperimentalKermitApi.kt` (modified, +1/-1)
-```diff
-@@ -11,4 +11,4 @@
- package co.touchlab.kermit
- 
- @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
--annotation class ExperimentalKermitApi()
-+annotation class ExperimentalKermitApi
-```
-
----
-
-### Incident Patch 10: `d536d6f7` (2023-09-20)
-**Commit Message**: Add linuxArm64 (#366)
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-3)
-```diff
-@@ -87,6 +87,4 @@ android = [
-     "androidx-navigationFragment",
-     "androidx-navigationUI",
-     "androidx-coordinatorLayout",
--]
--
--
-+]
-\ No newline at end of file
-```
-
-**File**: `kermit-core/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ kotlin {
- 
-     mingwX64()
-     linuxX64()
-+    linuxArm64()
- 
-     androidNativeArm32()
-     androidNativeArm64()
-```
-
-**File**: `kermit-simple/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -39,6 +39,7 @@ kotlin {
- 
-     mingwX64()
-     linuxX64()
-+    linuxArm64()
- 
-     androidNativeArm32()
-     androidNativeArm64()
-```
-
-**File**: `kermit-test/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ kotlin {
- 
-     mingwX64()
-     linuxX64()
-+    linuxArm64()
- 
-     androidNativeArm32()
-     androidNativeArm64()
-```
-
-**File**: `kermit/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ kotlin {
- 
-     mingwX64()
-     linuxX64()
-+    linuxArm64()
- 
-     androidNativeArm32()
-     androidNativeArm64()
-```
-
----
-
-### Incident Patch 11: `b9b79b0a` (2023-06-24)
-**Commit Message**: fix: enable mingwx64 target since is available also in koin (#345)
-
-**File**: `extensions/kermit-koin/build.gradle.kts` (modified, +2/-0)
-```diff
-@@ -44,6 +44,8 @@ kotlin {
- 
-     mingwX64()
- 
-+    mingwX64()
-+
-     // TODO: These targets aren't supported by Koin yet:
-     // mingwX86()
-     // androidNativeArm32()
-```
-
----
-
-### Incident Patch 12: `b6145083` (2023-06-24)
-**Commit Message**: Fix typo (#356)
-
-**File**: `website/docs/index.md` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ To log from non-Kotlin clients, that don't support calling Kotlin's default para
- 
- :::
- 
--For each severity, there are two methods. One takes a `String` log message directly, the other takes a function parameter that returns a string. The function is only evaluated if the log will be written. Which you use is personal preference. They both will log to the same places, but the function paramter version may avoid unecessary `String` creation and evaluation.
-+For each severity, there are two methods. One takes a `String` log message directly, the other takes a function parameter that returns a string. The function is only evaluated if the log will be written. Which you use is personal preference. They both will log to the same places, but the function parameter version may avoid unecessary `String` creation and evaluation.
- 
- Here are what the `w` method definitions look like:
- 
-```
-
----
-
-### Incident Patch 13: `7f30c1f3` (2023-06-24)
-**Commit Message**: Clarified where the setCrashlyticsUnhandledExceptionHook() method codes from in the docs, and fixed the code sample. (#355)
-
-**File**: `extensions/kermit-crashlytics/README.md` (modified, +4/-3)
-```diff
-@@ -38,8 +38,9 @@ a gap where some other failure may happen but logging is not capturing info.
- 
- ### iOS
- 
--For iOS, besides regular logging, you will also want to configure Kotlin's uncaught exception handling. `kermit-crashlytics` 
--provides the `setCrashlyticsUnhandledExceptionHook` helper function to handle this for you.
-+For iOS, besides regular logging, you will also want to configure Kotlin's uncaught exception handling.  This is
-+done via the underlying [CrashKiOS](https://github.com/touchlab/CrashKiOS) library which provides the 
-+`setCrashlyticsUnhandledExceptionHook` helper function to handle this for you.
- 
- If you don't need to make kermit logging calls from Swift/Objective C code, we recommend not exporting Kermit in the 
- framework exposed to your iOS app. To setup Kermit configuration you can make a top level helper method in
-@@ -51,7 +52,7 @@ almost always the best option. Here is a basic example.
- // in Kermit/AppInit.kt
- fun setupKermit() {
-     Logger.addLogWriter(CrashlyticsLogWriter())
--    setCrashlyticsUnhandledExceptionHook(Logger)
-+    setCrashlyticsUnhandledExceptionHook()
- }
- ```
- 
-```
-
----
-
-### Incident Patch 14: `8d5c8795` (2023-04-04)
-**Commit Message**: Fix api dump (#343)
-
-* Fix api dump
-
-* Disable sample script for now
-
-**File**: `.github/workflows/build.yml` (modified, +10/-10)
-```diff
-@@ -66,16 +66,16 @@ jobs:
-           S3_BUILD_CACHE_ACCESS_KEY_ID: ${{ secrets.S3_BUILD_CACHE_ACCESS_KEY_ID }}
-           S3_BUILD_CACHE_SECRET_KEY: ${{ secrets.S3_BUILD_CACHE_SECRET_KEY }}
-           CI: "true"
--      - name: script
--        if: matrix.os == 'macOS-latest'
--        env:
--          S3_BUILD_CACHE_AWS_REGION: ${{ secrets.S3_BUILD_CACHE_AWS_REGION }}
--          S3_BUILD_CACHE_BUCKET_NAME: ${{ secrets.S3_BUILD_CACHE_BUCKET_NAME }}
--          S3_BUILD_CACHE_ACCESS_KEY_ID: ${{ secrets.S3_BUILD_CACHE_ACCESS_KEY_ID }}
--          S3_BUILD_CACHE_SECRET_KEY: ${{ secrets.S3_BUILD_CACHE_SECRET_KEY }}
--          CI: "true"
--        run: ./ci-test-samples.sh
--        shell: bash
-+#      - name: script
-+#        if: matrix.os == 'macOS-latest'
-+#        env:
-+#          S3_BUILD_CACHE_AWS_REGION: ${{ secrets.S3_BUILD_CACHE_AWS_REGION }}
-+#          S3_BUILD_CACHE_BUCKET_NAME: ${{ secrets.S3_BUILD_CACHE_BUCKET_NAME }}
-+#          S3_BUILD_CACHE_ACCESS_KEY_ID: ${{ secrets.S3_BUILD_CACHE_ACCESS_KEY_ID }}
-+#          S3_BUILD_CACHE_SECRET_KEY: ${{ secrets.S3_BUILD_CACHE_SECRET_KEY }}
-+#          CI: "true"
-+#        run: ./ci-test-samples.sh
-+#        shell: bash
- 
- env:
-   GRADLE_OPTS: -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=512m"
-```
-
-**File**: `kermit-core/api/android/kermit-core.api` (modified, +0/-1)
-```diff
-@@ -39,7 +39,6 @@ public final class co/touchlab/kermit/LogcatWriter : co/touchlab/kermit/LogWrite
- 	public fun <init> ()V
- 	public fun <init> (Lco/touchlab/kermit/MessageStringFormatter;)V
- 	public synthetic fun <init> (Lco/touchlab/kermit/MessageStringFormatter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
--	public fun isLoggable (Ljava/lang/String;Lco/touchlab/kermit/Severity;)Z
- 	public fun log (Lco/touchlab/kermit/Severity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
- }
- 
-```
-
----
-
-### Incident Patch 15: `b1058de2` (2023-03-31)
-**Commit Message**: Fix logcat debug and verbose (#342)
-
-**File**: `gradle.properties` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ org.gradle.jvmargs=-Xmx2g
- SONATYPE_HOST=DEFAULT
- RELEASE_SIGNING_ENABLED=true
- GROUP=co.touchlab
--VERSION_NAME=2.0.0-RC3
-+VERSION_NAME=2.0.0-RC4
- KOTLIN_VERSION=1.8.10
- 
- POM_NAME=Kermit
-```
-
-**File**: `kermit-core/src/androidMain/kotlin/co/touchlab/kermit/LogcatWriter.kt` (modified, +0/-13)
-```diff
-@@ -19,19 +19,6 @@ class LogcatWriter(private val messageStringFormatter: MessageStringFormatter =
-     // When running unit tests, Log calls will fail. Back up to a common writer
-     private val testWriter: CommonWriter = CommonWriter(messageStringFormatter)
- 
--    private fun getSeverity(severity: Severity) = when (severity) {
--        Severity.Verbose -> Log.VERBOSE
--        Severity.Debug -> Log.DEBUG
--        Severity.Info -> Log.INFO
--        Severity.Warn -> Log.WARN
--        Severity.Error -> Log.ERROR
--        Severity.Assert -> Log.ASSERT
--    }
--
--    override fun isLoggable(tag: String, severity: Severity): Boolean {
--        return Log.isLoggable(tag, getSeverity(severity))
--    }
--
-     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-         val formattedMessage = messageStringFormatter.formatMessage(null, null, Message(message))
-         try {
-```
-
 #### Recent Merged Pull Requests:
 - **PR #489** (2026-09-16): Adding coil to sample (@KevinSchildhorn)
 - **PR #488** (2026-09-15): Improving Karma config to avoid timeout errors on KotlinJS tests (@faogustavo)
@@ -1798,8 +862,6 @@ This reverts commit 4a0ea162771cbb0f9e0ae770db3cb9a71758dce9.
 - **PR #486** (2026-09-08): Release 2.2.0 (@KevinSchildhorn)
 - **PR #485** (2026-08-24): Manually wiring Android API dump (@faogustavo)
 - **PR #484** (2026-08-14): WasmWasi Support (@faogustavo)
-- **PR #483** (2026-08-14): Fixed issues with rolling file and thread interruption (@faogustavo)
-- **PR #482** (closed): Version 2.1.1 (@KevinSchildhorn)
 
 ---
 
@@ -1813,3 +875,54 @@ This reverts commit 4a0ea162771cbb0f9e0ae770db3cb9a71758dce9.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. fixed issues with rolling file and thread interruption (#483)
+
+**RULE**:
+When implementing operations in `kermit-io/src/commonJvmMain/kotlin/co/touchlab/kermit/io/ChannelSend.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/Kermit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a745cc37`: fixed issues with rolling file and thread interruption (#483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kermit-io/src/commonJvmMain/kotlin/co/touchlab/kermit/io/ChannelSend.kt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+/*
+ * Copyright (c) 2026 Touchlab
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+package co.touchlab.kermit.io
+
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.trySendBlocking
+
+internal actual fun <E> SendChannel<E>.sendBlockingUnlessInterrupted(element: E) {
+    // A thread with its interrupt flag set has been asked to stop (Android sync adapters, ExecutorService.shutdownNow(), ...). Blocking it
+    // on log file I/O is exactly what the interrupt asked us not to do, and trySendBlocking would throw InterruptedException at it, so
+    // deliver the message only if that can be done without blocking.
+    if (Thread.currentThread().isInterrupted) {
+        trySen
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a745cc37` are properly handled with clean fallback behavior.

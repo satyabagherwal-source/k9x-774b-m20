@@ -3003,10 +3003,10 @@
     "repository": "Megabit/Blazorise",
     "platform": "github",
     "sourceUrl": "https://github.com/Megabit/Blazorise",
-    "sourceVersion": "f5ef5fbf",
+    "sourceVersion": "14553676",
     "license": "NOASSERTION",
-    "contentHash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
-    "lastHarvestedAt": "2026-10-19T09:41:56.774Z",
+    "contentHash": "4933eac28216e5d7e1fd549047b8c84e69b96bce5fe165e003ce7ec7c66a5bc2",
+    "lastHarvestedAt": "2026-10-19T20:16:47.433Z",
     "learningId": "learn-github-megabit-blazorise"
   },
   "metalbear-co-mirrord": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "2680518d",
+    "sourceVersion": "f6fdf447",
     "license": "NOASSERTION",
-    "contentHash": "bd6c64876c849ed85f29ecb1f0a8146dcd8e32731866d9d915806ed6cbc40b5c",
-    "lastHarvestedAt": "2026-10-19T05:18:59.952Z",
+    "contentHash": "c75ace10df7830004477907df322d72db9dbda862174084e8ae6a4659e366ae2",
+    "lastHarvestedAt": "2026-10-19T20:16:48.783Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -8898,5 +8898,25 @@
     "contentHash": "68dea21c1e30a75b91d61b21ff9cb3a8b9c61f6e25253b066c802edf4f85538e",
     "lastHarvestedAt": "2026-10-19T20:10:31.015Z",
     "learningId": "learn-github-m0ntydad0n-pseo-engine-oss"
+  },
+  "sundios-seo-dashboard": {
+    "repository": "sundios/SEO-Dashboard",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sundios/SEO-Dashboard",
+    "sourceVersion": "8ca76eb6",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "b1d5ffd9dfcb29ed9428a2a96b2388ef76c6dcf1e634d324223b2006e33855c1",
+    "lastHarvestedAt": "2026-10-19T20:16:51.485Z",
+    "learningId": "learn-github-sundios-seo-dashboard"
+  },
+  "touchlab-kermit": {
+    "repository": "touchlab/Kermit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/touchlab/Kermit",
+    "sourceVersion": "3a4042f3",
+    "license": "Apache-2.0",
+    "contentHash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
+    "lastHarvestedAt": "2026-10-19T20:16:52.942Z",
+    "learningId": "learn-github-touchlab-kermit"
   }
 }
