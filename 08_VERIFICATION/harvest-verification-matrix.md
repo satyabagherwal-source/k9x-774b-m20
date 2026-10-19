@@ -2751,3 +2751,10 @@
 | `CYCLE-20261019-SPL2` | `2026-10-19T01:28:40.838Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1972` | Yes (`d181a147...`) |
 | `CYCLE-20261019-SQVW` | `2026-10-19T01:28:42.524Z` | `gocrane/crane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1973` | Yes (`959600e3...`) |
 | `CYCLE-20261019-STSU` | `2026-10-19T01:28:46.302Z` | `AmrDeveloper/GQL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1974` | Yes (`f5d091e1...`) |
+| `CYCLE-20261019-0KEW` | `2026-10-19T01:34:47.384Z` | `keenthemes/reui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1975` | Yes (`b1956c63...`) |
+| `CYCLE-20261019-0LLI` | `2026-10-19T01:34:48.918Z` | `svenstaro/miniserve` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md` | Yes (`252e4629...`) |
+| `CYCLE-20261019-0P5Y` | `2026-10-19T01:34:53.542Z` | `founded-labs/react-native-reusables` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1976` | Yes (`10a86964...`) |
+| `CYCLE-20261019-0PTI` | `2026-10-19T01:34:54.390Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1977, Rule 550` | Yes (`2cd03c96...`) |
+| `CYCLE-20261019-0S1C` | `2026-10-19T01:34:57.264Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1978` | Yes (`732e4e94...`) |
+| `CYCLE-20261019-0VN0` | `2026-10-19T01:35:01.932Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1979` | Yes (`9dbc63f0...`) |
+| `CYCLE-20261019-0WX3` | `2026-10-19T01:35:03.591Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1980` | Yes (`07e89ba9...`) |

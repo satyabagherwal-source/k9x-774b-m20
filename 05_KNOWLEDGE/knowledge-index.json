@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:28:46.270Z",
-  "total_verified_learnings": 474,
+  "last_updated": "2026-10-19T01:35:03.553Z",
+  "total_verified_learnings": 479,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5280,8 +5280,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "04ee61d8",
-      "content_hash": "c1cb5850f1ff45aba9b18e53c475cbc795e9300c0435b9a89b80eae17174e245",
+      "source_version": "534bfac1",
+      "content_hash": "07e89ba95e3f9d1c8b88a9bcccf7a1067fd1270a13cbb845bfca93bf1a6b33b3",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -5299,6 +5299,11 @@
           "number": 1908,
           "title": "deps: bump calamine to 0.37 and remove our patch",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1980,
+          "title": "docs(geoconvert): note 64-bit float coordinate precision",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5306,7 +5311,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:16:44.762Z",
+      "verified_at": "2026-10-19T01:35:03.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8071,22 +8076,35 @@
     "learn-github-founded-labs-react-native-reusables": {
       "learning_id": "learn-github-founded-labs-react-native-reusables",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "founded-labs-react-native-reusables",
+      "source": "founded-labs/react-native-reusables",
+      "repository": "founded-labs/react-native-reusables",
       "slug": "founded-labs-react-native-reusables",
       "platform": "github",
       "source_url": "https://github.com/founded-labs/react-native-reusables",
-      "source_version": "HEAD",
-      "content_hash": "b7e86c0f6a7d63c48e3d88fd93e0f0d648d39ff57a52e833f9d5da752d9807ef",
+      "source_version": "385834c2",
+      "content_hash": "10a86964d797c7c89a45810dc3ddcef64ae2786681e4a8bdcdf0a58152ea5a2f",
       "dossier_path": "07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1976,
+          "title": "deps): downgrade lucide-react-native to version 0.577.0 and update documentation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.987Z"
+      "verified_at": "2026-10-19T01:34:53.485Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-franken-ui-ui": {
       "learning_id": "learn-github-franken-ui-ui",
@@ -18329,7 +18347,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "48f2535bc77cdd18828fd08724ccf4e9b6caa40ecdd8eb8e90ce63b9f8dbbcf5",
+      "content_hash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -18360,6 +18378,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
           "verified_at": "2026-10-11T17:31:18.086Z"
+        },
+        {
+          "number": 550,
+          "title": "Context Window Boundary Enforcement",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 820,
@@ -18420,6 +18443,11 @@
           "number": 1539,
           "title": "Safety Boundary & Alignment Integrity Check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1977,
+          "title": "GGUF Tensor Integrity & Quantization Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18440,7 +18468,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-17T21:47:07.074Z",
+      "verified_at": "2026-10-19T01:34:54.343Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23363,22 +23391,35 @@
     "learn-github-keenthemes-reui": {
       "learning_id": "learn-github-keenthemes-reui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "keenthemes-reui",
+      "source": "keenthemes/reui",
+      "repository": "keenthemes/reui",
       "slug": "keenthemes-reui",
       "platform": "github",
       "source_url": "https://github.com/keenthemes/reui",
-      "source_version": "HEAD",
-      "content_hash": "19309f2b0e6ed7a8b2aa0c9cb7b31d38049ffc4d4c52800715e353c099e04e43",
+      "source_version": "067aa0dc",
+      "content_hash": "b1956c635d943fbe4377b0858f06d495982f79d56b8a87c97e99267d62d7684f",
       "dossier_path": "07_PROJECT_LEARNING/keenthemes-reui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keenthemes-reui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1975,
+          "title": "security dependency updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.777Z"
+      "verified_at": "2026-10-19T01:34:47.339Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kestra-io-kestra": {
       "learning_id": "learn-github-kestra-io-kestra",
@@ -29493,22 +29534,35 @@
     "learn-github-openyurtio-openyurt": {
       "learning_id": "learn-github-openyurtio-openyurt",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "openyurtio-openyurt",
+      "source": "openyurtio/openyurt",
+      "repository": "openyurtio/openyurt",
       "slug": "openyurtio-openyurt",
       "platform": "github",
       "source_url": "https://github.com/openyurtio/openyurt",
-      "source_version": "HEAD",
-      "content_hash": "d56e367150cff5c116daf462696d1a20ab38ce7fb79fd514103af737c11eede6",
+      "source_version": "83ce3925",
+      "content_hash": "732e4e9426eb4377edd734e7513142d66b770883d954c8b8adc6ab2530f421d1",
       "dossier_path": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1978,
+          "title": "data race on ek.file and ek.count between sync and compress goroutines (#2631)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.890Z"
+      "verified_at": "2026-10-19T01:34:57.219Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-openziti-zrok": {
       "learning_id": "learn-github-openziti-zrok",
@@ -33705,22 +33759,35 @@
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "slatedb-slatedb",
+      "source": "slatedb/slatedb",
+      "repository": "slatedb/slatedb",
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "HEAD",
-      "content_hash": "75d69d8ff6d605d533a11396856d334308d3689f5c59be5061141491456a3244",
+      "source_version": "a5c4fd22",
+      "content_hash": "9dbc63f00c56d179cb440f93757f6a20bcea876d26d0354bf6df3b43a25de4ca",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1979,
+          "title": "Fix/external compaction concurrency cap (#2110)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.591Z"
+      "verified_at": "2026-10-19T01:35:01.887Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-slopus-happy": {
       "learning_id": "learn-github-slopus-happy",
@@ -34685,22 +34752,29 @@
     "learn-github-svenstaro-miniserve": {
       "learning_id": "learn-github-svenstaro-miniserve",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "svenstaro-miniserve",
+      "source": "svenstaro/miniserve",
+      "repository": "svenstaro/miniserve",
       "slug": "svenstaro-miniserve",
       "platform": "github",
       "source_url": "https://github.com/svenstaro/miniserve",
-      "source_version": "HEAD",
-      "content_hash": "7436bfca727a8d8ddbd54835d3dc6200b85c4702f343c1556f4a24a70bbcb0d6",
+      "source_version": "e698dbd0",
+      "content_hash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
       "dossier_path": "07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/svenstaro-miniserve-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.767Z"
+      "verified_at": "2026-10-19T01:34:48.860Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sventiigi-whatsnewkit": {
       "learning_id": "learn-github-sventiigi-whatsnewkit",
@@ -52716,15 +52790,15 @@
       "learning_id": "rule-550",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 550,
-      "title": "Context Window Boundary Enforcement & Tokenizer Consistency (Harvested from meta-llama/Meta-Llama-3-8B-Instruct)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Context Window Boundary Enforcement",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-10-19T01:34:54.343Z"
     },
     "rule-551": {
       "learning_id": "rule-551",
@@ -72921,6 +72995,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:28:46.265Z"
+    },
+    "rule-1975": {
+      "learning_id": "rule-1975",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1975,
+      "title": "security dependency updates",
+      "source_url": "https://github.com/keenthemes/reui",
+      "source_version": "067aa0dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:34:47.339Z"
+    },
+    "rule-1976": {
+      "learning_id": "rule-1976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1976,
+      "title": "deps): downgrade lucide-react-native to version 0.577.0 and update documentation",
+      "source_url": "https://github.com/founded-labs/react-native-reusables",
+      "source_version": "385834c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:34:53.485Z"
+    },
+    "rule-1977": {
+      "learning_id": "rule-1977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1977,
+      "title": "GGUF Tensor Integrity & Quantization Consistency",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:34:54.343Z"
+    },
+    "rule-1978": {
+      "learning_id": "rule-1978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1978,
+      "title": "data race on ek.file and ek.count between sync and compress goroutines (#2631)",
+      "source_url": "https://github.com/openyurtio/openyurt",
+      "source_version": "83ce3925",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:34:57.219Z"
+    },
+    "rule-1979": {
+      "learning_id": "rule-1979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1979,
+      "title": "Fix/external compaction concurrency cap (#2110)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "a5c4fd22",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:35:01.887Z"
+    },
+    "rule-1980": {
+      "learning_id": "rule-1980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1980,
+      "title": "docs(geoconvert): note 64-bit float coordinate precision",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "534bfac1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:35:03.546Z"
     }
   },
   "aliases": {

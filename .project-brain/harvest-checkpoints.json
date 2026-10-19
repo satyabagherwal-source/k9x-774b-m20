@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:28:46.307Z",
+  "last_updated": "2026-10-19T01:35:03.602Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -243,14 +243,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "48f2535bc77cdd18828fd08724ccf4e9b6caa40ecdd8eb8e90ce63b9f8dbbcf5",
-      "verified_at": "2026-10-17T21:47:07.109Z",
+      "content_hash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
+      "verified_at": "2026-10-19T01:34:54.405Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:47:07.110Z"
+      "last_updated": "2026-10-19T01:34:54.405Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -3674,14 +3674,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "c1cb5850f1ff45aba9b18e53c475cbc795e9300c0435b9a89b80eae17174e245",
-      "verified_at": "2026-10-19T00:16:44.818Z",
+      "content_hash": "07e89ba95e3f9d1c8b88a9bcccf7a1067fd1270a13cbb845bfca93bf1a6b33b3",
+      "verified_at": "2026-10-19T01:35:03.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:16:44.818Z"
+      "last_updated": "2026-10-19T01:35:03.602Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6907,6 +6907,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:28:46.307Z"
+    },
+    "keenthemes/reui": {
+      "repository": "keenthemes/reui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-keenthemes-reui",
+      "content_hash": "b1956c635d943fbe4377b0858f06d495982f79d56b8a87c97e99267d62d7684f",
+      "verified_at": "2026-10-19T01:34:47.395Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:34:47.395Z"
+    },
+    "svenstaro/miniserve": {
+      "repository": "svenstaro/miniserve",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-svenstaro-miniserve",
+      "content_hash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
+      "verified_at": "2026-10-19T01:34:48.927Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:34:48.927Z"
+    },
+    "founded-labs/react-native-reusables": {
+      "repository": "founded-labs/react-native-reusables",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-founded-labs-react-native-reusables",
+      "content_hash": "10a86964d797c7c89a45810dc3ddcef64ae2786681e4a8bdcdf0a58152ea5a2f",
+      "verified_at": "2026-10-19T01:34:53.550Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:34:53.550Z"
+    },
+    "openyurtio/openyurt": {
+      "repository": "openyurtio/openyurt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-openyurtio-openyurt",
+      "content_hash": "732e4e9426eb4377edd734e7513142d66b770883d954c8b8adc6ab2530f421d1",
+      "verified_at": "2026-10-19T01:34:57.275Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:34:57.275Z"
+    },
+    "slatedb/slatedb": {
+      "repository": "slatedb/slatedb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-slatedb-slatedb",
+      "content_hash": "9dbc63f00c56d179cb440f93757f6a20bcea876d26d0354bf6df3b43a25de4ca",
+      "verified_at": "2026-10-19T01:35:01.943Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:35:01.943Z"
     }
   },
   "repos": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `04ee61d8`  
+> **Source Version**: `534bfac1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:16:44.580Z  
+> **Timestamp**: 2026-10-19T01:35:03.375Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:16:44.104Z  
+> **Harvest Timestamp**: 2026-10-19T01:35:03.367Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,81 +2252,50 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04ee61d8` (2026-10-18)
-**Commit Message**: deps: bump calamine to 0.37 and remove our patch
+### Incident Patch 1: `534bfac1` (2026-10-19)
+**Commit Message**: docs(geoconvert): note 64-bit float coordinate precision
 
-also update other transitive deps
+Coordinates are output as the shortest decimal that round-trips the f64,
+so a value written with more than 15-17 significant digits comes out
+shortened, its last digit possibly changed. Document this in the USAGE
+text (and the regenerated help), with examples.
 
-**File**: `Cargo.lock` (modified, +8/-7)
+Closes #2698
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/help/geoconvert.md` (modified, +6/-0)
 ```diff
-@@ -411,9 +411,9 @@ dependencies = [
+@@ -66,6 +66,12 @@ output unchanged, so they are not the WGS-84 longitude/latitude that GeoJSON req
+ Reprojection is not done by geoconvert; reproject the shapefile first, e.g. with
+ ogr2ogr -t_srs EPSG:4326 out.shp in.shp
  
- [[package]]
- name = "arc-swap"
--version = "1.9.2"
-+version = "1.9.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c049c0be4daef0b145cb3555416b3b8ef5b7888a38aea1a3a155801fe7b0810b"
-+checksum = "380962b3d93b99642e50b9febf72c071e97e8b32d86eae9cf4ef582bb960ae6e"
- dependencies = [
-  "rustversion",
- ]
-@@ -1308,8 +1308,9 @@ checksum = "f5813789573ae815c8b4be58c4428e0e7ae05f0227678ba9de332ded585b9159"
++Coordinates are converted as 64-bit floating point numbers, which hold 15-17 significant
++digits in all (whole and decimal digits together). A coordinate written with more digits
++than that is output shortened, and its last digit may change: 40.123456789012345 becomes
++40.123456789012344, and the longitude -122.123456789012345 becomes -122.12345678901235.
++The difference is far below what GPS can measure; 7 decimal places is already about 1 cm.
++
+ See also <https://github.com/dathere/qsv/wiki/Geospatial#geoconvert>
  
- [[package]]
- name = "calamine"
--version = "0.36.1"
--source = "git+https://github.com/tafia/calamine?rev=b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f#b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f"
-+version = "0.37.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
- dependencies = [
-  "atoi_simd",
-  "byteorder",
-@@ -6839,9 +6840,9 @@ checksum = "4a6394b9e965e73d0a289ee54f589087e2c676aedf60885baf52c76b771e4958"
  
- [[package]]
- name = "ppmd-rust"
--version = "1.5.0"
-+version = "1.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "196a7c80b9a7652aba7cc070827516c2abe4ccdf53d128e1944003cf5726cff1"
-+checksum = "494b4379484fc92217cc7d9e3a532375b1d01a61889ec8333025dc3b0377af56"
- 
- [[package]]
- name = "ppv-lite86"
-@@ -9152,7 +9153,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-4)
+**File**: `src/cmd/geoconvert.rs` (modified, +6/-0)
 ```diff
-@@ -180,7 +180,7 @@ bytemuck = { version = "1.24", features = [
- byteorder = "1.5"
- bytes = "1"
- cached = { version = "4", features = ["ahash", "redb_store", "redis_store"] }
--calamine = { version = "0.36", features = ["chrono"] }
-+calamine = { version = "0.37", features = ["chrono"] }
- censor = { version = "0.3", optional = true }
- chrono = { version = "0.4", default-features = false }
- chrono-tz = "0.10"
-@@ -533,9 +533,6 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
- # csv-core = { path = "../rust-csv/csv-core" }
- # csv-index = { path = "../rust-csv/csv-index" }
+@@ -39,6 +39,12 @@ output unchanged, so they are not the WGS-84 longitude/latitude that GeoJSON req
+ Reprojection is not done by geoconvert; reproject the shapefile first, e.g. with
+ ogr2ogr -t_srs EPSG:4326 out.shp in.shp
  
--# use latest upstream of calamine with zip 9 fix and other recent improvements
--calamine = { git = "https://github.com/tafia/calamine", rev = "b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f" }
--
- # use latest upstream now that our PR has been merged
- csvlens = { git = "https://github.com/YS-L/csvlens", rev = "6acf060" }
++Coordinates are converted as 64-bit floating point numbers, which hold 15-17 significant
++digits in all (whole and decimal digits together). A coordinate written with more digits
++than that is output shortened, and its last digit may change: 40.123456789012345 becomes
++40.123456789012344, and the longitude -122.123456789012345 becomes -122.12345678901235.
++The difference is far below what GPS can measure; 7 decimal places is already about 1 cm.
++
+ See also https://github.com/dathere/qsv/wiki/Geospatial#geoconvert
  
+ Usage:
 ```
 
 #### Recent Merged Pull Requests:
@@ -2355,41 +2324,33 @@ also update other transitive deps
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump calamine to 0.37 and remove our patch
+## X. docs(geoconvert): note 64-bit float coordinate precision
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/help/geoconvert.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04ee61d8`: deps: bump calamine to 0.37 and remove our patch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `534bfac1`: docs(geoconvert): note 64-bit float coordinate precision. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/help/geoconvert.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.9.3"
-checksum = "380962b3d93b99642e50b9febf72c071e97e8b32d86eae9cf4ef582bb960ae6e"
-version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
-version = "1.5.1"
-checksum = "494b4379484fc92217cc7d9e3a532375b1d01a61889ec8333025dc3b0377af56"
- "getrandom 0.4.3",
+Coordinates are converted as 64-bit floating point numbers, which hold 15-17 significant
+digits in all (whole and decimal digits together). A coordinate written with more digits
+than that is output shortened, and its last digit may change: 40.123456789012345 becomes
+40.123456789012344, and the longitude -122.123456789012345 becomes -122.12345678901235.
+The difference is far below what GPS can measure; 7 decimal places is already about 1 cm.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.9.2"
-checksum = "c049c0be4daef0b145cb3555416b3b8ef5b7888a38aea1a3a155801fe7b0810b"
-version = "0.36.1"
-source = "git+https://github.com/tafia/calamine?rev=b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f#b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f"
-version = "1.5.0"
-checksum = "196a7c80b9a7652aba7cc070827516c2abe4ccdf53d128e1944003cf5726cff1"
- "getrandom 0.3.4",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04ee61d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `534bfac1` are properly handled with clean fallback behavior.

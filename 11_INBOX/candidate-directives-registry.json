@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T01:01:10.091Z",
+  "last_updated": "2026-10-19T01:34:48.924Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1674,6 +1674,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-0LLO",
+      "directive_title": "Empirical Invariant Guard in file_op.rs",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "svenstaro/miniserve",
+      "source_commit": "e698dbd0",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-svenstaro-miniserve"
     }
   ]
 }

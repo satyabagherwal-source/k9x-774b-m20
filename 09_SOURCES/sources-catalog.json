@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "48f2535bc77cdd18828fd08724ccf4e9b6caa40ecdd8eb8e90ce63b9f8dbbcf5",
-    "lastHarvestedAt": "2026-10-17T21:47:07.107Z",
+    "contentHash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
+    "lastHarvestedAt": "2026-10-19T01:34:54.400Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "04ee61d8",
+    "sourceVersion": "534bfac1",
     "license": "NOASSERTION",
-    "contentHash": "c1cb5850f1ff45aba9b18e53c475cbc795e9300c0435b9a89b80eae17174e245",
-    "lastHarvestedAt": "2026-10-19T00:16:44.814Z",
+    "contentHash": "07e89ba95e3f9d1c8b88a9bcccf7a1067fd1270a13cbb845bfca93bf1a6b33b3",
+    "lastHarvestedAt": "2026-10-19T01:35:03.597Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4528,5 +4528,55 @@
     "contentHash": "f5d091e1acec458db3483176ccc5445e27fae24f8c225e39d8609ff78e193273",
     "lastHarvestedAt": "2026-10-19T01:28:46.304Z",
     "learningId": "learn-github-amrdeveloper-gql"
+  },
+  "keenthemes-reui": {
+    "repository": "keenthemes/reui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/keenthemes/reui",
+    "sourceVersion": "067aa0dc",
+    "license": "MIT",
+    "contentHash": "b1956c635d943fbe4377b0858f06d495982f79d56b8a87c97e99267d62d7684f",
+    "lastHarvestedAt": "2026-10-19T01:34:47.390Z",
+    "learningId": "learn-github-keenthemes-reui"
+  },
+  "svenstaro-miniserve": {
+    "repository": "svenstaro/miniserve",
+    "platform": "github",
+    "sourceUrl": "https://github.com/svenstaro/miniserve",
+    "sourceVersion": "e698dbd0",
+    "license": "MIT",
+    "contentHash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
+    "lastHarvestedAt": "2026-10-19T01:34:48.921Z",
+    "learningId": "learn-github-svenstaro-miniserve"
+  },
+  "founded-labs-react-native-reusables": {
+    "repository": "founded-labs/react-native-reusables",
+    "platform": "github",
+    "sourceUrl": "https://github.com/founded-labs/react-native-reusables",
+    "sourceVersion": "385834c2",
+    "license": "MIT",
+    "contentHash": "10a86964d797c7c89a45810dc3ddcef64ae2786681e4a8bdcdf0a58152ea5a2f",
+    "lastHarvestedAt": "2026-10-19T01:34:53.545Z",
+    "learningId": "learn-github-founded-labs-react-native-reusables"
+  },
+  "openyurtio-openyurt": {
+    "repository": "openyurtio/openyurt",
+    "platform": "github",
+    "sourceUrl": "https://github.com/openyurtio/openyurt",
+    "sourceVersion": "83ce3925",
+    "license": "Apache-2.0",
+    "contentHash": "732e4e9426eb4377edd734e7513142d66b770883d954c8b8adc6ab2530f421d1",
+    "lastHarvestedAt": "2026-10-19T01:34:57.270Z",
+    "learningId": "learn-github-openyurtio-openyurt"
+  },
+  "slatedb-slatedb": {
+    "repository": "slatedb/slatedb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/slatedb/slatedb",
+    "sourceVersion": "a5c4fd22",
+    "license": "Apache-2.0",
+    "contentHash": "9dbc63f00c56d179cb440f93757f6a20bcea876d26d0354bf6df3b43a25de4ca",
+    "lastHarvestedAt": "2026-10-19T01:35:01.938Z",
+    "learningId": "learn-github-slatedb-slatedb"
   }
 }

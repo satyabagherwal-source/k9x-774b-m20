@@ -2758,3 +2758,10 @@ Every entry in this ledger must capture:
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `3678d1e6` | Multi-dimensional audit evidence | 2026-10-19T01:28:40.843Z |
 | `learn-github-gocrane-crane` | `https://github.com/gocrane/crane` | `2b0ddae8` | Multi-dimensional audit evidence | 2026-10-19T01:28:42.526Z |
 | `learn-github-amrdeveloper-gql` | `https://github.com/AmrDeveloper/GQL` | `3a76cfee` | Multi-dimensional audit evidence | 2026-10-19T01:28:46.304Z |
+| `learn-github-keenthemes-reui` | `https://github.com/keenthemes/reui` | `067aa0dc` | Multi-dimensional audit evidence | 2026-10-19T01:34:47.390Z |
+| `learn-github-svenstaro-miniserve` | `https://github.com/svenstaro/miniserve` | `e698dbd0` | Multi-dimensional audit evidence | 2026-10-19T01:34:48.921Z |
+| `learn-github-founded-labs-react-native-reusables` | `https://github.com/founded-labs/react-native-reusables` | `385834c2` | Multi-dimensional audit evidence | 2026-10-19T01:34:53.545Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-19T01:34:54.400Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `83ce3925` | Multi-dimensional audit evidence | 2026-10-19T01:34:57.270Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `a5c4fd22` | Multi-dimensional audit evidence | 2026-10-19T01:35:01.938Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `534bfac1` | Multi-dimensional audit evidence | 2026-10-19T01:35:03.597Z |
