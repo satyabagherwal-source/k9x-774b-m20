@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T17:05:35.071Z",
+  "last_updated": "2026-10-19T17:12:13.274Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4414,14 +4414,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
-      "verified_at": "2026-10-19T14:08:46.062Z",
+      "content_hash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
+      "verified_at": "2026-10-19T17:12:08.433Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:08:46.062Z"
+      "last_updated": "2026-10-19T17:12:08.433Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -8554,14 +8554,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
-      "verified_at": "2026-10-19T04:07:22.102Z",
+      "content_hash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
+      "verified_at": "2026-10-19T17:12:13.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:07:22.102Z"
+      "last_updated": "2026-10-19T17:12:13.273Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -12687,6 +12687,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T17:03:59.733Z"
+    },
+    "callstack/react-native-builder-bob": {
+      "repository": "callstack/react-native-builder-bob",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-callstack-react-native-builder-bob",
+      "content_hash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
+      "verified_at": "2026-10-19T17:12:06.317Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T17:12:06.317Z"
     }
   },
   "repos": {

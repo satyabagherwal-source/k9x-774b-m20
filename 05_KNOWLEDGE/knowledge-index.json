@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:05:35.018Z",
-  "total_verified_learnings": 858,
+  "last_updated": "2026-10-19T17:12:13.218Z",
+  "total_verified_learnings": 859,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4272,22 +4272,35 @@
     "learn-github-callstack-react-native-builder-bob": {
       "learning_id": "learn-github-callstack-react-native-builder-bob",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "callstack-react-native-builder-bob",
+      "source": "callstack/react-native-builder-bob",
+      "repository": "callstack/react-native-builder-bob",
       "slug": "callstack-react-native-builder-bob",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-builder-bob",
-      "source_version": "HEAD",
-      "content_hash": "a72a20001d06033a82a30a406f1e4542caf89c60b0d7ad9d13fb4e5f9dd6d0d1",
+      "source_version": "13309bc9",
+      "content_hash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2702,
+          "title": "add ndkVersion to nitro library templates (#951)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.193Z"
+      "verified_at": "2026-10-19T17:12:06.240Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -9859,8 +9872,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "0b1c364b",
-      "content_hash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
+      "source_version": "a697a9fb",
+      "content_hash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -9883,6 +9896,11 @@
           "number": 2620,
           "title": "build: release 0.2.147 (#5938)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2703,
+          "title": "test: cut chain-collapse sim runtime and keep ping lockfile in sync (#5935)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9890,7 +9908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:08:45.996Z",
+      "verified_at": "2026-10-19T17:12:08.367Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44796,14 +44814,19 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "a04eacaa",
-      "content_hash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
+      "source_version": "d0ba5153",
+      "content_hash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
         {
           "number": 2108,
           "title": "CHYT-1479: Fix CHYT abort on unordered key ranges",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2704,
+          "title": "YT-30042: increase memory limits for tests",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44812,7 +44835,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:07:22.049Z",
+      "verified_at": "2026-10-19T17:12:13.210Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89864,6 +89887,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:05:35.006Z"
+    },
+    "rule-2702": {
+      "learning_id": "rule-2702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2702,
+      "title": "add ndkVersion to nitro library templates (#951)",
+      "source_url": "https://github.com/callstack/react-native-builder-bob",
+      "source_version": "13309bc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:12:06.240Z"
+    },
+    "rule-2703": {
+      "learning_id": "rule-2703",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2703,
+      "title": "test: cut chain-collapse sim runtime and keep ping lockfile in sync (#5935)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "a697a9fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:12:08.367Z"
+    },
+    "rule-2704": {
+      "learning_id": "rule-2704",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2704,
+      "title": "YT-30042: increase memory limits for tests",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "d0ba5153",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:12:13.210Z"
     }
   },
   "aliases": {

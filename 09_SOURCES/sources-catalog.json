@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "0b1c364b",
+    "sourceVersion": "a697a9fb",
     "license": "NOASSERTION",
-    "contentHash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
-    "lastHarvestedAt": "2026-10-19T14:08:46.055Z",
+    "contentHash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
+    "lastHarvestedAt": "2026-10-19T17:12:08.426Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "a04eacaa",
+    "sourceVersion": "d0ba5153",
     "license": "Apache-2.0",
-    "contentHash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
-    "lastHarvestedAt": "2026-10-19T04:07:22.097Z",
+    "contentHash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
+    "lastHarvestedAt": "2026-10-19T17:12:13.263Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -8428,5 +8428,15 @@
     "contentHash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
     "lastHarvestedAt": "2026-10-19T17:03:59.726Z",
     "learningId": "learn-github-thebaselab-codeapp"
+  },
+  "callstack-react-native-builder-bob": {
+    "repository": "callstack/react-native-builder-bob",
+    "platform": "github",
+    "sourceUrl": "https://github.com/callstack/react-native-builder-bob",
+    "sourceVersion": "13309bc9",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
+    "lastHarvestedAt": "2026-10-19T17:12:06.311Z",
+    "learningId": "learn-github-callstack-react-native-builder-bob"
   }
 }

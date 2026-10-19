@@ -2037,14 +2037,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T14:08:45.771Z",
-    "lastVerified": "2026-10-19T14:08:45.771Z",
+    "lastChecked": "2026-10-19T17:12:08.143Z",
+    "lastVerified": "2026-10-19T17:12:08.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
+    "contentHash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7006,12 +7006,12 @@
     "revisionIdentifier": "e449d171"
   },
   "pimalaya-himalaya": {
-    "name": "pimalaya/himalaya",
+    "name": "himalaya",
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T02:03:10.661Z",
-    "lastVerified": "2026-10-19T02:03:10.661Z",
+    "lastChecked": "2026-10-19T17:11:54.761Z",
+    "lastVerified": "2026-10-19T17:11:54.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
@@ -7020,7 +7020,8 @@
     "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4df380ba"
   },
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-bindgen/wasm-pack",
@@ -10449,14 +10450,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-19T04:07:21.874Z",
-    "lastVerified": "2026-10-19T04:07:21.874Z",
+    "lastChecked": "2026-10-19T17:12:12.996Z",
+    "lastVerified": "2026-10-19T17:12:12.996Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
+    "contentHash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13568,12 +13569,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rook-rook": {
-    "name": "rook/rook",
+    "name": "rook",
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T04:53:03.390Z",
-    "lastVerified": "2026-10-19T04:53:03.390Z",
+    "lastChecked": "2026-10-19T17:12:02.326Z",
+    "lastVerified": "2026-10-19T17:12:02.326Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
@@ -13582,7 +13583,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cdfb3c2f"
   },
   "juicedata-juicefs": {
     "name": "juicedata/juicefs",
@@ -18261,8 +18263,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T16:43:46.478Z",
-    "lastVerified": "2026-10-19T16:43:46.478Z",
+    "lastChecked": "2026-10-19T17:12:09.796Z",
+    "lastVerified": "2026-10-19T17:12:09.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -21114,18 +21116,19 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "callstack-react-native-builder-bob": {
-    "name": "callstack-react-native-builder-bob",
+    "name": "callstack/react-native-builder-bob",
     "officialUrl": "https://github.com/callstack/react-native-builder-bob",
     "sourceType": "github",
-    "technology": "code-repository",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-02T03:28:10.605Z",
-    "lastVerified": "2026-10-02T03:28:10.605Z",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-19T17:12:04.290Z",
+    "lastVerified": "2026-10-19T17:12:04.290Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "learningId": "learn-github-callstack-react-native-builder-bob",
+    "contentHash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -21649,12 +21652,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pacocoursey-cmdk": {
-    "name": "dip/cmdk",
+    "name": "cmdk",
     "officialUrl": "https://github.com/pacocoursey/cmdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T05:58:40.928Z",
-    "lastVerified": "2026-10-19T05:58:40.928Z",
+    "lastChecked": "2026-10-19T17:11:52.281Z",
+    "lastVerified": "2026-10-19T17:11:52.281Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dip-cmdk",
@@ -21663,7 +21666,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dd2250ed"
   },
   "pola-rs-polars": {
     "name": "pola-rs/polars",
@@ -24906,9 +24910,9 @@
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
-    "lastChecked": "2026-10-18T05:44:17.379Z",
+    "lastChecked": "2026-10-19T17:11:57.253Z",
     "revisionIdentifier": "fac4b75f20",
-    "lastVerified": "2026-10-18T05:44:17.379Z"
+    "lastVerified": "2026-10-19T17:11:57.253Z"
   },
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",
@@ -26313,8 +26317,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T17:05:37.605Z",
-    "lastVerified": "2026-10-19T17:05:37.605Z",
+    "lastChecked": "2026-10-19T17:12:15.808Z",
+    "lastVerified": "2026-10-19T17:12:15.808Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0DHO",
-    "timestamp": "2026-10-19T03:54:36.492Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-88XH",
-    "timestamp": "2026-10-19T04:00:43.829Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "2d01ad3a3b7a2c1293f5d8266622cddb5b2d842ee61c82a96a3ee43192b7dc0a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-88YQ",
-    "timestamp": "2026-10-19T04:00:43.874Z",
-    "repository": "shadcn-ui/lint",
-    "learningId": "learn-github-shadcn-ui-lint",
-    "contentHash": "99f7cf0bb92b14fb8c5e4cfe124190ad1aefb4b89e0df2a8ba07b1e2e497024d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-8A7O",
     "timestamp": "2026-10-19T04:00:45.492Z",
     "repository": "ekzhang/rustpad",
@@ -7492,6 +7447,51 @@
     "contentHash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HYN8",
+    "timestamp": "2026-10-19T17:12:06.308Z",
+    "repository": "callstack/react-native-builder-bob",
+    "learningId": "learn-github-callstack-react-native-builder-bob",
+    "contentHash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I09Z",
+    "timestamp": "2026-10-19T17:12:08.423Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I40C",
+    "timestamp": "2026-10-19T17:12:13.260Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "fe3d7db194d7ae5df177193f68973e8c43d2ac7b3a0070607db8fd43a4c9f0c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

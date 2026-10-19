@@ -3372,3 +3372,6 @@
 | `CYCLE-20261019-5N1N` | `2026-10-19T17:02:31.403Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2695` | Yes (`55b94a4f...`) |
 | `CYCLE-20261019-7J6Z` | `2026-10-19T17:03:59.723Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2696, Rule 2697, Rule 2698` | Yes (`b5de191c...`) |
 | `CYCLE-20261019-9KR9` | `2026-10-19T17:05:35.061Z` | `serpapi/google-search-results-ruby` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2699, Rule 2700, Rule 2701` | Yes (`0e32b69d...`) |
+| `CYCLE-20261019-HYN8` | `2026-10-19T17:12:06.308Z` | `callstack/react-native-builder-bob` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2702` | Yes (`663d5620...`) |
+| `CYCLE-20261019-I09Z` | `2026-10-19T17:12:08.423Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2703` | Yes (`005f307b...`) |
+| `CYCLE-20261019-I40C` | `2026-10-19T17:12:13.260Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2704` | Yes (`fe3d7db1...`) |

@@ -3379,3 +3379,6 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `e2dcb0be` | Multi-dimensional audit evidence | 2026-10-19T17:02:31.406Z |
 | `learn-github-thebaselab-codeapp` | `https://github.com/thebaselab/codeapp` | `9b8475e2` | Multi-dimensional audit evidence | 2026-10-19T17:03:59.726Z |
 | `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `11326ef3` | Multi-dimensional audit evidence | 2026-10-19T17:05:35.064Z |
+| `learn-github-callstack-react-native-builder-bob` | `https://github.com/callstack/react-native-builder-bob` | `13309bc9` | Multi-dimensional audit evidence | 2026-10-19T17:12:06.311Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `a697a9fb` | Multi-dimensional audit evidence | 2026-10-19T17:12:08.426Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `d0ba5153` | Multi-dimensional audit evidence | 2026-10-19T17:12:13.263Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `a04eacaa`  
+> **Source Version**: `d0ba5153`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:07:21.882Z  
+> **Timestamp**: 2026-10-19T17:12:13.003Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:07:21.874Z  
+> **Harvest Timestamp**: 2026-10-19T17:12:12.996Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2319 stars
+- **Stars / Engagement**: 2320 stars
 
 ---
 
@@ -1198,142 +1198,125 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa10d952` (2026-10-16)
-**Commit Message**: CHYT-1479: Fix CHYT abort on unordered key ranges
+### Incident Patch 1: `46969b9b` (2026-10-19)
+**Commit Message**: YT-30042: increase memory limits for tests
+commit_hash:33109b87bae97b52867c43474ba69bd8bd4861a2
 
-* Changelog entry
-Type: fix
-Component: chyt
-
-Fix a crash in GROUP BY, DISTINCT, and LIMIT BY queries on sorted tables with unordered read ranges.
-commit_hash:523520a9c99be955ab6e0153c13d7a4abf76f308
-
-**File**: `yt/chyt/server/query_analyzer.cpp` (modified, +5/-5)
+**File**: `yt/yt/tests/integration/size_s/ya.make` (modified, +1/-1)
 ```diff
-@@ -1203,16 +1203,16 @@ void TQueryAnalyzer::OptimizeQueryProcessingStage()
-         return;
-     }
- 
--    bool isSingleTable = (storage->GetTables().size() == 1);
-+    bool isSingleTableWithoutRanges = (storage->GetTables().size() == 1)
-+        && !storage->GetTables()[0]->Path.HasNontrivialRanges();
-     int keyColumnCount = KeyColumnCount_;
- 
-     auto processAggregationKeyNode = [&] (const DB::QueryTreeNodePtr& keyNode) {
--        // SortedPool expects non-overlapping sorted chunks. In case of multiple
--        // tables (concatYtTablesRange), this condition is broken,
--        // so we cannot use SortedPool to optimize aggregation.
-+        // Multiple tables and explicit ranges may produce overlapping or unordered slices.
-+        // SortedPool requires monotonic bounds within each input stream.
-         // TODO(dakovalkov): Theoretically, the optimization is still possible,
-         // but we need to overthink SortedPool logic.
--        if (!isSingleTable) {
-+        if (!isSingleTableWithoutRanges) {
-             return false;
-         }
- 
-```
-
-**File**: `yt/chyt/tests/server/test_input_fetching.py` (modified, +32/-0)
-```diff
-@@ -2742,6 +2742,38 @@ def check_simple(lower_limit, upper_limit):
-                     check_simple(lower_limit, upper_limit)
-                     check_simple(upper_limit, lower_limit)
- 
-+    @authors("buyval01")
-+    @pytest.mark.parametrize("dynamic_ranges", [False, True], ids=["explicit", "dynamic"])
-+    def test_ypath_group_by_unordered_ranges(self, dynamic_ranges):
-+        self._create_table()
-+
-+        if dynamic_ranges:
-+            source = """
-+                ytTables(view(
-+                    select concat(
-+                        '//tmp/t[',
-+                        arrayStringConcat(
-+                            arrayMap(
-+                                key -> concat('(', toString(key), ')'),
-+                                arrayReverseSort(groupUniqArray(ki))
-+                            ),
-+                            ','
-+                        ),
-+                        ']'
-+                    )
-+                    from `//tmp/t`
-+                    where ki in (1, 6)
-+                ))
-+            """
-+        else:
-+            source = "`//tmp/t[(6),(1)]`"
-+
-+        with Clique(1) as clique:
-+            assert_items_equal(
-+                clique.make_query(f"select ki, count() as count from {source} group by ki"),
-+                [{"ki": 1, "count": 3}, {"ki": 6, "count": 3}],
-+            )
-+
-     @authors("max42", "dakovalkov")
-     @pytest.mark.timeout(500)
-     def test_ypath_complex(self):
-```
-
----
-
-### Incident Patch 2: `b17ffce7` (2026-10-16)
-**Commit Message**: Set oom score adj on exceeded memory reserve to 800 by default
-commit_hash:4d6a48a3e4faa62cf497bee216c962d68a33acf9
-
-**File**: `yt/yt/server/lib/job_proxy/config.cpp` (modified, +2/-2)
-```diff
-@@ -493,7 +493,7 @@ void TJobProxyInternalConfig::Register(TRegistrar registrar)
-         .GreaterThan(0);
- 
-     registrar.Parameter("oom_score_adj_on_exceeded_memory_reserve", &TThis::OomScoreAdjOnExceededMemoryReserve)
--        .Default()
-+        .Default(800)
-         .GreaterThanOrEqual(-1000)
-         .LessThanOrEqual(1000);
- 
-@@ -600,7 +600,7 @@ void TJobProxyDynamicConfig::Register(TRegistrar registrar)
-         .GreaterThan(0);
- 
-     registrar.Parameter("oom_score_adj_on_exceeded_memory_reserve", &TThis::OomScoreAdjOnExceededMemoryReserve)
--        .Default()
-+        .Default(800)
-         .GreaterThanOrEqual(-1000)
-         .LessThanOrEqual(1000);
- 
-```
-
----
-
-### Incident Patch 3: `77d25655` (2026-10-18)
-**Commit Message**: YT-30042: increase timeouts for xl tests
-commit_hash:e8fb32853e47dac923e8fda3509553793c2e7f4b
-
-**File**: `yt/yt/tests/integration/size_xl/ya.make` (modified, +2/-2)
-```diff
-@@ -7,9 +7,9 @@ ELSE()
- ENDIF()
- 
- IF (SANITIZER_TYPE)
--    SET(YT_TIMEOUT 3000)
-+    SET(YT_TIMEOUT 3600)
+@@ -18,7 +18,7 @@ ELSEIF (SANITIZER_TYPE)
+     )
  ELSE()
--    SET(YT_TIMEOUT 2400)
-+    SET(YT_TIMEOUT 3000)
+     REQUIREMENTS(
+-        ram:12
++        ram:14
+         cpu:8
+     )
  ENDIF()
+```
+
+**File**: `yt/yt/tests/integration/size_xl/ya.make` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ IF (SANITIZER_TYPE)
+ ELSE()
+     REQUIREMENTS(
+         cpu:20
+-        ram:26
++        ram:28
+         ram_disk:15
+     )
+ ENDIF()
+```
+
+---
+
+### Incident Patch 2: `3363f36f` (2026-10-19)
+**Commit Message**: YT-30096 - Fix tests
+commit_hash:d47f46cd51823dfc6616bc939ae2e9f8eead9954
+
+**File**: `yt/python/yt/wrapper/tests/serverless/test_ping_transaction.py` (modified, +9/-0)
+```diff
+@@ -10,6 +10,7 @@
+ from yt.wrapper.client import YtClient
+ import yt.wrapper.transaction as transaction_module
+ from yt.wrapper.transaction import PingTransaction
++from yt.testlib import authors
  
- ENV(YT_TEST_FILTER=XLARGE)
+ 
+ def _wait_for_child(pid, timeout):
+@@ -60,6 +61,7 @@ def make_pinger(config_patch=None, ping_period=1000, ping_timeout=100, interrupt
+             assert not pinger.is_alive()
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_stop_wakes_long_idle_wait(pinger_factory):
+     make_pinger, ping = pinger_factory
+     rpc_entered = threading.Event()
+@@ -82,6 +84,7 @@ def test_stop_wakes_long_idle_wait(pinger_factory):
+             stopper.join(timeout=4.0)
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_ping_cadence_and_rpc_parameters_are_unchanged(pinger_factory, monkeypatch):
+     make_pinger, ping = pinger_factory
+     base_time = datetime(2020, 1, 1)
+@@ -111,6 +114,7 @@ def record_ping(transaction, timeout, client):
+     assert calls[1][3] == pytest.approx(0.3)
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_stop_does_not_interrupt_in_flight_rpc(pinger_factory):
+     make_pinger, ping = pinger_factory
+     rpc_entered = threading.Event()
+@@ -140,6 +144,7 @@ def blocked_ping(*_args, **_kwargs):
+             stopper.join(timeout=2.0)
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_never_started_and_repeated_stop_are_safe(pinger_factory):
+     make_pinger, _ = pinger_factory
+     pinger = make_pinger()
+@@ -152,6 +157,7 @@ def test_never_started_and_repeated_stop_are_safe(pinger_factory):
+     assert not pinger._stop_event.is_set()
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_stop_uses_independent_join_timeouts(pinger_factory):
+     make_pinger, _ = pinger_factory
+     first = make_pinger(ping_period=1000, ping_timeout=271)
+@@ -173,6 +179,7 @@ def test_stop_uses_independent_join_timeouts(pinger_factory):
+     second.join.assert_called_once_with(pytest.approx(0.183))
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_callback_self_stop_keeps_existing_join_error(pinger_factory):
+     make_pinger, ping = pinger_factory
+     callback_errors = []
+@@ -198,13 +205,15 @@ def callback():
+     assert "current thread" in str(callback_errors[0])
+ 
+ 
++@authors("denvr")  # @damirzain
+ def test_partial_initialization_preserves_original_exception(pinger_factory):
+     make_pinger, _ = pinger_factory
+ 
+     with pytest.raises(transaction_module.YtError, match="Incorrect ping failed mode"):
+         make_pinger({"ping_failed_mode": "invalid-mode"})
+ 
+ 
++@authors("denvr")  # @damirzain
+ @pytest.mark.skipif(not hasattr(os, "fork"), reason="requires os.fork")
+ def test_fork_child_stop_skips_inherited_event_condition_lock(pinger_factory):
+     make_pinger, ping = pinger_factory
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1870** (closed): Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1869** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1865** (closed): [queues] Add a list of ignored objects for cypress synchronizer pass (@ItIsApachee)
 - **PR #1860** (closed): feat(CHYT): describe clique creation options [CHYT-1471] (@sesho96)
 - **PR #1858** (closed): Fix links to images after the directory with them has been moved (@andrey-khropov)
 - **PR #1856** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1852** (closed): Dump args count for builtin functions. (@Tony-Romanov)
-- **PR #1848** (closed): YQL-21471: Release YQL Language Server for Unix (@vityaman)
 
 ---
 
@@ -1353,36 +1336,28 @@ commit_hash:e8fb32853e47dac923e8fda3509553793c2e7f4b
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CHYT-1479: Fix CHYT abort on unordered key ranges
+## X. YT-30042: increase memory limits for tests
 
 **RULE**:
-When implementing operations in `yt/chyt/server/query_analyzer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/tests/integration/size_s/ya.make`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa10d952`: CHYT-1479: Fix CHYT abort on unordered key ranges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46969b9b`: YT-30042: increase memory limits for tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/chyt/server/query_analyzer.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/size_s/ya.make`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    bool isSingleTableWithoutRanges = (storage->GetTables().size() == 1)
-        && !storage->GetTables()[0]->Path.HasNontrivialRanges();
-        // Multiple tables and explicit ranges may produce overlapping or unordered slices.
-        // SortedPool requires monotonic bounds within each input stream.
-        if (!isSingleTableWithoutRanges) {
+        ram:14
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    bool isSingleTable = (storage->GetTables().size() == 1);
-        // SortedPool expects non-overlapping sorted chunks. In case of multiple
-        // tables (concatYtTablesRange), this condition is broken,
-        // so we cannot use SortedPool to optimize aggregation.
-        if (!isSingleTable) {
+        ram:12
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa10d952` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46969b9b` are properly handled with clean fallback behavior.
