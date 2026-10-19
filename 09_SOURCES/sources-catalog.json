@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "fb270749794e22cca4918e128c80c340af08944a2e3c2915e4710f90b8cd48d3",
-    "lastHarvestedAt": "2026-10-18T00:38:37.154Z",
+    "contentHash": "aeb118b2179e014eef151d651789b10c5c768d2cf370217edd10dc177547d3df",
+    "lastHarvestedAt": "2026-10-19T07:29:39.890Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -7008,5 +7008,45 @@
     "contentHash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
     "lastHarvestedAt": "2026-10-19T07:21:36.169Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
+  },
+  "jhspetersson-fselect": {
+    "repository": "jhspetersson/fselect",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jhspetersson/fselect",
+    "sourceVersion": "32c74c88",
+    "license": "Apache-2.0",
+    "contentHash": "c932ac6be5dc21a2810b687f9c208631fec3650669da10611da09793303ffd6b",
+    "lastHarvestedAt": "2026-10-19T07:29:39.369Z",
+    "learningId": "learn-github-jhspetersson-fselect"
+  },
+  "mikepenz-aboutlibraries": {
+    "repository": "mikepenz/AboutLibraries",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
+    "sourceVersion": "b499d890",
+    "license": "Apache-2.0",
+    "contentHash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
+    "lastHarvestedAt": "2026-10-19T07:29:47.125Z",
+    "learningId": "learn-github-mikepenz-aboutlibraries"
+  },
+  "tursodatabase-turso": {
+    "repository": "tursodatabase/turso",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tursodatabase/turso",
+    "sourceVersion": "65b33d6c",
+    "license": "MIT",
+    "contentHash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
+    "lastHarvestedAt": "2026-10-19T07:29:48.254Z",
+    "learningId": "learn-github-tursodatabase-turso"
+  },
+  "flux-iac-tofu-controller": {
+    "repository": "flux-iac/tofu-controller",
+    "platform": "github",
+    "sourceUrl": "https://github.com/flux-iac/tofu-controller",
+    "sourceVersion": "8fc67730",
+    "license": "Apache-2.0",
+    "contentHash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
+    "lastHarvestedAt": "2026-10-19T07:29:49.778Z",
+    "learningId": "learn-github-flux-iac-tofu-controller"
   }
 }

@@ -3053,3 +3053,8 @@
 | `CYCLE-20261019-EJOB` | `2026-10-19T07:21:35.003Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2294, Rule 2295, Rule 2296` | Yes (`847cb504...`) |
 | `CYCLE-20261019-EK3T` | `2026-10-19T07:21:35.561Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2297, Rule 2298, Rule 2299` | Yes (`b580f433...`) |
 | `CYCLE-20261019-EKKM` | `2026-10-19T07:21:36.166Z` | `Comfy-Org/z_image_turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2300, Rule 2301` | Yes (`c1d0f2ac...`) |
+| `CYCLE-20261019-OXEV` | `2026-10-19T07:29:39.367Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2302, Rule 2303, Rule 2304` | Yes (`c932ac6b...`) |
+| `CYCLE-20261019-OXTB` | `2026-10-19T07:29:39.887Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2305, Rule 2306` | Yes (`aeb118b2...`) |
+| `CYCLE-20261019-P3EA` | `2026-10-19T07:29:47.122Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2307, Rule 2308` | Yes (`e399e5e7...`) |
+| `CYCLE-20261019-P49N` | `2026-10-19T07:29:48.251Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2309, Rule 2310` | Yes (`9f63667c...`) |
+| `CYCLE-20261019-P5FZ` | `2026-10-19T07:29:49.775Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2311, Rule 2312, Rule 2313` | Yes (`6e6afb4a...`) |

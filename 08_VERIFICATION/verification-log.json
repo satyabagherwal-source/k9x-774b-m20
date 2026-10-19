@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-68CS",
-    "timestamp": "2026-10-18T22:23:14.380Z",
-    "repository": "CrawlCove/hreflang-checker",
-    "learningId": "learn-github-crawlcove-hreflang-checker",
-    "contentHash": "705f619c014ee293a4d6914a76acdf1ca3a24b4e57b7c1e3a205ac97f7ef87fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6AEI",
-    "timestamp": "2026-10-18T22:23:17.034Z",
-    "repository": "feathersjs/feathers",
-    "learningId": "learn-github-feathersjs-feathers",
-    "contentHash": "c42b5ad96f97e525d8ff3dbe39905d09552de47d72d5fe8e26d7c9dc63f1e617",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6DZD",
-    "timestamp": "2026-10-18T22:23:21.673Z",
-    "repository": "litmuschaos/litmus",
-    "learningId": "learn-github-litmuschaos-litmus",
-    "contentHash": "17b6d77c529806bc87e1e8179ce01914a2de570fa99c1a77dfebef3f53f8e0c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6F6O",
-    "timestamp": "2026-10-18T22:23:23.232Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "842eee5a66b5a762891a14fb7b7580410b3f8d0bb62610316aa67ee5acc96457",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6HDB",
-    "timestamp": "2026-10-18T22:23:26.063Z",
-    "repository": "vasu-devs/JustHireMe",
-    "learningId": "learn-github-vasu-devs-justhireme",
-    "contentHash": "73f6aebdad37a2679cf3a54b5b1d1319432519a4867cc811cd6f716712bc6f17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-E39N",
     "timestamp": "2026-10-18T22:29:21.035Z",
     "repository": "hunvreus/basecoat",
@@ -7492,6 +7417,81 @@
     "contentHash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-OXEV",
+    "timestamp": "2026-10-19T07:29:39.367Z",
+    "repository": "jhspetersson/fselect",
+    "learningId": "learn-github-jhspetersson-fselect",
+    "contentHash": "c932ac6be5dc21a2810b687f9c208631fec3650669da10611da09793303ffd6b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-OXTB",
+    "timestamp": "2026-10-19T07:29:39.887Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "aeb118b2179e014eef151d651789b10c5c768d2cf370217edd10dc177547d3df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-P3EA",
+    "timestamp": "2026-10-19T07:29:47.122Z",
+    "repository": "mikepenz/AboutLibraries",
+    "learningId": "learn-github-mikepenz-aboutlibraries",
+    "contentHash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-P49N",
+    "timestamp": "2026-10-19T07:29:48.251Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-P5FZ",
+    "timestamp": "2026-10-19T07:29:49.775Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3060,3 +3060,8 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `954797e4` | Multi-dimensional audit evidence | 2026-10-19T07:21:35.005Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `39edf7f0` | Multi-dimensional audit evidence | 2026-10-19T07:21:35.564Z |
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-19T07:21:36.169Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `32c74c88` | Multi-dimensional audit evidence | 2026-10-19T07:29:39.369Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-19T07:29:39.890Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `b499d890` | Multi-dimensional audit evidence | 2026-10-19T07:29:47.125Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `65b33d6c` | Multi-dimensional audit evidence | 2026-10-19T07:29:48.254Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `8fc67730` | Multi-dimensional audit evidence | 2026-10-19T07:29:49.778Z |

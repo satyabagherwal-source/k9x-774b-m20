@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T07:21:36.125Z",
-  "total_verified_learnings": 716,
+  "last_updated": "2026-10-19T07:29:49.734Z",
+  "total_verified_learnings": 719,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8971,22 +8971,45 @@
     "learn-github-flux-iac-tofu-controller": {
       "learning_id": "learn-github-flux-iac-tofu-controller",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "flux-iac-tofu-controller",
+      "source": "flux-iac/tofu-controller",
+      "repository": "flux-iac/tofu-controller",
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "HEAD",
-      "content_hash": "bef4f3a342e0efc2b707734168a5fb6fa7c84b0dc9885dc32ca6d32c073a8d35",
+      "source_version": "8fc67730",
+      "content_hash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2311,
+          "title": "External Metadata Isolation from Persistence Keys",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2312,
+          "title": "Time-Quantized Identifier Collision Elimination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2313,
+          "title": "Maximum Payload Etcd Bounded Multi-Chunk Reconstruction",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.970Z"
+      "verified_at": "2026-10-19T07:29:49.723Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-foryourhealth111-pixel-vibe-skills": {
       "learning_id": "learn-github-foryourhealth111-pixel-vibe-skills",
@@ -22076,7 +22099,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "fb270749794e22cca4918e128c80c340af08944a2e3c2915e4710f90b8cd48d3",
+      "content_hash": "aeb118b2179e014eef151d651789b10c5c768d2cf370217edd10dc177547d3df",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -22119,6 +22142,16 @@
           "number": 1495,
           "title": "GGUF Tensor Offset Integrity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2305,
+          "title": "Post-Truncation L2 Renormalization Invariant for Matryoshka Embeddings",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2306,
+          "title": "Mixed-Precision GGUF Quantization Boundary for Normalization Layers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22139,7 +22172,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-18T00:38:37.108Z",
+      "verified_at": "2026-10-19T07:29:39.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24466,22 +24499,45 @@
     "learn-github-jhspetersson-fselect": {
       "learning_id": "learn-github-jhspetersson-fselect",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jhspetersson-fselect",
+      "source": "jhspetersson/fselect",
+      "repository": "jhspetersson/fselect",
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "HEAD",
-      "content_hash": "db34a0e929ebc76115fc843d062bc01d70e73dc7a4b1a8677eaac0ed191e803e",
+      "source_version": "32c74c88",
+      "content_hash": "c932ac6be5dc21a2810b687f9c208631fec3650669da10611da09793303ffd6b",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2302,
+          "title": "Zero-Cost Binary VFS Serialization Boundary Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2303,
+          "title": "Temporal Representation Non-Ambiguity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2304,
+          "title": "Multi-Pass Topological Alias Binding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.689Z"
+      "verified_at": "2026-10-19T07:29:39.316Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jinxiansen-swiftui": {
       "learning_id": "learn-github-jinxiansen-swiftui",
@@ -28592,22 +28648,40 @@
     "learn-github-mikepenz-aboutlibraries": {
       "learning_id": "learn-github-mikepenz-aboutlibraries",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mikepenz-aboutlibraries",
+      "source": "mikepenz/AboutLibraries",
+      "repository": "mikepenz/AboutLibraries",
       "slug": "mikepenz-aboutlibraries",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/AboutLibraries",
-      "source_version": "HEAD",
-      "content_hash": "d1c8b50571d0739ab44f2b4d4b9e8d8afc8b1e9e373784b0b90baaa67f05838c",
+      "source_version": "b499d890",
+      "content_hash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2307,
+          "title": "Fail-Safe Builder Degradation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2308,
+          "title": "Heterogeneous JSON Primitive Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.344Z"
+      "verified_at": "2026-10-19T07:29:47.070Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mikepenz-multiplatform-markdown-renderer": {
       "learning_id": "learn-github-mikepenz-multiplatform-markdown-renderer",
@@ -39725,17 +39799,27 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "25f00f0a",
-      "content_hash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "65b33d6c",
+      "content_hash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
           "title": "Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2309,
+          "title": "Cursor Navigation State Flag Invalidation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2310,
+          "title": "Scoped Schema Resolution Invariant for Persistent Stored Objects",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39744,7 +39828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:32:07.803Z",
+      "verified_at": "2026-10-19T07:29:48.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81055,6 +81139,174 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T07:21:36.114Z"
+    },
+    "rule-2302": {
+      "learning_id": "rule-2302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2302,
+      "title": "Zero-Cost Binary VFS Serialization Boundary Rule",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "32c74c88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:39.316Z"
+    },
+    "rule-2303": {
+      "learning_id": "rule-2303",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2303,
+      "title": "Temporal Representation Non-Ambiguity Invariant",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "32c74c88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:39.316Z"
+    },
+    "rule-2304": {
+      "learning_id": "rule-2304",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2304,
+      "title": "Multi-Pass Topological Alias Binding Invariant",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "32c74c88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:39.316Z"
+    },
+    "rule-2305": {
+      "learning_id": "rule-2305",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2305,
+      "title": "Post-Truncation L2 Renormalization Invariant for Matryoshka Embeddings",
+      "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+      "source_version": "hf-unsloth-embeddinggemma-2-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:39.836Z"
+    },
+    "rule-2306": {
+      "learning_id": "rule-2306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2306,
+      "title": "Mixed-Precision GGUF Quantization Boundary for Normalization Layers",
+      "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+      "source_version": "hf-unsloth-embeddinggemma-2-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:39.836Z"
+    },
+    "rule-2307": {
+      "learning_id": "rule-2307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2307,
+      "title": "Fail-Safe Builder Degradation Invariant",
+      "source_url": "https://github.com/mikepenz/AboutLibraries",
+      "source_version": "b499d890",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:47.070Z"
+    },
+    "rule-2308": {
+      "learning_id": "rule-2308",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2308,
+      "title": "Heterogeneous JSON Primitive Extraction Invariant",
+      "source_url": "https://github.com/mikepenz/AboutLibraries",
+      "source_version": "b499d890",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:47.070Z"
+    },
+    "rule-2309": {
+      "learning_id": "rule-2309",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2309,
+      "title": "Cursor Navigation State Flag Invalidation Rule",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "65b33d6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:48.201Z"
+    },
+    "rule-2310": {
+      "learning_id": "rule-2310",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2310,
+      "title": "Scoped Schema Resolution Invariant for Persistent Stored Objects",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "65b33d6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:48.201Z"
+    },
+    "rule-2311": {
+      "learning_id": "rule-2311",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2311,
+      "title": "External Metadata Isolation from Persistence Keys",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "8fc67730",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:49.723Z"
+    },
+    "rule-2312": {
+      "learning_id": "rule-2312",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2312,
+      "title": "Time-Quantized Identifier Collision Elimination",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "8fc67730",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:49.723Z"
+    },
+    "rule-2313": {
+      "learning_id": "rule-2313",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2313,
+      "title": "Maximum Payload Etcd Bounded Multi-Chunk Reconstruction",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "8fc67730",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:29:49.723Z"
     }
   },
   "aliases": {

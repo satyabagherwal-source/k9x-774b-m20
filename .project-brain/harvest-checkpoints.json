@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T07:21:36.175Z",
+  "last_updated": "2026-10-19T07:29:49.785Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "fb270749794e22cca4918e128c80c340af08944a2e3c2915e4710f90b8cd48d3",
-      "verified_at": "2026-10-18T00:38:37.157Z",
+      "content_hash": "aeb118b2179e014eef151d651789b10c5c768d2cf370217edd10dc177547d3df",
+      "verified_at": "2026-10-19T07:29:39.896Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:38:37.157Z"
+      "last_updated": "2026-10-19T07:29:39.896Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -9513,14 +9513,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
-      "verified_at": "2026-10-19T05:32:07.859Z",
+      "content_hash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
+      "verified_at": "2026-10-19T07:29:48.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:32:07.859Z"
+      "last_updated": "2026-10-19T07:29:48.264Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10571,6 +10571,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T07:21:36.175Z"
+    },
+    "jhspetersson/fselect": {
+      "repository": "jhspetersson/fselect",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jhspetersson-fselect",
+      "content_hash": "c932ac6be5dc21a2810b687f9c208631fec3650669da10611da09793303ffd6b",
+      "verified_at": "2026-10-19T07:29:39.375Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:29:39.375Z"
+    },
+    "mikepenz/AboutLibraries": {
+      "repository": "mikepenz/AboutLibraries",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mikepenz-aboutlibraries",
+      "content_hash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
+      "verified_at": "2026-10-19T07:29:47.131Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:29:47.131Z"
+    },
+    "flux-iac/tofu-controller": {
+      "repository": "flux-iac/tofu-controller",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-flux-iac-tofu-controller",
+      "content_hash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
+      "verified_at": "2026-10-19T07:29:49.784Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:29:49.784Z"
     }
   },
   "repos": {

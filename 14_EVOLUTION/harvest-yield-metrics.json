@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T07:21:36.172Z",
-  "total_cycles_completed": 3030,
-  "total_learnings_persisted": 3030,
-  "total_rules_promoted": 2088,
+  "last_updated": "2026-10-19T07:29:49.782Z",
+  "total_cycles_completed": 3035,
+  "total_learnings_persisted": 3035,
+  "total_rules_promoted": 2100,
   "history": [
-    {
-      "timestamp": "2026-10-19T03:33:04.923Z",
-      "repository": "decodingai-magazine/llm-twin-course",
-      "learningId": "learn-github-decodingai-magazine-llm-twin-course",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:33:09.466Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:39:11.027Z",
-      "repository": "heroui-inc/heroui-native",
-      "learningId": "learn-github-heroui-inc-heroui-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:39:11.196Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:39:13.301Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T03:39:18.769Z",
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -1403,6 +1368,41 @@
       "repository": "Comfy-Org/z_image_turbo",
       "learningId": "learn-huggingface-comfy-org-z_image_turbo",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:29:39.373Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:29:39.894Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:29:47.128Z",
+      "repository": "mikepenz/AboutLibraries",
+      "learningId": "learn-github-mikepenz-aboutlibraries",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:29:48.261Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:29:49.782Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

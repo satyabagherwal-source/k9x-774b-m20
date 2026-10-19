@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T06:44:52.747Z",
+  "last_updated": "2026-10-19T07:29:48.258Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1773,6 +1773,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-huggingface-facebook-sam3"
+    },
+    {
+      "id": "CD-P49U",
+      "directive_title": "Backend Concurrency & Memory Safety",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "tursodatabase/turso",
+      "source_commit": "65b33d6c",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-github-tursodatabase-turso"
     }
   ]
 }
