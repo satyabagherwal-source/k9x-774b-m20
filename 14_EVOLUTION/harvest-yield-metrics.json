@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:58:19.760Z",
-  "total_cycles_completed": 3434,
-  "total_learnings_persisted": 3434,
-  "total_rules_promoted": 2581,
+  "last_updated": "2026-10-19T20:04:19.597Z",
+  "total_cycles_completed": 3438,
+  "total_learnings_persisted": 3438,
+  "total_rules_promoted": 2585,
   "history": [
-    {
-      "timestamp": "2026-10-19T13:27:26.957Z",
-      "repository": "elastic/eui",
-      "learningId": "learn-github-elastic-eui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:27:28.904Z",
-      "repository": "Michael-A-Kuykendall/shimmy",
-      "learningId": "learn-github-michael-a-kuykendall-shimmy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:27:33.619Z",
-      "repository": "amosgyamfi/open-swiftui-animations",
-      "learningId": "learn-github-amosgyamfi-open-swiftui-animations",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:37:09.057Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T13:37:10.278Z",
       "repository": "metalbear-co/mirrord",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T19:58:19.760Z",
       "repository": "ugolbck/seofordev",
       "learningId": "learn-github-ugolbck-seofordev",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:04:12.479Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:04:12.688Z",
+      "repository": "nometria/sitemap-generator",
+      "learningId": "learn-github-nometria-sitemap-generator",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:04:17.397Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:04:19.597Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

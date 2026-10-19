@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "abce92f9",
+    "sourceVersion": "4b7dc7e2",
     "license": "BSD-3-Clause",
-    "contentHash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
-    "lastHarvestedAt": "2026-10-19T05:05:32.540Z",
+    "contentHash": "98e4fc01727070d79ec96a5c9947ae0a5a760d3f9cf22a77b96f1467d6d6e3b7",
+    "lastHarvestedAt": "2026-10-19T20:04:12.476Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "9e79066f",
+    "sourceVersion": "dc64f3b4",
     "license": "Apache-2.0",
-    "contentHash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
-    "lastHarvestedAt": "2026-10-19T08:06:57.586Z",
+    "contentHash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
+    "lastHarvestedAt": "2026-10-19T20:04:19.594Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -8858,5 +8858,25 @@
     "contentHash": "de37e5e59c4f173f42ad65b81953f5b58be525c21f9eddcc613fb71dbfbfd971",
     "lastHarvestedAt": "2026-10-19T19:58:19.757Z",
     "learningId": "learn-github-ugolbck-seofordev"
+  },
+  "nometria-sitemap-generator": {
+    "repository": "nometria/sitemap-generator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nometria/sitemap-generator",
+    "sourceVersion": "6d8cae81",
+    "license": "MIT",
+    "contentHash": "c9134cdfea6d58604c13e1aab9616f1cc2bcffb540bb6e1cf99e0a6b34c311c7",
+    "lastHarvestedAt": "2026-10-19T20:04:12.685Z",
+    "learningId": "learn-github-nometria-sitemap-generator"
+  },
+  "chrisbanes-skills": {
+    "repository": "chrisbanes/skills",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chrisbanes/skills",
+    "sourceVersion": "b0d941a5",
+    "license": "Apache-2.0",
+    "contentHash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
+    "lastHarvestedAt": "2026-10-19T20:04:17.394Z",
+    "learningId": "learn-github-chrisbanes-skills"
   }
 }

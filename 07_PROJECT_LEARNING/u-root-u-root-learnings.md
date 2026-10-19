@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `abce92f9`  
+> **Source Version**: `4b7dc7e2`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:05:32.233Z  
+> **Timestamp**: 2026-10-19T20:04:12.295Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:05:32.223Z  
+> **Harvest Timestamp**: 2026-10-19T20:04:10.964Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1257,1026 +1257,213 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04fdcce8` (2026-10-04)
-**Commit Message**: ci: add codespell spell-check workflow and fix typos
+### Incident Patch 1: `4b7dc7e2` (2026-10-17)
+**Commit Message**: cmds/core/gosh: gate completer_bubbline behind goshbubble tag
 
-Adds a codespell job that runs on push and pull_request. It uses the
-codespell-project action pinned by commit, the same way the other
-workflows pin their actions. The skip list and ignored words live in
-.codespellrc so a local `codespell` run from the repo root matches CI.
+Commit ed196973e062 ("gosh: make completer_liner the default") gated
+completer.go behind the goshbubble build tag so completer_liner.go
+(!goshbubble) would be used by default, but left completer_bubbline.go
+without the goshbubble build constraint so TestAutocompleteBubb in
+completer_test.go would still compile without -tags goshbubble.
 
-The skip list covers vendored, generated, binary, and test-fixture paths:
-vendor, go.sum, go.mod, *.cast recordings, *.svg, *.signature, the npm
-lockfile, testdata trees, and pkg/pci/pciids.go, which mirrors the
-upstream PCI ID device-name database. The ignore list holds domain terms,
-protocol and flag tokens, and a few pre-existing identifiers that read as
-misspellings but are not typos.
+Because completer_bubbline.go imports github.com/knz/bubbline/editline
+(along with complete and computil), package initialization from
+bubbline/bubbletea/lipgloss is still compiled and linked into default
+(!goshbubble) builds of gosh and busybox initramfs binaries (~752 KiB
+of dead code and data).
 
-The rest of the changes fix the spelling mistakes codespell flagged in
-first-party comments, docs, and log or error messages, so the check
-starts from a clean state. No code identifiers or test input vectors were
-renamed.
+Add the goshbubble build tag to completer_bubbline.go and move
+TestAutocompleteBubb into completer_bubbline_test.go under the same
+build constraint.
 
-Signed-off-by: Chris (ChrisJr404) <[REDACTED_EMAIL]>
+Signed-off-by: Kevin Loughlin <[REDACTED_EMAIL]>
 
-**File**: `.codespellrc` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+# codespell configuration, used by .github/workflows/codespell.yml and by
-+# running `codespell` locally from the repo root.
-+#
-+# skip: vendored, generated, binary, and test-fixture paths that are not
-+# first-party prose. pkg/pci/pciids.go is a device-name data table that
-+# mirrors the upstream PCI ID database, so those names must not be "fixed".
-+#
-+# ignore-words-list: domain terms, protocol/flag tokens, and pre-existing
-+# identifiers that are not typos (or are too risky to rename in this change).
-+# All entries are lowercase, as codespell lowercases tokens before matching.
-+#
-+# This list is intentionally conservative and can be tightened over time.
-+[codespell]
-+skip = ./.git,./vendor,*.cast,*.svg,*.signature,go.sum,go.mod,./website/package-lock.json,*/testdata/*,*/testdata_new/*,./pkg/pci/pciids.go
-+ignore-words-list = additionals,afile,als,anull,atleast,buildin,caf,conenct,cros,delt,direcotry,dout,erally,errro,extention,failer,fo,formated,halp,iif,implementor,initator,lenth,mergable,nin,oen,parms,pendin,respone,shs,somemore,te,tha,unparseable,unziped,wont,writen
-```
-
-**File**: `.github/workflows/codespell.yml` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+name: codespell
-+on:
-+  push:
-+    branches:
-+      - main
-+  pull_request:
-+    branches:
-+      - main
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  codespell:
-+    name: codespell
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-+      # Skip list and ignored words are configured in .codespellrc at the repo root.
-+      - uses: codespell-project/actions-codespell@e3258cca84ce02b0bb36a3d41f2c18f719a0cc1a # v2.4.3
-```
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ the future.  The abstract form should be:
- More detailed explanation of your changes: Why and how.
- Wrap it to 72 characters.
- See [here] (http://chris.beams.io/posts/git-commit/)
--for some more good advices.
-+for some more good advice.
- 
- Signed-off-by: <contributor@foo.com>
- ```
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -220,7 +220,7 @@ Use `-skip-ldd` to not automatically include ldd dependencies for binary files.
- 
- ## Init and Uinit
- 
--u-root has a very simple (exchangable) init system controlled by the `-initcmd`
-+u-root has a very simple (exchangeable) init system controlled by the `-initcmd`
- and `-uinitcmd` command-line flags.
- 
- *   `-initcmd` determines what `/init` is symlinked to. `-initcmd` may be a
-```
-
-**File**: `RELEASES` (modified, +2/-2)
+**File**: `cmds/core/gosh/completer_bubbline.go` (modified, +1/-1)
 ```diff
 @@ -2,7 +2,7 @@
- 
- Note: All release >=1.0.0 have been bumped down from vX.0.0 to v0.X.0. This was
- done to avoid the +incompatible suffix from Go modules. The u-root API is
--currently unstable and may change slighly between releases.
-+currently unstable and may change slightly between releases.
- 
- ## v0.11.0 (2023-02-01)
- 
-@@ -40,7 +40,7 @@ currently unstable and may change slighly between releases.
- - New packages:
-   - gpio
- - Testing improvements:
--  - Use 9pfs to share files with intergration test instead of vfat
-+  - Use 9pfs to share files with integration test instead of vfat
-   - Replace ANSI escape codes with ~ character
-   - Run integration tests on pkg/ as well
- - checklicenses command is generalized to be used by other projects.
-```
-
-**File**: `cmds/boot/fitboot/main_linux.go` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ var (
- 	kernel     = flag.String("k", "", "Kernel image node name.")
- 	initramfs  = flag.String("i", "", "InitRAMFS node name -- default none")
- 	ringPath   = flag.String("r", "", "Path to PGP keyring. Enforces signature if non-empty path")
--	rsdpLookup = flag.Bool("rsdp", false, "Derrive RSDP table pointer from environment")
-+	rsdpLookup = flag.Bool("rsdp", false, "Derive RSDP table pointer from environment")
- )
- 
- var v = func(string, ...any) {}
-```
-
-**File**: `cmds/core/chmod/chmod.go` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- //
- //	chmod MODE FILE...
- //
--// Desription:
-+// Description:
- //
- //	MODE is a three character octal value or a string like a=rwx
- package main
-```
-
-**File**: `cmds/core/comm/comm.go` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- //
- //	comm [-123h] FILE1 FILE2
- //
--// Descrption:
-+// Description:
- //
- //	Comm reads file1 and file2, which are in lexicographical order, and
- //	produces a three column output: lines only in file1; lines only in
-```
-
----
-
-### Incident Patch 2: `fa616ab8` (2026-09-30)
-**Commit Message**: modprobe, kmodule: support Linux kernel module autoloading
-
-When the Linux kernel autoloads a module via request_module(), call_modprobe()
-in kernel/module/kmod.c invokes:
-
-  /sbin/modprobe -q -- <module_or_alias>
-
-with PATH=/sbin:/usr/sbin:/bin:/usr/bin. Previously this failed in u-root for
-several reasons:
-- modprobe did not support -q or unixflag parsing, and unixflag.ArgsToGoArgs
-  rewrote '--' to '-' while continuing to split subsequent arguments as flags.
-- kmodule did not resolve module aliases from modules.alias, modules.symbols,
-  modules.builtin.modinfo, or modprobe.d/*.conf (e.g. fs-9p -> 9p,
-  9p-fd -> 9pnet_fd, symbol:*, or modalias wildcards).
-
-Fix these and related issues in modprobe and pkg/kmodule:
-- Fix unixflag.ArgsToGoArgs to stop flag splitting on '--' and '-'.
-- Update cmds/exp/modprobe to use unixflag and support -q/--quiet, -r/--remove,
-  -b/--use-blacklist, -i/--ignore-install/--ignore-remove, -v/--verbose,
-  -a/--all, -n/--dry-run/--show, -d/--dirname, -S/--set-version, and '--'.
-  Reuse a single Prober across -a/-r arguments and exit non-zero on -a errors.
-- Resolve aliases from modprobe.d/*.conf, modules.alias, modules.symbols, and
-  modules.builtin.modi
-
-**File**: `cmds/exp/modprobe/modprobe_linux.go` (modified, +106/-40)
-```diff
-@@ -2,81 +2,147 @@
  // Use of this source code is governed by a BSD-style
  // license that can be found in the LICENSE file.
  
--// modprobe - Add and remove modules from the Linux Kernel
-+// modprobe - Add and remove modules from the Linux Kernel.
- //
- // Synopsis:
- //
--//	modprobe [-n] modulename [parameters...]
--//	modprobe [-n] -a modulename...
-+//	modprobe [-nqvrb] [-d DIR] [-S VERSION] [--] modulename [parameters...]
-+//	modprobe [-nqvrb] [-d DIR] [-S VERSION] -a modulename...
-+//	modprobe [-nqv] [-d DIR] [-S VERSION] -r modulename...
- //
- // Author:
- //
- //	Roland Kammerer <dev.rck@gmail.com>
+-//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall
++//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall && goshbubble
+ 
  package main
  
- import (
-+	"errors"
- 	"flag"
-+	"fmt"
-+	"io"
- 	"log"
- 	"os"
- 	"strings"
-+	"sync"
- 
- 	"github.com/u-root/u-root/pkg/kmodule"
-+	"github.com/u-root/u-root/pkg/uroot/unixflag"
- )
- 
--const cmd = "modprobe [-an] modulename[s] [parameters...]"
-+var errUsage = errors.New("one module and optional module options required")
- 
--var (
--	dryRun     = flag.Bool("n", false, "Dry run")
--	all        = flag.Bool("a", false, "Insert all module names on the command line.")
--	verboseAll = flag.Bool("va", false, "Insert all module names on the command line.")
--	rootDir    = flag.String("d", "/", "Root directory for modules")
--	kernelVer  = flag.String("S", "", "Set kernel version instead of using uname")
--)
-+type flags struct {
-+	dryRun        bool
-+	all           bool
-+	verbose       bool
-+	quiet         bool
-+	remove        bool
-+	useBlacklist  bool
-+	ignoreInstall bool
-+	rootDir       string
-+	kernelVer     string
-+}
-+
-+func run(args []string, stderr io.Writer) error {
-+	var f flags
-+	fs := flag.NewFlagSet("modprobe", flag.ContinueOnError)
-+	fs.SetOutput(stderr)
- 
--func init() {
--	defUsage := flag.Usage
--	flag.Usage = func() {
--		os.Args[0] = cmd
--		defUsage()
-+	fs.BoolVar(&f.dryRun, "n", false, "Dry run")
-+	fs.BoolVar(&f.dryRun, "dry-run", false, "Dry run")
-+	fs.BoolVar(&f.dryRun, "show", false, "Dry run")
-+	fs.BoolVar(&f.all, "a", false, "Insert all module names on the command line")
-+	fs.BoolVar(&f.all, "all", false, "Insert all module names on the command line")
-+	fs.BoolVar(&f.verbose, "v", false, "Print messages about what the program is doing")
-+	fs.BoolVar(&f.verbose, "verbose", false, "Print messages about what the program is doing")
-+	fs.BoolVar(&f.quiet, "q", false, "Disable error messages")
-+	fs.BoolVar(&f.quiet, "quiet", false, "Disable error messages")
-+	fs.BoolVar(&f.remove, "r", false, "Remove modules instead of inserting")
-+	fs.BoolVar(&f.remove, "remove", false, "Remove modules instead of inserting")
-+	fs.BoolVar(&f.useBlacklist, "b", false, "Apply blacklist to module names too")
-+	fs.BoolVar(&f.useBlacklist, "use-blacklist", false, "Apply blacklist to module names too")
-+	fs.BoolVar(&f.ignoreInstall, "i", false, "Ignore install and remove commands")
-+	fs.BoolVar(&f.ignoreInstall, "ignore-install", false, "Ignore install commands")
-+	fs.BoolVar(&f.ignoreInstall, "ignore-remove", false, "Ignore remove commands")
-+	fs.StringVar(&f.rootDir, "d", "/", "Root directory for modules")
-+	fs.StringVar(&f.rootDir, "dirname", "/", "Root directory for modules")
-+	fs.StringVar(&f.kernelVer, "S", "", "Set kernel version instead of using uname")
-+	fs.StringVar(&f.kernelVer, "set-version", "", "Set kernel version instead of using uname")
-+
-+	fs.Usage = func() {
-+		fmt.Fprintln(stderr, "Usage: modprobe [-anqvrb] [-d DIR] [-S VERSION] [--] modulename[s] [parameters...]")
-+		fs.PrintDefaults()
- 	}
--}
- 
--func main() {
--	flag.Parse()
-+	if err := fs.Parse(unixflag.ArgsToGoArgs(args)); err != nil {
-+		return err
-+	}
- 
--	if flag.NArg() == 0 {
--		log.Println("Usage: ERROR: one module and optional module options.")
--		flag.Usage()
--		os.Exit(1)
-+	if f.quiet {
-+		stderr = io.Discard
-+		fs.SetOutput(stderr)
-+	}
-+	log.SetOutput(stderr)
-+
-+	if fs.NArg() == 0 {
-+		fmt.Fprintln(stderr, "Usage: ERROR: one module and optional module options.")
-+		fs.Usage()
-+		return errUsage
- 	}
- 
- 	opts := kmodule.ProbeOpts{
--		RootDir: *rootDir,
--		KVer:    *kernelVer,
-+		RootDir:      f.rootDir,
-+		KVer:         f.kernelVer,
-+		UseBlacklist: f.useBlacklist,
- 	}
--	if *dryRun {
--		log.Println("Unique dependencies in load order, already loaded ones get skipped:")
-+	if f.dryRun {
-+		if f.verbose {
-+			fmt.Fprintln(stderr, "Unique dependencies in order, already handled ones get skipped:")
-+		}
-+		var dryRunMu sync.Mutex
- 		opts.DryRunCB = func(modPath string) {
--			log.Println(modPath)
-+			dryRunMu.Lock()
-+			defer dryRunMu.Unlock()
-+			fmt.Fprintln(stderr, modPath)
- 		}
- 	}
- 
--	// -va is just an alias for -a
--	*all = *all || *verboseAll
--	if *all {
--		modNames := flag.Args()
--		for _, modName := range modNames {
--			if err := kmodule.ProbeOptions(modName, "", opts); err != nil {
--				log.Printf("modprobe: Could not load module %q: %v", modName, err)
-+	prober, err := kmodule.NewProber(opts)
-+	if err != nil {
-+		return err
-+	}
-+
-+	if f.remove {
-+		var retErr error
-+		for _, modName := range fs.Args() {
-+			if err := prober.Remove(modName); err != nil {
 ```
 
-**File**: `cmds/exp/modprobe/modprobe_linux_test.go` (added, +176/-0)
+**File**: `cmds/core/gosh/completer_bubbline_test.go` (added, +71/-0)
 ```diff
-@@ -0,0 +1,176 @@
-+// Copyright 2026 the u-root Authors. All rights reserved
+@@ -0,0 +1,71 @@
++// Copyright 2021 the u-root Authors. All rights reserved
 +// Use of this source code is governed by a BSD-style
 +// license that can be found in the LICENSE file.
++
++//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall && goshbubble
 +
 +package main
 +
 +import (
-+	"bytes"
-+	"os"
-+	"path/filepath"
-+	"strings"
 +	"testing"
++
++	"github.com/knz/bubbline/editline"
 +)
 +
-+func setupTestModules(t *testing.T) (string, string) {
-+	t.Helper()
-+	root := t.TempDir()
-+	kver := "6.6.0-test"
-+	modDir := filepath.Join(root, "lib/modules", kver)
-+	etcModprobe := filepath.Join(root, "etc/modprobe.d")
-+	procDir := filepath.Join(root, "proc")
-+
-+	for _, d := range []string{modDir, etcModprobe, procDir} {
-+		if err := os.MkdirAll(d, 0o755); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+
-+	modulesDep := `kernel/net/9p/9pnet.ko:
-+kernel/fs/9p/9p.ko: kernel/net/9p/9pnet.ko
-+kernel/net/9p/9pnet_fd.ko: kernel/net/9p/9pnet.ko
-+kernel/drivers/char/blacklisted_mod.ko:
-+`
-+	if err := os.WriteFile(filepath.Join(modDir, "modules.dep"), []byte(modulesDep), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	modulesAlias := `alias fs-9p 9p
-+alias 9p-fd 9pnet_fd
-+`
-+	if err := os.WriteFile(filepath.Join(modDir, "modules.alias"), []byte(modulesAlias), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	conf := `blacklist blacklisted_mod
-+`
-+	if err := os.WriteFile(filepath.Join(etcModprobe, "blacklist.conf"), []byte(conf), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// Empty /proc/modules so host modules do not interfere.
-+	if err := os.WriteFile(filepath.Join(procDir, "modules"), []byte(""), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	return root, kver
-+}
-+
-+func TestModprobeCLI(t *testing.T) {
-+	root, kver := setupTestModules(t)
-+
-+	t.Run("kernel call_modprobe invocation (-q -- fs-9p)", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"-n", "-d", root, "-S", kver, "-q", "--", "fs-9p"}, &stderr)
-+		if err != nil {
-+			t.Fatalf("unexpected error: %v", err)
-+		}
-+		if stderr.Len() != 0 {
-+			t.Errorf("expected empty stderr with -q, got %q", stderr.String())
-+		}
-+
-+		err = run([]string{"-n", "-d", root, "-S", kver, "--", "fs-9p"}, &stderr)
-+		if err != nil {
-+			t.Fatalf("unexpected error: %v", err)
-+		}
-+		out := stderr.String()
-+		if !strings.Contains(out, "9pnet.ko") || !strings.Contains(out, "9p.ko") {
-+			t.Errorf("expected 9pnet.ko and 9p.ko in dry-run output, got:\n%s", out)
-+		}
-+	})
-+
-+	t.Run("combined flags -va and deduplicated prober", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"-n", "-va", "-d", root, "-S", kver, "fs-9p", "9p-fd"}, &stderr)
-+		if err != nil {
-+			t.Fatalf("unexpected error: %v", err)
-+		}
-+		out := stderr.String()
-+		if got := strings.Count(out, "9pnet.ko"); got != 1 {
-+			t.Errorf("expected 9pnet.ko to be loaded once across -a, got %d times in:\n%s", got, out)
-+		}
-+		if !strings.Contains(out, "9p.ko") || !strings.Contains(out, "9pnet_fd.ko") {
-+			t.Errorf("expected both 9p.ko and 9pnet_fd.ko in output, got:\n%s", out)
-+		}
-+	})
-+
-+	t.Run("long flags with equals and combined short flags", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"--dirname=" + root, "--set-version=" + kver, "-nva", "fs-9p", "9p-fd"}, &stderr)
-+		if err != nil {
-+			t.Fatalf("unexpected error: %v", err)
-+		}
-+		out := stderr.String()
-+		if got := strings.Count(out, "9pnet.ko"); got != 1 {
-+			t.Errorf("expected 9pnet.ko to be loaded once across -a, got %d times in:\n%s", got, out)
-+		}
-+	})
-+
-+	t.Run("-a returns error when module missing", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"-n", "-a", "-d", root, "-S", kver, "fs-9p", "nonexistent_mod"}, &stderr)
-+		if err == nil || !strings.Contains(err.Error(), "could not load module") {
-+			t.Fatalf("expected wrapped load error for nonexistent_mod with -a, got %v", err)
-+		}
-+	})
-+
-+	t.Run("-q suppresses error output", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"-q", "-d", root, "-S", kver, "--", "nonexistent_mod"}, &stderr)
-+		if err == nil || !strings.Contains(err.Error(), "could not load module") {
-+			t.Fatalf("expected wrapped load error for nonexistent_mod, got %v", err)
-+		}
-+		if stderr.Len() != 0 {
-+			t.Errorf("expected empty stderr with -q, got %q", stderr.String())
-+		}
-+	})
-+
-+	t.Run("-b honors blacklist on direct module name", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"-n", "-b", "-d", root, "-S", kver, "blacklisted_mod"}, &stderr)
-+		if err != nil {
-+			t.Fatalf("unexpected error: %v", err)
-+		}
-+		if strings.Contains(stderr.String(), "blacklisted_mod.ko") {
-+			t.Errorf("expected blacklisted_mod.ko to be skipped with -b, got:\n%s", stderr.String())
-+		}
-+	})
-+
-+	t.Run("-r removes module in dry-run and fails on missing", func(t *testing.T) {
-+		var stderr bytes.Buffer
-+		err := run([]string{"-n", "-r", "-d", root, "-S", kver, "fs-9p"}, &stderr)
-+		if err != nil {
-+			t.Fatalf("unexpected error: %v", err)
-+		}
-+		if !strings.Contains(stderr.String(), "9p.ko") {
-+			t.Errorf("expected 9p.ko in remove dry-run output, got:\n%s", stderr.Str
-```
-
-**File**: `pkg/kmodule/kmodule_linux.go` (modified, +999/-89)
-```diff
-@@ -10,6 +10,8 @@ package kmodule
- 
- import (
- 	"bufio"
-+	"bytes"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"os"
-@@ -41,16 +43,24 @@ const (
- 	builtin
- )
- 
--// concurrency: struct must be read-only outside of `loadOnce`
- type dependency struct {
--	state    modState
--	deps     []string
--	loadOnce sync.Once
--	err      error
-+	mu    sync.Mutex
-+	state modState
-+	deps  []string
- }
- 
- type depMap map[string]*dependency
- 
-+type modAlias struct {
-+	pattern string
-+	target  string
-+}
-+
-+type softDep struct {
-+	pre  []string
-+	post []string
-+}
-+
- // ProbeOpts contains optional parameters to Probe.
- //
- // An empty ProbeOpts{} should lead to the default behavior.
-@@ -59,28 +69,36 @@ type ProbeOpts struct {
- 	RootDir        string
- 	KVer           string
- 	IgnoreProcMods bool
-+	UseBlacklist   bool
- }
- 
- // Prober provides a concurrent-safe interface for probing modules.
--//
--// concurrency: `deps` and `opts` must be treated as read-only.
- type Prober struct {
--	deps depMap
--	opts ProbeOpts
-+	deps          depMap
-+	modIndex      map[string]string
-+	opts          ProbeOpts
-+	configAliases []modAlias
-+	moduleAliases []modAlias
-+	confOpts      map[string][]string
-+	cmdlineOpts   map[string][]string
-+	blacklist     map[string]bool
-+	softDeps      map[string]softDep
-+	loadCB        func(modPath, params string) error
-+	deleteCB      func(modName string) error
- }
- 
- // Init loads the kernel module given by image with the given options.
- func Init(image []byte, opts string) error {
- 	return unix.InitModule(image, opts)
- }
- 
--// Wrapper for the compression readers
-+// Wrapper for the compression readers.
- func CompressionReader(file *os.File) (reader io.Reader, err error) {
- 	return compressionReader(file)
- }
- 
- // FileInit loads the kernel module contained by `f` with the given opts and
--// flags. Uncompresses modules with a .xz and .gz suffix before loading.
-+// flags. Uncompresses modules with a .xz, .gz, and .zst suffix before loading.
- //
- // FileInit falls back to init_module(2) via Init when the finit_module(2)
- // syscall is not available and when loading compressed modules.
-@@ -114,85 +132,399 @@ func FileInit(f *os.File, opts string, flags uintptr) error {
- 
- // Delete removes a kernel module.
- func Delete(name string, flags uintptr) error {
--	return unix.DeleteModule(name, int(flags))
-+	return unix.DeleteModule(normalizeModName(name), int(flags))
-+}
-+
-+// hasHardCycle checks whether the hard-dependency subgraph in p.deps rooted at
-+// startPath contains a directed cycle. Checking this before acquiring
-+// per-module locks prevents concurrent Probe calls on cyclic graphs from
-+// deadlocking.
-+func (p *Prober) hasHardCycle(startPath string) bool {
-+	const (
-+		unvisited uint8 = iota
-+		visiting
-+		done
-+	)
-+	color := make(map[string]uint8)
-+	var dfs func(curr string) bool
-+	dfs = func(curr string) bool {
-+		color[curr] = visiting
-+		if d, ok := p.deps[curr]; ok {
-+			for _, next := range d.deps {
-+				switch color[next] {
-+				case visiting:
-+					return true
-+				case unvisited:
-+					if dfs(next) {
-+						return true
-+					}
-+				}
-+			}
-+		}
-+		color[curr] = done
-+		return false
-+	}
-+	return dfs(startPath)
-+}
-+
-+// reachesAny reports whether startPath can reach any module path in targets by
-+// following hard dependencies (d.deps) or pre-softdeps. This is used to avoid
-+// probing softdeps that depend back on an ancestor module currently being
-+// loaded.
-+func (p *Prober) reachesAny(startPath string, targets []string) bool {
-+	if len(targets) == 0 {
-+		return false
-+	}
-+	visited := make(map[string]bool)
-+	var dfs func(curr string) bool
-+	dfs = func(curr string) bool {
-+		if slices.Contains(targets, curr) {
-+			return true
-+		}
-+		if visited[curr] {
-+			return false
-+		}
-+		visited[curr] = true
-+		d, ok := p.deps[curr]
-+		if !ok {
-+			return false
-+		}
-+		if slices.ContainsFunc(d.deps, dfs) {
-+			return true
-+		}
-+		if stem, ok := modNameFromPath(curr); ok && p.softDeps != nil {
-+			sd := p.softDeps[normalizeModName(stem)]
-+			for _, preName := range sd.pre {
-+				resolved, _, err := p.resolveTargets(preName, true)
-+				if err != nil {
-+					continue
-+				}
-+				for _, t := range resolved {
-+					if dfs(t.modPath) {
-+						return true
-+					}
-+				}
-+			}
-+		}
-+		return false
-+	}
-+	return dfs(startPath)
- }
- 
--// parallelProbeDep loads a module and its dependencies
--// Returns once module is loaded.
--func parallelProbeDep(deps depMap, modPath string, params string, opts ProbeOpts, modStack []string) error {
--	dep, present := deps[modPath]
-+// parallelProbeDep loads a module, its hard dependencies, and any pre/post
-+// soft dependencies. Returns once the module is loaded.
-+func (p *Prober) parallelProbeDep(modPath, extraConfParams, userParams string, modStack []string) error {
-+	dep, present := p.deps[modPath]
- 	if !present {
- 		return fmt.Errorf("module not in depmap %s", modPath)
- 	}
- 
--	if slices.Contains(modStack, modPath) {
-+	if slices.Contains(modStack, modPath) || p.hasHardCycle(modPath) {
- 		return fmt.Errorf("circular dep
-```
-
-**File**: `pkg/kmodule/kmodule_linux_test.go` (modified, +571/-14)
-```diff
-@@ -10,12 +10,16 @@ import (
- 	"errors"
- 	"os"
- 	"path"
-+	"path/filepath"
-+	"slices"
-+	"sync"
- 	"testing"
- 	"time"
- 
- 	"github.com/klauspost/compress/zstd"
- 	"github.com/ulikunitz/xz"
- 	"golang.org/x/sync/errgroup"
-+	"golang.org/x/sys/unix"
- )
- 
- var procModsMock = `hid_generic 16384 0 - Live 0x0000000000000000
-@@ -41,6 +45,460 @@ func TestGenLoadedMods(t *testing.T) {
- 	}
- }
- 
-+func TestGenLoadedModsStatesAndOutOfTree(t *testing.T) {
-+	mock := `out_of_tree_mod 16384 0 - Live 0x0000000000000000
-+twofish_x86_64 32768 1 - Live 0x0000000000000000
-+still_loading 16384 0 - Loading 0x0000000000000000
-+being_unloaded 16384 0 - Unloading 0x0000000000000000
-+nls_iso8859_1 16384 0 - Live 0x0000000000000000
-+`
-+	m := depMap{
-+		"/lib/modules/6.6/kernel/crypto/twofish-x86_64.ko":  &dependency{},
-+		"/lib/modules/6.6/kernel/fs/nls/nls_iso8859-1.ko":   &dependency{},
-+		"/lib/modules/6.6/kernel/drivers/still_loading.ko":  &dependency{},
-+		"/lib/modules/6.6/kernel/drivers/being-unloaded.ko": &dependency{},
-+	}
-+	if err := genLoadedMods(bytes.NewBufferString(mock), m); err != nil {
-+		t.Fatalf("genLoadedMods failed: %v", err)
-+	}
-+	if m["/lib/modules/6.6/kernel/crypto/twofish-x86_64.ko"].state != loaded {
-+		t.Errorf("expected twofish-x86_64.ko to be marked loaded")
-+	}
-+	if m["/lib/modules/6.6/kernel/fs/nls/nls_iso8859-1.ko"].state != loaded {
-+		t.Errorf("expected nls_iso8859-1.ko to be marked loaded")
-+	}
-+	if m["/lib/modules/6.6/kernel/drivers/still_loading.ko"].state != loaded {
-+		t.Errorf("expected Loading module to be marked loaded so recursive request_module does not deadlock")
-+	}
-+	if m["/lib/modules/6.6/kernel/drivers/being-unloaded.ko"].state != unloaded {
-+		t.Errorf("expected Unloading module to remain unloaded")
-+	}
-+}
-+
-+func TestFindModPathMixedHyphenUnderscore(t *testing.T) {
-+	m := depMap{
-+		"/lib/modules/6.6/kernel/crypto/twofish-x86_64.ko.xz": &dependency{},
-+		"/lib/modules/6.6/kernel/fs/nls/nls_iso8859-1.ko.zst": &dependency{},
-+		"/lib/modules/6.6/kernel/net/9p/9pnet_fd.ko.gz":       &dependency{},
-+	}
-+	for _, tc := range []struct {
-+		query string
-+		want  string
-+	}{
-+		{"twofish_x86_64", "/lib/modules/6.6/kernel/crypto/twofish-x86_64.ko.xz"},
-+		{"twofish-x86-64", "/lib/modules/6.6/kernel/crypto/twofish-x86_64.ko.xz"},
-+		{"twofish-x86_64", "/lib/modules/6.6/kernel/crypto/twofish-x86_64.ko.xz"},
-+		{"nls_iso8859_1", "/lib/modules/6.6/kernel/fs/nls/nls_iso8859-1.ko.zst"},
-+		{"nls-iso8859-1", "/lib/modules/6.6/kernel/fs/nls/nls_iso8859-1.ko.zst"},
-+		{"9pnet-fd", "/lib/modules/6.6/kernel/net/9p/9pnet_fd.ko.gz"},
-+	} {
-+		got, err := findModPath(tc.query, m)
-+		if err != nil {
-+			t.Errorf("findModPath(%q) unexpected error: %v", tc.query, err)
-+			continue
-+		}
-+		if got != tc.want {
-+			t.Errorf("findModPath(%q) = %q, want %q", tc.query, got, tc.want)
-+		}
-+	}
-+}
-+
-+func TestMatchAlias(t *testing.T) {
-+	for _, tc := range []struct {
-+		pattern string
-+		name    string
-+		want    bool
-+	}{
-+		{"fs-9p", "fs-9p", true},
-+		{"fs-9p", "fs_9p", true},
-+		{"9p-fd", "9p-fd", true},
-+		{"block-major-7-*", "block-major-7-0", true},
-+		{"char-major-10-[0-9]*", "char-major-10-54", true},
-+		{"char-major-10-[0-9]*", "char-major-10-abc", false},
-+		{"pci:v00001AF4d00001009sv*sd*bc*sc*i*", "pci:v00001AF4d00001009sv00001AF4sd00000009bc00sc00i00", true},
-+		{"dmi:*:svnGoogle:pn*", "dmi:bvnSeaBIOS:bvr1.16:bd08/05/2026:svnGoogle:pnComputeEngine:", true},
-+	} {
-+		if got := matchAlias(tc.pattern, tc.name); got != tc.want {
-+			t.Errorf("matchAlias(%q, %q) = %v, want %v", tc.pattern, tc.name, got, tc.want)
-+		}
-+	}
-+}
-+
-+func TestModprobeConfigsAliasesAndCmdline(t *testing.T) {
-+	root := t.TempDir()
-+	kver := "6.6.0-test"
-+	modDir := filepath.Join(root, "lib/modules", kver)
-+	etcModprobe := filepath.Join(root, "etc/modprobe.d")
-+	libModprobe := filepath.Join(root, "lib/modprobe.d")
-+	procDir := filepath.Join(root, "proc")
-+
-+	for _, d := range []string{modDir, etcModprobe, libModprobe, procDir} {
-+		if err := os.MkdirAll(d, 0o755); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+
-+	// modules.dep with comments, blank lines, and trailing spaces after
-+	// ':'.
-+	modulesDep := `# comment line
-+
-+kernel/net/9p/9pnet.ko:   
-+kernel/fs/9p/9p.ko: kernel/net/9p/9pnet.ko
-+kernel/net/9p/9pnet-fd.ko: kernel/net/9p/9pnet.ko
-+kernel/drivers/char/bad_mod.ko:
-+kernel/drivers/misc/override_target.ko:
-+`
-+	if err := os.WriteFile(filepath.Join(modDir, "modules.dep"), []byte(modulesDep), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	modulesBuiltin := `kernel/fs/ext4/ext4.ko
-+`
-+	if err := os.WriteFile(filepath.Join(modDir, "modules.builtin"), []byte(modulesBuiltin), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	modulesAlias := `# Aliases extracted from modules themselves.
-+alias fs-9p 9p
-+alias 9p-fd 9pnet_fd
-+alias pci:v00001AF4d00001009sv*sd*bc*sc*i* 9p
-+alias bad-alias bad_mod
-+alias hw-chained middle_target
-+`
-+	if err := os.WriteFile(filepath.Join(modDir, "modules.alias"), []byte(modulesAlias), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-```
-
-**File**: `pkg/uroot/unixflag/unixflag.go` (modified, +9/-5)
-```diff
-@@ -10,14 +10,18 @@ import (
- )
- 
- // ArgsToGoArgs converts a Unix-style argument list such that:
--// all -- switches before the first non-switch argument are converted to - switches
--// all - switches are split into a set of single switches with a -
--// first non- args stops the process.
--// so, e.g., ps -aux turns into ps -a -u -x
--// ls -al --somelongthing becomes ls -a -l -somelongthing
-+// all -- switches before the first non-switch argument are converted to -
-+// switches, all - switches are split into a set of single switches with a -,
-+// and the first non-switch arg (or "-" or "--") stops the process.
-+// For example, ps -aux turns into ps -a -u -x, and
-+// ls -al --somelongthing becomes ls -a -l -somelongthing.
- func ArgsToGoArgs(args []string) []string {
- 	var out []string
- 	for i, f := range args {
-+		if f == "--" || f == "-" {
-+			out = append(out, args[i:]...)
-+			break
-+		}
- 		if strings.HasPrefix(f, "--") {
- 			out = append(out, f[1:])
- 			continue
-```
-
-**File**: `pkg/uroot/unixflag/unixflag_test.go` (modified, +2/-0)
-```diff
-@@ -25,6 +25,8 @@ func TestArgsToGoArgs(t *testing.T) {
- 		{name: "-long --short etc", args: []string{"-long", "--short", "etc"}, out: []string{"-l", "-o", "-n", "-g", "-short", "etc"}},
- 		{name: "-long --short etc -long ", args: []string{"-long", "--short", "etc", "-long"}, out: []string{"-l", "-o", "-n", "-g", "-short", "etc", "-long"}},
- 		{name: "-aux", args: []string{"-aux"}, out: []string{"-a", "-u", "-x"}},
-+		{name: "-q -- modname", args: []string{"-q", "--", "modname", "-opt"}, out: []string{"-q", "--", "modname", "-opt"}},
-+		{name: "single dash", args: []string{"-l", "-", "-x"}, out: []string{"-l", "-", "-x"}},
- 	} {
- 		t.Run(tt.name, func(t *testing.T) {
- 			out := unixflag.ArgsToGoArgs(tt.args)
-```
-
----
-
-### Incident Patch 3: `f622be01` (2026-10-15)
-**Commit Message**: core/pci: fix number printing
-
-pci -n did not print vendor and device numbers.
-
-The reason is that the default,
-reasonable behavior is to set the VendorName and DeviceName
-to human-readable strings in the package, using SetVendorDeviceName.
-
-While this is reasonable, it means that assuming the names
-are numbers, and making the call to SetVendorDeviceName
-in main() to set them to names, is a no-op,
-and (since it is already finished), worse, the command will
-will not display numbers.
-
-There are several ways to fix this, but this particular fix
-ensures minimal change to the package API and the command itself.
-
-Add SetVendorDeviceNum so that we can see device numbers.
-
-Signed-off-by: Ronald G Minnich <[REDACTED_EMAIL]>
-
-**File**: `cmds/core/pci/pci_linux.go` (modified, +8/-3)
-```diff
-@@ -155,6 +155,10 @@ func registers(d pci.Devices, cmds ...string) error {
- }
- 
- func (c *cmd) run() error {
-+	if c.numbers && c.dumpJSON {
-+		return fmt.Errorf("can not set both c.numbers and c.dumpJSON:%w", os.ErrInvalid)
-+	}
-+
- 	var dumpSize int
- 	switch c.hexdump {
- 	case 4:
-@@ -180,16 +184,17 @@ func (c *cmd) run() error {
- 		if err := json.Unmarshal(b, &d); err != nil {
- 			return fmt.Errorf("%w:%w", err, errBadJSON)
- 		}
--
-+		d.SetVendorDeviceName(pci.IDs)
- 	} else {
- 		if d, err = r.Read(); err != nil {
- 			return err
- 		}
- 	}
- 
--	if !c.numbers || c.dumpJSON {
--		d.SetVendorDeviceName(pci.IDs)
-+	if c.numbers {
-+		d.SetVendorDeviceNum()
- 	}
-+
- 	if len(c.args) > 0 {
- 		if err := registers(d, c.args...); err != nil {
- 			return err
-```
-
-**File**: `cmds/core/pci/pci_linux_test.go` (modified, +5/-0)
-```diff
-@@ -53,6 +53,11 @@ func TestRun(t *testing.T) {
- 		args []string
- 		err  error
- 	}{
-+		{
-+			name: "setting both -j and -n",
-+			args: []string{"-j", "-n"},
-+			err:  os.ErrInvalid,
-+		},
- 		{
- 			name: "readJSON true, without error",
- 			args: []string{"-J", "testdata/testfile1.json"},
-```
-
-**File**: `pkg/pci/devices.go` (modified, +8/-0)
-```diff
-@@ -104,6 +104,14 @@ func (d Devices) SetVendorDeviceName(ids []Vendor) {
- 	}
- }
- 
-+// SetVendorDeviceNum sets Device and Vendor names
-+// to their numeric values.
-+func (d Devices) SetVendorDeviceNum() {
-+	for _, p := range d {
-+		p.VendorName, p.DeviceName = fmt.Sprintf("%04x", p.Vendor), fmt.Sprintf("%04x", p.Device)
-+	}
-+}
-+
- // ReadConfig reads the config info for all the devices.
- func (d Devices) ReadConfig() error {
- 	for _, p := range d {
-```
-
-**File**: `pkg/pci/devices_test.go` (modified, +43/-0)
-```diff
-@@ -142,6 +142,49 @@ func TestSetVendorDeviceName(t *testing.T) {
- 	}
- }
- 
-+func TestSetVendorDeviceNum(t *testing.T) {
++func TestAutocompleteBubb(t *testing.T) {
 +	for _, tt := range []struct {
-+		name           string
-+		devices        Devices
-+		VendorNameWant string
-+		DeviceNameWant string
++		name        string
++		input       string
++		completions []string
 +	}{
 +		{
-+			name: "Lookup Using ID 80ee Device cafe",
-+			devices: Devices{
-+				&PCI{
-+					Vendor: 0x80ee,
-+					Device: 0xcafe,
-+				},
-+			},
-+			VendorNameWant: "80ee",
-+			DeviceNameWant: "cafe",
++			name:        "echo",
++			input:       "ech",
++			completions: []string{"echo"},
 +		},
 +		{
-+			name: "Lookup Using ID 1055 Device e420",
-+			devices: Devices{
-+				&PCI{
-+					Vendor: 0x1055,
-+					Device: 0xe420,
-+				},
-+			},
-+			VendorNameWant: "1055",
-+			DeviceNameWant: "e420",
++			name:        "cwd",
++			input:       "./",
++			completions: []string{"completer_test.go"},
 +		},
 +	} {
 +		t.Run(tt.name, func(t *testing.T) {
-+			tt.devices.SetVendorDeviceNum()
-+			VendorNameGot, DeviceNameGot := tt.devices[0].VendorName, tt.devices[0].DeviceName
-+			if VendorNameGot != tt.VendorNameWant {
-+				t.Errorf("Vendor mismatch, got: %q, want: %q\n", VendorNameGot, tt.VendorNameWant)
-+			}
-+			if DeviceNameGot != tt.DeviceNameWant {
-+				t.Errorf("Device mismatch, got: %q, want: %q\n", DeviceNameGot, tt.DeviceNameWant)
++			val := make([][]rune, 1)
++			val[0] = append(val[0], []rune(tt.input)...)
++
++			_, completions := autocompleteBubb(val, 0, len(tt.input))
++
++			if !completionsEqual(0, len(tt.completions), tt.completions, completions) {
++				t.Errorf("want: %v, got: %v", tt.completions, completions)
 +			}
 +		})
 +	}
 +}
 +
- func TestReadConfig(t *testing.T) {
- 	configBytes := []byte{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77}
- 	dir := t.TempDir()
++func completionsEqual(numCat, numEnt int, want []string, got editline.Completions) bool {
++	if got.NumCategories() < numCat {
++		return false
++	}
++
++	for i := range numCat {
++		if got.NumEntries(i) < numEnt {
++			return false
++		}
++	}
++
++	for j := range numCat {
++		for i := range numEnt {
++			found := false
++			for _, entry := range want {
++				if entry == got.Entry(j, i).Title() {
++					found = true
++				}
++			}
++			if !found {
++				return false
++			}
++		}
++	}
++
++	return true
++}
+```
+
+**File**: `cmds/core/gosh/completer_test.go` (modified, +2/-61)
+```diff
+@@ -11,68 +11,9 @@ import (
+ 	"slices"
+ 	"testing"
+ 
+-	"github.com/knz/bubbline/editline"
+ 	"mvdan.cc/sh/v3/syntax"
+ )
+ 
+-func TestAutocompleteBubb(t *testing.T) {
+-	for _, tt := range []struct {
+-		name        string
+-		input       string
+-		completions []string
+-	}{
+-		{
+-			name:        "echo",
+-			input:       "ech",
+-			completions: []string{"echo"},
+-		},
+-		{
+-			name:        "cwd",
+-			input:       "./",
+-			completions: []string{"completer_test.go"},
+-		},
+-	} {
+-		t.Run(tt.name, func(t *testing.T) {
+-			val := make([][]rune, 1)
+-			val[0] = append(val[0], []rune(tt.input)...)
+-
+-			_, completions := autocompleteBubb(val, 0, len(tt.input))
+-
+-			if !completionsEqual(0, len(tt.completions), tt.completions, completions) {
+-				t.Errorf("want: %v, got: %v", tt.completions, completions)
+-			}
+-		})
+-	}
+-}
+-
+-func completionsEqual(numCat, numEnt int, want []string, got editline.Completions) bool {
+-	if got.NumCategories() < numCat {
+-		return false
+-	}
+-
+-	for i := range numCat {
+-		if got.NumEntries(i) < numEnt {
+-			return false
+-		}
+-	}
+-
+-	for j := range numCat {
+-		for i := range numEnt {
+-			found := false
+-			for _, entry := range want {
+-				if entry == got.Entry(j, i).Title() {
+-					found = true
+-				}
+-			}
+-			if !found {
+-				return false
+-			}
+-		}
+-	}
+-
+-	return true
+-}
+-
+ func TestAutocomplete(t *testing.T) {
+ 	parser := syntax.NewParser()
+ 
+@@ -102,14 +43,14 @@ func TestAutocomplete(t *testing.T) {
+ 			name:  "cwd",
+ 			input: "./c",
+ 			want: []string{
+-				"./completer.go", "./completer_bubbline.go", "./completer_common.go", "./completer_liner.go", "./completer_nobuild.go", "./completer_test.go",
++				"./completer.go", "./completer_bubbline.go", "./completer_bubbline_test.go", "./completer_common.go", "./completer_liner.go", "./completer_nobuild.go", "./completer_test.go",
+ 			},
+ 		},
+ 		{
+ 			name:  "path",
+ 			input: "../gosh/c",
+ 			want: []string{
+-				"../gosh/completer.go", "../gosh/completer_bubbline.go", "../gosh/completer_common.go", "../gosh/completer_liner.go", "../gosh/completer_nobuild.go", "../gosh/completer_test.go"},
++				"../gosh/completer.go", "../gosh/completer_bubbline.go", "../gosh/completer_bubbline_test.go", "../gosh/completer_common.go", "../gosh/completer_liner.go", "../gosh/completer_nobuild.go", "../gosh/completer_test.go"},
+ 		},
+ 		{
+ 			name:  "directory",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3798** (2026-10-19): cmds/core/gosh: gate completer_bubbline behind goshbubble tag (@kevinloughlin)
+- **PR #3797** (closed): cmds/core/gosh: guard completer_bubbline.go with goshbubble build tag (@brho)
 - **PR #3793** (2026-10-16): core/pci: fix number printing (@rminnich)
 - **PR #3792** (closed): build(deps): bump handlebars from 4.7.8 to 4.7.10 in /website (@dependabot[bot])
 - **PR #3791** (closed): build(deps): bump liquidjs from 10.25.0 to 10.30.0 in /website (@dependabot[bot])
 - **PR #3785** (2026-10-17): pkg/dt: read the whole strings block (@mkopec)
-- **PR #3784** (2026-10-10): pkg/boot/grub: skip GRUB configs without entries (@mkopec)
-- **PR #3783** (2026-10-07): ci: fix some words from ignorelist and remove them (@binjip978)
 
 ---
 
@@ -2296,42 +1483,28 @@ Signed-off-by: Ronald G Minnich <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: add codespell spell-check workflow and fix typos
+## X. cmds/core/gosh: gate completer_bubbline behind goshbubble tag
 
 **RULE**:
-When implementing operations in `.codespellrc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmds/core/gosh/completer_bubbline.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04fdcce8`: ci: add codespell spell-check workflow and fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b7dc7e2`: cmds/core/gosh: gate completer_bubbline behind goshbubble tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codespellrc`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmds/core/gosh/completer_bubbline.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# codespell configuration, used by .github/workflows/codespell.yml and by
-# running `codespell` locally from the repo root.
-#
-# skip: vendored, generated, binary, and test-fixture paths that are not
-# first-party prose. pkg/pci/pciids.go is a device-name data table that
-# mirrors the upstream PCI ID database, so those names must not be "fixed".
-#
-# ignore-words-list: domain terms, protocol/flag tokens, and pre-existing
-# identifiers that are not typos (or are too risky to rename in this change).
-# All entries are lowercase, as codespell lowercases tokens before matching.
-#
-# This list is intentionally conservative and can be tightened over time.
-[codespell]
-skip = ./.git,./vendor,*.cast,*.svg,*.signature,go.sum,go.mod,./website/package-lock.json,*/testdata/*,*/testdata_new/*,./pkg/pci/pciids.go
-ignore-words-list = additionals,afile,als,anull,atleast,buildin,caf,conenct,cros,delt,direcotry,dout,erally,errro,extention,failer,fo,formated,halp,iif,implementor,initator,lenth,mergable,nin,oen,parms,pendin,respone,shs,somemore,te,tha,unparseable,unziped,wont,writen
+//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall && goshbubble
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+//go:build (!tinygo || tinygo.enable) && !plan9 && !goshsmall
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04fdcce8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b7dc7e2` are properly handled with clean fallback behavior.

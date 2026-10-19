@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-HIA6",
-    "timestamp": "2026-10-19T05:31:54.702Z",
-    "repository": "yvgude/lean-ctx",
-    "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HM6T",
-    "timestamp": "2026-10-19T05:31:59.765Z",
-    "repository": "gkd-kit/gkd",
-    "learningId": "learn-github-gkd-kit-gkd",
-    "contentHash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HO7F",
-    "timestamp": "2026-10-19T05:32:02.379Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "22c37956ccab5d5249d7ce94eda9e971f62e4613d732549964a86343c4a81d48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HSFE",
-    "timestamp": "2026-10-19T05:32:07.850Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-IPFA",
     "timestamp": "2026-10-19T05:32:50.614Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7490,6 +7430,66 @@
     "repository": "ugolbck/seofordev",
     "learningId": "learn-github-ugolbck-seofordev",
     "contentHash": "de37e5e59c4f173f42ad65b81953f5b58be525c21f9eddcc613fb71dbfbfd971",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NAD6",
+    "timestamp": "2026-10-19T20:04:12.474Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "98e4fc01727070d79ec96a5c9947ae0a5a760d3f9cf22a77b96f1467d6d6e3b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NAIZ",
+    "timestamp": "2026-10-19T20:04:12.683Z",
+    "repository": "nometria/sitemap-generator",
+    "learningId": "learn-github-nometria-sitemap-generator",
+    "contentHash": "c9134cdfea6d58604c13e1aab9616f1cc2bcffb540bb6e1cf99e0a6b34c311c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NE5S",
+    "timestamp": "2026-10-19T20:04:17.392Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NFUW",
+    "timestamp": "2026-10-19T20:04:19.592Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

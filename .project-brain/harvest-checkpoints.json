@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T19:58:19.764Z",
+  "last_updated": "2026-10-19T20:04:19.599Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9184,14 +9184,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
-      "verified_at": "2026-10-19T05:05:32.545Z",
+      "content_hash": "98e4fc01727070d79ec96a5c9947ae0a5a760d3f9cf22a77b96f1467d6d6e3b7",
+      "verified_at": "2026-10-19T20:04:12.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:05:32.545Z"
+      "last_updated": "2026-10-19T20:04:12.481Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",
@@ -10819,14 +10819,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
-      "verified_at": "2026-10-19T08:06:57.592Z",
+      "content_hash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
+      "verified_at": "2026-10-19T20:04:19.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:06:57.592Z"
+      "last_updated": "2026-10-19T20:04:19.599Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -13332,6 +13332,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T19:58:19.763Z"
+    },
+    "nometria/sitemap-generator": {
+      "repository": "nometria/sitemap-generator",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nometria-sitemap-generator",
+      "content_hash": "c9134cdfea6d58604c13e1aab9616f1cc2bcffb540bb6e1cf99e0a6b34c311c7",
+      "verified_at": "2026-10-19T20:04:12.690Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:04:12.690Z"
+    },
+    "chrisbanes/skills": {
+      "repository": "chrisbanes/skills",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chrisbanes-skills",
+      "content_hash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
+      "verified_at": "2026-10-19T20:04:17.399Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:04:17.399Z"
     }
   },
   "repos": {

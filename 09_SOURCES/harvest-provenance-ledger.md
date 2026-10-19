@@ -3464,3 +3464,7 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `dfda1fd3` | Multi-dimensional audit evidence | 2026-10-19T19:50:17.046Z |
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `a633b2e3` | Multi-dimensional audit evidence | 2026-10-19T19:58:19.657Z |
 | `learn-github-ugolbck-seofordev` | `https://github.com/ugolbck/seofordev` | `d791e6dd` | Multi-dimensional audit evidence | 2026-10-19T19:58:19.757Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `4b7dc7e2` | Multi-dimensional audit evidence | 2026-10-19T20:04:12.476Z |
+| `learn-github-nometria-sitemap-generator` | `https://github.com/nometria/sitemap-generator` | `6d8cae81` | Multi-dimensional audit evidence | 2026-10-19T20:04:12.685Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `b0d941a5` | Multi-dimensional audit evidence | 2026-10-19T20:04:17.394Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `dc64f3b4` | Multi-dimensional audit evidence | 2026-10-19T20:04:19.594Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:58:19.690Z",
-  "total_verified_learnings": 901,
+  "last_updated": "2026-10-19T20:04:19.565Z",
+  "total_verified_learnings": 903,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4932,22 +4932,35 @@
     "learn-github-chrisbanes-skills": {
       "learning_id": "learn-github-chrisbanes-skills",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chrisbanes-skills",
+      "source": "chrisbanes/skills",
+      "repository": "chrisbanes/skills",
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "HEAD",
-      "content_hash": "6d773ded0e2aa528afc6995edca7bb86a594770e8c0f07f2b11879a595381f74",
+      "source_version": "b0d941a5",
+      "content_hash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2784,
+          "title": "Improve affected-test discovery and fixture calibration (#121)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.282Z"
+      "verified_at": "2026-10-19T20:04:17.360Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chrispybacon-dev-dockflare": {
       "learning_id": "learn-github-chrispybacon-dev-dockflare",
@@ -10925,8 +10938,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "9e79066f",
-      "content_hash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
+      "source_version": "dc64f3b4",
+      "content_hash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -10944,6 +10957,11 @@
           "number": 2365,
           "title": "Identity vs. Content-Address Scoping Invariant for State Mutations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2785,
+          "title": "portal: align robot account immutability label (#24171)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10951,7 +10969,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:06:57.490Z",
+      "verified_at": "2026-10-19T20:04:19.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43182,14 +43200,19 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "abce92f9",
-      "content_hash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
+      "source_version": "4b7dc7e2",
+      "content_hash": "98e4fc01727070d79ec96a5c9947ae0a5a760d3f9cf22a77b96f1467d6d6e3b7",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
         {
           "number": 2159,
           "title": "ci: add codespell spell-check workflow and fix typos",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2782,
+          "title": "cmds/core/gosh: gate completer_bubbline behind goshbubble tag",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43198,7 +43221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:05:32.486Z",
+      "verified_at": "2026-10-19T20:04:12.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55931,22 +55954,36 @@
     "learn-github-nometria-sitemap-generator": {
       "learning_id": "learn-github-nometria-sitemap-generator",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nometria/sitemap-generator",
       "repository": "nometria/sitemap-generator",
       "slug": "nometria-sitemap-generator",
       "platform": "github",
       "source_url": "https://github.com/nometria/sitemap-generator",
-      "source_version": "main",
-      "content_hash": "12e9c9c41d3b1cd6d71ebc17a50099e00227d4cda5ba656f6a6abd82f1f4c275",
+      "source_version": "6d8cae81",
+      "content_hash": "c9134cdfea6d58604c13e1aab9616f1cc2bcffb540bb6e1cf99e0a6b34c311c7",
       "dossier_path": "07_PROJECT_LEARNING/nometria-sitemap-generator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nometria-sitemap-generator-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2783,
+          "title": "sync: update from nometria monorepo",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:04:12.650Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-m0ntydad0n-pseo-engine-oss": {
       "learning_id": "learn-github-m0ntydad0n-pseo-engine-oss",
@@ -91816,6 +91853,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:58:19.675Z"
+    },
+    "rule-2782": {
+      "learning_id": "rule-2782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2782,
+      "title": "cmds/core/gosh: gate completer_bubbline behind goshbubble tag",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "4b7dc7e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:04:12.443Z"
+    },
+    "rule-2783": {
+      "learning_id": "rule-2783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2783,
+      "title": "sync: update from nometria monorepo",
+      "source_url": "https://github.com/nometria/sitemap-generator",
+      "source_version": "6d8cae81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:04:12.650Z"
+    },
+    "rule-2784": {
+      "learning_id": "rule-2784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2784,
+      "title": "Improve affected-test discovery and fixture calibration (#121)",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "b0d941a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:04:17.361Z"
+    },
+    "rule-2785": {
+      "learning_id": "rule-2785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2785,
+      "title": "portal: align robot account immutability label (#24171)",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "dc64f3b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:04:19.557Z"
     }
   },
   "aliases": {

@@ -3457,3 +3457,7 @@
 | `CYCLE-20261019-5DQR` | `2026-10-19T19:50:17.043Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2779` | Yes (`3c99a812...`) |
 | `CYCLE-20261019-FQ4M` | `2026-10-19T19:58:19.654Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2780` | Yes (`9c94bc06...`) |
 | `CYCLE-20261019-FQ7E` | `2026-10-19T19:58:19.754Z` | `ugolbck/seofordev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2781` | Yes (`de37e5e5...`) |
+| `CYCLE-20261019-NAD6` | `2026-10-19T20:04:12.474Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2782` | Yes (`98e4fc01...`) |
+| `CYCLE-20261019-NAIZ` | `2026-10-19T20:04:12.683Z` | `nometria/sitemap-generator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2783` | Yes (`c9134cdf...`) |
+| `CYCLE-20261019-NE5S` | `2026-10-19T20:04:17.392Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2784` | Yes (`16c271e9...`) |
+| `CYCLE-20261019-NFUW` | `2026-10-19T20:04:19.592Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2785` | Yes (`a2fe3d42...`) |
