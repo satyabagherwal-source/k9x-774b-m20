@@ -9138,5 +9138,25 @@
     "contentHash": "132fac021337c5c1936bc6d2c153471610b302b8d2e55f6b47753a70c2d4a4a8",
     "lastHarvestedAt": "2026-10-19T21:30:26.818Z",
     "learningId": "learn-github-scrapy-plugins-scrapy-splash"
+  },
+  "scrapy-plugins-scrapy-selenium": {
+    "repository": "scrapy-plugins/scrapy-headless",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
+    "sourceVersion": "0eef52b5",
+    "license": "BSD-3-Clause",
+    "contentHash": "5421e7376c6487809e1e4cf19d8d95db827d81746b7cbb29b06a622f47cdde1a",
+    "lastHarvestedAt": "2026-10-19T21:38:26.999Z",
+    "learningId": "learn-github-scrapy-plugins-scrapy-headless"
+  },
+  "duongductrong-snapzy": {
+    "repository": "duongductrong/Snapzy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/duongductrong/Snapzy",
+    "sourceVersion": "969b91d7",
+    "license": "BSD-3-Clause",
+    "contentHash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
+    "lastHarvestedAt": "2026-10-19T21:38:27.412Z",
+    "learningId": "learn-github-duongductrong-snapzy"
   }
 }

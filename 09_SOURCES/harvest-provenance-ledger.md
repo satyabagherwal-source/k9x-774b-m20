@@ -3514,3 +3514,5 @@ Every entry in this ledger must capture:
 | `learn-github-scrapy-plugins-scrapy-splash` | `https://github.com/scrapy-plugins/scrapy-splash` | `72a87882` | Multi-dimensional audit evidence | 2026-10-19T21:30:26.818Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `e481af89` | Multi-dimensional audit evidence | 2026-10-19T21:30:27.255Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `6507615a` | Multi-dimensional audit evidence | 2026-10-19T21:30:32.294Z |
+| `learn-github-scrapy-plugins-scrapy-headless` | `https://github.com/scrapy-plugins/scrapy-selenium` | `0eef52b5` | Multi-dimensional audit evidence | 2026-10-19T21:38:26.999Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `969b91d7` | Multi-dimensional audit evidence | 2026-10-19T21:38:27.412Z |

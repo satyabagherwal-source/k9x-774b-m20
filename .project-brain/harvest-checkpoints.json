@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:30:32.300Z",
+  "last_updated": "2026-10-19T21:38:27.420Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13752,6 +13752,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:30:26.824Z"
+    },
+    "scrapy-plugins/scrapy-headless": {
+      "repository": "scrapy-plugins/scrapy-headless",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapy-plugins-scrapy-headless",
+      "content_hash": "5421e7376c6487809e1e4cf19d8d95db827d81746b7cbb29b06a622f47cdde1a",
+      "verified_at": "2026-10-19T21:38:27.008Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:38:27.008Z"
+    },
+    "duongductrong/Snapzy": {
+      "repository": "duongductrong/Snapzy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-duongductrong-snapzy",
+      "content_hash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
+      "verified_at": "2026-10-19T21:38:27.419Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:38:27.419Z"
     }
   },
   "repos": {

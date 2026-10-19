@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:30:32.235Z",
-  "total_verified_learnings": 929,
+  "last_updated": "2026-10-19T21:38:27.361Z",
+  "total_verified_learnings": 931,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7817,22 +7817,35 @@
     "learn-github-duongductrong-snapzy": {
       "learning_id": "learn-github-duongductrong-snapzy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "duongductrong-snapzy",
+      "source": "duongductrong/Snapzy",
+      "repository": "duongductrong/Snapzy",
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "HEAD",
-      "content_hash": "c9085bd1c3d3eb535d9c8440b59edfc08f60572c5d10830addbf0e980ea2507a",
+      "source_version": "969b91d7",
+      "content_hash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2826,
+          "title": "Fixed capture remapped and consumed keystrokes (#539)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.717Z"
+      "verified_at": "2026-10-19T21:38:27.349Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dylanvann-react-native-fast-image": {
       "learning_id": "learn-github-dylanvann-react-native-fast-image",
@@ -92887,6 +92900,47 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:30:32.218Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-headless": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-headless",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy-plugins/scrapy-headless",
+      "repository": "scrapy-plugins/scrapy-headless",
+      "slug": "scrapy-plugins-scrapy-selenium",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-selenium",
+      "source_version": "0eef52b5",
+      "content_hash": "5421e7376c6487809e1e4cf19d8d95db827d81746b7cbb29b06a622f47cdde1a",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-selenium-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-selenium-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:38:26.923Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2826": {
+      "learning_id": "rule-2826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2826,
+      "title": "Fixed capture remapped and consumed keystrokes (#539)",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "969b91d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:38:27.349Z"
     }
   },
   "aliases": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:17:55.977Z",
+  "last_updated": "2026-10-19T21:38:27.003Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1971,6 +1971,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-langchain4j-langchain4j"
+    },
+    {
+      "id": "CD-0HFF",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "scrapy-plugins/scrapy-headless",
+      "source_commit": "0eef52b5",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-scrapy-plugins-scrapy-headless"
     }
   ]
 }

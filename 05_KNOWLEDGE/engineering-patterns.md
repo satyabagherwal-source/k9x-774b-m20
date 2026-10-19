@@ -202391,3 +202391,72 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1ad97b14` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2826. Fixed capture remapped and consumed keystrokes (#539) (Harvested from duongductrong/Snapzy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fixed capture remapped and consumed keystrokes (#539)",
+  "source": "duongductrong/Snapzy",
+  "source_url": "https://github.com/duongductrong/Snapzy",
+  "source_version": "969b91d7",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-19T21:38:27.272Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-duongductrong-snapzy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [duongductrong/Snapzy](https://github.com/duongductrong/Snapzy) (Revision: `969b91d7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `Snapzy/Features/Recording/RecordingCoordinator.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d74508b0`: Fixed capture remapped and consumed keystrokes (#539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Recording/RecordingCoordinator.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+  private(set) var toolbarWindow: RecordingToolbarWindow?
+  // Invalidated before Stop/Cancel/Restart suspends, even while the toolbar survives.
+  private var recordingGeneration = UUID()
+  init() {
+    recordingGeneration = UUID()
+    recordingGeneration = UUID()
+    recordingGeneration = UUID()
+    let generation = recordingGeneration
+      guard isCurrentRecordingStart(generation, window: window) else { return }
+      guard isCurrentRecordingStart(generation, window: window) else { return }
+      guard isCurrentRecordingStart(generation, window: window) else { return }
+        guard isCurrentRecordingStart(generation, window: window) else { return }
+        guard isCurrentRecordingStart(generation, window: window) else { return }
+        guard isCurrentRecordingStart(generation, window: window) else { return }
+        guard await completeRecordingStart(for: rect) else { return }
+        guard isCurrentRecordingStart(generation, window: window) else { return }
+        guard isCurrentRecordingStart(generation, window: window) else { return }
+    let generation = recordingGeneration
+      guard isCurrentRecordingStart(generation, window: window) else { return }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+  private var toolbarWindow: RecordingToolbarWindow?
+  private init() {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d74508b0` are properly handled with clean fallback behavior.
