@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-NRB9",
-    "timestamp": "2026-10-18T23:32:51.333Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "792fdb22028b9ee82dc085255bc8167f098c971d7348bb009bd134d5604917f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-NRBR",
-    "timestamp": "2026-10-18T23:32:51.351Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-NTAR",
-    "timestamp": "2026-10-18T23:32:53.907Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-NUJP",
-    "timestamp": "2026-10-18T23:32:55.525Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "afdb92da970393584dfbb2c0a6a1a5ba9ec6bed677868941ee5fcb495ea514ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-NVXH",
     "timestamp": "2026-10-18T23:32:57.317Z",
     "repository": "dingodb/dingo",
@@ -7490,6 +7430,66 @@
     "repository": "Megabit/Blazorise",
     "learningId": "learn-github-megabit-blazorise",
     "contentHash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MWDP",
+    "timestamp": "2026-10-19T09:48:02.797Z",
+    "repository": "Veirt/weathr",
+    "learningId": "learn-github-veirt-weathr",
+    "contentHash": "1c863deabf5b2775e370d2d956f2ea24db5ce0a7430f75e44b914850d9216cb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MZFJ",
+    "timestamp": "2026-10-19T09:48:06.751Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "0ca5836e9232b6dafc2b1738e44099c64a5d25e48bcd1a7ae9551ae8b74a9983",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-N1I3",
+    "timestamp": "2026-10-19T09:48:09.435Z",
+    "repository": "LouisCAD/Splitties",
+    "learningId": "learn-github-louiscad-splitties",
+    "contentHash": "b214ed3d00f30ac0147c03fc817c275eb5be05f4bb1382eec20400cf1c8414e8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-N66U",
+    "timestamp": "2026-10-19T09:48:15.510Z",
+    "repository": "volcengine/MineContext",
+    "learningId": "learn-github-volcengine-minecontext",
+    "contentHash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

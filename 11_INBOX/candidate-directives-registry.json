@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T07:29:48.258Z",
+  "last_updated": "2026-10-19T09:48:09.444Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1784,6 +1784,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-github-tursodatabase-turso"
+    },
+    {
+      "id": "CD-N1IC",
+      "directive_title": "Run refreshVersions",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LouisCAD/Splitties",
+      "source_commit": "1ed56ba2",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-louiscad-splitties"
     }
   ]
 }

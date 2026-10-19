@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "bed7a24241cf7c93da65109727e7498011dbdaf25c9636b3a47dbf0344e231a2",
-    "lastHarvestedAt": "2026-10-18T01:48:30.951Z",
+    "contentHash": "0ca5836e9232b6dafc2b1738e44099c64a5d25e48bcd1a7ae9551ae8b74a9983",
+    "lastHarvestedAt": "2026-10-19T09:48:06.754Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -7558,5 +7558,35 @@
     "contentHash": "608a96cdd961d640de6ea1915ad43e2eee906108ab2e9a98d2a181a9c848a9a0",
     "lastHarvestedAt": "2026-10-19T09:38:57.582Z",
     "learningId": "learn-github-imsnif-diskonaut"
+  },
+  "veirt-weathr": {
+    "repository": "Veirt/weathr",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Veirt/weathr",
+    "sourceVersion": "7d403a0c",
+    "license": "GPL-3.0",
+    "contentHash": "1c863deabf5b2775e370d2d956f2ea24db5ce0a7430f75e44b914850d9216cb6",
+    "lastHarvestedAt": "2026-10-19T09:48:02.800Z",
+    "learningId": "learn-github-veirt-weathr"
+  },
+  "louiscad-splitties": {
+    "repository": "LouisCAD/Splitties",
+    "platform": "github",
+    "sourceUrl": "https://github.com/LouisCAD/Splitties",
+    "sourceVersion": "1ed56ba2",
+    "license": "Apache-2.0",
+    "contentHash": "b214ed3d00f30ac0147c03fc817c275eb5be05f4bb1382eec20400cf1c8414e8",
+    "lastHarvestedAt": "2026-10-19T09:48:09.439Z",
+    "learningId": "learn-github-louiscad-splitties"
+  },
+  "volcengine-minecontext": {
+    "repository": "volcengine/MineContext",
+    "platform": "github",
+    "sourceUrl": "https://github.com/volcengine/MineContext",
+    "sourceVersion": "171c7a9e",
+    "license": "Apache-2.0",
+    "contentHash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
+    "lastHarvestedAt": "2026-10-19T09:48:15.514Z",
+    "learningId": "learn-github-volcengine-minecontext"
   }
 }

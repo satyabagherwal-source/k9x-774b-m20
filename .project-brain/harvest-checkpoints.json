@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T09:41:56.780Z",
+  "last_updated": "2026-10-19T09:48:15.522Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1039,14 +1039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "content_hash": "bed7a24241cf7c93da65109727e7498011dbdaf25c9636b3a47dbf0344e231a2",
-      "verified_at": "2026-10-18T01:48:30.954Z",
+      "content_hash": "0ca5836e9232b6dafc2b1738e44099c64a5d25e48bcd1a7ae9551ae8b74a9983",
+      "verified_at": "2026-10-19T09:48:06.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:48:30.954Z"
+      "last_updated": "2026-10-19T09:48:06.760Z"
     },
     "meta-llama/Meta-Llama-3-8B": {
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -11381,6 +11381,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T09:38:57.588Z"
+    },
+    "Veirt/weathr": {
+      "repository": "Veirt/weathr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-veirt-weathr",
+      "content_hash": "1c863deabf5b2775e370d2d956f2ea24db5ce0a7430f75e44b914850d9216cb6",
+      "verified_at": "2026-10-19T09:48:02.806Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:48:02.806Z"
+    },
+    "LouisCAD/Splitties": {
+      "repository": "LouisCAD/Splitties",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-louiscad-splitties",
+      "content_hash": "b214ed3d00f30ac0147c03fc817c275eb5be05f4bb1382eec20400cf1c8414e8",
+      "verified_at": "2026-10-19T09:48:09.447Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:48:09.447Z"
+    },
+    "volcengine/MineContext": {
+      "repository": "volcengine/MineContext",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-volcengine-minecontext",
+      "content_hash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
+      "verified_at": "2026-10-19T09:48:15.521Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:48:15.521Z"
     }
   },
   "repos": {

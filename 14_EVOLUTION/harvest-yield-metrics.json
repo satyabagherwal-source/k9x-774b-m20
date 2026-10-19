@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T09:41:56.777Z",
-  "total_cycles_completed": 3108,
-  "total_learnings_persisted": 3108,
-  "total_rules_promoted": 2260,
+  "last_updated": "2026-10-19T09:48:15.518Z",
+  "total_cycles_completed": 3112,
+  "total_learnings_persisted": 3112,
+  "total_rules_promoted": 2264,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:59:22.653Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:59:27.317Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:05:32.315Z",
-      "repository": "taiga-family/taiga-ui",
-      "learningId": "learn-github-taiga-family-taiga-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:05:32.543Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:05:36.938Z",
       "repository": "shoutem/ui",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T09:41:56.777Z",
       "repository": "Megabit/Blazorise",
       "learningId": "learn-github-megabit-blazorise",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:48:02.803Z",
+      "repository": "Veirt/weathr",
+      "learningId": "learn-github-veirt-weathr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:48:06.757Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:48:09.445Z",
+      "repository": "LouisCAD/Splitties",
+      "learningId": "learn-github-louiscad-splitties",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:48:15.518Z",
+      "repository": "volcengine/MineContext",
+      "learningId": "learn-github-volcengine-minecontext",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

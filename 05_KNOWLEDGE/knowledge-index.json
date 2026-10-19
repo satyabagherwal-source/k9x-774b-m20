@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T09:41:56.738Z",
-  "total_verified_learnings": 771,
+  "last_updated": "2026-10-19T09:48:15.456Z",
+  "total_verified_learnings": 774,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -15074,7 +15074,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
       "source_version": "hf-compvis-stable-diffusion-v1-4",
-      "content_hash": "bed7a24241cf7c93da65109727e7498011dbdaf25c9636b3a47dbf0344e231a2",
+      "content_hash": "0ca5836e9232b6dafc2b1738e44099c64a5d25e48bcd1a7ae9551ae8b74a9983",
       "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "promoted_rules": [
@@ -15108,6 +15108,16 @@
           "number": 1046,
           "title": "License Enforcement & Gated Access Invariants",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2475,
+          "title": "Immutable Artifact Versioning & Schema Locking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2476,
+          "title": "Deterministic Serialization & Dtype Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15128,7 +15138,7 @@
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
       ],
-      "verified_at": "2026-10-18T01:48:30.913Z",
+      "verified_at": "2026-10-19T09:48:06.700Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27741,22 +27751,29 @@
     "learn-github-louiscad-splitties": {
       "learning_id": "learn-github-louiscad-splitties",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "louiscad-splitties",
+      "source": "LouisCAD/Splitties",
+      "repository": "LouisCAD/Splitties",
       "slug": "louiscad-splitties",
       "platform": "github",
       "source_url": "https://github.com/LouisCAD/Splitties",
-      "source_version": "HEAD",
-      "content_hash": "4c5fc5d43c0780050620a9c5869e5ebb669278684d25afa88ab1f7fd8d99cf5f",
+      "source_version": "1ed56ba2",
+      "content_hash": "b214ed3d00f30ac0147c03fc817c275eb5be05f4bb1382eec20400cf1c8414e8",
       "dossier_path": "07_PROJECT_LEARNING/louiscad-splitties-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louiscad-splitties-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.091Z"
+      "verified_at": "2026-10-19T09:48:09.362Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lsdefine-genericagent": {
       "learning_id": "learn-github-lsdefine-genericagent",
@@ -41508,22 +41525,35 @@
     "learn-github-veirt-weathr": {
       "learning_id": "learn-github-veirt-weathr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "veirt-weathr",
+      "source": "Veirt/weathr",
+      "repository": "Veirt/weathr",
       "slug": "veirt-weathr",
       "platform": "github",
       "source_url": "https://github.com/Veirt/weathr",
-      "source_version": "HEAD",
-      "content_hash": "46d2cd51acaa041f519b3e781b83701794119f950c194f5ce2220a33eb2f60a7",
+      "source_version": "7d403a0c",
+      "content_hash": "1c863deabf5b2775e370d2d956f2ea24db5ce0a7430f75e44b914850d9216cb6",
       "dossier_path": "07_PROJECT_LEARNING/veirt-weathr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/veirt-weathr-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2474,
+          "title": "build(deps): bump rand from 0.10.0 to 0.10.1 (#56)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.206Z"
+      "verified_at": "2026-10-19T09:48:02.746Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vercel-labs-opensrc": {
       "learning_id": "learn-github-vercel-labs-opensrc",
@@ -41904,22 +41934,35 @@
     "learn-github-volcengine-minecontext": {
       "learning_id": "learn-github-volcengine-minecontext",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "volcengine-minecontext",
+      "source": "volcengine/MineContext",
+      "repository": "volcengine/MineContext",
       "slug": "volcengine-minecontext",
       "platform": "github",
       "source_url": "https://github.com/volcengine/MineContext",
-      "source_version": "HEAD",
-      "content_hash": "b67cab273180e7120873a97b2520f48ec73657cc814859d65557f546681b86fa",
+      "source_version": "171c7a9e",
+      "content_hash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-minecontext-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-minecontext-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2477,
+          "title": "security): sandbox vikingdb:// protocol to userData directory (#363)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.258Z"
+      "verified_at": "2026-10-19T09:48:15.446Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-voltagent-voltagent": {
       "learning_id": "learn-github-voltagent-voltagent",
@@ -84764,6 +84807,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T09:41:56.729Z"
+    },
+    "rule-2474": {
+      "learning_id": "rule-2474",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2474,
+      "title": "build(deps): bump rand from 0.10.0 to 0.10.1 (#56)",
+      "source_url": "https://github.com/Veirt/weathr",
+      "source_version": "7d403a0c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:48:02.746Z"
+    },
+    "rule-2475": {
+      "learning_id": "rule-2475",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2475,
+      "title": "Immutable Artifact Versioning & Schema Locking",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:48:06.700Z"
+    },
+    "rule-2476": {
+      "learning_id": "rule-2476",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2476,
+      "title": "Deterministic Serialization & Dtype Consistency",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:48:06.700Z"
+    },
+    "rule-2477": {
+      "learning_id": "rule-2477",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2477,
+      "title": "security): sandbox vikingdb:// protocol to userData directory (#363)",
+      "source_url": "https://github.com/volcengine/MineContext",
+      "source_version": "171c7a9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:48:15.446Z"
     }
   },
   "aliases": {

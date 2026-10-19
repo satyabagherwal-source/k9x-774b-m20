@@ -3138,3 +3138,7 @@ Every entry in this ledger must capture:
 | `learn-github-imsnif-diskonaut` | `https://github.com/imsnif/diskonaut` | `65cd8290` | Multi-dimensional audit evidence | 2026-10-19T09:38:57.582Z |
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-19T09:40:15.262Z |
 | `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `f5ef5fbf` | Multi-dimensional audit evidence | 2026-10-19T09:41:56.774Z |
+| `learn-github-veirt-weathr` | `https://github.com/Veirt/weathr` | `7d403a0c` | Multi-dimensional audit evidence | 2026-10-19T09:48:02.800Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-19T09:48:06.754Z |
+| `learn-github-louiscad-splitties` | `https://github.com/LouisCAD/Splitties` | `1ed56ba2` | Multi-dimensional audit evidence | 2026-10-19T09:48:09.439Z |
+| `learn-github-volcengine-minecontext` | `https://github.com/volcengine/MineContext` | `171c7a9e` | Multi-dimensional audit evidence | 2026-10-19T09:48:15.514Z |
