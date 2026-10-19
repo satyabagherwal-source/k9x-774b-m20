@@ -3297,3 +3297,7 @@ Every entry in this ledger must capture:
 | `learn-github-zacharee-bifrost` | `https://github.com/zacharee/Bifrost` | `ed73a034` | Multi-dimensional audit evidence | 2026-10-19T14:27:18.163Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-19T14:27:22.862Z |
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `98947e90` | Multi-dimensional audit evidence | 2026-10-19T14:27:25.055Z |
+| `learn-github-react95-react95` | `https://github.com/React95/React95` | `ecdb9cad` | Multi-dimensional audit evidence | 2026-10-19T14:33:24.495Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T14:33:24.594Z |
+| `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `b6fd7ac4` | Multi-dimensional audit evidence | 2026-10-19T14:33:30.310Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `f6ad73c8` | Multi-dimensional audit evidence | 2026-10-19T14:33:33.049Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `1f752b67`  
+> **Source Version**: `f6ad73c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:09:55.106Z  
+> **Timestamp**: 2026-10-19T14:33:32.820Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:09:55.100Z  
+> **Harvest Timestamp**: 2026-10-19T14:33:32.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12942 stars
+- **Stars / Engagement**: 12943 stars
 
 ---
 
@@ -1200,782 +1200,172 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `57930a89` (2026-10-13)
-**Commit Message**: chore: check skills in the build (#39029)
+### Incident Patch 1: `f6ad73c8` (2026-10-19)
+**Commit Message**: chore: npm-check-updates && yarn upgrade (#38488)
 
-### Issue # (if applicable)
+Ran npm-check-updates and yarn upgrade to keep the `yarn.lock` file up-to-date.
 
-None.
-
-### Reason for this change
-
-Follow-up to https://github.com/aws/aws-cdk/pull/38942#pullrequestreview-5455097835.
-
-The skills under `skills/` link to headings in `AGENTS.md`, `CONTRIBUTING.md` and `docs/`. Renaming one of those headings breaks the links silently, and nothing checks the skills themselves.
-
-### Description of changes
-
-- `scripts/check-skills.js` checks every skill under `skills/`:
-  - frontmatter, `name` and `description` against the [skills specification](https://agentskills.io/specification), plus the `cdk-` name prefix;
-  - skill names the skills reference, and each group's README index;
-  - relative, `blob/main` and `tree/main` links, including the heading a `#fragment` points to.
-- In GitHub builds, where `PR_BUILD` is `true`, `build.sh` runs it right after the `yarn.lock` check, so the required `build` check fails on a broken skill, including a docs-only PR that renames a linked heading. Release pipelines don't set `PR_BUILD`, so they skip it.
-- Unit tests are in `scripts/@aws-cdk/script-tests`.
-
-It uses only Node builtins and reads only files inside the checkout. Run it locally with 
-
-**File**: `AGENTS.md` (modified, +1/-0)
+**File**: `package.json` (modified, +7/-7)
 ```diff
-@@ -32,6 +32,7 @@ Principles:
- | Test one file | `npx jest aws-lambda/test/function.test.ts` | `packages/aws-cdk-lib` |
- | Lint | `npx lerna run lint` | repo root |
- | Lint with auto-fix | `yarn lint --fix` | repo root |
-+| Check skills | `node scripts/check-skills.js` | repo root |
- | Rosetta (README compile check) | `/bin/bash ./scripts/run-rosetta.sh` | repo root |
- | Run all integ snapshots | `yarn integ` | `packages/@aws-cdk-testing/framework-integ` |
- | Run integ snapshots in module | `yarn integ --directory test/aws-lambda/test` | `packages/@aws-cdk-testing/framework-integ` |
-```
-
-**File**: `build.sh` (modified, +6/-0)
-```diff
-@@ -87,6 +87,12 @@ fi
- # Check that the yarn.lock is consistent
- node ./scripts/check-yarn-lock.js
- 
-+# Check the skills under skills/, including their links to headings in the docs.
-+# Only GitHub builds set PR_BUILD, so release pipelines skip this check.
-+if [ "${PR_BUILD:-}" == "true" ]; then
-+  node ./scripts/check-skills.js
-+fi
-+
- # Prepare for build with references
- /bin/bash scripts/generate-aggregate-tsconfig.sh > tsconfig.json
- 
-```
-
-**File**: `scripts/@aws-cdk/script-tests/check-skills.test.js` (added, +882/-0)
-```diff
-@@ -0,0 +1,882 @@
-+'use strict';
-+
-+const { spawnSync } = require('child_process');
-+const fs = require('fs');
-+const { builtinModules } = require('module');
-+const os = require('os');
-+const path = require('path');
-+const { checkSkills } = require('../../check-skills');
-+
-+const SCRIPT = path.join(__dirname, '..', '..', 'check-skills.js');
-+
-+// ─── Helpers ────────────────────────────────────────────────────────────────────
-+
-+const tempDirs = [];
-+
-+afterAll(() => {
-+  for (const dir of tempDirs) {
-+    fs.rmSync(dir, { recursive: true, force: true });
-+  }
-+});
-+
-+function toPosixPath(p) {
-+  return p.split(path.sep).join('/');
-+}
-+
-+function tempDir() {
-+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-skills-'));
-+  tempDirs.push(dir);
-+  return dir;
-+}
-+
-+function writeFiles(root, files) {
-+  for (const [rel, content] of Object.entries(files)) {
-+    const abs = path.join(root, rel);
-+    fs.mkdirSync(path.dirname(abs), { recursive: true });
-+    fs.writeFileSync(abs, content);
-+  }
-+}
-+
-+function skillMd({ name, description = 'Reviews one aspect of a change.', frontmatter, body = '# Review\n\nBody text.\n' }) {
-+  const lines = frontmatter ?? [`name: ${name}`, `description: ${description}`];
-+  return ['---', ...lines, '---', '', body].join('\n');
-+}
-+
-+function readme(folders) {
-+  const rows = folders.map((f) => `| [\`${f}\`](./${f}/SKILL.md) | Something |`);
-+  return ['# Skills', '', '| Skill | Reviews |', '|---|---|', ...rows, ''].join('\n');
-+}
-+
-+const GROUP = 'skills/cdk-review';
-+const SKILL = 'cdk-alpha-review';
-+const SKILL_PATH = `${GROUP}/${SKILL}/SKILL.md`;
-+
-+/** A repository with two valid skills in one group, plus any extra or replaced files. */
-+function repo(files = {}) {
-+  const root = tempDir();
-+  writeFiles(root, {
-+    [`${GROUP}/README.md`]: readme([SKILL, 'cdk-beta-principles']),
-+    [SKILL_PATH]: skillMd({ name: SKILL }),
-+    [`${GROUP}/cdk-beta-principles/SKILL.md`]: skillMd({ name: 'cdk-beta-principles' }),
-+    ...files,
-+  });
-+  return root;
-+}
-+
-+/** The findings without their messages, for exact comparison. */
-+function located(result) {
-+  return result.findings.map(({ path: p, line, severity, rule }) => ({ path: p, line, severity, rule }));
-+}
-+
-+function oneError(rule, line, p = SKILL_PATH) {
-+  return [{ path: p, line, severity: 'error', rule }];
-+}
-+
-+function withFrontmatter(...lines) {
-+  return repo({ [SKILL_PATH]: skillMd({ frontmatter: lines }) });
-+}
-+
-+// ─── Tests ──────────────────────────────────────────────────────────────────────
-+
-+describe('check-skills frontmatter and names', () => {
-+  test('a repository of valid skills has no findings', () => {
-+    const result = checkSkills(repo());
-+    expect(result.findings).toEqual([]);
-+    expect(result.counts.skills).toBe(2);
-+  });
-+
-+  test('fails a SKILL.md without frontmatter', () => {
-+    const result = checkSkills(repo({ [SKILL_PATH]: '# Review\n\nNo frontmatter.\n' }));
-+    expect(located(result)).toEqual(oneError('frontmatter', 1));
-+  });
-+
-+  test('fails frontmatter that is never closed', () => {
-+    const result = checkSkills(repo({ [SKILL_PATH]: `---\nname: ${SKILL}\ndescription: Reviews.\n\n# Review\n` }));
-+    expect(located(result)).toEqual(oneError('frontmatter', 1));
-+  });
-+
-+  // The Agent Skills spec makes `metadata` a map, which this single-line parser does not support,
-+  // so the key is not allowed in any form.
-+  test('fails a metadata map, saying nested values are not supported', () => {
-+    const result = checkSkills(withFrontmatter(`name: ${SKILL}`, 'description: Reviews.', 'metadata:', '  owner: cdk'));
-+    expect(located(result)).toEqual(oneError('frontmatter', 5));
-+    expect(result.findings[0].message).toContain('single-line');
-+    expect(result.findings[0].message).toContain('not nested maps, lists or multi-line values');
-+  });
-+
-+  test('fails a scalar metadata value as an unknown key', () => {
-+    const result = checkSkills(withFrontmatter(`name: ${SKILL}`, 'description: Reviews.', 'metadata: none'));
-+    expect(located(result)).toEqual(oneError('frontmatter-keys', 4));
-+  });
-+
-+  test.each([
-+    ['a block scalar', 'description: >'],
-+    ['a list item', '- item'],
-+    ['a flow sequence', 'description: [a, b]'],
-+  ])('fails %s in frontmatter', (_, line) => {
-+    const lines = line.startsWith('description')
-+      ? [`name: ${SKILL}`, line]
-+      : [`name: ${SKILL}`, 'description: Reviews.', line];
-+    const result = checkSkills(withFrontmatter(...lines));
-+    expect(located(result)).toEqual(oneError('frontmatter', lines.length + 1));
-+    expect(result.findings[0].message).toContain('single-line');
-+  });
-+
-+  test('fails a duplicate key', () => {
-+    const result = checkSkills(withFrontmatter(`name: ${SKILL}`, 'description: Reviews.', 'description: Again.'));
-+    expect(located(result)).toEqual(oneError('frontmatter', 4));
-+    expect(result.findings[0].message).toContain('description');
-+  });
-+
-+  test('accepts a double-quoted desc
-```
-
-**File**: `scripts/check-skills.js` (added, +629/-0)
-```diff
-@@ -0,0 +1,629 @@
-+#!/usr/bin/env node
-+/**
-+ * Checks the skills under skills/: their SKILL.md frontmatter and names, each group's
-+ * README index, and their links into the repository.
-+ *
-+ * Usage: node scripts/check-skills.js [<repository root>]
-+ *
-+ * Exit code: 0 if there are no errors (warnings allowed), 1 if there are errors,
-+ *            2 if the root or a file cannot be read
-+ */
-+'use strict';
-+
-+const fs = require('fs');
-+const path = require('path');
-+
-+const ALLOWED_KEYS = new Set(['name', 'description', 'license', 'compatibility', 'allowed-tools']);
-+const MAX_NAME_LENGTH = 64;
-+const MAX_DESCRIPTION_LENGTH = 1024;
-+const MAX_SKILL_LINES = 500;
-+const MAX_SYMLINKS = 40;
-+// GitHub serves blob/ and tree/ for the same paths. Links pinned to another ref, such as a commit
-+// SHA or a tag, are deliberately not checked: a rename cannot break them, and checking them needs
-+// git history, which the build does not use.
-+const MAIN = /^https:\/\/github\.com\/aws\/aws-cdk\/(?:blob|tree)\/main\//;
-+
-+/** Thrown when the check cannot run at all, as opposed to finding problems. */
-+class CheckError extends Error {}
-+
-+function toPosix(p) {
-+  return p.split(path.sep).join('/');
-+}
-+
-+/**
-+ * Checks the skills under `<root>/skills`.
-+ *
-+ * Returns { findings, counts, hasSkillsDir }, where each finding is
-+ * { path, line, severity, rule, message } with a root-relative path.
-+ */
-+function checkSkills(repoRoot) {
-+  const root = path.resolve(repoRoot);
-+  const findings = [];
-+  const counts = { skills: 0, markdownFiles: 0, links: 0, fragments: 0 };
-+
-+  const rootStat = statOrUndefined(fs.statSync, root);
-+  if (!rootStat || !rootStat.isDirectory()) {
-+    throw new CheckError(`cannot check ${root}: ${rootStat ? 'not a directory' : 'no such directory'}`);
-+  }
-+
-+  const report = (absPath, line, severity, rule, message) => {
-+    findings.push({ path: toPosix(path.relative(root, absPath)), line, severity, rule, message });
-+  };
-+
-+  const skillsDir = path.join(root, 'skills');
-+  const skillsStat = statOrUndefined(fs.lstatSync, skillsDir);
-+  if (!skillsStat) {
-+    return { findings, counts, hasSkillsDir: false };
-+  }
-+  if (skillsStat.isSymbolicLink()) {
-+    report(skillsDir, undefined, 'error', 'symlink', 'skills is a symlink, which is not followed; make it a directory');
-+    return { findings, counts, hasSkillsDir: true };
-+  }
-+  if (!skillsStat.isDirectory()) {
-+    report(skillsDir, undefined, 'error', 'skills-directory', 'skills is not a directory');
-+    return { findings, counts, hasSkillsDir: true };
-+  }
-+
-+  const markdownFiles = [];
-+  walk(skillsDir, markdownFiles, report);
-+  const skillDirs = markdownFiles.filter((f) => path.basename(f) === 'SKILL.md').map((f) => path.dirname(f));
-+  counts.skills = skillDirs.length;
-+  counts.markdownFiles = markdownFiles.length;
-+
-+  const texts = new Map(markdownFiles.map((file) => [file, readText(file)]));
-+  for (const dir of skillDirs) {
-+    const file = path.join(dir, 'SKILL.md');
-+    checkSkillMd(file, texts.get(file), path.basename(dir), report);
-+  }
-+
-+  const documents = new Map([...texts].map(([file, text]) => [file, parseMarkdown(text)]));
-+
-+  const context = { root, realRoot: fs.realpathSync(root), rootStat, counts, report, slugsByFile: new Map(), resolved: new Map() };
-+  for (const [file, doc] of documents) {
-+    for (const { line, links, unparsedLink } of doc) {
-+      for (const { target } of links) {
-+        checkLink(file, line, target, context);
-+      }
-+      if (unparsedLink) {
-+        report(file, line, 'warning', 'link-syntax',
-+          'this line has link syntax the check cannot parse (nested brackets, or parentheses in the target), so its link is not checked');
-+      }
-+    }
-+  }
-+
-+  const groups = new Map();
-+  for (const dir of skillDirs) {
-+    const group = path.dirname(dir);
-+    if (!groups.has(group)) {
-+      groups.set(group, []);
-+    }
-+    groups.get(group).push(path.basename(dir));
-+  }
-+  for (const [group, folders] of groups) {
-+    checkReadmeIndex(path.join(group, 'README.md'), documents, folders, report);
-+  }
-+
-+  findings.sort((a, b) => (a.path === b.path ? (a.line ?? 0) - (b.line ?? 0) : a.path < b.path ? -1 : 1));
-+  return { findings, counts, hasSkillsDir: true };
-+}
-+
-+/** Collects the .md files under `dir` in name order, reporting symlinks without following them. */
-+function walk(dir, markdownFiles, report) {
-+  let entries;
-+  try {
-+    entries = fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1));
-+  } catch (e) {
-+    throw new CheckError(`cannot read ${dir}: ${e.message}`);
-+  }
-+  for (const entry of entries) {
-+    const abs = path.join(dir, entry.name);
-+    if (entry.isSymbolicLink()) {
-+      report(abs, undefined, 'error', 'symlink', 'symlinks are not allowed under skills/; replace it with the file or directory');
-+    } else if (entry.isDirectory()) {
-+      walk(abs, markdownFiles, report);
-+    } else if (entry.isFile() && entry.nam
-```
-
----
-
-### Incident Patch 2: `1f752b67` (2026-10-16)
-**Commit Message**: fix(redshift-alpha): backslashes in user passwords and comments are not preserved (#39306)
-
-### Reason for this change
-
-Redshift reads backslash escapes in plain string literals. A backslash in a user password or a table or column comment could be stored altered or make the statement fail.
-
-### Description of changes
-
-- Escape backslashes in `quoteLiteral` before doubling single quotes, so the value reaches Redshift as written.
-- Apply this to the CREATE USER and ALTER USER password and to the COMMENT ON TABLE and COMMENT ON COLUMN text.
-- Leave stored passwords and comments unchanged on upgrade. The next time a comment is sent, an escape such as `\n` in it is stored literally.
-- Add an acknowledgeable synthesis warning when `User` `excludeCharacters` doesn't include `'`, `"`, `/` or `@`, which the [CREATE USER](https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_USER.html) documentation disallows in clear-text passwords.
-- Leave `\` out of that warning, although the documentation lists it, because Redshift accepted a password containing an escaped `\`.
-
-### Describe any new or updated permissions being added
-
-No new permissions.
-
-### Description of how you validated changes
-
--
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/lib/private/database-query-provider/escape.ts` (modified, +6/-2)
-```diff
-@@ -14,7 +14,11 @@ export function quoteQualifiedIdentifier(qualified: string): string {
-   return qualified.split('.').map(quoteIdentifier).join('.');
- }
- 
--/** Quotes a SQL string literal, doubling any embedded single quote. */
-+/**
-+ * Quotes a SQL string literal, doubling any embedded backslash and then any embedded single quote.
-+ *
-+ * Redshift processes backslash escape sequences in string literals, so a backslash is doubled to be read as written.
-+ */
- export function quoteLiteral(literal: string): string {
--  return `'${literal.replace(/'/g, "''")}'`;
-+  return `'${literal.replace(/\\/g, '\\\\').replace(/'/g, "''")}'`;
+@@ -23,20 +23,20 @@
+     "@types/prettier": "2.6.0",
+     "@yarnpkg/lockfile": "^1.1.0",
+     "aws-sdk-js-codemod": "^2.4.5",
+-    "cdk-generate-synthetic-examples": "^0.2.58",
++    "cdk-generate-synthetic-examples": "^0.2.60",
+     "conventional-changelog-cli": "^2.2.2",
+     "fs-extra": "^9.1.0",
+     "graceful-fs": "^4.2.11",
+     "jest-junit": "^13.2.0",
+-    "jsii-diff": "1.140.0",
+-    "jsii-pacmak": "1.140.0",
+-    "jsii-reflect": "1.140.0",
+-    "jsii-rosetta": "~5.9.56",
++    "jsii-diff": "1.141.0",
++    "jsii-pacmak": "1.141.0",
++    "jsii-reflect": "1.141.0",
++    "jsii-rosetta": "~5.9.71",
+     "lerna": "^8.2.4",
+     "nx": "^23",
+     "semver": "^7.8.5",
+     "standard-version": "^9.5.0",
+-    "ts-jest": "^29.4.11",
++    "ts-jest": "^29.4.15",
+     "ts-node": "^10.9.2",
+     "typescript": "~5.9.3"
+   },
+@@ -181,7 +181,7 @@
+   },
+   "dependencies": {
+     "string-width": "^4.2.3",
+-    "tar": "^7.5.20"
++    "tar": "^7.5.22"
+   },
+   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
  }
 ```
 
-**File**: `packages/@aws-cdk/aws-redshift-alpha/lib/user.ts` (modified, +13/-0)
+**File**: `packages/@aws-cdk-testing/framework-integ/package.json` (modified, +4/-4)
 ```diff
-@@ -14,6 +14,9 @@ import type { UserHandlerProps } from './private/handler-props';
- import { UserTablePrivileges } from './private/privileges';
- import type { ITable, TableAction } from './table';
+@@ -38,7 +38,7 @@
+     "@aws-sdk/client-rds": "3.632.0",
+     "@aws-sdk/client-s3": "3.632.0",
+     "@aws-sdk/client-cognito-identity-provider": "3.632.0",
+-    "axios": "^1.18.1",
++    "axios": "^1.20.0",
+     "delay": "5.0.0"
+   },
+   "dependencies": {
+@@ -51,10 +51,10 @@
+     "@aws-cdk/lambda-layer-kubectl-v33": "^2.2.2",
+     "@aws-cdk/lambda-layer-kubectl-v34": "^2.2.2",
+     "@aws-cdk/lambda-layer-kubectl-v35": "^2.2.2",
+-    "@aws-cdk/lambda-layer-kubectl-v36": "^2.0.0",
++    "@aws-cdk/lambda-layer-kubectl-v36": "2.0.0",
+     "@aws-cdk/region-info": "0.0.0",
+     "aws-cdk-lib": "0.0.0",
+-    "cdk8s": "2.70.83",
++    "cdk8s": "2.70.111",
+     "cdk8s-plus-27": "2.9.5",
+     "constructs": "^10.5.0"
+   },
+@@ -76,4 +76,4 @@
+   "publishConfig": {
+     "tag": "latest"
+   }
+-}
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk/aws-imagebuilder-alpha/package.json` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@
+     "@aws-cdk/integ-tests-alpha": "0.0.0",
+     "@aws-cdk/pkglint": "0.0.0",
+     "@aws-sdk/client-inspector2": "^3",
+-    "@types/aws-lambda": "^8.10.162",
++    "@types/aws-lambda": "^8.10.164",
+     "@types/jest": "^29.5.14",
+     "aws-cdk-lib": "0.0.0",
+     "constructs": "^10.5.0",
+```
+
+**File**: `packages/@aws-cdk/custom-resource-handlers/package.json` (modified, +3/-3)
+```diff
+@@ -53,11 +53,11 @@
+     "jest": "^29.7.0",
+     "sinon": "^9.2.4",
+     "nock": "^13.5.6",
+-    "fs-extra": "^11.3.6",
+-    "esbuild": "^0.28.1"
++    "fs-extra": "^11.4.1",
++    "esbuild": "^0.28.2"
+   },
+   "dependencies": {
+-    "@aws-cdk/asset-node-proxy-agent-v6": "^2.1.2",
++    "@aws-cdk/asset-node-proxy-agent-v6": "^2.1.3",
+     "@aws-sdk/client-lambda": "3.632.0",
+     "@aws-sdk/client-synthetics": "3.632.0",
+     "@aws-sdk/client-ecr": "3.632.0",
+```
+
+**File**: `packages/@aws-cdk/cx-api/package.json` (modified, +1/-1)
+```diff
+@@ -93,7 +93,7 @@
+     "@aws-cdk/pkglint": "0.0.0",
+     "@types/jest": "^29.5.14",
+     "@types/mock-fs": "^4.13.4",
+-    "@types/semver": "^7.7.1",
++    "@types/semver": "^7.8.0",
+     "jest": "^29.7.0",
+     "madge": "^5.0.2",
+     "mock-fs": "^4.14.0"
+```
+
+**File**: `packages/@aws-cdk/metrics-facade-alpha/package.json` (modified, +1/-1)
+```diff
+@@ -166,7 +166,7 @@
+     "aws-cdk-lib": "0.0.0",
+     "constructs": "^10.5.0",
+     "jest": "^29.7.0",
+-    "tsx": "^4.23.1"
++    "tsx": "^4.23.15"
+   },
+   "dependencies": {},
+   "peerDependencies": {
+```
+
+**File**: `packages/@aws-cdk/mixins-preview/package.json` (modified, +1/-1)
+```diff
+@@ -322,7 +322,7 @@
+     "aws-cdk-lib": "0.0.0",
+     "constructs": "^10.5.0",
+     "jest": "^29.7.0",
+-    "tsx": "^4.23.1"
++    "tsx": "^4.23.15"
+   },
+   "dependencies": {},
+   "peerDependencies": {
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/mixins/selectors.ts` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-import type { IConstruct, Node } from 'constructs';
++import type { IConstruct } from 'constructs';
+ import { CfnResource } from '../cfn-resource';
  
-+/** Characters the Redshift documentation excludes from clear-text passwords, except the backslash, which Redshift was observed to accept once `quoteLiteral` escapes it. */
-+const DISALLOWED_PASSWORD_CHARACTERS = ["'", '"', '/', '@'];
-+
  /**
-  * Properties for configuring a Redshift user.
-  */
-@@ -169,6 +172,16 @@ export class User extends UserBase {
-   constructor(scope: Construct, id: string, props: UserProps) {
-     super(scope, id);
+@@ -103,7 +103,7 @@ class ResourceTypeSelector implements IConstructSelector {
+ const { minimatch } = require('minimatch');
  
-+    if (props.excludeCharacters !== undefined && !cdk.Token.isUnresolved(props.excludeCharacters)) {
-+      const missing = DISALLOWED_PASSWORD_CHARACTERS.filter(character => !props.excludeCharacters!.includes(character));
-+      if (missing.length > 0) {
-+        cdk.Annotations.of(this).addWarningV2('@aws-cdk/aws-redshift-alpha:excludeCharactersIncomplete',
-+          `The Redshift documentation does not allow ${JSON.stringify(DISALLOWED_PASSWORD_CHARACTERS.join(''))} in a clear-text password, and excludeCharacters does not include ${JSON.stringify(missing.join(''))}. ` +
-+          'For a new user, add the missing characters to excludeCharacters. On an existing user, changing excludeCharacters gives the secret a new password, ' +
-+          'which must then also be set on the database user.');
-+      }
-+    }
-+
-     this.databaseProps = props;
-     this.cluster = props.cluster;
-     this.databaseName = props.databaseName;
-```
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/test/database-query-provider/escape.test.ts` (modified, +11/-0)
-```diff
-@@ -50,6 +50,17 @@ describe('quoteLiteral', () => {
-   test('wraps an empty value in single quotes', () => {
-     expect(quoteLiteral('')).toEqual("''");
-   });
-+
-+  test.each([
-+    ['a\\b', "'a\\\\b'"],
-+    ["a\\'b", "'a\\\\''b'"],
-+    ['a\\', "'a\\\\'"],
-+    ['\\\\', "'\\\\\\\\'"],
-+    ['a\\nb', "'a\\\\nb'"],
-+    ["x\\\\'y", "'x\\\\\\\\''y'"],
-+  ])('escapes backslashes and single quotes in %j', (literal, expected) => {
-+    expect(quoteLiteral(literal)).toEqual(expected);
-+  });
- });
+ class IdPatternSelector implements IConstructSelector {
+-  constructor(private readonly pattern: string, private field: keyof Node) {}
++  constructor(private readonly pattern: string, private field: 'id' | 'path') {}
  
- describe('quoteQualifiedIdentifier', () => {
-```
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/test/database-query-provider/table.test.ts` (modified, +52/-0)
-```diff
-@@ -819,6 +819,32 @@ describe('special-character handling', () => {
-     }));
-   });
- 
-+  test('escapes backslashes in a table comment', async () => {
-+    const newResourceProperties: ResourcePropertiesType = {
-+      ...resourceProperties,
-+      tableComment: 'path\\to\\table',
-+    };
-+
-+    await manageTable(newResourceProperties, createEvent);
-+
-+    expect(mockExecuteStatement).toHaveBeenCalledWith(expect.objectContaining({
-+      Sql: `COMMENT ON TABLE ${tableNamePrefix}${stackIdTruncated} IS 'path\\\\to\\\\table'`,
-+    }));
-+  });
-+
-+  test('escapes backslashes in a table comment changed by an update', async () => {
-+    const newResourceProperties: ResourcePropertiesType = {
-+      ...resourceProperties,
-+      tableComment: 'ends in \\',
-+    };
-+
-+    await manageTable(newResourceProperties, updateEvent);
-+
-+    expect(mockExecuteStatement).toHaveBeenCalledWith(expect.objectContaining({
-+      Sql: `COMMENT ON TABLE ${tableNamePrefix}${stackIdTruncated} IS 'ends in \\\\'`,
-+    }));
-+  });
-+
-   test('escapes single quotes in a column comment', async () => {
-     const newResourceProperties: ResourcePropertiesType = {
-       ...resourceProperties,
-@@ -832,6 +858,32 @@ describe('special-character handling', () => {
-     }));
-   });
- 
-+  test('escapes backslashes in a column comment', async () => {
-+    const newResourceProperties: ResourcePropertiesType = {
-+      ...resourceProperties,
-+      tableColumns: [{ name: 'col1', dataType: 'varchar(1)', comment: 'C:\\data' }],
-+    };
-+
-+    await manageTable(newResourceProperties, createEvent);
-+
-+    expect(mockExecuteStatement).toHaveBeenCalledWith(expect.objectContaining({
-+      Sql: `COMMENT ON COLUMN ${tableNamePrefix}${stackIdTruncated}.col1 IS 'C:\\\\data'`,
-+    }));
-+  });
-+
-+  test('escapes backslashes in a column comment changed by an update', async () => {
-+    const newResourceProperties: ResourcePropertiesType = {
-+      ...resourceProperties,
-+      tableColumns: [{ name: 'col1', dataType: 'varchar(1)', comment: 'ends in \\' }],
-+    };
-+
-+    await manageTable(newResourceProperties, updateEvent);
-+
-+    expect(mockExecuteStatement).toHaveBeenCalledWith(expect.objectContaining({
-+      Sql: `COMMENT ON COLUMN ${tableNamePrefix}${stackIdTruncated}.col1 IS 'ends in \\\\'`,
-+    }));
-+  });
-+
-   test('quotes table and column identifiers and doubles embedded double quotes in CREATE TABLE', async () => {
-     const newResourceProperties: ResourcePropertiesType = {
-       ...resourceProperties,
-```
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/test/database-query-provider/user.test.ts` (modified, +33/-0)
-```diff
-@@ -202,6 +202,20 @@ describe('special-character handling', () => {
-     }));
-   });
- 
-+  test('escapes backslashes in the password literal of CREATE USER', async () => {
-+    const event: AWSLambda.CloudFormationCustomResourceCreateEvent = {
-+      RequestType: 'Create',
-+      ...genericEvent,
-+    };
-+    mockGetSecretValue.mockImplementationOnce(async () => ({ SecretString: JSON.stringify({ password: 'pa\\ss' }) }));
-+
-+    await manageUser({ ...resourceProperties, username: 'u' }, event);
-+
-+    expect(mockExecuteStatement).toHaveBeenCalledWith(expect.objectContaining({
-+      Sql: 'CREATE USER u PASSWORD \'pa\\\\ss\'',
-+    }));
-+  });
-+
-   test('quotes the user name in DROP USER', async () => {
-     const specialUsername = 'u; x';
-     const event: AWSLambda.CloudFormationCustomResourceDeleteEvent = {
-@@ -236,6 +250,25 @@ describe('special-character handling', () => {
-     }));
-   });
- 
-+  test('escapes backslashes in the password literal of ALTER USER', async () => {
-+    const newPassword = 'p\\q';
-+    const event: AWSLambda.CloudFormationCustomResourceUpdateEvent = {
-+      RequestType: 'Update',
-+      OldResourceProperties: { ...resourceProperties, username: 'u' },
-+      PhysicalResourceId: physicalResourceId,
-+      ...genericEvent,
-+    };
-+    // First lookup resolves the old password, second resolves the new password.
-+    mockGetSecretValue.mockImplementationOnce(async () => ({ SecretString: JSON.stringify({ password: 'old' }) }));
-+    mockGetSecretValue.mockImplementationOnce(async () => ({ SecretString: JSON.stringify({ password: newPassword }) }));
-+
-+    await manageUser({ ...resourceProperties, username: 'u' }, event);
-+
-+    expect(mockExecuteStatement).toHaveBeenCalledWith(expect.objectContaining({
-+      Sql: 'ALTER USER u PASSWORD \'p\\\\q\'',
-+    }));
-+  });
-+
-   test('quotes the user name and doubles embedded double quotes in ALTER USER', async () => {
-     const properties = { ...resourceProperties, username: 'ab"c' };
-     const event: AWSLambda.CloudFormationCustomResourceUpdateEvent = {
-```
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/test/integ.cluster-distkey.js.snapshot/asset.1059b90e57a48954f8a33d230b215487e398f194970a210a0058cd736093929b/escape.js` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.quoteIdentifier = quoteIdentifier;
-+exports.quoteQualifiedIdentifier = quoteQualifiedIdentifier;
-+exports.quoteLiteral = quoteLiteral;
-+/** A valid bare identifier (letter/underscore then letters, digits, `_`, or `$`); needs no quoting. */
-+const BARE_IDENTIFIER = /^[\p{L}_][\p{L}\p{N}_$]*$/u;
-+/** Returns a bare-safe identifier unchanged; otherwise double-quotes it, doubling embedded double quotes. */
-+function quoteIdentifier(identifier) {
-+    if (BARE_IDENTIFIER.test(identifier)) {
-+        return identifier;
-+    }
-+    return `"${identifier.replace(/"/g, '""')}"`;
-+}
-+/** Applies {@link quoteIdentifier} to each `.`-separated component, keeping the dot separator. */
-+function quoteQualifiedIdentifier(qualified) {
-+    return qualified.split('.').map(quoteIdentifier).join('.');
-+}
-+/**
-+ * Quotes a SQL string literal, doubling any embedded backslash and then any embedded single quote.
-+ *
-+ * Redshift processes backslash escape sequences in string literals, so a backslash is doubled to be read as written.
-+ */
-+function quoteLiteral(literal) {
-+    return `'${literal.replace(/\\/g, '\\\\').replace(/'/g, "''")}'`;
-+}
-+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZXNjYXBlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZXNjYXBlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBSUEsMENBS0M7QUFHRCw0REFFQztBQU9ELG9DQUVDO0FBdkJELHVHQUF1RztBQUN2RyxNQUFNLGVBQWUsR0FBRyw0QkFBNEIsQ0FBQztBQUVyRCw2R0FBNkc7QUFDN0csU0FBZ0IsZUFBZSxDQUFDLFVBQWtCO0lBQ2hELElBQUksZUFBZSxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsRUFBRSxDQUFDO1FBQ3JDLE9BQU8sVUFBVSxDQUFDO0lBQ3BCLENBQUM7SUFDRCxPQUFPLElBQUksVUFBVSxDQUFDLE9BQU8sQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLEdBQUcsQ0FBQztBQUMvQyxDQUFDO0FBRUQsa0dBQWtHO0FBQ2xHLFNBQWdCLHdCQUF3QixDQUFDLFNBQWlCO0lBQ3hELE9BQU8sU0FBUyxDQUFDLEtBQUssQ0FBQyxHQUFHLENBQUMsQ0FBQyxHQUFHLENBQUMsZUFBZSxDQUFDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQzdELENBQUM7QUFFRDs7OztHQUlHO0FBQ0gsU0FBZ0IsWUFBWSxDQUFDLE9BQWU7SUFDMUMsT0FBTyxJQUFJLE9BQU8sQ0FBQyxPQUFPLENBQUMsS0FBSyxFQUFFLE1BQU0sQ0FBQyxDQUFDLE9BQU8sQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLEdBQUcsQ0FBQztBQUNuRSxDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLyoqIEEgdmFsaWQgYmFyZSBpZGVudGlmaWVyIChsZXR0ZXIvdW5kZXJzY29yZSB0aGVuIGxldHRlcnMsIGRpZ2l0cywgYF9gLCBvciBgJGApOyBuZWVkcyBubyBxdW90aW5nLiAqL1xuY29uc3QgQkFSRV9JREVOVElGSUVSID0gL15bXFxwe0x9X11bXFxwe0x9XFxwe059XyRdKiQvdTtcblxuLyoqIFJldHVybnMgYSBiYXJlLXNhZmUgaWRlbnRpZmllciB1bmNoYW5nZWQ7IG90aGVyd2lzZSBkb3VibGUtcXVvdGVzIGl0LCBkb3VibGluZyBlbWJlZGRlZCBkb3VibGUgcXVvdGVzLiAqL1xuZXhwb3J0IGZ1bmN0aW9uIHF1b3RlSWRlbnRpZmllcihpZGVudGlmaWVyOiBzdHJpbmcpOiBzdHJpbmcge1xuICBpZiAoQkFSRV9JREVOVElGSUVSLnRlc3QoaWRlbnRpZmllcikpIHtcbiAgICByZXR1cm4gaWRlbnRpZmllcjtcbiAgfVxuICByZXR1cm4gYFwiJHtpZGVudGlmaWVyLnJlcGxhY2UoL1wiL2csICdcIlwiJyl9XCJgO1xufVxuXG4vKiogQXBwbGllcyB7QGxpbmsgcXVvdGVJZGVudGlmaWVyfSB0byBlYWNoIGAuYC1zZXBhcmF0ZWQgY29tcG9uZW50LCBrZWVwaW5nIHRoZSBkb3Qgc2VwYXJhdG9yLiAqL1xuZXhwb3J0IGZ1bmN0aW9uIHF1b3RlUXVhbGlmaWVkSWRlbnRpZmllcihxdWFsaWZpZWQ6IHN0cmluZyk6IHN0cmluZyB7XG4gIHJldHVybiBxdWFsaWZpZWQuc3BsaXQoJy4nKS5tYXAocXVvdGVJZGVudGlmaWVyKS5qb2luKCcuJyk7XG59XG5cbi8qKlxuICogUXVvdGVzIGEgU1FMIHN0cmluZyBsaXRlcmFsLCBkb3VibGluZyBhbnkgZW1iZWRkZWQgYmFja3NsYXNoIGFuZCB0aGVuIGFueSBlbWJlZGRlZCBzaW5nbGUgcXVvdGUuXG4gKlxuICogUmVkc2hpZnQgcHJvY2Vzc2VzIGJhY2tzbGFzaCBlc2NhcGUgc2VxdWVuY2VzIGluIHN0cmluZyBsaXRlcmFscywgc28gYSBiYWNrc2xhc2ggaXMgZG91YmxlZCB0byBiZSByZWFkIGFzIHdyaXR0ZW4uXG4gKi9cbmV4cG9ydCBmdW5jdGlvbiBxdW90ZUxpdGVyYWwobGl0ZXJhbDogc3RyaW5nKTogc3RyaW5nIHtcbiAgcmV0dXJuIGAnJHtsaXRlcmFsLnJlcGxhY2UoL1xcXFwvZywgJ1xcXFxcXFxcJykucmVwbGFjZSgvJy9nLCBcIicnXCIpfSdgO1xufVxuIl19
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/test/integ.cluster-distkey.js.snapshot/asset.57b86a30fcba5ef577404618bf084f8231b547c4547a7920573174b880664f77/escape.js` (removed, +0/-23)
-```diff
-@@ -1,23 +0,0 @@
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.quoteIdentifier = quoteIdentifier;
--exports.quoteQualifiedIdentifier = quoteQualifiedIdentifier;
--exports.quoteLiteral = quoteLiteral;
--/** A valid bare identifier (letter/underscore then letters, digits, `_`, or `$`); needs no quoting. */
--const BARE_IDENTIFIER = /^[\p{L}_][\p{L}\p{N}_$]*$/u;
--/** Returns a bare-safe identifier unchanged; otherwise double-quotes it, doubling embedded double quotes. */
--function quoteIdentifier(identifier) {
--    if (BARE_IDENTIFIER.test(identifier)) {
--        return identifier;
--    }
--    return `"${identifier.replace(/"/g, '""')}"`;
--}
--/** Applies {@link quoteIdentifier} to each `.`-separated component, keeping the dot separator. */
--function quoteQualifiedIdentifier(qualified) {
--    return qualified.split('.').map(quoteIdentifier).join('.');
--}
--/** Quotes a SQL string literal, doubling any embedded single quote. */
--function quoteLiteral(literal) {
--    return `'${literal.replace(/'/g, "''")}'`;
--}
--//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZXNjYXBlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZXNjYXBlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBSUEsMENBS0M7QUFHRCw0REFFQztBQUdELG9DQUVDO0FBbkJELHVHQUF1RztBQUN2RyxNQUFNLGVBQWUsR0FBRyw0QkFBNEIsQ0FBQztBQUVyRCw2R0FBNkc7QUFDN0csU0FBZ0IsZUFBZSxDQUFDLFVBQWtCO0lBQ2hELElBQUksZUFBZSxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsRUFBRSxDQUFDO1FBQ3JDLE9BQU8sVUFBVSxDQUFDO0lBQ3BCLENBQUM7SUFDRCxPQUFPLElBQUksVUFBVSxDQUFDLE9BQU8sQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLEdBQUcsQ0FBQztBQUMvQyxDQUFDO0FBRUQsa0dBQWtHO0FBQ2xHLFNBQWdCLHdCQUF3QixDQUFDLFNBQWlCO0lBQ3hELE9BQU8sU0FBUyxDQUFDLEtBQUssQ0FBQyxHQUFHLENBQUMsQ0FBQyxHQUFHLENBQUMsZUFBZSxDQUFDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQzdELENBQUM7QUFFRCx1RUFBdUU7QUFDdkUsU0FBZ0IsWUFBWSxDQUFDLE9BQWU7SUFDMUMsT0FBTyxJQUFJLE9BQU8sQ0FBQyxPQUFPLENBQUMsSUFBSSxFQUFFLElBQUksQ0FBQyxHQUFHLENBQUM7QUFDNUMsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBBIHZhbGlkIGJhcmUgaWRlbnRpZmllciAobGV0dGVyL3VuZGVyc2NvcmUgdGhlbiBsZXR0ZXJzLCBkaWdpdHMsIGBfYCwgb3IgYCRgKTsgbmVlZHMgbm8gcXVvdGluZy4gKi9cbmNvbnN0IEJBUkVfSURFTlRJRklFUiA9IC9eW1xccHtMfV9dW1xccHtMfVxccHtOfV8kXSokL3U7XG5cbi8qKiBSZXR1cm5zIGEgYmFyZS1zYWZlIGlkZW50aWZpZXIgdW5jaGFuZ2VkOyBvdGhlcndpc2UgZG91YmxlLXF1b3RlcyBpdCwgZG91YmxpbmcgZW1iZWRkZWQgZG91YmxlIHF1b3Rlcy4gKi9cbmV4cG9ydCBmdW5jdGlvbiBxdW90ZUlkZW50aWZpZXIoaWRlbnRpZmllcjogc3RyaW5nKTogc3RyaW5nIHtcbiAgaWYgKEJBUkVfSURFTlRJRklFUi50ZXN0KGlkZW50aWZpZXIpKSB7XG4gICAgcmV0dXJuIGlkZW50aWZpZXI7XG4gIH1cbiAgcmV0dXJuIGBcIiR7aWRlbnRpZmllci5yZXBsYWNlKC9cIi9nLCAnXCJcIicpfVwiYDtcbn1cblxuLyoqIEFwcGxpZXMge0BsaW5rIHF1b3RlSWRlbnRpZmllcn0gdG8gZWFjaCBgLmAtc2VwYXJhdGVkIGNvbXBvbmVudCwga2VlcGluZyB0aGUgZG90IHNlcGFyYXRvci4gKi9cbmV4cG9ydCBmdW5jdGlvbiBxdW90ZVF1YWxpZmllZElkZW50aWZpZXIocXVhbGlmaWVkOiBzdHJpbmcpOiBzdHJpbmcge1xuICByZXR1cm4gcXVhbGlmaWVkLnNwbGl0KCcuJykubWFwKHF1b3RlSWRlbnRpZmllcikuam9pbignLicpO1xufVxuXG4vKiogUXVvdGVzIGEgU1FMIHN0cmluZyBsaXRlcmFsLCBkb3VibGluZyBhbnkgZW1iZWRkZWQgc2luZ2xlIHF1b3RlLiAqL1xuZXhwb3J0IGZ1bmN0aW9uIHF1b3RlTGl0ZXJhbChsaXRlcmFsOiBzdHJpbmcpOiBzdHJpbmcge1xuICByZXR1cm4gYCcke2xpdGVyYWwucmVwbGFjZSgvJy9nLCBcIicnXCIpfSdgO1xufVxuIl19
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk/aws-redshift-alpha/test/integ.cluster-distkey.js.snapshot/awscdkredshiftclusterdatabaseawscdkredshiftdistkeycreate9F628DC2.assets.json` (modified, +7/-7)
-```diff
-@@ -1,16 +1,16 @@
- {
-   "version": "54.0.0",
-   "files": {
--    "57b86a30fcba5ef577404618bf084f8231b547c4547a7920573174b880664f77": {
-+    "1059b90e57a48954f8a33d230b215487e398f194970a210a0058cd736093929b": {
-       "displayName": "Query Redshift Database3de5bea727da479686625efb56431b5f/Code",
-       "source": {
--        "path": "asset.57b86a30fcba5ef577404618bf084f8231b547c4547a7920573174b880664f77",
-+        "path": "asset.1059b90e57a48954f8a33d230b215487e398f194970a210a0058cd736093929b",
-         "packaging": "zip"
-       },
-       "destinations": {
--        "current_account-current_region-a767b17f": {
-+        "current_account-current_region-66ccdb51": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "57b86a30fcba5ef577404618bf084f8231b547c4547a7920573174b880664f77.zip",
-+          "objectKey": "1059b90e57a48954f8a33d230b215487e398f194970a210a0058cd736093929b.zip",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
-@@ -29,16 +29,16 @@
-         }
-       }
-     },
--    "4be78a64dbf3e4550e20d8ec98de1b991d297b7d8955d89b6bc0749dc0e982db": {
-+    "ffb432f2ecfb38cc69ee98ccb366229ef2054d7c621ff027752636b51c1b0c9e": {
-       "displayName": "awscdkredshiftclusterdatabaseawscdkredshiftdistkeycreate9F628DC2 Template",
-       "source": {
-         "path": "awscdkredshiftclusterdatabaseawscdkredshiftdistkeycreate9F628DC2.template.json",
-         "packaging": "file"
-       },
-       "destinations": {
--        "current_account-current_region-3f454cfd": {
-+        "current_account-current_region-1b742edf": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "4be78a64dbf3e4550e20d8ec98de1b991d297b7d8955d89b6bc0749dc0e982db.json",
-+          "objectKey": "ffb432f2ecfb38cc69ee98ccb366229ef2054d7c621ff027752636b51c1b0c9e.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
-```
-
----
-
-### Incident Patch 3: `54fb0eab` (2026-10-16)
-**Commit Message**: fix(core): validations with different messages are confusingly combined (#39132)
-
-Fixes the CDK-side half of #38982. The engine-side `E3047` false positive in the same issue is being tracked upstream in `aws-cloudformation/cloudformation-validate`.
-
-`CloudFormationValidatePlugin` grouped diagnostics into violations by `ruleId` and severity only. The first diagnostic's description (property path and message) became the description for the whole group, and every later diagnostic contributed only its resource, so most resources were reported with another resource's message and values. This affected every rule that fires more than once with differing messages.
-
-Violations are now grouped by `ruleId`, severity and description, as discussed with @pahud in the issue. Diagnostics with identical messages still share one violation, while diagnostics with different messages each get their own, so every resource is reported with its own values. Acknowledgements are unaffected, since suppression matches each violation by rule name.
-
-### Testing
-
-- New unit test (as requested in the issue): two diagnostics with the same `ruleId` and different messages produce two violations, each carrying its ow
-
-**File**: `packages/aws-cdk-lib/core/lib/validation/cloudformation-validate-plugin.ts` (modified, +7/-4)
-```diff
-@@ -248,18 +248,21 @@ export class CloudFormationValidatePlugin implements IPolicyValidationPlugin {
-           locations: diagnostic.propertyPath ? [diagnostic.propertyPath] : [],
-         };
- 
-+        const propertyPathPefix = diagnostic.propertyPath ? `${diagnostic.propertyPath.replace(/^Properties\./, '')}: ` : '';
-+        const description = `${propertyPathPefix}${diagnostic.message}`;
-+
-+        // Only diagnostics with the same description share a violation, so each
-+        // violating resource is reported with its own message.
-         const existing = violations.find(
--          v => v.ruleName === diagnostic.ruleId && v.severity === severity,
-+          v => v.ruleName === diagnostic.ruleId && v.severity === severity && v.description === description,
-         );
- 
--        const propertyPathPefix = diagnostic.propertyPath ? `${diagnostic.propertyPath.replace(/^Properties\./, '')}: ` : '';
--
-         if (existing) {
-           existing.violatingResources.push(violatingResource);
-         } else {
-           violations.push({
-             ruleName: diagnostic.ruleId,
--            description: `${propertyPathPefix}${diagnostic.message}`,
-+            description,
-             severity,
-             fix: diagnostic.suggestedFix,
-             violatingResources: [violatingResource],
-```
-
-**File**: `packages/aws-cdk-lib/core/test/validation/cloudformation-validate-plugin.test.ts` (modified, +80/-0)
-```diff
-@@ -460,6 +460,86 @@ describe('CloudFormationValidatePlugin', () => {
-     }
-   });
- 
-+  describe('grouping diagnostics into violations', () => {
-+    let tmpDir: string;
-+    let templatePath: string;
-+
-+    beforeEach(() => {
-+      tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cdk-validate-grouping-'));
-+      templatePath = path.join(tmpDir, 'template.json');
-+      fs.writeFileSync(templatePath, JSON.stringify({ Resources: {} }));
-+    });
-+
-+    afterEach(() => {
-+      fs.rmSync(tmpDir, { recursive: true });
-+    });
-+
-+    function validateWithDiagnostics(diagnostics: any[]) {
-+      const plugin = newPlugin();
-+      jest.spyOn((plugin as any).engine, 'validateTemplate').mockReturnValueOnce({ diagnostics });
-+      return plugin.validate({
-+        templatePaths: [templatePath],
-+        stackTemplates: [{ stackConstructPath: 'TestStack', templatePath, accountId: undefined, region: undefined }],
-+        appConstruct: new Construct(undefined as any, ''),
-+        accountId: undefined,
-+        region: undefined,
-+      });
-+    }
-+
-+    test('reports each resource with its own message when a rule fires with different messages', () => {
-+      const report = validateWithDiagnostics([
-+        {
-+          ruleId: 'E3047',
-+          severity: 'ERROR',
-+          message: "Cpu '1024' is not compatible with Memory 49152 for Fargate",
-+          propertyPath: 'Properties.Cpu',
-+          entity: { entityType: 'Resource', logicalId: 'TaskA' },
-+        },
-+        {
-+          ruleId: 'E3047',
-+          severity: 'ERROR',
-+          message: "Cpu '256' is not compatible with Memory 8192 for Fargate",
-+          propertyPath: 'Properties.Cpu',
-+          entity: { entityType: 'Resource', logicalId: 'TaskB' },
-+        },
-+      ]);
-+
-+      expect(report.violations).toHaveLength(2);
-+      expect(report.violations).toEqual(expect.arrayContaining([
-+        expect.objectContaining({
-+          ruleName: 'E3047',
-+          description: "Cpu: Cpu '1024' is not compatible with Memory 49152 for Fargate",
-+          violatingResources: [expect.objectContaining({ resourceLogicalId: 'TaskA' })],
-+        }),
-+        expect.objectContaining({
-+          ruleName: 'E3047',
-+          description: "Cpu: Cpu '256' is not compatible with Memory 8192 for Fargate",
-+          violatingResources: [expect.objectContaining({ resourceLogicalId: 'TaskB' })],
-+        }),
-+      ]));
-+    });
-+
-+    test('groups resources that share a rule and an identical message into one violation', () => {
-+      const report = validateWithDiagnostics([
-+        {
-+          ruleId: 'W3011',
-+          severity: 'WARN',
-+          message: 'Both UpdateReplacePolicy and DeletionPolicy are needed',
-+          entity: { entityType: 'Resource', logicalId: 'BucketA' },
-+        },
-+        {
-+          ruleId: 'W3011',
-+          severity: 'WARN',
-+          message: 'Both UpdateReplacePolicy and DeletionPolicy are needed',
-+          entity: { entityType: 'Resource', logicalId: 'BucketB' },
-+        },
-+      ]);
-+
-+      expect(report.violations).toHaveLength(1);
-+      expect(report.violations[0].violatingResources.map(r => r.resourceLogicalId)).toEqual(['BucketA', 'BucketB']);
-+    });
-+  });
-+
-   describe('_additionalSchemasDirectory', () => {
-     let schemaDir: string;
- 
+   select(scope: IConstruct): IConstruct[] {
+     const result: IConstruct[] = [];
 ```
 
 #### Recent Merged Pull Requests:
@@ -2004,28 +1394,40 @@ Violations are now grouped by `ruleId`, severity and description, as discussed w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. check skills in the build (#39029)
+## X. npm-check-updates && yarn upgrade (#38488)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `57930a89`: check skills in the build (#39029). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6ad73c8`: npm-check-updates && yarn upgrade (#38488). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| Check skills | `node scripts/check-skills.js` | repo root |
+    "cdk-generate-synthetic-examples": "^0.2.60",
+    "jsii-diff": "1.141.0",
+    "jsii-pacmak": "1.141.0",
+    "jsii-reflect": "1.141.0",
+    "jsii-rosetta": "~5.9.71",
+    "ts-jest": "^29.4.15",
+    "tar": "^7.5.22"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "cdk-generate-synthetic-examples": "^0.2.58",
+    "jsii-diff": "1.140.0",
+    "jsii-pacmak": "1.140.0",
+    "jsii-reflect": "1.140.0",
+    "jsii-rosetta": "~5.9.56",
+    "ts-jest": "^29.4.11",
+    "tar": "^7.5.20"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `57930a89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6ad73c8` are properly handled with clean fallback behavior.

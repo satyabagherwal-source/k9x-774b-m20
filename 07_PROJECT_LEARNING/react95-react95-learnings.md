@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source**: github ([https://github.com/React95/React95](https://github.com/React95/React95))  
-> **Source Version**: `30191733`  
+> **Source Version**: `ecdb9cad`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:32:55.519Z  
+> **Timestamp**: 2026-10-19T14:33:24.259Z  
 > **Learning ID**: `learn-github-react95-react95`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/React95/React95](https://github.com/React95/React95))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:32:54.249Z  
+> **Harvest Timestamp**: 2026-10-19T14:33:23.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -836,6 +836,9 @@ export const ThemePanel = ({ api }: { api: API }) => (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #554** (2026-10-19): **Video: controls have no accessible name**
+  *Symptoms*: **Where:** library (`components/Video/Video.tsx`) **Rules:** `button-name`, `label` **Stories:** Video › From URL, From File  The play/pause, stop and fullscreen buttons only have an icon, and the progress slider (Range) has no label. Each needs an `aria-label` (e.g. "Play", "Stop", "Fullscreen", "Progress").
+
 - **Issue #81** (2019-03-30): **Assets folder isn't builded**
   *Symptoms*: It throws an error when use some component that render an Icon.  To fix  that,  the assets folder need to be present inside dist folder after build process end. 
   **Post-Mortem & Fix Analysis**:
@@ -857,901 +860,134 @@ export const ThemePanel = ({ api }: { api: API }) => (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06cce041` (2026-10-16)
-**Commit Message**: fix(icons): end the generated index with a newline
+### Incident Patch 1: `8748954c` (2026-10-19)
+**Commit Message**: Merge pull request #579 from rootsiemen/fix-20261015-video-a11y
 
-Prettier adds it on commit, so every regeneration showed src/index.ts as
-changed.
+fix(video): add accessible names to controls and progress slider
 
-**File**: `packages/icons/scripts/makeIcons.mts` (modified, +1/-1)
+**File**: `packages/core/components/Video/Video.tsx` (modified, +4/-0)
 ```diff
-@@ -132,7 +132,7 @@ async function toReact(icons: IconsMap[]) {
-     );
-   });
+@@ -199,6 +199,7 @@ const VideoRenderer = (
+           <Button
+             className={styles.controlBtn}
+             disabled={!loadeddata}
++            aria-label={playing ? 'Pause' : 'Play'}
+             onClick={() => {
+               // asks the video, which is always up to date, unlike `playing`
+               if (player.current?.paused) {
+@@ -224,6 +225,7 @@ const VideoRenderer = (
+           <Button
+             className={styles.controlBtn}
+             disabled={!loadeddata}
++            aria-label="Stop"
+             onClick={() => {
+               if (player.current) {
+                 player.current.pause();
+@@ -239,6 +241,7 @@ const VideoRenderer = (
+           <Button
+             className={styles.controlBtn}
+             disabled={!loadeddata}
++            aria-label="Fullscreen"
+             onClick={() => {
+               player?.current?.requestFullscreen();
+             }}
+@@ -254,6 +257,7 @@ const VideoRenderer = (
+             max="100"
+             step="1"
+             value={progress}
++            aria-label="Progress"
+             onChange={({ target }) => {
+               const { current: video } = player;
  
--  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n'));
-+  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n') + '\n');
- }
+```
+
+**File**: `packages/core/stories/video.stories.tsx` (modified, +4/-2)
+```diff
+@@ -103,8 +103,8 @@ export const Playback: Story = {
  
- async function toCSS(icons: IconsMap[]) {
+     const video = canvasElement.querySelector('video')!;
+     const progress = canvas.getByRole('slider');
+-    // the controls have no accessible name yet (#554), so they go by order
+-    const [playPause, stop] = canvas.getAllByRole('button');
++    const playPause = canvas.getByRole('button', { name: 'Play' });
++    const stop = canvas.getByRole('button', { name: 'Stop' });
+ 
+     // they're Buttons, with Video's padding over Button's
+     await expect(playPause).toHaveStyle({ padding: '7px' });
+@@ -113,6 +113,8 @@ export const Playback: Story = {
+     await userEvent.click(playPause);
+ 
+     await waitFor(() => expect(video).toHaveProperty('paused', false));
++    // while it plays, the button is labeled Pause
++    await waitFor(() => expect(playPause).toHaveAccessibleName('Pause'));
+     await waitFor(() => expect(progress).not.toHaveValue('0'), {
+       timeout: 3000,
+     });
 ```
 
 ---
 
-### Incident Patch 2: `aad22fbb` (2026-10-08)
-**Commit Message**: feat(core)!: put the components' CSS in cascade layers
+### Incident Patch 2: `a4c4dd4d` (2026-10-19)
+**Commit Message**: Merge pull request #574 from rootsiemen/fix/tabs-story-select-name
 
-React95's CSS now sits in the react95 layer (react95.global, then
-react95.components, then react95.composed for components that restyle
-the ones they render). CSS outside of layers always wins over it, so
-Frame props like width or padding override a component's defaults
-whatever order the CSS loads in, and so does the app's own CSS.
+chore(storybook): label Dropdown in Tabs Simple story
 
-BREAKING CHANGE: CSS resets outside of a layer, like Tailwind v3's
-preflight or normalize.css, now win over React95's components (e.g.
-`button { padding: 0 }` undoes Button's padding). Put the reset in a
-layer and declare the order before React95's CSS loads, e.g. in the
-HTML's <head>: `<style>@layer reset, react95;</style>`.
-
-**File**: `packages/core/README.md` (modified, +40/-0)
+**File**: `packages/core/stories/tabs.stories.tsx` (modified, +9/-2)
 ```diff
-@@ -42,6 +42,46 @@ export const MyApp = () => {
+@@ -42,7 +42,10 @@ export const Simple: Story = {
+             domain.
+           </p>
+           <p style={{ marginBottom: 4, marginLeft: 22 }}>Windows NT domain:</p>
+-          <Input style={{ width: 180, marginLeft: 22 }} />
++          <Input
++            style={{ width: 180, marginLeft: 22 }}
++            aria-label="Windows NT domain"
++          />
+         </Fieldset>
  
- You can find a list of all available components on our [Storybook page](https://react95.github.io/React95/).
+         <Fieldset legend="Network logon options">
+@@ -69,7 +72,11 @@ export const Simple: Story = {
+           <Checkbox readOnly checked>
+             Run this program in compatibility mode for:
+           </Checkbox>
+-          <Dropdown style={{ width: 200 }} options={['Windows 95']} />
++          <Dropdown
++            style={{ width: 200 }}
++            options={['Windows 95']}
++            aria-label="Run this program in compatibility mode for"
++          />
+         </Fieldset>
  
-+### Customizing styles
-+
-+React95's CSS sits in the `react95` [cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer),
-+so your CSS wins over it without fighting specificity:
-+
-+```css
-+/* every button gets your font, React95's or not */
-+button {
-+  font-family: 'Comic Sans MS';
-+}
-+```
-+
-+That includes CSS resets, like Tailwind's preflight or normalize.css: their
-+`button { padding: 0 }` would undo React95's buttons. Put the reset in a layer
-+that comes before React95's:
-+
-+```css
-+@layer reset {
-+  /* your reset */
-+}
-+```
-+
-+and declare the order of the layers before any CSS loads, in your HTML's
-+`<head>`, since the browser keeps the first order it sees:
-+
-+```html
-+<style>
-+  @layer reset, react95;
-+</style>
-+```
-+
-+With Tailwind v4, whose CSS is in layers already, place `react95` between its
-+preflight and its utilities:
-+
-+```html
-+<style>
-+  @layer theme, base, react95, components, utilities;
-+</style>
-+```
-+
- ### Next.JS
- 
- If you want to use React95 on a NextJS project, check the [NextJS template](https://github.com/React95/nextjs-template)
-```
-
-**File**: `packages/core/components/Alert/Alert.css.ts` (modified, +22/-15)
-```diff
-@@ -1,20 +1,27 @@
- import { style } from '@vanilla-extract/css';
- import { contract } from '../themes/contract.css';
-+import { inLayer, composed } from '../shared/layers.css';
- 
--export const message = style({
--  display: 'flex',
--  alignItems: 'center',
--  justifyContent: 'center',
--});
-+export const message = style(
-+  inLayer(composed, {
-+    display: 'flex',
-+    alignItems: 'center',
-+    justifyContent: 'center',
-+  }),
-+);
- 
--export const icon = style({
--  paddingTop: contract.space[7],
--  paddingRight: contract.space[15],
--  paddingBottom: contract.space[7],
--  paddingLeft: contract.space[7],
--});
-+export const icon = style(
-+  inLayer(composed, {
-+    paddingTop: contract.space[7],
-+    paddingRight: contract.space[15],
-+    paddingBottom: contract.space[7],
-+    paddingLeft: contract.space[7],
-+  }),
-+);
- 
--export const dialog = style({
--  display: 'flex',
--  flexDirection: 'row',
--});
-+export const dialog = style(
-+  inLayer(composed, {
-+    display: 'flex',
-+    flexDirection: 'row',
-+  }),
-+);
-```
-
-**File**: `packages/core/components/Avatar/Avatar.css.ts` (modified, +10/-7)
-```diff
-@@ -1,9 +1,10 @@
- import { recipe } from '@vanilla-extract/recipes';
- import { contract } from '../themes/contract.css';
- import { style } from '@vanilla-extract/css';
-+import { inLayer, components } from '../shared/layers.css';
- 
- export const avatar = recipe({
--  base: {
-+  base: inLayer(components, {
-     display: 'flex',
-     alignItems: 'center',
-     justifyContent: 'center',
-@@ -13,11 +14,11 @@ export const avatar = recipe({
-     marginBottom: contract.space[1],
-     backgroundColor: contract.colors.material,
-     boxShadow: contract.shadows.in,
--  },
-+  }),
- 
-   variants: {
-     circle: {
--      true: {
-+      true: inLayer(components, {
-         borderRadius: '50%',
-         borderStyle: 'solid',
-         borderWidth: contract.space[1],
-@@ -26,11 +27,13 @@ export const avatar = recipe({
-         borderBottomColor: contract.colors.borderLightest,
-         borderLeftColor: contract.colors.borderDark,
-         boxShadow: 'none',
--      },
-+      }),
-     },
-   },
- });
- 
--export const imgStyle = style({
--  maxWidth: '100%',
--});
-+export const imgStyle = style(
-+  inLayer(components, {
-+    maxWidth: '100%',
-+  }),
-+);
-```
-
-**File**: `packages/core/components/Button/Button.css.ts` (modified, +29/-26)
-```diff
-@@ -2,41 +2,44 @@ import { style } from '@vanilla-extract/css';
- import { calc } from '@vanilla-extract/css-utils';
- 
- import { contract } from '../themes/contract.css';
-+import { inLayer, components } from '../shared/layers.css';
- 
--export const button = style({
--  backgroundColor: contract.colors.material,
--  paddingTop: contract.space[7],
--  paddingInline: contract.space[20],
--  paddingBottom: contract.space[5],
--  border: 'none',
--  color: contract.colors.materialText,
-+export const button = style(
-+  inLayer(components, {
-+    backgroundColor: contract.colors.material,
-+    paddingTop: contract.space[7],
-+    paddingInline: contract.space[20],
-+    paddingBottom: contract.space[5],
-+    border: 'none',
-+    color: contract.colors.materialText,
- 
--  fontSize: 12,
-+    fontSize: 12,
- 
--  boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
-+    boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
-     inset 0 0 0 1px ${contract.colors.borderDark},
-     1px 1px 0 0px ${contract.colors.borderDarkest}`,
- 
--  ':disabled': {
--    color: contract.colors.materialTextDisabled,
--  },
--  ':focus': {
--    outline: `${contract.space[1]} dotted ${contract.colors.materialText}`,
--    outlineOffset: calc.negate(contract.space[5]),
-+    ':disabled': {
-+      color: contract.colors.materialTextDisabled,
-+    },
-+    ':focus': {
-+      outline: `${contract.space[1]} dotted ${contract.colors.materialText}`,
-+      outlineOffset: calc.negate(contract.space[5]),
- 
--    boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
-+      boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
-       inset -0.5px -0.5px 0px 1px ${contract.colors.borderDark},
-       1px 1px 0 1px ${contract.colors.borderDarkest}`,
--  },
--  ':active': {
--    paddingTop: contract.space[8],
--    paddingInline: contract.space[20],
--    paddingBottom: contract.space[4],
-+    },
-+    ':active': {
-+      paddingTop: contract.space[8],
-+      paddingInline: contract.space[20],
-+      paddingBottom: contract.space[4],
- 
--    outline: `${contract.space[1]} dotted ${contract.colors.borderDarkest}`,
--    outlineOffset: calc.negate(contract.space[5]),
-+      outline: `${contract.space[1]} dotted ${contract.colors.borderDarkest}`,
-+      outlineOffset: calc.negate(contract.space[5]),
- 
--    boxShadow: `inset 0 0 0 1px ${contract.colors.borderDark},
-+      boxShadow: `inset 0 0 0 1px ${contract.colors.borderDark},
-       0 0 0 1px ${contract.colors.borderDarkest}`,
--  },
--});
-+    },
-+  }),
-+);
-```
-
-**File**: `packages/core/components/Checkbox/Checkbox.css.ts` (modified, +82/-61)
-```diff
-@@ -2,73 +2,94 @@ import check from './imgs/check.svg';
- import checkDisabled from './imgs/check-disabled.svg';
- import { globalStyle, style } from '@vanilla-extract/css';
- import { contract } from '../themes/contract.css';
-+import { inLayer, components } from '../shared/layers.css';
- 
--export const icon = style({
--  width: contract.space[12],
--  height: contract.space[12],
--  display: 'inline-block',
--  position: 'absolute',
--  left: '0',
--  top: contract.space[2],
--  borderLeftStyle: 'solid',
--  borderLeftWidth: contract.space[1],
--  borderLeftColor: contract.colors.borderDark,
--  borderTopStyle: 'solid',
--  borderTopWidth: contract.space[1],
--  borderTopColor: contract.colors.borderDark,
--  backgroundColor: contract.colors.inputBackground,
--  backgroundRepeat: 'no-repeat',
--  backgroundPosition: 'center center',
--  backgroundSize: '7px 7px',
--  boxShadow: contract.shadows.input,
--});
-+export const icon = style(
-+  inLayer(components, {
-+    width: contract.space[12],
-+    height: contract.space[12],
-+    display: 'inline-block',
-+    position: 'absolute',
-+    left: '0',
-+    top: contract.space[2],
-+    borderLeftStyle: 'solid',
-+    borderLeftWidth: contract.space[1],
-+    borderLeftColor: contract.colors.borderDark,
-+    borderTopStyle: 'solid',
-+    borderTopWidth: contract.space[1],
-+    borderTopColor: contract.colors.borderDark,
-+    backgroundColor: contract.colors.inputBackground,
-+    backgroundRepeat: 'no-repeat',
-+    backgroundPosition: 'center center',
-+    backgroundSize: '7px 7px',
-+    boxShadow: contract.shadows.input,
-+  }),
-+);
- 
--export const text = style({
--  padding: contract.space[1],
--  userSelect: 'none',
--});
-+export const text = style(
-+  inLayer(components, {
-+    padding: contract.space[1],
-+    userSelect: 'none',
-+  }),
-+);
- 
--export const field = style({
--  width: contract.space[12],
--  height: contract.space[12],
--  margin: '0',
--  position: 'absolute',
--  top: contract.space[2],
--  left: '0',
--  opacity: 0,
--  selectors: {},
--});
-+export const field = style(
-+  inLayer(components, {
-+    width: contract.space[12],
-+    height: contract.space[12],
-+    margin: '0',
-+    position: 'absolute',
-+    top: contract.space[2],
-+    left: '0',
-+    opacity: 0,
-+    selectors: {},
-+  }),
-+);
- 
--export const label = style({
--  display: 'inline-block',
--  height: contract.space[15],
--  lineHeight: 1.5,
--  position: 'relative',
--  marginBlock: contract.space[4],
--  paddingLeft: contract.space[20],
--  selectors: {
--    '&:has(:disabled)': {
--      color: contract.colors.borderDark,
--      textShadow: `0.5px 0.5px ${contract.colors.borderLight}`,
-+export const label = style(
-+  inLayer(components, {
-+    display: 'inline-block',
-+    height: contract.space[15],
-+    lineHeight: 1.5,
-+    position: 'relative',
-+    marginBlock: contract.space[4],
-+    paddingLeft: contract.space[20],
-+    selectors: {
-+      '&:has(:disabled)': {
-+        color: contract.colors.borderDark,
-+        textShadow: `0.5px 0.5px ${contract.colors.borderLight}`,
-+      },
-     },
--  },
--});
-+  }),
-+);
- 
--globalStyle(`${field}:checked + ${icon}`, {
--  backgroundImage: `url("${check}")`,
--});
-+globalStyle(
-+  `${field}:checked + ${icon}`,
-+  inLayer(components, {
-+    backgroundImage: `url("${check}")`,
-+  }),
-+);
- 
--globalStyle(`${field}:focus ~ ${text}, ${field}:active ~ ${text}`, {
--  borderWidth: contract.space[1],
--  borderStyle: 'dotted',
--  padding: '0',
--});
-+globalStyle(
-+  `${field}:focus ~ ${text}, ${field}:active ~ ${text}`,
-+  inLayer(components, {
-+    borderWidth: contract.space[1],
-+    borderStyle: 'dotted',
-+    padding: '0',
-+  }),
-+);
- 
--globalStyle(`${field}:checked:disabled + ${icon}`, {
--  backgroundImage: `url("${checkDisabled}")`,
--  backgroundSize: '7px 7px, 1.9px 1.9px',
--});
-+globalStyle(
-+  `${field}:checked:disabled + ${icon}`,
-+  inLayer(components, {
-+    backgroundImage: `url("${checkDisabled}")`,
-+    backgroundSize: '7px 7px, 1.9px 1.9px',
-+  }),
-+);
- 
--globalStyle(`${field}:disabled + ${icon}`, {
--  backgroundColor: contract.colors.inputBackgroundDisabled,
--});
-+globalStyle(
-+  `${field}:disabled + ${icon}`,
-+  inLayer(components, {
-+    backgroundColor: contract.colors.inputBackgroundDisabled,
-+  }),
-+);
-```
-
-**File**: `packages/core/components/Dropdown/Dropdown.css.ts` (modified, +50/-45)
-```diff
-@@ -2,55 +2,60 @@ import { style } from '@vanilla-extract/css';
- import { contract } from '../themes/contract.css';
- 
- import caret from './imgs/downcaret.png';
-+import { inLayer, components } from '../shared/layers.css';
- 
--export const wrapper = style({
--  position: 'relative',
--  width: '200px',
-+export const wrapper = style(
-+  inLayer(components, {
-+    position: 'relative',
-+    width: '200px',
- 
--  ':after': {
--    display: 'flex',
--    justifyContent: 'center',
--    width: contract.space[22],
--    bottom: contract.space[1],
--    fontSize: '14px',
--    lineHeight: 1.1,
--    content: "''",
--    pointerEvents: 'none',
--    position: 'absolute',
--    right: contract.space[1],
--    top: contract.space[2],
--    backgroundColor: contract.colors.material,
--    borderRightStyle: 'solid',
--    borderRightWidth: contract.space[1],
--    borderBottomStyle: 'solid',
--    borderBottomWidth: contract.space[1],
--    backgroundImage: `url('${caret}')`,
--    backgroundPosition: '60% 60%',
--    backgroundRepeat: 'no-repeat',
--    boxShadow: `inset 0.5px 0.7px 0px 0.7px ${contract.colors.material},
-+    ':after': {
-+      display: 'flex',
-+      justifyContent: 'center',
-+      width: contract.space[22],
-+      bottom: contract.space[1],
-+      fontSize: '14px',
-+      lineHeight: 1.1,
-+      content: "''",
-+      pointerEvents: 'none',
-+      position: 'absolute',
-+      right: contract.space[1],
-+      top: contract.space[2],
-+      backgroundColor: contract.colors.material,
-+      borderRightStyle: 'solid',
-+      borderRightWidth: contract.space[1],
-+      borderBottomStyle: 'solid',
-+      borderBottomWidth: contract.space[1],
-+      backgroundImage: `url('${caret}')`,
-+      backgroundPosition: '60% 60%',
-+      backgroundRepeat: 'no-repeat',
-+      boxShadow: `inset 0.5px 0.7px 0px 0.7px ${contract.colors.material},
-     inset -1px 0px 0 1px ${contract.colors.borderDark},
-     inset 1.5px 1.5px 0px 1.5px ${contract.colors.borderLightest}`,
--  },
--});
-+    },
-+  }),
-+);
- 
--export const select = style({
--  position: 'relative',
--  outline: 'none',
--  border: 'none',
--  borderRadius: '0',
--  width: '100%',
--  height: '100%',
--  padding: contract.space[3],
--  color: contract.colors.materialText,
--  backgroundColor: contract.colors.inputBackground,
--  borderLeftStyle: 'solid',
--  borderLeftWidth: contract.space[1],
--  borderLeftColor: contract.colors.borderDark,
--  borderTopStyle: 'solid',
--  borderTopWidth: contract.space[1],
--  borderTopColor: contract.colors.borderDark,
--  appearance: 'none',
--  boxShadow: `inset -1px -1px 0 0 ${contract.colors.material},
-+export const select = style(
-+  inLayer(components, {
-+    position: 'relative',
-+    outline: 'none',
-+    border: 'none',
-+    borderRadius: '0',
-+    width: '100%',
-+    height: '100%',
-+    padding: contract.space[3],
-+    color: contract.colors.materialText,
-+    backgroundColor: contract.colors.inputBackground,
-+    borderLeftStyle: 'solid',
-+    borderLeftWidth: contract.space[1],
-+    borderLeftColor: contract.colors.borderDark,
-+    borderTopStyle: 'solid',
-+    borderTopWidth: contract.space[1],
-+    borderTopColor: contract.colors.borderDark,
-+    appearance: 'none',
-+    boxShadow: `inset -1px -1px 0 0 ${contract.colors.material},
-     inset 1px 1px 0 0 ${contract.colors.borderDarkest},
-     0.5px 0.5px 0 0.5px ${contract.colors.borderLightest};`,
--});
-+  }),
-+);
-```
-
-**File**: `packages/core/components/Fieldset/Fieldset.css.ts` (modified, +24/-19)
-```diff
-@@ -1,23 +1,28 @@
- import { style } from '@vanilla-extract/css';
- import { contract } from '../themes/contract.css';
-+import { inLayer, components } from '../shared/layers.css';
- 
--export const field = style({
--  borderTopStyle: 'groove',
--  borderTopWidth: contract.space[2],
--  borderTopColor: contract.colors.borderLighter,
--  borderLeftStyle: 'groove',
--  borderLeftWidth: contract.space[2],
--  borderLeftColor: contract.colors.borderLighter,
--  borderBottomStyle: 'solid',
--  borderBottomWidth: contract.space[1],
--  borderBottomColor: contract.colors.borderDark,
--  borderRightStyle: 'solid',
--  borderRightWidth: contract.space[1],
--  borderRightColor: contract.colors.borderDark,
--  boxShadow: `1px 1px 0 0 ${contract.colors.borderLighter}`,
--});
-+export const field = style(
-+  inLayer(components, {
-+    borderTopStyle: 'groove',
-+    borderTopWidth: contract.space[2],
-+    borderTopColor: contract.colors.borderLighter,
-+    borderLeftStyle: 'groove',
-+    borderLeftWidth: contract.space[2],
-+    borderLeftColor: contract.colors.borderLighter,
-+    borderBottomStyle: 'solid',
-+    borderBottomWidth: contract.space[1],
-+    borderBottomColor: contract.colors.borderDark,
-+    borderRightStyle: 'solid',
-+    borderRightWidth: contract.space[1],
-+    borderRightColor: contract.colors.borderDark,
-+    boxShadow: `1px 1px 0 0 ${contract.colors.borderLighter}`,
-+  }),
-+);
- 
--export const legend = style({
--  paddingLeft: contract.space[4],
--  paddingRight: contract.space[1],
--});
-+export const legend = style(
-+  inLayer(components, {
-+    paddingLeft: contract.space[4],
-+    paddingRight: contract.space[1],
-+  }),
-+);
-```
-
-**File**: `packages/core/components/GlobalStyle/GlobalStyle.css.ts` (modified, +120/-74)
-```diff
-@@ -11,6 +11,7 @@ import videottf from './font/React95Video-Numbers.ttf';
- import videowoff from './font/React95Video-Numbers.woff';
- import videowoff2 from './font/React95Video-Numbers.woff2';
- import { MSSansSerif, R95VideoNumbers } from '../shared/font-names';
-+import { inLayer, globals } from '../shared/layers.css';
- 
- globalFontFace(MSSansSerif, {
-   src: `url('${ttf}') format('truetype')`,
-@@ -33,33 +34,51 @@ globalFontFace(R95VideoNumbers, {
-   fontWeight: 'normal',
- });
- 
--globalStyle('*, *::before, *::after', {
--  boxSizing: 'border-box',
--});
-+globalStyle(
-+  '*, *::before, *::after',
-+  inLayer(globals, {
-+    boxSizing: 'border-box',
-+  }),
-+);
- 
--globalStyle('html', {
--  fontSize: '100%',
--});
-+globalStyle(
-+  'html',
-+  inLayer(globals, {
-+    fontSize: '100%',
-+  }),
-+);
- 
--globalStyle('body', {
--  margin: 0,
--  padding: 0,
--  fontFamily: MSSansSerif,
--  fontSize: 12,
--  color: contract.colors.materialText,
--});
-+globalStyle(
-+  'body',
-+  inLayer(globals, {
-+    margin: 0,
-+    padding: 0,
-+    fontFamily: MSSansSerif,
-+    fontSize: 12,
-+    color: contract.colors.materialText,
-+  }),
-+);
- 
--globalStyle('button, input, select, textarea', {
--  fontFamily: 'inherit',
--});
-+globalStyle(
-+  'button, input, select, textarea',
-+  inLayer(globals, {
-+    fontFamily: 'inherit',
-+  }),
-+);
- 
--globalStyle('a', {
--  color: contract.colors.anchor,
--});
-+globalStyle(
-+  'a',
-+  inLayer(globals, {
-+    color: contract.colors.anchor,
-+  }),
-+);
- 
--globalStyle('a:visited', {
--  color: contract.colors.anchorVisited,
--});
-+globalStyle(
-+  'a:visited',
-+  inLayer(globals, {
-+    color: contract.colors.anchorVisited,
-+  }),
-+);
- 
- /* Scrollbar */
- 
-@@ -74,50 +93,71 @@ const triangles = {
-   },
- };
- 
--globalStyle('::-webkit-scrollbar', {
--  width: contract.space[17],
--  height: contract.space[17],
--});
-+globalStyle(
-+  '::-webkit-scrollbar',
-+  inLayer(globals, {
-+    width: contract.space[17],
-+    height: contract.space[17],
-+  }),
-+);
- 
--globalStyle('::-webkit-scrollbar-track', {
--  backgroundImage: [
--    `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
--    `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
--  ].join(','),
--  backgroundColor: contract.colors.borderLightest,
--  backgroundSize: `${contract.space[4]} ${contract.space[4]}`,
--  backgroundPosition: `0 0, ${contract.space[2]} ${contract.space[2]}`,
--});
-+globalStyle(
-+  '::-webkit-scrollbar-track',
-+  inLayer(globals, {
-+    backgroundImage: [
-+      `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
-+      `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
-+    ].join(','),
-+    backgroundColor: contract.colors.borderLightest,
-+    backgroundSize: `${contract.space[4]} ${contract.space[4]}`,
-+    backgroundPosition: `0 0, ${contract.space[2]} ${contract.space[2]}`,
-+  }),
-+);
- 
--globalStyle('::-webkit-scrollbar-corner', {
--  backgroundColor: contract.colors.material,
--});
-+globalStyle(
-+  '::-webkit-scrollbar-corner',
-+  inLayer(globals, {
-+    backgroundColor: contract.colors.material,
-+  }),
-+);
- 
- globalStyle(
-   `::-webkit-scrollbar-button:horizontal:increment:start,
-   ::-webkit-scrollbar-button:horizontal:decrement:end,
-   ::-webkit-scrollbar-button:vertical:increment:start,
-   ::-webkit-scrollbar-button:vertical:decrement:end`,
--  {
-+  inLayer(globals, {
-     display: 'none',
--  },
-+  }),
- );
- 
--globalStyle('::-webkit-scrollbar-button:horizontal:decrement', {
--  backgroundImage: triangles.horizontal.decrement,
--});
-+globalStyle(
-+  '::-webkit-scrollbar-button:horizontal:decrement',
-+  inLayer(globals, {
-+    backgroundImage: triangles.horizontal.decrement,
-+  }),
-+);
- 
--globalStyle('::-webkit-scrollbar-button:horizontal:increment', {
--  backgroundImage: triangles.horizontal.increment,
--});
-+globalStyle(
-+  '::-webkit-scrollbar-button:horizontal:increment',
-+  inLayer(globals, {
-+    backgroundImage: triangles.horizontal.increment,
-+  }),
-+);
- 
--globalStyle('::-webkit-scrollbar-button:vertical:decrement', {
--  backgroundImage: triangles.vertical.decrement,
--});
-+globalStyle(
-+  '::-webkit-scrollbar-button:vertical:decrement',
-+  inLayer(globals, {
-+    backgroundImage: triangles.vertical.decrement,
-+  }),
-+);
- 
--globalStyle('::-webkit-scrollbar-button:vertical:increment', {
--  backgroundImage: triangles.vertical.increment,
--});
-+globalStyle(
-+  '::-webkit-scrollbar-button:vertical:increment',
-+  inLayer(globals, {
-+    backgroundImage: triangles.vertical.increment,
-+  }),
-+);
- 
- const scrollbarBorderBase = createBorder({
-   direction: 'extrude',
-@@ -127,33 +167,39 @@ const scrollbarBorderBase = createBorder({
-   innerTopLeft: contract.colors.borderLightest,
- });
- 
--globalStyle('::-webkit-scrollbar-thumb', {
--  boxSizing: 'border-box',
--  displ
+         <Fieldset legend="Display Settings">
 ```
 
 ---
 
-### Incident Patch 3: `2094e633` (2026-10-16)
-**Commit Message**: fix(icons): run the icon scripts with Node instead of ts-node
+### Incident Patch 3: `32f8b2ae` (2026-10-19)
+**Commit Message**: Merge pull request #587 from nakul4n/fix/usemodal-event-log-a11y
 
-Since Node 23, its type stripping takes over before ts-node, and it can't
-resolve extensionless relative imports, so `yarn process-icons` failed on
-the Node 24 used by CI. The scripts are now .mts files, with explicit
-extensions, that Node runs natively.
+chore(storybook): make useModal Event Log keyboard-scrollable
 
-**File**: `packages/icons/package.json` (modified, +4/-4)
+**File**: `packages/core/stories/useModal.stories.tsx` (modified, +2/-0)
 ```diff
-@@ -52,16 +52,16 @@
-   },
-   "scripts": {
-     "precopy": "mkdir -p dist/src/png",
--    "process-icons": "ts-node-script scripts/processIcons.ts",
-+    "process-icons": "node scripts/processIcons.mts",
-     "prebuild": "rimraf ./dist",
-     "build": "yarn build:cjs && yarn build:esm && yarn build:types && yarn build:css && yarn build:svg",
-     "build:types": "cross-env NODE_ENV=production tsc -p ./tsconfig.json",
-     "build:esm": "cross-env NODE_ENV=esm yarn babel ./src --out-dir dist/esm --extensions .ts,.tsx",
-     "build:cjs": "cross-env NODE_ENV=cjs yarn babel ./src --out-dir dist/cjs --extensions .ts,.tsx",
--    "build:css": "cp ./icons.css ./dist/icons.css && ts-node-script scripts/fixCss.ts",
-+    "build:css": "cp ./icons.css ./dist/icons.css && node scripts/fixCss.mts",
-     "build:svg": "cp -r src/svg ./dist",
--    "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && ts-node-script scripts/addExports.ts",
--    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && ts-node-script scripts/addExports.ts",
-+    "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-+    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
-     "test": "vitest run --config=../../config/test/icons.js"
-   },
-   "nx": {
-```
-
-**File**: `packages/icons/scripts/component-template.mts` (renamed, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- import fs from 'fs';
- import { transform } from '@svgr/core';
--import type { IconData } from './utils';
-+import type { IconData } from './utils.mts';
- import type { Options } from '@svgr/babel-preset';
- 
- export const getIconDataName = (name: string): string => {
-```
-
-**File**: `packages/icons/scripts/iconBlockList.mts` (renamed, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--import type { IconData } from './utils';
-+import type { IconData } from './utils.mts';
- 
- /** This list includes all icons seen as not including any visual output */
- const iconBlockedIds = [
-```
-
-**File**: `packages/icons/scripts/makeIcons.mts` (renamed, +9/-6)
-```diff
-@@ -1,13 +1,16 @@
- import fs from 'fs';
- import ICO from 'icojs';
- import path from 'path';
--import { loadPixels } from 'pixel-perfect-svg/dist/imageLoader';
--import { toSvgString } from 'pixel-perfect-svg/dist/imageProcessor';
--import { type Pixel, pixel } from 'pixel-perfect-svg/dist/pixel';
-+import { loadPixels } from 'pixel-perfect-svg/dist/imageLoader.js';
-+import { toSvgString } from 'pixel-perfect-svg/dist/imageProcessor.js';
-+import { type Pixel, pixel } from 'pixel-perfect-svg/dist/pixel.js';
- import { type Config, optimize } from 'svgo';
- 
--import { getIconDataName, iconComponentTemplate } from './component-template';
--import { filterBlockedIcons } from './iconBlockList';
-+import {
-+  getIconDataName,
-+  iconComponentTemplate,
-+} from './component-template.mts';
-+import { filterBlockedIcons } from './iconBlockList.mts';
- import {
-   REACT_FOLDER,
-   IMAGE_FOLDER,
-@@ -17,7 +20,7 @@ import {
-   CSS_FILE_PATH,
-   ICONS_FOLDER,
-   SVG_FOLDER,
--} from './utils';
-+} from './utils.mts';
- 
- const svgoConfig: Config = {
-   plugins: [
-```
-
-**File**: `packages/icons/scripts/processIcons.mts` (renamed, +3/-3)
-```diff
-@@ -1,13 +1,13 @@
--import { makeIcons } from './makeIcons';
-+import { makeIcons } from './makeIcons.mts';
- import {
-   REACT_FOLDER,
-   IMAGE_FOLDER,
-   ICON_DEMOS_FILE_PATH,
-   ICONS_INDEX_FILE_PATH,
-   CSS_FILE_PATH,
-   SVG_FOLDER,
--} from './utils';
--import { deleteFolder } from './utils';
-+} from './utils.mts';
-+import { deleteFolder } from './utils.mts';
- 
- deleteFolder('dist');
- deleteFolder(REACT_FOLDER);
+@@ -749,6 +749,8 @@ const EventSubscriptionDemo = () => {
+             overflow="auto"
+             backgroundColor="#fafafa"
+             flexGrow={1}
++            tabIndex={0}
++            aria-label="Event log"
+           />
+         </Frame>
+       </Frame>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #593** (closed): fix(storybook): make useModal Event Subscription log keyboard-scrollable (@rootsiemen)
 - **PR #592** (closed): fix(storybook): make useModal Event Subscription log keyboard-scrollable (@rootsiemen)
+- **PR #588** (2026-10-19): chore(storybook): add accessible label to TextArea story (@nakul4n)
+- **PR #587** (2026-10-19): chore(storybook): make useModal Event Log keyboard-scrollable (@nakul4n)
 - **PR #586** (2026-10-16): feat(icons): add Internet Explorer 4 icons (@ggdaltoso)
 - **PR #585** (2026-10-16): fix(icons): run the icon scripts with Node and stop shipping blank variants (@ggdaltoso)
-- **PR #583** (2026-10-15): feat(core)!: put the components' CSS in cascade layers (@ggdaltoso)
-- **PR #576** (2026-10-15): fix(core): add accessible name to Range Simple story (@rootsiemen)
-- **PR #575** (2026-10-15): fix(core): add accessible name to Dropdown Simple story (@rootsiemen)
 
 ---
 
@@ -1771,28 +1007,31 @@ extensions, that Node runs natively.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. icons): end the generated index with a newline
+## X. Merge pull request #579 from rootsiemen/fix-20261015-video-a11y
 
 **RULE**:
-When implementing operations in `packages/icons/scripts/makeIcons.mts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/components/Video/Video.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06cce041`: icons): end the generated index with a newline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8748954c`: Merge pull request #579 from rootsiemen/fix-20261015-video-a11y. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/icons/scripts/makeIcons.mts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/components/Video/Video.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n') + '\n');
+            aria-label={playing ? 'Pause' : 'Play'}
+            aria-label="Stop"
+            aria-label="Fullscreen"
+            aria-label="Progress"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n'));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06cce041` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8748954c` are properly handled with clean fallback behavior.

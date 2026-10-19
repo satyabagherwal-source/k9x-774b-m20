@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "37f59f319e86a5c4d3092e918ed42c4276157a995fb28898a079c6878462c300",
-    "lastHarvestedAt": "2026-10-18T04:18:31.758Z",
+    "contentHash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
+    "lastHarvestedAt": "2026-10-19T14:33:24.594Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "1f752b67",
+    "sourceVersion": "f6ad73c8",
     "license": "Apache-2.0",
-    "contentHash": "e599469adccb123fe09166bd0786f1b44fc39590955a4d94581124d1132245d6",
-    "lastHarvestedAt": "2026-10-19T02:09:55.284Z",
+    "contentHash": "77bcc8ae1d960cbbe96be4aa6daf97d78645ca22a7bc9c0859cc5e82c023580a",
+    "lastHarvestedAt": "2026-10-19T14:33:33.049Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -5333,10 +5333,10 @@
     "repository": "React95/React95",
     "platform": "github",
     "sourceUrl": "https://github.com/React95/React95",
-    "sourceVersion": "30191733",
+    "sourceVersion": "ecdb9cad",
     "license": "NOASSERTION",
-    "contentHash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
-    "lastHarvestedAt": "2026-10-19T03:32:55.770Z",
+    "contentHash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
+    "lastHarvestedAt": "2026-10-19T14:33:24.495Z",
     "learningId": "learn-github-react95-react95"
   },
   "embassy-rs-embassy": {
@@ -8178,5 +8178,15 @@
     "contentHash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
     "lastHarvestedAt": "2026-10-19T14:27:18.163Z",
     "learningId": "learn-github-zacharee-bifrost"
+  },
+  "vinceglb-filekit": {
+    "repository": "vinceglb/FileKit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vinceglb/FileKit",
+    "sourceVersion": "b6fd7ac4",
+    "license": "MIT",
+    "contentHash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
+    "lastHarvestedAt": "2026-10-19T14:33:30.310Z",
+    "learningId": "learn-github-vinceglb-filekit"
   }
 }

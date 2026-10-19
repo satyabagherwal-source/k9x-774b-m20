@@ -3290,3 +3290,7 @@
 | `CYCLE-20261019-M0WG` | `2026-10-19T14:27:18.160Z` | `zacharee/Bifrost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2627` | Yes (`2fcbb6e6...`) |
 | `CYCLE-20261019-M4IZ` | `2026-10-19T14:27:22.859Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 716, Rule 664` | Yes (`4b283566...`) |
 | `CYCLE-20261019-M67W` | `2026-10-19T14:27:25.052Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2628` | Yes (`ab37ecf2...`) |
+| `CYCLE-20261019-TVKC` | `2026-10-19T14:33:24.492Z` | `React95/React95` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2629` | Yes (`afb64b64...`) |
+| `CYCLE-20261019-TVN3` | `2026-10-19T14:33:24.591Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`3f00594b...`) |
+| `CYCLE-20261019-U01W` | `2026-10-19T14:33:30.308Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2630` | Yes (`45424590...`) |
+| `CYCLE-20261019-U25Z` | `2026-10-19T14:33:33.047Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2631` | Yes (`77bcc8ae...`) |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T14:27:25.058Z",
-  "total_cycles_completed": 3267,
-  "total_learnings_persisted": 3267,
-  "total_rules_promoted": 2423,
+  "last_updated": "2026-10-19T14:33:33.052Z",
+  "total_cycles_completed": 3271,
+  "total_learnings_persisted": 3271,
+  "total_rules_promoted": 2426,
   "history": [
-    {
-      "timestamp": "2026-10-19T08:31:47.039Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:31:55.394Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:32:02.418Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:32:19.301Z",
-      "repository": "kosi-libs/Kodein",
-      "learningId": "learn-github-kosi-libs-kodein",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T08:33:19.186Z",
       "repository": "kubesphere/kubesphere",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T14:27:25.058Z",
       "repository": "RustCrypto/hashes",
       "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:33:24.499Z",
+      "repository": "React95/React95",
+      "learningId": "learn-github-react95-react95",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:33:24.597Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:33:30.314Z",
+      "repository": "vinceglb/FileKit",
+      "learningId": "learn-github-vinceglb-filekit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:33:33.052Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

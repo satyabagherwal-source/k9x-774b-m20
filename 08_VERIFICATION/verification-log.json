@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-KO0N",
-    "timestamp": "2026-10-19T02:18:24.791Z",
-    "repository": "react-native-device-info/react-native-device-info",
-    "learningId": "learn-github-react-native-device-info-react-native-device-info",
-    "contentHash": "ef68bd352cf9725d4d59b77a67d8a0468643f4601de14f0a0840d0b2b7cc0103",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KQL1",
-    "timestamp": "2026-10-19T02:18:28.117Z",
-    "repository": "infracost/infracost",
-    "learningId": "learn-github-infracost-infracost",
-    "contentHash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KUBM",
-    "timestamp": "2026-10-19T02:18:32.962Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-LXFP",
-    "timestamp": "2026-10-19T02:19:23.653Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-WKWY",
     "timestamp": "2026-10-19T02:27:40.643Z",
     "repository": "autotrust/JEV-35B",
@@ -7490,6 +7430,66 @@
     "repository": "RustCrypto/hashes",
     "learningId": "learn-github-rustcrypto-hashes",
     "contentHash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-TVKC",
+    "timestamp": "2026-10-19T14:33:24.492Z",
+    "repository": "React95/React95",
+    "learningId": "learn-github-react95-react95",
+    "contentHash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-TVN3",
+    "timestamp": "2026-10-19T14:33:24.591Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-U01W",
+    "timestamp": "2026-10-19T14:33:30.308Z",
+    "repository": "vinceglb/FileKit",
+    "learningId": "learn-github-vinceglb-filekit",
+    "contentHash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-U25Z",
+    "timestamp": "2026-10-19T14:33:33.047Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "77bcc8ae1d960cbbe96be4aa6daf97d78645ca22a7bc9c0859cc5e82c023580a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

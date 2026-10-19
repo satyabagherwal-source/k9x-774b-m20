@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:27:25.020Z",
-  "total_verified_learnings": 832,
+  "last_updated": "2026-10-19T14:33:33.011Z",
+  "total_verified_learnings": 833,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3103,14 +3103,19 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "1f752b67",
-      "content_hash": "e599469adccb123fe09166bd0786f1b44fc39590955a4d94581124d1132245d6",
+      "source_version": "f6ad73c8",
+      "content_hash": "77bcc8ae1d960cbbe96be4aa6daf97d78645ca22a7bc9c0859cc5e82c023580a",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
         {
           "number": 2010,
           "title": "check skills in the build (#39029)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2631,
+          "title": "npm-check-updates && yarn upgrade (#38488)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -3119,7 +3124,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:09:55.243Z",
+      "verified_at": "2026-10-19T14:33:33.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20258,7 +20263,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "37f59f319e86a5c4d3092e918ed42c4276157a995fb28898a079c6878462c300",
+      "content_hash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -20309,7 +20314,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-18T04:18:31.695Z",
+      "verified_at": "2026-10-19T14:33:24.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36094,14 +36099,19 @@
       "slug": "react95-react95",
       "platform": "github",
       "source_url": "https://github.com/React95/React95",
-      "source_version": "30191733",
-      "content_hash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
+      "source_version": "ecdb9cad",
+      "content_hash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
       "dossier_path": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "promoted_rules": [
         {
           "number": 2075,
           "title": "icons): end the generated index with a newline",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2629,
+          "title": "Merge pull request #579 from rootsiemen/fix-20261015-video-a11y",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36110,7 +36120,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:32:55.718Z",
+      "verified_at": "2026-10-19T14:33:24.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42957,22 +42967,35 @@
     "learn-github-vinceglb-filekit": {
       "learning_id": "learn-github-vinceglb-filekit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vinceglb-filekit",
+      "source": "vinceglb/FileKit",
+      "repository": "vinceglb/FileKit",
       "slug": "vinceglb-filekit",
       "platform": "github",
       "source_url": "https://github.com/vinceglb/FileKit",
-      "source_version": "HEAD",
-      "content_hash": "62bf6c82fecdbd33256b1fc999052c3c306c5434e4b9e30ba8d63b7fe263114f",
+      "source_version": "b6fd7ac4",
+      "content_hash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
       "dossier_path": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2630,
+          "title": "🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.236Z"
+      "verified_at": "2026-10-19T14:33:30.255Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vincentwei1021-anything2explainer": {
       "learning_id": "learn-github-vincentwei1021-anything2explainer",
@@ -88219,6 +88242,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:27:25.012Z"
+    },
+    "rule-2629": {
+      "learning_id": "rule-2629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2629,
+      "title": "Merge pull request #579 from rootsiemen/fix-20261015-video-a11y",
+      "source_url": "https://github.com/React95/React95",
+      "source_version": "ecdb9cad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:33:24.439Z"
+    },
+    "rule-2630": {
+      "learning_id": "rule-2630",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2630,
+      "title": "🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker",
+      "source_url": "https://github.com/vinceglb/FileKit",
+      "source_version": "b6fd7ac4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:33:30.255Z"
+    },
+    "rule-2631": {
+      "learning_id": "rule-2631",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2631,
+      "title": "npm-check-updates && yarn upgrade (#38488)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "f6ad73c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:33:33.001Z"
     }
   },
   "aliases": {
