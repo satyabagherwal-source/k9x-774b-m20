@@ -3042,3 +3042,9 @@ Every entry in this ledger must capture:
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `1be7f0d9` | Multi-dimensional audit evidence | 2026-10-19T06:52:10.653Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `1baf1620` | Multi-dimensional audit evidence | 2026-10-19T06:52:15.644Z |
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-19T06:53:27.192Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-19T06:59:21.732Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `8c5ef9cc` | Multi-dimensional audit evidence | 2026-10-19T06:59:25.244Z |
+| `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `1ef60af9` | Multi-dimensional audit evidence | 2026-10-19T06:59:25.360Z |
+| `learn-github-iconoir-icons-iconoir` | `https://github.com/iconoir-icons/iconoir` | `4eae577f` | Multi-dimensional audit evidence | 2026-10-19T06:59:28.883Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `217d799a` | Multi-dimensional audit evidence | 2026-10-19T06:59:31.917Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `84a03d29` | Multi-dimensional audit evidence | 2026-10-19T06:59:39.601Z |

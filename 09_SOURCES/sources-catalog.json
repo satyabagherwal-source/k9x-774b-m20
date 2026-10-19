@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
-    "lastHarvestedAt": "2026-10-18T00:29:05.018Z",
+    "contentHash": "24bda79bbff02da2c161c1196bb926138ceeb78c39ebd7a5f3f60aac565602e7",
+    "lastHarvestedAt": "2026-10-19T06:59:21.732Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -6858,5 +6858,55 @@
     "contentHash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
     "lastHarvestedAt": "2026-10-19T06:52:15.644Z",
     "learningId": "learn-github-weaviate-weaviate"
+  },
+  "topgrade-rs-topgrade": {
+    "repository": "topgrade-rs/topgrade",
+    "platform": "github",
+    "sourceUrl": "https://github.com/topgrade-rs/topgrade",
+    "sourceVersion": "8c5ef9cc",
+    "license": "GPL-3.0",
+    "contentHash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
+    "lastHarvestedAt": "2026-10-19T06:59:25.244Z",
+    "learningId": "learn-github-topgrade-rs-topgrade"
+  },
+  "lucide-icons-lucide": {
+    "repository": "lucide-icons/lucide",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lucide-icons/lucide",
+    "sourceVersion": "1ef60af9",
+    "license": "NOASSERTION",
+    "contentHash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
+    "lastHarvestedAt": "2026-10-19T06:59:25.360Z",
+    "learningId": "learn-github-lucide-icons-lucide"
+  },
+  "iconoir-icons-iconoir": {
+    "repository": "iconoir-icons/iconoir",
+    "platform": "github",
+    "sourceUrl": "https://github.com/iconoir-icons/iconoir",
+    "sourceVersion": "4eae577f",
+    "license": "MIT",
+    "contentHash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
+    "lastHarvestedAt": "2026-10-19T06:59:28.883Z",
+    "learningId": "learn-github-iconoir-icons-iconoir"
+  },
+  "gardener-gardener": {
+    "repository": "gardener/gardener",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gardener/gardener",
+    "sourceVersion": "217d799a",
+    "license": "Apache-2.0",
+    "contentHash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
+    "lastHarvestedAt": "2026-10-19T06:59:31.917Z",
+    "learningId": "learn-github-gardener-gardener"
+  },
+  "nirdiamant-rag_techniques": {
+    "repository": "NirDiamant/RAG_Techniques",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NirDiamant/RAG_Techniques",
+    "sourceVersion": "84a03d29",
+    "license": "NOASSERTION",
+    "contentHash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
+    "lastHarvestedAt": "2026-10-19T06:59:39.601Z",
+    "learningId": "learn-github-nirdiamant-rag_techniques"
   }
 }

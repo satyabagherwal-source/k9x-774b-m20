@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:53:27.151Z",
-  "total_verified_learnings": 701,
+  "last_updated": "2026-10-19T06:59:39.567Z",
+  "total_verified_learnings": 706,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9215,22 +9215,35 @@
     "learn-github-gardener-gardener": {
       "learning_id": "learn-github-gardener-gardener",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gardener-gardener",
+      "source": "gardener/gardener",
+      "repository": "gardener/gardener",
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "HEAD",
-      "content_hash": "017a578f165daa900f290c91e4fc959434f9287d99f15f7560d0ce32d13eecf7",
+      "source_version": "217d799a",
+      "content_hash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2267,
+          "title": "[GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.018Z"
+      "verified_at": "2026-10-19T06:59:31.873Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-geek-ai-magent": {
       "learning_id": "learn-github-geek-ai-magent",
@@ -15583,7 +15596,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
+      "content_hash": "24bda79bbff02da2c161c1196bb926138ceeb78c39ebd7a5f3f60aac565602e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -15636,7 +15649,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-18T00:29:04.969Z",
+      "verified_at": "2026-10-19T06:59:21.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23394,22 +23407,35 @@
     "learn-github-iconoir-icons-iconoir": {
       "learning_id": "learn-github-iconoir-icons-iconoir",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "iconoir-icons-iconoir",
+      "source": "iconoir-icons/iconoir",
+      "repository": "iconoir-icons/iconoir",
       "slug": "iconoir-icons-iconoir",
       "platform": "github",
       "source_url": "https://github.com/iconoir-icons/iconoir",
-      "source_version": "HEAD",
-      "content_hash": "901bfaf9cfcbd1d5f92fa4009c0c605f37b847ddab4dba5f41d1f0e1d3aaba48",
+      "source_version": "4eae577f",
+      "content_hash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
       "dossier_path": "07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2266,
+          "title": "site): changelog survives GitHub outages; star count in parentheses",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.539Z"
+      "verified_at": "2026-10-19T06:59:28.843Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-iflytek-astron-agent": {
       "learning_id": "learn-github-iflytek-astron-agent",
@@ -26902,22 +26928,35 @@
     "learn-github-lucide-icons-lucide": {
       "learning_id": "learn-github-lucide-icons-lucide",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lucide-icons-lucide",
+      "source": "lucide-icons/lucide",
+      "repository": "lucide-icons/lucide",
       "slug": "lucide-icons-lucide",
       "platform": "github",
       "source_url": "https://github.com/lucide-icons/lucide",
-      "source_version": "HEAD",
-      "content_hash": "1189fa38dfed7cdfc381c6a33d5a0c347dd75be5d2bddc50d5d956b14efc25f9",
+      "source_version": "1ef60af9",
+      "content_hash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
       "dossier_path": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2265,
+          "title": "icons): changed `chess-queen` icon (#4613)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.103Z"
+      "verified_at": "2026-10-19T06:59:25.318Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lumiwealth-lumibot": {
       "learning_id": "learn-github-lumiwealth-lumibot",
@@ -30146,22 +30185,35 @@
     "learn-github-nirdiamant-rag_techniques": {
       "learning_id": "learn-github-nirdiamant-rag_techniques",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nirdiamant-rag_techniques",
+      "source": "NirDiamant/RAG_Techniques",
+      "repository": "NirDiamant/RAG_Techniques",
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "HEAD",
-      "content_hash": "abc33afdabbe97c4d777b89b34d35ddc45f3f5f47b10e19aa0fb5b3bf3ca241a",
+      "source_version": "84a03d29",
+      "content_hash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2268,
+          "title": "Add REVIEW.md with the contribution-guidelines check (#204)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.658Z"
+      "verified_at": "2026-10-19T06:59:39.558Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nitrictech-nitric": {
       "learning_id": "learn-github-nitrictech-nitric",
@@ -38881,22 +38933,35 @@
     "learn-github-topgrade-rs-topgrade": {
       "learning_id": "learn-github-topgrade-rs-topgrade",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "topgrade-rs-topgrade",
+      "source": "topgrade-rs/topgrade",
+      "repository": "topgrade-rs/topgrade",
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "HEAD",
-      "content_hash": "b58077e0c2e1bafcf9a84a343412d7cbac2b822b2f0b4e0057a546ccdf349398",
+      "source_version": "8c5ef9cc",
+      "content_hash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2264,
+          "title": "locale): correct French plural in \"Finding available software\" (#2436)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.007Z"
+      "verified_at": "2026-10-19T06:59:25.196Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-topoteretes-cognee": {
       "learning_id": "learn-github-topoteretes-cognee",
@@ -80191,6 +80256,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:53:27.140Z"
+    },
+    "rule-2264": {
+      "learning_id": "rule-2264",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2264,
+      "title": "locale): correct French plural in \"Finding available software\" (#2436)",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "8c5ef9cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:59:25.196Z"
+    },
+    "rule-2265": {
+      "learning_id": "rule-2265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2265,
+      "title": "icons): changed `chess-queen` icon (#4613)",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "source_version": "1ef60af9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:59:25.318Z"
+    },
+    "rule-2266": {
+      "learning_id": "rule-2266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2266,
+      "title": "site): changelog survives GitHub outages; star count in parentheses",
+      "source_url": "https://github.com/iconoir-icons/iconoir",
+      "source_version": "4eae577f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:59:28.843Z"
+    },
+    "rule-2267": {
+      "learning_id": "rule-2267",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2267,
+      "title": "[GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "217d799a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:59:31.873Z"
+    },
+    "rule-2268": {
+      "learning_id": "rule-2268",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2268,
+      "title": "Add REVIEW.md with the contribution-guidelines check (#204)",
+      "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+      "source_version": "84a03d29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:59:39.558Z"
     }
   },
   "aliases": {

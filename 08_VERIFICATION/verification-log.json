@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-HRTL",
-    "timestamp": "2026-10-18T22:04:13.209Z",
-    "repository": "googleworkspace/cli",
-    "learningId": "learn-github-googleworkspace-cli",
-    "contentHash": "951cf9aebe41e1ce939679c347b1a90ef2dc5c3e8c27b9681125bac94ce2d591",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-HVJR",
-    "timestamp": "2026-10-18T22:04:18.039Z",
-    "repository": "react-navigation/react-navigation",
-    "learningId": "learn-github-react-navigation-react-navigation",
-    "contentHash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-HXLK",
-    "timestamp": "2026-10-18T22:04:20.696Z",
-    "repository": "easegress-io/easegress",
-    "learningId": "learn-github-easegress-io-easegress",
-    "contentHash": "72c406de9f113c4b64ba0fd4fe4d8480fabbfb8d820dcbdb0348cdf3fba246aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-HZMY",
-    "timestamp": "2026-10-18T22:04:23.338Z",
-    "repository": "mimblewimble/grin",
-    "learningId": "learn-github-mimblewimble-grin",
-    "contentHash": "45bb49d0d206e492e17dbda2be718de17d85d03b513ff76c34e665d9e66a2db5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-I0O4",
-    "timestamp": "2026-10-18T22:04:24.676Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-PDAQ",
-    "timestamp": "2026-10-18T22:10:07.634Z",
-    "repository": "markmead/hyperui",
-    "learningId": "learn-github-markmead-hyperui",
-    "contentHash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-PEY8",
     "timestamp": "2026-10-18T22:10:09.776Z",
     "repository": "cachix/devenv",
@@ -7492,6 +7402,96 @@
     "contentHash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-LYWX",
+    "timestamp": "2026-10-19T06:59:21.729Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "24bda79bbff02da2c161c1196bb926138ceeb78c39ebd7a5f3f60aac565602e7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M1MH",
+    "timestamp": "2026-10-19T06:59:25.241Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M1PP",
+    "timestamp": "2026-10-19T06:59:25.357Z",
+    "repository": "lucide-icons/lucide",
+    "learningId": "learn-github-lucide-icons-lucide",
+    "contentHash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M4FL",
+    "timestamp": "2026-10-19T06:59:28.881Z",
+    "repository": "iconoir-icons/iconoir",
+    "learningId": "learn-github-iconoir-icons-iconoir",
+    "contentHash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M6RV",
+    "timestamp": "2026-10-19T06:59:31.915Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MCPA",
+    "timestamp": "2026-10-19T06:59:39.598Z",
+    "repository": "NirDiamant/RAG_Techniques",
+    "learningId": "learn-github-nirdiamant-rag_techniques",
+    "contentHash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

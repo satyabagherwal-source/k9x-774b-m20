@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T06:53:27.198Z",
+  "last_updated": "2026-10-19T06:59:39.607Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -800,14 +800,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
-      "verified_at": "2026-10-18T00:29:05.021Z",
+      "content_hash": "24bda79bbff02da2c161c1196bb926138ceeb78c39ebd7a5f3f60aac565602e7",
+      "verified_at": "2026-10-19T06:59:21.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:29:05.021Z"
+      "last_updated": "2026-10-19T06:59:21.737Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
@@ -10346,6 +10346,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T06:52:15.650Z"
+    },
+    "topgrade-rs/topgrade": {
+      "repository": "topgrade-rs/topgrade",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-topgrade-rs-topgrade",
+      "content_hash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
+      "verified_at": "2026-10-19T06:59:25.249Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:59:25.249Z"
+    },
+    "lucide-icons/lucide": {
+      "repository": "lucide-icons/lucide",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lucide-icons-lucide",
+      "content_hash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
+      "verified_at": "2026-10-19T06:59:25.366Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:59:25.366Z"
+    },
+    "iconoir-icons/iconoir": {
+      "repository": "iconoir-icons/iconoir",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-iconoir-icons-iconoir",
+      "content_hash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
+      "verified_at": "2026-10-19T06:59:28.888Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:59:28.888Z"
+    },
+    "gardener/gardener": {
+      "repository": "gardener/gardener",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gardener-gardener",
+      "content_hash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
+      "verified_at": "2026-10-19T06:59:31.922Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:59:31.922Z"
+    },
+    "NirDiamant/RAG_Techniques": {
+      "repository": "NirDiamant/RAG_Techniques",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nirdiamant-rag_techniques",
+      "content_hash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
+      "verified_at": "2026-10-19T06:59:39.606Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:59:39.606Z"
     }
   },
   "repos": {
