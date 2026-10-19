@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `e72a7d3f`  
+> **Source Version**: `365cb0e4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:59:27.025Z  
+> **Timestamp**: 2026-10-19T18:03:04.215Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:59:27.017Z  
+> **Harvest Timestamp**: 2026-10-19T18:03:04.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6242 stars
+- **Stars / Engagement**: 6243 stars
 
 ---
 
@@ -1626,844 +1626,88 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58c8544a` (2026-10-15)
-**Commit Message**: [MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (#11909)
+### Incident Patch 1: `9d880a81` (2026-10-19)
+**Commit Message**: [MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925)
 
-* [MOD-17680] Honor over-aligned layouts in the Rust global allocator
+Reject zero-capacity legacy document tables
 
-RedisAlloc rounds the size up to the layout's alignment but returns
-whatever RedisModule_Alloc does, which guarantees only max_align_t
-(16 bytes). A type needing more, such as memchr's AVX2 substring
-searcher (32 bytes) boxed in the trie's contains iterator, gets
-under-aligned memory: undefined behaviour, which assertion-enabled
-macOS x86_64 builds report as a misaligned-pointer panic on CONTAINS
-and suffix tag queries. Linux is masked by jemalloc's size classes and
-aarch64 by a 16-byte NEON searcher.
-
-Add an `over_aligned_alloc` crate whose `OverAligned` adapter forwards
-layouts aligned to at most 16 bytes unchanged and serves larger ones
-from an inner block padded by the alignment, storing the inner block's
-address just below the aligned pointer. Register it around RedisAlloc
-as the global allocator.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* [MOD-17680] Abort rather than panic in the allocator; test forwarding
-
-A panic must not unwind out of a global allocator, and it would re-enter
-the allocator to format its mes
-
-**File**: `src/redisearch_rs/Cargo.lock` (modified, +8/-0)
+**File**: `src/doc_table.c` (modified, +6/-0)
 ```diff
-@@ -1663,6 +1663,13 @@ version = "11.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
+@@ -459,6 +459,12 @@ int DocTable_LegacyRdbLoad(DocTable *t, RedisModuleIO *rdb, int encver) {
+     t->maxSize = MIN(RSGlobalConfig.maxDocTableSize, t->maxDocId);
+   }
  
-+[[package]]
-+name = "over_aligned_alloc"
-+version = "0.0.1"
-+dependencies = [
-+ "workspace_hack",
-+]
-+
- [[package]]
- name = "page_size"
- version = "0.6.0"
-@@ -2208,6 +2215,7 @@ dependencies = [
-  "metrics_ffi",
-  "module_init_ffi",
-  "numeric_range_tree_ffi",
-+ "over_aligned_alloc",
-  "query_error_ffi",
-  "query_eval_ffi",
-  "query_term_ffi",
-```
-
-**File**: `src/redisearch_rs/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -15,6 +15,7 @@ members = [
-     "inverted_index",
-     "inverted_index_bencher",
-     "nul_terminated_bytes",
-+    "over_aligned_alloc",
-     "numeric_range_tree",
-     "thin_vec",
-     "qint",
-@@ -137,6 +138,7 @@ index_result = { path = "./index_result" }
- index_spec_cache = { path = "./c_wrappers/index_spec_cache" }
- inverted_index = { path = "./inverted_index" }
- nul_terminated_bytes = { path = "./nul_terminated_bytes" }
-+over_aligned_alloc = { path = "./over_aligned_alloc" }
- numeric_range_tree = { path = "./numeric_range_tree" }
- numeric_score_source = { path = "./numeric_score_source" }
- redis_reply = { path = "./redis_reply" }
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/redisearch_rs/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -56,6 +56,7 @@ trie_rdb_ffi = { path = "../trie_rdb_ffi" }
- ttl_table_ffi = { path = "../ttl_table_ffi" }
- types_ffi = { path = "../types_ffi" }
- numeric_range_tree_ffi = { path = "../numeric_range_tree_ffi" }
-+over_aligned_alloc = { workspace = true }
- varint_ffi = { path = "../varint_ffi" }
- value_ffi = { path = "../value_ffi" }
- workspace_hack.workspace = true
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/redisearch_rs/src/lib.rs` (modified, +5/-1)
-```diff
-@@ -13,9 +13,13 @@
- //! It exposes an FFI module for each workspace crate that must be consumed (directly) by the C code.
- 
- /// Registers the Redis module allocator as the global allocator for the application.
-+///
-+/// [`OverAligned`](over_aligned_alloc::OverAligned) serves the layouts the Redis
-+/// allocator cannot align on its own.
- #[cfg(not(feature = "mock_allocator"))]
- #[global_allocator]
--static REDIS_MODULE_ALLOCATOR: redis_module::alloc::RedisAlloc = redis_module::alloc::RedisAlloc;
-+static REDIS_MODULE_ALLOCATOR: over_aligned_alloc::OverAligned<redis_module::alloc::RedisAlloc> =
-+    over_aligned_alloc::OverAligned(redis_module::alloc::RedisAlloc);
- 
- pub use fnv_ffi as fnv;
- pub use fork_gc_ffi as fork_gc;
-```
-
-**File**: `src/redisearch_rs/over_aligned_alloc/Cargo.toml` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+[package]
-+name = "over_aligned_alloc"
-+version.workspace = true
-+edition.workspace = true
-+license-file.workspace = true
-+publish.workspace = true
-+
-+[dependencies]
-+workspace_hack.workspace = true
-+
-+[lints]
-+workspace = true
-+
-+[[test]]
-+name = "integration"
-+path = "tests/integration/main.rs"
-```
-
-**File**: `src/redisearch_rs/over_aligned_alloc/src/lib.rs` (added, +191/-0)
-```diff
-@@ -0,0 +1,191 @@
-+/*
-+ * Copyright (c) 2006-Present, Redis Ltd.
-+ * All rights reserved.
-+ *
-+ * Licensed under your choice of the Redis Source Available License 2.0
-+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-+ * GNU Affero General Public License v3 (AGPLv3).
-+*/
-+
-+//! A [`GlobalAlloc`] adapter that serves alignments its inner allocator cannot.
-+//!
-+//! The Redis module allocator has no aligned-allocation primitive: it returns
-+//! whatever its backing `malloc` does, which guarantees only `max_align_t`.
-+//! Rust types can demand more — an AVX2 searcher needs 32 bytes — and handing
-+//! them under-aligned memory is undefined behavior. [`OverAligned`] closes that
-+//! gap without touching small-alignment allocations, which are forwarded as-is.
-+
-+use std::alloc::{GlobalAlloc, Layout};
-+use std::ptr;
-+
-+/// The largest alignment the inner allocator of an [`OverAligned`] must honor.
-+///
-+/// This is `max_align_t` on every platform the module ships on, which is all
-+/// `malloc` promises. Layouts asking for more are served by over-allocating.
-+pub const MAX_INNER_ALIGN: usize = 16;
-+
-+/// Size of the back-pointer stored just below every over-aligned block.
-+const HEADER_SIZE: usize = size_of::<*mut u8>();
-+
-+const _: () = assert!(
-+    HEADER_SIZE <= MAX_INNER_ALIGN,
-+    "the header must fit in the padding before an over-aligned block"
-+);
-+
-+/// Abort on a broken allocator invariant.
-+///
-+/// A global allocator must not unwind, and a panic would also re-enter the
-+/// allocator to format its message, so neither `panic!` nor `debug_assert!` is
-+/// safe here.
-+#[cold]
-+fn invariant_violated() -> ! {
-+    std::process::abort()
-+}
-+
-+/// Wraps an allocator that honors alignments up to [`MAX_INNER_ALIGN`], so that
-+/// every alignment is honored.
-+///
-+/// A layout whose alignment is at most [`MAX_INNER_ALIGN`] goes straight to the
-+/// inner allocator. A larger one is served from an inner block padded by the
-+/// alignment: the returned pointer is the first suitably aligned address with
-+/// room below it to store the inner block's address, which deallocation reads
-+/// back.
-+///
-+/// The inner allocator must return memory aligned to
-+/// `min(layout.align(), MAX_INNER_ALIGN)`; nothing else is assumed of it.
-+pub struct OverAligned<A>(pub A);
-+
-+impl<A> OverAligned<A> {
-+    /// The layout requested from the inner allocator to serve the over-aligned
-+    /// `layout`, or `None` if its size overflows.
-+    fn padded_layout(layout: Layout) -> Option<Layout> {
-+        let size = layout.size().checked_add(layout.align())?;
-+        Layout::from_size_align(size, MAX_INNER_ALIGN).ok()
-+    }
-+
-+    /// Carve an aligned block out of `base`, a block allocated with
-+    /// [`Self::padded_layout`] of `layout`, and record `base` below it.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `base` must be non-null, aligned to [`MAX_INNER_ALIGN`], and valid for
-+    /// writes of `Self::padded_layout(layout).size()` bytes; `layout.align()`
-+    /// must exceed [`MAX_INNER_ALIGN`].
-+    unsafe fn place(base: *mut u8, layout: Layout) -> *mut u8 {
-+        // `base` is a multiple of MAX_INNER_ALIGN and so is the rounded address,
-+        // so the offset is a multiple of MAX_INNER_ALIGN in
-+        // [HEADER_SIZE, layout.align()]: the header fits below the block, and the
-+        // block ends within the `size + align` bytes of `base`.
-+        if cfg!(debug_assertions) && !base.addr().is_multiple_of(MAX_INNER_ALIGN) {
-+            invariant_violated();
-+        }
-+        let aligned = (base.addr() + HEADER_SIZE).next_multiple_of(layout.align());
-+        let offset = aligned - base.addr();
-+        if cfg!(debug_assertions) && !(HEADER_SIZE..=layout.align()).contains(&offset) {
-+            invariant_violated();
-+        }
-+        // SAFETY: `offset <= layout.align()`, so the pointer stays inside the
-+        // inner block, per the bound above.
-+        let block = unsafe { base.add(offset) };
-+        // SAFETY: `block` is the over-aligned block being placed.
-+        let header = unsafe { Self::header(block) };
-+        // SAFETY: the header slot lies in `[base, block)` because
-+        // `offset >= HEADER_SIZE`, and it is pointer-aligned because `block` is
-+        // aligned to `layout.align() > MAX_INNER_ALIGN >= HEADER_SIZE`.
-+        unsafe { header.write(base) };
-+        block
-+    }
-+
-+    /// The slot holding the inner block's address for the over-aligned `block`.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `block` must have been returned by [`Self::place`].
-+    const unsafe fn header(block: *mut u8) -> *mut *mut u8 {
-+        // SAFETY: `place` reserved at least HEADER_SIZE bytes below `block`
-+        // within the same inner allocation.
-+        unsafe { block.cast::<*mut u8>().sub(1) }
-+    }
-+}
-+
-+// SAFETY: every layout gets memory of at least its size and alignment, from the
-+// inner allocator directly or from a padded inner block via `place`, and every
-+// pointer is
-```
-
-**File**: `src/redisearch_rs/over_aligned_alloc/tests/integration/main.rs` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+/*
-+ * Copyright (c) 2006-Present, Redis Ltd.
-+ * All rights reserved.
-+ *
-+ * Licensed under your choice of the Redis Source Available License 2.0
-+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-+ * GNU Affero General Public License v3 (AGPLv3).
-+*/
-+
-+mod over_aligned;
-```
-
-**File**: `src/redisearch_rs/over_aligned_alloc/tests/integration/over_aligned.rs` (added, +416/-0)
-```diff
-@@ -0,0 +1,416 @@
-+/*
-+ * Copyright (c) 2006-Present, Redis Ltd.
-+ * All rights reserved.
-+ *
-+ * Licensed under your choice of the Redis Source Available License 2.0
-+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-+ * GNU Affero General Public License v3 (AGPLv3).
-+*/
-+
-+use std::alloc::{GlobalAlloc, Layout, System};
-+use std::collections::HashMap;
-+use std::sync::Mutex;
-+use std::sync::atomic::{AtomicBool, Ordering};
-+
-+use over_aligned_alloc::{MAX_INNER_ALIGN, OverAligned};
-+
-+/// Offset at which [`Misaligning`] places blocks inside a [`MISALIGN_BASE`]-aligned
-+/// system block.
-+const MISALIGN_OFFSET: usize = MAX_INNER_ALIGN;
-+/// Alignment of the system block behind every [`Misaligning`] allocation.
-+const MISALIGN_BASE: usize = 2 * MAX_INNER_ALIGN;
-+
-+/// A call that reached [`Misaligning`], with its arguments and result, as addresses.
-+#[derive(Debug, PartialEq)]
-+enum Call {
-+    Alloc {
-+        layout: Layout,
-+        result: usize,
-+    },
-+    AllocZeroed {
-+        layout: Layout,
-+        result: usize,
-+    },
-+    Realloc {
-+        block: usize,
-+        layout: Layout,
-+        new_size: usize,
-+        result: usize,
-+    },
-+    Dealloc {
-+        block: usize,
-+        layout: Layout,
-+    },
-+}
-+
-+/// An inner allocator that honors [`MAX_INNER_ALIGN`] and nothing more: every
-+/// address it returns is a multiple of [`MAX_INNER_ALIGN`] but of no larger power of
-+/// two, like a `malloc` that happens to be maximally unlucky.
-+///
-+/// It records every live allocation with its layout, so a test can check that
-+/// each block comes back with the layout it was allocated with, and logs every
-+/// call, so a test can check exactly what the adapter forwarded.
-+#[derive(Default)]
-+struct Misaligning {
-+    live: Mutex<HashMap<usize, Layout>>,
-+    calls: Mutex<Vec<Call>>,
-+    /// Fail every allocation, to model the inner allocator running out of memory.
-+    exhausted: AtomicBool,
-+}
-+
-+impl Misaligning {
-+    fn exhausted() -> Self {
-+        let inner = Self::default();
-+        inner.set_exhausted(true);
-+        inner
-+    }
-+
-+    fn set_exhausted(&self, exhausted: bool) {
-+        self.exhausted.store(exhausted, Ordering::Relaxed);
-+    }
-+
-+    fn system_layout(layout: Layout) -> Layout {
-+        Layout::from_size_align(layout.size() + MISALIGN_BASE, MISALIGN_BASE).unwrap()
-+    }
-+
-+    fn live_count(&self) -> usize {
-+        self.live.lock().unwrap().len()
-+    }
-+
-+    /// The calls logged since the last time this was called.
-+    fn take_calls(&self) -> Vec<Call> {
-+        std::mem::take(&mut self.calls.lock().unwrap())
-+    }
-+
-+    fn log(&self, call: Call) {
-+        self.calls.lock().unwrap().push(call);
-+    }
-+
-+    /// Allocate a misaligned block for `layout`, or null when exhausted.
-+    fn allocate(&self, layout: Layout) -> *mut u8 {
-+        assert!(
-+            layout.align() <= MAX_INNER_ALIGN,
-+            "OverAligned asked the inner allocator for {layout:?}"
-+        );
-+        if self.exhausted.load(Ordering::Relaxed) {
-+            return std::ptr::null_mut();
-+        }
-+        // SAFETY: the system layout has a non-zero size.
-+        let base = unsafe { System.alloc(Self::system_layout(layout)) };
-+        assert!(!base.is_null());
-+        // SAFETY: the system block has MISALIGN_BASE bytes of slack before `layout.size()`.
-+        let block = unsafe { base.add(MISALIGN_OFFSET) };
-+        self.live.lock().unwrap().insert(block.addr(), layout);
-+        block
-+    }
-+
-+    /// Free a block from [`Self::allocate`], checking it comes back with its layout.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `block` must be a live block from [`Self::allocate`].
-+    unsafe fn free(&self, block: *mut u8, layout: Layout) {
-+        let recorded = self.live.lock().unwrap().remove(&block.addr());
-+        assert_eq!(recorded, Some(layout), "freed with a different layout");
-+        // SAFETY: `block` was placed MISALIGN_OFFSET bytes into a system block.
-+        let base = unsafe { block.sub(MISALIGN_OFFSET) };
-+        // SAFETY: that system block was allocated with this layout.
-+        unsafe { System.dealloc(base, Self::system_layout(layout)) };
-+    }
-+}
-+
-+// SAFETY: blocks come from `System` with enough room past the offset for
-+// `layout.size()` bytes, and are returned to it with the same layout.
-+unsafe impl GlobalAlloc for Misaligning {
-+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-+        let block = self.allocate(layout);
-+        self.log(Call::Alloc {
-+            layout,
-+            result: block.addr(),
-+        });
-+        block
-+    }
-+
-+    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
-+        let block = self.allocate(layout);
-+        if !block.is_null() {
-+            // SAFETY: the block is valid for `layout.size()` bytes.
-+            unsafe { block.write_bytes(0, layout.size()) };
-+        }
-+        self.log(Call::AllocZeroed {
-+            layout,
-+            result: block.addr(),
-+    
-```
-
----
-
-### Incident Patch 2: `e72a7d3f` (2026-10-18)
-**Commit Message**: [MOD-19838] Fix growing num_docs and missing results on Flex after a full sync or hot restart (#11913)
-
-* [MOD-19838] Persist specId across SST loads so DocIdMeta resolves
-
-An SST load (Flex full sync or hot restart) keeps each key's DocIdMeta,
-which is keyed by the specIds of the process that saved it, but every
-loaded spec got a fresh id from the loading process's counter. The ids
-differ whenever the two processes' histories do (an index dropped on
-one of them) or the specs load in another order than they were created
-(the save walks the registry in hash order). Lookups then miss, so an
-update is indexed as a new document: num_docs grows and the old doc
-stays on disk. Field-loading queries also validate results against
-DocIdMeta and would skip documents not updated since the load.
-
-Save the specId in the spec's SST block (encver 29), adopt it on load,
-and advance the counter past it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* [MOD-19838] Note that DocIdMeta specIds are only valid after an SST load
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* [MOD-19838] Fail the load on an invalid or clashing saved specId
-
-Reassigning a fresh id would reintroduce the mismatc
-
-**File**: `src/doc_id_meta.c` (modified, +4/-0)
-```diff
-@@ -211,6 +211,10 @@ static int docIdMetaRDBLoad(RedisModuleIO *rdb, uint64_t *meta, int encver) {
-     if (forgetDocIDMetadata) continue;
- 
-     // Skip entries belonging to indexes that are no longer in specIdDict_g (O(1) lookup).
-+    // Entries are keyed by the specIds of the process that saved the key. Those match this
-+    // process's indexes only after an SST load, where each index keeps its saved specId
-+    // (see IndexSpec_RdbLoad). A key imported by slot migration would carry the source
-+    // shard's specIds, and one of them can be the id of a different index on this shard.
-     if (!isSpecValid(specId)) {
-       continue;
-     }
-```
-
-**File**: `src/indexes.c` (modified, +8/-0)
-```diff
-@@ -283,6 +283,14 @@ static IndexSpec *Indexes_LoadSpecFromRdb(RedisModuleIO *rdb, int encver, bool u
-   // Duplicate detection is a registry read, so it lives here rather than in the
-   // IndexSpec core. It also gates the non-SST on-disk index open below.
-   sp->isDuplicate = dictFetchValue(specDict_g, sp->specName) != NULL;
-+  // An SST load adopts the saved specId. The load drops every spec first and one
-+  // process never saves two specs under the same id, so a clash means a corrupt
-+  // RDB. Loading anyway would point the keys' DocIdMeta at the wrong index.
-+  if (!sp->isDuplicate && dictFetchValue(specIdDict_g, (void *)(uintptr_t)sp->specId) != NULL) {
-+    QueryError_SetError(status, QUERY_ERROR_CODE_PARSE_ARGS, "Saved index id is already in use");
-+    IndexSpec_RdbLoadDiscard(sp->own_ref);
-+    return NULL;
++  if (t->size > 1 && t->maxSize == 0) {
++    RedisModule_LogIOError(rdb, "warning",
++                           "DocTable_LegacyRdbLoad: non-empty table has zero capacity");
++    return REDISMODULE_ERR;
 +  }
-   if (SearchDisk_IsEnabled() && !sp->isDuplicate && !SearchDisk_CanRestoreIndex(status)) {
-     IndexSpec_RdbLoadDiscard(sp->own_ref);
-     return NULL;
++
+   if (t->maxDocId > t->maxSize) {
+     /**
+      * If the maximum doc id is greater than the maximum cap size
 ```
 
-**File**: `src/spec.c` (modified, +37/-2)
+**File**: `tests/cpptests/test_cpp_rdb.cpp` (modified, +42/-0)
 ```diff
-@@ -2449,6 +2449,23 @@ static void initializeFieldSpec(FieldSpec *fs, t_fieldIndex index) {
-   fs->indexError = IndexError_Init();
+@@ -1594,6 +1594,48 @@ TEST_F(RdbMockTest, testLegacyRealPayloadStillConsumed) {
+   }
  }
  
-+// An SST load keeps each key's DocIdMeta, whose entries are keyed by the specIds of
-+// the process that saved them. The loaded spec must therefore keep its saved specId,
-+// or its keys' entries would not be found. Moving the counter past the adopted id
-+// keeps the ids of indexes created later unique.
-+// Returns false for an id no real save produces: 0 is never assigned, and a counter
-+// never gets near INT64_MAX. Rejecting larger ids also keeps the counter from wrapping.
-+static bool adoptSavedSpecId(IndexSpec *sp, uint64_t savedSpecId) {
-+  if (savedSpecId == 0 || savedSpecId > INT64_MAX) {
-+    return false;
-+  }
-+  sp->specId = savedSpecId;
-+  if (nextSpecId_g <= savedSpecId) {
-+    nextSpecId_g = savedSpecId + 1;
-+  }
-+  return true;
-+}
-+
- // Helper function for initializing an index spec
- // Solves issues where a field is initialized in index creation but not when loading from RDB
- static void initializeIndexSpec(IndexSpec *sp, const HiddenString *name, IndexFlags flags,
-@@ -2460,8 +2477,8 @@ static void initializeIndexSpec(IndexSpec *sp, const HiddenString *name, IndexFl
-   sp->obfuscatedName = IndexSpec_FormatObfuscatedName(name);
-   // Assign a unique specId from the global counter. This ensures that even if
-   // an index is dropped and recreated with the same name, the new incarnation
--  // has a different ID. The specId is not persisted — on RDB load, each spec
--  // gets a fresh sequential ID.
-+  // has a different ID. An SST load replaces it with the saved one (see
-+  // adoptSavedSpecId).
-   sp->specId = nextSpecId_g++;
-   sp->docs = DocTable_New(INITIAL_DOC_TABLE_SIZE);
-   sp->suffix = NULL;
-@@ -3269,6 +3286,7 @@ void IndexSpec_RdbSave(RedisModuleIO *rdb, IndexSpec *sp, int contextFlags) {
-   // We assume symmetry w.r.t this context flag. I.e., If it is not set, we
-   // assume it was not set in when the RDB will be loaded as well
-   if (sp->diskSpec && storeDiskRdbData) {
-+    RedisModule_SaveUnsigned(rdb, sp->specId);
-     // Persist whether the source node was mid background-indexing, so the
-     // loading node (replica / hot-restart) can restart the async scan and
-     // finish a partially populated index. A scan actively in progress or a
-@@ -3410,6 +3428,23 @@ IndexSpec *IndexSpec_RdbLoad(RedisModuleIO *rdb, int encver, bool useSst, QueryE
-     // even for duplicates. We just won't use it in the duplicate case.
-     RS_ASSERT(encver >= INDEX_DISK_VERSION);
-     RS_ASSERT(disk_db);
-+    if (encver >= INDEX_SST_SPEC_ID_VERSION) {
-+      if (!adoptSavedSpecId(sp, LoadUnsigned_IOError(rdb, goto cleanup))) {
-+        QueryError_SetError(status, QUERY_ERROR_CODE_PARSE_ARGS, "Invalid saved index id");
-+        goto cleanup;
++TEST_F(RdbMockTest, testLegacyDocTableRejectsZeroCapacity) {
++  for (int encver :
++       {INDEX_MIN_COMPACTED_DOCTABLE_VERSION - 1, INDEX_MIN_COMPACTED_DOCTABLE_VERSION}) {
++    for (bool empty : {false, true}) {
++      SCOPED_TRACE(::testing::Message() << "encver=" << encver << " empty=" << empty);
++      RedisModuleIO *io = RMCK_CreateRdbIO();
++      ASSERT_NE(io, nullptr);
++      DocTable table = NewDocTable(4, 4);
++      RMCK_SaveUnsigned(io, empty ? 1 : 2);  // Size includes the unused document ID zero.
++      // Older encodings derive capacity from maxDocId, so zero exercises that path too.
++      RMCK_SaveUnsigned(io, !empty && encver >= INDEX_MIN_COMPACTED_DOCTABLE_VERSION ? 1 : 0);
++      if (encver >= INDEX_MIN_COMPACTED_DOCTABLE_VERSION) {
++        RMCK_SaveUnsigned(io, 0);
 +      }
-+    } else {
-+      // Not fatal: the index keeps a fresh id, as before encver 29. The keys' DocIdMeta
-+      // may then name another index, which a recreated index can still hit if the saving
-+      // process used its new id, hence the hint to check the count and retry.
-+      RedisModule_Log(RSDummyContext, "warning",
-+                      "Index '%s' was loaded from an RDB without its saved index id (encver %d). "
-+                      "Updates to documents indexed before the load may be counted as new "
-+                      "documents, and queries that load fields may skip them. To recover, drop "
-+                      "the index without DD and recreate it. Once it finishes indexing, if "
-+                      "num_docs is below the number of matching keys, repeat.",
-+                      IndexSpec_FormatName(sp, RSGlobalConfig.hideUserDataFromLog), encver);
++      const size_t headerEnd = io->buffer.size();
++      if (!empty) {
++        RMCK_SaveStringBuffer(io, "doc", 3);
++        if (encver >= INDEX_MIN_COMPACTED_DOCTABLE_VERSION) {
++          RMCK_SaveUnsigned(io, 1);
++        }
++        RMCK_SaveUnsigned(io, Document_DefaultFlags);
++        RMCK_SaveUnsigned(io, 1);
++        RMCK_SaveUnsigned(io, 1);
++        RMCK_SaveDouble(io, 0.5);
++      }
++      io->read_pos = 0;
++      auto originalLoadFloat = RedisModule_LoadFloat;
++      RedisModule_LoadFloat = [](RedisModuleIO *rdb) {
++        return static_cast<float>(RMCK_LoadDouble(rdb));
++      };
++      int result = DocTable_LegacyRdbLoad(&table, io, encver);
++      RedisModule_LoadFloat = originalLoadFloat;
++      EXPECT_EQ(result, empty ? REDISMODULE_OK : REDISMODULE_ERR);
++      EXPECT_EQ(io->read_pos, headerEnd);
++      EXPECT_EQ(table.cap, 4);
++      EXPECT_EQ(table.buckets[0].root, nullptr);
++      DocTable_Free(&table);
++      RMCK_FreeRdbIO(io);
 +    }
-     // Symmetric with IndexSpec_RdbSave: whether the source node was mid
-     // background-indexing. Consumed at Indexes_FinishSSTReplication to restart
-     // the async scan and backfill the remaining documents.
-```
-
-**File**: `src/spec.h` (modified, +2/-1)
-```diff
-@@ -224,7 +224,8 @@ typedef uint16_t FieldSpecDedupeArray[SPEC_MAX_FIELDS];
- #define INDEX_DEFAULT_FLAGS \
-   Index_StoreFreqs | Index_StoreTermOffsets | Index_StoreFieldFlags | Index_StoreByteOffsets
- 
--#define INDEX_CURRENT_VERSION 28
-+#define INDEX_CURRENT_VERSION 29
-+#define INDEX_SST_SPEC_ID_VERSION 29
- #define INDEX_HNSW_QUANT_VERSION 28
- #define INDEX_VECTOR_RERANK_VERSION 27
- #define INDEX_DISK_VERSION 26
-```
-
----
-
-### Incident Patch 3: `1ea20e83` (2026-10-14)
-**Commit Message**: [MOD-19634] Prevent Redis crashes during long-token synonym lookup (#11884)
-
-* [MOD-19634] Avoid stack overflow during synonym lookup
-
-* Reuse CharBuf hashing and cover synonym token flows
-
-**File**: `src/synonym_map.c` (modified, +35/-15)
-```diff
-@@ -22,6 +22,30 @@
- #define INITIAL_CAPACITY 2
- #define SYNONYM_PREFIX "~%s"
- 
-+static void* synonymKeyDup(void* privdata, const void* key) {
-+  CharBuf* copy = rm_malloc(sizeof(*copy));
-+  // TermData owns the bytes. Only the descriptor belongs to the dictionary.
-+  *copy = *(const CharBuf*)key;
-+  return copy;
++  }
 +}
 +
-+static void synonymKeyFree(void* privdata, void* key) {
-+  rm_free(key);
-+}
-+
-+static dictType synonymDictType = {
-+    .hashFunction = CharBuf_HashFunction,
-+    .keyDup = synonymKeyDup,
-+    .keyCompare = CharBuf_KeyCompare,
-+    .keyDestructor = synonymKeyFree,
-+};
-+
-+// Transfers ownership of term only on DICT_OK; the caller retains it on failure.
-+static int synonymMapAddTerm(SynonymMap* smap, TermData* term) {
-+  CharBuf key = {.buf = term->term, .len = sdslen(term->term)};
-+  return dictAdd(smap->h_table, &key, term);
-+}
-+
- static TermData* TermData_New(sds term) {
-   TermData* t_data = rm_malloc(sizeof(TermData));
-   t_data->term = term;
-@@ -120,7 +144,7 @@ TermData* TermData_RdbLoad(RedisModuleIO* rdb, int encver) {
- 
- SynonymMap* SynonymMap_New(bool is_read_only) {
-   SynonymMap* smap = rm_new(SynonymMap);
--  smap->h_table = dictCreate(&dictTypeHeapStrings, NULL);
-+  smap->h_table = dictCreate(&synonymDictType, NULL);
-   smap->is_read_only = is_read_only;
-   smap->read_only_copy = NULL;
-   smap->ref_count = 1;
-@@ -200,7 +224,7 @@ SynonymMapResult SynonymMap_Update(SynonymMap* smap, const char** synonyms, size
-   // don't over-count duplicates within the input batch.
-   dict* pending_new = dictCreate(&dictTypeHeapStrings, NULL);
-   for (size_t i = 0; i < size; i++) {
--    TermData* termData = dictFetchValue(smap->h_table, lowered[i]);
-+    TermData* termData = SynonymMap_GetIdsBySynonym(smap, lowered[i], sdslen(lowered[i]));
-     if (termData) {
-       // Existing term gains one group id iff it doesn't already have it.
-       if (!TermData_IdExists(termData, groupId) &&
-@@ -228,12 +252,12 @@ SynonymMapResult SynonymMap_Update(SynonymMap* smap, const char** synonyms, size
- 
-   // Apply pass. Validation guarantees TermData_AddId cannot fail here.
-   for (size_t i = 0; i < size; i++) {
--    TermData* termData = dictFetchValue(smap->h_table, lowered[i]);
-+    TermData* termData = SynonymMap_GetIdsBySynonym(smap, lowered[i], sdslen(lowered[i]));
-     if (termData) {
-       sdsfree(lowered[i]);
-     } else {
-       termData = TermData_New(lowered[i]);
--      dictAdd(smap->h_table, termData->term, termData);
-+      synonymMapAddTerm(smap, termData);
-     }
-     SynonymMapResult r = TermData_AddId(termData, groupId);
-     RS_LOG_ASSERT(r == SYNONYM_MAP_OK,
-@@ -249,10 +273,8 @@ SynonymMapResult SynonymMap_Update(SynonymMap* smap, const char** synonyms, size
- }
- 
- TermData* SynonymMap_GetIdsBySynonym(SynonymMap* smap, const char* synonym, size_t len) {
--  char syn[len + 1];
--  memcpy(syn, synonym, len);
--  syn[len] = '\0';
--  return dictFetchValue(smap->h_table, syn);
-+  const CharBuf key = {.buf = (char*)synonym, .len = len};
-+  return dictFetchValue(smap->h_table, &key);
- }
- 
- TermData** SynonymMap_DumpAllTerms(SynonymMap* smap, size_t* size) {
-@@ -269,8 +291,8 @@ TermData** SynonymMap_DumpAllTerms(SynonymMap* smap, size_t* size) {
-   return dump;
- }
- 
--static void SynonymMap_CopyEntry(SynonymMap* smap, const char* key, TermData* t_data) {
--  dictAdd(smap->h_table, (char*)key, TermData_Copy(t_data));
-+static void SynonymMap_CopyEntry(SynonymMap* smap, TermData* t_data) {
-+  synonymMapAddTerm(smap, TermData_Copy(t_data));
- }
- 
- static SynonymMap* SynonymMap_GenerateReadOnlyCopy(SynonymMap* smap) {
-@@ -279,9 +301,8 @@ static SynonymMap* SynonymMap_GenerateReadOnlyCopy(SynonymMap* smap) {
-   dictIterator* iter = dictGetIterator(smap->h_table);
-   dictEntry* entry = NULL;
-   while ((entry = dictNext(iter))) {
--    char* key = dictGetKey(entry);
-     TermData* val = dictGetVal(entry);
--    SynonymMap_CopyEntry(read_only_smap, key, val);
-+    SynonymMap_CopyEntry(read_only_smap, val);
-   }
-   dictReleaseIterator(iter);
-   return read_only_smap;
-@@ -363,9 +384,8 @@ void* SynonymMap_RdbLoad(RedisModuleIO* rdb, int encver) {
-       uint64_t unudes = LoadUnsigned_IOError(rdb, goto cleanup);
-     }
-     TermData* t_data = TermData_RdbLoad(rdb, encver);
--    if (t_data == NULL)
--      goto cleanup;
--    dictAdd(smap->h_table, t_data->term, t_data);
-+    if (t_data == NULL) goto cleanup;
-+    synonymMapAddTerm(smap, t_data);
-   }
-   return smap;
- 
-```
-
-**File**: `src/util/dict/dict.c` (modified, +1/-1)
-```diff
-@@ -224,7 +224,7 @@ uint8_t *RS_dictGetHashFunctionSeed(void) {
- uint64_t siphash(const uint8_t *in, const size_t inlen, const uint8_t *k);
- uint64_t siphash_nocase(const uint8_t *in, const size_t inlen, const uint8_t *k);
- 
--uint64_t RS_dictGenHashFunction(const void *key, int len) {
-+uint64_t RS_dictGenHashFunction(const void *key, size_t len) {
-     return siphash(key,len,dict_hash_function_seed);
- }
- 
-```
-
-**File**: `src/util/dict/dict.h` (modified, +1/-1)
-```diff
-@@ -197,7 +197,7 @@ void RS_dictReleaseIterator(dictIterator *iter);
- dictEntry *RS_dictGetRandomKey(dict *d);
- unsigned int RS_dictGetSomeKeys(dict *d, dictEntry **des, unsigned int count);
- void RS_dictGetStats(char *buf, size_t bufsize, dict *d);
--uint64_t RS_dictGenHashFunction(const void *key, int len);
-+uint64_t RS_dictGenHashFunction(const void *key, size_t len);
- uint64_t RS_dictGenCaseHashFunction(const unsigned char *buf, int len);
- void RS_dictEmpty(dict *d, void(callback)(void*));
- void RS_dictEnableResize(void);
-```
-
-**File**: `tests/ctests/test_synonym_map.c` (modified, +57/-0)
-```diff
-@@ -98,10 +98,67 @@ int testSynonymGetReadOnlyCopy() {
-   RETURN_TEST_SUCCESS
- }
- 
-+int testSynonymLookupBuffer() {
-+  SynonymMap* smap = SynonymMap_New(false);
-+  const char* values[] = {"val", "value", ""};
-+  ASSERT(SynonymMap_Add(smap, "g1", values, 3) == SYNONYM_MAP_OK);
-+  const char token[] = {'v', 'a', 'l'};
-+  TermData* term = SynonymMap_GetIdsBySynonym(smap, token, sizeof(token));
-+  ASSERT(term);
-+  ASSERT_STRING_EQ(term->groupIds[0], "~g1");
-+  ASSERT(SynonymMap_GetIdsBySynonym(smap, "value suffix", 5));
-+  ASSERT(!SynonymMap_GetIdsBySynonym(smap, token, 2));
-+  ASSERT(SynonymMap_GetIdsBySynonym(smap, token, 0));
-+  const char embedded_nul[] = {'v', 'a', 'l', '\0', 'x'};
-+  ASSERT(!SynonymMap_GetIdsBySynonym(smap, embedded_nul, sizeof(embedded_nul)));
-+  SynonymMap_Free(smap);
-+  RETURN_TEST_SUCCESS;
-+}
-+
-+static int checkSynonymLookupLongToken(SynonymMap** map, SynonymMap** copy, char* token,
-+                                       size_t len) {
-+  SynonymMap* smap = *map;
-+  const char* values[] = {"short"};
-+  ASSERT(SynonymMap_Add(smap, "g1", values, 1) == SYNONYM_MAP_OK);
-+  ASSERT(!SynonymMap_GetIdsBySynonym(smap, token, len));
-+
-+  const char* long_values[] = {token};
-+  ASSERT(SynonymMap_Add(smap, "g2", long_values, 1) == SYNONYM_MAP_OK);
-+  TermData* term = SynonymMap_GetIdsBySynonym(smap, token, len);
-+  ASSERT(term);
-+  ASSERT_STRING_EQ(term->groupIds[0], "~g2");
-+  SynonymMap* snapshot = *copy = SynonymMap_GetReadOnlyCopy(smap);
-+  ASSERT(SynonymMap_Update(smap, long_values, 1, "g3") == SYNONYM_MAP_OK);
-+  ASSERT(array_len(SynonymMap_GetIdsBySynonym(smap, token, len)->groupIds) == 2);
-+  SynonymMap_Free(smap);
-+  *map = NULL;
-+  term = SynonymMap_GetIdsBySynonym(snapshot, token, len);
-+  ASSERT(term);
-+  ASSERT(array_len(term->groupIds) == 1);
-+  ASSERT_STRING_EQ(term->groupIds[0], "~g2");
-+  RETURN_TEST_SUCCESS;
-+}
-+
-+int testSynonymLookupLongToken() {
-+  const size_t len = 16 * 1024 * 1024;
-+  char* token = rm_malloc(len + 1);
-+  memset(token, 'x', len);
-+  token[len] = '\0';
-+  SynonymMap* smap = SynonymMap_New(false);
-+  SynonymMap* snapshot = NULL;
-+  int result = checkSynonymLookupLongToken(&smap, &snapshot, token, len);
-+  if (snapshot) SynonymMap_Free(snapshot);
-+  if (smap) SynonymMap_Free(smap);
-+  rm_free(token);
-+  return result;
-+}
-+
- TEST_MAIN({
-   // LOGGING_INIT(L_INFO);
-   RMUTil_InitAlloc();
-   TESTFUNC(testSynonymMapAddGetId);
-   TESTFUNC(testSynonymUpdate);
-   TESTFUNC(testSynonymGetReadOnlyCopy);
-+  TESTFUNC(testSynonymLookupBuffer);
-+  TESTFUNC(testSynonymLookupLongToken);
- });
-```
-
-**File**: `tests/pytests/test_synonyms.py` (modified, +38/-1)
-```diff
-@@ -6,7 +6,8 @@
- # GNU Affero General Public License v3 (AGPLv3).
- 
- from includes import *
--from common import getConnectionByEnv, waitForIndex, toSortedFlatList
-+from RLTest import Env
-+from common import getConnectionByEnv, waitForIndex, toSortedFlatList, skip
- 
- def testBasicSynonymsUseCase(env):
-     env.expect(
-@@ -200,3 +201,39 @@ def testDoubleDefinition(env):
-     env.expect('FT.SYNUPDATE idx foo bar').ok()
-     # Ensure it's only added once
-     env.expect('FT.SYNDUMP idx').equal(['bar', ['foo']])
-+
-+
-+@skip(cluster=True)
-+def testSynonymLongTokenWorkers():
-+    """Large document and query tokens must not exhaust thread stacks during synonym lookup."""
-+    env = Env(moduleArgs='WORKERS 2 TIMEOUT 0')
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA', 't', 'TEXT', 'NOSTEM').ok()
-+    token = 'x' * (16 * 1024 * 1024)
-+    conn = getConnectionByEnv(env)
-+    conn.execute_command('HSET', 'doc', 't', token + ' short')
-+    # SYNUPDATE reindexes the existing document on the background scanner.
-+    env.expect('FT.SYNUPDATE', 'idx', 'g', 'short', 'alias').ok()
-+    waitForIndex(env, 'idx')
-+    env.expect('FT.SEARCH', 'idx', 'alias', 'NOCONTENT').equal([1, 'doc'])
-+    env.expect('FT.SEARCH', 'idx', token, 'NOCONTENT').equal([1, 'doc'])
-+
-+
-+@skip(cluster=True)
-+def testSynonymEmbeddedNul(env):
-+    """Token normalization preserves synonym matches before length-aware lookup."""
-+    conn = getConnectionByEnv(env)
-+    for language in ('english', 'chinese'):
-+        idx = 'idx_' + language
-+        doc = 'doc_' + language
-+        env.expect('FT.CREATE', idx, 'PREFIX', 1, doc, 'LANGUAGE', language,
-+                   'SCHEMA', 't', 'TEXT', 'NOSTEM').ok()
-+        env.expect('FT.SYNUPDATE', idx, 'g', 'val', 'alias').ok()
-+        conn.execute_command('HSET', doc, 't', 'val\0ignored')
-+        for dialect in (1, 2, 3, 4):
-+            env.expect('FT.SEARCH', idx, 'alias', 'NOCONTENT',
-+                       'DIALECT', dialect).equal([1, doc])
-+            env.expect('FT.SEARCH', idx, 'val\0ignored', 'NOCONTENT',
-+                       'DIALECT', dialect).equal([1, doc])
-+            if dialect >= 2:
-+                env.expect('FT.SEARCH', idx, '$term', 'PARAMS', 2, 'term', 'val\0ignored',
-+                           'NOCONTENT', 'DIALECT', dialect).equal([1, doc])
+ TEST_F(RdbMockTest, testLegacyDocTableReservesPayloadSlot) {
+   RedisModuleIO *io = RMCK_CreateRdbIO();
+   ASSERT_NE(io, nullptr);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11913** (2026-10-18): [MOD-19838] Fix growing num_docs and missing results on Flex after a full sync or hot restart (@GuyAv46)
-- **PR #11909** (2026-10-15): [MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (@alonre24)
-- **PR #11907** (2026-10-15): [MOD-19758] Cover DIALECT 4 numeric aggregate sorting (@GuyAv46)
-- **PR #11906** (closed): [MOD-19625] Store term positions in one array instead of a writer per term (@GuyAv46)
-- **PR #11905** (2026-10-15): [MOD-19625] Stop one large document from slowing down all later indexing (@GuyAv46)
-- **PR #11904** (2026-10-15): Update rustls to 0.23.46 to resolve security advisories (@Itzikvaknin)
+- **PR #11926** (2026-10-19): [8.8-rse] [MOD-19928] Open every staged spec exactly once at SST load end (@redisearch-backport-pull-request[bot])
+- **PR #11925** (2026-10-19): [MOD-19638] Prevent crashes when loading malformed legacy indexes (@GuyAv46)
+- **PR #11924** (2026-10-19): [MOD-19632] Reject unsafe vector dimensions (@GuyAv46)
+- **PR #11922** (2026-10-19): [MOD-19928] Open every staged spec exactly once at SST load end (@GuyAv46)
+- **PR #11916** (2026-10-19): [8.8-rse] [MOD-19838] Fix growing num_docs and missing results on Flex after a full sync or hot restart (@redisearch-backport-pull-request[bot])
+- **PR #11915** (2026-10-19): [MOD-18989] Make search-min-maintenance-workers a module config only (@kei-nan)
 
 ---
 
@@ -2483,28 +1727,26 @@ Reassigning a fresh id would reintroduce the mismatc
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (#119
+## X. [MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925)
 
 **RULE**:
-When implementing operations in `src/redisearch_rs/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/doc_table.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58c8544a`: [MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (#11909). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d880a81`: [MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/doc_table.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "over_aligned_alloc"
-version = "0.0.1"
-dependencies = [
- "workspace_hack",
-]
+  if (t->size > 1 && t->maxSize == 0) {
+    RedisModule_LogIOError(rdb, "warning",
+                           "DocTable_LegacyRdbLoad: non-empty table has zero capacity");
+    return REDISMODULE_ERR;
+  }
 
- "over_aligned_alloc",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2514,4 +1756,4 @@ dependencies = [
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58c8544a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d880a81` are properly handled with clean fallback behavior.

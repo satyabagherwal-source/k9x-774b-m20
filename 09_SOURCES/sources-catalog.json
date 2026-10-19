@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "dc5a1b22",
+    "sourceVersion": "835550fb",
     "license": "Apache-2.0",
-    "contentHash": "cd2f1322c0209478c17e48b9c46c86755c72edb35bdcfc6c7acc3094057b9b8c",
-    "lastHarvestedAt": "2026-10-19T14:59:12.794Z",
+    "contentHash": "dd5f115f0dd12a88b14b3f2db18761bd5849972a2b8a63007a2786eb3fb9627e",
+    "lastHarvestedAt": "2026-10-19T18:03:03.259Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "e72a7d3f",
+    "sourceVersion": "365cb0e4",
     "license": "NOASSERTION",
-    "contentHash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
-    "lastHarvestedAt": "2026-10-19T04:59:27.314Z",
+    "contentHash": "a3106678083498c9358f4f2ef88afc99430444144267123ce3234c6c28b1feda",
+    "lastHarvestedAt": "2026-10-19T18:03:04.483Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "105b18bb",
+    "sourceVersion": "42f15c9b",
     "license": "MPL-2.0",
-    "contentHash": "0730c7ad4b7ca8fad3890795baf71ad5ee16d5d35f39d61d0649f605d3b11e13",
-    "lastHarvestedAt": "2026-10-19T05:45:32.710Z",
+    "contentHash": "b87dbf5385f6cb59e41aa76b8ef9f2b911fcfa0f528a53f23bdd0e7238b38a2c",
+    "lastHarvestedAt": "2026-10-19T18:02:59.533Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -6723,10 +6723,10 @@
     "repository": "vuetifyjs/vuetify",
     "platform": "github",
     "sourceUrl": "https://github.com/vuetifyjs/vuetify",
-    "sourceVersion": "56872aae",
+    "sourceVersion": "56225014",
     "license": "NOASSERTION",
-    "contentHash": "e7e1656e2e2507f7f13424eeef5a2692129aecd7989ec0048460d79a79adf9e5",
-    "lastHarvestedAt": "2026-10-19T06:38:32.565Z",
+    "contentHash": "a7f52116b1c45fd26342f25937376fd9df073204d2c4123bdea03a3f4416dbd7",
+    "lastHarvestedAt": "2026-10-19T18:03:58.678Z",
     "learningId": "learn-github-vuetifyjs-vuetify"
   },
   "pauljuliusmartinez-jless": {
@@ -8528,5 +8528,15 @@
     "contentHash": "db7066b52042e356777eae95cc7607c8fa1133149fff9d1903be889ef8efe1a9",
     "lastHarvestedAt": "2026-10-19T17:56:29.948Z",
     "learningId": "learn-github-obytes-react-native-template-obytes"
+  },
+  "zoontek-react-native-bootsplash": {
+    "repository": "zoontek/react-native-bootsplash",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zoontek/react-native-bootsplash",
+    "sourceVersion": "2ac6a06c",
+    "license": "MIT",
+    "contentHash": "a1820d0cd75eb49766b3f980bc2c24c6cba4f1a9f59b7f38a26a7043aa97de66",
+    "lastHarvestedAt": "2026-10-19T18:02:59.289Z",
+    "learningId": "learn-github-zoontek-react-native-bootsplash"
   }
 }

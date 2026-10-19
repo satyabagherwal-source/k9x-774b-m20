@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-WG0N",
-    "timestamp": "2026-10-19T04:19:32.759Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "64e030ceefe8c05ba1d7e0df14f12fb2d387dabffb5b00af2289c1105869ae99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-WGLI",
-    "timestamp": "2026-10-19T04:19:33.510Z",
-    "repository": "APSL/react-native-keyboard-aware-scroll-view",
-    "learningId": "learn-github-apsl-react-native-keyboard-aware-scroll-view",
-    "contentHash": "294c3c54738164b00f93019ffae8f9948ccdc8e1c26880f7f194d937415844c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-WIVP",
-    "timestamp": "2026-10-19T04:19:36.469Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "cfa1e84bbe07914d606e2f4e8ac509c763038ab9a51c04dad4fba5b42901c696",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-WMIJ",
-    "timestamp": "2026-10-19T04:19:41.179Z",
-    "repository": "apache/incubator-pegasus",
-    "learningId": "learn-github-apache-incubator-pegasus",
-    "contentHash": "2ea802c850c5df17f702d9a433a90b984f8b48a04ddc885ede4083cff13735b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-4W0R",
-    "timestamp": "2026-10-19T04:26:06.747Z",
-    "repository": "benoitvallon/react-native-nw-react-calculator",
-    "learningId": "learn-github-benoitvallon-react-native-nw-react-calculator",
-    "contentHash": "fc2c5cbd24d611d1e4084cb74a83a393e88b37728df2e8fcfeacd6d2bc8eebfa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-4Y4F",
     "timestamp": "2026-10-19T04:26:09.471Z",
     "repository": "cycloidio/terracognita",
@@ -7492,6 +7417,81 @@
     "contentHash": "2a7320f2c212d49f5ead4fd0993ccbe94df90ac4fe27965035ed53f9e5e9917e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BEC6",
+    "timestamp": "2026-10-19T18:02:59.286Z",
+    "repository": "zoontek/react-native-bootsplash",
+    "learningId": "learn-github-zoontek-react-native-bootsplash",
+    "contentHash": "a1820d0cd75eb49766b3f980bc2c24c6cba4f1a9f59b7f38a26a7043aa97de66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BEIY",
+    "timestamp": "2026-10-19T18:02:59.530Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "b87dbf5385f6cb59e41aa76b8ef9f2b911fcfa0f528a53f23bdd0e7238b38a2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BHEG",
+    "timestamp": "2026-10-19T18:03:03.256Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "dd5f115f0dd12a88b14b3f2db18761bd5849972a2b8a63007a2786eb3fb9627e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BICG",
+    "timestamp": "2026-10-19T18:03:04.480Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "a3106678083498c9358f4f2ef88afc99430444144267123ce3234c6c28b1feda",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CO5W",
+    "timestamp": "2026-10-19T18:03:58.676Z",
+    "repository": "vuetifyjs/vuetify",
+    "learningId": "learn-github-vuetifyjs-vuetify",
+    "contentHash": "a7f52116b1c45fd26342f25937376fd9df073204d2c4123bdea03a3f4416dbd7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

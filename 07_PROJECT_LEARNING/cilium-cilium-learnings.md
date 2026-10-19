@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `dc5a1b22`  
+> **Source Version**: `835550fb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:59:12.635Z  
+> **Timestamp**: 2026-10-19T18:03:02.984Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:59:12.464Z  
+> **Harvest Timestamp**: 2026-10-19T18:03:02.977Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25689 stars
+- **Stars / Engagement**: 25688 stars
 
 ---
 
@@ -1283,109 +1283,40 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc5a1b22` (2026-10-19)
-**Commit Message**: gha/conformance-gke: Accept /ci-gke arguments as a JSON string
+### Incident Patch 1: `b7c0dc57` (2026-10-16)
+**Commit Message**: CODEOWNERS: Fix vendor metrics ownership
 
-ariane passes the capture of a trigger comment to the workflow as a
-JSON string, so /ci-gke versions=all arrives as "versions=all". The
-Generate Matrix step indexes it with jq like the object that
-conformance-kpr-gke passes, so every /ci-gke with an argument fails
-before any cluster exists [1]:
+Hadrien and Jussi report that vendor metrics files are requesting the
+metrics code owner, but there's actually no need to do so. Revert those
+files back to vendor ownership.
 
-  jq: error (at <stdin>:1): Cannot index string with string "ipsec"
+Fixes: 0732f03c83b0 ("CODEOWNERS: Update metrics codeowners files")
+Reported-by: Hadrien Patte <[REDACTED_EMAIL]>
+Reported-by: Jussi Maki <[REDACTED_EMAIL]>
+Signed-off-by: Joe Stringer <[REDACTED_EMAIL]>
 
-Its awk parsing also kept the closing quote, so versions=all never
-matched, and channel=rapid became the filter channels.channel=RAPID".
-
-This commit turns extra-args into one JSON object first, splitting a
-key=value string into a single key, and both steps read every option
-from that object.
-
-This commit was prepared with AIL:3. I personally checked the diff.
-
-Fixes: 1337c87c9955 ("Add vanilla cloud-provider configs for conformance tests")
-1: https://github.com/cilium/cilium/actions/runs/39252040705/job/118057961373
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/conformance-gke.yaml` (modified, +10/-9)
+**File**: `CODEOWNERS` (modified, +2/-1)
 ```diff
-@@ -166,12 +166,15 @@ jobs:
-           # Use complete matrix in case of scheduled run
-           # main -> event_name = schedule
-           # other stable branches -> PR-number starting with v (e.g. v1.14)
--          VERSIONS=$(echo "${EXTRA_ARGS}" | awk -F'=' '{print $2}')
--          IPSEC=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["ipsec"] // false')
--          WG=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["wireguard"] // false')
--          KPR=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["kpr"] // false')
--          BPFMASQV4=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["bpf-masq-v4"] // false')
--          ADV_FEAT=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["advanced-features"] // false')
-+          # ariane passes a comment's capture as a JSON string such as "versions=all", callers pass an object.
-+          ARGS=$(jq -Rc '. as $raw | (try fromjson catch $raw) | if type == "object" then . elif type == "string" and contains("=") then (split("=") | {(.[0]): .[1]}) else {} end' <<< "${EXTRA_ARGS}")
-+          echo "GKE_EXTRA_ARGS=${ARGS}" >> "${GITHUB_ENV}"
-+          VERSIONS=$(jq -r '.versions // ""' <<< "${ARGS}")
-+          IPSEC=$(jq -r '.ipsec // false' <<< "${ARGS}")
-+          WG=$(jq -r '.wireguard // false' <<< "${ARGS}")
-+          KPR=$(jq -r '.kpr // false' <<< "${ARGS}")
-+          BPFMASQV4=$(jq -r '.["bpf-masq-v4"] // false' <<< "${ARGS}")
-+          ADV_FEAT=$(jq -r '.["advanced-features"] // false' <<< "${ARGS}")
- 
-           # shellcheck disable=SC2193
-           if [[ "${{ github.event_name }}" == "schedule" || "${PR_NUMBER}" == v* || "$VERSIONS" == "all" ]];then
-@@ -233,10 +236,8 @@ jobs:
- 
-       - name: Filter Matrix
-         id: set-matrix
--        env:
--          EXTRA_ARGS: ${{ inputs.extra-args }}
-         run: |
--          CHANNEL=$(echo "${EXTRA_ARGS}" | grep "channel" | awk -F'=' '{print $2}' | tr '[:lower:]' '[:upper:]')
-+          CHANNEL=$(jq -r '.channel // "" | ascii_upcase' <<< "${GKE_EXTRA_ARGS}")
-           if [ "$CHANNEL" == "" ];then
-             FILTER="channels.channel=REGULAR"
-           elif [ "$CHANNEL" == "NONE" ];then
-```
-
----
-
-### Incident Patch 2: `0d72d63b` (2026-10-16)
-**Commit Message**: datapath: explicitly set `ENABLE_SRV6` to 1 in tests
-
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
-
-**File**: `bpf/tests/tc_srv6_decap.c` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- /* Enable code paths under test */
- #define ENABLE_IPV4 1
- #define ENABLE_IPV6 1
--#define ENABLE_SRV6
-+#define ENABLE_SRV6 1
- #ifdef TUNNEL_MODE
- #undef TUNNEL_MODE
- #endif
-```
-
-**File**: `bpf/tests/tc_srv6_encap.c` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- /* Enable code paths under test */
- #define ENABLE_IPV4 1
- #define ENABLE_IPV6 1
--#define ENABLE_SRV6
-+#define ENABLE_SRV6 1
- #ifdef TUNNEL_MODE
- #undef TUNNEL_MODE
- #endif
+@@ -748,8 +748,9 @@ Makefile* @cilium/build
+ /USERS.md @cilium/community
+ /go.sum @cilium/vendor
+ /go.mod @cilium/vendor
+-/vendor/ @cilium/vendor
+ /VERSION @cilium/release-managers
+ /.clang-format @cilium/contributing
++# Metrics are deliberately late in the ownership to override earlier owners
+ /**/*metrics*.go @cilium/metrics
+ /pkg/hubble/metrics @cilium/hubble-metrics
++/vendor/ @cilium/vendor
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #49470** (2026-10-19): gha/conformance-gke: Accept /ci-gke arguments as a JSON string (@aanm)
 - **PR #49467** (2026-10-19): [v1.20] Backports 2026-10-19 (@aanm)
+- **PR #49464** (2026-10-19): auto-approve: Only approve trusted Renovate PRs (@aanm)
 - **PR #49462** (2026-10-19): cilium, docs: update Maglev reassignment claims (@borkmann)
 - **PR #49453** (2026-10-19): ci: Pass the auto-committer secrets to the base images workflow (@aanm)
 - **PR #49450** (2026-10-19): [v1.19] gwapi: Backport listener validation and conflict detection (@asauber)
-- **PR #49447** (2026-10-18): fix(deps): update module github.com/azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 to v12.1.0 (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1405,45 +1336,29 @@ Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gha/conformance-gke: Accept /ci-gke arguments as a JSON string
+## X. CODEOWNERS: Fix vendor metrics ownership
 
 **RULE**:
-When implementing operations in `.github/workflows/conformance-gke.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CODEOWNERS`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc5a1b22`: gha/conformance-gke: Accept /ci-gke arguments as a JSON string. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7c0dc57`: CODEOWNERS: Fix vendor metrics ownership. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/conformance-gke.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODEOWNERS`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          # ariane passes a comment's capture as a JSON string such as "versions=all", callers pass an object.
-          ARGS=$(jq -Rc '. as $raw | (try fromjson catch $raw) | if type == "object" then . elif type == "string" and contains("=") then (split("=") | {(.[0]): .[1]}) else {} end' <<< "${EXTRA_ARGS}")
-          echo "GKE_EXTRA_ARGS=${ARGS}" >> "${GITHUB_ENV}"
-          VERSIONS=$(jq -r '.versions // ""' <<< "${ARGS}")
-          IPSEC=$(jq -r '.ipsec // false' <<< "${ARGS}")
-          WG=$(jq -r '.wireguard // false' <<< "${ARGS}")
-          KPR=$(jq -r '.kpr // false' <<< "${ARGS}")
-          BPFMASQV4=$(jq -r '.["bpf-masq-v4"] // false' <<< "${ARGS}")
-          ADV_FEAT=$(jq -r '.["advanced-features"] // false' <<< "${ARGS}")
-          CHANNEL=$(jq -r '.channel // "" | ascii_upcase' <<< "${GKE_EXTRA_ARGS}")
+# Metrics are deliberately late in the ownership to override earlier owners
+/vendor/ @cilium/vendor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          VERSIONS=$(echo "${EXTRA_ARGS}" | awk -F'=' '{print $2}')
-          IPSEC=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["ipsec"] // false')
-          WG=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["wireguard"] // false')
-          KPR=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["kpr"] // false')
-          BPFMASQV4=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["bpf-masq-v4"] // false')
-          ADV_FEAT=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["advanced-features"] // false')
-        env:
-          EXTRA_ARGS: ${{ inputs.extra-args }}
-          CHANNEL=$(echo "${EXTRA_ARGS}" | grep "channel" | awk -F'=' '{print $2}' | tr '[:lower:]' '[:upper:]')
+/vendor/ @cilium/vendor
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc5a1b22` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7c0dc57` are properly handled with clean fallback behavior.

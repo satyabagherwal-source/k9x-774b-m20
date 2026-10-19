@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `105b18bb`  
+> **Source Version**: `42f15c9b`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:45:32.457Z  
+> **Timestamp**: 2026-10-19T18:02:59.259Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:45:32.449Z  
+> **Harvest Timestamp**: 2026-10-19T18:02:59.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30536 stars
+- **Stars / Engagement**: 30544 stars
 
 ---
 
@@ -1398,11 +1398,11 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4732** (2026-10-19): **Plan files created when using symbol libraries are missing symbols**
+  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell 1.13.1 ```  ### OpenTofu Configuration Files  main.tf ```hcl language {   experiments = [symbol_libraries] }  symbols "example" {   source = "./symbols" }  variable "message" {   type    = symbols::example::message()   default = "hello" }  output "message" {   value = var.message } ```  symbols/main.sym.hcl ```hcl language {   edition = experimental2026 }  typedef "message" {   type = string } ```  ### Debug Output  https://gist.github.com/dre-x1f/9bb5f108e16f25e5b5a5b5a9306de024  ### Expected Behavior  Plan should be usable.  ### Actual Behavior  Plan is not usable.  ### Steps to Reproduce  1. `tofu init` 2. `tofu plan -out=plan.tfplan` 3. `tofu show -json -plan=plan.tfplan`  ``` │ Error: 2 problems: │  │ - Experimental features are active: Experimental features are subject to breaking changes or total removal in later versions, based on feedback. We recommend against using experimental features in production. │  │ The following experiments are enabled: symbol_libraries │ - Missing type: Type message not defined in symbol library example ```  5. `tofu apply plan.tfplan` ``` │ Error: Missing type │  │   on main.tf line 10, in variable "message": │   10:   type    = symbols::example::message() │  │ Type message 
+
 - **Issue #4658** (2026-10-14): **Shell completion no longer suggests positional arguments since v1.13.0 (e.g. `tofu workspace select <TAB>` lists no workspaces)**
   *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.1 on linux_amd64 ```  ### OpenTofu Configuration Files  No configuration is needed; it reproduces in an empty directory (where the only workspace is `default`). It also reproduces in a directory with a local backend and several workspaces.   ### Debug Output  With `TF_LOG=trace`, the completion request logs only the startup lines and exits. There are no config-loading or `Meta.Backend` log lines, which suggests the workspace predictor is never invoked:  ``` [INFO]  OpenTofu version: 1.13.1 [INFO]  CLI args: []string{".../tofu", "tofu", "", "select"} [DEBUG] File doesn't exist, but doesn't need to. Ignoring. ```  Gist Link: https://gist.github.com/luisotaviodesimone/2e5724f95f10aa472963f0bd7fcc49c6   ### Expected Behavior  `tofu workspace select <TAB>` (and `tofu workspace delete <TAB>`) should suggest the existing workspace names, as it did up to v1.12.x.  ### Actual Behavior  No suggestions are returned. Subcommand names still complete (`tofu workspace <TAB>` lists `list select new delete show`); only positional argument predictions are missing.   ### Steps to Reproduce  The completion protocol can be exercised directly, without a shell:  ```shell cd "$(mktemp -d)" L="tofu workspace select " COM
-
-- **Issue #4647** (2026-10-06): **Crash in plan when lifecycle `destroy` uses an expression with a variable (e.g. `!var.keep`)**
-  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.  ### OpenTofu Version  ```shell OpenTofu v1.12.6 on linux_amd64 ```  ### OpenTofu Configuration Files  ```hcl variable "keep" {   type    = bool   default = true   const   = true }  resource "terraform_data" "example" {   lifecycle {     destroy = !var.keep   } } ```  ### Debug Output  No trace log attached; the crash output is short. Relevant frames:  ``` interface conversion: interface {} is *cty.unknownType, not bool ... github.com/zclconf/go-cty/cty.Value.True(...) 	github.com/zclconf/go-cty@v1.18.0/cty/value_ops.go:429 +0xd3 github.com/zclconf/go-cty/cty.Value.False(...) 	github.com/zclconf/go-cty@v1.18.0/cty/value_ops.go:434 github.com/opentofu/opentofu/internal/tofu.skipDestroyValueFromConstantExpression({0x47c5f78, 0x36acd9804460}) 	github.com/opentofu/opentofu/internal/tofu/node_resource_abstract.go:795 +0x23b github.com/opentofu/opentofu/internal/tofu.(*NodeAbstractResource).shouldSkipDestroy(0x0?) 	github.com/opentofu/opentofu/internal/tofu/node_resource_abstract.go:762 +0x34 github.com/opentofu/opentofu/internal/tofu.(*NodeAbstractResourceInstance).plan(...) 	github.com/opentofu/opentofu/internal/tofu/node_resource_abstract_instance.go:1270 +0x1ae5 github.com/opentofu/opentofu/internal/tofu.(*NodePlannableResourceInstance).managedR
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1419,300 +1419,74 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e735399` (2026-10-13)
-**Commit Message**: Context-based panic handler and stack tracing
+### Incident Patch 1: `041f4abb` (2026-10-19)
+**Commit Message**: Fix planfiles created with symbol libraries
 
-The new runtime uses a *massive* number of nested go-routines. The
-go-runtime overall handles this incredibly well, except for when panics
-occur.
-
-This change tracks all caller go-routine's stack in the context of the
-new runtime and builds a corresponding panic handler.
-
-Due to potential performance concerns, this is only enabled when TF_LOG
-is debug or trace. We can always revisit this decision and expand it if
-needed.
+We had neglected to ensure that the config loader snapshot includes
+symbol library files.
 
 Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-**File**: `internal/lang/eval/internal/configgraph/check_concurrently.go` (modified, +9/-0)
+**File**: `internal/command/e2etest/symbols_test.go` (modified, +2/-0)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 
- 	"github.com/opentofu/opentofu/internal/lang/exprs"
- 	"github.com/opentofu/opentofu/internal/lang/grapheval"
-+	"github.com/opentofu/opentofu/internal/logging"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
- )
- 
-@@ -39,7 +40,9 @@ type CheckGroup struct {
+@@ -24,4 +24,6 @@ func TestSymbolLibraries(t *testing.T) {
+ 	run("init").Success()
+ 	run("plan", `-var=my_items=[""]`, `-var=my_items_unchecked=[""]`).Failure().StderrContains("One or more elements is empty").StderrContains("One or more of the elements in")
+ 	run("plan", `-var=my_items=["foo"]`, `-var=my_items_unchecked=["bar"]`).Success()
++	run("plan", `-out`, `planfile`, `-var=my_items=["foo"]`, `-var=my_items_unchecked=["bar"]`).Success()
++	run("apply", `-auto-approve`, `planfile`).Success()
  }
- 
- func (g *CheckGroup) CheckChild(ctx context.Context, child allChecker) {
-+	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
- 	g.wg.Go(func() {
-+		defer panicHandler()
- 		diags := child.CheckAll(grapheval.ContextWithNewWorker(ctx))
- 		g.mu.Lock()
- 		g.diags = g.diags.Append(diags)
-@@ -48,7 +51,9 @@ func (g *CheckGroup) CheckChild(ctx context.Context, child allChecker) {
- }
- 
- func (g *CheckGroup) CheckValuer(ctx context.Context, v exprs.Valuer) {
-+	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
- 	g.wg.Go(func() {
-+		defer panicHandler()
- 		// We use Value to make sure we're running the same codepath that
- 		// normal evaluation would use, but we only care about the diags.
- 		_, diags := v.Value(grapheval.ContextWithNewWorker(ctx))
-@@ -59,7 +64,9 @@ func (g *CheckGroup) CheckValuer(ctx context.Context, v exprs.Valuer) {
- }
- 
- func (g *CheckGroup) CheckDiagsFunc(ctx context.Context, f func(ctx context.Context) tfdiags.Diagnostics) {
-+	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
- 	g.wg.Go(func() {
-+		defer panicHandler()
- 		diags := f(grapheval.ContextWithNewWorker(ctx))
- 		g.mu.Lock()
- 		g.diags = g.diags.Append(diags)
-@@ -73,7 +80,9 @@ func (g *CheckGroup) CheckDiagsFunc(ctx context.Context, f func(ctx context.Cont
- // but should eventually make zero or more calls to Check* methods on the
- // same [checkGroup] before it returns.
- func (g *CheckGroup) Await(ctx context.Context, cb func(ctx context.Context)) {
-+	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
- 	g.wg.Go(func() {
-+		defer panicHandler()
- 		// We give the waiter its own worker since it may run concurrently
- 		// with other Awaits or with Check* calls.
- 		cb(grapheval.ContextWithNewWorker(ctx))
 ```
 
-**File**: `internal/lang/grapheval/once.go` (modified, +5/-0)
+**File**: `internal/configs/configload/loader_snapshot.go` (modified, +3/-2)
 ```diff
-@@ -13,6 +13,7 @@ import (
+@@ -165,7 +165,7 @@ func (l *loader) makeModuleWalkerSnapshot(snap *Snapshot) configs.ModuleWalker {
+ func (l *loader) addModuleToSnapshot(snap *Snapshot, key string, dir string, sourceAddr string, v *version.Version) hcl.Diagnostics {
+ 	var diags hcl.Diagnostics
  
- 	"github.com/apparentlymart/go-workgraph/workgraph"
+-	primaryFiles, overrideFiles, moreDiags := l.parser.ConfigDirFiles(dir)
++	primaryFiles, overrideFiles, symbolFiles, moreDiags := l.parser.ConfigDirFiles(dir)
+ 	if moreDiags.HasErrors() {
+ 		// Any diagnostics we get here should be already present
+ 		// in diags, so it's weird if we get here but we'll allow it
+@@ -185,9 +185,10 @@ func (l *loader) addModuleToSnapshot(snap *Snapshot, key string, dir string, sou
+ 		Version:    v,
+ 	}
  
-+	"github.com/opentofu/opentofu/internal/logging"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
- )
- 
-@@ -51,6 +52,8 @@ type Once[T any] struct {
- // into the callback function, because it includes internal tracking
- // information.
- func (o *Once[T]) Do(ctx context.Context, f func(ctx context.Context) (T, tfdiags.Diagnostics), rng *tfdiags.SourceRange, label string, labelArgs ...any) (T, tfdiags.Diagnostics) {
-+	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, label, labelArgs...)
-+
- 	worker := WorkerFromContext(ctx)
- 	o.mu.Lock()
- 	if o.promise == nil {
-@@ -69,6 +72,8 @@ func (o *Once[T]) Do(ctx context.Context, f func(ctx context.Context) (T, tfdiag
- 			}
- 		})
- 		workgraph.WithNewAsyncWorker(func(w *workgraph.Worker) {
-+			defer panicHandler()
-+
- 			pprof.SetGoroutineLabels(ctx) // Just in case the caller uses pprof labels to describe what this worker's goal is
- 			ctx := ContextWithWorker(ctx, w)
- 			ret, diags := f(ctx)
+-	files := make([]string, 0, len(primaryFiles)+len(overrideFiles))
++	files := make([]string, 0, len(primaryFiles)+len(overrideFiles)+len(symbolFiles))
+ 	files = append(files, primaryFiles...)
+ 	files = append(files, overrideFiles...)
++	files = append(files, symbolFiles...)
+ 	sources := l.Sources() // should be populated with all the files we need by now
+ 	for _, filePath := range files {
+ 		filename := filepath.Base(filePath)
 ```
 
-**File**: `internal/logging/panic.go` (modified, +56/-18)
+**File**: `internal/configs/parser_config_dir.go` (modified, +3/-3)
 ```diff
-@@ -7,6 +7,7 @@ package logging
- 
- import (
- 	"bytes"
-+	"context"
- 	"fmt"
- 	"os"
- 	"runtime/debug"
-@@ -41,13 +42,6 @@ var panicMutex sync.Mutex
- // PanicHandler must be called as a deferred function, and must be the first
- // defer called at the start of a new goroutine.
- func PanicHandler() {
--	// Have all managed goroutines checkin here, and prevent them from exiting
--	// if there's a panic in progress. While this can't lock the entire runtime
--	// to block progress, we can prevent some cases where OpenTofu may return
--	// early before the panic has been printed out.
--	panicMutex.Lock()
--	defer panicMutex.Unlock()
--
- 	recovered := recover()
- 	panicHandler(recovered, nil, "", nil)
- }
-@@ -79,25 +73,54 @@ func PanicHandlerWithTraceFn() func() {
- // PanicHandlerWithTraceHandlerFn is an enhanced version of PanicHandlerWithTraceFn
- // that supports providing information about the caller
- func PanicHandlerWithTraceHandlerFn() func(caller string, handler func()) {
--	trace := debug.Stack()
-+	traces := [][]byte{debug.Stack()}
- 	return func(caller string, handler func()) {
--		// Have all managed goroutines checkin here, and prevent them from exiting
--		// if there's a panic in progress. While this can't lock the entire runtime
--		// to block progress, we can prevent some cases where OpenTofu may return
--		// early before the panic has been printed out.
--		panicMutex.Lock()
--		defer panicMutex.Unlock()
-+		recovered := recover()
-+		panicHandler(recovered, traces, caller, handler)
-+	}
-+}
- 
-+var panicTrace bool
-+
-+func init() {
-+	panicTrace = os.Getenv("TOFU_PANIC_TRACE") != ""
-+}
-+
-+// PanicHandlerWithContext adds the current stack to the context and builds
-+// a panicHandler in case a recover() is possible.
-+func PanicHandlerWithContext(ctx context.Context, label string, labelArgs ...any) (context.Context, func()) {
-+	if !panicTrace {
-+		// Due to the sheer number of go-routines the new runtime
-+		// deals with, we only enable this panic handler if explicitly requested
-+		return ctx, func() {
-+			recovered := recover()
-+			panicHandler(recovered, nil, fmt.Sprintf(label, labelArgs...), nil)
-+		}
-+	}
-+	stack := debug.Stack()
-+	if label != "" {
-+		labelFmt := fmt.Sprintf("label: %s\n", label)
-+		stack = append([]byte(fmt.Sprintf(labelFmt, labelArgs...)), debug.Stack()...)
-+	}
-+	ctx = ContextWithStack(ctx, stack)
-+	return ctx, func() {
- 		recovered := recover()
--		panicHandler(recovered, trace, caller, handler)
-+		panicHandler(recovered, StacksFromContext(ctx), fmt.Sprintf(label, labelArgs...), nil)
- 	}
+@@ -103,9 +103,9 @@ func (p *Parser) LoadConfigDirWithTests(path string, testDirectory string) (*Mod
+ //
+ // If the given directory does not exist or cannot be read, error diagnostics
+ // are returned. If errors are returned, the resulting lists may be incomplete.
+-func (p Parser) ConfigDirFiles(dir string) (primary, override []string, diags hcl.Diagnostics) {
+-	primary, override, _, _, diags = p.dirFiles(dir, "")
+-	return primary, override, diags
++func (p Parser) ConfigDirFiles(dir string) (primary, override []string, symbols []string, diags hcl.Diagnostics) {
++	primary, override, _, symbols, diags = p.dirFiles(dir, "")
++	return primary, override, symbols, diags
  }
  
--func panicHandler(recovered interface{}, trace []byte, caller string, handler func()) {
-+func panicHandler(recovered interface{}, traces [][]byte, caller string, handler func()) {
- 	if recovered == nil {
- 		return
- 	}
- 
-+	// Have all managed goroutines checkin here, and prevent them from exiting
-+	// if there's a panic in progress. While this can't lock the entire runtime
-+	// to block progress, we can prevent some cases where OpenTofu may return
-+	// early before the panic has been printed out.
-+	panicMutex.Lock()
-+	defer panicMutex.Unlock()
-+
- 	// Given that multiple routines may be spewing to stderr at the same time
- 	// buffer our message to prevent it being split.
- 	buffer := new(bytes.Buffer)
-@@ -111,8 +134,8 @@ func panicHandler(recovered interface{}, trace []byte, caller string, handler fu
- 	// When called from a deferred function, debug.PrintStack will include the
- 	// full stack from the point of the pending panic.
- 	buffer.Write(debug.Stack())
--	if trace != nil {
--		fmt.Fprint(buffer, "With go-routine called from:\n")
-+	for _, trace := range traces {
-+		fmt.Fprint(buffer, "\nWith go-routine called from:\n")
- 		buffer.Write(trace)
- 	}
- 
-@@ -239,3 +262,18 @@ func (l *logPanicWrapper) Debug(msg string, args ...interface{}) {
- 
- 	l.Logger.Debug(msg, args...)
- }
-+
-+type contextKey rune
-+
-+const stackContextKey = contextKey('S')
-+
-+func ContextWithStack(ctx context.Context, stack []byte) context.Context {
-+	currentStacks := StacksFromContext(ctx)
-+	stacks := append([][]byte{stack}, currentStacks...)
-+	return context.WithValue(ctx, stackContextKey, stacks)
-+}
-+
-+func StacksFromContext(ctx context.Context) [][]byte {
-+	value, _ := ctx.Value(stackContextKey).([][]byte)
-+	return value
-+}
-```
-
-**File**: `website/docs/cli/config/environment-variables.mdx` (modified, +24/-0)
-```diff
-@@ -209,3 +209,27 @@ Set `TOFU_CPU_PROFILE` to instruct OpenTofu to write a [Go pprof file](https://p
- TOFU_CPU_PROFILE=./tofu.pprof tofu plan
- go tool pprof -http ./tofu.pprof
- ```
-+
-+## TOFU_PANIC_TRACE
-+
-+:::warning
-+This feature is currently experimental and only impacts the new runtime
-+:::
-+
-+Set `TOFU_PANIC_TRACE` to instruct OpenTofu to provide a full trace of panics across go-routines. This is an expensive option to enable and should only be used as a last resort.
-+
-+```shell
-+TOFU_PANIC_TRACE=1 tofu plan
-+!!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-+< crash header >
-+
-+With go-routine called from:
-+< stacktrace >
-+
-+With go-routine called from:
-+< stacktrace >
-+
-+With go-routine called from:
-+< stacktrace >
-+
-+```
-```
-
----
-
-### Incident Patch 2: `880704ce` (2026-10-14)
-**Commit Message**: Fix panic caused by returning an object containing cty.NilVal
-
-When a workgraph error occurs, we need to be very careful. It returns a zero value (cty.NilVal) and can cause panics if not properly handled. It is not properly handled in configgraph.ModuleInstance.Value and was therefore returning a object containing a cty.NilVal marked as an EvalError.
-
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/lang/eval/internal/configgraph/module_instance.go` (modified, +12/-3)
-```diff
-@@ -96,11 +96,20 @@ func (m *ModuleInstance) Value(ctx context.Context) (cty.Value, tfdiags.Diagnost
- 	// The following is mechanically similar to evaluating an object constructor
- 	// expression gathering all of the output value results into a single
- 	// object, but because we're not using the expression evaluator to do it
--	// we need to explicitly discard indirect diagnostics with
--	// [diagsHandledElsewhere].
-+	// we need to explicitly handle output diagnostics in the case of an evaluation
-+	// error.
- 	attrs := make(map[string]cty.Value, len(m.OutputValuers))
- 	for addr, valuer := range m.OutputValuers {
--		attrs[addr.Name] = diagsHandledElsewhere(valuer.Value(ctx))
-+		val, diags := valuer.Value(ctx)
-+		if diags.HasErrors() {
-+			// Error diagnostics will be reported via CompiledModuleInstance.CheckAll,
-+			// but we still need to handle errors here in order to not produce objects
-+			// containing cty.NilVal
-+			// Alternatively, we could check for the EvalError mark deep, but that is more
-+			// expensive
-+			val = cty.DynamicVal.Mark(exprs.EvalError)
-+		}
-+		attrs[addr.Name] = val
- 	}
- 	return cty.ObjectVal(attrs), nil
- }
+ // ConfigDirFilesWithTests matches ConfigDirFiles except it also returns the
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4736** (closed): Add encryption to context (@lbordowitz)
+- **PR #4735** (2026-10-19): [backport v1.13] Fix planfiles created with symbol libraries (@cam72cam)
+- **PR #4734** (2026-10-19): Fix planfiles created with symbol libraries (@cam72cam)
+- **PR #4724** (closed): Data resources in the new engine (@lbordowitz)
 - **PR #4722** (2026-10-15): Re-define plan mode destroy as refresh + destroy orphans (@cam72cam)
 - **PR #4721** (2026-10-15): Implement refresh-only planning in the new runtime (@cam72cam)
-- **PR #4720** (2026-10-15): Implement refresh in the new runtime (@cam72cam)
-- **PR #4718** (2026-10-15): Factorize managed resource planning in the new runtime (@cam72cam)
-- **PR #4711** (2026-10-14): Enable deposed object tests in new runtime (@cam72cam)
-- **PR #4710** (2026-10-14): CHANGELOG: Prepare for 1.12.8 release (@apparentlymart)
 
 ---
 
@@ -1732,29 +1506,22 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Context-based panic handler and stack tracing
+## X. planfiles created with symbol libraries
 
 **RULE**:
-When implementing operations in `internal/lang/eval/internal/configgraph/check_concurrently.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/command/e2etest/symbols_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e735399`: Context-based panic handler and stack tracing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `041f4abb`: planfiles created with symbol libraries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/lang/eval/internal/configgraph/check_concurrently.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/e2etest/symbols_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/opentofu/opentofu/internal/logging"
-	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
-		defer panicHandler()
-	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
-		defer panicHandler()
-	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
-		defer panicHandler()
-	ctx, panicHandler := logging.PanicHandlerWithContext(ctx, "")
-		defer panicHandler()
+	run("plan", `-out`, `planfile`, `-var=my_items=["foo"]`, `-var=my_items_unchecked=["bar"]`).Success()
+	run("apply", `-auto-approve`, `planfile`).Success()
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1764,4 +1531,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e735399` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `041f4abb` are properly handled with clean fallback behavior.

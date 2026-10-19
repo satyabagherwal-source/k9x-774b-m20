@@ -3400,3 +3400,8 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b0ea1881` | Multi-dimensional audit evidence | 2026-10-19T17:56:33.257Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `a124ebc3` | Multi-dimensional audit evidence | 2026-10-19T17:56:34.824Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `ecc37b37` | Multi-dimensional audit evidence | 2026-10-19T17:56:37.850Z |
+| `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `2ac6a06c` | Multi-dimensional audit evidence | 2026-10-19T18:02:59.289Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `42f15c9b` | Multi-dimensional audit evidence | 2026-10-19T18:02:59.533Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `835550fb` | Multi-dimensional audit evidence | 2026-10-19T18:03:03.259Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `365cb0e4` | Multi-dimensional audit evidence | 2026-10-19T18:03:04.483Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `56225014` | Multi-dimensional audit evidence | 2026-10-19T18:03:58.678Z |
