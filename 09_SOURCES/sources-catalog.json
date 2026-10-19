@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "a697a9fb",
+    "sourceVersion": "78eca881",
     "license": "NOASSERTION",
-    "contentHash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
-    "lastHarvestedAt": "2026-10-19T17:12:08.426Z",
+    "contentHash": "ae58ca77e925ec0055a749056dffb5a6b4ce3c72d5711206ee3f5298adc1d99c",
+    "lastHarvestedAt": "2026-10-19T20:10:37.675Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -8878,5 +8878,25 @@
     "contentHash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
     "lastHarvestedAt": "2026-10-19T20:04:17.394Z",
     "learningId": "learn-github-chrisbanes-skills"
+  },
+  "joreilly-confetti": {
+    "repository": "joreilly/Confetti",
+    "platform": "github",
+    "sourceUrl": "https://github.com/joreilly/Confetti",
+    "sourceVersion": "c517e458",
+    "license": "Apache-2.0",
+    "contentHash": "e2b6f70d35313e8c277e3d1316a674c023ac43992b2fa77508ce52c03639ff06",
+    "lastHarvestedAt": "2026-10-19T20:10:30.876Z",
+    "learningId": "learn-github-joreilly-confetti"
+  },
+  "m0ntydad0n-pseo-engine-oss": {
+    "repository": "m0ntydad0n/pseo-engine-oss",
+    "platform": "github",
+    "sourceUrl": "https://github.com/m0ntydad0n/pseo-engine-oss",
+    "sourceVersion": "945ce349",
+    "license": "Apache-2.0",
+    "contentHash": "68dea21c1e30a75b91d61b21ff9cb3a8b9c61f6e25253b066c802edf4f85538e",
+    "lastHarvestedAt": "2026-10-19T20:10:31.015Z",
+    "learningId": "learn-github-m0ntydad0n-pseo-engine-oss"
   }
 }

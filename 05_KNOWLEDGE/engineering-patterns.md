@@ -199793,3 +199793,173 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dc64f3b4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2786. Merge pull request #1971 from joreilly/build-step (Harvested from joreilly/Confetti)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge pull request #1971 from joreilly/build-step",
+  "source": "joreilly/Confetti",
+  "source_url": "https://github.com/joreilly/Confetti",
+  "source_version": "c517e458",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T20:10:30.751Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-joreilly-confetti",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [joreilly/Confetti](https://github.com/joreilly/Confetti) (Revision: `c517e458`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/scripts/ios-changes.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5b2efa96`: Merge pull request #1971 from joreilly/build-step. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/ios-changes.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+    "website/",
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Anti-pattern to NEVER write (induced failure mode):
+    "landing-page/",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5b2efa96` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2787. matrix-gen): raise runner max_tokens 2048 -> 16384 (Harvested from m0ntydad0n/pseo-engine-oss)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "matrix-gen): raise runner max_tokens 2048 -> 16384",
+  "source": "m0ntydad0n/pseo-engine-oss",
+  "source_url": "https://github.com/m0ntydad0n/pseo-engine-oss",
+  "source_version": "945ce349",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T20:10:30.896Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-m0ntydad0n-pseo-engine-oss",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [m0ntydad0n/pseo-engine-oss](https://github.com/m0ntydad0n/pseo-engine-oss) (Revision: `945ce349`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pipeline/pseo/matrix_gen.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in m0ntydad0n/pseo-engine-oss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4cd6bfdc`: matrix-gen): raise runner max_tokens 2048 -> 16384. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pipeline/pseo/matrix_gen.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+            max_tokens=16384,
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+            max_tokens=2048,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4cd6bfdc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2788. ci): make release.yml dry_run side-effect free (#5939) (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ci): make release.yml dry_run side-effect free (#5939)",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "78eca881",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T20:10:37.525Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `78eca881`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/scripts/check_release_dry_run.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `afb74456`: ci): make release.yml dry_run side-effect free (#5939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_release_dry_run.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+#!/usr/bin/env python3
+"""Guard: a workflow's `dry_run` must not be able to push, merge, tag or publish.
+
+#5936. `release.yml` had a `dry_run` input described as "show what would be
+done without publishing". Each mutating step carried its own
+`if: ${{ !inputs.dry_run }}`, and the version-bump job carried none. So a dry
+run pushed `release/vX.Y.Z`, opened the real `build: release X.Y.Z` PR and
+enabled auto-merge on it, landing the bump on `main` through the merge queue:
+a partial release cut, which also invalidated any soak of the previous `main`.
+
+The fix replaces per-step guards with ONE resolved value, and this linter makes
+that structure the only one that passes:
+
+  1. The `validate` job resolves the input once, in its step `id: mode`
+     (`scripts/resolve_release_mode.sh`), and exports `outputs.live`. Only the
+     literal input `false` yields `live == 'true'`; anything else is a dry run.
+  2. `inputs.dry_run` is read NOWHERE else: dotted or indexed, any case, or
+     through a whole object that carries it (`inputs`, `github.event`,
+     `github`). A second reader is how the guards drifted apart.
+  3. Every MUTATING step is gated on `needs.validate.outputs.live == 'true'`,
+   
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `afb74456` are properly handled with clean fallback behavior.

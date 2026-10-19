@@ -3468,3 +3468,6 @@ Every entry in this ledger must capture:
 | `learn-github-nometria-sitemap-generator` | `https://github.com/nometria/sitemap-generator` | `6d8cae81` | Multi-dimensional audit evidence | 2026-10-19T20:04:12.685Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `b0d941a5` | Multi-dimensional audit evidence | 2026-10-19T20:04:17.394Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `dc64f3b4` | Multi-dimensional audit evidence | 2026-10-19T20:04:19.594Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `c517e458` | Multi-dimensional audit evidence | 2026-10-19T20:10:30.876Z |
+| `learn-github-m0ntydad0n-pseo-engine-oss` | `https://github.com/m0ntydad0n/pseo-engine-oss` | `945ce349` | Multi-dimensional audit evidence | 2026-10-19T20:10:31.015Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `78eca881` | Multi-dimensional audit evidence | 2026-10-19T20:10:37.675Z |

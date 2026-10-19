@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:04:19.599Z",
+  "last_updated": "2026-10-19T20:10:37.682Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4414,14 +4414,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
-      "verified_at": "2026-10-19T17:12:08.433Z",
+      "content_hash": "ae58ca77e925ec0055a749056dffb5a6b4ce3c72d5711206ee3f5298adc1d99c",
+      "verified_at": "2026-10-19T20:10:37.682Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:12:08.433Z"
+      "last_updated": "2026-10-19T20:10:37.682Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -13362,6 +13362,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:04:17.399Z"
+    },
+    "joreilly/Confetti": {
+      "repository": "joreilly/Confetti",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-joreilly-confetti",
+      "content_hash": "e2b6f70d35313e8c277e3d1316a674c023ac43992b2fa77508ce52c03639ff06",
+      "verified_at": "2026-10-19T20:10:30.882Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:10:30.882Z"
+    },
+    "m0ntydad0n/pseo-engine-oss": {
+      "repository": "m0ntydad0n/pseo-engine-oss",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-m0ntydad0n-pseo-engine-oss",
+      "content_hash": "68dea21c1e30a75b91d61b21ff9cb3a8b9c61f6e25253b066c802edf4f85538e",
+      "verified_at": "2026-10-19T20:10:31.021Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:10:31.021Z"
     }
   },
   "repos": {

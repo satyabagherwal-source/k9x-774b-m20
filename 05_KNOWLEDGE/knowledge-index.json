@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:04:19.565Z",
-  "total_verified_learnings": 903,
+  "last_updated": "2026-10-19T20:10:37.608Z",
+  "total_verified_learnings": 905,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9974,8 +9974,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "a697a9fb",
-      "content_hash": "005f307b0e93607d7c94f4ff35826fd7d5d559f438dab644c238207638c010f5",
+      "source_version": "78eca881",
+      "content_hash": "ae58ca77e925ec0055a749056dffb5a6b4ce3c72d5711206ee3f5298adc1d99c",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -10003,6 +10003,11 @@
           "number": 2703,
           "title": "test: cut chain-collapse sim runtime and keep ping lockfile in sync (#5935)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2788,
+          "title": "ci): make release.yml dry_run side-effect free (#5939)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10010,7 +10015,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:12:08.367Z",
+      "verified_at": "2026-10-19T20:10:37.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26191,22 +26196,35 @@
     "learn-github-joreilly-confetti": {
       "learning_id": "learn-github-joreilly-confetti",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "joreilly-confetti",
+      "source": "joreilly/Confetti",
+      "repository": "joreilly/Confetti",
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "HEAD",
-      "content_hash": "0237d0986b185cedc57bb4b95939d1032b37429804fa93c58524a3bcce852313",
+      "source_version": "c517e458",
+      "content_hash": "e2b6f70d35313e8c277e3d1316a674c023ac43992b2fa77508ce52c03639ff06",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2786,
+          "title": "Merge pull request #1971 from joreilly/build-step",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.726Z"
+      "verified_at": "2026-10-19T20:10:30.821Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-joreilly-peopleinspace": {
       "learning_id": "learn-github-joreilly-peopleinspace",
@@ -55988,22 +56006,36 @@
     "learn-github-m0ntydad0n-pseo-engine-oss": {
       "learning_id": "learn-github-m0ntydad0n-pseo-engine-oss",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "m0ntydad0n/pseo-engine-oss",
       "repository": "m0ntydad0n/pseo-engine-oss",
       "slug": "m0ntydad0n-pseo-engine-oss",
       "platform": "github",
       "source_url": "https://github.com/m0ntydad0n/pseo-engine-oss",
-      "source_version": "main",
-      "content_hash": "ecb252278bf1ab951b65c5262cf84ee313a23843bd6b1d8357fba098b4bd625a",
+      "source_version": "945ce349",
+      "content_hash": "68dea21c1e30a75b91d61b21ff9cb3a8b9c61f6e25253b066c802edf4f85538e",
       "dossier_path": "07_PROJECT_LEARNING/m0ntydad0n-pseo-engine-oss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/m0ntydad0n-pseo-engine-oss-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2787,
+          "title": "matrix-gen): raise runner max_tokens 2048 -> 16384",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:10:30.967Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sundios-seo-dashboard": {
       "learning_id": "learn-github-sundios-seo-dashboard",
@@ -91909,6 +91941,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:04:19.557Z"
+    },
+    "rule-2786": {
+      "learning_id": "rule-2786",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2786,
+      "title": "Merge pull request #1971 from joreilly/build-step",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "c517e458",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:10:30.821Z"
+    },
+    "rule-2787": {
+      "learning_id": "rule-2787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2787,
+      "title": "matrix-gen): raise runner max_tokens 2048 -> 16384",
+      "source_url": "https://github.com/m0ntydad0n/pseo-engine-oss",
+      "source_version": "945ce349",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:10:30.967Z"
+    },
+    "rule-2788": {
+      "learning_id": "rule-2788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2788,
+      "title": "ci): make release.yml dry_run side-effect free (#5939)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "78eca881",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:10:37.600Z"
     }
   },
   "aliases": {
