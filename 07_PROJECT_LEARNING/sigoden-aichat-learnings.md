@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigoden-aichat-learnings.md`  
+> **Source**: github ([https://github.com/sigoden/aichat](https://github.com/sigoden/aichat))  
+> **Source Version**: `82976d34`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T00:48:15.417Z  
+> **Learning ID**: `learn-github-sigoden-aichat`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): sigoden/aichat
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigoden-aichat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigoden/aichat](https://github.com/sigoden/aichat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:46:29.297Z  
+> **Harvest Timestamp**: 2026-10-19T00:48:15.076Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: All-in-one LLM CLI tool featuring Shell Assistant, Chat-REPL, RAG, AI Tools & Agents, with access to OpenAI, Claude, Gemini, Ollama, Groq, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10484 stars
+- **Stars / Engagement**: 10504 stars
 
 ---
 
@@ -1222,534 +1236,6 @@ pub fn load_protocol_path(
 
 ```
 
-### Core Architecture Module: `src/utils/mod.rs`
-```
-mod abort_signal;
-mod clipboard;
-mod command;
-mod crypto;
-mod html_to_md;
-mod input;
-mod loader;
-mod path;
-mod render_prompt;
-mod request;
-mod spinner;
-mod variables;
-
-pub use self::abort_signal::*;
-pub use self::clipboard::set_text;
-pub use self::command::*;
-pub use self::crypto::*;
-pub use self::html_to_md::*;
-pub use self::input::*;
-pub use self::loader::*;
-pub use self::path::*;
-pub use self::render_prompt::render_prompt;
-pub use self::request::*;
-pub use self::spinner::*;
-pub use self::variables::*;
-
-use anyhow::{Context, Result};
-use fancy_regex::Regex;
-use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
-use is_terminal::IsTerminal;
-use std::borrow::Cow;
-use std::sync::LazyLock;
-use std::{env, path::PathBuf, process};
-use unicode_segmentation::UnicodeSegmentation;
-
-pub static CODE_BLOCK_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?ms)```\w*(.*)```").unwrap());
-pub static THINK_TAG_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?s)^\s*<think>.*?</think>(\s*|$)").unwrap());
-pub static IS_STDOUT_TERMINAL: LazyLock<bool> = LazyLock::new(|| std::io::stdout().is_terminal());
-pub static NO_COLOR: LazyLock<bool> = LazyLock::new(|| {
-    env::var("NO_COLOR")
-        .ok()
-        .and_then(|v| parse_bool(&v))
-        .unwrap_or_default()
-        || !*IS_STDOUT_TERMINAL
-});
-
-pub fn now() -> String {
-    chrono::Local::now().to_rfc3339_opts(chrono::SecondsFormat::Secs, false)
-}
-
-pub fn now_timestamp() -> i64 {
-    chrono::Local::now().timestamp()
-}
-
-pub fn get_env_name(key: &str) -> String {
-    format!("{}_{key}", env!("CARGO_CRATE_NAME"),).to_ascii_uppercase()
-}
-
-pub fn normalize_env_name(value: &str) -> String {
-    value.replace('-', "_").to_ascii_uppercase()
-}
-
-pub fn parse_bool(value: &str) -> Option<bool> {
-    match value {
-        "1" | "true" => Some(true),
-        "0" | "false" => Some(false),
-        _ => None,
-    }
-}
-
-pub fn estimate_token_length(text: &str) -> usize {
-    let words: Vec<&str> = text.unicode_words().collect();
-    let mut output: f32 = 0.0;
-    for word in words {
-        if word.is_ascii() {
-            output += 1.3;
-        } else {
-            let count = word.chars().count();
-            if count == 1 {
-                output += 1.0
-            } else {
-                output += (count as f32) * 0.5;
-            }
-        }
-    }
-    output.ceil() as usize
-}
-
-pub fn strip_think_tag(text: &str) -> Cow<'_, str> {
-    THINK_TAG_RE.replace_all(text, "")
-}
-
-pub fn extract_code_block(text: &str) -> &str {
-    CODE_BLOCK_RE
-        .captures(text)
-        .ok()
-        .and_then(|v| v?.get(1).map(|v| v.as_str().trim()))
-        .unwrap_or(text)
-}
-
-pub fn convert_option_string(value: &str) -> Option<String> {
-    if value.is_empty() {
-        None
-    } else {
-        Some(value.to_string())
-    }
-}
-
-pub fn fuzzy_filter<T, F>(values: Vec<T>, get: F, pattern: &str) -> Vec<T>
-where
-    F: Fn(&T) -> &str,
-{
-    let matcher = SkimMatcherV2::default();
-    let mut list: Vec<(T, i64)> = values
-        .into_iter()
-        .filter_map(|v| {
-            let score = matcher.fuzzy_match(get(&v), pattern)?;
-            Some((v, score))
-        })
-        .collect();
-    list.sort_unstable_by(|a, b| b.1.cmp(&a.1));
-    list.into_iter().map(|(v, _)| v).collect()
-}
-
-pub fn pretty_error(err: &anyhow::Error) -> String {
-    let mut output = vec![];
-    output.push(format!("Error: {err}"));
-    let causes: Vec<_> = err.chain().skip(1).collect();
-    let causes_len = causes.len();
-    if causes_len > 0 {
-        output.push("\nCaused by:".to_string());
-        if causes_len == 1 {
-            output.push(format!("    {}", indent_text(causes[0], 4).trim()));
-        } else {
-            for (i, cause) in causes.into_iter().enumerate() {
-                output.push(format!("{i:5}: {}", indent_text(cause, 7).trim()));
-            }
-        }
-    }
-    output.join("\n")
-}
-
-pub fn indent_text<T: ToString>(s: T, size: usize) -> String {
-    let indent_str = " ".repeat(size);
-    s.to_string()
-        .split('\n')
-        .map(|line| format!("{indent_str}{line}"))
-        .collect::<Vec<String>>()
-        .join("\n")
-}
-
-pub fn error_text(input: &str) -> String {
-    color_text(input, nu_ansi_term::Color::Red)
-}
-
-pub fn warning_text(input: &str) -> String {
-    color_text(input, nu_ansi_term::Color::Yellow)
-}
-
-pub fn color_text(input: &str, color: nu_ansi_term::Color) -> String {
-    if *NO_COLOR {
-        return input.to_string();
-    }
-    nu_ansi_term::Style::new()
-        .fg(color)
-        .paint(input)
-        .to_string()
-}
-
-pub fn dimmed_text(input: &str) -> String {
-    if *NO_COLOR {
-        return input.to_string();
-    }
-    nu_ansi_term::Style::new().dimmed().paint(input).to_string()
-}
-
-pub fn multiline_text(input: &str) -> String {
-    input
-        .split('\n')
-        .enumerate()
-        .map(|(i, v)| {
-            if i == 0 {
-                v.to_string()
-            } else {
-                format!(".. {v}")
-            }
-        })
-        .collect::<Vec<String>>()
-        .join("\n")
-}
-
-pub fn temp_file(prefix: &str, suffix: &str) -> PathBuf {
-    env::temp_dir().join(format!(
-        "{}-{}{prefix}{}{suffix}",
-        env!("CARGO_CRATE_NAME").to_lowercase(),
-        process::id(),
-        uuid::Uuid::new_v4()
-    ))
-}
-
-pub fn is_url(path: &str) -> bool {
-    path.starts_with("http://") || path.starts_with("https://")
-}
-
-pub fn set_proxy(
-    mut builder: reqwest::ClientBuilder,
-    proxy: &str,
-) -> Result<reqwest::ClientBuilder> {
-    builder = builder.no_proxy();
-    if !proxy.is_empty() && proxy != "-" {
-        builder = builder
-            .proxy(reqwest::Proxy::all(proxy).with_context(|| format!("Invalid proxy `{proxy}`"))?);
-    };
-    Ok(builder)
-}
-
-pub fn decode_bin<T: serde::de::DeserializeOwned>(data: &[u8]) -> Result<T> {
-    let (v, _) = bincode::serde::decode_from_slice(data, bincode::config::legacy())?;
-    Ok(v)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    #[cfg(not(target_os = "windows"))]
-    fn test_safe_join_path() {
-        assert_eq!(
-            safe_join_path("/home/user/dir1", "files/file1"),
-            Some(PathBuf::from("/home/user/dir1/files/file1"))
-        );
-        assert!(safe_join_path("/home/user/dir1", "/files/file1").is_none());
-        assert!(safe_join_path("/home/user/dir1", "../file1").is_none());
-    }
-
-    #[test]
-    #[cfg(target_os = "windows")]
-    fn test_safe_join_path() {
-        assert_eq!(
-            safe_join_path("C:\\Users\\user\\dir1", "files/file1"),
-            Some(PathBuf::from("C:\\Users\\user\\dir1\\files\\file1"))
-        );
-        assert!(safe_join_path("C:\\Users\\user\\dir1", "/files/file1").is_none());
-        assert!(safe_join_path("C:\\Users\\user\\dir1", "../file1").is_none());
-    }
-}
-
-```
-
-### Core Architecture Module: `src/utils/path.rs`
-```
-use std::path::{Component, Path, PathBuf};
-
-use anyhow::{bail, Result};
-use indexmap::IndexSet;
-use path_absolutize::Absolutize;
-
-pub fn safe_join_path<T1: AsRef<Path>, T2: AsRef<Path>>(
-    base_path: T1,
-    sub_path: T2,
-) -> Option<PathBuf> {
-    let base_path = base_path.as_ref();
-    let sub_path = sub_path.as_ref();
-    if sub_path.is_absolute() {
-        return None;
-    }
-
-    let mut joined_path = PathBuf::from(base_path);
-
-    for component in sub_path.components() {
-        if Component::ParentDir == component {
-            return None;
-        }
-        joined_path.push(component);
-    }
-
-    if joined_path.starts_with(base_path) {
-        Some(joined_path)
-    } else {
-        None
-    }
-}
-
-pub async fn expand_glob_paths<T: AsRef<str>>(
-    paths: &[T],
-    bail_non_exist: bool,
-) -> Result<IndexSet<String>> {
-    let mut new_paths = IndexSet::new();
-    for path in paths {
-        let (path_str, suffixes, current_only) = parse_glob(path.as_ref())?;
-        list_files(
-            &mut new_paths,
-            Path::new(&path_str),
-            suffixes.as_ref(),
-            current_only,
-            bail_non_exist,
-        )
-        .await?;
-    }
-    Ok(new_paths)
-}
-
-pub fn list_file_names<T: AsRef<Path>>(dir: T, ext: &str) -> Vec<String> {
-    match std::fs::read_dir(dir.as_ref()) {
-        Ok(rd) => {
-            let mut names = vec![];
-            for entry in rd.flatten() {
-                let name = entry.file_name();
-                if let Some(name) = name.to_string_lossy().strip_suffix(ext) {
-                    names.push(name.to_string());
-                }
-            }
-            names.sort_unstable();
-            names
-        }
-        Err(_) => vec![],
-    }
-}
-
-pub fn get_patch_extension(path: &str) -> Option<String> {
-    Path::new(&path)
-        .extension()
-        .map(|v| v.to_string_lossy().to_lowercase())
-}
-
-pub fn to_absolute_path(path: &str) -> Result<String> {
-    Ok(Path::new(&path).absolutize()?.display().to_string())
-}
-
-pub fn resolve_home_dir(path: &str) -> String {
-    let mut path = path.to_string();
-    if path.starts_with("~/") || path.starts_with("~\\") {
-        if let Some(home_dir) = dirs::home_dir() {
-            path.replace_range(..1, &home_dir.display().to_string());
-        }
-    }
-    path
-}
-
-fn parse_glob(path_str: &str) -> Result<(String, Option<Vec<String>>, bool)> {
-    let glob_result =
-        if let Some(start) = path_str.find("/**/*.").or_else(|| path_str.find(r"\**\*.")) {
-            Some((start, 6, false))
-        } else if let Some(start) = path_str.find("**/*.").or_else(|| path_str.find(r"**\*.")) {
-            if start == 0 {
-                Some((start, 5, false))
-            } else {
-                None
-            }
-        } else if let Some(start) = path_str.find("/*.").or_else(|| path_str.find(r"\*.")) {
-            Some((start, 3, true))
-        } else if let Some(start) = path_str.find("*.") {
-            if start == 0 {
-                Some((start, 2, true))
-            } else {
-                None
-            }
-        } else {
-            None
-        };
-    if let Some((start, offset, current_only)) = glob_result {
-        let mut base_path = path_str[..start].to_string();
-        if base_path.is_empty() {
-            base_path = if path_str
-                .chars()
-                .next()
-                .map(|v| v == '/')
-                .unwrap_or_default()
-            {
-                "/"
-            } else {
-                "."
-            }
-            .into();
-        }
-
-        let extensions = if let Some(curly_brace_end) = path_str[start..].find('}') {
-            let end = start + curly_brace_end;
-            let extensions_str = &path_str[start + offset..end + 1];
-            if extensions_str.starts_with('{') && extensions_str.ends_with('}') {
-                extensions_str[1..extensions_str.len() - 1]
-                    .split(',')
-                    .map(|s| s.to_string())
-                    .collect::<Vec<String>>()
-            } else {
-                bail!("Invalid path '{path_str}'");
-            }
-        } else {
-            let extensions_str = &path_str[start + offset..];
-            vec![extensions_str.to_string()]
-        };
-        let extensions = if extensions.is_empty() {
-            None
-        } else {
-            Some(extensions)
-        };
-        Ok((base_path, extensions, current_only))
-    } else if path_str.ends_with("/**") || path_str.ends_with(r"\**") {
-        Ok((path_str[0..path_str.len() - 3].to_string(), None, false))
-    } else {
-        Ok((path_str.to_string(), None, false))
-    }
-}
-
-#[async_recursion::async_recursion]
-async fn list_files(
-    files: &mut IndexSet<String>,
-    entry_path: &Path,
-    suffixes: Option<&Vec<String>>,
-    current_only: bool,
-    bail_non_exist: bool,
-) -> Result<()> {
-    if !entry_path.exists() {
-        if bail_non_exist {
-            bail!("Not found '{}'", entry_path.display());
-        } else {
-            return Ok(());
-        }
-    }
-    if entry_path.is_dir() {
-        let mut reader = tokio::fs::read_dir(entry_path).await?;
-        while let Some(entry) = reader.next_entry().await? {
-            let path = entry.path();
-            if path.is_dir() {
-                if !current_only {
-                    list_files(files, &path, suffixes, current_only, bail_non_exist).await?;
-                }
-            } else {
-                add_file(files, suffixes, &path);
-            }
-        }
-    } else {
-        add_file(files, suffixes, entry_path);
-    }
-    Ok(())
-}
-
-fn add_file(files: &mut IndexSet<String>, suffixes: Option<&Vec<String>>, path: &Path) {
-    if is_valid_extension(suffixes, path) {
-        let path = path.display().to_string();
-        if !files.contains(&path) {
-            files.insert(path);
-        }
-    }
-}
-
-fn is_valid_extension(suffixes: Option<&Vec<String>>, path: &Path) -> bool {
-    if let Some(suffixes) = suffixes {
-        if !suffixes.is_empty() {
-            if let Some(extension) = path.extension().map(|v| v.to_string_lossy().to_string()) {
-                return suffixes.contains(&extension);
-            }
-            return false;
-        }
-    }
-    true
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parse_glob() {
-        assert_eq!(parse_glob("dir").unwrap(), ("dir".into(), None, false));
-        assert_eq!(parse_glob("dir/**").unwrap(), ("dir".into(), None, false));
-        assert_eq!(
-            parse_glob("dir/file.md").unwrap(),
-            ("dir/file.md".into(), None, false)
-        );
-        assert_eq!(
-            parse_glob("**/*.md").unwrap(),
-            (".".into(), Some(vec!["md".into()]), false)
-        );
-        assert_eq!(
-            parse_glob("/**/*.md").unwrap(),
-            ("/".into(), Some(vec!["md".into()]), false)
-        );
-        assert_eq!(
-            parse_glob("dir/**/*.md").unwrap(),
-            ("dir".into(), Some(vec!["md".into()]), false)
-        );
-        assert_eq!(
-            parse_glob("dir/**/*.{md,txt}").unwrap(),
-            ("dir".into(), Some(vec!["md".into(), "txt".into()]), false)
-        );
-        assert_eq!(
-            parse_glob("C:\\dir\\**\\*.{md,txt}").unwrap(),
-            (
-                "C:\\dir".into(),
-                Some(vec!["md".into(), "txt".into()]),
-                false
-            )
-        );
-        assert_eq!(
-            parse_glob("*.md").unwrap(),
-            (".".into(), Some(vec!["md".into()]), true)
-        );
-        assert_eq!(
-            parse_glob("/*.md").unwrap(),
-            ("/".into(), Some(vec!["md".into()]), true)
-        );
-        assert_eq!(
-            parse_glob("dir/*.md").unwrap(),
-            ("dir".into(), Some(vec!["md".into()]), true)
-        );
-        assert_eq!(
-            parse_glob("dir/*.{md,txt}").unwrap(),
-            ("dir".into(), Some(vec!["md".into(), "txt".into()]), true)
-        );
-        assert_eq!(
-            parse_glob("C:\\dir\\*.{md,txt}").unwrap(),
-            (
-                "C:\\dir".into(),
-                Some(vec!["md".into(), "txt".into()]),
-                true
-            )
-        );
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1761,44 +1247,9 @@ mod tests {
   **Post-Mortem & Fix Analysis**:
   > Have you tried using `.model openai:gpt-4-vision-preview` instead? I uploaded an image file to that OK.
   > 1. After #270 merged, you can use an image with an uppercase extension. But now, you should change `.PNG` to `.png` to make it work. 2. Only models that support vision can use image files. Make sure that the model you use is `openai:gpt-4-vision-preview`.
-  > Thanks for the explanation. It works now with lowercase extension name and GPT4V model. So this `.file` command is designed only for image files working with GPT4V? The GPT4 model is able to process different file types, like `docx` or `pdf`. Is there any way to use it with `aichat`?
 
 - **Issue #266** (2023-12-13): **User is told to use redundant `.clear session`**
   *Symptoms*: It should say `.exit session` as mentioned in https://github.com/sigoden/aichat/releases/tag/v0.9.0  ![error](https://github.com/sigoden/aichat/assets/12832280/b81a4b58-4647-4239-b78f-4bbef7230846)  (and there should not be a question mark as it is a statement not a question)  - os version: Debian 12 - aichat version: 0.11.0 - terminal version: Kitty 
-
-- **Issue #261** (2023-12-07): **Command mode is not opening an existing sessions when piping is used**
-  *Symptoms*: I have a session named `test` which I can initiate using the following command:  ```bash $ aichat -s test Welcome to aichat 0.11.0 Type ".help" for more information. test） ```  This command functions correctly. However, when I attempt to open the session using piping, it does not work as expected, the session does not open and I return to the command prompt:  ```bash $ echo 'hello' | aichat -s test Hello! How can I assist you today? david@mycomputer:~$ ```  According to an example provided in the [README](https://github.com/sigoden/aichat#command), this functionality should be operational:  ```bash cat config.json | aichat -s i18n # Read stdin with a session ```  **Environment details:** - Operating System version: Debian 12 - aichat version: 0.11.0 - Terminal emulator version: kitty 0.26.5
-  **Post-Mortem & Fix Analysis**:
-  > Aichat will only enter REPL mode when there is no input. ``` echo hello | aichat     # command mode aichat hello            # command mode aichat                  # repl mode ```  If you want to use file in session, please use `.file` command  ``` Usage: .file <file>... [-- text...]  .file message.txt .file config.yaml -- convert to toml ```
-  > Thanks for the updated info, but it does not explain what the following from the README does:  ``` cat config.json | aichat -s i18n # Read stdin with a session ```  Maybe I just not understanding properly, thanks for the amazing project!
-  > Session can be used not only in REPL mode, but also in command mode  Use REAME  [.session - context-aware conversation](https://github.com/sigoden/aichat#session---context-aware-conversation) as an example: ``` model: openai:gpt-3.5-turbo temperature: null messages: - role: user   content: 1 to 5, odd only - role: assistant   content: 1, 3, 5 - role: user   content: to 7 - role: assistant   content: 1, 3, 5, 7 data_urls: {} ``` ``` $ echo to 11 | aichat -s demo 1, 3, 5, 7, 9, 11 ``` 
-
-- **Issue #260** (2023-12-07): **Broken prompt symbol in Gnome terminal and Kitty**
-  *Symptoms*: EDIT: I just found https://github.com/sigoden/aichat/issues/248, but it is closed. How do I change the prompt? I am not going to change my choice of fonts, they are the default in Debian so should be considered mainstream. Thanks!  I just installed aichat using Cargo and the prompt looks messed up in Gnome Terminal and Kitty:  ![image](https://github.com/sigoden/aichat/assets/12832280/acf01e33-7ca3-4f08-9c09-6cb951c2af89)  ![image](https://github.com/sigoden/aichat/assets/12832280/0733cc13-8a0b-4678-9b21-300befbe9be3)  I am using Debian 12 with all the default font settings. I have Nerd Fonts symbols only installed, and they work great in all the TUI apps that use them.  On your website there are similar artefacts. I am aware this is some kind of system config issue on my side BUT it has not happened on any other website or app, so something funny is going on?  ![image](https://github.com/sigoden/aichat/assets/12832280/51f806eb-c1a7-472a-8298-8dbf2ac3e194) 
-
-- **Issue #257** (2023-12-07): **Piping a file on macOS often results in an error**
-  *Symptoms*: **Describe the bug** Thank you for building aichat!  I am running into a strange issue - if I do something like (apologies for the basic example):  ```shell cat file | aichat -r shell "Give me the number of lines in each file" ```  I get an output of:  ``` ⠋ Generating   Failed to initialize input reader  Failed to send ReplyEvent::Done  Caused by:     sending on a disconnected channel ```  If, on the other hand, I am to run:  ```shell aichat --file o -r shell "Give me the number of lines in each file" ```  I correctly receive an output.  **To Reproduce** Pipe something to `aichat` on macOS.  **Expected behavior** Expect it to behave the same as using `--file`.  **Screenshots/Logs** ![CleanShot 2023-12-02 at 23 05 55@2x](https://github.com/sigoden/aichat/assets/47771/2d61fd36-c46b-496b-b0bc-6ebab729458c)   **Environment (please complete the following information):** - os version: macOS 14.1.2 - aichat version: 0.11.0 - terminal version: Kitty 0.31.0  **Additional context**  - The shell role is the same as the one on the wiki.
-  **Post-Mortem & Fix Analysis**:
-  > Same problem
-  > @ahmedre @jacobaraujo7 I can't reproduce the problem on my mac. Clould your provide more details?  - Is this error reproducible? - Will there be an error if run with `-S` option? - Will there be an error if use other terminal app other than kitty? 
-  > thank you @sigoden  1. yes, this happens always. 2. everything works fine if run with `-S` 3. tried with iTerm and same problem. tried with macOS built in terminal and same problem.
-
-- **Issue #248** (2023-11-20): **REPL prompt characters do not render with common fonts**
-  *Symptoms*: **Describe the bug** The REPL prompt (`src/repl/prompt.rs`) uses some rare characters that are not supported by most fonts and render as a square:   - ）U+FF09 (FULLWIDTH RIGHT PARENTHESIS)   - 〉U+3009 (RIGHT ANGLE BRACKET)  **To Reproduce** I am using the fonts Noto Sans Mono, Noto Color Emoji, and Deja Vu Sans Mono. I also notice these characters are not available in Symbols Nerd Font.   **Expected behavior** Expected the characters to render in standard fonts.  **Screenshots/Logs** ![screenshot](https://github.com/sigoden/aichat/assets/7788417/6841629e-e248-4678-8ff0-e8f8e2cce1de)  **Environment (please complete the following information):** - os version: Arch - aichat version: 0.10.0 - terminal version: urxvt 9.31
-  **Post-Mortem & Fix Analysis**:
-  > I think this is probably your terminal settings.  Deja Vu Sans Mono renders perfectly here. You'll want to be sure to be running a terminal that can display those characters.  ``` $ echo $TERM xterm-256color  $ echo $LANG en_US.UTF-8 ```
-  > @xytroyzy provided a great answer.
-  > ``` $ echo $TERM      rxvt-unicode-256color $ echo $LANG en_US.UTF-8 $ fc-list ':charset=3009 ff09' /usr/share/fonts/noto/NotoSansNewTaiLue-Bold.ttf: Noto Sans New Tai Lue:style=Bold /usr/share/fonts/noto/NotoSansNewTaiLue-Regular.ttf: Noto Sans New Tai Lue:style=Regular /usr/share/fonts/noto/NotoSansNewTaiLue-Medium.ttf: Noto Sans New Tai Lue,Noto Sans New Tai Lue Medium:style=Medium,Regular $ pacman -Qqe | grep -E 'ttf|fonts'  gnu-free-fonts noto-fonts noto-fonts-emoji ttf-dejavu ttf-inconsolata ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-mono ```  As you can see I have a number of Arch font packages installed and the only font that has both characters is NotoSansNewTaiLue, a font in the Southeast Asian New Tai Lue script.  @sigoden Sorry to tag you but could you respond or reopen to prevent another issue?  @xytroyzy Could you please try the `fc-list ':charset=3009 ff09'` line to see if it includes your DejaVu?
-
-- **Issue #237** (2023-11-08): **Error: Invalid model 'gpt-4'**
-  *Symptoms*: **Describe the bug** Any call with model gpt-4 or gpt-4-1106-preview results in  Error: Invalid model 'gpt-4'  **To Reproduce** ```shell aichat --model gpt-4 --info ``` or ```shell aichat --model gpt-4 "What is the capital of France?" ``` or even ```shell  aichat --model gpt-3.5-turbo --info ```  **Environment (please complete the following information):** - os version: Ubuntu 22.04 in WSL - aichat version: 0.10.0 - terminal version: Windows Terminal  **Additional context** I had a network error: ```shell Error: Failed to fetch stream  Caused by:     Request failed, Bad gateway. ``` before upgrading ( I can't remember if I was at 0.8.0 or 0.9.0). so I upgraded and the current behaviour replaced the previous one.
-  **Post-Mortem & Fix Analysis**:
-  > Please run 'aichat --list-models' and choose one from the list
-  > You may have missed the `openai:` prefix. try `openai:gpt-4`
-  > Sorry about that, I was so used to the old pattern that I didn't see those `openai:` on the left. Thanks!
-
-- **Issue #229** (2023-11-08): **Spurious line endings**
-  *Symptoms*: **Describe the bug** After some recent new line fixes, aichat is giving new lines randomly when it should not be there. Using openai gpt-3.5-turbo  **To Reproduce** prompt: `write code to create a race condition in rust` there are spurious new lines everywhere  **Expected behavior** correct response without extra new lines  **Screenshots/Logs** ![image](https://github.com/sigoden/aichat/assets/2500570/b12998e7-452c-451d-b3ba-02b4504d615e)   **Environment (please complete the following information):** - os version: Manjaro 6.1.60-1 on X11 - aichat version: latest commit - terminal version: konsole 23.08.2  **Additional context** Line endings are not from openai because `.copy` does not have them, they are only displayed on the terminal
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1815,7 +1266,41 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cce9901` (2025-08-02)
+### Incident Patch 1: `c354f77b` (2025-07-29)
+**Commit Message**: feat: gemini pass API key in header for security (#1360)
+
+Co-authored-by: Aman Shaw <[REDACTED_EMAIL]>
+Co-authored-by: aman <[REDACTED_EMAIL]>
+
+**File**: `src/client/gemini.rs` (modified, +5/-4)
+```diff
+@@ -52,16 +52,17 @@ fn prepare_chat_completions(
+     };
+ 
+     let url = format!(
+-        "{}/models/{}:{}?key={}",
++        "{}/models/{}:{}",
+         api_base.trim_end_matches('/'),
+         self_.model.real_name(),
+-        func,
+-        api_key
++        func
+     );
+ 
+     let body = gemini_build_chat_completions_body(data, &self_.model)?;
+ 
+-    let request_data = RequestData::new(url, body);
++    let mut request_data = RequestData::new(url, body);
++
++    request_data.header("x-goog-api-key", api_key);
+ 
+     Ok(request_data)
+ }
+```
+
+---
+
+### Incident Patch 2: `1cce9901` (2025-08-02)
 **Commit Message**: feat: eliminate return requirement for -e mode option selection (#1374)
 
 Co-authored-by: Claude <[REDACTED_EMAIL]>
@@ -1973,7 +1458,7 @@ Co-authored-by: sigoden <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 2: `a5d484c7` (2025-08-01)
+### Incident Patch 3: `a5d484c7` (2025-08-01)
 **Commit Message**: feat: switch to raw stream renderer when no_color/no_highlight (#1371)
 
 **File**: `src/render/mod.rs` (modified, +1/-1)
@@ -2031,648 +1516,13 @@ Co-authored-by: sigoden <[REDACTED_EMAIL]>
              if let Some(spinner) = spinner.take() {
 ```
 
----
-
-### Incident Patch 3: `c354f77b` (2025-07-29)
-**Commit Message**: feat: gemini pass API key in header for security (#1360)
-
-Co-authored-by: Aman Shaw <[REDACTED_EMAIL]>
-Co-authored-by: aman <[REDACTED_EMAIL]>
-
-**File**: `src/client/gemini.rs` (modified, +5/-4)
-```diff
-@@ -52,16 +52,17 @@ fn prepare_chat_completions(
-     };
- 
-     let url = format!(
--        "{}/models/{}:{}?key={}",
-+        "{}/models/{}:{}",
-         api_base.trim_end_matches('/'),
-         self_.model.real_name(),
--        func,
--        api_key
-+        func
-     );
- 
-     let body = gemini_build_chat_completions_body(data, &self_.model)?;
- 
--    let request_data = RequestData::new(url, body);
-+    let mut request_data = RequestData::new(url, body);
-+
-+    request_data.header("x-goog-api-key", api_key);
- 
-     Ok(request_data)
- }
-```
-
----
-
-### Incident Patch 4: `75cd6489` (2025-07-11)
-**Commit Message**: fix: `.copy` does not work after session compression (#1350)
-
-**File**: `src/repl/mod.rs` (modified, +1/-1)
-```diff
-@@ -665,7 +665,7 @@ pub async fn run_repl_command(
-                     .read()
-                     .last_message
-                     .as_ref()
--                    .filter(|v| v.continuous && !v.output.is_empty())
-+                    .filter(|v| !v.output.is_empty())
-                     .map(|v| v.output.clone())
-                 {
-                     Some(v) => v,
-```
-
----
-
-### Incident Patch 5: `dfa2363b` (2025-07-04)
-**Commit Message**: fix: `.file` external commands capture stdout/stderr (#1343)
-
-**File**: `Cargo.lock` (modified, +41/-0)
-```diff
-@@ -57,6 +57,7 @@ dependencies = [
-  "clap",
-  "crossterm 0.28.1",
-  "dirs",
-+ "duct",
-  "fancy-regex",
-  "futures-util",
-  "fuzzy-matcher",
-@@ -846,6 +847,18 @@ dependencies = [
-  "dtoa",
- ]
- 
-+[[package]]
-+name = "duct"
-+version = "1.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b6ce170a0e8454fa0f9b0e5ca38a6ba17ed76a50916839d217eb5357e05cdfde"
-+dependencies = [
-+ "libc",
-+ "os_pipe",
-+ "shared_child",
-+ "shared_thread",
-+]
-+
- [[package]]
- name = "dyn-clone"
- version = "1.0.19"
-@@ -3018,6 +3031,23 @@ dependencies = [
-  "lazy_static",
- ]
- 
-+[[package]]
-+name = "shared_child"
-+version = "1.1.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1e362d9935bc50f019969e2f9ecd66786612daae13e8f277be7bfb66e8bed3f7"
-+dependencies = [
-+ "libc",
-+ "sigchld",
-+ "windows-sys 0.60.2",
-+]
-+
-+[[package]]
-+name = "shared_thread"
-+version = "0.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "c7a6f98357c6bb0ebace19b22220e5543801d9de90ffe77f8abb27c056bac064"
-+
- [[package]]
- name = "shell-words"
- version = "1.1.0"
-@@ -3030,6 +3060,17 @@ version = "1.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
- 
-+[[package]]
-+name = "sigchld"
-+version = "0.2.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1219ef50fc0fdb04fcc243e6aa27f855553434ffafe4fa26554efb78b5b4bf89"
-+dependencies = [
-+ "libc",
-+ "os_pipe",
-+ "signal-hook",
-+]
-+
- [[package]]
- name = "signal-hook"
- version = "0.3.18"
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@ bm25 = { version = "2.0.1", features = ["parallelism"] }
- which = "8.0.0"
- fuzzy-matcher = "0.3.7"
- terminal-colorsaurus = "0.4.8"
-+duct = "1.0.0"
- 
- [dependencies.reqwest]
- version = "0.12.0"
-```
-
-**File**: `src/config/input.rs` (modified, +7/-8)
-```diff
-@@ -94,7 +94,7 @@ impl Input {
-         }
-         let documents_len = documents.len();
-         for (kind, path, contents) in documents {
--            if documents_len == 1 {
-+            if documents_len == 1 && raw_text.is_empty() {
-                 texts.push(format!("\n{contents}"));
-             } else {
-                 texts.push(format!(
-@@ -457,13 +457,12 @@ async fn load_documents(
-     let mut data_urls = HashMap::new();
- 
-     for cmd in external_cmds {
--        let (success, stdout, stderr) =
--            run_command_with_output(&SHELL.cmd, &[&SHELL.arg, &cmd], None)?;
--        if !success {
--            let err = if !stderr.is_empty() { stderr } else { stdout };
--            bail!("Failed to run `{cmd}`\n{err}");
--        }
--        files.push(("CMD", cmd, stdout));
-+        let output = duct::cmd(&SHELL.cmd, &[&SHELL.arg, &cmd])
-+            .stderr_to_stdout()
-+            .unchecked()
-+            .read()
-+            .unwrap_or_else(|err| err.to_string());
-+        files.push(("CMD", cmd, output));
-     }
- 
-     let local_files = expand_glob_paths(&local_paths, true).await?;
-```
-
----
-
-### Incident Patch 6: `b8fd84ae` (2025-06-28)
-**Commit Message**:  fix: change temperature/top_p reading rules (#1333)
-
-**File**: `src/config/agent.rs` (modified, +9/-1)
-```diff
-@@ -62,7 +62,15 @@ impl Agent {
-             let config = config.read();
-             match agent_config.model_id.as_ref() {
-                 Some(model_id) => Model::retrieve_model(&config, model_id, ModelType::Chat)?,
--                None => config.current_model().clone(),
-+                None => {
-+                    if agent_config.temperature.is_none() {
-+                        agent_config.temperature = config.temperature;
-+                    }
-+                    if agent_config.top_p.is_none() {
-+                        agent_config.top_p = config.top_p;
-+                    }
-+                    config.current_model().clone()
-+                }
-             }
-         };
- 
-```
-
-**File**: `src/config/mod.rs` (modified, +10/-9)
-```diff
-@@ -523,7 +523,7 @@ impl Config {
-     }
- 
-     pub fn extract_role(&self) -> Role {
--        let mut role = if let Some(session) = self.session.as_ref() {
-+        if let Some(session) = self.session.as_ref() {
-             session.to_role()
-         } else if let Some(agent) = self.agent.as_ref() {
-             agent.to_role()
-@@ -538,14 +538,7 @@ impl Config {
-                 self.use_tools.clone(),
-             );
-             role
--        };
--        if role.temperature().is_none() && self.temperature.is_some() {
--            role.set_temperature(self.temperature);
-         }
--        if role.top_p().is_none() && self.top_p.is_some() {
--            role.set_top_p(self.top_p);
--        }
--        role
-     }
- 
-     pub fn info(&self) -> Result<String> {
-@@ -933,7 +926,15 @@ impl Config {
-                     role.set_model(current_model);
-                 }
-             }
--            None => role.set_model(current_model),
-+            None => {
-+                role.set_model(current_model);
-+                if role.temperature().is_none() {
-+                    role.set_temperature(self.temperature);
-+                }
-+                if role.top_p().is_none() {
-+                    role.set_top_p(self.top_p);
-+                }
-+            }
-         }
-         Ok(role)
-     }
-```
-
----
-
-### Incident Patch 7: `ffcb19dc` (2025-06-23)
-**Commit Message**: fix: openai api omits content field from tool_calls message (#1326)
-
-**File**: `src/client/openai.rs` (modified, +2/-4)
-```diff
-@@ -241,7 +241,7 @@ pub fn openai_build_chat_completions_body(data: ChatCompletionsData, model: &Mod
-             match content {
-                 MessageContent::ToolCalls(MessageContentToolCalls {
-                         tool_results,
--                        text,
-+                        text: _,
-                         sequence,
-                     }) => {
-                     if !sequence {
-@@ -255,9 +255,8 @@ pub fn openai_build_chat_completions_body(data: ChatCompletionsData, model: &Mod
-                                 },
-                             })
-                         }).collect();
--                        let text = if text.is_empty() { Value::Null } else { text.into() };
-                         let mut messages = vec![
--                            json!({ "role": MessageRole::Assistant, "content": text, "tool_calls": tool_calls })
-+                            json!({ "role": MessageRole::Assistant, "tool_calls": tool_calls })
-                         ];
-                         for tool_result in tool_results {
-                             messages.push(
-@@ -274,7 +273,6 @@ pub fn openai_build_chat_completions_body(data: ChatCompletionsData, model: &Mod
-                             vec![
-                                 json!({
-                                     "role": MessageRole::Assistant,
--                                    "content": "",
-                                     "tool_calls": [
-                                         {
-                                             "id": tool_result.call.id,
-```
-
----
-
-### Incident Patch 8: `4fecd670` (2025-06-02)
-**Commit Message**: fix: better error handling for `aichat -e` on MacOS (#1311)
-
-**File**: `src/main.rs` (modified, +3/-3)
-```diff
-@@ -174,9 +174,6 @@ async fn run(config: GlobalConfig, cli: Cli, text: Option<String>) -> Result<()>
-         return Ok(());
-     }
-     if cli.execute && !is_repl {
--        if cfg!(target_os = "macos") && !stdin().is_terminal() {
--            bail!("Unable to read the pipe for shell execution on MacOS")
--        }
-         let input = create_input(&config, text, &cli.file, abort_signal.clone()).await?;
-         shell_execute(&config, &SHELL, input, abort_signal.clone()).await?;
-         return Ok(());
-@@ -265,6 +262,9 @@ async fn shell_execute(
-         return Ok(());
-     }
-     if *IS_STDOUT_TERMINAL {
-+        if cfg!(target_os = "macos") && !stdin().is_terminal() {
-+            bail!("Unable to read the pipe for shell execution on MacOS")
-+        }
-         let options = ["execute", "revise", "describe", "copy", "quit"];
-         let command = color_text(eval_str.trim(), nu_ansi_term::Color::Rgb(255, 165, 0));
-         let first_letter_color = nu_ansi_term::Color::Cyan;
-```
-
----
-
-### Incident Patch 9: `88776622` (2025-05-02)
-**Commit Message**: fix: visual indication of Vi insert/normal model #897 (#1279)
-
-**File**: `src/repl/mod.rs` (modified, +8/-0)
-```diff
-@@ -17,7 +17,9 @@ use crate::utils::{
- };
- 
- use anyhow::{bail, Context, Result};
-+use crossterm::cursor::SetCursorStyle;
- use fancy_regex::Regex;
-+use reedline::CursorConfig;
- use reedline::{
-     default_emacs_keybindings, default_vi_insert_keybindings, default_vi_normal_keybindings,
-     ColumnarMenu, EditCommand, EditMode, Emacs, KeyCode, KeyModifiers, Keybindings, Reedline,
-@@ -263,11 +265,17 @@ Type ".help" for additional help.
-         let highlighter = ReplHighlighter::new(config);
-         let menu = Self::create_menu();
-         let edit_mode = Self::create_edit_mode(config);
-+        let cursor_config = CursorConfig {
-+            vi_insert: Some(SetCursorStyle::BlinkingBar),
-+            vi_normal: Some(SetCursorStyle::SteadyBlock),
-+            emacs: Some(SetCursorStyle::SteadyBlock),
-+        };
-         let mut editor = Reedline::create()
-             .with_completer(Box::new(completer))
-             .with_highlighter(Box::new(highlighter))
-             .with_menu(menu)
-             .with_edit_mode(edit_mode)
-+            .with_cursor_config(cursor_config)
-             .with_quick_completions(true)
-             .with_partial_completions(true)
-             .use_bracketed_paste(true)
-```
-
----
-
-### Incident Patch 10: `fe6263b2` (2025-03-28)
-**Commit Message**: fix: use_tools in agent mode (#1252)
-
-**File**: `src/function.rs` (modified, +48/-32)
-```diff
-@@ -1,5 +1,5 @@
- use crate::{
--    config::{Config, GlobalConfig},
-+    config::{Agent, Config, GlobalConfig},
-     utils::*,
- };
- 
-@@ -140,6 +140,8 @@ pub struct ToolCall {
-     pub id: Option<String>,
- }
- 
-+type CallConfig = (String, String, Vec<String>, HashMap<String, String>);
-+
- impl ToolCall {
-     pub fn dedup(calls: Vec<Self>) -> Vec<Self> {
-         let mut new_calls = vec![];
-@@ -169,39 +171,11 @@ impl ToolCall {
-     }
- 
-     pub fn eval(&self, config: &GlobalConfig) -> Result<Value> {
--        let function_name = self.name.clone();
-         let (call_name, cmd_name, mut cmd_args, envs) = match &config.read().agent {
--            Some(agent) => match agent.functions().find(&function_name) {
--                Some(function) => {
--                    let agent_name = agent.name().to_string();
--                    if function.agent {
--                        (
--                            format!("{agent_name}-{function_name}"),
--                            agent_name,
--                            vec![function_name],
--                            agent.variable_envs(),
--                        )
--                    } else {
--                        (
--                            function_name.clone(),
--                            function_name,
--                            vec![],
--                            Default::default(),
--                        )
--                    }
--                }
--                None => bail!("Unexpected call: {function_name} {}", self.arguments),
--            },
--            None => match config.read().functions.contains(&function_name) {
--                true => (
--                    function_name.clone(),
--                    function_name,
--                    vec![],
--                    Default::default(),
--                ),
--                false => bail!("Unexpected call: {function_name} {}", self.arguments),
--            },
-+            Some(agent) => self.extract_call_config_from_agent(config, agent)?,
-+            None => self.extract_call_config_from_config(config)?,
-         };
-+
-         let json_data = if self.arguments.is_object() {
-             self.arguments.clone()
-         } else if let Some(arguments) = self.arguments.as_str() {
-@@ -227,6 +201,48 @@ impl ToolCall {
- 
-         Ok(output)
-     }
-+
-+    fn extract_call_config_from_agent(
-+        &self,
-+        config: &GlobalConfig,
-+        agent: &Agent,
-+    ) -> Result<CallConfig> {
-+        let function_name = self.name.clone();
-+        match agent.functions().find(&function_name) {
-+            Some(function) => {
-+                let agent_name = agent.name().to_string();
-+                if function.agent {
-+                    Ok((
-+                        format!("{agent_name}-{function_name}"),
-+                        agent_name,
-+                        vec![function_name],
-+                        agent.variable_envs(),
-+                    ))
-+                } else {
-+                    Ok((
-+                        function_name.clone(),
-+                        function_name,
-+                        vec![],
-+                        Default::default(),
-+                    ))
-+                }
-+            }
-+            None => self.extract_call_config_from_config(config),
-+        }
-+    }
-+
-+    fn extract_call_config_from_config(&self, config: &GlobalConfig) -> Result<CallConfig> {
-+        let function_name = self.name.clone();
-+        match config.read().functions.contains(&function_name) {
-+            true => Ok((
-+                function_name.clone(),
-+                function_name,
-+                vec![],
-+                Default::default(),
-+            )),
-+            false => bail!("Unexpected call: {function_name} {}", self.arguments),
-+        }
-+    }
- }
- 
- pub fn run_llm_function(
-```
-
----
-
-### Incident Patch 11: `9222713a` (2025-03-11)
-**Commit Message**: fix: miss </think> tag while tool calling (#1226)
-
-**File**: `src/client/openai.rs` (modified, +4/-0)
-```diff
-@@ -153,6 +153,10 @@ pub async fn openai_chat_completions_streaming(
-                 .as_str()
-                 .filter(|v| !v.is_empty()),
-         ) {
-+            if reasoning_state == 1 {
-+                handler.text("\n</think>\n\n")?;
-+                reasoning_state = 0;
-+            }
-             let maybe_call_id = format!("{}/{}", id.unwrap_or_default(), index.unwrap_or_default());
-             if maybe_call_id != call_id && maybe_call_id.len() >= call_id.len() {
-                 if !function_name.is_empty() {
-```
-
----
-
-### Incident Patch 12: `d7a9244d` (2025-03-05)
-**Commit Message**: fix: openai-compatible handles empty tool call arguments (#1217)
-
-**File**: `src/client/openai.rs` (modified, +6/-0)
-```diff
-@@ -110,6 +110,9 @@ pub async fn openai_chat_completions_streaming(
-     let handle = |message: SseMmessage| -> Result<bool> {
-         if message.data == "[DONE]" {
-             if !function_name.is_empty() {
-+                if function_arguments.is_empty() {
-+                    function_arguments = String::from("{}");
-+                }
-                 let arguments: Value = function_arguments.parse().with_context(|| {
-                     format!("Tool call '{function_name}' have non-JSON arguments '{function_arguments}'")
-                 })?;
-@@ -153,6 +156,9 @@ pub async fn openai_chat_completions_streaming(
-             let maybe_call_id = format!("{}/{}", id.unwrap_or_default(), index.unwrap_or_default());
-             if maybe_call_id != call_id && maybe_call_id.len() >= call_id.len() {
-                 if !function_name.is_empty() {
-+                    if function_arguments.is_empty() {
-+                        function_arguments = String::from("{}");
-+                    }
-                     let arguments: Value = function_arguments.parse().with_context(|| {
-                         format!("Tool call '{function_name}' have non-JSON arguments '{function_arguments}'")
-                     })?;
-```
-
----
-
-### Incident Patch 13: `26034f51` (2025-03-03)
-**Commit Message**: fix: bedrock handles empty tool call arguments (#1213)
-
-**File**: `src/client/bedrock.rs` (modified, +6/-0)
-```diff
-@@ -222,6 +222,9 @@ async fn chat_completions_streaming(
-                                     json_str_from_map(tool_use, "name"),
-                                 ) {
-                                     if !function_name.is_empty() {
-+                                        if function_arguments.is_empty() {
-+                                            function_arguments = String::from("{}");
-+                                        }
-                                         let arguments: Value =
-                                         function_arguments.parse().with_context(|| {
-                                             format!("Tool call '{function_name}' have non-JSON arguments '{function_arguments}'")
-@@ -259,6 +262,9 @@ async fn chat_completions_streaming(
-                                 reasoning_state = 0;
-                             }
-                             if !function_name.is_empty() {
-+                                if function_arguments.is_empty() {
-+                                    function_arguments = String::from("{}");
-+                                }
-                                 let arguments: Value = function_arguments.parse().with_context(|| {
-                                     format!("Tool call '{function_name}' have non-JSON arguments '{function_arguments}'")
-                                 })?;
-```
-
----
-
-### Incident Patch 14: `3dd90e1e` (2025-02-21)
-**Commit Message**: fix: incorrect model when switching role in session context (#1192)
-
-**File**: `src/config/mod.rs` (modified, +7/-6)
-```diff
-@@ -591,7 +591,7 @@ impl Config {
-             ("use_tools", format_option_value(&role.use_tools())),
-             (
-                 "max_output_tokens",
--                self.model
-+                role.model()
-                     .max_tokens_param()
-                     .map(|v| format!("{v} (current model)"))
-                     .unwrap_or_else(|| "null".into()),
-@@ -867,7 +867,7 @@ impl Config {
- 
-     pub fn use_prompt(&mut self, prompt: &str) -> Result<()> {
-         let mut role = Role::new(TEMP_ROLE_NAME, prompt);
--        role.set_model(&self.model);
-+        role.set_model(self.current_model());
-         self.use_role_obj(role)
-     }
- 
-@@ -923,16 +923,17 @@ impl Config {
-         } else {
-             Role::builtin(name)?
-         };
-+        let current_model = self.current_model();
-         match role.model_id() {
-             Some(model_id) => {
--                if self.model.id() != model_id {
-+                if current_model.id() != model_id {
-                     let model = Model::retrieve_model(self, model_id, ModelType::Chat)?;
-                     role.set_model(&model);
-                 } else {
--                    role.set_model(&self.model);
-+                    role.set_model(current_model);
-                 }
-             }
--            None => role.set_model(&self.model),
-+            None => role.set_model(current_model),
-         }
-         Ok(role)
-     }
-@@ -1795,7 +1796,7 @@ impl Config {
-             };
-         } else if cmd == ".set" && args.len() == 2 {
-             let candidates = match args[0] {
--                "max_output_tokens" => match self.model.max_output_tokens() {
-+                "max_output_tokens" => match self.current_model().max_output_tokens() {
-                     Some(v) => vec![v.to_string()],
-                     None => vec![],
-                 },
-```
-
-**File**: `src/rag/mod.rs` (modified, +1/-1)
-```diff
-@@ -841,7 +841,7 @@ impl Debug for DocumentId {
- 
- impl DocumentId {
-     pub fn new(file_index: usize, document_index: usize) -> Self {
--        let value = file_index << (usize::BITS / 2) | document_index;
-+        let value = (file_index << (usize::BITS / 2)) | document_index;
-         Self(value)
-     }
- 
-```
-
----
-
-### Incident Patch 15: `8bd7db9a` (2025-02-18)
-**Commit Message**: fix: better handle OpenAI-Compatible streaming responses (#1184)
-
-**File**: `src/client/openai.rs` (modified, +2/-1)
-```diff
-@@ -142,7 +142,8 @@ pub async fn openai_chat_completions_streaming(
-                 reason_state = 1;
-             }
-             handler.text(text)?;
--        } else if let (Some(function), index, id) = (
-+        }
-+        if let (Some(function), index, id) = (
-             data["choices"][0]["delta"]["tool_calls"][0]["function"].as_object(),
-             data["choices"][0]["delta"]["tool_calls"][0]["index"].as_u64(),
-             data["choices"][0]["delta"]["tool_calls"][0]["id"]
-```
-
 #### Recent Merged Pull Requests:
 - **PR #1548** (closed): feat: add llmman to example config and provider list (@ericcurtin)
 - **PR #1547** (closed): feat(agent): allow agents to use a role configuration (@mikemikimike)
 - **PR #1531** (closed): fix(config): respect $EDITOR when config editor is unset (@syf2211)
 - **PR #1522** (closed): fix: tool call arguments lost on OpenAI-compatible providers that stream id only in first SSE chunk (@goingforstudying-ctrl)
 - **PR #1521** (closed): fix: trim trailing whitespace from API keys (@goingforstudying-ctrl)
-- **PR #1503** (closed): Support claude code style hooks (@dobesv)
-- **PR #1502** (closed): feat: add TLS configuration for custom endpoints (@dobesv)
-- **PR #1500** (closed): fix: apply cmd_prelude before printing --info output (@majiayu000)
+- **PR #1508** (closed): feat: add audio transcription support to AI clients (@simon3z)
 
 ---
 
@@ -2686,3 +1536,41 @@ Co-authored-by: aman <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. gemini pass API key in header for security (#1360)
+
+**RULE**:
+When implementing operations in `src/client/gemini.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigoden/aichat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c354f77b`: gemini pass API key in header for security (#1360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/client/gemini.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        "{}/models/{}:{}",
+        func
+    let mut request_data = RequestData::new(url, body);
+
+    request_data.header("x-goog-api-key", api_key);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        "{}/models/{}:{}?key={}",
+        func,
+        api_key
+    let request_data = RequestData::new(url, body);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c354f77b` are properly handled with clean fallback behavior.

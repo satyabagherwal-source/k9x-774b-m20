@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-VA66",
-    "timestamp": "2026-10-17T15:55:08.478Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "ad3a38d13a390d7a56322ff1121709d5ea67be2b71a046bc3ac9a8a084e1a2b1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-ZF3G",
-    "timestamp": "2026-10-17T15:58:21.484Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "91ace2a97bb69323f462f0fd83f414cc01c2781293a5c85e01ad89c9b51cdac7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-3J6M",
-    "timestamp": "2026-10-17T16:01:33.406Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "97a44fb08d99f6c53ca20626f7e82eefacb30beffc7addbb2f6d27b1a93da255",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-7KJR",
-    "timestamp": "2026-10-17T16:04:41.799Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "b0e31afc35bf667e2792d8820e8000df1462afe21f66dc301375531b67d79508",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-BKCB",
-    "timestamp": "2026-10-17T16:07:48.155Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "892cc82fa0bdcb837aba55ee7f13dc44d307184dca0ea8beb82d4457f7685717",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-FJWM",
-    "timestamp": "2026-10-17T16:10:54.214Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "8c8157f798dac952004647269b2fc6ab98cdd00c5e15a49795d9793dc70cfd22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-JLE0",
     "timestamp": "2026-10-17T16:14:02.760Z",
     "repository": "PSRben/VisionHOPE",
@@ -7492,6 +7402,96 @@
     "contentHash": "9803286a86f8e62790f3c6cca24f9a020784f6ac867f8390597528162dff7d9c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CPBW",
+    "timestamp": "2026-10-19T00:48:14.396Z",
+    "repository": "uber/baseweb",
+    "learningId": "learn-github-uber-baseweb",
+    "contentHash": "121680524c098385935d8f460b680e2a528972bb5f821f93f74af356f3fe357f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CQ9X",
+    "timestamp": "2026-10-19T00:48:15.621Z",
+    "repository": "sigoden/aichat",
+    "learningId": "learn-github-sigoden-aichat",
+    "contentHash": "b8da42b0f72b5aed86aeb4fa2015c18bdc744f9c55a545c86b542d213d81a54c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CUJ1",
+    "timestamp": "2026-10-19T00:48:21.133Z",
+    "repository": "margelo/react-native-vision-camera",
+    "learningId": "learn-github-margelo-react-native-vision-camera",
+    "contentHash": "d9c99f20f2d60efdcd07974d47f3e986228a98a165852e33aae273ff8c804748",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CWHX",
+    "timestamp": "2026-10-19T00:48:23.685Z",
+    "repository": "vinceanalytics/vince",
+    "learningId": "learn-github-vinceanalytics-vince",
+    "contentHash": "fa12e4ba75460fe2d924cd1936580f44883c7742bcb7d0d8f504ffce628c9411",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CYVW",
+    "timestamp": "2026-10-19T00:48:26.780Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "89fdd58bd1b2d044aebcfcc87237c63e76330725f08da6da8453a7e08b354821",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-D0S0",
+    "timestamp": "2026-10-19T00:48:29.232Z",
+    "repository": "malisper/pgrust",
+    "learningId": "learn-github-malisper-pgrust",
+    "contentHash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

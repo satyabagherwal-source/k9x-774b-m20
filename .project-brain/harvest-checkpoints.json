@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:41:20.309Z",
+  "last_updated": "2026-10-19T00:48:29.239Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -125,14 +125,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "79e916572f160f2ae7ff59c87b97570900d8adc4ab3b1568602d4b71b4376201",
-      "verified_at": "2026-10-17T21:20:27.163Z",
+      "content_hash": "89fdd58bd1b2d044aebcfcc87237c63e76330725f08da6da8453a7e08b354821",
+      "verified_at": "2026-10-19T00:48:26.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:20:27.163Z"
+      "last_updated": "2026-10-19T00:48:26.791Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -6382,6 +6382,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:41:20.309Z"
+    },
+    "uber/baseweb": {
+      "repository": "uber/baseweb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-uber-baseweb",
+      "content_hash": "121680524c098385935d8f460b680e2a528972bb5f821f93f74af356f3fe357f",
+      "verified_at": "2026-10-19T00:48:14.407Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:48:14.407Z"
+    },
+    "sigoden/aichat": {
+      "repository": "sigoden/aichat",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sigoden-aichat",
+      "content_hash": "b8da42b0f72b5aed86aeb4fa2015c18bdc744f9c55a545c86b542d213d81a54c",
+      "verified_at": "2026-10-19T00:48:15.632Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:48:15.632Z"
+    },
+    "margelo/react-native-vision-camera": {
+      "repository": "margelo/react-native-vision-camera",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-margelo-react-native-vision-camera",
+      "content_hash": "d9c99f20f2d60efdcd07974d47f3e986228a98a165852e33aae273ff8c804748",
+      "verified_at": "2026-10-19T00:48:21.144Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:48:21.144Z"
+    },
+    "vinceanalytics/vince": {
+      "repository": "vinceanalytics/vince",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vinceanalytics-vince",
+      "content_hash": "fa12e4ba75460fe2d924cd1936580f44883c7742bcb7d0d8f504ffce628c9411",
+      "verified_at": "2026-10-19T00:48:23.692Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:48:23.692Z"
+    },
+    "malisper/pgrust": {
+      "repository": "malisper/pgrust",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-malisper-pgrust",
+      "content_hash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
+      "verified_at": "2026-10-19T00:48:29.239Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:48:29.239Z"
     }
   },
   "repos": {

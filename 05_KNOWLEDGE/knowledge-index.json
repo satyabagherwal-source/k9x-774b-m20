@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:41:20.269Z",
-  "total_verified_learnings": 440,
+  "last_updated": "2026-10-19T00:48:29.194Z",
+  "total_verified_learnings": 445,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11642,7 +11642,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "79e916572f160f2ae7ff59c87b97570900d8adc4ab3b1568602d4b71b4376201",
+      "content_hash": "89fdd58bd1b2d044aebcfcc87237c63e76330725f08da6da8453a7e08b354821",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -11690,6 +11690,21 @@
         {
           "number": 1067,
           "title": "Tokenizer Truncation and Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1937,
+          "title": "The Semantic Invariance of Embedding Dimensions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1938,
+          "title": "The Normalization Invariant for Cosine Similarity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1939,
+          "title": "The Tokenizer-Model Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12028,7 +12043,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-17T21:20:27.124Z",
+      "verified_at": "2026-10-19T00:48:26.736Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25070,22 +25085,29 @@
     "learn-github-malisper-pgrust": {
       "learning_id": "learn-github-malisper-pgrust",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "malisper-pgrust",
+      "source": "malisper/pgrust",
+      "repository": "malisper/pgrust",
       "slug": "malisper-pgrust",
       "platform": "github",
       "source_url": "https://github.com/malisper/pgrust",
-      "source_version": "HEAD",
-      "content_hash": "e4f90999d5397adfe705ecfb7ccc0366b7bf6e6c09e2885d32208b9843f0a1fb",
+      "source_version": "79ad992e",
+      "content_hash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
       "dossier_path": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.131Z"
+      "verified_at": "2026-10-19T00:48:29.187Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-manavarya09-design-extract": {
       "learning_id": "learn-github-manavarya09-design-extract",
@@ -25183,22 +25205,35 @@
     "learn-github-margelo-react-native-vision-camera": {
       "learning_id": "learn-github-margelo-react-native-vision-camera",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "margelo-react-native-vision-camera",
+      "source": "margelo/react-native-vision-camera",
+      "repository": "margelo/react-native-vision-camera",
       "slug": "margelo-react-native-vision-camera",
       "platform": "github",
       "source_url": "https://github.com/margelo/react-native-vision-camera",
-      "source_version": "HEAD",
-      "content_hash": "0816d912294869741729969130adf6ac7d459dfd98ac4d9f502579c1708efe9d",
+      "source_version": "1a69f290",
+      "content_hash": "d9c99f20f2d60efdcd07974d47f3e986228a98a165852e33aae273ff8c804748",
       "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1935,
+          "title": "Deep-compare `constraints` instead of `JSON.stringify`-ing them (#4167)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.149Z"
+      "verified_at": "2026-10-19T00:48:21.090Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mariadb-server": {
       "learning_id": "learn-github-mariadb-server",
@@ -32931,22 +32966,35 @@
     "learn-github-sigoden-aichat": {
       "learning_id": "learn-github-sigoden-aichat",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sigoden-aichat",
+      "source": "sigoden/aichat",
+      "repository": "sigoden/aichat",
       "slug": "sigoden-aichat",
       "platform": "github",
       "source_url": "https://github.com/sigoden/aichat",
-      "source_version": "HEAD",
-      "content_hash": "e1960a9e7c1810425ca957b47de222ef700d11c8e215e522774d057b9eb52823",
+      "source_version": "82976d34",
+      "content_hash": "b8da42b0f72b5aed86aeb4fa2015c18bdc744f9c55a545c86b542d213d81a54c",
       "dossier_path": "07_PROJECT_LEARNING/sigoden-aichat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigoden-aichat-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1934,
+          "title": "gemini pass API key in header for security (#1360)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.527Z"
+      "verified_at": "2026-10-19T00:48:15.579Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sigstore-cosign": {
       "learning_id": "learn-github-sigstore-cosign",
@@ -36352,22 +36400,35 @@
     "learn-github-uber-baseweb": {
       "learning_id": "learn-github-uber-baseweb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "uber-baseweb",
+      "source": "uber/baseweb",
+      "repository": "uber/baseweb",
       "slug": "uber-baseweb",
       "platform": "github",
       "source_url": "https://github.com/uber/baseweb",
-      "source_version": "HEAD",
-      "content_hash": "d59cf73655c30dd6249a3d181dd799edbb9d85270dc2b6bbd8f111e0711ab579",
+      "source_version": "ed21081e",
+      "content_hash": "121680524c098385935d8f460b680e2a528972bb5f821f93f74af356f3fe357f",
       "dossier_path": "07_PROJECT_LEARNING/uber-baseweb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/uber-baseweb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1933,
+          "title": "prevent unbounded itemRefs growth and ArrowUp crash in Accordion (#5406)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.148Z"
+      "verified_at": "2026-10-19T00:48:14.346Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-unclecode-crawl4ai": {
       "learning_id": "learn-github-unclecode-crawl4ai",
@@ -36807,22 +36868,35 @@
     "learn-github-vinceanalytics-vince": {
       "learning_id": "learn-github-vinceanalytics-vince",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vinceanalytics-vince",
+      "source": "vinceanalytics/vince",
+      "repository": "vinceanalytics/vince",
       "slug": "vinceanalytics-vince",
       "platform": "github",
       "source_url": "https://github.com/vinceanalytics/vince",
-      "source_version": "HEAD",
-      "content_hash": "98d0c28fa444d85474d2a99b034617226683008b8d3cffeec25223b584442fbf",
+      "source_version": "fc06f7a2",
+      "content_hash": "fa12e4ba75460fe2d924cd1936580f44883c7742bcb7d0d8f504ffce628c9411",
       "dossier_path": "07_PROJECT_LEARNING/vinceanalytics-vince-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vinceanalytics-vince-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1936,
+          "title": "custom range query (#86)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.232Z"
+      "verified_at": "2026-10-19T00:48:23.624Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vinceglb-filekit": {
       "learning_id": "learn-github-vinceglb-filekit",
@@ -71867,6 +71941,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:41:20.262Z"
+    },
+    "rule-1933": {
+      "learning_id": "rule-1933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1933,
+      "title": "prevent unbounded itemRefs growth and ArrowUp crash in Accordion (#5406)",
+      "source_url": "https://github.com/uber/baseweb",
+      "source_version": "ed21081e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:14.346Z"
+    },
+    "rule-1934": {
+      "learning_id": "rule-1934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1934,
+      "title": "gemini pass API key in header for security (#1360)",
+      "source_url": "https://github.com/sigoden/aichat",
+      "source_version": "82976d34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:15.579Z"
+    },
+    "rule-1935": {
+      "learning_id": "rule-1935",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1935,
+      "title": "Deep-compare `constraints` instead of `JSON.stringify`-ing them (#4167)",
+      "source_url": "https://github.com/margelo/react-native-vision-camera",
+      "source_version": "1a69f290",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:21.090Z"
+    },
+    "rule-1936": {
+      "learning_id": "rule-1936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1936,
+      "title": "custom range query (#86)",
+      "source_url": "https://github.com/vinceanalytics/vince",
+      "source_version": "fc06f7a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:23.624Z"
+    },
+    "rule-1937": {
+      "learning_id": "rule-1937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1937,
+      "title": "The Semantic Invariance of Embedding Dimensions",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:26.736Z"
+    },
+    "rule-1938": {
+      "learning_id": "rule-1938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1938,
+      "title": "The Normalization Invariant for Cosine Similarity",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:26.736Z"
+    },
+    "rule-1939": {
+      "learning_id": "rule-1939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1939,
+      "title": "The Tokenizer-Model Consistency Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:48:26.736Z"
     }
   },
   "aliases": {

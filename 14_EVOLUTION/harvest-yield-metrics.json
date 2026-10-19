@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:41:20.307Z",
-  "total_cycles_completed": 2684,
-  "total_learnings_persisted": 2684,
-  "total_rules_promoted": 1711,
+  "last_updated": "2026-10-19T00:48:29.237Z",
+  "total_cycles_completed": 2690,
+  "total_learnings_persisted": 2690,
+  "total_rules_promoted": 1718,
   "history": [
-    {
-      "timestamp": "2026-10-18T21:32:43.726Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:33:23.675Z",
-      "repository": "tamagui/tamagui",
-      "learningId": "learn-github-tamagui-tamagui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:33:30.058Z",
-      "repository": "BurntSushi/ripgrep",
-      "learningId": "learn-github-burntsushi-ripgrep",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:39:32.245Z",
-      "repository": "cosscom/coss",
-      "learningId": "learn-github-cosscom-coss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:39:32.847Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:39:37.332Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T21:39:40.899Z",
       "repository": "authzed/spicedb",
@@ -1403,6 +1361,48 @@
       "repository": "skytable/skytable",
       "learningId": "learn-github-skytable-skytable",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:48:14.406Z",
+      "repository": "uber/baseweb",
+      "learningId": "learn-github-uber-baseweb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:48:15.630Z",
+      "repository": "sigoden/aichat",
+      "learningId": "learn-github-sigoden-aichat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:48:21.142Z",
+      "repository": "margelo/react-native-vision-camera",
+      "learningId": "learn-github-margelo-react-native-vision-camera",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:48:23.691Z",
+      "repository": "vinceanalytics/vince",
+      "learningId": "learn-github-vinceanalytics-vince",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:48:26.789Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:48:29.237Z",
+      "repository": "malisper/pgrust",
+      "learningId": "learn-github-malisper-pgrust",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

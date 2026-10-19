@@ -2714,3 +2714,9 @@ Every entry in this ledger must capture:
 | `learn-github-oblador-react-native-animatable` | `https://github.com/oblador/react-native-animatable` | `dfd74137` | Multi-dimensional audit evidence | 2026-10-19T00:41:12.869Z |
 | `learn-github-nitrictech-nitric` | `https://github.com/nitrictech/nitric` | `8b1be250` | Multi-dimensional audit evidence | 2026-10-19T00:41:15.722Z |
 | `learn-github-skytable-skytable` | `https://github.com/skytable/skytable` | `146d8664` | Multi-dimensional audit evidence | 2026-10-19T00:41:20.305Z |
+| `learn-github-uber-baseweb` | `https://github.com/uber/baseweb` | `ed21081e` | Multi-dimensional audit evidence | 2026-10-19T00:48:14.403Z |
+| `learn-github-sigoden-aichat` | `https://github.com/sigoden/aichat` | `82976d34` | Multi-dimensional audit evidence | 2026-10-19T00:48:15.627Z |
+| `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `1a69f290` | Multi-dimensional audit evidence | 2026-10-19T00:48:21.139Z |
+| `learn-github-vinceanalytics-vince` | `https://github.com/vinceanalytics/vince` | `fc06f7a2` | Multi-dimensional audit evidence | 2026-10-19T00:48:23.688Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-19T00:48:26.786Z |
+| `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `79ad992e` | Multi-dimensional audit evidence | 2026-10-19T00:48:29.234Z |

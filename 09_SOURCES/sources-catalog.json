@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "79e916572f160f2ae7ff59c87b97570900d8adc4ab3b1568602d4b71b4376201",
-    "lastHarvestedAt": "2026-10-17T21:20:27.161Z",
+    "contentHash": "89fdd58bd1b2d044aebcfcc87237c63e76330725f08da6da8453a7e08b354821",
+    "lastHarvestedAt": "2026-10-19T00:48:26.786Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -4178,5 +4178,55 @@
     "contentHash": "9803286a86f8e62790f3c6cca24f9a020784f6ac867f8390597528162dff7d9c",
     "lastHarvestedAt": "2026-10-19T00:41:20.305Z",
     "learningId": "learn-github-skytable-skytable"
+  },
+  "uber-baseweb": {
+    "repository": "uber/baseweb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/uber/baseweb",
+    "sourceVersion": "ed21081e",
+    "license": "MIT",
+    "contentHash": "121680524c098385935d8f460b680e2a528972bb5f821f93f74af356f3fe357f",
+    "lastHarvestedAt": "2026-10-19T00:48:14.403Z",
+    "learningId": "learn-github-uber-baseweb"
+  },
+  "sigoden-aichat": {
+    "repository": "sigoden/aichat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sigoden/aichat",
+    "sourceVersion": "82976d34",
+    "license": "Apache-2.0",
+    "contentHash": "b8da42b0f72b5aed86aeb4fa2015c18bdc744f9c55a545c86b542d213d81a54c",
+    "lastHarvestedAt": "2026-10-19T00:48:15.627Z",
+    "learningId": "learn-github-sigoden-aichat"
+  },
+  "margelo-react-native-vision-camera": {
+    "repository": "margelo/react-native-vision-camera",
+    "platform": "github",
+    "sourceUrl": "https://github.com/margelo/react-native-vision-camera",
+    "sourceVersion": "1a69f290",
+    "license": "MIT",
+    "contentHash": "d9c99f20f2d60efdcd07974d47f3e986228a98a165852e33aae273ff8c804748",
+    "lastHarvestedAt": "2026-10-19T00:48:21.139Z",
+    "learningId": "learn-github-margelo-react-native-vision-camera"
+  },
+  "vinceanalytics-vince": {
+    "repository": "vinceanalytics/vince",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vinceanalytics/vince",
+    "sourceVersion": "fc06f7a2",
+    "license": "AGPL-3.0",
+    "contentHash": "fa12e4ba75460fe2d924cd1936580f44883c7742bcb7d0d8f504ffce628c9411",
+    "lastHarvestedAt": "2026-10-19T00:48:23.688Z",
+    "learningId": "learn-github-vinceanalytics-vince"
+  },
+  "malisper-pgrust": {
+    "repository": "malisper/pgrust",
+    "platform": "github",
+    "sourceUrl": "https://github.com/malisper/pgrust",
+    "sourceVersion": "79ad992e",
+    "license": "AGPL-3.0",
+    "contentHash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
+    "lastHarvestedAt": "2026-10-19T00:48:29.234Z",
+    "learningId": "learn-github-malisper-pgrust"
   }
 }
