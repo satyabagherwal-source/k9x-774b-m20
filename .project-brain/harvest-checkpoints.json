@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:28:58.724Z",
+  "last_updated": "2026-10-19T00:35:11.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2429,14 +2429,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "d1a5090f81a42a1dd5de7157ec0d53db2c6ddf87a67d8e15c69cb40e28dcc22a",
-      "verified_at": "2026-10-17T21:12:18.040Z",
+      "content_hash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
+      "verified_at": "2026-10-19T00:35:06.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:12:18.040Z"
+      "last_updated": "2026-10-19T00:35:06.768Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -6232,6 +6232,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:28:58.724Z"
+    },
+    "ant-design/ant-design-mobile": {
+      "repository": "ant-design/ant-design-mobile",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ant-design-ant-design-mobile",
+      "content_hash": "8ba15e2b41ce8ec8093461b1efdf47a2fff6b6796aefc02b1bd75c4833357a94",
+      "verified_at": "2026-10-19T00:34:58.015Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:34:58.015Z"
+    },
+    "imsnif/bandwhich": {
+      "repository": "imsnif/bandwhich",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-imsnif-bandwhich",
+      "content_hash": "672442d6f2933ce5487e4815d97be95ee6b1783f6de5f8d7fe4592e07de023dd",
+      "verified_at": "2026-10-19T00:34:59.103Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:34:59.103Z"
+    },
+    "i18next/react-i18next": {
+      "repository": "i18next/react-i18next",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-i18next-react-i18next",
+      "content_hash": "bc6c814e5167671ad44abbda353ab4689e815c1f46a3d87b0af818b3ba3f48be",
+      "verified_at": "2026-10-19T00:35:03.425Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:35:03.425Z"
+    },
+    "clastix/kamaji": {
+      "repository": "clastix/kamaji",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-clastix-kamaji",
+      "content_hash": "08c6c1c0229139377baa34e36a7acce156bfb6e44aaaf82119a18f5e9c3044a6",
+      "verified_at": "2026-10-19T00:35:06.019Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:35:06.019Z"
+    },
+    "gluesql/gluesql": {
+      "repository": "gluesql/gluesql",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gluesql-gluesql",
+      "content_hash": "05ca2ac1833601310d1441f0562949171c756fa038bc92084dde9e930913e097",
+      "verified_at": "2026-10-19T00:35:11.490Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:35:11.490Z"
     }
   },
   "repos": {

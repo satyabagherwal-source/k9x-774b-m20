@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:28:58.686Z",
-  "total_verified_learnings": 430,
+  "last_updated": "2026-10-19T00:35:11.441Z",
+  "total_verified_learnings": 435,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1398,22 +1398,35 @@
     "learn-github-ant-design-ant-design-mobile": {
       "learning_id": "learn-github-ant-design-ant-design-mobile",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ant-design-ant-design-mobile",
+      "source": "ant-design/ant-design-mobile",
+      "repository": "ant-design/ant-design-mobile",
       "slug": "ant-design-ant-design-mobile",
       "platform": "github",
       "source_url": "https://github.com/ant-design/ant-design-mobile",
-      "source_version": "HEAD",
-      "content_hash": "acad98ff1695450928f3f188a128baf3aa3bcbc99d1e1450716d22321f32a5a7",
+      "source_version": "eee5477f",
+      "content_hash": "8ba15e2b41ce8ec8093461b1efdf47a2fff6b6796aefc02b1bd75c4833357a94",
       "dossier_path": "07_PROJECT_LEARNING/ant-design-ant-design-mobile-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ant-design-ant-design-mobile-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1922,
+          "title": "Dropdown): Optimize position update logic for dropdown on scroll and resize (#70",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.790Z"
+      "verified_at": "2026-10-19T00:34:57.953Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ant-design-pro-components": {
       "learning_id": "learn-github-ant-design-pro-components",
@@ -4076,22 +4089,35 @@
     "learn-github-clastix-kamaji": {
       "learning_id": "learn-github-clastix-kamaji",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "clastix-kamaji",
+      "source": "clastix/kamaji",
+      "repository": "clastix/kamaji",
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "HEAD",
-      "content_hash": "b5bd114835c1400af154a00e18fd85b3828bc3165f5bddf7316ea95da156b36a",
+      "source_version": "8164ff2f",
+      "content_hash": "08c6c1c0229139377baa34e36a7acce156bfb6e44aaaf82119a18f5e9c3044a6",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1924,
+          "title": "kubeadm): let kubelet configuration JSON patches remove fields (#1347)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.317Z"
+      "verified_at": "2026-10-19T00:35:05.957Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-clementtsang-bottom": {
       "learning_id": "learn-github-clementtsang-bottom",
@@ -8486,22 +8512,29 @@
     "learn-github-gluesql-gluesql": {
       "learning_id": "learn-github-gluesql-gluesql",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gluesql-gluesql",
+      "source": "gluesql/gluesql",
+      "repository": "gluesql/gluesql",
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "HEAD",
-      "content_hash": "5513010cd48e8dfb599a3054ccf78aa88ceb43d5afe6e01cf263d0ce3da88af3",
+      "source_version": "42a4b418",
+      "content_hash": "05ca2ac1833601310d1441f0562949171c756fa038bc92084dde9e930913e097",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.089Z"
+      "verified_at": "2026-10-19T00:35:11.430Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gluestack-gluestack-ui": {
       "learning_id": "learn-github-gluestack-gluestack-ui",
@@ -21661,22 +21694,29 @@
     "learn-github-i18next-react-i18next": {
       "learning_id": "learn-github-i18next-react-i18next",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "i18next-react-i18next",
+      "source": "i18next/react-i18next",
+      "repository": "i18next/react-i18next",
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "HEAD",
-      "content_hash": "6f1fb4f62efd9c6c17f0fdea1df0167e8dc511b046017d6173a99d988edd6ca0",
+      "source_version": "2aab7f1d",
+      "content_hash": "bc6c814e5167671ad44abbda353ab4689e815c1f46a3d87b0af818b3ba3f48be",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.528Z"
+      "verified_at": "2026-10-19T00:35:03.362Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-i365dev-free4chat": {
       "learning_id": "learn-github-i365dev-free4chat",
@@ -21854,22 +21894,35 @@
     "learn-github-imsnif-bandwhich": {
       "learning_id": "learn-github-imsnif-bandwhich",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "imsnif-bandwhich",
+      "source": "imsnif/bandwhich",
+      "repository": "imsnif/bandwhich",
       "slug": "imsnif-bandwhich",
       "platform": "github",
       "source_url": "https://github.com/imsnif/bandwhich",
-      "source_version": "HEAD",
-      "content_hash": "2f0de7ebaa0b3cfacf3c61f76cd292fee3d852a5715969fc9391744a501fbd06",
+      "source_version": "1899870c",
+      "content_hash": "672442d6f2933ce5487e4815d97be95ee6b1783f6de5f8d7fe4592e07de023dd",
       "dossier_path": "07_PROJECT_LEARNING/imsnif-bandwhich-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/imsnif-bandwhich-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1923,
+          "title": "clippy nightly lints",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.561Z"
+      "verified_at": "2026-10-19T00:34:59.048Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-imsnif-diskonaut": {
       "learning_id": "learn-github-imsnif-diskonaut",
@@ -45450,7 +45503,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "d1a5090f81a42a1dd5de7157ec0d53db2c6ddf87a67d8e15c69cb40e28dcc22a",
+      "content_hash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -45483,6 +45536,21 @@
           "number": 1525,
           "title": "Asynchronous CUDA Stream Latency Hiding for Weight Offloading",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1925,
+          "title": "Tensor Serialization Integrity & Dtype Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1926,
+          "title": "ComfyUI Node Registration & Classpath Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1927,
+          "title": "Memory-Bounded Weight Loading for Large DiT Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45490,7 +45558,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T21:12:18.001Z",
+      "verified_at": "2026-10-19T00:35:06.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71580,6 +71648,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:28:58.682Z"
+    },
+    "rule-1922": {
+      "learning_id": "rule-1922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1922,
+      "title": "Dropdown): Optimize position update logic for dropdown on scroll and resize (#70",
+      "source_url": "https://github.com/ant-design/ant-design-mobile",
+      "source_version": "eee5477f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:34:57.953Z"
+    },
+    "rule-1923": {
+      "learning_id": "rule-1923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1923,
+      "title": "clippy nightly lints",
+      "source_url": "https://github.com/imsnif/bandwhich",
+      "source_version": "1899870c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:34:59.048Z"
+    },
+    "rule-1924": {
+      "learning_id": "rule-1924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1924,
+      "title": "kubeadm): let kubelet configuration JSON patches remove fields (#1347)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "8164ff2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:35:05.957Z"
+    },
+    "rule-1925": {
+      "learning_id": "rule-1925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1925,
+      "title": "Tensor Serialization Integrity & Dtype Consistency",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:35:06.714Z"
+    },
+    "rule-1926": {
+      "learning_id": "rule-1926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1926,
+      "title": "ComfyUI Node Registration & Classpath Stability",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:35:06.714Z"
+    },
+    "rule-1927": {
+      "learning_id": "rule-1927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1927,
+      "title": "Memory-Bounded Weight Loading for Large DiT Models",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:35:06.714Z"
     }
   },
   "aliases": {

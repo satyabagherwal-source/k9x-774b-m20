@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "d1a5090f81a42a1dd5de7157ec0d53db2c6ddf87a67d8e15c69cb40e28dcc22a",
-    "lastHarvestedAt": "2026-10-17T21:12:18.036Z",
+    "contentHash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
+    "lastHarvestedAt": "2026-10-19T00:35:06.764Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -4078,5 +4078,55 @@
     "contentHash": "786d800c12b4008d97d97c00878d4d0ba68b0487a5ec71e6a7828dc8d1caddcc",
     "lastHarvestedAt": "2026-10-19T00:28:58.721Z",
     "learningId": "learn-github-orbitinghail-sqlsync"
+  },
+  "ant-design-ant-design-mobile": {
+    "repository": "ant-design/ant-design-mobile",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ant-design/ant-design-mobile",
+    "sourceVersion": "eee5477f",
+    "license": "MIT",
+    "contentHash": "8ba15e2b41ce8ec8093461b1efdf47a2fff6b6796aefc02b1bd75c4833357a94",
+    "lastHarvestedAt": "2026-10-19T00:34:58.010Z",
+    "learningId": "learn-github-ant-design-ant-design-mobile"
+  },
+  "imsnif-bandwhich": {
+    "repository": "imsnif/bandwhich",
+    "platform": "github",
+    "sourceUrl": "https://github.com/imsnif/bandwhich",
+    "sourceVersion": "1899870c",
+    "license": "MIT",
+    "contentHash": "672442d6f2933ce5487e4815d97be95ee6b1783f6de5f8d7fe4592e07de023dd",
+    "lastHarvestedAt": "2026-10-19T00:34:59.097Z",
+    "learningId": "learn-github-imsnif-bandwhich"
+  },
+  "i18next-react-i18next": {
+    "repository": "i18next/react-i18next",
+    "platform": "github",
+    "sourceUrl": "https://github.com/i18next/react-i18next",
+    "sourceVersion": "2aab7f1d",
+    "license": "MIT",
+    "contentHash": "bc6c814e5167671ad44abbda353ab4689e815c1f46a3d87b0af818b3ba3f48be",
+    "lastHarvestedAt": "2026-10-19T00:35:03.419Z",
+    "learningId": "learn-github-i18next-react-i18next"
+  },
+  "clastix-kamaji": {
+    "repository": "clastix/kamaji",
+    "platform": "github",
+    "sourceUrl": "https://github.com/clastix/kamaji",
+    "sourceVersion": "8164ff2f",
+    "license": "Apache-2.0",
+    "contentHash": "08c6c1c0229139377baa34e36a7acce156bfb6e44aaaf82119a18f5e9c3044a6",
+    "lastHarvestedAt": "2026-10-19T00:35:06.007Z",
+    "learningId": "learn-github-clastix-kamaji"
+  },
+  "gluesql-gluesql": {
+    "repository": "gluesql/gluesql",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gluesql/gluesql",
+    "sourceVersion": "42a4b418",
+    "license": "Apache-2.0",
+    "contentHash": "05ca2ac1833601310d1441f0562949171c756fa038bc92084dde9e930913e097",
+    "lastHarvestedAt": "2026-10-19T00:35:11.483Z",
+    "learningId": "learn-github-gluesql-gluesql"
   }
 }

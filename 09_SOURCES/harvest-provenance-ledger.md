@@ -2702,3 +2702,9 @@ Every entry in this ledger must capture:
 | `learn-github-devhubapp-devhub` | `https://github.com/devhubapp/devhub` | `1d0d66a3` | Multi-dimensional audit evidence | 2026-10-19T00:28:52.182Z |
 | `learn-github-apptainer-singularity` | `https://github.com/apptainer/singularity` | `9dceb424` | Multi-dimensional audit evidence | 2026-10-19T00:28:54.721Z |
 | `learn-github-orbitinghail-sqlsync` | `https://github.com/orbitinghail/sqlsync` | `7dc1af6b` | Multi-dimensional audit evidence | 2026-10-19T00:28:58.721Z |
+| `learn-github-ant-design-ant-design-mobile` | `https://github.com/ant-design/ant-design-mobile` | `eee5477f` | Multi-dimensional audit evidence | 2026-10-19T00:34:58.010Z |
+| `learn-github-imsnif-bandwhich` | `https://github.com/imsnif/bandwhich` | `1899870c` | Multi-dimensional audit evidence | 2026-10-19T00:34:59.097Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `2aab7f1d` | Multi-dimensional audit evidence | 2026-10-19T00:35:03.419Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `8164ff2f` | Multi-dimensional audit evidence | 2026-10-19T00:35:06.007Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T00:35:06.764Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `42a4b418` | Multi-dimensional audit evidence | 2026-10-19T00:35:11.483Z |

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T21:12:17.728Z  
+> **Timestamp**: 2026-10-19T00:35:06.363Z  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,527 +14,328 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): black-forest-labs/flux-3-image-klein-comfy
 
----
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### Exact Technical Problem Solved
-`black-forest-labs/flux-3-image-klein-comfy` targets the deployment, quantization, serialization, and runtime loading of the FLUX architecture family (flow-matching rectified transformer models, MMDiT/DiT variants) within memory-constrained execution environments, specifically ComfyUI-driven computational graphs. 
+**Status: INSUFFICIENT DATA FOR FORENSIC EXTRACTION**
 
-When deploying large diffusion-transformer models (~12B+ parameters combining dual text encoders like CLIP-L and T5-XXL with joint multimodal transformer blocks), consumer and enterprise edge runtimes encounter:
-1. **Memory Ceiling Saturation (OOM)**: Loading full FP32/BF16 weights exceeds standard unified VRAM limits (24GB on RTX 3090/4090 or 16GB on mid-tier GPUs), requiring deterministic quantization (FP8 `e4m3fn`/`e5m2`, NF4, or AWQ/GGUF derivatives) and zero-copy weight mapping (`mmap`).
-2. **State Dictionary Key Drift**: Incompatibilities between Hugging Face `diffusers` keys (`transformer_blocks.X.attn.to_q`), native BFL/FLUX reference implementations (`double_blocks.X.img_attn.qkv`), and ComfyUI state dict expectation maps (`diffusion_model.double_blocks...`).
-3. **Graph Execution Topology**: Coordinating the three-phase pipeline:
-   - Multimodal prompt conditioning (T5-XXL + CLIP-L tokenization and latent space projection).
-   - Rectified flow velocity field integration over $N$ discrete timesteps via Runge-Kutta / Euler solvers.
-   - Spatial autoencoder decoding (VAE tiling and un-patchification).
+The provided repository data for `black-forest-labs/flux-3-image-klein-comfy` is effectively empty. The input manifests indicate:
+- **Commits/Patches**: `[]` (Empty)
+- **Issues/Post-Mortems**: `[]` (Empty)
+- **Source Code Snippets**: `{}` (Empty)
+- **Directory Tree**: `[]` (Empty)
+- **Configs**: All marked as `"N/A"`
 
-### Architectural Boundaries & Subsystems
+**Architectural Inference (Contextual Only):**
+Based on the repository name (`flux-3-image-klein-comfy`) and the ecosystem (Hugging Face, ComfyUI), this repository is inferred to be a **model weight distribution package** for the FLUX.3 image generation model, specifically optimized or formatted for the ComfyUI workflow engine.
 
-```
-                                      Hugging Face / Remote Hub
-                                                 │
-                                                 ▼ (HTTP/Git LFS / Transfer)
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ Hub Ingestion & Verification Layer                                                     │
-│ - Chunked Hash Verification (BLAKE3 / SHA256)                                          │
-│ - Safetensors Metadata Header Pre-Parsing (Zero-Payload Inspection)                    │
-└────────────────────────────────────────┬───────────────────────────────────────────────┘
-                                         │
-                                         ▼ (mmap / Zero-Copy Syscall)
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ Safetensors & Memory Orchestration Layer                                               │
-│ - Posix `mmap` / Win32 `CreateFileMapping` Allocation                                  │
-│ - Byte Alignment (64-byte aligned tensor offsets for AVX-512 / CUDA Unified Memory)   │
-│ - Dynamic Precision Cast Engine (FP8 E4M3FN <-> BF16 / FP32 Dequantization)            │
-└────────────────────────────────────────┬───────────────────────────────────────────────┘
-                                         │
-                                         ▼ (Key Remapping & Ingestion)
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ State Dictionary Remapper & Invariant Normalizer                                       │
-│ - Diffusers Format <-> BFL Reference Format <-> ComfyUI Native Node Schema              │
-│ - Rotational Position Embedding (RoPE) Frequency Cache Precomputation                  │
-└────────────────────────────────────────┬───────────────────────────────────────────────┘
-                                         │
-                                         ▼ (Execution Pipeline)
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ ComfyUI Dynamic Computational Node Graph                                               │
-│ ┌────────────────────────┐  ┌────────────────────────┐  ┌───────────────────────────┐  │
-│ │ CLIPTextEncodeFlux     │  │ KSampler (Flow Euler)  │  │ VAEDecodeTiled            │  │
-│ │ [CLIP-L + T5XXL Cache] │─▶│ [MMDiT Double/Single   │─▶│ [Dynamic Tile Latent Sizer│  │
-│ │                        │  │  Stream Transformer]   │  │  & Spatial Recomb]        │  │
-│ └────────────────────────┘  └────────────────────────┘  └───────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
+1.  **System Role**: It serves as a static artifact repository, not a software application. It contains binary tensor weights (likely `.safetensors` or `.ckpt`), configuration JSONs defining the model architecture (DiT - Diffusion Transformer), and potentially a `requirements.txt` or `environment.yaml` for dependency locking.
+2.  **Boundary**: The boundary is the file system. There is no runtime logic, no API server, and no client-side code in this specific repository context. The "code" is the mathematical definition of the neural network layers stored in the config files.
+3.  **Critical Subsystem**: The **Serialization Layer**. The primary engineering challenge here is not algorithmic logic but the integrity, versioning, and loading efficiency of large binary tensors into GPU memory.
 
-1. **Weight Storage Subsystem (Safetensors Layout)**: Enforces byte-level header layouts where JSON metadata precedes 64-byte aligned raw binary tensor segments. This eliminates arbitrary code execution risks inherent in pickle/PyTorch (`.pt`/`.bin`) checkpoints.
-2. **Quantization & Dequantization Subsystem**: Bridges low-bit precision representations (`float8_e4m3fn`, integer scales) with execution precision (`bfloat16`). Ensures scales and zero-points are preserved per tensor or per block.
-3. **Execution Routing Subsystem (ComfyUI Dispatcher)**: Decouples model parameter storage from runtime execution modules, using lazy offloading where model layers are streamed to VRAM immediately before forward execution and offloaded back to pinned CPU memory when inactive.
-
----
+**Forensic Verdict**: Without source code, commit history, or configuration files, it is impossible to extract specific coding invariants, bug fixes, or architectural patterns from *this specific repository instance*. The following sections will therefore provide **Universal Engineering Rules** derived from the *known architectural constraints* of ComfyUI-compatible diffusion model repositories, which are the only valid invariants applicable to this class of artifact.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Zero-Allocation Safe Tensor Loading via Direct Memory-Mapping
+Since no specific code was provided, the following rules are derived from the **mandatory invariants** of any ComfyUI-compatible model repository to ensure interoperability and prevent runtime crashes.
+
+### 1. Tensor Serialization Integrity & Dtype Consistency
 **RULE**:
-Model loading subsystems MUST load tensor checkpoint weights via direct memory-mapping (`mmap`) interfaces and validate data alignment to 64-byte memory boundaries before accessing binary buffers. Systems MUST NOT read weights into unpinned system heap RAM or deserialize untrusted formats via Python `pickle` or arbitrary execution runtimes.
+Model weight files MUST be serialized using a format that preserves exact data types (dtype) and shape metadata. Configuration files MUST explicitly declare the expected dtype (e.g., `float16`, `bfloat16`, `float32`) for each tensor group. The loader MUST NOT perform implicit dtype casting without explicit user consent or configuration override.
 
 **WHY**:
-Standard sequential reads (`read()`, `torch.load()`) duplicate large multi-gigabyte models across system RAM and Python garbage collection heaps, causing transient memory spikes of $2\times$ to $3\times$ model size. This triggers OOM kills in high-density containerized environments. Unaligned memory buffers force the underlying BLAS/CUDA drivers to perform intermediary buffer allocations and synchronous CPU memory copies, inducing compute pipeline stalls.
+Implicit casting (e.g., loading `float32` weights into a `float16` pipeline without scaling) causes numerical overflow, resulting in `NaN` (Not a Number) values in the latent space. This manifests as black images, noise artifacts, or complete pipeline crashes during the denoising step. ComfyUI nodes often assume specific dtypes for performance; mismatched dtypes break the graph execution.
 
 **WHEN TO APPLY**:
-Apply in all model checkpoint ingestion, weights caching, and tensor serialization components across Python, C++, and Rust inference microservices.
+Any repository distributing neural network weights for inference engines (ComfyUI, Diffusers, ONNX). Specifically critical for DiT (Diffusion Transformer) models where attention mechanisms are sensitive to precision loss.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import os
-import struct
-import json
-import mmap
-from typing import Dict, Any, Tuple
+# In the model loading script or config
 import torch
+from safetensors.torch import load_file
 
-class SafetensorsZeroCopyLoader:
-    HEADER_ALIGNMENT_BOUNDARY = 64
-
-    def __init__(self, file_path: str):
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"Weight file missing: {file_path}")
-        self.file_path = file_path
-        self._fd: int = -1
-        self._mmap_obj: mmap.mmap | None = None
-        self.metadata: Dict[str, Any] = {}
-        self.tensor_index: Dict[str, Dict[str, Any]] = {}
-        self.data_offset: int = 0
-
-    def __enter__(self) -> "SafetensorsZeroCopyLoader":
-        self._fd = os.open(self.file_path, os.O_RDONLY)
-        # Allocate read-only private memory mapping
-        self._mmap_obj = mmap.mmap(self._fd, length=0, access=mmap.ACCESS_READ)
-        self._parse_safetensors_header()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        if self._mmap_obj is not None:
-            self._mmap_obj.close()
-        if self._fd >= 0:
-            os.close(self._fd)
-
-    def _parse_safetensors_header(self) -> None:
-        assert self._mmap_obj is not None
-        # Safetensors standard: First 8 bytes define unsigned 64-bit little-endian int for header size
-        if len(self._mmap_obj) < 8:
-            raise ValueError("Corrupt file: Image size smaller than 8-byte header.")
-        
-        header_len = struct.unpack("<Q", self._mmap_obj[0:8])[0]
-        self.data_offset = 8 + header_len
-        
-        # Invariant: Data offset MUST align with hardware memory architectures
-        if self.data_offset % 8 != 0:
-            raise ValueError(f"Corrupt alignment: Header end {self.data_offset} is not 8-byte aligned.")
-
-        header_bytes = self._mmap_obj[8:self.data_offset]
-        parsed_header = json.loads(header_bytes.decode("utf-8"))
-        
-        self.metadata = parsed_header.get("__metadata__", {})
-        self.tensor_index = {k: v for k, v in parsed_header.items() if k != "__metadata__"}
-
-    def get_tensor_view(self, tensor_name: str, device: torch.device = torch.device("cpu")) -> torch.Tensor:
-        if tensor_name not in self.tensor_index:
-            raise KeyError(f"Tensor '{tensor_name}' not found in safetensors index.")
-        
-        t_info = self.tensor_index[tensor_name]
-        start_offset = self.data_offset + t_info["data_offsets"][0]
-        end_offset = self.data_offset + t_info["data_offsets"][1]
-        shape = t_info["shape"]
-        dtype_str = t_info["dtype"]
-
-        dtype_map = {
-            "F32": torch.float32,
-            "BF16": torch.bfloat16,
-            "F16": torch.float16,
-            "F8_E4M3": torch.float8_e4m3fn,
-            "F8_E5M2": torch.float8_e5m2,
-            "I32": torch.int32,
-            "I64": torch.int64,
-            "U8": torch.uint8
-        }
-        
-        if dtype_str not in dtype_map:
-            raise NotImplementedError(f"Unsupported tensor storage dtype: {dtype_str}")
-
-        target_dtype = dtype_map[dtype_str]
-        
-        # Zero-copy from mmap buffer using torch.frombuffer
-        assert self._mmap_obj is not None
-        raw_buffer = self._mmap_obj[start_offset:end_offset]
-        
-        tensor = torch.frombuffer(raw_buffer, dtype=target_dtype)
-        tensor = tensor.view(shape)
-        
-        if device.type != "cpu":
-            # Non-blocking async transfer via CUDA Stream
-            tensor = tensor.to(device=device, non_blocking=True)
+def load_model_weights(path, expected_dtype=torch.float16):
+    # 1. Load with explicit dtype hint if supported, or load raw
+    state_dict = load_file(path, device="cpu")
+    
+    # 2. Verify and Cast Explicitly
+    for key, tensor in state_dict.items():
+        if tensor.dtype != expected_dtype:
+            # Check for overflow risk before casting
+            if expected_dtype == torch.float16 and tensor.dtype == torch.float32:
+                if tensor.abs().max() > 65504:
+                    raise ValueError(f"Tensor {key} overflows float16 range. Use bfloat16 or float32.")
+            state_dict[key] = tensor.to(expected_dtype)
             
-        return tensor
+    return state_dict
+
+# Config JSON must specify:
+# {
+#   "model_dtype": "float16",
+#   "weights_file": "flux3_klein.safetensors"
+# }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# DO NOT DO THIS: Loads entire un-mmaped file into heap, uses dangerous deserialization
-import pickle
-import torch
-
-def bad_load_weights(weights_path: str):
-    with open(weights_path, "rb") as f:
-        # CRITICAL BUG 1: Arbitrary code execution vulnerability via pickle
-        # CRITICAL BUG 2: System RAM spike loads entire binary file to RAM twice
-        data = pickle.load(f) 
-    
-    # CRITICAL BUG 3: Sequential in-place mutation on Python dict causing memory thrash
-    state_dict = {}
-    for k, v in data.items():
-        state_dict[k] = torch.tensor(v).to("cuda") # Immediate CUDA allocation forces thrashing
-    return state_dict
+# ANTI-PATTERN: Implicit casting without validation
+state_dict = torch.load("weights.bin")
+# Directly passing to model without checking dtype or range
+model.load_state_dict(state_dict) 
+# If model expects fp16 and weights are fp32 with large values -> NaNs
 ```
 
 **VERIFICATION METHOD**:
-Verify memory footprint during loading using a peak memory tracker. Assert that heap memory allocated during weight reading does not exceed 10MB overhead regardless of model size (e.g., 12GB checkpoint).
-```python
-import tracemalloc
-def verify_mmap_zero_allocation():
-    tracemalloc.start()
-    with SafetensorsZeroCopyLoader("model.safetensors") as loader:
-        _ = loader.get_tensor_view("double_blocks.0.img_attn.qkv.weight")
-        current, peak = tracemalloc.get_traced_memory()
-    tracemalloc.stop()
-    assert peak < 10 * 1024 * 1024, f"Heap allocation exceeded limit: {peak} bytes"
-```
+1.  **Unit Test**: Load the weights, assert `tensor.dtype == expected_dtype` for all keys.
+2.  **Range Check**: Assert `tensor.abs().max() < dtype_max_value` for floating-point types.
+3.  **Integration Test**: Run a single step of the diffusion process and assert that the output latent does not contain `NaN` or `Inf` values.
 
----
-
-### 2. State-Dict Invariant Normalization with Deterministic Architecture Probing
+### 2. ComfyUI Node Registration & Classpath Stability
 **RULE**:
-Model ingestion gateways MUST NOT rely on static, hardcoded dictionary key namespaces. Checkpoints MUST pass through an invariant normalization router that verifies tensor rank, shape topology, and presence of signature projections (e.g., QKV vs separate Q, K, V; Modulated RMSNorm shifts/scales) before dispatching to node execution subgraphs.
+If the repository includes Python code for custom nodes, the class names and module paths MUST be stable and explicitly registered in `nodes.py` or `__init__.py`. The `INPUT_TYPES` dictionary MUST define all parameters with explicit default values and type constraints. No dynamic attribute access on the model object is permitted during graph construction.
 
 **WHY**:
-Diffusion ecosystems (Diffusers, ComfyUI, Native BFL, Kohya) continuously mutate internal naming topologies across major and minor releases. Passing an un-normalized state dict leads to silent parameter omission (default initialization remaining in place), shape mismatches during fused attention passes, or cryptic matrix dimension errors (`RuntimeError: mat1 and mat2 shapes cannot be multiplied`).
+ComfyUI builds the execution graph at load time. If a node's `INPUT_TYPES` changes or a class is renamed without updating the registry, existing workflows will break with `KeyError` or `AttributeError`. Dynamic access prevents static analysis and caching of the graph structure.
 
 **WHEN TO APPLY**:
-Apply whenever external weights are loaded into execution graphs or dynamically swapped across multi-tenant diffusion backends.
+Any Python package extending ComfyUI with custom model loaders or processing nodes.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import re
-from typing import Dict, Tuple
-import torch
-
-class StateDictNormalizer:
-    # Explicit mapping rules: (Regex pattern, Substitution, Expected Rank)
-    CANONICAL_RULES: Tuple[Tuple[re.Pattern, str, int], ...] = (
-        (re.compile(r"^model\.diffusion_model\."), "", -1),
-        (re.compile(r"^transformer_blocks\.(\d+)\.attn\.to_q"), r"double_blocks.\1.img_attn.qkv.q", 2),
-        (re.compile(r"^transformer_blocks\.(\d+)\.attn\.to_k"), r"double_blocks.\1.img_attn.qkv.k", 2),
-        (re.compile(r"^transformer_blocks\.(\d+)\.attn\.to_v"), r"double_blocks.\1.img_attn.qkv.v", 2),
-        (re.compile(r"^single_transformer_blocks\.(\d+)\.norm"), r"single_blocks.\1.modulation.lin", 2),
-    )
-
+# nodes.py
+class Flux3KleinLoader:
     @classmethod
-    def normalize_state_dict(cls, raw_state: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
-        normalized_state: Dict[str, torch.Tensor] = {}
-        
-        # Step 1: Strip outer wrappers
-        for key, tensor in raw_state.items():
-            current_key = key
-            for pattern, repl, expected_rank in cls.CANONICAL_RULES:
-                if pattern.search(current_key):
-                    current_key = pattern.sub(repl, current_key)
-                    if expected_rank != -1 and tensor.ndim != expected_rank:
-                        raise ValueError(
-                            f"Invariant violation for {current_key}: Expected rank {expected_rank}, got {tensor.ndim} with shape {tensor.shape}"
-                        )
-            normalized_state[current_key] = tensor
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "model_path": ("STRING", {"default": "flux3_klein.safetensors"}),
+                "dtype": (["float16", "bfloat16", "float32"], {"default": "float16"}),
+            }
+        }
 
-        # Step 2: Handle fused QKV tensors if upstream provides separated linear projections
-        cls._resolve_fused_qkv(normalized_state)
-        
-        return normalized_state
+    RETURN_TYPES = ("MODEL",)
+    RETURN_NAMES = ("model",)
+    FUNCTION = "load_model"
+    CATEGORY = "Flux3"
 
-    @classmethod
-    def _resolve_fused_qkv(cls, state: Dict[str, torch.Tensor]) -> None:
-        # Detect individual Q, K, V components needing consolidation for fused kernel execution
-        split_keys = [k for k in state.keys() if ".img_attn.qkv.q" in k]
-        for q_key in split_keys:
-            base = q_key.replace(".img_attn.qkv.q", ".img_attn.qkv")
-            k_key = f"{base}.k"
-            v_key = f"{base}.v"
-            fused_key = f"{base}.weight"
-            
-            if k_key in state and v_key in state:
-                q = state.pop(q_key)
-                k = state.pop(k_key)
-                v = state.pop(v_key)
-                # Ensure dimensional alignment across channel axis (dim 0)
-                if not (q.shape[1:] == k.shape[1:] == v.shape[1:]):
-                    raise ValueError(f"Dimension mismatch in QKV fusion for {base}")
-                state[fused_key] = torch.cat([q, k, v], dim=0)
+    def load_model(self, model_path, dtype):
+        # Explicit, static loading logic
+        model = load_flux3_model(model_path, dtype)
+        return (model,)
+
+# Registration
+NODE_CLASS_MAPPINGS = {
+    "Flux3KleinLoader": Flux3KleinLoader
+}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "Flux3KleinLoader": "Flux 3 Klein Loader"
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# DO NOT DO THIS: Blind load_state_dict with strict=False hides broken/missing weights
-def bad_load_checkpoint(model: torch.nn.Module, checkpoint_path: str):
-    state_dict = torch.load(checkpoint_path)
-    # INVARIANT VIOLATION: strict=False silently discards mismatched tensors,
-    # causing the network to execute with uninitialized / random weights
-    model.load_state_dict(state_dict, strict=False) 
+# ANTI-PATTERN: Dynamic input types or missing defaults
+class Flux3Loader:
+    @classmethod
+    def INPUT_TYPES(cls):
+        # Missing 'required' key or no defaults causes UI crash
+        return {"model_path": "STRING"} 
+
+    def load_model(self, **kwargs):
+        # Dynamic access is fragile
+        path = kwargs.get("model_path")
+        if path is None:
+            raise Exception("Path missing") # Should be handled by UI validation
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Lint check to ensure all `INPUT_TYPES` return dictionaries with "required" and "optional" keys.
+2.  **Graph Construction Test**: Instantiate the node class and call `INPUT_TYPES()` to ensure it returns a valid schema.
+3.  **Workflow Replay**: Load a saved workflow JSON that references the node and verify it resolves without errors.
+
+### 3. Memory-Bounded Weight Loading for Large DiT Models
+**RULE**:
+Model loading routines MUST implement chunked or offloading strategies for tensors exceeding available VRAM. The loader MUST NOT load the entire state dictionary into CPU RAM if the target device is GPU, unless explicitly configured for CPU inference. Memory allocation MUST be monitored and released after model initialization.
+
+**WHY**:
+FLUX-class models are large (12B+ parameters). Loading a 24GB+ float16 model into CPU RAM on a system with 16GB RAM causes `MemoryError` and system swap thrashing, leading to timeouts or OOM kills. ComfyUI relies on efficient VRAM management; unbounded loading breaks the memory pool.
+
+**WHEN TO APPLY**:
+Loading any model with >10B parameters on consumer hardware (8-24GB VRAM).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def load_with_offloading(path, device="cuda", offload_to_cpu=True):
+    # Use safetensors lazy loading if possible
+    from safetensors.torch import load_file
+    
+    # Load to CPU first to avoid VRAM spike during transfer
+    state_dict = load_file(path, device="cpu")
+    
+    model = Flux3Model()
+    
+    # Move to device in chunks or use accelerate
+    if offload_to_cpu:
+        # Use a context manager or explicit move
+        for name, param in model.named_parameters():
+            if name in state_dict:
+                param.data = state_dict[name].to(device)
+                # Optional: Delete CPU copy if memory is tight
+                # del state_dict[name]
+    else:
+        model.load_state_dict(state_dict)
+        model.to(device)
+        
+    # Clear cache
+    torch.cuda.empty_cache()
     return model
 ```
 
-**VERIFICATION METHOD**:
-Execute an automated shape-and-completeness test proving every weight module inside the target PyTorch module has a corresponding, byte-matched, initialized tensor from the normalized state dictionary.
-```python
-def verify_model_completeness(model: torch.nn.Module, normalized_state: Dict[str, torch.Tensor]):
-    model_keys = set(model.state_dict().keys())
-    state_keys = set(normalized_state.keys())
-    missing = model_keys - state_keys
-    unexpected = state_keys - model_keys
-    assert len(missing) == 0, f"Critical: Model initialization missing required parameters: {missing}"
-    assert len(unexpected) == 0, f"Critical: Checkpoint contains unmapped parameters: {unexpected}"
-```
-
----
-
-### 3. Asynchronous CUDA Stream Latency Hiding for Weight Offloading
-**RULE**:
-Dynamic layer-swapping engines MUST perform host-to-device (H2D) and device-to-host (D2H) tensor offloading operations on dedicated, background `torch.cuda.Stream` instances synchronized via CUDA events. Compute kernels MUST NOT execute synchronously on the default stream during active memory transfers.
-
-**WHY**:
-Blocking data transfers on the default CUDA stream stall execution pipelines, dropping GPU compute utilization to under 40% when swapping transformer layers between host memory and VRAM. Furthermore, failing to synchronize events creates race conditions where compute kernels execute against partially transferred weight memory, resulting in silent calculation corruption or `NaN` outputs.
-
-**WHEN TO APPLY**:
-Layer-by-layer offloading, sequential transformer block evaluation, and memory-constrained inference in ComfyUI execution graphs.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import torch
-from typing import List, Generator
-
-class LayerPrefetchEngine:
-    def __init__(self, layers: List[torch.nn.Module], device: torch.device):
-        self.layers = layers
-        self.device = device
-        self.copy_stream = torch.cuda.Stream(device=device) if device.type == "cuda" else None
-
-    def execute_pipeline(self, initial_hidden_states: torch.Tensor) -> torch.Tensor:
-        if self.device.type != "cuda":
-            # Fallback for CPU execution
-            x = initial_hidden_states
-            for layer in self.layers:
-                x = layer(x)
-            return x
-
-        num_layers = len(self.layers)
-        h = initial_hidden_states
-        
-        # Pre-transfer the first layer to GPU
-        self.layers[0].to(self.device, non_blocking=False)
-        
-        for i in range(num_layers):
-            current_layer = self.layers[i]
-            
-            # Initiate async prefetch of NEXT layer on background stream
-            next_layer_idx = i + 1
-            if next_layer_idx < num_layers:
-                next_layer = self.layers[next_layer_idx]
-                with torch.cuda.stream(self.copy_stream):
-                    next_layer.to(self.device, non_blocking=True)
-                # Record event indicating transfer has been enqueued
-                copy_event = self.copy_stream.record_event()
-            else:
-                copy_event = None
-
-            # Compute current layer on main stream
-            h = current_layer(h)
-
-            # Wait for next layer transfer to finish before next iteration
-            if copy_event is not None:
-                torch.cuda.current_stream().wait_event(copy_event)
-
-            # Offload executed layer back to CPU memory
-            current_layer.to("cpu", non_blocking=True)
-            
-        return h
-```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# DO NOT DO THIS: Synchronous layer swapping on default CUDA stream
-def bad_layer_execution(layers, x, device):
-    for layer in layers:
-        # CRITICAL PERFORMANCE BUG: Forces pipeline flush, completely blocks execution
-        layer.to(device) 
-        x = layer(x)
-        layer.to("cpu") # Blocks CPU until all GPU queues flush
-    return x
+# ANTI-PATTERN: Direct GPU load of massive file
+state_dict = torch.load("huge_model.bin", map_location="cuda:0")
+# This attempts to allocate all VRAM at once, likely failing on 12GB cards
 ```
 
 **VERIFICATION METHOD**:
-Profile with PyTorch Profiler (`torch.profiler`) to verify overlap between `Memcpy HtoD` and `sm__throughput` compute execution.
-```python
-def verify_transfer_compute_overlap(engine, sample_input):
-    with torch.profiler.profile(
-        activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA],
-        record_shapes=True
-    ) as prof:
-        _ = engine.execute_pipeline(sample_input)
-    
-    events = prof.key_averages()
-    has_memcpy = any("Memcpy HtoD" in e.key for e in events)
-    assert has_memcpy, "Profiling verification failed: No async memory copy operations detected."
-```
-
----
+1.  **Memory Profiling**: Use `tracemalloc` or `nvidia-smi` to monitor peak memory usage during loading.
+2.  **Assertion**: Assert that peak CPU RAM usage < System RAM * 0.8.
+3.  **VRAM Check**: Assert that `torch.cuda.memory_allocated()` after loading is within expected bounds.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-### Incident 1: FP8 Matrix Multiplication Saturation & NaN Loss Divergence (BUG-FLUX-COMFY-01)
-- **Context**: `comfy/model_patcher.py` and `flux/math.py` when quantizing the `single_blocks` and `double_blocks` linear layers to `torch.float8_e4m3fn`.
-- **What Was Expected**: Model generates coherent latents under FP8 quantization with scale factors applied dynamically per tensor.
-- **What Actually Happened**: The attention output produced all `NaN` tokens starting at timestep index 14 out of 20, resulting in pure static image output.
-- **Evidence in Repo**: PR discussions and patch diffs regarding FP8-e4m3fn clamp ranges and absence of FP8 GEMM scale factor normalization.
-- **Root Cause**: The dynamic range of `float8_e4m3fn` is limited to $[-448, 448]$ with an epsilon of $2^{-7} \approx 0.0078$. In the deep single-stream transformer blocks, intermediate residual additions produced activations with peak values exceeding 512.0. Under `float8_e4m3fn`, values $>448$ saturate to `NaN` (unlike `float8_e5m2` which saturates to `Inf`). The subsequent softmax in the self-attention operation propagated `NaN` across the entire sequence.
-- **Remediation Code Diff**:
-```diff
---- a/flux/math.py
-+++ b/flux/math.py
-@@ -12,7 +12,14 @@ def apply_fp8_linear(x: torch.Tensor, weight: torch.Tensor, scale: torch.Tensor
-     if x.dtype != torch.float8_e4m3fn:
--        x_fp8 = x.to(torch.float8_e4m3fn)
-+        # Saturated values in E4M3FN map to NaN. Must clamp to representation maximum
-+        FP8_MAX = 448.0
-+        x_scaled = x * scale
-+        x_clamped = torch.clamp(x_scaled, min=-FP8_MAX, max=FP8_MAX)
-+        x_fp8 = x_clamped.to(torch.float8_e4m3fn)
-     else:
-         x_fp8 = x
-         
--    out = torch._scaled_mm(x_fp8, weight, scale_a=scale, scale_b=torch.tensor(1.0, device=x.device))
-+    scale_inv = 1.0 / scale
-+    out, _ = torch._scaled_mm(
-+        x_fp8, weight.t(), 
-+        scale_a=scale_inv, 
-+        scale_b=torch.tensor(1.0, device=x.device, dtype=torch.float32),
-+        out_dtype=torch.bfloat16
-+    )
-     return out
-```
-- **Lesson**: `float8_e4m3fn` does not have an infinity representation; any overflow immediately converts to `NaN`. All inputs to an `e4m3fn` scaled GEMM kernel must be clamped to `[-448.0, 448.0]` prior to casting.
+**Status: NO DATA AVAILABLE**
 
----
+The input data contains no commit history, bug reports, or patch diffs. Therefore, no specific incidents can be documented.
 
-### Incident 2: Rotary Positional Embedding (RoPE) Coordinate Degeneracy on Non-Square Latents (BUG-FLUX-COMFY-02)
-- **Context**: `flux/modules/layers.py` -> `EmbedND.forward()` during arbitrary aspect-ratio generation in ComfyUI.
-- **What Was Expected**: Generating images with non-square resolutions (e.g., 1344x768, 832x1216) should maintain geometric spatial consistency.
-- **What Actually Happened**: Synthesized output exhibited severe horizontal shearing, duplicated human anatomy, and repeated artifact grids along the extended dimension.
-- **Evidence in Repo**: Patch to spatial coordinate grid construction in 2D RoPE calculations inside the latent coordinate unflattening block.
-- **Root Cause**: The RoPE implementation assumed a square latent token grid when constructing spatial indices $(H \times W)$. The indexing logic flattened coordinates using a 1D `torch.arange(0, tokens)` without calculating separate 2D spatial frequencies $(f_y, f_x)$. This caused high-frequency spatial coordinate leakage from row boundaries into column frequencies.
-- **Remediation Code Diff**:
-```diff
---- a/flux/modules/layers.py
-+++ b/flux/modules/layers.py
-@@ -35,8 +35,12 @@ class EmbedND(torch.nn.Module):
-     def forward(self, ids: torch.Tensor) -> torch.Tensor:
--        # BUGGY: Flat 1D coordinate derivation assuming square latents
--        # seq_len = ids.shape[1]
--        # freqs = self.freqs[:seq_len]
--        # return freqs
-+        # SAFE INVARIANT: Explicit multi-dimensional coordinate calculation
-+        # ids shape: [batch, sequence_length, 3] representing (t, y, x)
-+        t_coords = ids[..., 0]
-+        y_coords = ids[..., 1]
-+        x_coords = ids[..., 2]
-+        
-+        freqs_y = self.compute_rope_freqs(y_coords, self.dim // 2)
-+        freqs_x = self.compute_rope_freqs(x_coords, self.dim // 2)
-+        freqs = torch.cat([freqs_y, freqs_x], dim=-1)
-+        return freqs
-```
-- **Lesson**: Positional embeddings in multimodal transformers must track explicit coordinate dimensions independently. Flattening 2D/3D grids into sequential 1D index buffers before computing trigonometric frequency components causes phase-shift distortion across aspect ratio changes.
+*Note: In a real forensic scenario, this section would detail specific bugs such as:*
+*   *Incident 1: NaN propagation due to fp16 overflow in attention heads.*
+*   *Incident 2: Workflow breakage due to node class name change.*
+*   *Incident 3: OOM crash on 8GB VRAM cards due to lack of offloading.*
 
----
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### Incident 3: Memory Fragmentation via VAE Latent Slice Unpack Mutation (BUG-FLUX-COMFY-03)
-- **Context**: `comfy/sd.py` and `comfy/vae.py` during tiled decoding of massive latents ($2048 \times 2048$ pixel generation).
-- **What Was Expected**: Memory overhead remains bounded to the execution size of a single VAE tile ($512 \times 512$ pixel latent patch).
-- **What Actually Happened**: System raised `torch.cuda.OutOfMemoryError: CUDA out of memory` during tile reassembly, even when 16GB of VRAM was free.
-- **Evidence in Repo**: Memory management bug reports during ComfyUI tiled VAE decoding execution passes.
-- **Root Cause**: Tile concatenation used `torch.cat` iteratively inside a nested Python loop. Each call allocated a new contiguous memory chunk on the GPU for intermediate tensors, leaving preceding partial buffers in CUDA caching memory. This fragmented the allocator heap until no contiguous 2GB block could be reserved for the final output canvas.
-- **Remediation Code Diff**:
-```diff
---- a/comfy/vae.py
-+++ b/comfy/vae.py
-@@ -102,10 +102,12 @@ class TiledVAEDecoder:
--        # BUGGY: Iterative concatenation induces dynamic heap fragmentation
--        reconstructed_canvas = None
--        for tile in tiles:
--            decoded = self.vae.decode(tile)
--            reconstructed_canvas = decoded if reconstructed_canvas is None else torch.cat([reconstructed_canvas, decoded], dim=-1)
--        return reconstructed_canvas
-+        # SAFE INVARIANT: Pre-allocate pinned target buffer and insert in-place via views
-+        canvas = torch.empty(
-+            (batch, channels, full_h * scale_factor, full_w * scale_factor),
-+            dtype=torch.float32,
-+            device=device
-+        )
-+        for (y1, y2, x1, x2), tile in tile_generator:
-+            decoded_tile = self.vae.decode(tile)
-+            canvas[:, :, y1*scale_factor:y2*scale_factor, x1*scale_factor:x2*scale_factor] = decoded_tile
-+        return canvas
-```
-- **Lesson**: Never accumulate tensors in Python loops via dynamic concatenation (`torch.cat`, `np.concatenate`). Pre-allocate the complete canvas tensor once and perform in-place assignments (`tensor[slice] = patch`) to eliminate memory fragmentation.
+Since no source code was provided, the following are **universal invariants** for Python-based ML model repositories interacting with ComfyUI.
 
----
+### 1. Micro-Syntax & Token-Level Precision
+*   **Invariant**: Never use `is` for numeric comparison. Always use `==`.
+    *   *Bad*: `if dtype is torch.float16:` (Fails if dtype is a string "float16" or a different object instance).
+    *   *Good*: `if dtype == torch.float16:` or `if str(dtype) == "float16":`.
+*   **Invariant**: Explicitly handle `None` in tensor operations.
+    *   *Bad*: `tensor * scale` where `scale` might be `None`.
+    *   *Good*: `scale = 1.0 if scale is None else scale; tensor * scale`.
 
-### Incident 4: Attention Mask Dim Mismatch in Single-Stream Cross Attention (BUG-FLUX-COMFY-04)
-- **Context**: `flux/modules/transformer.py` -> `SingleStreamBlock.forward()`.
-- **What Was Expected**: Concatenated text tokens and latent image tokens pass through shared self-attention blocks without boundary truncation.
-- **What Actually Happened**: `RuntimeError: The size of tensor a (4096) must match the size of tensor b (4352) at non-singleton dimension 2`.
-- **Evidence in Repo**: Patch diff addressing text padding length invariants when passing sequences to `SingleStreamBlock`.
-- **Root Cause**: Text context tokens were padded to static length 512, while image latents were variable ($N = H \times W / 16$). When switching from `DoubleStreamBlock` (which holds independent text and image streams) to `SingleStreamBlock` (which concatenates them along dimension 1), the projection weight expected the exact concatenated dimension $(512 + N)$, but a downstream spatial attention mechanism applied a static, non-extended attention mask.
-- **Remediation Code Diff**:
-```diff
---- a/flux/modules/transformer.py
-+++ b/flux/modules/transformer.py
-@@ -88,7 +88,10 @@ class SingleStreamBlock(torch.nn.Module):
-     def forward(self, x: torch.Tensor, vec: torch.Tensor, pe: torch.Tensor) -> torch.Tensor:
--        # BUGGY: Mask assuming static image sequence length
--        # res = self.attn(x, mask=self.static_mask)
-+        # SAFE INVARIANT: Dynamic context mask matching combined sequence length
-+        total_seq_len = x.shape[1]
-+        # Construct causal/cross dynamic mask on current stream if required
-+        dynamic_mask = None
-+        if pe.shape[1] != total_seq_len:
-+             raise ValueError(f"Positional embedding length {pe.shape[1]} != sequence length {total_seq_len}")
-+        res = self.attn(x, pe=pe, mask=dynamic_mask)
-         return x + self.linear(res)
-```
-- **Lesson**: Single-stream architectures that merge heterogeneous modalities along the sequence dimension must dynamically compute and validate masking layouts and RoPE components relative to `total_len = text_len + image_len`.
+### 2. Infinite Loop & Recursion Guards
+*   **Invariant**: Model loading must not involve recursive directory scanning without depth limits.
+    *   *Guard*: `os.walk` with `maxdepth` or explicit file list.
+*   **Invariant**: Avoid circular imports between `nodes.py` and `model.py`.
+    *   *Guard*: Use lazy imports inside functions if necessary, or structure modules to have a clear dependency hierarchy (Model -> Nodes).
 
----
+### 3. UI & UX Micro-Mechanics
+*   **Invariant**: ComfyUI node inputs must have valid default values to prevent UI rendering errors.
+    *   *Guard*: Ensure all `INPUT_TYPES` fields have a `default` key.
+*   **Invariant**: Long-running operations (model loading) should not block the UI thread if possible, or provide clear status updates.
+    *   *Guard*: Use ComfyUI's progress reporting mechanisms if available, or ensure the operation is fast enough (<2s) to not feel unresponsive.
 
-### Incident 5: Deadlock Under PyTorch Multiprocessing Queue Worker Spawn (BUG-FLUX-COMFY-05)
-- **Context**: Background checkpoint validation and pre-caching CLI utilities in ComfyUI extensions.
-- **What Was Expected**: CLI asynchronously parses directory trees of `.safetensors` checkpoints using `multiprocessing.Pool`.
-- **What Actually Happened**: Process hung indefinitely with 0% CPU and 0% GPU utilization during the initial file traversal loop.
-- **Evidence in Repo**: Git commit resolving frozen child process executions under Python's `fork` model on POSIX systems.
-- **Root Cause**: The host parent process initialized CUDA prior to calling `multiprocessing.Pool()`. Under POSIX systems, `fork` copies the internal CUDA runtime driver lock state in an acquired state to the child process. When the child process attempted to initialize CUDA context or load pinned tensor memory via PyTorch, it deadlocked waiting for the lock that was never released.
-- **Remediation Code Diff**:
-```diff
---- a/comfy/cli_args.py
-+++ b/comfy/cli_args.py
-@@ -1,6 +1,9 @@
- import multiprocessing as mp
- 
- def initialize_runtime_environment():
--    # BUGGY: Default
+### 4. Backend Concurrency & Memory Safety
+*   **Invariant**: Thread-safe access to shared model instances.
+    *   *Guard*: If the model is shared across multiple workflows, use locks or ensure the model is stateless during inference.
+*   **Invariant**: Proper release of GPU memory.
+    *   *Guard*: Call `torch.cuda.empty_cache()` after loading or unloading models.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Invariant**: Validate file existence and readability before loading.
+    *   *Guard*: `if not os.path.exists(path): raise FileNotFoundError(f"Model file not found: {path}")`.
+*   **Invariant**: Check for corrupted files using checksums if provided.
+    *   *Guard*: Compare SHA256 hash of the file with the expected hash from the manifest.
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+*   **Analysis**: The repository is a static artifact store. The architecture is defined by the file structure: weights, configs, and optional Python code. The boundary is the file system. There is no runtime state management within the repo itself.
+
+### 2. Core Abstractions
+*   **Analysis**: The core abstraction is the **State Dictionary** (a mapping of tensor names to tensors). The secondary abstraction is the **Model Config** (JSON defining layer dimensions, dtypes, and architecture type).
+
+### 3. Error Handling
+*   **Analysis**: Error handling is minimal in the repo itself. It relies on the loading code (in ComfyUI or a custom node) to handle missing files, dtype mismatches, and memory errors. The repo should provide clear error messages in its README if specific versions are required.
+
+### 4. Testing
+*   **Analysis**: No tests are present in the repo. Testing is external: verifying that the model loads and produces valid images in ComfyUI.
+
+### 5. Security
+*   **Analysis**: The primary security risk is **supply chain attack** (malicious weights or code). Mitigation: Use trusted sources, verify checksums, and inspect any Python code before execution.
+
+### 6. Performance
+*   **Analysis**: Performance is determined by the dtype (fp16 vs fp32) and the offloading strategy. The repo should document the expected VRAM usage and recommended hardware.
+
+### 7. Deployment
+*   **Analysis**: Deployment is manual: download the repo, place it in the ComfyUI models directory, and restart ComfyUI. No CI/CD is involved in the user's deployment.
+
+### 8. Agent Patterns
+*   **Analysis**: Not applicable. This is a model repo, not an agent framework.
+
+### 9. Data Flow
+*   **Analysis**: Data flows from disk (weights) -> CPU RAM (loading) -> GPU VRAM (inference). The flow is linear and one-time per session.
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern
+*   **Chunked Weight Loading**: Load weights in chunks to manage memory.
+    ```python
+    for chunk in chunks(state_dict):
+        model.load_state_dict(chunk, strict=False)
+    ```
+
+### 2. Rule
+*   **Explicit Dtype Declaration**: Always specify the expected dtype in the config and validate it during loading.
+
+### 3. Architecture Principle
+*   **Separation of Weights and Code**: Keep model weights separate from Python code to allow for easy swapping of models without changing code.
+
+### 4. Failure Mode
+*   **NaN Propagation**: Caused by dtype mismatch or overflow. Results in black/noisy images.
+
+### 5. Reusable Skill
+*   **Model Validation Script**: A script that loads the model, checks dtypes, runs a dummy forward pass, and asserts no NaNs.
+
+### 6. Decision
+*   **Use Safetensors**: Choose `.safetensors` over `.bin` for security (no arbitrary code execution) and speed (lazy loading).
+
+### 7. Anti-pattern
+*   **Implicit Casting**: Never rely on PyTorch to implicitly cast dtypes. Always cast explicitly.
+
+### 8. Verification Method
+*   **Dummy Inference Test**: Run a single step of the diffusion process with a random noise tensor and assert the output is finite.
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+For any AI coding agent building or maintaining a ComfyUI-compatible model repository:
+
+1.  **File Structure Check**:
+    *   [ ] Ensure weights are in `.safetensors` format.
+    *   [ ] Ensure `config.json` or `model_config.json` is present and valid JSON.
+    *   [ ] Ensure `README.md` includes installation instructions and VRAM requirements.
+
+2.  **Code Quality Check** (if Python code is present):
+    *   [ ] All node classes are registered in `NODE_CLASS_MAPPINGS`.
+    *   [ ] All `INPUT_TYPES` have default values.
+    *   [ ] No global state is modified during node initialization.
+    *   [ ] Explicit dtype handling is used.
+
+3.  **Security Check**:
+    *   [ ] No executable code in weight files (use `.safetensors`).
+    *   [ ] Checksums are provided for weight files.
+
+4.  **Performance Check**:
+    *   [ ] Documented VRAM usage for different dtypes.
+    *   [ ] Offloading strategy is implemented if model > 10B params.
+
+5.  **Testing Check**:
+    *   [ ] A validation script is provided to test model loading.
+    *   [ ] The validation script checks for NaNs in the output.
+
+**Final Note**: This forensic extraction is limited by the absence of source code and commit history in the provided data. The rules and patterns above are derived from best practices for the ComfyUI ecosystem and are applicable to any similar model repository.
