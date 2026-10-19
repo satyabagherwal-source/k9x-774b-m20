@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:08:46.009Z",
-  "total_verified_learnings": 829,
+  "last_updated": "2026-10-19T14:15:06.731Z",
+  "total_verified_learnings": 830,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2187,14 +2187,19 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "9dd3e28d",
-      "content_hash": "158676aaafd6140e5c3a1d4ecd107d3083b8548db2390d38db6da65a9c24a35f",
+      "source_version": "b65f3230",
+      "content_hash": "15b2a4a3e62a9cb7630c21f6f27e9327636936e08871313522695f0af42615f6",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
         {
           "number": 1988,
           "title": "vex): avoid panic on CSAF advisory without a CVE (#10990)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2623,
+          "title": "k8s): accept tolerations without a value (#11425)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2203,7 +2208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:49:21.536Z",
+      "verified_at": "2026-10-19T14:15:01.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18516,7 +18521,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "fc46f6f449b53307de8d899a5870b84bfb136ed6b49d345b577e81cb527ef66f",
+      "content_hash": "a5bf58263d7fc4bea8b58f0ad9a33484ae9e3c5e5375009236ff37ed835c953d",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -18563,7 +18568,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-18T04:08:24.283Z",
+      "verified_at": "2026-10-19T14:14:55.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24569,22 +24574,35 @@
     "learn-github-igorescodro-alkaa": {
       "learning_id": "learn-github-igorescodro-alkaa",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "igorescodro-alkaa",
+      "source": "igorescodro/alkaa",
+      "repository": "igorescodro/alkaa",
       "slug": "igorescodro-alkaa",
       "platform": "github",
       "source_url": "https://github.com/igorescodro/alkaa",
-      "source_version": "HEAD",
-      "content_hash": "a19c44fc4a3bd433706b191ee4874561b45de5d88fbeccb94189f8854293e518",
+      "source_version": "8524e062",
+      "content_hash": "aa645f5ecd0b4e05c58f556659a730be57b240d1802373394e2d0fb6705e4168",
       "dossier_path": "07_PROJECT_LEARNING/igorescodro-alkaa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/igorescodro-alkaa-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2622,
+          "title": "🔧 Fix TaskItemTest Koin configuration and add RelativeDateTimeProviderFake",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.546Z"
+      "verified_at": "2026-10-19T14:14:59.691Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-iii-hq-iii": {
       "learning_id": "learn-github-iii-hq-iii",
@@ -27217,14 +27235,19 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "f0441e6d",
-      "content_hash": "b10c962d3ecce9e256de840a7fd4bd98c05a10fb9be602074b1e47bf44ab5f1d",
+      "source_version": "f5cf5a68",
+      "content_hash": "91d48bdbc5089091c2e503f8f43ae5ced54ccf0a9c58b0f25174a6280c0aaa95",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
         {
           "number": 1830,
           "title": "pin native input view cleanup for release validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2621,
+          "title": "Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27233,7 +27256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:14:17.036Z",
+      "verified_at": "2026-10-19T14:14:54.966Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52771,13 +52794,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "89acffc2",
-      "content_hash": "ab84324d762c4894d541bbaf55c1ea87eb9284bba9a4f5da05ae7722672125a6",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "f60ba6be407581dd095ab99a5324b23b53ca62bb509c5d86d4c26da3381e74af",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -52792,7 +52815,7 @@
         {
           "number": 2605,
           "title": "Merge pull request #4563 from aleo-labs-protocol/deps/zip-9",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52800,7 +52823,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:21:16.593Z",
+      "verified_at": "2026-10-19T14:15:06.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87815,14 +87838,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2605,
       "title": "Merge pull request #4563 from aleo-labs-protocol/deps/zip-9",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "89acffc2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T13:21:16.593Z"
+      "verified_at": "2026-10-19T14:15:06.722Z"
     },
     "rule-2606": {
       "learning_id": "rule-2606",
@@ -88033,6 +88056,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:08:45.996Z"
+    },
+    "rule-2621": {
+      "learning_id": "rule-2621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2621,
+      "title": "Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "f5cf5a68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:14:54.966Z"
+    },
+    "rule-2622": {
+      "learning_id": "rule-2622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2622,
+      "title": "🔧 Fix TaskItemTest Koin configuration and add RelativeDateTimeProviderFake",
+      "source_url": "https://github.com/igorescodro/alkaa",
+      "source_version": "8524e062",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:14:59.691Z"
+    },
+    "rule-2623": {
+      "learning_id": "rule-2623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2623,
+      "title": "k8s): accept tolerations without a value (#11425)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "b65f3230",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:15:01.611Z"
     }
   },
   "aliases": {

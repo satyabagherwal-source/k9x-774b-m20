@@ -3278,3 +3278,8 @@
 | `CYCLE-20261019-Y2KP` | `2026-10-19T14:08:40.585Z` | `GitLiveApp/firebase-kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2618` | Yes (`0239078f...`) |
 | `CYCLE-20261019-Y42P` | `2026-10-19T14:08:42.529Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2619` | Yes (`cdc71bab...`) |
 | `CYCLE-20261019-Y6SK` | `2026-10-19T14:08:46.052Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2620` | Yes (`0aaba765...`) |
+| `CYCLE-20261019-63HN` | `2026-10-19T14:14:55.019Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2621` | Yes (`91d48bdb...`) |
+| `CYCLE-20261019-63LW` | `2026-10-19T14:14:55.172Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`a5bf5826...`) |
+| `CYCLE-20261019-674W` | `2026-10-19T14:14:59.744Z` | `igorescodro/alkaa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2622` | Yes (`aa645f5e...`) |
+| `CYCLE-20261019-68M8` | `2026-10-19T14:15:01.664Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2623` | Yes (`15b2a4a3...`) |
+| `CYCLE-20261019-6CK3` | `2026-10-19T14:15:06.771Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2605` | Yes (`f60ba6be...`) |

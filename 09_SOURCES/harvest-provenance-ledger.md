@@ -3285,3 +3285,8 @@ Every entry in this ledger must capture:
 | `learn-github-gitliveapp-firebase-kotlin-sdk` | `https://github.com/GitLiveApp/firebase-kotlin-sdk` | `077d6624` | Multi-dimensional audit evidence | 2026-10-19T14:08:40.588Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `8a97fe6c` | Multi-dimensional audit evidence | 2026-10-19T14:08:42.532Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0b1c364b` | Multi-dimensional audit evidence | 2026-10-19T14:08:46.055Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `f5cf5a68` | Multi-dimensional audit evidence | 2026-10-19T14:14:55.022Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-19T14:14:55.175Z |
+| `learn-github-igorescodro-alkaa` | `https://github.com/igorescodro/alkaa` | `8524e062` | Multi-dimensional audit evidence | 2026-10-19T14:14:59.747Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `b65f3230` | Multi-dimensional audit evidence | 2026-10-19T14:15:01.667Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `89acffc2` | Multi-dimensional audit evidence | 2026-10-19T14:15:06.774Z |

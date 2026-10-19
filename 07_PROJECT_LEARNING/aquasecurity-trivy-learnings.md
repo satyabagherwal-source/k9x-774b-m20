@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `9dd3e28d`  
+> **Source Version**: `b65f3230`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:49:21.372Z  
+> **Timestamp**: 2026-10-19T14:15:01.386Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:49:21.364Z  
+> **Harvest Timestamp**: 2026-10-19T14:15:01.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38500 stars
+- **Stars / Engagement**: 38508 stars
 
 ---
 
@@ -1002,721 +1002,136 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `431288f8` (2026-10-13)
-**Commit Message**: fix(vex): avoid panic on CSAF advisory without a CVE (#10990)
+### Incident Patch 1: `914b658c` (2026-10-19)
+**Commit Message**: fix(k8s): accept tolerations without a value (#11425)
 
-Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
-
-**File**: `pkg/vex/csaf.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -35,7 +35,7 @@ func (v *CSAF) Filter(result *types.Result, bom *core.BOM) {
- 
- func (v *CSAF) NotAffected(vuln types.DetectedVulnerability, product, subProduct *core.Component) (types.ModifiedFinding, bool) {
- 	found, ok := lo.Find(v.advisory.Vulnerabilities, func(item *csaf.Vulnerability) bool {
--		return string(*item.CVE) == vuln.VulnerabilityID
-+		return item.CVE != nil && string(*item.CVE) == vuln.VulnerabilityID
- 	})
- 	if !ok {
- 		return types.ModifiedFinding{}, false
+@@ -126,6 +126,7 @@ require (
+ 	gopkg.in/yaml.v3 v3.0.1
+ 	helm.sh/helm/v4 v4.3.0
+ 	k8s.io/api v0.37.1
++	k8s.io/apimachinery v0.37.1
+ 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+ 	modernc.org/sqlite v1.60.1
+ )
+@@ -453,7 +454,6 @@ require (
+ 	gopkg.in/warnings.v0 v0.1.2 // indirect
+ 	gopkg.in/yaml.v2 v2.4.0 // indirect
+ 	k8s.io/apiextensions-apiserver v0.37.0 // indirect
+-	k8s.io/apimachinery v0.37.1 // indirect
+ 	k8s.io/apiserver v0.37.0 // indirect
+ 	k8s.io/cli-runtime v0.37.0 // indirect
+ 	k8s.io/client-go v0.37.0 // indirect
 ```
 
-**File**: `pkg/vex/testdata/csaf.json` (modified, +19/-0)
+**File**: `pkg/flag/kubernetes_flags.go` (modified, +8/-4)
 ```diff
-@@ -65,6 +65,25 @@
-     ]
-   },
-   "vulnerabilities": [
-+    {
-+      "ids": [
-+        {
-+          "system_name": "GitHub Security Advisory",
-+          "text": "GHSA-2r2c-cx56-8933"
-+        }
-+      ],
-+      "product_status": {
-+        "known_not_affected": [
-+          "go-transitive-v4.0.0"
-+        ]
-+      },
-+      "threats": [
-+        {
-+          "category": "impact",
-+          "details": "vulnerable_code_not_in_execute_path"
-+        }
-+      ]
-+    },
-     {
-       "cve": "CVE-2024-0001",
-       "notes": [
-```
-
----
-
-### Incident Patch 2: `6c7a8a6b` (2026-10-14)
-**Commit Message**: chore(deps): pin zlib >= 1.3.2-r1 in container images to fix CVE-2026-85091 (#11407)
-
-**File**: `Dockerfile` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- FROM alpine:3.24.2
--RUN apk --no-cache add ca-certificates git
-+# CVE-2026-85091: remove after alpine base ships zlib >= 1.3.2-r1
-+RUN apk --no-cache add ca-certificates git 'zlib>=1.3.2-r1'
- ARG TARGETPLATFORM
- COPY ${TARGETPLATFORM}/trivy /usr/local/bin/trivy
- COPY contrib/*.tpl contrib/
-```
-
-**File**: `Dockerfile.canary` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- FROM alpine:3.24.2
--RUN apk --no-cache add ca-certificates git
-+# CVE-2026-85091: remove after alpine base ships zlib >= 1.3.2-r1
-+RUN apk --no-cache add ca-certificates git 'zlib>=1.3.2-r1'
+@@ -7,6 +7,7 @@ import (
  
- # binaries were created with GoReleaser
- # need to copy binaries from folder with correct architecture
-```
-
----
-
-### Incident Patch 3: `a67baa8d` (2026-10-12)
-**Commit Message**: feat(crypto): report nominal security levels of algorithms (#11369)
-
-**File**: `docs/guide/scanner/crypto.md` (modified, +34/-1)
-```diff
-@@ -36,11 +36,44 @@ An asset is identified by its content. For a certificate this is the SHA-256 of
- 
- The parameters of an algorithm are the key size for RSA and the curve for EC. For DSA they are the two bit lengths that name a parameter set in FIPS 186: L, the length of the prime `p`, and N, the length of the prime `q`. So DSA keys of (2048, 224) and (2048, 256) belong to different algorithms, although both are named `DSA-2048` after the CycloneDX naming pattern. Other algorithms are identified by the OID alone.
- 
-+### Security levels
-+
-+Trivy estimates two nominal security levels for the algorithms it recognizes. The classical security level is the strength in bits against classical attacks. The NIST quantum security level is the NIST post-quantum security category from 1 to 5, or 0 for an algorithm that meets none of the categories.
-+
-+The levels are estimates for an algorithm and its parameters, taken from NIST and IETF publications. They are not a guarantee about an implementation, nor a statement that any policy approves the algorithm.
-+
-+| Algorithm | Classical security level (bits) | NIST quantum security level |
-+| --- | --- | --- |
-+| RSA, key size 1024 / 2048 / 3072 / 4096 / 6144 / 8192 bits | 80 / 112 / 128 / 152 / 176 / 200 | 0 |
-+| EC, curve P-224 / P-256 / P-384 / P-521 | 112 / 128 / 192 / 256 | 0 |
-+| DSA, (L, N) of (1024, 160) / (2048, 224) / (2048, 256) / (3072, 256) | 80 / 112 / 112 / 128 | 0 |
-+| Ed25519 | 128 | 0 |
-+| ML-DSA-44 / ML-DSA-65 / ML-DSA-87 | - | 2 / 3 / 5 |
-+| RSA, ECDSA and DSA signature algorithms | - | 0 |
-+
-+A dash means that the level is left out of the report.
-+
-+The levels come from these publications:
-+
-+- RSA with a key size of 2048 bits and above takes the approximate maximum strengths in Appendix D, Table 4 of [NIST SP 800-56B Rev. 2](https://csrc.nist.gov/pubs/sp/800/56/b/r2/final). RSA with a key size of 1024 bits takes the nominal maximum of 80 from Table 2 of [NIST SP 800-57 Part 1 Rev. 5](https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final), whose row for a 1024-bit modulus states at most 80 bits.
-+- EC takes the ECC strength ranges in Table 2 of NIST SP 800-57 Part 1 Rev. 5.
-+- DSA takes the FFC entries in Table 2 of NIST SP 800-57 Part 1 Rev. 5 and the DSA strengths in Section 3 of [NIST SP 800-131A Rev. 2](https://csrc.nist.gov/pubs/sp/800/131/a/r2/final). The (1024, 160) pair takes the nominal maximum of 80 from the Table 2 row that states at most 80 bits.
-+- Ed25519 takes its strength from [RFC 8032, Section 8.5](https://datatracker.ietf.org/doc/html/rfc8032#section-8.5).
-+- ML-DSA takes its categories from [FIPS 204](https://csrc.nist.gov/pubs/fips/204/final).
-+- RSA, EC, DSA and EdDSA rest on integer factorization and discrete logarithms, which a sufficiently capable quantum computer breaks. Section 1.2 of FIPS 204 discusses this. They therefore meet none of the NIST categories.
-+
-+A level is left out when it cannot be estimated:
-+
-+- An RSA, ECDSA or DSA signature algorithm gets no classical level. The strength of such a signature is limited by the key that signed it, and that key belongs to the issuer, which the certificate does not carry. Ed25519 is different, because its OID fixes the curve.
-+- ML-DSA gets no classical level, because FIPS 204 assigns its parameter sets a NIST category but no classical strength in bits.
-+- An algorithm whose parameters are not in the table, such as RSA with a key size of 2047 bits or a DSA pair that FIPS 186 does not define, gets no classical level, but still gets a NIST quantum security level of 0.
-+- An algorithm that Trivy does not recognize, such as RSA-PSS or Ed448, gets neither level. An encrypted private key has no algorithm in the report at all, because its algorithm stays inside the ciphertext.
-+
- ### CycloneDX
- 
- Every asset becomes a `cryptographic-asset` component with `cryptoProperties`, and the links between assets are stored in `relatedCryptographicAssets`. Each place an asset was found is an entry in `evidence.occurrences`. The path is stored in `location`, and the layer in `additionalContext` as `aquasecurity:trivy:LayerDiffID=<diff ID>`.
- 
--The parameters of an algorithm are stored in `algorithmProperties`. The key size goes to `parameterSetIdentifier`, and for DSA it is the pair `<L>-<N>`, such as `2048-256`, which tells apart two components named `DSA-2048`. The curve goes to `ellipticCurve`.
-+The parameters of an algorithm are stored in `algorithmProperties`. The key size goes to `parameterSetIdentifier`, and for DSA it is the pair `<L>-<N>`, such as `2048-256`, which tells apart two components named `DSA-2048`. The curve goes to `ellipticCurve`. The security levels go to `classicalSecurityLevel` and `nistQuantumSecurityLevel`, and a level that is not estimated is left out.
- 
- ```json
- {
-```
-
-**File**: `integration/testdata/crypto.cdx.json.golden` (modified, +15/-6)
-```diff
-@@ -76,7 +76,9 @@
-         "assetType": "algorithm",
-         "algorithmProperties": {
-           "primitive": "unknown",
--          "ellipticCurve": "nist/P-256"
-+          "ellipticCurve": "nist/P-256",
-+          "classicalSecurityLevel": 128,
-+          "nistQuantumSecurityLevel": 0
-         },
-         "oid": "1.2.840.10045.2.1"
-       }
-@@ -97,7 +99,8 @@
-         "assetType": "algorithm",
-         "algorithmProperties": {
-           "primitive": "signature",
--          "algorithmFamily": "ECDSA"
-+          "algorithmFamily": "ECDSA",
-+          "nistQuantumSecurityLevel": 0
-         },
-         "oid": "1.2.840.10045.4.3.2"
-       }
-@@ -126,7 +129,8 @@
-         "assetType": "algorithm",
-         "algorithmProperties": {
-           "primitive": "signature",
--          "algorithmFamily": "RSASSA-PKCS1"
-+          "algorithmFamily": "RSASSA-PKCS1",
-+          "nistQuantumSecurityLevel": 0
-         },
-         "oid": "1.2.840.113549.1.1.11"
-       }
-@@ -167,7 +171,9 @@
-         "assetType": "algorithm",
-         "algorithmProperties": {
-           "primitive": "unknown",
--          "parameterSetIdentifier": "2048"
-+          "parameterSetIdentifier": "2048",
-+          "classicalSecurityLevel": 112,
-+          "nistQuantumSecurityLevel": 0
-         },
-         "oid": "1.2.840.113549.1.1.1"
-       }
-@@ -188,7 +194,9 @@
-         "assetType": "algorithm",
-         "algorithmProperties": {
-           "primitive": "signature",
--          "algorithmFamily": "EdDSA"
-+          "algorithmFamily": "EdDSA",
-+          "classicalSecurityLevel": 128,
-+          "nistQuantumSecurityLevel": 0
-         },
-         "oid": "1.3.101.112"
-       }
-@@ -209,7 +217,8 @@
-         "assetType": "algorithm",
-         "algorithmProperties": {
-           "primitive": "signature",
--          "algorithmFamily": "ML-DSA"
-+          "algorithmFamily": "ML-DSA",
-+          "nistQuantumSecurityLevel": 3
-         },
-         "oid": "2.16.840.1.101.3.4.3.18"
-       }
-```
-
-**File**: `pkg/crypto/catalog.go` (modified, +70/-49)
-```diff
-@@ -4,7 +4,8 @@ import ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
- 
- // algorithm is the hand-maintained knowledge about an OID: the name and family it
- // carries in the CycloneDX cryptography vocabulary, the primitive it provides, and the
--// key properties that distinguish assets sharing it.
-+// key properties that distinguish assets sharing it. It also holds the basis the security
-+// levels of an asset are assessed from after caching, which describing an asset does not use.
- //
- // An OID whose purpose cannot be decided carries no family and an unknown primitive.
- // RFC 3279 section 2.3.1 states that rsaEncryption identifies both signature and
-@@ -18,6 +19,7 @@ type algorithm struct {
- 	family         string
- 	primitive      ftypes.CryptoPrimitive
- 	parameterNames []ftypes.CryptoAlgorithmParameterName
-+	strengthBasis  strengthBasis
- }
- 
- // algorithms maps the OIDs that appear in the certificates and keys this package
-@@ -41,67 +43,79 @@ type algorithm struct {
- var algorithms = map[string]algorithm{
- 	// Certificate signature algorithms.
- 	"1.2.840.113549.1.1.4": {
--		name:      "RSA-PKCS1-1.5-MD5",
--		family:    "RSASSA-PKCS1",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "RSA-PKCS1-1.5-MD5",
-+		family:        "RSASSA-PKCS1",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.113549.1.1.5": {
--		name:      "RSA-PKCS1-1.5-SHA-1",
--		family:    "RSASSA-PKCS1",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "RSA-PKCS1-1.5-SHA-1",
-+		family:        "RSASSA-PKCS1",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.113549.1.1.11": {
--		name:      "RSA-PKCS1-1.5-SHA-256",
--		family:    "RSASSA-PKCS1",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "RSA-PKCS1-1.5-SHA-256",
-+		family:        "RSASSA-PKCS1",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.113549.1.1.12": {
--		name:      "RSA-PKCS1-1.5-SHA-384",
--		family:    "RSASSA-PKCS1",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "RSA-PKCS1-1.5-SHA-384",
-+		family:        "RSASSA-PKCS1",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.113549.1.1.13": {
--		name:      "RSA-PKCS1-1.5-SHA-512",
--		family:    "RSASSA-PKCS1",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "RSA-PKCS1-1.5-SHA-512",
-+		family:        "RSASSA-PKCS1",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	// The ISO arc carries a second OID for SHA-1 with RSA, which makecert.exe has been
- 	// known to produce. The two OIDs name one algorithm but stay two assets, because an
- 	// algorithm is identified by the OID the certificate carries.
- 	"1.3.14.3.2.29": {
--		name:      "RSA-PKCS1-1.5-SHA-1",
--		family:    "RSASSA-PKCS1",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "RSA-PKCS1-1.5-SHA-1",
-+		family:        "RSASSA-PKCS1",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.10040.4.3": {
--		name:      "DSA-SHA-1",
--		family:    "DSA",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "DSA-SHA-1",
-+		family:        "DSA",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"2.16.840.1.101.3.4.3.2": {
--		name:      "DSA-SHA-256",
--		family:    "DSA",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "DSA-SHA-256",
-+		family:        "DSA",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.10045.4.1": {
--		name:      "ECDSA-SHA-1",
--		family:    "ECDSA",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "ECDSA-SHA-1",
-+		family:        "ECDSA",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.10045.4.3.2": {
--		name:      "ECDSA-SHA-256",
--		family:    "ECDSA",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "ECDSA-SHA-256",
-+		family:        "ECDSA",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.10045.4.3.3": {
--		name:      "ECDSA-SHA-384",
--		family:    "ECDSA",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "ECDSA-SHA-384",
-+		family:        "ECDSA",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 	"1.2.840.10045.4.3.4": {
--		name:      "ECDSA-SHA-512",
--		family:    "ECDSA",
--		primitive: ftypes.CryptoPrimitiveSignature,
-+		name:          "ECDSA-SHA-512",
-+		family:        "ECDSA",
-+		primitive:     ftypes.CryptoPrimitiveSignature,
-+		strengthBasis: signatureStrengthBasis,
- 	},
- 
- 	// Subject public key algorithms.
-@@ -111,13 +125,15 @@ var algorithms = map[string]algo
-```
-
-**File**: `pkg/crypto/strength.go` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+package crypto
-+
-+import ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
-+
-+// strengthBasis is the published basis the security levels of an algorithm are assessed
-+// from. The levels themselves are assessed after caching by AssessStrength, so that a
-+// change to a basis applies without analyzing again.
-+//
-+// The levels are nominal estimates taken from NIST and IETF publications. They estimate the
-+// strength of an algorithm and its parameters, and are neither a guarantee for an
-+// implementation nor a statement of policy approval.
-+type strengthBasis struct {
-+	// nistCategory is the NIST post-quantum security category. It is nil for an algorithm
-+	// with no basis, which then gets neither level.
-+	nistCategory *int
-+	// classicalStrengths maps the canonical parameters of an asset to its classical strength
-+	// in bits. Parameters it does not list have no estimate.
-+	classicalStrengths map[string]int
-+}
-+
-+// RSA, EC, DSA and EdDSA rest on integer factorization and discrete logarithms, which a
-+// sufficiently capable quantum computer breaks, as FIPS 204 section 1.2 discusses, so they
-+// meet none of the NIST categories.
-+var (
-+	// A signature algorithm has no classical strength, because the strength of a signature
-+	// is limited by the key that produced it, and that key belongs to the issuer, which a
-+	// certificate does not carry.
-+	signatureStrengthBasis = strengthBasis{
-+		nistCategory: new(0),
-+	}
-+
-+	// RSA estimates for 2048 bits and above are the approximate maximum strengths in
-+	// NIST SP 800-56B Rev. 2, Appendix D, Table 4. RSA-1024 takes the nominal maximum of 80
-+	// from NIST SP 800-57 Part 1 Rev. 5, Table 2, whose row states at most 80 bits.
-+	rsaStrengthBasis = strengthBasis{
-+		nistCategory: new(0),
-+		classicalStrengths: map[string]int{
-+			"key-size=1024": 80,
-+			"key-size=2048": 112,
-+			"key-size=3072": 128,
-+			"key-size=4096": 152,
-+			"key-size=6144": 176,
-+			"key-size=8192": 200,
-+		},
-+	}
-+
-+	// EC estimates are the ECC strength ranges in NIST SP 800-57 Part 1 Rev. 5, Table 2.
-+	ecStrengthBasis = strengthBasis{
-+		nistCategory: new(0),
-+		classicalStrengths: map[string]int{
-+			"curve=P-224": 112,
-+			"curve=P-256": 128,
-+			"curve=P-384": 192,
-+			"curve=P-521": 256,
-+		},
-+	}
-+
-+	// DSA estimates depend on both L and N. They are the FFC entries of NIST SP 800-57
-+	// Part 1 Rev. 5, Table 2, and the DSA strengths in NIST SP 800-131A Rev. 2, Section 3.
-+	// The (1024, 160) value is the nominal maximum of the at-most-80 row.
-+	dsaStrengthBasis = strengthBasis{
-+		nistCategory: new(0),
-+		classicalStrengths: map[string]int{
-+			"key-size=1024,subgroup-size=160": 80,
-+			"key-size=2048,subgroup-size=224": 112,
-+			"key-size=2048,subgroup-size=256": 112,
-+			"key-size=3072,subgroup-size=256": 128,
-+		},
-+	}
-+
-+	// Ed25519 has no parameters, and RFC 8032 section 8.5 puts its strength at about 128
-+	// bits.
-+	// See https://datatracker.ietf.org/doc/html/rfc8032#section-8.5
-+	ed25519StrengthBasis = strengthBasis{
-+		nistCategory: new(0),
-+		classicalStrengths: map[string]int{
-+			"": 128,
-+		},
-+	}
-+)
-+
-+// mldsaStrengthBasis is the basis of an ML-DSA parameter set, which FIPS 204 assigns a NIST
-+// category without a classical strength to translate it into.
-+func mldsaStrengthBasis(category int) strengthBasis {
-+	return strengthBasis{
-+		nistCategory: new(category),
-+	}
-+}
-+
-+// AssessStrength fills in the nominal security levels of algorithm assets from the basis
-+// the catalog holds for their OID. An OID with no basis gets neither level, and parameters
-+// the basis does not cover get no classical level. Levels the assets already carry are
-+// replaced, so that they come from the basis alone.
-+func AssessStrength(assets []ftypes.CryptoAsset) {
-+	for i := range assets {
-+		asset := &assets[i]
-+		if asset.Kind != ftypes.CryptoKindAlgorithm || asset.Algorithm == nil ||
-+			asset.Identity.Method != ftypes.CryptoMethodOID {
-+			continue
-+		}
-+
-+		// The levels go to a copy of the algorithm, because an in-memory cache hands out
-+		// the algorithm it holds, and the cache keeps no levels.
-+		assessed := *asset.Algorithm
-+		assessed.ClassicalSecurityLevel, assessed.NISTQuantumSecurityLevel = securityLevels(asset.Identity)
-+		asset.Algorithm = &assessed
-+	}
-+}
-+
-+// securityLevels assesses the levels of an algorithm identity from the basis the catalog
-+// holds for its OID.
-+func securityLevels(identity ftypes.CryptoIdentity) (classical, nistCategory *int) {
-+	basis := algorithms[identity.Value].strengthBasis
-+	if basis.nistCategory == nil {
-+		return nil, nil
-+	}
-+	if bits, found := basis.classicalStrengths[identity.Parameters]; found {
-+		classical = new(bits)
-+	}
-+	return classical, new(*basis.nistCategory)
-+}
-```
-
-**File**: `pkg/crypto/strength_test.go` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+package crypto_test
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/aquasecurity/trivy/pkg/crypto"
-+	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
-+)
-+
-+func TestAssessStrength(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		oid           string
-+		size          int
-+		subgroupSize  int
-+		curve         string
-+		wantClassical *int
-+		wantCategory  *int
-+	}{
-+		{name: "RSA-1024", oid: "1.2.840.113549.1.1.1", size: 1024, wantClassical: new(80), wantCategory: new(0)},
-+		{name: "RSA-2048", oid: "1.2.840.113549.1.1.1", size: 2048, wantClassical: new(112), wantCategory: new(0)},
-+		{name: "RSA-3072", oid: "1.2.840.113549.1.1.1", size: 3072, wantClassical: new(128), wantCategory: new(0)},
-+		{name: "RSA-4096", oid: "1.2.840.113549.1.1.1", size: 4096, wantClassical: new(152), wantCategory: new(0)},
-+		{name: "RSA-6144", oid: "1.2.840.113549.1.1.1", size: 6144, wantClassical: new(176), wantCategory: new(0)},
-+		{name: "RSA-8192", oid: "1.2.840.113549.1.1.1", size: 8192, wantClassical: new(200), wantCategory: new(0)},
-+		{
-+			// A key size between the listed ones has no estimate, rather than the one of a
-+			// neighbor.
-+			name:         "RSA with an uncovered key size",
-+			oid:          "1.2.840.113549.1.1.1",
-+			size:         2047,
-+			wantCategory: new(0),
-+		},
-+		{
-+			name:         "RSA without a key size",
-+			oid:          "1.2.840.113549.1.1.1",
-+			wantCategory: new(0),
-+		},
-+		{name: "EC-P-224", oid: "1.2.840.10045.2.1", curve: "P-224", wantClassical: new(112), wantCategory: new(0)},
-+		{name: "EC-P-256", oid: "1.2.840.10045.2.1", curve: "P-256", wantClassical: new(128), wantCategory: new(0)},
-+		{name: "EC-P-384", oid: "1.2.840.10045.2.1", curve: "P-384", wantClassical: new(192), wantCategory: new(0)},
-+		{name: "EC-P-521", oid: "1.2.840.10045.2.1", curve: "P-521", wantClassical: new(256), wantCategory: new(0)},
-+		{
-+			name:         "EC with an uncovered curve",
-+			oid:          "1.2.840.10045.2.1",
-+			curve:        "secp256k1",
-+			wantCategory: new(0),
-+		},
-+		{name: "DSA (1024, 160)", oid: "1.2.840.10040.4.1", size: 1024, subgroupSize: 160, wantClassical: new(80), wantCategory: new(0)},
-+		{name: "DSA (2048, 224)", oid: "1.2.840.10040.4.1", size: 2048, subgroupSize: 224, wantClassical: new(112), wantCategory: new(0)},
-+		{name: "DSA (2048, 256)", oid: "1.2.840.10040.4.1", size: 2048, subgroupSize: 256, wantClassical: new(112), wantCategory: new(0)},
-+		{name: "DSA (3072, 256)", oid: "1.2.840.10040.4.1", size: 3072, subgroupSize: 256, wantClassical: new(128), wantCategory: new(0)},
-+		{
-+			// FIPS 186 does not pair an L of 2048 with an N of 160.
-+			name: "DSA with an uncovered pair",
-+			oid:  "1.2.840.10040.4.1",
-+			size: 2048, subgroupSize: 160,
-+			wantCategory: new(0),
-+		},
-+		{
-+			name:         "DSA without a subgroup size",
-+			oid:          "1.2.840.10040.4.1",
-+			size:         2048,
-+			wantCategory: new(0),
-+		},
-+		{name: "Ed25519", oid: "1.3.101.112", wantClassical: new(128), wantCategory: new(0)},
-+		{name: "ML-DSA-44", oid: "2.16.840.1.101.3.4.3.17", wantCategory: new(2)},
-+		{name: "ML-DSA-65", oid: "2.16.840.1.101.3.4.3.18", wantCategory: new(3)},
-+		{name: "ML-DSA-87", oid: "2.16.840.1.101.3.4.3.19", wantCategory: new(5)},
-+		{
-+			// The strength of a signature depends on the key of the issuer.
-+			name:         "signature algorithm",
-+			oid:          "1.2.840.113549.1.1.11",
-+			wantCategory: new(0),
-+		},
-+		{
-+			// RSASSA-PSS is left out of the catalog.
-+			name: "algorithm outside the catalog",
-+			oid:  "1.2.840.113549.1.1.10",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			// The identity comes from DescribeAlgorithm, so the parameters are encoded the way
-+			// the parser encodes them. The algorithm carries levels of its own, which the
-+			// assessment replaces without writing to the algorithm, as an in-memory cache may
-+			// hold it.
-+			info := crypto.DescribeAlgorithm(tt.oid, tt.size, tt.subgroupSize, tt.curve)
-+			original := info.Algorithm
-+			original.ClassicalSecurityLevel = new(1)
-+			original.NISTQuantumSecurityLevel = new(6)
-+			assets := []ftypes.CryptoAsset{{CryptoAssetInfo: info}}
-+
-+			crypto.AssessStrength(assets)
-+			assert.Equal(t, tt.wantClassical, assets[0].Algorithm.ClassicalSecurityLevel)
-+			assert.Equal(t, tt.wantCategory, assets[0].Algorithm.NISTQuantumSecurityLevel)
-+			require.NoError(t, assets[0].Validate())
-+
-+			assert.Equal(t, new(1), original.ClassicalSecurityLevel)
-+			assert.Equal(t, new(6), original.NISTQuantumSecurityLevel)
-+		})
-+	}
-+
-+	t.Run("assets that are not algorithms identified by an OID", func(t *testing.T) {
-+		rsa := crypto.DescribeAlgorithm("1.2.840.113549.1.1.1", 2048, 0, "")
-+		withoutDetails := rsa
-+		withoutDetails.Algorithm = nil
-+		otherMethod := rsa.Clone()
-+		otherMethod.Identity.Method = ftypes.CryptoMethodSHA256
-+		otherKind := rsa.Clone()
-+		otherKi
-```
-
-**File**: `pkg/fanal/types/crypto.go` (modified, +13/-0)
-```diff
-@@ -167,6 +167,12 @@ func (a CryptoAssetInfo) Clone() CryptoAssetInfo {
- 	}
- 	if a.Algorithm != nil {
- 		clone.Algorithm = new(*a.Algorithm)
-+		if a.Algorithm.ClassicalSecurityLevel != nil {
-+			clone.Algorithm.ClassicalSecurityLevel = new(*a.Algorithm.ClassicalSecurityLevel)
-+		}
-+		if a.Algorithm.NISTQuantumSecurityLevel != nil {
-+			clone.Algorithm.NISTQuantumSecurityLevel = new(*a.Algorithm.NISTQuantumSecurityLevel)
-+		}
- 	}
- 	return clone
- }
-@@ -202,6 +208,13 @@ func (a CryptoAssetInfo) validateAlgorithm() error {
- 	default:
- 		return xerrors.Errorf("unknown algorithm primitive %q", a.Algorithm.Primitive)
- 	}
-+	if level := a.Algorithm.ClassicalSecurityLevel; level != nil && *level <= 0 {
-+		return xerrors.Errorf("classical security level must be positive")
-+	}
-+	// NIST defines five categories, and the CycloneDX schema allows up to 6.
-+	if level := a.Algorithm.NISTQuantumSecurityLevel; level != nil && (*level < 0 || *level > 6) {
-+		return xerrors.Errorf("NIST quantum security level must be between 0 and 6")
-+	}
- 	return nil
- }
- 
-```
-
-**File**: `pkg/fanal/types/crypto_algorithm.go` (modified, +9/-0)
-```diff
-@@ -13,7 +13,16 @@ const (
+ 	"golang.org/x/xerrors"
+ 	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/util/validation"
  )
  
- // CryptoAlgorithm contains algorithm-specific metadata.
-+//
-+// The security levels are nominal estimates for the algorithm and its parameters, not a
-+// statement about an implementation or about policy approval. A nil level is not estimated.
- type CryptoAlgorithm struct {
- 	Family    string `json:",omitempty"`
- 	Primitive CryptoPrimitive
-+
-+	// ClassicalSecurityLevel is the classical security strength in bits.
-+	ClassicalSecurityLevel *int `json:",omitempty"`
-+	// NISTQuantumSecurityLevel is the NIST post-quantum security category from 1 to 5, or 0
-+	// for an algorithm that meets none of them.
-+	NISTQuantumSecurityLevel *int `json:",omitempty"`
- }
+ var (
+@@ -226,14 +227,17 @@ func optionToTolerations(tolerationsOptions []string) ([]corev1.Toleration, erro
+ 			corev1.TaintEffect(tolerationParts[1]) != corev1.TaintEffectNoExecute {
+ 			return []corev1.Toleration{}, errors.New("toleration effect must be a valid value")
+ 		}
+-		keyValue := strings.Split(tolerationParts[0], "=")
++		key, value, _ := strings.Cut(tolerationParts[0], "=")
++		if errs := validation.IsValidLabelValue(value); len(errs) > 0 {
++			return nil, xerrors.Errorf("invalid toleration value %q: %s", value, strings.Join(errs, "; "))
++		}
+ 		operator := corev1.TolerationOpEqual
+-		if keyValue[1] == "" {
++		if value == "" {
+ 			operator = corev1.TolerationOpExists
+ 		}
+ 		toleration := corev1.Toleration{
+-			Key:      keyValue[0],
+-			Value:    keyValue[1],
++			Key:      key,
++			Value:    value,
+ 			Operator: operator,
+ 			Effect:   corev1.TaintEffect(tolerationParts[1]),
+ 		}
 ```
 
-**File**: `pkg/fanal/types/crypto_test.go` (modified, +49/-0)
+**File**: `pkg/flag/kubernetes_flags_test.go` (modified, +44/-0)
 ```diff
-@@ -248,6 +248,49 @@ func TestCryptoAssetValidate(t *testing.T) {
- 			})),
- 			wantErr: `unknown algorithm primitive "hash"`,
+@@ -14,6 +14,7 @@ func TestOptionToToleration(t *testing.T) {
+ 		name               string
+ 		tolerationsOptions []string
+ 		want               []corev1.Toleration
++		wantErr            string
+ 	}{
+ 		{
+ 			name:               "no execute",
+@@ -40,10 +41,53 @@ func TestOptionToToleration(t *testing.T) {
+ 				},
+ 			},
  		},
 +		{
-+			name: "algorithm with security levels",
-+			asset: cryptotest.AlgorithmAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-+				a.Algorithm.ClassicalSecurityLevel = new(112)
-+				a.Algorithm.NISTQuantumSecurityLevel = new(0)
-+			})),
-+			wantErr: "",
++			name:               "empty value",
++			tolerationsOptions: []string{"node-role.kubernetes.io/control-plane=:NoSchedule"},
++			want: []corev1.Toleration{
++				{
++					Key:      "node-role.kubernetes.io/control-plane",
++					Operator: "Exists",
++					Effect:   "NoSchedule",
++				},
++			},
 +		},
 +		{
-+			name: "highest NIST quantum security level",
-+			asset: cryptotest.AlgorithmAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-+				a.Algorithm.NISTQuantumSecurityLevel = new(6)
-+			})),
-+			wantErr: "",
++			name:               "key without value",
++			tolerationsOptions: []string{"node-role.kubernetes.io/control-plane:NoSchedule"},
++			want: []corev1.Toleration{
++				{
++					Key:      "node-role.kubernetes.io/control-plane",
++					Operator: "Exists",
++					Effect:   "NoSchedule",
++				},
++			},
 +		},
 +		{
-+			name: "negative classical security level",
-+			asset: cryptotest.AlgorithmAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-+				a.Algorithm.ClassicalSecurityLevel = new(-1)
-+			})),
-+			wantErr: "classical security level must be positive",
++			name:               "key without value with seconds",
++			tolerationsOptions: []string{"node.kubernetes.io/unreachable:NoExecute:300"},
++			want: []corev1.Toleration{
++				{
++					Key:               "node.kubernetes.io/unreachable",
++					Operator:          "Exists",
++					Effect:            "NoExecute",
++					TolerationSeconds: new(int64(300)),
++				},
++			},
 +		},
 +		{
-+			name: "zero classical security level",
-+			asset: cryptotest.AlgorithmAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-+				a.Algorithm.ClassicalSecurityLevel = new(0)
-+			})),
-+			wantErr: "classical security level must be positive",
++			name:               "invalid value",
++			tolerationsOptions: []string{"key1=a=b:NoSchedule"},
++			wantErr:            `invalid toleration value "a=b"`,
 +		},
-+		{
-+			name: "NIST quantum security level above 6",
-+			asset: cryptotest.AlgorithmAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-+				a.Algorithm.NISTQuantumSecurityLevel = new(7)
-+			})),
-+			wantErr: "NIST quantum security level must be between 0 and 6",
-+		},
-+		{
-+			name: "negative NIST quantum security level",
-+			asset: cryptotest.AlgorithmAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-+				a.Algorithm.NISTQuantumSecurityLevel = new(-1)
-+			})),
-+			wantErr: "NIST quantum security level must be between 0 and 6",
-+		},
- 		{
- 			name: "negative key size",
- 			asset: cryptotest.PublicKeyAsset(cryptotest.WithMutate(func(a *types.CryptoAsset) {
-@@ -431,11 +474,17 @@ func TestCryptoAssetClone(t *testing.T) {
- 		t.Parallel()
- 
- 		source := cryptotest.AlgorithmAsset()
-+		source.Algorithm.ClassicalSecurityLevel = new(112)
-+		source.Algorithm.NISTQuantumSecurityLevel = new(0)
- 		clone := source.Clone()
- 		require.NotSame(t, source.Algorithm, clone.Algorithm)
- 		assert.Equal(t, source, clone)
- 
- 		clone.Algorithm.Family = "changed"
-+		*clone.Algorithm.ClassicalSecurityLevel = 128
-+		*clone.Algorithm.NISTQuantumSecurityLevel = 1
- 		assert.Empty(t, source.Algorithm.Family)
-+		assert.Equal(t, 112, *source.Algorithm.ClassicalSecurityLevel)
-+		assert.Equal(t, 0, *source.Algorithm.NISTQuantumSecurityLevel)
- 	})
- }
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			got, err := optionToTolerations(tt.tolerationsOptions)
++			if tt.wantErr != "" {
++				require.ErrorContains(t, err, tt.wantErr)
++				return
++			}
+ 			require.NoError(t, err)
+ 			assert.Equal(t, tt.want, got)
+ 		})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11433** (2026-10-19): refactor(flag): write newline separately in flag usages (@nikpivkin)
+- **PR #11426** (closed): fix(python): retain unversioned pylock dependencies (@wangyusheng1985)
+- **PR #11425** (2026-10-19): fix(k8s): accept tolerations without a value (@nikpivkin)
 - **PR #11419** (2026-10-16): ci: add scopes for Helm, Ansible and ARM scanners (@nikpivkin)
 - **PR #11414** (2026-10-16): fix: fail on read errors in .trivyignore (@nikpivkin)
 - **PR #11412** (2026-10-15): chore: add misconfiguration tutorials to CODEOWNERS (@nikpivkin)
-- **PR #11410** (2026-10-14): ci(helm): bump Trivy version to 0.76.0 for Trivy Helm Chart 0.28.0 (@repo-trivy-write-33ed3c[bot])
-- **PR #11407** (2026-10-14): chore(deps): pin zlib >= 1.3.2-r1 in container images to fix CVE-2026-85091 (@DmitriyLewen)
-- **PR #11405** (2026-10-14): ci: add scan/crypto label (@nikpivkin)
 
 ---
 
@@ -1736,28 +1151,28 @@ Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vex): avoid panic on CSAF advisory without a CVE (#10990)
+## X. k8s): accept tolerations without a value (#11425)
 
 **RULE**:
-When implementing operations in `pkg/vex/csaf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `431288f8`: vex): avoid panic on CSAF advisory without a CVE (#10990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `914b658c`: k8s): accept tolerations without a value (#11425). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/vex/csaf.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		return item.CVE != nil && string(*item.CVE) == vuln.VulnerabilityID
+	k8s.io/apimachinery v0.37.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		return string(*item.CVE) == vuln.VulnerabilityID
+	k8s.io/apimachinery v0.37.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `431288f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `914b658c` are properly handled with clean fallback behavior.

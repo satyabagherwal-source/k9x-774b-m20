@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `f0441e6d`  
+> **Source Version**: `f5cf5a68`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:14:16.945Z  
+> **Timestamp**: 2026-10-19T14:14:54.754Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:14:16.527Z  
+> **Harvest Timestamp**: 2026-10-19T14:14:54.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3484 stars
+- **Stars / Engagement**: 3507 stars
 
 ---
 
@@ -1363,288 +1363,565 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b6891b8` (2026-10-15)
-**Commit Message**: fix: pin native input view cleanup for release validation
+### Incident Patch 1: `b49b5351` (2026-10-19)
+**Commit Message**: Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point
 
-**File**: `Cargo.lock` (modified, +25/-25)
+Verified the stale grid bounds guard against the reported resize/hover crash. The guard adds constant-time bounds checks with no allocation; targeted display::hint tests pass, including the out-of-grid regression.
+
+**File**: `nebula_app/src/display/hint.rs` (modified, +10/-0)
 ```diff
-@@ -1552,7 +1552,7 @@ dependencies = [
- [[package]]
- name = "collections"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "gpui_util",
-  "indexmap",
-@@ -2201,7 +2201,7 @@ dependencies = [
- [[package]]
- name = "derive_refineable"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -3300,7 +3300,7 @@ dependencies = [
- [[package]]
- name = "gpui"
- version = "0.2.2"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "accesskit",
-  "anyhow",
-@@ -3387,7 +3387,7 @@ dependencies = [
- [[package]]
- name = "gpui-component"
- version = "0.5.2"
--source = "git+https://github.com/Kuddev/gpui-component?rev=ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a#ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a"
-+source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
- dependencies = [
-  "aho-corasick",
-  "anyhow",
-@@ -3470,7 +3470,7 @@ dependencies = [
- [[package]]
- name = "gpui-component-assets"
- version = "0.5.1"
--source = "git+https://github.com/Kuddev/gpui-component?rev=ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a#ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a"
-+source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
- dependencies = [
-  "anyhow",
-  "gpui",
-@@ -3484,7 +3484,7 @@ dependencies = [
- [[package]]
- name = "gpui-component-macros"
- version = "0.5.1"
--source = "git+https://github.com/Kuddev/gpui-component?rev=ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a#ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a"
-+source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -3494,7 +3494,7 @@ dependencies = [
- [[package]]
- name = "gpui_linux"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "accesskit",
-  "accesskit_unix",
-@@ -3546,7 +3546,7 @@ dependencies = [
- [[package]]
- name = "gpui_macos"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "accesskit",
-  "accesskit_macos",
-@@ -3596,7 +3596,7 @@ dependencies = [
- [[package]]
- name = "gpui_macros"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "heck 0.5.0",
-  "proc-macro2",
-@@ -3607,7 +3607,7 @@ dependencies = [
- [[package]]
- name = "gpui_platform"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "console_error_panic_hook",
-  "gpui",
-@@ -3620,7 +3620,7 @@ dependencies = [
- [[package]]
- name = "gpui_shared_string"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "schemars",
-  "serde",
-@@ -3630,7 +3630,7 @@ dependencies = [
- [[package]]
- name = "gpui_util"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-+source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
- dependencies = [
-  "anyhow",
-  "log",
-@@ -3640,7 +3640,7 @@ dependencies = [
- [[package]]
+@@ -941,6 +941,16 @@ mod tests {
+         }
+     }
  
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -72,7 +72,7 @@ toml_edit = "0.24.0"
- # GPUI v1.16.1 把平台启动入口拆到独立 crate。它必须与 `gpui` 使用完全相同
- # 的 Git URL 和 rev，否则 Cargo 会把同名类型解析成两套互不兼容的 crate。
- # Without font-kit, the macOS platform uses NoopTextSystem and renders no text.
--gpui_platform = { git = "https://github.com/Kuddev/zed", rev = "f9215143d15809a427a7889d511d1355d9933592", version = "=0.1.0", features = ["font-kit"] }
-+gpui_platform = { git = "https://github.com/Kuddev/zed", rev = "1e716d16ec54b361499931b4278903cdcaae8949", version = "=0.1.0", features = ["font-kit"] }
- 
- # TODO: Drop this pin and return to the crates.io release once the fix ships there.
- [patch.crates-io]
-@@ -190,9 +190,9 @@ winit = { path = "third_party/winit-0.30.13" }
- # Input 补丁 4-5 仍保持独立。
- # 背景流式纹理和 WGSL 原生适配已固定到公开的渲染器基线；组件同步引用
- # 同一提交，避免一套窗口里出现两份不兼容的 GPUI 类型。功能仍显式启用。
--gpui = { git = "https://github.com/Kuddev/zed", rev = "f9215143d15809a427a7889d511d1355d9933592", version = "=0.2.2" }
-+gpui = { git = "https://github.com/Kuddev/zed", rev = "1e716d16ec54b361499931b4278903cdcaae8949", version = "=0.2.2" }
- # Native inputs share rendered text's device-pixel line height and expose a
- # post-paint point lookup. Window selection ends on release even when a child
- # consumes MouseUp or the platform reports the next move without a held button.
--gpui-component = { git = "https://github.com/Kuddev/gpui-component", rev = "ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a", version = "=0.5.2" }
--gpui-component-assets = { git = "https://github.com/Kuddev/gpui-component", rev = "ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a", version = "=0.5.1" }
-+gpui-component = { git = "https://github.com/Kuddev/gpui-component", rev = "78e1d0c48867f69fec297d9016f48b0ce1b8c146", version = "=0.5.2" }
-+gpui-component-assets = { git = "https://github.com/Kuddev/gpui-component", rev = "78e1d0c48867f69fec297d9016f48b0ce1b8c146", version = "=0.5.1" }
-```
-
-**File**: `architecture/notes/nebula_app/platform/2026-10-14-linux-desktop-lifecycle.md` (modified, +6/-2)
-```diff
-@@ -31,13 +31,13 @@ Route the client titlebar through the same workspace close operation as native
- close requests. Keep the window, terminal views, PTYs and persistence ownership.
- 
- Keep native presentation in the existing fixed GPUI fork. The patch at
--`f9215143d15809a427a7889d511d1355d9933592` honors initial visibility, reuses the
-+`1e716d16ec54b361499931b4278903cdcaae8949` honors initial visibility, reuses the
- X11 map/drain path, and accepts a portal activation token. Wayland performs its
- initial configure handshake while hidden but submits no window buffer until shown;
- the first visible frame consumes a queued token once. A forced frame restores a
- scene whose earlier hidden presentation was intentionally skipped.
- 
--The component fork at `ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a` retains the
-+The component fork at `78e1d0c48867f69fec297d9016f48b0ce1b8c146` retains the
- current reader component APIs and aligns its five framework pins with that revision.
- Updating only the application's pins
- leaves two framework sources and fails locked resolution. Cargo regenerates the
-@@ -83,6 +83,10 @@ cache. It clicks the actual titlebar, checks terminal-view identity across closi
- and restoration, and checks X11 map state. Wayland protocol evidence checks that
- the actual surface has no buffer before the first show and does present afterward.
- 
-+Native window destruction releases its input handler synchronously before queuing
-+platform close callbacks. Otherwise a final-window quit can retain the handler's
-+strong terminal-view entity while the native event loop has already stopped.
-+
- ## Validation
- 
- Targeted checks cover desktop-file identity and the native lifecycle above, in
-```
-
----
-
-### Incident Patch 2: `3b3287d1` (2026-10-15)
-**Commit Message**: Merge pull request #648 from Kuddev/fix/theme-focus-notifications-221
-
-fix(theme): avoid unchanged focus-ring notifications
-
-**File**: `nebula_app/src/gpui_shell/theme.rs` (modified, +53/-1)
-```diff
-@@ -513,7 +513,15 @@ pub fn settings_hairline(cx: &App) -> Hsla {
- /// a dark outline makes the control look stuck. Keyboard navigation keeps the
- /// accent ring; pointer interaction folds the ring into the normal input line.
- pub fn sync_component_focus_ring(window: &Window, cx: &mut App) {
--    let ring = if window.last_input_was_keyboard() { cx.theme().link } else { cx.theme().input };
-+    sync_component_focus_ring_for_input(window.last_input_was_keyboard(), cx);
-+}
-+
-+fn sync_component_focus_ring_for_input(last_input_was_keyboard: bool, cx: &mut App) {
-+    let ring = if last_input_was_keyboard { cx.theme().link } else { cx.theme().input };
-+    // GPUI 的 global_mut 即使写回相同颜色也会通知观察者；动画帧不应重复广播主题变化。
-+    if cx.theme().ring == ring {
-+        return;
-+    }
-     Theme::global_mut(cx).ring = ring;
- }
- 
-@@ -816,6 +824,50 @@ mod tests {
-     use super::{PaneCardStyle, resolve_theme_name, theme_card_persist_updates};
-     use nebula_settings::{RawSettings, RuntimeSettings, ThemeName};
- 
-+    #[cfg(feature = "gpui-test-support")]
-+    #[gpui::test]
-+    fn repeated_focus_ring_sync_does_not_notify_theme_observers(cx: &mut gpui::TestAppContext) {
-+        use gpui_component::Theme;
-+        use std::{cell::Cell, rc::Rc};
-+
-+        cx.update(|cx| {
-+            let mut theme = Theme::default();
-+            theme.input = gpui::rgb(0x303744).into();
-+            theme.link = gpui::rgb(0x88c0d0).into();
-+            theme.ring = theme.input;
-+            cx.set_global(theme);
-+        });
-+        let notifications = Rc::new(Cell::new(0));
-+        let observed = notifications.clone();
-+        let _subscription =
-+            cx.update(|cx| cx.observe_global::<Theme>(move |_| observed.set(observed.get() + 1)));
-+
-+        for _ in 0..24 {
-+            cx.update(|cx| super::sync_component_focus_ring_for_input(false, cx));
-+        }
-+        cx.run_until_parked();
-+        assert_eq!(notifications.get(), 0, "unchanged animation frames must not rebroadcast Theme");
-+
-+        cx.update(|cx| {
-+            super::sync_component_focus_ring_for_input(true, cx);
-+            assert_eq!(Theme::global(cx).ring, Theme::global(cx).link);
-+        });
-+        cx.run_until_parked();
-+        assert_eq!(notifications.get(), 1, "keyboard focus still updates the visible ring");
-+        for _ in 0..24 {
-+            cx.update(|cx| super::sync_component_focus_ring_for_input(true, cx));
-+        }
-+        cx.run_until_parked();
-+        assert_eq!(notifications.get(), 1);
-+
-+        cx.update(|cx| {
-+            super::sync_component_focus_ring_for_input(false, cx);
-+            assert_eq!(Theme::global(cx).ring, Theme::global(cx).input);
-+        });
-+        cx.run_until_parked();
-+        assert_eq!(notifications.get(), 2, "pointer input restores the neutral ring once");
++    #[test]
++    fn table_lookup_past_the_grid_edge_is_not_a_hit() {
++        let term = mock_term("│ entry │ https://example.com/123456 │");
++        let past_edge = Point::new(Line(0), Column(term.columns() + 2));
++        assert!(
++            highlighted_at(&term, &UiConfig::default(), past_edge, ModifiersState::CONTROL)
++                .is_none()
++        );
 +    }
 +
      #[test]
-     fn square_panes_fill_the_column_despite_saved_card_spacing_and_shadow() {
-         let runtime = RuntimeSettings::from_raw(&RawSettings::from_text(
+     fn search_limit_never_opens_a_truncated_softwrapped_url_prefix() {
+         use nebula_terminal::event::VoidListener;
+```
+
+**File**: `nebula_app/src/display/hint/table.rs` (modified, +5/-0)
+```diff
+@@ -79,6 +79,11 @@ fn continuation<T>(term: &Term<T>, line: Line, left: usize) -> bool {
+ }
+ 
+ pub(super) fn at<T>(term: &Term<T>, point: Point) -> Option<TableLink> {
++    // Like `hyperlink_at`: a hover point can lead the grid by a column/row during a resize.
++    let grid = term.grid();
++    if point.column.0 >= grid.columns() || point.line.0 >= grid.screen_lines() as i32 {
++        return None;
++    }
+     let left = (0..point.column.0)
+         .rfind(|&col| border(term.grid()[Point::new(point.line, Column(col))].c))?;
+     let right = (point.column.0 + 1..term.columns())
 ```
 
 ---
 
-### Incident Patch 3: `e32e4ecb` (2026-10-16)
-**Commit Message**: test: reuse platform detection in file link regression
+### Incident Patch 2: `f5cf5a68` (2026-10-19)
+**Commit Message**: Merge pull request #562 from zuiho-kai/macos-video-background
 
-**File**: `nebula_app/src/file_uri.rs` (modified, +3/-2)
+feat(macos):Play video backgrounds on macOS through a native layer below GPUI
+
+**File**: `Cargo.lock` (modified, +16/-0)
 ```diff
-@@ -881,8 +881,9 @@ mod tests {
-         std::fs::write(&path, "fixture").unwrap();
-         let native = path.to_string_lossy().replace('\\', "/");
-         let uri = format!("file:/{}", native.trim_start_matches('/'));
--        let targets = std::iter::once(uri.clone())
--            .chain(cfg!(windows).then(|| path.to_string_lossy().into_owned()));
-+        let targets = std::iter::once(uri.clone()).chain(
-+            (Platform::current() == Platform::Windows).then(|| path.to_string_lossy().into_owned()),
+@@ -5336,7 +5336,10 @@ dependencies = [
+  "notify-rust",
+  "objc2 0.6.3",
+  "objc2-app-kit 0.3.2",
++ "objc2-av-foundation",
++ "objc2-core-foundation",
+  "objc2-foundation 0.3.2",
++ "objc2-quartz-core 0.3.2",
+  "parking_lot",
+  "pebrel-completions",
+  "pebrel-mobile-link",
+@@ -5841,6 +5844,19 @@ dependencies = [
+  "objc2-quartz-core 0.3.2",
+ ]
+ 
++[[package]]
++name = "objc2-av-foundation"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "478ae33fcac9df0a18db8302387c666b8ef08a3e2d62b510ca4fc278a384b6c0"
++dependencies = [
++ "bitflags 2.13.0",
++ "objc2 0.6.3",
++ "objc2-core-foundation",
++ "objc2-foundation 0.3.2",
++ "objc2-quartz-core 0.3.2",
++]
++
+ [[package]]
+ name = "objc2-cloud-kit"
+ version = "0.2.2"
+```
+
+**File**: `architecture/notes/nebula_app/gpui_shell/wallpaper/2026-10-10-macos-native-video-underlay.md` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++# macOS video background as a native layer below GPUI
++
++## Status
++
++Implemented behind the existing `video-background` feature on macOS. Validated on
++one Apple Silicon machine (macOS 27); no Intel or multi-display validation yet.
++
++## Context
++
++On macOS the video kind was visible in settings but fell back to image mode: the
++animated backend selected the unavailable implementation, the decoder worker had no
++macOS reader, and playback visibility used Win32 handles. The Windows path paints
++decoded BGRA frames through `paint_stream_image`, but the pinned GPUI revision's
++Metal atlas implements only postprocess resources; the stream image methods use the
++trait default and fail.
++
++## Evidence
++
++- `gpui_macos` already places its own native blur view in the window content view,
++  directly below the GPUI view. A sibling view is therefore a supported composition
++  point that needs no GPUI change.
++- In a standalone prototype, a 3840×2160 H.264 loop played through `AVPlayerLayer`
++  with about 0.5–2% CPU in the owning process; decoding stays in the system media
++  service. The integrated build was not separately profiled.
++- `gpui_component::Root` fills the window with the shell color. A layer below GPUI
++  was invisible at window opacity 1 until that fill was cleared; the title bar was
++  the only region relying on it and showed the windows behind it once it was cleared.
++
++## Decision
++
++- Keep AVFoundation handles and platform selection in `platform/video_underlay`;
++  wallpaper owns the monitor, source lifetime and surface/error presentation. The
++  native adapter accepts geometry/visibility inputs and never reads wallpaper
++  globals or starts its own timer. This keeps the platform cfg budget unchanged.
++  One `AVQueuePlayer` and
++  `AVPlayerLooper` per source; each window owns a clip view inserted directly below
++  the GPUI view. All AppKit and AVFoundation calls stay on the main thread.
++- Painting does not touch the GPUI scene. The wallpaper paint callback only updates
++  the clip frame, card radius and video frame from the shared `wallpaper_rect`, so
++  fit, alignment and cover-chrome keep their image semantics.
++- Preserve the image composition `w·V + a·(1-w)·B` exactly: surfaces above the video
++  use alpha `a·(1-w)` and the layer uses opacity `w / (1 - a·(1-w))`
++  (`underlay_composition`). While the layer is shown, the window root fill is cleared
++  and the title bar paints the shell color it previously inherited.
++- A 500 ms monitor owned by the source plays only when a placement window is visible
++  (occlusion state, not miniaturized), the opacity is non-zero and reduced motion is
++  off. It also detects decoder failure and reports the existing typed media error.
++- Source destruction explicitly pauses playback and removes placements. Decode or
++  native placement failure restores the regular surfaces and ends monitoring.
++- Explicit ANSI backgrounds, INVERSE and DIM retain their normal terminal semantics.
++  Video visibility changes the default surface composition, not application cell
++  colors; colored terminal regions can therefore cover the video.
++
++## Rejected alternatives
++
++- Implementing Metal stream images in the GPUI fork and an AVFoundation BGRA reader:
++  two repositories, a pinned-revision bump and a per-frame CPU copy and upload for
++  the same visible result. It remains the route if video must enter GPUI effects.
++- `paint_surface(CVPixelBuffer)`: the Metal path asserts full-range NV12, applies a
++  fixed BT.601 matrix and has no opacity, corner radius or placement semantics.
++- A separate process or window ordered behind Pebrel: it cannot know the card bounds,
++  sidebar state or window moves without polling another process.
++- Clearing `theme.background` globally: other components read it as an opaque color.
++
++## Consequences
++
++- The Windows admission limits (720p, 32 MiB, H.264) do not apply on macOS; the
++  system decoder accepts any format AVFoundation plays, including 4K and HEVC.
++- Shader backgrounds and GIF remain unavailable on macOS, as before.
++- The video cannot be read back by GPUI terminal effects, which only sample the scene.
++
++## Validation
++
++- Unit test: `native_underlay_composites_exactly_like_a_wallpaper_painted_above_the_surface`.
++- Manual (Apple Silicon, macOS 27): 4K H.264 plays muted and loops; hiding the
++  application pauses and showing it resumes; the title bar and sidebar keep the shell
++  color; the card shows the video with the configured fit at opacity 1 and 0.3.
++- Not yet run: multiple windows, cover-chrome mode, display changes, Intel Macs.
++
++## Supersedes
++
++None. Adds a macOS backend at the boundary from `2026-10-06-media-backend-boundaries.md`.
++
++## Revisit when
++
++The pinned GPUI revision gains Metal stream images, or video must feed terminal or
++background effects that sample GPUI-rendered content.
+```
+
+**File**: `nebula_app/Cargo.toml` (modified, +35/-1)
+```diff
+@@ -205,6 +205,27 @@ objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+     "NSView",
+     "NSWindow",
+ ] }
++# 视频背景：系统 AVPlayer 解码到 GPUI 视图下方的原生图层，仅随 video-background 启用。
++objc2-av-foundation = { version = "0.3.2", optional = true, default-features = false, features = [
++    "std",
++    "AVAnimation",
++    "AVPlayer",
++    "AVPlayerItem",
++    "AVPlayerLayer",
++    "AVPlayerLooper",
++    "objc2-core-foundation",
++    "objc2-quartz-core",
++] }
++objc2-quartz-core = { version = "0.3.2", optional = true, default-features = false, features = [
++    "std",
++    "CALayer",
++    "CATransaction",
++    "objc2-core-foundation",
++] }
++objc2-core-foundation = { version = "0.3.2", optional = true, default-features = false, features = [
++    "std",
++    "CFCGTypes",
++] }
+ 
+ [target.'cfg(windows)'.dependencies]
+ windows-core = "=0.61.2"
+@@ -319,7 +340,20 @@ gpui-shell = [
+ ]
+ # 真实 GPUI hitbox / 鼠标路由测试显式启用；不能放进 dev-dependencies，
+ # 否则不带 gpui-shell 的默认 `cargo test -p nebula` 也会编译整棵 GPUI。
+-video-background = ["gpui-shell", "dep:anyhow", "dep:raw-window-handle", "windows/Win32_Media_MediaFoundation"]
++video-background = [
++    "gpui-shell",
++    "dep:anyhow",
++    "dep:raw-window-handle",
++    "windows/Win32_Media_MediaFoundation",
++    "dep:objc2-av-foundation",
++    "dep:objc2-quartz-core",
++    "dep:objc2-core-foundation",
++    "objc2-app-kit/NSGraphics",
++    "objc2-app-kit/objc2-quartz-core",
++    "objc2-foundation/NSGeometry",
++    "objc2-foundation/NSURL",
++    "objc2-foundation/NSArray",
++]
+ gif-background = ["video-background", "dep:gif"]
+ shader-background = ["gif-background", "dep:naga", "gpui/wgsl-postprocess", "windows/Win32_Graphics_Direct3D_Fxc"]
+ gpui-test-support = ["gpui-shell", "gpui/test-support", "gpui-component/test-support"]
+```
+
+**File**: `nebula_app/src/gpui_shell/theme.rs` (modified, +1/-1)
+```diff
+@@ -335,7 +335,7 @@ pub fn card_content_bg(cx: &App) -> Hsla {
+         .try_global::<crate::gpui_shell::config::Settings>()
+         .map(|s| s.palette.background.into())
+         .unwrap_or_else(|| cx.theme().background);
+-    bg.a *= crate::gpui_shell::wallpaper::chrome_surface_opacity(cx);
++    bg.a *= crate::gpui_shell::wallpaper::card_surface_opacity(cx);
+     bg
+ }
+ 
+```
+
+**File**: `nebula_app/src/gpui_shell/wallpaper.rs` (modified, +70/-0)
+```diff
+@@ -215,6 +215,37 @@ fn refresh_surface_opacity(cx: &mut App) {
+     {
+         crate::gpui_shell::theme::reapply_prepared_surface_opacity(cx);
+     }
++    sync_root_background(cx);
++}
++
++/// Whether a native wallpaper layer is composited below the GPUI scene.
++pub fn native_underlay_active(cx: &App) -> bool {
++    animated::underlay_ready(cx)
++}
++
++/// `gpui_component::Root` fills the whole window with the shell color. Content
++/// painted above it is unaffected, but a native layer below GPUI would be hidden,
++/// so the root fill is cleared while one is shown. Shell regions around the card
++/// are painted separately and keep their color.
++fn sync_root_background(cx: &mut App) {
++    let underlay = animated::underlay_ready(cx);
++    cx.defer(move |cx| {
++        for handle in cx.windows() {
++            if let Err(error) = handle.update(cx, |_, window, cx| {
++                let Some(Some(root)) = window.root::<gpui_component::Root>() else { return };
++                root.update(cx, |root, cx| {
++                    let background = underlay.then(|| gpui::Fill::from(gpui::transparent_black()));
++                    let style = gpui::Styled::style(root);
++                    if style.background != background {
++                        style.background = background;
++                        cx.notify();
++                    }
++                });
++            }) {
++                log::warn!("failed to update window root background: {error}");
++            }
++        }
++    });
+ }
+ 
+ fn retire_image(image: Option<Arc<RenderImage>>, cx: &mut App) {
+@@ -273,12 +304,51 @@ pub fn chrome_surface_opacity(cx: &App) -> f32 {
+     let Some(effects) = cx.try_global::<VisualEffects>() else {
+         return 1.0;
+     };
++    let opacity = base_surface_opacity(effects, cx);
++    if effects.layout.cover_chrome && animated::underlay_ready(cx) {
++        return underlay_composition(opacity, effects.layout.opacity).0;
++    }
++    opacity
++}
++
++/// Card surface alpha. Equal to [`chrome_surface_opacity`] unless a native
++/// video sits below only the card.
++pub fn card_surface_opacity(cx: &App) -> f32 {
++    let Some(effects) = cx.try_global::<VisualEffects>() else {
++        return 1.0;
++    };
++    if !effects.layout.cover_chrome && animated::underlay_ready(cx) {
++        return underlay_composition(base_surface_opacity(effects, cx), effects.layout.opacity).0;
++    }
++    chrome_surface_opacity(cx)
++}
++
++fn base_surface_opacity(effects: &VisualEffects, cx: &App) -> f32 {
+     if effects.layout.cover_chrome && background_ready(effects, cx) {
+         return effects.opacity.clamp(0.0, 1.0).min(0.78);
+     }
+     effects.opacity.clamp(0.0, 1.0)
+ }
+ 
++fn underlay_layer_opacity(cx: &App) -> f32 {
++    let Some(effects) = cx.try_global::<VisualEffects>() else {
++        return 1.0;
++    };
++    underlay_composition(base_surface_opacity(effects, cx), effects.layout.opacity).1
++}
++
++/// A wallpaper painted above a surface of alpha `a` with opacity `w` shows
++/// `w·V + a·(1-w)·B`. A layer *below* that surface matches it exactly when the
++/// surface alpha becomes `a·(1-w)` and the layer opacity `w / (1 - a·(1-w))`.
++/// Returns `(surface alpha, layer opacity)`.
++fn underlay_composition(surface: f32, wallpaper: f32) -> (f32, f32) {
++    let surface = surface.clamp(0.0, 1.0);
++    let wallpaper = wallpaper.clamp(0.0, 1.0);
++    let surface_alpha = surface * (1.0 - wallpaper);
++    let layer = if surface_alpha >= 1.0 { 0.0 } else { wallpaper / (1.0 - surface_alpha) };
++    (surface_alpha, layer.min(1.0))
++}
++
+ /// 开窗参数用。GPUI 通用层在窗口创建时就会把这个值下发到平台层
+ /// （`gpui::Window::new` → `platform_window.set_background_appearance`）。
+ /// Mica / Mica Alt 因此从首帧就走平台原生 backdrop，不再先挂一层普通透明背景。
+```
+
+**File**: `nebula_app/src/gpui_shell/wallpaper/animated.rs` (modified, +2/-3)
+```diff
+@@ -1,9 +1,8 @@
+-//! 动画后端的选择只发生在此处；共享壁纸入口不拥有平台专用字段。
++//! Windows 流式纹理与原生下衬视图共享壁纸合同；系统 API 选择归平台层。
+ #[cfg(all(windows, feature = "video-background"))]
+ #[path = "animated/native.rs"]
+ mod implementation;
+ #[cfg(not(all(windows, feature = "video-background")))]
+-#[path = "animated/unavailable.rs"]
++#[path = "animated/av_player.rs"]
+ mod implementation;
+-
+ pub(super) use implementation::*;
+```
+
+**File**: `nebula_app/src/gpui_shell/wallpaper/animated/av_player.rs` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++//! 原生下衬视频的 UI 生命周期；播放器与系统视图由 platform 持有。
++//!
++//! 不走 StreamImage：固定 GPUI 版本的 Metal 后端没有流式纹理，而 AVPlayerLayer
++//! 由系统硬件解码并直接合成，无需逐帧 CPU 拷贝和上传。GPUI 窗口本身透明清屏，
++//! 卡片底色按 [`super::super::underlay_composition`] 降低 alpha，使合成结果与
++//! 图片背景的 `w·V + a·(1-w)·B` 一致。所有 AppKit/AVFoundation 调用都在主线程。
++use super::super::{
++    VisualEffects, WallpaperLayout, refresh_surface_opacity, show_media_error, show_shader_error,
++    underlay_layer_opacity,
++};
++use crate::platform::video_underlay::{Layout, NativeVideo};
++use gpui::{App, AsyncApp, Bounds, Pixels, Task, Window, point, px};
++use std::{path::PathBuf, time::Duration};
++
++const MONITOR_INTERVAL: Duration = Duration::from_millis(500);
++#[derive(Default)]
++pub(in crate::gpui_shell::wallpaper) struct Animated {
++    effect_config: nebula_settings::BackgroundEffects,
++    source: Option<Source>,
++}
++struct Source {
++    video: NativeVideo,
++    enabled: bool,
++    _monitor: Task<()>,
++}
++
++pub(in crate::gpui_shell::wallpaper) fn configure(
++    rt: &nebula_settings::RuntimeSettings,
++    source_changed: bool,
++    cx: &mut App,
++) {
++    let state = &mut cx.global_mut::<VisualEffects>().animated;
++    let effects_changed = state.effect_config != rt.background_effects;
++    state.effect_config = rt.background_effects.clone();
++    if effects_changed && rt.background_effects.preset() != "off" {
++        show_shader_error(cx);
++    }
++    if rt.background_media_kind != nebula_settings::BackgroundMediaKind::Video {
++        if cx.global_mut::<VisualEffects>().animated.source.take().is_some() {
++            cx.defer(refresh_surface_opacity);
++        }
++        if source_changed && rt.background_media_kind.is_animated() {
++            show_media_error(rt.background_media_kind, cx);
++        }
++        return;
++    }
++    if source_changed {
++        restart(cx);
++    }
++    let enabled = rt.background_image_opacity > 0.0;
++    if let Some(source) = cx.global_mut::<VisualEffects>().animated.source.as_mut() {
++        source.enabled = enabled;
++    }
++    tick(cx);
++}
++
++fn restart(cx: &mut App) {
++    let path = cx.global::<VisualEffects>().wallpaper.as_ref().map(|wp| wp.path.clone());
++    let had_source = cx.global_mut::<VisualEffects>().animated.source.take().is_some();
++    let source = path.and_then(|path| match open(path, cx) {
++        Ok(source) => Some(source),
++        Err(error) => {
++            log::warn!("video background open failed: {error:#}");
++            show_media_error(nebula_settings::BackgroundMediaKind::Video, cx);
++            None
++        },
++    });
++    cx.global_mut::<VisualEffects>().animated.source = source;
++    if had_source {
++        cx.defer(refresh_surface_opacity);
++    }
++}
++
++fn open(path: PathBuf, cx: &mut App) -> anyhow::Result<Source> {
++    let video = NativeVideo::open(path)?;
++    let monitor = cx.spawn(async move |cx: &mut AsyncApp| {
++        loop {
++            cx.background_executor().timer(MONITOR_INTERVAL).await;
++            let finished = cx.update(|cx| {
++                tick(cx);
++                cx.try_global::<VisualEffects>()
++                    .and_then(|effects| effects.animated.source.as_ref())
++                    .is_none_or(|source| source.video.failed())
++            });
++            if finished {
++                break;
++            }
++        }
++    });
++    Ok(Source { video, enabled: true, _monitor: monitor })
++}
++
++fn tick(cx: &mut App) {
++    let windows = cx.windows().iter().map(|handle| handle.window_id()).collect::<Vec<_>>();
++    let reduce_motion = cx.reduce_motion();
++    if !cx.has_global::<VisualEffects>() {
++        return;
++    }
++    let Some(source) = cx.global_mut::<VisualEffects>().animated.source.as_mut() else { return };
++    match source.video.tick(&windows, source.enabled, reduce_motion) {
++        Ok(true) => {
++            cx.defer(refresh_surface_opacity);
++            cx.refresh_windows();
++        },
++        Ok(false) => {},
++        Err(error) => {
++            log::warn!("video background failed: {error:#}");
++            source.video.fail();
++            show_media_error(nebula_settings::BackgroundMediaKind::Video, cx);
++            cx.defer(refresh_surface_opacity);
++        },
++    }
++}
++
++pub(in crate::gpui_shell::wallpaper) fn source_failed(cx: &App) -> bool {
++    cx.global::<VisualEffects>().animated.source.as_ref().is_some_and(|s| s.video.failed())
++}
++pub(in crate::gpui_shell::wallpaper) fn shader_ready(_: &App) -> bool {
++    false
++}
++pub(in crate::gpui_shell::wallpaper) fn media_ready(cx: &App) -> bool {
++    underlay_ready(cx)
++}
++pub(in crate::gpui_shell::wallpaper) fn underlay_ready(cx: &App) -> bool {
++    cx.try_global::<VisualEffects>()
++        .and_then(|e| e.animated.source.as_ref())
++        .is_some_and(|s| s.enabled && s.video.ready())
++}
++pub(in crate::gpui_shell::wallpaper) fn video_available() -> bool {
++    NativeVideo::available()
++}
++pub(in crate::gpui_shell::wallpaper) fn shader_available() -> bool {
++    false
++}
++pub(in crate::
+```
+
+**File**: `nebula_app/src/gpui_shell/wallpaper/animated/native.rs` (modified, +4/-0)
+```diff
+@@ -287,6 +287,10 @@ pub(in crate::gpui_shell::wallpaper) fn media_ready(cx: &App) -> bool {
+         || effects.animated.retired_video.as_ref().is_some_and(|v| v.read(cx).has_front())
+ }
+ 
++/// Backends that paint into the GPUI scene never sit below translucent surfaces.
++pub(in crate::gpui_shell::wallpaper) fn underlay_ready(_: &App) -> bool {
++    false
++}
+ pub(in crate::gpui_shell::wallpaper) fn video_available() -> bool {
+     true
+ }
+```
+
+---
+
+### Incident Patch 3: `26c07474` (2026-10-18)
+**Commit Message**: fix(hints): skip table link lookup for a hover point past the grid edge
+
+Signed-off-by: Sai Asish Y <[REDACTED_EMAIL]>
+
+**File**: `nebula_app/src/display/hint.rs` (modified, +10/-0)
+```diff
+@@ -941,6 +941,16 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn table_lookup_past_the_grid_edge_is_not_a_hit() {
++        let term = mock_term("│ entry │ https://example.com/123456 │");
++        let past_edge = Point::new(Line(0), Column(term.columns() + 2));
++        assert!(
++            highlighted_at(&term, &UiConfig::default(), past_edge, ModifiersState::CONTROL)
++                .is_none()
 +        );
-         for target in targets {
-             for text in [
-                 format!("{target} (121 行)"),
++    }
++
+     #[test]
+     fn search_limit_never_opens_a_truncated_softwrapped_url_prefix() {
+         use nebula_terminal::event::VoidListener;
+```
+
+**File**: `nebula_app/src/display/hint/table.rs` (modified, +5/-0)
+```diff
+@@ -79,6 +79,11 @@ fn continuation<T>(term: &Term<T>, line: Line, left: usize) -> bool {
+ }
+ 
+ pub(super) fn at<T>(term: &Term<T>, point: Point) -> Option<TableLink> {
++    // Like `hyperlink_at`: a hover point can lead the grid by a column/row during a resize.
++    let grid = term.grid();
++    if point.column.0 >= grid.columns() || point.line.0 >= grid.screen_lines() as i32 {
++        return None;
++    }
+     let left = (0..point.column.0)
+         .rfind(|&col| border(term.grid()[Point::new(point.line, Column(col))].c))?;
+     let right = (point.column.0 + 1..term.columns())
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #682** (2026-10-19): fix(hints): skip table link lookup for a hover point past the grid edge (@SAY-5)
 - **PR #667** (2026-10-17): Release Pebrel 2.2.2 desktop updates (@Kuddev)
 - **PR #666** (closed): perf: bound Agent activity updates and stop hidden badge animation (@Kuddev)
 - **PR #663** (2026-10-16): fix: 修复本地文件链接包含尾随行数说明时无法打开的问题 (@galact-byte)
 - **PR #659** (2026-10-15): docs: finalize Pebrel 2.2.1 release checksums (@Kuddev)
 - **PR #658** (2026-10-16): fix(keymap): release macOS Control character defaults (@YinBuLiao)
-- **PR #657** (2026-10-15): release: prepare Pebrel 2.2.1 (@Kuddev)
 
 ---
 
@@ -1664,44 +1941,37 @@ fix(theme): avoid unchanged focus-ring notifications
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pin native input view cleanup for release validation
+## X. Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nebula_app/src/display/hint.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b6891b8`: pin native input view cleanup for release validation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b49b5351`: Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_app/src/display/hint.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
-source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
-source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903
+    #[test]
+    fn table_lookup_past_the_grid_edge_is_not_a_hit() {
+        let term = mock_term("│ entry │ https://example.com/123456 │");
+        let past_edge = Point::new(Line(0), Column(term.columns() + 2));
+        assert!(
+            highlighted_at(&term, &UiConfig::default(), past_edge, ModifiersState::CONTROL)
+                .is_none()
+        );
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-source = "git+https://github.com/Kuddev/gpui-component?rev=ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a#ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a"
-source = "git+https://github.com/Kuddev/gpui-component?rev=ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a#ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a"
-source = "git+https://github.com/Kuddev/gpui-component?rev=ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a#ce8ef64313b4e4145cd4f9eedf2dd9612d4b842a"
-source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d1355d9933592"
-source = "git+https://github.com/Kuddev/zed?rev=f9215143d15809a427a7889d511d1355d9933592#f9215143d15809a427a7889d511d13
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b6891b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b49b5351` are properly handled with clean fallback behavior.

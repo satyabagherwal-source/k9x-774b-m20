@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "fc46f6f449b53307de8d899a5870b84bfb136ed6b49d345b577e81cb527ef66f",
-    "lastHarvestedAt": "2026-10-18T04:08:24.312Z",
+    "contentHash": "a5bf58263d7fc4bea8b58f0ad9a33484ae9e3c5e5375009236ff37ed835c953d",
+    "lastHarvestedAt": "2026-10-19T14:14:55.175Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "b63526c5",
+    "sourceVersion": "89acffc2",
     "license": "Apache-2.0",
-    "contentHash": "842eee5a66b5a762891a14fb7b7580410b3f8d0bb62610316aa67ee5acc96457",
-    "lastHarvestedAt": "2026-10-18T22:23:23.235Z",
+    "contentHash": "f60ba6be407581dd095ab99a5324b23b53ca62bb509c5d86d4c26da3381e74af",
+    "lastHarvestedAt": "2026-10-19T14:15:06.774Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "f0441e6d",
+    "sourceVersion": "f5cf5a68",
     "license": "GPL-3.0",
-    "contentHash": "b10c962d3ecce9e256de840a7fd4bd98c05a10fb9be602074b1e47bf44ab5f1d",
-    "lastHarvestedAt": "2026-10-18T23:14:17.061Z",
+    "contentHash": "91d48bdbc5089091c2e503f8f43ae5ced54ccf0a9c58b0f25174a6280c0aaa95",
+    "lastHarvestedAt": "2026-10-19T14:14:55.022Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "9dd3e28d",
+    "sourceVersion": "b65f3230",
     "license": "Apache-2.0",
-    "contentHash": "158676aaafd6140e5c3a1d4ecd107d3083b8548db2390d38db6da65a9c24a35f",
-    "lastHarvestedAt": "2026-10-19T01:49:21.585Z",
+    "contentHash": "15b2a4a3e62a9cb7630c21f6f27e9327636936e08871313522695f0af42615f6",
+    "lastHarvestedAt": "2026-10-19T14:15:01.667Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -8148,5 +8148,15 @@
     "contentHash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
     "lastHarvestedAt": "2026-10-19T14:08:40.588Z",
     "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk"
+  },
+  "igorescodro-alkaa": {
+    "repository": "igorescodro/alkaa",
+    "platform": "github",
+    "sourceUrl": "https://github.com/igorescodro/alkaa",
+    "sourceVersion": "8524e062",
+    "license": "Apache-2.0",
+    "contentHash": "aa645f5ecd0b4e05c58f556659a730be57b240d1802373394e2d0fb6705e4168",
+    "lastHarvestedAt": "2026-10-19T14:14:59.747Z",
+    "learningId": "learn-github-igorescodro-alkaa"
   }
 }
