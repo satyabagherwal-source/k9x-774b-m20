@@ -2740,3 +2740,9 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d9009b50` | Multi-dimensional audit evidence | 2026-10-19T01:07:22.782Z |
 | `learn-github-skyzh-mini-lsm` | `https://github.com/skyzh/mini-lsm` | `2f7ce315` | Multi-dimensional audit evidence | 2026-10-19T01:07:25.193Z |
 | `learn-github-paullecam-react-leaflet` | `https://github.com/PaulLeCam/react-leaflet` | `374882f6` | Multi-dimensional audit evidence | 2026-10-19T01:10:30.845Z |
+| `learn-github-ekmas-neobrutalism-components` | `https://github.com/ekmas/neobrutalism-components` | `3306a802` | Multi-dimensional audit evidence | 2026-10-19T01:16:19.147Z |
+| `learn-github-vi-websocat` | `https://github.com/vi/websocat` | `3a3574cd` | Multi-dimensional audit evidence | 2026-10-19T01:16:20.322Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `2f33f554` | Multi-dimensional audit evidence | 2026-10-19T01:16:26.800Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T01:16:28.055Z |
+| `learn-github-sealerio-sealer` | `https://github.com/sealerio/sealer` | `e426153a` | Multi-dimensional audit evidence | 2026-10-19T01:16:28.950Z |
+| `learn-github-cozodb-cozo` | `https://github.com/cozodb/cozo` | `481af058` | Multi-dimensional audit evidence | 2026-10-19T01:16:32.537Z |

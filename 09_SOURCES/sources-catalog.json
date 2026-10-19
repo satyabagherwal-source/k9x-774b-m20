@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "d46869d9dab2aa175b74f5776ef11e7351447e2349d60107d3690443a7e3670c",
-    "lastHarvestedAt": "2026-10-17T21:33:14.055Z",
+    "contentHash": "438460b4d780be4c2dd47becd6a403df43e97182ffd4151eb4c63dad96f2fdc9",
+    "lastHarvestedAt": "2026-10-19T01:16:28.055Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -4378,5 +4378,55 @@
     "contentHash": "d56a8b8b10c408e03ef57c24f924f0479016e712ce4f78133b579e79d0997cbc",
     "lastHarvestedAt": "2026-10-19T01:10:30.845Z",
     "learningId": "learn-github-paullecam-react-leaflet"
+  },
+  "ekmas-neobrutalism-components": {
+    "repository": "ekmas/neobrutalism-components",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ekmas/neobrutalism-components",
+    "sourceVersion": "3306a802",
+    "license": "MIT",
+    "contentHash": "06bf51c87d1929a089d55ba7955c98e80da2eb2790d097fb4921707d22a3c5d3",
+    "lastHarvestedAt": "2026-10-19T01:16:19.147Z",
+    "learningId": "learn-github-ekmas-neobrutalism-components"
+  },
+  "vi-websocat": {
+    "repository": "vi/websocat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vi/websocat",
+    "sourceVersion": "3a3574cd",
+    "license": "MIT",
+    "contentHash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
+    "lastHarvestedAt": "2026-10-19T01:16:20.322Z",
+    "learningId": "learn-github-vi-websocat"
+  },
+  "keybase-client": {
+    "repository": "keybase/client",
+    "platform": "github",
+    "sourceUrl": "https://github.com/keybase/client",
+    "sourceVersion": "2f33f554",
+    "license": "BSD-3-Clause",
+    "contentHash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
+    "lastHarvestedAt": "2026-10-19T01:16:26.800Z",
+    "learningId": "learn-github-keybase-client"
+  },
+  "sealerio-sealer": {
+    "repository": "sealerio/sealer",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sealerio/sealer",
+    "sourceVersion": "e426153a",
+    "license": "Apache-2.0",
+    "contentHash": "d796af4afca33622fdba1227d76bb208112a912b429aca104dc4f33eb388a9e9",
+    "lastHarvestedAt": "2026-10-19T01:16:28.950Z",
+    "learningId": "learn-github-sealerio-sealer"
+  },
+  "cozodb-cozo": {
+    "repository": "cozodb/cozo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cozodb/cozo",
+    "sourceVersion": "481af058",
+    "license": "MPL-2.0",
+    "contentHash": "a5d0f863fddce868d8d996592f9e8ebebcbee7b831e71380cca392a49056ae89",
+    "lastHarvestedAt": "2026-10-19T01:16:32.537Z",
+    "learningId": "learn-github-cozodb-cozo"
   }
 }

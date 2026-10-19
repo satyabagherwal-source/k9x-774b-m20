@@ -2733,3 +2733,9 @@
 | `CYCLE-20261019-1BFC` | `2026-10-19T01:07:22.776Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1953` | Yes (`acbac9df...`) |
 | `CYCLE-20261019-1DAA` | `2026-10-19T01:07:25.186Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1954` | Yes (`25d12bd5...`) |
 | `CYCLE-20261019-5CJB` | `2026-10-19T01:10:30.839Z` | `PaulLeCam/react-leaflet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1955, Rule 1956, Rule 1957` | Yes (`d56a8b8b...`) |
+| `CYCLE-20261019-CTAF` | `2026-10-19T01:16:19.143Z` | `ekmas/neobrutalism-components` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ekmas-neobrutalism-components-learnings.md` | Yes (`06bf51c8...`) |
+| `CYCLE-20261019-CU71` | `2026-10-19T01:16:20.317Z` | `vi/websocat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1958` | Yes (`fd20b733...`) |
+| `CYCLE-20261019-CZ6Z` | `2026-10-19T01:16:26.795Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1959` | Yes (`1d0dc3de...`) |
+| `CYCLE-20261019-D05V` | `2026-10-19T01:16:28.051Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 1960, Rule 1961` | Yes (`438460b4...`) |
+| `CYCLE-20261019-D0UO` | `2026-10-19T01:16:28.944Z` | `sealerio/sealer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sealerio-sealer-learnings.md` | Yes (`d796af4a...`) |
+| `CYCLE-20261019-D3MD` | `2026-10-19T01:16:32.533Z` | `cozodb/cozo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1962` | Yes (`a5d0f863...`) |

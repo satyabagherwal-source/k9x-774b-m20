@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:10:30.801Z",
-  "total_verified_learnings": 460,
+  "last_updated": "2026-10-19T01:16:32.510Z",
+  "total_verified_learnings": 465,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4637,22 +4637,35 @@
     "learn-github-cozodb-cozo": {
       "learning_id": "learn-github-cozodb-cozo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cozodb-cozo",
+      "source": "cozodb/cozo",
+      "repository": "cozodb/cozo",
       "slug": "cozodb-cozo",
       "platform": "github",
       "source_url": "https://github.com/cozodb/cozo",
-      "source_version": "HEAD",
-      "content_hash": "65dc55dcda0686d555ed0e26d70be647b042b9e10b116e375effcaf787e83085",
+      "source_version": "481af058",
+      "content_hash": "a5d0f863fddce868d8d996592f9e8ebebcbee7b831e71380cca392a49056ae89",
       "dossier_path": "07_PROJECT_LEARNING/cozodb-cozo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cozodb-cozo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1962,
+          "title": "Fix regression in newrocks.rs",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.418Z"
+      "verified_at": "2026-10-19T01:16:32.506Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crate-ci-typos": {
       "learning_id": "learn-github-crate-ci-typos",
@@ -6349,22 +6362,29 @@
     "learn-github-ekmas-neobrutalism-components": {
       "learning_id": "learn-github-ekmas-neobrutalism-components",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ekmas-neobrutalism-components",
+      "source": "ekmas/neobrutalism-components",
+      "repository": "ekmas/neobrutalism-components",
       "slug": "ekmas-neobrutalism-components",
       "platform": "github",
       "source_url": "https://github.com/ekmas/neobrutalism-components",
-      "source_version": "HEAD",
-      "content_hash": "336cfa4a007012dd08513ed74ce30eb8814500f052bb486ef52d7f33aaa3a2fe",
+      "source_version": "3306a802",
+      "content_hash": "06bf51c87d1929a089d55ba7955c98e80da2eb2790d097fb4921707d22a3c5d3",
       "dossier_path": "07_PROJECT_LEARNING/ekmas-neobrutalism-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ekmas-neobrutalism-components-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.752Z"
+      "verified_at": "2026-10-19T01:16:19.111Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ekzhang-bore": {
       "learning_id": "learn-github-ekzhang-bore",
@@ -19023,10 +19043,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "d46869d9dab2aa175b74f5776ef11e7351447e2349d60107d3690443a7e3670c",
+      "content_hash": "438460b4d780be4c2dd47becd6a403df43e97182ffd4151eb4c63dad96f2fdc9",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1960,
+          "title": "Linear Attention State Size Bounding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1961,
+          "title": "Multimodal Token Serialization Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -19045,7 +19081,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-10-17T21:33:14.028Z",
+      "verified_at": "2026-10-19T01:16:28.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23299,22 +23335,35 @@
     "learn-github-keybase-client": {
       "learning_id": "learn-github-keybase-client",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "keybase-client",
+      "source": "keybase/client",
+      "repository": "keybase/client",
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "HEAD",
-      "content_hash": "ae2a6d4b7dc8d6fbe72f98a50ed34eae827ca2b9d67639c781c7655adac93d49",
+      "source_version": "2f33f554",
+      "content_hash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1959,
+          "title": "modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.790Z"
+      "verified_at": "2026-10-19T01:16:26.768Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-keyboardkit-keyboardkit": {
       "learning_id": "learn-github-keyboardkit-keyboardkit",
@@ -32492,22 +32541,29 @@
     "learn-github-sealerio-sealer": {
       "learning_id": "learn-github-sealerio-sealer",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sealerio-sealer",
+      "source": "sealerio/sealer",
+      "repository": "sealerio/sealer",
       "slug": "sealerio-sealer",
       "platform": "github",
       "source_url": "https://github.com/sealerio/sealer",
-      "source_version": "HEAD",
-      "content_hash": "f93ef3295a31bd718f436b6363a2dce6ee7fc0a29faacaf7fa85181e71afbefa",
+      "source_version": "e426153a",
+      "content_hash": "d796af4afca33622fdba1227d76bb208112a912b429aca104dc4f33eb388a9e9",
       "dossier_path": "07_PROJECT_LEARNING/sealerio-sealer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sealerio-sealer-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.417Z"
+      "verified_at": "2026-10-19T01:16:28.910Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-seaql-sea-orm": {
       "learning_id": "learn-github-seaql-sea-orm",
@@ -37018,22 +37074,35 @@
     "learn-github-vi-websocat": {
       "learning_id": "learn-github-vi-websocat",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vi-websocat",
+      "source": "vi/websocat",
+      "repository": "vi/websocat",
       "slug": "vi-websocat",
       "platform": "github",
       "source_url": "https://github.com/vi/websocat",
-      "source_version": "HEAD",
-      "content_hash": "de40dc9487dba26a4c5dda389b3f8095b4d987591a43418c56a2cceec7ac4d89",
+      "source_version": "3a3574cd",
+      "content_hash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
       "dossier_path": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1958,
+          "title": "Update OpenSSL to 3.5.4 for the pre-built executables",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.223Z"
+      "verified_at": "2026-10-19T01:16:20.292Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-video-db-director": {
       "learning_id": "learn-github-video-db-director",
@@ -58387,14 +58456,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
-      "source_version": "hf-google-gemma-4-31b-it",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T22:48:09.133Z"
+      "verified_at": "2026-10-19T01:16:28.025Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -72501,6 +72570,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:10:30.794Z"
+    },
+    "rule-1958": {
+      "learning_id": "rule-1958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1958,
+      "title": "Update OpenSSL to 3.5.4 for the pre-built executables",
+      "source_url": "https://github.com/vi/websocat",
+      "source_version": "3a3574cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:16:20.292Z"
+    },
+    "rule-1959": {
+      "learning_id": "rule-1959",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1959,
+      "title": "modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken",
+      "source_url": "https://github.com/keybase/client",
+      "source_version": "2f33f554",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:16:26.768Z"
+    },
+    "rule-1960": {
+      "learning_id": "rule-1960",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1960,
+      "title": "Linear Attention State Size Bounding",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:16:28.025Z"
+    },
+    "rule-1961": {
+      "learning_id": "rule-1961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1961,
+      "title": "Multimodal Token Serialization Barrier",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:16:28.025Z"
+    },
+    "rule-1962": {
+      "learning_id": "rule-1962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1962,
+      "title": "Fix regression in newrocks.rs",
+      "source_url": "https://github.com/cozodb/cozo",
+      "source_version": "481af058",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:16:32.506Z"
     }
   },
   "aliases": {

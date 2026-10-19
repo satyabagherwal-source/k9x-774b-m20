@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:10:30.850Z",
+  "last_updated": "2026-10-19T01:16:32.541Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -213,14 +213,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "d46869d9dab2aa175b74f5776ef11e7351447e2349d60107d3690443a7e3670c",
-      "verified_at": "2026-10-17T21:33:14.057Z",
+      "content_hash": "438460b4d780be4c2dd47becd6a403df43e97182ffd4151eb4c63dad96f2fdc9",
+      "verified_at": "2026-10-19T01:16:28.059Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:33:14.057Z"
+      "last_updated": "2026-10-19T01:16:28.070Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -6682,6 +6682,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:10:30.850Z"
+    },
+    "ekmas/neobrutalism-components": {
+      "repository": "ekmas/neobrutalism-components",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ekmas-neobrutalism-components",
+      "content_hash": "06bf51c87d1929a089d55ba7955c98e80da2eb2790d097fb4921707d22a3c5d3",
+      "verified_at": "2026-10-19T01:16:19.150Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:16:19.150Z"
+    },
+    "vi/websocat": {
+      "repository": "vi/websocat",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vi-websocat",
+      "content_hash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
+      "verified_at": "2026-10-19T01:16:20.325Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:16:20.325Z"
+    },
+    "keybase/client": {
+      "repository": "keybase/client",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-keybase-client",
+      "content_hash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
+      "verified_at": "2026-10-19T01:16:26.805Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:16:26.805Z"
+    },
+    "sealerio/sealer": {
+      "repository": "sealerio/sealer",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sealerio-sealer",
+      "content_hash": "d796af4afca33622fdba1227d76bb208112a912b429aca104dc4f33eb388a9e9",
+      "verified_at": "2026-10-19T01:16:28.954Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:16:28.954Z"
+    },
+    "cozodb/cozo": {
+      "repository": "cozodb/cozo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cozodb-cozo",
+      "content_hash": "a5d0f863fddce868d8d996592f9e8ebebcbee7b831e71380cca392a49056ae89",
+      "verified_at": "2026-10-19T01:16:32.541Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:16:32.541Z"
     }
   },
   "repos": {
