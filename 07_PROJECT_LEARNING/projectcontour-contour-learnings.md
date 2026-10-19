@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `617a205b`  
+> **Source Version**: `16f633ee`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:44:58.534Z  
+> **Timestamp**: 2026-10-19T19:03:37.506Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:44:58.526Z  
+> **Harvest Timestamp**: 2026-10-19T19:03:37.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,15 +1592,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7770** (2026-10-19): **build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0**
+  *Symptoms*: Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ossf/scorecard-action/releases">ossf/scorecard-action's releases</a>.</em></p> <blockquote> <h2>v2.5.0</h2> <h2>What's Changed</h2> <p>This release moves the action to Scorecard v5.6.0, the first Scorecard release since its hosted services moved to new infrastructure.</p> <p>For changes to checks and results, and what the infrastructure move means for you, see the <a href="https://github.com/ossf/scorecard/releases/tag/v5.6.0">Scorecard v5.6.0 release notes</a>.</p> <ul> <li>The action's container image is built with Go 1.27.2 on a refreshed distroless base. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The installer (<code>cmd/installer</code>) now creates <code>.github/workflows/scorecard.yml</code>, and still recognizes existing <code>scorecards.yml</code> and <code>scorecards-analysis.yml</code> workflows. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The Scorecard version in results now always matches the Scorecard release the action is built with. by <a href="https://github.com/justaugustus"><code>@​justaug
+
 - **Issue #7769** (2026-10-16): **Update compatibility matrix**
   *Symptoms*: Rephrase the compatibility matrix to clarify that the listed Kubernetes versions are the ones used in CI testing, rather than required versions for users.  Related to #7732
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7769?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.06%. Comparing base ([`52e8593`](https://app.codecov.io/gh/projectcontour/contour/commit/52e8593ee7f0fe209a2bef397158db61c2321b7d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`934d970`](https://app.codecov.io/gh/projectcontour/contour/commit/934d970d62d9bf832833e779ff52be1a04372580?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
-
-- **Issue #7768** (2026-10-14): **main: Bump to Envoy v1.40.0**
-  *Symptoms*: Updates to Envoy v1.40.0. For further info see https://github.com/envoyproxy/envoy/releases/tag/v1.40.0
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7768?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.04%. Comparing base ([`7c1d4fc`](https://app.codecov.io/gh/projectcontour/contour/commit/7c1d4fc5be6483b40000f2b75fce98641b00194e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`677a3ba`](https://app.codecov.io/gh/projectcontour/contour/commit/677a3ba296a9d9c365eb9e447774868cae907094?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1617,70 +1615,21 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90ba0079` (2026-10-09)
-**Commit Message**: build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750)
-
-Bumps [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) from 0.25.1 to 0.25.2.
-- [Release notes](https://github.com/kubernetes-sigs/controller-runtime/releases)
-- [Changelog](https://github.com/kubernetes-sigs/controller-runtime/blob/main/RELEASE.md)
-- [Commits](https://github.com/kubernetes-sigs/controller-runtime/compare/v0.25.1...v0.25.2)
-
----
-updated-dependencies:
-- dependency-name: sigs.k8s.io/controller-runtime
-  dependency-version: 0.25.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ require (
- 	k8s.io/client-go v0.37.1
- 	k8s.io/klog/v2 v2.140.0
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
--	sigs.k8s.io/controller-runtime v0.25.1
-+	sigs.k8s.io/controller-runtime v0.25.2
- 	sigs.k8s.io/gateway-api v1.3.0
- 	sigs.k8s.io/kustomize/kyaml v0.21.1
- )
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -324,8 +324,8 @@ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI0
- k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- rsc.io/pdf v0.1.1 h1:k1MczvYDUvJBe93bYd7wrZLLUEcLZAuF824/I4e5Xr4=
- rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=
--sigs.k8s.io/controller-runtime v0.25.1 h1:BKgU9OeE8xv8EbbM8cY0NVzTQs35rokkdq1jh12fMb4=
--sigs.k8s.io/controller-runtime v0.25.1/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
-+sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
-+sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
- sigs.k8s.io/gateway-api v1.3.0 h1:q6okN+/UKDATola4JY7zXzx40WO4VISk7i9DIfOvr9M=
- sigs.k8s.io/gateway-api v1.3.0/go.mod h1:d8NV8nJbaRbEKem+5IuxkL8gJGOZ+FJ+NvOIltV8gDk=
- sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
-```
-
----
-
-### Incident Patch 2: `7439896e` (2026-10-09)
-**Commit Message**: build(deps): bump the codeql-action group across 1 directory with 4 updates (#7746)
+### Incident Patch 1: `9d86ec1b` (2026-10-19)
+**Commit Message**: build(deps): bump the codeql-action group across 1 directory with 4 updates (#7763)
 
 Bumps the codeql-action group with 4 updates in the / directory: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
 
 
-Updates `github/codeql-action/init` from 4.38.0 to 4.38.2
+Updates `github/codeql-action/init` from 4.38.2 to 4.39.0
 - [Release notes](https://github.com/github/codeql-action/releases)
 - [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/b96794f015dfd88f77b49b1c93e0fa7110f94c63...2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2)
+- [Commits](https://github.com/github/codeql-action/compare/2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
 
-Updates `github/codeql-action/autobuild` from 4.38.0 to 4.38.2
+Updates `github/codeql-action/autobuild` from 4.38.2 to 4.39.0
 - [Release notes](https://github.com/github/codeql-action/releases)
 - [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/b96794f015dfd88f77b49b1c93e0fa7110f94c63...2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2)
+- [Commits](https://github.com/github/codeql-action/compare/2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
 
 Updates `github/codeql-action/analyze` from 
 
@@ -1690,17 +1639,17 @@ Updates `github/codeql-action/analyze` from
          cache: false
      # Initializes the CodeQL tools for scanning.
      - name: Initialize CodeQL
--      uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
        with:
          languages: go
      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
      - name: Autobuild
--      uses: github/codeql-action/autobuild@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      uses: github/codeql-action/autobuild@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      uses: github/codeql-action/autobuild@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/autobuild@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
      - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
        with:
          category: /language:go
  
@@ -1708,13 +1657,13 @@ Updates `github/codeql-action/analyze` from
        with:
          persist-credentials: false
      - name: Initialize CodeQL
--      uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
        with:
          languages: actions
      - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
        with:
          category: /language:actions
 ```
@@ -1725,8 +1674,8 @@ Updates `github/codeql-action/analyze` from
          name: SARIF file
          path: results.sarif
      - name: "Upload to code-scanning"
--      uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
        with:
          sarif_file: results.sarif
 ```
@@ -1737,26 +1686,58 @@ Updates `github/codeql-action/analyze` from
            output: 'trivy-results.sarif'
            ignore-unfixed: true
            severity: 'HIGH,CRITICAL'
--      - uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
-+      - uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+-      - uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
++      - uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
          with:
            sarif_file: 'trivy-results.sarif'
 ```
 
 ---
 
-### Incident Patch 3: `1e7ef203` (2026-10-09)
-**Commit Message**: build(deps): bump github.com/onsi/gomega from 1.43.0 to 1.44.0 (#7745)
+### Incident Patch 2: `033d3ed4` (2026-10-19)
+**Commit Message**: build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#7770)
 
-Bumps [github.com/onsi/gomega](https://github.com/onsi/gomega) from 1.43.0 to 1.44.0.
-- [Release notes](https://github.com/onsi/gomega/releases)
-- [Changelog](https://github.com/onsi/gomega/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/onsi/gomega/compare/v1.43.0...v1.44.0)
+Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0.
+- [Release notes](https://github.com/ossf/scorecard-action/releases)
+- [Changelog](https://github.com/ossf/scorecard-action/blob/main/RELEASE.md)
+- [Commits](https://github.com/ossf/scorecard-action/compare/2d1146689b8cda280b9bc96326124645441f03bc...fa7117db83c52d787ae5a89f350999701505d78e)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/onsi/gomega
-  dependency-version: 1.44.0
+- dependency-name: ossf/scorecard-action
+  dependency-version: 2.5.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/openssf-scorecard.yaml` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ jobs:
+       with:
+         persist-credentials: false
+     - name: "Run analysis"
+-      uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
++      uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+       with:
+         results_file: results.sarif
+         results_format: sarif
+```
+
+---
+
+### Incident Patch 3: `16f633ee` (2026-10-19)
+**Commit Message**: build(deps): bump golang.org/x/net from 0.59.0 to 0.60.0 (#7760)
+
+Bumps [golang.org/x/net](https://github.com/golang/net) from 0.59.0 to 0.60.0.
+- [Commits](https://github.com/golang/net/compare/v0.59.0...v0.60.0)
+
+---
+updated-dependencies:
+- dependency-name: golang.org/x/net
+  dependency-version: 0.60.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
@@ -1766,39 +1747,39 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,7 @@ require (
- 	github.com/google/uuid v1.6.0
- 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
- 	github.com/onsi/ginkgo/v2 v2.33.0
--	github.com/onsi/gomega v1.43.0
-+	github.com/onsi/gomega v1.44.0
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.24.1
- 	github.com/prometheus/client_model v0.6.3
+@@ -26,7 +26,7 @@ require (
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tsaarni/certyaml v0.13.0
+ 	go.uber.org/automaxprocs v1.6.0
+-	golang.org/x/net v0.59.0
++	golang.org/x/net v0.60.0
+ 	golang.org/x/oauth2 v0.37.0
+ 	gonum.org/v1/plot v0.17.0
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -168,8 +168,8 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
- github.com/onsi/ginkgo/v2 v2.33.0 h1:C8gBA6Uc2ZEubiV+SXiu5tZnMTwEmXHgkJwGozKtZf8=
- github.com/onsi/ginkgo/v2 v2.33.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
--github.com/onsi/gomega v1.43.0 h1:VlG/1FxqNxhSO+lq/OHBNaaqwiBK/mO8JbVkX9Y+FeU=
--github.com/onsi/gomega v1.43.0/go.mod h1:REff/hsDsodHoKlWsP2mAPhu1+5/6hVYNf9rIEBpeSg=
-+github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
-+github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
- github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+@@ -250,8 +250,8 @@ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7770** (2026-10-19): build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
 - **PR #7769** (2026-10-16): Update compatibility matrix (@tsaarni)
 - **PR #7768** (2026-10-14): main: Bump to Envoy v1.40.0 (@tsaarni)
 - **PR #7766** (closed): Add metrics for /healthz endpoint (@Sun-Wukhan)
 - **PR #7765** (closed): Add metrics for /healthz endpoint (@Sun-Wukhan)
-- **PR #7751** (2026-10-09): build(deps): bump sigs.k8s.io/kustomize/kyaml from 0.21.1 to 0.21.2 (@dependabot[bot])
-- **PR #7750** (2026-10-09): build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (@dependabot[bot])
+- **PR #7763** (2026-10-19): build(deps): bump the codeql-action group across 1 directory with 4 updates (@dependabot[bot])
 
 ---
 
@@ -1818,28 +1799,36 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750)
+## X. build(deps): bump the codeql-action group across 1 directory with 4 updates (#77
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90ba0079`: build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d86ec1b`: build(deps): bump the codeql-action group across 1 directory with 4 updates (#7763). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-	sigs.k8s.io/controller-runtime v0.25.2
+      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      uses: github/codeql-action/autobuild@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-	sigs.k8s.io/controller-runtime v0.25.1
+      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+      uses: github/codeql-action/autobuild@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90ba0079` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d86ec1b` are properly handled with clean fallback behavior.

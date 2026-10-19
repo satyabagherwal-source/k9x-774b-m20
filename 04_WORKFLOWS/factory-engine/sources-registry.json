@@ -660,12 +660,12 @@
     "revisionIdentifier": "21b29048"
   },
   "mintplex-labs-anything-llm": {
-    "name": "Mintplex-Labs/anything-llm",
+    "name": "anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-19T05:58:53.734Z",
-    "lastVerified": "2026-10-19T05:58:53.734Z",
+    "lastChecked": "2026-10-19T19:03:37.075Z",
+    "lastVerified": "2026-10-19T19:03:37.075Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -674,7 +674,8 @@
     "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d7d68e75"
   },
   "iii-hq-iii": {
     "name": "iii-hq/iii",
@@ -847,22 +848,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "adobe-react-spectrum": {
-    "name": "react-spectrum",
+    "name": "adobe/react-spectrum",
     "officialUrl": "https://github.com/adobe/react-spectrum",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T07:58:04.163Z",
-    "lastVerified": "2026-10-19T07:58:04.163Z",
+    "lastChecked": "2026-10-19T19:03:27.129Z",
+    "lastVerified": "2026-10-19T19:03:27.129Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-adobe-react-spectrum",
-    "contentHash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
+    "contentHash": "f9f0b8555871846a832f6afaca13e7ba2fc433705c14bd5480e42b193514e65a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 23,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "26134433"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
     "name": "gravitl/netmaker",
@@ -1034,8 +1034,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T16:06:08.972Z",
-    "lastVerified": "2026-10-19T16:06:08.972Z",
+    "lastChecked": "2026-10-19T19:03:34.768Z",
+    "lastVerified": "2026-10-19T19:03:34.768Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1497,14 +1497,14 @@
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-19T06:44:58.526Z",
-    "lastVerified": "2026-10-19T06:44:58.526Z",
+    "lastChecked": "2026-10-19T19:03:37.502Z",
+    "lastVerified": "2026-10-19T19:03:37.502Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
+    "contentHash": "94e6c70e37c207754d8a4be26e5a48529e5d2430cfa194b0ddd8e5bfc994db3e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 26,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8596,12 +8596,12 @@
     "revisionIdentifier": "54e4a938"
   },
   "async-rs-async-std": {
-    "name": "async-rs/async-std",
+    "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T04:07:04.497Z",
-    "lastVerified": "2026-10-19T04:07:04.497Z",
+    "lastChecked": "2026-10-19T19:03:24.553Z",
+    "lastVerified": "2026-10-19T19:03:24.553Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-async-rs-async-std",
@@ -8610,7 +8610,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "844b5525"
   },
   "adonisjs-core": {
     "name": "adonisjs/core",
@@ -18311,12 +18312,12 @@
     "revisionIdentifier": "6e2b5850"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T18:36:04.049Z",
-    "lastVerified": "2026-10-19T18:36:04.049Z",
+    "lastChecked": "2026-10-19T19:03:39.592Z",
+    "lastVerified": "2026-10-19T19:03:39.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -18325,7 +18326,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b012a600"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -18620,14 +18622,15 @@
     "officialUrl": "https://github.com/yshrsmz/BuildKonfig",
     "sourceType": "github",
     "technology": "Kotlin",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-04T20:20:57.710Z",
-    "lastVerified": "2026-10-04T20:20:57.710Z",
+    "lastChecked": "2026-10-19T19:03:33.602Z",
+    "lastVerified": "2026-10-19T19:03:33.602Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 34,
+    "learningId": "learn-github-yshrsmz-buildkonfig",
+    "contentHash": "921dbf6799a3a6a62331356e8396a22adfd77943d54ea3b530023740ed59d22f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 12,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -25370,11 +25373,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "raghav453-multilipi-hreflang-generator": {
-    "name": "multilipi-hreflang-generator",
+    "name": "raghav453/multilipi-hreflang-generator",
     "officialUrl": "https://github.com/raghav453/multilipi-hreflang-generator",
-    "lastChecked": "2026-10-18T06:29:09.763283Z",
-    "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T06:29:09.763283Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-19T19:03:29.973Z",
+    "lastVerified": "2026-10-19T19:03:29.973Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-raghav453-multilipi-hreflang-generator",
+    "contentHash": "93850186748e9c520e9468bf0758632e0c40317784174e9097680d02ee997fbc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",
@@ -26414,8 +26427,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T18:57:41.043Z",
-    "lastVerified": "2026-10-19T18:57:41.043Z",
+    "lastChecked": "2026-10-19T19:03:40.210Z",
+    "lastVerified": "2026-10-19T19:03:40.210Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

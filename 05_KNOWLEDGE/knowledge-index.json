@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:57:38.470Z",
-  "total_verified_learnings": 884,
+  "last_updated": "2026-10-19T19:03:37.656Z",
+  "total_verified_learnings": 886,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -409,14 +409,19 @@
       "slug": "adobe-react-spectrum",
       "platform": "github",
       "source_url": "https://github.com/adobe/react-spectrum",
-      "source_version": "26134433",
-      "content_hash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
+      "source_version": "797762ed",
+      "content_hash": "f9f0b8555871846a832f6afaca13e7ba2fc433705c14bd5480e42b193514e65a",
       "dossier_path": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "promoted_rules": [
         {
           "number": 1713,
           "title": "avoid an extra render on mount in useDescription (#10754)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2757,
+          "title": "omit version postfix from S2 style macro class names in tests (#10736)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -425,7 +430,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:20:07.642Z",
+      "verified_at": "2026-10-19T19:03:28.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35535,14 +35540,19 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "617a205b",
-      "content_hash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
+      "source_version": "16f633ee",
+      "content_hash": "94e6c70e37c207754d8a4be26e5a48529e5d2430cfa194b0ddd8e5bfc994db3e",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
         {
           "number": 2254,
           "title": "build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2760,
+          "title": "build(deps): bump the codeql-action group across 1 directory with 4 updates (#77",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35551,7 +35561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:44:58.718Z",
+      "verified_at": "2026-10-19T19:03:37.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45106,22 +45116,35 @@
     "learn-github-yshrsmz-buildkonfig": {
       "learning_id": "learn-github-yshrsmz-buildkonfig",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "yshrsmz-buildkonfig",
+      "source": "yshrsmz/BuildKonfig",
+      "repository": "yshrsmz/BuildKonfig",
       "slug": "yshrsmz-buildkonfig",
       "platform": "github",
       "source_url": "https://github.com/yshrsmz/BuildKonfig",
-      "source_version": "HEAD",
-      "content_hash": "2e29152e8dd40d82bdf1b8a4aedebefdf0ed4e6167150964481d90cde98f77dc",
+      "source_version": "f460ddf9",
+      "content_hash": "921dbf6799a3a6a62331356e8396a22adfd77943d54ea3b530023740ed59d22f",
       "dossier_path": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2759,
+          "title": "deps): update dependency org.jetbrains.kotlin:kotlin-gradle-plugin to v2.4.21 (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.476Z"
+      "verified_at": "2026-10-19T19:03:33.745Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -55430,22 +55453,36 @@
     "learn-github-raghav453-multilipi-hreflang-generator": {
       "learning_id": "learn-github-raghav453-multilipi-hreflang-generator",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "raghav453/multilipi-hreflang-generator",
       "repository": "raghav453/multilipi-hreflang-generator",
       "slug": "raghav453-multilipi-hreflang-generator",
       "platform": "github",
       "source_url": "https://github.com/raghav453/multilipi-hreflang-generator",
-      "source_version": "main",
-      "content_hash": "544317a1cc541e354f5a06f1a8f029b51833542adf0f47f4954f6b3979065cc4",
+      "source_version": "ca4d146c",
+      "content_hash": "93850186748e9c520e9468bf0758632e0c40317784174e9097680d02ee997fbc",
       "dossier_path": "07_PROJECT_LEARNING/raghav453-multilipi-hreflang-generator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/raghav453-multilipi-hreflang-generator-learnings.md",
       "promoted_rules": [
-        "Rule 1625"
+        "Rule 1625",
+        {
+          "number": 2758,
+          "title": "Initial release: hreflang generator and validator",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:03:30.124Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-aliarifsoydas-sitemap-checker": {
       "learning_id": "learn-github-aliarifsoydas-sitemap-checker",
@@ -91196,6 +91233,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:57:38.459Z"
+    },
+    "rule-2757": {
+      "learning_id": "rule-2757",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2757,
+      "title": "omit version postfix from S2 style macro class names in tests (#10736)",
+      "source_url": "https://github.com/adobe/react-spectrum",
+      "source_version": "797762ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:03:28.242Z"
+    },
+    "rule-2758": {
+      "learning_id": "rule-2758",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2758,
+      "title": "Initial release: hreflang generator and validator",
+      "source_url": "https://github.com/raghav453/multilipi-hreflang-generator",
+      "source_version": "ca4d146c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:03:30.124Z"
+    },
+    "rule-2759": {
+      "learning_id": "rule-2759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2759,
+      "title": "deps): update dependency org.jetbrains.kotlin:kotlin-gradle-plugin to v2.4.21 (#",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "f460ddf9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:03:33.745Z"
+    },
+    "rule-2760": {
+      "learning_id": "rule-2760",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2760,
+      "title": "build(deps): bump the codeql-action group across 1 directory with 4 updates (#77",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "16f633ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:03:37.650Z"
     }
   },
   "aliases": {

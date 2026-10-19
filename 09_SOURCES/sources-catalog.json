@@ -2313,10 +2313,10 @@
     "repository": "adobe/react-spectrum",
     "platform": "github",
     "sourceUrl": "https://github.com/adobe/react-spectrum",
-    "sourceVersion": "26134433",
+    "sourceVersion": "797762ed",
     "license": "Apache-2.0",
-    "contentHash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
-    "lastHarvestedAt": "2026-10-18T21:20:07.686Z",
+    "contentHash": "f9f0b8555871846a832f6afaca13e7ba2fc433705c14bd5480e42b193514e65a",
+    "lastHarvestedAt": "2026-10-19T19:03:28.278Z",
     "learningId": "learn-github-adobe-react-spectrum"
   },
   "max-sixty-worktrunk": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "617a205b",
+    "sourceVersion": "16f633ee",
     "license": "Apache-2.0",
-    "contentHash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
-    "lastHarvestedAt": "2026-10-19T06:44:58.770Z",
+    "contentHash": "94e6c70e37c207754d8a4be26e5a48529e5d2430cfa194b0ddd8e5bfc994db3e",
+    "lastHarvestedAt": "2026-10-19T19:03:37.682Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -8688,5 +8688,25 @@
     "contentHash": "e372a57ce3e6f884b8c518ef8e945ee1e61d229a032918f81fdee618593e44b2",
     "lastHarvestedAt": "2026-10-19T18:57:38.509Z",
     "learningId": "learn-github-mitrovicsinisaa-schemaorg-rs"
+  },
+  "raghav453-multilipi-hreflang-generator": {
+    "repository": "raghav453/multilipi-hreflang-generator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/raghav453/multilipi-hreflang-generator",
+    "sourceVersion": "ca4d146c",
+    "license": "MIT",
+    "contentHash": "93850186748e9c520e9468bf0758632e0c40317784174e9097680d02ee997fbc",
+    "lastHarvestedAt": "2026-10-19T19:03:30.159Z",
+    "learningId": "learn-github-raghav453-multilipi-hreflang-generator"
+  },
+  "yshrsmz-buildkonfig": {
+    "repository": "yshrsmz/BuildKonfig",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yshrsmz/BuildKonfig",
+    "sourceVersion": "f460ddf9",
+    "license": "Apache-2.0",
+    "contentHash": "921dbf6799a3a6a62331356e8396a22adfd77943d54ea3b530023740ed59d22f",
+    "lastHarvestedAt": "2026-10-19T19:03:33.787Z",
+    "learningId": "learn-github-yshrsmz-buildkonfig"
   }
 }
