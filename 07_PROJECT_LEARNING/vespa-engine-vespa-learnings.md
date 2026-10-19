@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `fdbd35a4`  
+> **Source Version**: `0521b006`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:40:32.049Z  
+> **Timestamp**: 2026-10-19T17:44:03.556Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:40:32.042Z  
+> **Harvest Timestamp**: 2026-10-19T17:44:03.549Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7131 stars
+- **Stars / Engagement**: 7133 stars
 
 ---
 
@@ -1065,418 +1065,501 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8be7ea9e` (2026-10-15)
-**Commit Message**: Bump abseil-cpp, gtest and protobuf C++ build dependencies
+### Incident Patch 1: `23507600` (2026-10-19)
+**Commit Message**: Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-vespa-re2-on-fedora-and-amazon-linux
 
-Update the versions of the vespa-packaged C++ dependencies required by
-dist/vespa.spec:
+Use vespa-abseil-cpp, vespa-gtest and vespa-re2 on Fedora and Amazon …
 
- - abseil-cpp:              20250127.1 -> 20260817.0
- - gtest:                   1.16.0     -> 1.18.0
- - protobuf:                6.34.1     -> 7.36.2
- - vespa-build-dependencies: 1.21.0    -> 1.22.0
-
-Also require exact vespa-abseil-cpp version when using it.
-
-The C++ protobuf runtime now matches the upstream release (v36.2)
-already used on the Java side (protobuf.vespa.version 4.36.2), so
-generated code on both sides comes from the same protobuf release.
-
-This relies on the preceding change that isolates generated *.pb.h
-headers from abseil's LOG/VLOG macros (#38238), since newer protobuf
-pulls in absl/log transitively and would otherwise clash with
-vespa/log's LOG macro.
-
-**File**: `dist/vespa.spec` (modified, +7/-4)
+**File**: `dist/vespa.spec` (modified, +1/-3)
 ```diff
-@@ -32,10 +32,10 @@
- %define _create_vespa_service 1
- %define _defattr_is_vespa_vespa 0
- %define _command_cmake cmake
--%global _vespa_abseil_cpp_version 20250127.1
--%global _vespa_build_dependencies_version 1.21.0
--%global _vespa_gtest_version 1.16.0
--%global _vespa_protobuf_version 6.34.1
-+%global _vespa_abseil_cpp_version 20260817.0
-+%global _vespa_build_dependencies_version 1.22.0
-+%global _vespa_gtest_version 1.18.0
-+%global _vespa_protobuf_version 7.36.2
- %global _vespa_openblas_version 0.3.27
- %global _vespa_mimalloc_version 3.3.2
- %global _vespa_highway_version 1.4.0
-@@ -255,6 +255,9 @@ Requires: vespa-re2 = %{_vespa_re2_version}
- %else
- Requires: re2
+@@ -47,12 +47,10 @@
+ %global _vespa_openssl_version 3.5.9
+ %global _vespa_opentelemetry_cpp_version 1.29.0
+ %global _vespa_grpc_version 1.84.0
+-%if 0%{?el8} || 0%{?el9} || 0%{?amzn2023}
+ %global _use_vespa_abseil_cpp 1
+ %global _vespa_abseil_excludes |absl_[a-z_0-9]*
+ %global _use_vespa_gtest 1
+ %global _vespa_gtest_excludes |(gtest|gmock)(_main)?
+-%endif
+ %global _use_vespa_protobuf 1
+ %global _vespa_protobuf_excludes |protobuf|utf8_validity|utf8_range
+ %global _use_vespa_openblas 1
+@@ -80,9 +78,9 @@
+ %if ! 0%{?_vespa_java_version:1}
+ %global _vespa_java_version 17
  %endif
-+%if 0%{?_use_vespa_abseil_cpp}
-+Requires: vespa-abseil-cpp = %{_vespa_abseil_cpp_version}
-+%endif
- 
- %if 0%{?el8} || 0%{?el9} || 0%{?el10}
- Requires: vespa-openssl >= %{_vespa_openssl_version}
+-%if 0%{?el8} || 0%{?el9} || 0%{?el10}
+ %global _use_vespa_re2 1
+ %global _vespa_re2_excludes |re2
++%if 0%{?el8} || 0%{?el9} || 0%{?el10}
+ %global _use_vespa_icu 1
+ %global _vespa_icu_excludes |icu(data|i18n|io|test|tu|uc)
+ %endif
 ```
 
 ---
 
-### Incident Patch 2: `43f1f56e` (2026-10-15)
-**Commit Message**: fix: UrlDownloader follows cross-origin redirects without leaking auth token (#38217)
+### Incident Patch 2: `c2f79466` (2026-10-19)
+**Commit Message**: Use vespa-abseil-cpp, vespa-gtest and vespa-re2 on Fedora and Amazon Linux.
 
-**File**: `config-proxy/src/main/java/com/yahoo/vespa/config/proxy/filedistribution/UrlDownloader.java` (modified, +24/-0)
+**File**: `dist/vespa.spec` (modified, +1/-3)
 ```diff
-@@ -6,9 +6,14 @@
- import org.apache.hc.client5.http.classic.methods.HttpGet;
- import org.apache.hc.client5.http.config.RequestConfig;
- import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
-+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
- import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
- import org.apache.hc.core5.http.ClassicHttpResponse;
-+import org.apache.hc.core5.http.HttpHeaders;
-+import org.apache.hc.core5.http.HttpHost;
-+import org.apache.hc.core5.http.HttpRequest;
- import org.apache.hc.core5.http.message.BasicHeader;
-+import org.apache.hc.core5.http.protocol.HttpContext;
- import org.apache.hc.core5.util.Timeout;
- 
- import java.io.File;
-@@ -91,14 +96,33 @@ boolean alreadyDownloaded(File downloadDir) {
- 
-     private static HttpClient createClient() {
-         return HttpClientBuilder.create()
-+                                .setRedirectStrategy(new StripAuthOnCrossOriginRedirectStrategy())
-                                 .setRetryStrategy(new DefaultHttpRequestRetryStrategy())
-                                 .setUserAgent(USER_AGENT_MODEL_DOWNLOADER)
-                                 .setDefaultRequestConfig(
-                                         RequestConfig.custom()
-                                                      .setConnectionRequestTimeout(Timeout.ofSeconds(30))
-                                                      .setResponseTimeout(Timeout.ofSeconds(30))
-+                                                     .setMaxRedirects(5)
-                                                      .build())
-                                 .build();
-     }
- 
-+    /**
-+     * Follows redirects like the default strategy, but never sends the auth token to another origin: the default
-+     * strategy refuses cross-origin redirects when an Authorization header is set (e.g. huggingface.co redirecting
-+     * to a CDN with a pre-signed url), so instead drop the header and follow the redirect without it.
-+     * Any other sensitive header is left to the default strategy, which will then still refuse the redirect.
-+     */
-+    static class StripAuthOnCrossOriginRedirectStrategy extends DefaultRedirectStrategy {
-+
-+        @Override
-+        public boolean isRedirectAllowed(HttpHost currentTarget, HttpHost newTarget, HttpRequest redirect, HttpContext context) {
-+            if (super.isRedirectAllowed(currentTarget, newTarget, redirect, context)) return true;
-+            redirect.removeHeaders(HttpHeaders.AUTHORIZATION);
-+            return super.isRedirectAllowed(currentTarget, newTarget, redirect, context);
-+        }
-+
-+    }
-+
- }
-```
-
-**File**: `config-proxy/src/test/java/com/yahoo/vespa/config/proxy/filedistribution/UrlDownloaderTest.java` (modified, +141/-0)
-```diff
-@@ -1,22 +1,45 @@
- package com.yahoo.vespa.config.proxy.filedistribution;
- 
-+import com.sun.net.httpserver.HttpServer;
-+import org.apache.hc.client5.http.protocol.HttpClientContext;
-+import org.apache.hc.core5.http.HttpHost;
-+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
-+import org.junit.jupiter.api.AfterEach;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.io.TempDir;
- 
- import java.io.File;
- import java.io.IOException;
-+import java.net.InetSocketAddress;
- import java.net.URI;
- import java.nio.charset.StandardCharsets;
- import java.nio.file.Files;
-+import java.util.ArrayList;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.Optional;
-+import java.util.concurrent.ConcurrentHashMap;
- 
-+import static org.junit.jupiter.api.Assertions.assertEquals;
- import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- 
- public class UrlDownloaderTest {
- 
-+    private static final String TOKEN = "secret";
-+    private static final String BEARER = "Bearer " + TOKEN;
-+
-     @TempDir
-     public File temporaryFolder;
- 
-+    private final List<TestServer> servers = new ArrayList<>();
-+
-+    @AfterEach
-+    public void stopServers() {
-+        servers.forEach(TestServer::stop);
-+    }
-+
-     @Test
-     public void testFileDownload() throws IOException {
-         URI uri = URI.create("https://docs.vespa.ai/foo");
-@@ -27,4 +50,122 @@ public void testFileDownload() throws IOException {
-         Files.write(temporaryFolder.toPath().resolve("foo"), "bar".getBytes(StandardCharsets.UTF_8));
-         assertTrue(downloader.alreadyDownloaded(temporaryFolder));
-     }
-+
-+    @Test
-+    public void followsCrossOriginRedirectAndOnlySendsTokenToOriginalOrigin() throws IOException {
-+        var cdn = server().ok("/model.onnx", "content");
-+        var origin = server().redirect("/resolve/model.onnx", cdn.uri("/model.onnx"));
-+
-+        var file = download(origin.uri("/resolve/model.onnx"), TOKEN).orElseThrow();
-+
-+        assertEquals("content", Files.readString(file.toPath()));
-+        assertEquals(Optional.of(BEARER), origin.authHeaderSentTo("/resolve/model.onnx"));
-+        assertEquals(Optional.empty(), cdn.authHeaderSentTo("/model.onnx"));
-+    }
-+
-+    @Test
-+    public void keepsTokenOnSameOriginRedirect() throws IOException {
-+        var origin = server().redirect("/resolve/model.onnx", "/moved/model.onnx")
-+                             .ok("/moved/model.onnx", "content");
-+
-+        var file = download(origin.uri("/resolve/model.onnx"), TOKEN).orElseThrow();
-+
-+        assertEquals("content", Files.readString(file.toPath()));
-+        assertEquals(Optional.of(BEARER), origin.authHeaderSentTo("/resolve/model.onnx"));
-+        assertEquals(Optional.of(BEARER), origin.authHeaderSentTo("/moved/model.onnx"));
-+    }
-+
-+    @Test
-+    public void failsOnTooManyRedirects() throws IOException {
-+        var server = server();
-+        for (int i = 1; i <= 6; i++)
-+            server.redirect("/hop" + i, "/hop" + (i + 1));
-+        server.ok("/hop7", "content");
-+
-+        var e = assertThrows(IOException.class, () -> download(server.uri("/hop1"), null));
-+
-+        assertTrue(e.getMessage().contains("Maximum redirects (5) exceeded"), e.getMessage());
-+        assertFalse(server.wasRequested("/hop7"));
-+    }
-+
-+    @Test
-+    public void redirectStrategyStillRefusesCrossOriginWithOtherSensitiveHeaders() {
-+        var request = new BasicClassicHttpRequest("GET", "/model.onnx");
-+        request.setHeader("Authorization", BEARER);
-+        request.setHeader("Cookie", "session=1");
-+
-+        var allowed = new UrlDownloader.StripAuthOnCrossOriginRedirectStrategy()
-+                .isRedirectAllowed(new HttpHost("https", "a.example", 443), new HttpHost("https", "b.example", 443),
-+                                   request, HttpClientContext.create());
-+
-+        assertFalse(allowed);
-+        assertFalse(request.containsHeader("Authorization"));
-+        assertTrue(request.containsHeader("Cookie"));
-+    }
-+
-+    private Optional<File> download(URI uri, String token) throws IOException {
-+        return new UrlDownloader(uri, new DownloadOptions(token)).download(temporaryFolder);
-+    }
-+
-+    private TestServer server() throws IOException {
-+        var server = new TestServer();
-+        servers.add(server);
-+        return server;
-+    }
-+
-+    /** A local http server where each path either redirects or serves a body, recording the Authorization header it received. */
-+    private static class TestServer {
-+
-+        private final HttpServer server;
-+        private final Map<String, Optional<String>> authHeaders = new ConcurrentHashMap<>();
-+
-+        TestServer() throws IOException {
-+            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-+            server.start();
-+        }
-+
-+        TestServer redirect(String path, String locat
+@@ -47,12 +47,10 @@
+ %global _vespa_openssl_version 3.5.9
+ %global _vespa_opentelemetry_cpp_version 1.29.0
+ %global _vespa_grpc_version 1.84.0
+-%if 0%{?el8} || 0%{?el9} || 0%{?amzn2023}
+ %global _use_vespa_abseil_cpp 1
+ %global _vespa_abseil_excludes |absl_[a-z_0-9]*
+ %global _use_vespa_gtest 1
+ %global _vespa_gtest_excludes |(gtest|gmock)(_main)?
+-%endif
+ %global _use_vespa_protobuf 1
+ %global _vespa_protobuf_excludes |protobuf|utf8_validity|utf8_range
+ %global _use_vespa_openblas 1
+@@ -80,9 +78,9 @@
+ %if ! 0%{?_vespa_java_version:1}
+ %global _vespa_java_version 17
+ %endif
+-%if 0%{?el8} || 0%{?el9} || 0%{?el10}
+ %global _use_vespa_re2 1
+ %global _vespa_re2_excludes |re2
++%if 0%{?el8} || 0%{?el9} || 0%{?el10}
+ %global _use_vespa_icu 1
+ %global _vespa_icu_excludes |icu(data|i18n|io|test|tu|uc)
+ %endif
 ```
 
 ---
 
-### Incident Patch 3: `fb7df9a9` (2026-10-15)
-**Commit Message**: Require integer parameters in grouping max, precision, md5 and xorbit
+### Incident Patch 3: `ce05d425` (2026-10-19)
+**Commit Message**: Merge pull request #38051 from vespa-engine/radu/tracing-sortfeatures-tracedoctor
 
-A parameter in one of these positions is narrowed to an int like a
-literal, so a value such as 4294967295 wrapped to -1 and silently unset
-the max, and 0.5 truncated to 0. Since the value now comes from the
-request rather than the application, the parameter path validates that
-the value is an integer between 1 and the clause's maximum before
-narrowing. Literals keep their existing behaviour.
+Sort-rankfeatures: tracedoctor update
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `container-search/src/main/javacc/com/yahoo/search/grouping/request/parser/GroupingParser.jj` (modified, +31/-7)
+**File**: `client/go/internal/vespa/tracedoctor/extract.go` (modified, +69/-15)
 ```diff
-@@ -112,6 +112,18 @@ public class GroupingParser {
-         return number;
-     }
- 
-+    /**
-+     * Resolves a parameter used where an int is expected. The value must be an integer within the given bounds,
-+     * so that the narrowing done by the caller is lossless.
-+     */
-+    private Number resolveParameterInteger(String name, String clause, long min, long max) throws ParseException {
-+        Number num = resolveParameterNumber(name, resolveParameter(name));
-+        if (num instanceof Double || num.longValue() < min || num.longValue() > max) {
-+            throw new ParseException(clause + " must be an integer between " + min + " and " + max + ", but got " + num);
-+        }
-+        return num;
-+    }
-+
-     private static Number resolveNumber(String str) {
-         if (str.indexOf('.') >= 0) {
-             return Double.valueOf(str);
-@@ -358,7 +370,7 @@ void operationBody(GroupingOperation parent) :
-     FilterExpression filterExp = null;
-     ConstantValue<?> maxOperand = null;
-     String str;
--    Number num;
-+    Number num = null;
-     GroupingExpression exp;
-     List<GroupingExpression> lst;
- }
-@@ -369,17 +381,17 @@ void operationBody(GroupingOperation parent) :
-       ( <HINT>      lbrace() str = identifier()                           rbrace() { parent.addHint(str); }                   ) |
-       ( <FILTER>    lbrace() filterExp = filterExp(parent)                rbrace() { parent.setFilterBy(filterExp); }         ) |
-       ( <KEEP>      lbrace() filterExp = filterExp(parent)                rbrace() { parent.setFilterBy(filterExp); }         ) |
--      ( <MAX>       lbrace() ( maxOperand = infinitePositiveValue() | maxOperand = constantValue() ) rbrace()
-+      ( <MAX>       { maxOperand = null; } lbrace() ( maxOperand = infinitePositiveValue() | num = integerNumber("max", Integer.MAX_VALUE) ) rbrace()
-       {
--            if (maxOperand instanceof InfiniteValue) {
-+            if (maxOperand != null) {
-                 parent.setMax(GroupingOperation.UNLIMITED_MAX);
-             } else {
--                parent.setMax(checkPositive("max", (Number)maxOperand.getValue()).intValue());
-+                parent.setMax(checkPositive("max", num).intValue());
-             }
-       } ) |
-       ( <ORDER>     lbrace() lst = expList(parent)                        rbrace() { parent.addOrderBy(lst); }                ) |
-       ( <OUTPUT>    lbrace() lst = expList(parent)                        rbrace() { parent.addOutputs(lst); }                ) |
--      ( <PRECISION> lbrace() num = number()                               rbrace() { parent.setPrecision(checkPositive("precision", num).intValue()); } ) |
-+      ( <PRECISION> lbrace() num = integerNumber("precision", Integer.MAX_VALUE) rbrace() { parent.setPrecision(checkPositive("precision", num).intValue()); } ) |
-       ( <WHERE>     lbrace() str = where()                                rbrace() { parent.setWhere(str); }                  ) )*
-     (                              operation(parent)                                                                            )*
- }
-@@ -744,7 +756,7 @@ GroupingExpression md5Function(GroupingOperation grp) :
-     Number num;
- }
- {
--    ( <MD5> lbrace() exp = exp(grp) comma() num = number() rbrace() )
-+    ( <MD5> lbrace() exp = exp(grp) comma() num = integerNumber("md5 bits", 128) rbrace() )
-     { return new Md5Function(exp, toNumBits("md5", num, 128)); }
+@@ -472,6 +472,16 @@ func (t threadTrace) secondPhasePerf() *topNPerf {
+ 	return perf
  }
  
-@@ -1111,7 +1123,7 @@ XorBitFunction xorBitFunction(GroupingOperation grp) :
-     Number num;
- }
- {
--    ( <XORBIT> lbrace() exp = exp(grp) comma() num = number() rbrace() )
-+    ( <XORBIT> lbrace() exp = exp(grp) comma() num = integerNumber("xorbit bits", 64) rbrace() )
-     { return new XorBitFunction(exp, toNumBits("xorbit", num, 64)); }
- }
- 
-@@ -1250,6 +1262,18 @@ Number number() :
-     { return num; }
- }
- 
-+// A number used where an int is expected. A literal is narrowed by the caller as before, while a parameter
-+// must be an integer between 1 and max, as it may come from the request.
-+Number integerNumber(String clause, int max) :
-+{
-+    Number num;
-+    String name;
-+}
-+{
-+    ( num = literalNumber() | name = parameterName() { num = resolveParameterInteger(name, clause, 1, max); } )
-+    { return num; }
++func (t threadTrace) sortFeaturesPerf() *topNPerf {
++	perf := newTopNPerf()
++	slime.Select(t.source, hasTag("sort_features_profiling"), func(p *slime.Path, v slime.Value) {
++		eachSample(v, func(sample perfSample) {
++			perf.addSample(sample.name(), sample.count(), sample.selfTimeMs())
++		})
++	})
++	return perf
 +}
 +
- // A bound of range(): a number literal which may be negative, or a parameter
- Number rangeBound() :
- {
+ func (t threadTrace) matchTimeMs() float64 {
+ 	p := slime.Find(t.source, hasTag("match_profiling"))
+ 	if len(p) == 1 {
+@@ -496,15 +506,38 @@ func (t threadTrace) secondPhaseTimeMs() float64 {
+ 	return 0.0
+ }
+ 
++func (t threadTrace) sortFeaturesTimeMs() float64 {
++	p := slime.Find(t.source, hasTag("sort_features_profiling"))
++	if len(p) == 1 {
++		return p[0].Apply(t.source).Field("total_time_ms").AsDouble()
++	}
++	return 0.0
++}
++
++func (t threadTrace) hasSortFeaturesProfiling() bool {
++	return len(slime.Find(t.source, hasTag("sort_features_profiling"))) == 1
++}
++
+ func (t threadTrace) profTimeMs() float64 {
+-	return t.matchTimeMs() + t.firstPhaseTimeMs() + t.secondPhaseTimeMs()
++	return t.matchTimeMs() + t.firstPhaseTimeMs() + t.secondPhaseTimeMs() + t.sortFeaturesTimeMs()
+ }
+ 
+ type threadSummary struct {
+-	id            int
+-	matchMs       float64
+-	firstPhaseMs  float64
+-	secondPhaseMs float64
++	id              int
++	matchMs         float64
++	firstPhaseMs    float64
++	secondPhaseMs   float64
++	sortFeaturesMs  float64
++	hasSortFeatures bool
++}
++
++func anyThreadHasSortFeatures(threads ...*threadSummary) bool {
++	for _, thread := range threads {
++		if thread.hasSortFeatures {
++			return true
++		}
++	}
++	return false
+ }
+ 
+ func renderThreadSummaries(out *output, threads ...*threadSummary) {
+@@ -523,15 +556,20 @@ func renderThreadSummaries(out *output, threads ...*threadSummary) {
+ 	addRow("matching", func(thread *threadSummary) float64 { return thread.matchMs })
+ 	addRow("first phase", func(thread *threadSummary) float64 { return thread.firstPhaseMs })
+ 	addRow("second phase", func(thread *threadSummary) float64 { return thread.secondPhaseMs })
++	if anyThreadHasSortFeatures(threads...) {
++		addRow("sort features", func(thread *threadSummary) float64 { return thread.sortFeaturesMs })
++	}
+ 	tab.render(out)
+ }
+ 
+ func (t threadTrace) extractSummary() *threadSummary {
+ 	return &threadSummary{
+-		id:            t.id,
+-		matchMs:       t.matchTimeMs(),
+-		firstPhaseMs:  t.firstPhaseTimeMs(),
+-		secondPhaseMs: t.secondPhaseTimeMs(),
++		id:              t.id,
++		matchMs:         t.matchTimeMs(),
++		firstPhaseMs:    t.firstPhaseTimeMs(),
++		secondPhaseMs:   t.secondPhaseTimeMs(),
++		sortFeaturesMs:  t.sortFeaturesTimeMs(),
++		hasSortFeatures: t.hasSortFeaturesProfiling(),
+ 	}
+ }
+ 
+@@ -667,12 +705,23 @@ func (p protonTrace) followUpDurationsMs() []float64 {
+ }
+ 
+ type protonSummary struct {
+-	name          string
+-	filterMs      float64
+-	annMs         float64
+-	matchMs       float64
+-	firstPhaseMs  float64
+-	secondPhaseMs float64
++	name            string
++	filterMs        float64
++	annMs           float64
++	matchMs         float64
++	firstPhaseMs    float64
++	secondPhaseMs   float64
++	sortFeaturesMs  float64
++	hasSortFeatures bool
++}
++
++func anyNodeHasSortFeatures(nodes ...*protonSummary) bool {
++	for _, node := range nodes {
++		if node.hasSortFeatures {
++			return true
++		}
++	}
++	return false
+ }
+ 
+ func renderProtonSummaries(out *output, nodes ...*protonSummary) {
+@@ -693,6 +742,9 @@ func renderProtonSummaries(out *output, nodes ...*protonSummary) {
+ 	addRow("matching", func(node *protonSummary) float64 { return node.matchMs })
+ 	addRow("first phase", func(node *protonSummary) float64 { return node.firstPhaseMs })
+ 	addRow("second phase", func(node *protonSummary) float64 { return node.secondPhaseMs })
++	if anyNodeHasSortFeatures(nodes...) {
++		addRow("sort features", func(node *protonSummary) float64 { return node.sortFeaturesMs })
++	}
+ 	tab.render(out)
+ }
+ 
+@@ -707,6 +759,8 @@ func (p protonTrace) extractSummary() *protonSummary {
+ 		res.matchMs = thread.matchTimeMs()
+ 		res.firstPhaseMs = thread.firstPhaseTimeMs()
+ 		res.secondPhaseMs = thread.secondPhaseTimeMs()
++		res.sortFeaturesMs = thread.sortFeaturesTimeMs()
++		res.hasSortFeatures = thread.hasSortFeaturesProfiling()
+ 	}
+ 	return res
+ }
 ```
 
-**File**: `container-search/src/test/java/com/yahoo/search/grouping/request/parser/GroupingParserTestCase.java` (modified, +46/-6)
+**File**: `client/go/internal/vespa/tracedoctor/extract_test.go` (modified, +129/-0)
 ```diff
-@@ -719,12 +719,52 @@ void testBitCounts() {
-         // Does not wrap around to a valid value
-         assertIllegalArgument("all(group(xorbit(foo, 4294967361)) each(output(count())))",
-                               "xorbit requires a number of bits between 1 and 64, but got 4294967361");
--        assertEquals("xorbit requires a number of bits between 1 and 64, but got -5",
-+        assertEquals("xorbit bits must be an integer between 1 and 64, but got -5",
-                      assertThrows(IllegalArgumentException.class,
-                                   () -> GroupingOperation.fromString("all(group(xorbit(foo, @negative)) each(output(count())))",
-                                                                      Map.of("negative", "-5")::get)).getMessage());
-     }
+@@ -3,6 +3,7 @@
+ package tracedoctor
  
-+    @Test
-+    void testIntegerParameters() {
-+        // max, precision and bit counts are ints: a parameter must be an integer which fits, since it comes from the request
-+        assertAll("integer parameters reject values which would wrap or truncate",
-+                  () -> assertIntegerParameterFails("max(@n)", "4294967295", "max must be an integer between 1 and 2147483647, but got 4294967295"),
-+                  () -> assertIntegerParameterFails("max(@n)", "4294967297", "max must be an integer between 1 and 2147483647, but got 4294967297"),
-+                  () -> assertIntegerParameterFails("max(@n)", "2147483648", "max must be an integer between 1 and 2147483647, but got 2147483648"),
-+                  () -> assertIntegerParameterFails("max(@n)", "0.5", "max must be an integer between 1 and 2147483647, but got 0.5"),
-+                  () -> assertIntegerParameterFails("max(@n)", "2.9", "max must be an integer between 1 and 2147483647, but got 2.9"),
-+                  () -> assertIntegerParameterFails("max(@n)", "2.0", "max must be an integer between 1 and 2147483647, but got 2.0"),
-+                  () -> assertIntegerParameterFails("max(@n)", "1e3", "max must be an integer between 1 and 2147483647, but got 1000.0"),
-+                  () -> assertIntegerParameterFails("precision(@n)", "4294967295", "precision must be an integer between 1 and 2147483647, but got 4294967295"),
-+                  () -> assertIntegerParameterFails("precision(@n)", "0.5", "precision must be an integer between 1 and 2147483647, but got 0.5"),
-+                  () -> assertIntegerParameterFails("group(md5(foo, @n))", "1.5", "md5 bits must be an integer between 1 and 128, but got 1.5"),
-+                  () -> assertIntegerParameterFails("group(md5(foo, @n))", "129", "md5 bits must be an integer between 1 and 128, but got 129"),
-+                  () -> assertIntegerParameterFails("group(md5(foo, @n))", "4294967297", "md5 bits must be an integer between 1 and 128, but got 4294967297"),
-+                  () -> assertIntegerParameterFails("group(xorbit(foo, @n))", "1.5", "xorbit bits must be an integer between 1 and 64, but got 1.5"),
-+                  () -> assertIntegerParameterFails("group(xorbit(foo, @n))", "65", "xorbit bits must be an integer between 1 and 64, but got 65"));
-+        assertAll("integer parameters within bounds are accepted",
-+                  () -> assertEquals(7, parseWith("max(@n)", "7").getMax()),
-+                  () -> assertEquals(Integer.MAX_VALUE, parseWith("max(@n)", "2147483647").getMax()),
-+                  () -> assertEquals(7, parseWith("max(@n)", " 7 ").getMax()),
-+                  () -> assertEquals(1000, parseWith("precision(@n)", "1000").getPrecision()),
-+                  () -> assertEquals("all(group(md5(foo, 128)) each(output(count())))", parseWith("group(md5(foo, @n))", "128").toString()),
-+                  () -> assertEquals("all(group(xorbit(foo, 64)) each(output(count())))", parseWith("group(xorbit(foo, @n))", "64").toString()));
-+        // Literals are narrowed as before
-+        assertEquals(2, assertParse("all(group(foo) max(2.5) each(output(count())))").get(0).getMax());
-+        assertEquals(2, assertParse("all(group(foo) precision(2.5) each(output(count())))").get(0).getPrecision());
-+        assertParse("all(group(md5(foo, 1.5)) each(output(count())))");
-+    }
+ import (
++	"bytes"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -430,3 +431,131 @@ func TestFindValueWhenNotFound(t *testing.T) {
+ 	assert.NotNil(t, value)
+ 	assert.False(t, value.Valid())
+ }
 +
-+    private static GroupingOperation parseWith(String clause, String n) {
-+        return GroupingOperation.fromString("all(" + clause + " each(output(count())))", Map.of("n", n)::get);
-+    }
++func (f testFactory) profilingEntry(tag string, totalMs float64, roots ...perfSample) slime.Value {
++	return slime.MakeObject(func(obj slime.Value) {
++		obj.Set("tag", slime.String(tag))
++		obj.Set("total_time_ms", slime.Double(totalMs))
++		if len(roots) > 0 {
++			obj.Set("roots", slime.MakeArray(func(arr slime.Value) {
++				for _, root := range roots {
++					arr.Add(root.source)
++				}
++			}))
++		}
++	})
++}
 +
-+    private static void assertIntegerParameterFails(String clause, String n, String expectedMessage) {
-+        assertEquals(expectedMessage,
-+                     assertThrows(IllegalArgumentException.class, () -> parseWith(clause, n)).getMessage());
-+    }
++func (f testFactory) threadTraceWithEntries(id int, entries ...slime.Value) threadTrace {
++	return threadTrace{
++		id: id,
++		source: slime.MakeObject(func(obj slime.Value) {
++			obj.Set("traces", slime.MakeArray(func(arr slime.Value) {
++				for _, entry := range entries {
++					arr.Add(entry)
++				}
++			}))
++		}),
++	}
++}
 +
-     @Test
-     void testParameterSubstitution() {
-         Map<String, String> parameters = Map.ofEntries(
-@@ -816,23 +856,23 @@ void testParameterSubstitution() {
-                      assertThrows(IllegalArgumentException.class,
-                                   () -> GroupingOperation.fromString("all(group(foo) max(@label) each(output(count())))",
-                    
++func (f testFactory) protonTraceWithThreads(threads ...threadTrace) protonTrace {
++	return protonTrace{source: slime.MakeObject(func(obj slime.Value) {
++		obj.Set("traces", slime.MakeArray(func(arr slime.Value) {
++			arr.Add(slime.MakeObject(func(obj slime.Value) {
++				obj.Set("tag", slime.String("query_execution"))
++				obj.Set("threads", slime.MakeArray(func(arr slime.Value) {
++					for _, thread := range threads {
++						arr.Add(thread.source)
++					}
++				}))
++			}))
++		}))
++	})}
++}
++
++// thread #0 matches for longer but finds no hits, so its sort entry has no samples;
++// thread #1 evaluates two sort keys that both compute attribute(stock)
++func (f testFactory) sortFeaturesProtonTrace(withSort bool) protonTrace {
++	thread0 := []slime.Value{f.profilingEntry("match_profiling", 10)}
++	thread1 := []slime.Value{f.profilingEntry("match_profiling", 1)}
++	if withSort {
++		hasStock := f.treeSample("function has_stock", 6, 80, 60)
++		hasStock.source.Set("children", slime.MakeArray(func(arr slime.Value) {
++			arr.Add(f.treeSample("attribute(stock)", 6, 20, 20).source)
++		}))
++		thread0 = append(thread0, f.profilingEntry("sort_features_profiling", 0))
++		thread1 = append(thread1, f.profilingEntry("sort_features_profiling", 100,
++			hasStock, f.treeSample("attribute(stock)", 6, 20, 20)))
++	}
++	return f.protonTraceWithThreads(
++		f.threadTraceWithEntries(0, thread0...),
++		f.threadTraceWithEntries(1, thread1...))
++}
++
++func TestSortFeaturesProfilingExtract(t *testing.T) {
++	proton := testFactory{}.sortFeaturesProtonTrace(true)
++	threads := proton.findThreadTraces()
++	assert.Equal(t, 2, len(threads))
++	assert.Equal(t, 0.0, threads[0].sortFeaturesTimeMs())
++	assert.Equal(t, 100.0, threads[1].sortFeaturesTimeMs())
++	assert.True(t, threads[0].hasSortFeaturesProfiling())
++	assert.True(t, threads[1].hasSortFeaturesProfiling())
++	assert.Equal(t, 10.0, threads[0].profTimeMs())
++	assert.Equal(t, 101.0, threads[1].profTimeMs())
++
++	// sort time makes thread #1 the slowest, although it matched for less time
++	slowest, _ := selectSlowestThread(append([]threadTrace(nil), threads...))
++	assert.Equal(t, 1, slowest.id)
++
++	summary := threads[1].extractSummary()
++	assert.Equal(t, 100.0, summary.sortFeaturesMs)
++	assert.True(t, summary.hasSortFeatures)
++	node := proton.extractSummary()
++	assert.Equal(t, 100.0, node.sortFeaturesMs)
++	assert.True(t, node.hasSortFeatures)
++
++	assert.Equal(t, 0.0, threads[0].sortFeaturesPerf().impact())
++	perf := threads[1].sortFeaturesPerf()
++	assert.Equal(t, 100.0, perf.impact())
++	assert.Equal(t, 2, len(perf.entries))
++	assert.Equal(t, int64(6), perf.entries["function has_stock"].count)
++	assert.Equal(t, 60.0, perf.entries["function has_stock"].selfTimeMs)
++	assert.Equal(t, int64(12), perf.entries["attribute(stock)"].count)
++	assert.Equal(t, 40.0, perf.entries["attribute(stock)"].selfTimeMs)
++}
++
++func TestSortFeaturesProfilingAbsent(t *testing.T) {
++	proton := testFactory{}.sortFeaturesProtonTrace(false)
++	threads := proton.findThreadTraces()
++	for _, thread := range threads {
++		assert.Equal(t, 0.0, thread.sortFeaturesTimeMs())
++		assert.False(t, thread.hasSortFeaturesProfiling())
++		assert.False(t, thread.extractSummary().hasSortFeatures)
++	}
++	slowest, _ := selectSlowestThread(append([]threadTrace(nil), threads...))
++	assert.Equal(t, 0, slowest.id)
++	node := proton.extractSummary()
++	assert.Equal(t, 0.0, node.sortFeaturesMs)
++	assert.False(t, node.hasSortFeatures)
++}
++
++func TestSortFeaturesSummaryRows(t *testing.T) {
++	f := testFactory{}
++	render := func(fill func(out *output)) string {
++		var buf bytes.Buffer
++		fill(&output{out: &buf})
++		return buf.String()
++	}
++	// the row follows the presence of the entry, not its time
++	plain := f.threadTraceWithEntries(0, f.profilingEntry("match_profiling", 5))
++	idle := f.threadTraceWithEntries(1, f.profilingEntry("match_profiling", 1), f.profilingEntry("sort_features_profiling", 0))
++	plainThread, idleThread := plain.extractSummary(), idle.extractSummary()
++	assert.NotContains(t, rende
+```
+
+**File**: `client/go/internal/vespa/tracedoctor/prompt.go` (modified, +32/-0)
+```diff
+@@ -134,6 +134,17 @@ matching the query.
+ for the best results after first phase ranking. This step is optional and if the time is zero the
+ query was executed with only a single ranking phase</AI>`
+ 
++const sortFeaturesTaskPromptStr = `<AI>The following table also includes this task:
++*sort features*: time spent evaluating the rank features the query sorts by, given as feature(...) in the
++sort specification. Recording the values and sorting the hits are not included.
++The parts of each distinct sort key that depend on the document are evaluated for every matched hit.
++When first phase ranking runs, only the hits kept by any first phase rank-score-drop-limit are evaluated.
++Values that do not depend on the document, such as query(...) features, are evaluated during setup,
++once per sort key in each matching thread, and are included in this time.
++Sort keys are evaluated separately from first phase ranking, even when they use the same features.
++When first phase ranking does not run and the sort keys need match data, unpacking that data is
++counted under *matching*.</AI>`
++
+ const matchThreadTimelinePromptStr = `<AI>
+ The following table shows the timeline for a single matching thread.
+ 
+@@ -154,6 +165,15 @@ const secondPhaseProfilingPromptStr = `<AI>The following table shows profiling i
+ This is more detailed information about what happens inside the *second phase* task from the table above.
+ </AI>`
+ 
++const sortFeaturesProfilingPromptStr = `<AI>The following table shows profiling information for sort feature evaluation.
++This is more detailed information about what happens inside the *sort features* task from the table above.
++The *count* column shows how many times the feature or function was actually computed in this thread,
++added up over the sort keys. It is not the number of hits. Within a sort key, a value is computed at most
++once per hit, however often it is referenced, and a branch that is not taken is usually not computed.
++Values that do not depend on the document have small counts, because they are evaluated once per sort key
++during setup.
++</AI>`
++
+ const slowToMedianPromptStr = `<AI>The report for the slowest node is complete.
+ The following section reports the median node for comparison.
+ Some variance between nodes is expected.</AI>`
+@@ -258,6 +278,12 @@ func matchThreadSummaryPrompt(ctx *Context, out *output) {
+ 	}
+ }
+ 
++func sortFeaturesTaskPrompt(ctx *Context, out *output) {
++	if ctx.makePrompt {
++		out.fmt("%s\n", sortFeaturesTaskPromptStr)
++	}
++}
++
+ func matchThreadTimelinePrompt(ctx *Context, out *output) {
+ 	if ctx.makePrompt {
+ 		out.fmt("%s\n", matchThreadTimelinePromptStr)
+@@ -282,6 +308,12 @@ func secondPhaseProfilingPrompt(ctx *Context, out *output) {
+ 	}
+ }
+ 
++func sortFeaturesProfilingPrompt(ctx *Context, out *output) {
++	if ctx.makePrompt {
++		out.fmt("%s\n", sortFeaturesProfilingPromptStr)
++	}
++}
++
+ func slowToMedianPrompt(ctx *Context, out *output) {
+ 	if ctx.makePrompt {
+ 		out.fmt("%s\n", slowToMedianPromptStr)
+```
+
+**File**: `client/go/internal/vespa/tracedoctor/tracedoctor.go` (modified, +11/-0)
+```diff
+@@ -110,6 +110,9 @@ func (ctx *Context) analyzeThread(trace protonTrace, thread threadTrace, peer *t
+ 		overview = append(overview, peer.extractSummary())
+ 	}
+ 	matchThreadSummaryPrompt(ctx, out)
++	if anyThreadHasSortFeatures(overview...) {
++		sortFeaturesTaskPrompt(ctx, out)
++	}
+ 	renderThreadSummaries(out, overview...)
+ 	out.fmt("looking into thread #%d\n", thread.id)
+ 	matchThreadTimelinePrompt(ctx, out)
+@@ -129,6 +132,11 @@ func (ctx *Context) analyzeThread(trace protonTrace, thread threadTrace, peer *t
+ 		secondPhaseProfilingPrompt(ctx, out)
+ 		secondPhasePerf.render(out)
+ 	}
++	if sortFeaturesPerf := thread.sortFeaturesPerf(); sortFeaturesPerf.impact() != 0.0 {
++		out.fmt("sort feature profiling for thread #%d (total time was %.3f ms)\n", thread.id, thread.sortFeaturesTimeMs())
++		sortFeaturesProfilingPrompt(ctx, out)
++		sortFeaturesPerf.render(out)
++	}
+ }
+ 
+ func (ctx *Context) analyzeProtonTrace(trace protonTrace, peer *protonTrace, out *output) {
+@@ -137,6 +145,9 @@ func (ctx *Context) analyzeProtonTrace(trace protonTrace, peer *protonTrace, out
+ 		overview = append(overview, peer.extractSummary())
+ 	}
+ 	protonSummaryPrompt(ctx, out)
++	if anyNodeHasSortFeatures(overview...) {
++		sortFeaturesTaskPrompt(ctx, out)
++	}
+ 	renderProtonSummaries(out, overview...)
+ 	out.fmt("looking into node %s\n", trace.desc())
+ 	protonTimelinePrompt(ctx, out)
+```
+
+**File**: `client/go/internal/vespa/tracedoctor/tracedoctor_test.go` (modified, +24/-0)
+```diff
+@@ -3,6 +3,8 @@
+ package tracedoctor
+ 
+ import (
++	"bytes"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -28,3 +30,25 @@ func TestExtractTiming(t *testing.T) {
+ 	assert.Equal(t, 250.0, timing.summaryMs)
+ 	assert.Equal(t, 1000.0, timing.totalMs)
+ }
++
++func TestAnalyzeProtonTraceSortFeatures(t *testing.T) {
++	ctx := NewContext(slime.Object())
++	ctx.MakePrompt()
++	analyze := func(trace protonTrace) string {
++		var buf bytes.Buffer
++		ctx.analyzeProtonTrace(trace, nil, &output{out: &buf})
++		return buf.String()
++	}
++	out := analyze(testFactory{}.sortFeaturesProtonTrace(true))
++	assert.Equal(t, 2, strings.Count(out, sortFeaturesTaskPromptStr))
++	assert.Equal(t, 1, strings.Count(out, protonSummaryPromptStr+"\n"+sortFeaturesTaskPromptStr))
++	assert.Equal(t, 1, strings.Count(out, matchThreadSummaryPromptStr+"\n"+sortFeaturesTaskPromptStr))
++	assert.Equal(t, 1, strings.Count(out, "sort feature profiling for thread #1 (total time was 100.000 ms)"))
++	assert.Equal(t, 1, strings.Count(out, sortFeaturesProfilingPromptStr))
++	assert.Equal(t, 1, strings.Count(out, "function has_stock"))
++	assert.Equal(t, 1, strings.Count(out, "attribute(stock)"))
++
++	// covers the summary rows, both prompts and the detail header
++	out = analyze(testFactory{}.sortFeaturesProtonTrace(false))
++	assert.NotContains(t, out, "sort feature")
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38253** (closed): Skip “nice” test (@arnej27959)
-- **PR #38252** (2026-10-16): Make vespalib nice test independent of starting nice value [MERGEOK] (@esolitos)
-- **PR #38250** (2026-10-18): Arnej/split vespa log.h (@arnej27959)
-- **PR #38249** (2026-10-16): Trim padding buckets to the embedder's max tokens (@glebashnik)
-- **PR #38247** (2026-10-17): bump onnxruntime to 1.31.0 (@arnej27959)
-- **PR #38246** (2026-10-16): chore: update third-party attributions (@github-actions[bot])
+- **PR #38264** (2026-10-19): Make blueprints non-strict outside first-phase matching (@arnej27959)
+- **PR #38263** (2026-10-19): Add metric for padded sequence length (@ingridhabrekke)
+- **PR #38262** (2026-10-19): gradle needs a bigger JVM heap (@arnej27959)
+- **PR #38260** (2026-10-19): Use vespa-abseil-cpp, vespa-gtest and vespa-re2 on Fedora and Amazon … (@toregge)
+- **PR #38259** (2026-10-19): Single program for sort features (@radu-gheorghe)
+- **PR #38257** (2026-10-19): Make SHA-256 file references unconditional (@gjoranv)
 
 ---
 
@@ -1496,13 +1579,13 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump abseil-cpp, gtest and protobuf C++ build dependencies
+## X. Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-ves
 
 **RULE**:
 When implementing operations in `dist/vespa.spec`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8be7ea9e`: Bump abseil-cpp, gtest and protobuf C++ build dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23507600`: Merge pull request #38260 from vespa-engine/toregge/use-vespa-abseil-cpp-and-vespa-re2-on-fedora-and-amazon-linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dist/vespa.spec`.
@@ -1510,23 +1593,16 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-%global _vespa_abseil_cpp_version 20260817.0
-%global _vespa_build_dependencies_version 1.22.0
-%global _vespa_gtest_version 1.18.0
-%global _vespa_protobuf_version 7.36.2
-%if 0%{?_use_vespa_abseil_cpp}
-Requires: vespa-abseil-cpp = %{_vespa_abseil_cpp_version}
-%endif
+%if 0%{?el8} || 0%{?el9} || 0%{?el10}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-%global _vespa_abseil_cpp_version 20250127.1
-%global _vespa_build_dependencies_version 1.21.0
-%global _vespa_gtest_version 1.16.0
-%global _vespa_protobuf_version 6.34.1
+%if 0%{?el8} || 0%{?el9} || 0%{?amzn2023}
+%endif
+%if 0%{?el8} || 0%{?el9} || 0%{?el10}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8be7ea9e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23507600` are properly handled with clean fallback behavior.

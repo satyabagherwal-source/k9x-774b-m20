@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "9685516a",
+    "sourceVersion": "a69362a9",
     "license": "MIT",
-    "contentHash": "265719a05919e625c65b7b2df803d3a1cc05bd95e73c91c644a4cb45cf51d391",
-    "lastHarvestedAt": "2026-10-19T02:44:46.039Z",
+    "contentHash": "e5212e59101eae29a95454f4e8bf59c254936b425f2cb6ed5f84eb2a4ad01077",
+    "lastHarvestedAt": "2026-10-19T17:43:51.409Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "fdbd35a4",
+    "sourceVersion": "0521b006",
     "license": "Apache-2.0",
-    "contentHash": "e27c7480410713827f221a67e724104a91d4b4fed5449525074f0eb177e78534",
-    "lastHarvestedAt": "2026-10-19T04:40:32.271Z",
+    "contentHash": "28c91bb298f421f2ad037825dc1768d0e6368a222e6bb072df94ce3c60daaca1",
+    "lastHarvestedAt": "2026-10-19T17:44:03.842Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -8498,5 +8498,15 @@
     "contentHash": "b3b44a6a373e5ac4a6f906bb15760c1001b219b13e3a38141a3121a05010471f",
     "lastHarvestedAt": "2026-10-19T17:37:41.229Z",
     "learningId": "learn-github-oliviertassinari-react-swipeable-views"
+  },
+  "rainbow-me-rainbow": {
+    "repository": "rainbow-me/rainbow",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rainbow-me/rainbow",
+    "sourceVersion": "0e6ad90a",
+    "license": "GPL-3.0",
+    "contentHash": "fabb61b17f22f64c6385c7474ba1ac14b3dd9fce5ce2383ad105de0a8eb8b9c3",
+    "lastHarvestedAt": "2026-10-19T17:43:56.446Z",
+    "learningId": "learn-github-rainbow-me-rainbow"
   }
 }

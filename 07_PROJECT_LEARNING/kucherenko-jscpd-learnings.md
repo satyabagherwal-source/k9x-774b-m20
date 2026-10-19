@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `9685516a`  
+> **Source Version**: `a69362a9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:44:45.814Z  
+> **Timestamp**: 2026-10-19T17:43:51.103Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:44:45.426Z  
+> **Harvest Timestamp**: 2026-10-19T17:43:49.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6415 stars
+- **Stars / Engagement**: 6418 stars
 
 ---
 
@@ -62,6 +62,165 @@ export function enqueue(sku, copies) {
 export function drainQueue() {
   const drained = pending.splice(0, pending.length);
   return drained.reduce((total, label) => total + label.copies, 0);
+}
+
+```
+
+### Core Architecture Module: `rust/crates/cpd-core/src/boundaries.rs`
+```
+//! What the boundary rules of a config file found (`boundaries`): copies of
+//! protected code, a module, a folder, a file or a method, in places a rule
+//! keeps it out of, such as money calculated in a frontend when only the
+//! backend may calculate it.
+
+use crate::models::{CloneKind, Fragment, SimilarityMethod};
+use serde::{Deserialize, Serialize};
+
+/// The violations of every rule, in the order the config file lists the
+/// rules.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct BoundaryReport {
+    pub rules: Vec<RuleReport>,
+}
+
+impl BoundaryReport {
+    /// How many copies the rules found, all rules together.
+    pub fn violations(&self) -> usize {
+        self.rules.iter().map(|rule| rule.violations.len()).sum()
+    }
+
+    /// Every fragment of every violation, for the path rewrites a report
+    /// needs: scan-root-relative display, or absolute paths.
+    pub fn fragments_mut(&mut self) -> impl Iterator<Item = &mut Fragment> {
+        self.rules
+            .iter_mut()
+            .flat_map(|rule| rule.violations.iter_mut())
+            .flat_map(|v| [&mut v.copy.fragment, &mut v.protected.fragment])
+    }
+}
+
+/// One rule and the copies of its code found outside its boundary.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RuleReport {
+    pub name: String,
+    pub violations: Vec<Violation>,
+}
+
+/// A copy of protected code in a place its rule keeps the code out of.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Violation {
+    /// How the copy matches the protected code: `exact` or `renamed` for a
+    /// token clone, `similar` for a merged clone or a pair of functions of
+    /// the same structure, `semantic` for a function that does the same
+    /// thing written another way, often in another language.
+    pub kind: CloneKind,
+    /// For a `similar` copy, the mechanism that found it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub method: Option<SimilarityMethod>,
+    /// For `similar` and `semantic` copies, the score of the match: matched
+    /// tokens over the span (`gap`), the structural overlap of two functions
+    /// (`ast`), or the cosine similarity of their embeddings (`semantic`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub similarity: Option<f32>,
+    /// Detection tokens the copy holds: the matched tokens of a token clone,
+    /// the tokens of the smaller function of a function pair.
+    pub tokens: u32,
+    /// The copy, in a place the rule keeps the code out of.
+    pub copy: Place,
+    /// The protected code it copies.
+    pub protected: Place,
+}
+
+impl Violation {
+    /// `similarity` rounded to three decimals, the form reports print.
+    pub fn similarity_rounded(&self) -> Option<f64> {
+        self.similarity
+            .map(|s| (f64::from(s) * 1000.0).round() / 1000.0)
+    }
+
+    /// The lines of the copy, the first and the last included.
+    pub fn copy_lines(&self) -> u32 {
+        let fragment = &self.copy.fragment;
+        fragment.end.line.saturating_sub(fragment.start.line) + 1
+    }
+}
+
+/// One side of a violation.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Place {
+    pub fragment: Fragment,
+    /// The function the fragment lies in, when jscpd finds functions in its
+    /// language and the function has a name.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub function: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::Location;
+
+    fn place(file: &str, from: u32, to: u32) -> Place {
+        Place {
+            fragment: Fragment::new(
+                file,
+                Location::new(from, 0, 0),
+                Location::new(to, 0, 0),
+                [0, 0],
+            ),
+            function: None,
+        }
+    }
+
+    fn violation() -> Violation {
+        Violation {
+            kind: CloneKind::Semantic,
+            method: None,
+            similarity: Some(0.712_345),
+            tokens: 40,
+            copy: place("web/total.ts", 12, 40),
+            protected: place("backend/Fees.kt", 20, 51),
+        }
+    }
+
+    #[test]
+    fn a_report_counts_the_violations_of_every_rule() {
+        let report = BoundaryReport {
+            rules: vec![
+                RuleReport {
+                    name: "money".into(),
+                    violations: vec![violation(), violation()],
+                },
+                RuleReport {
+                    name: "auth".into(),
+                    violations: vec![],
+                },
+            ],
+        };
+        assert_eq!(report.violations(), 2);
+    }
+
+    #[test]
+    fn the_copy_counts_its_first_and_last_line() {
+        assert_eq!(violation().copy_lines(), 29);
+        assert_eq!(violation().similarity_rounded(), Some(0.712));
+    }
+
+    #[test]
+    fn every_fragment_can_be_rewritten() {
+        let mut report = BoundaryReport {
+            rules: vec![RuleReport {
+                name: "money".into(),
+                violations: vec![violation()],
+            }],
+        };
+        for fragment in report.fragments_mut() {
+            fragment.source_id = format!("/root/{}", fragment.source_id);
+        }
+        let v = &report.rules[0].violations[0];
+        assert_eq!(v.copy.fragment.source_id, "/root/web/total.ts");
+        assert_eq!(v.protected.fragment.source_id, "/root/backend/Fees.kt");
+    }
 }
 
 ```
@@ -361,8 +520,8 @@ use std::path::{Path, PathBuf};
 use crate::{
     hash::{HASH_BASE, base_pow, roll, token_hash},
     models::{
-        CloneKind, CpdClone, DetectionToken, Fragment, Location, SimilarityMethod, SourceFile,
-        TokenKind, covered_lines,
+        CloneKind, CpdClone, DetectionToken, Fragment, Location, MEMBER_NAME, SimilarityMethod,
+        SourceFile, TokenKind, covered_lines,
     },
 };
 
@@ -590,18 +749,17 @@ impl PreparedSource {
     /// was made from; their `name` tells the renamed identifiers. Leaves a
     /// source without renamed identifiers as it is: its windows hash the
     /// same either way.
+    ///
+    /// A member's name ([`MEMBER_NAME`]) is another name than a local's of
+    /// the same text, except as the first token of a window or part: the dot
+    /// before it lies outside, so there it counts as a local (see
+    /// [`Renames::back`]).
     pub fn track_renames(&mut self, tokens: &[DetectionToken]) {
         debug_assert_eq!(tokens.len(), self.hashes.len());
         if tokens.iter().all(|t| t.name == 0) {
             return;
         }
-        let mut prev = vec![0u32; tokens.len()];
-        let mut last: FxHashMap<u64, usize> = FxHashMap::default();
-        for (j, token) in tokens.iter().enumerate() {
-            if token.name == 0 {
-                continue;
-            }
-            if let Some(p) = last.insert(toke
+        let mut pre
 ```
 
 ### Core Architecture Module: `rust/crates/cpd-core/src/hash.rs`
@@ -1373,6 +1531,7 @@ mod tests {
 
 ### Core Architecture Module: `rust/crates/cpd-core/src/lib.rs`
 ```
+pub mod boundaries;
 pub mod deadcode;
 pub mod detect;
 pub mod hash;
@@ -1692,170 +1851,17 @@ impl CpdClone {
     /// of its
 ```
 
-### Core Architecture Module: `rust/crates/cpd-core/src/paths.rs`
-```
-// paths.rs — shared source-id path helpers.
-//
-// Source ids may carry a `:format` suffix (multi-format files, e.g.
-// `README.md:javascript`) and, since scan-root relativization, fragments may
-// store their scan root separately in `Fragment.source_root`. These helpers
-// are the single source of truth for turning a fragment back into a real
-// filesystem path; cpd-finder (blame) and cpd-reporter both rely on them.
-
-use crate::models::Fragment;
-
-/// Strip a `:format` suffix from a source id so it can be used as a real path.
-///
-/// Format-qualified IDs look like `README.md:javascript`. A bare colon inside
-/// a Windows drive letter (`C:\…`) or after a path separator is NOT a format
-/// suffix — only a colon preceded by a non-separator, non-colon char with a
-/// valid format name after it qualifies.
-pub fn clean_source_id(source_id: &str) -> &str {
-    match source_id.rfind(':') {
-        Some(pos) if pos > 0 => {
-            let bytes = source_id.as_bytes();
-            let before = bytes[pos - 1];
-            // A colon right after a single drive letter (e.g. `C:`) or after
-            // a path separator (`/`, `\`) is structural, not a format suffix.
-            if pos == 1 && before.is_ascii_alphabetic() {
-                return source_id;
-            }
-            if before == b'/' || before == b'\\' {
-                return source_id;
-            }
-            // A colon followed by a path separator is a drive-letter colon in
-            // a non-prefix position — Windows verbatim paths (`\\?\C:\...`)
-            // put it at position 5. Format suffixes are names like
-            // `:javascript`, never followed by a separator.
-            if matches!(bytes.get(pos + 1), Some(b'/') | Some(b'\\')) {
-                return source_id;
-            }
-            &source_id[..pos]
-        }
-        _ => source_id,
-    }
-}
-
-/// Resolve a fragment's filesystem path by joining `source_root` (if set) with
-/// the cleaned `source_id`. Falls back to the bare `source_id` when no root is
-/// stored (absolute paths, `--absolute` mode, or legacy data).
-pub fn resolve_fragment_path(fragment: &Fragment) -> String {
-    let clean = clean_source_id(&fragment.source_id);
-    match &fragment.source_root {
-        Some(root) => {
-            let joined = std::path::Path::new(root).join(clean);
-            joined.to_string_lossy().into_owned()
-        }
-        None => clean.to_string(),
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::models::Location;
-
-    fn frag(source_id: &str, source_root: Option<&str>) -> Fragment {
-        let loc = Location {
-            line: 1,
-            column: 0,
-            offset: 0,
-        };
-        Fragment {
-            source_id: source_id.to_string(),
-            source_root: source_root.map(str::to_string),
-            start: loc.clone(),
-            end: loc,
-            range: [0, 0],
-            blame: None,
-        }
-    }
-
-    #[test]
-    fn clean_source_id_strips_format_suffix() {
-        assert_eq!(clean_source_id("README.md:javascript"), "README.md");
-    }
-
-    #[test]
-    fn clean_source_id_preserves_bare_path() {
-        assert_eq!(clean_source_id("src/a.js"), "src/a.js");
-    }
-
-    #[test]
-    fn clean_source_id_preserves_windows_drive() {
-        assert_eq!(clean_source_id(r"C:\scan\a.rs"), r"C:\scan\a.rs");
-    }
-
-    #[test]
-    fn clean_source_id_strips_format_from_windows_path() {
-        assert_eq!(clean_source_id(r"C:\scan\a.md:javascript"), r"C:\scan\a.md");
-    }
-
-    #[test]
-    fn clean_source_id_preserves_windows_verbatim_path() {
-        // std::fs::canonicalize on Windows returns verbatim paths whose drive
-        // colon sits at position 5; it must not be mistaken for a format
-        // suffix (which truncated the id to `\\?\C` and broke every snippet
-        // read behind --baseline-from-ref).
-        assert_eq!(clean_source_id(r"\\?\C:\scan\a.rs"), r"\\?\C:\scan\a.rs");
-    }
-
-    #[test]
-    fn clean_source_id_strips_format_from_windows_verbatim_path() {
-        assert_eq!(
-            clean_source_id(r"\\?\C:\scan\a.md:javascript"),
-            r"\\?\C:\scan\a.md"
-        );
-    }
-
-    #[test]
-    fn resolve_fragment_path_joins_root() {
-        // Build the expectation via Path::join too: on Windows the joined
-        // separator is a backslash, so a hardcoded "/project/src/a.js" fails.
-        let expected = std::path::Path::new("/project")
-            .join("src/a.js")
-            .to_string_lossy()
-            .into_owned();
-        assert_eq!(
-            resolve_fragment_path(&frag("src/a.js", Some("/project"))),
-            expected
-        );
-    }
-
-    #[test]
-    fn resolve_fragment_path_falls_back_to_source_id() {
-        assert_eq!(
-            resolve_fragment_path(&frag("/absolute/path/a.js", None)),
-            "/absolute/path/a.js"
-        );
-    }
-
-    #[test]
-    fn resolve_fragment_path_cleans_format_suffix() {
-        let expected = std::path::Path::new("/repo")
-            .join("doc.md")
-            .to_string_lossy()
-            .into_owned();
-        assert_eq!(
-            resolve_fragment_path(&frag("doc.md:javascript", Some("/repo"))),
-            expected
-        );
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1210** (2026-10-17): **--semantic: a JSX element doesn't count as a call, so a component and the parent rendering it are reported as a clone**
-  *Symptoms*: ### Engine  v5 (Rust engine — jscpd@5, cpd, cargo, brew, nix, install.sh, GitHub Action, Docker)  ### jscpd version  jscpd 5.4.1  ### Install method  npx (npx jscpd)  ### Operating system  macOS 15.6.1 (arm64)  ### Node.js version (v4 engine only)  _No response_  ### Command and configuration  ```shell jscpd src --semantic --kind semantic --min-lines 1 --min-tokens 5 --reporters console ```  ### Expected behavior  No semantic clone. The docs say a pair is skipped when one function calls the other by name, and `EditUserPage` renders `EditUserForm` as `<EditUserForm ... />`, the JSX form of calling it.  ### Actual behavior  ```text Clone found (tsx, semantic ~0.68)  - EditUserForm.tsx [1:8 - 9:2] (9 lines, 65 tokens)    page.tsx [1:16 - 5:2] Found 1 clones. ```  ### Minimal reproduction  // src/page.tsx ```tsx export default async function EditUserPage({ id }: { id: string }) {   const [user, roles] = await Promise.all([getUser(id), getRoles()]);   if (!user) notFound();   return <EditUserForm user={user} roles={roles} />; } ```  // src/EditUserForm.tsx ```tsx export function EditUserForm({ user, roles }: { user: User; roles: Role[] }) {   const form = useForm({ defaultValues: user });   return (     <form>       <TextField name="name" />       <RoleSelect roles={roles} />     </form>   ); } ```  ### Additional context  Changing the JSX line to `return EditUserForm({ user, roles });` makes the pair go away, so the caller/callee rule is what misses it: `called_names` in `cpd-sem
+- **Issue #1224** (2026-10-19): **MCP check_duplication: a Vue, Svelte or Astro snippet never matches, by tokens or by meaning**
+  *Symptoms*: ### Engine, version, install method, OS  v5 (Rust engine): `jscpd --mcp` of the released 5.4.1 and of master at 0d8d35b6. Linux x86_64.  ### Command and configuration  ```shell jscpd --mcp src ```  No `.jscpd.json`. The semantic part needs the model on the machine (`jscpd --semantic-download`).  ### What happens  `src/total.ts` holds a function, and `src/cart.vue` holds the same function in its `<script setup lang="ts">`. `check_duplication` with `kinds: ["exact"]`:  | `code` | `format` | `count` | |---|---|---| | `cart.vue` | `vue` | 0 | | `total.ts` | `typescript` | 2: `cart.vue` and `total.ts` |  By meaning it is the same. A project with `cartTotal` in `total.ts`, and snippets with `basketTotal`, written with `filter` and `reduce`, `kinds: ["semantic"]`:  | `code` | `format` | `count` | |---|---|---| | `basket.ts` | `typescript` | 1: `cartTotal`, 0.665 | | `basket.vue`, the same function in its script | `vue` | 0 | | `basket.svelte`, the same | `svelte` | 0 |  There is no `note` and nothing under `unavailable`, so an assistant takes the empty answer for "nothing like this exists yet" and writes the code again.  Two causes:  - tokens: `Project::check` (`crates/cpd/src/mcp/project.rs:708`) tokenizes the snippet as one stream of its format and matches it with the pool of that format (`:742`). A scan never makes a source of format `vue`: `FilePreparer::prepare` (`crates/cpd-finder/src/orchestrate.rs:564`) gives a component one source per block language, `html`, `typescript`, `
 
-- **Issue #1171** (2026-10-08): **fix(dead-code): JSDoc links and JavaScript JSDoc types are uses of imports**
-  *Symptoms*: Fixes #1170  `--dead-code` now reads JSDoc and TSDoc comments for uses of imports, the same way TypeScript does.  - `{@link X}`, `{@linkcode X}` and `{@linkplain X}` read the import X, so `import type { X }` that only the docs link to is not an unused import any more. The first name of `{@link X.member}`, `{@link X#member}`, `{@link X | text}` and `{@link X text}` counts, also in backticks, in `.js` files and in the script of Vue, Svelte and Astro components. - In a JavaScript file JSDoc is the type syntax, so the type of `@param {X}`, `@returns`, `@type`, `@typedef`, `@template`, `@this`, `@implements`, `@satisfies`, `@enum` and `@property` reads X too. Keys (`{{ id: Id }}` reads `Id`, not `id`), names after a dot and strings are left out.  The docs only keep imports. A name in a comment is no reference edge in the graph, so a function that only a link names, even its own docs, is still reported as unused, e.g. `export function decode` that nothing imports but `{@link decode}` mentions.  Not counted, as in tsc 5.9 with `noUnusedLocals`: a URL (`{@link https://example.com X}`), a JSDoc namepath (`{@link module:cart}`), `@see X`, `@throws {X}`, `@yields {X}`, line comments and plain `/* */` comments. In TypeScript files JSDoc types are not read, TypeScript has types of its own.  Tests: link and type parsing, local refs per comment kind and per language, a component script, and end to end scans in `tests/findings.rs` (TSDoc links, JSDoc types in JS, links that must not keep fun
+- **Issue #1223** (2026-10-19): **Markdown: front matter that runs into a code fence aborts jscpd, its MCP server and its language server**
+  *Symptoms*: ### Engine, version, install method, OS  v5 (Rust engine): the released 5.4.1 and master at 0d8d35b6. Linux x86_64.  ### Command and configuration  ```shell jscpd docs ```  No `.jscpd.json`, no flags.  ### What happens  ``` thread '<unnamed>' panicked at crates/cpd-tokenizer/src/embedded.rs:50:13: overlapping ranges detected: [0, 122) overlaps [39, 126) Aborted (core dumped) ```  The exit code is 134: the release profile has `panic = "abort"`. `jscpd --mcp docs` answers `initialize` and then aborts in the same place during its startup scan, and `jscpd --lsp` aborts once its workspace holds such a file, so the assistant or the editor loses the server.  `docs/store.md` is an ordinary page: a horizontal rule on its first line, and a Python stub whose body is `...`:  ~~~markdown ---  The protocol a store implements.  ```python class Store(Protocol):     def get(self, key: str) -> bytes:         ... ``` ~~~  `extract_front_matter` (`crates/cpd-tokenizer/src/markdown.rs:163`) takes a file that starts with `---` for front matter, and `front_matter_closer` (`:190`) closes it at the first later line that is `---` or `...` once trimmed: here the `...` inside the fence. So the front matter runs over bytes 0 to 122, across the fence at 39 to 126. `tokenize_markdown_maps` (`:278`) and `tokenize_markdown` (`:347`) blank both with `blank_ranges_preserve_newlines` (`crates/cpd-tokenizer/src/embedded.rs:44`), which panics on ranges that overlap.  A fence that opens inside real front matter fa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1872,563 +1878,1282 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e46f360` (2026-10-17)
-**Commit Message**: fix(deps): ignore three zip advisories about extracting an archive
+### Incident Patch 1: `a38ead8b` (2026-10-19)
+**Commit Message**: fix(razor): read a view in the order of its text
 
-cargo deny check fails since advisory-db added RUSTSEC-2026-0367,
-RUSTSEC-2026-0368 and RUSTSEC-2026-0369 on 2026-10-16. They cover zip
-8.6.0, which comes through candle-core 0.11.0 for --semantic.
-candle-core asks for ^8.6.0 and 0.11.0 is its latest release, so zip 9,
-which has the fixes, can't be used yet.
+Fixes #1221.
 
-All three are about extracting an archive: ZipArchive::extract and the
-stream extraction API keep SUID and SGID bits and follow symbolic links
-out of the target folder. Nothing in jscpd extracts an archive. candle
-opens zip archives only to read .npz and PyTorch files, and jscpd loads
-its models from safetensors. deny.toml ignores the three advisories
-with that reason, until candle moves to zip 9.
+tokenize_razor appended the HTML of the whole view and then the C# of
+every block, all with the view's line numbers, so the stream went back
+to line 1 where the C# began. A clone across that seam glued the end of
+the HTML to the start of the C# and ended before it started: debug
+builds panicked in the --min-lines check of push_clone and of
+fits_secondary, and release builds reported the range, 5.4.1 too. Even
+two identical views came out short, page1.cshtml as lines 1-70 of 71
+and component1.razor as 1-48 of 95.
 
-**File**: `rust/deny.toml` (modified, +11/-1)
+- the HTML and the C# of a view are one stream in the order of the
+  text, so a clone is a run of the view as it is written, and markup in
+  an @if block matches the same markup outside one with its @
+  expressions too
+- a fragment that ends on an earlier line than it starts is no clone,
+  in both passes and at any --min-lines
+
+Detecting a view block by block, as the issue suggested and as
+Markdown and components are, was tried first and dropped: it moved
+markup inside @if and @foreach blocks into the C# pool, counted a view
+three times in the totals, changed what --cross-formats, the language
+server and the f
+
+**File**: `docs/rust.md` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,17 @@ allow = [
- [advisories]
- db-path = "~/.cargo/advisory-db"
- db-urls = ["https://github.com/rustsec/advisory-db"]
--ignore = []
-+# zip 8.6.0 comes through candle-core 0.11.0 (--semantic), which asks for
-+# ^8.6.0, so zip 9, which has the fixes, can't be used yet. These three
-+# advisories are about extracting an archive (ZipArchive::extract and the
-+# stream extraction API), and nothing in jscpd extracts one: candle opens
-+# zip archives only to read .npz and PyTorch files, and jscpd loads its
-+# models from safetensors. Drop them when candle moves to zip 9.
-+ignore = [
-+    { id = "RUSTSEC-2026-0367", reason = "zip via candle-core; jscpd extracts no archive" },
-+    { id = "RUSTSEC-2026-0368", reason = "zip via candle-core; jscpd extracts no archive" },
-+    { id = "RUSTSEC-2026-0369", reason = "zip via candle-core; jscpd extracts no archive" },
-+]
- 
- [bans]
- multiple-versions = "warn"
+@@ -840,7 +840,7 @@ jscpd is a token-based detector, but the tokens come from each language's own sy
+ 1. **Format detection.** A conventional file name (`Makefile`, `Dockerfile`, `go.mod`, `CMakeLists.txt`) or else the file extension selects one of the 224 formats, and the format selects the tokenizer. [FORMATS.md](../FORMATS.md) lists every built-in extension and file name; `--formats-exts` and `--formats-names` add mappings and win over the built-in ones. See [`fixtures/file-names-demo`](../fixtures/file-names-demo/README.md) for a runnable example.
+ 2. **Tokenization.** Every format has its comment style (`//` and `/* */`, `#`, `--`, Lua's `--[[ ]]`, `;`, Visual Basic's `'`, none for Markdown) and string-literal rules, so a comment marker inside a string, or a `/*` in Markdown prose, does not swallow the rest of the file. Each token is classified as identifier, literal, punctuation, comment or whitespace.
+    - **JavaScript, TypeScript, JSX, TSX** are tokenized by the [oxc](https://oxc.rs) parser: template literals, regular expressions, JSX and decorators come out as the tokens the language defines, and a recoverable parse error does not change the stream. With `--cross-formats`, erasable TypeScript-only syntax (type annotations, interfaces, type aliases, generics, access modifiers) is removed via the syntax tree so the remaining tokens match the equivalent JavaScript; constructs with runtime meaning (`enum`, non-declare `namespace`, parameter properties) are kept.
+-   - **Vue, Svelte, Astro** files are split into `<template>`, `<script>` and `<style>` blocks, and each block is tokenized as the language its `lang` attribute names. **Markdown** fences are tokenized as the language of the fence. **Razor** views separate C# from HTML. Clones are reported with the line range of the block, and a `<script lang="ts">` block matches `.ts` files. The console, `ai` and HTML reports name a block by its file and language, as in `guide.md:markup`; the reports that tools read (JSON, XML, xcode, SARIF, Code Climate, EDN) and the language server name the file itself, so an editor opens it, and JSON gives the block's language as the clone's `format`.
++   - **Vue, Svelte, Astro** files are split into `<template>`, `<script>` and `<style>` blocks, and each block is tokenized as the language its `lang` attribute names. **Markdown** fences are tokenized as the language of the fence. **Razor** views tokenize the C# of their `@` expressions and blocks as C# and the rest as HTML, in one `razor` stream in the order of the text. Clones are reported with the line range of the block, and a `<script lang="ts">` block matches `.ts` files. The console, `ai` and HTML reports name a block by its file and language, as in `guide.md:markup`; the reports that tools read (JSON, XML, xcode, SARIF, Code Climate, EDN) and the language server name the file itself, so an editor opens it, and JSON gives the block's language as the clone's `format`.
+ 3. **What counts.** `--mode mild` (default) drops whitespace tokens, `--mode weak` also drops comments, `--mode strict` keeps every token. `jscpd:ignore-start` / `jscpd:ignore-end` comments exclude a region and `--ignore-pattern` regular expressions exclude whatever they match; skipped tokens leave the stream without shifting the positions reported for the rest.
+ 4. **Normalization (opt-in).** `--ignore-identifiers` hashes every identifier as the same placeholder but leaves keywords alone (the oxc token kinds for JS/TS, a shared keyword table for other languages); `--ignore-literals` does the same for strings and numbers; `--ignore-annotations` drops `@Name` and `@Name(...)` sequences only in the languages where `@` means an annotation or decorator (Java, Kotlin, Scala, Groovy, Python, Dart, Swift, JavaScript, TypeScript), never in Ruby, Perl, T-SQL, Razor or CSS, where it means something else. Unless `--ignore-identifiers=blind` asks for any name to match any other, a window hashes a name together with the distance back to its previous occurrence in the window, so two windows match only when their names repeat alike; sliding the window changes that distance for one token at most, so the rolling hash stays one step per token, and a clone longer than a window is cut where a name would stand for two. A name after `.` (and `->` in C, C++ and PHP) is a member's, another name than a local's of the same text.
+ 5. **Matching.** A rolling [Rabin-Karp](https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm) hash over the token stream finds every repeated window of at least `--min-tokens` tokens and `--min-lines` lines, within a format and across the formats that share a pool.
 ```
 
----
-
-### Incident Patch 2: `17a1dbb7` (2026-10-18)
-**Commit Message**: fix(detect): cut a consistent clone once, take names as written
-
-Fixes from a review of consistent identifier matching:
-
-- A renamed identifier carries its name (DetectionToken.name): the
-  identifier as written. The raw hash had a decorator that
-  --ignore-annotations dropped folded into the name before it, and
-  --ignore-case made Counter and counter one name in Java. In SQL,
-  PowerShell, Visual Basic, Pascal, Fortran, Ada and the other languages
-  that ignore case, Customer and customer are one name.
-- An open clone grows past a name that stands for two and is cut once,
-  when it closes. The parts no longer overlap, so the statistics count
-  no token twice. When the part before the clash is too small to
-  report, the cut goes right after the earlier occurrence, so the rest
-  is as long as it can be. Where a line starts between the two
-  occurrences, the cut goes there, so two parts share no line.
-- A gap merge leaves the parts of a cut clone apart (CpdClone.after_cut)
-  instead of joining them into a similar clone of similarity 1.0. Other
-  clones that touch are joined as before.
-- A secondary clone ends one token past its last window, as in 5.4.
-  Consistent matching checks th
-
-**File**: `action.yml` (modified, +3/-3)
+**File**: `rust/crates/cpd-core/src/detect.rs` (modified, +43/-0)
 ```diff
-@@ -106,7 +106,7 @@ inputs:
-     required: false
-     default: "false"
-   ignore-identifiers:
--    description: "Treat identifiers as equal (Type-2 clones: renamed variables, functions, types): 'true' or 'consistent' lets a name stand for one name on the other side only, 'blind' lets any name match any other"
-+    description: "Treat identifiers as equal (Type-2 clones: renamed variables, functions, types): 'consistent' lets a name stand for one name on the other side only, 'blind' lets any name match any other, 'true' takes the matching from the config's ignoreIdentifiers, else consistent"
-     required: false
-     default: "false"
-   ignore-literals:
-@@ -446,8 +446,8 @@ runs:
-           ARGS+=("--ignore-case")
-         fi
-         case "$INPUT_IGNORE_IDENTIFIERS" in
--          true|consistent) ARGS+=("--ignore-identifiers") ;;
--          blind) ARGS+=("--ignore-identifiers=blind") ;;
-+          true) ARGS+=("--ignore-identifiers") ;;
-+          consistent|blind) ARGS+=("--ignore-identifiers=$INPUT_IGNORE_IDENTIFIERS") ;;
-         esac
-         if [ "$INPUT_IGNORE_LITERALS" = "true" ]; then
-           ARGS+=("--ignore-literals")
-```
-
-**File**: `docs/ci-and-hooks.md` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ The workflow fails if more than 5% of the code is duplicated.
- | `max-size` | Skip files larger than SIZE | — |
- | `skip-local` | Skip clones in same directory | `false` |
- | `ignore-case` | Ignore case of symbols (experimental) | `false` |
--| `ignore-identifiers` | Treat identifiers as equal (Type-2 clones): `true` or `consistent` lets a name stand for one name on the other side only, `blind` any name match any other | `false` |
-+| `ignore-identifiers` | Treat identifiers as equal (Type-2 clones): `consistent` lets a name stand for one name on the other side only, `blind` any name match any other, `true` takes the matching from the config's `ignoreIdentifiers`, else `consistent` | `false` |
- | `ignore-literals` | Treat all string and numeric literals as equal | `false` |
- | `ignore-annotations` | Skip annotations and decorators (`@Name`, `@Name(...)`) | `false` |
- | `max-gap-lines` | Merge clones separated by at most N unmatched lines into one near-miss clone (Type-3); `0` disables | `0` |
-```
-
-**File**: `docs/rust.md` (modified, +2/-2)
-```diff
-@@ -526,9 +526,9 @@ jscpd --ignore-identifiers --ignore-literals src/     # …and 10 matches 25, 'd
- jscpd --ignore-annotations src/main/java/             # @Override / @Deprecated no longer split a clone
- ```
- 
--`--ignore-identifiers` (config `true` or `"consistent"`) matches two fragments only when every name stands for one name on the other side and no two names for the same one (consistent renaming, as in NiCad; Baker's parameterized matching): `d = a + b * c` matches `s = p + q * r` but not `x = x + x * x`, whose data flows another way. A clone that keeps to one mapping only in parts is reported as those parts, each of at least `--min-tokens` tokens, and a part whose tokens are the same on both sides is `exact`. `--ignore-identifiers=blind` (config `"blind"`) lets any name match any other, as PMD CPD does and jscpd did up to 5.4. On 24 open-source projects in 11 languages, almost half of the renamed clones blind matching reported had no one-to-one mapping between their names: lists of imports, a list of names against itself shifted by one, statements that only look alike. Without a value, `--ignore-identifiers` takes the config's matching when the config names one. Literals stay blind: `--ignore-literals` lets any value match any other.
-+`--ignore-identifiers` (config `true` or `"consistent"`) matches two fragments only when every name stands for one name on the other side and no two names for the same one (consistent renaming, as in NiCad; Baker's parameterized matching): `d = a + b * c` matches `s = p + q * r` but not `x = x + x * x`, whose data flows another way. A clone that keeps to one mapping only in parts is reported as those parts, each of at least `--min-tokens` tokens, and a part whose tokens are the same on both sides is `exact`; `--max-gap-lines` does not join the parts back. Names keep their case, except in languages that ignore it, such as SQL, PowerShell, Visual Basic, Pascal, Fortran and Ada, where `Customer` and `customer` are one name. `--ignore-identifiers=blind` (config `"blind"`) lets any name match any other, as PMD CPD does and jscpd did up to 5.4. On 24 open-source projects in 11 languages, almost half of the renamed clones blind matching reported had no one-to-one mapping between their names: lists of imports, a list of names against itself shifted by one, statements that only look alike. Without a value, `--ignore-identifiers` takes the config's matching when the config names one. Literals stay blind: `--ignore-literals` lets any value match any other.
- 
--Normalized runs find more and longer clones than exact runs, so their snippet fingerprints (`jscpdCloneHash/v1`) differ from an exact run's. Keep a separate `--baseline` file per configuration, blind and consistent matching included: a clone that consistent matching cuts has another snippet, so a baseline of blind matching would report its parts as new. A baseline that jscpd 5.4 wrote with `--ignore-identifiers` is one of blind matching: keep `--ignore-identifiers=blind` with it, or update it. See [`fixtures/type2-demo`](../fixtures/type2-demo/README.md) for a runnable example of each flag.
-+Normalized runs report other clones than exact runs, most often more and longer ones, so their snippet fingerprints (`jscpdCloneHash/v1`) differ from an exact run's. Keep a separate `--baseline` file per configuration, blind and consistent matching included: a clone that consistent matching cuts has another snippet, so a baseline of blind matching would report its parts as new. A baseline that jscpd 5.4 wrote with `--ignore-identifiers` is one of blind matching: keep `--ignore-identifiers=blind` with it, or update it. See [`fixtures/type2-demo`](../fixtures/type2-demo/README.md) for a runnable example of each flag.
- 
- ### Type-3 clones: near-miss merging with `--max-gap-lines`
- 
-```
-
-**File**: `fixtures/type3-demo/README.md` (modified, +1/-1)
-```diff
-@@ -213,7 +213,7 @@ jscpd fixtures/type3-demo --max-gap-lines 2 --similarity 0.6 --kind gap,ast
- # Found 4 clones.
- 
- jscpd fixtures/type3-demo --max-gap-lines 2 --similarity 0.6 --ignore-identifiers --kind renamed
--# Found 1 clones.   (the long-line/ themes)
-+# Found 2 clones.
- ```
- 
- The filter never turns a detector on. A kind that cannot occur is a warning,
-```
-
-**File**: `rust/crates/cpd-core/src/detect.rs` (modified, +392/-236)
-```diff
-@@ -5,7 +5,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
- use std::path::{Path, PathBuf};
- 
- use crate::{
--    hash::{HASH_BASE, base_pow, hash_window, renamed_identifier_hash, roll, token_hash},
-+    hash::{HASH_BASE, base_pow, roll, token_hash},
-     models::{
-         CloneKind, CpdClone, DetectionToken, Fragment, Location, SimilarityMethod, SourceFile,
-         TokenKind, covered_lines,
-@@ -229,64 +229,66 @@ impl PreparedSource {
-     }
- 
-     /// Records where each renamed identifier occurs again, so that detection
--    /// matches names consistently (`--ignore-identifiers=consistent`, issue
--    /// #1217): two fragments match only when every name stands for one name
--    /// on the other side and no two names for the same one, so `d = a + b`
--    /// matches `s = p + q` but not `x = x + x`. Leaves a source without
--    /// renamed identifiers as it is.
--    pub fn track_renames(&mut self) {
--        let renamed = renamed_identifier_hash();
--        if !self.hashes.contains(&renamed) {
-+    /// matches names consistently (`--ignore-identifiers`, issue #1217): two
-+    /// fragments match only when every name stands for one name on the other
-+    /// side and no two names for the same one, so `d = a + b` matches
-+    /// `s = p + q` but not `x = x + x`. `tokens` are the tokens this source
-+    /// was made from; their `name` tells the renamed identifiers. Leaves a
-+    /// source without renamed identifiers as it is: its windows hash the
-+    /// same either way.
-+    pub fn track_renames(&mut self, tokens: &[DetectionToken]) {
-+        debug_assert_eq!(tokens.len(), self.hashes.len());
-+        if tokens.iter().all(|t| t.name == 0) {
-             return;
-         }
--        let mut prev = vec![0u32; self.hashes.len()];
--        let mut next = vec![0u32; self.hashes.len()];
-+        let mut prev = vec![0u32; tokens.len()];
-         let mut last: FxHashMap<u64, usize> = FxHashMap::default();
--        for (j, &hash) in self.hashes.iter().enumerate() {
--            if hash != renamed {
-+        for (j, token) in tokens.iter().enumerate() {
-+            if token.name == 0 {
-                 continue;
-             }
--            if let Some(p) = last.insert(self.name(j), j) {
-+            if let Some(p) = last.insert(token.name, j) {
-                 // A name too far back for any window counts as new.
--                let distance = u32::try_from(j - p).unwrap_or(0);
--                prev[j] = distance;
--                next[p] = distance;
-+                prev[j] = u32::try_from(j - p).unwrap_or(0);
-             }
-         }
--        self.renames = Renames { prev, next };
--    }
--
--    /// The name of token `j` before normalization.
--    fn name(&self, j: usize) -> u64 {
--        self.raw_hashes.get(j).copied().unwrap_or(self.hashes[j])
-+        self.renames = Renames { prev };
-     }
- }
- 
--/// For every token of a source, how many tokens back and ahead the same
--/// renamed identifier occurs (0: never), when detection matches names
--/// consistently. This is Baker's parameterized matching: a window hashes
--/// a renamed identifier with the distance back to its previous occurrence
--/// in the window, so two windows hash alike only when their names repeat
--/// alike, and sliding the window changes that distance for one token at
--/// most, the next occurrence of the name that leaves it.
-+/// For every token of a source, how many tokens back the same renamed
-+/// identifier occurred last (0: never), when detection matches names
-+/// consistently. This is Baker's parameterized matching: a window hashes a
-+/// renamed identifier with that distance when the earlier occurrence lies
-+/// in the window ([`within`]), so two windows hash alike only when their
-+/// names repeat alike. Sliding the window changes the distance of one token
-+/// at most, the next occurrence of the name that leaves it.
- #[derive(Debug, Clone, Default)]
- pub struct Renames {
-     prev: Vec<u32>,
--    next: Vec<u32>,
- }
- 
- impl Renames {
-     pub fn is_empty(&self) -> bool {
-         self.prev.is_empty()
-     }
- 
--    /// How far back the name at `j` occurred last within the window that
--    /// starts at `start`; 0 when it did not, and for any other token.
-+    /// How far back the name at `j` occurred last within the window or part
-+    /// that starts at `start`; 0 when it did not, and for any other token.
-     #[inline]
-     fn back(&self, j: usize, start: usize) -> u32 {
--        match self.prev.get(j) {
--            Some(&d) if d != 0 && d as usize <= j - start => d,
--            _ => 0,
-+        within(self.prev.get(j).copied().unwrap_or(0), j - start)
+@@ -982,6 +982,9 @@ fn push_clone(
+         Some(f) => f,
+         None => return,
+     };
++    if goes_back(&fragment_a) || goes_back(&fragment_b) {
++        return;
 +    }
-+
-+    /// For every token, how many tokens ahead its name occurs next (0:
-+    /// never), into `next`: what [`roll_consistent`] needs.
-+    fn next_into(&self, next: &mut Vec<u32>) {
-+        next.clear();
-+        next.resize(self.prev.len(), 0);
-+        for (j, &distance) in self.prev.iter().enumerate() {
-+            if distance != 0 {
-+                next[j - distance as 
-```
-
-**File**: `rust/crates/cpd-core/src/hash.rs` (modified, +0/-19)
-```diff
-@@ -1,29 +1,10 @@
- // hash.rs
- 
--use std::sync::LazyLock;
- use xxhash_rust::xxh3::xxh3_64;
- 
--use crate::models::TokenKind;
--
- /// Fibonacci hashing constant for good bit distribution.
- pub const HASH_BASE: u64 = 0x9e3779b97f4a7c15;
- 
--/// The value every identifier hashes as under `--ignore-identifiers`.
--pub const RENAMED_IDENTIFIER: &str = "$id";
--
--/// The hash of a renamed identifier: [`RENAMED_IDENTIFIER`] as an
--/// identifier token, whatever `--ignore-case` says.
--pub fn renamed_identifier_hash() -> u64 {
--    static HASH: LazyLock<u64> = LazyLock::new(|| {
--        hash_token(
--            TokenKind::Identifier.discriminant(),
--            RENAMED_IDENTIFIER,
--            false,
--        )
--    });
--    *HASH
--}
--
- /// Compute a deterministic hash for a single token given its kind byte and value string.
- /// Uses xxh3_64 XORed with kind cast to u64.
- pub fn token_hash(kind: u8, value: &str) -> u64 {
-```
-
-**File**: `rust/crates/cpd-core/src/models.rs` (modified, +11/-0)
-```diff
-@@ -257,6 +257,11 @@ pub struct CpdClone {
-     /// from the fragment's span.
-     #[serde(skip)]
-     pub unmatched_lines: [u32; 2],
-+    /// True for a part of a clone that consistent name matching
-+    /// (`--ignore-identifiers`) cut where a name stood for two, other than
-+    /// the first part: a gap merge must not join it to the part before it.
-+    #[serde(skip)]
-+    pub after_cut: bool,
- }
- 
- impl Location {
-@@ -336,6 +341,7 @@ impl CpdClone {
-             similarity_method: None,
-             structure: None,
-             unmatched_lines: [0, 0],
-+            after_cut: false,
-         }
-     }
-     /// The order clone lists are reported in: by the first fragment's file
-@@ -373,6 +379,11 @@ pub struct DetectionToken {
-     /// normalization option applied; lets detection tell exact clones from
-     /// renamed ones without re-tokenizing.
-     pub raw_hash: u64,
-+    /// The name of an identifier that `--ignore-identifiers` renamed, for
-+    /// matching names consistently; 0 for any other token. The hash of the
-+    /// identifier as written, without the dropped annotations `raw_hash` may
-+    /// carry, and in lower case where the language ignores case.
-+    pub name: u64,
-     pub start: Location,
-     pub end: Location,
-     /// Byte range in the source content: `[start_byte, end_byte]`.
-```
-
-**File**: `rust/crates/cpd-finder/src/orchestrate.rs` (modified, +12/-3)
-```diff
-@@ -82,6 +82,15 @@ pub struct RunConfig {
-     pub match_as: Vec<PathBuf>,
- }
- 
-+impl RunConfig {
-+    /// Whether names are matched consistently: `--ignore-identifiers`
-+    /// without `=blind`. The sources then track their renamed identifiers
-+    /// ([`PreparedSource::track_renames`]).
-+    pub fn consistent_identifiers(&self) -> bool {
-+        self.ignore_identifiers && !self.blind_identifiers
+     let kind = clone_kind(
+         existing_file,
+         fragment_a.range,
+@@ -1587,6 +1590,9 @@ fn fits_secondary(
+     min_lines: usize,
+     coverage: &LineCoverage,
+ ) -> bool {
++    if goes_back(&clone.fragment_a) || goes_back(&clone.fragment_b) {
++        return false;
 +    }
+     // min_lines filter: only check fragment A, mirroring jscpd's LinesLengthCloneValidator.
+     if min_lines > 0 {
+         let lines = clone.fragment_a.end.line as usize - clone.fragment_a.start.line as usize;
+@@ -1640,6 +1646,13 @@ fn finish_secondary_clone(
+     }
+ }
+ 
++/// Whether `fragment` ends on an earlier line than it starts: tokens that
++/// a stream put out of the order of the text (issue #1221), no text of the
++/// file, so no clone.
++fn goes_back(fragment: &Fragment) -> bool {
++    fragment.end.line < fragment.start.line
 +}
 +
- impl Default for RunConfig {
-     fn default() -> Self {
-         Self {
-@@ -476,7 +485,7 @@ impl<'a> FilePreparer<'a> {
-             max_lines: config.max_lines,
-             ignore_case: config.ignore_case,
-             ignore_identifiers: config.ignore_identifiers,
--            consistent_identifiers: config.ignore_identifiers && !config.blind_identifiers,
-+            consistent_identifiers: config.consistent_identifiers(),
-             ignore_literals: config.ignore_literals,
-             ignore_annotations: config.ignore_annotations,
-             want_functions: config.similarity_threshold().is_some(),
-@@ -632,7 +641,7 @@ impl<'a> FilePreparer<'a> {
-                 let mut sub =
-                     PreparedSource::from_detection_tokens(map_id, map.format, &map.tokens);
-                 if self.consistent_identifiers {
--                    sub.track_renames();
-+                    sub.track_renames(&map.tokens);
-                 }
-                 sub.real_path = real_path.clone();
-                 // Only a different language is embedded; the host's own
-@@ -693,7 +702,7 @@ impl<'a> FilePreparer<'a> {
-             let mut prepared =
-                 PreparedSource::from_detection_tokens(id, format.to_string(), &det_tokens);
-             if self.consistent_identifiers {
--                prepared.track_renames();
-+                prepared.track_renames(&det_tokens);
-             }
-             prepared.real_path = real_path;
-             let prepared = vec![prepared];
-```
-
----
-
-### Incident Patch 3: `a0ffc978` (2026-10-17)
-**Commit Message**: Merge pull request #1211 from cristianchiriac/fix/semantic-jsx-element-call
-
-fix(semantic): count a JSX element of a component as a call
-
-**File**: `docs/rust.md` (modified, +2/-2)
-```diff
-@@ -617,7 +617,7 @@ Each language is a tree-sitter grammar and a few tables in `cpd-similarity` (`sy
- 
- Some functions do the same thing but are written differently: renamed, restructured, or in another language, like a validation rule a Rust backend enforces and a Svelte frontend repeats, or two helpers two people wrote for the same job. They share no token run and no syntax tree for the passes above to match (Type-4 clones). `--semantic` (config key `semantic`) looks for them with a code embedding model. It embeds every function of a JavaScript, TypeScript, JSX, TSX, Vue, Svelte, Astro, Python, Rust, Go, Java, Kotlin, C#, C, C++, PHP, Ruby, Scala or Swift file that clears `--min-tokens` and `--min-lines`, as the function's code without comments, starting at the name the function is declared under (a method's key, the variable an arrow function is assigned to, or the test-case call a callback is passed to, as in `it('rounds cents', () => …)`). jscpd skips declarations without a body, which have no code to compare: TypeScript overload signatures and `declare function`, the functions of a `.d.ts` file, interface and abstract methods, a Swift protocol's `init`, a Go function written in assembly and a C++ `= default`. Two functions are reported as one `semantic` clone when
- 
--- they are in different files, neither calls the other by name, the clones the token passes found do not already cover both (90% of each function's lines), and `--skip-local` / `--skip-isolated` allow the pair. A function and the helper it calls are related, not duplicated, and a copy that is already reported does not take the place of a function's real match. A call counts only between languages that can call each other (one language, C with C++, Java with Kotlin and Scala), so `JSON.parse(` in TypeScript does not rule out a Python `parse`;
-+- they are in different files, neither calls the other by name, the clones the token passes found do not already cover both (90% of each function's lines), and `--skip-local` / `--skip-isolated` allow the pair. A function and the helper it calls are related, not duplicated, and a copy that is already reported does not take the place of a function's real match. A call counts only between languages that can call each other (one language, C with C++, Java with Kotlin and Scala), so `JSON.parse(` in TypeScript does not rule out a Python `parse`. Type arguments may stand between the name and the `(`, as in `fetchAll<Order>(url)` and Rust's `parse::<Config>(s)`. A name shorter than five characters, such as `get(` or `run(`, is too common to count. A JSX element of a component counts as a call of it, however short the name: `<EditUserForm ... />` calls `EditUserForm` and `<Row />` calls `Row`;
- - each is the other's closest match among the functions of its language (the Rust functions, the Python ones, or the JavaScript-family ones), or close to it: within 0.05 with jina-embeddings-v2-base-code, and within as much more as the model's scores are spread wider (0.075 with CodeRankEmbed). A feature written three times makes three pairs, while a function that resembles many others (a request handler, a getter) pairs once per language at most;
- - their cosine similarity reaches `--semantic-threshold` for a pair across languages, or `--semantic-same-threshold` for a pair within one language. Both default to the values calibrated for the model (see [Embedding models](#embedding-models)): 0.4125 and 0.6375 for the default model, CodeRankEmbed. Two functions in one language resemble each other more easily, whatever they do, and below the higher bar most such pairs are related code, such as two implementations of one interface, not duplicates. A pair that is not each other's very best match, such as a third copy of a feature, needs more, whatever the threshold: 0.8 with jina-embeddings-v2-base-code and 0.7125 with CodeRankEmbed; and
- - the similarity stands out from each function's own background: at least 3 standard deviations above its mean similarity to the other function's language, not counting its 8 closest matches. Code in two languages scores lower than code in one, whatever it does, and a family of generated look-alikes scores high among itself. Measuring each pair against everything else its functions resemble lets the same rule work for a Rust/Svelte pair, a TypeScript/TypeScript pair and a folder of generated code.
-@@ -791,7 +791,7 @@ A side's totals count the functions of at least `--min-tokens` tokens and `--min
- 
- Reporters: `console` (the default), `console-full` (adds the list of every pair, those found by name marked `by name`), `json` (`jscpd-compare.json`, with a `code` and a `tests` section of the same shape; each has, for each side, its `path`, `functions`, `matched`, `percentage`, `files` with `similarity` and `lowPairs`, `unmatched` and `readyToPort`, then the `pairs`, each with its two functions, `similarity`, `level`, `renamed` and `matchedBy`), `markdown` (`jscpd-compare.md`, with the same t
-```
-
-**File**: `rust/crates/cpd-semantic/src/compare.rs` (modified, +40/-5)
-```diff
-@@ -538,11 +538,13 @@ const MAX_CALL_TARGETS: usize = 3;
- 
- /// The calls between the functions of each side, `(caller, callee)` as
- /// indexes into `items`, found by name the way `--semantic` finds them (see
--/// [`call_pairs`]): a name followed by `(` in the caller's code calls the
-+/// [`call_pairs`]), short names included: a name followed by `(`, type
-+/// arguments allowed in between (`fetchAll<Order>(url)`), or a JSX element
-+/// of a component (`<EditUserForm />`) in the caller's code calls the
- /// functions of the caller's side that carry that name, in a language the
--/// caller's language calls into. A function in the caller's own file wins
--/// over the others; past [`MAX_CALL_TARGETS`] candidates the call is left
--/// out.
-+/// caller's language calls into. A function in the caller's own file
-+/// wins over the others; past [`MAX_CALL_TARGETS`] candidates the call is
-+/// left out.
- ///
- /// Nothing calls a test. A test calls the helpers of the tests first, so
- /// when a function of the tests declares the name (`assertEquals` or
-@@ -580,7 +582,7 @@ fn call_graph<'u>(
-         let family = call_family(own.grammar);
-         let callable = |&j: &usize| j != i && call_family(unit(&items[j]).grammar) == family;
-         let mut seen: FxHashSet<&str> = FxHashSet::default();
--        for callee in called_names(&own.text) {
-+        for callee in called_names(&own.text).map(|c| c.name) {
-             // Its own name is the header or recursion, except for a test
-             // that goes by a title.
-             if (callee == own.name && !titled[i]) || !seen.insert(callee) {
-@@ -1613,6 +1615,39 @@ mod tests {
-         assert_eq!(result.ready(), vec![false, true]);
+ fn fragment_line_range(fragment: &Fragment) -> (usize, usize) {
+     let start = fragment.start.line as usize;
+     let end = fragment.end.line as usize;
+@@ -2747,6 +2760,36 @@ mod tests {
+         assert_eq!(runs(12), [(0, 13), (13, 9)]);
      }
  
 +    #[test]
-+    fn a_page_waits_for_the_components_it_renders() {
-+        // A JSX element calls the component, short name or not; the
-+        // components render no other and are ready.
-+        let page = "function EditUserPage() { return <EditUserForm><Row /></EditUserForm>; }";
-+        let tsx = vec![
-+            source(
-+                "web/page.tsx",
-+                "tsx",
-+                vec![with_text(unit("oxc", "EditUserPage", 1, 9, 60), page)],
-+            ),
-+            source(
-+                "web/EditUserForm.tsx",
-+                "tsx",
-+                vec![with_text(
-+                    unit("oxc", "EditUserForm", 1, 9, 60),
-+                    "function EditUserForm() { return <form />; }",
-+                )],
-+            ),
-+            source(
-+                "web/Row.tsx",
-+                "tsx",
-+                vec![with_text(
-+                    unit("oxc", "Row", 1, 9, 60),
-+                    "function Row() { return <tr />; }",
-+                )],
-+            ),
-+        ];
-+        let result = compare([&tsx, &[]], &table(&[]), &PARAMS).unwrap();
-+        assert_eq!(result.calls, vec![(0, 1), (0, 2)]);
-+        assert_eq!(result.ready(), vec![false, true, true]);
++    fn a_fragment_that_ends_before_it_starts_is_no_clone() {
++        // Lines that go back, as in one stream of a Razor view's HTML and
++        // then its C# (issue #1221): the copies start on line 3 and end on
++        // line 1.
++        let source = |id: &str| {
++            let tokens: Vec<DetectionToken> = toy_tokens("x + 1 ; y + 2 ;")
++                .into_iter()
++                .zip([3, 3, 3, 3, 1, 1, 1, 1])
++                .map(|(t, line)| tok(t.hash, t.raw_hash, line))
++                .collect();
++            PreparedSource::from_detection_tokens(id.into(), "toy".into(), &tokens)
++        };
++        let prepared = vec![source("one"), source("two")];
++        for min_lines in [0, 1] {
++            let found = detect_prepared(
++                vec![prepared.clone()],
++                8,
++                min_lines,
++                &PathFilters::default(),
++            );
++            assert!(found.is_empty(), "{found:?}");
++        }
++        // The secondary pass checks its clones alike.
++        let fragment = |i: usize| make_fragment(&prepared[i].id, &prepared[i].spans, 0, 7).unwrap();
++        let clone = CpdClone::exact("toy", fragment(0), fragment(1), 8);
++        let coverage = LineCoverage::from_clones(&prepared, &[]);
++        assert!(!fits_secondary(&clone, 0, 1, 0, &coverage));
++    }
++
+     /// The clones that flushing a secondary clone of `prepared[0]` and
+     /// `prepared[1]` reports, grown as [`SecondaryOpen::grow`] grows it from
+     /// the windows of 10 tokens at 0 to the windows at `last`.
+```
+
+**File**: `rust/crates/cpd-tokenizer/src/razor.rs` (modified, +27/-0)
+```diff
+@@ -209,6 +209,10 @@ pub fn tokenize_razor(source: &str, mode: Mode) -> Vec<Token> {
+         mode,
+     ));
+ 
++    // In the order of the text. The HTML and then the C# went back to line 1
++    // where the C# began, and a clone across that seam ended before it
++    // started (issue #1221).
++    all_tokens.sort_by_key(|token| token.start.offset);
+     all_tokens
+ }
+ 
+@@ -424,6 +428,29 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn tokenize_razor_reads_a_view_in_the_order_of_its_text() {
++        // The C# of `<h1>@Model.Title</h1>` comes between the tags of its
++        // line, not after the HTML of the whole view (issue #1221).
++        let tokens = tokenize_razor(RAZOR_CSHARP, Mode::Mild);
++        assert!(
++            tokens
++                .windows(2)
++                .all(|pair| pair[0].start.offset <= pair[1].start.offset)
++        );
++        let line: Vec<&str> = tokens
++            .iter()
++            .filter(|t| t.start.line == 5 && !t.value.trim().is_empty())
++            .map(|t| t.value.as_str())
++            .collect();
++        let title = line.iter().position(|&v| v == "Title").unwrap();
++        assert_eq!(line.iter().filter(|&&v| v == "h1").count(), 2, "{line:?}");
++        assert!(
++            line[..title].contains(&"h1") && line[title..].contains(&"h1"),
++            "{line:?}"
++        );
 +    }
 +
      #[test]
-     fn a_function_is_ready_when_all_it_calls_is_ported() {
-         let f = |side, counted| FunctionRef {
+     fn tokenize_razor_pure_html_is_not_empty() {
+         let tokens = tokenize_razor(PURE_HTML, Mode::Mild);
 ```
 
-**File**: `rust/crates/cpd-semantic/src/search.rs` (modified, +304/-17)
+**File**: `rust/crates/cpd/tests/integration.rs` (modified, +67/-0)
 ```diff
-@@ -62,7 +62,8 @@ const TOP: usize = 8;
- /// file) is too thin for a z-score; rule 4 is then not applied for it.
- pub const MIN_BACKGROUND: usize = 8;
- /// A callee name shorter than this is too common to tell a call from a
--/// namesake (`new`, `get`, `run`), so it does not exclude a pair.
-+/// namesake (`new`, `get`, `run`), so it does not exclude a pair, unless a
-+/// JSX element renders it: `<Row />` names the component in scope.
- const MIN_CALLEE_NAME: usize = 5;
- /// Rows of the similarity matrix computed together, so each column vector
- /// is read from memory once per block instead of once per row.
-@@ -619,9 +620,11 @@ pub(crate) fn grammar_ids(items: &[Item], grammar: impl Fn(&Item) -> &'static st
+@@ -886,6 +886,73 @@ fn consistent_identifiers_keep_identical_text_whole_around_members() {
+     );
  }
  
- /// For every item, the sorted items it calls or is called by (rule 1). A
--/// call is the callee's name followed by `(`; a function's own name is never
--/// a call, so the header `fn name(` and recursion do not count, and two
--/// namesakes (a port keeps the name) are not mistaken for caller and callee.
-+/// call is the callee's name followed by `(`, or a JSX element of it (see
-+/// [`called_names`]); a function's own name is never a call, so the header
-+/// `fn name(` and recursion do not count, and two namesakes (a port keeps
-+/// the name) are not mistaken for caller and callee. A name shorter than
-+/// [`MIN_CALLEE_NAME`] counts as a JSX element only.
- /// Only a callee the caller's language can call counts (see
- /// [`call_family`]): a method of a library (`JSON.parse`, `schema.validate`)
- /// must not rule out the other side of a port that happens to share its
-@@ -634,7 +637,7 @@ pub(crate) fn call_pairs<'u>(
-     for (i, item) in items.iter().enumerate() {
-         let name = unit(item).name.as_str();
-         // A test's name is a title (`it('add', …)`), never called.
--        if name.chars().count() >= MIN_CALLEE_NAME && !name.starts_with('<') && !unit(item).test {
-+        if !name.starts_with('<') && !unit(item).test {
-             by_name.entry(name).or_default().push(i);
-         }
-     }
-@@ -645,13 +648,18 @@ pub(crate) fn call_pairs<'u>(
-     for (i, item) in items.iter().enumerate() {
-         let own = unit(item);
-         let mut seen: rustc_hash::FxHashSet<&str> = rustc_hash::FxHashSet::default();
--        for callee in called_names(&own.text) {
-+        for Callee { name, rendered } in called_names(&own.text) {
-+            // Checked before `seen`, so `Row(x)` does not hide a later
-+            // `<Row />`.
-+            if name.len() < MIN_CALLEE_NAME && !rendered {
-+                continue;
-+            }
-             // A function's own name in its header or a recursive call is
-             // not a call; a test titled after the function it calls is.
--            if (callee == own.name && !own.test) || !seen.insert(callee) {
-+            if (name == own.name && !own.test) || !seen.insert(name) {
-                 continue;
-             }
--            for &j in by_name.get(callee).map(Vec::as_slice).unwrap_or_default() {
-+            for &j in by_name.get(name).map(Vec::as_slice).unwrap_or_default() {
-                 if j != i && call_family(unit(&items[j]).grammar) == call_family(own.grammar) {
-                     related[i].push(j);
-                     related[j].push(i);
-@@ -708,9 +716,23 @@ const NOT_CALLS: &[&str] = &[
-     "yield",
- ];
- 
--/// Identifiers directly followed by `(` (spaces allowed in between). A word
--/// of [`NOT_CALLS`] counts only as a member, as in `promise.catch(f)`.
--pub(crate) fn called_names(text: &str) -> impl Iterator<Item = &str> {
-+/// A name the code of a function calls (see [`called_names`]).
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub(crate) struct Callee<'a> {
-+    pub(crate) name: &'a str,
-+    /// A JSX element renders it, `<Row />`, rather than a call: the name is
-+    /// a component in scope, however short.
-+    pub(crate) rendered: bool,
++/// A Razor view is one stream of its HTML and of the C# of its `@` blocks,
++/// in the order of the text (issue #1221). The HTML and then the C# went
++/// back to line 1 where the C# began, and a clone across that seam ended
++/// before it started; a debug build panicked on it.
++#[test]
++fn a_razor_view_is_read_in_the_order_of_its_text() {
++    if maybe_bin().is_none() {
++        return;
++    }
++    // The lines of the first file of every clone; no fragment goes back.
++    let clones = |json: &serde_json::Value| -> Vec<(u64, u64)> {
++        let mut clones: Vec<_> = json["duplicates"]
++            .as_array()
++            .unwrap()
++            .iter()
++            .map(|d| {
++                assert_eq!(d["format"], "razor", "{d}");
++                for side in ["firstFile", "secondFile"] {
++                    assert!(d[side]["start"].as_u64() <= d[side]["end"].as_u64(), "{d}");
++                }
++                let line = |key: &str| d["firstFile"][key].as_u64().unwrap();
++                (line("start"), line("end"))
++            })
++            .collect();
++        clones.sort_unstable();
++        clones
++    };
++    let demo = common::repo_root().join("fixtures/razor");
++    let out = std::env::temp_dir().join(format!("cpd-razor-report-{}", std::process::id()));
++    let (json, _) = scan_json(
++        &demo,
++        &out,
++        &[
++            "--ignore-identifiers",
++            "--min-tokens",
++            "10",
++            "--min-lines",
++            "2",
++        ],
++    );
++    let _ = std::fs::remove_dir_all(&out);
++    assert!(!clones(&json).is_empty(), "{json}");
++
++    // Two copies of a view, one changed in its C# on line 5 and in its HTML
++    // on line 48: the text before the first change, between the two and
++    // after the second.
++    let page = std::fs::read_to_string(demo.join("page1.cshtml")).unwrap();
++    let changed = page
++        .replacen("Model.Count();", "Model.Count() + 0;", 1)
++        .replacen(
++            "<p class=\"summary\">Showing",
++            "<p class=\"total\">Listing",
++            1,
++        );
++    let root = config_dir(
++        "razor-seam",
++        &[("a.cshtml", page.as_str()), ("b.cshtml", changed.as_str())],
++    );
++    let (json, _) = scan_json(
++        &root,
++        &root.join("report"),
++        &["--min-tokens", "20", "--min-lines", "2"],
++    );
++    let _ = std::fs::remove_dir_all(&root);
++    assert_eq!(clones(&json), [(1, 5), (5, 48), (48, 71)], "{json}");
 +}
 +
-+/// Identifiers directly followed by `(`, spaces and type arguments allowed
-+/// in between: `fetchAll<Order>(url)`, Rust's `parse::<Config>(s)`. A word
-+/// of [`NOT_CALLS`] counts only as a member, as in `promise.catch(f)`. A JSX
-+/// element of a component, `<EditUserForm user={u} />`, is a call of the
-+/// component too: a capitalized name right after a `<` that does not follow
-+/// a name (`useState<Props>` is a type argument), with a space, `/` or `>`
-+/// after it or after its own type arguments (`<Select<Option> />`).
-+pub(crate) fn called_names(text: &str) -> impl Iterator<Item = Callee<'_>> {
-     let bytes = text.as_bytes();
-     let mut i = 0;
-     std::iter::from_fn(move || {
-@@ -727,25 +749,96 @@ pub(crate) fn called_names(text: &str) -> impl Iterator<Item = &str> {
-                 i += 1;
+ #[test]
+ fn an_unknown_kind_is_an_error() {
+     let dir = config_dir("kind-typo", &[("a.js", GREET_DUP)]);
+```
+
+---
+
+### Incident Patch 2: `5c1598cf` (2026-10-19)
+**Commit Message**: fix(markdown): front matter holds no code fence
+
+Fixes #1223.
+
+A page that starts with `---` had front matter up to the next line that
+read `---` or `...` once trimmed, wherever that line was. The `...` of a
+Python stub in a later fence closed it, and so did a `---` inside a fence,
+so the front matter ran across the fence. Blanking both then panicked on
+the overlap. The release profile aborts on a panic, so the scan exited
+with 134, and `jscpd --mcp` and `jscpd --lsp` died with it.
+
+A `---` on the first line is now front matter only when the next line is
+not blank, as Pandoc reads it, and when a line that is `---` or `...`
+from its first column closes it before any code fence opens, closed or
+not. Otherwise it is a horizontal rule and the fences stay fences. An
+indented `...` in a YAML block scalar no longer cuts real front matter
+short either. The frontmatter of an Astro component takes the same
+first-column rule, so a `---` inside a template string doesn't end it.
+
+blank_ranges_preserve_newlines blanks ranges that overlap instead of
+panicking. No caller passes such ranges now, but a wrong range shouldn't
+take the scan and the servers down.
+
+The behavior test that kept this case a
+
+**File**: `rust/crates/cpd-tokenizer/src/embedded.rs` (modified, +12/-24)
+```diff
+@@ -41,27 +41,15 @@ pub(crate) fn tokenize_blocks_shifted<'a>(
+     all_tokens
+ }
+ 
++/// `source` with the bytes of `ranges` turned into spaces, newlines kept, so
++/// the rest keeps its lines and columns. The ranges need no order and may
++/// overlap (issue #1223).
+ pub fn blank_ranges_preserve_newlines(source: &str, ranges: &[[usize; 2]]) -> String {
+     let mut src_bytes = source.as_bytes().to_vec();
+-    let mut sorted: Vec<[usize; 2]> = ranges.to_vec();
+-    sorted.sort_by_key(|r| r[0]);
+-    for i in 1..sorted.len() {
+-        if sorted[i][0] < sorted[i - 1][1] {
+-            panic!(
+-                "overlapping ranges detected: [{}, {}) overlaps [{}, {})",
+-                sorted[i - 1][0],
+-                sorted[i - 1][1],
+-                sorted[i][0],
+-                sorted[i][1],
+-            );
+-        }
+-    }
+-    sorted.sort_by(|a, b| b[0].cmp(&a[0]));
+-    for &[start, end] in &sorted {
++    for &[start, end] in ranges {
+         for byte in &mut src_bytes[start..end] {
+-            match byte {
+-                b'\n' => {}
+-                _ => *byte = b' ',
++            if *byte != b'\n' {
++                *byte = b' ';
              }
-             let end = i;
--            let mut k = i;
-+            let after = type_args_end(bytes, end).unwrap_or(end);
-+            let mut k = after;
-             while k < bytes.len() && matches!(bytes[k], b' ' | b'\t') {
-                 k += 1;
-             }
-+    
+         }
+     }
+@@ -87,10 +75,10 @@ mod tests {
+     }
+ 
+     #[test]
+-    #[should_panic(expected = "overlapping ranges")]
+-    fn overlapping_ranges_panics() {
+-        let s = "hello";
+-        let _ = blank_ranges_preserve_newlines(s, &[[0, 3], [2, 5]]);
++    fn overlapping_ranges_blank_their_union() {
++        let s = "hello\nworld";
++        let result = blank_ranges_preserve_newlines(s, &[[0, 8], [2, 5]]);
++        assert_eq!(result, "     \n  rld");
+     }
+ 
+     #[test]
+@@ -101,9 +89,9 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn right_to_left_no_index_drift() {
++    fn unsorted_ranges_are_blanked_alike() {
+         let s = "abcdefghij";
+-        let result = blank_ranges_preserve_newlines(s, &[[0, 3], [6, 9]]);
++        let result = blank_ranges_preserve_newlines(s, &[[6, 9], [0, 3]]);
+         assert_eq!(result, "   def   j");
+     }
+ }
+```
+
+**File**: `rust/crates/cpd-tokenizer/src/markdown.rs` (modified, +35/-23)
+```diff
+@@ -114,8 +114,7 @@ fn fence_bounds(
+     (inner_end, block_end)
+ }
+ 
+-fn extract_code_fences(content: &str) -> Vec<MarkdownFence> {
+-    let lines = line_spans(content);
++fn extract_code_fences(content: &str, lines: &[LineSpan]) -> Vec<MarkdownFence> {
+     let mut fences = Vec::new();
+     let mut idx = 0usize;
+     while idx < lines.len() {
+@@ -140,7 +139,7 @@ fn extract_code_fences(content: &str) -> Vec<MarkdownFence> {
+             .get(idx + 1)
+             .map(|s| s.start)
+             .unwrap_or(lines[idx].next_start);
+-        let (inner_end, block_end) = fence_bounds(content, &lines, close_idx, inner_start);
++        let (inner_end, block_end) = fence_bounds(content, lines, close_idx, inner_start);
+         let format = resolved.map(|r| r.to_string()).unwrap_or_else(|| {
+             open.info
+                 .split_whitespace()
+@@ -160,7 +159,12 @@ fn extract_code_fences(content: &str) -> Vec<MarkdownFence> {
+     fences
+ }
+ 
+-fn extract_front_matter(content: &str) -> Option<MarkdownFence> {
++/// Front matter: YAML between a `---` on the first line and the next line
++/// that is `---` or `...` from its first column. The first `---` is a
++/// thematic break instead when a blank line follows it, as Pandoc reads it,
++/// or when a code fence opens before the closing line: front matter holds no
++/// fence (issue #1223).
++fn extract_front_matter(content: &str, lines: &[LineSpan]) -> Option<MarkdownFence> {
+     // ponytail: front-matter opener is `---` on its own line; reject anything else
+     // up front so the line scan only runs on real candidates.
+     let opener_len = if content.starts_with("---\r\n") {
+@@ -170,12 +174,15 @@ fn extract_front_matter(content: &str) -> Option<MarkdownFence> {
+     } else {
+         return None;
+     };
++    let second = lines.get(1)?;
++    if content[second.start..second.end].trim().is_empty() {
++        return None;
++    }
+ 
+-    let lines = line_spans(content);
+     // Body begins right after the opener line.
+     let inner_start = opener_len;
+-    let close_idx = front_matter_closer(content, &lines)?;
+-    let (inner_end, block_end) = fence_bounds(content, &lines, close_idx, inner_start);
++    let close_idx = front_matter_closer(content, lines)?;
++    let (inner_end, block_end) = fence_bounds(content, lines, close_idx, inner_start);
+     Some(MarkdownFence {
+         format: "yaml".to_string(),
+         block_start: 0,
+@@ -185,23 +192,36 @@ fn extract_front_matter(content: &str) -> Option<MarkdownFence> {
+     })
+ }
+ 
+-/// Index of the first line after the opener that holds a front-matter closer
+-/// (`---` or `...`). Returns `None` if no closer is found.
++/// Index of the first line after the opener that closes front matter, `---`
++/// or `...` from the first column. `None` when no line does, or when a code
++/// fence opens first.
+ fn front_matter_closer(content: &str, lines: &[LineSpan]) -> Option<usize> {
+     // ponytail: skip the opener line (idx 0) and walk the rest with a numeric
+     // counter so we avoid the `.enumerate().skip(1)` chain shape used in jscpd-rs.
+     let mut idx = 1usize;
+     while idx < lines.len() {
+-        let span = &lines[idx];
+-        let line = content[span.start..span.end].trim();
+-        if line == "---" || line == "..." {
++        let line = &content[lines[idx].start..lines[idx].end];
++        if matches!(line.trim_end(), "---" | "...") {
+             return Some(idx);
+         }
++        if parse_opening_fence(line).is_some() {
++            return None;
++        }
+         idx += 1;
+     }
+     None
+ }
+ 
++/// The blocks of a Markdown file in order: its front matter, then its code
++/// fences. No two overlap, since front matter holds no fence.
++fn markdown_blocks(content: &str) -> Vec<MarkdownFence> {
++    let lines = line_spans(content);
++    extract_front_matter(content, &lines)
++        .into_iter()
++        .chain(extract_code_fences(content, &lines))
++        .collect()
++}
++
+ pub(crate) fn collect_ignore_byte_ranges(content: &str) -> Vec<[usize; 2]> {
+     let lines = line_spans(content);
+     let mut ranges = Vec::new();
+@@ -260,7 +280,7 @@ pub fn offset_detection_tokens(
+ /// fences are left out; front matter is not a fence.
+ pub fn code_blocks(source: &str) -> Vec<(String, std::ops::Range<usize>)> {
+     let ignore_ranges = collect_ignore_byte_ranges(source);
+-    extract_code_fences(source)
++    extract_code_fences(source, &line_spans(source))
+         .into_iter()
+         .filter(|f| f.inner_start < f.inner_end)
+         .filter(|f| {
+@@ -282,11 +302,7 @@ pub fn tokenize_markdown_maps(source: &str, options: &TokenizeOptions) -> Vec<To
+ 
+     let ignore_ranges = collect_ignore_byte_ranges(source);
+ 
+-    let mut fences = extract_code_fences(source);
+-    if let Some(fm) = extract_front_matter(source) {
+-        fences.push(fm);
+-        fences.sort_by_key(|f| f.block_start);
+-    }
++    let fences = markdown_blocks(source);
+ 
+     let sanitized = blank_ranges_preserve_newlines(
+         source,
+@@ -371,14 +387,1
+```
+
+**File**: `rust/crates/cpd-tokenizer/src/sfc.rs` (modified, +19/-1)
+```diff
+@@ -262,7 +262,7 @@ fn astro_frontmatter_block(source: &str) -> Option<SfcBlock> {
+         .iter()
+         .enumerate()
+         .skip(1)
+-        .find(|(_, span)| source[span.start..span.end].trim() == "---")
++        .find(|(_, span)| source[span.start..span.end].trim_end() == "---")
+         .map(|(idx, _)| idx)?;
+     let inner_start = lines.get(1)?.start;
+     let inner_end = source[..lines[close_idx].start]
+@@ -552,4 +552,22 @@ const x: number = 5;
+         assert!(formats.contains(&"css"), "must have real css block");
+         assert!(formats.contains(&"html"), "must have html markup");
+     }
++
++    #[test]
++    fn astro_frontmatter_closes_at_a_fence_from_the_first_column() {
++        // A `---` inside a template string is no fence: Astro and basta close
++        // the frontmatter only at a line that starts with it.
++        let source = "---\nconst help = `\n  ---\n`;\nfunction summarize(total: number) {\n  return total + 1;\n}\n---\n<p>{help}</p>\n";
++        let maps = tokenize_sfc_maps(source, "astro", &TokenizeOptions::new(Mode::Mild));
++        let script = maps
++            .iter()
++            .find(|m| m.format == "typescript")
++            .expect("the frontmatter");
++        let texts: Vec<&str> = script
++            .tokens
++            .iter()
++            .map(|t| &source[t.range[0]..t.range[1]])
++            .collect();
++        assert!(texts.contains(&"summarize"), "{texts:?}");
++    }
+ }
+```
+
+**File**: `rust/crates/cpd-tokenizer/tests/behavior.rs` (modified, +114/-15)
+```diff
+@@ -274,6 +274,120 @@ fn an_unclosed_markdown_fence_is_prose_not_code() {
+     assert!(texts(md, &prose.tokens).contains(&"open"));
+ }
+ 
++/// A `---` on the first line is front matter only when the next line is not
++/// blank and a line that is `---` or `...` from its first column closes it
++/// before any code fence opens (issue #1223). Otherwise it is a thematic
++/// break, and the fences stay fences: front matter and a fence used to
++/// overlap, and blanking them panicked.
++#[test]
++fn front_matter_holds_no_fence() {
++    // A thematic break, then the format and a word of the map that the
++    // page's code lands in.
++    let rules = [
++        // The closing `---` inside a fence.
++        (
++            "---\n```js\n---\nconst a = 1;\n```\n",
++            "javascript",
++            "const",
++        ),
++        // The issue's page: the `...` of a Python stub inside a fence.
++        (
++            "---\n\nThe protocol a store implements.\n\n```python\nclass Store(Protocol):\n    def get(self, key: str) -> bytes:\n        ...\n```\n",
++            "python",
++            "Protocol",
++        ),
++        // A fence inside what would be front matter.
++        (
++            "---\n```js\nconst a = 1;\n```\n---\n\nprose\n",
++            "javascript",
++            "const",
++        ),
++        // A fence that opens inside front matter and holds its closer.
++        (
++            "---\ntitle: x\n```js\n---\nlet b = 2;\n```\n\nprose\n",
++            "javascript",
++            "let",
++        ),
++        // The `...` of a stub in a fence of a list item, indented.
++        (
++            "---\nSteps:\n\n1. Implement the store:\n\n   ```python\n   class Store(Protocol):\n       def get(self, key: str) -> bytes:\n           ...\n   ```\n",
++            "markdown",
++            "Protocol",
++        ),
++        // A fence that never closes, before a closer.
++        (
++            "---\ntitle: x\n```js\nconst a = 1;\n...\n",
++            "markdown",
++            "const",
++        ),
++        // A second rule before the first fence.
++        (
++            "---\n\n# Title\n\nIntro text.\n\n---\n\n## Usage\n\n```js\nconst a = 1;\n```\n",
++            "markdown",
++            "Intro",
++        ),
++    ];
++    for (md, format, word) in rules {
++        for mode in [Mode::Mild, Mode::Weak, Mode::Strict] {
++            let maps = tokenize_to_detection_maps("markdown", md, &opts(mode));
++            assert!(
++                map(&maps, "yaml").is_none(),
++                "{md:?}: {:?}",
++                formats_of(&maps)
++            );
++            let code = map(&maps, format).expect("the code");
++            assert!(texts(md, &code.tokens).contains(&word), "{md:?}");
++            // Strict keeps the whitespace that blanks a fence in the prose.
++            if mode != Mode::Strict {
++                assert_maps_apart(md, &maps);
++            }
++            let display = tokenize("markdown", md, mode);
++            assert!(display.iter().any(|t| t.value == word), "{md:?}");
++        }
++    }
++
++    // Front matter that closes before the first fence, and front matter
++    // whose block scalar holds an indented `...`.
++    let md = "---\ntitle: Guide\n---\n\nSee the code.\n\n```js\nconst a = 1;\n```\n";
++    let maps = tokenize_to_detection_maps("markdown", md, &opts(Mode::Mild));
++    assert_eq!(formats_of(&maps), ["markdown", "javascript", "yaml"]);
++    assert_maps_apart(md, &maps);
++    let md = "---\ntitle: Stubs\nexample: |\n  def get(self, key):\n      ...\nauthor: someone\n---\n\nProse.\n";
++    let maps = tokenize_to_detection_maps("markdown", md, &opts(Mode::Mild));
++    let yaml = texts(md, &map(&maps, "yaml").expect("front matter").tokens);
++    assert!(
++        yaml.contains(&"author") && yaml.contains(&"someone"),
++        "{yaml:?}"
++    );
++    assert_eq!(
++        texts(md, &map(&maps, "markdown").expect("prose").tokens),
++        ["Prose", "."]
++    );
++}
++
++/// No byte of `source` lies in the tokens of two maps.
++fn assert_maps_apart(source: &str, maps: &[TokenMap]) {
++    let mut owner: Vec<Option<&str>> = vec![None; source.len()];
++    for m in maps {
++        for t in &m.tokens {
++            for (byte, slot) in owner
++                .iter_mut()
++                .enumerate()
++                .take(t.range[1])
++                .skip(t.range[0])
++            {
++                match *slot {
++                    Some(other) if other != m.format => panic!(
++                        "{source:?}: byte {byte} is in a {other} token and a {} token",
++                        m.format
++                    ),
++                    _ => *slot = Some(&m.format),
++                }
++            }
++        }
++    }
++}
++
+ #[test]
+ fn an_unclosed_component_block_leaves_the_file_as_markup() {
+     let vue = "<template><p>hi</p></template>\n<script>\nconst unclosed = 1;\n";
+@@ -595,21 +709,6 @@ fn a_shebang_names_the_interpreter_format() {
+ 
+ // ── known bugs ──────────────────────────────────────────────────────────
+ 
+
+```
+
+**File**: `rust/crates/cpd/tests/integration.rs` (modified, +50/-11)
+```diff
+@@ -209,6 +209,30 @@ fn config_dir(name: &str, files: &[(&str, &str)]) -> PathBuf {
+     dir
+ }
+ 
++/// Scan a temp dir named `name` that holds `files` with `args`, write the
++/// report outside it and return the report. Both dirs go before the exit is
++/// checked, so a scan that fails leaves nothing behind.
++fn scan_scratch_json(name: &str, files: &[(&str, &str)], args: &[&str]) -> serde_json::Value {
++    let root = config_dir(name, files);
++    let out = std::env::temp_dir().join(format!("cpd-{name}-report-{}", std::process::id()));
++    let output = Command::new(cpd_bin())
++        .args(args)
++        .args([
++            "--reporters",
++            "json,silent",
++            "--output",
++            out.to_str().unwrap(),
++        ])
++        .arg(&root)
++        .output()
++        .expect("failed to run cpd");
++    let report = std::fs::read_to_string(out.join("jscpd-report.json"));
++    let _ = std::fs::remove_dir_all(&root);
++    let _ = std::fs::remove_dir_all(&out);
++    assert!(output.status.success(), "scan failed: {}", output.status);
++    serde_json::from_str(&report.expect("the report")).expect("valid JSON")
++}
++
+ /// Run cpd inside `dir` (config auto-discovery), delete it, return stderr.
+ fn stderr_in_dir(dir: &std::path::Path) -> String {
+     let output = run_cpd_in_dir(dir).expect("cpd binary must exist");
+@@ -804,11 +828,7 @@ fn consistent_identifiers_keep_identical_text_whole_around_members() {
+     }
+     // The names one run finds a clone of, with its tokens.
+     let clones = |name: &str, files: &[(&str, &str)], args: &[&str]| -> Vec<u64> {
+-        let root = config_dir(name, files);
+-        let out = root.join("report");
+-        let (json, _) = scan_json(&root, &out, args);
+-        let _ = std::fs::remove_dir_all(&root);
+-        json["duplicates"]
++        scan_scratch_json(name, files, args)["duplicates"]
+             .as_array()
+             .unwrap()
+             .iter()
+@@ -886,6 +906,30 @@ fn consistent_identifiers_keep_identical_text_whole_around_members() {
+     );
+ }
+ 
++/// A Markdown page that starts with a horizontal rule and documents a
++/// Python stub (issue #1223): the `...` of the stub closed front matter that
++/// never opened, the two regions overlapped and the scan aborted. The fence
++/// is Python like any other.
++#[test]
++fn a_page_that_starts_with_a_rule_keeps_its_fences() {
++    if maybe_bin().is_none() {
++        return;
++    }
++    let page = "---\n\nThe protocol a store implements.\n\n```python\nclass Store(Protocol):\n    def get(self, key: str) -> bytes:\n        ...\n\n    def put(self, key: str, value: bytes) -> None:\n        ...\n```\n";
++    let json = scan_scratch_json(
++        "front-matter",
++        &[("store.md", page), ("cache.md", page)],
++        &["--min-tokens", "20", "--min-lines", "2"],
++    );
++    let formats: Vec<&str> = json["duplicates"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .map(|d| d["format"].as_str().unwrap())
++        .collect();
++    assert_eq!(formats, ["python"], "{json}");
++}
++
+ /// A Razor view is one stream of its HTML and of the C# of its `@` blocks,
+ /// in the order of the text (issue #1221). The HTML and then the C# went
+ /// back to line 1 where the C# began, and a clone across that seam ended
+@@ -940,16 +984,11 @@ fn a_razor_view_is_read_in_the_order_of_its_text() {
+             "<p class=\"total\">Listing",
+             1,
+         );
+-    let root = config_dir(
++    let json = scan_scratch_json(
+         "razor-seam",
+         &[("a.cshtml", page.as_str()), ("b.cshtml", changed.as_str())],
+-    );
+-    let (json, _) = scan_json(
+-        &root,
+-        &root.join("report"),
+         &["--min-tokens", "20", "--min-lines", "2"],
+     );
+-    let _ = std::fs::remove_dir_all(&root);
+     assert_eq!(clones(&json), [(1, 5), (5, 48), (48, 71)], "{json}");
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `765ebbaa` (2026-10-19)
+**Commit Message**: Merge pull request #1228 from kucherenko/fix/mcp-component-snippets
+
+fix(mcp): a component or Markdown snippet is checked block by block
+
+**File**: `docs/ai-ready.md` (modified, +1/-1)
+```diff
+@@ -165,7 +165,7 @@ Semantic clones need the embedding model on this machine (`jscpd --semantic-down
+ 
+ ### Tools
+ 
+-- `check_duplication(code, format, kinds?, limit?, similarity?)` compares a snippet with the scanned project, so you can reuse existing code instead of writing it again. A match has its `kind`, the file and lines of the project's copy and of the snippet's, and `tokens`. Similar and semantic matches add `similarity`, similar ones also `method` (`gap` or `ast`), and a match between two functions adds `name` (the project's) and `snippetName`. Exact matches come first, then renamed, similar and semantic ones. `similarity`, a ratio in `(0, 1]`, sets the threshold of ast matches for the call and asks for them; `1` finds functions of the same structure only. A request without `kinds` gets its ast matches under `similar` with `similarCount`, plus `similarNote` for a language without syntax trees, the way earlier versions answered. With `kinds`, every match is in `duplications`. `format` takes a format name (`javascript`) or a file extension (`js`).
++- `check_duplication(code, format, kinds?, limit?, similarity?)` compares a snippet with the scanned project, so you can reuse existing code instead of writing it again. A match has its `kind`, the `format` of the code that matched, the file and lines of the project's copy and of the snippet's, `lines`, the number of the project's lines that match, and `tokens`. Similar and semantic matches add `similarity`, similar ones also `method` (`gap` or `ast`), and a match between two functions adds `name` (the project's) and `snippetName`. Exact matches come first, then renamed, similar and semantic ones. `similarity`, a ratio in `(0, 1]`, sets the threshold of ast matches for the call and asks for them; `1` finds functions of the same structure only. A request without `kinds` gets its ast matches under `similar` with `similarCount`, plus `similarNote` for a language without syntax trees, the way earlier versions answered. With `kinds`, every match is in `duplications`. `format` takes a format name (`javascript`) or a file extension (`js`). A Markdown, Vue, Svelte or Astro snippet is split into blocks the way a scan splits such a file, so the code of a fence or a script matches code in its language and the markup of a component matches the markup of other components. By meaning, only the functions in the scripts of a component are compared. A snippet or a block of code in it shorter than `--min-tokens` matches nothing by tokens, and `note` says so.
+ - `get_file_clones(path, kinds?, limit?)` lists the clones of one file, for refactoring that file. `path` is relative to the scan root, as results show paths, or absolute.
+ - `get_statistics(kinds?)` returns the totals and per-format statistics of the last scan for the kinds asked, and the number of clones of each kind (`byKind`).
+ - `check_current_directory(kinds?, limit?)` scans the configured paths again and returns the new counts and clone list.
+```
+
+**File**: `rust/crates/cpd-core/src/detect.rs` (modified, +33/-0)
+```diff
+@@ -1296,6 +1296,7 @@ fn dedup_exact_clones(clones: &mut Vec<CpdClone>) {
+         let b_key = (&clone.fragment_b.source_id, clone.fragment_b.start.line);
+         if a_key > b_key {
+             std::mem::swap(&mut clone.fragment_a, &mut clone.fragment_b);
++            clone.unmatched_lines.swap(0, 1);
+         }
+     }
+ 
+@@ -1918,6 +1919,38 @@ mod tests {
+         assert_eq!(out[0].fragment_b.end.line, 10);
+     }
+ 
++    #[test]
++    fn the_unmatched_lines_of_a_fragment_stay_with_it_when_a_clone_is_ordered() {
++        // `z.md`'s block comes first in the pool, so its fragment is A until
++        // the clone is ordered by id. Line 3 of `z.md` is the host's, inside
++        // the fragment and matching nothing; ordered, the fragment is B and
++        // takes that line along.
++        let tokens = |lines: &[u32]| -> Vec<DetectionToken> {
++            lines
++                .iter()
++                .enumerate()
++                .map(|(i, &line)| tok(i as u64 + 1, i as u64 + 1, line))
++                .collect()
++        };
++        let mut block = PreparedSource::from_detection_tokens(
++            "z.md:javascript".into(),
++            "javascript".into(),
++            &tokens(&[1, 2, 4, 5, 6, 7, 8, 9, 10, 11]),
++        );
++        block.embedded = true;
++        let file = PreparedSource::from_detection_tokens(
++            "a.js".into(),
++            "javascript".into(),
++            &tokens(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
++        );
++        let clones = detect_prepared(vec![vec![block, file]], 5, 0, &PathFilters::default());
++        assert_eq!(clones.len(), 1, "{clones:#?}");
++        let clone = &clones[0];
++        assert_eq!(clone.fragment_a.source_id, "a.js");
++        assert_eq!(clone.unmatched_lines, [0, 1]);
++        assert_eq!((clone.fragment_lines(0), clone.fragment_lines(1)), (10, 10));
++    }
++
+     #[test]
+     fn merge_gapped_reports_renamed_halves_as_similar() {
+         let mut clones = vec![
+```
+
+**File**: `rust/crates/cpd-finder/src/orchestrate.rs` (modified, +7/-1)
+```diff
+@@ -478,6 +478,12 @@ pub struct FilePreparer<'a> {
+ /// prepared source of its own.
+ const MULTI_FORMAT_EXTS: &[&str] = &["md", "markdown", "mkd", "vue", "svelte", "astro"];
+ 
++/// Whether a file of `format` is detected by its blocks, each language in a
++/// prepared source of its own: Markdown and components.
++pub fn splits_blocks(format: &str) -> bool {
++    MULTI_FORMAT_EXTS.contains(&format)
++}
++
+ impl<'a> FilePreparer<'a> {
+     pub fn new(config: &'a RunConfig) -> Self {
+         Self {
+@@ -561,7 +567,7 @@ impl<'a> FilePreparer<'a> {
+         let reads_forms = self.want_functions
+             && cpd_similarity::reads(Path::new(below_root(&id, &self.roots)), format);
+ 
+-        if MULTI_FORMAT_EXTS.contains(&format) {
++        if splits_blocks(format) {
+             // Multi-format path: produce one PreparedSource per sub-format.
+             let maps = tokenize_to_detection_maps(format, content, &opts);
+ 
+```
+
+**File**: `rust/crates/cpd-semantic/src/search.rs` (modified, +81/-15)
+```diff
+@@ -327,40 +327,45 @@ pub fn pair_embedded(
+     Ok(embedded.clones(&rows, params, |_, _| true))
+ }
+ 
+-/// The functions of `sources` that the functions of `query` would pair
+-/// with if `query` were one more file of the project: a search for code
++/// The functions of `sources` that the functions of `queries` would pair
++/// with if `queries` were more files of the project: a search for code
+ /// that already does what a snippet does, before the snippet is written.
+-/// The rules are those of [`find_semantic_clones`] with `query` among the
++/// The queries are the blocks of one snippet, such as the scripts of a
++/// component, searched together as a scan searches the blocks of a file.
++/// The rules are those of [`find_semantic_clones`] with `queries` among the
+ /// sources, so a query function and a project function pair when each is
+ /// the other's near-best match and their similarity reaches the threshold
+ /// and stands out. Only the pairs with a query function are returned, each
+-/// as a semantic clone with one fragment in `query`.
++/// as a semantic clone with one fragment in a query.
+ ///
+ /// `vectors` are those of `sources` (see [`SourceVectors::embed`]); only
+-/// the query's functions are embedded, with [`Embedder::embed_once`], so a
++/// the queries' functions are embedded, with [`Embedder::embed_once`], so a
+ /// cache keeps the project's vectors. `existing` holds the clones already
+-/// found between the query and the project, which rule 1 leaves out. A
++/// found between the queries and the project, which rule 1 leaves out. A
+ /// project with fewer than two functions that count has nothing to match.
+ /// Fails only when the embedder does.
+ pub fn find_semantic_matches(
+-    query: &UnitSource,
++    queries: &[UnitSource],
+     sources: &[UnitSource],
+     vectors: &SourceVectors,
+     embedder: &dyn Embedder,
+     params: &SemanticParams,
+     existing: &[CpdClone],
+ ) -> Result<Vec<CpdClone>, String> {
+-    // The query's functions come first: `matched_pairs` sees each pair from
+-    // its lower index, which is then always the query's end.
+-    let all: Vec<&UnitSource> = std::iter::once(query).chain(sources).collect();
++    // The queries' functions come first: `matched_pairs` sees each pair from
++    // its lower index, which is then always a query's end.
++    let all: Vec<&UnitSource> = queries.iter().chain(sources).collect();
+     let items = eligible_items(&all, params);
+-    let asked = items.iter().take_while(|item| item.source == 0).count();
++    let asked = items
++        .iter()
++        .take_while(|item| item.source < queries.len())
++        .count();
+     if asked == 0 || vectors.vectors.is_empty() {
+         return Ok(Vec::new());
+     }
+     let texts: Vec<&str> = items[..asked]
+         .iter()
+-        .map(|item| query.units[item.unit].text.as_str())
++        .map(|item| all[item.source].units[item.unit].text.as_str())
+         .collect();
+     let mut all_vectors = embedder.embed_once(&texts)?;
+     all_vectors.extend(vectors.vectors.iter().cloned());
+@@ -1387,7 +1392,15 @@ mod tests {
+         existing: &[CpdClone],
+     ) -> Vec<CpdClone> {
+         let vectors = SourceVectors::embed(project, embedder, params).unwrap();
+-        find_semantic_matches(query, project, &vectors, embedder, params, existing).unwrap()
++        find_semantic_matches(
++            std::slice::from_ref(query),
++            project,
++            &vectors,
++            embedder,
++            params,
++            existing,
++        )
++        .unwrap()
+     }
+ 
+     #[test]
+@@ -1481,6 +1494,52 @@ mod tests {
+         assert!(found.is_empty(), "{found:#?}");
+     }
+ 
++    #[test]
++    fn the_blocks_of_a_snippet_are_searched_together() {
++        // `b1` implements `a` at 0.80 and `b2` at 0.77, each in a script of
++        // one component: as in a scan of the file, `b2` is a near-best match
++        // of `a` that is not the best one and needs the group floor, 0.8.
++        // Searched on its own, its block made `b2` the best match of `a`.
++        let project = with_backgrounds(vec![source(
++            "a.rs",
++            "rust",
++            vec![unit("rust", "a", 1, "pa")],
++        )]);
++        let blocks = [
++            source(
++                "snippet://check:typescript",
++                "typescript",
++                vec![unit("oxc", "b1", 1, "pb1")],
++            ),
++            source(
++                "snippet://check:javascript",
++                "javascript",
++                vec![unit("oxc", "b2", 20, "pb2")],
++            ),
++        ];
++        let embedder = embedder(&[
++            ("pa", vec_on(4, 5, 0.0)),
++            ("pb1", vec_on(4, 6, 0.75)),
++            ("pb2", vec_on(4, 7, 0.83)),
++        ]);
++        let loose = with_bars(Thresholds {
++            across: 0.5,
++            ..Thresholds::REFERENCE
++        });
++        let vectors = SourceVectors::embed(&project, &embedder, &loose).unwrap();
++        let found =
++            find_semantic_matches(&blocks, &proj
+```
+
+**File**: `rust/crates/cpd/src/mcp/project.rs` (modified, +217/-106)
+```diff
+@@ -34,10 +34,11 @@
+ use crate::index::{ScanIndex, host_file};
+ use crate::options::Options;
+ use cpd_core::detect::{PathFilters, PreparedSource, detect_prepared, merge_gapped_clones};
+-use cpd_core::models::Location;
+-use cpd_core::models::{CloneKind, CpdClone, KindFilter, SimilarityMethod, Statistics};
++use cpd_core::models::{
++    CloneKind, CpdClone, DetectionToken, KindFilter, Location, SimilarityMethod, Statistics,
++};
+ use cpd_finder::orchestrate::{
+-    RunConfig, build_thread_pool, canonicalize_all, pool_key, strip_types_formats,
++    RunConfig, build_thread_pool, canonicalize_all, pool_key, splits_blocks, strip_types_formats,
+ };
+ use cpd_finder::pass::{ClonePass, PassSource};
+ use cpd_semantic::search::{
+@@ -46,17 +47,27 @@ use cpd_semantic::search::{
+ use cpd_semantic::{SemanticOptions, UnitReader};
+ use cpd_similarity::{Coverage, FormSource, SimilarityIndex, discount_token_lines};
+ use cpd_tokenizer::tokenizer::{
+-    TokenizeOptions, code_ignore_ranges, compile_ignore_patterns, tokenize_to_detection,
++    TokenMap, TokenizeOptions, code_ignore_ranges, compile_ignore_patterns, tokenize_to_detection,
+     tokenize_to_detection_maps,
+ };
++use rayon::prelude::*;
+ use serde_json::Value;
+-use std::collections::HashMap;
++use std::collections::{BTreeMap, HashMap};
+ use std::path::{Path, PathBuf};
+ use std::sync::Arc;
+ use std::thread::JoinHandle;
+ 
+-/// The source id of the snippet a check compares with the project.
++/// The source id of the snippet a check compares with the project. A block
++/// of another language in it, a fence of a Markdown snippet or the script of
++/// a component, is `snippet://check:<format>`, as a scan names a block.
+ pub(super) const SNIPPET_ID: &str = "snippet://check";
++
++/// Whether `id` is the snippet's or one of its blocks'.
++pub(super) fn is_snippet(id: &str) -> bool {
++    id.strip_prefix(SNIPPET_ID)
++        .is_some_and(|rest| rest.is_empty() || rest.starts_with(':'))
++}
++
+ /// `--max-gap-lines` for gap clones when the options set none: a line or
+ /// two inserted, removed or changed in a copy.
+ const DEFAULT_GAP_LINES: usize = 2;
+@@ -705,24 +716,90 @@ impl Project {
+             code_ignore_regexes,
+             strip_types_formats: strip_types_formats(&run.cross_formats),
+         };
+-        let detection = tokenize_to_detection(&format, code, &options);
++        // The snippet split as a scan splits a file of its format: a
++        // Markdown file or a component into its blocks (issue #1224), each a
++        // source of its own named as a scan names a block, so detection, the
++        // merge across gaps and the ast coverage keep them apart. Not
++        // tokenize_to_detection_maps for every format: it would split a Razor
++        // view, which a scan reads as one stream since #1222.
++        let consistent = run.consistent_identifiers();
++        let maps = match splits_blocks(&format) {
++            true => tokenize_to_detection_maps(&format, code, &options),
++            false => vec![TokenMap {
++                format: format.clone(),
++                tokens: tokenize_to_detection(&format, code, &options),
++            }],
++        };
++        let mut blocks: Vec<PreparedSource> = maps
++            .iter()
++            .map(|map| {
++                // Only a different language is embedded.
++                let embedded = map.format != format;
++                let id = match embedded {
++                    true => format!("{SNIPPET_ID}:{}", map.format),
++                    false => SNIPPET_ID.to_string(),
++                };
++                snippet_source(id, &map.format, &map.tokens, consistent, embedded)
++            })
++            .collect();
+         // A snippet too small for the token passes still has its units
+-        // compared: --similarity does not apply --min-tokens to them.
+-        let short = detection.len() < run.min_tokens;
+-        if short {
+-            checked.note = Some(format!(
+-                "snippet has {} tokens, below the detection threshold of {} (--min-tokens)",
+-                detection.len(),
+-                run.min_tokens
++        // compared: --similarity does not apply --min-tokens to them. The
++        // note names the blocks of code below it, or the snippet when it has
++        // no code block.
++        let (min_tokens, min_lines) = (run.min_tokens, run.min_lines);
++        let small: Vec<String> = match blocks.iter().any(|block| block.embedded) {
++            true => blocks
++                .iter()
++                .filter(|block| block.embedded && block.hashes.len() < min_tokens)
++                .map(|block| format!("{} tokens of {}", block.hashes.len(), block.format))
++                .collect(),
++            false => {
++                let tokens: usize = blocks.iter().map(|block| block.hashes.len()).sum();
++                match tokens < min_tokens {
++                    true => vec![format!("{tokens} tokens")],
++                    false => Vec::new(),
++                }
++            }
++        };
++  
+```
+
+**File**: `rust/crates/cpd/src/mcp/tests.rs` (modified, +235/-0)
+```diff
+@@ -539,6 +539,241 @@ fn component_snippets_match_by_the_functions_of_their_scripts() {
+     assert!(found.get("unavailable").is_none(), "{found}");
+ }
+ 
++#[test]
++fn a_component_snippet_matches_by_the_tokens_of_its_script() {
++    // A scan detects a component by its blocks, each in the pool of its
++    // language, so the snippet goes by its blocks too (issue #1224). As one
++    // stream of format `vue` it met only components in Markdown fences.
++    let mut s = server(&project(&[("cart.vue", CART_VUE)]));
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        json!({ "code": CART_VUE, "format": "vue", "kinds": ["exact"] }),
++    ));
++    assert_eq!(found["count"], 1, "{found}");
++    let dup = &found["duplications"][0];
++    assert_eq!(
++        (&dup["file"], &dup["format"], &dup["snippetStartLine"]),
++        (&json!("cart.vue"), &json!("typescript"), &json!(5))
++    );
++}
++
++#[test]
++fn a_component_snippet_finds_its_copy_in_a_markdown_fence() {
++    // A scan reads a component in a ```vue fence as one stream of format
++    // `vue`, so the snippet looks for itself there whole.
++    let guide = format!("# Cart\n\n```vue\n{CART_VUE}```\n");
++    let mut s = server(&project(&[("cart.vue", CART_VUE), ("guide.md", &guide)]));
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        json!({ "code": CART_VUE, "format": "vue", "kinds": ["exact"] }),
++    ));
++    let mut files: Vec<(&str, &str)> = found["duplications"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .map(|d| (d["file"].as_str().unwrap(), d["format"].as_str().unwrap()))
++        .collect();
++    files.sort_unstable();
++    assert_eq!(
++        files,
++        [("cart.vue", "typescript"), ("guide.md", "vue")],
++        "{found}"
++    );
++}
++
++/// A component with a script of five tokens and the rest in its markup.
++const COUNTER_SVELTE: &str = "<script>\n  let count = 0;\n</script>\n\n<section class=\"counter\">\n  <h2>Counter</h2>\n  <p>The button was pressed {count} times.</p>\n  <button on:click={() => count += 1}>Press</button>\n</section>\n";
++
++#[test]
++fn a_block_of_code_too_short_to_match_is_named_in_the_note() {
++    // The markup matches; the script, five tokens long, cannot, and the
++    // answer says so as it does for a short snippet.
++    let mut s = server(&project(&[("counter.svelte", COUNTER_SVELTE)]));
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        json!({ "code": COUNTER_SVELTE, "format": "svelte", "kinds": ["exact"] }),
++    ));
++    assert_eq!(
++        found["note"],
++        "snippet has 5 tokens of javascript, below the detection threshold of 15 (--min-tokens)",
++        "{found}"
++    );
++    // The markup's match runs over the script and counts its lines only.
++    assert_eq!(found["count"], 1, "{found}");
++    let dup = &found["duplications"][0];
++    assert_eq!(
++        [
++            &dup["format"],
++            &dup["fileStartLine"],
++            &dup["fileEndLine"],
++            &dup["lines"]
++        ],
++        [&json!("html"), &json!(1), &json!(9), &json!(7)]
++    );
++    // A function too short in a fence of a page of prose, too.
++    let page = "# Counting\n\nThe counter starts at zero and goes up by one each time the button is pressed, and the page shows how many times that happened so far.\n\n```js\nlet count = 0;\n```\n";
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        json!({ "code": page, "format": "markdown", "kinds": ["exact"] }),
++    ));
++    assert_eq!(
++        found["note"],
++        "snippet has 5 tokens of javascript, below the detection threshold of 15 (--min-tokens)",
++        "{found}"
++    );
++}
++
++#[test]
++fn a_component_snippet_without_a_script_is_compared_as_markup_and_says_so() {
++    // A function sent as `vue` has no tags: all of it is markup, which
++    // matches no script, and the answer tells why.
++    let mut s = server(&project(&[("cart.vue", CART_VUE)]));
++    let script = CART_VUE.split("lang=\"ts\">\n").nth(1).unwrap();
++    let script = script.trim_end_matches("</script>\n");
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        json!({ "code": script, "format": "vue", "kinds": ["exact"] }),
++    ));
++    assert_eq!(found["count"], 0, "{found}");
++    assert_eq!(
++        found["note"], "the vue snippet has no script, so it was compared as markup",
++        "{found}"
++    );
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        json!({ "code": script, "format": "typescript", "kinds": ["exact"] }),
++    ));
++    assert_eq!(found["count"], 1, "{found}");
++}
++
++#[test]
++fn a_markdown_snippet_matches_by_its_code_blocks() {
++    let mut s = server(&project(&[("add.js", ADD)]));
++    let guide = format!("# Adding\n\nCall it with two numbers:\n\n```js\n{ADD}```\n");
++    let found = payload(&call(
++        &mut s,
++        "check_duplication",
++        j
+```
+
+**File**: `rust/crates/cpd/src/mcp/tools.rs` (modified, +12/-8)
+```diff
+@@ -13,7 +13,7 @@
+ //! error (`isError`), which the model reads and can correct; only an
+ //! unknown tool or a malformed request is a protocol error.
+ 
+-use super::project::{Checked, Kinds, Match, Project, SNIPPET_ID};
++use super::project::{Checked, Kinds, Match, Project, is_snippet};
+ use cpd_core::models::{CpdClone, SimilarityMethod};
+ use cpd_reporter::json_reporter::add_near_miss;
+ use serde_json::{Map, Value, json};
+@@ -96,7 +96,7 @@ pub(super) fn definitions(project: &Project) -> Value {
+         {
+             "name": "check_duplication",
+             "title": "Check a snippet for duplication",
+-            "description": "Check whether a code snippet duplicates code that already exists in the scanned project. Use it before writing or committing a function, class or block, to find the existing code you should reuse instead; pass kinds [\"exact\", \"renamed\", \"similar\"] to find copies with other names or edited lines as well. Returns {format, kinds, count, returned, duplications[]}, each duplication with 'kind', 'file', 'fileStartLine', 'fileEndLine', 'snippetStartLine', 'snippetEndLine' and 'tokens'; similar and semantic ones add 'similarity' (and 'method': gap or ast), and ast and semantic ones add 'name' (the name of the project's function) and 'snippetName'. Exact matches come first, then renamed, similar and semantic ones. A request without 'kinds' gets its ast matches under 'similar' with 'similarCount', as earlier versions answered. A snippet shorter than the server's --min-tokens (50 by default) cannot match and gets a 'note' saying so. Kinds that could not be searched are listed under 'unavailable' with the reason. The snippet is compared with the last scan: call check_current_directory first if files changed.",
++            "description": "Check whether a code snippet duplicates code that already exists in the scanned project. Use it before writing or committing a function, class or block, to find the existing code you should reuse instead; pass kinds [\"exact\", \"renamed\", \"similar\"] to find copies with other names or edited lines as well. Returns {format, kinds, count, returned, duplications[]}, each duplication with 'kind', 'format' (the language of the code that matched), 'file', 'fileStartLine', 'fileEndLine', 'lines' (how many of those lines match), 'snippetStartLine', 'snippetEndLine' and 'tokens'; similar and semantic ones add 'similarity' (and 'method': gap or ast), and ast and semantic ones add 'name' (the name of the project's function) and 'snippetName'. Exact matches come first, then renamed, similar and semantic ones. A request without 'kinds' gets its ast matches under 'similar' with 'similarCount', as earlier versions answered. A Markdown, Vue, Svelte or Astro snippet is split into blocks the way a scan splits such a file, so the code of a fence or a script matches code in its language; by meaning, only the functions in a component's scripts are compared. A snippet or a block of code in it shorter than the server's --min-tokens (50 by default) cannot match, and a 'note' says so. Kinds that could not be searched are listed under 'unavailable' with the reason. The snippet is compared with the last scan: call check_current_directory first if files changed.",
+             "inputSchema": {
+                 "type": "object",
+                 "properties": {
+@@ -367,9 +367,11 @@ fn check_duplication(project: &mut Project, args: &Args) -> Result<Value, String
+             let (snippet, file) = sides(project, m);
+             let mut value = json!({
+                 "kind": m.clone.kind.as_str(),
++                "format": m.clone.format,
+                 "file": file.0,
+                 "fileStartLine": file.1,
+                 "fileEndLine": file.2,
++                "lines": file.3,
+                 "snippetStartLine": snippet.0,
+                 "snippetEndLine": snippet.1,
+                 "tokens": m.clone.token_count,
+@@ -424,19 +426,21 @@ fn check_duplication(project: &mut Project, args: &Args) -> Result<Value, String
+     Ok(payload)
+ }
+ 
+-/// The snippet's lines in a match, then the project's file and lines, the
+-/// path as results show it.
+-fn sides(project: &Project, m: &Match) -> ((u32, u32), (String, u32, u32)) {
+-    let (snippet, file) = match m.clone.fragment_a.source_id == SNIPPET_ID {
+-        true => (&m.clone.fragment_a, &m.clone.fragment_b),
+-        false => (&m.clone.fragment_b, &m.clone.fragment_a),
++/// The snippet's lines in a match, then the project's file, its lines and
++/// how many of them match, the path as results show it. A match in a block
++/// of a file can span lines of other blocks, which match nothing.
++fn sides(project: &Project, m: &Match) -> ((u32, u32), (String, u32, u32, u64)) {
++    let (snippet, file, at) = match is_snippet(&m.clone.fragment_a.source_id) {
++        true => (&m.clone.fragment_a, &m.clone.fragment_b, 1),
++        false => (&m.clone.fragment_b, &m.clone.fragment_a, 0),
+     };
+     (
+         (snippet.start.line, snip
+```
+
+**File**: `rust/crates/cpd/tests/mcp_stdio.rs` (modified, +26/-1)
+```diff
+@@ -295,10 +295,20 @@ fn mcp_semantic_clones_and_compare_folders() {
+             "compare_folders",
+             json!({ "left": "backend", "right": "frontend", "limit": 0 }),
+         ),
++        // The same function in the script of a component (issue #1224).
++        tool_call(
++            5,
++            "check_duplication",
++            json!({
++                "code": format!("<script lang=\"ts\">\n{snippet}</script>\n\n<p>Total: {{total}}</p>\n"),
++                "format": "svelte",
++                "kinds": ["type4"],
++            }),
++        ),
+     ];
+     let (responses, output) = drive(child, &requests);
+     let stderr = String::from_utf8_lossy(&output.stderr);
+-    assert_eq!(responses.len(), 5, "{stderr}");
++    assert_eq!(responses.len(), 6, "{stderr}");
+ 
+     let scan = payload(&responses[1]);
+     assert_eq!(scan["kinds"], json!(["semantic"]));
+@@ -338,6 +348,21 @@ fn mcp_semantic_clones_and_compare_folders() {
+         names.contains(&"cart_total") || names.contains(&"cartTotal"),
+         "{checked}"
+     );
++    let component = payload(&responses[5]);
++    let found: Vec<(&str, &str, u64)> = component["duplications"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .map(|d| {
++            (
++                d["name"].as_str().unwrap(),
++                d["snippetName"].as_str().unwrap(),
++                d["snippetStartLine"].as_u64().unwrap(),
++            )
++        })
++        .collect();
++    let expected: Vec<(&str, &str, u64)> = names.iter().map(|&n| (n, "totalOfCart", 2)).collect();
++    assert_eq!(found, expected, "{component}");
+ 
+     let compared = payload(&responses[3]);
+     assert_eq!(compared["model"], "stand-in");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1218** (2026-10-18): feat(detect): --ignore-identifiers pairs a name with one name (@kucherenko)
-- **PR #1216** (2026-10-17): fix(deps): keep cargo audit in step with the zip ignores (@kucherenko)
-- **PR #1215** (2026-10-17): fix(deps): ignore three zip advisories about extracting an archive (@kucherenko)
-- **PR #1211** (2026-10-17): fix(semantic): count a JSX element of a component as a call (@cristianchiriac)
-- **PR #1209** (2026-10-16): chore(deps): bump taiki-e/install-action from 2.87.26 to 2.87.28 (@dependabot[bot])
-- **PR #1208** (2026-10-16): chore(deps): bump serde_json from 1.0.151 to 1.0.154 in /rust (@dependabot[bot])
+- **PR #1228** (2026-10-19): fix(mcp): a component or Markdown snippet is checked block by block (@kucherenko)
+- **PR #1227** (2026-10-19): feat(boundaries): rules that keep the code of a module in its boundary (@kucherenko)
+- **PR #1226** (2026-10-19): fix(markdown): front matter holds no code fence (@kucherenko)
+- **PR #1222** (2026-10-19): fix(razor): read a view in the order of its text (@kucherenko)
+- **PR #1220** (2026-10-19): feat(detect): --ignore-identifiers tells a member from a local (@kucherenko)
+- **PR #1219** (2026-10-19): feat(similarity): --similarity pairs a name with one name too (@kucherenko)
 
 ---
 
@@ -2448,38 +3173,28 @@ fix(semantic): count a JSX element of a component as a call
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): ignore three zip advisories about extracting an archive
+## X. razor): read a view in the order of its text
 
 **RULE**:
-When implementing operations in `rust/deny.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/rust.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e46f360`: deps): ignore three zip advisories about extracting an archive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a38ead8b`: razor): read a view in the order of its text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/deny.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/rust.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# zip 8.6.0 comes through candle-core 0.11.0 (--semantic), which asks for
-# ^8.6.0, so zip 9, which has the fixes, can't be used yet. These three
-# advisories are about extracting an archive (ZipArchive::extract and the
-# stream extraction API), and nothing in jscpd extracts one: candle opens
-# zip archives only to read .npz and PyTorch files, and jscpd loads its
-# models from safetensors. Drop them when candle moves to zip 9.
-ignore = [
-    { id = "RUSTSEC-2026-0367", reason = "zip via candle-core; jscpd extracts no archive" },
-    { id = "RUSTSEC-2026-0368", reason = "zip via candle-core; jscpd extracts no archive" },
-    { id = "RUSTSEC-2026-0369", reason = "zip via candle-core; jscpd extracts no archive" },
-]
+   - **Vue, Svelte, Astro** files are split into `<template>`, `<script>` and `<style>` blocks, and each block is tokenized as the language its `lang` attribute names. **Markdown** fences are tokenized as the language of the fence. **Razor** views tokenize the C# of their `@` expressions and blocks as C# and the rest as HTML, in one `razor` stream in the order of the text. Clones are reported with the line range of the block, and a `<script lang="ts">` block matches `.ts` files. The console, `ai` and HTML reports name a block by its file and language, as in `guide.md:markup`; the reports that tools read (JSON, XML, xcode, SARIF, Code Climate, EDN) and the language server name the file itself, so an editor opens it, and JSON gives the block's language as the clone's `format`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-ignore = []
+   - **Vue, Svelte, Astro** files are split into `<template>`, `<script>` and `<style>` blocks, and each block is tokenized as the language its `lang` attribute names. **Markdown** fences are tokenized as the language of the fence. **Razor** views separate C# from HTML. Clones are reported with the line range of the block, and a `<script lang="ts">` block matches `.ts` files. The console, `ai` and HTML reports name a block by its file and language, as in `guide.md:markup`; the reports that tools read (JSON, XML, xcode, SARIF, Code Climate, EDN) and the language server name the file itself, so an editor opens it, and JSON gives the block's language as the clone's `format`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e46f360` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a38ead8b` are properly handled with clean fallback behavior.

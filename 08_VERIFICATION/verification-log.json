@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-GS8E",
-    "timestamp": "2026-10-19T04:07:22.094Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-O9I1",
-    "timestamp": "2026-10-19T04:13:11.065Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "c80ae6055ce84f3871b3342fd8c628313f0d1d2b98b299a54e38b3c6a9d0eb6b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-O9KZ",
-    "timestamp": "2026-10-19T04:13:11.171Z",
-    "repository": "franken-ui/ui",
-    "learningId": "learn-github-franken-ui-ui",
-    "contentHash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-OBAK",
     "timestamp": "2026-10-19T04:13:13.388Z",
     "repository": "DataDog/glommio",
@@ -7490,6 +7445,51 @@
     "repository": "oliviertassinari/react-swipeable-views",
     "learningId": "learn-github-oliviertassinari-react-swipeable-views",
     "contentHash": "b3b44a6a373e5ac4a6f906bb15760c1001b219b13e3a38141a3121a05010471f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MSMM",
+    "timestamp": "2026-10-19T17:43:51.406Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "e5212e59101eae29a95454f4e8bf59c254936b425f2cb6ed5f84eb2a4ad01077",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MWIJ",
+    "timestamp": "2026-10-19T17:43:56.443Z",
+    "repository": "rainbow-me/rainbow",
+    "learningId": "learn-github-rainbow-me-rainbow",
+    "contentHash": "fabb61b17f22f64c6385c7474ba1ac14b3dd9fce5ce2383ad105de0a8eb8b9c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-N27Y",
+    "timestamp": "2026-10-19T17:44:03.838Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "28c91bb298f421f2ad037825dc1768d0e6368a222e6bb072df94ce3c60daaca1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

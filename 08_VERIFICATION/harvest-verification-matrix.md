@@ -3384,3 +3384,6 @@
 | `CYCLE-20261019-6SUF` | `2026-10-19T17:31:25.191Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2712` | Yes (`9d3e60f6...`) |
 | `CYCLE-20261019-6U6H` | `2026-10-19T17:31:26.922Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2713` | Yes (`942b2cbe...`) |
 | `CYCLE-20261019-EUZV` | `2026-10-19T17:37:41.227Z` | `oliviertassinari/react-swipeable-views` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2714` | Yes (`b3b44a6a...`) |
+| `CYCLE-20261019-MSMM` | `2026-10-19T17:43:51.406Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2715` | Yes (`e5212e59...`) |
+| `CYCLE-20261019-MWIJ` | `2026-10-19T17:43:56.443Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2716` | Yes (`fabb61b1...`) |
+| `CYCLE-20261019-N27Y` | `2026-10-19T17:44:03.838Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2717` | Yes (`28c91bb2...`) |

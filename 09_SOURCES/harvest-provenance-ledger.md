@@ -3391,3 +3391,6 @@ Every entry in this ledger must capture:
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `bc1136ba` | Multi-dimensional audit evidence | 2026-10-19T17:31:25.194Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `45eb1b50` | Multi-dimensional audit evidence | 2026-10-19T17:31:26.924Z |
 | `learn-github-oliviertassinari-react-swipeable-views` | `https://github.com/oliviertassinari/react-swipeable-views` | `c637ad7d` | Multi-dimensional audit evidence | 2026-10-19T17:37:41.229Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a69362a9` | Multi-dimensional audit evidence | 2026-10-19T17:43:51.409Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `0e6ad90a` | Multi-dimensional audit evidence | 2026-10-19T17:43:56.446Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `0521b006` | Multi-dimensional audit evidence | 2026-10-19T17:44:03.842Z |
