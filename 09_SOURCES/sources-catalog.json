@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "cc1d48a6b5cdb5bdd2b4cda0951f13c2ffe01269a9ea574b74dda8d54cf0759c",
-    "lastHarvestedAt": "2026-10-17T23:42:49.269Z",
+    "contentHash": "3fcf4ff49b144151d8918d40738f4acf8fce50ea6335e5916f6b6ae2795d52a2",
+    "lastHarvestedAt": "2026-10-19T05:32:50.617Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -6228,5 +6228,55 @@
     "contentHash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
     "lastHarvestedAt": "2026-10-19T05:25:41.715Z",
     "learningId": "learn-github-tursodatabase-libsql"
+  },
+  "yvgude-lean-ctx": {
+    "repository": "yvgude/lean-ctx",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yvgude/lean-ctx",
+    "sourceVersion": "2ef6632f",
+    "license": "Apache-2.0",
+    "contentHash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
+    "lastHarvestedAt": "2026-10-19T05:31:54.706Z",
+    "learningId": "learn-github-yvgude-lean-ctx"
+  },
+  "gkd-kit-gkd": {
+    "repository": "gkd-kit/gkd",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gkd-kit/gkd",
+    "sourceVersion": "5a3d485e",
+    "license": "GPL-3.0",
+    "contentHash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
+    "lastHarvestedAt": "2026-10-19T05:31:59.768Z",
+    "learningId": "learn-github-gkd-kit-gkd"
+  },
+  "envoyproxy-envoy": {
+    "repository": "envoyproxy/envoy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/envoyproxy/envoy",
+    "sourceVersion": "d7b74bd6",
+    "license": "Apache-2.0",
+    "contentHash": "22c37956ccab5d5249d7ce94eda9e971f62e4613d732549964a86343c4a81d48",
+    "lastHarvestedAt": "2026-10-19T05:32:02.382Z",
+    "learningId": "learn-github-envoyproxy-envoy"
+  },
+  "tursodatabase-limbo": {
+    "repository": "tursodatabase/turso",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tursodatabase/limbo",
+    "sourceVersion": "25f00f0a",
+    "license": "MIT",
+    "contentHash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
+    "lastHarvestedAt": "2026-10-19T05:32:07.853Z",
+    "learningId": "learn-github-tursodatabase-turso"
+  },
+  "carbon-design-system-carbon": {
+    "repository": "carbon-design-system/carbon",
+    "platform": "github",
+    "sourceUrl": "https://github.com/carbon-design-system/carbon",
+    "sourceVersion": "48192318",
+    "license": "Apache-2.0",
+    "contentHash": "e05c2a8268df9472f5d342dd7f38ce48b958c86ca2bbde5636fcdf1b49c1b68a",
+    "lastHarvestedAt": "2026-10-19T05:33:01.991Z",
+    "learningId": "learn-github-carbon-design-system-carbon"
   }
 }

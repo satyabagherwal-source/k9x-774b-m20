@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:25:41.668Z",
-  "total_verified_learnings": 642,
+  "last_updated": "2026-10-19T05:33:01.951Z",
+  "total_verified_learnings": 647,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3954,22 +3954,45 @@
     "learn-github-carbon-design-system-carbon": {
       "learning_id": "learn-github-carbon-design-system-carbon",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "carbon-design-system-carbon",
+      "source": "carbon-design-system/carbon",
+      "repository": "carbon-design-system/carbon",
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "HEAD",
-      "content_hash": "4f5c9ea94ba716298f809c6b1599e5cf7efe2b9a9383e20de4ed9fe3bb871104",
+      "source_version": "48192318",
+      "content_hash": "e05c2a8268df9472f5d342dd7f38ce48b958c86ca2bbde5636fcdf1b49c1b68a",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2192,
+          "title": "Controlled State Machine Equality Reconciliation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2193,
+          "title": "Portal-Isolated CSS Boundary Containment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2194,
+          "title": "Non-Linear Pagination State Self-Correction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.213Z"
+      "verified_at": "2026-10-19T05:33:01.941Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-caviraoss-longmemory": {
       "learning_id": "learn-github-caviraoss-longmemory",
@@ -7446,22 +7469,35 @@
     "learn-github-envoyproxy-envoy": {
       "learning_id": "learn-github-envoyproxy-envoy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "envoyproxy-envoy",
+      "source": "envoyproxy/envoy",
+      "repository": "envoyproxy/envoy",
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "HEAD",
-      "content_hash": "20af9598e091c168e94fca859ebc6e47e9df9207e47503c8bb239ee80adea20a",
+      "source_version": "d7b74bd6",
+      "content_hash": "22c37956ccab5d5249d7ce94eda9e971f62e4613d732549964a86343c4a81d48",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2187,
+          "title": "wasm: fix a regression for remote code (#48415)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.801Z"
+      "verified_at": "2026-10-19T05:32:02.332Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-eosphoros-ai-db-gpt": {
       "learning_id": "learn-github-eosphoros-ai-db-gpt",
@@ -9424,22 +9460,35 @@
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gkd-kit-gkd",
+      "source": "gkd-kit/gkd",
+      "repository": "gkd-kit/gkd",
       "slug": "gkd-kit-gkd",
       "platform": "github",
       "source_url": "https://github.com/gkd-kit/gkd",
-      "source_version": "HEAD",
-      "content_hash": "5df0f531c53d0279914f097c7412991920e4a1de27a4fb4bde2697ba181fe213",
+      "source_version": "5a3d485e",
+      "content_hash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
       "dossier_path": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2186,
+          "title": "stabilize subscription failure indicators and centralize subscription IDs",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.084Z"
+      "verified_at": "2026-10-19T05:31:59.718Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gluesql-gluesql": {
       "learning_id": "learn-github-gluesql-gluesql",
@@ -15584,7 +15633,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "cc1d48a6b5cdb5bdd2b4cda0951f13c2ffe01269a9ea574b74dda8d54cf0759c",
+      "content_hash": "3fcf4ff49b144151d8918d40738f4acf8fce50ea6335e5916f6b6ae2795d52a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -15624,6 +15673,21 @@
           "number": 1355,
           "title": "Entropic Normalization & Epsilon Floor in Optimal Transport Indexing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2189,
+          "title": "Sub-Channel Block-Quantized Matrix Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2190,
+          "title": "Multi-Head Latent Attention (MLA) LoRA Group Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2191,
+          "title": "Dynamic SwiGLU Output Saturation Bound Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15644,7 +15708,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-17T23:42:49.225Z",
+      "verified_at": "2026-10-19T05:32:50.567Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38668,22 +38732,35 @@
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tursodatabase-turso",
-      "slug": "tursodatabase-turso",
+      "source": "tursodatabase/turso",
+      "repository": "tursodatabase/turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "HEAD",
-      "content_hash": "c4258ffe963988e843bfa56f7de352fc1f6794fbc9aa34fc65c9c4ef296e7dba",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "25f00f0a",
+      "content_hash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2188,
+          "title": "Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.100Z"
+      "verified_at": "2026-10-19T05:32:07.803Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tusen-ai-naive-ui": {
       "learning_id": "learn-github-tusen-ai-naive-ui",
@@ -40853,22 +40930,35 @@
     "learn-github-yvgude-lean-ctx": {
       "learning_id": "learn-github-yvgude-lean-ctx",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "yvgude-lean-ctx",
+      "source": "yvgude/lean-ctx",
+      "repository": "yvgude/lean-ctx",
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "HEAD",
-      "content_hash": "f86341c4675297861c1ab860a774691e4c4557182919e742d06c36a36b6d78a8",
+      "source_version": "2ef6632f",
+      "content_hash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2185,
+          "title": "opencode): explain an unbound session; rules name only offered tools",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.495Z"
+      "verified_at": "2026-10-19T05:31:54.653Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zacharee-bifrost": {
       "learning_id": "learn-github-zacharee-bifrost",
@@ -78189,6 +78279,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:25:41.653Z"
+    },
+    "rule-2185": {
+      "learning_id": "rule-2185",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2185,
+      "title": "opencode): explain an unbound session; rules name only offered tools",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "2ef6632f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:31:54.653Z"
+    },
+    "rule-2186": {
+      "learning_id": "rule-2186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2186,
+      "title": "stabilize subscription failure indicators and centralize subscription IDs",
+      "source_url": "https://github.com/gkd-kit/gkd",
+      "source_version": "5a3d485e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:31:59.718Z"
+    },
+    "rule-2187": {
+      "learning_id": "rule-2187",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2187,
+      "title": "wasm: fix a regression for remote code (#48415)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "d7b74bd6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:32:02.332Z"
+    },
+    "rule-2188": {
+      "learning_id": "rule-2188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2188,
+      "title": "Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "25f00f0a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:32:07.803Z"
+    },
+    "rule-2189": {
+      "learning_id": "rule-2189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2189,
+      "title": "Sub-Channel Block-Quantized Matrix Scaling Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:32:50.567Z"
+    },
+    "rule-2190": {
+      "learning_id": "rule-2190",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2190,
+      "title": "Multi-Head Latent Attention (MLA) LoRA Group Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:32:50.567Z"
+    },
+    "rule-2191": {
+      "learning_id": "rule-2191",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2191,
+      "title": "Dynamic SwiGLU Output Saturation Bound Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:32:50.567Z"
+    },
+    "rule-2192": {
+      "learning_id": "rule-2192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2192,
+      "title": "Controlled State Machine Equality Reconciliation Invariant",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "48192318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:33:01.941Z"
+    },
+    "rule-2193": {
+      "learning_id": "rule-2193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2193,
+      "title": "Portal-Isolated CSS Boundary Containment Invariant",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "48192318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:33:01.941Z"
+    },
+    "rule-2194": {
+      "learning_id": "rule-2194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2194,
+      "title": "Non-Linear Pagination State Self-Correction Invariant",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "48192318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:33:01.941Z"
     }
   },
   "aliases": {

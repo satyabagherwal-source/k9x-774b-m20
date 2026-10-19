@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:25:41.718Z",
-  "total_cycles_completed": 2934,
-  "total_learnings_persisted": 2934,
-  "total_rules_promoted": 1968,
+  "last_updated": "2026-10-19T05:33:01.994Z",
+  "total_cycles_completed": 2940,
+  "total_learnings_persisted": 2940,
+  "total_rules_promoted": 1978,
   "history": [
-    {
-      "timestamp": "2026-10-19T01:35:03.600Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:41:06.651Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:41:06.800Z",
-      "repository": "react-component/slider",
-      "learningId": "learn-github-react-component-slider",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:41:08.286Z",
-      "repository": "mufeedvh/code2prompt",
-      "learningId": "learn-github-mufeedvh-code2prompt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:41:13.629Z",
-      "repository": "react-native-image-picker/react-native-image-picker",
-      "learningId": "learn-github-react-native-image-picker-react-native-image-picker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:41:16.316Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T01:41:20.523Z",
       "repository": "TaKO8Ki/gobang",
@@ -1403,6 +1361,48 @@
       "repository": "tursodatabase/libsql",
       "learningId": "learn-github-tursodatabase-libsql",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:31:54.710Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:31:59.771Z",
+      "repository": "gkd-kit/gkd",
+      "learningId": "learn-github-gkd-kit-gkd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:32:02.385Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:32:07.856Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:32:50.620Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:33:01.994Z",
+      "repository": "carbon-design-system/carbon",
+      "learningId": "learn-github-carbon-design-system-carbon",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

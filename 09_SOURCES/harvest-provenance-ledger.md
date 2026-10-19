@@ -2964,3 +2964,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-19T05:25:34.187Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `b60b8e74` | Multi-dimensional audit evidence | 2026-10-19T05:25:34.748Z |
 | `learn-github-tursodatabase-libsql` | `https://github.com/libsql/libsql` | `d8bc862d` | Multi-dimensional audit evidence | 2026-10-19T05:25:41.715Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `2ef6632f` | Multi-dimensional audit evidence | 2026-10-19T05:31:54.706Z |
+| `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `5a3d485e` | Multi-dimensional audit evidence | 2026-10-19T05:31:59.768Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `d7b74bd6` | Multi-dimensional audit evidence | 2026-10-19T05:32:02.382Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `25f00f0a` | Multi-dimensional audit evidence | 2026-10-19T05:32:07.853Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T05:32:50.617Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `48192318` | Multi-dimensional audit evidence | 2026-10-19T05:33:01.991Z |

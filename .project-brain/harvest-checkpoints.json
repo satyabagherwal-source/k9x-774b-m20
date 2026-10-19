@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:25:41.721Z",
+  "last_updated": "2026-10-19T05:33:01.997Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -633,14 +633,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "cc1d48a6b5cdb5bdd2b4cda0951f13c2ffe01269a9ea574b74dda8d54cf0759c",
-      "verified_at": "2026-10-17T23:42:49.272Z",
+      "content_hash": "3fcf4ff49b144151d8918d40738f4acf8fce50ea6335e5916f6b6ae2795d52a2",
+      "verified_at": "2026-10-19T05:32:50.622Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:42:49.272Z"
+      "last_updated": "2026-10-19T05:32:50.622Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -9457,6 +9457,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:25:41.720Z"
+    },
+    "yvgude/lean-ctx": {
+      "repository": "yvgude/lean-ctx",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yvgude-lean-ctx",
+      "content_hash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
+      "verified_at": "2026-10-19T05:31:54.712Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:31:54.712Z"
+    },
+    "gkd-kit/gkd": {
+      "repository": "gkd-kit/gkd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gkd-kit-gkd",
+      "content_hash": "6a6f2d737b402d4a5659384ea6939244cab8b80aee22e64728eb189cce65b1cd",
+      "verified_at": "2026-10-19T05:31:59.774Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:31:59.774Z"
+    },
+    "envoyproxy/envoy": {
+      "repository": "envoyproxy/envoy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-envoyproxy-envoy",
+      "content_hash": "22c37956ccab5d5249d7ce94eda9e971f62e4613d732549964a86343c4a81d48",
+      "verified_at": "2026-10-19T05:32:02.387Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:32:02.387Z"
+    },
+    "tursodatabase/turso": {
+      "repository": "tursodatabase/turso",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tursodatabase-turso",
+      "content_hash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
+      "verified_at": "2026-10-19T05:32:07.859Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:32:07.859Z"
+    },
+    "carbon-design-system/carbon": {
+      "repository": "carbon-design-system/carbon",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-carbon-design-system-carbon",
+      "content_hash": "e05c2a8268df9472f5d342dd7f38ce48b958c86ca2bbde5636fcdf1b49c1b68a",
+      "verified_at": "2026-10-19T05:33:01.996Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:33:01.996Z"
     }
   },
   "repos": {
