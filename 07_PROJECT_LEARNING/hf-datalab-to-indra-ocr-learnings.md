@@ -3,7 +3,7 @@
 > **Source Version**: `hf-datalab-t`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T03:08:59.824Z  
+> **Timestamp**: 2026-10-19T12:13:58.450Z  
 > **Learning ID**: `learn-huggingface-datalab-to-indra-ocr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/datalab-to/indra-ocr](https://huggingface.co/datalab-to/indra-ocr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T03:08:58.937Z  
+> **Harvest Timestamp**: 2026-10-19T12:13:57.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1053 downloads | 174 likes
+- **Stars / Engagement**: 2433 downloads | 216 likes
 
 ---
 

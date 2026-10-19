@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-T6HT",
-    "timestamp": "2026-10-19T01:01:03.137Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-TADS",
-    "timestamp": "2026-10-19T01:01:08.176Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-TBUT",
-    "timestamp": "2026-10-19T01:01:10.085Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "c448bb78b2baa7f4c3e912a38f95d73527b6bfeb566a5fa55eefee1a6cbc6404",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-13CD",
     "timestamp": "2026-10-19T01:07:12.301Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7445,51 @@
     "repository": "doobidoo/mcp-memory-service",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
     "contentHash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-UKEE",
+    "timestamp": "2026-10-19T12:13:58.598Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-UKJR",
+    "timestamp": "2026-10-19T12:13:58.791Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-UO4Z",
+    "timestamp": "2026-10-19T12:14:03.443Z",
+    "repository": "Juanpe/About-SwiftUI",
+    "learningId": "learn-github-juanpe-about-swiftui",
+    "contentHash": "932dc95cbcda5c7c4de352f8edcfa293a2f06af084ce1c214dcda2dec1da7c43",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "bb3baee6e16978513debf5d5ac74d9482453c639dbec0820bcbc616f1762fcd6",
-    "lastHarvestedAt": "2026-10-18T03:08:59.926Z",
+    "contentHash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
+    "lastHarvestedAt": "2026-10-19T12:13:58.601Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "5e5c65b2",
+    "sourceVersion": "4cb42676",
     "license": "NOASSERTION",
-    "contentHash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
-    "lastHarvestedAt": "2026-10-18T21:20:09.222Z",
+    "contentHash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
+    "lastHarvestedAt": "2026-10-19T12:13:58.794Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -7968,5 +7968,15 @@
     "contentHash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
     "lastHarvestedAt": "2026-10-19T12:07:46.716Z",
     "learningId": "learn-github-parthjadhav-app-store-screenshots"
+  },
+  "juanpe-about-swiftui": {
+    "repository": "Juanpe/About-SwiftUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Juanpe/About-SwiftUI",
+    "sourceVersion": "59a740fc",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "932dc95cbcda5c7c4de352f8edcfa293a2f06af084ce1c214dcda2dec1da7c43",
+    "lastHarvestedAt": "2026-10-19T12:14:03.446Z",
+    "learningId": "learn-github-juanpe-about-swiftui"
   }
 }

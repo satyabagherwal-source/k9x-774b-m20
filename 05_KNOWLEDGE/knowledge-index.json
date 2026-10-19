@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:07:53.982Z",
-  "total_verified_learnings": 811,
+  "last_updated": "2026-10-19T12:14:03.401Z",
+  "total_verified_learnings": 812,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -25675,22 +25675,35 @@
     "learn-github-juanpe-about-swiftui": {
       "learning_id": "learn-github-juanpe-about-swiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "juanpe-about-swiftui",
+      "source": "Juanpe/About-SwiftUI",
+      "repository": "Juanpe/About-SwiftUI",
       "slug": "juanpe-about-swiftui",
       "platform": "github",
       "source_url": "https://github.com/Juanpe/About-SwiftUI",
-      "source_version": "HEAD",
-      "content_hash": "e3bd9527e2e6313898efdb7a5bd96074ffa3fb9a72f62bda6f89100737273c17",
+      "source_version": "59a740fc",
+      "content_hash": "932dc95cbcda5c7c4de352f8edcfa293a2f06af084ce1c214dcda2dec1da7c43",
       "dossier_path": "07_PROJECT_LEARNING/juanpe-about-swiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juanpe-about-swiftui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2570,
+          "title": "Add \"SwiftUI Examples for Designers\" website",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.736Z"
+      "verified_at": "2026-10-19T12:14:03.390Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-juicedata-juicefs": {
       "learning_id": "learn-github-juicedata-juicefs",
@@ -28729,14 +28742,19 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "5e5c65b2",
-      "content_hash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
+      "source_version": "4cb42676",
+      "content_hash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
         {
           "number": 1714,
           "title": "deps): declare dirs as a Windows-only dependency (#4465)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2569,
+          "title": "templates): add expected_worktree_path_of_branch() template function (#4502)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28745,7 +28763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:20:09.177Z",
+      "verified_at": "2026-10-19T12:13:58.737Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52866,7 +52884,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "bb3baee6e16978513debf5d5ac74d9482453c639dbec0820bcbc616f1762fcd6",
+      "content_hash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [],
@@ -52875,7 +52893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T03:08:59.877Z",
+      "verified_at": "2026-10-19T12:13:58.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86894,6 +86912,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:07:53.965Z"
+    },
+    "rule-2569": {
+      "learning_id": "rule-2569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2569,
+      "title": "templates): add expected_worktree_path_of_branch() template function (#4502)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "4cb42676",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:13:58.737Z"
+    },
+    "rule-2570": {
+      "learning_id": "rule-2570",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2570,
+      "title": "Add \"SwiftUI Examples for Designers\" website",
+      "source_url": "https://github.com/Juanpe/About-SwiftUI",
+      "source_version": "59a740fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:14:03.390Z"
     }
   },
   "aliases": {

@@ -3230,3 +3230,6 @@ Every entry in this ledger must capture:
 | `learn-github-parthjadhav-app-store-screenshots` | `https://github.com/ParthJadhav/app-store-screenshots` | `5386f227` | Multi-dimensional audit evidence | 2026-10-19T12:07:46.716Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `696d4e28` | Multi-dimensional audit evidence | 2026-10-19T12:07:52.932Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a7c1f033` | Multi-dimensional audit evidence | 2026-10-19T12:07:54.032Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-19T12:13:58.601Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `4cb42676` | Multi-dimensional audit evidence | 2026-10-19T12:13:58.794Z |
+| `learn-github-juanpe-about-swiftui` | `https://github.com/Juanpe/About-SwiftUI` | `59a740fc` | Multi-dimensional audit evidence | 2026-10-19T12:14:03.446Z |

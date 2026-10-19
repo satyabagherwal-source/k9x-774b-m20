@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:07:54.036Z",
-  "total_cycles_completed": 3200,
-  "total_learnings_persisted": 3200,
-  "total_rules_promoted": 2357,
+  "last_updated": "2026-10-19T12:14:03.449Z",
+  "total_cycles_completed": 3203,
+  "total_learnings_persisted": 3203,
+  "total_rules_promoted": 2359,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:44:49.172Z",
-      "repository": "chakra-ui/chakra-ui",
-      "learningId": "learn-github-chakra-ui-chakra-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:44:50.813Z",
-      "repository": "sachaos/viddy",
-      "learningId": "learn-github-sachaos-viddy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:44:52.748Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:44:55.411Z",
       "repository": "kotest/kotest",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-19T12:07:54.036Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:13:58.606Z",
+      "repository": "datalab-to/indra-ocr",
+      "learningId": "learn-huggingface-datalab-to-indra-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:13:58.797Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:14:03.449Z",
+      "repository": "Juanpe/About-SwiftUI",
+      "learningId": "learn-github-juanpe-about-swiftui",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

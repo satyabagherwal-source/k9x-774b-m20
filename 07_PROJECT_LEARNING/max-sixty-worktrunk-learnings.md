@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `5e5c65b2`  
+> **Source Version**: `4cb42676`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:20:09.023Z  
+> **Timestamp**: 2026-10-19T12:13:58.523Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:20:08.736Z  
+> **Harvest Timestamp**: 2026-10-19T12:13:58.511Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9292 stars
+- **Stars / Engagement**: 9305 stars
 
 ---
 
@@ -2094,506 +2094,352 @@ impl LayoutConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0822c9a` (2026-10-13)
-**Commit Message**: fix(deps): declare dirs as a Windows-only dependency (#4465)
+### Incident Patch 1: `4cb42676` (2026-10-19)
+**Commit Message**: feat(templates): add expected_worktree_path_of_branch() template function (#4502)
 
-After #4436 removed the `dirs::data_dir()` fallbacks, the only remaining
-use of `dirs` is `dirs::document_dir()` inside `#[cfg(windows)]` in
-`src/shell/paths.rs` (`powershell_profile_paths`). The nightly
-`check-unused-dependencies` job runs `cargo udeps --all-targets` on
-Linux, and in [run
-38353472092](https://github.com/max-sixty/worktrunk/actions/runs/38353472092)
-it reports `dirs` as unused. This PR moves `dirs` into a
-`[target.'cfg(windows)'.dependencies]` table so Linux and macOS builds
-no longer pull it in. `Cargo.lock` is unchanged.
-
-I couldn't run `cargo udeps` locally because it needs a nightly
-toolchain. The Windows build in this PR's CI confirms that `dirs` still
-resolves where it's used.
-
-The same nightly run had a second, unrelated failure, a race in
-`test_promote_bare_repo_with_worktrees`. #4466 fixes it separately.
-
-Refs #4464 — automated triage
-
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
-
-**File**: `Cargo.toml` (modified, +4/-1)
+**File**: `docs/src/content/docs/hook.md` (modified, +7/-0)
 ```diff
-@@ -229,7 +229,6 @@ supports-hyperlinks = "3"
- home = "0.5.12"
- humantime = { version = "2.2", optional = true }
- once_cell = "1.21.4"
--dirs = "7.0"
- normalize-path = "0.2.1"
- path-slash = "0.2"
- pathdiff = "0.2"
-@@ -335,6 +334,10 @@ signal-hook = "0.4.1"
- # Safe FIONREAD snapshots bound cancellation drains even with continuous writers.
- rustix = "1.1.4"
+@@ -250,6 +250,7 @@ Templates also support functions for dynamic lookups:
+ | Function | Example | Description |
+ |----------|---------|-------------|
+ | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
++| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
  
-+[target.'cfg(windows)'.dependencies]
-+# The localized Documents folder that holds PowerShell profiles.
-+dirs = "7.0"
+ The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
+ 
+@@ -260,6 +261,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
+ setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
+ ```
+ 
++The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
 +
- [build-dependencies]
- vergen-gitcl = { version = "10.0.0", features = ["build"] }
++```bash
++wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
++```
++
+ ## Interactive hooks
  
+ Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
 ```
 
----
-
-### Incident Patch 2: `0c75655c` (2026-10-18)
-**Commit Message**: fix: resolve worktree arguments once and pass the resolved worktree through (#4496)
-
-Follow-up to the survey on #4493. Several commands resolved a worktree
-argument, kept only the branch or only the path, and looked the other
-half up again. Each re-lookup could disagree with the first. This
-resolves the argument once and passes the resolved worktree through.
-
-| Case | Before | After |
-|---|---|---|
-| `wt switch origin/feature` (`feature` has a worktree) | pre-switch
-hook got `branch=origin/feature` and no `target_worktree_path` | hook
-gets `branch=feature` and the worktree path |
-| `wt step promote <second copy>` of a branch checked out twice | acted
-on the first copy, failed partway, left the main worktree and that copy
-detached | refuses before touching anything, listing both checkouts |
-| the same with no argument from the second copy, or with the default
-branch checked out twice | same partial failure | same refusal |
-| `wt switch @` from a second copy or a detached worktree | landed in
-the first copy, or errored | `already_at` the current worktree |
-| bare-repo worktree-path warning for `@` / `-` / `pr:N` | skipped
-through a hand-kept list of shortcuts | names the branch the s
-
-**File**: `src/commands/context.rs` (modified, +1/-7)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +7/-0)
 ```diff
-@@ -59,13 +59,7 @@ impl CommandEnv {
-     /// named by path expands `{{ branch }}` to the branch checked out there.
-     pub fn for_selector(config: UserConfig, selector: &str) -> anyhow::Result<Self> {
-         let repo = Repository::current()?;
--        let worktree_path = repo.require_worktree(selector)?;
--        // Re-read the branch off the resolved worktree rather than the
--        // selector, which may have been the path. The lookup is against the
--        // cached worktree list `require_worktree` just walked.
--        let branch = repo
--            .worktree_at_path(&worktree_path)?
--            .and_then(|(_, branch)| branch);
-+        let (worktree_path, branch) = repo.require_worktree(selector)?;
+@@ -244,6 +244,7 @@ Templates also support functions for dynamic lookups:
+ | Function | Example | Description |
+ |----------|---------|-------------|
+ | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
++| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
  
-         Ok(Self {
-             repo: Repository::at(&worktree_path)?,
+ The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
+ 
+@@ -254,6 +255,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
+ setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
+ ```
+ 
++The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
++
++```bash
++wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
++```
++
+ ## Interactive hooks
+ 
+ Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
 ```
 
-**File**: `src/commands/hook_commands.rs` (modified, +3/-1)
+**File**: `skills/worktrunk/reference/hook.md` (modified, +7/-0)
 ```diff
-@@ -52,7 +52,8 @@ fn run_post_hook(
-             extra_vars,
-             name_filters,
-             FailureStrategy::Warn,
--        );
-+        )
-+        .map(drop);
-     }
+@@ -244,6 +244,7 @@ Templates also support functions for dynamic lookups:
+ | Function | Example | Description |
+ |----------|---------|-------------|
+ | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
++| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
  
-     // Filter path merges user + project matches into one pipeline (the user
-@@ -342,6 +343,7 @@ pub fn run_hook(
-             name_filters,
-             FailureStrategy::FailFast,
-         )
-+        .map(drop)
-     } else {
-         run_post_hook(
-             &ctx,
+ The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
+ 
+@@ -254,6 +255,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
+ setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
+ ```
+ 
++The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
++
++```bash
++wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
++```
++
+ ## Interactive hooks
+ 
+ Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
 ```
 
-**File**: `src/commands/hooks.rs` (modified, +9/-4)
+**File**: `src/cli/mod.rs` (modified, +7/-0)
 ```diff
-@@ -695,6 +695,8 @@ pub(crate) fn sourced_steps_to_foreground(
- /// The announcement shows the worktree path when commands run somewhere other
- /// than the user's cwd ([`crate::output::pre_hook_display_path`] — pre-hooks
- /// and manual `wt hook` invocations both run with the user still at cwd).
-+///
-+/// Returns whether any hook ran.
- pub(crate) fn run_hooks_foreground(
-     ctx: &CommandContext,
-     user_config: Option<&CommandConfig>,
-@@ -703,7 +705,7 @@ pub(crate) fn run_hooks_foreground(
-     extra_vars: &[(&str, &str)],
-     name_filters: &[String],
-     failure_strategy: FailureStrategy,
--) -> anyhow::Result<()> {
-+) -> anyhow::Result<bool> {
-     let sourced_steps = prepare_and_check(
-         ctx,
-         user_config,
-@@ -714,7 +716,7 @@ pub(crate) fn run_hooks_foreground(
-     )?;
+@@ -1874,6 +1874,7 @@ Templates also support functions for dynamic lookups:
+ | Function | Example | Description |
+ |----------|---------|-------------|
+ | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
++| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
  
-     if sourced_steps.is_empty() {
--        return Ok(());
-+        return Ok(false);
-     }
+ The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
  
-     let kind = PipelineKind::Hook {
-@@ -729,7 +731,8 @@ pub(crate) fn run_hooks_foreground(
-         ctx.repo,
-         ctx.worktree_path,
-         failure_strategy,
--    )
-+    )?;
-+    Ok(true)
- }
+@@ -1884,6 +1885,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
+ setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
+ ```
  
- /// Run a single hook type in the foreground for an operation (merge, switch,
-@@ -744,12 +747,14 @@ pub(crate) fn run_hooks_foreground(
- /// Project config comes from `ctx.repo.load_project_config()` — see the
- /// module-level "Which `.config/wt.toml` a hook reads" docs for which worktree
- /// `ctx.repo` is rooted at per hook type.
-+///
-+/// Returns whether any hook ran.
- pub(crate) fn execute_hook(
-     ctx: &CommandContext,
-     hook_type: HookType,
-     extra_vars: &[(&str, &str)],
-     failure_strategy: FailureStrategy,
--) -> anyhow::Result<()> {
-+) -> anyhow::Result<bool> {
-     let project_config = ctx.repo.load_project_config()?;
-     let user_hooks = ctx.config.hooks(ctx.project_id().as_deref());
-     run_hooks_foreground(
++The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
++
++```bash
++wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
++```
++
+ ## Interactive hooks
+ 
+ Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
 ```
 
-**File**: `src/commands/relocate.rs` (modified, +1/-1)
+**File**: `src/commands/worktree/resolve.rs` (modified, +1/-31)
 ```diff
-@@ -170,7 +170,7 @@ pub fn gather_candidates(
-     } else {
-         let mut selected: Vec<WorktreeInfo> = Vec::new();
-         for arg in filter_branches {
--            let path = repo.require_worktree(arg)?;
-+            let (path, _) = repo.require_worktree(arg)?;
-             let Some(wt) = worktrees.iter().find(|wt| paths_match(&path, &wt.path)) else {
-                 // Resolved, but pruned out above: its directory or `.git` is
-                 // gone, so there is nothing to move.
-```
-
-**File**: `src/commands/step/copy_ignored.rs` (modified, +8/-7)
-```diff
-@@ -7,7 +7,7 @@ use std::time::SystemTime;
- use anyhow::Context;
+@@ -9,7 +9,6 @@ use std::io::IsTerminal;
+ use std::path::PathBuf;
+ 
  use color_print::cformat;
- use worktrunk::copy::{copy_dir_recursive, copy_leaf};
--use worktrunk::git::Repository;
-+use worktrunk::git::{Repository, path_dir_name};
- use worktrunk::path::format_path_for_display;
- use worktrunk::progress::{Progress, format_bytes, format_reflink_paren};
- use worktrunk::styling::{
-@@ -67,7 +67,11 @@ pub fn step_copy_ignored(
- 
-     // Resolve source and destination worktree paths
-     let (source_path, source_context) = match from {
--        Some(branch) => (repo.require_worktree(branch)?, branch.to_string()),
-+        Some(selector) => {
-+            let (path, branch) = repo.require_worktree(selector)?;
-+            let context = branch.unwrap_or_else(|| path_dir_name(&path).to_string());
-+            (path, context)
-+        }
-         None => {
-             // Default source is the primary worktree (main worktree for normal repos,
-             // default branch worktree for bare repos).
-@@ -76,16 +80,13 @@ pub fn step_copy_ignored(
-                     "No primary worktree found (bare repo with no default branch worktree)"
-                 )
-             })?;
--            let context = path
--                .file_name()
--                .map(|n| n.to_string_lossy().into_owned())
--                .unwrap_or_default();
-+            let context = path_dir_name(&path).to_string();
-             (path, context)
-         }
-     };
- 
-     let dest_path = match to {
--        Some(branch) => repo.require_worktree(branch)?,
-+        Some(selector) => repo.require_worktree(selector)?.0,
-         None => repo.current_worktree().root()?,
-     };
- 
-```
-
-**File**: `src/commands/step/diff.rs` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ pub fn step_diff(
-     extra_args: &[String],
- ) -> anyhow::Result<()> {
-     let repo = match branch {
--        Some(b) => Repository::at(&Repository::current()?.require_worktree(b)?)?,
-+        Some(b) => Repository::at(Repository::current()?.require_worktree(b)?.0)?,
-         None => Repository::current()?,
-     };
-     let wt = repo.current_worktree();
-```
-
-**File**: `src/commands/step/promote.rs` (modified, +49/-46)
-```diff
-@@ -8,7 +8,7 @@ use anyhow::{Context, bail};
- use color_print::cformat;
+-use normalize_path::NormalizePath;
  use path_slash::PathExt as _;
- use worktrunk::copy::{copy_dir_recursive, copy_leaf};
--use worktrunk::git::Repository;
-+use worktrunk::git::{Repository, duplicated_branches};
- use worktrunk::path::format_path_for_display;
- use worktrunk::progress::Progress;
- use worktrunk::styling::{eprintln, hint_message, info_message, success_message, warning_message};
-@@ -184,36 +184,28 @@ pub enum PromoteResult {
-     AlreadyInMain(String),
- }
- 
--/// Resolve the branch to promote.
-+/// Resolve the worktree to promote, and its branch.
- ///
--/// An explicit argument goes through the worktree selector, so the branch can be
--/// named by its worktree's path as well as by name. With no argument: from the
--/// main worktree, restore the default branch; from a linked worktree, promote
--/// the current branch.
--fn resolve_target_branch(branch: Option<&str>, repo: &Repository) -> anyhow::Result<String> {
-+/// An explicit argument goes through the worktree selector, so it can name the
-+/// branch or its worktree's path. With no argument: from the main worktree,
-+/// restore the default branch (`^`); from a linked worktree, promote the
-+/// current one (`@`).
-+fn resolve_target(branch: Option<&str>, repo: &Repository) -> anyhow::Result<(PathBuf, String)> {
-     use worktrunk::git::GitError;
- 
--    if let Some(b) = branch {
--        // Promoting swaps two branches between worktrees, so a detached
--        // worktree has nothing to swap in.
--        return repo.require_selected_branch(b, "promote");
--    }
--
--    let current_wt = repo.current_worktree();
--    if !current_wt.is_linked()? {
--        // From main worktree with no args: restore default branch
--        repo.default_branch()
--            .ok_or_else(|| anyhow::anyhow!("Could not determine default branch"))
--    } else {
--        // From other worktree with no args: promote current branch
--        current_wt.branch()?.ok_or_else(|| {
--            GitError::DetachedHead {
--                action: Some("promote".into()),
--                worktree: None,
--            }
--            .into()
--        })
--    }
-+    let selector = match branch {
-+        Some(b) => b,
-+        None if repo.current_worktree().is_linked()? => "@",
-+        None => "^",
-+    };
-+    let (path, branch) = repo.require_worktree(selector)?;
-+    // Promoting swaps two branches between worktrees, so a detached worktree
-+    // has nothing to swap in.
-+    let branch = branch.ok_or_else(|| GitError::DetachedHead {
-+        action: Some("promote".into()),
-+        worktree: Some(path.clone()),
-+    })?;
-+    Ok((path, branch))
- }
- 
- /// Bail if a leftover staging dir exists from a previous interrupted promote —
-@@ -336,24 +328,31 @@ pub fn handle_promote(branch: Option<&str>) -> anyhow::Result<PromoteResult> {
-             worktree: Some(main_path.clone()),
-         })?;
- 
--    // Resolve the branch to promote (default_branch computed lazily, only when needed)
--    let target_branch = resolve_target_branch(branch, &repo)?;
-+    let (target_path, target_branch) = resolve_target(branch, &repo)?;
- 
-     // Check if target is already in main worktree
-     if target_branch == main_branch {
-         return Ok(PromoteResult::AlreadyInMain(target_branch));
-     }
- 
--    // Find the worktree with the target branch
--    let target_wt = worktrees
--        .iter()
--        .skip(1) // Skip main worktree
--        .find(|wt| wt.branch.as_deref() == Some(&target_branch))
--        .ok_or_else(|| GitError::WorktreeNotFound {
--            branch: target_branch.clone(),
--        })?;
--
--    let target_path = &target_wt.path;
-+    // The exchange checks each branch out in the other worktree, which git
-+    // refuses while a third worktree holds it — and by then both worktrees are
-+    // detached. Worktrunk never creates such a duplicate, but `git worktree
-+    // add --force` can.
-+    let duplicated = duplicated_branches(worktrees);
-+    for branch in [&main_branch, &target_branch] {
-+        if duplicated.contains(branch.as_str()) {
-+            let paths: Vec<_> = worktrees
-+                .iter()
-+                .filter(|wt| wt.branch.as_ref() == Some(branch))
-+                .map(|wt| format_path_for_display(&wt.path).to_string())
-+                .collect();
-+            return Err(anyhow::anyhow!(paths.join("\n")).context(cformat!(
-+                "Cannot promote: <bold>{branch}</> is checked out in {} worktrees",
-+                paths.len()
-+            )));
-+        }
-+    }
- 
-     // Bail early if a leftover staging dir exists from a previous interrupted promote —
-     // checked before `ensure_clean` so users see the recovery path first.
-@@ -362,7 +361,7 @@ pub fn handle_promote(branch: Option<&str>) -> anyhow::Result<PromoteResult> {
- 
-     // Ensure both worktrees are clean
-     let main_working_tree = repo.worktree_at(main_path);
--    let target_working_tree = repo.worktree_at(target_path);
-+    let target_working_tree = repo.worktr
-```
-
-**File**: `src/commands/worktree/resolve.rs` (modified, +1/-7)
-```diff
-@@ -131,6 +131,7 @@ fn template_references_repo_name(template: &str) -> bool {
- /// When a bare repo lives at a hidden path like `.git` or `.bare`, the `{{ repo }}`
- /// template variable resolves to that directory name, producing broken worktree paths.
- /// This function detects the situation and offers to set a project-level override.
-+/// `branch` is the branch the switch resolved to, which the example paths show.
- ///
- /// Returns `true` if config was modified (caller should use the updated config).
- pub fn offer_bare_repo_worktree_path_fix(
-@@ -142,13 +143,6 @@ pub fn offer_bare_repo_worktree_path_fix(
-         return Ok(false);
-     }
- 
--    // Symbolic identifiers (-, @, ^, pr:N, mr:N) haven't been resolved to a real
--    // branch name yet, so the example paths would be misleading. Skip the prompt;
--    // it will surface on the next switch with a concrete branch name.
--    if branch == "-" || branch == "@" || branch == "^" || branch.contains(':') {
--        return Ok(false);
--    }
--
-     let repo_path = repo.repo_path()?;
-     let repo_name = repo_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-     if !repo_name.starts_with('.') {
-```
-
----
-
-### Incident Patch 3: `00cf0ed9` (2026-10-17)
-**Commit Message**: fix(switch): name the configured worktree path in the bare-repo warning (#4491)
-
-In a bare repo at a hidden path (e.g. `project/.git`), `wt switch` warns
-that the configured `worktree-path` will place worktrees badly. The
-"worktrees will be at …" path in that warning was hard-coded to the
-default template's `{{ repo }}.{{ branch }}` shape, but the warning
-fires for any template that references `{{ repo }}`. So a custom
-template got a wrong prediction:
-
-```
-worktree-path = "{{ repo_path }}/../{{ repo }}-wt/{{ branch | sanitize }}"
-
-▲ Bare repo at project/.git — worktrees will be at project/.git.feature
-✓ Created branch feature and worktree @ …/project/.git-wt/feature
-```
-
-The example is now computed with `compute_worktree_path`, the same
-function the switch uses to place the worktree. It is shown relative to
-the project's parent, so the default template's output is unchanged (the
-existing `bare_repo_worktree_path_prompt_non_interactive_warning`
-snapshot still passes).
-
-`test_bare_repo_worktree_path_warning_uses_configured_template` sets the
-template above and asserts that the warning names
-`project/.git-wt/feature` and that the worktree lands there. Before the
-fix, it fails with the
-
-**File**: `src/commands/worktree/resolve.rs` (modified, +13/-4)
-```diff
-@@ -10,6 +10,7 @@ use std::path::PathBuf;
- 
- use color_print::cformat;
- use normalize_path::NormalizePath;
-+use path_slash::PathExt as _;
  use worktrunk::config::UserConfig;
  use worktrunk::git::Repository;
- use worktrunk::path::{format_path_for_display, paths_match};
-@@ -175,11 +176,19 @@ pub fn offer_bare_repo_worktree_path_fix(
-         .and_then(|n| n.to_str())
-         .unwrap_or("project");
- 
--    // Use the actual branch being switched to in example paths. Calling
--    // `sanitize_branch_name` keeps the displayed example aligned with what
--    // the `sanitize` Jinja filter applies inside `BARE_REPO_WORKTREE_PATH`.
-+    // Use the actual branch being switched to in example paths. The bad
-+    // example is where the configured template puts it, shown relative to
-+    // the project's parent when it lands there. Calling
-+    // `sanitize_branch_name` keeps the good example aligned with what the
-+    // `sanitize` Jinja filter applies inside `BARE_REPO_WORKTREE_PATH`.
-+    let bad_path = compute_worktree_path(repo, branch, config)?;
-+    let example_bad = repo_path
-+        .parent()
-+        .and_then(|p| p.parent())
-+        .and_then(|root| bad_path.strip_prefix(root).ok())
-+        .map(|rel| rel.to_slash_lossy().into_owned())
-+        .unwrap_or_else(|| format_path_for_display(&bad_path).to_string());
-     let sanitized = worktrunk::config::sanitize_branch_name(branch);
--    let example_bad = format!("{parent_name}/{repo_name}.{sanitized}");
-     let example_good = format!("{parent_name}/{sanitized}");
- 
-     let config_path_display = worktrunk::config::config_path_for_display();
-```
-
-**File**: `tests/integration_tests/bare_repository.rs` (modified, +30/-0)
-```diff
-@@ -2031,6 +2031,36 @@ fn test_bare_repo_worktree_path_prompt_non_interactive_warning() {
-     });
+@@ -31,36 +30,7 @@ pub fn compute_worktree_path(
+     branch: &str,
+     config: &UserConfig,
+ ) -> anyhow::Result<PathBuf> {
+-    let repo_root = repo.repo_path()?;
+-    let default_branch = repo.default_branch().unwrap_or_default();
+-    let is_bare = repo.is_bare()?;
+-
+-    // Default branch lives at repo root (main worktree), not a templated path.
+-    // Exception: bare repos have no main worktree, so all branches use templated paths.
+-    if !is_bare && branch == default_branch {
+-        return Ok(repo_root.to_path_buf());
+-    }
+-
+-    let repo_name = repo_root
+-        .file_name()
+-        .ok_or_else(|| {
+-            anyhow::anyhow!(
+-                "Repository path has no filename: {}",
+-                format_path_for_display(repo_root)
+-            )
+-        })?
+-        .to_str()
+-        .ok_or_else(|| {
+-            anyhow::anyhow!(
+-                "Repository path contains invalid UTF-8: {}",
+-                format_path_for_display(repo_root)
+-            )
+-        })?;
+-
+-    let project = repo.project_identifier().ok();
+-    let expanded_path = config.format_path(repo_name, branch, repo, project.as_deref())?;
+-
+-    Ok(repo_root.join(expanded_path).normalize())
++    config.expected_worktree_path(repo, branch)
  }
  
-+/// The warning names where the configured template puts the worktree, not
-+/// the default template's `{{ repo }}.{{ branch }}` shape.
-+#[test]
-+fn test_bare_repo_worktree_path_warning_uses_configured_template() {
-+    let test = setup_unconfigured_nested_bare_repo();
-+    let main_worktree = test.project_path().join("main");
-+    fs::write(
-+        test.config_path(),
-+        "skip-shell-integration-prompt = true\nworktree-path = \"{{ repo_path }}/../{{ repo }}-wt/{{ branch | sanitize }}\"\n",
-+    )
-+    .unwrap();
-+
-+    let mut cmd = wt_command();
-+    test.configure_wt_cmd(&mut cmd);
-+    cmd.args(["switch", "--create", "feature", "--no-cd"])
-+        .current_dir(&main_worktree);
-+    let output = cmd.output().unwrap();
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(output.status.success(), "{stderr}");
-+
-+    assert!(
-+        stderr.contains("worktrees will be at project/.git-wt/feature"),
-+        "warning should name the configured path, got: {stderr}"
+ /// Check if a worktree is at its expected path based on config template.
+```
+
+**File**: `src/config/expansion.rs` (modified, +30/-0)
+```diff
+@@ -956,6 +956,34 @@ pub fn template_environment(repo: &Repository) -> Environment<'static> {
+             .unwrap_or_default()
+     });
+ 
++    // Register expected_worktree_path_of_branch: where `wt switch --create` would put a
++    // branch's worktree, whether or not one exists there. Rendering the
++    // `worktree-path` template re-enters this environment, so a template
++    // that calls the function errors rather than recursing.
++    let repo_clone = repo.clone();
++    env.add_function(
++        "expected_worktree_path_of_branch",
++        move |branch: String| -> Result<String, minijinja::Error> {
++            thread_local! {
++                static IN_EXPECTED_WORKTREE_PATH_OF_BRANCH: std::cell::Cell<bool> =
++                    const { std::cell::Cell::new(false) };
++            }
++            if IN_EXPECTED_WORKTREE_PATH_OF_BRANCH.replace(true) {
++                return Err(minijinja::Error::new(
++                    ErrorKind::InvalidOperation,
++                    "expected_worktree_path_of_branch cannot be used in the worktree-path template",
++                ));
++            }
++            let result = repo_clone
++                .user_config()
++                .expected_worktree_path(&repo_clone, &branch);
++            IN_EXPECTED_WORKTREE_PATH_OF_BRANCH.set(false);
++            result
++                .map(|p| to_posix_path(&p.to_string_lossy()))
++                .map_err(|e| minijinja::Error::new(ErrorKind::InvalidOperation, format!("{e:#}")))
++        },
 +    );
-+    assert!(
-+        test.project_path().join(".git-wt").join("feature").exists(),
-+        "worktree should be where the warning said"
++
+     env
+ }
+ 
+@@ -1133,6 +1161,8 @@ pub fn validate_template(
+ /// # Functions
+ /// - `worktree_path_of_branch(branch)` — Look up the filesystem path of a branch's worktree
+ ///   Returns empty string if branch has no worktree.
++/// - `expected_worktree_path_of_branch(branch)` — Where `wt switch` expects the branch's worktree,
++///   from the `worktree-path` template. Returns the path whether or not it exists.
+ ///
+ /// The `name` parameter appears in error messages to help identify which template failed.
+ pub fn expand_template(
+```
+
+**File**: `src/config/user/accessors.rs` (modified, +47/-0)
+```diff
+@@ -4,10 +4,14 @@
+ //! project by merging global settings with project-specific overrides.
+ 
+ use std::collections::{BTreeMap, HashMap};
++use std::path::PathBuf;
++
++use normalize_path::NormalizePath;
+ 
+ use crate::config::HooksConfig;
+ use crate::config::commands::CommandConfig;
+ use crate::config::expansion::expand_template;
++use crate::path::format_path_for_display;
+ use crate::shell_exec::ShellEscapeMode;
+ 
+ use super::UserConfig;
+@@ -271,4 +275,47 @@ impl UserConfig {
+         )
+         .map(|p| shellexpand::tilde(&p).into_owned())?)
+     }
++
++    /// Compute the expected worktree path for a branch name.
++    ///
++    /// For the default branch, returns the repo root (main worktree location).
++    /// For other branches, applies the `worktree-path` template from config.
++    ///
++    /// Uses cached values from Repository for `default_branch` and `is_bare`.
++    pub fn expected_worktree_path(
++        &self,
++        repo: &crate::git::Repository,
++        branch: &str,
++    ) -> anyhow::Result<PathBuf> {
++        let repo_root = repo.repo_path()?;
++        let default_branch = repo.default_branch().unwrap_or_default();
++        let is_bare = repo.is_bare()?;
++
++        // Default branch lives at repo root (main worktree), not a templated path.
++        // Exception: bare repos have no main worktree, so all branches use templated paths.
++        if !is_bare && branch == default_branch {
++            return Ok(repo_root.to_path_buf());
++        }
++
++        let repo_name = repo_root
++            .file_name()
++            .ok_or_else(|| {
++                anyhow::anyhow!(
++                    "Repository path has no filename: {}",
++                    format_path_for_display(repo_root)
++                )
++            })?
++            .to_str()
++            .ok_or_else(|| {
++                anyhow::anyhow!(
++                    "Repository path contains invalid UTF-8: {}",
++                    format_path_for_display(repo_root)
++                )
++            })?;
++
++        let project = repo.project_identifier().ok();
++        let expanded_path = self.format_path(repo_name, branch, repo, project.as_deref())?;
++
++        Ok(repo_root.join(expanded_path).normalize())
++    }
+ }
+```
+
+**File**: `tests/integration_tests/eval.rs` (modified, +63/-0)
+```diff
+@@ -203,3 +203,66 @@ fn test_eval_commit_matches_head_sha(repo: TestRepo) {
+         "eval commit should match HEAD SHA"
+     );
+ }
++
++/// `expected_worktree_path_of_branch` renders the `worktree-path` template for a branch
++/// even when another branch occupies that path, which is where
++/// `worktree_path_of_branch` comes back empty.
++#[rstest]
++fn test_eval_expected_worktree_path_of_branch(repo: TestRepo) {
++    repo.write_test_config(
++        "worktree-path = \"{{ repo_path }}/../{{ repo }}.wt.{{ branch | sanitize }}\"\n",
 +    );
++    let repo_name = repo.root_path().file_name().unwrap().to_str().unwrap();
++    let occupied = repo
++        .root_path()
++        .parent()
++        .unwrap()
++        .join(format!("{repo_name}.wt.feature-x"));
++    repo.run_git(&["worktree", "add", "-b", "other", occupied.to_str().unwrap()]);
++
++    let output = repo
++        .wt_command()
++        .args([
++            "step",
++            "eval",
++            "{{ expected_worktree_path_of_branch('feature/x') }}|{{ worktree_path_of_branch('feature/x') }}|{{ expected_worktree_path_of_branch('main') }}",
++        ])
++        .output()
++        .unwrap();
++    assert!(
++        output.status.success(),
++        "stderr: {}",
++        String::from_utf8_lossy(&output.stderr)
++    );
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let parts: Vec<&str> = stdout.trim().split('|').collect();
++    let file_name = |p: &str| p.rsplit(['/', '\\']).next().unwrap().to_string();
++    assert_eq!(file_name(parts[0]), format!("{repo_name}.wt.feature-x"));
++    assert_eq!(parts[1], "");
++    // The default branch lives at the repo root, not a templated path.
++    assert_eq!(file_name(parts[2]), repo_name);
 +}
 +
- /// Symbolic identifiers (-, @, pr:N) are passed before branch resolution, so
- /// the example paths in the prompt would show the raw symbol. The function
- /// must return early without prompting.
++/// A `worktree-path` template that calls `expected_worktree_path_of_branch` errors
++/// instead of recursing.
++#[rstest]
++fn test_eval_expected_worktree_path_of_branch_in_worktree_path_template(repo: TestRepo) {
++    repo.write_test_config("worktree-path = \"{{ expected_worktree_path_of_branch(branch) }}\"\n");
++    let output = repo
++        .wt_command()
++        .args([
++            "step",
++            "eval",
++            "{{ expected_worktree_path_of_branch('feature') }}",
++        ])
++        .output()
++        .unwrap();
++    assert_eq!(output.status.code(), Some(1));
++    assert!(
++        String::from_utf8_lossy(&output.stderr).contains(
++            "expected_worktree_path_of_branch cannot be used in the worktree-path template"
++        ),
++        "stderr: {}",
++        String::from_utf8_lossy(&output.stderr)
++    );
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4502** (2026-10-19): feat(templates): add expected_worktree_path_of_branch() template function (@worktrunk-bot)
 - **PR #4498** (2026-10-18): fix: identify detached worktrees by their paths (@max-sixty)
 - **PR #4497** (2026-10-18): fix(switch): return `wt switch -` to the worktree it left, not the first checkout of its branch (@max-sixty)
 - **PR #4496** (2026-10-18): fix: resolve worktree arguments once and pass the resolved worktree through (@max-sixty)
 - **PR #4495** (2026-10-17): Honor resolved paths and forge settings (@max-sixty)
 - **PR #4494** (2026-10-17): docs(statusline): clarify the footer spacing allowance (@max-sixty)
-- **PR #4493** (2026-10-17): fix(switch): resolve a worktree path for pre-switch hook variables (@worktrunk-bot)
 
 ---
 
@@ -2613,31 +2459,34 @@ fix, it fails with the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): declare dirs as a Windows-only dependency (#4465)
+## X. templates): add expected_worktree_path_of_branch() template function (#4502)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/content/docs/hook.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0822c9a`: deps): declare dirs as a Windows-only dependency (#4465). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4cb42676`: templates): add expected_worktree_path_of_branch() template function (#4502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/docs/hook.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[target.'cfg(windows)'.dependencies]
-# The localized Documents folder that holds PowerShell profiles.
-dirs = "7.0"
+| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
+The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
+
+```bash
+wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
+```
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-dirs = "7.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0822c9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4cb42676` are properly handled with clean fallback behavior.

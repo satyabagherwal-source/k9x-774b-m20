@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T12:07:54.039Z",
+  "last_updated": "2026-10-19T12:14:03.452Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2704,14 +2704,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
-      "content_hash": "bb3baee6e16978513debf5d5ac74d9482453c639dbec0820bcbc616f1762fcd6",
-      "verified_at": "2026-10-18T03:08:59.930Z",
+      "content_hash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
+      "verified_at": "2026-10-19T12:13:58.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:08:59.930Z"
+      "last_updated": "2026-10-19T12:13:58.610Z"
     },
     "chrisryugj/kordoc": {
       "repository": "chrisryugj/kordoc",
@@ -3619,14 +3619,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
-      "verified_at": "2026-10-18T21:20:09.228Z",
+      "content_hash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
+      "verified_at": "2026-10-19T12:13:58.800Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:20:09.228Z"
+      "last_updated": "2026-10-19T12:13:58.800Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -11982,6 +11982,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T12:07:46.722Z"
+    },
+    "Juanpe/About-SwiftUI": {
+      "repository": "Juanpe/About-SwiftUI",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-juanpe-about-swiftui",
+      "content_hash": "932dc95cbcda5c7c4de352f8edcfa293a2f06af084ce1c214dcda2dec1da7c43",
+      "verified_at": "2026-10-19T12:14:03.452Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T12:14:03.452Z"
     }
   },
   "repos": {
