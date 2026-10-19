@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source**: github ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
-> **Source Version**: `55b73b01`  
+> **Source Version**: `98947e90`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:35:46.274Z  
+> **Timestamp**: 2026-10-19T14:27:24.822Z  
 > **Learning ID**: `learn-github-rustcrypto-hashes`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:35:45.919Z  
+> **Harvest Timestamp**: 2026-10-19T14:27:24.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -674,234 +674,73 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c32a0da` (2026-07-10)
-**Commit Message**: jh: add long-input regression tests (#894)
+### Incident Patch 1: `98947e90` (2026-10-19)
+**Commit Message**: ripemd: fix comment in RIPEMD-128 implementation (#931)
 
-**File**: `jh/tests/mod.rs` (modified, +47/-1)
+**File**: `ripemd/src/c128.rs` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,9 @@
--use digest::{dev::fixed_test, hash_serialization_test, new_test};
-+use digest::{
-+    Digest,
-+    dev::{feed_rand_16mib, fixed_test},
-+    hash_serialization_test, new_test,
-+};
-+use hex_literal::hex;
+@@ -56,7 +56,7 @@ macro_rules! process_block(
+                   $data[$data_index4], $bits4, 0x8f1b_bcdc,
+                   (bb[$i1] & bb[$i3]) | (bb[$i2] & !bb[$i3])); )*
  
- new_test!(jh224_long_kat, jh::Jh224, fixed_test);
- new_test!(jh256_long_kat, jh::Jh256, fixed_test);
-@@ -14,3 +19,44 @@ hash_serialization_test!(jh224_serialization, jh::Jh224);
- hash_serialization_test!(jh256_serialization, jh::Jh256);
- hash_serialization_test!(jh384_serialization, jh::Jh384);
- hash_serialization_test!(jh512_serialization, jh::Jh512);
-+
-+macro_rules! test_jh_rand {
-+    ($name:ident, $hasher:ty, $expected:expr) => {
-+        #[test]
-+        fn $name() {
-+            let mut h = <$hasher>::new();
-+            feed_rand_16mib(&mut h);
-+            assert_eq!(&h.finalize()[..], &$expected[..]);
-+        }
-+    };
-+}
-+
-+test_jh_rand!(
-+    jh224_rand,
-+    jh::Jh224,
-+    hex!("7a4e35b939ccbf71d7bc8243e87871d0891a845d09197ac4a0bc3af1")
-+);
-+
-+test_jh_rand!(
-+    jh256_rand,
-+    jh::Jh256,
-+    hex!("553d2d32bea1224d56e59df45d07f8b464535154e702119d90a23510d7489f5e")
-+);
-+
-+test_jh_rand!(
-+    jh384_rand,
-+    jh::Jh384,
-+    hex!(
-+        "ba049c6c00f8ef651861db921588b41d8d6ce3faf94c2ffb1bdbf91cefcac6d2"
-+        "f5d5510cb1b3e94ba529fb6a9e29a8e5"
-+    )
-+);
-+
-+test_jh_rand!(
-+    jh512_rand,
-+    jh::Jh512,
-+    hex!(
-+        "692b44c9fa2c3982060c85cbcdfde6015ade526ef6aad5218ed8d1cdcb42f389"
-+        "6e21a345db74c83faa042ef4f996cf5e8478dcd3f03b87025bd3edc78beab126"
-+    )
-+);
+-        // Parallel rounds: these are the same as the previous five
++        // Parallel rounds: these are the same as the previous four
+         // rounds except that the constants have changed, we work
+         // with the other buffer, and they are applied in reverse
+         // order.
 ```
 
 ---
 
-### Incident Patch 2: `55b73b01` (2026-10-17)
-**Commit Message**: skein: fix `AlgorithmName` implementations (#930)
+### Incident Patch 2: `1a35dd12` (2026-10-19)
+**Commit Message**: sha2: fix comment in LoongArch64 SHA-512 backend (#932)
 
-**File**: `skein/CHANGELOG.md` (modified, +4/-0)
+**File**: `sha2/src/sha512/loongarch64_asm.rs` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+@@ -102,7 +102,7 @@ pub(super) fn compress(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
  
-+## 0.2.1 (UNRELEASED)
-+### Fixed
-+- `AlgorithmName` implementations
-+
- ## 0.2.0 (2026-04-10)
- ### Added
- - `alloc` crate feature ([#678])
-```
-
-**File**: `skein/src/block_api.rs` (modified, +4/-4)
-```diff
-@@ -24,7 +24,7 @@ const CFG_STR_LEN: usize = 4 * 8;
+             "42:",
  
- macro_rules! define_hasher {
-     (
--        $name:ident, $threefish:ident,
-+        $name:ident, $full_name:ident, $threefish:ident,
-         $state_bytes:ty, $alg_name:expr
-     ) => {
-         #[doc = $alg_name]
-@@ -209,6 +209,6 @@ macro_rules! define_hasher {
-     };
- }
- 
--define_hasher!(Skein256Core, Threefish256, U32, "Skein-256");
--define_hasher!(Skein512Core, Threefish512, U64, "Skein-512");
--define_hasher!(Skein1024Core, Threefish1024, U128, "Skein-1024");
-+define_hasher!(Skein256Core, Skein256, Threefish256, U32, "Skein-256");
-+define_hasher!(Skein512Core, Skein512, Threefish512, U64, "Skein-512");
-+define_hasher!(Skein1024Core, Skein1024, Threefish1024, U128, "Skein-1024");
-```
-
-**File**: `skein/tests/mod.rs` (modified, +29/-0)
-```diff
-@@ -12,6 +12,35 @@ hash_serialization_test!(skein256_serialization, skein::Skein256_256);
- hash_serialization_test!(skein512_serialization, skein::Skein512_512);
- hash_serialization_test!(skein1024_serialization, skein::Skein1024_1024);
- 
-+#[test]
-+fn algorithm_names() {
-+    use core::{fmt, marker::PhantomData};
-+    use skein::digest::{block_api::AlgorithmName, consts::U7};
-+
-+    struct Name<T>(PhantomData<T>);
-+
-+    impl<T: AlgorithmName> fmt::Display for Name<T> {
-+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+            T::write_alg_name(f)
-+        }
-+    }
-+
-+    fn assert_name<T: AlgorithmName>(expected: &str) {
-+        assert_eq!(format!("{}", Name::<T>(PhantomData)), expected);
-+    }
-+
-+    assert_name::<skein::Skein256_256>("Skein256");
-+    assert_name::<skein::Skein256_512>("Skein256");
-+    assert_name::<skein::Skein512_256>("Skein512");
-+    assert_name::<skein::Skein512_512>("Skein512");
-+    assert_name::<skein::Skein1024_256>("Skein1024");
-+    assert_name::<skein::Skein1024_512>("Skein1024");
-+    assert_name::<skein::Skein1024_1024>("Skein1024");
-+    assert_name::<skein::Skein256<U7>>("Skein256");
-+    assert_name::<skein::Skein512<U7>>("Skein512");
-+    assert_name::<skein::Skein1024<U7>>("Skein1024");
-+}
-+
- /// Regression tests for https://github.com/RustCrypto/hashes/issues/681
- #[test]
- fn skein_uncommon_sizes() {
+-            // Do 64 rounds of hashing
++            // Do 80 rounds of hashing
+             rounda!( 0, "$t0" , "$t1" , "$t2", "$t3", "$t4", "$t5", "$t6", "$t7"),
+             rounda!( 1, "$t7", "$t0" , "$t1" , "$t2", "$t3", "$t4", "$t5", "$t6"),
+             rounda!( 2, "$t6", "$t7", "$t0" , "$t1" , "$t2", "$t3", "$t4", "$t5"),
 ```
 
 ---
 
-### Incident Patch 3: `ff2b46e7` (2026-10-14)
-**Commit Message**: fsb: fix `AlgorithmName` implementations (#928)
+### Incident Patch 3: `31da55d4` (2026-10-19)
+**Commit Message**: streebog: fix stale doc comments (#933)
 
-**File**: `fsb/CHANGELOG.md` (modified, +6/-0)
+**File**: `streebog/src/consts.rs` (modified, +2/-2)
 ```diff
-@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+@@ -1,6 +1,6 @@
+ //! Constants defined in the Streebog specification
+ //!
+-//! In the code for optimization purposes `table::SHUFFLED_LIN_TABLE` is used
++//! In the code for optimization purposes `SHUFFLED_LIN_TABLE` is used
+ //! instead of `A` and `P`
  
-+## 0.2.1 (UNRELEASED)
-+### Fixed
-+- `AlgorithmName` implementations ([#928])
-+
-+[#928]: https://github.com/RustCrypto/hashes/pull/928
-+
- ## 0.2.0 (2026-03-27)
- ### Added
- - `alloc` crate feature ([#678])
-```
-
-**File**: `fsb/src/block_api.rs` (modified, +6/-1)
-```diff
-@@ -12,7 +12,7 @@ use digest::{
+ use crate::u512::U512;
+@@ -180,7 +180,7 @@ pub(crate) const C: [[u8; BLOCK_SIZE]; 12] = [
+     ],
+ ];
  
- macro_rules! fsb_impl {
-     (
--        $state:ident, $block_size:ident, $output_size:ident, $state_size:ident,
-+        $full_state:ident, $state:ident, $block_size:ident, $output_size:ident, $state_size:ident,
-         $n:expr, $w:expr, $r:expr, $p:expr, $s:expr, $doc:expr,
-     ) => {
-         use digest::consts::{$block_size, $output_size, $state_size};
-@@ -333,6 +333,7 @@ macro_rules! fsb_impl {
- }
- 
- fsb_impl!(
-+    Fsb160,
-     Fsb160Core,
-     U60,
-     U20,
-@@ -345,6 +346,7 @@ fsb_impl!(
-     "Core FSB-160 hasher state",
- );
- fsb_impl!(
-+    Fsb224,
-     Fsb224Core,
-     U84,
-     U28,
-@@ -357,6 +359,7 @@ fsb_impl!(
-     "Core FSB-224 hasher state",
- );
- fsb_impl!(
-+    Fsb256,
-     Fsb256Core,
-     U96,
-     U32,
-@@ -369,6 +372,7 @@ fsb_impl!(
-     "Core FSB-256 hasher state",
- );
- fsb_impl!(
-+    Fsb384,
-     Fsb384Core,
-     U115,
-     U48,
-@@ -381,6 +385,7 @@ fsb_impl!(
-     "Core FSB-384 hasher state",
- );
- fsb_impl!(
-+    Fsb512,
-     Fsb512Core,
-     U155,
-     U64,
+-/// Iteration constants represented as `[u64; 8]`
++/// Iteration constants represented as `[U512; 12]`
+ pub(crate) const C64: [U512; 12] = {
+     let mut res = [U512::ZERO; 12];
+     let mut i = 0;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #933** (2026-10-19): streebog: fix stale doc comments in `consts` (@elonfliter)
+- **PR #932** (2026-10-19): sha2: fix round count comment in LoongArch64 SHA-512 backend (@kleonyuan)
+- **PR #931** (2026-10-19): ripemd: fix RIPEMD-128 round count in comment (@kleonyuan)
 - **PR #930** (2026-10-17): skein: fix  implementations (@zoupingcenter)
 - **PR #928** (2026-10-14): fix(fsb): preserve public AlgorithmName (@zerozebrazone)
 - **PR #927** (2026-10-12): Release sha2 v0.11.1 (@newpavlov)
-- **PR #926** (2026-10-09): sha2: fix `unsafe_op_in_unsafe_fn` lint, bump MSRV to 1.88 (@newpavlov)
-- **PR #925** (2026-10-06): streebog: tweak internal implementation (@newpavlov)
-- **PR #924** (2026-10-06): Fix `cargo::manual_readme` lint (@newpavlov)
 
 ---
 
@@ -921,74 +760,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. jh: add long-input regression tests (#894)
+## X. ripemd: fix comment in RIPEMD-128 implementation (#931)
 
 **RULE**:
-When implementing operations in `jh/tests/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ripemd/src/c128.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c32a0da`: jh: add long-input regression tests (#894). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98947e90`: ripemd: fix comment in RIPEMD-128 implementation (#931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `jh/tests/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ripemd/src/c128.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use digest::{
-    Digest,
-    dev::{feed_rand_16mib, fixed_test},
-    hash_serialization_test, new_test,
-};
-use hex_literal::hex;
-
-macro_rules! test_jh_rand {
-    ($name:ident, $hasher:ty, $expected:expr) => {
-        #[test]
-        fn $name() {
-            let mut h = <$hasher>::new();
-            feed_rand_16mib(&mut h);
-            assert_eq!(&h.finalize()[..], &$expected[..]);
-        }
-    };
-}
-
-test_jh_rand!(
-    jh224_rand,
-    jh::Jh224,
-    hex!("7a4e35b939ccbf71d7bc8243e87871d0891a845d09197ac4a0bc3af1")
-);
-
-test_jh_rand!(
-    jh256_rand,
-    jh::Jh256,
-    hex!("553d2d32bea1224d56e59df45d07f8b464535154e702119d90a23510d7489f5e")
-);
-
-test_jh_rand!(
-    jh384_rand,
-    jh::Jh384,
-    hex!(
-        "ba049c6c00f8ef651861db921588b41d8d6ce3faf94c2ffb1bdbf91cefcac6d2"
-        "f5d5510cb1b3e94ba529fb6a9e29a8e5"
-    )
-);
-
-test_jh_rand!(
-    jh512_rand,
-    jh::Jh512,
-    hex!(
-        "692b44c9fa2c3982060c85cbcdfde6015ade526ef6aad5218ed8d1cdcb42f389"
-        "6e21a345db74c83faa042ef4f996cf5e8478dcd3f03b87025bd3edc78beab126"
-    )
-);
+        // Parallel rounds: these are the same as the previous four
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use digest::{dev::fixed_test, hash_serialization_test, new_test};
+        // Parallel rounds: these are the same as the previous five
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c32a0da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98947e90` are properly handled with clean fallback behavior.

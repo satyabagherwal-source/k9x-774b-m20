@@ -2182,22 +2182,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rustcrypto-hashes": {
-    "name": "hashes",
+    "name": "RustCrypto/hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T11:27:55.567Z",
-    "lastVerified": "2026-10-19T11:27:55.567Z",
+    "lastChecked": "2026-10-19T14:27:24.688Z",
+    "lastVerified": "2026-10-19T14:27:24.688Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
-    "contentHash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
+    "contentHash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "55b73b01"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ascending-llc-jarvis-registry": {
     "name": "ascending-llc/jarvis-registry",
@@ -4163,12 +4162,12 @@
     "revisionIdentifier": "eb94e073"
   },
   "sharkdp-hyperfine": {
-    "name": "sharkdp/hyperfine",
+    "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-18T23:26:45.404Z",
-    "lastVerified": "2026-10-18T23:26:45.404Z",
+    "lastChecked": "2026-10-19T14:27:07.743Z",
+    "lastVerified": "2026-10-19T14:27:07.743Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-hyperfine",
@@ -4177,7 +4176,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5161524"
   },
   "ratatui-ratatui": {
     "name": "ratatui/ratatui",
@@ -7807,12 +7807,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bergside-typeui": {
-    "name": "bergside/typeui",
+    "name": "typeui",
     "officialUrl": "https://github.com/bergside/typeui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T03:26:40.324Z",
-    "lastVerified": "2026-10-19T03:26:40.324Z",
+    "lastChecked": "2026-10-19T14:27:05.134Z",
+    "lastVerified": "2026-10-19T14:27:05.134Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bergside-typeui",
@@ -7821,7 +7821,8 @@
     "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2a977f1f"
   },
   "react95-react95": {
     "name": "React95/React95",
@@ -8185,12 +8186,12 @@
     "revisionIdentifier": "2f7ce315"
   },
   "cozodb-cozo": {
-    "name": "cozodb/cozo",
+    "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T01:16:32.398Z",
-    "lastVerified": "2026-10-19T01:16:32.398Z",
+    "lastChecked": "2026-10-19T14:27:20.144Z",
+    "lastVerified": "2026-10-19T14:27:20.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cozodb-cozo",
@@ -8199,7 +8200,8 @@
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "481af058"
   },
   "vlcn-io-cr-sqlite": {
     "name": "vlcn-io/cr-sqlite",
@@ -9013,12 +9015,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "saltstack-salt": {
-    "name": "saltstack/salt",
+    "name": "salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T02:03:18.189Z",
-    "lastVerified": "2026-10-19T02:03:18.189Z",
+    "lastChecked": "2026-10-19T14:27:15.743Z",
+    "lastVerified": "2026-10-19T14:27:15.743Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
@@ -9027,7 +9029,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "88a27b2b"
   },
   "ntex-rs-ntex": {
     "name": "ntex-rs/ntex",
@@ -17049,14 +17052,15 @@
     "officialUrl": "https://github.com/zacharee/Bifrost",
     "sourceType": "github",
     "technology": "Kotlin",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T23:33:01.331Z",
-    "lastVerified": "2026-09-30T23:33:01.331Z",
+    "lastChecked": "2026-10-19T14:27:17.759Z",
+    "lastVerified": "2026-10-19T14:27:17.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 14,
+    "learningId": "learn-github-zacharee-bifrost",
+    "contentHash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18174,8 +18178,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T14:02:11.853Z",
-    "lastVerified": "2026-10-19T14:02:11.853Z",
+    "lastChecked": "2026-10-19T14:27:22.692Z",
+    "lastVerified": "2026-10-19T14:27:22.692Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -19600,13 +19604,13 @@
     "officialUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-18T04:15:09.999Z",
-    "lastVerified": "2026-10-18T04:15:09.999Z",
+    "lastChecked": "2026-10-19T14:27:10.252Z",
+    "lastVerified": "2026-10-19T14:27:10.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "3f0de83fd0e1bfb7abe9d527fb9f1121f5a3e8920af33c7c84e78624834c801f",
-    "promotedRulesCount": 0,
+    "contentHash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -26141,8 +26145,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T14:21:13.237Z",
-    "lastVerified": "2026-10-19T14:21:13.237Z",
+    "lastChecked": "2026-10-19T14:27:27.587Z",
+    "lastVerified": "2026-10-19T14:27:27.587Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

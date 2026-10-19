@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-D4L0",
-    "timestamp": "2026-10-19T02:12:33.012Z",
-    "repository": "react95-io/React95",
-    "learningId": "learn-github-react95-io-react95",
-    "contentHash": "bc8cbdfdff2420d239e6598d9e5da055151bacf86b93cd99922b8807a888996a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KJ9U",
-    "timestamp": "2026-10-19T02:18:18.642Z",
-    "repository": "elastic/eui",
-    "learningId": "learn-github-elastic-eui",
-    "contentHash": "96f3dd771672facbe28378c62f14a6666fd7ed97724686adc8f6570715f40218",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KKB8",
-    "timestamp": "2026-10-19T02:18:19.988Z",
-    "repository": "aome510/spotify-player",
-    "learningId": "learn-github-aome510-spotify-player",
-    "contentHash": "9846676cecdc912e324f28ed373d8f205cace0dfa0a1039820c18e6db4d53912",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-KO0N",
     "timestamp": "2026-10-19T02:18:24.791Z",
     "repository": "react-native-device-info/react-native-device-info",
@@ -7490,6 +7445,51 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M0WG",
+    "timestamp": "2026-10-19T14:27:18.160Z",
+    "repository": "zacharee/Bifrost",
+    "learningId": "learn-github-zacharee-bifrost",
+    "contentHash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M4IZ",
+    "timestamp": "2026-10-19T14:27:22.859Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M67W",
+    "timestamp": "2026-10-19T14:27:25.052Z",
+    "repository": "RustCrypto/hashes",
+    "learningId": "learn-github-rustcrypto-hashes",
+    "contentHash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

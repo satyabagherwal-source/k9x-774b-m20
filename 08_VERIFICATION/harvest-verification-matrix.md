@@ -3287,3 +3287,6 @@
 | `CYCLE-20261019-DY2O` | `2026-10-19T14:21:01.248Z` | `lobehub/lobe-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2624` | Yes (`e7689872...`) |
 | `CYCLE-20261019-E2XJ` | `2026-10-19T14:21:07.543Z` | `vanniktech/Emoji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2625` | Yes (`a6b95a80...`) |
 | `CYCLE-20261019-E5D1` | `2026-10-19T14:21:10.693Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2626` | Yes (`de79fc0c...`) |
+| `CYCLE-20261019-M0WG` | `2026-10-19T14:27:18.160Z` | `zacharee/Bifrost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2627` | Yes (`2fcbb6e6...`) |
+| `CYCLE-20261019-M4IZ` | `2026-10-19T14:27:22.859Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 716, Rule 664` | Yes (`4b283566...`) |
+| `CYCLE-20261019-M67W` | `2026-10-19T14:27:25.052Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2628` | Yes (`ab37ecf2...`) |

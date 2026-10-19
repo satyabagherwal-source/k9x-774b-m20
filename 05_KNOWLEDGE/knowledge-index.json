@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:21:10.670Z",
-  "total_verified_learnings": 831,
+  "last_updated": "2026-10-19T14:27:25.020Z",
+  "total_verified_learnings": 832,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -17280,7 +17280,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "3f0de83fd0e1bfb7abe9d527fb9f1121f5a3e8920af33c7c84e78624834c801f",
+      "content_hash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [
@@ -17297,6 +17297,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d",
           "verified_at": "2026-10-11T22:01:38.870Z"
+        },
+        {
+          "number": 664,
+          "title": "Tokenizer-Model Vocabulary Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 716,
+          "title": "Configuration-Weight Dimensional Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 953,
@@ -17331,7 +17341,7 @@
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
       ],
-      "verified_at": "2026-10-18T04:15:11.271Z",
+      "verified_at": "2026-10-19T14:27:22.814Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36900,14 +36910,19 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "55b73b01",
-      "content_hash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
+      "source_version": "98947e90",
+      "content_hash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
         {
           "number": 1792,
           "title": "jh: add long-input regression tests (#894)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2628,
+          "title": "ripemd: fix comment in RIPEMD-128 implementation (#931)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36916,7 +36931,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:35:46.439Z",
+      "verified_at": "2026-10-19T14:27:25.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44419,22 +44434,35 @@
     "learn-github-zacharee-bifrost": {
       "learning_id": "learn-github-zacharee-bifrost",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zacharee-bifrost",
+      "source": "zacharee/Bifrost",
+      "repository": "zacharee/Bifrost",
       "slug": "zacharee-bifrost",
       "platform": "github",
       "source_url": "https://github.com/zacharee/Bifrost",
-      "source_version": "HEAD",
-      "content_hash": "b73882a77a61b8816dc5a93e2358520d46a57532ee2b60fc6c6ee4f1ffd4ff05",
+      "source_version": "ed73a034",
+      "content_hash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
       "dossier_path": "07_PROJECT_LEARNING/zacharee-bifrost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zacharee-bifrost-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2627,
+          "title": "iOS build and work on reading auth_param.dat on iOS",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.498Z"
+      "verified_at": "2026-10-19T14:27:18.103Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
@@ -60383,15 +60411,15 @@
       "learning_id": "rule-664",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 664,
-      "title": "Tokenizer-Model Vocabulary Alignment Invariant (Harvested from meta-llama/Llama-2-7b-chat-hf)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer-Model Vocabulary Alignment Invariant",
+      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-19T14:27:22.814Z"
     },
     "rule-665": {
       "learning_id": "rule-665",
@@ -61111,15 +61139,15 @@
       "learning_id": "rule-716",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 716,
-      "title": "Configuration-Weight Dimensional Consistency Invariant (Harvested from google-bert/bert-base-uncased)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Configuration-Weight Dimensional Consistency Invariant",
+      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-19T14:27:22.814Z"
     },
     "rule-717": {
       "learning_id": "rule-717",
@@ -88163,6 +88191,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:21:10.664Z"
+    },
+    "rule-2627": {
+      "learning_id": "rule-2627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2627,
+      "title": "iOS build and work on reading auth_param.dat on iOS",
+      "source_url": "https://github.com/zacharee/Bifrost",
+      "source_version": "ed73a034",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:27:18.103Z"
+    },
+    "rule-2628": {
+      "learning_id": "rule-2628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2628,
+      "title": "ripemd: fix comment in RIPEMD-128 implementation (#931)",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "98947e90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:27:25.012Z"
     }
   },
   "aliases": {

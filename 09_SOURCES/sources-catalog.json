@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "3f0de83fd0e1bfb7abe9d527fb9f1121f5a3e8920af33c7c84e78624834c801f",
-    "lastHarvestedAt": "2026-10-18T04:15:11.317Z",
+    "contentHash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
+    "lastHarvestedAt": "2026-10-19T14:27:22.862Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "55b73b01",
+    "sourceVersion": "98947e90",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
-    "lastHarvestedAt": "2026-10-18T22:35:46.486Z",
+    "contentHash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
+    "lastHarvestedAt": "2026-10-19T14:27:25.055Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {
@@ -8168,5 +8168,15 @@
     "contentHash": "a6b95a80db7f5d99c070e9255a7cb819859ae9e551429e3066b41a0863c27500",
     "lastHarvestedAt": "2026-10-19T14:21:07.545Z",
     "learningId": "learn-github-vanniktech-emoji"
+  },
+  "zacharee-bifrost": {
+    "repository": "zacharee/Bifrost",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zacharee/Bifrost",
+    "sourceVersion": "ed73a034",
+    "license": "MIT",
+    "contentHash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
+    "lastHarvestedAt": "2026-10-19T14:27:18.163Z",
+    "learningId": "learn-github-zacharee-bifrost"
   }
 }

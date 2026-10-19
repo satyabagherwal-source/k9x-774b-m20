@@ -3294,3 +3294,6 @@ Every entry in this ledger must capture:
 | `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `4ffde053` | Multi-dimensional audit evidence | 2026-10-19T14:21:01.250Z |
 | `learn-github-vanniktech-emoji` | `https://github.com/vanniktech/Emoji` | `69e998da` | Multi-dimensional audit evidence | 2026-10-19T14:21:07.545Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `55676740` | Multi-dimensional audit evidence | 2026-10-19T14:21:10.695Z |
+| `learn-github-zacharee-bifrost` | `https://github.com/zacharee/Bifrost` | `ed73a034` | Multi-dimensional audit evidence | 2026-10-19T14:27:18.163Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-19T14:27:22.862Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `98947e90` | Multi-dimensional audit evidence | 2026-10-19T14:27:25.055Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T14:21:10.700Z",
+  "last_updated": "2026-10-19T14:27:25.061Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1504,14 +1504,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
-      "content_hash": "3f0de83fd0e1bfb7abe9d527fb9f1121f5a3e8920af33c7c84e78624834c801f",
-      "verified_at": "2026-10-18T04:15:11.320Z",
+      "content_hash": "4b283566ba146a87d45c3a056e752992989b75860e0c79f0dd74f4bcdf3bb963",
+      "verified_at": "2026-10-19T14:27:22.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:15:11.320Z"
+      "last_updated": "2026-10-19T14:27:22.867Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",
@@ -4699,14 +4699,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustcrypto-hashes",
-      "content_hash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
-      "verified_at": "2026-10-18T22:35:46.497Z",
+      "content_hash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
+      "verified_at": "2026-10-19T14:27:25.061Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:35:46.497Z"
+      "last_updated": "2026-10-19T14:27:25.061Z"
     },
     "onlook-dev/onlook": {
       "repository": "onlook-dev/onlook",
@@ -12282,6 +12282,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T14:21:07.550Z"
+    },
+    "zacharee/Bifrost": {
+      "repository": "zacharee/Bifrost",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zacharee-bifrost",
+      "content_hash": "2fcbb6e6afffbf6faba32a47549a00d119bf3c710d36d813f79a13609d73dd96",
+      "verified_at": "2026-10-19T14:27:18.171Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T14:27:18.171Z"
     }
   },
   "repos": {
