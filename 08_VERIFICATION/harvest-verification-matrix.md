@@ -2885,3 +2885,9 @@
 | `CYCLE-20261019-GJ0F` | `2026-10-19T04:07:10.143Z` | `Flipkart/recyclerlistview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2107` | Yes (`5c3736fb...`) |
 | `CYCLE-20261019-GKRP` | `2026-10-19T04:07:12.421Z` | `architect/architect` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f2ff57da...`) |
 | `CYCLE-20261019-GS8E` | `2026-10-19T04:07:22.094Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2108` | Yes (`0fb32728...`) |
+| `CYCLE-20261019-O9I1` | `2026-10-19T04:13:11.065Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`c80ae605...`) |
+| `CYCLE-20261019-O9KZ` | `2026-10-19T04:13:11.171Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`408149a2...`) |
+| `CYCLE-20261019-OBAK` | `2026-10-19T04:13:13.388Z` | `DataDog/glommio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2110` | Yes (`22d3d33b...`) |
+| `CYCLE-20261019-OFX5` | `2026-10-19T04:13:19.385Z` | `pytest-dev/pytest-testinfra` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2111` | Yes (`b9fdf644...`) |
+| `CYCLE-20261019-OH4D` | `2026-10-19T04:13:20.941Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2112` | Yes (`d9722151...`) |
+| `CYCLE-20261019-OKG9` | `2026-10-19T04:13:25.257Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2113` | Yes (`0607bd8a...`) |

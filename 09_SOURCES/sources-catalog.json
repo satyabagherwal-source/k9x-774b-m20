@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "d418d9402ad30078534bba71db02cc773c47fc90c0af5f3fedb73b64572ee4d8",
-    "lastHarvestedAt": "2026-10-17T23:03:42.720Z",
+    "contentHash": "c80ae6055ce84f3871b3342fd8c628313f0d1d2b98b299a54e38b3c6a9d0eb6b",
+    "lastHarvestedAt": "2026-10-19T04:13:11.067Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -5628,5 +5628,55 @@
     "contentHash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
     "lastHarvestedAt": "2026-10-19T04:07:22.097Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
+  },
+  "franken-ui-ui": {
+    "repository": "franken-ui/ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/franken-ui/ui",
+    "sourceVersion": "32af1a27",
+    "license": "MIT",
+    "contentHash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
+    "lastHarvestedAt": "2026-10-19T04:13:11.173Z",
+    "learningId": "learn-github-franken-ui-ui"
+  },
+  "datadog-glommio": {
+    "repository": "DataDog/glommio",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DataDog/glommio",
+    "sourceVersion": "84348159",
+    "license": "NOASSERTION",
+    "contentHash": "22d3d33bcc6cbbef0e6109cb722924cceb643de493625edc11f1dcdd99cead0b",
+    "lastHarvestedAt": "2026-10-19T04:13:13.393Z",
+    "learningId": "learn-github-datadog-glommio"
+  },
+  "pytest-dev-pytest-testinfra": {
+    "repository": "pytest-dev/pytest-testinfra",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pytest-dev/pytest-testinfra",
+    "sourceVersion": "04cccc39",
+    "license": "Apache-2.0",
+    "contentHash": "b9fdf644a5362581e98376c418b38bedb69104711705be6fe5121ee7ce311570",
+    "lastHarvestedAt": "2026-10-19T04:13:19.391Z",
+    "learningId": "learn-github-pytest-dev-pytest-testinfra"
+  },
+  "lingodotdev-lingo.dev": {
+    "repository": "lingodotdev/lingo.dev",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lingodotdev/lingo.dev",
+    "sourceVersion": "b29703a4",
+    "license": "Apache-2.0",
+    "contentHash": "d9722151dc1a2f59bb2c4a8714be689c034626c5d23bdb0b6b48d7f38df8af2d",
+    "lastHarvestedAt": "2026-10-19T04:13:20.949Z",
+    "learningId": "learn-github-lingodotdev-lingo-dev"
+  },
+  "startrail-org-leann": {
+    "repository": "StarTrail-org/LEANN",
+    "platform": "github",
+    "sourceUrl": "https://github.com/StarTrail-org/LEANN",
+    "sourceVersion": "7fcb3b54",
+    "license": "MIT",
+    "contentHash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
+    "lastHarvestedAt": "2026-10-19T04:13:25.261Z",
+    "learningId": "learn-github-startrail-org-leann"
   }
 }

@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T04:07:22.100Z",
-  "total_cycles_completed": 2862,
-  "total_learnings_persisted": 2862,
-  "total_rules_promoted": 1892,
+  "last_updated": "2026-10-19T04:13:25.264Z",
+  "total_cycles_completed": 2868,
+  "total_learnings_persisted": 2868,
+  "total_rules_promoted": 1897,
   "history": [
-    {
-      "timestamp": "2026-10-19T00:22:52.628Z",
-      "repository": "RunanywhereAI/runanywhere-sdks",
-      "learningId": "learn-github-runanywhereai-runanywhere-sdks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:22:52.944Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:22:53.758Z",
-      "repository": "krakend/krakend-ce",
-      "learningId": "learn-github-krakend-krakend-ce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:22:58.033Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:28:45.022Z",
-      "repository": "tremorlabs/tremor-npm",
-      "learningId": "learn-github-tremorlabs-tremor-npm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:28:47.609Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T00:28:51.165Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T04:07:22.100Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:13:11.103Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:13:11.176Z",
+      "repository": "franken-ui/ui",
+      "learningId": "learn-github-franken-ui-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:13:13.395Z",
+      "repository": "DataDog/glommio",
+      "learningId": "learn-github-datadog-glommio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:13:19.393Z",
+      "repository": "pytest-dev/pytest-testinfra",
+      "learningId": "learn-github-pytest-dev-pytest-testinfra",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:13:20.951Z",
+      "repository": "lingodotdev/lingo.dev",
+      "learningId": "learn-github-lingodotdev-lingo-dev",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:13:25.264Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

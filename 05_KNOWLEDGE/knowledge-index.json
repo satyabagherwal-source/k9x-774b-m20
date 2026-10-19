@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:07:22.058Z",
-  "total_verified_learnings": 582,
+  "last_updated": "2026-10-19T04:13:25.235Z",
+  "total_verified_learnings": 587,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5522,22 +5522,35 @@
     "learn-github-datadog-glommio": {
       "learning_id": "learn-github-datadog-glommio",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "datadog-glommio",
+      "source": "DataDog/glommio",
+      "repository": "DataDog/glommio",
       "slug": "datadog-glommio",
       "platform": "github",
       "source_url": "https://github.com/DataDog/glommio",
-      "source_version": "HEAD",
-      "content_hash": "45a5c1e302ff9e66139761b23bf231bd92e86c91a555f0e8d984cd2d1e667453",
+      "source_version": "84348159",
+      "content_hash": "22d3d33bcc6cbbef0e6109cb722924cceb643de493625edc11f1dcdd99cead0b",
       "dossier_path": "07_PROJECT_LEARNING/datadog-glommio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/datadog-glommio-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2110,
+          "title": "first sleep taking at least 30-50ms (#653)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.520Z"
+      "verified_at": "2026-10-19T04:13:13.359Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dataelement-bisheng": {
       "learning_id": "learn-github-dataelement-bisheng",
@@ -8626,22 +8639,35 @@
     "learn-github-franken-ui-ui": {
       "learning_id": "learn-github-franken-ui-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "franken-ui-ui",
+      "source": "franken-ui/ui",
+      "repository": "franken-ui/ui",
       "slug": "franken-ui-ui",
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
-      "source_version": "HEAD",
-      "content_hash": "e2a050e4e86429593d90b83f647faf11d3dd0cf7323084ec09d96a8459468246",
+      "source_version": "32af1a27",
+      "content_hash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2109,
+          "title": "input-date with pre-defined value off by a day for UTC minus",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.990Z"
+      "verified_at": "2026-10-19T04:13:11.133Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-freenet-freenet-core": {
       "learning_id": "learn-github-freenet-freenet-core",
@@ -25545,22 +25571,35 @@
     "learn-github-lingodotdev-lingo-dev": {
       "learning_id": "learn-github-lingodotdev-lingo-dev",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lingodotdev-lingo.dev",
+      "source": "lingodotdev/lingo.dev",
+      "repository": "lingodotdev/lingo.dev",
       "slug": "lingodotdev-lingo.dev",
       "platform": "github",
       "source_url": "https://github.com/lingodotdev/lingo.dev",
-      "source_version": "HEAD",
-      "content_hash": "fe65602e71b7da6108068e4d4a12ebfb208cbadb8b50d989ca8541df0c2cf8f5",
+      "source_version": "b29703a4",
+      "content_hash": "d9722151dc1a2f59bb2c4a8714be689c034626c5d23bdb0b6b48d7f38df8af2d",
       "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2112,
+          "title": "security dependency patches (#2213)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.025Z"
+      "verified_at": "2026-10-19T04:13:20.913Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lingui-js-lingui": {
       "learning_id": "learn-github-lingui-js-lingui",
@@ -31932,22 +31971,35 @@
     "learn-github-pytest-dev-pytest-testinfra": {
       "learning_id": "learn-github-pytest-dev-pytest-testinfra",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pytest-dev-pytest-testinfra",
+      "source": "pytest-dev/pytest-testinfra",
+      "repository": "pytest-dev/pytest-testinfra",
       "slug": "pytest-dev-pytest-testinfra",
       "platform": "github",
       "source_url": "https://github.com/pytest-dev/pytest-testinfra",
-      "source_version": "HEAD",
-      "content_hash": "0695c826f331f839b805d134a07f5dda9df74fdef8f9c2e2673ff169540a57c6",
+      "source_version": "04cccc39",
+      "content_hash": "b9fdf644a5362581e98376c418b38bedb69104711705be6fe5121ee7ce311570",
       "dossier_path": "07_PROJECT_LEARNING/pytest-dev-pytest-testinfra-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pytest-dev-pytest-testinfra-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2111,
+          "title": "handle ansible encoding errors and update rocky9 package assertion",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.145Z"
+      "verified_at": "2026-10-19T04:13:19.356Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pzqpzq-principia": {
       "learning_id": "learn-github-pzqpzq-principia",
@@ -35564,22 +35616,35 @@
     "learn-github-startrail-org-leann": {
       "learning_id": "learn-github-startrail-org-leann",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "startrail-org-leann",
+      "source": "StarTrail-org/LEANN",
+      "repository": "StarTrail-org/LEANN",
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "HEAD",
-      "content_hash": "972bfbb683a9e6b686111b13e2a2dd38539963ba1b8f5b9a722ae2e4a60cf1c8",
+      "source_version": "7fcb3b54",
+      "content_hash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2113,
+          "title": "ci): clear the ty diagnostics blocking every open PR (#425)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.694Z"
+      "verified_at": "2026-10-19T04:13:25.230Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-startrail-org-pixelrag": {
       "learning_id": "learn-github-startrail-org-pixelrag",
@@ -48009,7 +48074,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "d418d9402ad30078534bba71db02cc773c47fc90c0af5f3fedb73b64572ee4d8",
+      "content_hash": "c80ae6055ce84f3871b3342fd8c628313f0d1d2b98b299a54e38b3c6a9d0eb6b",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [
@@ -48024,7 +48089,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T23:03:42.688Z",
+      "verified_at": "2026-10-19T04:13:11.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76252,6 +76317,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:07:22.049Z"
+    },
+    "rule-2109": {
+      "learning_id": "rule-2109",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2109,
+      "title": "input-date with pre-defined value off by a day for UTC minus",
+      "source_url": "https://github.com/franken-ui/ui",
+      "source_version": "32af1a27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:13:11.134Z"
+    },
+    "rule-2110": {
+      "learning_id": "rule-2110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2110,
+      "title": "first sleep taking at least 30-50ms (#653)",
+      "source_url": "https://github.com/DataDog/glommio",
+      "source_version": "84348159",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:13:13.359Z"
+    },
+    "rule-2111": {
+      "learning_id": "rule-2111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2111,
+      "title": "handle ansible encoding errors and update rocky9 package assertion",
+      "source_url": "https://github.com/pytest-dev/pytest-testinfra",
+      "source_version": "04cccc39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:13:19.356Z"
+    },
+    "rule-2112": {
+      "learning_id": "rule-2112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2112,
+      "title": "security dependency patches (#2213)",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "b29703a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:13:20.914Z"
+    },
+    "rule-2113": {
+      "learning_id": "rule-2113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2113,
+      "title": "ci): clear the ty diagnostics blocking every open PR (#425)",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "7fcb3b54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:13:25.230Z"
     }
   },
   "aliases": {

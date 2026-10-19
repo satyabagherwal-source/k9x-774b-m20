@@ -2892,3 +2892,9 @@ Every entry in this ledger must capture:
 | `learn-github-flipkart-recyclerlistview` | `https://github.com/Flipkart/recyclerlistview` | `3485036e` | Multi-dimensional audit evidence | 2026-10-19T04:07:10.145Z |
 | `learn-github-architect-architect` | `https://github.com/architect/architect` | `9924cd0a` | Multi-dimensional audit evidence | 2026-10-19T04:07:12.428Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a04eacaa` | Multi-dimensional audit evidence | 2026-10-19T04:07:22.097Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-19T04:13:11.067Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-19T04:13:11.173Z |
+| `learn-github-datadog-glommio` | `https://github.com/DataDog/glommio` | `84348159` | Multi-dimensional audit evidence | 2026-10-19T04:13:13.393Z |
+| `learn-github-pytest-dev-pytest-testinfra` | `https://github.com/pytest-dev/pytest-testinfra` | `04cccc39` | Multi-dimensional audit evidence | 2026-10-19T04:13:19.391Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `b29703a4` | Multi-dimensional audit evidence | 2026-10-19T04:13:20.949Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `7fcb3b54` | Multi-dimensional audit evidence | 2026-10-19T04:13:25.261Z |

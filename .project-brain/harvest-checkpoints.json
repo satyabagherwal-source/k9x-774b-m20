@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:07:22.102Z",
+  "last_updated": "2026-10-19T04:13:25.265Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2020,15 +2020,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "0f41776aae9a1ac2be431b5092aefa6b34c0d0ff5ffcc2cae2f2997eb447d02a",
-      "verified_at": "2026-10-19T00:16:41.858Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "c80ae6055ce84f3871b3342fd8c628313f0d1d2b98b299a54e38b3c6a9d0eb6b",
+      "verified_at": "2026-10-19T04:13:11.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:16:41.858Z"
+      "last_updated": "2026-10-19T04:13:11.106Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -8557,6 +8557,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:07:22.102Z"
+    },
+    "franken-ui/ui": {
+      "repository": "franken-ui/ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-franken-ui-ui",
+      "content_hash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
+      "verified_at": "2026-10-19T04:13:11.177Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:13:11.177Z"
+    },
+    "DataDog/glommio": {
+      "repository": "DataDog/glommio",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-datadog-glommio",
+      "content_hash": "22d3d33bcc6cbbef0e6109cb722924cceb643de493625edc11f1dcdd99cead0b",
+      "verified_at": "2026-10-19T04:13:13.397Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:13:13.397Z"
+    },
+    "pytest-dev/pytest-testinfra": {
+      "repository": "pytest-dev/pytest-testinfra",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pytest-dev-pytest-testinfra",
+      "content_hash": "b9fdf644a5362581e98376c418b38bedb69104711705be6fe5121ee7ce311570",
+      "verified_at": "2026-10-19T04:13:19.394Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:13:19.394Z"
+    },
+    "lingodotdev/lingo.dev": {
+      "repository": "lingodotdev/lingo.dev",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lingodotdev-lingo-dev",
+      "content_hash": "d9722151dc1a2f59bb2c4a8714be689c034626c5d23bdb0b6b48d7f38df8af2d",
+      "verified_at": "2026-10-19T04:13:20.952Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:13:20.952Z"
+    },
+    "StarTrail-org/LEANN": {
+      "repository": "StarTrail-org/LEANN",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-startrail-org-leann",
+      "content_hash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
+      "verified_at": "2026-10-19T04:13:25.265Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:13:25.265Z"
     }
   },
   "repos": {
