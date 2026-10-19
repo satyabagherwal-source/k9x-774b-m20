@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T10:10:05.208Z",
-  "total_cycles_completed": 3124,
-  "total_learnings_persisted": 3124,
-  "total_rules_promoted": 2273,
+  "last_updated": "2026-10-19T10:16:21.125Z",
+  "total_cycles_completed": 3128,
+  "total_learnings_persisted": 3128,
+  "total_rules_promoted": 2275,
   "history": [
-    {
-      "timestamp": "2026-10-19T05:19:03.839Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:19:04.329Z",
-      "repository": "xinthink/react-native-material-kit",
-      "learningId": "learn-github-xinthink-react-native-material-kit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:19:06.582Z",
-      "repository": "kubeshark/kubeshark",
-      "learningId": "learn-github-kubeshark-kubeshark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:19:12.540Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:25:25.365Z",
       "repository": "megh-bari/pattern-craft",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T10:10:05.208Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:16:09.558Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:16:11.402Z",
+      "repository": "facebook/folly",
+      "learningId": "learn-github-facebook-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:16:16.409Z",
+      "repository": "Kotlin/kmp-production-sample",
+      "learningId": "learn-github-kotlin-kmp-production-sample",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:16:21.125Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

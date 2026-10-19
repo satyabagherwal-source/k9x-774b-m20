@@ -3154,3 +3154,7 @@ Every entry in this ledger must capture:
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c4199d79` | Multi-dimensional audit evidence | 2026-10-19T10:09:55.659Z |
 | `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `ca63e338` | Multi-dimensional audit evidence | 2026-10-19T10:10:01.820Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `4d046d12` | Multi-dimensional audit evidence | 2026-10-19T10:10:05.205Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-19T10:16:09.553Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `ea41cb2f` | Multi-dimensional audit evidence | 2026-10-19T10:16:11.398Z |
+| `learn-github-kotlin-kmp-production-sample` | `https://github.com/Kotlin/kmp-production-sample` | `b0bed628` | Multi-dimensional audit evidence | 2026-10-19T10:16:16.403Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `e50e2c4e` | Multi-dimensional audit evidence | 2026-10-19T10:16:21.121Z |

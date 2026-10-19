@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T09:48:09.444Z",
+  "last_updated": "2026-10-19T10:16:16.407Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1795,6 +1795,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-louiscad-splitties"
+    },
+    {
+      "id": "CD-N76F",
+      "directive_title": "Empirical Invariant Guard in action.yml",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kotlin/kmp-production-sample",
+      "source_commit": "b0bed628",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-kotlin-kmp-production-sample"
     }
   ]
 }

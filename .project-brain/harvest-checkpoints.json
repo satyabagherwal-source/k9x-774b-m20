@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:10:05.211Z",
+  "last_updated": "2026-10-19T10:16:21.128Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1069,14 +1069,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
-      "content_hash": "207e6f551fb94c9a36e93a618607103e565f00afa5a91bd33423c471d3d5418a",
-      "verified_at": "2026-10-18T02:02:15.764Z",
+      "content_hash": "6945e06958cf323172e993bf61245e4cbf632719c0e6bf8e935ee3490d4d01c4",
+      "verified_at": "2026-10-19T10:16:09.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:02:15.764Z"
+      "last_updated": "2026-10-19T10:16:09.561Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
@@ -3663,14 +3663,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "38f5d915e382a1bd1b8fafcf7407d443cf1d7f2ad92171ada1a9e7219bca3b6f",
-      "verified_at": "2026-10-18T21:20:19.343Z",
+      "content_hash": "b910691a9b8652b97c698bec9014040c182e6487ad6b450bb9b7d2a9696f69ca",
+      "verified_at": "2026-10-19T10:16:21.128Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:20:19.343Z"
+      "last_updated": "2026-10-19T10:16:21.128Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -11531,6 +11531,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:10:01.826Z"
+    },
+    "facebook/folly": {
+      "repository": "facebook/folly",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-facebook-folly",
+      "content_hash": "ec454c8dd6cc38b28e34fabb1486dfdd469f03687c6c1492b656cd7079e58b7a",
+      "verified_at": "2026-10-19T10:16:11.404Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:16:11.404Z"
+    },
+    "Kotlin/kmp-production-sample": {
+      "repository": "Kotlin/kmp-production-sample",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kotlin-kmp-production-sample",
+      "content_hash": "f0af857c19886d3c8c77cbf15c8a994ffbf021100686238ea885e0bde05c03fa",
+      "verified_at": "2026-10-19T10:16:16.411Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:16:16.411Z"
     }
   },
   "repos": {

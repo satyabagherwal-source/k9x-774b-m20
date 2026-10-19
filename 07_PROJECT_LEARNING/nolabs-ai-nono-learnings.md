@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `cf73ec0b`  
+> **Source Version**: `e50e2c4e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:20:19.140Z  
+> **Timestamp**: 2026-10-19T10:16:20.845Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:20:19.131Z  
+> **Harvest Timestamp**: 2026-10-19T10:16:20.836Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4564 stars
+- **Stars / Engagement**: 4574 stars
 
 ---
 
@@ -2946,13 +2946,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2127** (2026-10-15): **fix(ci): update cargo audit failures**
-  *Symptoms*: ## Linked Issue No issue  ## Summary Fixes the CI failures caused by `cargo-audit` targets being out of date.  ## Test Plan `make audit`  ## Checklist  - [x] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked  
-
-- **Issue #2111** (2026-10-14): **fix(proxy): use HTTP/1.1 for AWS intercept routes**
-  *Symptoms*:  ## Linked Issue Closes #2061  ## Summary Forces HTTP/1.1 for intercepted hosts matching an aws_auth route so requests use the existing SigV4 signing path  ## Test Plan Adds new integration tests  ## Checklist  - [x] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [x] Public-facing changes are paired with documentation updates - [x] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked
+- **Issue #2152** (2026-10-19): **listen_port_range undocumented**
+  *Symptoms*: ### What happened?  The policy option `network.listen_port_range` is not documented anywhere.  ### What did you expect to happen?  I expected to find it on `docs/cli/features/profiles-groups.mdx` alongside `listen_port`.  ### Steps to reproduce  Documentation bug. Not applicable.  ### Relevant output or logs  ```shell  ```  ### nono version  0.80.0  ### Operating system  Linux  ### OS version / distro  Aurora 44  ### Kernel version (Linux only)  7.2.5-200.fc44.x86_64  ### Profile (if relevant)  ```json  ```  ### Additional context  _No response_
   **Post-Mortem & Fix Analysis**:
-  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +257 | | Lines removed | -1 | | Total changed | 258 | | **Classification** | **Medium (50–300 lines)** |  ### Affected crates  - **crates/nono-proxy** — **downstream consumers depend on this crate**. API or behaviour changes will affect external callers; treat any breaking change with extra scrutiny.  ### Blast radius — Contained  This PR touches: **source code**  --- <sub>Updated automatically on each push to this PR.</sub>
+  > ## 🛡️ nogent issue triage  **Assessment:** needs-code-change  **Suggested resolution:** Update documentation in `docs/cli/features/profiles-groups.mdx` and `crates/nono-cli/data/profile-authoring-guide.md` to document `network.listen_port_range`.  **Notes for maintainers:** Requires repository documentation updates to explain `network.listen_port_range` alongside `listen_port`.  <sub>Automated triage suggestion. Not a maintainer decision.</sub>
+  > Agent disclosure for #2152: I am an AI coding agent working under LuckVd's direction. I prepared a documentation-only update in `docs/cli/features/profiles-groups.mdx` to add `listen_port_range` to the network example and field table, matching the existing profile schema and authoring guide. No runtime or security-policy behavior changes. This is an intent/approach disclosure, not an assignment request.
+
+- **Issue #2151** (2026-10-19): **fix(policy): enable Nix runtime and cache/channel access**
+  *Symptoms*: ## Linked Issue  <!-- External and agent-proposed PRs must reference an existing issue. Maintainer-directed routine PRs may leave this blank and explain the exception in the Summary. -->  None.  ## Summary  <!-- Briefly describe what this PR does and why. -->  This has three fixes for the Nix runtime, extending the policy group with read access to `~/.local/share/nix/` - the client's state directory - where files such as `trusted-settings.json` record the user's accepted trust decisions.  it adds the NixOS cache and channels URLs to the `package_registries` network group.  Also found that `nix profile` was blocked from write access to `~/.local/state/nix/profiles` so added a separate policy group for allowing that.  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  Already applied to my own configuration and test cases in the repo enhanced to include this.  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [X] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [X] Code changes follow the 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2969,981 +2970,907 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45fcc241` (2026-10-15)
-**Commit Message**: fix(ci): update cargo audit failures (#2127)
+### Incident Patch 1: `3b10c79d` (2026-10-19)
+**Commit Message**: feat(linux): opt-in namespace isolation (NEP-0004) (#2145)
 
-Signed-off-by: Kurtis Charnock <[REDACTED_EMAIL]>
+* feat(linux): opt-in namespace isolation, phase 1 (NEP-0004)
 
-**File**: `Cargo.lock` (modified, +3/-3)
+Add `linux.isolate` / `--isolate net,ipc,uts`, which runs the sandboxed
+command in new user + network/IPC/UTS namespaces under the existing
+Landlock and seccomp policy. Permanently opt-in and Linux-only.
+
+Library (mechanism): NamespaceSpec, a no-alloc child entry step
+(unshare, loopback up, optional in-namespace bridge listener),
+parent-side id-map writer, bridge listener validation (including a
+SIOCGSKNS check that the socket is not in the supervisor's netns), a
+real-unshare availability probe, and a prepared openat-only seccomp
+filter for raw-clone children.
+
+CLI (policy): isolated launches go through the raw-clone bootstrap; the
+parent writes id maps before releasing the child and receives the
+bridge listener from the shared fd table, then serves it with the
+session proxy via the new ProxyHandle::add_listener. Isolation fields
+OR-merge across profile layers and the CLI. Allow-all networking and
+direct-reachability grants (open_port, connect_port, listen_port,
+no_proxy) are rejected; nono wrap rejects isolation; a host refusal is
+a startup error naming the fa
+
+**File**: `crates/nono-cli/data/nono-profile.schema.json` (modified, +30/-0)
 ```diff
-@@ -3838,9 +3838,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "aws-lc-rs",
-  "log",
-@@ -4703,7 +4703,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.3",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
+@@ -665,6 +665,36 @@
+             { "type": "null" }
+           ],
+           "description": "Which Linux sandboxing mechanism to install. Defaults to 'auto' (Landlock plus a static seccomp network baseline, falling back to seccomp-only networking when the kernel ABI lacks Landlock network support)."
++        },
++        "isolate": {
++          "$ref": "#/$defs/LinuxIsolateConfig"
++        }
++      }
++    },
++    "LinuxIsolateConfig": {
++      "type": "object",
++      "description": "Opt-in namespace isolation (NEP-0004). Every field defaults to false. Fields merge by logical OR across profile layers and the CLI: any layer can enable a namespace and none can disable it. Requested isolation that the host cannot provide is a startup error, never a silent downgrade. Inert on macOS. Not supported by `nono wrap`.",
++      "additionalProperties": false,
++      "properties": {
++        "network": {
++          "type": "boolean",
++          "default": false,
++          "description": "Run in a new user + network namespace containing only loopback. Egress is possible only through the session proxy. Requires a blocked or proxied network, and cannot be combined with network.open_port, network.connect_port, network.listen_port, or network.no_proxy."
++        },
++        "loopback": {
++          "type": "boolean",
++          "default": false,
++          "description": "Allow TCP bind and connect on any port of the isolated network namespace's own loopback, for local dev servers and tests. Requires network. Egress stays proxy-only; UDP, raw sockets, and netlink stay denied; host localhost services stay unreachable. The network.open_port / listen_port / connect_port fields remain rejected because they mean host localhost."
++        },
++        "ipc": {
++          "type": "boolean",
++          "default": false,
++          "description": "Run in a new user + IPC namespace (SysV IPC and POSIX message queues are not shared with the host)."
++        },
++        "uts": {
++          "type": "boolean",
++          "default": false,
++          "description": "Run in a new user + UTS namespace (hostname changes do not affect the host)."
+         }
+       }
+     },
 ```
 
----
-
-### Incident Patch 2: `b0ecfb54` (2026-10-14)
-**Commit Message**: fix(proxy): use HTTP/1.1 for AWS intercept routes (#2111)
-
-Disables HTTP/2 negotiation for authorities matching any configured AWS
-route so intercepted requests use the existing SigV4 signing path.
-
-Adds regression coverage and document the fallback.
-
-Fixes #2061.
-
-Signed-off-by: Kurtis Charnock <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-proxy/src/route.rs` (modified, +57/-0)
+**File**: `crates/nono-cli/data/profile-authoring-guide.md` (modified, +15/-0)
 ```diff
-@@ -78,6 +78,10 @@ pub struct LoadedRoute {
-     /// authentication itself rather than accept agent-provided credentials.
-     pub requires_managed_credential: bool,
+@@ -1136,6 +1136,21 @@ Creating a new exact socket with `unix_socket_bind` requires write access to
+ its parent directory. If that parent is denied, bypass the parent directory or,
+ preferably, use `unix_socket_dir_bind` with a dedicated directory.
  
-+    /// AWS SigV4 is currently supported only by the HTTP/1.1 intercept path.
-+    /// Retained even when credential loading fails.
-+    pub requires_http1: bool,
++#### Linux namespace isolation
 +
-     /// Audit auth mechanism implied by the managed credential configuration.
-     /// Kept even if credential material failed to load so fail-closed denial
-     /// events can describe what auth shape the route expected.
-@@ -111,6 +115,7 @@ impl std::fmt::Debug for LoadedRoute {
-             .field("upgrade_rules", &self.upgrade_rules)
-             .field("has_custom_tls_ca", &self.tls_connector.is_some())
-             .field("requires_intercept", &self.requires_intercept)
-+            .field("requires_http1", &self.requires_http1)
-             .field(
-                 "requires_managed_credential",
-                 &self.requires_managed_credential,
-@@ -357,6 +362,7 @@ impl RouteStore {
-                     tls_config_key,
-                     requires_intercept,
-                     requires_managed_credential,
-+                    requires_http1: route.aws_auth.is_some(),
-                     managed_auth_mechanism,
-                     managed_injection_mode,
-                     managed_auth,
-@@ -458,6 +464,14 @@ impl RouteStore {
-         })
-     }
++`linux.isolate` runs the command in new namespaces (opt-in, Linux only). `network` leaves only loopback, so egress must go through the proxy, and the profile cannot also grant `network.open_port`, `network.connect_port`, `network.listen_port`, or `network.no_proxy`. The fields merge by OR: an extending profile can add isolation but never remove it.
++
++```json
++{
++  "network": { "allow_domain": ["api.openai.com"] },
++  "linux": { "isolate": { "network": true, "ipc": true, "uts": true } }
++}
++```
++
++Add `"loopback": true` (requires `network`) to let the command use TCP on the namespace's own loopback, for local dev servers and tests. Egress stays proxy-only and the host's localhost stays unreachable.
++
++Network isolation does not block pathname Unix sockets (such as `/run/docker.sock`); use `linux.af_unix_mediation` for those.
++
+ #### Linux
  
-+    /// Whether any configured route matching this authority requires HTTP/1.1.
-+    #[must_use]
-+    pub fn requires_http1(&self, host_port: &str) -> bool {
-+        self.lookup_all_by_upstream(host_port)
-+            .iter()
-+            .any(|(_, route)| route.requires_http1)
+ Landlock cannot express deny-within-allow, so `filesystem.deny` is a no-op on Linux. Instead, enable `linux.af_unix_mediation` to switch to a default-deny seccomp supervisor for AF_UNIX pathname sockets, then add back only the sockets the agent needs via `filesystem.unix_socket`:
+```
+
+**File**: `crates/nono-cli/src/cli.rs` (modified, +51/-0)
+```diff
+@@ -1348,6 +1348,27 @@ pub struct SandboxArgs {
+     #[arg(long, help_heading = "OPTIONS", value_name = "POLICY")]
+     pub sandbox_policy: Option<crate::profile::LinuxSandboxPolicy>,
+ 
++    /// Run the command in new Linux namespaces (opt-in, NEP-0004).
++    ///
++    /// Comma-separated list of: net, loopback, ipc, uts. Always adds a user
++    /// namespace. `loopback` (requires `net`) allows TCP bind/connect on any
++    /// port of the namespace's own loopback, for local dev servers and tests.
++    /// `net` leaves only loopback; egress is possible only through the session
++    /// proxy, so it requires --block-net or a proxied network policy and cannot
++    /// be combined with direct-access grants (--open-port, --listen-port,
++    /// --allow-connect-port, network.no_proxy). Adds to any `linux.isolate`
++    /// set by the profile; it cannot remove it. Fails at startup if this host
++    /// cannot create the namespaces.
++    #[cfg(target_os = "linux")]
++    #[arg(
++        long,
++        help_heading = "OPTIONS",
++        value_name = "NAMESPACES",
++        value_enum,
++        value_delimiter = ','
++    )]
++    pub isolate: Vec<IsolateNamespace>,
++
+     /// Allow HTTP/2 multiplexing for upstream proxy connections.
+     ///
+     /// When enabled, the proxy negotiates HTTP/2 via ALPN with upstream
+@@ -1838,6 +1859,34 @@ pub struct WrapSandboxArgs {
+     pub dry_run: bool,
+ }
+ 
++/// A namespace that `--isolate` can request.
++#[cfg(target_os = "linux")]
++#[derive(Debug, Clone, Copy, PartialEq, Eq, clap::ValueEnum)]
++pub enum IsolateNamespace {
++    /// Network namespace containing only loopback.
++    Net,
++    /// TCP on the isolated network namespace's own loopback (requires `net`).
++    Loopback,
++    /// IPC namespace.
++    Ipc,
++    /// UTS namespace.
++    Uts,
++}
++
++#[cfg(target_os = "linux")]
++impl SandboxArgs {
++    /// The isolation set requested on the command line.
++    pub fn isolate_config(&self) -> crate::profile::LinuxIsolateConfig {
++        let has = |namespace| self.isolate.contains(&namespace);
++        crate::profile::LinuxIsolateConfig {
++            network: has(IsolateNamespace::Net),
++            loopback: has(IsolateNamespace::Loopback),
++            ipc: has(IsolateNamespace::Ipc),
++            uts: has(IsolateNamespace::Uts),
++        }
 +    }
++}
 +
-     /// All unique upstream `host:port` strings across loaded routes.
-     #[must_use]
-     pub fn route_upstream_hosts(&self) -> std::collections::HashSet<String> {
-@@ -1319,6 +1333,46 @@ mod tests {
+ impl From<WrapSandboxArgs> for SandboxArgs {
+     fn from(args: WrapSandboxArgs) -> Self {
+         Self {
+@@ -1895,6 +1944,8 @@ impl From<WrapSandboxArgs> for SandboxArgs {
+             dry_run: args.dry_run,
+             #[cfg(target_os = "linux")]
+             sandbox_policy: None,
++            #[cfg(target_os = "linux")]
++            isolate: Vec::new(),
+         }
+     }
+ }
+```
+
+**File**: `crates/nono-cli/src/command_runtime.rs` (modified, +9/-0)
+```diff
+@@ -380,6 +380,15 @@ pub(crate) fn run_wrap(wrap_args: WrapArgs, silent: bool) -> Result<()> {
          ));
      }
  
-+    #[tokio::test]
-+    async fn http1_required_for_all_matching_aws_routes() {
-+        let aws: RouteConfig = serde_json::from_value(serde_json::json!({
-+            "prefix": "z-aws",
-+            "upstream": "https://*.example.com",
-+            "aws_auth": {"region": "us-east-1", "service": "bedrock"},
-+            "endpoint_rules": [{"method": "POST", "path": "/aws/**"}]
-+        }))
-+        .unwrap();
-+
-+        let other: RouteConfig = serde_json::from_value(serde_json::json!({
-+            "prefix": "a-other",
-+            "upstream": "https://api.example.com",
-+            "endpoint_rules": [{"method": "GET", "path": "/other/**"}]
-+        }))
-+        .unwrap();
-+
-+        // Only route configuration is loaded, with no credential store at all.
-+        for routes in [vec![other.clone(), aws.clone()], vec![aws, other]] {
-+            let store = RouteStore::load(&routes).await.unwrap();
-+
-+            assert!(store.requires_http1("API.EXAMPLE.COM:443"));
-+            assert!(store.requires_http1("another.example.com:443"));
-+            assert!(!store.requires_http1("api.example.com:8443"));
-+            assert!(!store.requires_http1("unrelated.test:443"));
-+            assert!(!store.requires_http1("example.com:443"));
-+            assert!(!store.requires_http1("api.example.com.evil:443"));
-+        }
-+
-+        let store = RouteStore::load(&[serde_json::from_value(serde_json::json!({
-+            "prefix": "other",
-+            "upstream": "https://api.example.com"
-+        }))
-+        .unwrap()])
-+        .await
-+        .unwrap();
-+
-+        assert!(!store.requires_http1("api.example.com:443"));
++    #[cfg(target_os = "linux")]
++    if !prepared.isolate.is_empty() {
++        return Err(NonoError::ConfigParse(
++            "nono wrap does not support linux.isolate because direct exec has no supervisor \
++             to create the namespaces or serve the proxy bridge. Use `nono run` instead."
++                .to_string(),
++        ));
 +    }
 +
-     #[test]
-     fn test_loaded_route_debug() {
-         let route = LoadedRoute {
-@@ -1333,6 +1387,7 @@ mod tests {
-             tls_config_key: None,
-             requires_intercept: false,
-             requires_managed_credential: false,
-+            requires_http1: false,
-             managed_auth_mechanism: None,
-             managed_injection_mode: None,
-             managed_auth: None,
-@@ -1589,6 +1644,7 @@ mod tests {
-             tls_config_key: None,
-             requires_intercept: true,
-             requires_managed_credential: true,
-+            requires_http1: false,
-             managed_auth_mechanism: Some(NetworkAuditAuthMechanism::PhantomHeader),
-             managed_injection_mode: Some(NetworkAuditInjectionMode::Header),
-             managed_auth: None,
-@@ -1612,6 +1668,7 @@ mod tests {
-             tls_config_key: None,
-             requires_intercept: true,
-             requires_managed_credential: false,
-+            requires_http1: false,
-             managed_auth_mechanism: None,
-             managed_injection_mode: None,
-             managed_auth: None,
+     #[cfg(target_os = "linux")]
+     if prepared.af_unix_mediation.is_pathname() {
+         return Err(NonoError::ConfigParse(
 ```
 
-**File**: `crates/nono-proxy/src/server.rs` (modified, +198/-1)
+**File**: `crates/nono-cli/src/diagnostic/formatter.rs` (modified, +61/-2)
 ```diff
-@@ -1726,11 +1726,19 @@ async fn handle_connection(mut stream: tokio::net::TcpStream, state: &ProxyState
-                                 None
-                             };
+@@ -390,6 +390,15 @@ fn format_allow_net_help_line() -> String {
+     "[nono]   --allow-net        unrestricted network for this session".to_string()
+ }
  
-+                        let requires_http1 = state.route_store.requires_http1(&host_port);
-+                        if state.enable_h2 && requires_http1 {
-+                            debug!(
-+                                "tls_intercept: disabling h2 for {}:{}: AWS SigV4 requires HTTP/1.1",
-+                                host, port
-+                            );
-+                        }
-                         let mut h2_enabled_for_target = state.enable_h2
-+                            && !requires_http1
-                             && !oauth_host_policy
-                                 .as_ref()
-                                 .is_some_and(|policy| policy.force_http1);
--                        let (tls_connector_h2, h2_connector_cache_key) = if state.enable_h2 {
-+                        let (tls_connector_h2, h2_connector_cache_key) = if h2_enabled_for_target {
-                             match tls_intercept::handle::select_h2_tls_connector_for_target(
-                                 &state.route_store,
-                                 &host,
-@@ -2265,6 +2273,195 @@ mod tests {
++/// Network grant help for sessions in an isolated network namespace.
++///
++/// `--allow-net` is rejected alongside `linux.isolate.network`, so the only
++/// remedy that can work is proxied access to a named host.
++fn format_allow_domain_help_line() -> String {
++    "[nono]   --allow-domain <host>  proxied access to a host (network isolation has no direct route out)"
++        .to_string()
++}
++
+ fn format_command_succeeded_with_stderr_line() -> String {
+     "[nono] The command succeeded, but stderr showed a likely sandbox-related access issue."
+         .to_string()
+@@ -690,6 +699,9 @@ pub struct DiagnosticFormatter<'a> {
+     /// `network_blocked_hint`. Populated only in supervised mode with an
+     /// active proxy.
+     network_denials: Vec<nono::undo::NetworkAuditEvent>,
++    /// The session ran in an isolated network namespace (NEP-0004), where
++    /// `--allow-net` is a configuration error.
++    network_isolated: bool,
+ }
+ 
+ impl<'a> DiagnosticFormatter<'a> {
+@@ -719,6 +731,7 @@ impl<'a> DiagnosticFormatter<'a> {
+             canonical_denial_paths: Vec::new(),
+             session_diagnostics: &[],
+             network_denials: Vec::new(),
++            network_isolated: false,
          }
      }
  
-+    /// Exercise CONNECT dispatch, ALPN, and the existing HTTP/1.1 signing path
-+    /// against an upstream that would otherwise permit h2.
+@@ -925,6 +938,15 @@ impl<'a> DiagnosticFormatter<'a> {
+         self
+     }
+ 
++    /// Mark the session as running in an isolated network namespace, so
++    /// network grant help suggests `--allow-domain` instead of `--allow-net`.
++    #[cfg(target_os = "linux")]
++    #[must_use]
++    pub fn with_network_isolated(mut self, isolated: bool) -> Self {
++        self.network_isolated = isolated;
++        self
++    }
++
+     /// Add policy explanations for denied paths.
+     ///
+     /// These are resolved from `query_path` in the CLI layer and provide
+@@ -2157,7 +2179,15 @@ impl<'a> DiagnosticFormatter<'a> {
+         lines.push("[nono]   --write <path>     write-only access to directory".to_string());
+ 
+         if self.caps.is_network_blocked() && stderr_network_diagnostic(diagnostics).is_some() {
+-            lines.push(format_allow_net_help_line());
++            lines.push(self.network_grant_help_line());
++        }
++    }
++
++    fn network_grant_help_line(&self) -> String {
++        if self.network_isolated {
++            format_allow_domain_help_line()
++        } else {
++            format_allow_net_help_line()
+         }
+     }
+ 
+@@ -2168,7 +2198,7 @@ impl<'a> DiagnosticFormatter<'a> {
+     /// evidence this failure was network-related.
+     fn format_network_grant_help(&self, lines: &mut Vec<String>) {
+         lines.push("[nono] To grant additional access, re-run with:".to_string());
+-        lines.push(format_allow_net_help_line());
++        lines.push(self.network_grant_help_line());
+     }
+ 
+     /// Render proxy-observed network denials with grant guidance.
+@@ -3957,6 +3987,35 @@ mod tests {
+         assert!(output.contains("--allow-net"));
+     }
+ 
 +    #[test]
-+    fn aws_intercept_falls_back_to_http1_and_signs_request() {
-+        use base64::Engine;
-+        use rustls::pki_types::{CertificateDer, ServerName, pem::PemObject};
-+        use sha2::{Digest, Sha256};
-+        use tokio::io::AsyncWriteExt;
-+        use tokio::net::{TcpListener, TcpStream};
++    #[cfg(target_os = "linux")]
++    fn test_network_isolated_suggests_allow_domain_not_allow_net() {
++        // --allow-net is rejected alongside linux.isolate.network, so the hint
++        // must point at the only remedy that can work: proxied access.
++        let caps = make_test_caps();
++        let observation = || ErrorObservation {
++            primary_verdict: None,
++            blocked_protected_file: None,
++            path_hints: Vec::new(),
++            missing_paths: Vec::new(),
++            non_sandbox_failure: None,
++            network_blocked_hint: true,
++        };
++        let isolated = DiagnosticFormatter::new(&caps)
++            .with_mode(DiagnosticMode::Supervised)
++            .with_error_observation(observation())
++            .with_network_isolated(true)
++            .format_footer(1);
++        assert!(!isolated.contains("--allow-net"), "{isolated}");
++        assert!(isolated.contains("--allow-domain <host>"), "{isolated}");
 +
-+        let _lock = crate::test_env::ENV_LOCK.lock().unwrap();
-+        let dir = tempfile::tempdir().unwrap();
-+        let empty_profile = dir.path().join("aws-empty");
-+        std::fs::write(&empty_profile, "").unwrap();
++        let plain = DiagnosticFormatter::new(&caps)
++            .with_mode(DiagnosticMode::Supervised)
++            .with_error_observation(observation())
++            .format_footer(1);
++        assert!(plain.contains("--allow-net"), "{plain}");
++    }
 +
-+        let _env = crate::test_env::EnvVarGuard::set_all(&[
-+            ("AWS_ACCESS_KEY_ID", "AKIAIOSFODNN7EXAMPLE"),
-+            (
-+                "AWS_SECRET_ACCESS_KEY",
-+                "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-+            ),
-+            ("AWS_SESSION_TOKEN", "fake-session-token"),
-+            ("AWS_REGION", "us-east-1"),
-+            ("AWS_CONFIG_FILE", empty_profile.to_str().unwrap()),
-+            (
-+                "AWS_SHARED_CREDENTIALS_FILE",
-+                empty_profile.to_str().unwrap(),
-+            ),
-+            ("AWS_EC2_METADATA_DISABLED", "true"),
-+        ]);
-+
-+        // Hold the environment lock until the runtime and guard are dropped.
-+        let runtime = tokio::runtime::Builder::new_current_thread()
-+            .enable_all()
-+            .build()
-+            .unwrap();
-+
-+        runtime.block_on(async {
-+            tokio::time::timeout(std::time::Duration::from_secs(15), async {
-+                let ca = Arc::new(EphemeralCa::generate().unwrap());
-+                let cache = Arc::new(CertCache::new(Arc::clone(&ca)));
-+                let acceptor = tokio_rustls::TlsAcceptor::from(
-+                    tls_intercept::acceptor::build_server_config(cache, true).unwrap(),
-+                );
-+
-+                let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+                let upstream_port = listener.local_addr().unwrap().port();
-+                let body = br#"{"messages":[{"text":"hi"}]}"#;
-+
-+                let upstream = tokio::spawn(async move {
-+                    // A pre-flight h2 probe would consume this connection and
-+                    // fail the HTTP/1.1 assertion, so this also checks probe suppression.
-+                    let (sock, _) = listener.accept().await.unwrap();
-+                    let mut tls = acceptor.accept(sock).await.unwrap();
-+                    assert_ne!(tls.get_ref().1.alpn_protocol(), Some(b"h2".as_slice()));
-+
-+                    let mut request = Vec::new();
-+                    let header_end = loop {
-+                        let mut byte = [0];
-+                        tls.read_exact(&mut byte).await.unwrap();
-+                        request.push(byte[0]);
-+                        if request.ends_with(b"\r\n\r\n") {
-+                            break request.len();
-+                        }
-+                        assert!(request.len() < 16384);
-+                    };
-+
-+                    let mut received_body = vec![0; body.len()];
-+                    tls.read_exact(&mut received_body).await.unwrap();
-+                    assert_eq!(received_body, body);
-+
-+                    let headers = String::from_utf8(request[..header_end].to_vec()).unwrap();
-+                    assert!(headers.starts_with("POST /model/test/converse HTTP/1.1\r\n"));
-+                    assert!(headers.contains("AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/"));
-+                    assert!(headers.contains("/us-east-1/bedrock/aws4_request"));
-+       
+     #[test]
+     fn test_next_steps_header_omitted_without_follow_up_remediations() {
+         // Path evidence with no RunDiscovery/CheckPolicy remediation must not
 ```
 
-**File**: `docs/cli/features/networking.mdx` (modified, +2/-0)
+**File**: `crates/nono-cli/src/exec_strategy.rs` (modified, +65/-8)
 ```diff
-@@ -506,6 +506,8 @@ When enabled:
- - **Reverse proxy**: Negotiates h2 with upstreams that support it, allowing multiple requests to be multiplexed over a single TCP connection. This eliminates per-request TLS handshake overhead (~50-100ms) for workloads with many concurrent requests to the same host (e.g., Maven/Gradle artifact downloads).
- - **CONNECT intercept**: Advertises both `h2` and `http/1.1` in ALPN, enabling gRPC and other HTTP/2 clients to negotiate h2 transparently through the proxy. Per-stream endpoint rules and credential injection are enforced at the HTTP/2 frame level.
+@@ -256,6 +256,14 @@ impl SeccompPolicy {
+     }
+ }
  
-+Intercepted targets with an `aws_auth` route use HTTP/1.1 even when HTTP/2 is enabled, because AWS SigV4 signing currently requires the HTTP/1.1 intercept path. This applies to all routes sharing that host and port; other targets can still negotiate HTTP/2. OAuth targets configured to force HTTP/1.1 also retain that fallback.
++/// Whether the child must be launched through the raw-clone bootstrap:
++/// network notifications need its listener handoff, and namespace isolation
++/// needs its synchronized parent/child id-map step.
++#[cfg(target_os = "linux")]
++fn uses_clone_bootstrap(config: &ExecConfig<'_>) -> bool {
++    config.seccomp_policy.needs_network_notify() || config.namespaces.is_some()
++}
 +
- ### Why Disabled by Default
+ /// Configuration for command execution.
+ pub struct ExecConfig<'a> {
+     /// The command to execute (program + args).
+@@ -304,6 +312,11 @@ pub struct ExecConfig<'a> {
+     /// Linux network enforcement backend for this session.
+     #[cfg(target_os = "linux")]
+     pub sandbox_policy: crate::profile::LinuxSandboxPolicy,
++    /// Opt-in namespace isolation (NEP-0004). When set, the child is launched
++    /// through the raw-clone bootstrap, which enters these namespaces before
++    /// Landlock and seccomp apply. Partial application is fatal.
++    #[cfg(target_os = "linux")]
++    pub namespaces: Option<nono::NamespaceSpec>,
+     /// Allow-list of environment variable names. When set, only variables
+     /// matching a glob pattern (e.g. `"AWS_*"`, `"*_TOKEN"`, `"*SECRET*"`) are
+     /// passed to the child. Nono-injected credentials always bypass this.
+@@ -612,7 +625,7 @@ pub fn execute_supervised<F: FnMut(i32) -> bool>(
+     let socket_pair = if needs_child_ipc {
+         let pair = SupervisorSocket::pair()?;
+         #[cfg(target_os = "linux")]
+-        let pair = if config.seccomp_policy.needs_network_notify() {
++        let pair = if uses_clone_bootstrap(config) {
+             (
+                 clone_files::promote_supervisor_socket(pair.0)?,
+                 clone_files::promote_supervisor_socket(pair.1)?,
+@@ -942,14 +955,17 @@ pub fn execute_supervised<F: FnMut(i32) -> bool>(
+     // Serialize notification listener ownership, including destruction, across
+     // shared-table bootstraps. Ordinary proxy I/O threads remain concurrent.
+     #[cfg(target_os = "linux")]
+-    let _listener_ownership_guard = if config.seccomp_policy.child_requires_dumpable() {
+-        Some(clone_files::lock_listener_ownership()?)
+-    } else {
+-        None
+-    };
++    let _listener_ownership_guard =
++        if config.seccomp_policy.child_requires_dumpable() || config.namespaces.is_some() {
++            Some(clone_files::lock_listener_ownership()?)
++        } else {
++            None
++        };
+     #[cfg(target_os = "linux")]
+-    let mut clone_bootstrap = if config.seccomp_policy.needs_network_notify() {
+-        if !supervisor.is_some_and(|sup| sup.seccomp_policy == config.seccomp_policy) {
++    let mut clone_bootstrap = if uses_clone_bootstrap(config) {
++        if config.seccomp_policy.needs_network_notify()
++            && !supervisor.is_some_and(|sup| sup.seccomp_policy == config.seccomp_policy)
++        {
+             return Err(NonoError::SandboxInit(
+                 "Network notifications require a supervisor with matching notification policy"
+                     .into(),
+@@ -1450,6 +1466,38 @@ pub fn execute_supervised<F: FnMut(i32) -> bool>(
+                 .as_mut()
+                 .and_then(|bootstrap| bootstrap.network.take());
  
- HTTP/2 is opt-in because:
++            // Namespace isolation proxy bridge: serve the listener the child
++            // created inside its network namespace with the session proxy.
++            // Failing to attach it is fatal; the child would have no egress
++            // path and the profile asked for proxied egress.
++            #[cfg(target_os = "linux")]
++            if let Some(bridge) = clone_bootstrap
++                .as_mut()
++                .and_then(|bootstrap| bootstrap.bridge.take())
++            {
++                let attached = supervisor
++                    .and_then(|sup| sup.proxy_handle)
++                    .ok_or_else(|| {
++                        NonoError::SandboxInit(
++                            "namespace isolation bridge requires a running proxy".to_string(),
++                        )
++                    })
++                    .and_then(|handle| {
++                        handle
++                            .add_listener(std::net::TcpListener::from(bridge))
++                            .map_err(|e| {
++                                NonoError::SandboxInit(format!(
++                                    "cannot attach namespace isolation bridge to proxy: {e}"
++                                ))
++                            })
++                    });
++                if let Err(error) = attached {
++                    let _ = signal::kill(child, Signal::SIGKILL);
++                    let _ = waitpid(child, None);
++                    return Err(error);
++                }
++            }
++
+             // Set up signal forwarding.
+             setup_signal_forwarding(child, pty_proxy.as_ref().map(|p| p.poll_fds().0));
+             let _signal_forwarding_guard = SignalForwardingGuard;
+@@ -1728,6 +1776,15 @@ pub fn execute_supervised<F: FnMut(i32
+```
+
+**File**: `crates/nono-cli/src/exec_strategy/clone_files.rs` (modified, +185/-34)
+```diff
+@@ -24,6 +24,9 @@ use std::sync::{Mutex, MutexGuard};
+ const READY: u8 = 0xc1;
+ const DETACHED: u8 = 0xd1;
+ const ACK: u8 = 0xa1;
++// Sent instead of READY when namespace entry fails, followed by the failing
++// stage code and errno, so the parent can name what the host refused.
++const NAMESPACE_FAILED: u8 = 0xe1;
+ const BOOTSTRAP_SECONDS: i64 = 15;
+ 
+ // All supervised notification sessions hold this lock until their listener
+@@ -41,6 +44,9 @@ pub(super) fn lock_listener_ownership() -> Result<MutexGuard<'static, ()>> {
+ pub(super) struct Bootstrap {
+     pub child: nix::unistd::Pid,
+     pub network: Option<OwnedFd>,
++    /// Loopback listener created inside the child's network namespace, when
++    /// namespace isolation requested a proxy bridge.
++    pub bridge: Option<OwnedFd>,
+ }
+ 
+ pub(super) struct Command<'a> {
+@@ -78,22 +84,89 @@ fn failure(detail: &str) -> NonoError {
+     NonoError::SandboxInit(format!("CLONE_FILES bootstrap: {detail}"))
+ }
+ 
++/// Whether the child's network namespace confines TCP to its own loopback
++/// (`linux.isolate.loopback`), so nono's TCP port rules are lifted.
++fn namespace_confines_tcp(config: &ExecConfig<'_>) -> bool {
++    config
++        .namespaces
++        .is_some_and(|spec| spec.has_network() && spec.loopback_tcp_enabled())
++}
++
+ fn prepare(
+     caps: &CapabilitySet,
+     abi: &DetectedAbi,
+     policy: LinuxSandboxPolicy,
++    namespace_tcp: bool,
+ ) -> Result<PreparedLandlockSandbox> {
+-    match policy {
+-        LinuxSandboxPolicy::Auto => {
++    match (policy, namespace_tcp) {
++        (LinuxSandboxPolicy::Auto, false) => {
+             sandbox::prepare_seccomp_with_abi(caps, abi, nono::SeccompOpts::network_baseline())
+         }
+-        LinuxSandboxPolicy::External => {
++        // TCP confined by the network namespace: no Landlock TCP rules, but
++        // UDP, raw and non-IP sockets stay denied by the static baseline.
++        (LinuxSandboxPolicy::Auto, true) => sandbox::prepare_seccomp_with_abi(
++            caps,
++            abi,
++            nono::SeccompOpts::external_tcp_with_baseline(),
++        ),
++        // External delegates TCP already; Landlock policy installs no seccomp,
++        // so with loopback it keeps Landlock filesystem rules only.
++        (LinuxSandboxPolicy::External, _) | (LinuxSandboxPolicy::Landlock, true) => {
+             sandbox::prepare_seccomp_with_abi(caps, abi, nono::SeccompOpts::external_tcp())
+         }
+-        LinuxSandboxPolicy::Landlock => sandbox::prepare_landlock_with_abi(caps, abi),
++        (LinuxSandboxPolicy::Landlock, false) => sandbox::prepare_landlock_with_abi(caps, abi),
+     }
+ }
+ 
++/// The seccomp-notify program the child installs, if any. Network
++/// notifications carry filesystem notifications when both are needed; an
++/// isolation-only launch may need filesystem notifications alone, or none.
++fn notify_filter(
++    config: &ExecConfig<'_>,
++    caps: &CapabilitySet,
++) -> Option<PreparedSeccompNotifyFilter> {
++    let policy = config.seccomp_policy;
++    let network = if policy.proxy_fallback {
++        let has_bind = matches!(caps.network_mode(), nono::NetworkMode::ProxyOnly { bind_ports, .. } if !bind_ports.is_empty());
++        sandbox::prepare_seccomp_proxy_filter(has_bind)
++    } else if policy.af_unix_mediation {
++        sandbox::prepare_seccomp_af_unix_filter()
++    } else if policy.needs_openat_notify() {
++        return Some(sandbox::prepare_seccomp_openat_filter());
++    } else {
++        return None;
++    };
++    Some(if policy.needs_openat_notify() {
++        network.with_openat_notifications()
++    } else {
++        network
++    })
++}
++
++fn namespace_stage_code(stage: sandbox::RawSandboxStage) -> u8 {
++    match stage {
++        sandbox::RawSandboxStage::UnshareNamespaces => 1,
++        sandbox::RawSandboxStage::LoopbackUp => 2,
++        sandbox::RawSandboxStage::BridgeListener => 3,
++        _ => 0,
++    }
++}
++
++fn namespace_failure(record: [u8; 5]) -> NonoError {
++    let step = match record[0] {
++        1 => "creating the namespaces (unshare)",
++        2 => "bringing up loopback in the new network namespace",
++        3 => "creating the proxy bridge listener",
++        _ => "an unknown step",
++    };
++    let errno = i32::from_ne_bytes([record[1], record[2], record[3], record[4]]);
++    NonoError::SandboxInit(format!(
++        "namespace isolation failed while {step}: {}. The startup probe succeeded, so the \
++         host refused the launch itself; nono does not run without the requested isolation.",
++        std::io::Error::from_raw_os_error(errno)
++    ))
++}
++
+ fn above_stdio(fd: OwnedFd) -> Result<OwnedFd> {
+     if fd.as_raw_fd() >= 3 {
+         return Ok(fd);
+@@ -148,21 +221,23 @@ pub(super) fn spawn(
+     caps: &CapabilitySet,
+     abi: DetectedAbi,
+ ) -> Result<Bootstrap> {
+-    if sandbox::is_wsl2() {
++    let network = notify_filter(config, caps);
++    if network.is_some() && sandbox::is_wsl2() {
+         return Err(failure("required notification filters unavailabl
+```
+
+**File**: `crates/nono-cli/src/exec_strategy/clone_files/tests.rs` (modified, +1/-0)
+```diff
+@@ -70,6 +70,7 @@ fn config(caps: &CapabilitySet, filesystem: bool, proxy: bool) -> ExecConfig<'_>
+             proc_comm_notify: filesystem,
+         },
+         sandbox_policy: LinuxSandboxPolicy::Auto,
++        namespaces: None,
+         allowed_env_vars: None,
+         denied_env_vars: None,
+         case_insensitive_env_vars: false,
 ```
 
 ---
 
-### Incident Patch 3: `44df7f63` (2026-10-14)
-**Commit Message**: feat(profiles): require fully qualified package profile names (#2118)
+### Incident Patch 2: `e50e2c4e` (2026-10-19)
+**Commit Message**: build: add NEP roadmap generation script and workflow (#2144)
 
-* feat(profiles): require fully qualified package profile names
+Add a Python script (`scripts/gen-roadmap.py`) that parses frontmatter from NEPs to generate both the project `ROADMAP.md` and the index table in `neps/README.md`.
 
-Resolve bare names from user and built-in profiles only
-Load installed package profiles through namespace/package references
-Preserve sibling inheritance within filesystem and package profiles
-Prompt to install missing official packages by exact identity
-Remove legacy short-name package discovery paths
-Fix profile subcommand help and update documentation examples
-Add coverage for resolution precedence and package identity rules
+- Add `breaking` field support to NEP frontmatter templates and documentation
+- Update `Makefile` with `roadmap` and `roadmap-check` targets
+- Add a GitHub Actions workflow to verify that generated roadmap files remain up to date in CI
 
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
-* fix: resolve correctly
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
-* fix: remove outdated notes
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/src/cli.rs` (modified, +17/-7)
+**File**: `.github/workflows/roadmap.yml` (added, +26/-0)
 ```diff
-@@ -517,8 +517,8 @@ SESSION PICKER:
-                                                # Extend an existing profile
-   nono profile init my-agent --full            # Generate a full skeleton
-   nono profile list                            # List all profiles (built-in and user)
--  nono profile show claude-code                # Show a fully resolved profile
--  nono profile diff default claude-code        # Compare two profiles
-+  nono profile show nolabs-ai/claude            # Show an installed package profile
-+  nono profile diff default nolabs-ai/claude    # Compare two profiles
-   nono profile validate my-agent               # Validate a profile by name
-   nono profile validate ~/my-profile.json      # Validate a profile file
-   nono profile validate --draft my-profile     # Validate a profile draft
-@@ -888,14 +888,9 @@ pub struct CompletionsArgs {
- }
- 
- #[derive(Parser, Debug)]
--#[command(disable_help_flag = true)]
- pub struct ProfileCmdArgs {
-     #[command(subcommand)]
-     pub command: ProfileCommands,
--
--    /// Print help
--    #[arg(long, short = 'h', action = clap::ArgAction::Help, help_heading = "OPTIONS")]
--    pub help: Option<bool>,
- }
- 
- #[derive(Subcommand, Debug)]
-@@ -4449,6 +4444,21 @@ mod tests {
-         assert!(result.is_err(), "profile without subcommand should fail");
-     }
- 
-+    #[test]
-+    fn test_profile_subcommand_help_is_available() {
-+        for subcommand in [
-+            "init", "list", "show", "diff", "validate", "promote", "groups", "schema", "guide",
-+        ] {
-+            let error = Cli::try_parse_from(["nono", "profile", subcommand, "--help"])
-+                .expect_err("--help should exit through clap");
-+            assert_eq!(
-+                error.kind(),
-+                clap::error::ErrorKind::DisplayHelp,
-+                "profile {subcommand} --help should display help"
-+            );
-+        }
-+    }
+@@ -0,0 +1,26 @@
++name: Roadmap
 +
-     #[test]
-     fn test_profile_list_parses() {
-         let cli = Cli::try_parse_from(["nono", "profile", "list", "--json"])
++on:
++  pull_request:
++    branches: [main]
++    paths:
++      - "neps/**"
++      - "ROADMAP.md"
++      - "scripts/gen-roadmap.py"
++      - "crates/nono/Cargo.toml"
++      - ".github/workflows/roadmap.yml"
++
++permissions:
++  contents: read
++
++jobs:
++  roadmap:
++    name: ROADMAP.md is up to date
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++
++      - name: Check generated roadmap and NEP index
++        run: python3 scripts/gen-roadmap.py --check
 ```
 
-**File**: `crates/nono-cli/src/migration.rs` (modified, +52/-232)
+**File**: `Makefile` (modified, +8/-1)
 ```diff
-@@ -1,20 +1,7 @@
--//! Auto-pull prompt when a user runs `--profile <name>` and no local
--//! resolver (user dir, pack store, embedded) has the profile.
--//!
--//! Resolution order:
--//!   1. The small in-tree `OFFICIAL_PACKS` map for well-known names
--//!      (`claude-code`, `codex`, …). Lets new users go from a fresh
--//!      install to a working sandbox without needing a network round
--//!      trip — the common case stays fast and deterministic.
--//!   2. Registry endpoint `GET /api/v1/profiles/<name>/providers` for
--//!      community packs. Adding a community-published profile is a
--//!      registry-side operation; no CLI release required.
--//!
--//! Community packs that aren't in the registry's index just need the
--//! explicit `nono pull <ns>/<pack>` once.
-+//! Install prompt for a missing fully-qualified registry package profile.
+@@ -6,7 +6,7 @@
+ #   make check        Run clippy and format check
+ #   make release      Build release binaries
  
- use crate::cli::PullArgs;
--use crate::package::ProfileProvider;
-+use crate::package::PackageRef;
- use crate::package_cmd;
- use crate::registry_client::{PullReason, RegistryClient, resolve_registry_url};
- use colored::Colorize;
-@@ -24,214 +11,80 @@ use std::io::{self, IsTerminal, Write};
- const ENV_AUTO_MIGRATE: &str = "NONO_AUTO_MIGRATE";
- const ENV_NO_MIGRATE: &str = "NONO_NO_MIGRATE";
+-.PHONY: all build build-lib build-cli build-ffi build-arm64 test test-workspace test-lib test-cli test-ffi test-doc test-one test-repeat test-spiffe check clippy fmt clean install audit help
++.PHONY: all build build-lib build-cli build-ffi build-arm64 test test-workspace test-lib test-cli test-ffi test-doc test-one test-repeat test-spiffe check clippy fmt clean install audit help roadmap roadmap-check
  
--/// Where users can read about the registry-pack model: why this prompt
--/// fires, what gets installed, and what to do if anything breaks.
--/// Surfaced in both the install confirmation and the decline-path hint
--/// so users have a way to investigate before they say yes (or come
--/// back to after they say no).
--const LEARN_MORE_URL: &str = "https://github.com/nolabs-ai/nono/discussions/780";
--
--/// Profile names this CLI knows about as official, vetted packs.
--/// Fast-path for the common case so users don't pay a network round
--/// trip for the marquee integrations. Community-published profiles
--/// resolve via the registry endpoint instead — see `fetch_providers`.
--///
--/// Adding to this list is a deliberate signal that the pack is
--/// maintained in lockstep with nono itself. Third-party packs do
--/// **not** belong here; they go through the registry path and require
--/// an explicit `nono pull` if no provider lookup is available.
--const OFFICIAL_PACKS: &[OfficialPack] = &[
--    OfficialPack {
--        profile_name: "claude",
--        namespace: "nolabs-ai",
--        pack_name: "claude",
--        description: Some("Anthropic Claude Code sandbox profile + plugin"),
--        installs_summary: Some("sandbox profile + Claude Code plugin (hooks, skill)"),
--    },
--    // Transitional alias: the profile was originally `claude-code`,
--    // renamed to `claude` so it matches the pack name. Once the pack
--    // is installed, the resolver also accepts `claude-code` via the
--    // artifact's `aliases` field. This entry only matters for users
--    // who type `--profile nolabs-ai/claude` *before* the pack is installed.
--    OfficialPack {
--        profile_name: "claude-code",
--        namespace: "nolabs-ai",
--        pack_name: "claude",
--        description: Some("Anthropic Claude Code (legacy profile name; canonical is `claude`)"),
--        installs_summary: Some("sandbox profile + Claude Code plugin (hooks, skill)"),
--    },
--    OfficialPack {
--        profile_name: "codex",
--        namespace: "nolabs-ai",
--        pack_name: "codex",
--        description: Some("OpenAI Codex CLI sandbox profile + plugin"),
--        installs_summary: Some("sandbox profile + Codex plugin (hooks, skill)"),
--    },
--    OfficialPack {
--        profile_name: "opencode",
--        namespace: "nolabs-ai",
--        pack_name: "opencode",
--        description: Some("OpenCode 2 AI coding assistant sandbox profile + plugin"),
--        installs_summary: Some("sandbox profile + OpenCode plugin (hooks, skill)"),
--    },
--    OfficialPack {
--        profile_name: "opencode-v1",
--        namespace: "nolabs-ai",
--        pack_name: "opencode-v1",
--        description: Some("OpenCode 1 AI coding assistant sandbox profile + plugin"),
--        installs_summary: Some("sandbox profile + OpenCode v1 plugin (hooks, skill)"),
--    },
--];
--
--struct OfficialPack {
--    profile_name: &'static str,
--    namespace: &'static str,
--    pack_name: &'static str,
--    description: Option<&'static str>,
--    installs_summary: Option<&'static str>,
--}
--
--impl OfficialPack {
--    fn as_provider(&self) -> ProfileProvider {
--        ProfileProvider {
--            namespace: self.namespace.to_string(),
--            name: self.pack_name.to_string(),
--            description: self.description.map(str::to_string),
--            installs_summary: self.installs_summary.map(str::to_string),
--        }
--    }
--}
--
--/// Outcome of the migration check, communicated back to the caller so
--/// it can decide whether to re-resolve the profile.
- #[derive(Debug, Clone, PartialEq, Eq)]
- pub enum MigrationOutcome {
--    /// No registry pack provides this profile name. Caller should
--    /// surface a "profile not found" error unchanged.
-     NotApplicable,
-
+ # Keep Rust panic locations available in both local and CI test output. A
+ # caller can still override this (for example, RUST_BACKTRACE=full make test).
+@@ -101,6 +101,13 @@ fmt:
+ fmt-check:
+ 	cargo fmt --all -- --check
+ 
++# Regenerate ROADMAP.md and the neps/README.md index from NEP frontmatter
++roadmap:
++	python3 scripts/gen-roadmap.py
++
++roadmap-check:
++	python3 scripts/gen-roadmap.py --check
++
+ # Clean
+ clean:
+ 	cargo clean
 ```
 
-**File**: `crates/nono-cli/src/package.rs` (modified, +30/-38)
+**File**: `ROADMAP.md` (added, +43/-0)
 ```diff
-@@ -71,6 +71,16 @@ impl PackageManifest {
-             .iter()
-             .any(|a| a.artifact_type == ArtifactType::Profile)
-     }
+@@ -0,0 +1,43 @@
++# Roadmap
 +
-+    /// The profile exposed by the package's fully-qualified name.
-+    /// Other profile artifacts are package-local inheritance helpers.
-+    #[must_use]
-+    pub fn public_profile_artifact(&self) -> Option<&ArtifactEntry> {
-+        self.artifacts.iter().find(|artifact| {
-+            artifact.artifact_type == ArtifactType::Profile
-+                && artifact.install_as.as_deref() == Some(self.name.as_str())
-+        })
-+    }
- }
- 
- #[derive(Debug, Clone, Serialize, Deserialize)]
-@@ -84,15 +94,6 @@ pub struct ArtifactEntry {
-     pub placement: Option<String>,
-     #[serde(default)]
-     pub prefix: Option<String>,
--    /// Additional names that resolve to this same artifact. Currently
--    /// only meaningful for `Profile` artifacts: each alias is accepted
--    /// by `--profile` and routes to the file installed under
--    /// `install_as`. Lets a pack rename its canonical profile name
--    /// (e.g. `claude-code` → `claude`) without breaking commands users
--    /// already have in their shell history. The pack only stores the
--    /// content once — aliases never produce extra files on disk.
--    #[serde(default)]
--    pub aliases: Vec<String>,
- }
- 
- #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-@@ -212,35 +213,6 @@ pub struct PackageAdvisory {
-     pub summary: Option<String>,
- }
- 
--/// One pack that ships a given profile name (the `install_as` of a
--/// profile artifact in its manifest). Returned by
--/// `GET /api/v1/profiles/<name>/providers`. Used by the migration
--/// prompt to discover which pack to offer when a user runs
--/// `--profile <formerly-builtin-name>`.
--#[derive(Debug, Clone, Serialize, Deserialize)]
--pub struct ProfileProvider {
--    pub namespace: String,
--    pub name: String,
--    #[serde(default)]
--    pub description: Option<String>,
--    /// Short user-visible summary of what the pack installs. Renders
--    /// in the migration prompt's "Installs" row.
--    #[serde(default)]
--    pub installs_summary: Option<String>,
--}
--
--impl ProfileProvider {
--    #[must_use]
--    pub fn pack_ref(&self) -> String {
--        format!("{}/{}", self.namespace, self.name)
--    }
--}
--
--#[derive(Debug, Clone, Serialize, Deserialize)]
--pub struct ProfileProvidersResponse {
--    pub providers: Vec<ProfileProvider>,
--}
--
- #[derive(Debug, Clone, Serialize, Deserialize)]
- pub struct PullResponse {
-     pub namespace: String,
-@@ -438,4 +410,24 @@ mod tests {
-         assert!(package_install_dir("", "name").is_err());
-         assert!(package_install_dir("namespace", "").is_err());
-     }
++<!-- Generated by scripts/gen-roadmap.py from neps/. Do not edit by hand;
++     run `make roadmap` after changing a NEP. -->
 +
-+    #[test]
-+    fn public_profile_must_match_package_name() {
-+        let manifest: PackageManifest = serde_json::from_value(serde_json::json!({
-+            "schema_version": 1,
-+            "name": "copilot-cli",
-+            "artifacts": [
-+                {"type": "profile", "path": "base.json", "install_as": "copilot-base"},
-+                {"type": "profile", "path": "cli.json", "install_as": "copilot-cli"}
-+            ]
-+        }))
-+        .expect("manifest");
++This roadmap lists the major and security-consequential changes tracked as
++[nono Enhancement Proposals](neps/README.md). Bug fixes and small features
++do not need a NEP and are not listed here. A proposal's position reflects
++its NEP status, not a delivery date.
 +
-+        assert_eq!(
-+            manifest
-+                .public_profile_artifact()
-+                .and_then(|artifact| artifact.install_as.as_deref()),
-+            Some("copilot-cli")
-+        );
-+    }
- }
++Next major release: **1.0**. NEPs flagged as API-breaking require a major
++version increase and are targeted at 1.0. Within each section they are
++listed first, then NEPs whose impact has not yet been assessed, then
++non-breaking NEPs.
++
++## Accepted
++
++_Approved; implementation may proceed._
++
++- **[NEP-0000: NEP process](neps/0000-nep-process.md)** — _Breaking: not yet assessed_
++  Establish `neps/` at the repo root as the place for design proposals on changes too large or security-consequential for a plain PR description.
++- **[NEP-0003: Move macOS keychain authorisation to `nono-cli`](neps/0003-keychain-authorisation-to-cli.md)** — _Breaking: not yet assessed_
++  Move the decision about whether a sandboxed process may reach the macOS keychain out of the `nono` library and into `nono-cli` and make that decision require an explicit `filesystem.bypass_protection` entry when a deny group covers the keychain.
++
++## Proposed
++
++_Complete and awaiting a maintainer decision._
++
++- **[NEP-0001: Pre-1.0.0 tech debt, deprecation, and API-freeze cleanup](neps/0001-1-0-0-tech-debt-cleanup.md)** — _Breaking: not yet assessed_
++  Before nono reaches 1.0.0, we should remove the deprecations, dead code, backward-compat aliases, and library/CLI boundary drift that have built up since the project started.
++- **[NEP-0004: Opt-in Linux namespace isolation](neps/0004-opt-in-linux-namespace-isolation.md)** — _Breaking: not yet assessed_
++  Add an opt-in, permanently default-off Linux isolation layer that runs the sandboxed workload inside a set of unprivileged namespaces (user + network, later a minimal mount-mask), layered on top of the existing Landlock and seccomp enforcement.
++
++## Draft
++
++_Under active authoring; not yet ready for a decision._
++
++- **[NEP-0002: Tool Sandbox invocation-scoped filesystem approvals](neps/0002-invocation-scoped-commands.md)** — _Breaking: not yet assessed_
++  Extend the Tool Sandbox policy model so that a sandboxed command can request a narrowly scoped filesystem capability for one invocation without escaping the filesystem policy selected for that invocation.
++- **[NEP-0005: Windows enforcement backend](neps/0005-windows-enforcement-backend.md)** — _Breaking: not yet assessed_
++  Add a third OS enforcement backend to nono for Windows, alongside Linux (Landlock) and macOS (Seatbelt).
++- **[NEP-0007: Supervisor decisions, audit and credentials outside a microVM guest](neps/0007-remote-supervisor-decisions-over-vsock.md)** — _Breaking: not yet assessed_
++  Let nono split its supervisor across a virtual-machine boundary.
 ```
 
-**File**: `crates/nono-cli/src/package_cmd.rs` (modified, +33/-1)
+**File**: `neps/NEP-template.md` (modified, +1/-0)
 ```diff
-@@ -44,6 +44,12 @@ pub fn run_pull(args: PullArgs, reason: PullReason) -> Result<()> {
+@@ -5,6 +5,7 @@ authors:
+   - your-name
+ status: draft
+ created: YYYY-MM-DD
++breaking:
+ superseded-by:
+ ---
  
-     let downloads = download_and_verify_artifacts(&client, &package_ref, &pull, Some(&printer))?;
-     let manifest = load_manifest(&downloads.artifacts)?;
-+    if manifest.name != package_ref.name {
-+        return Err(NonoError::PackageInstall(format!(
-+            "package manifest name '{}' does not match requested package '{}'",
-+            manifest.name, package_ref.name
-+        )));
-+    }
-     validate_manifest(&manifest)?;
+```
+
+**File**: `neps/README.md` (modified, +32/-8)
+```diff
+@@ -47,6 +47,23 @@ Any change to the "Security Considerations" section of an accepted NEP
+ requires the same review as the original acceptance — don't quietly amend
+ a security-relevant decision after the fact.
  
-     let signer_identity = signer_identity_uri(&downloads.signer_identity)?;
-@@ -732,6 +738,14 @@ fn load_manifest(downloads: &[DownloadedArtifact]) -> Result<PackageManifest> {
- }
- 
- fn validate_manifest(manifest: &PackageManifest) -> Result<()> {
-+    if manifest.has_profile_artifact() && manifest.public_profile_artifact().is_none() {
-+        return Err(NonoError::PackageInstall(format!(
-+            "package '{}' has profile artifacts but no public profile named '{}'; \
-+             set a profile artifact's install_as to the package name",
-+            manifest.name, manifest.name
-+        )));
-+    }
++## Breaking changes
 +
-     if !manifest.platforms.is_empty()
-         && !manifest
-             .platforms
-@@ -1289,6 +1303,25 @@ mod tests {
-         assert_eq!(stable_vs_prerelease, Ordering::Greater);
-     }
- 
-+    #[test]
-+    fn manifest_rejects_profiles_without_package_named_public_entry() {
-+        let manifest: PackageManifest = serde_json::from_value(serde_json::json!({
-+            "schema_version": 1,
-+            "name": "tools",
-+            "artifacts": [
-+                {"type": "profile", "path": "base.json", "install_as": "tools-base"}
-+            ]
-+        }))
-+        .expect("manifest");
++The optional `breaking` frontmatter field records whether a NEP changes a
++public API or behavior in a way that requires a major version increase
++(the `nono` library API, CLI flags, or the profile format):
 +
-+        let error = validate_manifest(&manifest).expect_err("missing public entry must fail");
-+        assert!(
-+            error
-+                .to_string()
-+                .contains("no public profile named 'tools'")
-+        );
-+    }
++| Value   | Meaning                                                   |
++|---------|-----------------------------------------------------------|
++| `true`  | API-breaking; requires a major version increase            |
++| `false` | Assessed and not breaking                                  |
++| empty   | Not yet assessed (the default; also if the field is absent) |
 +
-     #[test]
-     fn copy_instruction_to_project_refuses_dangling_symlink_at_dest() {
-         use crate::test_env::ENV_LOCK;
-@@ -1320,7 +1353,6 @@ mod tests {
-             install_as: None,
-             placement: None,
-             prefix: None,
--            aliases: Vec::new(),
-         };
++The author proposes a value and the maintainer who accepts the NEP confirms
++it. Leave it empty rather than guessing. `ROADMAP.md` sorts breaking NEPs
++first within each status and labels the rest, so unassessed NEPs stay
++visible.
++
+ ## Numbering
  
-         let result = copy_instruction_to_project(&artifact, &source);
+ Numbers are assigned sequentially, zero-padded to 4 digits, in the order
+@@ -67,11 +84,18 @@ whoever merges second renumbering their file.
+ 
+ ## Index
+ 
+-| NEP  | Title                     | Status   |
+-|------|---------------------------|----------|
+-| 0000 | NEP process               | accepted |
+-| 0001 | Pre-1.0.0 tech debt, deprecation, and API-freeze cleanup | proposed |
+-| 0003 | Move macOS keychain authorisation to `nono-cli`          | accepted |
+-| 0004 | Opt-in Linux namespace isolation                          | proposed |
+-| 0005 | Windows enforcement backend                               | draft    |
+-| 0007 | Supervisor decisions, audit and credentials outside a microVM guest | draft |
++This index and [ROADMAP.md](../ROADMAP.md) are generated from each NEP's
++frontmatter. After changing a NEP's `status` or `title`, run `make roadmap`;
++CI fails PRs that leave them stale.
++
++<!-- nep-index:begin (generated by scripts/gen-roadmap.py) -->
++| NEP  | Title | Status | Breaking |
++|------|-------|--------|----------|
++| 0000 | NEP process | accepted | Breaking: not yet assessed |
++| 0001 | Pre-1.0.0 tech debt, deprecation, and API-freeze cleanup | proposed | Breaking: not yet assessed |
++| 0002 | Tool Sandbox invocation-scoped filesystem approvals | draft | Breaking: not yet assessed |
++| 0003 | Move macOS keychain authorisation to `nono-cli` | accepted | Breaking: not yet assessed |
++| 0004 | Opt-in Linux namespace isolation | proposed | Breaking: not yet assessed |
++| 0005 | Windows enforcement backend | draft | Breaking: not yet assessed |
++| 0007 | Supervisor decisions, audit and credentials outside a microVM guest | draft | Breaking: not yet assessed |
++<!-- nep-index:end -->
 ```
 
-**File**: `crates/nono-cli/src/package_status.rs` (modified, +18/-80)
+**File**: `scripts/gen-roadmap.py` (added, +247/-0)
 ```diff
-@@ -145,11 +145,8 @@ fn yanked_message(key: &str, installed: &str, status: &PackageStatusResponse) ->
-     message
- }
- 
--/// Returns `true` when this run launches Claude Code: the `nolabs-ai/claude`
--/// pack ref, any name the installed pack answers to (its `install_as` plus the
--/// manifest's aliases), the names the pack is published under while it is not
--/// installed yet, a user profile file named after one of those, or any profile
--/// whose `extends` chain reaches one of those.
-+/// Returns `true` when this run launches Claude Code: an official package ref,
-+/// a known bare agent profile name, or an inheritance chain reaching either.
- ///
- /// `cli_extends` carries `--extends`, whose bases are resolved as if they
- /// were prepended to the selected profile's own `extends`.
-@@ -166,10 +163,8 @@ pub(crate) fn profile_selects_claude_code(name_or_path: &str, cli_extends: &[Str
-     )
- }
- 
--/// Returns `true` when this run loads `target`'s own profile: the pack ref, a
--/// name the installed pack answers to, a name the pack is published under
--/// while it is not installed yet, or any profile whose `extends` chain reaches
--/// one of those.
-+/// Returns `true` when this run loads `target`'s package profile: the exact
-+/// package ref, or an inheritance chain reaching it.
- ///
- /// Unlike [`profile_selects_claude_code`] this mirrors the resolver exactly, so
- /// a user profile file shadowing a published name is not the pack: that run
-@@ -182,24 +177,6 @@ fn run_loads_official_pack(
-     reaches_official_pack_profile(target, name_or_path, cli_extends, name_loads_official_pack)
- }
- 
--/// The pack a bare `--profile <name>` would resolve to, if any — matching the
--/// canonical `install_as` names and the manifest aliases alike.
--///
--/// Delegates to the resolver's own lookup rather than re-deriving it from a
--/// separate scan, so this answer cannot drift from the pack `load_profile_inner`
--/// would load — including the tie-break when two installed packs publish the
--/// same profile name.
--///
--/// Each call rescans the pack store (a `read_dir` per namespace plus a
--/// `package.json` read and parse per pack). Detection asks this once per node of
--/// every `extends` chain it walks, but the walk already pays the same scan per
--/// node inside [`profile::load_profile_extends`], so this at most doubles a cost
--/// bounded by chain length. Cache it in `profile` — behind the one lookup both
--/// sides use — if that ever shows up in a profile.
--fn pack_store_provider(name: &str) -> Option<String> {
--    profile::find_pack_store_profile(name).map(|(_, pack_key)| pack_key)
--}
--
- /// Walk `name_or_path` and the `--extends` bases, asking `name_matches` about
- /// each name and following every `extends` edge until one matches.
- fn reaches_official_pack_profile(
-@@ -242,17 +219,8 @@ fn walk_extends_chain(
- /// Returns `true` when this single name loads `target`'s own profile, ignoring
- /// `extends`.
- ///
--/// Mirrors the resolver's precedence (`load_profile_inner`): pack ref, then
--/// user override, then the pack store, then the published names.
- fn name_loads_official_pack(target: OfficialPackStatusTarget, name: &str) -> bool {
--    if is_official_package_ref(target, name) {
--        return true;
--    }
--    // A user file shadows the pack, so this name loads that file, not the pack.
--    if profile::is_user_override(name) {
--        return false;
--    }
--    name_resolves_to_official_pack(target, name)
-+    is_official_package_ref(target, name)
- }
- 
- /// Returns `true` when this single name launches `target`'s agent, ignoring
-@@ -262,24 +230,7 @@ fn name_loads_official_pack(target: OfficialPackStatusTarget, name: &str) -> boo
- /// the pack: `~/.config/nono/profiles/claude-code.json` shadows the pack, but it
- /// still launches Claude Code and still needs the Claude Code preparation.
- fn name_launches_official_pack(target: OfficialPackStatusTarget, name: &str) -> bool {
--    if is_official_package_ref(target, name) {
--        return true;
--    }
--    if profile::is_user_override(name) {
--        return is_official_profile_name(target, name);
--    }
--    name_resolves_to_official_pack(target, name)
--}
--
--/// The tail both questions share: the pack store, then the published names.
--fn name_resolves_to_official_pack(target: OfficialPackStatusTarget, name: &str) -> bool {
--    if let Some(pack_key) = pack_store_provider(name) {
--        // An installed pack owns the name it installs, even when that name is
--        // one the official pack publishes — `--profile claude` resolves to
--        // that pack, so this run is not the official one.
--        return target.keys().any(|key| key == pack_key);
--    }
--    is_official_profile_name(target, name)
-+    is_official_package_ref(target, name) || is_official_profile_name(target, name)
- }
- 
- fn is_official_profile_name(target: OfficialPackStatusTarget, name: &str) -> bool {
-@@ -312,8 +263,7 @@ mod tests {
-         run_loads_official_pack(CLAUDE_PACK, name, NO_EXTENDS)
-    
+@@ -0,0 +1,247 @@
++#!/usr/bin/env python3
++"""Generate ROADMAP.md and the neps/README.md index from NEP frontmatter.
++
++Usage:
++    scripts/gen-roadmap.py           # rewrite generated files
++    scripts/gen-roadmap.py --check   # exit 1 if generated files are stale
++
++Standard library only. Frontmatter is the simple `key: value` / `- item`
++subset used by neps/NEP-template.md, not full YAML.
++"""
++
++import re
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++NEPS = ROOT / "neps"
++ROADMAP = ROOT / "ROADMAP.md"
++README = NEPS / "README.md"
++# The library's public API is what a major version promises to keep stable.
++VERSION_SOURCE = ROOT / "crates" / "nono" / "Cargo.toml"
++
++INDEX_BEGIN = "<!-- nep-index:begin (generated by scripts/gen-roadmap.py) -->"
++INDEX_END = "<!-- nep-index:end -->"
++
++# Roadmap section per status, in display order. rejected/superseded are
++# deliberately absent from the roadmap but still valid and still indexed.
++SECTIONS = [
++    ("implemented", "Shipped", "Accepted and implemented."),
++    ("accepted", "Accepted", "Approved; implementation may proceed."),
++    ("proposed", "Proposed", "Complete and awaiting a maintainer decision."),
++    ("draft", "Draft", "Under active authoring; not yet ready for a decision."),
++]
++VALID_STATUSES = {s for s, _, _ in SECTIONS} | {"rejected", "superseded"}
++
++# `breaking:` frontmatter: true = API-breaking, needs a major version bump;
++# false = not breaking; empty/absent = not yet assessed. Unassessed is a
++# distinct state so a NEP nobody has reviewed is never presented as safe.
++BREAKING_LABELS = {
++    "breaking": "Breaking (targets {major})",
++    "unassessed": "Breaking: not yet assessed",
++    "compatible": "Non-breaking",
++}
++# Sort order within a status: surface what constrains the version first.
++BREAKING_ORDER = {"breaking": 0, "unassessed": 1, "compatible": 2}
++
++FILE_RE = re.compile(r"^(\d{4})-.+\.md$")
++
++
++class NepError(Exception):
++    pass
++
++
++def parse_frontmatter(path):
++    text = path.read_text(encoding="utf-8")
++    lines = text.splitlines()
++    if not lines or lines[0].strip() != "---":
++        raise NepError(f"{path.name}: missing frontmatter")
++    try:
++        end = lines.index("---", 1)
++    except ValueError:
++        raise NepError(f"{path.name}: unterminated frontmatter") from None
++
++    meta = {}
++    key = None
++    for line in lines[1:end]:
++        if not line.strip():
++            continue
++        item = re.match(r"^\s+-\s+(.*)$", line)
++        if item and key is not None:
++            meta.setdefault(key, []).append(item.group(1).strip())
++            continue
++        pair = re.match(r"^([A-Za-z0-9_-]+):\s*(.*)$", line)
++        if not pair:
++            raise NepError(f"{path.name}: cannot parse frontmatter line: {line!r}")
++        key = pair.group(1)
++        value = pair.group(2).strip()
++        meta[key] = value if value else []
++    return meta, "\n".join(lines[end + 1 :])
++
++
++def summary_of(body):
++    match = re.search(r"^## Summary\s*\n(.*?)(?=^## |\Z)", body, re.S | re.M)
++    if not match:
++        return ""
++    first = match.group(1).strip().split("\n\n", 1)[0]
++    flat = " ".join(first.split())
++    # First sentence only; roadmap entries should stay one or two lines.
++    return re.split(r"(?<=[.!?])\s+(?=[A-Z])", flat, maxsplit=1)[0]
++
++
++def next_major():
++    """Next major release, e.g. "1.0" while the library is 0.x.
++
++    Only the next major is emitted (never the current version), so generated
++    files do not go stale on every patch or minor release.
++    """
++    text = VERSION_SOURCE.read_text(encoding="utf-8")
++    pkg = re.search(r"^\[package\]\s*$(.*?)(?=^\[|\Z)", text, re.S | re.M)
++    ver = pkg and re.search(r'^version\s*=\s*"(\d+)\.\d+\.\d+[^"]*"', pkg.group(1), re.M)
++    if not ver:
++        raise NepError(f"{VERSION_SOURCE.relative_to(ROOT)}: cannot read package version")
++    return f"{int(ver.group(1)) + 1}.0"
++
++
++def label(n, major):
++    return BREAKING_LABELS[n["breaking"]].format(major=major)
++
++
++def breaking_of(name, meta):
++    raw = meta.get("breaking")
++    if raw is None or raw == [] or raw == "":
++        return "unassessed"
++    if raw == "true":
++        return "breaking"
++    if raw == "false":
++        return "compatible"
++    raise NepError(f"{name}: 'breaking' must be true, false, or empty, got {raw!r}")
++
++
++def load_neps():
++    neps = []
++    for path in sorted(NEPS.iterdir()):
++        match = FILE_RE.match(path.name)
++        if not match:
++            continue
++        meta, body = parse_frontmatter(path)
++        for field in ("nep", "title", "status"):
++            if not meta.get(field):
++                raise NepError(f"{path.name}: missing '{field}' in frontmatter")
++        if meta["nep"] != match.group(1):
++            raise NepError(
++                f"{path.name}: frontmatter nep {meta['nep']} does not match filename"
++            )
++        status = meta["status"]
++        if status not in VALID_
 ```
 
-**File**: `crates/nono-cli/src/profile/mod.rs` (modified, +177/-464)
-```diff
-@@ -2885,7 +2885,7 @@ pub fn load_profile_extends(name_or_path: &str) -> Option<Vec<String>> {
-     // Registry refs are not valid bare profile names, so resolve them from the
-     // pack store before the name check below rejects them.
-     if is_registry_ref(name_or_path) {
--        return find_pack_store_profile(name_or_path)
-+        return find_installed_package_profile(name_or_path)
-             .and_then(|(profile_path, _)| parse_profile_file(&profile_path).ok())
-             .and_then(|p| p.extends);
-     }
-@@ -2903,14 +2903,6 @@ pub fn load_profile_extends(name_or_path: &str) -> Option<Vec<String>> {
-             .and_then(|p| p.extends);
-     }
- 
--    // Pack-store: any installed pack that declares a profile artifact with
--    // matching `install_as`.
--    if let Some((profile_path, _)) = find_pack_store_profile(name_or_path) {
--        return parse_profile_file(&profile_path)
--            .ok()
--            .and_then(|p| p.extends);
--    }
--
-     // Built-in profile
-     if let Ok(policy) = crate::policy::load_embedded_policy()
-         && let Some(def) = policy.profiles.get(name_or_path)
-@@ -2923,18 +2915,15 @@ pub fn load_profile_extends(name_or_path: &str) -> Option<Vec<String>> {
- 
- /// Load a profile by name or file path
- ///
--/// If `name_or_path` contains a path separator or ends with `.json`, it is
--/// treated as a direct file path. Otherwise it is resolved as a profile name.
-+/// Explicit filesystem paths load a file, fully-qualified names load a package,
-+/// and bare names load a user or built-in profile.
-+///
-+/// Bare-name precedence:
-+/// 1. `$XDG_CONFIG_HOME/nono/profiles/<name>.json`
-+/// 2. Built-in profiles compiled into the binary
- ///
--/// Name loading precedence:
--/// 1. User profiles from `$XDG_CONFIG_HOME/nono/profiles/<name>.json` — never written
--///    by nono. Users (and Claude's "Option B" guidance) own this directory.
--/// 2. Pack-store scan — any installed pack with a profile artifact whose
--///    `install_as` matches the requested name. Self-heals Claude Code plugin
--///    wiring (symlink + `enabledPlugins`) on every successful resolution.
--/// 3. Built-in profiles (compiled into binary).
--/// 4. Auto-pull prompt for the registry pack `nolabs-ai/claude` when
--///    the requested profile is `claude-code` (or inherits from it).
-+/// Packages are never selected by a bare name. A missing fully-qualified
-+/// package may offer to install that exact package from the registry.
- pub fn load_profile(name_or_path: &str) -> Result<Profile> {
-     load_profile_impl(name_or_path, &[])
- }
-@@ -2951,56 +2940,11 @@ pub fn load_profile_with_extends(name_or_path: &str, cli_extends: &[String]) ->
- }
- 
- fn load_profile_impl(name_or_path: &str, cli_extends: &[String]) -> Result<Profile> {
--    // Enable the chain-aware migration prompt for the duration of this
--    // call: if `extends` resolution hits a pack-provided base that isn't
--    // installed (e.g. user profile that `extends: ["claude-code"]`),
--    // `load_base_profile_raw` will run `migration::check_and_run` rather
--    // than failing with "base profile not found". The flag is restored
--    // on exit so nested `load_profile_no_migrate` calls stay quiet.
--    with_missing_base_prompt(true, || {
-+    with_missing_package_prompt(true, || {
-         if let Some(profile) = load_profile_inner(name_or_path, cli_extends)? {
-             return Ok(profile);
-         }
--
--        // Top-level miss: ask whether to install the pack that provides
--        // the requested name (or the chain it would inherit through).
--        let outcome = crate::migration::check_and_run(name_or_path)?;
--        match outcome {
--            crate::migration::MigrationOutcome::Migrated => {
--                // Pull completed AND the wiring interpreter ran during
--                // install — no extra "wire" pass needed here. Just
--                // re-resolve through the pack-store branch and load.
--                if let Some((profile_path, pack_key)) = find_pack_store_profile(name_or_path) {
--                    tracing::info!(
--                        "Loading pack-store profile from: {}",
--                        profile_path.display()
--                    );
--                    let mut profile =
--                        load_from_file(&profile_path, cli_extends).and_then(finalize_profile)?;
--                    if !profile.packs.contains(&pack_key) {
--                        profile.packs.push(pack_key);
--                    }
--                    return Ok(profile);
--                }
--                Err(NonoError::ProfileNotFound(format!(
--                    "{name_or_path}\n  the registry pack pulled but did not install \
--                     the expected profile artifact"
--                )))
--            }
--            crate::migration::MigrationOutcome::Skipped => {
--                // The migration prompt has already printed a friendly
--                // stderr hint (decline / non-TTY / NO_MIGRATE). Surface
--                // the 
-```
+---
 
-**File**: `crates/nono-cli/src/profile_cmd.rs` (modified, +13/-20)
-```diff
-@@ -123,8 +123,8 @@ fn cmd_init(args: ProfileInitArgs) -> Result<()> {
-         }
-     }
- 
--    // Validate --extends target exists in any of the three sources the
--    // resolver knows about (user dir, pack store, built-in).
-+    // Validate --extends against user profiles, fully-qualified installed
-+    // packages, and built-ins.
-     if let Some(ref base) = args.extends
-         && !profile_exists(base)
-     {
-@@ -320,21 +320,16 @@ fn build_skeleton(args: &ProfileInitArgs) -> serde_json::Value {
- 
-         // NOTE: open_urls, allow_launch_services, and allow_gpu are intentionally
-         // omitted. Emitting them would replace inherited values from base profiles like
--        // claude-code (which grants OAuth2 origins, launch services, and GPU access).
-+        // package profiles (which may grant OAuth2 origins, launch services, and GPU access).
-         // Absent = inherit from base. Authors who need to override these
-         // should add them explicitly.
-     }
- 
-     serde_json::Value::Object(root)
- }
- 
--/// Check if a profile exists (built-in, user, or pack-provided).
--///
--/// Mirrors the resolver in `profile::load_profile_inner`: user dir →
--/// pack-store → built-in. Without the pack-store check, formerly-builtin
--/// profiles that have moved to registry packs (claude-code, codex)
--/// would falsely fail `nono profile init --extends <name>` validation
--/// even when `nono profile show <name>` resolves them fine.
-+/// Check whether a bare user/built-in profile or a fully-qualified installed
-+/// package profile exists.
- fn profile_exists(name: &str) -> bool {
-     if profile::builtin::get_builtin(name).is_some() {
-         return true;
-@@ -344,15 +339,14 @@ fn profile_exists(name: &str) -> bool {
-     {
-         return true;
-     }
--    profile::find_pack_store_profile(name).is_some()
-+    profile::find_installed_package_profile(name).is_some()
- }
- 
--/// Update the validation error so users know all three sources were
--/// considered. Used by `cmd_init`'s `--extends` check.
-+/// Explain the accepted inheritance sources for `cmd_init --extends`.
- fn extends_target_not_found_message(name: &str) -> String {
-     format!(
--        "Base profile '{name}' not found (built-in, user, or installed pack). \
--         If it's provided by a registry pack, run `nono pull <namespace>/<pack>` first."
-+        "Base profile '{name}' not found (built-in, user, or fully-qualified installed package). \
-+         Package profiles must use `<namespace>/<pack>`."
-     )
- }
- 
-@@ -701,8 +695,7 @@ fn profile_source(name: &str) -> &'static str {
- pub(crate) fn cmd_list(args: ProfileListArgs) -> Result<()> {
-     let builtin_names = profile::builtin::list_builtin();
-     let all_names = profile::list_profiles();
--    // (install_as -> pack ref) for the catalogue. Used to bucket pack
--    // profiles under their own section and surface the providing pack.
-+    // (fully-qualified profile name -> pack ref) for the catalogue.
-     let pack_profiles: std::collections::HashMap<String, String> =
-         profile::list_pack_store_profiles().into_iter().collect();
- 
-@@ -2362,7 +2355,7 @@ fn classify_profile_error(e: &NonoError) -> &'static str {
- /// types `nono profile validate claude-docs` arrives here with the bare
- /// name. We mirror the same precedence as `--profile`: the literal path
- /// wins if it exists, otherwise look up the user profile dir, then the
--/// installed pack store, then the `.json` form of the bare name. If
-+/// an exact fully-qualified installed package. If
- /// nothing matches, return the original input so the existing
- /// not-found error path produces a readable message.
- fn resolve_validate_target(input: &std::path::Path) -> std::path::PathBuf {
-@@ -2380,7 +2373,7 @@ fn resolve_validate_target(input: &std::path::Path) -> std::path::PathBuf {
-     {
-         return p;
-     }
--    if let Some((p, _)) = profile::find_pack_store_profile(name) {
-+    if let Some((p, _)) = profile::find_installed_package_profile(name) {
-         return p;
-     }
-     input.to_path_buf()
-@@ -2701,7 +2694,7 @@ fn reserved_profile_source(name: &str) -> Result<Option<&'static str>> {
-     if pol.profiles.contains_key(name) {
-         return Ok(Some("built-in"));
-     }
--    if profile::find_pack_store_profile(name).is_some() {
-+    if profile::find_installed_package_profile(name).is_some() {
-         return Ok(Some("installed pack"));
-     }
-     Ok(None)
-```
+### Incident Patch 3: `61083b63` (2026-10-19)
+**Commit Message**: fix(policy): grant system_read_linux_core access to /var/lib/ca-certificates (#2149)
 
-**File**: `crates/nono-cli/src/profile_runtime.rs` (modified, +3/-5)
+Signed-off-by: Bharath Vemula <[REDACTED_EMAIL]>
+Co-authored-by: Bharath Vemula <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/data/policy.json` (modified, +1/-0)
 ```diff
-@@ -680,9 +680,8 @@ fn prepare_profile_with_options(
-     }
- 
-     let (loaded_profile, resolved_command_binaries) = if let Some(ref profile_name) = args.profile {
--        // The claude-code → registry-pack migration is wired into
--        // `load_profile` itself so it fires from every call site (run,
--        // wrap, shell, profile show, why) without duplication.
-+        // Missing fully-qualified package profiles may offer to install the
-+        // exact registry package from every normal loading call site.
-         let profile = profile::load_profile_with_extends(profile_name, &args.extends)?;
-         crate::package_status::enforce_for_active_profile(
-             Some(profile_name),
-@@ -692,8 +691,7 @@ fn prepare_profile_with_options(
-         // If the profile was addressed by pack ref (e.g. --profile nolabs-ai/hermes),
-         // ensure that pack is verified even if the profile JSON doesn't list it in `packs`.
-         // Pack refs are injected into profile.packs at load time for every
--        // pack-store resolution — both direct registry refs and name/alias
--        // paths — so no post-hoc lookup is needed here.
-+        // fully-qualified package resolution, so no post-hoc lookup is needed.
-         let mut packs_to_verify = profile.packs.clone();
-         let resolved_command_binaries = validate_command_policy_runtime_support(&profile)?;
- 
+@@ -218,6 +218,7 @@
+           "/etc/ssl",
+           "/etc/pki",
+           "/etc/ca-certificates",
++          "/var/lib/ca-certificates",
+           "/etc/crypto-policies",
+           "/etc/fonts",
+           "/etc/ld.so.cache",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2139** (2026-10-16): docs(readme): rewrite introduction and feature breakdown (@lukehinds)
-- **PR #2138** (2026-10-16): docs(readme): remove references to archived TypeScript and Go bindings (@kipz)
-- **PR #2137** (2026-10-16): Update maintainers list (@lukehinds)
-- **PR #2127** (2026-10-15): fix(ci): update cargo audit failures (@kurtisc)
-- **PR #2122** (2026-10-14): chore(deps): bump the routine-rust group with 6 updates (@dependabot[bot])
-- **PR #2119** (2026-10-14): chore(deps): group routine Dependabot updates (@SequeI)
+- **PR #2153** (2026-10-19): docs(cli): document network.listen_port_range in profiles-groups (@LuckVd)
+- **PR #2151** (2026-10-19): fix(policy): enable Nix runtime and cache/channel access (@jpds)
+- **PR #2150** (2026-10-19): docs(neps): add NEP 0007 for remote supervisor decisions over vsock (@lukehinds)
+- **PR #2149** (2026-10-19): fix(policy): grant system_read_linux_core access to /var/lib/ca-certificates (@bharathvemula)
+- **PR #2145** (2026-10-19): feat(linux): opt-in namespace isolation (NEP-0004) (@lukehinds)
+- **PR #2144** (2026-10-19): chore(release): automate NEP roadmap generation script and workflow (@lukehinds)
 
 ---
 
@@ -3963,32 +3890,47 @@ Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): update cargo audit failures (#2127)
+## X. linux): opt-in namespace isolation (NEP-0004) (#2145)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/data/nono-profile.schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45fcc241`: ci): update cargo audit failures (#2127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b10c79d`: linux): opt-in namespace isolation (NEP-0004) (#2145). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/nono-profile.schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.23.46"
-checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- "getrandom 0.3.4",
+        },
+        "isolate": {
+          "$ref": "#/$defs/LinuxIsolateConfig"
+        }
+      }
+    },
+    "LinuxIsolateConfig": {
+      "type": "object",
+      "description": "Opt-in namespace isolation (NEP-0004). Every field defaults to false. Fields merge by logical OR across profile layers and the CLI: any layer can enable a namespace and none can disable it. Requested isolation that the host cannot provide is a startup error, never a silent downgrade. Inert on macOS. Not supported by `nono wrap`.",
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run in a new user + network namespace containing only loopback. Egress is possible only through the session proxy. Requires a blocked or proxied network, and cannot be combined with network.open_port, network.connect_port, network.listen_port, or network.no_proxy."
+        },
+        "loopback": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow TCP bind and connect on any port of the isolated network namespace's own loopback, for local dev servers and tests. Requires network. Egre
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.23.45"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
- "getrandom 0.4.3",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45fcc241` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b10c79d` are properly handled with clean fallback behavior.

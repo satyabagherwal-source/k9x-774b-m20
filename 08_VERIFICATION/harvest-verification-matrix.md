@@ -3147,3 +3147,7 @@
 | `CYCLE-20261019-F1E0` | `2026-10-19T10:09:55.656Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2484` | Yes (`3345fca8...`) |
 | `CYCLE-20261019-F655` | `2026-10-19T10:10:01.817Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2485` | Yes (`90404889...`) |
 | `CYCLE-20261019-F8R6` | `2026-10-19T10:10:05.202Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2486` | Yes (`9f03702d...`) |
+| `CYCLE-20261019-N1VY` | `2026-10-19T10:16:09.550Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`6945e069...`) |
+| `CYCLE-20261019-N3B7` | `2026-10-19T10:16:11.395Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2487` | Yes (`ec454c8d...`) |
+| `CYCLE-20261019-N768` | `2026-10-19T10:16:16.400Z` | `Kotlin/kmp-production-sample` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kotlin-kmp-production-sample-learnings.md` | Yes (`f0af857c...`) |
+| `CYCLE-20261019-NATB` | `2026-10-19T10:16:21.119Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2488` | Yes (`b910691a...`) |

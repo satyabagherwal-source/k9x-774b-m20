@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:10:05.161Z",
-  "total_verified_learnings": 781,
+  "last_updated": "2026-10-19T10:16:21.077Z",
+  "total_verified_learnings": 783,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8680,22 +8680,35 @@
     "learn-github-facebook-folly": {
       "learning_id": "learn-github-facebook-folly",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "facebook-folly",
+      "source": "facebook/folly",
+      "repository": "facebook/folly",
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "HEAD",
-      "content_hash": "e9e5be44b9dea1871f60031b4b2f0dcad614b2f0eec203e9da197bc746ea7b9d",
+      "source_version": "ea41cb2f",
+      "content_hash": "ec454c8dd6cc38b28e34fabb1486dfdd469f03687c6c1492b656cd7079e58b7a",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2487,
+          "title": "Save local crash reports and retain the latest ten",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.857Z"
+      "verified_at": "2026-10-19T10:16:11.337Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-falkordb-falkordb": {
       "learning_id": "learn-github-falkordb-falkordb",
@@ -17657,7 +17670,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "207e6f551fb94c9a36e93a618607103e565f00afa5a91bd33423c471d3d5418a",
+      "content_hash": "6945e06958cf323172e993bf61245e4cbf632719c0e6bf8e935ee3490d4d01c4",
       "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "promoted_rules": [
@@ -17690,7 +17703,7 @@
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q"
       ],
-      "verified_at": "2026-10-18T02:02:15.716Z",
+      "verified_at": "2026-10-19T10:16:09.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26279,22 +26292,29 @@
     "learn-github-kotlin-kmp-production-sample": {
       "learning_id": "learn-github-kotlin-kmp-production-sample",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kotlin-kmp-production-sample",
+      "source": "Kotlin/kmp-production-sample",
+      "repository": "Kotlin/kmp-production-sample",
       "slug": "kotlin-kmp-production-sample",
       "platform": "github",
       "source_url": "https://github.com/Kotlin/kmp-production-sample",
-      "source_version": "HEAD",
-      "content_hash": "49de581a0bf82fcf472d0059903c959959d5bda6cd6b8425425206d25880793c",
+      "source_version": "b0bed628",
+      "content_hash": "f0af857c19886d3c8c77cbf15c8a994ffbf021100686238ea885e0bde05c03fa",
       "dossier_path": "07_PROJECT_LEARNING/kotlin-kmp-production-sample-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotlin-kmp-production-sample-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.857Z"
+      "verified_at": "2026-10-19T10:16:16.346Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-krakend-krakend-ce": {
       "learning_id": "learn-github-krakend-krakend-ce",
@@ -31464,14 +31484,19 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "cf73ec0b",
-      "content_hash": "38f5d915e382a1bd1b8fafcf7407d443cf1d7f2ad92171ada1a9e7219bca3b6f",
+      "source_version": "e50e2c4e",
+      "content_hash": "b910691a9b8652b97c698bec9014040c182e6487ad6b450bb9b7d2a9696f69ca",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
         {
           "number": 1717,
           "title": "ci): update cargo audit failures (#2127)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2488,
+          "title": "linux): opt-in namespace isolation (NEP-0004) (#2145)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -31480,7 +31505,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:20:19.294Z",
+      "verified_at": "2026-10-19T10:16:21.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85090,6 +85115,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:10:05.150Z"
+    },
+    "rule-2487": {
+      "learning_id": "rule-2487",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2487,
+      "title": "Save local crash reports and retain the latest ten",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "ea41cb2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:16:11.337Z"
+    },
+    "rule-2488": {
+      "learning_id": "rule-2488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2488,
+      "title": "linux): opt-in namespace isolation (NEP-0004) (#2145)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "e50e2c4e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:16:21.065Z"
     }
   },
   "aliases": {
