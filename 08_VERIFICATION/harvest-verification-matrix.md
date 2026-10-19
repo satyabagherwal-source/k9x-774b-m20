@@ -3236,3 +3236,6 @@
 | `CYCLE-20261019-Q7S4` | `2026-10-19T12:38:35.236Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`b6ad864f...`) |
 | `CYCLE-20261019-QDB5` | `2026-10-19T12:38:42.401Z` | `nalexn/clean-architecture-swiftui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2576` | Yes (`71508027...`) |
 | `CYCLE-20261019-QH9V` | `2026-10-19T12:38:47.539Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2577` | Yes (`caa4c2fd...`) |
+| `CYCLE-20261019-YCHK` | `2026-10-19T12:44:54.584Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2516` | Yes (`c7c64ebf...`) |
+| `CYCLE-20261019-YFD8` | `2026-10-19T12:44:58.316Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2578` | Yes (`de2d5946...`) |
+| `CYCLE-20261019-ZLRG` | `2026-10-19T12:45:53.260Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2579, Rule 2580, Rule 2581` | Yes (`1abb3ed3...`) |

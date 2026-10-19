@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "8cd0ea9beccb29994dc646531e918f20bc49acf42c94ca95a89dde125e6ba384",
-    "lastHarvestedAt": "2026-10-18T03:25:17.719Z",
+    "contentHash": "1abb3ed36ef5c2f2f193efc9ca6273eaae44a8f87bbf0f5e88f37545d83b23da",
+    "lastHarvestedAt": "2026-10-19T12:45:53.263Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "7877c62d",
+    "sourceVersion": "273ac2db",
     "license": "MIT",
-    "contentHash": "a24fba2bc347f8c35ed8d1365d4a080299ab95a5c111d40c053bb07effba71b6",
-    "lastHarvestedAt": "2026-10-18T21:52:00.343Z",
+    "contentHash": "c7c64ebfba91c3171cf552705bfdc6f9ea0047884ca49e1ec14fcac8e79b35e7",
+    "lastHarvestedAt": "2026-10-19T12:44:54.587Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -8018,5 +8018,15 @@
     "contentHash": "7150802781bd08871c26157661bcf93af507c73adb7e7284a09d8a0104cb87fe",
     "lastHarvestedAt": "2026-10-19T12:38:42.402Z",
     "learningId": "learn-github-nalexn-clean-architecture-swiftui"
+  },
+  "siteline-swiftui-introspect": {
+    "repository": "siteline/swiftui-introspect",
+    "platform": "github",
+    "sourceUrl": "https://github.com/siteline/swiftui-introspect",
+    "sourceVersion": "7f32b29d",
+    "license": "MIT",
+    "contentHash": "de2d5946bdf741a1acc471ea4d569dd7371581c0314c194162e5d24f9ef77b2a",
+    "lastHarvestedAt": "2026-10-19T12:44:58.319Z",
+    "learningId": "learn-github-siteline-swiftui-introspect"
   }
 }

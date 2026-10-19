@@ -3243,3 +3243,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-19T12:38:35.238Z |
 | `learn-github-nalexn-clean-architecture-swiftui` | `https://github.com/nalexn/clean-architecture-swiftui` | `9eca97b8` | Multi-dimensional audit evidence | 2026-10-19T12:38:42.402Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `e8c0f0bc` | Multi-dimensional audit evidence | 2026-10-19T12:38:47.541Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `273ac2db` | Multi-dimensional audit evidence | 2026-10-19T12:44:54.587Z |
+| `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `7f32b29d` | Multi-dimensional audit evidence | 2026-10-19T12:44:58.319Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T12:45:53.263Z |

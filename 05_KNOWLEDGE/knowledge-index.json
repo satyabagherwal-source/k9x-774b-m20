@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:38:47.507Z",
-  "total_verified_learnings": 816,
+  "last_updated": "2026-10-19T12:45:53.218Z",
+  "total_verified_learnings": 817,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5371,13 +5371,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "273ac2db",
-      "content_hash": "2be40e2094560b701e29d18cacff241c69659b8affc6193a115d08aacffb3f9e",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "content_hash": "c7c64ebfba91c3171cf552705bfdc6f9ea0047884ca49e1ec14fcac8e79b35e7",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -5387,7 +5387,7 @@
         {
           "number": 2516,
           "title": "hooks): Esc stops a running tool_call_before hook",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5395,7 +5395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:01:04.175Z",
+      "verified_at": "2026-10-19T12:44:54.529Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21168,10 +21168,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "8cd0ea9beccb29994dc646531e918f20bc49acf42c94ca95a89dde125e6ba384",
+      "content_hash": "1abb3ed36ef5c2f2f193efc9ca6273eaae44a8f87bbf0f5e88f37545d83b23da",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2579,
+          "title": "Dual-EOS and Pad Token Equivalence Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2580,
+          "title": "Upstream Architecture Spec Version Pinning and Model-Type Fallback",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2581,
+          "title": "Asymmetric Q-to-KV Head Projection Invariant in GQA",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -21189,7 +21205,7 @@
         "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
         "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
       ],
-      "verified_at": "2026-10-18T03:25:17.691Z",
+      "verified_at": "2026-10-19T12:45:53.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38182,22 +38198,35 @@
     "learn-github-siteline-swiftui-introspect": {
       "learning_id": "learn-github-siteline-swiftui-introspect",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "siteline-swiftui-introspect",
+      "source": "siteline/swiftui-introspect",
+      "repository": "siteline/swiftui-introspect",
       "slug": "siteline-swiftui-introspect",
       "platform": "github",
       "source_url": "https://github.com/siteline/swiftui-introspect",
-      "source_version": "HEAD",
-      "content_hash": "a2c7fec53518625230aba6e45adb1fb1e4db60c14674e44e9e98cba9756dfa33",
+      "source_version": "7f32b29d",
+      "content_hash": "de2d5946bdf741a1acc471ea4d569dd7371581c0314c194162e5d24f9ef77b2a",
       "dossier_path": "07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2578,
+          "title": "docs(maintenance): define post-merge feature and fix backports",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.568Z"
+      "verified_at": "2026-10-19T12:44:58.261Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-skeletonlabs-skeleton": {
       "learning_id": "learn-github-skeletonlabs-skeleton",
@@ -86248,14 +86277,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2516,
       "title": "hooks): Esc stops a running tool_call_before hook",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "273ac2db",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T11:01:04.175Z"
+      "verified_at": "2026-10-19T12:44:54.529Z"
     },
     "rule-2517": {
       "learning_id": "rule-2517",
@@ -87110,6 +87139,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:38:47.500Z"
+    },
+    "rule-2578": {
+      "learning_id": "rule-2578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2578,
+      "title": "docs(maintenance): define post-merge feature and fix backports",
+      "source_url": "https://github.com/siteline/swiftui-introspect",
+      "source_version": "7f32b29d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:44:58.261Z"
+    },
+    "rule-2579": {
+      "learning_id": "rule-2579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2579,
+      "title": "Dual-EOS and Pad Token Equivalence Guard",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
+      "source_version": "hf-qwen-qwen3-4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:45:53.207Z"
+    },
+    "rule-2580": {
+      "learning_id": "rule-2580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2580,
+      "title": "Upstream Architecture Spec Version Pinning and Model-Type Fallback",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
+      "source_version": "hf-qwen-qwen3-4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:45:53.207Z"
+    },
+    "rule-2581": {
+      "learning_id": "rule-2581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2581,
+      "title": "Asymmetric Q-to-KV Head Projection Invariant in GQA",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
+      "source_version": "hf-qwen-qwen3-4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:45:53.207Z"
     }
   },
   "aliases": {

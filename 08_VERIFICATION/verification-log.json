@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-D05V",
-    "timestamp": "2026-10-19T01:16:28.051Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "438460b4d780be4c2dd47becd6a403df43e97182ffd4151eb4c63dad96f2fdc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-D0UO",
-    "timestamp": "2026-10-19T01:16:28.944Z",
-    "repository": "sealerio/sealer",
-    "learningId": "learn-github-sealerio-sealer",
-    "contentHash": "d796af4afca33622fdba1227d76bb208112a912b429aca104dc4f33eb388a9e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-D3MD",
-    "timestamp": "2026-10-19T01:16:32.533Z",
-    "repository": "cozodb/cozo",
-    "learningId": "learn-github-cozodb-cozo",
-    "contentHash": "a5d0f863fddce868d8d996592f9e8ebebcbee7b831e71380cca392a49056ae89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-KT5Q",
     "timestamp": "2026-10-19T01:22:32.222Z",
     "repository": "elrumordelaluz/reactour",
@@ -7492,6 +7447,51 @@
     "contentHash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YCHK",
+    "timestamp": "2026-10-19T12:44:54.584Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "c7c64ebfba91c3171cf552705bfdc6f9ea0047884ca49e1ec14fcac8e79b35e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YFD8",
+    "timestamp": "2026-10-19T12:44:58.316Z",
+    "repository": "siteline/swiftui-introspect",
+    "learningId": "learn-github-siteline-swiftui-introspect",
+    "contentHash": "de2d5946bdf741a1acc471ea4d569dd7371581c0314c194162e5d24f9ef77b2a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ZLRG",
+    "timestamp": "2026-10-19T12:45:53.260Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "1abb3ed36ef5c2f2f193efc9ca6273eaae44a8f87bbf0f5e88f37545d83b23da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

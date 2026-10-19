@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `7877c62d`  
+> **Source Version**: `273ac2db`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:52:00.132Z  
+> **Timestamp**: 2026-10-19T12:44:54.386Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:51:59.818Z  
+> **Harvest Timestamp**: 2026-10-19T12:44:53.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source Rust agent engine and terminal client for Codewhale, with provider choice, tools, approvals and receipts.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41103 stars
+- **Stars / Engagement**: 41100 stars
 
 ---
 
@@ -1355,620 +1355,241 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d00b01c` (2026-10-18)
-**Commit Message**: fix(engine): refuse a shell or gate command the safety check blocks before asking to approve it
+### Incident Patch 1: `ba6366bc` (2026-10-19)
+**Commit Message**: fix(hooks): Esc stops a running tool_call_before hook
 
-Found in a real session (deepseek-v4-pro, Ask, demo repo under
-CW/artifacts/readme-shot-20261018/): the model sent a multiline
-`python3 -c "..."` command, Codewhale showed an approval card, I approved
-it, and then the shell refused it with "BLOCKED ... Command contains
-multiple lines". The approval decided nothing: whenever the tool context
-is not auto-approve, BashTool::execute refuses every command that
-analyze_command rates Dangerous, and the engine only asks for approval in
-exactly those postures. So the person was asked to approve a call that
-could never run.
+The pre-tool hook gate never saw the turn's cancel token. The legacy
+runner received None and the native runner received only its job's
+own token. Esc or POST /v1/threads/{id}/turns/{turn}/interrupt marked
+the turn cancelled, but the engine kept waiting for the hook, and the
+hook kept running and could still change files afterwards.
 
-ToolSpec gains refusal_before_approval(input, context) -> Option<ToolResult>,
-default None. BashTool implements it with the same steps execute takes up
-to the safety check: the ReadOnly `cd` normalization, the forced or
-declared action (only `run` is judged), the command string, then
-analyze_command; LowercaseBashTool translates its legacy input and
-delegates. The BLOCKED result is built by one helper,
-dangerous_command_block, which execute now also uses, so the text and
-metadata are identical on both paths. TasksTool impleme
+run_tool_call_before_hooks_for_context now takes the turn's cancel token
+and binds it to the executor through HookExecutor::with_cancel:
+- legacy runner: gets the token, so its 25 ms wait loop kills and reaps
+  the process tree on cancel. The result now reads "Hook cancelled with
+  its turn" instead of a timeout.
+- native runner: execute_hook is raced against the token. Dropping it
+  drops the Invocation, which cancels the job token that the running
+  closure polls.
+- execute(): stops before starting the next hook once cancelled.
+Strict hooks still fail closed, and the existing batch-start cancel check
+keeps a cancelled turn from dispatching the tool.
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+Found by GPT-6 Astra (codex) in a read-only engine sweep.
+
+Live check: codewhale serve --http against a mock provider. A
+tool_call_before hook runs 
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `/statusline` shows its last two items, Workspace and Git branch, without
-   scrolling. The picker had not counted its padding rows. Thanks @Lstarsky0
-   (#7022).
-+- A shell or gate command that the safety check will refuse, such as one
-+  spanning several lines, is refused at once instead of first asking you to
-+  approve it.
- - Diffs in the TUI number each line only on its own side: a removed line
-   shows its old line number and an added line its new one. Unchanged
-   context lines keep their indentation instead of starting at the left
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `/statusline` shows its last two items, Workspace and Git branch, without
-   scrolling. The picker had not counted its padding rows. Thanks @Lstarsky0
-   (#7022).
-+- A shell or gate command that the safety check will refuse, such as one
-+  spanning several lines, is refused at once instead of first asking you to
-+  approve it.
- - Diffs in the TUI number each line only on its own side: a removed line
-   shows its old line number and an added line its new one. Unchanged
-   context lines keep their indentation instead of starting at the left
-```
-
-**File**: `crates/tui/src/core/engine/turn_loop.rs` (modified, +19/-1)
-```diff
-@@ -3171,11 +3171,29 @@ impl Engine {
-                         requested_sandbox_escalation(&tool_name, &tool_input, batch_sandbox_policy)
-                             .expect("sandbox escalation was validated while planning")
-                             .map(|(policy, _)| policy);
-+                    let refusal_before_approval = if plan.approval_required {
-+                        tool_registry
-+                            .and_then(|registry| registry.get(&tool_name))
-+                            .zip(batch_tool_context.as_ref())
-+                            .and_then(|(spec, context)| {
-+                                spec.refusal_before_approval(&tool_input, context)
-+                            })
-+                    } else {
-+                        None
-+                    };
-                     let (result_override, context_override, approval_stamp): (
-                         Option<Result<ToolResult, ToolError>>,
-                         Option<crate::tools::ToolContext>,
-                         Option<ToolApprovalStamp>,
--                    ) = if plan.approval_required {
-+                    ) = if let Some(refusal) = refusal_before_approval {
-+                        nested_gate_env.tool_call_budget.refund();
-+                        emit_tool_audit(json!({
-+                            "event": "tool.refused_before_approval",
-+                            "tool_id": tool_id.clone(),
-+                            "tool_name": tool_name.clone(),
-+                        }));
-+                        (Some(Ok(refusal)), None, None)
-+                    } else if plan.approval_required {
-                         emit_tool_audit(json!({
-                             "event": "tool.approval_required",
-                             "tool_id": tool_id.clone(),
-```
-
-**File**: `crates/tui/src/tools/shell.rs` (modified, +64/-29)
-```diff
-@@ -3838,9 +3838,9 @@ use crate::tools::spec::{
- };
- use async_trait::async_trait;
- use codewhale_execpolicy::command_safety::{
--    NetworkRead, ReadonlyRejection, SafetyLevel, agent_readonly_verdict, analyze_command,
--    extract_primary_command, is_parallel_readonly_command, normalize_windows_command_paths,
--    readonly_network_reads, split_leading_cd,
-+    NetworkRead, ReadonlyRejection, SafetyAnalysis, SafetyLevel, agent_readonly_verdict,
-+    analyze_command, extract_primary_command, is_parallel_readonly_command,
-+    normalize_windows_command_paths, readonly_network_reads, split_leading_cd,
- };
- use codewhale_execpolicy::toml_rules::{ExecPolicyConfig, RuleDecision};
- use serde_json::json;
-@@ -5483,6 +5483,15 @@ impl ToolSpec for LowercaseBashTool {
-         self.is_read_only_for(input)
-     }
- 
-+    fn refusal_before_approval(
-+        &self,
-+        input: &serde_json::Value,
-+        context: &ToolContext,
-+    ) -> Option<ToolResult> {
-+        let translated = contract_bash_legacy_input(input).ok()?;
-+        BashTool::contract_delegate().refusal_before_approval(&translated, context)
-+    }
-+
-     async fn execute(
-         &self,
-         input: serde_json::Value,
-@@ -5495,6 +5504,30 @@ impl ToolSpec for LowercaseBashTool {
-     }
- }
- 
-+fn dangerous_command_block(safety: &SafetyAnalysis) -> Option<ToolResult> {
-+    if safety.level != SafetyLevel::Dangerous {
-+        return None;
-+    }
-+    let reasons = safety.reasons.join("; ");
-+    let suggestions = if safety.suggestions.is_empty() {
-+        String::new()
-+    } else {
-+        format!("\nSuggestions: {}", safety.suggestions.join("; "))
-+    };
-+    Some(ToolResult {
-+        content: format!(
-+            "BLOCKED: This command was blocked for safety reasons.\n\nReasons: {reasons}{suggestions}\n\nNote: allow_shell=true exposes shell tools, but it does not disable built-in shell safety validation."
-+        ),
-+        success: false,
-+        metadata: Some(json!({
-+            "safety_level": "dangerous",
-+            "blocked": true,
-+            "reasons": safety.reasons,
-+            "suggestions": safety.suggestions,
-+        })),
-+    })
-+}
-+
- fn contract_bash_legacy_input(input: &serde_json::Value) -> Result<serde_json::Value, ToolError> {
-     let object = input
-         .as_object()
-@@ -5788,6 +5821,30 @@ impl ToolSpec for BashTool {
-         exec_shell_input_starts_detached(input)
-     }
- 
-+    fn refusal_before_approval(
-+        &self,
-+        input: &serde_json::Value,
-+        context: &ToolContext,
-+    ) -> Option<ToolResult> {
-+        if context.auto_approve {
-+            return None;
-+        }
-+        let input = if context.shell_policy == ShellPolicy::ReadOnly {
-+            normalize_readonly_cd(input)
-+        } else {
-+            input.clone()
-+        };
-+        let action = match self.forced_action {
-+            Some(forced) => forced,
-+            None => optional_str(&input, "action").ok()?.unwrap_or("run"),
-+        };
-+        if action != "run" {
-+            return None;
-+        }
-+        let command = input.get("command")?.as_str()?;
-+        dangerous_command_block(&analyze_command(command))
-+    }
-+
-     async fn execute(
-         &self,
-         input: serde_json::Value,
-@@ -6014,32 +6071,10 @@ impl ToolSpec for BashTool {
- 
-         // Safety analysis (always run for metadata, but only block when not in YOLO mode)
-         let safety = analyze_command(command);
--        if !context.auto_approve {
--            match safety.level {
--                SafetyLevel::Dangerous => {
--                    let reasons = safety.reasons.join("; ");
--                    let suggestions = if safety.suggestions.is_empty() {
--                        String::new()
--                    } else {
--                        format!("\nSuggestions: {}", safety.suggestions.join("; "))
--                    };
--                    return Ok(ToolResult {
--                        content: format!(
--                            "BLOCKED: This command was blocked for safety reasons.\n\nReasons: {reasons}{suggestions}\n\nNote: allow_shell=true exposes shell tools, but it does not disable built-in shell safety validation."
--                        ),
--                        success: false,
--                        metadata: Some(json!({
--                            "safety_level": "dangerous",
--                            "blocked": true,
--                            "reasons": safety.reasons,
--                            "suggestions": safety.suggestions,
--                        })),
--                    });
--                }
--                SafetyLevel::RequiresApproval | SafetyLevel::Safe | SafetyLevel::WorkspaceSafe => {
--                    // Proceed normally
--                }
--            }
-+        if !context.auto_approve
-+            && let Some(blocked) = dangerous_command_block(&safety)
-+        {
-+            return Ok(blocked);
-         }
- 
-         // This explicit mode only narrows the caller's posture. No
-```
-
-**File**: `crates/tui/src/tools/spec.rs` (modified, +8/-0)
-```diff
-@@ -1614,6 +1614,14 @@ pub trait ToolSpec: Send + Sync {
-         false
-     }
- 
-+    fn refusal_before_approval(
-+        &self,
-+        _input: &Value,
-+        _context: &ToolContext,
-+    ) -> Option<ToolResult> {
-+        None
-+    }
-+
-     /// Resolve input-specific policy without performing external side effects.
-     ///
-     /// Resource claims deliberately default to global exclusivity until a
-```
-
-**File**: `crates/tui/src/tools/subagent/tests.rs` (modified, +10/-3)
-```diff
-@@ -25744,10 +25744,17 @@ mod child_permission_gate {
-             .into_iter()
-             .enumerate()
-             {
--                let err = registry
-+                let outcome = registry
-                     .execute("agent_gate", "bash", json!({ "command": command }))
--                    .await
--                    .expect_err("a detached agent's catastrophic write is held");
-+                    .await;
-+                if mode == ApprovalMode::Suggest && index == 2 {
-+                    let content =
-+                        outcome.expect("the safety check refuses it before any approval is asked");
-+                    assert!(content.contains("BLOCKED"), "{mode:?} {command}: {content}");
-+                    assert_eq!(manager.read().await.pending_child_approvals(), 0);
-+                    continue;
-+                }
-+                let err = outcome.expect_err("a detached agent's catastrophic write is held");
-                 let typed = err
-                     .downcast_ref::<ToolError>()
-                     .expect("canonical typed refusal");
-```
-
-**File**: `crates/tui/src/tools/tasks.rs` (modified, +30/-12)
-```diff
-@@ -23,7 +23,7 @@ use crate::work_graph::{
-     CancelOutcome, OperationIntent, OperationObservation, OperationOwnerSnapshot, OwnerState,
-     task_owner_snapshot,
- };
--use codewhale_execpolicy::command_safety::{SafetyLevel, analyze_command};
-+use codewhale_execpolicy::command_safety::{SafetyAnalysis, SafetyLevel, analyze_command};
- 
- const MAX_SUMMARY_CHARS: usize = 900;
- const DEFAULT_GATE_TIMEOUT_MS: u64 = 120_000;
-@@ -373,6 +373,14 @@ impl ToolSpec for TasksTool {
-         }
-     }
- 
-+    fn refusal_before_approval(&self, input: &Value, context: &ToolContext) -> Option<ToolResult> {
-+        if context.auto_approve || self.resolve_action(input).ok()? != "gate_run" {
-+            return None;
-+        }
-+        let command = input.get("command")?.as_str()?;
-+        dangerous_gate_block(&analyze_command(command))
-+    }
-+
-     async fn execute(&self, input: Value, context: &ToolContext) -> Result<ToolResult, ToolError> {
-         crate::core::engine::tool_catalog::enforce_tool_denial(
-             context,
-@@ -396,6 +404,23 @@ impl ToolSpec for TasksTool {
-     }
- }
- 
-+fn dangerous_gate_block(safety: &SafetyAnalysis) -> Option<ToolResult> {
-+    if safety.level != SafetyLevel::Dangerous {
-+        return None;
-+    }
-+    Some(
-+        ToolResult::error(format!(
-+            "BLOCKED: gate command classified dangerous: {}",
-+            safety.reasons.join("; ")
-+        ))
-+        .with_metadata(json!({
-+            "safety_level": "dangerous",
-+            "blocked": true,
-+            "reasons": safety.reasons,
-+        })),
-+    )
-+}
-+
- /// The exact schema the legacy per-action tool exposed, kept so hidden alias
- /// registrations report an identical contract to the pre-unification tools.
- fn legacy_action_schema(action: &str) -> Value {
-@@ -667,17 +692,10 @@ impl TasksTool {
-             .clamp(1_000, MAX_GATE_TIMEOUT_MS);
-         let cwd = resolve_cwd(context, optional_str(input, "cwd")?)?;
- 
--        let safety = analyze_command(&command);
--        if !context.auto_approve && matches!(safety.level, SafetyLevel::Dangerous) {
--            return Ok(ToolResult::error(format!(
--                "BLOCKED: gate command classified dangerous: {}",
--                safety.reasons.join("; ")
--            ))
--            .with_metadata(json!({
--                "safety_level": "dangerous",
--                "blocked": true,
--                "reasons": safety.reasons,
--            })));
-+        if !context.auto_approve
-+            && let Some(blocked) = dangerous_gate_block(&analyze_command(&command))
-+        {
-+            return Ok(blocked);
-         }
- 
-         let started = Instant::now();
-```
-
----
-
-### Incident Patch 2: `88071522` (2026-10-18)
-**Commit Message**: fix(engine): hand finished background shells to the model at step boundaries
-
-codewhale-app#3233 item 1. In `codewhale exec`, a shell command that
-auto-backgrounded never got its output to the model: completions were
-drained only when the model stopped calling tools, appended without
-another model round, and exec ends at the first TurnComplete. The DSH
-parity runs saw 0 of 198 backgrounded outputs.
-
-- One helper, Engine::deliver_shell_completions, replaces the three copies
-  of drain + runtime message + status (turn start in send_message, and the
-  final-answer and late drains in continuation).
-- tool_batch calls it after a tool batch's results are appended, before
-  the next model request. A job that finished while the model was working
-  reaches it on its next step with no extra model round; the event is an
-  appended user-role runtime message (no KV prefix change) recorded through
-  add_session_message.
-- No retry at final-answer time: 03ece7d8b1 removed that deliberately
-  (timing-dependent token spend and flaky tests).
-- Child engines no longer drain: they share the parent's shell manager and
-  root session id, so their drains claimed the parent's unowned completions
-  into th
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- A background shell job that finishes while the agent is still working now
-+  reaches the model before its next step, instead of only when the turn ends.
-+  In `codewhale exec`, which stops at the end of the turn, that output used to
-+  be lost. The background notice now says that a job still running when the
-+  turn ends is stopped unseen in a headless run, so the model knows to wait
-+  explicitly when its answer depends on it. Sub-agents no longer pick up the
-+  parent's finished jobs, and the parent no longer consumes a sub-agent's.
- - `codewhale review --base <ref>` gives the reviewer the `base..HEAD` commit
-   messages as the author's stated intent, ahead of the diff, so it stops
-   flagging changes their commit messages already explain. The messages are
++- Esc, or a Runtime interrupt, now stops a `tool_call_before` hook that is
++  still running: its process tree is killed and reaped, hooks queued behind
++  it are skipped, and the turn stops at once. Before, the turn waited for the
++  hook to finish, and the hook could still change files after the turn was
++  reported as stopped.
+ - With a sub-agent open in the main pane, scrolling and redraws reuse its
+   rendered transcript instead of re-rendering every message on every frame,
+   and a finished sub-agent's transcript file is no longer reread from disk
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +7/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- A background shell job that finishes while the agent is still working now
-+  reaches the model before its next step, instead of only when the turn ends.
-+  In `codewhale exec`, which stops at the end of the turn, that output used to
-+  be lost. The background notice now says that a job still running when the
-+  turn ends is stopped unseen in a headless run, so the model knows to wait
-+  explicitly when its answer depends on it. Sub-agents no longer pick up the
-+  parent's finished jobs, and the parent no longer consumes a sub-agent's.
- - `codewhale review --base <ref>` gives the reviewer the `base..HEAD` commit
-   messages as the author's stated intent, ahead of the diff, so it stops
-   flagging changes their commit messages already explain. The messages are
++- Esc, or a Runtime interrupt, now stops a `tool_call_before` hook that is
++  still running: its process tree is killed and reaped, hooks queued behind
++  it are skipped, and the turn stops at once. Before, the turn waited for the
++  hook to finish, and the hook could still change files after the turn was
++  reported as stopped.
+ - With a sub-agent open in the main pane, scrolling and redraws reuse its
+   rendered transcript instead of re-rendering every message on every frame,
+   and a finished sub-agent's transcript file is no longer reread from disk
 ```
 
-**File**: `crates/tui/src/core/engine.rs` (modified, +1/-16)
+**File**: `crates/tui/src/core/engine/turn_loop.rs` (modified, +10/-3)
 ```diff
-@@ -6396,22 +6396,7 @@ impl Engine {
-         // Deliver completions that arrived after the previous turn before the
-         // next user request is sent. This keeps background shell work
-         // model-visible without requiring an explicit wait/poll tool call.
--        let shell_completions = if self.is_acp_turn() {
--            Vec::new()
--        } else {
--            self.drain_shell_completion_events()
--        };
--        if !shell_completions.is_empty() {
--            self.add_session_message(crate::runtime_handoff::shell_completion_runtime_message(
--                &shell_completions,
--            ))
--            .await;
--            if let Some(status) =
--                crate::core::engine::turn_loop::shell_completion_status_text(&shell_completions, "")
--            {
--                let _ = self.send_event(Event::status(status)).await;
--            }
--        }
-+        self.deliver_shell_completions("").await;
- 
-         // A person writing to a goal that only the runtime stopped (a failed
-         // or timed-out continuation) is continuing the work: resume it as a
-```
-
-**File**: `crates/tui/src/core/engine/tests/test_cases_19.rs` (modified, +4/-4)
-```diff
-@@ -387,10 +387,10 @@ fn turn_metadata_carries_the_narrowing_only_on_a_narrowed_turn() {
- /// first, and it is delivered exactly once.
- ///
- /// This exercises the engine's own shell manager through the same
--/// `drain_shell_completion_events` both delivery sites use — the next-turn
--/// boundary drain in `Engine::send_message` and the late drain in the turn
--/// loop — so the exactly-once guarantee holds across them rather than within
--/// one of them.
-+/// `drain_shell_completion_events` every delivery site uses — turn start in
-+/// `Engine::send_message`, the step boundary after a tool batch, and the
-+/// finishing drains in the turn loop — so the exactly-once guarantee holds
-+/// across them rather than within one of them.
- #[tokio::test]
- async fn background_completion_after_a_turn_is_delivered_once_on_the_next_turn() {
-     let tmp = tempdir().expect("tempdir");
-```
-
-**File**: `crates/tui/src/core/engine/turn_loop.rs` (modified, +25/-3)
-```diff
-@@ -1152,9 +1152,6 @@ impl Engine {
-             .unwrap_or_default();
-         completions
-             .into_iter()
--            // Child-owned output stays in task/status for explicit child
--            // waits. Only unowned jobs belong in the parent model stream.
--            .filter(|completion| completion.event.owner_agent_id.is_none())
-             .map(|mut completion| {
-                 let tool_call_id =
-                     format!("background-shell-completion-{}", completion.event.task_id);
-@@ -1177,6 +1174,31 @@ impl Engine {
-             .collect()
+@@ -1983,6 +1983,7 @@ impl Engine {
+                 match run_tool_call_before_hooks_for_context(
+                     hook_context.as_ref(),
+                     self.config.hook_executor.as_ref(),
++                    &self.cancel_token,
+                     self.extension_host.as_ref().filter(|_| {
+                         self.config
+                             .features
+@@ -8594,6 +8595,7 @@ mod tests {
+ pub(crate) async fn run_tool_call_before_hooks_for_context(
+     context: Option<&crate::tools::spec::ToolContext>,
+     hooks: Option<&Arc<crate::hooks::HookExecutor>>,
++    cancel: &CancellationToken,
+     attachment: Option<&crate::extension_host::HostAttachment>,
+     name: &str,
+     id: &str,
+@@ -8610,9 +8612,14 @@ pub(crate) async fn run_tool_call_before_hooks_for_context(
+             "hook caller context is unavailable",
+         ));
      }
- 
-+    /// Hand finished background shell jobs to the model as one runtime
-+    /// message. Called at turn start, after each tool batch and when the turn
-+    /// is finishing; returns whether anything was delivered.
-+    ///
-+    /// Known limitation: a job still running when the model ends its turn
-+    /// reaches it only through the idle wake, on hosts that keep the Engine
-+    /// alive; headless exec shuts down and stops it unseen. ACP turns and
-+    /// child engines never receive runtime shell completions and use
-+    /// `task_shell_wait` instead.
-+    pub(super) async fn deliver_shell_completions(&mut self, timing: &str) -> bool {
-+        if self.child_host.is_some() {
-+            return false;
-+        }
-+        let completions = self.drain_shell_completion_events();
-+        if completions.is_empty() {
-+            return false;
-+        }
-+        self.add_session_message(shell_completion_runtime_message(&completions))
-+            .await;
-+        if let Some(status) = shell_completion_status_text(&completions, timing) {
-+            let _ = self.send_event(Event::status(status)).await;
-+        }
-+        true
+-    let bound = hooks.map(|hooks| match context {
+-        Some(context) => Arc::new(hooks.bind_caller(crate::hooks::HookCaller::from_tool(context))),
+-        None => Arc::clone(hooks),
++    let bound = hooks.map(|hooks| {
++        Arc::new(
++            match context {
++                Some(context) => hooks.bind_caller(crate::hooks::HookCaller::from_tool(context)),
++                None => hooks.as_ref().clone(),
++            }
++            .with_cancel(cancel.clone()),
++        )
+     });
+     run_tool_call_before_hooks(
+         bound.as_ref(),
+```
+
+**File**: `crates/tui/src/hooks/executor.rs` (modified, +45/-14)
+```diff
+@@ -1571,6 +1571,7 @@ pub struct HookExecutor {
+     background_supervisor: BackgroundSupervisor,
+     caller: Option<HookCaller>,
+     fire_context: Option<Arc<HookContext>>,
++    cancel: Option<tokio_util::sync::CancellationToken>,
+     host_manager: Arc<crate::extension_host::ExtensionHostManager>,
+     engine_handle: Option<tokio::runtime::Handle>,
+     native_policy: bool,
+@@ -1588,6 +1589,20 @@ impl fmt::Debug for HookExecutor {
+     }
+ }
+ impl HookExecutor {
++    /// Foreground hooks run under this executor stop, and are reaped, when
++    /// `token` is cancelled; hooks not yet started are skipped.
++    #[must_use]
++    pub(crate) fn with_cancel(mut self, token: tokio_util::sync::CancellationToken) -> Self {
++        self.cancel = Some(token);
++        self
 +    }
 +
-     /// Keep workers alive while their tracked background shell work is still
-     /// running. This is deliberately owner-based and read-only: an unowned
-     /// shell job cannot extend any worker heartbeat.
-```
-
-**File**: `crates/tui/src/core/engine/turn_loop/continuation.rs` (modified, +2/-25)
-```diff
-@@ -113,18 +113,7 @@ impl Engine {
-                 return PhaseResult::Retry;
++    fn cancelled(&self) -> bool {
++        self.cancel
++            .as_ref()
++            .is_some_and(tokio_util::sync::CancellationToken::is_cancelled)
++    }
++
+     /// One Engine scheduler, propagated through the existing std workers.
+     pub(crate) fn bind_caller(&self, caller: HookCaller) -> Self {
+         let mut bound = self.clone();
+@@ -1680,6 +1695,7 @@ impl HookExecutor {
+             background_supervisor: BackgroundSupervisor::new(),
+             caller: None,
+             fire_context: None,
++            cancel: None,
+             host_manager: crate::extension_host::manager(),
+             engine_handle: tokio::runtime::Handle::try_current().ok(),
+             native_policy: crate::plugins::activation::extension_host_policy_enabled(),
+@@ -1706,6 +1722,7 @@ impl HookExecutor {
+                 .clone()
+                 .filter(|c| c.workspace == default_working_dir),
+             fire_context: None,
++            cancel: self.cancel.clone(),
+             host_manager: Arc::clone(&self.host_manager),
+             engine_handle: self.engine_handle.clone(),
+             native_policy: self.native_policy,
+@@ -1728,6 +1745,7 @@ impl HookExecutor {
+             background_supervisor: BackgroundSupervisor::new(),
+             caller: None,
+             fire_context: None,
++            cancel: None,
+             host_manager: crate::extension_host::manager(),
+             engine_handle: tokio::runtime::Handle::try_current().ok(),
+             native_policy: crate::plugins::activation::extension_host_policy_enabled(),
+@@ -2072,6 +2090,9 @@ impl HookExecutor {
+         let mut results = Vec::new();
+ 
+         for hook in &hooks {
++            if this.cancelled() {
++                break;
++            }
+             if !self.matches_condition(hook, context) {
+                 continue;
              }
- 
--            let shell_completions = if self.is_acp_turn() {
--                Vec::new()
--            } else {
--                self.drain_shell_completion_events()
--            };
--            if !shell_completions.is_empty() {
--                self.add_session_message(shell_completion_runtime_message(&shell_completions))
--                    .await;
--                if let Some(status) = shell_completion_status_text(&shell_completions, "") {
--                    let _ = self.send_event(Event::status(status)).await;
--                }
--            }
-+            self.deliver_shell_completions("").await;
- 
-             // Sub-agent completion handoff (issue #756). Resuming when
-             // queued completions exist is correct; #3216 says do not wait
-@@ -175,19 +164,7 @@ impl Engine {
-             // arrived between the last hold check and now. If a child finished
-             // while we were running the thinking-only check, surface its
-             // sentinel rather than delaying it to the next turn.
--            let late_shell_completions = if self.is_acp_turn() {
--                Vec::new()
--            } else {
--                self.drain_shell_completion_events()
--            };
--            if !late_shell_completions.is_empty() {
--                self.add_session_message(shell_completion_runtime_message(&late_shell_completions))
--                    .await;
--                if let Some(status) = shell_completion_status_text(&late_shell_completions, "late")
--                {
--                    let _ = self.send_event(Event::status(status)).await;
--                }
--            }
-+            self.deliver_shell_completions("late").await;
- 
-             if !self.is_acp_turn() && self.drain_subagent_completion_events("late").await > 0 {
-                 let _ = self
-```
-
-**File**: `crates/tui/src/core/engine/turn_loop/tool_batch.rs` (modified, +2/-0)
-```diff
-@@ -234,6 +234,8 @@ impl Engine {
-                 .await;
+@@ -2341,7 +2362,7 @@ impl HookExecutor {
+             if hook.native_shell.is_some() {
+                 return unavailable_hook(hook, "Native shell hook is disabled");
+             }
+-            return self.execute_sync_legacy(hook, env_vars, stdin_json, None);
++            return self.execute_sync_legacy(hook, env_vars, stdin_json, self.cancel.as_ref());
          }
- 
-+        self.deliver_shell_completions("").await;
-+
-         // A successful tool step is productive progress, not a runaway
-         // synthetic resume. Declared per-task tool budgets and max_steps
-         // remain the explicit limits for tool-driven work.
-```
-
-**File**: `crates/tui/src/tools/shell.rs` (modified, +12/-3)
-```diff
-@@ -3576,7 +3576,11 @@ impl ShellManager {
-             let owned = active_session_id.is_none_or(|session_id| {
-                 !session_id.is_empty() && shell.owner_session_id == session_id
-             });
--            if owned && shell.status != ShellStatus::Running && !shell.completion_reported {
-+            if owned
-+                && shell.owner_agent.is_none()
-+                && shell.status != ShellStatus::Running
-+                && !shell.completion_reported
-+            {
-                 shell.completion_reported = true;
-                 completions.push(shell.completion_evidence());
-                 // The bytes are now in the caller's hands (they become a durable
-@@ -5384,8 +5388,13 @@ fn finish_contract_bash_result(
-             tail_lines(output.trim(), 20)
+         let Some(caller) = self.caller.clone() else {
+             return unavailable_hook(hook, "hook caller receipt is unavailable");
+@@ -2382,18 +2403,24 @@ impl HookExecutor {
+                 .cloned()
+                 .unwrap_or_default()
          };
-         let notice = promotion_notice(context, task_id, result.duration_ms / 1_000, &output);
-+        let completion = if context.owner_agent_id.is_some() {
-+            "Its completion stays in task/status and is not injected into the parent model."
-+        } else {
-+            "Its completion reaches you as a runtime event before your next step; if you end the turn first, a headless run stops it unseen."
-+        };
-         return Ok(ToolResult::success(format!(
--            "{notice}\n\nOutput so far:\n{so_far}\n\nCompletion will appear as a runtime event. To see more output or block until it finishes, call `task_shell_wait` directly with task_id=\"{task_id}\"; do not sleep-poll with bash. To stop it, send the same call with cancel=true. It also stops when the session ends."
-+            "{notice}\n\nOutput so far:\n{so_far}\n\n{completion} To see more output or block until it finishes, call `task_shell_wait` directly with task_id=\"{task_id}\"; do not sleep-poll with bash. To stop it, send the same call with cancel=true. It also stops when the session ends."
-         )).with_metadata(metadata));
-     }
-     if result.status != ShellStatus::Completed {
-@@ -6491,7 +6500,7 @@ impl ToolSpec for BashTool {
-                     let completion_contract = if context.owner_agent_id.is_some() {
-                         "completion stays in task/status and is not injected into the parent model."
-                     } else {
--                        "completion is delivered to the model as an internal runtime event and shown in task/status state."
-+                        "completion is delivered to the model as an internal runtime event before its next step and shown in task/status state; if the turn ends first, a headless run stops the task unseen."
-                     };
-                     if backgrounded_foreground {
-                         let seconds = result.duration_ms / 1_000;
++        let turn_cancel = self.cancel.clone();
+         let work = handle.spawn(async move {
+             let _policy = crate::plugins::activation::PolicyScope::propagate(policy);
+             #[cfg(test)]
+             let _env_scope = crate::test_support::join_env_scope(env_scope);
+             let timeout = Duration::from_secs(executor.effective_timeout_secs(&owned_hook));
+             let hook_for_run = owned_hook.clone();
+-            let result = manager
+-                .execute_hook(caller, owned_hook, timeout, query, move |cancel| {
+-                    let _policy = crate::plugins::activation::PolicyScope::propagate(policy);
+-                    executor.execute_sync_legacy(&hook_for_run, &env, input.as_ref(), Some(&cancel))
+-                })
+-                .await;
++            let run = manager.execute_hook(caller, owned_hook, timeout, query, move |cancel| {
++                let _policy = crate::plugins::activation::PolicyScope::propagate(policy);
++                executor.execute_sync_legacy(&hook_for_run, &env, input.as_ref(), Some(&cancel))
++            });
++            let result = match turn_cancel {
++                Some(turn_cancel) => tokio::select! {
++                    result = run => result,
++                    () = turn_cancel.cancelled() => Err("hook cancelled with its turn".into()),
++                },
++                None => run.await,
++            };
+             let _ = sender.send(result);
+         });
+         // Never block an Engine/UI runtime worker. Its synchronous callsites already use
+@@ -2647,13 +2674,17 @@ impl HookExecutor {
+                     stdout: String::new(),
+                     stderr: String::new(),
+                     duration: started.elapsed(),
+-             
 ```
 
 ---
 
-### Incident Patch 3: `6f95551d` (2026-10-18)
-**Commit Message**: fix(tui): read and list cards show workspace-relative paths
+### Incident Patch 2: `27b57751` (2026-10-19)
+**Commit Message**: fix(tui): /fork <id> shows the conversation it forked
 
-Models often pass absolute paths. In the real deepseek-v4-pro session
-(CW/artifacts/readme-shot-20261018/) every read card read "Reading
-/Volumes/VIXinSSD/CW/artifacts/readme-shot-20261018/home/slugkit/slugkit/__init__.py",
-while the patch card for the same file said "Updated slugkit/__init__.py".
+SessionLifecycleAdapter::fork_from saved the forked document, installed
+its session id and called app.restore_api_messages, which updates the
+journal, stamps and API messages but not the transcript cells or the
+session-owned indexes. After `/fork <A>` from conversation B, the screen
+still showed B while the model received A's history.
 
-exploring_label now takes the workspace and passes read_file and list_dir
-paths through workspace_relative. That helper already did this for
-approval-card details; it moves from tui/approval.rs to utils.rs (next to
-display_path) so both callers share it. Paths outside the workspace, and
-relative paths, are shown unchanged. receipts.rs keeps its own
-string-based workspace_relative: it normalises paths for comparison
-(trims "./"), not for display.
+fork_from now saves the fork and installs it through
+apply_loaded_session_with_goal, the same loader /resume uses
+(transcript reconstruction plus session-owned indexes). The sync
+payload is then built from that App state. The existing fork test now
+starts from a different visible conversation and checks that the
+transcript shows the parent's turn afterwards.
 
-Verified in a real TUI with the cw7087 mock (phase7 reads
-/Volumes/VIXinSSD/CW/artifacts/cw7087-20261018/ws/diffdemo.py by absolute
-path; CW/artifacts/approval-card-20261018/abspath-*.txt):
-- before: "✓ ▷ read done · Reading /Volumes/VIXinSSD/CW/artifacts/cw7087-20261018/ws/diffdemo.py"
-- after:  "✓ ▷ read done · Reading diffdemo.py"
+Found by GPT-6 Astra (codex) in a read-only TUI sweep (T4). Coded by
+GPT-6 Astra (codex, workspace-write, no builds); reviewed, built and
+tested by Claude.
 
-Checks:
-- cargo test -p codewhale-tui --lib -- expl
+Verification:
+- RUST_MIN_STACK=8388608 cargo test -p codewhale-tui --lib -- history
+  tool_routing translat fork active_cell streaming thinking session:
+  1583 passed, 4 failed, 2 ignored. The four failures pass alone and
+  are outside these changes: client chat_translation_http_error, e
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
@@ -1976,11 +1597,11 @@ Checks:
  
  ## [Unreleased]
  
-+- Read and list cards show a path inside the workspace relative to it
-+  ("Reading src/lib.rs") instead of the full absolute path the model sent.
- - `/statusline` shows its last two items, Workspace and Git branch, without
-   scrolling. The picker had not counted its padding rows. Thanks @Lstarsky0
-   (#7022).
++- `/fork <id>` now shows the forked conversation. Before, the screen kept
++  the previous conversation while the model already had the fork's history.
+ - Pasting text that contains an escape sequence written out, such as
+   `print("\x1b[?25l")`, keeps it as pasted. Before, part of it was removed
+   from the message box as if it were a stray mouse report.
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
@@ -1989,182 +1610,249 @@ Checks:
  
  ## [Unreleased]
  
-+- Read and list cards show a path inside the workspace relative to it
-+  ("Reading src/lib.rs") instead of the full absolute path the model sent.
- - `/statusline` shows its last two items, Workspace and Git branch, without
-   scrolling. The picker had not counted its padding rows. Thanks @Lstarsky0
-   (#7022).
++- `/fork <id>` now shows the forked conversation. Before, the screen kept
++  the previous conversation while the model already had the fork's history.
+ - Pasting text that contains an escape sequence written out, such as
+   `print("\x1b[?25l")`, keeps it as pasted. Before, part of it was removed
+   from the message box as if it were a stray mouse report.
 ```
 
-**File**: `crates/tui/src/tui/approval.rs` (modified, +1/-15)
+**File**: `crates/tui/src/commands/contract.rs` (modified, +21/-19)
 ```diff
-@@ -337,7 +337,7 @@ impl ApprovalRequest {
-             .into_iter()
-             .map(|mut detail| {
-                 if matches!(detail.label.as_str(), "File" | "Path" | "Dir") {
--                    detail.value = workspace_relative(&detail.value, &self.workspace);
-+                    detail.value = crate::utils::workspace_relative(&detail.value, &self.workspace);
-                 }
-                 detail.label = localize_detail_label(&detail.label, locale).to_string();
-                 if detail.is_preview
-@@ -355,20 +355,6 @@ impl ApprovalRequest {
-     }
- }
- 
--/// Show `value` relative to `workspace` when it is an absolute path inside
--/// it, so the card never spends a row on the workspace prefix.
--fn workspace_relative(value: &str, workspace: &Path) -> String {
--    let path = Path::new(value);
--    if workspace.as_os_str().is_empty() || !path.is_absolute() {
--        return value.to_string();
--    }
--    match path.strip_prefix(workspace) {
--        Ok(relative) if relative.as_os_str().is_empty() => ".".to_string(),
--        Ok(relative) => relative.display().to_string(),
--        Err(_) => value.to_string(),
--    }
--}
--
- pub use crate::mcp::connected_app_server;
- 
- fn description_is_repo_law_prompt(description: &str) -> bool {
-```
-
-**File**: `crates/tui/src/tui/tool_routing.rs` (modified, +15/-12)
-```diff
-@@ -45,7 +45,7 @@ pub(super) fn handle_tool_call_started(
+@@ -621,6 +621,11 @@ impl CommandSessionLifecycleContext for SessionLifecycleAdapter<'_> {
      }
  
-     if is_exploring_tool(semantic_name) {
--        let label = exploring_label(semantic_name, input);
-+        let label = exploring_label(semantic_name, input, &app.workspace);
-         // ensure_exploring + append_to_exploring keeps all parallel exploring
-         // starts in a single ExploringCell entry.
-         let active = app.active_cell.as_mut().expect("active_cell just ensured");
-@@ -1693,20 +1693,23 @@ pub(super) fn refreshes_workspace_context_on_completion(name: &str) -> bool {
-     )
- }
- 
--pub(super) fn exploring_label(name: &str, input: &serde_json::Value) -> String {
-+pub(super) fn exploring_label(
-+    name: &str,
-+    input: &serde_json::Value,
-+    workspace: &std::path::Path,
-+) -> String {
-     let fallback = format!("{name} tool");
-     let obj = input.as_object();
--    match name {
--        "read_file" => obj
--            .and_then(|o| o.get("path"))
--            .and_then(|v| v.as_str())
--            .map_or(fallback, |path| format!("Reading {path}")),
--        "list_dir" => obj
--            .and_then(|o| o.get("path"))
-+    let path = || {
-+        obj.and_then(|o| o.get("path"))
-             .and_then(|v| v.as_str())
--            .map_or("Listing directory".to_string(), |path| {
--                format!("Listing {path}")
--            }),
-+            .map(|path| crate::utils::workspace_relative(path, workspace))
-+    };
-+    match name {
-+        "read_file" => path().map_or(fallback, |path| format!("Reading {path}")),
-+        "list_dir" => path().map_or("Listing directory".to_string(), |path| {
-+            format!("Listing {path}")
-+        }),
-         "grep_files" => {
-             let pattern = obj
-                 .and_then(|o| o.get("pattern"))
+     fn fork_from(&mut self, session_id_or_prefix: &str) -> Result<SessionForkFromReceipt, String> {
++        let mut config = self
++            .host
++            .config
++            .ok_or_else(|| "The fork command has no active provider configuration.".to_string())?
++            .clone();
+         let mut app = self.host.app.borrow_mut();
+         let manager = match crate::session_manager::SessionManager::default_location() {
+             Ok(m) => m,
+@@ -681,35 +686,24 @@ impl CommandSessionLifecycleContext for SessionLifecycleAdapter<'_> {
+         forked.artifacts = source_session.artifacts.clone();
+         forked.work_state = source_session.work_state.clone();
+         forked.last_auto_route = source_session.last_auto_route.clone();
+-        let queue_transition =
+-            crate::tui::ui::prepare_offline_queue_transition(&app, &forked.metadata.id)?;
+         if let Err(err) = manager.save_session(&forked) {
+             return Err(format!("Failed to save forked session: {err}"));
+         }
+-        crate::tui::ui::install_offline_queue_transition(&mut app, queue_transition);
+-        app.current_session_id = Some(forked.metadata.id.clone());
+-        app.current_session_metadata = Some(forked.metadata.clone());
+-        app.restore_api_messages(forked.messages.clone(), &forked);
+-        app.session_title = Some(forked.metadata.title.clone());
+-        // A fork starts as its own session: no inherited tab/window title.
+-        app.window_title = None;
+-        app.composer_color = None;
+         let parent_label =
+             crate::session_manager::truncate_id(&source_session.metadata.id).to_string();
+         let fork_label = crate::session_manager::truncate_id(&forked.metadata.id).to_string();
++        let spawn_depth = forked.metadata.spawn_depth;
++        crate::tui::ui::apply_loaded_session_with_goal(&mut app, &mut config, forked, None)?;
+         let mode = to_command_mode(app.mode);
+         Ok(SessionForkFromReceipt {
+             parent_label,
+             fork_label,
+-            spawn_depth: forked.metadata.spawn_depth.into(),
++            spawn_depth: spawn_depth.into(),
+             sync: SessionSyncPayload {
+-                session_id: Some(forked.metadata.id.clone()),
+-                messages: forked.messages.clone(),
+-                system_prompt: forked
+-                    .system_prompt
+-                    .as_ref()
+-                    .map(|s| codewhale_models::SystemPrompt::Text(s.clone())),
+-                model: forked.metadata.model.clone(),
++                session_id: app.current_session_id.clone(),
++                messages: app.api_messages.as_ref().clone(),
++                system_prompt: app.system_prompt.clone(),
++                model: app.model.clone(),
+                 workspace: app.workspace.clone(),
+                 mode,
+             },
+@@ -6949,8 +6943,12 @@ mod tests {
+                 .messages
+                 .len()
+         };
++        app.add_message(HistoryCell::System {
++            content: "another conversation".to_string(),
++        });
++        let config = crate::config::Config::default();
+         {
+-            let mut bundle = app.command_contexts();
++            let mut bundle = app.command_contexts_with_config(Some(&config));
+             let mut parts = bundle.parts();
+             let facet = parts.lifecycle.as_deref_mut().expect("lifecycle slot");
+             let forked = facet.fork_from(&parent_id).expect("explicit fork ok");
+@@ -6961,6 +6959,10 @@ mod tests {
+             );
+             assert_eq!(forked.sync.messages.len(), 1);
+         }
++        assert!(matches!(
++            app.history.as_slice(),
++            [HistoryCell::User { content }] if content == "parent turn"
++        ));
+         let manager = crate::session_manager::SessionManager::default_location().unwrap();
+         let reloaded = manager
+             .load_session(&parent_id)
 ```
 
-**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +17/-4)
+---
+
+### Incident Patch 3: `031b3d12` (2026-10-19)
+**Commit Message**: fix(tui): Ctrl+Enter after /edit replaces the message like Enter
+
+`/edit` arms app.edit_in_progress. Ordinary Enter goes through
+submit_decided_composer_input, where edit_replacement_result takes the
+flag and rolls the last exchange back before sending the revision.
+Ctrl+Enter (force submit) called dispatch_composer_message directly and
+skipped that. The revision was appended instead of replacing, the flag
+stayed armed, and the next ordinary Enter rolled back the revision and
+its reply.
+
+The shared part is now dispatch_submitted_composer_message (edit
+replacement, then dispatch), used by both paths, so the flag is consumed
+exactly once either way.
+
+Found by GPT-6 Astra (codex) in a read-only TUI sweep (T2). Coded by
+GPT-6 Astra (codex, workspace-write, no builds); reviewed, built and
+tested by Claude.
+
+Verification: same run as the /new goal fix (the two runtime_threads
+failures are load timeouts that pass alone; clippy and fmt clean).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01NBKbhx19BRbZtvWK8rVKjz
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -25523,19 +25523,27 @@ fn tool_details_survive_active_cell_flush() {
- 
- #[test]
- fn exploring_label_uses_progressive_for_read_file() {
--    let label = exploring_label("read_file", &serde_json::json!({"path": "src/foo.rs"}));
-+    let label = exploring_label(
-+        "read_file",
-+        &serde_json::json!({"path": "src/foo.rs"}),
-+        std::path::Path::new(""),
-+    );
-     assert_eq!(label, "Reading src/foo.rs");
- }
- 
- #[test]
- fn exploring_label_uses_progressive_for_list_dir() {
--    let label = exploring_label("list_dir", &serde_json::json!({"path": "crates/tui/src/"}));
-+    let label = exploring_label(
-+        "list_dir",
-+        &serde_json::json!({"path": "crates/tui/src/"}),
-+        std::path::Path::new(""),
-+    );
-     assert_eq!(label, "Listing crates/tui/src/");
- }
- 
- #[test]
- fn exploring_label_uses_progressive_for_list_dir_no_path() {
--    let label = exploring_label("list_dir", &serde_json::json!({}));
-+    let label = exploring_label("list_dir", &serde_json::json!({}), std::path::Path::new(""));
-     assert_eq!(label, "Listing directory");
- }
- 
-@@ -25544,13 +25552,18 @@ fn exploring_label_for_grep_quotes_pattern_with_searching_for() {
-     let label = exploring_label(
-         "grep_files",
-         &serde_json::json!({"pattern": "TranscriptScroll"}),
-+        std::path::Path::new(""),
-     );
-     assert_eq!(label, "Searching for `TranscriptScroll`");
- }
- 
- #[test]
- fn exploring_label_for_list_files_uses_progressive() {
--    let label = exploring_label("list_files", &serde_json::json!({}));
-+    let label = exploring_label(
-+        "list_files",
-+        &serde_json::json!({}),
-+        std::path::Path::new(""),
-+    );
-     assert_eq!(label, "Listing files");
- }
- 
+@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `/new` and `/clear` start without the previous conversation's goal.
+   Before, a paused goal followed you into the new conversation, where
+   `/goal resume` picked it up again. The old session keeps its saved goal.
++- After `/edit`, sending the revision with Ctrl+Enter replaces the earlier
++  message as Enter does. Before, it was appended instead, and the next
++  message then undid the wrong exchange.
+ - In `/resume`, pressing `d` and then scrolling with the mouse before
+   answering `y` could delete the session you scrolled to instead of the one
+   you chose. The prompt now ignores the mouse, and `y` deletes only the
 ```
 
-**File**: `crates/tui/src/utils.rs` (modified, +14/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -1063,6 +1063,20 @@ pub fn url_encode(input: &str) -> String {
-     encoded
- }
- 
-+/// Show `value` relative to `workspace` when it is an absolute path inside
-+/// it, so a card never spends a row on the workspace prefix.
-+pub fn workspace_relative(value: &str, workspace: &Path) -> String {
-+    let path = Path::new(value);
-+    if workspace.as_os_str().is_empty() || !path.is_absolute() {
-+        return value.to_string();
+@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `/new` and `/clear` start without the previous conversation's goal.
+   Before, a paused goal followed you into the new conversation, where
+   `/goal resume` picked it up again. The old session keeps its saved goal.
++- After `/edit`, sending the revision with Ctrl+Enter replaces the earlier
++  message as Enter does. Before, it was appended instead, and the next
++  message then undid the wrong exchange.
+ - In `/resume`, pressing `d` and then scrolling with the mouse before
+   answering `y` could delete the session you scrolled to instead of the one
+   you chose. The prompt now ignores the mouse, and `y` deletes only the
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +43/-27)
+```diff
+@@ -1755,24 +1755,39 @@ async fn submit_decided_composer_input(
+             return Ok(true);
+         }
+     } else {
+-        // #383: /edit — if the user invoked /edit to revise the last
+-        // message, undo the last exchange before dispatching the
+-        // replacement. Sync the engine session so it also drops the old
+-        // exchange.
+-        if let Some(result) = edit_replacement_result(app, &input) {
+-            return apply_command_result(
+-                terminal,
+-                app,
+-                engine_handle,
+-                task_manager,
+-                config,
+-                result,
+-            )
++        return dispatch_submitted_composer_message(
++            terminal,
++            app,
++            engine_handle,
++            task_manager,
++            config,
++            input,
++            action,
++        )
++        .await;
 +    }
-+    match path.strip_prefix(workspace) {
-+        Ok(relative) if relative.as_os_str().is_empty() => ".".to_string(),
-+        Ok(relative) => relative.display().to_string(),
-+        Err(_) => value.to_string(),
-+    }
++    Ok(false)
 +}
 +
- /// Render a path for **user-facing display** with the home directory
- /// contracted to `~`. Use this in the TUI, doctor/setup stdout, and any
- /// other place a viewer might see the output (screenshot, video,
++async fn dispatch_submitted_composer_message(
++    terminal: &mut AppTerminal,
++    app: &mut App,
++    engine_handle: &mut EngineHandle,
++    task_manager: &SharedTaskManager,
++    config: &mut Config,
++    input: String,
++    action: ComposerSubmitAction,
++) -> Result<bool> {
++    // #383: /edit — if the user invoked /edit to revise the last
++    // message, undo the last exchange before dispatching the
++    // replacement. Sync the engine session so it also drops the old
++    // exchange.
++    if let Some(result) = edit_replacement_result(app, &input) {
++        return apply_command_result(terminal, app, engine_handle, task_manager, config, result)
+             .await;
+-        }
+-        let (queued, recovery) = message_from_submitted_input(app, input);
+-        dispatch_composer_message(app, config, engine_handle, queued, recovery, action).await?;
+     }
++    let (queued, recovery) = message_from_submitted_input(app, input);
++    dispatch_composer_message(app, config, engine_handle, queued, recovery, action).await?;
+     Ok(false)
+ }
+ 
+@@ -6971,17 +6986,18 @@ pub(crate) async fn run_event_loop(
+                             {
+                                 return Ok(());
+                             }
+-                        } else {
+-                            let (queued, recovery) = message_from_submitted_input(app, input);
+-                            dispatch_composer_message(
+-                                app,
+-                                config,
+-                                &engine_handle,
+-                                queued,
+-                                recovery,
+-                                action,
+-                            )
+-                            .await?;
++                        } else if dispatch_submitted_composer_message(
++                            terminal,
++                            app,
++                            &mut engine_handle,
++                            &task_manager,
++                            config,
++                            input,
++                            action,
++                        )
++                        .await?
++                        {
++                            return Ok(());
+                         }
+                     }
+                 }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7025** (2026-10-19): fix(tui): drop the /statusline picker's padding rows when the list doesn't fit (@Lstarsky0)
 - **PR #7024** (2026-10-18): fix(tui): show a scroll rail on a settings choice list that doesn't fit (@Lstarsky0)
 - **PR #7023** (2026-10-18): fix(tui): say "no matches" in the /mcp status line when a search finds nothing (@Lstarsky0)
 - **PR #7022** (2026-10-18): fix(tui): size the /statusline picker for its padding rows (@Lstarsky0)
 - **PR #7020** (2026-10-18): fix(route): honor a custom table's wire on runtime routes (@asto18089)
 - **PR #7019** (2026-10-18): fix(client): capture and replay Anthropic redacted thinking blocks (@asto18089)
-- **PR #7018** (2026-10-18): fix(engine): keep turn and submission attribution on TurnComplete (@asto18089)
 
 ---
 
@@ -2184,13 +1872,13 @@ Checks:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): refuse a shell or gate command the safety check blocks before asking to
+## X. hooks): Esc stops a running tool_call_before hook
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d00b01c`: engine): refuse a shell or gate command the safety check blocks before asking to approve it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba6366bc`: hooks): Esc stops a running tool_call_before hook. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2198,9 +1886,11 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- A shell or gate command that the safety check will refuse, such as one
-  spanning several lines, is refused at once instead of first asking you to
-  approve it.
+- Esc, or a Runtime interrupt, now stops a `tool_call_before` hook that is
+  still running: its process tree is killed and reaped, hooks queued behind
+  it are skipped, and the turn stops at once. Before, the turn waited for the
+  hook to finish, and the hook could still change files after the turn was
+  reported as stopped.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2210,4 +1900,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d00b01c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba6366bc` are properly handled with clean fallback behavior.
