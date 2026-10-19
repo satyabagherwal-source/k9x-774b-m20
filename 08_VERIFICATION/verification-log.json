@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-U4H9",
-    "timestamp": "2026-10-18T22:41:49.101Z",
-    "repository": "fastify/fastify",
-    "learningId": "learn-github-fastify-fastify",
-    "contentHash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U6GY",
-    "timestamp": "2026-10-18T22:41:51.682Z",
-    "repository": "FaridSafi/react-native-gifted-chat",
-    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
-    "contentHash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U8SH",
-    "timestamp": "2026-10-18T22:41:54.689Z",
-    "repository": "taubyte/tau",
-    "learningId": "learn-github-taubyte-tau",
-    "contentHash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-UBRX",
-    "timestamp": "2026-10-18T22:41:58.557Z",
-    "repository": "build-trust/ockam",
-    "learningId": "learn-github-build-trust-ockam",
-    "contentHash": "0eee770b8056016df971167498ccbffe1d58d5caa9c407578be6b7a422ad80a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-UCUG",
-    "timestamp": "2026-10-18T22:41:59.944Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-21PS",
-    "timestamp": "2026-10-18T22:47:58.768Z",
-    "repository": "GeekyAnts/NativeBase",
-    "learningId": "learn-github-geekyants-nativebase",
-    "contentHash": "eff8d0923d6a11df32d9fa6d830568a5e79408ef4026464fcd346142f7023eca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-23BU",
     "timestamp": "2026-10-18T22:48:00.858Z",
     "repository": "sayanarijit/xplr",
@@ -7492,6 +7402,96 @@
     "contentHash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0OZ0",
+    "timestamp": "2026-10-19T08:06:47.916Z",
+    "repository": "ouch-org/ouch",
+    "learningId": "learn-github-ouch-org-ouch",
+    "contentHash": "dbf7bb3618181a362b2a26ffd52e3508065c858cab050b0bba7d93f97cd7890b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0WFK",
+    "timestamp": "2026-10-19T08:06:57.584Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0X9Q",
+    "timestamp": "2026-10-19T08:06:58.670Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "3f88cf828468148c21fc5e875d0b09ba5805fe55b89f3993a1d5aeca56d83d92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0ZQX",
+    "timestamp": "2026-10-19T08:07:01.881Z",
+    "repository": "joreilly/PeopleInSpace",
+    "learningId": "learn-github-joreilly-peopleinspace",
+    "contentHash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-17MR",
+    "timestamp": "2026-10-19T08:07:12.099Z",
+    "repository": "assistant-ui/assistant-ui",
+    "learningId": "learn-github-assistant-ui-assistant-ui",
+    "contentHash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-18L6",
+    "timestamp": "2026-10-19T08:07:13.338Z",
+    "repository": "valeriansaliou/sonic",
+    "learningId": "learn-github-valeriansaliou-sonic",
+    "contentHash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

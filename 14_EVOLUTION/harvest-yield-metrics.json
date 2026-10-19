@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T07:59:32.945Z",
-  "total_cycles_completed": 3051,
-  "total_learnings_persisted": 3051,
-  "total_rules_promoted": 2146,
+  "last_updated": "2026-10-19T08:07:13.344Z",
+  "total_cycles_completed": 3057,
+  "total_learnings_persisted": 3057,
+  "total_rules_promoted": 2163,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:00:43.884Z",
-      "repository": "shadcn-ui/lint",
-      "learningId": "learn-github-shadcn-ui-lint",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:00:45.497Z",
-      "repository": "ekzhang/rustpad",
-      "learningId": "learn-github-ekzhang-rustpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:00:50.148Z",
-      "repository": "thecodingmachine/react-native-boilerplate",
-      "learningId": "learn-github-thecodingmachine-react-native-boilerplate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:00:53.662Z",
-      "repository": "snyk/driftctl",
-      "learningId": "learn-github-snyk-driftctl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:00:57.966Z",
-      "repository": "lindb/lindb",
-      "learningId": "learn-github-lindb-lindb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:07:03.023Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:07:03.213Z",
       "repository": "cloudscape-design/components",
@@ -1403,6 +1361,48 @@
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:06:47.923Z",
+      "repository": "ouch-org/ouch",
+      "learningId": "learn-github-ouch-org-ouch",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:06:57.590Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:06:58.676Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:07:01.887Z",
+      "repository": "joreilly/PeopleInSpace",
+      "learningId": "learn-github-joreilly-peopleinspace",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:07:12.106Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:07:13.344Z",
+      "repository": "valeriansaliou/sonic",
+      "learningId": "learn-github-valeriansaliou-sonic",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

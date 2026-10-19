@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T07:59:32.948Z",
+  "last_updated": "2026-10-19T08:07:13.347Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -905,14 +905,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
-      "content_hash": "dddb96c6ced1c9f12bc6fa3d64fe5b0d710fc0b5ac50b636afde41d8c4fc04e3",
-      "verified_at": "2026-10-18T00:55:02.147Z",
+      "content_hash": "3f88cf828468148c21fc5e875d0b09ba5805fe55b89f3993a1d5aeca56d83d92",
+      "verified_at": "2026-10-19T08:06:58.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:55:02.147Z"
+      "last_updated": "2026-10-19T08:06:58.678Z"
     },
     "google/electra-base-discriminator": {
       "repository": "google/electra-base-discriminator",
@@ -3693,14 +3693,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-assistant-ui-assistant-ui",
-      "content_hash": "69e96742de33f96fbb95866310f72f00b11d2a892de18ac0df5edbe4eb2938a5",
-      "verified_at": "2026-10-18T21:26:08.674Z",
+      "content_hash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
+      "verified_at": "2026-10-19T08:07:12.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:26:08.674Z"
+      "last_updated": "2026-10-19T08:07:12.108Z"
     },
     "ducaale/xh": {
       "repository": "ducaale/xh",
@@ -10796,6 +10796,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T07:59:32.947Z"
+    },
+    "ouch-org/ouch": {
+      "repository": "ouch-org/ouch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ouch-org-ouch",
+      "content_hash": "dbf7bb3618181a362b2a26ffd52e3508065c858cab050b0bba7d93f97cd7890b",
+      "verified_at": "2026-10-19T08:06:47.925Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:06:47.925Z"
+    },
+    "goharbor/harbor": {
+      "repository": "goharbor/harbor",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-goharbor-harbor",
+      "content_hash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
+      "verified_at": "2026-10-19T08:06:57.592Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:06:57.592Z"
+    },
+    "joreilly/PeopleInSpace": {
+      "repository": "joreilly/PeopleInSpace",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-joreilly-peopleinspace",
+      "content_hash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
+      "verified_at": "2026-10-19T08:07:01.889Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:07:01.889Z"
+    },
+    "valeriansaliou/sonic": {
+      "repository": "valeriansaliou/sonic",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-valeriansaliou-sonic",
+      "content_hash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
+      "verified_at": "2026-10-19T08:07:13.347Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:07:13.347Z"
     }
   },
   "repos": {

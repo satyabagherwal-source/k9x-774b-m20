@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "dddb96c6ced1c9f12bc6fa3d64fe5b0d710fc0b5ac50b636afde41d8c4fc04e3",
-    "lastHarvestedAt": "2026-10-18T00:55:02.144Z",
+    "contentHash": "3f88cf828468148c21fc5e875d0b09ba5805fe55b89f3993a1d5aeca56d83d92",
+    "lastHarvestedAt": "2026-10-19T08:06:58.673Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "a587b283",
+    "sourceVersion": "1960f3c2",
     "license": "MIT",
-    "contentHash": "69e96742de33f96fbb95866310f72f00b11d2a892de18ac0df5edbe4eb2938a5",
-    "lastHarvestedAt": "2026-10-18T21:26:08.672Z",
+    "contentHash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
+    "lastHarvestedAt": "2026-10-19T08:07:12.102Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -7168,5 +7168,45 @@
     "contentHash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
     "lastHarvestedAt": "2026-10-19T07:59:32.941Z",
     "learningId": "learn-github-t8y2-dbx"
+  },
+  "ouch-org-ouch": {
+    "repository": "ouch-org/ouch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ouch-org/ouch",
+    "sourceVersion": "6df14b05",
+    "license": "NOASSERTION",
+    "contentHash": "dbf7bb3618181a362b2a26ffd52e3508065c858cab050b0bba7d93f97cd7890b",
+    "lastHarvestedAt": "2026-10-19T08:06:47.919Z",
+    "learningId": "learn-github-ouch-org-ouch"
+  },
+  "goharbor-harbor": {
+    "repository": "goharbor/harbor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/goharbor/harbor",
+    "sourceVersion": "9e79066f",
+    "license": "Apache-2.0",
+    "contentHash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
+    "lastHarvestedAt": "2026-10-19T08:06:57.586Z",
+    "learningId": "learn-github-goharbor-harbor"
+  },
+  "joreilly-peopleinspace": {
+    "repository": "joreilly/PeopleInSpace",
+    "platform": "github",
+    "sourceUrl": "https://github.com/joreilly/PeopleInSpace",
+    "sourceVersion": "3a10b125",
+    "license": "Apache-2.0",
+    "contentHash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
+    "lastHarvestedAt": "2026-10-19T08:07:01.884Z",
+    "learningId": "learn-github-joreilly-peopleinspace"
+  },
+  "valeriansaliou-sonic": {
+    "repository": "valeriansaliou/sonic",
+    "platform": "github",
+    "sourceUrl": "https://github.com/valeriansaliou/sonic",
+    "sourceVersion": "85238906",
+    "license": "MPL-2.0",
+    "contentHash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
+    "lastHarvestedAt": "2026-10-19T08:07:13.341Z",
+    "learningId": "learn-github-valeriansaliou-sonic"
   }
 }

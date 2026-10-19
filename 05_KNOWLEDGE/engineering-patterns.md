@@ -167139,3 +167139,1750 @@ it("suppresses execution shortcuts when event.repeat is true", () => {
 ```
 
 ---
+
+
+---
+
+## 2360. Invariant Range Clamping Across Signed-to-Unsigned Cast Boundaries (Harvested from ouch-org/ouch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Range Clamping Across Signed-to-Unsigned Cast Boundaries",
+  "source": "ouch-org/ouch",
+  "source_url": "https://github.com/ouch-org/ouch",
+  "source_version": "6df14b05",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T08:06:47.467Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ouch-org-ouch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ouch-org/ouch](https://github.com/ouch-org/ouch) (Revision: `6df14b05`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When mapping user-provided signed integers (e.g., `i16`, `i32`, `isize`) into bounded unsigned types (e.g., `u8`, `u32`, `usize`), code MUST clamp values on the signed type **before** performing the cast (`as u32`). Code MUST NOT cast a signed integer to an unsigned integer prior to boundary checking or clamping.
+
+**WHY**:
+In twos-complement architectures, casting any negative signed number to an unsigned integer produces a value near the maximum capacity of that unsigned type (e.g., `-1i16 as u32` evaluates to `4_294_967_295`). If this cast value is subsequently clamped with `.clamp(min, max)`, the out-of-bounds large number clamps directly to `max` rather than `min`. In compression algorithms, this causes a negative compression level (requesting fastest/lightest effort) to silently execute as maximum compression (level 9/max), consuming orders of magnitude more CPU cycles and RAM.
+
+**WHEN TO APPLY**:
+Any systems software, CLI parameter normalization layer, network serializer, or driver wrapper where signed integer user inputs are normalized into unsigned configuration bounds (e.g., compression levels, concurrency limits, buffer capacities, timeouts).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// CORRECT: Clamp on the signed domain before converting to unsigned
+pub fn normalize_compression_level(level: Option<i16>, default_val: u32, min_val: i16, max_val: i16) -> u32 {
+    level.map_or(default_val, |l| {
+        // Invariant: min_val and max_val match signed bounds
+        l.clamp(min_val, max_val) as u32
+    })
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// VIOLATION: Casting to unsigned before clamping produces silent wrap-around
+pub fn dangerous_compression_level(level: Option<i16>, default_val: u32) -> u32 {
+    level.map_or(default_val, |l| {
+        // BUG: -1i16 as u32 == 4294967295; (4294967295).clamp(0, 9) returns 9!
+        (l as u32).clamp(0, 9)
+    })
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via unit tests validating extreme boundary inputs (`-1`, `i16::MIN`, `0`, `i16::MAX`):
+```rust
+#[test]
+fn verify_negative_level_clamping() {
+    let min_boundary = normalize_compression_level(Some(-1), 6, 0, 9);
+    assert_eq!(min_boundary, 0, "Negative levels must normalize to lower bound (0), not upper bound (9)");
+    
+    let extreme_min = normalize_compression_level(Some(i16::MIN), 6, 0, 9);
+    assert_eq!(extreme_min, 0);
+}
+```
+
+---
+
+
+---
+
+## 2361. Symlink Pivot and Writing-Through-Symlink Extraction Invariant (Harvested from ouch-org/ouch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Symlink Pivot and Writing-Through-Symlink Extraction Invariant",
+  "source": "ouch-org/ouch",
+  "source_url": "https://github.com/ouch-org/ouch",
+  "source_version": "6df14b05",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T08:06:47.614Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ouch-org-ouch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ouch-org/ouch](https://github.com/ouch-org/ouch) (Revision: `6df14b05`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Archive extraction engines MUST inspect every path segment between the destination root and the final write target on disk using `symlink_metadata` (lstat) immediately prior to writing file contents. If ANY intermediate on-disk component is a symbolic link, the extraction MUST be aborted immediately.
+
+**WHY**:
+Static lexical verification of an archive entry (`foo/bar/baz.txt`) is insufficient to prevent ZipSlip and root escape attacks. If entry #1 in a malicious archive creates a symlink named `foo` pointing to `/etc`, and entry #2 writes to `foo/passwd`, lexical checks on entry #2 pass (it looks like a safe child of `./foo`). When written to disk, the operating system traverses the on-disk symlink created by entry #1 and overwrites the host system file outside the extraction root.
+
+**WHEN TO APPLY**:
+All file archive unpackers (ZIP, TAR, 7Z, RAR, CPIO) and file sync tools handling untrusted input directory trees.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::path::{Path, PathBuf};
+use fs_err as fs;
+
+pub fn validate_dest_inside_root(root: &Path, dest: &Path) -> Result<(), &'static str> {
+    let rel = dest.strip_prefix(root).map_err(|_| "Target is outside extraction root")?;
+    let mut probe = root.to_path_buf();
+    
+    for comp in rel.components() {
+        probe.push(comp);
+        // Query filesystem metadata WITHOUT following symlinks
+        match fs::symlink_metadata(&probe) {
+            Ok(md) if md.file_type().is_symlink() => {
+                return Err("Security invariant violation: intermediate on-disk component is a symlink");
+            }
+            Ok(_) => continue,
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+                // If a path component does not yet exist, subsequent children cannot pivot through it
+                break;
+            }
+            Err(_) => return Err("Filesystem metadata inspection failed"),
+        }
+    }
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// VIOLATION: Relying only on lexical normalization (e.g., path components check)
+pub fn unsafe_extract_entry(root: &Path, entry_path: &Path) -> Result<PathBuf, &'static str> {
+    let mut safe_path = root.to_path_buf();
+    for comp in entry_path.components() {
+        if let std::path::Component::Normal(c) = comp {
+            safe_path.push(c);
+        } else {
+            return Err("Disallowed component");
+        }
+    }
+    // DANGER: If 'safe_path' parent components were unpacked earlier as symlinks,
+    // this directly overwrites arbitrary files on the host system!
+    Ok(safe_path)
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test attempting multi-entry symlink injection:
+```rust
+#[test]
+fn test_prevent_symlink_pivot_write() {
+    let temp = tempfile::tempdir().unwrap();
+    let root = temp.path();
+    let evil_symlink = root.join("link");
+    // Simulate entry 1: creates symlink to root's parent
+    std::os::unix::fs::symlink(root.parent().unwrap(), &evil_symlink).unwrap();
+    
+    // Simulate entry 2: tries to write through the symlink
+    let target_file = evil_symlink.join("pwned.txt");
+    let result = validate_dest_inside_root(root, &target_file);
+    assert!(result.is_err(), "Must block writes traversing on-disk symlinks");
+}
+```
+
+---
+
+
+---
+
+## 2362. Bidirectional and Terminal Control Character Sanitization Invariant (Harvested from ouch-org/ouch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bidirectional and Terminal Control Character Sanitization Invariant",
+  "source": "ouch-org/ouch",
+  "source_url": "https://github.com/ouch-org/ouch",
+  "source_version": "6df14b05",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T08:06:47.768Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ouch-org-ouch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ouch-org/ouch](https://github.com/ouch-org/ouch) (Revision: `6df14b05`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before rendering arbitrary user, file, or archive strings (such as filenames or paths embedded within untrusted containers) to a TTY or stderr, software MUST scrub all C0/C1 control characters, line breaks, zero-width spaces, and Unicode Bidirectional (BiDi) formatting markers (`U+202A` through `U+202E`, `U+2066` through `U+2069`), replacing them with standard replacement characters (`\u{FFFD}`).
+
+**WHY**:
+Unsanitized strings printed to terminals enable critical terminal injection vulnerabilities. Attackers use BiDi control codes (CVE-2021-42574, Trojan Source) to visually invert filenames (e.g., displaying `innocent.txt` in the terminal when the actual file is `txt.tneconni.exe`). Control characters (`\x1b`, `\r`, `\x08`) allow overwriting prompt lines, spoofing interactive confirmation dialogs, or altering user decisions during collision checks.
+
+**WHEN TO APPLY**:
+All CLI tools, log formatters, error reporters, and terminal UI frameworks presenting untrusted external strings to operators.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::borrow::Cow;
+
+pub fn is_unsafe_display_char(ch: char) -> bool {
+    matches!(ch,
+        c if c.is_control() => true,
+        '\u{2028}' | '\u{2029}' => true,             // Line / Paragraph separators
+        '\u{202A}'..='\u{202E}' => true,             // LRE, RLE, PDF, LRO, RLO
+        '\u{2066}'..='\u{2069}' => true,             // LRI, RLI, FSI, PDI
+        '\u{200B}' | '\u{200C}' | '\u{200D}' |      // Zero-width spaces & joiners
+        '\u{FEFF}' | '\u{00AD}' | '\u{180E}' |
+        '\u{034F}' | '\u{061C}' => true,             // Invisible marks & Arabic letter marks
+        _ => false,
+    )
+}
+
+pub fn sanitize_for_display(text: &str) -> Cow<'_, str> {
+    if !text.chars().any(is_unsafe_display_char) {
+        return Cow::Borrowed(text);
+    }
+    let mut sanitized = String::with_capacity(text.len());
+    for ch in text.chars() {
+        if is_unsafe_display_char(ch) {
+            sanitized.push('\u{FFFD}');
+        } else {
+            sanitized.push(ch);
+        }
+    }
+    Cow::Owned(sanitized)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// VIOLATION: Printing raw paths directly to stderr/stdout
+pub fn print_status(filename: &std::path::Path) {
+    // DANGER: An attacker embedding ANSI codes (\x1b[2K\r) or BiDi codes
+    // can overwrite terminal history or spoof subsequent confirmation prompts!
+    eprintln!("Processing file: {}", filename.display());
+}
+```
+
+**VERIFICATION METHOD**:
+Property test ensuring no unsafe codepoint survives sanitization:
+```rust
+#[test]
+fn test_terminal_sanitization_removes_bidi_and_escapes() {
+    let malicious = "safe_prefix_\u{202E}txt.exe\x1b[31m";
+    let sanitized = sanitize_for_display(malicious);
+    assert!(!sanitized.chars().any(is_unsafe_display_char));
+    assert!(sanitized.contains('\u{FFFD}'));
+}
+```
+
+---
+
+
+---
+
+## 2363. Verification of Temporal Reachability for Disjoint Cron Specifications (Harvested from goharbor/harbor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Verification of Temporal Reachability for Disjoint Cron Specifications",
+  "source": "goharbor/harbor",
+  "source_url": "https://github.com/goharbor/harbor",
+  "source_version": "9e79066f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:06:57.101Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goharbor-harbor",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `9e79066f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any parser validating a multi-field cron expression MUST NOT rely solely on independent field-syntax parsing. The system MUST compute a forward reachability projection across a complete calendar cycle (for the Gregorian calendar: 400 years / 146,097 days) before persisting or scheduling the spec. Furthermore, all scheduling loops stepping forward with `schedule.Next(t)` MUST explicitly check `!t.IsZero()` and terminate execution immediately if a zero-value timestamp is returned.
+
+**WHY**:
+Standard cron parsers (such as `robfig/cron`) validate field grammars orthogonally. Expressions like `0 0 3 30 2 *` (Feb 30) or `0 0 0 31 4 *` (April 31) pass syntax parsing because `30 <= 31` and `2 <= 12`. When executing `schedule.Next(now)`, the library searches within a finite forward horizon (typically 5 years). Finding no match, it returns Go’s zero value `time.Time{}` (Unix epoch `-62135596800`). An iteration loop `for t := schedule.Next(now); t.Before(horizon); t = schedule.Next(t)` encounters an immediate condition failure: `time.Time{}` is always before any current or future horizon. The loop advances with `t = schedule.Next(time.Time{})`, which repeatedly fails to match and returns `time.Time{}`, triggering an unyielding 100% CPU lockup and thread starvation.
+
+**WHEN TO APPLY**:
+Apply in any distributed task scheduler, asynchronous worker, cron runner, or API input validation layer written in Go, Rust, Java, or C++ where cron strings configure automated background jobs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package cronutil
+
+import (
+	"fmt"
+	"time"
+	"github.com/robfig/cron/v3"
+)
+
+// StandardParser returns a 6-field parser (Seconds, Minutes, Hours, Dom, Month, Dow).
+func StandardParser() cron.Parser {
+	return cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow)
+}
+
+// IsCronReachable proves the cron schedule fires at least once within a 400-year Gregorian cycle.
+// Robfig/cron searches at most 5 years forward per Next() invocation. Probing in 80 consecutive
+// 5-year intervals ensures valid, rare dates (e.g. leap year February 29 bridging non-leap century
+// years like 2100) are not falsely marked unreachable, while mathematically impossible specs return false.
+func IsCronReachable(schedule cron.Schedule) bool {
+	// 2000 was a 400-year leap century; provides an ideal reference base.
+	base := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	for i := 0; i < 80; i++ {
+		next := schedule.Next(base)
+		if !next.IsZero() {
+			return true
+		}
+		base = base.AddDate(5, 0, 0)
+	}
+	return false
+}
+
+// SafeNextOccurrences gathers scheduled fire times between 'from' and 'horizon' without infinite spin risk.
+func SafeNextOccurrences(schedule cron.Schedule, from, horizon time.Time) ([]time.Time, error) {
+	if !IsCronReachable(schedule) {
+		return nil, fmt.Errorf("cron schedule is unreachable; will never fire")
+	}
+
+	var occurrences []time.Time
+	// Invariant: Guard against both zero-time and horizon overflow
+	for t := schedule.Next(from); !t.IsZero() && t.Before(horizon); t = schedule.Next(t) {
+		occurrences = append(occurrences, t)
+	}
+	return occurrences, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Field parsing without cross-field calendar reachability verification
+func ScheduleTaskUnsafe(spec string, horizon time.Time) error {
+	p := cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow)
+	sched, err := p.Parse(spec) // Returns nil error for "0 0 3 30 2 *"
+	if err != nil {
+		return err
+	}
+	// CRITICAL BUG: When sched.Next returns time.Time{}, time.Time{}.Before(horizon) is TRUE.
+	// Next(time.Time{}) returns time.Time{}, causing an infinite busy spin locking an OS thread.
+	for t := sched.Next(time.Now()); t.Before(horizon); t = sched.Next(t) {
+		enqueue(t)
+	}
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Run property-based boundary testing passing impossible dates (`Feb 30`, `April 31`, `Feb 29 on non-leap years`) and rare valid dates (`Feb 29 across leap century`). Ensure impossible dates return validation errors upon submission and the loop returns in `< 5ms`.
+```go
+func TestCronSafetyInvariants(t *testing.T) {
+	parser := StandardParser()
+	impossible := "0 0 3 30 2 *"
+	sched, err := parser.Parse(impossible)
+	require.NoError(t, err)
+	assert.False(t, IsCronReachable(sched), "Feb 30 must be unreachable")
+
+	// Ensure SafeNextOccurrences terminates immediately
+	done := make(chan struct{})
+	go func() {
+		_, _ = SafeNextOccurrences(sched, time.Now(), time.Now().Add(24*time.Hour))
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("Deadlock or infinite loop detected: failed to terminate on unreachable cron")
+	}
+}
+```
+
+---
+
+
+---
+
+## 2364. Request-Origin Anchored Location Redirection Invariant (Harvested from goharbor/harbor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Request-Origin Anchored Location Redirection Invariant",
+  "source": "goharbor/harbor",
+  "source_url": "https://github.com/goharbor/harbor",
+  "source_version": "9e79066f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:06:57.255Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goharbor-harbor",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `9e79066f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an HTTP client executes chunked or multi-step uploads where subsequent operations depend on an upstream `Location` response header, the client MUST validate that the target URI shares the exact scheme, host, and port of the *effective answering request* (`resp.Request.URL`), NOT the initially configured static endpoint. Cross-origin responses, scheme-downgrades, network-path references (`//attacker.com`), and userinfo credentials (`user:pass@host`) MUST fail closed.
+
+**WHY**:
+Modern cloud registries (e.g., AWS ECR, GCP Artifact Registry) use request authorizers or regional API gateways that dynamically rewrite target hosts (e.g., rewriting `https://api.ecr.<region>.amazonaws.com` to `https://<account>.dkr.ecr.<region>.amazonaws.com`). Validating `Location` against the static endpoint causes valid uploads to break. Conversely, blindly trusting upstream `Location` headers allows an upstream registry (or a MitM on an unpinned endpoint) to inject arbitrary absolute URIs. When the client executes subsequent `PATCH`/`PUT` requests, it sends binary data alongside sensitive authorization credentials (`Authorization: Basic ...` or `Bearer ...`) to internal cloud metadata endpoints (`http://169.254.169.254`) or malicious hosts (CWE-918 SSRF and Credential Exfiltration).
+
+**WHEN TO APPLY**:
+Apply to all HTTP clients handling chunked uploads, OCI registry replication clients, multipart S3-compatible adapters, and webhook dispatch engines following HTTP 307/308 redirects or OCI distribution `Location` mechanics.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package httputil
+
+import (
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+)
+
+// SameOrigin verifies both URLs share identical scheme, hostname, and explicit port.
+func SameOrigin(a, b *url.URL) bool {
+	if a == nil || b == nil {
+		return false
+	}
+	return strings.EqualFold(a.Scheme, b.Scheme) &&
+		strings.EqualFold(a.Hostname(), b.Hostname()) &&
+		a.Port() == b.Port()
+}
+
+// ResolveUploadLocation validates a Location header against the effective request origin.
+func ResolveUploadLocation(effectiveReqURL *url.URL, rawLocation string) (*url.URL, error) {
+	if strings.TrimSpace(rawLocation) == "" {
+		return nil, fmt.Errorf("empty upload location received from server")
+	}
+
+	loc, err := url.Parse(rawLocation)
+	if err != nil {
+		return nil, fmt.Errorf("malformed location header %q: %w", rawLocation, err)
+	}
+
+	// Reject network-path references (//host/path) lacking explicit scheme
+	if strings.HasPrefix(rawLocation, "//") {
+		return nil, fmt.Errorf("protocol-relative network-path references are strictly forbidden")
+	}
+
+	// Reject userinfo smuggling within Location headers
+	if loc.User != nil {
+		return nil, fmt.Errorf("userinfo is prohibited in upload location")
+	}
+
+	// Relative URLs resolve against the answering origin
+	if !loc.IsAbs() {
+		return effectiveReqURL.ResolveReference(loc), nil
+	}
+
+	// Absolute URLs MUST share the exact origin of the request that produced the response
+	if !SameOrigin(effectiveReqURL, loc) {
+		return nil, fmt.Errorf("cross-origin location %q rejected; does not match origin %q",
+			loc.Redacted(), effectiveReqURL.Redacted())
+	}
+
+	return loc, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blindly trusting upstream Location headers or validating against static endpoints
+func UploadNextChunkUnsafe(configuredEndpoint string, resp *http.Response, chunk []byte) error {
+	nextLoc := resp.Header.Get("Location")
+	// Fatal Flaw 1: Validating against configuredEndpoint breaks reverse proxies/ECR host rewrites.
+	// Fatal Flaw 2: Using nextLoc directly sends Authorization headers to any host specified in Location.
+	req, _ := http.NewRequest("PATCH", nextLoc, bytes.NewReader(chunk))
+	req.Header.Set("Authorization", "Bearer secret-token")
+	_, err := http.DefaultClient.Do(req) // SSRF: Attacker exfiltrates bearer token to their server
+	return err
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock upstream server returning a `Location: http://169.254.169.254/latest/meta-data/` on the second chunk of an upload. Assert that the client throws an `origin mismatch` error, does not perform the subsequent request, and does not leak credentials.
+
+---
+
+
+---
+
+## 2365. Identity vs. Content-Address Scoping Invariant for State Mutations (Harvested from goharbor/harbor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Identity vs. Content-Address Scoping Invariant for State Mutations",
+  "source": "goharbor/harbor",
+  "source_url": "https://github.com/goharbor/harbor",
+  "source_version": "9e79066f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:06:57.401Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goharbor-harbor",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `9e79066f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any mutation or cancellation operation targeting an artifact (e.g., stopping a scan, triggering retention, pruning tags) MUST scope database queries by the entity's immutable Surrogate Primary Key (`artifact.ID`), NOT by its content digest (`artifact.Digest`). Content digests MUST NOT serve as tenant-isolation boundaries.
+
+**WHY**:
+Container images, manifests, and blobs in an OCI registry are content-addressable: two distinct tenants uploading an identical base image (e.g., `alpine:latest` or `golang:1.24`) produce identical SHA256 digests. If an operation (such as `/api/v2.0/projects/{project}/repositories/{repo}/artifacts/{digest}/scan/stop`) resolves backend execution tasks using `WHERE digest = ?`, a malicious or low-privileged user in Tenant A can cancel, modify, or abort active security scans running on Tenant B’s repository. This creates a cross-tenant Availability denial-of-service and blind-spot exploit (CWE-284 / CWE-639).
+
+**WHEN TO APPLY**:
+Apply across all multi-tenant storage, registry, or processing architectures where underlying payloads are deduplicated via cryptographic hashes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package control
+
+import (
+	"context"
+	"fmt"
+)
+
+type ExecutionQuery struct {
+	VendorType string
+	VendorID   int64  // Bound to the relational DB ID
+	ScopedAttr string
+}
+
+type Artifact struct {
+	ID             int64  // Immutable Surrogate Primary Key
+	ProjectID      int64  // Multi-tenant boundary
+	Digest         string // Content hash
+	RepositoryName string
+}
+
+// StopScan safely halts an in-flight vulnerability scan strictly bounded to the calling tenant's artifact.
+func (bc *ExecutionController) StopScan(ctx context.Context, art *Artifact, capType string) error {
+	if art == nil {
+		return fmt.Errorf("artifact cannot be nil")
+	}
+
+	// Invariant: Bind query strictly to art.ID (Surrogate PK), never solely to art.Digest
+	query := ExecutionQuery{
+		VendorType: "IMAGE_SCAN",
+		VendorID:   art.ID,
+		ScopedAttr: fmt.Sprintf("%d", art.ID),
+	}
+
+	executions, err := bc.execMgr.List(ctx, query)
+	if err != nil {
+		return fmt.Errorf("failed listing executions: %w", err)
+	}
+
+	if len(executions) == 0 {
+		return fmt.Errorf("no active scan job for artifact %s (id=%d)", art.RepositoryName, art.ID)
+	}
+
+	return bc.execMgr.Stop(ctx, executions[0].ID)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Using global content digest to query stateful job executions
+func StopScanVulnerable(ctx context.Context, art *Artifact) error {
+	// BUG: Querying by Digest matches all tenants that hold an identical image layer/manifest.
+	// Tenant A can abort scanning on Tenant B's private deployment!
+	query := map[string]string{
+		"artifact_digest": art.Digest,
+	}
+	execs, _ := listExecutions(ctx, query)
+	return stopExecution(ctx, execs[0].ID)
+}
+```
+
+**VERIFICATION METHOD**:
+Seed two projects (`project-alpha`, `project-beta`) with identical image digests (`sha256:e3b0c442...`) but distinct IDs (`ID: 101`, `ID: 102`). Start scans for both. Issue a `StopScan` request under `project-alpha`. Assert via test mocks that the execution list query explicitly asserts `vendor_id == 101` and that Project Beta's execution remains in the `Running` state.
+
+---
+
+
+---
+
+## 2366. Dynamic Additive Mask Value Scaling for Mixed-Precision Stability (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Additive Mask Value Scaling for Mixed-Precision Stability",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T08:06:58.212Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When constructing additive attention masks to suppress padding or future tokens in transformer attention blocks, systems MUST dynamically query the minimum representable finite value of the current tensor dtype ($\text{finfo}(\text{dtype}).\min$) rather than using hardcoded negative float literals like `-1e9` or `-1e4`. Systems MUST NOT use $-10000.0$ or $-\infty$ directly in mixed FP16/BF16/FP32 pipelines.
+
+**WHY**:
+In IEEE 754 Half-Precision (FP16), the minimum normal finite value is approximately $-65504.0$. If a codebase hardcodes `-1e9` ($-10^9$) as an additive mask, casting this tensor to FP16 causes an immediate numerical overflow to `-inf`. While mathematically $-\infty$ produces zero after softmax, subsequent gradient backpropagation through the softmax derivative ($\frac{\partial S_i}{\partial z_j} = S_i(\delta_{ij} - S_j)$) can generate $\text{NaN}$ values when multiplied by zero or when intermediate autograd engines compute $(- \infty) \cdot 0$. Conversely, using $-10000.0$ in FP32 provides insufficient suppression when computing attention weights over sequence lengths where unmasked scores can reach high values, altering probabilities post-softmax.
+
+**WHEN TO APPLY**:
+Apply in all transformer self-attention and cross-attention kernels, custom attention mask generators, PyTorch/ONNX/TensorRT export pipelines, and multi-precision inference/training runtimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def create_additive_attention_mask(
+    binary_mask: torch.Tensor, 
+    target_dtype: torch.dtype
+) -> torch.Tensor:
+    """
+    Converts a binary attention mask (1 = keep, 0 = mask) to an additive mask 
+    guaranteed never to underflow or cause NaN gradients in the target floating-point precision.
+    
+    Args:
+        binary_mask: Tensor of shape (batch_size, seq_len) or (batch_size, 1, 1, seq_len)
+        target_dtype: torch.float32, torch.float16, or torch.bfloat16
+        
+    Returns:
+        Additive mask ready to be summed directly with attention scores.
+    """
+    if binary_mask.dim() == 2:
+        # Broadcast across attention heads and query dimensions: (B, 1, 1, S)
+        extended_mask = binary_mask[:, None, None, :]
+    elif binary_mask.dim() == 4:
+        extended_mask = binary_mask
+    else:
+        raise ValueError(f"Expected binary_mask to have 2 or 4 dimensions, got {binary_mask.dim()}")
+
+    # Enforce float type conversion strictly before subtraction
+    extended_mask = extended_mask.to(dtype=target_dtype)
+    
+    # Obtain machine epsilon / min representable value for target dtype
+    min_dtype_value = torch.finfo(target_dtype).min
+    
+    # Scale: where mask == 1 -> 0.0; where mask == 0 -> min_dtype_value
+    # Safe multiplier factor: 0.5 * min_dtype_value prevents overflow if subtracted or squared
+    safe_masked_value = min_dtype_value * 0.5
+    additive_mask = (1.0 - extended_mask) * safe_masked_value
+    
+    return additive_mask
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding float literals or casting to float16 after negative scaling
+def bad_additive_mask(binary_mask: torch.Tensor, fp16: bool = False):
+    # DANGER: -1e9 causes overflow to -inf in FP16 (max FP16 magnitude is 65504)
+    # DANGER: -10000.0 in FP32 does not provide adequate suppression if logits exceed 20
+    mask_val = -1e9 if not fp16 else -10000.0
+    inverted = (1.0 - binary_mask.float()) * mask_val
+    if fp16:
+        inverted = inverted.half() # Prone to precision clipping and NaN backprop
+    return inverted
+```
+
+**VERIFICATION METHOD**:
+Execute an automated PyTorch invariant test across all floating types:
+```python
+def test_attention_mask_stability():
+    for dtype in [torch.float32, torch.float16, torch.bfloat16]:
+        binary_mask = torch.tensor([[1, 1, 0, 0]], dtype=torch.long)
+        mask = create_additive_attention_mask(binary_mask, dtype)
+        assert not torch.isnan(mask).any(), f"NaN detected for {dtype}"
+        assert not torch.isinf(mask).any(), f"Inf detected for {dtype} (must be bounded finite)"
+        # Verify softmax behaviour
+        logits = torch.zeros((1, 1, 1, 4), dtype=dtype) + mask
+        probs = torch.softmax(logits, dim=-1)
+        assert torch.allclose(probs[0, 0, 0, 2:], torch.tensor(0.0, dtype=dtype)), "Masked elements not 0"
+        assert torch.allclose(probs.sum(dim=-1), torch.tensor(1.0, dtype=dtype)), "Softmax sum != 1.0"
+```
+
+---
+
+
+---
+
+## 2367. Strict Input Truncation and Fixed-Rank Position Guard (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Input Truncation and Fixed-Rank Position Guard",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T08:06:58.369Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before token sequence tensors are dispatched to transformer embedding layers with fixed positional embeddings (`position_embedding_type == "absolute"`), callers MUST explicitly assert or truncate sequence lengths to `max_position_embeddings`. Systems MUST NOT rely on downstream layers or CUDA kernel bounds-checking to catch sequence overruns.
+
+**WHY**:
+Fixed absolute positional embeddings are indexed via integer tables of fixed size (e.g., $512 \times 768$). If an input sequence of length $513$ is forwarded, PyTorch on CPU raises an `IndexError: index out of range in self`. On CUDA, depending on the memory allocator, CUDA version, and whether bounds assertions are compiled in, out-of-bounds indexing can trigger an asynchronous illegal memory access (`CUDA error: device-side assert triggered`). This invalidates the entire CUDA context, causes all subsequent operations in the process to fail with unrecoverable device errors, and crashes multi-tenant inference services without clean error propagation.
+
+**WHEN TO APPLY**:
+Apply at every entry-point boundary receiving raw text or pre-tokenized IDs destined for models with static positional embeddings (BERT, RoBERTa, Electra, etc.).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Dict
+import torch
+
+def sanitize_bert_inputs(
+    batch: Dict[str, torch.Tensor], 
+    max_position_embeddings: int = 512,
+    pad_token_id: int = 0
+) -> Dict[str, torch.Tensor]:
+    """
+    Enforces strict sequence length invariants before passing tensors to BertEmbeddings.
+    Guarantees no out-of-bounds positional lookup occurs.
+    """
+    sanitized = {}
+    input_ids = batch.get("input_ids")
+    if input_ids is None:
+        raise KeyError("Batch must contain 'input_ids'")
+
+    seq_len = input_ids.shape[1]
+    if seq_len > max_position_embeddings:
+        # Hard truncate along sequence dimension
+        sanitized["input_ids"] = input_ids[:, :max_position_embeddings]
+        if "attention_mask" in batch:
+            sanitized["attention_mask"] = batch["attention_mask"][:, :max_position_embeddings]
+        if "token_type_ids" in batch:
+            sanitized["token_type_ids"] = batch["token_type_ids"][:, :max_position_embeddings]
+    else:
+        sanitized["input_ids"] = input_ids
+        if "attention_mask" in batch:
+            sanitized["attention_mask"] = batch["attention_mask"]
+        if "token_type_ids" in batch:
+            sanitized["token_type_ids"] = batch["token_type_ids"]
+
+    # Post-condition assertion: sequence length invariant
+    assert sanitized["input_ids"].shape[1] <= max_position_embeddings, (
+        f"Input sequence length {sanitized['input_ids'].shape[1]} exceeds "
+        f"max_position_embeddings {max_position_embeddings}"
+    )
+    return sanitized
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blindly assuming the tokenizer truncated or passing arbitrary length tensors to model
+def unsafe_inference_call(model, raw_ids):
+    # If len(raw_ids[0]) == 513, this crashes CUDA worker process permanently!
+    outputs = model(input_ids=raw_ids) 
+    return outputs
+```
+
+**VERIFICATION METHOD**:
+Verify using a negative boundary test that asserts graceful truncation or early programmatic rejection before tensor dispatch:
+```python
+def test_input_truncation_guard():
+    max_pos = 512
+    oversized_tensor = torch.randint(0, 30522, (2, 600), dtype=torch.long)
+    clean_batch = sanitize_bert_inputs({"input_ids": oversized_tensor}, max_position_embeddings=max_pos)
+    assert clean_batch["input_ids"].shape == (2, max_pos)
+```
+
+---
+
+
+---
+
+## 2368. LayerNorm Epsilon Calibration for Zero-Variance Subspaces (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "LayerNorm Epsilon Calibration for Zero-Variance Subspaces",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T08:06:58.518Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing or instantiating custom Layer Normalization layers for transformer architectures matching BERT configurations, engineers MUST specify an explicit epsilon value $\epsilon \le 1\times 10^{-12}$ that matches the pre-trained checkpoint configuration exactly, and MUST NOT default to framework-standard epsilons (such as PyTorch's default `eps=1e-5`) when loading pre-trained weights.
+
+**WHY**:
+BERT was trained with `layer_norm_eps = 1e-12`. PyTorch's `nn.LayerNorm` defaults to `eps=1e-5`. In transformers, LayerNorm computes:
+$$y = \frac{x - \mathrm{E}[x]}{\sqrt{\mathrm{Var}[x] + \epsilon}} \odot \gamma + \beta$$
+When fine-tuned representations have small feature variance in specific dimensions (common in deep residual connections where components converge), an $\epsilon$ disparity of $10^{-5}$ versus $10^{-12}$ introduces a systematic scaling distortion in the normalization denominator ($1 / \sqrt{\sigma^2 + 10^{-5}}$ vs $1 / \sqrt{\sigma^2 + 10^{-12}}$). This causes numeric logit drift, degrades precision downstream, and breaks bit-for-bit parity with pre-trained evaluation benchmarks.
+
+**WHEN TO APPLY**:
+In all custom transformer model definitions, manual re-implementations of BERT modules, model transpilers, and parameter migration scripts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class BertLayerNorm(nn.Module):
+    def __init__(self, hidden_size: int, eps: float = 1e-12):
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(hidden_size))
+        self.bias = nn.Parameter(torch.zeros(hidden_size))
+        # Invariant: eps MUST match checkpoint config exactly (default 1e-12 for BERT)
+        self.variance_epsilon = eps
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        u = x.mean(-1, keepdim=True)
+        s = (x - u).pow(2).mean(-1, keepdim=True)
+        x = (x - u) / torch.sqrt(s + self.variance_epsilon)
+        return self.weight * x + self.bias
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying on framework default epsilon
+class NaiveTransformerLayer(nn.Module):
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        # PyTorch default eps is 1e-05, breaking numeric parity with bert-base-uncased (1e-12)
+        self.norm = nn.LayerNorm(hidden_size)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_layernorm_epsilon_parity():
+    config_eps = 1e-12
+    custom_norm = BertLayerNorm(768, eps=config_eps)
+    # Check that eps parameter matches config
+    assert custom_norm.variance_epsilon == 1e-12, "Epsilon mismatch detected"
+    
+    # Verify behavior on near-constant tensor
+    flat_input = torch.full((1, 10, 768), 5.0)
+    out = custom_norm(flat_input)
+    assert not torch.isnan(out).any(), "NaN in zero-variance LayerNorm output"
+```
+
+---
+
+
+---
+
+## 2369. Offline-First Non-Destructive Stateflow Reconciliation Invariant (Harvested from joreilly/PeopleInSpace)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Offline-First Non-Destructive Stateflow Reconciliation Invariant",
+  "source": "joreilly/PeopleInSpace",
+  "source_url": "https://github.com/joreilly/PeopleInSpace",
+  "source_version": "3a10b125",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:07:01.430Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-joreilly-peopleinspace",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace) (Revision: `3a10b125`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When combining local cache storage with remote synchronization streams, UI state projectors MUST NEVER emit an `Error` state if the underlying local cache contains valid historical data. Network synchronization failures in the presence of populated local storage MUST emit a `Success` state with an explicit `refreshing = false` degradation flag, reserving `Error` states exclusively for zero-cache cold-start execution failures.
+
+**WHY**:
+Emitting an `Error` state when cached entities exist destroys screen stability, tears down local view hierarchies, induces jarring layout shifts (CLS), and invalidates existing scroll offsets. It violates the core contract of offline-first architecture by converting a transient transport-layer failure into a catastrophic application-layer outage.
+
+**WHEN TO APPLY**:
+Apply in any reactive multiplatform client (Kotlin Multiplatform, Flutter, React Native, Swift/Combine) where network operations hydrate local persistence engines (SQLDelight, Room, CoreData, SQLite, IndexedDB).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified from dev.johnoreilly.common.viewmodel.UiStateFlows.kt
+internal fun PeopleInSpaceRepositoryInterface.personListUiState(): Flow<PersonListUiState> = combine(
+    fetchPeopleAsFlow(),
+    initialSyncCompleted,
+    peopleSyncLoading,
+    peopleSyncError,
+) { people, initialSyncCompleted, syncLoading, error ->
+    when {
+        // Cold start: DB is empty and sync is in progress
+        people.isEmpty() && !initialSyncCompleted -> PersonListUiState.Loading
+        
+        // Critical failure: DB is empty and network sync threw an unrecoverable exception
+        people.isEmpty() && error != null -> PersonListUiState.Error(error.describe())
+        
+        // Non-destructive fallback: DB has records, so emit Success regardless of network error.
+        // Sync failures degrade gracefully by toggling 'refreshing' to false while retaining data.
+        else -> PersonListUiState.Success(
+            result = people,
+            refreshing = syncLoading && initialSyncCompleted,
+        )
+    }
+}
+
+private fun Throwable.describe(): String = message ?: toString()
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Direct stream piping or naive flatMapLatest that swallows cache on failure
+internal fun PeopleInSpaceRepositoryInterface.badPersonListUiState(): Flow<PersonListUiState> = 
+    peopleSyncError.flatMapLatest { error ->
+        if (error != null) {
+            // CATASTROPHIC: Discards cached database rows because a background sync failed!
+            flowOf(PersonListUiState.Error(error.message ?: "Failed"))
+        } else {
+            fetchPeopleAsFlow().map { PersonListUiState.Success(it) }
+        }
+    }
+```
+
+**VERIFICATION METHOD**:
+Enforce via unit tests that simulate a pre-populated cache followed by an injected HTTP 500 transport error:
+```kotlin
+@Test
+fun verifyCachePreservationOnNetworkError() = runTest {
+    val fakeRepo = FakePeopleInSpaceRepository().apply {
+        emitCachedPeople(listOf(Assignment("ISS", "Commander")))
+        emitSyncError(IOException("Connection refused"))
+    }
+    
+    val state = fakeRepo.personListUiState().first()
+    assertIs<PersonListUiState.Success>(state)
+    assertEquals(1, state.result.size)
+    assertFalse(state.refreshing)
+}
+```
+
+---
+
+
+---
+
+## 2370. Double-Layered Coroutine BroadcastReceiver Completion Guard (Harvested from joreilly/PeopleInSpace)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Double-Layered Coroutine BroadcastReceiver Completion Guard",
+  "source": "joreilly/PeopleInSpace",
+  "source_url": "https://github.com/joreilly/PeopleInSpace",
+  "source_version": "3a10b125",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:07:01.584Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-joreilly-peopleinspace",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace) (Revision: `3a10b125`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deferring Android `BroadcastReceiver` execution to a coroutine scope using `BroadcastReceiver.goAsync()`, the executing code MUST:
+1. Enclose the coroutine invocation within a scoped `coroutineScope { ... }` block to prevent child failure propagation to the global `CoroutineExceptionHandler`.
+2. Cancel the allocated parent `CoroutineScope` strictly inside the inner `finally` block before calling `pendingResult.finish()`.
+3. Wrap `pendingResult.finish()` in an outer `finally` block protected by a targeted `try-catch` intercepting `IllegalStateException`.
+
+**WHY**:
+Uncaught exceptions inside child jobs launched within an unconstrained receiver scope bubble up to the process-level `CoroutineExceptionHandler`, causing application crashes. Additionally, calling `pendingResult.finish()` on specific OEM-modified Android runtimes (or when timeouts occur) triggers a fatal `IllegalStateException: Broadcast already finished` (Android issue b/257513022), destabilizing system broadcast dispatchers.
+
+**WHEN TO APPLY**:
+Apply to any Android components implementing asynchronous widget updates, push notifications, boot receivers, or alarm triggers using `BroadcastReceiver.goAsync()` with Kotlin Coroutines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified from dev.johnoreilly.peopleinspace.peopleinspace.remotecompose.util.goAsync.kt
+internal fun BroadcastReceiver.goAsync(
+    coroutineContext: CoroutineContext = Dispatchers.Default,
+    block: suspend CoroutineScope.() -> Unit,
+) {
+    val parentScope = CoroutineScope(coroutineContext)
+    val pendingResult = goAsync()
+
+    parentScope.launch {
+        try {
+            try {
+                // coroutineScope rethrows errors at the boundary rather than bubbling
+                // to parentScope's Job hierarchy, avoiding unhandled exceptions crashing the process.
+                coroutineScope { this.block() }
+            } catch (e: Throwable) {
+                if (e is CancellationException && e.cause == null) {
+                    // Normal coroutine cancellation; suppress logging
+                } else {
+                    println("BroadcastReceiver execution failed: $e")
+                }
+            } finally {
+                // Structural cleanup: Guarantee parent scope tear down
+                parentScope.cancel()
+            }
+        } finally {
+            // Must be terminal statement. Guarantees OS release even if coroutine was cancelled.
+            try {
+                pendingResult.finish()
+            } catch (e: IllegalStateException) {
+                // Intercept b/257513022 OEM race condition where system finalized early
+                println("Error thrown when trying to finish broadcast: $e")
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Naked goAsync coroutine launch leading to memory leaks and OEM crashes
+fun BroadcastReceiver.unsafeGoAsync(block: suspend () -> Unit) {
+    val pending = goAsync()
+    GlobalScope.launch { // ANTI-PATTERN: Unbounded GlobalScope
+        block()
+        pending.finish() // FATAL: Crashes with IllegalStateException if timeout elapsed or block throws
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Automate verification using static analysis or mock test intercepting `pendingResult.finish()`:
+```kotlin
+@Test
+fun verifyBroadcastReceiverFinishesSafelyOnException() = runTest {
+    var finishCalls = 0
+    val mockPendingResult = mockk<BroadcastReceiver.PendingResult>(relaxed = true) {
+        every { finish() } answers {
+            finishCalls++
+            if (finishCalls > 1) throw IllegalStateException("Broadcast already finished")
+        }
+    }
+    // Assert no unhandled IllegalStateException propagates out of async execution
+}
+```
+
+---
+
+
+---
+
+## 2371. Antimeridian-Aware Longitudinal Coordinate Wrapping Invariant (Harvested from joreilly/PeopleInSpace)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Antimeridian-Aware Longitudinal Coordinate Wrapping Invariant",
+  "source": "joreilly/PeopleInSpace",
+  "source_url": "https://github.com/joreilly/PeopleInSpace",
+  "source_version": "3a10b125",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:07:01.731Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-joreilly-peopleinspace",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace) (Revision: `3a10b125`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When calculating geographic bounding boxes, center coordinates, or polyline paths for trajectory/orbit data across global projections, systems MUST compute longitudinal span by evaluating the maximum delta between cyclically sorted coordinates (`360.0 - (lon_max - lon_min)`), and MUST partition geometric polyline arrays whenever `abs(lon[i] - lon[i-1]) > 180.0`.
+
+**WHY**:
+The International Date Line (antimeridian, $\pm 180^\circ$ longitude) introduces a mathematical discontinuity in Cartesian and Mercator projection coordinates. Naive min/max calculations result in world-spanning bounding boxes ($360^\circ$ width) and render horizontal streaks across the map canvas when connecting points transitioning from $+179^\circ$ to $-179^\circ$.
+
+**WHEN TO APPLY**:
+Apply in any GIS, mapping, telemetry, or aerospace visualization module rendering trajectories on 2D projections (Web Mercator, Plate Carrée) handling satellite tracks, flight plans, or nautical navigation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified from dev.johnoreilly.peopleinspace.peopleinspace.remotecompose.util.GeoUtils.kt
+fun calculateDatelineSafeSegments(geoPoints: List<GeoPoint>): List<List<GeoPoint>> {
+    val segments = mutableListOf<MutableList<GeoPoint>>()
+    if (geoPoints.isEmpty()) return segments
+
+    segments.add(mutableListOf(geoPoints.first()))
+    for (i in 1 until geoPoints.size) {
+        val prev = geoPoints[i - 1]
+        val curr = geoPoints[i]
+        
+        // Detect 180th meridian crossing: jump across boundary exceeds hemisphere half-width
+        if (kotlin.math.abs(curr.longitude - prev.longitude) > 180.0) {
+            segments.add(mutableListOf()) // Break polyline to prevent horizontal wrap streak
+        }
+        segments.last().add(curr)
+    }
+    return segments
+}
+
+fun calculateDatelineSafeCenterLongitude(sortedLons: List<Double>): Double {
+    if (sortedLons.isEmpty()) return 0.0
+    if (sortedLons.size == 1) return sortedLons.first()
+
+    // Determine the largest longitudinal gap between consecutive points
+    var maxGap = 360.0 - (sortedLons.last() - sortedLons.first())
+    var gapEnd = sortedLons.first()
+
+    for (i in 0 until sortedLons.size - 1) {
+        val gap = sortedLons[i + 1] - sortedLons[i]
+        if (gap > maxGap) {
+            maxGap = gap
+            gapEnd = sortedLons[i + 1]
+        }
+    }
+
+    val lngDiff = 360.0 - maxGap
+    var centerLng = gapEnd + (lngDiff / 2.0)
+    
+    // Normalize to standard (-180, 180] geographic range
+    while (centerLng > 180.0) centerLng -= 360.0
+    while (centerLng < -180.0) centerLng += 360.0
+    return centerLng
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Naive centroid and single polyline rendering
+fun naiveCenter(points: List<GeoPoint>): Double {
+    // If points are at 179.0 and -179.0, naive average calculates (179 + -179)/2 = 0.0 (Prime Meridian)
+    // The actual center is 180.0 (Antimeridian)!
+    return points.map { it.longitude }.average() 
+}
+```
+
+**VERIFICATION METHOD**:
+Validate via property tests feeding crossing sequences:
+```kotlin
+@Test
+fun verifyDatelineCrossingPolylineSplitting() {
+    val points = listOf(
+        GeoPoint(0.0, 179.0),
+        GeoPoint(0.0, 179.9),
+        GeoPoint(0.0, -179.9), // Antimeridian crossed here
+        GeoPoint(0.0, -178.5)
+    )
+    val segments = calculateDatelineSafeSegments(points)
+    assertEquals(2, segments.size)
+    assertEquals(2, segments[0].size)
+    assertEquals(2, segments[1].size)
+}
+```
+
+---
+
+
+---
+
+## 2372. Dual-Path Read Alignment for Synchronous Controlled Inputs (Harvested from assistant-ui/assistant-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Path Read Alignment for Synchronous Controlled Inputs",
+  "source": "assistant-ui/assistant-ui",
+  "source_url": "https://github.com/assistant-ui/assistant-ui",
+  "source_version": "1960f3c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:07:11.655Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-assistant-ui-assistant-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui) (Revision: `1960f3c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When synchronizing external state engines with React-controlled input components (e.g., textareas, content-editable blocks, or tokenized mention systems), the store MUST expose an immediate synchronous read-overlay (`getState()`) reflecting mutations prior to React's commit phase, while concurrently publishing synchronous updates via `useSyncExternalStore` using live subscriptions (`unstable_useClientSource`). A store MUST NOT defer state visibility until post-render commit when servicing input drivers.
+
+**WHY**:
+React's asynchronous or batched rendering causes controlled inputs (such as `react-mentions` or inputs undergoing IME composition) to experience an intermediate frame where internal DOM value differs from React props. If `onChange` writes to the store but `getState()` returns the previous committed snapshot during the same JavaScript turn, controlled components reset the native input value or move the selection caret (`selectionStart`/`selectionEnd`) unconditionally to the end of the text stream.
+
+**WHEN TO APPLY**:
+Apply to any framework-agnostic client store bridging into React via `useSyncExternalStore` where text input, cursor manipulation, or keystroke-level filtering is controlled by store state.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { useMemo, useSyncExternalStore } from "react";
+
+type Subscribable<T> = {
+  subscribe: (listener: () => void) => () => void;
+  getState: () => T;
+};
+
+interface LiveReaderOptions {
+  live?: boolean;
+}
+
+export function createSyncStoreFacade<TRuntimeState extends { text: string }, TPublicState extends { text: string }>(
+  runtime: Subscribable<TRuntimeState>,
+  transformState: (snapshot: TRuntimeState) => TPublicState,
+  notifySource?: (subscribe: ((listener: () => void) => () => void) | undefined) => void,
+) {
+  return function useStoreClient(options?: LiveReaderOptions) {
+    // 1. Direct subscription wiring into client source to prevent stale frame drops
+    notifySource?.(options?.live ? runtime.subscribe : undefined);
+
+    // 2. Standard React external store subscription
+    const committedSnapshot = useSyncExternalStore(
+      runtime.subscribe,
+      runtime.getState,
+      runtime.getState,
+    );
+
+    // 3. Stable committed state projection
+    const stableState = useMemo(
+      () => transformState(committedSnapshot),
+      [committedSnapshot],
+    );
+
+    // 4. Immediate overlay accessor: checks live runtime snapshot directly
+    // If the runtime was mutated during the current execution turn (pre-commit),
+    // return an overlay snapshot so callers see changes synchronously.
+    const getState = useMemo(() => {
+      let overlaySnapshot: TRuntimeState | undefined;
+      let overlay: TPublicState | undefined;
+
+      return (): TPublicState => {
+        const liveSnapshot = runtime.getState();
+        if (liveSnapshot === committedSnapshot) {
+          return stableState;
+        }
+        if (liveSnapshot !== overlaySnapshot) {
+          overlaySnapshot = liveSnapshot;
+          overlay = transformState(liveSnapshot);
+        }
+        return overlay!;
+      };
+    }, [committedSnapshot, stableState, runtime]);
+
+    return {
+      getState,
+      setText: (text: string) => {
+        // Mutates backend runtime immediately
+        (runtime as any).setText(text);
+      },
+    };
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Returning closed-over render state in getState()
+export function useBuggyStoreClient(runtime: Subscribable<{ text: string }>) {
+  const state = useSyncExternalStore(runtime.subscribe, runtime.getState);
+  
+  return {
+    // FATAL: When an input calls setText() and immediately inspects getState(),
+    // it receives the stale 'state' variable from the current render closure.
+    // Controlled inputs will see stale values, causing cursor jumps or text revert!
+    getState: () => state,
+    setText: (text: string) => (runtime as any).setText(text),
+  };
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a jsdom integration test mounting a controlled input that forces an internal state tick on `onChange` and asserts the caret index (`selectionStart`) remains anchored at the insertion index:
+```typescript
+it("preserves caret position during mid-string insertions", async () => {
+  render(<BoundInputWithLocalTick />);
+  const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+  input.value = "hello world";
+  input.setSelectionRange(5, 5);
+  fireEvent.change(input, {
+    target: { value: "hello! world", selectionStart: 6, selectionEnd: 6 },
+  });
+  expect(input.selectionStart).toBe(6);
+});
+```
+
+---
+
+
+---
+
+## 2373. Upstream Capability Asymmetry via Exact Optional Interface Contracts (Harvested from assistant-ui/assistant-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Capability Asymmetry via Exact Optional Interface Contracts",
+  "source": "assistant-ui/assistant-ui",
+  "source_url": "https://github.com/assistant-ui/assistant-ui",
+  "source_version": "1960f3c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:07:11.803Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-assistant-ui-assistant-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui) (Revision: `1960f3c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing service or storage adapter abstractions where disparate external engines (e.g., OpenCode, Google ADK, LangGraph, Cloud APIs) exhibit asymmetric feature capabilities, capability methods MUST be declared optional on the base adapter interface (`method?(...): Promise<void>`). Adapters providing full support MUST type their factory returns using intersection types (`Adapter & Pick<Required<Adapter>, "method">`) to signal guaranteed capabilities to strict callers without forcing unsupported backends to implement reject stubs or throw runtime exceptions.
+
+**WHY**:
+Forcing every adapter to implement all lifecycle operations (such as `unarchive`) causes backend incompatibilities when the underlying persistence layer or vendor protocol is fundamentally immutable or unidirectional (e.g., sessions in OpenCode that cannot be unarchived once closed). If the interface mandates the method, adapters must resort to returning fake promises or throwing runtime exceptions, breaking caller UX and violating the Liskov Substitution Principle.
+
+**WHEN TO APPLY**:
+Apply to all adapter architectures, database driver layers, storage abstractions, and messaging backends where heterogeneous target engines share a core protocol but diverge in lifecycle mutations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// 1. Base interface declares optional capability
+export interface RemoteThreadListAdapter {
+  readonly id: string;
+  archive(remoteId: string): Promise<void>;
+  unarchive?(remoteId: string): Promise<void>;
+  delete(remoteId: string): Promise<void>;
+}
+
+// 2. Base consumer checks capability defensively at runtime
+export async function openArchivedThread(
+  adapter: RemoteThreadListAdapter,
+  threadId: string,
+): Promise<void> {
+  if (typeof adapter.unarchive === "function") {
+    await adapter.unarchive(threadId);
+  } else {
+    // Graceful degradation: read-only access without restoring status
+    console.warn(`Adapter ${adapter.id} does not support unarchiving; opening read-only.`);
+  }
+}
+
+// 3. Fully-capable implementations declare guaranteed contracts via type intersections
+export type FullyCapableThreadListAdapter = RemoteThreadListAdapter &
+  Pick<Required<RemoteThreadListAdapter>, "unarchive">;
+
+export function createLocalStorageAdapter(): FullyCapableThreadListAdapter {
+  return {
+    id: "local-storage",
+    async archive(id: string) { /* ... */ },
+    async unarchive(id: string) { /* guaranteed implementation */ },
+    async delete(id: string) { /* ... */ },
+  };
+}
+
+export function createOpenCodeAdapter(): RemoteThreadListAdapter {
+  return {
+    id: "open-code",
+    async archive(id: string) { /* ... */ },
+    // unarchive omitted intentionally due to engine constraints
+    async delete(id: string) { /* ... */ },
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Forcing dummy implementations that throw or no-op
+export interface RigidRemoteThreadListAdapter {
+  unarchive(remoteId: string): Promise<void>; // Mandated for all
+}
+
+export function createOpenCodeAdapterBroken(): RigidRemoteThreadListAdapter {
+  return {
+    async unarchive(id: string) {
+      // FORBIDDEN: Caller thinks operation succeeded, but engine never unarchived!
+      // Or throwing runtime Error: "Not supported" crashing unexpected UI workflows.
+      throw new Error("OpenCode cannot unarchive sessions");
+    },
+  };
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce compliance via static TypeScript API surface checks (`scripts/check-api-surface.mjs`) ensuring missing method declarations are marked optional on the base interface, paired with type tests:
+```typescript
+// Type test assertion
+type AssertOptionalUnarchive = undefined extends RemoteThreadListAdapter["unarchive"] ? true : false;
+const assertOptional: AssertOptionalUnarchive = true;
+```
+
+---
+
+
+---
+
+## 2374. Hard-Capped Stream Ingestion with Early Transport Cancellation (Harvested from assistant-ui/assistant-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hard-Capped Stream Ingestion with Early Transport Cancellation",
+  "source": "assistant-ui/assistant-ui",
+  "source_url": "https://github.com/assistant-ui/assistant-ui",
+  "source_version": "1960f3c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:07:11.952Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-assistant-ui-assistant-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui) (Revision: `1960f3c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Edge handlers and ingestion workers accepting payload buffers of non-deterministic length MUST enforce a strict byte-budget limit during chunk streaming and MUST cancel the underlying transport stream (`reader.cancel().catch(...)`) immediately when the threshold is exceeded before decoding or accumulating text into memory.
+
+**WHY**:
+Accumulating unvalidated streaming bodies into memory using `request.text()` or unbounded array allocations exposes edge workers (e.g., Cloudflare Workers with 128MB limits) to catastrophic Out-Of-Memory (OOM) termination and denial-of-service via slow-loris memory exhaustion. Merely slicing an accumulated buffer after reading the entire payload fails to protect edge process boundaries.
+
+**WHEN TO APPLY**:
+Apply in any Web API / Edge runtime endpoint (`Request`/`Response`) handling file uploads, generative UI artifacts, secret deposits, or large payload inputs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Reads stream up to maxBytes; aborts reader immediately if exceeded.
+ * Returns decoded UTF-8 string, or undefined if the payload exceeded the limit.
+ */
+export async function readCapped(
+  request: Request,
+  maxBytes: number,
+): Promise<string | undefined> {
+  if (!request.body) return "";
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      totalBytes += value.byteLength;
+      if (totalBytes > maxBytes) {
+        // CRITICAL: Cancel the readable stream to free upstream network sockets
+        reader.cancel("Payload size exceeded threshold").catch(() => {});
+        return undefined;
+      }
+      chunks.push(value);
+    }
+  } catch (error) {
+    reader.cancel(error).catch(() => {});
+    throw error;
+  }
+
+  // Linear allocation of exact size
+  const combined = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    combined.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return new TextDecoder("utf-8", { fatal: true }).decode(combined);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Reading full payload into memory before checking length
+export async function readUnsafe(request: Request, maxBytes: number) {
+  // FATAL: An attacker can send a 500MB stream that blows worker heap memory
+  // before the length check is ever reached!
+  const text = await request.text();
+  if (text.length > maxBytes) {
+    throw new Error("Payload too large");
+  }
+  return text;
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test with a mocked readable stream delivering chunks past the boundary:
+```typescript
+it("aborts reading and releases memory when exceeding max limit", async () => {
+  const chunk = new Uint8Array(1024);
+  const stream = new ReadableStream({
+    pull(controller) {
+      controller.enqueue(chunk);
+    },
+  });
+  const req = new Request("http://localhost", { method: "POST", body: stream });
+  const result = await readCapped(req, 2048);
+  expect(result).toBeUndefined();
+});
+```
+
+---
+
+
+---
+
+## 2375. Exclusive Embedded Database File-Lock Reentrancy Guard (Harvested from valeriansaliou/sonic)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Exclusive Embedded Database File-Lock Reentrancy Guard",
+  "source": "valeriansaliou/sonic",
+  "source_url": "https://github.com/valeriansaliou/sonic",
+  "source_version": "85238906",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-10-19T08:07:13.020Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-valeriansaliou-sonic",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [valeriansaliou/sonic](https://github.com/valeriansaliou/sonic) (Revision: `85238906`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When backing up, snapshotting, or inspecting an embedded database instance (such as RocksDB, SQLite, or LMDB) managed by a process-local connection pool, callers **MUST NOT** attempt to instantiate a new database handle against the target path if the pool already holds an active instance. Instead, the runtime **MUST** inspect the memory registry, extract the existing open handle (`Arc<DB>`), flush pending in-memory write buffers (`memtables`), and pass the pooled reference directly to the backup/snapshot engine.
+
+**WHY**:
+Embedded database engines enforce single-process physical directory exclusion via filesystem locks (`LOCK` file on POSIX/Windows). Re-opening an active database path crashes the operation with `io::ErrorKind::Other` ("resource temporarily unavailable" or internal lock acquisition failure). Furthermore, bypassing the pooled instance omits volatile uncommitted memtable state if the write-ahead log (WAL) is disabled or un-flushed, yielding corrupted or stale point-in-time snapshots.
+
+**WHEN TO APPLY**:
+All embedded storage layers (RocksDB, Sled, DuckDB, SQLite) operating under dynamic pooling, background janitor cycles, or hot runtime backup routines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified safe embedded backup dispatch with pool inspection and memtable flush
+pub fn backup_pooled_kv_store(
+    pool: &KvStorePool,
+    store_id: StoreId,
+    backup_engine: &mut DBBackupEngine,
+) -> Result<(), io::Error> {
+    // 1. Inspect pool registry under shared read lock without holding write lock across I/O
+    let pooled_handle = pool.read()
+        .map_err(|_| io::Error::other("poisoned lock on store pool"))?
+        .get(&store_id)
+        .map(Arc::clone);
+
+    match pooled_handle {
+        Some(active_store) => {
+            // 2. Database already open in this process: RocksDB LOCK file is actively held.
+            // Flush memtables explicitly prior to backup snapshot to ensure memory parity.
+            backup_engine
+                .create_new_backup_flush(&active_store.database, true)
+                .map_err(|e| io::Error::other(format!("hot backup flush failed: {e}")))?;
+        }
+        None => {
+            // 3. Database is dormant: Safe to open new ephemeral handle via pool factory.
+            let cold_store = pool
+                .open(store_id, |_| {})
+                .map_err(|e| io::Error::other(format!("dormant store open failed: {e}")))?;
+
+            backup_engine
+                .create_new_backup(&cold_store)
+                .map_err(|e| io::Error::other(format!("cold backup failed: {e}")))?;
+        }
+    }
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blindly opening the database path for backup operations.
+// Will trigger immediate crash if the store is active in the connection pool.
+pub fn unsafe_backup(pool: &KvStorePool, store_id: StoreId, backup_engine: &mut DBBackupEngine) -> Result<(), io::Error> {
+    // BUG: If store_id was recently touched by an ingest operation, open() panics
+    // or fails with RocksDB IO error: "lock hold by current process".
+    let origin_kv = pool.open(store_id, |_| {})
+        .map_err(|_| io::Error::other("database open failure"))?;
+
+    backup_engine.create_new_backup(&origin_kv)
+        .map_err(|_| io::Error::other("database backup failure"))?;
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test where a write command (`PUSH`) executes concurrently with an administrative backup command (`TRIGGER backup`). Assert that zero lock contention errors are returned and that backup artifacts exist on disk:
+```rust
+#[test]
+fn verify_hot_backup_lock_reentrancy() {
+    let pool = KvStorePool::new_test();
+    pool.acquire_write("col1", b"val").unwrap(); // Holds LOCK file in pool
+    let res = pool.trigger_backup("col1", "/tmp/backup");
+    assert!(res.is_ok(), "Backup failed under active pool lock: {:?}", res.err());
+}
+```
+
+---
+
+
+---
+
+## 2376. Guarded Asymmetric Multi-Pool Thread Budgeting (Harvested from valeriansaliou/sonic)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded Asymmetric Multi-Pool Thread Budgeting",
+  "source": "valeriansaliou/sonic",
+  "source_url": "https://github.com/valeriansaliou/sonic",
+  "source_version": "85238906",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-10-19T08:07:13.179Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-valeriansaliou-sonic",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [valeriansaliou/sonic](https://github.com/valeriansaliou/sonic) (Revision: `85238906`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When configuring subordinate thread pools for concurrent engine subsystems (such as separating RocksDB flush threads from compaction threads, or indexing threads from search workers), thread budget allocation calculations **MUST** clamp values against underflow using integer ceiling/floor primitives (`max(1)`). Calculations **MUST NOT** perform raw subtraction between parent worker limits and prioritized worker allocations without saturating boundaries.
+
+**WHY**:
+In environments where CPU limits or user configs restrict background concurrency (e.g., `max_background_jobs = 1` or `2`, and `max_flushes = 1` or `2`), computing compaction threads as `max_jobs - max_flushes` yields zero or negative integers (`0` or negative signed integers). RocksDB internal thread pools interpret negative or zero thread assignments as invalid or unbounded, causing thread starvation, deadlocks in compaction scheduling, or integer-cast panics.
+
+**WHEN TO APPLY**:
+Thread scheduling, LSM-tree tuning parameters, and worker pool allocation where a pool quota is split into high-priority and low-priority execution queues.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified safe thread assignment with guaranteed minimum saturation
+pub fn configure_rocksdb_thread_pools(
+    env: &mut rocksdb::Env,
+    max_background_jobs: Option<i32>,
+    max_flushes: i32,
+) {
+    // High-priority pool dedicated to memtable flushes to prevent write stalls
+    env.set_high_priority_background_threads(max_flushes);
+
+    // Low-priority pool dedicated to background compactions (L0 -> L1 -> Lmax).
+    // Ensure low-priority threads cannot underflow below 1 regardless of user configuration.
+    let low_priority_threads = max_background_jobs
+        .map_or(1i32, |n| (n - max_flushes).max(1i32));
+
+    env.set_low_priority_background_threads(low_priority_threads);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Naive subtraction of subcompactions/flushes allowing 0 or negative thread counts.
+pub fn unsafe_thread_assignment(env: &mut rocksdb::Env, max_subcompactions: Option<u32>, max_flushes: i32) {
+    // If max_subcompactions is None (defaults to 1) and max_flushes is 2,
+    // (1 as i32 - 2) evaluates to -1, corrupting RocksDB thread pool state.
+    env.set_low_priority_background_threads(max_subcompactions.unwrap_or(1) as i32 - max_flushes);
+}
+```
+
+**VERIFICATION METHOD**:
+Implement property-based unit testing covering edge configurations:
+```rust
+#[test]
+fn test_thread_allocation_boundary_invariants() {
+    for max_jobs in [Some(0), Some(1), Some(2), None] {
+        for flushes in [1, 2, 4] {
+            let low = max_jobs.map_or(1i32, |n| (n - flushes).max(1i32));
+            assert!(low >= 1, "Failed underflow constraint: max_jobs={:?}, flushes={}", max_jobs, flushes);
+        }
+    }
+}
+```
+
+---

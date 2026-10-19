@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T07:59:32.895Z",
-  "total_verified_learnings": 731,
+  "last_updated": "2026-10-19T08:07:13.292Z",
+  "total_verified_learnings": 735,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2589,14 +2589,29 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "a587b283",
-      "content_hash": "69e96742de33f96fbb95866310f72f00b11d2a892de18ac0df5edbe4eb2938a5",
+      "source_version": "1960f3c2",
+      "content_hash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 1720,
           "title": "core): resolve a thread switch once the replacement runtime attaches (#9765)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2372,
+          "title": "Dual-Path Read Alignment for Synchronous Controlled Inputs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2373,
+          "title": "Upstream Capability Asymmetry via Exact Optional Interface Contracts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2374,
+          "title": "Hard-Capped Stream Ingestion with Early Transport Cancellation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2605,7 +2620,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:26:08.648Z",
+      "verified_at": "2026-10-19T08:07:12.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10128,22 +10143,45 @@
     "learn-github-goharbor-harbor": {
       "learning_id": "learn-github-goharbor-harbor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "goharbor-harbor",
+      "source": "goharbor/harbor",
+      "repository": "goharbor/harbor",
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "HEAD",
-      "content_hash": "c7ed28f8ea335404195851c244dc8e1005036da50ea50d87118be7a9993d4c64",
+      "source_version": "9e79066f",
+      "content_hash": "bd47b8bba7d26a1463470d209ab33c787bc26bc7e87f85f52448b00114b47e38",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2363,
+          "title": "Verification of Temporal Reachability for Disjoint Cron Specifications",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2364,
+          "title": "Request-Origin Anchored Location Redirection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2365,
+          "title": "Identity vs. Content-Address Scoping Invariant for State Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.118Z"
+      "verified_at": "2026-10-19T08:06:57.490Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-golutra-golutra": {
       "learning_id": "learn-github-golutra-golutra",
@@ -16860,7 +16898,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "dddb96c6ced1c9f12bc6fa3d64fe5b0d710fc0b5ac50b636afde41d8c4fc04e3",
+      "content_hash": "3f88cf828468148c21fc5e875d0b09ba5805fe55b89f3993a1d5aeca56d83d92",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -16903,6 +16941,21 @@
           "number": 1578,
           "title": "Numerical Stability Epsilon Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2366,
+          "title": "Dynamic Additive Mask Value Scaling for Mixed-Precision Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2367,
+          "title": "Strict Input Truncation and Fixed-Rank Position Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2368,
+          "title": "LayerNorm Epsilon Calibration for Zero-Variance Subspaces",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16923,7 +16976,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-18T00:55:02.108Z",
+      "verified_at": "2026-10-19T08:06:58.607Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24900,22 +24953,45 @@
     "learn-github-joreilly-peopleinspace": {
       "learning_id": "learn-github-joreilly-peopleinspace",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "joreilly-peopleinspace",
+      "source": "joreilly/PeopleInSpace",
+      "repository": "joreilly/PeopleInSpace",
       "slug": "joreilly-peopleinspace",
       "platform": "github",
       "source_url": "https://github.com/joreilly/PeopleInSpace",
-      "source_version": "HEAD",
-      "content_hash": "04c164c0481d0c9d312617d244f1501d951e34fc925de59148a7246d15eff087",
+      "source_version": "3a10b125",
+      "content_hash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2369,
+          "title": "Offline-First Non-Destructive Stateflow Reconciliation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2370,
+          "title": "Double-Layered Coroutine BroadcastReceiver Completion Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2371,
+          "title": "Antimeridian-Aware Longitudinal Coordinate Wrapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.729Z"
+      "verified_at": "2026-10-19T08:07:01.817Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jpush-aurora-imui": {
       "learning_id": "learn-github-jpush-aurora-imui",
@@ -32397,22 +32473,45 @@
     "learn-github-ouch-org-ouch": {
       "learning_id": "learn-github-ouch-org-ouch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ouch-org-ouch",
+      "source": "ouch-org/ouch",
+      "repository": "ouch-org/ouch",
       "slug": "ouch-org-ouch",
       "platform": "github",
       "source_url": "https://github.com/ouch-org/ouch",
-      "source_version": "HEAD",
-      "content_hash": "048c952da1f97b9bfca275b2ac754893c440681c5053d11c981cf6cd0fc227d0",
+      "source_version": "6df14b05",
+      "content_hash": "dbf7bb3618181a362b2a26ffd52e3508065c858cab050b0bba7d93f97cd7890b",
       "dossier_path": "07_PROJECT_LEARNING/ouch-org-ouch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ouch-org-ouch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2360,
+          "title": "Invariant Range Clamping Across Signed-to-Unsigned Cast Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2361,
+          "title": "Symlink Pivot and Writing-Through-Symlink Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2362,
+          "title": "Bidirectional and Terminal Control Character Sanitization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.946Z"
+      "verified_at": "2026-10-19T08:06:47.855Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -40500,22 +40599,40 @@
     "learn-github-valeriansaliou-sonic": {
       "learning_id": "learn-github-valeriansaliou-sonic",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "valeriansaliou-sonic",
+      "source": "valeriansaliou/sonic",
+      "repository": "valeriansaliou/sonic",
       "slug": "valeriansaliou-sonic",
       "platform": "github",
       "source_url": "https://github.com/valeriansaliou/sonic",
-      "source_version": "HEAD",
-      "content_hash": "438abf7909d519a823781d6de40a2525eccefb392cc9a4d7c97f21a8bf28a96e",
+      "source_version": "85238906",
+      "content_hash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
       "dossier_path": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2375,
+          "title": "Exclusive Embedded Database File-Lock Reentrancy Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2376,
+          "title": "Guarded Asymmetric Multi-Pool Thread Budgeting",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.182Z"
+      "verified_at": "2026-10-19T08:07:13.275Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vanniktech-emoji": {
       "learning_id": "learn-github-vanniktech-emoji",
@@ -82277,6 +82394,244 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T07:59:32.883Z"
+    },
+    "rule-2360": {
+      "learning_id": "rule-2360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2360,
+      "title": "Invariant Range Clamping Across Signed-to-Unsigned Cast Boundaries",
+      "source_url": "https://github.com/ouch-org/ouch",
+      "source_version": "6df14b05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:47.855Z"
+    },
+    "rule-2361": {
+      "learning_id": "rule-2361",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2361,
+      "title": "Symlink Pivot and Writing-Through-Symlink Extraction Invariant",
+      "source_url": "https://github.com/ouch-org/ouch",
+      "source_version": "6df14b05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:47.855Z"
+    },
+    "rule-2362": {
+      "learning_id": "rule-2362",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2362,
+      "title": "Bidirectional and Terminal Control Character Sanitization Invariant",
+      "source_url": "https://github.com/ouch-org/ouch",
+      "source_version": "6df14b05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:47.855Z"
+    },
+    "rule-2363": {
+      "learning_id": "rule-2363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2363,
+      "title": "Verification of Temporal Reachability for Disjoint Cron Specifications",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "9e79066f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:57.490Z"
+    },
+    "rule-2364": {
+      "learning_id": "rule-2364",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2364,
+      "title": "Request-Origin Anchored Location Redirection Invariant",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "9e79066f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:57.490Z"
+    },
+    "rule-2365": {
+      "learning_id": "rule-2365",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2365,
+      "title": "Identity vs. Content-Address Scoping Invariant for State Mutations",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "9e79066f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:57.490Z"
+    },
+    "rule-2366": {
+      "learning_id": "rule-2366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2366,
+      "title": "Dynamic Additive Mask Value Scaling for Mixed-Precision Stability",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:58.607Z"
+    },
+    "rule-2367": {
+      "learning_id": "rule-2367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2367,
+      "title": "Strict Input Truncation and Fixed-Rank Position Guard",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:58.607Z"
+    },
+    "rule-2368": {
+      "learning_id": "rule-2368",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2368,
+      "title": "LayerNorm Epsilon Calibration for Zero-Variance Subspaces",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:06:58.607Z"
+    },
+    "rule-2369": {
+      "learning_id": "rule-2369",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2369,
+      "title": "Offline-First Non-Destructive Stateflow Reconciliation Invariant",
+      "source_url": "https://github.com/joreilly/PeopleInSpace",
+      "source_version": "3a10b125",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:01.817Z"
+    },
+    "rule-2370": {
+      "learning_id": "rule-2370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2370,
+      "title": "Double-Layered Coroutine BroadcastReceiver Completion Guard",
+      "source_url": "https://github.com/joreilly/PeopleInSpace",
+      "source_version": "3a10b125",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:01.817Z"
+    },
+    "rule-2371": {
+      "learning_id": "rule-2371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2371,
+      "title": "Antimeridian-Aware Longitudinal Coordinate Wrapping Invariant",
+      "source_url": "https://github.com/joreilly/PeopleInSpace",
+      "source_version": "3a10b125",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:01.817Z"
+    },
+    "rule-2372": {
+      "learning_id": "rule-2372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2372,
+      "title": "Dual-Path Read Alignment for Synchronous Controlled Inputs",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "1960f3c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:12.038Z"
+    },
+    "rule-2373": {
+      "learning_id": "rule-2373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2373,
+      "title": "Upstream Capability Asymmetry via Exact Optional Interface Contracts",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "1960f3c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:12.038Z"
+    },
+    "rule-2374": {
+      "learning_id": "rule-2374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2374,
+      "title": "Hard-Capped Stream Ingestion with Early Transport Cancellation",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "1960f3c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:12.038Z"
+    },
+    "rule-2375": {
+      "learning_id": "rule-2375",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2375,
+      "title": "Exclusive Embedded Database File-Lock Reentrancy Guard",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "85238906",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:13.275Z"
+    },
+    "rule-2376": {
+      "learning_id": "rule-2376",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2376,
+      "title": "Guarded Asymmetric Multi-Pool Thread Budgeting",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "85238906",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:07:13.275Z"
     }
   },
   "aliases": {

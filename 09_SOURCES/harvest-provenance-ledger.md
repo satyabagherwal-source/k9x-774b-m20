@@ -3081,3 +3081,9 @@ Every entry in this ledger must capture:
 | `learn-github-jetbrains-kotlinconf-app` | `https://github.com/JetBrains/kotlinconf-app` | `21891558` | Multi-dimensional audit evidence | 2026-10-19T07:59:19.790Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `eb86638b` | Multi-dimensional audit evidence | 2026-10-19T07:59:20.860Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `c7c266c3` | Multi-dimensional audit evidence | 2026-10-19T07:59:32.941Z |
+| `learn-github-ouch-org-ouch` | `https://github.com/ouch-org/ouch` | `6df14b05` | Multi-dimensional audit evidence | 2026-10-19T08:06:47.919Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `9e79066f` | Multi-dimensional audit evidence | 2026-10-19T08:06:57.586Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T08:06:58.673Z |
+| `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `3a10b125` | Multi-dimensional audit evidence | 2026-10-19T08:07:01.884Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `1960f3c2` | Multi-dimensional audit evidence | 2026-10-19T08:07:12.102Z |
+| `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `85238906` | Multi-dimensional audit evidence | 2026-10-19T08:07:13.341Z |
