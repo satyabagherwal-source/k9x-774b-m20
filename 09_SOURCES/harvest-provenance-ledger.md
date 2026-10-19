@@ -3246,3 +3246,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `273ac2db` | Multi-dimensional audit evidence | 2026-10-19T12:44:54.587Z |
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `7f32b29d` | Multi-dimensional audit evidence | 2026-10-19T12:44:58.319Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T12:45:53.263Z |
+| `learn-github-github-copilotforxcode` | `https://github.com/github/CopilotForXcode` | `258d4577` | Multi-dimensional audit evidence | 2026-10-19T12:53:23.791Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-19T12:54:08.077Z |

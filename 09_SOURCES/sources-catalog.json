@@ -1045,8 +1045,8 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "d16adfc5079731fd40f353ad6e1dfca6d2254efebf91aee4c2c7bd121798ae7a",
-    "lastHarvestedAt": "2026-10-18T03:28:33.226Z",
+    "contentHash": "3ae678eda3c16bd08e14e04d4f14e5dc271f0e7356919d45229f83967b69bcbc",
+    "lastHarvestedAt": "2026-10-19T12:54:08.077Z",
     "learningId": "learn-huggingface-fermionresearch-phonon-2"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
@@ -8028,5 +8028,15 @@
     "contentHash": "de2d5946bdf741a1acc471ea4d569dd7371581c0314c194162e5d24f9ef77b2a",
     "lastHarvestedAt": "2026-10-19T12:44:58.319Z",
     "learningId": "learn-github-siteline-swiftui-introspect"
+  },
+  "github-copilotforxcode": {
+    "repository": "github/CopilotForXcode",
+    "platform": "github",
+    "sourceUrl": "https://github.com/github/CopilotForXcode",
+    "sourceVersion": "258d4577",
+    "license": "MIT",
+    "contentHash": "beafcd8e069421b549a9913afb49fa235932b7a1c6f9de12d6f445206195281a",
+    "lastHarvestedAt": "2026-10-19T12:53:23.791Z",
+    "learningId": "learn-github-github-copilotforxcode"
   }
 }

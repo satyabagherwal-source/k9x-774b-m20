@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-KT5Q",
-    "timestamp": "2026-10-19T01:22:32.222Z",
-    "repository": "elrumordelaluz/reactour",
-    "learningId": "learn-github-elrumordelaluz-reactour",
-    "contentHash": "f2f499b9154162e884fb87476556863eb2f910ec72c76d5ea7ed7a86c8d05fab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KU5U",
-    "timestamp": "2026-10-19T01:22:33.522Z",
-    "repository": "pemistahl/grex",
-    "learningId": "learn-github-pemistahl-grex",
-    "contentHash": "9c5417b130df844b5c4750f72af542fb1d8c3aaccd4ac2f7029371c8464f2018",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-KXYS",
     "timestamp": "2026-10-19T01:22:38.452Z",
     "repository": "gorhom/react-native-bottom-sheet",
@@ -7490,6 +7460,36 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
     "contentHash": "1abb3ed36ef5c2f2f193efc9ca6273eaae44a8f87bbf0f5e88f37545d83b23da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-99E4",
+    "timestamp": "2026-10-19T12:53:23.788Z",
+    "repository": "github/CopilotForXcode",
+    "learningId": "learn-github-github-copilotforxcode",
+    "contentHash": "beafcd8e069421b549a9913afb49fa235932b7a1c6f9de12d6f445206195281a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-A7KA",
+    "timestamp": "2026-10-19T12:54:08.074Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "3ae678eda3c16bd08e14e04d4f14e5dc271f0e7356919d45229f83967b69bcbc",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

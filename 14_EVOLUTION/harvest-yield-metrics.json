@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:45:53.266Z",
-  "total_cycles_completed": 3216,
-  "total_learnings_persisted": 3216,
-  "total_rules_promoted": 2372,
+  "last_updated": "2026-10-19T12:54:08.081Z",
+  "total_cycles_completed": 3218,
+  "total_learnings_persisted": 3218,
+  "total_rules_promoted": 2377,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:59:31.920Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:59:39.604Z",
-      "repository": "NirDiamant/RAG_Techniques",
-      "learningId": "learn-github-nirdiamant-rag_techniques",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T07:09:54.342Z",
       "repository": "medialab/xan",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-19T12:45:53.266Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:53:23.794Z",
+      "repository": "github/CopilotForXcode",
+      "learningId": "learn-github-github-copilotforxcode",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:54:08.081Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -987,12 +987,12 @@
     "revisionIdentifier": "b35c47e3"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T09:54:29.508Z",
-    "lastVerified": "2026-10-19T09:54:29.508Z",
+    "lastChecked": "2026-10-19T12:52:13.567Z",
+    "lastVerified": "2026-10-19T12:52:13.567Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -1001,7 +1001,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "86db4607"
   },
   "google-gemini-gemini-cli": {
     "name": "google-gemini/gemini-cli",
@@ -1616,12 +1617,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ajeetdsouza-zoxide": {
-    "name": "ajeetdsouza/zoxide",
+    "name": "zoxide",
     "officialUrl": "https://github.com/ajeetdsouza/zoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-18T21:58:07.061Z",
-    "lastVerified": "2026-10-18T21:58:07.061Z",
+    "lastChecked": "2026-10-19T12:52:03.526Z",
+    "lastVerified": "2026-10-19T12:52:03.526Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ajeetdsouza-zoxide",
@@ -1630,7 +1631,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d48a7ab5"
   },
   "nirdiamant-rag_techniques": {
     "name": "NirDiamant/RAG_Techniques",
@@ -6028,12 +6030,12 @@
     "revisionIdentifier": "067aa0dc"
   },
   "react-component-slider": {
-    "name": "react-component/slider",
+    "name": "slider",
     "officialUrl": "https://github.com/react-component/slider",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T01:41:06.394Z",
-    "lastVerified": "2026-10-19T01:41:06.394Z",
+    "lastChecked": "2026-10-19T12:52:01.087Z",
+    "lastVerified": "2026-10-19T12:52:01.087Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-component-slider",
@@ -6042,7 +6044,8 @@
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2dcc4f67"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
     "name": "unsloth/Qwen-Image-2.1-GGUF",
@@ -6491,12 +6494,12 @@
     "revisionIdentifier": "338fd687"
   },
   "pixeltable-pixeltable": {
-    "name": "pixeltable/pixeltable",
+    "name": "pixeltable",
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-18T23:45:35.085Z",
-    "lastVerified": "2026-10-18T23:45:35.085Z",
+    "lastChecked": "2026-10-19T12:52:16.090Z",
+    "lastVerified": "2026-10-19T12:52:16.090Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
@@ -6505,7 +6508,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "10f23bdb"
   },
   "okteto-okteto": {
     "name": "okteto",
@@ -7407,12 +7411,12 @@
     "revisionIdentifier": "153d87ac"
   },
   "apptainer-singularity": {
-    "name": "apptainer/singularity",
+    "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T00:28:54.570Z",
-    "lastVerified": "2026-10-19T00:28:54.570Z",
+    "lastChecked": "2026-10-19T12:52:11.039Z",
+    "lastVerified": "2026-10-19T12:52:11.039Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apptainer-singularity",
@@ -7421,7 +7425,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9dceb424"
   },
   "margelo-react-native-mmkv": {
     "name": "react-native-mmkv",
@@ -16674,14 +16679,15 @@
     "officialUrl": "https://github.com/github/CopilotForXcode",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T22:30:42.456Z",
-    "lastVerified": "2026-09-30T22:30:42.456Z",
+    "lastChecked": "2026-10-19T12:52:11.934Z",
+    "lastVerified": "2026-10-19T12:52:11.934Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "learningId": "learn-github-github-copilotforxcode",
+    "contentHash": "beafcd8e069421b549a9913afb49fa235932b7a1c6f9de12d6f445206195281a",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18155,8 +18161,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T12:26:43.672Z",
-    "lastVerified": "2026-10-19T12:26:43.672Z",
+    "lastChecked": "2026-10-19T12:52:18.548Z",
+    "lastVerified": "2026-10-19T12:52:18.548Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -18240,13 +18246,13 @@
     "officialUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-18T03:28:31.040Z",
-    "lastVerified": "2026-10-18T03:28:31.040Z",
+    "lastChecked": "2026-10-19T12:52:06.061Z",
+    "lastVerified": "2026-10-19T12:52:06.061Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "d16adfc5079731fd40f353ad6e1dfca6d2254efebf91aee4c2c7bd121798ae7a",
-    "promotedRulesCount": 0,
+    "contentHash": "3ae678eda3c16bd08e14e04d4f14e5dc271f0e7356919d45229f83967b69bcbc",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -26087,8 +26093,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T12:45:55.802Z",
-    "lastVerified": "2026-10-19T12:45:55.802Z",
+    "lastChecked": "2026-10-19T12:54:10.620Z",
+    "lastVerified": "2026-10-19T12:54:10.620Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

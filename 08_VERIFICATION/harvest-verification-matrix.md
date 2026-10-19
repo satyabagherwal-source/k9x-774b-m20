@@ -3239,3 +3239,5 @@
 | `CYCLE-20261019-YCHK` | `2026-10-19T12:44:54.584Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2516` | Yes (`c7c64ebf...`) |
 | `CYCLE-20261019-YFD8` | `2026-10-19T12:44:58.316Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2578` | Yes (`de2d5946...`) |
 | `CYCLE-20261019-ZLRG` | `2026-10-19T12:45:53.260Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2579, Rule 2580, Rule 2581` | Yes (`1abb3ed3...`) |
+| `CYCLE-20261019-99E4` | `2026-10-19T12:53:23.788Z` | `github/CopilotForXcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2582, Rule 2583` | Yes (`beafcd8e...`) |
+| `CYCLE-20261019-A7KA` | `2026-10-19T12:54:08.074Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2584, Rule 2585, Rule 2586` | Yes (`3ae678ed...`) |

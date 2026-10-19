@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:45:53.218Z",
-  "total_verified_learnings": 817,
+  "last_updated": "2026-10-19T12:54:08.017Z",
+  "total_verified_learnings": 818,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10046,22 +10046,40 @@
     "learn-github-github-copilotforxcode": {
       "learning_id": "learn-github-github-copilotforxcode",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "github-copilotforxcode",
+      "source": "github/CopilotForXcode",
+      "repository": "github/CopilotForXcode",
       "slug": "github-copilotforxcode",
       "platform": "github",
       "source_url": "https://github.com/github/CopilotForXcode",
-      "source_version": "HEAD",
-      "content_hash": "d9537050e2ddddf86faeeeb2eddc662246d701732127e55d692dd8afa517b53f",
+      "source_version": "258d4577",
+      "content_hash": "beafcd8e069421b549a9913afb49fa235932b7a1c6f9de12d6f445206195281a",
       "dossier_path": "07_PROJECT_LEARNING/github-copilotforxcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/github-copilotforxcode-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2582,
+          "title": "Granular Sub-Resource Permission Scoping for Autonomous Agent Tools",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2583,
+          "title": "Atomic Accessibility AST-Aware Buffer Injection",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.057Z"
+      "verified_at": "2026-10-19T12:53:23.731Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-github-github-mcp-server": {
       "learning_id": "learn-github-github-github-mcp-server",
@@ -17291,10 +17309,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "d16adfc5079731fd40f353ad6e1dfca6d2254efebf91aee4c2c7bd121798ae7a",
+      "content_hash": "3ae678eda3c16bd08e14e04d4f14e5dc271f0e7356919d45229f83967b69bcbc",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2584,
+          "title": "Two-Phase Cryptographic Integrity Boundary for Staged Decompression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2585,
+          "title": "Radix-Base-5 Quinary Fixed-Width Quantization Packing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2586,
+          "title": "TDT Forward Decoding Step Non-Zero Progression Bound",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -17312,7 +17346,7 @@
         "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo",
         "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f"
       ],
-      "verified_at": "2026-10-18T03:28:33.181Z",
+      "verified_at": "2026-10-19T12:54:08.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87195,6 +87229,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:45:53.207Z"
+    },
+    "rule-2582": {
+      "learning_id": "rule-2582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2582,
+      "title": "Granular Sub-Resource Permission Scoping for Autonomous Agent Tools",
+      "source_url": "https://github.com/github/CopilotForXcode",
+      "source_version": "258d4577",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:53:23.731Z"
+    },
+    "rule-2583": {
+      "learning_id": "rule-2583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2583,
+      "title": "Atomic Accessibility AST-Aware Buffer Injection",
+      "source_url": "https://github.com/github/CopilotForXcode",
+      "source_version": "258d4577",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:53:23.731Z"
+    },
+    "rule-2584": {
+      "learning_id": "rule-2584",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2584,
+      "title": "Two-Phase Cryptographic Integrity Boundary for Staged Decompression",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:54:08.005Z"
+    },
+    "rule-2585": {
+      "learning_id": "rule-2585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2585,
+      "title": "Radix-Base-5 Quinary Fixed-Width Quantization Packing Invariant",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:54:08.005Z"
+    },
+    "rule-2586": {
+      "learning_id": "rule-2586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2586,
+      "title": "TDT Forward Decoding Step Non-Zero Progression Bound",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:54:08.005Z"
     }
   },
   "aliases": {
