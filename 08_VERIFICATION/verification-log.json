@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-TXJ9",
-    "timestamp": "2026-10-17T14:58:06.213Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "3b2ab3c4341f885624d248f0b5d6aa98ed52a73c418cd008df32fb2678069304",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-XOJI",
-    "timestamp": "2026-10-17T15:01:01.182Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "ff044855db1ae5371d29a4068b8a09b72391e1caf8c6ddffa1981e8787915de4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-1QCW",
-    "timestamp": "2026-10-17T15:04:10.160Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "63328661e90a12d1f6693a5662d62235817d5fb095c1b9989e2d73cc1f07d890",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-64QL",
-    "timestamp": "2026-10-17T15:07:35.421Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "fc7e5df74e373ee032d702891cfb0867800c82955fadf196d264e69dd6ecb2e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-A3E3",
-    "timestamp": "2026-10-17T15:10:40.299Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "0fad003c9a282a40029948e5edad05c52c647a93a3727232d8b03b0bf075d690",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-E7AP",
-    "timestamp": "2026-10-17T15:13:51.985Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "a236741871390458858b936cf1df3afd2e89d79a48ea5aa7202e53f221443cc4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-IK3N",
     "timestamp": "2026-10-17T15:17:15.203Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7490,6 +7400,96 @@
     "repository": "trailbaseio/trailbase",
     "learningId": "learn-github-trailbaseio-trailbase",
     "contentHash": "77deab97882f474eaa677f0b9587cfc16a0f4d7ed17c145a3b6514b5503544d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NN14",
+    "timestamp": "2026-10-19T00:28:45.016Z",
+    "repository": "tremorlabs/tremor-npm",
+    "learningId": "learn-github-tremorlabs-tremor-npm",
+    "contentHash": "a3ec5efd08c5849c5498bff17763789ef19075c0877e4575217ea847015958e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NP0Y",
+    "timestamp": "2026-10-19T00:28:47.602Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NRRQ",
+    "timestamp": "2026-10-19T00:28:51.158Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NSJY",
+    "timestamp": "2026-10-19T00:28:52.174Z",
+    "repository": "devhubapp/devhub",
+    "learningId": "learn-github-devhubapp-devhub",
+    "contentHash": "1c7d5aca00d63886de8b819e5f1a1687fa09b387bd61538bdabf19b9978c7a6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NUIN",
+    "timestamp": "2026-10-19T00:28:54.719Z",
+    "repository": "apptainer/singularity",
+    "learningId": "learn-github-apptainer-singularity",
+    "contentHash": "a6191f564db76ff98050232c346b28691d9aaf2c8e65e7905a099ea0202e8dbe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NXLR",
+    "timestamp": "2026-10-19T00:28:58.719Z",
+    "repository": "orbitinghail/sqlsync",
+    "learningId": "learn-github-orbitinghail-sqlsync",
+    "contentHash": "786d800c12b4008d97d97c00878d4d0ba68b0487a5ec71e6a7828dc8d1caddcc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

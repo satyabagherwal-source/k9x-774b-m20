@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:22:57.987Z",
-  "total_verified_learnings": 425,
+  "last_updated": "2026-10-19T00:28:58.686Z",
+  "total_verified_learnings": 430,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1731,22 +1731,35 @@
     "learn-github-apptainer-singularity": {
       "learning_id": "learn-github-apptainer-singularity",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apptainer-singularity",
+      "source": "apptainer/singularity",
+      "repository": "apptainer/singularity",
       "slug": "apptainer-singularity",
       "platform": "github",
       "source_url": "https://github.com/apptainer/singularity",
-      "source_version": "HEAD",
-      "content_hash": "f16fab4b68fa45de47251bbd58d24d08f4b8dcf7892ebb0e1360b5dce2266211",
+      "source_version": "9dceb424",
+      "content_hash": "a6191f564db76ff98050232c346b28691d9aaf2c8e65e7905a099ea0202e8dbe",
       "dossier_path": "07_PROJECT_LEARNING/apptainer-singularity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apptainer-singularity-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1920,
+          "title": "build(deps): bump github.com/docker/docker",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.852Z"
+      "verified_at": "2026-10-19T00:28:54.681Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-appwrite-appwrite": {
       "learning_id": "learn-github-appwrite-appwrite",
@@ -5447,22 +5460,35 @@
     "learn-github-devhubapp-devhub": {
       "learning_id": "learn-github-devhubapp-devhub",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "devhubapp-devhub",
+      "source": "devhubapp/devhub",
+      "repository": "devhubapp/devhub",
       "slug": "devhubapp-devhub",
       "platform": "github",
       "source_url": "https://github.com/devhubapp/devhub",
-      "source_version": "HEAD",
-      "content_hash": "754da4bddbe1e929c77b29f023ea8dae3490add8e525b2d15089b4382317ace0",
+      "source_version": "1d0d66a3",
+      "content_hash": "1c7d5aca00d63886de8b819e5f1a1687fa09b387bd61538bdabf19b9978c7a6e",
       "dossier_path": "07_PROJECT_LEARNING/devhubapp-devhub-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/devhubapp-devhub-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1919,
+          "title": "[iOS] Bump deployment target to 12.1 (from 10.0) due to Flipper requirement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.593Z"
+      "verified_at": "2026-10-19T00:28:52.150Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-devlikeapro-waha": {
       "learning_id": "learn-github-devlikeapro-waha",
@@ -8367,22 +8393,35 @@
     "learn-github-gitoxidelabs-gitoxide": {
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gitoxidelabs-gitoxide",
+      "source": "GitoxideLabs/gitoxide",
+      "repository": "GitoxideLabs/gitoxide",
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "HEAD",
-      "content_hash": "2c0a4b39b500780fa3a312c7654b726785cc378b126b34e987ad5800deca638d",
+      "source_version": "7540f69b",
+      "content_hash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1916,
+          "title": "Update `rustls` to 0.23.46 to resolve security advisories",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.073Z"
+      "verified_at": "2026-10-19T00:28:47.575Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gitpoint-git-point": {
       "learning_id": "learn-github-gitpoint-git-point",
@@ -13732,7 +13771,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "fa0cebfae751435add5a153248ab35f765005fbadd98676660dc9a21cf52ac7e",
+      "content_hash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -13744,6 +13783,16 @@
         {
           "number": 999,
           "title": "Raw Logit vs. Probability Interpretation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1917,
+          "title": "Cross-Encoder Input Concatenation Order Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1918,
+          "title": "Truncation Strategy for Cross-Encoders",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14087,7 +14136,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-10-17T21:06:54.509Z",
+      "verified_at": "2026-10-19T00:28:51.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29185,22 +29234,35 @@
     "learn-github-orbitinghail-sqlsync": {
       "learning_id": "learn-github-orbitinghail-sqlsync",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "orbitinghail-sqlsync",
+      "source": "orbitinghail/sqlsync",
+      "repository": "orbitinghail/sqlsync",
       "slug": "orbitinghail-sqlsync",
       "platform": "github",
       "source_url": "https://github.com/orbitinghail/sqlsync",
-      "source_version": "HEAD",
-      "content_hash": "384036494e967cf2667ea0bd55924b2fa894077f4f869560619e1616a5cdbe02",
+      "source_version": "7dc1af6b",
+      "content_hash": "786d800c12b4008d97d97c00878d4d0ba68b0487a5ec71e6a7828dc8d1caddcc",
       "dossier_path": "07_PROJECT_LEARNING/orbitinghail-sqlsync-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orbitinghail-sqlsync-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1921,
+          "title": "buffersource error",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.914Z"
+      "verified_at": "2026-10-19T00:28:58.682Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-orchestratorinc-agent-orchestrator": {
       "learning_id": "learn-github-orchestratorinc-agent-orchestrator",
@@ -35739,22 +35801,35 @@
     "learn-github-tremorlabs-tremor-npm": {
       "learning_id": "learn-github-tremorlabs-tremor-npm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tremorlabs-tremor-npm",
+      "source": "tremorlabs/tremor-npm",
+      "repository": "tremorlabs/tremor-npm",
       "slug": "tremorlabs-tremor-npm",
       "platform": "github",
       "source_url": "https://github.com/tremorlabs/tremor-npm",
-      "source_version": "HEAD",
-      "content_hash": "e8447bf673f42dd33c049b34c42fa0418ec50e250dcf03d54ba4b56a111447ca",
+      "source_version": "7613bff6",
+      "content_hash": "a3ec5efd08c5849c5498bff17763789ef19075c0877e4575217ea847015958e6",
       "dossier_path": "07_PROJECT_LEARNING/tremorlabs-tremor-npm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tremorlabs-tremor-npm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1915,
+          "title": "icon imports (#1150)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.056Z"
+      "verified_at": "2026-10-19T00:28:44.990Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-trendy-design-llmchat": {
       "learning_id": "learn-github-trendy-design-llmchat",
@@ -71407,6 +71482,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:22:57.980Z"
+    },
+    "rule-1915": {
+      "learning_id": "rule-1915",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1915,
+      "title": "icon imports (#1150)",
+      "source_url": "https://github.com/tremorlabs/tremor-npm",
+      "source_version": "7613bff6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:44.990Z"
+    },
+    "rule-1916": {
+      "learning_id": "rule-1916",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1916,
+      "title": "Update `rustls` to 0.23.46 to resolve security advisories",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "7540f69b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:47.575Z"
+    },
+    "rule-1917": {
+      "learning_id": "rule-1917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1917,
+      "title": "Cross-Encoder Input Concatenation Order Invariance",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:51.132Z"
+    },
+    "rule-1918": {
+      "learning_id": "rule-1918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1918,
+      "title": "Truncation Strategy for Cross-Encoders",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:51.132Z"
+    },
+    "rule-1919": {
+      "learning_id": "rule-1919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1919,
+      "title": "[iOS] Bump deployment target to 12.1 (from 10.0) due to Flipper requirement",
+      "source_url": "https://github.com/devhubapp/devhub",
+      "source_version": "1d0d66a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:52.150Z"
+    },
+    "rule-1920": {
+      "learning_id": "rule-1920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1920,
+      "title": "build(deps): bump github.com/docker/docker",
+      "source_url": "https://github.com/apptainer/singularity",
+      "source_version": "9dceb424",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:54.681Z"
+    },
+    "rule-1921": {
+      "learning_id": "rule-1921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1921,
+      "title": "buffersource error",
+      "source_url": "https://github.com/orbitinghail/sqlsync",
+      "source_version": "7dc1af6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:28:58.682Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:22:58.035Z",
+  "last_updated": "2026-10-19T00:28:58.724Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "fa0cebfae751435add5a153248ab35f765005fbadd98676660dc9a21cf52ac7e",
-      "verified_at": "2026-10-17T21:06:54.537Z",
+      "content_hash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
+      "verified_at": "2026-10-19T00:28:51.167Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:06:54.537Z"
+      "last_updated": "2026-10-19T00:28:51.167Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -6157,6 +6157,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:22:58.035Z"
+    },
+    "tremorlabs/tremor-npm": {
+      "repository": "tremorlabs/tremor-npm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tremorlabs-tremor-npm",
+      "content_hash": "a3ec5efd08c5849c5498bff17763789ef19075c0877e4575217ea847015958e6",
+      "verified_at": "2026-10-19T00:28:45.024Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:28:45.024Z"
+    },
+    "GitoxideLabs/gitoxide": {
+      "repository": "GitoxideLabs/gitoxide",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gitoxidelabs-gitoxide",
+      "content_hash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
+      "verified_at": "2026-10-19T00:28:47.610Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:28:47.610Z"
+    },
+    "devhubapp/devhub": {
+      "repository": "devhubapp/devhub",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-devhubapp-devhub",
+      "content_hash": "1c7d5aca00d63886de8b819e5f1a1687fa09b387bd61538bdabf19b9978c7a6e",
+      "verified_at": "2026-10-19T00:28:52.185Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:28:52.185Z"
+    },
+    "apptainer/singularity": {
+      "repository": "apptainer/singularity",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apptainer-singularity",
+      "content_hash": "a6191f564db76ff98050232c346b28691d9aaf2c8e65e7905a099ea0202e8dbe",
+      "verified_at": "2026-10-19T00:28:54.723Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:28:54.723Z"
+    },
+    "orbitinghail/sqlsync": {
+      "repository": "orbitinghail/sqlsync",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-orbitinghail-sqlsync",
+      "content_hash": "786d800c12b4008d97d97c00878d4d0ba68b0487a5ec71e6a7828dc8d1caddcc",
+      "verified_at": "2026-10-19T00:28:58.724Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:28:58.724Z"
     }
   },
   "repos": {

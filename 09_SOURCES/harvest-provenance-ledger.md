@@ -2696,3 +2696,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-19T00:22:52.941Z |
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `153d87ac` | Multi-dimensional audit evidence | 2026-10-19T00:22:53.755Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `58b8411a` | Multi-dimensional audit evidence | 2026-10-19T00:22:58.030Z |
+| `learn-github-tremorlabs-tremor-npm` | `https://github.com/tremorlabs/tremor-npm` | `7613bff6` | Multi-dimensional audit evidence | 2026-10-19T00:28:45.021Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `7540f69b` | Multi-dimensional audit evidence | 2026-10-19T00:28:47.607Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-19T00:28:51.163Z |
+| `learn-github-devhubapp-devhub` | `https://github.com/devhubapp/devhub` | `1d0d66a3` | Multi-dimensional audit evidence | 2026-10-19T00:28:52.182Z |
+| `learn-github-apptainer-singularity` | `https://github.com/apptainer/singularity` | `9dceb424` | Multi-dimensional audit evidence | 2026-10-19T00:28:54.721Z |
+| `learn-github-orbitinghail-sqlsync` | `https://github.com/orbitinghail/sqlsync` | `7dc1af6b` | Multi-dimensional audit evidence | 2026-10-19T00:28:58.721Z |

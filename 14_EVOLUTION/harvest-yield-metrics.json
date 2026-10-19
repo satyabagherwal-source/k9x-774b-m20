@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:22:58.033Z",
-  "total_cycles_completed": 2666,
-  "total_learnings_persisted": 2666,
-  "total_rules_promoted": 1693,
+  "last_updated": "2026-10-19T00:28:58.723Z",
+  "total_cycles_completed": 2672,
+  "total_learnings_persisted": 2672,
+  "total_rules_promoted": 1700,
   "history": [
-    {
-      "timestamp": "2026-10-18T21:14:05.437Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:14:07.359Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:20:07.687Z",
-      "repository": "adobe/react-spectrum",
-      "learningId": "learn-github-adobe-react-spectrum",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:20:09.227Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:20:15.615Z",
-      "repository": "mattermost/mattermost",
-      "learningId": "learn-github-mattermost-mattermost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:20:17.509Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T21:20:19.341Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T00:22:58.033Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:28:45.022Z",
+      "repository": "tremorlabs/tremor-npm",
+      "learningId": "learn-github-tremorlabs-tremor-npm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:28:47.609Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:28:51.165Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:28:52.184Z",
+      "repository": "devhubapp/devhub",
+      "learningId": "learn-github-devhubapp-devhub",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:28:54.722Z",
+      "repository": "apptainer/singularity",
+      "learningId": "learn-github-apptainer-singularity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:28:58.723Z",
+      "repository": "orbitinghail/sqlsync",
+      "learningId": "learn-github-orbitinghail-sqlsync",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
