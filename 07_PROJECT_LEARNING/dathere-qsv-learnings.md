@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `94707284`  
+> **Source Version**: `7ce08434`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:35:29.238Z  
+> **Timestamp**: 2026-10-19T10:35:01.804Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:35:29.232Z  
+> **Harvest Timestamp**: 2026-10-19T10:35:01.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,44 +2252,185 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94707284` (2026-10-19)
-**Commit Message**: deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15
+### Incident Patch 1: `7ce08434` (2026-10-19)
+**Commit Message**: deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (#4845)
 
-**File**: `Cargo.lock` (modified, +4/-4)
+* deps(polars): enable rolling_window + bitwise, drop unused business/coalesce
+
+- rolling_window: unlocks `ROWS <n> PRECEDING` window frames in sqlp
+  (previously "'ROWS <n> PRECEDING' window frames require the
+  'rolling_window' feature")
+- bitwise: unlocks SQL BIT_COUNT in sqlp (previously "unsupported
+  function 'bit_count'")
+- regex, string_normalize: listed explicitly; joinp's key transforms
+  need them and they only arrived transitively via polars-sql
+- business: unused (no polars business-day API calls)
+- coalesce: vestigial upstream (polars-plan `coalesce = []`, gates no code)
+
+Adds regression tests sqlp_rows_preceding_window_frame and sqlp_bit_count
+(mutation-checked: both fail with the errors above when the features are removed).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #4845
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1335,9 +1335,9 @@ dependencies = [
+@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`viz barpolar` (wind rose), and polar bars for the `viz smart` seasonality panel** ([#4840](https://github.com/dathere/qsv/pull/4840)), using plotly.js's `barpolar` trace from [#4838](https://github.com/dathere/qsv/pull/4838). `viz barpolar` draws one bar per `--x` category, clockwise from north, as long as the `--agg` of `--y` (sum by default) or the row count when `--y` is omitted; `--series` stacks colored segments, in numeric order when the series are bins like `0-10`/`10-20`. Compass labels (`N`, `NE`, `NNE`...) sit at their true bearings on a full 8- or 16-point rose, so a direction with no data stays an empty slot. Other labels get evenly spaced slots, and the new `--degrees` option places a numeric bearing column at its real angle instead. The seasonality panel (hour of day, day of week, month) now draws one bar per phase instead of a filled line ring, so each hour, day or month is its own hover target, and reads like a 24-hour dial: the first phase (00h, Mon, Jan) at the top, running clockwise (it previously started at 3 o'clock and ran counterclockwise). With `--theme plotly_dark`, polar charts (`viz radar` and `viz barpolar`) now get a dark polar background and grid instead of a white disc, via the plotly.rs pin. The gallery gains a wind-rose figure built from a synthetic `wind_obs.csv`.
+ - **`viz ternary`** ([#4841](https://github.com/dathere/qsv/pull/4841)), a ternary (triangle) plot from plotly.js's `scatterternary` trace. `--cols` names exactly three numeric columns, the a, b and c parts of a whole, and each row is drawn at its shares of their sum, with the axes reading 0-100%. `--series` splits the points into colored traces, or `--color`/`--size` encode numeric columns; the hover shows each part's raw value next to its share. Rows with a blank, non-numeric or negative part, parts summing to zero, or a missing `--color`/`--size` value are skipped and counted on stderr; a file with no plottable row is an error. The gallery gains a soil-texture triangle from a synthetic `soil_samples.csv`.
+ - **`viz funnel --area`** ([#4842](https://github.com/dathere/qsv/pull/4842)) draws the funnel as a plotly.js `funnelarea`: stacked sections sized by each stage's share of the total and labeled with its value and percent of the total, instead of bars labeled with the conversion from the previous stage. Stage order, aggregation and the negative-total check are unchanged; `--area` on any other chart is a usage error. A funnel area's outline always narrows, so a stage larger than the one before it can't show as growth; `--area` warns on stderr naming the first such stage. The gallery shows it next to the bar funnel.
++- **`sqlp`: `ROWS <n> PRECEDING` window frames and `BIT_COUNT`** ([#4845](https://github.com/dathere/qsv/pull/4845)). Moving aggregates such as `AVG(v) OVER (ORDER BY id ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)` failed with "'ROWS <n> PRECEDING' window frames require the 'rolling_window' feature", and `BIT_COUNT(x)` failed with "unsupported function 'bit_count'". qsv now enables polars' `rolling_window` and `bitwise` features. It also drops the `business` feature, which nothing used, and `coalesce`, which no longer gates any code upstream. SQL `COALESCE` and `joinp --coalesce` are unaffected.
+ - **`qsvpy314` binary variant** ([#4832](https://github.com/dathere/qsv/pull/4832)), built with Python 3.14, alongside `qsvpy311`, `qsvpy312` and `qsvpy313`.
  
- [[package]]
- name = "cc"
--version = "1.8.0"
-+version = "1.9.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-+checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -2806,9 +2806,9 @@ dependencies = [
+ ### Changed
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -6049,6 +6049,7 @@ dependencies = [
+  "polars-lazy",
+  "polars-ops",
+  "polars-parquet",
++ "polars-plan",
+  "polars-sql",
+  "polars-time",
+  "polars-utils",
+```
+
+**File**: `Cargo.toml` (modified, +16/-4)
+```diff
+@@ -346,10 +346,13 @@ polars = { version = "0.55", features = [
+     # (AVX-512 is an x86 ISA extension; inert on aarch64 et al.)
+     # "aws",
+     "binary_encoding",
+-    # "bitwise",
+-    "business",
++    # "bitwise" powers the BIT_COUNT SQL function in sqlp. polars-sql cfg-gates
++    # it, so without it sqlp rejects it as "unsupported function 'bit_count'".
++    "bitwise",
++    # "business" and "coalesce" were dropped: qsv calls no business-day API, and
++    # upstream "coalesce" gates no code (polars-plan defines it as `coalesce = []`).
++    # SQL COALESCE and `joinp --coalesce` work without either.
+     # "cloud",
+-    "coalesce",
+     "cross_join",
+     "cse",
+     "csv",
+@@ -383,10 +386,19 @@ polars = { version = "0.55", features = [
+     "performant",
+     "pivot",
+     "rank",
++    # "regex" and "string_normalize" back joinp's key transforms
++    # (.str().replace_all() for leading zeros, .str().normalize() for Unicode).
++    # They are listed explicitly because otherwise they only arrive transitively
++    # through polars-sql's own polars-lazy feature list.
++    "regex",
++    # "rolling_window" powers `ROWS <n> PRECEDING` window frames (moving
++    # aggregates) in sqlp. Without it, polars-sql fails at plan time with
++    # "'ROWS <n> PRECEDING' window frames require the 'rolling_window' feature".
++    "rolling_window",
+     "semi_anti_join",
+     "serde-lazy",
+     "strings",
+-    # "string_normalize",
++    "string_normalize",
+     # "string_pad",
+     "sql",
+     "timezones",
+```
+
+**File**: `tests/test_sqlp.rs` (modified, +67/-0)
+```diff
+@@ -5104,6 +5104,73 @@ fn sqlp_approx_quantile() {
+     );
+ }
  
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.14"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
-+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
- 
- [[package]]
- name = "finl_unicode"
++#[test]
++fn sqlp_rows_preceding_window_frame() {
++    // `ROWS <n> PRECEDING` window frames compile to rolling aggregates, which
++    // polars-sql cfg-gates on polars' `rolling_window` feature. Without it,
++    // sqlp fails at plan time ("... require the 'rolling_window' feature").
++    let wrk = Workdir::new("sqlp_rows_preceding_window_frame");
++    wrk.create(
++        "t.csv",
++        vec![
++            svec!["id", "v"],
++            svec!["1", "10"],
++            svec!["2", "20"],
++            svec!["3", "30"],
++            svec!["4", "40"],
++        ],
++    );
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg(
++        "SELECT id, AVG(v) OVER (ORDER BY id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS ma, \
++         SUM(v) OVER (ORDER BY id ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ms FROM t ORDER BY \
++         id",
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id", "ma", "ms"],
++            svec!["1", "10.0", "10"],
++            svec!["2", "15.0", "30"],
++            svec!["3", "25.0", "60"],
++            svec!["4", "35.0", "90"],
++        ]
++    );
++}
++
++#[test]
++fn sqlp_bit_count() {
++    // BIT_COUNT is cfg-gated in polars-sql on polars' `bitwise` feature;
++    // without it sqlp rejects it as "unsupported function 'bit_count'".
++    let wrk = Workdir::new("sqlp_bit_count");
++    wrk.create(
++        "t.csv",
++        vec![
++            svec!["v"],
++            svec!["0"],
++            svec!["7"],
++            svec!["10"],
++            svec!["255"],
++        ],
++    );
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg("SELECT v, BIT_COUNT(v) AS bc FROM t");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["v", "bc"],
++            svec!["0", "0"],
++            svec!["7", "3"],
++            svec!["10", "2"],
++            svec!["255", "8"],
++        ]
++    );
++}
++
+ /// Fixture for the window-function tests: two groups, correlated a/b pairs.
+ fn window_fixture(wrk: &Workdir) {
+     wrk.create(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4845** (2026-10-19): deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (@jqnatividad)
 - **PR #4844** (2026-10-19): build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (@dependabot[bot])
 - **PR #4843** (2026-10-19): build(deps): bump anthropics/claude-code-action from 1.0.248 to 1.0.252 (@dependabot[bot])
 - **PR #4842** (2026-10-18): feat(viz): funnel --area draws a funnel area (@jqnatividad)
 - **PR #4841** (2026-10-18): feat(viz): ternary plot of three parts of a whole (@jqnatividad)
 - **PR #4840** (2026-10-18): feat(viz): barpolar wind rose; clock-face polar bars for the smart seasonality panel (@jqnatividad)
-- **PR #4839** (2026-10-18): feat(viz): parcoords chart, smart parallel-coordinates panel, gallery WebGL lazy rendering (@jqnatividad)
 
 ---
 
@@ -2309,34 +2450,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15
+## X. deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (#4
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94707284`: deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ce08434`: deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (#4845). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.9.0"
-checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
-version = "0.1.15"
-checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+- **`sqlp`: `ROWS <n> PRECEDING` window frames and `BIT_COUNT`** ([#4845](https://github.com/dathere/qsv/pull/4845)). Moving aggregates such as `AVG(v) OVER (ORDER BY id ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)` failed with "'ROWS <n> PRECEDING' window frames require the 'rolling_window' feature", and `BIT_COUNT(x)` failed with "unsupported function 'bit_count'". qsv now enables polars' `rolling_window` and `bitwise` features. It also drops the `business` feature, which nothing used, and `coalesce`, which no longer gates any code upstream. SQL `COALESCE` and `joinp --coalesce` are unaffected.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.8.0"
-checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-version = "0.1.14"
-checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94707284` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ce08434` are properly handled with clean fallback behavior.

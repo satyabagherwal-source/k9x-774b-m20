@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:28:56.090Z",
-  "total_verified_learnings": 787,
+  "last_updated": "2026-10-19T10:35:01.946Z",
+  "total_verified_learnings": 789,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6293,8 +6293,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "94707284",
-      "content_hash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
+      "source_version": "7ce08434",
+      "content_hash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6327,6 +6327,11 @@
           "number": 2471,
           "title": "deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2500,
+          "title": "deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (#4",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6334,7 +6339,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:35:29.403Z",
+      "verified_at": "2026-10-19T10:35:01.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14253,7 +14258,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "0c91ec0a2ce57de91b6ebc74bf58fd0171b70977db116d4eebf45303c42df9e3",
+      "content_hash": "169f2e8fceecd60b38e8d11619dc96a758e1b452af6f128a7b0013b6a186a417",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -14358,6 +14363,16 @@
           "number": 1585,
           "title": "Latent Space Normalization & VAE Boundary",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2497,
+          "title": "Rectified Flow Sampling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2498,
+          "title": "Large Model Memory Management Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14378,7 +14393,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-18T02:12:26.402Z",
+      "verified_at": "2026-10-19T10:34:56.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25893,14 +25908,19 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "8a498c64",
-      "content_hash": "b88d720afe1ad308662bd4f3327da6889a674a8afef3ec9d142891c4f53899ad",
+      "source_version": "556b4ce5",
+      "content_hash": "61ea85fa966ef11ffec05bd697b9b2fb0c76d14ff8bfcc97c9b3858f7abadf5d",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
         {
           "number": 1768,
           "title": "CVE fixes (#14832)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2496,
+          "title": "remove fmt.Sprintf from ListenerSet sort and route names (#14849)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -25909,7 +25929,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:16:29.107Z",
+      "verified_at": "2026-10-19T10:34:54.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33272,22 +33292,35 @@
     "learn-github-oxc-project-oxc": {
       "learning_id": "learn-github-oxc-project-oxc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oxc-project-oxc",
+      "source": "oxc-project/oxc",
+      "repository": "oxc-project/oxc",
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "HEAD",
-      "content_hash": "f893f5306fe9ed69ff4108ebe6fdf9020ea5879ca84bdc0e84a76e7e4dc74ed5",
+      "source_version": "ce6a0880",
+      "content_hash": "e188fc63a71c188e2c200a1455d4170c0ab3fc79ae786fcc6e9b3188f9cc2ac6",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2494,
+          "title": "formatter): treat static block with only empty statements as empty (#27945)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.958Z"
+      "verified_at": "2026-10-19T10:34:49.544Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-packtpublishing-llm-engineers-handbook": {
       "learning_id": "learn-github-packtpublishing-llm-engineers-handbook",
@@ -34101,22 +34134,35 @@
     "learn-github-pointfreeco-swift-composable-architecture": {
       "learning_id": "learn-github-pointfreeco-swift-composable-architecture",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pointfreeco-swift-composable-architecture",
+      "source": "pointfreeco/swift-composable-architecture",
+      "repository": "pointfreeco/swift-composable-architecture",
       "slug": "pointfreeco-swift-composable-architecture",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/swift-composable-architecture",
-      "source_version": "HEAD",
-      "content_hash": "1578fb33c14f25fcbb2e84f3a0287cd535384e460fe06b510c6aad960aa798eb",
+      "source_version": "bc2db5ba",
+      "content_hash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2495,
+          "title": "Fixed: Reading @Shared state from a Store conforming to BindableAction raises de",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.077Z"
+      "verified_at": "2026-10-19T10:34:52.724Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pola-rs-polars": {
       "learning_id": "learn-github-pola-rs-polars",
@@ -51841,8 +51887,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "9cd77861",
-      "content_hash": "a8f631225abb501d52f56116c1a84b8880dbc0f94b3702ef4e7e3d4c0a81b54a",
+      "source_version": "b1d0fa51",
+      "content_hash": "5ffa7d9bd78dcc536158dc47133b3f5db8406cd44bda4fd8372bddc1abbf83c1",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -51855,6 +51901,11 @@
           "number": 1728,
           "title": "session): release archive lock before task registration (#6175)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2499,
+          "title": "langchain): preserve conversation text, roles and tool history (#6275)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51862,7 +51913,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:32:43.677Z",
+      "verified_at": "2026-10-19T10:35:00.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85269,6 +85320,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:28:56.078Z"
+    },
+    "rule-2494": {
+      "learning_id": "rule-2494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2494,
+      "title": "formatter): treat static block with only empty statements as empty (#27945)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "ce6a0880",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:34:49.544Z"
+    },
+    "rule-2495": {
+      "learning_id": "rule-2495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2495,
+      "title": "Fixed: Reading @Shared state from a Store conforming to BindableAction raises de",
+      "source_url": "https://github.com/pointfreeco/swift-composable-architecture",
+      "source_version": "bc2db5ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:34:52.724Z"
+    },
+    "rule-2496": {
+      "learning_id": "rule-2496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2496,
+      "title": "remove fmt.Sprintf from ListenerSet sort and route names (#14849)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "556b4ce5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:34:54.858Z"
+    },
+    "rule-2497": {
+      "learning_id": "rule-2497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2497,
+      "title": "Rectified Flow Sampling Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:34:56.039Z"
+    },
+    "rule-2498": {
+      "learning_id": "rule-2498",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2498,
+      "title": "Large Model Memory Management Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:34:56.039Z"
+    },
+    "rule-2499": {
+      "learning_id": "rule-2499",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2499,
+      "title": "langchain): preserve conversation text, roles and tool history (#6275)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "b1d0fa51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:35:00.458Z"
+    },
+    "rule-2500": {
+      "learning_id": "rule-2500",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2500,
+      "title": "deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (#4",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "7ce08434",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:35:01.939Z"
     }
   },
   "aliases": {

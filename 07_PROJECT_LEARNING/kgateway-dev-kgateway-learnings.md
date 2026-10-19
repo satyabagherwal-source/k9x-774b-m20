@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `8a498c64`  
+> **Source Version**: `556b4ce5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:16:28.943Z  
+> **Timestamp**: 2026-10-19T10:34:54.731Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:16:27.707Z  
+> **Harvest Timestamp**: 2026-10-19T10:34:54.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5713 stars
+- **Stars / Engagement**: 5714 stars
 
 ---
 
@@ -933,8 +933,8 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 - **Issue #14850** (2026-10-18): **fix(listenerset): stamp the promoted ListenerSet GVK at the informer**
   *Symptoms*: # Description  Typed informers drop TypeMeta on decode, so promoted `ListenerSet` objects arrive with an empty GVK. To compensate, `GatewaysForEnvoyTransformationFunc` called `SetGroupVersionKind(wellknown.ListenerSetGVK)` on each ListenerSet it read. Those objects are the shared informer-cache objects, so the write raced with every other reader of them (status writers, the deployer, debug dumps).  The GVK is load-bearing: it is what tells a promoted ListenerSet apart from a converted legacy XListenerSet (same Go type, stamped `XListenerSetGVK`) for status and for the `AllowedListenerSets`/`DeniedListenerSets` maps.  What changed: - The promoted ListenerSet informer in `pkg/pluginsdk/collections/setup.go` now sets `ListenerSetObjectTransform` as its ObjectTransform hook. It stamps `ListenerSetGVK` only when the GVK is empty, before the object enters the cache. Setting a transform replaces the informer's default one, so it also strips managed fields like the default does. Anything that is not a `*gwv1.ListenerSet` passes through unchanged. - The `SetGroupVersionKind` mutation in `pkg/krtcollections/policy.go` is removed. The GVK is now read as-is. - The ListenerSet status writer's client shares the same informer, and the shared informer keeps whichever transform registers first. Both registrations are delayed on the CRD, so the order isn't fixed. The writer now passes the same transform so the stamp applies either way. The status cycle test fixture does the same. - Another cli
 
-- **Issue #14846** (2026-10-17): **perf: validate route paths without regexes or url.Parse**
-  *Symptoms*: # Description  Every gateway translation runs static checks on each route's match paths and prefix rewrites. Three of them were costly:  - `ValidateRoutePath` ran a nested-quantifier regex over every path, which backtracks, and converted the path to `[]byte` first. - `ValidatePrefixRewrite` called `url.Parse` only to read `Path` back. It runs twice per route, once for the route action and once for the redirect, so most calls parsed `""`. That still allocates a `url.URL`. - `isValidPathSeparated` ran a second regex on every PathPrefix value.  In a scale test with 2,500 ListenerSets and 40,000 routes, these cost about 67 CPU-seconds over a 900 s run: `ValidateRoutePath` 31.8 s, `url.Parse` 25 s, and `isValidPathSeparated` 10.3 s. GC was about half of the controller's CPU, so their allocations cost more on top. At 5,000 routes they cost about 16 CPU-seconds.  **What changed:**  - `ValidateRoutePath` checks the regex's language with a byte loop: every byte is in the pchar set, or starts a `%` followed by two hex digits. The `//`, `/./`, `%2f` and suffix checks that follow are unchanged. - `ValidatePrefixRewrite` skips `url.Parse` when the rewrite is empty, or starts with a single `/` and has no `%`, `?`, `#` or control byte. `url.Parse` returns such a string unchanged as `Path`, with no error. Anything else still goes through `url.Parse`. - `isValidPathSeparated` checks Envoy's `^[^?#]+[^?#/]$` directly: no `?` or `#`, no trailing `/`, and at least two characters. - Every error v
+- **Issue #14849** (2026-10-19): **perf: remove fmt.Sprintf from ListenerSet sort and route names**
+  *Symptoms*: # Description  This PR removes `fmt.Sprintf` from two code paths that run on every Gateway translation. Both now use string concatenation. The strings they produce are unchanged.  **ListenerSet precedence sort.** The Gateway IR transform sorts a Gateway's ListenerSets by GEP-1713 listener precedence: creation time first, then `"{namespace}/{name}"`. The tie-break built both keys with `fmt.Sprintf` on every comparison. Ties are common, because creation timestamps have one-second granularity and ListenerSets are often created in bulk. In a scale test with 2,500 ListenerSets, this sort made 119M allocations (2.4% of all allocated objects). It also used about 28 CPU-seconds during the ramp, 9.6 s of it in `fmt`.  **`RouteInfo.UniqueRouteName`.** This builds the Envoy route name once per route match on every translation. It now uses concatenation and `strconv.Itoa` instead of `fmt.Sprintf`.  Both were measured with local benchmarks (not committed), `-count=10`, benchstat. I also checked locally that `UniqueRouteName` produces the same output as the old `Sprintf` format, with and without a rule name.  Sorting 2,500 ListenerSets with the same creation timestamp:  | | before | after | |---|---|---| | sec/op | 3.23ms | 1.10ms (-66%) | | B/op | 3.10Mi | 1.33Mi (-57%) | | allocs/op | 174k | 58k (-67%) |  `UniqueRouteName`, without / with a rule name:  | | before | after | |---|---|---| | sec/op | 144ns / 189ns | 64ns / 89ns (-55% / -53%) | | B/op | 112 / 128 | 64 / 64 | | allocs/op | 5 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,538 +951,55 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26271220` (2026-10-15)
-**Commit Message**: CVE fixes (#14832)
+### Incident Patch 1: `556b4ce5` (2026-10-19)
+**Commit Message**: perf: remove fmt.Sprintf from ListenerSet sort and route names (#14849)
 
-Signed-off-by: David Jumani <[REDACTED_EMAIL]>
+Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +8/-8)
+**File**: `pkg/kgateway/query/route.go` (modified, +3/-2)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/kgateway-dev/kgateway/v2
+@@ -5,6 +5,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"slices"
++	"strconv"
+ 	"strings"
  
--go 1.26.8
-+go 1.26.9
- 
- godebug x509negativeserial=1
- 
-@@ -32,7 +32,7 @@ require (
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.28.0
- 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa
--	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/net v0.61.0 // indirect
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
- 	helm.sh/helm/v3 v3.21.3
-@@ -395,16 +395,16 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0
- 	go.uber.org/atomic v1.11.0
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp/typeparams v0.0.0-20251125195548-87e1e737ad39 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sync v0.24.0
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d
-```
-
-**File**: `go.sum` (modified, +14/-14)
-```diff
-@@ -1219,8 +1219,8 @@ golang.org/x/crypto v0.14.0/go.mod h1:MVFd36DqK4CsrnJYDkBA3VC4m2GkXAM0PvzMCn4JQf
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
- golang.org/x/crypto v0.31.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -1306,8 +1306,8 @@ golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
- golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
- golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
- golang.org/x/net v0.33.0/go.mod h1:HXLR5J+9DxmrqMwG9qjGCxZ+zKXxBru04zlTvWlWuN4=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
-+golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -1332,8 +1332,8 @@ golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180606202747-9527bec2660b/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180823144017-11551d06cbcc/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1389,8 +1389,8 @@ golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.28.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20240228155512-f48c80bd79b2/go.mod h1:TeRTkGYfJXctD9OcfyVLyj2J3IxLnKwHJR8f4D8a3YE=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
-@@ -1401,8 +1401,8 @@ golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
- golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
- golang.org/x/term v0.20.0/go.mod h1:8UkIAJTvZgivsXaD6/pH6U9ecQzZ45awqEOzuCvwpFY=
- golang.org/x/term v0.27.0/go.mod h1:iMsnZpn0cago0GOrHO2+Y7u7JPn5AylBrcoWkElMTSM=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
-@@ -1416,8 +1416,8 @@ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbA
-```
-
-**File**: `hack/utils/oss_compliance/osa_provided.md` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ Name|Version|License
- [go.uber.org/mock](https://go.uber.org/mock)|v0.6.0|Apache License 2.0
- [go.uber.org/zap](https://go.uber.org/zap)|v1.28.0|MIT License
- [x/exp](https://golang.org/x/exp)|v0.0.0-20260218203240-3dfff04db8fa|BSD 3-clause "New" or "Revised" License
--[x/sync](https://golang.org/x/sync)|v0.23.0|BSD 3-clause "New" or "Revised" License
-+[x/sync](https://golang.org/x/sync)|v0.24.0|BSD 3-clause "New" or "Revised" License
- [x/time](https://golang.org/x/time)|v0.15.0|BSD 3-clause "New" or "Revised" License
- [googleapis/rpc](https://google.golang.org/genproto/googleapis/rpc)|v0.0.0-20260803160001-6ac0973c030d|Apache License 2.0
- [google.golang.org/grpc](https://google.golang.org/grpc)|v1.83.2|Apache License 2.0
-```
-
-**File**: `tools/go.mod` (modified, +8/-8)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/kgateway-dev/kgateway/v2/tools
- 
--go 1.26.8
-+go 1.26.9
- 
- tool (
- 	github.com/google/yamlfmt/cmd/yamlfmt
-@@ -342,15 +342,15 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
- 	gocloud.dev v0.45.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/net v0.61.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
- 	google.golang.org/api v0.283.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
-```
-
-**File**: `tools/go.sum` (modified, +14/-14)
-```diff
-@@ -1012,8 +1012,8 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
- golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
- golang.org/x/crypto v0.17.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/lint v0.0.0-20190930215403-16217165b5de/go.mod h1:6SW0HCj/g11FgYtHlgUYUwCkIfeOF89ocIRzGO/8vkc=
-@@ -1036,8 +1036,8 @@ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qx
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
-+golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -1046,8 +1046,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20191026070338-33540a1f6037/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -1068,24 +1068,24 @@ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.15.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
- golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.15.0/go.mod h1:BDl952bC7+uMoWR75FIrCDx79TPU9oHkTZ9yRbYOrX0=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
- golang.org/x/text v0.9.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
- golang.org/x/text v0.14.0/go.mod h1:18ZOQI
-```
-
----
-
-### Incident Patch 2: `a0158fc2` (2026-10-05)
-**Commit Message**:  Merge all security context fields and document list merge behavior (#14725)
-
-Signed-off-by: Owm <[REDACTED_EMAIL]>
-
-**File**: `pkg/deployer/merge.go` (modified, +34/-1)
-```diff
-@@ -69,6 +69,8 @@ func DeepMergeMaps[keyT comparable, valT any](dst, src map[keyT]valT) map[keyT]v
- 	return dst
- }
- 
-+// DeepMergeSlices keeps dst for a nil src, clears it for an empty src, and otherwise appends src to dst.
-+// Lists whose entries must be unique by key (e.g. sysctls) need a keyed merge instead.
- func DeepMergeSlices[T any](dst, src []T) []T {
- 	// nil src override means just use dst
- 	if src == nil {
-@@ -167,10 +169,13 @@ func deepMergePodSecurityContext(dst, src *corev1.PodSecurityContext) *corev1.Po
- 	dst.RunAsGroup = MergePointers(dst.RunAsGroup, src.RunAsGroup)
- 	dst.RunAsNonRoot = MergePointers(dst.RunAsNonRoot, src.RunAsNonRoot)
- 	dst.SupplementalGroups = DeepMergeSlices(dst.SupplementalGroups, src.SupplementalGroups)
-+	dst.SupplementalGroupsPolicy = MergePointers(dst.SupplementalGroupsPolicy, src.SupplementalGroupsPolicy)
- 	dst.FSGroup = MergePointers(dst.FSGroup, src.FSGroup)
--	dst.Sysctls = DeepMergeSlices(dst.Sysctls, src.Sysctls)
-+	dst.Sysctls = deepMergeSysctls(dst.Sysctls, src.Sysctls)
- 	dst.FSGroupChangePolicy = MergePointers(dst.FSGroupChangePolicy, src.FSGroupChangePolicy)
- 	dst.SeccompProfile = deepMergeSeccompProfile(dst.SeccompProfile, src.SeccompProfile)
-+	dst.AppArmorProfile = MergePointers(dst.AppArmorProfile, src.AppArmorProfile)
-+	dst.SELinuxChangePolicy = MergePointers(dst.SELinuxChangePolicy, src.SELinuxChangePolicy)
- 
- 	return dst
- }
-@@ -227,6 +232,33 @@ func deepMergeSeccompProfile(dst, src *corev1.SeccompProfile) *corev1.SeccompPro
- 	return dst
- }
- 
-+// deepMergeSysctls merges by name so src values win, since Kubernetes rejects duplicate sysctl names.
-+func deepMergeSysctls(dst, src []corev1.Sysctl) []corev1.Sysctl {
-+	// nil src override means just use dst
-+	if src == nil {
-+		return dst
-+	}
-+
-+	if dst == nil || len(src) == 0 {
-+		return src
-+	}
-+
-+	indexByName := make(map[string]int, len(dst))
-+	for i, sysctl := range dst {
-+		indexByName[sysctl.Name] = i
-+	}
-+	for _, sysctl := range src {
-+		if i, ok := indexByName[sysctl.Name]; ok {
-+			dst[i] = sysctl
-+			continue
-+		}
-+		indexByName[sysctl.Name] = len(dst)
-+		dst = append(dst, sysctl)
-+	}
-+
-+	return dst
-+}
-+
- func DeepMergeAffinity(dst, src *corev1.Affinity) *corev1.Affinity {
- 	// nil src override means just use dst
- 	if src == nil {
-@@ -748,6 +780,7 @@ func DeepMergeSecurityContext(dst, src *corev1.SecurityContext) *corev1.Security
- 	dst.AllowPrivilegeEscalation = MergePointers(dst.AllowPrivilegeEscalation, src.AllowPrivilegeEscalation)
- 	dst.ProcMount = MergePointers(dst.ProcMount, src.ProcMount)
- 	dst.SeccompProfile = deepMergeSeccompProfile(dst.SeccompProfile, src.SeccompProfile)
-+	dst.AppArmorProfile = MergePointers(dst.AppArmorProfile, src.AppArmorProfile)
- 
- 	return dst
- }
-```
-
-**File**: `pkg/deployer/merge_test.go` (modified, +265/-0)
-```diff
-@@ -1,6 +1,8 @@
- package deployer
- 
- import (
-+	"fmt"
-+	"reflect"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -675,3 +677,266 @@ func TestDeepMergeSecurityContextWindowsOptions(t *testing.T) {
- 		})
+ 	"istio.io/istio/pkg/kube/krt"
+@@ -92,9 +93,9 @@ func (r *RouteInfo) Clone() *RouteInfo {
+ // and the given indexes.
+ func (r *RouteInfo) UniqueRouteName(ruleIdx, matchIdx int, ruleName string) string {
+ 	if ruleName == "" {
+-		return fmt.Sprintf("%s-%s-%s-%d-%d", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx)
++		return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx)
  	}
+-	return fmt.Sprintf("%s-%s-%s-%d-%d-%s", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx, ruleName)
++	return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx) + "-" + ruleName
  }
-+
-+func assertAllFieldsSet(t *testing.T, v any) {
-+	t.Helper()
-+	rv := reflect.ValueOf(v).Elem()
-+	for i := range rv.NumField() {
-+		assert.False(t, rv.Field(i).IsZero(), "fixture must populate %s.%s", rv.Type().Name(), rv.Type().Field(i).Name)
-+	}
-+}
-+
-+func TestDeepMergeSecurityContextAllFields(t *testing.T) {
-+	dst := &corev1.SecurityContext{
-+		Capabilities:             &corev1.Capabilities{Add: []corev1.Capability{"NET_BIND_SERVICE"}, Drop: []corev1.Capability{"KILL"}},
-+		Privileged:               new(true),
-+		SELinuxOptions:           &corev1.SELinuxOptions{User: "system_u", Role: "system_r", Type: "container_t", Level: "s0"},
-+		WindowsOptions:           &corev1.WindowsSecurityContextOptions{RunAsUserName: new("default-user")},
-+		RunAsUser:                new(int64(1000)),
-+		RunAsGroup:               new(int64(1000)),
-+		RunAsNonRoot:             new(false),
-+		ReadOnlyRootFilesystem:   new(false),
-+		AllowPrivilegeEscalation: new(true),
-+		ProcMount:                new(corev1.DefaultProcMount),
-+		SeccompProfile:           &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeUnconfined},
-+		AppArmorProfile:          &corev1.AppArmorProfile{Type: corev1.AppArmorProfileTypeRuntimeDefault},
-+	}
-+	src := &corev1.SecurityContext{
-+		Capabilities:             &corev1.Capabilities{Add: []corev1.Capability{"NET_ADMIN"}, Drop: []corev1.Capability{"ALL"}},
-+		Privileged:               new(false),
-+		SELinuxOptions:           &corev1.SELinuxOptions{User: "user_u", Role: "user_r", Type: "spc_t", Level: "s0:c1"},
-+		WindowsOptions:           &corev1.WindowsSecurityContextOptions{RunAsUserName: new("override-user")},
-+		RunAsUser:                new(int64(1001)),
-+		RunAsGroup:               new(int64(1002)),
-+		RunAsNonRoot:             new(true),
-+		ReadOnlyRootFilesystem:   new(true),
-+		AllowPrivilegeEscalation: new(false),
-+		ProcMount:                new(corev1.UnmaskedProcMount),
-+		SeccompProfile:           &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeLocalhost, LocalhostProfile: new("seccomp.json")},
-+		AppArmorProfile:          &corev1.AppArmorProfile{Type: corev1.AppArmorProfileTypeLocalhost, LocalhostProfile: new("k8s-apparmor")},
-+	}
-+	assertAllFieldsSet(t, dst)
-+	assertAllFieldsSet(t, src)
-+
-+	t.Run("src fields are copied into empty dst", func(t *testing.T) {
-+		got := DeepMergeSecurityContext(&corev1.SecurityContext{}, src.DeepCopy())
-+		assert.Equal(t, src, got)
-+	})
-+
-+	t.Run("dst fields are kept when src is empty", func(t *testing.T) {
-+		got := DeepMergeSecurityContext(dst.DeepCopy(), &corev1.SecurityContext{})
-+		assert.Equal(t, dst, got)
-+	})
-+
-+	t.Run("src fields override populated dst and lists are appended", func(t *testing.T) {
-+		want := src.DeepCopy()
-+		want.Capabilities.Add = []corev1.Capability{"NET_BIND_SERVICE", "NET_ADMIN"}
-+		want.Capabilities.Drop = []corev1.Capability{"KILL", "ALL"}
-+
-+		got := DeepMergeSecurityContext(dst.DeepCopy(), src.DeepCopy())
-+		assert.Equal(t, want, got)
-+	})
-+}
-+
-+func TestDeepMergePodSecurityContextAllFields(t *testing.T) {
-+	dst := &corev1.PodSecurityContext{
-+		SELinuxOptions:           &corev1.SELinuxOptions{User: "system_u", Role: "system_r", Type: "container_t", Level: "s0"},
-+		WindowsOptions:           &corev1.WindowsSecurityContextOptions{RunAsUserName: new("default-user")},
-+		RunAsUser:                new(int64(1000)),
-+		RunAsGroup:               new(int64(1000)),
-+		RunAsNonRoot:             new(false),
-+		SupplementalGroups:       []int64{2000},
-+		SupplementalGroupsPolicy: new(corev1.SupplementalGroupsPolicyMerge),
-+		FSGroup:                  new(int64(1000)),
-+		Sysctls:                  []corev1.Sysctl{{Name: "net.core.somaxconn", Value: "1024"}},
-+		FSGroupChangePolicy:      new(corev1.FSGroupChangeAlways),
-+		SeccompProfile:           &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeUnconfined},
-+		AppArmorProfile:          &corev1.AppArmorProfile{Type: corev1.AppArmorProfileTypeRuntimeDefault},
-+		SELinuxChangePolicy:      new(corev1.SELinuxChangePolicyMountOption),
-+	}
-+	src := &corev1.PodSecurityContext{
-+		SELinuxOptions:           &corev1.SELinuxOptions{User: "user_u", Role: "user_r", Type: "spc_t", Level: "s0:c1"},
-+		WindowsOptions:           &corev1.WindowsSecurityContextOptions{RunAsUserName: new("override-user")},
-+		RunAsUser:                new(int64(1001)),
-+		RunAsGroup:               new(int64(1002)),
-+		RunAsNonRoot:             new(true),
-+		SupplementalGroups:       []int64{3000},
-+		SupplementalGroupsPolicy: new(corev1.SupplementalGroupsPolicyStrict),
-+		FSGroup:                  new(int64(1003)),
-+		Sysctls:                  []corev1.Sysctl{{Name: "net.ipv4.ip_unprivileged_port_start", Value: "0"}},
-+		FSGroupChangePolicy:      new(corev1.FSGroupChangeOnRootMismatch),
-+		SeccompP
-```
-
----
-
-### Incident Patch 3: `25c053f6` (2026-10-08)
-**Commit Message**: docs(api): fix broken links in API godoc comments (#14781)
-
-Signed-off-by: Kristin Brown <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `api/v1alpha1/kgateway/backend_config_policy_types.go` (modified, +2/-2)
-```diff
-@@ -86,12 +86,12 @@ type BackendConfigPolicySpec struct {
  
- 	// Http2ProtocolOptions contains the options necessary to configure HTTP/2 backends.
- 	// Note: Http2ProtocolOptions can only be applied to HTTP/2 backends.
--	// See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-sslconfig) for more details.
-+	// See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/protocol.proto#envoy-v3-api-msg-config-core-v3-http2protocoloptions) for more details.
- 	// +optional
- 	Http2ProtocolOptions *Http2ProtocolOptions `json:"http2ProtocolOptions,omitempty"`
- 
- 	// TLS contains the options necessary to configure a backend to use TLS origination.
--	// See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-sslconfig) for more details.
-+	// See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-upstreamtlscontext) for more details.
- 	// +optional
- 	TLS *TLS `json:"tls,omitempty"`
- 
+ // GetRouteChain recursively resolves all backends for the given route object.
 ```
 
-**File**: `api/v1alpha1/kgateway/backend_types.go` (modified, +1/-1)
+**File**: `pkg/krtcollections/policy.go` (modified, +1/-1)
 ```diff
-@@ -347,7 +347,7 @@ const (
- 
- 	// AWSLambdaPayloadTransformEnvoy indicates that the payload will be transformed using Envoy's
- 	// built-in transformation. Refer to
--	// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/aws_lambda_filter#configuration-as-a-listener-filter
-+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/aws_lambda_filter
- 	// for more details on how Envoy transforms the payload.
- 	AWSLambdaPayloadTransformEnvoy AWSLambdaPayloadTransformMode = "Envoy"
- )
-```
-
-**File**: `api/v1alpha1/kgateway/listener_policy_types.go` (modified, +1/-1)
-```diff
-@@ -191,7 +191,7 @@ type HTTPSettings struct {
- 	LocalReplies *LocalReplyConfig `json:"localReplies,omitempty"`
- 
- 	// UpgradeConfig contains configuration for HTTP upgrades like WebSocket.
--	// See here for more information: https://www.envoyproxy.io/docs/envoy/v1.34.1/intro/arch_overview/http/upgrades.html
-+	// See here for more information: https://www.envoyproxy.io/docs/envoy/v1.34.1/intro/arch_overview/http/upgrades
- 	// +optional
- 	UpgradeConfig *UpgradeConfig `json:"upgradeConfig,omitempty"`
- 
-```
-
-**File**: `api/v1alpha1/shared/shared_types.go` (modified, +1/-2)
-```diff
-@@ -114,8 +114,7 @@ type PolicyAncestorStatus struct {
- 	// Example: "example.net/gateway-controller".
- 	//
- 	// The format of this field is DOMAIN "/" PATH, where DOMAIN and PATH are
--	// valid Kubernetes names
--	// (https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).
-+	// valid [Kubernetes names](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).
- 	//
- 	// Controllers MUST populate this field when writing status. Controllers should ensure that
- 	// entries to status populated with their ControllerName are cleaned up when they are no
-```
-
-**File**: `install/helm/kgateway-crds/templates/gateway.kgateway.dev_backendconfigpolicies.yaml` (modified, +2/-2)
-```diff
-@@ -322,7 +322,7 @@ spec:
-                 description: |-
-                   Http2ProtocolOptions contains the options necessary to configure HTTP/2 backends.
-                   Note: Http2ProtocolOptions can only be applied to HTTP/2 backends.
--                  See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-sslconfig) for more details.
-+                  See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/protocol.proto#envoy-v3-api-msg-config-core-v3-http2protocoloptions) for more details.
-                 properties:
-                   connectionKeepalive:
-                     description: |-
-@@ -1036,7 +1036,7 @@ spec:
-               tls:
-                 description: |-
-                   TLS contains the options necessary to configure a backend to use TLS origination.
--                  See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-sslconfig) for more details.
-+                  See [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/tls.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-upstreamtlscontext) for more details.
-                 properties:
-                   allowRenegotiation:
-                     description: |-
-```
-
-**File**: `install/helm/kgateway-crds/templates/gateway.kgateway.dev_listenerpolicies.yaml` (modified, +2/-2)
-```diff
-@@ -3277,7 +3277,7 @@ spec:
-                       upgradeConfig:
-                         description: |-
-                           UpgradeConfig contains configuration for HTTP upgrades like WebSocket.
--                          See here for more information: https://www.envoyproxy.io/docs/envoy/v1.34.1/intro/arch_overview/http/upgrades.html
-+                          See here for more information: https://www.envoyproxy.io/docs/envoy/v1.34.1/intro/arch_overview/http/upgrades
-                         properties:
-                           enabledUpgrades:
-                             description: |-
-@@ -6623,7 +6623,7 @@ spec:
-                             upgradeConfig:
-                               description: |-
-                                 UpgradeConfig contains configuration for HTTP upgrades like WebSocket.
--                                See here for more information: https://www.envoyproxy.io/docs/envoy/v1.34.1/intro/arch_overview/http/upgrades.html
-+                                See here for more information: https://www.envoyproxy.io/docs/envoy/v1.34.1/intro/arch_overview/http/upgrades
-                               properties:
-                                 enabledUpgrades:
-                                   description: |-
-```
-
-**File**: `test/e2e/features/lambda/suite.go` (modified, +1/-1)
-```diff
-@@ -198,7 +198,7 @@ func (s *testingSuite) TestLambdaBackendRouting() {
- 			curl.WithBody("{}"), // JSON payload is a requirement when Envoy payload transformation is disabled
- 		},
- 		// Ensure the JSON transformation Envoy applies are not a part of the lambda's response body:
--		// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/aws_lambda_filter#configuration-as-a-listener-filter
-+		// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/aws_lambda_filter
- 		&testmatchers.HttpResponse{
- 			StatusCode: http.StatusOK,
- 			Body: gomega.And(
+@@ -604,7 +604,7 @@ func GatewaysForEnvoyTransformationFunc(config *GatewayIndexConfig) func(kctx kr
+ 			}
+ 			// secondary sort: alphabetically by "{namespace}/{name}"
+ 			nnsString := func(ls *gwv1.ListenerSet) string {
+-				return fmt.Sprintf("%s/%s", ls.Namespace, ls.Name)
++				return ls.Namespace + "/" + ls.Name
+ 			}
+ 			return strings.Compare(nnsString(a), nnsString(b))
+ 		})
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #14850** (closed): fix(listenerset): stamp the promoted ListenerSet GVK at the informer (@puertomontt)
+- **PR #14849** (2026-10-19): perf: remove fmt.Sprintf from ListenerSet sort and route names (@puertomontt)
 - **PR #14846** (closed): perf: validate route paths without regexes or url.Parse (@puertomontt)
 - **PR #14844** (closed): perf: cheaper route names and status contribution order per translation (@puertomontt)
 - **PR #14842** (closed): perf: sort ListenerSets by precedence without allocating (@puertomontt)
 - **PR #14838** (2026-10-16): metrics(statussync): replace resources_status_sync* with status_writes_total (@puertomontt)
-- **PR #14834** (2026-10-15): [2.3] CVE fixes (@davidjumani)
 
 ---
 
@@ -1502,42 +1019,31 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CVE fixes (#14832)
+## X. remove fmt.Sprintf from ListenerSet sort and route names (#14849)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/kgateway/query/route.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26271220`: CVE fixes (#14832). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `556b4ce5`: remove fmt.Sprintf from ListenerSet sort and route names (#14849). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/query/route.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-go 1.26.9
-	golang.org/x/net v0.61.0 // indirect
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/sync v0.24.0
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
+	"strconv"
+		return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx)
+	return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx) + "-" + ruleName
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-go 1.26.8
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/crypto v0.57.0 // indirect
-	golang.org/x/sync v0.23.0
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/term v0.46.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
+		return fmt.Sprintf("%s-%s-%s-%d-%d", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx)
+	return fmt.Sprintf("%s-%s-%s-%d-%d-%s", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx, ruleName)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26271220` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `556b4ce5` are properly handled with clean fallback behavior.

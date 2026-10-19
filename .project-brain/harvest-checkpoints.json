@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:28:56.141Z",
+  "last_updated": "2026-10-19T10:35:01.980Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1099,14 +1099,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "0c91ec0a2ce57de91b6ebc74bf58fd0171b70977db116d4eebf45303c42df9e3",
-      "verified_at": "2026-10-18T02:12:26.440Z",
+      "content_hash": "169f2e8fceecd60b38e8d11619dc96a758e1b452af6f128a7b0013b6a186a417",
+      "verified_at": "2026-10-19T10:34:56.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:12:26.440Z"
+      "last_updated": "2026-10-19T10:34:56.081Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -2538,14 +2538,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "a8f631225abb501d52f56116c1a84b8880dbc0f94b3702ef4e7e3d4c0a81b54a",
-      "verified_at": "2026-10-18T21:32:43.731Z",
+      "content_hash": "5ffa7d9bd78dcc536158dc47133b3f5db8406cd44bda4fd8372bddc1abbf83c1",
+      "verified_at": "2026-10-19T10:35:00.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:32:43.731Z"
+      "last_updated": "2026-10-19T10:35:00.500Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -3678,14 +3678,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
-      "verified_at": "2026-10-19T09:35:29.453Z",
+      "content_hash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
+      "verified_at": "2026-10-19T10:35:01.980Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:35:29.453Z"
+      "last_updated": "2026-10-19T10:35:01.980Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4398,14 +4398,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "b88d720afe1ad308662bd4f3327da6889a674a8afef3ec9d142891c4f53899ad",
-      "verified_at": "2026-10-18T22:16:29.159Z",
+      "content_hash": "61ea85fa966ef11ffec05bd697b9b2fb0c76d14ff8bfcc97c9b3858f7abadf5d",
+      "verified_at": "2026-10-19T10:34:54.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:16:29.159Z"
+      "last_updated": "2026-10-19T10:34:54.899Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -11621,6 +11621,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:28:51.457Z"
+    },
+    "oxc-project/oxc": {
+      "repository": "oxc-project/oxc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-oxc-project-oxc",
+      "content_hash": "e188fc63a71c188e2c200a1455d4170c0ab3fc79ae786fcc6e9b3188f9cc2ac6",
+      "verified_at": "2026-10-19T10:34:49.587Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:34:49.587Z"
+    },
+    "pointfreeco/swift-composable-architecture": {
+      "repository": "pointfreeco/swift-composable-architecture",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pointfreeco-swift-composable-architecture",
+      "content_hash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
+      "verified_at": "2026-10-19T10:34:52.762Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:34:52.762Z"
     }
   },
   "repos": {

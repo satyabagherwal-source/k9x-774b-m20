@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "0c91ec0a2ce57de91b6ebc74bf58fd0171b70977db116d4eebf45303c42df9e3",
-    "lastHarvestedAt": "2026-10-18T02:12:26.436Z",
+    "contentHash": "169f2e8fceecd60b38e8d11619dc96a758e1b452af6f128a7b0013b6a186a417",
+    "lastHarvestedAt": "2026-10-19T10:34:56.076Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "9cd77861",
+    "sourceVersion": "b1d0fa51",
     "license": "AGPL-3.0",
-    "contentHash": "a8f631225abb501d52f56116c1a84b8880dbc0f94b3702ef4e7e3d4c0a81b54a",
-    "lastHarvestedAt": "2026-10-18T21:32:43.724Z",
+    "contentHash": "5ffa7d9bd78dcc536158dc47133b3f5db8406cd44bda4fd8372bddc1abbf83c1",
+    "lastHarvestedAt": "2026-10-19T10:35:00.496Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "94707284",
+    "sourceVersion": "7ce08434",
     "license": "NOASSERTION",
-    "contentHash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
-    "lastHarvestedAt": "2026-10-19T09:35:29.447Z",
+    "contentHash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
+    "lastHarvestedAt": "2026-10-19T10:35:01.975Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "8a498c64",
+    "sourceVersion": "556b4ce5",
     "license": "Apache-2.0",
-    "contentHash": "b88d720afe1ad308662bd4f3327da6889a674a8afef3ec9d142891c4f53899ad",
-    "lastHarvestedAt": "2026-10-18T22:16:29.152Z",
+    "contentHash": "61ea85fa966ef11ffec05bd697b9b2fb0c76d14ff8bfcc97c9b3858f7abadf5d",
+    "lastHarvestedAt": "2026-10-19T10:34:54.894Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -7718,5 +7718,25 @@
     "contentHash": "fef2cfe8b6daf43bb6991dee7c8cdd0d25997673b53c815476c061c7a61fc84c",
     "lastHarvestedAt": "2026-10-19T10:28:51.450Z",
     "learningId": "learn-github-codeeditapp-codeedit"
+  },
+  "oxc-project-oxc": {
+    "repository": "oxc-project/oxc",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oxc-project/oxc",
+    "sourceVersion": "ce6a0880",
+    "license": "MIT",
+    "contentHash": "e188fc63a71c188e2c200a1455d4170c0ab3fc79ae786fcc6e9b3188f9cc2ac6",
+    "lastHarvestedAt": "2026-10-19T10:34:49.582Z",
+    "learningId": "learn-github-oxc-project-oxc"
+  },
+  "pointfreeco-swift-composable-architecture": {
+    "repository": "pointfreeco/swift-composable-architecture",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pointfreeco/swift-composable-architecture",
+    "sourceVersion": "bc2db5ba",
+    "license": "MIT",
+    "contentHash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
+    "lastHarvestedAt": "2026-10-19T10:34:52.757Z",
+    "learningId": "learn-github-pointfreeco-swift-composable-architecture"
   }
 }

@@ -3167,3 +3167,9 @@ Every entry in this ledger must capture:
 | `learn-github-codeeditapp-codeedit` | `https://github.com/CodeEditApp/CodeEdit` | `fa2aebd8` | Multi-dimensional audit evidence | 2026-10-19T10:28:51.450Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `ef5b2fc8` | Multi-dimensional audit evidence | 2026-10-19T10:28:54.537Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `2d1fc1de` | Multi-dimensional audit evidence | 2026-10-19T10:28:56.133Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `ce6a0880` | Multi-dimensional audit evidence | 2026-10-19T10:34:49.582Z |
+| `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `bc2db5ba` | Multi-dimensional audit evidence | 2026-10-19T10:34:52.757Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `556b4ce5` | Multi-dimensional audit evidence | 2026-10-19T10:34:54.894Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T10:34:56.076Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `b1d0fa51` | Multi-dimensional audit evidence | 2026-10-19T10:35:00.496Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7ce08434` | Multi-dimensional audit evidence | 2026-10-19T10:35:01.975Z |

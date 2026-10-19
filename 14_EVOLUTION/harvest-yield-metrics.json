@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T10:28:56.137Z",
-  "total_cycles_completed": 3137,
-  "total_learnings_persisted": 3137,
-  "total_rules_promoted": 2281,
+  "last_updated": "2026-10-19T10:35:01.978Z",
+  "total_cycles_completed": 3143,
+  "total_learnings_persisted": 3143,
+  "total_rules_promoted": 2288,
   "history": [
-    {
-      "timestamp": "2026-10-19T05:32:07.856Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:32:50.620Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:33:01.994Z",
-      "repository": "carbon-design-system/carbon",
-      "learningId": "learn-github-carbon-design-system-carbon",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:39:03.383Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:39:03.702Z",
-      "repository": "emilkowalski/vaul",
-      "learningId": "learn-github-emilkowalski-vaul",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:39:04.993Z",
-      "repository": "graykode/abtop",
-      "learningId": "learn-github-graykode-abtop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:39:10.841Z",
       "repository": "open-ani/animeko",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T10:28:56.137Z",
       "repository": "DefGuard/defguard",
       "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:34:49.585Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:34:52.760Z",
+      "repository": "pointfreeco/swift-composable-architecture",
+      "learningId": "learn-github-pointfreeco-swift-composable-architecture",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:34:54.897Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:34:56.079Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:35:00.498Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:35:01.978Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
