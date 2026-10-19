@@ -3176,3 +3176,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-19T10:41:11.159Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `b951cd70` | Multi-dimensional audit evidence | 2026-10-19T10:41:12.241Z |
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `573ace30` | Multi-dimensional audit evidence | 2026-10-19T10:41:16.980Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T10:48:28.696Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `0d322ce7` | Multi-dimensional audit evidence | 2026-10-19T10:48:31.318Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `9cc73706` | Multi-dimensional audit evidence | 2026-10-19T10:48:36.075Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `f884f5a1` | Multi-dimensional audit evidence | 2026-10-19T10:48:43.750Z |

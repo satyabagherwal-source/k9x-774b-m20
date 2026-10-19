@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:41:16.987Z",
+  "last_updated": "2026-10-19T10:48:43.757Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1129,14 +1129,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "bc3f729b3ed16c08754ea5a0363e81db91b2ea3a392919888632c8d4e57df2fc",
-      "verified_at": "2026-10-18T02:20:23.175Z",
+      "content_hash": "bd979ae0ed766cf51035441c38648e1bfa2374a47286e8d716a3192187d0b153",
+      "verified_at": "2026-10-19T10:48:28.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:20:23.175Z"
+      "last_updated": "2026-10-19T10:48:28.702Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -4578,14 +4578,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "6da2aa32cb0d4cec4f4da89118e94ed25a12fc938ca8e37d259f3334aa254907",
-      "verified_at": "2026-10-18T22:29:31.573Z",
+      "content_hash": "ed90556f47ef04f133623df332e1e90006af9d33ca28d8122030c8fdd805d680",
+      "verified_at": "2026-10-19T10:48:36.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:29:31.573Z"
+      "last_updated": "2026-10-19T10:48:36.082Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -11681,6 +11681,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:41:16.987Z"
+    },
+    "tokio-rs/tokio": {
+      "repository": "tokio-rs/tokio",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tokio-rs-tokio",
+      "content_hash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
+      "verified_at": "2026-10-19T10:48:31.324Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:48:31.324Z"
+    },
+    "SimonSchubert/LinuxCommandLibrary": {
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
+      "content_hash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
+      "verified_at": "2026-10-19T10:48:43.757Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:48:43.757Z"
     }
   },
   "repos": {

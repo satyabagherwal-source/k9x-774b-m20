@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T10:41:16.984Z",
-  "total_cycles_completed": 3146,
-  "total_learnings_persisted": 3146,
-  "total_rules_promoted": 2290,
+  "last_updated": "2026-10-19T10:48:43.754Z",
+  "total_cycles_completed": 3150,
+  "total_learnings_persisted": 3150,
+  "total_rules_promoted": 2301,
   "history": [
-    {
-      "timestamp": "2026-10-19T05:45:24.257Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:45:24.414Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:45:25.617Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:45:30.138Z",
-      "repository": "komi-store/komi-store",
-      "learningId": "learn-github-komi-store-komi-store",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:45:32.714Z",
       "repository": "opentofu/opentofu",
@@ -1403,6 +1375,34 @@
       "repository": "mrkai77/Loop",
       "learningId": "learn-github-mrkai77-loop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:48:28.699Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:48:31.322Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:48:36.079Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:48:43.754Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

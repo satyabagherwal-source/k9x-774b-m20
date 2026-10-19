@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "bc3f729b3ed16c08754ea5a0363e81db91b2ea3a392919888632c8d4e57df2fc",
-    "lastHarvestedAt": "2026-10-18T02:20:23.173Z",
+    "contentHash": "bd979ae0ed766cf51035441c38648e1bfa2374a47286e8d716a3192187d0b153",
+    "lastHarvestedAt": "2026-10-19T10:48:28.696Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "694ac05c",
+    "sourceVersion": "9cc73706",
     "license": "AGPL-3.0",
-    "contentHash": "6da2aa32cb0d4cec4f4da89118e94ed25a12fc938ca8e37d259f3334aa254907",
-    "lastHarvestedAt": "2026-10-18T22:29:31.568Z",
+    "contentHash": "ed90556f47ef04f133623df332e1e90006af9d33ca28d8122030c8fdd805d680",
+    "lastHarvestedAt": "2026-10-19T10:48:36.075Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -7758,5 +7758,25 @@
     "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
     "lastHarvestedAt": "2026-10-19T10:41:16.980Z",
     "learningId": "learn-github-mrkai77-loop"
+  },
+  "tokio-rs-tokio": {
+    "repository": "tokio-rs/tokio",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tokio-rs/tokio",
+    "sourceVersion": "0d322ce7",
+    "license": "MIT",
+    "contentHash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
+    "lastHarvestedAt": "2026-10-19T10:48:31.318Z",
+    "learningId": "learn-github-tokio-rs-tokio"
+  },
+  "simonschubert-linuxcommandlibrary": {
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+    "sourceVersion": "f884f5a1",
+    "license": "Apache-2.0",
+    "contentHash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
+    "lastHarvestedAt": "2026-10-19T10:48:43.750Z",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   }
 }

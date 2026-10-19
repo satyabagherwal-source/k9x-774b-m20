@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-S395",
-    "timestamp": "2026-10-19T00:04:13.049Z",
-    "repository": "spacejam/sled",
-    "learningId": "learn-github-spacejam-sled",
-    "contentHash": "daafd916f7ed55e4f806042e8f9c5aea1ab10466fff2bbf0717400d8921c16c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ZU1P",
-    "timestamp": "2026-10-19T00:10:14.365Z",
-    "repository": "themeselection/flyonui",
-    "learningId": "learn-github-themeselection-flyonui",
-    "contentHash": "176c07da52e5bb22eada30c526102a692470f5f0ad458dce6d47ac7830e7d2a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ZWJ0",
-    "timestamp": "2026-10-19T00:10:17.580Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "ab92b1aec66d2c5c54679360559c8c43cd60a4744459c3883fbfd40231e843c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ZYEB",
-    "timestamp": "2026-10-19T00:10:20.003Z",
-    "repository": "jhen0409/react-native-debugger",
-    "learningId": "learn-github-jhen0409-react-native-debugger",
-    "contentHash": "e2f0e3616c236d7e5585b3efdda920ff9548825996d5fe5c51ae890255b218a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-02OS",
     "timestamp": "2026-10-19T00:10:25.564Z",
     "repository": "go-chassis/go-chassis",
@@ -7492,6 +7432,66 @@
     "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SM51",
+    "timestamp": "2026-10-19T10:48:28.693Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "bd979ae0ed766cf51035441c38648e1bfa2374a47286e8d716a3192187d0b153",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SO5V",
+    "timestamp": "2026-10-19T10:48:31.315Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SRU0",
+    "timestamp": "2026-10-19T10:48:36.072Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "ed90556f47ef04f133623df332e1e90006af9d33ca28d8122030c8fdd805d680",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SXR8",
+    "timestamp": "2026-10-19T10:48:43.748Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:41:16.934Z",
-  "total_verified_learnings": 791,
+  "last_updated": "2026-10-19T10:48:43.707Z",
+  "total_verified_learnings": 793,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3183,14 +3183,29 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "694ac05c",
-      "content_hash": "6da2aa32cb0d4cec4f4da89118e94ed25a12fc938ca8e37d259f3334aa254907",
+      "source_version": "9cc73706",
+      "content_hash": "ed90556f47ef04f133623df332e1e90006af9d33ca28d8122030c8fdd805d680",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
         {
           "number": 1783,
           "title": "download-server):  block downloads without detected media and disable remote tim",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2508,
+          "title": "Prefix-Stripping Invariant via Explicit Semantic Anchors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2509,
+          "title": "Dual-Tier Dynamic Navigation Bypass in PWA Service Workers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2510,
+          "title": "Multi-Script Font Variation Keying & Glyph Fallback Cache Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -3199,7 +3214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:29:31.532Z",
+      "verified_at": "2026-10-19T10:48:36.019Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21194,10 +21209,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "bc3f729b3ed16c08754ea5a0363e81db91b2ea3a392919888632c8d4e57df2fc",
+      "content_hash": "bd979ae0ed766cf51035441c38648e1bfa2374a47286e8d716a3192187d0b153",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2503,
+          "title": "State Space Accumulator Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2504,
+          "title": "Micro-Block Indexer Bound & Divisibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2505,
+          "title": "Dual-Gated Residual Stream Conservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -21216,7 +21247,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-18T02:20:23.143Z",
+      "verified_at": "2026-10-19T10:48:28.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37642,22 +37673,45 @@
     "learn-github-simonschubert-linuxcommandlibrary": {
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "simonschubert-linuxcommandlibrary",
+      "source": "SimonSchubert/LinuxCommandLibrary",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "HEAD",
-      "content_hash": "a8a2bd2f587f8d46e922683c434bad8c48f294cba646b4efd22aa44e94c8e144",
+      "source_version": "f884f5a1",
+      "content_hash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2511,
+          "title": "External Intent Platform Boundary Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2512,
+          "title": "Multi-Pane Adaptive Scaffold History Pre-Seeding Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2513,
+          "title": "Visual-Offset Aware ANSI Tokenization Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.550Z"
+      "verified_at": "2026-10-19T10:48:43.695Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-simular-ai-agent-s": {
       "learning_id": "learn-github-simular-ai-agent-s",
@@ -40517,22 +40571,40 @@
     "learn-github-tokio-rs-tokio": {
       "learning_id": "learn-github-tokio-rs-tokio",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tokio-rs-tokio",
+      "source": "tokio-rs/tokio",
+      "repository": "tokio-rs/tokio",
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "HEAD",
-      "content_hash": "8167932f949fad0afa3c2cff40b98c1ab9ad21612ca2228d032c1e31d71933c2",
+      "source_version": "0d322ce7",
+      "content_hash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2506,
+          "title": "Invariant Preservation Across Stream Lifecycle and EOF Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2507,
+          "title": "Context Boundary Enforcement for Asynchronous System Primitives",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.999Z"
+      "verified_at": "2026-10-19T10:48:31.261Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-toni-sm-skrl": {
       "learning_id": "learn-github-toni-sm-skrl",
@@ -85472,6 +85544,160 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:41:16.921Z"
+    },
+    "rule-2503": {
+      "learning_id": "rule-2503",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2503,
+      "title": "State Space Accumulator Precision Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "source_version": "hf-qwen-qwen3.8-flash-next",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:28.641Z"
+    },
+    "rule-2504": {
+      "learning_id": "rule-2504",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2504,
+      "title": "Micro-Block Indexer Bound & Divisibility Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "source_version": "hf-qwen-qwen3.8-flash-next",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:28.641Z"
+    },
+    "rule-2505": {
+      "learning_id": "rule-2505",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2505,
+      "title": "Dual-Gated Residual Stream Conservation Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "source_version": "hf-qwen-qwen3.8-flash-next",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:28.641Z"
+    },
+    "rule-2506": {
+      "learning_id": "rule-2506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2506,
+      "title": "Invariant Preservation Across Stream Lifecycle and EOF Boundaries",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "0d322ce7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:31.261Z"
+    },
+    "rule-2507": {
+      "learning_id": "rule-2507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2507,
+      "title": "Context Boundary Enforcement for Asynchronous System Primitives",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "0d322ce7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:31.261Z"
+    },
+    "rule-2508": {
+      "learning_id": "rule-2508",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2508,
+      "title": "Prefix-Stripping Invariant via Explicit Semantic Anchors",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "9cc73706",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:36.019Z"
+    },
+    "rule-2509": {
+      "learning_id": "rule-2509",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2509,
+      "title": "Dual-Tier Dynamic Navigation Bypass in PWA Service Workers",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "9cc73706",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:36.019Z"
+    },
+    "rule-2510": {
+      "learning_id": "rule-2510",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2510,
+      "title": "Multi-Script Font Variation Keying & Glyph Fallback Cache Isolation",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "9cc73706",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:36.019Z"
+    },
+    "rule-2511": {
+      "learning_id": "rule-2511",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2511,
+      "title": "External Intent Platform Boundary Isolation Rule",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "f884f5a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:43.695Z"
+    },
+    "rule-2512": {
+      "learning_id": "rule-2512",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2512,
+      "title": "Multi-Pane Adaptive Scaffold History Pre-Seeding Rule",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "f884f5a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:43.695Z"
+    },
+    "rule-2513": {
+      "learning_id": "rule-2513",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2513,
+      "title": "Visual-Offset Aware ANSI Tokenization Rule",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "f884f5a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:48:43.695Z"
     }
   },
   "aliases": {
