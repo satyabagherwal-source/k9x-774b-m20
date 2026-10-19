@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:34:12.552Z",
-  "total_verified_learnings": 602,
+  "last_updated": "2026-10-19T04:40:32.229Z",
+  "total_verified_learnings": 607,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3832,22 +3832,35 @@
     "learn-github-camptocamp-terraboard": {
       "learning_id": "learn-github-camptocamp-terraboard",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "camptocamp-terraboard",
+      "source": "camptocamp/terraboard",
+      "repository": "camptocamp/terraboard",
       "slug": "camptocamp-terraboard",
       "platform": "github",
       "source_url": "https://github.com/camptocamp/terraboard",
-      "source_version": "HEAD",
-      "content_hash": "988bb966d2ecc56c65fdbe3a9481f0bb098f4e1ecf4603d727308a932e1e3618",
+      "source_version": "6f6b6b60",
+      "content_hash": "b1791c85819775de18e4210c75ea60d38e971b80bcd3f39e568a5de380cd9272",
       "dossier_path": "07_PROJECT_LEARNING/camptocamp-terraboard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/camptocamp-terraboard-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2141,
+          "title": "db): possible sql injection on /search endpoint (#247)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.201Z"
+      "verified_at": "2026-10-19T04:40:26.934Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-canner-wrenai": {
       "learning_id": "learn-github-canner-wrenai",
@@ -4694,22 +4707,29 @@
     "learn-github-cloudwego-volo": {
       "learning_id": "learn-github-cloudwego-volo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cloudwego-volo",
+      "source": "cloudwego/volo",
+      "repository": "cloudwego/volo",
       "slug": "cloudwego-volo",
       "platform": "github",
       "source_url": "https://github.com/cloudwego/volo",
-      "source_version": "HEAD",
-      "content_hash": "e135a4da0371b500510cee2bba1e6e1d4f8186d42d2719f17229ed49805c9194",
+      "source_version": "26ea87de",
+      "content_hash": "8bf74d34e2f854d0fd9dd47adc6f49b16afd64a951800584569e53f0d0891ed9",
       "dossier_path": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.346Z"
+      "verified_at": "2026-10-19T04:40:19.137Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cobusgreyling-loop-engineering": {
       "learning_id": "learn-github-cobusgreyling-loop-engineering",
@@ -16831,7 +16851,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "02ce73219cfa311186e1115d6d1b41c2c521d97463e3a02fb7bccd4994f8a8c9",
+      "content_hash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -16859,6 +16879,16 @@
           "number": 1559,
           "title": "Speculative Decoding Head Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2138,
+          "title": "Per-Tensor Precision Allocation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2139,
+          "title": "GGUF Binary Format Integrity & Metadata Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16879,7 +16909,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-17T23:16:59.292Z",
+      "verified_at": "2026-10-19T04:40:24.569Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23294,22 +23324,35 @@
     "learn-github-itinance-react-native-fs": {
       "learning_id": "learn-github-itinance-react-native-fs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "itinance-react-native-fs",
+      "source": "itinance/react-native-fs",
+      "repository": "itinance/react-native-fs",
       "slug": "itinance-react-native-fs",
       "platform": "github",
       "source_url": "https://github.com/itinance/react-native-fs",
-      "source_version": "HEAD",
-      "content_hash": "5ec599458a9161217c2faf028445c773701867bd0a9af7ad9196f71b712cb2ec",
+      "source_version": "64aa755c",
+      "content_hash": "a99504977b8586a1af9330dad5b3538565e075a8abd22e4469f99431d323187d",
       "dossier_path": "07_PROJECT_LEARNING/itinance-react-native-fs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/itinance-react-native-fs-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2140,
+          "title": "Merge pull request #1 from IntelexTechnologies/iOS_crashes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.626Z"
+      "verified_at": "2026-10-19T04:40:24.696Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-itzcrazykns-vane": {
       "learning_id": "learn-github-itzcrazykns-vane",
@@ -29164,22 +29207,35 @@
     "learn-github-ng-zorro-ng-zorro-antd": {
       "learning_id": "learn-github-ng-zorro-ng-zorro-antd",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ng-zorro-ng-zorro-antd",
+      "source": "NG-ZORRO/ng-zorro-antd",
+      "repository": "NG-ZORRO/ng-zorro-antd",
       "slug": "ng-zorro-ng-zorro-antd",
       "platform": "github",
       "source_url": "https://github.com/NG-ZORRO/ng-zorro-antd",
-      "source_version": "HEAD",
-      "content_hash": "0c2d1eb1cacfd7254503e6819042bac5616dc9efecec1405e82457be941bb4cd",
+      "source_version": "d8b3d05b",
+      "content_hash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
       "dossier_path": "07_PROJECT_LEARNING/ng-zorro-ng-zorro-antd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ng-zorro-ng-zorro-antd-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2137,
+          "title": "module:select): prevent dropdown option overflow (#9849) (#9957)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.630Z"
+      "verified_at": "2026-10-19T04:40:18.379Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nginx-kubernetes-ingress": {
       "learning_id": "learn-github-nginx-kubernetes-ingress",
@@ -38794,22 +38850,35 @@
     "learn-github-vespa-engine-vespa": {
       "learning_id": "learn-github-vespa-engine-vespa",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vespa-engine-vespa",
+      "source": "vespa-engine/vespa",
+      "repository": "vespa-engine/vespa",
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "HEAD",
-      "content_hash": "054c68a87da0f836d851cd639d91270c42af3700ceac5162ada0763580567275",
+      "source_version": "fdbd35a4",
+      "content_hash": "e27c7480410713827f221a67e724104a91d4b4fed5449525074f0eb177e78534",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2142,
+          "title": "Bump abseil-cpp, gtest and protobuf C++ build dependencies",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.214Z"
+      "verified_at": "2026-10-19T04:40:32.221Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vexa-ai-vexa": {
       "learning_id": "learn-github-vexa-ai-vexa",
@@ -76943,6 +77012,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:34:12.545Z"
+    },
+    "rule-2137": {
+      "learning_id": "rule-2137",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2137,
+      "title": "module:select): prevent dropdown option overflow (#9849) (#9957)",
+      "source_url": "https://github.com/NG-ZORRO/ng-zorro-antd",
+      "source_version": "d8b3d05b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:40:18.379Z"
+    },
+    "rule-2138": {
+      "learning_id": "rule-2138",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2138,
+      "title": "Per-Tensor Precision Allocation Invariant",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:40:24.569Z"
+    },
+    "rule-2139": {
+      "learning_id": "rule-2139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2139,
+      "title": "GGUF Binary Format Integrity & Metadata Consistency",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:40:24.569Z"
+    },
+    "rule-2140": {
+      "learning_id": "rule-2140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2140,
+      "title": "Merge pull request #1 from IntelexTechnologies/iOS_crashes",
+      "source_url": "https://github.com/itinance/react-native-fs",
+      "source_version": "64aa755c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:40:24.696Z"
+    },
+    "rule-2141": {
+      "learning_id": "rule-2141",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2141,
+      "title": "db): possible sql injection on /search endpoint (#247)",
+      "source_url": "https://github.com/camptocamp/terraboard",
+      "source_version": "6f6b6b60",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:40:26.934Z"
+    },
+    "rule-2142": {
+      "learning_id": "rule-2142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2142,
+      "title": "Bump abseil-cpp, gtest and protobuf C++ build dependencies",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "fdbd35a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:40:32.221Z"
     }
   },
   "aliases": {

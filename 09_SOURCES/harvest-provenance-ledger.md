@@ -2916,3 +2916,9 @@ Every entry in this ledger must capture:
 | `learn-github-learnapollo-learnapollo` | `https://github.com/learnapollo/learnapollo` | `dea1677e` | Multi-dimensional audit evidence | 2026-10-19T04:34:04.972Z |
 | `learn-github-someengineering-fixinventory` | `https://github.com/someengineering/fixinventory` | `21183338` | Multi-dimensional audit evidence | 2026-10-19T04:34:07.477Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `327437ad` | Multi-dimensional audit evidence | 2026-10-19T04:34:12.595Z |
+| `learn-github-ng-zorro-ng-zorro-antd` | `https://github.com/NG-ZORRO/ng-zorro-antd` | `d8b3d05b` | Multi-dimensional audit evidence | 2026-10-19T04:40:18.433Z |
+| `learn-github-cloudwego-volo` | `https://github.com/cloudwego/volo` | `26ea87de` | Multi-dimensional audit evidence | 2026-10-19T04:40:19.196Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-19T04:40:24.628Z |
+| `learn-github-itinance-react-native-fs` | `https://github.com/itinance/react-native-fs` | `64aa755c` | Multi-dimensional audit evidence | 2026-10-19T04:40:24.759Z |
+| `learn-github-camptocamp-terraboard` | `https://github.com/camptocamp/terraboard` | `6f6b6b60` | Multi-dimensional audit evidence | 2026-10-19T04:40:26.997Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `fdbd35a4` | Multi-dimensional audit evidence | 2026-10-19T04:40:32.271Z |

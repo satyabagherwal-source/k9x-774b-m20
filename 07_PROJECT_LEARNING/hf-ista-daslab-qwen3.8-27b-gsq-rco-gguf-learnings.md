@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ista-dasl`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T23:16:59.019Z  
+> **Timestamp**: 2026-10-19T04:40:24.262Z  
 > **Learning ID**: `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,325 +17,171 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository addresses the **precision-efficiency trade-off** in Large Language Model (LLM) deployment. Standard uniform quantization (e.g., Q4_K_M, Q8_0) applies a single quantization type to all weight tensors, ignoring that different layers have different sensitivities to precision loss. This repo implements **Non-Uniform Quantization** via a two-stage pipeline:
+This repository addresses the critical inefficiency of **uniform quantization** in Large Language Models (LLMs). Standard quantization (e.g., Q4_K_M, Q8_0) applies a single precision level to all weight tensors, ignoring the fact that different layers (e.g., attention heads vs. feed-forward networks) have vastly different sensitivities to precision loss. This repository implements **Non-Uniform Quantization** via a two-stage pipeline:
 1.  **GSQ (Gumbel-Softmax Quantization):** A post-training scalar quantization method that jointly learns per-coordinate grid assignments and per-group scales using a Gumbel-Softmax relaxation. This allows for accurate low-bit scalar quantization of individual tensors.
-2.  **RCO (Resource-Constrained Optimization):** A gradient-based search algorithm that assigns specific quantization types to each tensor under a strict total size budget, optimizing for task performance rather than just minimizing error.
+2.  **RCO (Resource-Constrained Optimization):** A gradient-based search algorithm that assigns specific quantization types to *every* tensor individually, subject to a total file size budget. This optimizes the "precision allocation" across the model to maximize accuracy for a given bit-width.
 
 **Architectural Boundaries:**
-*   **Input:** Base model weights (Qwen3.8-27B) and a vision projector (`mmproj`).
-*   **Processing:** Offline quantization pipeline (not present in this repo, but implied by the output artifacts). The repo itself is a **static artifact repository** containing the resulting `.gguf` files.
-*   **Output:** Standard GGUF files compatible with `llama.cpp`, Ollama, and LM Studio.
-*   **Key Abstraction:** The "Model" is not a single entity but a **heterogeneous collection of tensors**, each with its own quantization metadata (type, scale, zero-point) embedded in the GGUF header and tensor data.
+*   **Input:** Base Hugging Face model weights (Qwen3.8-27B) + Vision Projector (`mmproj`).
+*   **Processing:** Offline optimization pipeline (GSQ + RCO) executed in Python/PyTorch.
+*   **Output:** Standard `.gguf` files compatible with `llama.cpp`, Ollama, and LM Studio.
+*   **Decoupling:** The optimization logic is strictly separated from the inference runtime. The output is a static binary artifact (GGUF) that requires no special runtime support for non-uniform quantization; the `llama.cpp` engine handles the mixed-precision tensors natively.
 
 **Critical Subsystem Abstractions:**
-*   **GGUF Container Format:** A binary format that stores tensor data, metadata, and architecture-specific parameters. The non-uniform nature means the GGUF parser must handle mixed quantization types within a single model file.
-*   **Vision Projector (`mmproj`):** A separate component that maps visual features to the language model's embedding space. It is quantized separately and loaded alongside the main model.
-*   **Speculative Decoding Head (MTP):** The model includes a Multi-Token Prediction (MTP) head, enabling speculative decoding to improve inference latency.
+*   **Tensor Sensitivity Map:** The core data structure derived from RCO, mapping each tensor ID to its optimal quantization type.
+*   **GGUF Metadata Layer:** The binary header structure that stores the per-tensor quantization type, scale, and zero-point information, allowing the inference engine to decode weights dynamically.
+*   **Vision Projector Bridge:** The `mmproj` component that aligns visual embeddings with the text embedding space, preserved in the GGUF format for multimodal inference.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Heterogeneous Tensor Quantization Metadata Integrity
+### 1. Per-Tensor Precision Allocation Invariant
 **RULE**:
-When deploying non-uniformly quantized models, the inference engine MUST validate that every tensor's quantization type, scale, and zero-point metadata is present and consistent with the tensor's data layout. The system MUST NOT assume a uniform quantization type across all tensors.
+When quantizing large neural networks for deployment, you MUST NOT apply a uniform quantization type to all weight tensors. You MUST assign quantization types per-tensor based on a sensitivity analysis (e.g., gradient-based search) subject to a strict total size budget.
 
 **WHY**:
-Uniform quantization assumes a single type (e.g., Q4_0) for all weights. Non-uniform quantization assigns different types (e.g., Q4_K_M for some layers, Q8_0 for others) based on sensitivity. If the inference engine assumes uniformity, it will misinterpret the binary data, leading to garbage outputs, crashes, or silent numerical errors. The GGUF format stores per-tensor metadata, but the inference engine must explicitly parse and apply this metadata for each tensor.
+Uniform quantization forces high-sensitivity tensors (like early attention layers) to use low precision, causing catastrophic accuracy loss, while low-sensitivity tensors (like later FFN layers) waste bits on unnecessary precision. Non-uniform allocation maximizes the accuracy-to-size ratio by matching precision to sensitivity.
 
 **WHEN TO APPLY**:
-Any system loading GGUF files with mixed quantization types, especially when using custom quantization pipelines like GSQ/RCO.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```cpp
-// Pseudocode for GGUF tensor loading
-for (auto& tensor : model.tensors) {
-    // 1. Parse per-tensor metadata from GGUF header
-    QuantType qtype = tensor.metadata.quant_type;
-    float scale = tensor.metadata.scale;
-    float zero_point = tensor.metadata.zero_point;
-    
-    // 2. Validate that qtype is supported by the inference engine
-    if (!is_supported_quant_type(qtype)) {
-        throw std::runtime_error("Unsupported quantization type: " + std::to_string(qtype));
-    }
-    
-    // 3. Allocate memory based on qtype-specific size
-    size_t tensor_size = get_tensor_size(tensor.shape, qtype);
-    void* data = malloc(tensor_size);
-    
-    // 4. Load raw bytes and dequantize using qtype-specific logic
-    load_raw_bytes(tensor.data_ptr, data, tensor_size);
-    dequantize(data, tensor.shape, qtype, scale, zero_point);
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```cpp
-// ANTI-PATTERN: Assuming uniform quantization
-QuantType global_qtype = model.metadata.default_quant_type; // WRONG
-for (auto& tensor : model.tensors) {
-    // Uses global_qtype for all tensors, ignoring per-tensor metadata
-    dequantize(tensor.data_ptr, tensor.shape, global_qtype, ...);
-}
-```
-
-**VERIFICATION METHOD**:
-Unit test that loads a GGUF file with mixed quantization types and asserts that each tensor is dequantized using its specific metadata. Compare the dequantized weights against the original FP16 weights to ensure numerical accuracy.
-
-### 2. Vision Projector Alignment Invariant
-**RULE**:
-When loading a multimodal model with a separate vision projector (`mmproj`), the system MUST verify that the projector's output dimension matches the language model's embedding dimension. The system MUST NOT load the projector if the dimensions are mismatched.
-
-**WHY**:
-The vision projector maps visual features to the language model's embedding space. If the output dimension of the projector does not match the embedding dimension of the language model, the model will produce incorrect outputs or crash during the forward pass. This is a common failure mode in multimodal models where the projector is updated independently of the language model.
-
-**WHEN TO APPLY**:
-Any multimodal model deployment where the vision projector is stored as a separate file or component.
+Any LLM or multimodal model quantization pipeline targeting GGUF, ONNX, or custom binary formats where per-tensor metadata is supported.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for multimodal model loading
-def load_multimodal_model(llm_path, mmproj_path):
-    llm = load_llm(llm_path)
-    mmproj = load_mmproj(mmproj_path)
+# Pseudocode for RCO-style allocation
+def allocate_quantization_types(model_tensors, size_budget_bits):
+    # 1. Compute sensitivity score for each tensor (e.g., via gradient magnitude)
+    sensitivity_scores = compute_sensitivity(model_tensors)
     
-    # Verify dimension alignment
-    if llm.embedding_dim != mmproj.output_dim:
-        raise ValueError(
-            f"Dimension mismatch: LLM embedding dim {llm.embedding_dim} "
-            f"does not match MMProj output dim {mmproj.output_dim}"
-        )
+    # 2. Sort tensors by sensitivity (highest first)
+    sorted_tensors = sorted(model_tensors, key=lambda t: sensitivity_scores[t.id], reverse=True)
     
-    return MultimodalModel(llm, mmproj)
+    # 3. Greedy or gradient-based assignment under budget constraint
+    assignment = {}
+    remaining_budget = size_budget_bits
+    for tensor in sorted_tensors:
+        # Choose highest precision that fits remaining budget
+        # e.g., Q8_0 (8 bits) for high sensitivity, Q4_0 (4 bits) for low
+        optimal_type = find_optimal_type(tensor, remaining_budget)
+        assignment[tensor.id] = optimal_type
+        remaining_budget -= optimal_type.bits_per_weight * tensor.numel()
+        
+    return assignment
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Ignoring dimension mismatch
-def load_multimodal_model(llm_path, mmproj_path):
-    llm = load_llm(llm_path)
-    mmproj = load_mmproj(mmproj_path)
-    # No dimension check, leading to silent failure or crash later
-    return MultimodalModel(llm, mmproj)
+# ANTI-PATTERN: Uniform quantization
+def uniform_quantization(model_tensors, target_bits=4):
+    # Applies Q4_0 to ALL tensors regardless of sensitivity
+    for tensor in model_tensors:
+        tensor.quantize(type="Q4_0") 
+    # Result: High-sensitivity layers suffer severe accuracy drop
 ```
 
 **VERIFICATION METHOD**:
-Integration test that loads a multimodal model with a mismatched projector and asserts that a `ValueError` is raised with a clear error message.
+1.  **Accuracy Benchmark:** Compare perplexity or task-specific accuracy of the non-uniform model vs. a uniform model of the same total size. The non-uniform model MUST show significantly lower perplexity.
+2.  **Metadata Inspection:** Parse the GGUF file and verify that `tensor_type` varies across different tensors. If all tensors have the same type, the invariant is violated.
 
-### 3. Speculative Decoding Head Consistency
+### 2. GGUF Binary Format Integrity & Metadata Consistency
 **RULE**:
-When using a model with a Multi-Token Prediction (MTP) head for speculative decoding, the system MUST ensure that the MTP head's weights are consistent with the main model's weights. The system MUST NOT use the MTP head if the main model has been modified after the MTP head was trained.
+When generating GGUF files, you MUST ensure that the metadata header (tensor names, dimensions, quantization types, scales, zero-points) is strictly consistent with the binary payload. Any mismatch between the declared quantization type in the header and the actual binary data layout will cause silent corruption or crashes in the inference engine.
 
 **WHY**:
-The MTP head is trained to predict the next token given the current token and the main model's hidden states. If the main model's weights are modified (e.g., fine-tuned) after the MTP head was trained, the MTP head's predictions will be inaccurate, leading to lower acceptance rates and potentially slower inference than without speculative decoding.
+GGUF is a self-describing binary format. The inference engine (`llama.cpp`) relies entirely on the header to interpret the binary data. If the header declares `Q4_K_M` but the data is laid out as `Q4_0`, the engine will misinterpret the bytes, leading to garbage outputs or segmentation faults.
 
 **WHEN TO APPLY**:
-Any deployment using speculative decoding with a pre-trained MTP head.
+Any custom tooling that writes or modifies GGUF files, especially when introducing non-standard or mixed quantization types.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for speculative decoding setup
-def setup_speculative_decoding(model, mtp_head):
-    # Verify that the MTP head is compatible with the model
-    if not mtp_head.is_compatible_with(model):
-        raise ValueError("MTP head is not compatible with the model")
-    
-    # Check for weight consistency (e.g., hash comparison)
-    if mtp_head.weight_hash != model.weight_hash:
-        logger.warning("MTP head weights may be inconsistent with model weights")
-    
-    return SpeculativeDecoder(model, mtp_head)
+# Pseudocode for safe GGUF writing
+def write_gguf_safe(model, output_path):
+    with open(output_path, 'wb') as f:
+        # 1. Write Header with metadata
+        header = build_header(model)
+        f.write(header)
+        
+        # 2. Write Tensor Data
+        for tensor in model.tensors:
+            # CRITICAL: Ensure the data layout matches the declared type
+            data = tensor.get_quantized_data()
+            f.write(data)
+            
+            # 3. Verify checksum (if supported)
+            # assert verify_checksum(data, tensor.metadata.checksum)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming MTP head compatibility
-def setup_speculative_decoding(model, mtp_head):
-    # No compatibility check, leading to poor performance or errors
-    return SpeculativeDecoder(model, mtp_head)
+# ANTI-PATTERN: Mismatched metadata and data
+def write_gguf_buggy(model, output_path):
+    with open(output_path, 'wb') as f:
+        # Header declares Q8_0
+        f.write(build_header(model, quant_type="Q8_0"))
+        
+        # But data is actually Q4_0
+        for tensor in model.tensors:
+            f.write(tensor.get_quantized_data(type="Q4_0"))
+        # Result: Inference engine crashes or produces garbage
 ```
 
 **VERIFICATION METHOD**:
-Unit test that creates a model and an MTP head with mismatched weights and asserts that a warning or error is raised.
+1.  **Round-Trip Test:** Load the generated GGUF file using `llama.cpp`'s `llama_load_model_from_file` and verify that no errors are raised.
+2.  **Data Integrity Check:** Compare the first N bytes of the tensor data in the file with the expected layout for the declared quantization type.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain specific commit patches, bug issues, or developer post-mortems. The following incidents are inferred from common failure modes in non-uniform quantization and multimodal model deployment.*
-
-### Incident 1: Silent Numerical Corruption Due to Uniform Quantization Assumption (BUG-QUANT-01)
-- **Context**: Inference engine loading a non-uniformly quantized GGUF file.
-- **What Was Expected**: The model should produce accurate outputs by using the per-tensor quantization metadata.
-- **What Actually Happened**: The model produced garbage outputs because the inference engine assumed a uniform quantization type for all tensors.
-- **Evidence in Repo**: N/A (Inferred from architectural requirements).
-- **Root Cause**: The inference engine did not parse the per-tensor quantization metadata from the GGUF header and instead used a global default quantization type.
-- **Remediation Code Diff**:
-```cpp
-// - Buggy code: Using global quantization type
-QuantType qtype = model.metadata.default_quant_type;
-for (auto& tensor : model.tensors) {
-    dequantize(tensor.data_ptr, tensor.shape, qtype, ...);
-}
-
-// + Fixed pattern: Using per-tensor quantization type
-for (auto& tensor : model.tensors) {
-    QuantType qtype = tensor.metadata.quant_type;
-    dequantize(tensor.data_ptr, tensor.shape, qtype, ...);
-}
-```
-- **Lesson**: Always parse and use per-tensor metadata for non-uniform quantization.
-
-### Incident 2: Dimension Mismatch in Vision Projector (BUG-MM-02)
-- **Context**: Loading a multimodal model with a separate vision projector.
-- **What Was Expected**: The model should load successfully and produce accurate multimodal outputs.
-- **What Actually Happened**: The model crashed during the forward pass due to a dimension mismatch between the vision projector's output and the language model's embedding.
-- **Evidence in Repo**: N/A (Inferred from architectural requirements).
-- **Root Cause**: The vision projector was trained with a different output dimension than the language model's embedding dimension.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: No dimension check
-llm = load_llm(llm_path)
-mmproj = load_mmproj(mmproj_path)
-model = MultimodalModel(llm, mmproj)
-
-# + Fixed pattern: Dimension check
-llm = load_llm(llm_path)
-mmproj = load_mmproj(mmproj_path)
-if llm.embedding_dim != mmproj.output_dim:
-    raise ValueError("Dimension mismatch")
-model = MultimodalModel(llm, mmproj)
-```
-- **Lesson**: Always verify dimension alignment between components in multimodal models.
-
-### Incident 3: Speculative Decoding Performance Degradation (BUG-SD-03)
-- **Context**: Using a model with a pre-trained MTP head for speculative decoding.
-- **What Was Expected**: Speculative decoding should improve inference latency.
-- **What Actually Happened**: Speculative decoding resulted in slower inference than without speculative decoding.
-- **Evidence in Repo**: N/A (Inferred from architectural requirements).
-- **Root Cause**: The MTP head was trained with a different version of the main model, leading to low acceptance rates.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: No compatibility check
-decoder = SpeculativeDecoder(model, mtp_head)
-
-# + Fixed pattern: Compatibility check
-if not mtp_head.is_compatible_with(model):
-    logger.warning("MTP head may be incompatible")
-decoder = SpeculativeDecoder(model, mtp_head)
-```
-- **Lesson**: Always verify compatibility between the main model and the MTP head.
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no specific production incidents can be documented from this source. The following section is omitted as per the mandate to only document real incidents from the provided evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1. **Micro-Syntax & Token-Level Precision**:
-   - **Invariant**: When parsing GGUF metadata, ensure that integer fields (e.g., tensor shape, quantization type) are read with the correct byte order (little-endian) and size.
-   - **Code Example**:
-     ```cpp
-     // Correct: Read uint32_t in little-endian
-     uint32_t shape[3];
-     fread(&shape[0], sizeof(uint32_t), 1, file);
-     fread(&shape[1], sizeof(uint32_t), 1, file);
-     fread(&shape[2], sizeof(uint32_t), 1, file);
-     
-     // Incorrect: Assuming native byte order
-     uint32_t shape[3];
-     fread(shape, sizeof(uint32_t), 3, file); // May fail on big-endian systems
-     ```
+*Note: Since this is a model artifact repository (GGUF files) and not a source code repository, traditional software engineering invariants (UI, concurrency, etc.) are not directly applicable. However, the following invariants apply to the **tooling** that generates and consumes these artifacts:*
 
-2. **Infinite Loop & Recursion Guards**:
-   - **Invariant**: When traversing the GGUF tensor list, ensure that the loop terminates by checking the tensor count and index.
-   - **Code Example**:
-     ```cpp
-     // Correct: Bounded loop
-     for (size_t i = 0; i < model.tensor_count; ++i) {
-         // Process tensor i
-     }
-     
-     // Incorrect: Unbounded loop
-     while (true) {
-         // Process tensor, may never terminate if tensor_count is incorrect
-     }
-     ```
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant:** When parsing GGUF metadata, ensure that integer fields (e.g., tensor dimensions, quantization type IDs) are read with the correct endianness and size. GGUF uses little-endian encoding.
+    *   **Trap:** Reading a 32-bit integer as a 64-bit integer will cause misalignment of all subsequent fields, leading to catastrophic parsing failures.
 
-3. **UI & UX Micro-Mechanics**:
-   - **Invariant**: When displaying model loading progress, ensure that the progress bar updates are throttled to avoid UI freezing.
-   - **Code Example**:
-     ```python
-     # Correct: Throttled progress updates
-     import time
-     last_update = 0
-     for i, tensor in enumerate(model.tensors):
-         load_tensor(tensor)
-         if time.time() - last_update > 0.1:  # Update every 100ms
-             update_progress(i / len(model.tensors))
-             last_update = time.time()
-     
-     # Incorrect: Unthrottled progress updates
-     for i, tensor in enumerate(model.tensors):
-         load_tensor(tensor)
-         update_progress(i / len(model.tensors))  # May freeze UI
-     ```
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant:** When traversing the GGUF tensor list, ensure that the loop terminates based on the declared number of tensors in the header, not on a null terminator or EOF.
+    *   **Trap:** If the header declares 100 tensors but the file is truncated, a loop that waits for a null terminator will hang indefinitely.
 
-4. **Backend Concurrency & Memory Safety**:
-   - **Invariant**: When loading tensors in parallel, ensure that memory allocation is thread-safe and that tensor data is not accessed before it is fully loaded.
-   - **Code Example**:
-     ```cpp
-     // Correct: Thread-safe memory allocation
-     std::mutex mutex;
-     for (auto& tensor : model.tensors) {
-         std::lock_guard<std::mutex> lock(mutex);
-         void* data = malloc(get_tensor_size(tensor.shape, tensor.metadata.quant_type));
-         tensor.data_ptr = data;
-     }
-     
-     // Incorrect: Non-thread-safe memory allocation
-     for (auto& tensor : model.tensors) {
-         void* data = malloc(get_tensor_size(tensor.shape, tensor.metadata.quant_type));
-         tensor.data_ptr = data;  // Race condition
-     }
-     ```
+3.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant:** When loading large GGUF files into memory, use memory-mapped files (`mmap`) to avoid loading the entire model into RAM at once.
+    *   **Trap:** Loading a 27B model (approx. 15-20 GB in Q4) into a standard Python list of arrays will cause `MemoryError` on most consumer hardware.
 
-5. **Defect & Error Prevention ("Galti Pakadna")**:
-   - **Invariant**: When dequantizing tensors, ensure that the scale and zero-point values are within valid ranges to avoid numerical overflow.
-   - **Code Example**:
-     ```cpp
-     // Correct: Range check
-     if (scale <= 0 || zero_point < -128 || zero_point > 127) {
-         throw std::runtime_error("Invalid scale or zero-point");
-     }
-     
-     // Incorrect: No range check
-     float dequantized = (raw_value - zero_point) * scale;  // May overflow
-     ```
+4.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant:** Always validate the GGUF magic number (`GGUF`) and version field before attempting to parse the file.
+    *   **Trap:** Attempting to parse a corrupted or non-GGUF file will lead to undefined behavior or crashes in the inference engine.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1. **Architecture**: The system is a static artifact repository with no runtime code. The architecture is defined by the GGUF format and the non-uniform quantization strategy.
-2. **Core Abstractions**: Key abstractions include the GGUF tensor, the quantization metadata, and the vision projector.
-3. **Error Handling**: Error handling is minimal in the repository itself, as it contains only data files. Error handling is the responsibility of the inference engine.
-4. **Testing**: Testing is not present in the repository. Testing is the responsibility of the inference engine and the quantization pipeline.
-5. **Security**: Security is not a primary concern for a static data repository. However, the integrity of the GGUF files should be verified using checksums.
-6. **Performance**: Performance is optimized through non-uniform quantization, which reduces model size and improves inference speed.
-7. **Deployment**: Deployment is straightforward, as the GGUF files are compatible with standard inference engines.
-8. **Agent Patterns**: No agent patterns are present in the repository.
-9. **Data Flow**: Data flow is from the GGUF files to the inference engine, where the tensors are dequantized and used for inference.
+1.  **Architecture**: The system is a **pipeline architecture** where the optimization stage (GSQ/RCO) is decoupled from the inference stage (llama.cpp). The boundary is the GGUF file format.
+2.  **Core Abstractions**: The core abstraction is the **Quantized Tensor**, which encapsulates the raw weights, scales, zero-points, and the quantization type. The **GGUF File** is the container abstraction.
+3.  **Error Handling**: Error handling is minimal in the artifact itself. The inference engine (`llama.cpp`) handles errors by checking metadata consistency and returning error codes. The optimization pipeline (GSQ/RCO) likely uses standard PyTorch error handling.
+4.  **Testing**: Testing is implicit in the **accuracy benchmarks** (perplexity, task-specific metrics) shown in the README. There are no unit tests for the GGUF format itself in this repository.
+5.  **Security**: The primary security concern is **supply chain integrity**. Users must verify the checksums of the GGUF files to ensure they have not been tampered with. The Apache-2.0 license allows for commercial use.
+6.  **Performance**: The non-uniform quantization improves **accuracy-per-bit**, allowing for smaller models with better performance. The inference performance is determined by the `llama.cpp` engine, which is optimized for CPU/GPU.
+7.  **Deployment**: Deployment is straightforward: copy the GGUF file and `mmproj` file to the `llama.cpp` or Ollama directory. No special configuration is required.
+8.  **Agent Patterns**: Not applicable. This is a static model artifact, not an agent system.
+9.  **Data Flow**: The data flow is **unidirectional**: Base Model -> GSQ/RCO Optimization -> GGUF File -> Inference Engine. There is no feedback loop.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1. **Pattern**: Non-uniform quantization with per-tensor metadata.
-2. **Rule**: Always parse and use per-tensor quantization metadata.
-3. **Architecture Principle**: Heterogeneous tensor quantization requires per-tensor metadata parsing.
-4. **Failure Mode**: Silent numerical corruption due to uniform quantization assumption.
-5. **Reusable Skill**: Parse GGUF metadata and dequantize tensors using per-tensor metadata.
-6. **Decision**: Use non-uniform quantization to optimize for task performance under a size budget.
-7. **Anti-pattern**: Assuming uniform quantization for all tensors.
-8. **Verification Method**: Unit test that loads a GGUF file with mixed quantization types and asserts numerical accuracy.
+1.  **Pattern**: **Non-Uniform Quantization Allocation**. Assign different quantization types to different tensors based on sensitivity.
+2.  **Rule**: **MUST** use per-tensor quantization types for optimal accuracy-size trade-off. **MUST NOT** use uniform quantization for large models.
+3.  **Architecture Principle**: **Decoupled Optimization and Inference**. The optimization process is separate from the inference runtime, allowing for flexible deployment.
+4.  **Failure Mode**: **Accuracy Degradation**. Uniform quantization leads to significant accuracy loss in high-sensitivity layers.
+5.  **Reusable Skill**: **GGUF File Validation**. Check the magic number, version, and metadata consistency before loading a GGUF file.
+6.  **Decision**: **Use GSQ + RCO**. This combination provides the best accuracy-size trade-off compared to other quantization methods.
+7.  **Anti-pattern**: **Uniform Quantization**. Applying the same quantization type to all tensors is inefficient and leads to poor accuracy.
+8.  **Verification Method**: **Perplexity Benchmark**. Compare the perplexity of the non-uniform model with a uniform model of the same size.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Parse GGUF Header**: Read the GGUF header to extract model metadata, including tensor count and per-tensor metadata.
-2. **Validate Tensor Metadata**: For each tensor, validate that the quantization type, scale, and zero-point are present and within valid ranges.
-3. **Allocate Memory**: Allocate memory for each tensor based on its shape and quantization type.
-4. **Load Tensor Data**: Load the raw bytes for each tensor from the GGUF file.
-5. **Dequantize Tensors**: Dequantize each tensor using its specific quantization type, scale, and zero-point.
-6. **Verify Dimension Alignment**: For multimodal models, verify that the vision projector's output dimension matches the language model's embedding dimension.
-7. **Check MTP Head Compatibility**: For speculative decoding, verify that the MTP head is compatible with the main model.
-8. **Run Inference**: Run inference using the dequantized tensors and verify the outputs.
+1.  **Verify Base Model**: Ensure the base model (Qwen3.8-27B) is correctly loaded and has the expected architecture.
+2.  **Run GSQ Optimization**: Apply Gumbel-Softmax Quantization to each tensor to learn the optimal grid assignments and scales.
+3.  **Run RCO Allocation**: Use gradient-based search to assign quantization types to each tensor under the size budget.
+4.  **Generate GGUF File**: Write the optimized weights and metadata to a GGUF file.
+5.  **Validate GGUF File**: Check the magic number, version, and metadata consistency.
+6.  **Benchmark Accuracy**: Evaluate the perplexity and task-specific accuracy of the quantized model.
+7.  **Deploy**: Copy the GGUF file and `mmproj` file to the inference engine directory.
+8.  **Monitor Performance**: Monitor the inference performance and accuracy in production.

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-N0LJ",
-    "timestamp": "2026-10-18T03:28:33.223Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "d16adfc5079731fd40f353ad6e1dfca6d2254efebf91aee4c2c7bd121798ae7a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-QSZ2",
-    "timestamp": "2026-10-18T03:31:29.966Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "f2ed96535ecec80963d6cd22154d228ec24cea8dbec61c837cc9f0493bf9e6f8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VAAX",
-    "timestamp": "2026-10-18T03:34:59.049Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "4130bf7a9676c5cc3f54a49fbf46d894aeb9738712b7fad78588a4f414cf3d82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-ZPCB",
-    "timestamp": "2026-10-18T03:38:25.163Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "59c076a5f96e8b19b28114d1cc8499461cc092b3dddfde968719ee14fdb1b2a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-3X9U",
-    "timestamp": "2026-10-18T03:41:42.066Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "d5296d54d732e1523d16443a625d8f082c98b84128dcf0c9aacba1701aa211f8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-864Y",
-    "timestamp": "2026-10-18T03:45:00.178Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "51a2211d8d2fe25bb9cc706c40d49c15d0364cf42c57144f9112bb9d02e4311c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-C46E",
     "timestamp": "2026-10-18T03:48:04.262Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7400,96 @@
     "repository": "MariaDB/server",
     "learningId": "learn-github-mariadb-server",
     "contentHash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-N56I",
+    "timestamp": "2026-10-19T04:40:18.426Z",
+    "repository": "NG-ZORRO/ng-zorro-antd",
+    "learningId": "learn-github-ng-zorro-ng-zorro-antd",
+    "contentHash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-N5RO",
+    "timestamp": "2026-10-19T04:40:19.188Z",
+    "repository": "cloudwego/volo",
+    "learningId": "learn-github-cloudwego-volo",
+    "contentHash": "8bf74d34e2f854d0fd9dd47adc6f49b16afd64a951800584569e53f0d0891ed9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-N9YL",
+    "timestamp": "2026-10-19T04:40:24.621Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NA2C",
+    "timestamp": "2026-10-19T04:40:24.756Z",
+    "repository": "itinance/react-native-fs",
+    "learningId": "learn-github-itinance-react-native-fs",
+    "contentHash": "a99504977b8586a1af9330dad5b3538565e075a8abd22e4469f99431d323187d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NBSI",
+    "timestamp": "2026-10-19T04:40:26.994Z",
+    "repository": "camptocamp/terraboard",
+    "learningId": "learn-github-camptocamp-terraboard",
+    "contentHash": "b1791c85819775de18e4210c75ea60d38e971b80bcd3f39e568a5de380cd9272",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NFUX",
+    "timestamp": "2026-10-19T04:40:32.265Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "e27c7480410713827f221a67e724104a91d4b4fed5449525074f0eb177e78534",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

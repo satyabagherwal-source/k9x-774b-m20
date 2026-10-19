@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "02ce73219cfa311186e1115d6d1b41c2c521d97463e3a02fb7bccd4994f8a8c9",
-    "lastHarvestedAt": "2026-10-17T23:16:59.329Z",
+    "contentHash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
+    "lastHarvestedAt": "2026-10-19T04:40:24.628Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -5828,5 +5828,55 @@
     "contentHash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
     "lastHarvestedAt": "2026-10-19T04:34:12.595Z",
     "learningId": "learn-github-mariadb-server"
+  },
+  "ng-zorro-ng-zorro-antd": {
+    "repository": "NG-ZORRO/ng-zorro-antd",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NG-ZORRO/ng-zorro-antd",
+    "sourceVersion": "d8b3d05b",
+    "license": "MIT",
+    "contentHash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
+    "lastHarvestedAt": "2026-10-19T04:40:18.433Z",
+    "learningId": "learn-github-ng-zorro-ng-zorro-antd"
+  },
+  "cloudwego-volo": {
+    "repository": "cloudwego/volo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cloudwego/volo",
+    "sourceVersion": "26ea87de",
+    "license": "Apache-2.0",
+    "contentHash": "8bf74d34e2f854d0fd9dd47adc6f49b16afd64a951800584569e53f0d0891ed9",
+    "lastHarvestedAt": "2026-10-19T04:40:19.196Z",
+    "learningId": "learn-github-cloudwego-volo"
+  },
+  "itinance-react-native-fs": {
+    "repository": "itinance/react-native-fs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/itinance/react-native-fs",
+    "sourceVersion": "64aa755c",
+    "license": "MIT",
+    "contentHash": "a99504977b8586a1af9330dad5b3538565e075a8abd22e4469f99431d323187d",
+    "lastHarvestedAt": "2026-10-19T04:40:24.759Z",
+    "learningId": "learn-github-itinance-react-native-fs"
+  },
+  "camptocamp-terraboard": {
+    "repository": "camptocamp/terraboard",
+    "platform": "github",
+    "sourceUrl": "https://github.com/camptocamp/terraboard",
+    "sourceVersion": "6f6b6b60",
+    "license": "Apache-2.0",
+    "contentHash": "b1791c85819775de18e4210c75ea60d38e971b80bcd3f39e568a5de380cd9272",
+    "lastHarvestedAt": "2026-10-19T04:40:26.997Z",
+    "learningId": "learn-github-camptocamp-terraboard"
+  },
+  "vespa-engine-vespa": {
+    "repository": "vespa-engine/vespa",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vespa-engine/vespa",
+    "sourceVersion": "fdbd35a4",
+    "license": "Apache-2.0",
+    "contentHash": "e27c7480410713827f221a67e724104a91d4b4fed5449525074f0eb177e78534",
+    "lastHarvestedAt": "2026-10-19T04:40:32.271Z",
+    "learningId": "learn-github-vespa-engine-vespa"
   }
 }

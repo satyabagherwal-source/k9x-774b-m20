@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T04:34:12.598Z",
-  "total_cycles_completed": 2886,
-  "total_learnings_persisted": 2886,
-  "total_rules_promoted": 1920,
+  "last_updated": "2026-10-19T04:40:32.274Z",
+  "total_cycles_completed": 2892,
+  "total_learnings_persisted": 2892,
+  "total_rules_promoted": 1926,
   "history": [
-    {
-      "timestamp": "2026-10-19T00:48:21.142Z",
-      "repository": "margelo/react-native-vision-camera",
-      "learningId": "learn-github-margelo-react-native-vision-camera",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:48:23.691Z",
-      "repository": "vinceanalytics/vince",
-      "learningId": "learn-github-vinceanalytics-vince",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:48:26.789Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:48:29.237Z",
-      "repository": "malisper/pgrust",
-      "learningId": "learn-github-malisper-pgrust",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:54:30.559Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T00:54:30.830Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T00:54:31.496Z",
       "repository": "Kuberwastaken/claurst",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T04:34:12.598Z",
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:40:18.436Z",
+      "repository": "NG-ZORRO/ng-zorro-antd",
+      "learningId": "learn-github-ng-zorro-ng-zorro-antd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:40:19.199Z",
+      "repository": "cloudwego/volo",
+      "learningId": "learn-github-cloudwego-volo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:40:24.631Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:40:24.762Z",
+      "repository": "itinance/react-native-fs",
+      "learningId": "learn-github-itinance-react-native-fs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:40:27.000Z",
+      "repository": "camptocamp/terraboard",
+      "learningId": "learn-github-camptocamp-terraboard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:40:32.274Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

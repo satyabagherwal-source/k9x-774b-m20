@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:34:12.601Z",
+  "last_updated": "2026-10-19T04:40:32.278Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -528,14 +528,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "02ce73219cfa311186e1115d6d1b41c2c521d97463e3a02fb7bccd4994f8a8c9",
-      "verified_at": "2026-10-17T23:16:59.333Z",
+      "content_hash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
+      "verified_at": "2026-10-19T04:40:24.634Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:16:59.333Z"
+      "last_updated": "2026-10-19T04:40:24.634Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -8857,6 +8857,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:34:12.600Z"
+    },
+    "NG-ZORRO/ng-zorro-antd": {
+      "repository": "NG-ZORRO/ng-zorro-antd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ng-zorro-ng-zorro-antd",
+      "content_hash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
+      "verified_at": "2026-10-19T04:40:18.438Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:40:18.438Z"
+    },
+    "cloudwego/volo": {
+      "repository": "cloudwego/volo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cloudwego-volo",
+      "content_hash": "8bf74d34e2f854d0fd9dd47adc6f49b16afd64a951800584569e53f0d0891ed9",
+      "verified_at": "2026-10-19T04:40:19.201Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:40:19.201Z"
+    },
+    "itinance/react-native-fs": {
+      "repository": "itinance/react-native-fs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-itinance-react-native-fs",
+      "content_hash": "a99504977b8586a1af9330dad5b3538565e075a8abd22e4469f99431d323187d",
+      "verified_at": "2026-10-19T04:40:24.764Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:40:24.764Z"
+    },
+    "camptocamp/terraboard": {
+      "repository": "camptocamp/terraboard",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-camptocamp-terraboard",
+      "content_hash": "b1791c85819775de18e4210c75ea60d38e971b80bcd3f39e568a5de380cd9272",
+      "verified_at": "2026-10-19T04:40:27.002Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:40:27.002Z"
+    },
+    "vespa-engine/vespa": {
+      "repository": "vespa-engine/vespa",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vespa-engine-vespa",
+      "content_hash": "e27c7480410713827f221a67e724104a91d4b4fed5449525074f0eb177e78534",
+      "verified_at": "2026-10-19T04:40:32.278Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:40:32.278Z"
     }
   },
   "repos": {

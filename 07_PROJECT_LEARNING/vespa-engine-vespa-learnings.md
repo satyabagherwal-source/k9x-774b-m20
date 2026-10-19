@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
+> **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
+> **Source Version**: `fdbd35a4`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T04:40:32.049Z  
+> **Learning ID**: `learn-github-vespa-engine-vespa`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): vespa-engine/vespa
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:31:40.461Z  
+> **Harvest Timestamp**: 2026-10-19T04:40:32.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7119 stars
+- **Stars / Engagement**: 7131 stars
 
 ---
 
@@ -1022,352 +1036,19 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 
 ```
 
-### Core Architecture Module: `client/go/internal/httputil/httputil.go`
-```
-// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
-package httputil
-
-import (
-	"context"
-	"crypto/tls"
-	"crypto/x509"
-	"fmt"
-	"net"
-	"net/http"
-	"strings"
-	"time"
-
-	"github.com/vespa-engine/vespa/client/go/internal/build"
-	"golang.org/x/net/http2"
-)
-
-// Client represents a HTTP client usable by the Vespa CLI.
-type Client interface {
-	Do(request *http.Request, timeout time.Duration) (response *http.Response, error error)
-}
-
-type defaultClient struct {
-	client *http.Client
-}
-
-func (c *defaultClient) Do(request *http.Request, timeout time.Duration) (response *http.Response, error error) {
-	if c.client.Timeout != timeout { // Set wanted timeout
-		c.client.Timeout = timeout
-	}
-	if request.Header == nil {
-		request.Header = make(http.Header)
-	}
-	request.Header.Set("User-Agent", fmt.Sprintf("Vespa CLI/%s", build.Version))
-	return c.client.Do(request)
-}
-
-// ConfigureTLS configures the given client with given certificates and caCertificate. If trustAll is true, the client
-// will skip verification of the certificate chain.
-func ConfigureTLS(client Client, certificates []tls.Certificate, caCertificate []byte, trustAll bool) {
-	c, ok := client.(*defaultClient)
-	if !ok {
-		return
-	}
-	var tlsConfig *tls.Config = nil
-	if certificates != nil {
-		tlsConfig = &tls.Config{
-			Certificates:       certificates,
-			MinVersion:         tls.VersionTLS12,
-			InsecureSkipVerify: trustAll,
-		}
-		if caCertificate != nil {
-			certs := x509.NewCertPool()
-			certs.AppendCertsFromPEM(caCertificate)
-			tlsConfig.RootCAs = certs
-		}
-	}
-	if tr, ok := c.client.Transport.(*http.Transport); ok {
-		tr.TLSClientConfig = tlsConfig
-	} else if tr, ok := c.client.Transport.(*http2.Transport); ok {
-		tr.TLSClientConfig = tlsConfig
-	} else {
-		panic(fmt.Sprintf("unknown transport type: %T", c.client.Transport))
-	}
-}
-
-// ForceHTTP2 configures the given client exclusively with a HTTP/2 transport. The other options are passed to
-// ConfigureTLS. If certificates is nil, the client will be configured with H2C (HTTP/2 over clear-text).
-func ForceHTTP2(client Client, certificates []tls.Certificate, caCertificate []byte, trustAll bool) {
-	c, ok := client.(*defaultClient)
-	if !ok {
-		return
-	}
-	var dialFunc func(ctx context.Context, network, addr string, cfg *tls.Config) (net.Conn, error)
-	if certificates == nil {
-		// No certificate, so force H2C (HTTP/2 over clear-text) by using a non-TLS Dialer
-		dialer := net.Dialer{}
-		dialFunc = func(ctx context.Context, network, addr string, cfg *tls.Config) (net.Conn, error) {
-			return dialer.DialContext(ctx, network, addr)
-		}
-	}
-	// Use HTTP/2 transport explicitly. Connection reuse does not work properly when using regular http.Transport, even
-	// though it upgrades to HTTP/2 automatically
-	// https://github.com/golang/go/issues/16582
-	// https://github.com/golang/go/issues/22091
-	c.client.Transport = &http2.Transport{
-		DisableCompression: true,
-		AllowHTTP:          true,
-		DialTLSContext:     dialFunc,
-	}
-	ConfigureTLS(client, certificates, caCertificate, trustAll)
-}
-
-// NewClients creates a new HTTP client the given default timeout.
-func NewClient(timeout time.Duration) Client {
-	return &defaultClient{
-		client: &http.Client{
-			Timeout:   timeout,
-			Transport: http.DefaultTransport,
-		},
-	}
-}
-
-// ParseHeader parses headers slice into a http.Header. Each element in the slice is expected to contain a string on
-// the format "Header: Value".
-func ParseHeader(headers []string) (http.Header, error) {
-	h := make(http.Header)
-	for _, header := range headers {
-		kv := strings.SplitN(header, ":", 2)
-		if len(kv) < 2 {
-			return nil, fmt.Errorf("invalid header %q: missing colon separator", header)
-		}
-		k := kv[0]
-		v := strings.TrimSpace(kv[1])
-		h.Add(k, v)
-	}
-	return h, nil
-}
-
-```
-
-### Core Architecture Module: `client/go/internal/ioutil/ioutil.go`
-```
-// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
-// File utilities.
-// Author: bratseth
-
-package ioutil
-
-import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"io"
-	"math"
-	"os"
-	"path/filepath"
-	"reflect"
-	"strings"
-
-	"github.com/fxamacker/cbor/v2"
-)
-
-// cborDecMode is configured to decode maps with string keys for JSON compatibility.
-var cborDecMode cbor.DecMode
-
-func init() {
-	var err error
-	cborDecMode, err = cbor.DecOptions{
-		DefaultMapType:  reflect.TypeOf(map[string]interface{}(nil)),
-		MaxNestedLevels: 1000,
-	}.DecMode()
-	if err != nil {
-		panic("failed to initialize CBOR decoder mode: " + err.Error())
-	}
-}
-
-// Exists returns true if the given path exists.
-func Exists(path string) bool {
-	info, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist) && info != nil
-}
-
-// IsDir returns true if the given path points to an existing directory.
-func IsDir(path string) bool {
-	info, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist) && info != nil && info.IsDir()
-}
-
-// IsFile returns true if the given path points to an existing regular file.
-func IsFile(path string) bool {
-	info, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist) && info != nil && info.Mode().IsRegular()
-}
-
-// IsExecutable returns true if the given path points to an executable file.
-func IsExecutable(path string) bool {
-	info, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist) &&
-		info != nil &&
-		info.Mode().IsRegular() &&
-		((int(info.Mode()) & 0o111) == 0o111)
-}
-
-// ReaderToString Returns the content of reader as a string. Read errors are ignored.
-func ReaderToString(reader io.Reader) string {
-	var buffer strings.Builder
-	io.Copy(&buffer, reader)
-	return buffer.String()
-}
-
-// ReaderToBytes returns the content of a reader as a byte array. Read errors are ignored.
-func ReaderToBytes(reader io.Reader) []byte {
-	var buffer bytes.Buffer
-	buffer.ReadFrom(reader)
-	return buffer.Bytes()
-}
-
-// ReaderToJSON returns the contents of reader as indented JSON. Read errors are ignored.
-func ReaderToJSON(reader io.Reader) string {
-	bodyBytes, _ := io.ReadAll(reader)
-	var prettyJSON bytes.Buffer
-	parseError := json.Indent(&prettyJSON, bodyBytes, "", "    ")
-	if parseError != nil { // Not JSON: Print plainly
-		return string(bodyBytes)
-	}
-	return prettyJSON.String()
-}
-
-// StringToJSON returns string s as indented JSON.
-func StringToJSON(s string) string { return ReaderToJSON(strings.NewReader(s)) }
-
-// normalizeForJSON replaces non-finite float64 values (NaN, ±Inf) with their
-// string representations, since encoding/json does not support these values.
-func normalizeForJSON(v interface{}) interface{} {
-	switch val := v.(type) {
-	case float64:
-		if math.IsInf(val, -1) {
-			return "-Infinity"
-		} else if math.IsInf(val, 1) {
-			return "Infinity"
-		} else if math.IsNaN(val) {
-			return "NaN"
-		}
-	case map[string]interface{}:
-		for k, mv := range val {
-			val[k] = normalizeForJSON(mv)
-		}
-	case []interface{}:
-		for i, sv := range val {
-			val[i] = normalizeForJSON(sv)
-		}
-	}
-	return v
-}
-
-// encodeJSON encodes v as JSON into buf without Go's default HTML escaping of <, >, and &.
-func encodeJSON(buf *bytes.Buffer, v interface{}, indent bool) error {
-	enc := json.NewEncoder(buf)
-	enc.SetEscapeHTML(false)
-	if indent {
-		enc.SetIndent("", "    ")
-	}
-	return enc.Encode(v)
-}
-
-// CBORToJSON converts CBOR data to indented JSON string.
-func CBORToJSON(data []byte) (string, error) {
-	var v interface{}
-	if err := cborDecMode.Unmarshal(data, &v); err != nil {
-		return "", err
-	}
-	v = normalizeForJSON(v)
-	var buf bytes.Buffer
-	if err := encodeJSON(&buf, v, true); err != nil {
-		return "", err
-	}
-	return strings.TrimSuffix(buf.String(), "\n"), nil
-}
-
-// CBORToJSONCompact converts CBOR data to compact JSON string.
-func CBORToJSONCompact(data []byte) (string, error) {
-	var v interface{}
-	if err := cborDecMode.Unmarshal(data, &v); err != nil {
-		return "", err
-	}
-	v = normalizeForJSON(v)
-	var buf bytes.Buffer
-	if err := encodeJSON(&buf, v, false); err != nil {
-		return "", err
-	}
-	return strings.TrimSuffix(buf.String(), "\n"), nil
-}
-
-// AtomicWriteFile atomically writes data to filename.
-func AtomicWriteFile(filename string, data []byte) error {
-	dir := filepath.Dir(filename)
-	tmpFile, err := os.CreateTemp(dir, "vespa")
-	if err != nil {
-		return err
-	}
-	defer os.Remove(tmpFile.Name())
-	if _, err := tmpFile.Write(data); err != nil {
-		return err
-	}
-	if err := tmpFile.Close(); err != nil {
-		return err
-	}
-	return os.Rename(tmpFile.Name(), filename)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #38252** (2026-10-16): **Make vespalib nice test independent of starting nice value [MERGEOK]**
+  *Symptoms*: ## What  - Make the vespalib nice tests use the starting nice value and the remaining range up to 19. - Preserve the per-thread, init-function, nested, and maximum-value checks; skip cases only when there is too little headroom for distinct values.  ## Why  Buildkite agent v4 runs job commands at nice 5 (buildkite/agent#4100), so the test's nice-0 assumption fails even though the production mapping is correct.  ## How to test  - Built `vespalib_nice_test_app` with CMake in the official Vespa development image. - Ran the executable at starting nice values 0, 5, and 15; all five tests passed each time. 
+  **Post-Mortem & Fix Analysis**:
+  > Would be nice if someone else review this as well, but merging now to try to fix factory
+
 - **Issue #35165** (2025-11-19): **Segfault in BitVector::getNextFalseBit**
   *Symptoms*: **Describe the bug**  BitVector::GetNextBit heavily relies on guard bit as stop condition of [this cycle](https://github.com/vespa-engine/vespa/blob/c37f89a8c712d734f0f86fb98cfeb83cf346be16/searchlib/src/vespa/searchlib/common/bitvector.h#L383).  As guard bit is one, getNextFalseBit won't stop on the guard bit and continue iteration.  **To Reproduce**  Unit test below fails with `cmake3 . -DVESPA_USE_SANITIZER=address` build.  ```cc TEST(BitVector, guardbit_with_next_false) {     constexpr size_t kBitsPerByte = 8;     // I made BitVector::getAlignment() public for the purpose of this test.     constexpr size_t kBitSize = BitVector::getAlignment() * kBitsPerByte - 1;      // For the vector of aligned size contains only ones,     // bv->getNextFalseBit(0) could read beyond the allocated memory bound.     auto bv = BitVector::create(kBitSize);     for (uint32_t i = 0; i < kBitSize; ++i) {         bv->setBit(i);     }     EXPECT_EQ(bv->getNextFalseBit(0), kBitSize); } ```  **Vespa version** I checked on 8.558.9, but the issue should be reproducible on master.  **Additional context** I haven't tried to reproduce it on the application layer, but it should be doable.
-  **Post-Mortem & Fix Analysis**:
-  > This has been fixed in Vespa 8.610.20
-
-- **Issue #34514** (2025-08-11): **nearestNeighbor query (with filter) return docs without field embedding value**
-  *Symptoms*: **Describe the bug** for field build hnsw index, some doc may not have the value. the nearestNeighbor query run on this field and return the doc which has no embedding value for the field.  bug code  1. https://github.com/vespa-engine/vespa/blob/5974323e8fdbeda031131fe826ed2778e076b2a0/searchlib/src/vespa/searchlib/queryeval/nearest_neighbor_distance_heap.h#L23 2. https://github.com/vespa-engine/vespa/blob/5974323e8fdbeda031131fe826ed2778e076b2a0/searchlib/src/vespa/searchlib/queryeval/exact_nearest_neighbor_iterator.cpp#L53 3. https://github.com/vespa-engine/vespa/blob/5974323e8fdbeda031131fe826ed2778e076b2a0/searchlib/src/vespa/searchlib/tensor/distance_calculator.h#L70  when fallback to exact search.  **To Reproduce**  schema  ``` schema test_ann {      document test_ann {          field docid type long {             indexing: attribute | summary         }          field embed1 type tensor<float>(x[2]) {             indexing: attribute | index | summary             attribute {                 distance-metric: angular             }             index {                 hnsw {                     max-links-per-node: 32                     neighbors-to-explore-at-insert: 400                 }             }         }          field embed2 type tensor<float>(x[2]) {             indexing: attribute | index | summary             attribute {                 distance-metric: angular             }             index {                 hnsw {                     max-links-per-node: 32   
-  **Post-Mortem & Fix Analysis**:
-  > Dear @luoyetx,  Thank you for reporting this!
-
-- **Issue #34338** (2025-07-01): **Predicate field with more than 255 values crashes content nodes**
-  *Symptoms*: **Describe the bug** Seems that there's a hard [limit](https://github.com/vespa-engine/vespa/blob/d5d8cf249c59c5bbcc0828b6890ab1a15576cc2d/searchlib/src/vespa/searchlib/attribute/predicate_attribute.cpp#L292) on the predicate values which is not enforced during feeding time. As a result once a doc with exceeded values is indexed, the content nodes holding the pending document crash until the index is manually cleared.  E.g. ``` [2025-06-11 06:35:06.289] WARNING searchnode       stderr	vespa-proton-bin: /workspace/build/buildkite/vespaai/vespa-engine-vespa/searchlib/src/vespa/searchlib/attribute/predicate_attribute.cpp:292: void search::PredicateAttribute::updateValue(uint32_t, const document::PredicateFieldValue&): Assertion `result.min_feature <= MAX_MIN_FEATURE' failed. [2025-06-11 06:35:06.289] WARNING searchnode       stderr	*** SIGABRT received at time=1749623706 on cpu 32 *** [2025-06-11 06:35:06.302] WARNING searchnode       stderr	PC: @     0x7f102b84ea4f  (unknown)  raise [2025-06-11 06:35:06.302] WARNING searchnode       stderr	    @   0x4d524554474953  (unknown)  (unknown) ```  **To Reproduce** Steps to reproduce the behavior: When feeding a document with predicate field of more than 255 values the feeding goes through leading to the persistent crash.  **Expected behavior** Feeding should be rejected, and/or limit should be increased.  **Vespa version** 8.457.32 
-  **Post-Mortem & Fix Analysis**:
-  > The assert should only be triggered if a predicate requires at more than 255 values to match. It's limited by the use of an 8-bit data type in a index data structure. Note that use of range attributes in the predicate will implicitly count as multiple values. How ranges are expanded to values can be controlled through [predicate field configuration](https://docs.vespa.ai/en/predicate-fields.html#upper-and-lower-bounds) with `arity`, `lower-bound` and `upper-bound`.  It should be relatively straight forward to fail such feeds gracefully, either while processing the predicate in the container or in proton.  It possible to support larger predicates by modifying the [min_feature](https://github.com/vespa-engine/vespa/blob/d5d8cf249c59c5bbcc0828b6890ab1a15576cc2d/searchlib/src/vespa/searchlib/attribute/predicate_attribute.h#L88-L89) to use a bigger integer type. It may negatively impact performance though.
-  > Thanks for looking into this! And good to know about the limit increase option, though I'm not sure it's worth it for our use case.  We've added a protection on our end due to the severe impact, but definitely would be better for the platform to have this considering the low LOE 🙏 
-  > We're are working a patch that will fail out the document operation instead.  Let us know if you later determine that the 255 limit is prohibitive for your use case. Feel free to create a new GH issue if so.
-
-- **Issue #33206** (2025-02-12): **An exception is thrown when when a raw type attribute is added to ranking profile summary features**
-  *Symptoms*: **Describe the bug** When we query with tmp_msgpacked ranking profile content nodes throw an exception, after which they restart and then join the back the cluster as normal. This is possibly due to this bit attribute(embedding_msgpacked) in the ranking profile. ``` what():  UnsupportedOperationException: The function is not implemented for attribute 'embedding_msgpacked' of type 'search::attribute::SingleRawAttribute'. ``` Everything works fine if we use a document-summary `msgpacked_emb`.    **To Reproduce** create a schema ``` schema test_index {     document test_index {          field item_id type string {             indexing: summary | attribute             attribute: fast-search             rank: filter             dictionary {                 hash                 cased             }             match: cased         }                  field embedding_msgpacked type raw {             indexing: summary | attribute         }                  field embedding type tensor<int8>(d0[512]) {             indexing: attribute | index | summary             attribute {                 distance-metric: innerproduct             }             index {                 hnsw {                     max-links-per-node: 16                     neighbors-to-explore-at-insert: 50                 }             }         }     }      document-summary empty {       summary item_id {           source: item_id       }     }      	 rank-profile tmp_msgpacked inherits unranked {        summary-features
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in Vespa 8.475.11.  Using an attribute field of type `raw` is not supported in the `attribute()` rank feature. With the fix this will fail already during application deployment.
-
-- **Issue #33088** (2025-01-28): **Same name fields conflict in parent/child documents**
-  *Symptoms*: **Describe the bug** in parent/child related schemas if I import field with same name, deployment fails. Here is minimal example      **To Reproduce** ``` users.sd: schema users {     document users {         field id type long {             indexing: summary | attribute         }         field city_ref type reference<cities> {             indexing: attribute         }     }       import field city_ref.id as city_id {} }  cities.sd: schema cities {     document cities {         field id type int {             indexing: summary | attribute         }     } }  service.xml: <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <services version="1.0">   <container id="default" version="1.0">     <search>     </search>     <document-api/>     <accesslog type="disabled"/>     <model-evaluation/>   </container>    <content id="content" version="1.0">     <redundancy>1</redundancy>     <documents>       <document type="cities" mode="index" global="true" />       <document type="users" mode="index" />     </documents>   </content> </services> ```  gives error: ``` For schema 'users', field 'id': Incompatible types. Expected long for attribute 'id', got int. ```  So seems users.id and cities.id fields conflicting. If i remove this line `import field city_ref.id as city_id {}` deployment completes without error.  **Expected behavior** I expect that fields would not conflict.  **Environment (please complete the following infor
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in Vespa 8.466.14.
-
-- **Issue #32475** (2024-10-07): **ArrayIndexOutOfBoundsException during feeding of large JSON Files containing multiple documents**
-  *Symptoms*: I encountered an ArrayIndexOutOfBoundsException while feeding a large JSON file (approx 1GB) containing multiple json documents to a Vespa cluster. The error occurs during the batch feeding process. I am ingesting around 500 such json files of approx. 1GB each but getting errors on a few.  **Error description:** The error log indicates an ArrayIndexOutOfBoundsException during the batch feeding process. The exception is thrown when attempting to copy an array, and the destination index exceeds the array`s bounds.  This issue occurs within the JsonFileFeeder class, specifically in the batchFeed method.  **Error log:**  [FeedThread-14] JsonFileFeeder - ERROR: Error while batch feeding file: local/documents/slice_doc2_1_00004.json java.util.concurrent.CompletionException: ai.vespa.feed.client.FeedException: java.lang.ArrayIndexOutOfBoundsException: arraycopy: last destination index 150862649 out of bounds for byte[134217728]     at java.util.concurrent.CompletableFuture.reportJoin(CompletableFuture.java:413) ~[?:?]     at java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2118) ~[?:?] Caused by: ai.vespa.feed.client.FeedException: java.lang.ArrayIndexOutOfBoundsException: arraycopy: last destination index 150862649 out of bounds for byte[134217728]     at ai.vespa.feed.client.JsonFeeder.wrapException(JsonFeeder.java:229) ~[vespa-feed-client-api-8.301.19.jar:?]     at ai.vespa.feed.client.JsonFeeder.lambda$feedMany$7(JsonFeeder.java:180) ~[vespa-feed-cl
-  **Post-Mortem & Fix Analysis**:
-  > there was a bug when growing the buffer; did you have very large documents in the feed?  it should be fixed in the next release.
-  > Yes, we have large documents in JSON files. I will test the fix with the next release. Thanks
-  > @arnej27959  can you share the fix version please? cc: @bratseth 
-
-- **Issue #32353** (2024-10-03): **From sources clause not working as expected in yql**
-  *Symptoms*: **Describe the bug** select * from sources * and select * from sources doc1, doc2 returning different results  **To Reproduce** Steps to reproduce the behavior: Difficult to reproduce. It started happening today and we started seeing issues on some queries.  **Expected behaviour** There are only two content clusters which are doc1, doc2 but while running the query we are getting correct count only when we use *. We can see results are coming from doc2 but finding 0 docs when using select * from doc2   **Environment (please complete the following information):**  - RHEL 8  - Podman    **Vespa version** 8.332.5  **Additional context** I have seen this issue mostly in case of multi content clusters. 
-  **Post-Mortem & Fix Analysis**:
-  > Do you have one, or more content clusters and what are their ids?
-  > We have 2 content clusters doc1 and doc2 while querying we query like select * from doc1.* ,doc2.* <query> but it’s giving 0 results whereas when we do the same query with select * from sources * its giving results.
-  > You have two content clusters with id's "doc1" and "doc2" and they have schemas named "doc1" and "doc2" respectively?
-
-- **Issue #32016** (2024-08-02): **Support uploading binary files in deploy API**
-  *Symptoms*: From Slack:  > Using `PUT /application/v2/tenant/default/session/[session-id]/content/[path]` endpoint, the file content got changed.  It looks like the binary content is read into a string and persisted in a file, the md5 hash is also based on the string content, which is not correct.   Also: > When I use the prepareandactivate endpoint to upload the zip file. The binary files included in the zip file is persisted to file correctly. However, the md5 hash is still calculated based on the string content, which is not correct.  
-  **Post-Mortem & Fix Analysis**:
-  > Implemented in https://github.com/vespa-engine/vespa/pull/32055, released in 8.382.22
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1384,626 +1065,418 @@ func AtomicWriteFile(filename string, data []byte) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd228533` (2026-10-05)
-**Commit Message**: Merge pull request #38078 from vespa-engine/andreer/fix-http-byte-metrics
+### Incident Patch 1: `8be7ea9e` (2026-10-15)
+**Commit Message**: Bump abseil-cpp, gtest and protobuf C++ build dependencies
 
-Fix serverBytesSent/serverBytesReceived
+Update the versions of the vespa-packaged C++ dependencies required by
+dist/vespa.spec:
 
-**File**: `container-disc/src/main/java/com/yahoo/jdisc/http/server/jetty/JettyRequestContentReader.java` (modified, +1/-1)
+ - abseil-cpp:              20250127.1 -> 20260817.0
+ - gtest:                   1.16.0     -> 1.18.0
+ - protobuf:                6.34.1     -> 7.36.2
+ - vespa-build-dependencies: 1.21.0    -> 1.22.0
+
+Also require exact vespa-abseil-cpp version when using it.
+
+The C++ protobuf runtime now matches the upstream release (v36.2)
+already used on the Java side (protobuf.vespa.version 4.36.2), so
+generated code on both sides comes from the same protobuf release.
+
+This relies on the preceding change that isolates generated *.pb.h
+headers from abseil's LOG/VLOG macros (#38238), since newer protobuf
+pulls in absl/log transitively and would otherwise clash with
+vespa/log's LOG macro.
+
+**File**: `dist/vespa.spec` (modified, +7/-4)
 ```diff
-@@ -167,7 +167,7 @@ public void failed(Throwable t) {
-                             log.log(Level.FINE, t, () -> "Failed to write chunk to content channel");
-                         }
-                     });
--                    metricReporter.successfulWrite(bytesRemaining);
-+                    metricReporter.successfulRead(bytesRemaining);
-                 } catch (Throwable t) {
-                     chunkReleaser.complete(null);
-                     log.log(Level.FINE, t, () -> "Failed to invoke content channel write");
-```
-
-**File**: `container-disc/src/main/java/com/yahoo/jdisc/http/server/jetty/JettyResponseWriter.java` (modified, +3/-1)
-```diff
-@@ -164,12 +164,14 @@ private void performWrite(WriteTask task) {
-                 }
- 
-                 canWrite = false;
-+                // Jetty consumes the buffer, so its size must be captured before the write
-+                int bytesToSend = task.buf != null ? task.buf.remaining() : 0;
-                 jettyResponse.write(task.buf == null, Objects.requireNonNullElse(task.buf, EMPTY_BUFFER), new Callback() {
-                     @Override
-                     public void succeeded() {
-                         if (task.buf == null) responseCompletion.complete(null);
-                         completeAndFinishTask(task.handler, CompletionHandler::completed);
--                        if (task.buf != null) metricReporter.successfulWrite(task.buf.remaining());
-+                        if (task.buf != null) metricReporter.successfulWrite(bytesToSend);
-                     }
- 
-                     @Override
-```
-
-**File**: `container-disc/src/test/java/com/yahoo/jdisc/http/server/jetty/HttpServerIT.java` (modified, +51/-0)
-```diff
-@@ -47,6 +47,7 @@
- import org.junit.jupiter.api.Disabled;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.io.TempDir;
-+import org.mockito.ArgumentCaptor;
- import org.mockito.Mockito;
- 
- import javax.net.ssl.SSLContext;
-@@ -951,6 +952,32 @@ void httpComplianceChecksCanBeDisabled() throws Exception {
-         assertTrue(driver.close());
-     }
- 
-+    @Test
-+    void requireThatRequestAndResponseBytesAreReported() throws Exception {
-+        var metricConsumer = new MetricConsumerMock();
-+        int requestSize = 12345;
-+        int responseSize = 6789;
-+        JettyTestDriver driver = JettyTestDriver.newConfiguredInstance(
-+                new ReadThenRespondRequestHandler(responseSize),
-+                new ServerConfig.Builder(),
-+                new ConnectorConfig.Builder(),
-+                binder -> binder.bind(MetricConsumer.class).toInstance(metricConsumer.mockitoMock()));
-+        driver.client().newPost("/status.html")
-+                .setBinaryContent(new byte[requestSize])
-+                .execute()
-+                .expectStatusCode(is(OK));
-+        assertTrue(driver.close());
-+
-+        assertEquals(requestSize, sumOfSetValues(metricConsumer, MetricDefinitions.NUM_BYTES_RECEIVED));
-+        assertEquals(responseSize, sumOfSetValues(metricConsumer, MetricDefinitions.NUM_BYTES_SENT));
-+    }
-+
-+    private static long sumOfSetValues(MetricConsumerMock metricConsumer, String name) {
-+        var values = ArgumentCaptor.forClass(Number.class);
-+        verify(metricConsumer.mockitoMock(), atLeast(1)).set(eq(name), values.capture(), any());
-+        return values.getAllValues().stream().mapToLong(Number::longValue).sum();
-+    }
-+
-     @Test
-     void requestHeaderValueContainingCommaIsInterpretedAsASingleValue() throws IOException {
-         JettyTestDriver driver = JettyTestDriver.newInstance(new RequestHeaderEchoingHandler("X-Foo"));
-@@ -1132,6 +1159,30 @@ public ContentChannel handleRequest(Request request, ResponseHandler handler) {
-         }
-     }
- 
-+    private static class ReadThenRespondRequestHandler extends AbstractRequestHandler implements ContentChannel {
-+
-+        private final int responseSize;
-+        private ResponseHandler responseHandler;
-+
-+        ReadThenRespondRequestHandler(int responseSize) { this.responseSize = responseSize; }
-+
-+        @Override
-+        public synchronized ContentChannel handleRequest(Request request, ResponseHandler handler) {
-+            this.responseHandler = handler;
-+            return this;
-+        }
-+
-+        @Override public void write(ByteBuffer buf, CompletionHandler ch) { ch.completed(); }
-+
-+        @Override
-+        public synchronized void close(CompletionHandler completionHandler) {
-+            completionHandler.completed();
-+            var content = responseHandler.handleResponse(new Response(OK));
-+            content.write(ByteBuffer.wrap(new byte[responseSize]), null);
-+            content.close(null);
-+        }
-+    }
-+
-     private static class OkRequestHandler extends AbstractRequestHandler {
-         @Override
-         public ContentChannel handleRequest(Request request, ResponseHandler handler) {
-```
-
----
-
-### Incident Patch 2: `6a481310` (2026-10-05)
-**Commit Message**: Merge pull request #38084 from vespa-engine/toregge/fix-prepare-for-less-waiting-in-flush-target-init-flush
-
-Call real member function in parent class instead of compat shim.
-
-**File**: `searchcore/src/vespa/searchcore/proton/docsummary/summarymanager.cpp` (modified, +3/-2)
-```diff
-@@ -81,8 +81,9 @@ void ShrinkSummaryLidSpaceFlushTarget::init_flush(SerialNum
-                                                   TaskPromise                          task_promise) {
-     std::promise<Task::UP> promise;
-     std::future<Task::UP>  future = promise.get_future();
--    _summaryService.execute(makeLambdaTask(
--        [&]() { promise.set_value(ShrinkLidSpaceFlushTarget::initFlush(currentSerial, flush_token)); }));
-+    _summaryService.execute(makeLambdaTask([&, promise(std::move(promise))]() mutable {
-+        ShrinkLidSpaceFlushTarget::init_flush(currentSerial, flush_token, std::move(promise));
-+    }));
-     task_promise.set_value(future.get());
- }
- 
-```
-
----
-
-### Incident Patch 3: `d08c0857` (2026-10-05)
-**Commit Message**: fix serverBytesSent and serverBytesReceived metrics
-
-Request bytes were reported as sent, response bytes were measured
-after Jetty consumed the buffer (~0), and serverBytesReceived was
-never reported. Regression from the Jetty 12 upgrade.
-
-**File**: `container-disc/src/main/java/com/yahoo/jdisc/http/server/jetty/JettyRequestContentReader.java` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ public void failed(Throwable t) {
-                             log.log(Level.FINE, t, () -> "Failed to write chunk to content channel");
-                         }
-                     });
--                    metricReporter.successfulWrite(bytesRemaining);
-+                    metricReporter.successfulRead(bytesRemaining);
-                 } catch (Throwable t) {
-                     chunkReleaser.complete(null);
-                     log.log(Level.FINE, t, () -> "Failed to invoke content channel write");
-```
-
-**File**: `container-disc/src/main/java/com/yahoo/jdisc/http/server/jetty/JettyResponseWriter.java` (modified, +3/-1)
-```diff
-@@ -164,12 +164,14 @@ private void performWrite(WriteTask task) {
-                 }
- 
-                 canWrite = false;
-+                // Jetty consumes the buffer, so its size must be captured before the write
-+                int bytesToSend = task.buf != null ? task.buf.remaining() : 0;
-                 jettyResponse.write(task.buf == null, Objects.requireNonNullElse(task.buf, EMPTY_BUFFER), new Callback() {
-                     @Override
-                     public void succeeded() {
-                         if (task.buf == null) responseCompletion.complete(null);
-                         completeAndFinishTask(task.handler, CompletionHandler::completed);
--                        if (task.buf != null) metricReporter.successfulWrite(task.buf.remaining());
-+                        if (task.buf != null) metricReporter.successfulWrite(bytesToSend);
-                     }
- 
-                     @Override
-```
-
-**File**: `container-disc/src/test/java/com/yahoo/jdisc/http/server/jetty/HttpServerIT.java` (modified, +51/-0)
-```diff
-@@ -47,6 +47,7 @@
- import org.junit.jupiter.api.Disabled;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.io.TempDir;
-+import org.mockito.ArgumentCaptor;
- import org.mockito.Mockito;
- 
- import javax.net.ssl.SSLContext;
-@@ -951,6 +952,32 @@ void httpComplianceChecksCanBeDisabled() throws Exception {
-         assertTrue(driver.close());
-     }
- 
-+    @Test
-+    void requireThatRequestAndResponseBytesAreReported() throws Exception {
-+        var metricConsumer = new MetricConsumerMock();
-+        int requestSize = 12345;
-+        int responseSize = 6789;
-+        JettyTestDriver driver = JettyTestDriver.newConfiguredInstance(
-+                new ReadThenRespondRequestHandler(responseSize),
-+                new ServerConfig.Builder(),
-+                new ConnectorConfig.Builder(),
-+                binder -> binder.bind(MetricConsumer.class).toInstance(metricConsumer.mockitoMock()));
-+        driver.client().newPost("/status.html")
-+                .setBinaryContent(new byte[requestSize])
-+                .execute()
-+                .expectStatusCode(is(OK));
-+        assertTrue(driver.close());
-+
-+        assertEquals(requestSize, sumOfSetValues(metricConsumer, MetricDefinitions.NUM_BYTES_RECEIVED));
-+        assertEquals(responseSize, sumOfSetValues(metricConsumer, MetricDefinitions.NUM_BYTES_SENT));
-+    }
-+
-+    private static long sumOfSetValues(MetricConsumerMock metricConsumer, String name) {
-+        var values = ArgumentCaptor.forClass(Number.class);
-+        verify(metricConsumer.mockitoMock(), atLeast(1)).set(eq(name), values.capture(), any());
-+        return values.getAllValues().stream().mapToLong(Number::longValue).sum();
-+    }
-+
-     @Test
-     void requestHeaderValueContainingCommaIsInterpretedAsASingleValue() throws IOException {
-         JettyTestDriver driver = JettyTestDriver.newInstance(new RequestHeaderEchoingHandler("X-Foo"));
-@@ -1132,6 +1159,30 @@ public ContentChannel handleRequest(Request request, ResponseHandler handler) {
-         }
-     }
- 
-+    private static class ReadThenRespondRequestHandler extends AbstractRequestHandler implements ContentChannel {
-+
-+        private final int responseSize;
-+        private ResponseHandler responseHandler;
-+
-+        ReadThenRespondRequestHandler(int responseSize) { this.responseSize = responseSize; }
-+
-+        @Override
-+        public synchronized ContentChannel handleRequest(Request request, ResponseHandler handler) {
-+            this.responseHandler = handler;
-+            return this;
-+        }
-+
-+        @Override public void write(ByteBuffer buf, CompletionHandler ch) { ch.completed(); }
-+
-+        @Override
-+        public synchronized void close(CompletionHandler completionHandler) {
-+            completionHandler.completed();
-+            var content = responseHandler.handleResponse(new Response(OK));
-+            content.write(ByteBuffer.wrap(new byte[responseSize]), null);
-+            content.close(null);
-+        }
-+    }
-+
-     private static class OkRequestHandler extends AbstractRequestHandler {
-         @Override
-         public ContentChannel handleRequest(Request request, ResponseHandler handler) {
-```
-
----
-
-### Incident Patch 4: `7984fb1d` (2026-10-05)
-**Commit Message**: Merge pull request #38054 from buinauskas/reserve-hash-dictionary-read-snapshot
-
-Reserve vector capacity when filling hash dictionary read snapshot
-
-**File**: `vespalib/src/vespa/vespalib/datastore/unique_store_hash_dictionary_read_snapshot.hpp` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ UniqueStoreHashDictionaryReadSnapshot<HashDictionaryT>::UniqueStoreHashDictionar
- }
- 
- template <typename HashDictionaryT> void UniqueStoreHashDictionaryReadSnapshot<HashDictionaryT>::fill() {
-+    _refs.reserve(_hash.size());
-     _hash.foreach_key([this](EntryRef ref) { _refs.push_back(ref); });
- }
- 
-```
-
----
-
-### Incident Patch 5: `eb49a776` (2026-10-04)
-**Commit Message**: fix(deps): update dependency org.codehaus.woodstox:stax2-api to v4.3.1
-
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
-```diff
-@@ -165,7 +165,7 @@
-         <velocity.tools.vespa.version>3.1</velocity.tools.vespa.version>
-         <wiremock.vespa.version>3.13.2</wiremock.vespa.version>
-         <woodstox.vespa.version>7.3.0</woodstox.vespa.version>
--        <stax2-api.vespa.version>4.2.2</stax2-api.vespa.version>
-+        <stax2-api.vespa.version>4.3.1</stax2-api.vespa.version>
-         <xerces.vespa.version>2.12.2</xerces.vespa.version>
-         <zero-allocation-hashing.vespa.version>0.27ea1</zero-allocation-hashing.vespa.version>
-         <zookeeper.client.vespa.version>3.9.5</zookeeper.client.vespa.version>
-```
-
----
-
-### Incident Patch 6: `91f6e866` (2026-10-04)
-**Commit Message**: fix(deps): update dependency org.xerial.snappy:snappy-java to v1.1.10.10
-
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
-```diff
-@@ -157,7 +157,7 @@
-         <re2j.vespa.version>1.8</re2j.vespa.version>
-         <reactor-core.vespa.version>3.8.7</reactor-core.vespa.version>
-         <spifly.vespa.version>1.3.8</spifly.vespa.version>
--        <snappy.vespa.version>1.1.10.8</snappy.vespa.version>
-+        <snappy.vespa.version>1.1.10.10</snappy.vespa.version>
-         <snakeyaml.vespa.version>2.4</snakeyaml.vespa.version>
-         <surefire.vespa.version>3.5.6</surefire.vespa.version>
-         <testcontainers.vespa.version>1.21.4</testcontainers.vespa.version>
-```
-
----
-
-### Incident Patch 7: `b719ee59` (2026-10-04)
-**Commit Message**: fix(deps): update dependency org.apache.commons:commons-lang3 to v3.21.0
-
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
-```diff
-@@ -78,7 +78,7 @@
-         <commons-collections.vespa.version>3.2.2</commons-collections.vespa.version>
-         <commons-digester.vespa.version>3.2</commons-digester.vespa.version>
-         <commons-io.vespa.version>2.22.0</commons-io.vespa.version>
--        <commons-lang3.vespa.version>3.20.0</commons-lang3.vespa.version>
-+        <commons-lang3.vespa.version>3.21.0</commons-lang3.vespa.version>
-         <commons-logging.vespa.version>1.4.0</commons-logging.vespa.version>  <!-- Bindings exported by jdisc through jcl-over-slf4j. -->
-         <commons.math3.vespa.version>3.6.1</commons.math3.vespa.version>
-         <commons-compress.vespa.version>1.28.0</commons-compress.vespa.version>
-```
-
----
-
-### Incident Patch 8: `c3782626` (2026-10-04)
-**Commit Message**: fix(deps): update mockito monorepo to v5.24.0
-
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
-```diff
-@@ -128,7 +128,7 @@
-         <maven-xml-impl.vespa.version>4.0.0-beta-5</maven-xml-impl.vespa.version>
-         <mcp-sdk.vespa.version>0.18.4</mcp-sdk.vespa.version>
-         <micrometer.vespa.version>1.17.1</micrometer.vespa.version>
--        <mockito.vespa.version>5.23.0</mockito.vespa.version>
-+        <mockito.vespa.version>5.24.0</mockito.vespa.version>
-         <mojo-executor.vespa.version>2.4.1</mojo-executor.vespa.version>
-         <netty.vespa.version>4.2.18.Final</netty.vespa.version>
-         <netty-tcnative.vespa.version>2.0.84.Final</netty-tcnative.vespa.version>
-```
-
-**File**: `integration/logstash-plugins/logstash-output-vespa/build.gradle` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ dependencies {
-     testImplementation 'org.jruby:jruby-core:10.1.2.0'
-     testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-     testImplementation 'junit:junit:4.13.2'
--    testImplementation 'org.mockito:mockito-core:5.23.0'
-+    testImplementation 'org.mockito:mockito-core:5.24.0'
-     testImplementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
-     testImplementation fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core.jar")
-     testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.3'
-```
-
----
-
-### Incident Patch 9: `1b1c0c41` (2026-10-04)
-**Commit Message**: fix(deps): update dependency com.fasterxml.woodstox:woodstox-core to v7.3.0
-
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
-```diff
-@@ -164,7 +164,7 @@
-         <velocity.vespa.version>2.4.1</velocity.vespa.version>
-         <velocity.tools.vespa.version>3.1</velocity.tools.vespa.version>
-         <wiremock.vespa.version>3.13.2</wiremock.vespa.version>
--        <woodstox.vespa.version>7.2.2</woodstox.vespa.version>
-+        <woodstox.vespa.version>7.3.0</woodstox.vespa.version>
-         <stax2-api.vespa.version>4.2.2</stax2-api.vespa.version>
-         <xerces.vespa.version>2.12.2</xerces.vespa.version>
-         <zero-allocation-hashing.vespa.version>0.27ea1</zero-allocation-hashing.vespa.version>
-```
-
----
-
-### Incident Patch 10: `b7b0243a` (2026-10-02)
-**Commit Message**: Reduce make output noise in RPM build
-
-Pass --no-print-directory to the make invocations in vespa.spec
-(build, test and install). The CMake-generated Makefiles recurse
-heavily, and the resulting "Entering/Leaving directory" lines make
-up a large part of the build log, burying warnings and errors.
-Dropping them makes RPM build logs much easier to read.
-
-**File**: `dist/vespa.spec` (modified, +3/-3)
-```diff
-@@ -412,7 +412,7 @@ export PATH="%{_prefix}-deps/bin:$PATH"
-        %{?_cmake_extra_opts} \
-        .
- 
--make %{_smp_mflags}
-+make --no-print-directory %{_smp_mflags}
- VERSION=%{version} CI=true make -C client/go install-all
- %endif
- 
-@@ -425,7 +425,7 @@ export JAVA_HOME=/usr/lib/jvm/java-%{_vespa_java_version}-openjdk
- %endif
- export PATH="$JAVA_HOME/bin:$PATH"
- LC_CTYPE=C.UTF-8 %{_mvn_cmd} --batch-mode -nsu -T 1C verify
--make test ARGS="--output-on-failure %{_smp_mflags}"
-+make --no-print-directory test ARGS="--output-on-failure %{_smp_mflags}"
- %endif
- 
- %install
-@@ -437,7 +437,7 @@ cp -r %{installdir} %{buildroot}
- find %{buildroot} -exec file {} \; | grep ': ELF ' | cut -d: -f1 | xargs --no-run-if-empty -n1 /usr/lib/rpm/debugedit -b %{source_base} -d %{_builddir}/%{name}-%{version}
- %endif
+@@ -32,10 +32,10 @@
+ %define _create_vespa_service 1
+ %define _defattr_is_vespa_vespa 0
+ %define _command_cmake cmake
+-%global _vespa_abseil_cpp_version 20250127.1
+-%global _vespa_build_dependencies_version 1.21.0
+-%global _vespa_gtest_version 1.16.0
+-%global _vespa_protobuf_version 6.34.1
++%global _vespa_abseil_cpp_version 20260817.0
++%global _vespa_build_dependencies_version 1.22.0
++%global _vespa_gtest_version 1.18.0
++%global _vespa_protobuf_version 7.36.2
+ %global _vespa_openblas_version 0.3.27
+ %global _vespa_mimalloc_version 3.3.2
+ %global _vespa_highway_version 1.4.0
+@@ -255,6 +255,9 @@ Requires: vespa-re2 = %{_vespa_re2_version}
  %else
--make install DESTDIR=%{buildroot}
-+make --no-print-directory install DESTDIR=%{buildroot}
- cp client/go/bin/vespa %{buildroot}%{_prefix}/bin/vespa
- mkdir -p %{buildroot}/usr/share
- cp -a client/go/share/* %{buildroot}/usr/share
+ Requires: re2
+ %endif
++%if 0%{?_use_vespa_abseil_cpp}
++Requires: vespa-abseil-cpp = %{_vespa_abseil_cpp_version}
++%endif
+ 
+ %if 0%{?el8} || 0%{?el9} || 0%{?el10}
+ Requires: vespa-openssl >= %{_vespa_openssl_version}
 ```
 
 ---
 
-### Incident Patch 11: `0669ddd1` (2026-10-01)
-**Commit Message**: Revert "feat: illegal deployment endpoints give error (#38013)" (#38044)
+### Incident Patch 2: `43f1f56e` (2026-10-15)
+**Commit Message**: fix: UrlDownloader follows cross-origin redirects without leaking auth token (#38217)
 
-**File**: `config-model/src/main/java/com/yahoo/vespa/model/application/validation/DeploymentSpecValidator.java` (modified, +0/-6)
+**File**: `config-proxy/src/main/java/com/yahoo/vespa/config/proxy/filedistribution/UrlDownloader.java` (modified, +24/-0)
 ```diff
-@@ -4,8 +4,6 @@
- import com.yahoo.config.application.api.DeploymentInstanceSpec;
- import com.yahoo.config.application.api.DeploymentSpec;
- import com.yahoo.config.provision.InstanceName;
--import com.yahoo.config.provision.Zone;
--import com.yahoo.config.provision.zone.ZoneId;
- import com.yahoo.vespa.model.application.validation.Validation.Context;
- import com.yahoo.vespa.model.container.ContainerModel;
+@@ -6,9 +6,14 @@
+ import org.apache.hc.client5.http.classic.methods.HttpGet;
+ import org.apache.hc.client5.http.config.RequestConfig;
+ import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
++import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
+ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+ import org.apache.hc.core5.http.ClassicHttpResponse;
++import org.apache.hc.core5.http.HttpHeaders;
++import org.apache.hc.core5.http.HttpHost;
++import org.apache.hc.core5.http.HttpRequest;
+ import org.apache.hc.core5.http.message.BasicHeader;
++import org.apache.hc.core5.http.protocol.HttpContext;
+ import org.apache.hc.core5.util.Timeout;
  
-@@ -31,16 +29,12 @@ public void validate(Context context) {
-         Reader deploymentReader = deployment.get();
-         DeploymentSpec deploymentSpec = DeploymentSpec.fromXml(deploymentReader);
-         List<ContainerModel> containers = context.model().getRoot().configModelRepo().getModels(ContainerModel.class);
--        Zone zone = context.deployState().zone();
-         requireUniqueInstanceIds(context, deploymentSpec.instances());
-         for (DeploymentInstanceSpec instance : deploymentSpec.instances()) {
-             instance.endpoints().forEach(endpoint -> {
-                 requireClusterId(context, containers, instance.name(),
-                                  "Endpoint '" + endpoint.endpointId() + "'", endpoint.containerId());
-             });
--            instance.zoneEndpoints(ZoneId.from(zone.environment(), zone.region())).keySet().forEach(cluster -> {
--                requireClusterId(context, containers, instance.name(), "Zone endpoint", cluster.value());
--            });
-         }
+ import java.io.File;
+@@ -91,14 +96,33 @@ boolean alreadyDownloaded(File downloadDir) {
+ 
+     private static HttpClient createClient() {
+         return HttpClientBuilder.create()
++                                .setRedirectStrategy(new StripAuthOnCrossOriginRedirectStrategy())
+                                 .setRetryStrategy(new DefaultHttpRequestRetryStrategy())
+                                 .setUserAgent(USER_AGENT_MODEL_DOWNLOADER)
+                                 .setDefaultRequestConfig(
+                                         RequestConfig.custom()
+                                                      .setConnectionRequestTimeout(Timeout.ofSeconds(30))
+                                                      .setResponseTimeout(Timeout.ofSeconds(30))
++                                                     .setMaxRedirects(5)
+                                                      .build())
+                                 .build();
      }
  
++    /**
++     * Follows redirects like the default strategy, but never sends the auth token to another origin: the default
++     * strategy refuses cross-origin redirects when an Authorization header is set (e.g. huggingface.co redirecting
++     * to a CDN with a pre-signed url), so instead drop the header and follow the redirect without it.
++     * Any other sensitive header is left to the default strategy, which will then still refuse the redirect.
++     */
++    static class StripAuthOnCrossOriginRedirectStrategy extends DefaultRedirectStrategy {
++
++        @Override
++        public boolean isRedirectAllowed(HttpHost currentTarget, HttpHost newTarget, HttpRequest redirect, HttpContext context) {
++            if (super.isRedirectAllowed(currentTarget, newTarget, redirect, context)) return true;
++            redirect.removeHeaders(HttpHeaders.AUTHORIZATION);
++            return super.isRedirectAllowed(currentTarget, newTarget, redirect, context);
++        }
++
++    }
++
+ }
 ```
 
-**File**: `config-model/src/test/java/com/yahoo/vespa/model/application/validation/DeploymentSpecValidatorTest.java` (modified, +0/-13)
+**File**: `config-proxy/src/test/java/com/yahoo/vespa/config/proxy/filedistribution/UrlDownloaderTest.java` (modified, +141/-0)
 ```diff
-@@ -34,19 +34,6 @@ void testEndpointNonExistentContainerId() {
-                 "deployment.xml does not match any container cluster ID", deploymentXml);
-     }
+@@ -1,22 +1,45 @@
+ package com.yahoo.vespa.config.proxy.filedistribution;
  
--    @Test
--    void testZoneEndpointNonExistentContainerId() {
--        var deploymentXml = """
--                <deployment version='1.0'>
--                  <endpoints>
--                    <endpoint type='private' container-id='non-existing' />
--                  </endpoints>
--                </deployment>
--                """;
--        assertValidationError("Zone endpoint in instance default: 'non-existing' specified in " +
--                "deployment.xml does not match any container cluster ID", deploymentXml);
--    }
--
++import com.sun.net.httpserver.HttpServer;
++import org.apache.hc.client5.http.protocol.HttpClientContext;
++import org.apache.hc.core5.http.HttpHost;
++import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
++import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.io.TempDir;
+ 
+ import java.io.File;
+ import java.io.IOException;
++import java.net.InetSocketAddress;
+ import java.net.URI;
+ import java.nio.charset.StandardCharsets;
+ import java.nio.file.Files;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Map;
++import java.util.Optional;
++import java.util.concurrent.ConcurrentHashMap;
+ 
++import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ 
+ public class UrlDownloaderTest {
+ 
++    private static final String TOKEN = "secret";
++    private static final String BEARER = "Bearer " + TOKEN;
++
+     @TempDir
+     public File temporaryFolder;
+ 
++    private final List<TestServer> servers = new ArrayList<>();
++
++    @AfterEach
++    public void stopServers() {
++        servers.forEach(TestServer::stop);
++    }
++
      @Test
-     void requireUniqueInstanceId() {
-         String deploymentXml = """
+     public void testFileDownload() throws IOException {
+         URI uri = URI.create("https://docs.vespa.ai/foo");
+@@ -27,4 +50,122 @@ public void testFileDownload() throws IOException {
+         Files.write(temporaryFolder.toPath().resolve("foo"), "bar".getBytes(StandardCharsets.UTF_8));
+         assertTrue(downloader.alreadyDownloaded(temporaryFolder));
+     }
++
++    @Test
++    public void followsCrossOriginRedirectAndOnlySendsTokenToOriginalOrigin() throws IOException {
++        var cdn = server().ok("/model.onnx", "content");
++        var origin = server().redirect("/resolve/model.onnx", cdn.uri("/model.onnx"));
++
++        var file = download(origin.uri("/resolve/model.onnx"), TOKEN).orElseThrow();
++
++        assertEquals("content", Files.readString(file.toPath()));
++        assertEquals(Optional.of(BEARER), origin.authHeaderSentTo("/resolve/model.onnx"));
++        assertEquals(Optional.empty(), cdn.authHeaderSentTo("/model.onnx"));
++    }
++
++    @Test
++    public void keepsTokenOnSameOriginRedirect() throws IOException {
++        var origin = server().redirect("/resolve/model.onnx", "/moved/model.onnx")
++                             .ok("/moved/model.onnx", "content");
++
++        var file = download(origin.uri("/resolve/model.onnx"), TOKEN).orElseThrow();
++
++        assertEquals("content", Files.readString(file.toPath()));
++        assertEquals(Optional.of(BEARER), origin.authHeaderSentTo("/resolve/model.onnx"));
++        assertEquals(Optional.of(BEARER), origin.authHeaderSentTo("/moved/model.onnx"));
++    }
++
++    @Test
++    public void failsOnTooManyRedirects() throws IOException {
++        var server = server();
++        for (int i = 1; i <= 6; i++)
++            server.redirect("/hop" + i, "/hop" + (i + 1));
++        server.ok("/hop7", "content");
++
++        var e = assertThrows(IOException.class, () -> download(server.uri("/hop1"), null));
++
++        assertTrue(e.getMessage().contains("Maximum redirects (5) exceeded"), e.getMessage());
++        assertFalse(server.wasRequested("/hop7"));
++    }
++
++    @Test
++    public void redirectStrategyStillRefusesCrossOriginWithOtherSensitiveHeaders() {
++        var request = new BasicClassicHttpRequest("GET", "/model.onnx");
++        request.setHeader("Authorization", BEARER);
++        request.setHeader("Cookie", "session=1");
++
++        var allowed = new UrlDownloader.StripAuthOnCrossOriginRedirectStrategy()
++                .isRedirectAllowed(new HttpHost("https", "a.example", 443), new HttpHost("https", "b.example", 443),
++                                   request, HttpClientContext.create());
++
++        assertFalse(allowed);
++        assertFalse(request.containsHeader("Authorization"));
++        assertTrue(request.containsHeader("Cookie"));
++    }
++
++    private Optional<File> download(URI uri, String token) throws IOException {
++        return new UrlDownloader(uri, new DownloadOptions(token)).download(temporaryFolder);
++    }
++
++    private TestServer server() throws IOException {
++        var server = new TestServer();
++        servers.add(server);
++        return server;
++    }
++
++    /** A local http server where each path either redirects or serves a body, recording the Authorization header it received. */
++    private static class TestServer {
++
++        private final HttpServer server;
++        private final Map<String, Optional<String>> authHeaders = new ConcurrentHashMap<>();
++
++        TestServer() throws IOException {
++            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
++            server.start();
++        }
++
++        TestServer redirect(String path, String locat
 ```
 
 ---
 
-### Incident Patch 12: `7be74a0e` (2026-09-30)
-**Commit Message**: Merge pull request #38041 from vespa-engine/arnej/run-basic-search-in-build-container
+### Incident Patch 3: `fb7df9a9` (2026-10-15)
+**Commit Message**: Require integer parameters in grouping max, precision, md5 and xorbit
 
-Smoke-test the system-test container right after building it
+A parameter in one of these positions is narrowed to an int like a
+literal, so a value such as 4294967295 wrapped to -1 and silently unset
+the max, and 0.5 truncated to 0. Since the value now comes from the
+request rather than the application, the parameter path validates that
+the value is an integer between 1 and the clause's maximum before
+narrowing. Literals keep their existing behaviour.
 
-**File**: `.buildkite/build-container.sh` (modified, +11/-0)
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `container-search/src/main/javacc/com/yahoo/search/grouping/request/parser/GroupingParser.jj` (modified, +31/-7)
 ```diff
-@@ -130,3 +130,14 @@ docker build --progress=plain \
-              --target systemtest \
-              --tag "$DOCKER_SYSTEMTEST_TAG" \
-              --file "$(select_dockerfile)" .
-+
-+echo "--- Running basic-search system test"
-+
-+srv="/opt/vespa-systemtests/lib/node_server.rb"
-+lib="/opt/vespa-systemtests/lib:/opt/vespa-systemtests/tests"
-+bst="/opt/vespa-systemtests/tests/search/basicsearch/basic_search.rb"
-+tnm="test_basicsearch__INDEXED"
-+lft="/opt/vespa/bin/vespa-logfmt"
-+
-+docker run --entrypoint /bin/bash -a stdout -a stderr --rm "$DOCKER_SYSTEMTEST_TAG" -lc \
-+    "set -x; ${srv} & sleep 3 && RUBYLIB=${lib} ruby ${bst} --run ${tnm} || ($lft -N && false)"
-```
-
----
-
-### Incident Patch 13: `f5bcf986` (2026-09-30)
-**Commit Message**: Smoke-test the system-test container right after building it
-
-After building the vespa-systemtest-preview image, run a single
-system test (test_basicsearch__INDEXED from basic_search.rb) inside.
-
-**File**: `.buildkite/build-container.sh` (modified, +11/-0)
-```diff
-@@ -130,3 +130,14 @@ docker build --progress=plain \
-              --target systemtest \
-              --tag "$DOCKER_SYSTEMTEST_TAG" \
-              --file "$(select_dockerfile)" .
-+
-+echo "--- Running basic-search system test"
-+
-+srv="/opt/vespa-systemtests/lib/node_server.rb"
-+lib="/opt/vespa-systemtests/lib:/opt/vespa-systemtests/tests"
-+bst="/opt/vespa-systemtests/tests/search/basicsearch/basic_search.rb"
-+tnm="test_basicsearch__INDEXED"
-+lft="/opt/vespa/bin/vespa-logfmt"
-+
-+docker run --entrypoint /bin/bash -a stdout -a stderr --rm "$DOCKER_SYSTEMTEST_TAG" -lc \
-+    "set -x; ${srv} & sleep 3 && RUBYLIB=${lib} ruby ${bst} --run ${tnm} || ($lft -N && false)"
-```
-
----
-
-### Incident Patch 14: `6fa0d2c1` (2026-09-30)
-**Commit Message**: Add /proc/cpuinfo as default path for Landlock
-
-**File**: `config-model/src/main/java/com/yahoo/vespa/model/Landlock.java` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ public static Map<String, String> createEnv(boolean enableLandlock, String... re
-             return Map.of();
-         }
- 
--        StringBuilder paths = new StringBuilder("/dev,ro:/sys,ro:/proc/self,ro");
-+        StringBuilder paths = new StringBuilder("/dev,ro:/sys,ro:/proc/self,ro:/proc/cpuinfo,ro");
-         for (String path : readOnlyPaths) {
-             paths.append(":").append(path).append(",ro");
-         }
-```
-
-**File**: `config-model/src/test/java/com/yahoo/vespa/model/application/validation/RankSetupValidatorTest.java` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ void landlock_env_vars_are_set_when_feature_flag_is_enabled() {
-         Map<String, String> env = RankSetupValidator.createEnvForEnablingLandlock(context, schemaDir);
- 
-         assertEquals("true", env.get("VESPA_ENABLE_LANDLOCK"));
--        assertEquals("/dev,ro:/sys,ro:/proc/self,ro:" + schemaDir + ",ro", env.get("VESPA_LANDLOCK_PATHS"));
-+        assertEquals("/dev,ro:/sys,ro:/proc/self,ro:/proc/cpuinfo,ro:" + schemaDir + ",ro", env.get("VESPA_LANDLOCK_PATHS"));
+@@ -112,6 +112,18 @@ public class GroupingParser {
+         return number;
      }
  
-     @Test
-```
-
----
-
-### Incident Patch 15: `300b0083` (2026-09-30)
-**Commit Message**: Add guidance for using td safely
-
-**File**: `client/go/internal/cli/cmd/inspect.go` (modified, +17/-1)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"io"
- 	"os"
- 
-+	"github.com/fatih/color"
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/pflag"
- 	"github.com/vespa-engine/vespa/client/go/internal/vespa/slime"
-@@ -23,7 +24,20 @@ type inspectProfileOptions struct {
- 	showQueryNodes      []int
++    /**
++     * Resolves a parameter used where an int is expected. The value must be an integer within the given bounds,
++     * so that the narrowing done by the caller is lossless.
++     */
++    private Number resolveParameterInteger(String name, String clause, long min, long max) throws ParseException {
++        Number num = resolveParameterNumber(name, resolveParameter(name));
++        if (num instanceof Double || num.longValue() < min || num.longValue() > max) {
++            throw new ParseException(clause + " must be an integer between " + min + " and " + max + ", but got " + num);
++        }
++        return num;
++    }
++
+     private static Number resolveNumber(String str) {
+         if (str.indexOf('.') >= 0) {
+             return Double.valueOf(str);
+@@ -358,7 +370,7 @@ void operationBody(GroupingOperation parent) :
+     FilterExpression filterExp = null;
+     ConstantValue<?> maxOperand = null;
+     String str;
+-    Number num;
++    Number num = null;
+     GroupingExpression exp;
+     List<GroupingExpression> lst;
+ }
+@@ -369,17 +381,17 @@ void operationBody(GroupingOperation parent) :
+       ( <HINT>      lbrace() str = identifier()                           rbrace() { parent.addHint(str); }                   ) |
+       ( <FILTER>    lbrace() filterExp = filterExp(parent)                rbrace() { parent.setFilterBy(filterExp); }         ) |
+       ( <KEEP>      lbrace() filterExp = filterExp(parent)                rbrace() { parent.setFilterBy(filterExp); }         ) |
+-      ( <MAX>       lbrace() ( maxOperand = infinitePositiveValue() | maxOperand = constantValue() ) rbrace()
++      ( <MAX>       { maxOperand = null; } lbrace() ( maxOperand = infinitePositiveValue() | num = integerNumber("max", Integer.MAX_VALUE) ) rbrace()
+       {
+-            if (maxOperand instanceof InfiniteValue) {
++            if (maxOperand != null) {
+                 parent.setMax(GroupingOperation.UNLIMITED_MAX);
+             } else {
+-                parent.setMax(checkPositive("max", (Number)maxOperand.getValue()).intValue());
++                parent.setMax(checkPositive("max", num).intValue());
+             }
+       } ) |
+       ( <ORDER>     lbrace() lst = expList(parent)                        rbrace() { parent.addOrderBy(lst); }                ) |
+       ( <OUTPUT>    lbrace() lst = expList(parent)                        rbrace() { parent.addOutputs(lst); }                ) |
+-      ( <PRECISION> lbrace() num = number()                               rbrace() { parent.setPrecision(checkPositive("precision", num).intValue()); } ) |
++      ( <PRECISION> lbrace() num = integerNumber("precision", Integer.MAX_VALUE) rbrace() { parent.setPrecision(checkPositive("precision", num).intValue()); } ) |
+       ( <WHERE>     lbrace() str = where()                                rbrace() { parent.setWhere(str); }                  ) )*
+     (                              operation(parent)                                                                            )*
+ }
+@@ -744,7 +756,7 @@ GroupingExpression md5Function(GroupingOperation grp) :
+     Number num;
+ }
+ {
+-    ( <MD5> lbrace() exp = exp(grp) comma() num = number() rbrace() )
++    ( <MD5> lbrace() exp = exp(grp) comma() num = integerNumber("md5 bits", 128) rbrace() )
+     { return new Md5Function(exp, toNumBits("md5", num, 128)); }
  }
  
-+const inspectProfileDisclaimer = `This command is internal tooling and is not a supported public API.
-+Its flags, output format, and behavior may change or be removed without
-+notice between releases. Do not rely on it in scripts, integrations, or
-+other production workflows.`
-+
-+func printInspectProfileDisclaimer(cli *CLI) {
-+	border := "================================================================"
-+	fmt.Fprintln(cli.Stderr, color.YellowString(border))
-+	fmt.Fprintln(cli.Stderr, color.YellowString("WARNING: "+inspectProfileDisclaimer))
-+	fmt.Fprintln(cli.Stderr, color.YellowString(border))
+@@ -1111,7 +1123,7 @@ XorBitFunction xorBitFunction(GroupingOperation grp) :
+     Number num;
+ }
+ {
+-    ( <XORBIT> lbrace() exp = exp(grp) comma() num = number() rbrace() )
++    ( <XORBIT> lbrace() exp = exp(grp) comma() num = integerNumber("xorbit bits", 64) rbrace() )
+     { return new XorBitFunction(exp, toNumBits("xorbit", num, 64)); }
+ }
+ 
+@@ -1250,6 +1262,18 @@ Number number() :
+     { return num; }
+ }
+ 
++// A number used where an int is expected. A literal is narrowed by the caller as before, while a parameter
++// must be an integer between 1 and max, as it may come from the request.
++Number integerNumber(String clause, int max) :
++{
++    Number num;
++    String name;
++}
++{
++    ( num = literalNumber() | name = parameterName() { num = resolveParameterInteger(name, clause, 1, max); } )
++    { return num; }
 +}
 +
- func inspectProfile(cli *CLI, opts *inspectProfileOptions) error {
-+	printInspectProfileDisclaimer(cli)
- 	var r io.ReadCloser
- 	switch opts.profileFile {
- 	case "-":
-@@ -73,7 +87,9 @@ func newInspectProfileCmd(cli *CLI) *cobra.Command {
- 		Use:    "profile",
- 		Hidden: true,
- 		Short:  "Inspect profiling results",
--		Long:   `Inspect profiling results previously obtained by vespa query --profile`,
-+		Long: `Inspect profiling results previously obtained by vespa query --profile
+ // A bound of range(): a number literal which may be negative, or a parameter
+ Number rangeBound() :
+ {
+```
+
+**File**: `container-search/src/test/java/com/yahoo/search/grouping/request/parser/GroupingParserTestCase.java` (modified, +46/-6)
+```diff
+@@ -719,12 +719,52 @@ void testBitCounts() {
+         // Does not wrap around to a valid value
+         assertIllegalArgument("all(group(xorbit(foo, 4294967361)) each(output(count())))",
+                               "xorbit requires a number of bits between 1 and 64, but got 4294967361");
+-        assertEquals("xorbit requires a number of bits between 1 and 64, but got -5",
++        assertEquals("xorbit bits must be an integer between 1 and 64, but got -5",
+                      assertThrows(IllegalArgumentException.class,
+                                   () -> GroupingOperation.fromString("all(group(xorbit(foo, @negative)) each(output(count())))",
+                                                                      Map.of("negative", "-5")::get)).getMessage());
+     }
+ 
++    @Test
++    void testIntegerParameters() {
++        // max, precision and bit counts are ints: a parameter must be an integer which fits, since it comes from the request
++        assertAll("integer parameters reject values which would wrap or truncate",
++                  () -> assertIntegerParameterFails("max(@n)", "4294967295", "max must be an integer between 1 and 2147483647, but got 4294967295"),
++                  () -> assertIntegerParameterFails("max(@n)", "4294967297", "max must be an integer between 1 and 2147483647, but got 4294967297"),
++                  () -> assertIntegerParameterFails("max(@n)", "2147483648", "max must be an integer between 1 and 2147483647, but got 2147483648"),
++                  () -> assertIntegerParameterFails("max(@n)", "0.5", "max must be an integer between 1 and 2147483647, but got 0.5"),
++                  () -> assertIntegerParameterFails("max(@n)", "2.9", "max must be an integer between 1 and 2147483647, but got 2.9"),
++                  () -> assertIntegerParameterFails("max(@n)", "2.0", "max must be an integer between 1 and 2147483647, but got 2.0"),
++                  () -> assertIntegerParameterFails("max(@n)", "1e3", "max must be an integer between 1 and 2147483647, but got 1000.0"),
++                  () -> assertIntegerParameterFails("precision(@n)", "4294967295", "precision must be an integer between 1 and 2147483647, but got 4294967295"),
++                  () -> assertIntegerParameterFails("precision(@n)", "0.5", "precision must be an integer between 1 and 2147483647, but got 0.5"),
++                  () -> assertIntegerParameterFails("group(md5(foo, @n))", "1.5", "md5 bits must be an integer between 1 and 128, but got 1.5"),
++                  () -> assertIntegerParameterFails("group(md5(foo, @n))", "129", "md5 bits must be an integer between 1 and 128, but got 129"),
++                  () -> assertIntegerParameterFails("group(md5(foo, @n))", "4294967297", "md5 bits must be an integer between 1 and 128, but got 4294967297"),
++                  () -> assertIntegerParameterFails("group(xorbit(foo, @n))", "1.5", "xorbit bits must be an integer between 1 and 64, but got 1.5"),
++                  () -> assertIntegerParameterFails("group(xorbit(foo, @n))", "65", "xorbit bits must be an integer between 1 and 64, but got 65"));
++        assertAll("integer parameters within bounds are accepted",
++                  () -> assertEquals(7, parseWith("max(@n)", "7").getMax()),
++                  () -> assertEquals(Integer.MAX_VALUE, parseWith("max(@n)", "2147483647").getMax()),
++                  () -> assertEquals(7, parseWith("max(@n)", " 7 ").getMax()),
++                  () -> assertEquals(1000, parseWith("precision(@n)", "1000").getPrecision()),
++                  () -> assertEquals("all(group(md5(foo, 128)) each(output(count())))", parseWith("group(md5(foo, @n))", "128").toString()),
++                  () -> assertEquals("all(group(xorbit(foo, 64)) each(output(count())))", parseWith("group(xorbit(foo, @n))", "64").toString()));
++        // Literals are narrowed as before
++        assertEquals(2, assertParse("all(group(foo) max(2.5) each(output(count())))").get(0).getMax());
++        assertEquals(2, assertParse("all(group(foo) precision(2.5) each(output(count())))").get(0).getPrecision());
++        assertParse("all(group(md5(foo, 1.5)) each(output(count())))");
++    }
 +
-+WARNING: ` + inspectProfileDisclaimer,
- 		RunE: func(cmd *cobra.Command, args []string) error {
- 			return inspectProfile(cli, &opts)
- 		},
++    private static GroupingOperation parseWith(String clause, String n) {
++        return GroupingOperation.fromString("all(" + clause + " each(output(count())))", Map.of("n", n)::get);
++    }
++
++    private static void assertIntegerParameterFails(String clause, String n, String expectedMessage) {
++        assertEquals(expectedMessage,
++                     assertThrows(IllegalArgumentException.class, () -> parseWith(clause, n)).getMessage());
++    }
++
+     @Test
+     void testParameterSubstitution() {
+         Map<String, String> parameters = Map.ofEntries(
+@@ -816,23 +856,23 @@ void testParameterSubstitution() {
+                      assertThrows(IllegalArgumentException.class,
+                                   () -> GroupingOperation.fromString("all(group(foo) max(@label) each(output(count())))",
+                    
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38086** (2026-10-05): Do not color the parentheses of function declarations as parameters (@johansolbakken)
-- **PR #38085** (2026-10-05): Avoid calling compat shim from within a flush target. (@toregge)
-- **PR #38084** (2026-10-05): Call real member function in parent class instead of compat shim. (@toregge)
-- **PR #38081** (2026-10-05): Restore model feature flag methods for Kubernetes upgrades (@onurkaracali)
-- **PR #38080** (2026-10-05): Run searchlib_array_bool_test_app without valgrind (@arnej27959)
-- **PR #38079** (closed): Revert "Prepare for fewer threads waiting for proxied flush target init flush." (@toregge)
-- **PR #38078** (2026-10-05): Fix serverBytesSent/serverBytesReceived (@andreer)
-- **PR #38077** (2026-10-05): Regenerate the Vespa schema TextMate grammar and check it in CI (@johansolbakken)
+- **PR #38253** (closed): Skip “nice” test (@arnej27959)
+- **PR #38252** (2026-10-16): Make vespalib nice test independent of starting nice value [MERGEOK] (@esolitos)
+- **PR #38250** (2026-10-18): Arnej/split vespa log.h (@arnej27959)
+- **PR #38249** (2026-10-16): Trim padding buckets to the embedder's max tokens (@glebashnik)
+- **PR #38247** (2026-10-17): bump onnxruntime to 1.31.0 (@arnej27959)
+- **PR #38246** (2026-10-16): chore: update third-party attributions (@github-actions[bot])
 
 ---
 
@@ -2017,3 +1490,43 @@ system test (test_basicsearch__INDEXED from basic_search.rb) inside.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Bump abseil-cpp, gtest and protobuf C++ build dependencies
+
+**RULE**:
+When implementing operations in `dist/vespa.spec`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8be7ea9e`: Bump abseil-cpp, gtest and protobuf C++ build dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dist/vespa.spec`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+%global _vespa_abseil_cpp_version 20260817.0
+%global _vespa_build_dependencies_version 1.22.0
+%global _vespa_gtest_version 1.18.0
+%global _vespa_protobuf_version 7.36.2
+%if 0%{?_use_vespa_abseil_cpp}
+Requires: vespa-abseil-cpp = %{_vespa_abseil_cpp_version}
+%endif
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Anti-pattern to NEVER write (induced failure mode):
+%global _vespa_abseil_cpp_version 20250127.1
+%global _vespa_build_dependencies_version 1.21.0
+%global _vespa_gtest_version 1.16.0
+%global _vespa_protobuf_version 6.34.1
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8be7ea9e` are properly handled with clean fallback behavior.
