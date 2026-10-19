@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T22:00:48.922Z",
-  "total_cycles_completed": 3497,
-  "total_learnings_persisted": 3497,
-  "total_rules_promoted": 2644,
+  "last_updated": "2026-10-19T22:06:48.445Z",
+  "total_cycles_completed": 3501,
+  "total_learnings_persisted": 3501,
+  "total_rules_promoted": 2647,
   "history": [
-    {
-      "timestamp": "2026-10-19T15:17:40.233Z",
-      "repository": "adonisjs/core",
-      "learningId": "learn-github-adonisjs-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:17:46.628Z",
-      "repository": "buresdv/Cork",
-      "learningId": "learn-github-buresdv-cork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:17:56.318Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:24:31.428Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T15:24:31.595Z",
       "repository": "vikejs/vike",
@@ -1403,6 +1375,34 @@
       "repository": "reflection/Beam-1.0-501B-A23B",
       "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:06:40.524Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:06:42.892Z",
+      "repository": "webrecorder/pywb",
+      "learningId": "learn-github-webrecorder-pywb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:06:45.347Z",
+      "repository": "Kruszoneq/macUSB",
+      "learningId": "learn-github-kruszoneq-macusb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:06:48.445Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

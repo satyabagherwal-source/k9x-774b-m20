@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `556b4ce5`  
+> **Source Version**: `84b2d092`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:34:54.731Z  
+> **Timestamp**: 2026-10-19T22:06:48.269Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:34:54.727Z  
+> **Harvest Timestamp**: 2026-10-19T22:06:47.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5714 stars
+- **Stars / Engagement**: 5715 stars
 
 ---
 
@@ -951,55 +951,293 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `556b4ce5` (2026-10-19)
-**Commit Message**: perf: remove fmt.Sprintf from ListenerSet sort and route names (#14849)
+### Incident Patch 1: `7cc1ac54` (2026-10-19)
+**Commit Message**: perf: build each ListenerSet's IR in its own collection (#14848)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `pkg/kgateway/query/route.go` (modified, +3/-2)
+**File**: `pkg/krtcollections/gateway_index_test.go` (modified, +233/-17)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"slices"
-+	"strconv"
- 	"strings"
+@@ -8,13 +8,17 @@ import (
  
+ 	"istio.io/istio/pkg/kube/controllers"
  	"istio.io/istio/pkg/kube/krt"
-@@ -92,9 +93,9 @@ func (r *RouteInfo) Clone() *RouteInfo {
- // and the given indexes.
- func (r *RouteInfo) UniqueRouteName(ruleIdx, matchIdx int, ruleName string) string {
- 	if ruleName == "" {
--		return fmt.Sprintf("%s-%s-%s-%d-%d", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx)
-+		return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx)
++	"istio.io/istio/pkg/slices"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
+ 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
+ 
+ 	. "github.com/onsi/gomega"
+ 
++	"github.com/kgateway-dev/kgateway/v2/api/settings"
++	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
++	sdk "github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/ir"
+ )
+ 
+@@ -154,48 +158,240 @@ func TestGatewayIRIgnoresStatusOnlyWrites(t *testing.T) {
  	}
--	return fmt.Sprintf("%s-%s-%s-%d-%d-%s", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx, ruleName)
-+	return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx) + "-" + ruleName
+ 
+ 	// The IR reflects the latest spec of both objects.
+-	out := h.index.Gateways.GetKey(ir.ObjectSource{Group: gwv1.GroupName, Kind: wellknown.GatewayKind, Namespace: "default", Name: "gw"}.ResourceName())
++	out := h.gatewayIR("gw")
+ 	g.Expect(out).NotTo(BeNil())
+ 	g.Expect(out.Obj.Generation).To(Equal(gw.Generation))
+ 	g.Expect(out.Listeners).To(HaveLen(2))
+ 	g.Expect(out.Listeners[0].Name).To(Equal(gwv1.SectionName("renamed")))
+ 	g.Expect(out.Listeners[1].Port).To(Equal(gwv1.PortNumber(9090)))
  }
  
- // GetRouteChain recursively resolves all backends for the given route object.
++// TestGatewayIRRebuildsOnlyChangedListenerSets counts policy lookups: creating, changing,
++// deleting or attaching a policy to one ListenerSet looks up policies for that ListenerSet only,
++// while the Gateway IR still carries every ListenerSet's listeners in precedence order.
++func TestGatewayIRRebuildsOnlyChangedListenerSets(t *testing.T) {
++	g := NewWithT(t)
++	created := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
++	listenerSetAt := func(name string, age time.Duration) *gwv1.ListenerSet {
++		ls := testListenerSet(name, "gw")
++		ls.CreationTimestamp = metav1.NewTime(created.Add(age))
++		return ls
++	}
++	// Precedence is creation time, then namespace/name, so the order is c, a, b.
++	lsA, lsB, lsC := listenerSetAt("ls-a", time.Second), listenerSetAt("ls-b", time.Second), listenerSetAt("ls-c", 0)
++	lsGone := listenerSetAt("ls-gone", 0)
++	denied := listenerSetAt("denied", 0)
++	denied.Namespace = "other"
++	denied.Spec.ParentRef.Namespace = new(gwv1.Namespace("default"))
++	h := newGatewayIndexHarness(t, testGateway("gw"), []*gwv1.ListenerSet{lsA, lsB, lsC, lsGone, denied}, testPolicy("policy-a", "ls-a"))
++
++	steps := []struct {
++		name  string
++		write func()
++		// rebuilt is how many ListenerSet IRs the write should rebuild.
++		rebuilt int64
++	}{
++		{
++			name:    "create a ListenerSet",
++			write:   func() { h.listenerSets.UpdateObject(listenerSetAt("ls-d", 2*time.Second)) },
++			rebuilt: 1,
++		},
++		{
++			name: "change a ListenerSet's spec",
++			write: func() {
++				lsB = bumpGeneration(lsB)
++				lsB.Spec.Listeners[0].Port = 9090
++				h.listenerSets.UpdateObject(lsB)
++			},
++			rebuilt: 1,
++		},
++		{
++			name:    "attach a policy to a ListenerSet",
++			write:   func() { h.policies.UpdateObject(testPolicy("policy-c", "ls-c")) },
++			rebuilt: 1,
++		},
++		{
++			name:  "delete a ListenerSet",
++			write: func() { h.listenerSets.DeleteObject(krt.GetKey(lsGone)) },
++		},
++	}
++	for _, step := range steps {
++		runs, lookups := h.runs.Load(), h.lookups.Load()
++		step.write()
++		h.flushListenerSets()
++		h.flushPolicies()
++		g.Expect(h.runs.Load()).To(Equal(runs+1), "%s: Gateway should re-run once", step.name)
++		// Every Gateway and ListenerSet here has one listener, so building either looks up
++		// policies twice. Besides the rebuilt ListenerSets, a step runs the Gateway once and the
++		// barrier Gateway twice, and both flushes rebuild the barrier ListenerSet: 10 lookups.
++		g.Expect(h.lookups.Load()-lookups).To(Equal(2*step.rebuilt+10), "%s: only the changed ListenerSet should look up policies", step.name)
++	}
++
++	out := h.gatewayIR("gw")
++	g.Expect(out).NotTo(BeNil())
++	type listenerView struct {
++		Parent   string
++		Port     gwv1.PortNumber
++		Policies []string
++	}
++	viewListeners := func(listeners []ir.Listener) []listenerView {
++		return slices.Map(listeners, func(l ir.Listener) listenerView {
++			var names []string
++			for _, atts := range l.AttachedPolicies.Policies {
++				for _, att := range atts {
++					names = append(names, att.PolicyRef.Name)
++				}
++			}
++			return listenerView{Parent: l.Parent.GetName(), Port: l.Port, Policies: names}
++		})
++	}
++	g.Expect(viewListeners(out.Listeners)).To(Equal([]listenerView{
++		{Parent: "gw", Port: 80},
++		{Parent: "ls-c", Port: 8080, Policies: []string{"policy-c"}},
++		{Parent: "ls-a", Port: 8080, Policies: []string{"policy-a"}},
++		{Parent: "ls-b", Port: 9090},
++		{Parent: "ls-d", Port: 8080},
++	}), "Gateway listeners first, then admitted ListenerSets' listeners in precedence order")
++
++	listenerSetNames := func(sets ir.ListenerSets) []string {
++		return slices.Map(sets, func(ls ir.ListenerSet) string { return ls.Name })
++	}
++	g.Expect(listenerSetNames(out.AllowedListenerSets[wellknown.ListenerSetGVK])).To(Equal([]string{"ls-c", "ls-a", "ls-b", "ls-d"}))
++	deniedSets := out.DeniedListenerSets[wellknown.Listene
 ```
 
-**File**: `pkg/krtcollections/policy.go` (modified, +1/-1)
+**File**: `pkg/krtcollections/option.go` (modified, +17/-15)
 ```diff
-@@ -604,7 +604,7 @@ func GatewaysForEnvoyTransformationFunc(config *GatewayIndexConfig) func(kctx kr
+@@ -33,21 +33,7 @@ func WithGatewayForEnvoyTransformationFunc(f GatewaysForEnvoyTransformationFunct
+ }
+ 
+ func processGatewayIndexConfig(config *GatewayIndexConfig, opts ...GatewayIndexConfigOption) {
+-	config.byParentRefIndex = krtpkg.UnnamedIndex(config.ListenerSets, func(in *gwv1.ListenerSet) []TargetRefIndexKey {
+-		pRef := in.Spec.ParentRef
+-		ns := strOr(pRef.Namespace, "")
+-		if ns == "" {
+-			ns = in.GetNamespace()
+-		}
+-		// lookup by the root object
+-		return []TargetRefIndexKey{{
+-			Group:     wellknown.GatewayGroup,
+-			Kind:      wellknown.GatewayKind,
+-			Name:      string(pRef.Name),
+-			Namespace: ns,
+-			// this index intentionally doesn't include sectionName
+-		}}
+-	})
++	config.byParentRefIndex = krtpkg.UnnamedIndex(config.ListenerSets, listenerSetParentRefKeys)
+ 
+ 	config.gatewaysForDeployerTransformationFunc = GatewaysForDeployerTransformationFunc
+ 	config.gatewaysForEnvoyTransformationFunc = GatewaysForEnvoyTransformationFunc
+@@ -56,3 +42,19 @@ func processGatewayIndexConfig(config *GatewayIndexConfig, opts ...GatewayIndexC
+ 		fn(config)
+ 	}
+ }
++
++func listenerSetParentRefKeys(in *gwv1.ListenerSet) []TargetRefIndexKey {
++	pRef := in.Spec.ParentRef
++	ns := strOr(pRef.Namespace, "")
++	if ns == "" {
++		ns = in.GetNamespace()
++	}
++	// lookup by the root object
++	return []TargetRefIndexKey{{
++		Group:     wellknown.GatewayGroup,
++		Kind:      wellknown.GatewayKind,
++		Name:      string(pRef.Name),
++		Namespace: ns,
++		// this index intentionally doesn't include sectionName
++	}}
++}
+```
+
+**File**: `pkg/krtcollections/policy.go` (modified, +106/-52)
+```diff
+@@ -482,6 +482,7 @@ type GatewayIndexConfig struct {
+ 	gatewaysForDeployerTransformationFunc func(config *GatewayIndexConfig) func(kctx krt.HandlerContext, gw *gwv1.Gateway) *ir.GatewayForDeployer
+ 	gatewaysForEnvoyTransformationFunc    func(config *GatewayIndexConfig) func(kctx krt.HandlerContext, gw *gwv1.Gateway) *ir.Gateway
+ 	byParentRefIndex                      krt.Index[TargetRefIndexKey, *gwv1.ListenerSet]
++	listenerSetIRsByParentRef             krt.Index[TargetRefIndexKey, listenerSetIRRef]
+ }
+ 
+ func NewGatewayIndex(config GatewayIndexConfig, opts ...GatewayIndexConfigOption) *GatewayIndex {
+@@ -493,6 +494,21 @@ func NewGatewayIndex(config GatewayIndexConfig, opts ...GatewayIndexConfigOption
+ 		return h
+ 	}
+ 
++	// Each ListenerSet's listeners and attached policies are built in a collection of their own,
++	// so a change to one ListenerSet rebuilds only that one instead of every ListenerSet on the
++	// Gateway. ir.ListenerSet.Equals compares the source object by version, so a status-only
++	// write to a ListenerSet rebuilds only its IR and stops there.
++	listenerSetIRs := krt.NewCollection(config.ListenerSets, func(kctx krt.HandlerContext, ls *gwv1.ListenerSet) *listenerSetIRRef {
++		// Nothing reads the IR of a ListenerSet under another controller's Gateway, so skip its
++		// policy lookups.
++		if !envoyOwnsParent(kctx, &config, ls) {
++			return nil
++		}
++		return &listenerSetIRRef{listenerSetIR(kctx, config.PolicyIndex, ls)}
++	}, config.KrtOpts.ToOptions("ListenerSetIRs")...)
++	config.listenerSetIRsByParentRef = krtpkg.UnnamedIndex(listenerSetIRs, func(in listenerSetIRRef) []TargetRefIndexKey {
++		return listenerSetParentRefKeys(in.Obj.(*gwv1.ListenerSet))
++	})
+ 	// The Envoy transformation reads only the Gateway's spec and metadata, so feed it from a
+ 	// projection that drops status-only writes. Otherwise every Gateway status write re-runs it
+ 	// over all of the Gateway's ListenerSets, only for Gateway.Equals to discard the result.
+@@ -523,6 +539,16 @@ func (g gatewaySpec) Equals(in gatewaySpec) bool {
+ 	return ir.VersionEquals(g.gw, in.gw)
+ }
+ 
++// listenerSetIRRef holds a ListenerSet's IR by pointer, so that fetching every ListenerSet on a
++// Gateway copies pointers rather than ir.ListenerSet values.
++type listenerSetIRRef struct {
++	*ir.ListenerSet
++}
++
++func (r listenerSetIRRef) Equals(in listenerSetIRRef) bool {
++	return r.ListenerSet.Equals(*in.ListenerSet)
++}
++
+ func GatewaysForDeployerTransformationFunc(config *GatewayIndexConfig) func(kctx krt.HandlerContext, gw *gwv1.Gateway) *ir.GatewayForDeployer {
+ 	return func(kctx krt.HandlerContext, gw *gwv1.Gateway) *ir.GatewayForDeployer {
+ 		// only care about gateways that use a class controlled by us
+@@ -611,72 +637,39 @@ func GatewaysForEnvoyTransformationFunc(config *GatewayIndexConfig) func(kctx kr
+ 			logger.Error("unable to parse allowedListeners", "error", err)
+ 		}
+ 
+-		// Only spec and metadata are read from ListenerSets, so a status-only write to one must not
+-		// re-run this transformation over all of them.
+-		listenerSets := krt.PartialFetch(kctx, config.ListenerSets,
+-			func(ls *gwv1.ListenerSet) *gwv1.ListenerSet { return ls },
+-			func(a, b *gwv1.ListenerSet) bool { return ir.VersionEquals(a, b) },
+-			krt.FilterIndex(config.byParentRefIndex, TargetRefIndexKey{
+-				Group:     wellknown.GatewayGroup,
+-				Kind:      wellknown.GatewayKind,
+-				Name:      gw.GetName(),
+-				Namespace: gw.GetNamespace(),
+-			}))
++		listenerSets := config.listenerSetIRsByParentRef.Fetch(kctx, TargetRefIndexKey{
++			Group:     wellknown.GatewayGroup,
++			Kind:      wellknown.GatewayKind,
++			Name:      gw.GetName(),
++			Namespace: gw.GetNamespace(),
++		})
++		// Make room for every ListenerSet listener up front rather than regrowing per ListenerSet.
++		numListeners := len(gwIR.Listeners)
++		for _, ls := range listenerSets {
++			numListeners += len(ls.Listeners)
++		}
++		gwIR.Listeners = append(make([]ir.Listener, 0, numListeners), gwIR.Listeners...)
+ 
+ 		// Sort by listener precedence
+ 		// Ref: https://gateway-api.sigs.k8s.io/geps/gep-1713/#listener-precedence
+ 		// - ListenerSet ordered by creation time (oldest first)
+ 		// - ListenerSet ordered alphabetically by “{namespace}/{name}”
+-		slices.SortFunc(listenerSets, func(a, b *gwv1.ListenerSet) int {
++		slices.SortFunc(listenerSets, func(a, b listenerSetIRRef) int {
+ 			// primary sort: creation timestamp (oldest first)
+-			if cmp := a.GetCreationTimestamp().Compare(b.GetCreationTimestamp().Time); cmp != 0 {
++			if cmp := a.Obj.GetCreationTimestamp().Compare(b.Obj.GetCreationTimestamp().Time); cmp != 0 {
+ 				return cmp
  			}
  			// secondary sort: alphabetically by "{namespace}/{name}"
- 			nnsString := func(ls *gwv1.ListenerSet) string {
--				return fmt.Sprintf("%s/%s", ls.Namespace, ls.Name)
-+				return ls.Namespace + "/" + ls.Name
+-			nnsString := func(ls *gwv1.ListenerSet) string {
++			nnsString := func(ls listenerSetIRRef) string {
+ 				return ls.Namespace + "/" + ls.Name
  			}
  			return strings.Compare(nnsString(a), nnsString(b))
  		})
+ 
+ 		for _, ls := range listenerSets {
+-			if ls.GroupVersionKind().Empty() {
+-				ls.SetGroupVersi
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #14850** (closed): fix(listenerset): stamp the promoted ListenerSet GVK at the informer (@puertomontt)
 - **PR #14849** (2026-10-19): perf: remove fmt.Sprintf from ListenerSet sort and route names (@puertomontt)
+- **PR #14848** (2026-10-19): perf: build each ListenerSet's IR in its own collection (@puertomontt)
+- **PR #14847** (2026-10-19): perf: stop deep-copying ListenerSet listeners in ToListener (@puertomontt)
 - **PR #14846** (closed): perf: validate route paths without regexes or url.Parse (@puertomontt)
-- **PR #14844** (closed): perf: cheaper route names and status contribution order per translation (@puertomontt)
-- **PR #14842** (closed): perf: sort ListenerSets by precedence without allocating (@puertomontt)
-- **PR #14838** (2026-10-16): metrics(statussync): replace resources_status_sync* with status_writes_total (@puertomontt)
+- **PR #14845** (2026-10-19): perf: stop status-only writes from re-running the Gateway IR transform (@puertomontt)
 
 ---
 
@@ -1019,31 +1257,50 @@ Signed-off-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove fmt.Sprintf from ListenerSet sort and route names (#14849)
+## X. build each ListenerSet's IR in its own collection (#14848)
 
 **RULE**:
-When implementing operations in `pkg/kgateway/query/route.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/krtcollections/gateway_index_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `556b4ce5`: remove fmt.Sprintf from ListenerSet sort and route names (#14849). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cc1ac54`: build each ListenerSet's IR in its own collection (#14848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/query/route.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/krtcollections/gateway_index_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"strconv"
-		return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx)
-	return strings.ToLower(r.GetKind()) + "-" + r.GetName() + "-" + r.GetNamespace() + "-" + strconv.Itoa(ruleIdx) + "-" + strconv.Itoa(matchIdx) + "-" + ruleName
+	"istio.io/istio/pkg/slices"
+	"github.com/kgateway-dev/kgateway/v2/api/settings"
+	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
+	sdk "github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk"
+	out := h.gatewayIR("gw")
+// TestGatewayIRRebuildsOnlyChangedListenerSets counts policy lookups: creating, changing,
+// deleting or attaching a policy to one ListenerSet looks up policies for that ListenerSet only,
+// while the Gateway IR still carries every ListenerSet's listeners in precedence order.
+func TestGatewayIRRebuildsOnlyChangedListenerSets(t *testing.T) {
+	g := NewWithT(t)
+	created := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	listenerSetAt := func(name string, age time.Duration) *gwv1.ListenerSet {
+		ls := testListenerSet(name, "gw")
+		ls.CreationTimestamp = metav1.NewTime(created.Add(age))
+		return ls
+	}
+	// Precedence is creation time, then namespace/name, so the order is c, a, b.
+	lsA, lsB, lsC := listenerSetAt("ls-a", time.Second), listenerSetAt("ls-b", time.Second), listenerSetAt("ls-c", 0)
+	lsGone := listenerSetAt("ls-gone", 0)
+	denied := listenerSetAt("denied", 0)
+	denied.Namespace = "other"
+	denied.Spec.ParentRef.Namespace = new(gwv1.Namespace("default"))
+	h := ne
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		return fmt.Sprintf("%s-%s-%s-%d-%d", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx)
-	return fmt.Sprintf("%s-%s-%s-%d-%d-%s", strings.ToLower(r.GetKind()), r.GetName(), r.GetNamespace(), ruleIdx, matchIdx, ruleName)
+	out := h.index.Gateways.GetKey(ir.ObjectSource{Group: gwv1.GroupName, Kind: wellknown.GatewayKind, Namespace: "default", Name: "gw"}.ResourceName())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `556b4ce5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cc1ac54` are properly handled with clean fallback behavior.

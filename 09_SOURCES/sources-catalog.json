@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "556b4ce5",
+    "sourceVersion": "84b2d092",
     "license": "Apache-2.0",
-    "contentHash": "61ea85fa966ef11ffec05bd697b9b2fb0c76d14ff8bfcc97c9b3858f7abadf5d",
-    "lastHarvestedAt": "2026-10-19T10:34:54.894Z",
+    "contentHash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
+    "lastHarvestedAt": "2026-10-19T22:06:48.442Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "0b696603",
+    "sourceVersion": "f8e8606f",
     "license": "Unlicense",
-    "contentHash": "172a6d4a7d23ac850b231e957e53a6dcb8a45f269c75001cd83a4ea9c44b4e0d",
-    "lastHarvestedAt": "2026-10-19T07:09:54.340Z",
+    "contentHash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
+    "lastHarvestedAt": "2026-10-19T22:06:40.520Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -9228,5 +9228,25 @@
     "contentHash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
     "lastHarvestedAt": "2026-10-19T22:00:48.918Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
+  },
+  "webrecorder-pywb": {
+    "repository": "webrecorder/pywb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/webrecorder/pywb",
+    "sourceVersion": "2b310902",
+    "license": "GPL-3.0",
+    "contentHash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
+    "lastHarvestedAt": "2026-10-19T22:06:42.888Z",
+    "learningId": "learn-github-webrecorder-pywb"
+  },
+  "kruszoneq-macusb": {
+    "repository": "Kruszoneq/macUSB",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Kruszoneq/macUSB",
+    "sourceVersion": "938f7d12",
+    "license": "MIT",
+    "contentHash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
+    "lastHarvestedAt": "2026-10-19T22:06:45.343Z",
+    "learningId": "learn-github-kruszoneq-macusb"
   }
 }

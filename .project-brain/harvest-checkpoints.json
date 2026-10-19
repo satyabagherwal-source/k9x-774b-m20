@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T22:00:48.926Z",
+  "last_updated": "2026-10-19T22:06:48.447Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4399,14 +4399,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "61ea85fa966ef11ffec05bd697b9b2fb0c76d14ff8bfcc97c9b3858f7abadf5d",
-      "verified_at": "2026-10-19T10:34:54.899Z",
+      "content_hash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
+      "verified_at": "2026-10-19T22:06:48.447Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:34:54.899Z"
+      "last_updated": "2026-10-19T22:06:48.447Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -10429,14 +10429,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "172a6d4a7d23ac850b231e957e53a6dcb8a45f269c75001cd83a4ea9c44b4e0d",
-      "verified_at": "2026-10-19T07:09:54.344Z",
+      "content_hash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
+      "verified_at": "2026-10-19T22:06:40.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:09:54.344Z"
+      "last_updated": "2026-10-19T22:06:40.527Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -13887,6 +13887,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T22:00:48.925Z"
+    },
+    "webrecorder/pywb": {
+      "repository": "webrecorder/pywb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-webrecorder-pywb",
+      "content_hash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
+      "verified_at": "2026-10-19T22:06:42.894Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:06:42.894Z"
+    },
+    "Kruszoneq/macUSB": {
+      "repository": "Kruszoneq/macUSB",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kruszoneq-macusb",
+      "content_hash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
+      "verified_at": "2026-10-19T22:06:45.349Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:06:45.349Z"
     }
   },
   "repos": {

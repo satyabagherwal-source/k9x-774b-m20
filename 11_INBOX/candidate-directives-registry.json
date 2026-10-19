@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:38:27.003Z",
+  "last_updated": "2026-10-19T22:06:45.346Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1982,6 +1982,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-scrapy-plugins-scrapy-headless"
+    },
+    {
+      "id": "CD-0VVM",
+      "directive_title": "Clarify README compatibility and image writing guidance",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kruszoneq/macUSB",
+      "source_commit": "938f7d12",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kruszoneq-macusb"
     }
   ]
 }

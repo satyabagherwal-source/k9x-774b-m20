@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-VCE2",
-    "timestamp": "2026-10-19T06:38:39.482Z",
-    "repository": "kizitonwose/Calendar",
-    "learningId": "learn-github-kizitonwose-calendar",
-    "contentHash": "df70951dd78c5b789e3392f1c108ad01b56c4c5011e05019f7eab0b50e830050",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VECR",
-    "timestamp": "2026-10-19T06:38:42.027Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "753b5f8f12346aa1dfcca38f50b75b0e8c834f1a0f12b6bbf40cfb1adcd5b17c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VH8R",
-    "timestamp": "2026-10-19T06:38:45.771Z",
-    "repository": "pathwaycom/serviette",
-    "learningId": "learn-github-pathwaycom-serviette",
-    "contentHash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-39N2",
-    "timestamp": "2026-10-19T06:44:49.166Z",
-    "repository": "chakra-ui/chakra-ui",
-    "learningId": "learn-github-chakra-ui-chakra-ui",
-    "contentHash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-3AWN",
     "timestamp": "2026-10-19T06:44:50.807Z",
     "repository": "sachaos/viddy",
@@ -7492,6 +7432,66 @@
     "contentHash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0S5I",
+    "timestamp": "2026-10-19T22:06:40.518Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0TWZ",
+    "timestamp": "2026-10-19T22:06:42.803Z",
+    "repository": "webrecorder/pywb",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0VVH",
+    "timestamp": "2026-10-19T22:06:45.341Z",
+    "repository": "Kruszoneq/macUSB",
+    "learningId": "learn-github-kruszoneq-macusb",
+    "contentHash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0Y9K",
+    "timestamp": "2026-10-19T22:06:48.440Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

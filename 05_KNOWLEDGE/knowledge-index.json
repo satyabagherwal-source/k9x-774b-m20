@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:00:48.864Z",
-  "total_verified_learnings": 938,
+  "last_updated": "2026-10-19T22:06:48.413Z",
+  "total_verified_learnings": 940,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26945,8 +26945,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "556b4ce5",
-      "content_hash": "61ea85fa966ef11ffec05bd697b9b2fb0c76d14ff8bfcc97c9b3858f7abadf5d",
+      "source_version": "84b2d092",
+      "content_hash": "dad7129d7fd7553d9411604fc710bfdfe0c75b3677f66d3183fa1d1479acdccd",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -26959,6 +26959,11 @@
           "number": 2496,
           "title": "remove fmt.Sprintf from ListenerSet sort and route names (#14849)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2846,
+          "title": "build each ListenerSet's IR in its own collection (#14848)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26966,7 +26971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:34:54.858Z",
+      "verified_at": "2026-10-19T22:06:48.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27444,22 +27449,29 @@
     "learn-github-kruszoneq-macusb": {
       "learning_id": "learn-github-kruszoneq-macusb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kruszoneq-macusb",
+      "source": "Kruszoneq/macUSB",
+      "repository": "Kruszoneq/macUSB",
       "slug": "kruszoneq-macusb",
       "platform": "github",
       "source_url": "https://github.com/Kruszoneq/macUSB",
-      "source_version": "HEAD",
-      "content_hash": "ef8f03c4b84322ea714348e3625133f1cea6185ba6cc927d0015eb9617706226",
+      "source_version": "938f7d12",
+      "content_hash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
       "dossier_path": "07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.864Z"
+      "verified_at": "2026-10-19T22:06:45.305Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kruxai-ragbuilder": {
       "learning_id": "learn-github-kruxai-ragbuilder",
@@ -29842,8 +29854,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "0b696603",
-      "content_hash": "172a6d4a7d23ac850b231e957e53a6dcb8a45f269c75001cd83a4ea9c44b4e0d",
+      "source_version": "f8e8606f",
+      "content_hash": "1f47af094d91f5aa1d635753a64eee808bbe007b21a27c16fd38ec39c1deb7e1",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -29861,6 +29873,11 @@
           "number": 2271,
           "title": "Concretization Constant-Folding Isolation for Fallback Functions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2844,
+          "title": "Fixing xan hist -m sum with nonlinear scales",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29868,7 +29885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:09:54.302Z",
+      "verified_at": "2026-10-19T22:06:40.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56955,20 +56972,35 @@
     "learn-github-webrecorder-pywb": {
       "learning_id": "learn-github-webrecorder-pywb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webrecorder/pywb",
       "repository": "webrecorder/pywb",
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "main",
-      "content_hash": "1c85e653c0047f2ebf69c917a29eece9a6aaaa33413085b8ca06406fd00caf5a",
+      "source_version": "2b310902",
+      "content_hash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2845,
+          "title": "test_timeouts failing after slow tests (#1051)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:06:42.773Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-webrecorder-browsertrix-crawler": {
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
@@ -93344,6 +93376,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:00:48.847Z"
+    },
+    "rule-2844": {
+      "learning_id": "rule-2844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2844,
+      "title": "Fixing xan hist -m sum with nonlinear scales",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "f8e8606f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:06:40.482Z"
+    },
+    "rule-2845": {
+      "learning_id": "rule-2845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2845,
+      "title": "test_timeouts failing after slow tests (#1051)",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "2b310902",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:06:42.773Z"
+    },
+    "rule-2846": {
+      "learning_id": "rule-2846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2846,
+      "title": "build each ListenerSet's IR in its own collection (#14848)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "84b2d092",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:06:48.405Z"
     }
   },
   "aliases": {

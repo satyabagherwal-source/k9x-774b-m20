@@ -3520,3 +3520,7 @@
 | `CYCLE-20261019-RNHW` | `2026-10-19T21:59:34.580Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2839` | Yes (`f65cba1b...`) |
 | `CYCLE-20261019-RQYJ` | `2026-10-19T21:59:39.067Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2840` | Yes (`a3ccbb35...`) |
 | `CYCLE-20261019-T8UR` | `2026-10-19T22:00:48.915Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2841, Rule 2842, Rule 2843` | Yes (`8d0bfc90...`) |
+| `CYCLE-20261019-0S5I` | `2026-10-19T22:06:40.518Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2844` | Yes (`1f47af09...`) |
+| `CYCLE-20261019-0TWZ` | `2026-10-19T22:06:42.803Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2845` | Yes (`b2095c30...`) |
+| `CYCLE-20261019-0VVH` | `2026-10-19T22:06:45.341Z` | `Kruszoneq/macUSB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md` | Yes (`cd5252d6...`) |
+| `CYCLE-20261019-0Y9K` | `2026-10-19T22:06:48.440Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2846` | Yes (`dad7129d...`) |

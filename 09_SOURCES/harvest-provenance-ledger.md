@@ -3527,3 +3527,7 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `7cb3c422` | Multi-dimensional audit evidence | 2026-10-19T21:59:34.583Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `d9e5536c` | Multi-dimensional audit evidence | 2026-10-19T21:59:39.070Z |
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-19T22:00:48.918Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `f8e8606f` | Multi-dimensional audit evidence | 2026-10-19T22:06:40.520Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `2b310902` | Multi-dimensional audit evidence | 2026-10-19T22:06:42.888Z |
+| `learn-github-kruszoneq-macusb` | `https://github.com/Kruszoneq/macUSB` | `938f7d12` | Multi-dimensional audit evidence | 2026-10-19T22:06:45.343Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `84b2d092` | Multi-dimensional audit evidence | 2026-10-19T22:06:48.442Z |
