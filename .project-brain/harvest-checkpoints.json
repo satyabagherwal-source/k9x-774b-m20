@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T09:06:47.848Z",
+  "last_updated": "2026-10-19T09:12:56.332Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1923,14 +1923,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "0f5f9a49fd9348831b013f213fba7f8a452336b47830f6a63ae88abdda47613a",
-      "verified_at": "2026-10-18T01:39:01.259Z",
+      "content_hash": "ca047d6c3555634df40d36037fd0b84355846106fe9268050a0d2483d6717f98",
+      "verified_at": "2026-10-19T09:12:49.482Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:39:01.259Z"
+      "last_updated": "2026-10-19T09:12:49.482Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -11246,6 +11246,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T09:06:47.848Z"
+    },
+    "pamburus/hl": {
+      "repository": "pamburus/hl",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pamburus-hl",
+      "content_hash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
+      "verified_at": "2026-10-19T09:12:43.276Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:12:43.276Z"
+    },
+    "linkwarden/linkwarden": {
+      "repository": "linkwarden/linkwarden",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-linkwarden-linkwarden",
+      "content_hash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
+      "verified_at": "2026-10-19T09:12:48.217Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:12:48.217Z"
+    },
+    "databendlabs/databend": {
+      "repository": "databendlabs/databend",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-databendlabs-databend",
+      "content_hash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
+      "verified_at": "2026-10-19T09:12:56.332Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:12:56.332Z"
     }
   },
   "repos": {

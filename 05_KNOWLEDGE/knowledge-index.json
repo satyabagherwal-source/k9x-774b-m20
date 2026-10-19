@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T09:06:47.805Z",
-  "total_verified_learnings": 761,
+  "last_updated": "2026-10-19T09:12:56.292Z",
+  "total_verified_learnings": 764,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6012,22 +6012,35 @@
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "databendlabs-databend",
+      "source": "databendlabs/databend",
+      "repository": "databendlabs/databend",
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "HEAD",
-      "content_hash": "1df4cc2f8bb6daea2c6da7d9e31a60536459e7f1c3113d3109dee30019b64949",
+      "source_version": "d9eea49a",
+      "content_hash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2462,
+          "title": "meta: make metactl RPC timeouts configurable (#20706)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.512Z"
+      "verified_at": "2026-10-19T09:12:56.285Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-databricks-click": {
       "learning_id": "learn-github-databricks-click",
@@ -12827,7 +12840,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "0f5f9a49fd9348831b013f213fba7f8a452336b47830f6a63ae88abdda47613a",
+      "content_hash": "ca047d6c3555634df40d36037fd0b84355846106fe9268050a0d2483d6717f98",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -12839,6 +12852,16 @@
         {
           "number": 1412,
           "title": "GGUF Quantization Tensor Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2460,
+          "title": "Semantic Neutrality in Feature Extraction Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2461,
+          "title": "GGUF Quantization Integrity for Drop-in Replacement",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12854,7 +12877,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-18T01:39:01.209Z",
+      "verified_at": "2026-10-19T09:12:49.444Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27336,22 +27359,35 @@
     "learn-github-linkwarden-linkwarden": {
       "learning_id": "learn-github-linkwarden-linkwarden",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "linkwarden-linkwarden",
+      "source": "linkwarden/linkwarden",
+      "repository": "linkwarden/linkwarden",
       "slug": "linkwarden-linkwarden",
       "platform": "github",
       "source_url": "https://github.com/linkwarden/linkwarden",
-      "source_version": "HEAD",
-      "content_hash": "882eae96eb95993da2f2c78de237d7cb71602f9cfe1cb3b5e6df5c9ee04a08cf",
+      "source_version": "952ac454",
+      "content_hash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
       "dossier_path": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2459,
+          "title": "mobile): fix \"waiting for connection\" persisting",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.035Z"
+      "verified_at": "2026-10-19T09:12:48.180Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lioensky-vcptoolbox": {
       "learning_id": "learn-github-lioensky-vcptoolbox",
@@ -33050,22 +33086,35 @@
     "learn-github-pamburus-hl": {
       "learning_id": "learn-github-pamburus-hl",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pamburus-hl",
+      "source": "pamburus/hl",
+      "repository": "pamburus/hl",
       "slug": "pamburus-hl",
       "platform": "github",
       "source_url": "https://github.com/pamburus/hl",
-      "source_version": "HEAD",
-      "content_hash": "4b429650ab7f47f5effe085be28c7e346ebcac3d014c67c4b409f8f6e04af372",
+      "source_version": "5270fb3f",
+      "content_hash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
       "dossier_path": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2458,
+          "title": "build(deps): bump github/codeql-action/init from 4.38.3 to 4.39.0 (#1593)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.969Z"
+      "verified_at": "2026-10-19T09:12:43.240Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pan-chera-multi-agent-cad": {
       "learning_id": "learn-github-pan-chera-multi-agent-cad",
@@ -84380,6 +84429,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T09:06:47.795Z"
+    },
+    "rule-2458": {
+      "learning_id": "rule-2458",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2458,
+      "title": "build(deps): bump github/codeql-action/init from 4.38.3 to 4.39.0 (#1593)",
+      "source_url": "https://github.com/pamburus/hl",
+      "source_version": "5270fb3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:12:43.240Z"
+    },
+    "rule-2459": {
+      "learning_id": "rule-2459",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2459,
+      "title": "mobile): fix \"waiting for connection\" persisting",
+      "source_url": "https://github.com/linkwarden/linkwarden",
+      "source_version": "952ac454",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:12:48.180Z"
+    },
+    "rule-2460": {
+      "learning_id": "rule-2460",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2460,
+      "title": "Semantic Neutrality in Feature Extraction Encoders",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:12:49.444Z"
+    },
+    "rule-2461": {
+      "learning_id": "rule-2461",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2461,
+      "title": "GGUF Quantization Integrity for Drop-in Replacement",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:12:49.444Z"
+    },
+    "rule-2462": {
+      "learning_id": "rule-2462",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2462,
+      "title": "meta: make metactl RPC timeouts configurable (#20706)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "d9eea49a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:12:56.285Z"
     }
   },
   "aliases": {

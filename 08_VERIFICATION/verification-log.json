@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-7XBQ",
-    "timestamp": "2026-10-18T23:20:32.630Z",
-    "repository": "welldone-software/why-did-you-render",
-    "learningId": "learn-github-welldone-software-why-did-you-render",
-    "contentHash": "44088a1a70705dd74b92ca7ebb85740680a296924bd4d4bac7a2a4762a5f7cb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-7XS0",
-    "timestamp": "2026-10-18T23:20:33.216Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-80ZN",
-    "timestamp": "2026-10-18T23:20:37.379Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-81PR",
-    "timestamp": "2026-10-18T23:20:38.319Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "bb80839393d0024831f809923806b438bdea1aa77595c648b380db7bc1e8c113",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-8397",
     "timestamp": "2026-10-18T23:20:40.315Z",
     "repository": "supervc-stack/VectorChord",
@@ -7490,6 +7430,66 @@
     "repository": "oramasearch/orama",
     "learningId": "learn-github-oramasearch-orama",
     "contentHash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DGXY",
+    "timestamp": "2026-10-19T09:12:43.270Z",
+    "repository": "pamburus/hl",
+    "learningId": "learn-github-pamburus-hl",
+    "contentHash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DKR6",
+    "timestamp": "2026-10-19T09:12:48.210Z",
+    "repository": "linkwarden/linkwarden",
+    "learningId": "learn-github-linkwarden-linkwarden",
+    "contentHash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DLQB",
+    "timestamp": "2026-10-19T09:12:49.475Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "ca047d6c3555634df40d36037fd0b84355846106fe9268050a0d2483d6717f98",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DR0M",
+    "timestamp": "2026-10-19T09:12:56.326Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

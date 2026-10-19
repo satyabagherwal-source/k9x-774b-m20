@@ -3123,3 +3123,7 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `3224f1b4` | Multi-dimensional audit evidence | 2026-10-19T09:06:40.269Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-19T09:06:40.700Z |
 | `learn-github-oramasearch-orama` | `https://github.com/oramasearch/orama` | `b030e1bd` | Multi-dimensional audit evidence | 2026-10-19T09:06:47.842Z |
+| `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `5270fb3f` | Multi-dimensional audit evidence | 2026-10-19T09:12:43.272Z |
+| `learn-github-linkwarden-linkwarden` | `https://github.com/linkwarden/linkwarden` | `952ac454` | Multi-dimensional audit evidence | 2026-10-19T09:12:48.212Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-19T09:12:49.478Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `d9eea49a` | Multi-dimensional audit evidence | 2026-10-19T09:12:56.328Z |

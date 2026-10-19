@@ -3116,3 +3116,7 @@
 | `CYCLE-20261019-5OUI` | `2026-10-19T09:06:40.266Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2454` | Yes (`e846f541...`) |
 | `CYCLE-20261019-5P6I` | `2026-10-19T09:06:40.698Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2455, Rule 2456` | Yes (`5e8f49d7...`) |
 | `CYCLE-20261019-5UOW` | `2026-10-19T09:06:47.840Z` | `oramasearch/orama` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2457` | Yes (`e03deb48...`) |
+| `CYCLE-20261019-DGXY` | `2026-10-19T09:12:43.270Z` | `pamburus/hl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2458` | Yes (`2085203b...`) |
+| `CYCLE-20261019-DKR6` | `2026-10-19T09:12:48.210Z` | `linkwarden/linkwarden` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2459` | Yes (`369f8fe2...`) |
+| `CYCLE-20261019-DLQB` | `2026-10-19T09:12:49.475Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2460, Rule 2461` | Yes (`ca047d6c...`) |
+| `CYCLE-20261019-DR0M` | `2026-10-19T09:12:56.326Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2462` | Yes (`13d55699...`) |

@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "0f5f9a49fd9348831b013f213fba7f8a452336b47830f6a63ae88abdda47613a",
-    "lastHarvestedAt": "2026-10-18T01:39:01.256Z",
+    "contentHash": "ca047d6c3555634df40d36037fd0b84355846106fe9268050a0d2483d6717f98",
+    "lastHarvestedAt": "2026-10-19T09:12:49.478Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -7468,5 +7468,35 @@
     "contentHash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
     "lastHarvestedAt": "2026-10-19T09:06:47.842Z",
     "learningId": "learn-github-oramasearch-orama"
+  },
+  "pamburus-hl": {
+    "repository": "pamburus/hl",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pamburus/hl",
+    "sourceVersion": "5270fb3f",
+    "license": "MIT",
+    "contentHash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
+    "lastHarvestedAt": "2026-10-19T09:12:43.272Z",
+    "learningId": "learn-github-pamburus-hl"
+  },
+  "linkwarden-linkwarden": {
+    "repository": "linkwarden/linkwarden",
+    "platform": "github",
+    "sourceUrl": "https://github.com/linkwarden/linkwarden",
+    "sourceVersion": "952ac454",
+    "license": "AGPL-3.0",
+    "contentHash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
+    "lastHarvestedAt": "2026-10-19T09:12:48.212Z",
+    "learningId": "learn-github-linkwarden-linkwarden"
+  },
+  "databendlabs-databend": {
+    "repository": "databendlabs/databend",
+    "platform": "github",
+    "sourceUrl": "https://github.com/databendlabs/databend",
+    "sourceVersion": "d9eea49a",
+    "license": "Apache-2.0",
+    "contentHash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
+    "lastHarvestedAt": "2026-10-19T09:12:56.328Z",
+    "learningId": "learn-github-databendlabs-databend"
   }
 }
