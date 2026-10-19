@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `78894c81`  
+> **Source Version**: `86db4607`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:00:52.924Z  
+> **Timestamp**: 2026-10-19T09:54:29.514Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:00:52.025Z  
+> **Harvest Timestamp**: 2026-10-19T09:54:29.508Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6440 stars
+- **Stars / Engagement**: 6442 stars
 
 ---
 
@@ -405,419 +405,341 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce75bd82` (2026-10-17)
-**Commit Message**: fix(agent-compliance): drop extras and parentheses from parsed requirement names (#4348)
+### Incident Patch 1: `86db4607` (2026-10-19)
+**Commit Message**: fix(agent-hypervisor): check the command behind sudo, doas and xargs (#4361)
 
-_parse_requirements_line kept PEP 508 extras (requests[security]) and the
-opening parenthesis of a parenthesized specifier (requests (>=2.28.0)) in
-the package name, so lockfile drift reported such packages as missing and
-the typosquatting check ran on the decorated name.
+* fix(agent-hypervisor): check the command behind sudo, doas and xargs
 
+RingEnforcer.check_command unwraps env, nohup, timeout and the other
+wrappers in its table, but sudo, doas and xargs were not in it, so they
+were taken as the executable and a denied command behind them was
+allowed: sudo curl, sudo -u root curl, doas curl, xargs curl, xargs -n1
+curl.
+
+They are now in the wrapper table, with option tables taken from sudo's
+parse_args.c, OpenBSD doas.c and GNU findutils xargs.c. NAME=value words
+after sudo's options are skipped like env's, and xargs -i, -l and -e,
+whose argument is optional and can only be attached, are read with a new
+optional_argument field. Options that run no command (sudo -l, -v, -e,
+-K, -V; doas -L, -C) keep the wrapper as the executable. sudo -s, sudo -i
+and doas -s start a shell that reads the command words again, and sudo -h
+is either help or a host name that may be the next word, so those are
+denied instead of guessed.
+
+Fixes #4358
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(agent-hypervisor): read sudo options aft
+
+**File**: `.cspell-repo-terms.txt` (modified, +6/-0)
+```diff
+@@ -375,6 +375,7 @@ artefacts
+ arun
+ asctime
+ asdict
++askpass
+ asname
+ aspnet
+ astimezone
+@@ -566,6 +567,7 @@ finalizer
+ findall
+ finditer
+ findtext
++findutils
+ flatbuffer
+ flate
+ flowise
+@@ -623,6 +625,7 @@ healthz
+ helpdesk
+ hexdigest
+ hexdigit
++hhost
+ hitl
+ hkdf
+ hostnames
+@@ -842,6 +845,7 @@ openAPIV3Schema
+ opencode
+ openpolicyagent
+ openshell
++oprtx
+ organisation
+ organisational
+ organisations
+@@ -893,6 +897,7 @@ prependpath
+ pretool
+ privatelink
+ processcontainer
++procs
+ promptdefense
+ promptinjectiondetector
+ proofblob
+@@ -1138,6 +1143,7 @@ urlopen
+ urlparse
+ urlsafe
+ urlunparse
++uroot
+ usemanagedidentity
+ userinfo
+ usize
+```
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agt-policies`: merge-layer overlap analysis no longer infers deny polarity from operand position.** `_scalar_conditions_disjoint` assumed the left operand was always the parent deny condition, but `_condition_unsatisfiable` compares the two siblings of an `and` as a peer pair, so deny `null` semantics leaked onto allow-side siblings and the result depended on sibling order. Polarity is now passed explicitly (`left_deny`/`right_deny` through `_conditions_disjoint`/`_scalar_conditions_disjoint`, `is_deny` through `_condition_unsatisfiable`); `deny_polarity` tracks the operator's rule rather than its position. This also closes an order-dependent fail-open where a deny rule whose condition was `and[eq null, ne/not_in …]` (eq-null sibling first) was wrongly judged unsatisfiable, so an overlapping child `allow` was not dropped.
- - **Python circuit breakers no longer stay HALF_OPEN forever after a cancelled probe.** `agent_sre.cascade.CircuitBreaker.call` (and the `agent_os._circuit_breaker_impl` fallback used when `agent_sre` is not installed) took a HALF_OPEN probe slot before running the call but only gave it back by recording a success or a failure. A probe that ended with `asyncio.CancelledError`, or a sync call interrupted by `KeyboardInterrupt`, did neither, so with the default `half_open_max_calls=1` every later call raised `CircuitOpenError` with `retry_after=0.0` until `reset()`. Such a probe now returns its slot without recording an outcome, matching the .NET breaker's treatment of cancellation as neither success nor failure (#2202). A probe from an earlier HALF_OPEN period does not free a slot in the current one.
- - **Supply-chain checks keep the package name of a compound version specifier.** `_parse_requirements_line` tried the operators in a fixed order and split at the first one it found anywhere in the line, so `requests>=2.28.0,!=2.29.0` was read as the package `requests>=2.28.0,` with the specifier `!=2.29.0`, and `requests<3,>=2.28.0` as `requests<3,`. `check_requirements`, `check_pyproject` and `scan_lockfile_drift` then reported findings under that name, ran the typosquatting check on it (so a typosquatted name written with a compound specifier was not flagged), and flagged the package as missing from a lockfile that lists it. The line is now split at the leftmost operator, so the name is `requests` and the specifier is the whole `>=2.28.0,!=2.29.0`.
-+- **Supply-chain checks keep the package name of a requirement with extras or a parenthesized specifier.** `_parse_requirements_line` kept PEP 508 extras and the opening parenthesis in the package name, so `requests[security]==2.31.0` was read as the package `requests[security]` and `requests (>=2.28.0)` as `requests (` with the specifier `>=2.28.0)`. `scan_lockfile_drift` then reported every package written with extras as missing from a lockfile that lists it, `check_requirements` and `check_pyproject` reported findings under that name, and the typosquatting check ran on it, so a typosquatted name written with extras was not flagged. The extras and the parentheses are now dropped from the name, and the parentheses from the specifier.
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Hypervisor command denylist no longer misses a denied command written without a space, by path or quoted.** `RingEnforcer.check_command` compared the first whitespace-separated token against `DENIED_COMMANDS` after stripping only trailing `;&|`, so `curl;rm -rf /`, `curl&&id`, `|curl`, `/usr/bin/curl`, `./bash`, `"curl"` and `\curl` were all reported as allowed, as were `curl>out`, `(curl x)`, `` `curl x` ``, `$(curl x)`, `{ curl; }`, `$'curl'`, `>out curl` and `>"my file" curl`. The command now has redirections dropped together with their targets (`>out`, `2>&1`, `< /dev/null`, and quoted or escaped targets such as `>"my file"` or `>a\ b`), then has shell quotes (including `$'...'` and `$"..."`) and backslashes removed, is split at whitespace, `;`, `&`, `|`, `<`, `>`, `(`, `)` and backticks, skips a leading `{`, `!` or `$(`, and the first command is reduced to its executable name before matching. A token made only of control operators, or a redirection to an empty file name (`>"" curl`), is denied as having no executable name instead of being allowed.
+ - **Hypervisor command denylist no longer misses a denied command after a variable assignment or a wrapper.** `RingEnforcer.check_command` took the first word as the executable, so `FOO=x curl`, `env -i curl`, `exec curl`, `nohup curl`, `nice -n 5 curl`, `timeout 5 curl`, `command curl` and `time curl` were checked as `FOO=x`, `env`, `exec` and so on and allowed, and a line continuation (`cu\<newline>rl`) split the name. Backslash-newline pairs are now removed first, leading `NAME=value` assignments (with quoted or escaped values) are skipped, and `env`, `exec`, `nohup`, `nice`, `timeout`, `stdbuf`, `time`, `command` and `builtin` are unwrapped by reading their options, so the command they run is checked. A wrapper that runs no command (`env`, `command -v curl`) is still the executable, and a wrapper whose options cannot be read (an unknown option, a missing option argument, or `env -S`) is denied (#4331).
+ - **Hypervisor command denylist no longer treats a quoted `<` or `>` as a redirection.** `RingEnforcer.check_command` dropped redirections with a pattern that did not honour quotes, so a quoted or escaped `<` or `>` (`FOO=">" ls`, `echo ">"`, `echo '<'`, `echo \>`) was read as a redirection whose target ran into the rest of the command, and the command was denied as having no executable. Closed quotes and backslash escapes are now skipped when looking for redirections, as the shell reads them as part of a word; an unterminated quote is handled as before (#4335).
++- **Hypervisor command denylist no longer misses a denied command behind `sudo`, `doas` or `xargs`.** `RingEnforcer.check_command` unwrapped `env`, `nohup`, `timeout` and the other wrappers since #4331, but took `sudo`, `doas` and `xargs` as the executable, so `sudo curl`, `sudo -u root curl`, `doas curl`, `xargs curl` and `xargs -n1 curl` were allowed. They are now unwrapped too, with their options read from the sudo, OpenBSD doas and GNU findutils option tables, including `NAME=value` words after `sudo` and the attached-only optional arguments of `xargs -i`, `-l` and `-e`. Options that run no command (`sudo -l`, `-v`, `-e`, `-K`, `-V`, `doas -L`, `-C`) keep the wrapper as the executable, and options that start a shell, which reads the command words again (`sudo -s`, `sudo -i`, `doas -s`), and `sudo -h` are denied (#4358).
+ - **Hypervisor `VectorClock` no longer deadlocks when compared with or merged into itself.** `merge`, `happens_before` and `==` (and so `is_concurrent`) take both clocks' locks, and when the other clock was the same object they tried to take its non-reentrant `threading.Lock` twice, so `clock == clock`, `clock.happens_before(clock)`, `clock.is_concurrent(clock)` and `clock.merge(clock)` hung forever. A shared lock is now taken once, so a clock equals itself, does not happen before or run concurrently with itself, and merges into a copy of itself.
+ - **OpenCode audit logs no longer brick when they roll over.** `appendAuditEntry` kept the most recent 10,000 entries with `.slice(-MAX_ENTRIES)`, which dropped the entry the surviving head pointed at. The head was then re-anchored to the genesis hash, every later verification failed, and because the plugin fails closed on audit errors it denied every request from that point on. The hash of the last evicted entry is now kept as a seam and the file becomes `{ seamHash, entries }`, so the surviving chain stays verifiable. A log that has never rolled over keeps the bare-array format and is always anchored to genesis, so a bare array whose head does not anchor to genesis fails verification. The chain is unkeyed, so this raises the cost of editing a log rather than preventing it: someone who can rewrite the file can also rewrap it with a matching seam. Ports the fix already shipped for the TypeScript, Rust and Claude Code packages (#18
 ```
 
-**File**: `agent-governance-python/agent-compliance/src/agent_compliance/supply_chain.py` (modified, +9/-5)
+**File**: `agent-governance-python/agent-hypervisor/src/hypervisor/rings/enforcer.py` (modified, +110/-4)
 ```diff
-@@ -198,11 +198,15 @@ def _parse_requirements_line(line: str) -> tuple[str, str] | None:
-     # ("pkg>=2.0,!=2.5") stays whole instead of being cut at whichever
-     # operator happens to be tried first
-     match = _VERSION_OPERATOR.search(line)
--    if match:
--        return line[:match.start()].strip(), line[match.start():].strip()
--
--    # No version specifier at all
--    return line, ""
-+    name = line[:match.start()] if match else line
-+    version_spec = line[match.start():].strip() if match else ""
-+
-+    # PEP 508 also allows a parenthesized specifier ("pkg (>=1.0)") and
-+    # extras ("pkg[security]==1.0"); neither is part of the package name
-+    if "(" in name:
-+        name = name.split("(", 1)[0]
-+        version_spec = version_spec.removesuffix(")").strip()
-+    return name.split("[", 1)[0].strip(), version_spec
+@@ -165,30 +165,38 @@ class _WrapperSyntax:
+     Attributes:
+         flags: Short options without an argument.
+         with_argument: Short options that take an argument.
++        optional_argument: Short options whose argument, if any, is attached to
++            them (``xargs -l1``).
+         long_options: Long option names, mapped to 0 (no argument), 1 (required
+             argument) or 2 (optional argument, only when attached with "=").
+         no_command: Options after which the wrapper runs no command (e.g. "--help").
+         unsupported: Options whose effect on the command cannot be checked.
+         operands: Operands read before the command (the duration of ``timeout``).
+         assignments: Whether ``NAME=VALUE`` words before the command are read
+-            (``env``), including a lone "-" right after the options.
++            (``env``, ``sudo``), including a lone "-" right after the options.
++        interleaved_assignments: Whether ``NAME=VALUE`` words can also come
++            between the options (``sudo``). Such a word does not start with "/"
++            or "=".
+         numeric_options: Whether "-N", "--N" and "-+N" set a value (``nice``).
+     """
+ 
+     flags: str = ""
+     with_argument: str = ""
++    optional_argument: str = ""
+     long_options: dict[str, int] = field(default_factory=dict)
+     no_command: frozenset[str] = frozenset({"--help", "--version"})
+     unsupported: frozenset[str] = frozenset()
+     operands: int = 0
+     assignments: bool = False
++    interleaved_assignments: bool = False
+     numeric_options: bool = False
  
  
- # ---------------------------------------------------------------------------
+ _HELP_AND_VERSION = {"help": 0, "version": 0}
+ 
+ # Commands that run the command named by a later word. The option tables follow
+-# GNU coreutils and GNU time, and the bash builtins and the "time" keyword.
++# GNU coreutils, GNU time, GNU findutils xargs, sudo and OpenBSD doas, and the
++# bash builtins and the "time" keyword.
+ _WRAPPERS: dict[str, _WrapperSyntax] = {
+     "builtin": _WrapperSyntax(long_options={"help": 0}),
+     "command": _WrapperSyntax(
+@@ -214,13 +222,81 @@ class _WrapperSyntax:
+         unsupported=frozenset({"-S", "--split-string"}),
+         assignments=True,
+     ),
++    "doas": _WrapperSyntax(
++        flags="Lns",
++        with_argument="aCu",
++        long_options={},
++        # -L and -C exit without running the command
++        no_command=frozenset({"-L", "-C"}),
++        # -s runs a shell instead of a command
++        unsupported=frozenset({"-s"}),
++    ),
+     "exec": _WrapperSyntax(flags="cl", with_argument="a", long_options={"help": 0}),
+     "nice": _WrapperSyntax(
+         with_argument="n",
+         long_options={"adjustment": 1, **_HELP_AND_VERSION},
+         numeric_options=True,
+     ),
+     "nohup": _WrapperSyntax(long_options=_HELP_AND_VERSION),
++    "sudo": _WrapperSyntax(
++        flags="ABbEeHiKklNnPSsVv",
++        with_argument="aCcDgpRrTtUu",
++        long_options={
++            "askpass": 0,
++            "auth-type": 1,
++            "background": 0,
++            "bell": 0,
++            "close-from": 1,
++            "login-class": 1,
++            "chdir": 1,
++            "preserve-env": 2,
++            "edit": 0,
++            "group": 1,
++            "set-home": 0,
++            "host": 1,
++            "login": 0,
++            "remove-timestamp": 0,
++            "reset-timestamp": 0,
++            "list": 0,
++            "no-update": 0,
++            "non-interactive": 0,
++            "preserve-groups": 0,
++            "prompt": 1,
++            "chroot": 1,
++            "role": 1,
++            "stdin": 0,
++            "shell": 0,
++            "type": 1,
++            "command-timeout": 1,
++            "other-user": 1,
++            "user": 1,
++            "validate": 0,
++            **_HELP_AND_VERSION,
++        },
++        # Editing files, listing privileges, validating or removing the cached
++        # credentials and printing the version run no command
++        no_command=frozenset(
++            {
++                "--help",
++                "--version",
++                "-V",
++                "-e",
++                "--edit",
++                "-l",
++                "--list",
++                "-v",
++                "--validate",
++                "-K",
++                "--remove-timestamp",
++            }
++        ),
++        # -i and -s run a shell, which reads the command words again, and -h is
++        # either --help or --host with an attached or a following argument
++        unsupported=frozenset({"-i", "--login", "-s", "--shell", "-h"}),
++        assignments=True,
++        # sudo reads an environment word and then resumes reading options
++        interleaved_assignments=True,
++    ),
+     "stdbuf": _WrapperSyntax(
+         with_argument="ioe",
+         long_options={"input": 1, "output": 1, "error": 1, **_HELP_AND_VERSION},
+@@ -252,6 +328,30 @@ class _WrapperSyntax:
+         },
+         operands=1,
+     ),
++    "xargs": _WrapperSyntax(
++        flags="0oprtx",
++        with_argument="aEILnsPd",
++    
 ```
 
-**File**: `agent-governance-python/agent-compliance/tests/test_supply_chain.py` (modified, +60/-0)
+**File**: `agent-governance-python/agent-hypervisor/tests/unit/test_command_denylist.py` (modified, +70/-0)
 ```diff
-@@ -240,6 +240,43 @@ def test_compound_specifier_typosquat_flagged(
-         findings = guard.check_requirements(str(req))
-         assert any(f.rule == "typosquat" and f.package == "reqeusts" for f in findings)
- 
-+    @pytest.mark.parametrize(
-+        "line, version",
-+        [
-+            ("requests[security]>=2.28.0", ">=2.28.0"),
-+            ("requests[security,socks] >= 2.28.0", ">= 2.28.0"),
-+            ("requests (>=2.28.0)", ">=2.28.0"),
-+            ("requests[socks] (>=2.28.0,<3)", ">=2.28.0,<3"),
-+            ("requests[security]", "unspecified"),
-+        ],
-+    )
-+    def test_extras_and_parenthesized_specifier_keep_package_name(
-+        self, guard: SupplyChainGuard, tmp_path: Path, line: str, version: str,
-+    ) -> None:
-+        req = tmp_path / "requirements.txt"
-+        req.write_text(f"{line}\n")
-+        findings = guard.check_requirements(str(req))
-+        assert [(f.rule, f.package, f.version) for f in findings] == [
-+            ("unpinned-version", "requests", version)
-+        ]
-+
-+    @pytest.mark.parametrize("line", ["requests[security]==2.31.0", "requests (==2.31.0)"])
-+    def test_extras_and_parenthesized_exact_pin_passes(
-+        self, guard: SupplyChainGuard, tmp_path: Path, line: str,
-+    ) -> None:
-+        req = tmp_path / "requirements.txt"
-+        req.write_text(f"{line}\n")
-+        assert guard.check_requirements(str(req)) == []
-+
-+    def test_extras_typosquat_flagged(
-+        self, guard: SupplyChainGuard, tmp_path: Path,
-+    ) -> None:
-+        # cspell:ignore reqeusts
-+        req = tmp_path / "requirements.txt"
-+        req.write_text("reqeusts[socks]==2.31.0\n")
-+        findings = guard.check_requirements(str(req))
-+        assert any(f.rule == "typosquat" and f.package == "reqeusts" for f in findings)
-+
- 
- # ---------------------------------------------------------------------------
- # check_pyproject
-@@ -284,6 +321,19 @@ def test_compound_specifier_keeps_package_name(
-         findings = guard.check_pyproject(str(pp))
-         assert [(f.rule, f.package) for f in findings] == [("loose-constraint", "requests")]
- 
-+    def test_extras_keep_package_name(
-+        self, guard: SupplyChainGuard, tmp_path: Path,
-+    ) -> None:
-+        pp = tmp_path / "pyproject.toml"
-+        pp.write_text(
-+            '[project]\nname = "test"\n'
-+            'dependencies = [\n'
-+            '    "uvicorn[standard]>=0.30.0",\n'
-+            ']\n'
-+        )
-+        findings = guard.check_pyproject(str(pp))
-+        assert [(f.rule, f.package) for f in findings] == [("loose-constraint", "uvicorn")]
-+
-     def test_optional_dependencies_checked(
-         self, guard: SupplyChainGuard, tmp_path: Path,
-     ) -> None:
-@@ -873,3 +923,13 @@ def test_compound_specifier_found_in_lockfile(
-         lock.write_text("requests==2.31.0\n")
-         findings = guard.scan_lockfile_drift(str(manifest), str(lock))
-         assert findings == []
-+
-+    def test_extras_found_in_lockfile(
-+        self, guard: SupplyChainGuard, tmp_path: Path,
-+    ) -> None:
-+        manifest = tmp_path / "requirements.txt"
-+        manifest.write_text("requests[security]==2.31.0\nuvicorn[standard] (>=0.30.0)\n")
-+        lock = tmp_path / "requirements.lock"
-+        lock.write_text("requests==2.31.0\nuvicorn==0.30.0\n")
-+        findings = guard.scan_lockfile_drift(str(manifest), str(lock))
-+        assert findings == []
-```
-
----
-
-### Incident Patch 2: `73307337` (2026-10-18)
-**Commit Message**: fix(claude-code): name the matched text in MCP scan deny reasons (#4353)
-
-* fix(claude-code): name the matched text in MCP scan deny reasons
-
-The agt-mcp-scan backend built its deny reason from each threat's type and severity only, so a block such as 'tool_poisoning (critical)' never said which text triggered it. The scanner already reports that text as threat.evidence. Append it, JSON-quoted, when present; threats without evidence keep the previous wording. What gets blocked is unchanged. Adds a regression test for a Write whose content contains 'override'. Addresses suggested fix 5 of #4343.
-
-Signed-off-by: Micahscodingjourney <[REDACTED_EMAIL]>
-
-* docs(changelog): note agt-mcp-scan deny reasons naming the matched text
-
-Signed-off-by: Micahscodingjourney <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Micahscodingjourney <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Supply-chain checks keep the package name of a compound version specifier.** `_parse_requirements_line` tried the operators in a fixed order and split at the first one it found anywhere in the line, so `requests>=2.28.0,!=2.29.0` was read as the package `requests>=2.28.0,` with the specifier `!=2.29.0`, and `requests<3,>=2.28.0` as `requests<3,`. `check_requirements`, `check_pyproject` and `scan_lockfile_drift` then reported findings under that name, ran the typosquatting check on it (so a typosquatted name written with a compound specifier was not flagged), and flagged the package as missing from a lockfile that lists it. The line is now split at the leftmost operator, so the name is `requests` and the specifier is the whole `>=2.28.0,!=2.29.0`.
- - **Supply-chain checks keep the package name of a requirement with extras or a parenthesized specifier.** `_parse_requirements_line` kept PEP 508 extras and the opening parenthesis in the package name, so `requests[security]==2.31.0` was read as the package `requests[security]` and `requests (>=2.28.0)` as `requests (` with the specifier `>=2.28.0)`. `scan_lockfile_drift` then reported every package written with extras as missing from a lockfile that lists it, `check_requirements` and `check_pyproject` reported findings under that name, and the typosquatting check ran on it, so a typosquatted name written with extras was not flagged. The extras and the parentheses are now dropped from the name, and the parentheses from the specifier.
- - **Supply-chain typosquat check no longer flags the canonical spelling of a popular PyPI package.** `check_typosquatting` compared names case- and separator-sensitively, but PyPI treats names case-insensitively and `-`, `_` and `.` as the same separator (PEP 503), so `Django`, `Flask`, `Pillow`, `Requests` and `scikit_learn` were reported as critical typosquats of `django`, `flask`, `pillow`, `requests` and `scikit-learn`. PyPI names, the popular-package list and `known_packages` are now normalized before comparing; near-miss names such as `Reqeusts` are still flagged.
-+- **Claude Code `agt-mcp-scan` deny reasons now name the matched text.** A block that read `tool_poisoning (critical)` now reads `tool_poisoning (critical) matched "override"`, so a false positive can be located and reported. What gets blocked is unchanged (#4343).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
-```
-
-**File**: `agent-governance-claude-code/lib/policy.mjs` (modified, +4/-1)
-```diff
-@@ -506,7 +506,10 @@ function createMcpInvocationBackend(policy, scanner) {
-         backend: "agt-mcp-scan",
-         decision: decisionFromSeverity(policy.mode, getHighestThreatSeverity(result.threats)),
-         reason: `MCP/tool scan flagged ${result.threats.length} threat(s) for ${toolName}: ${result.threats
--          .map((threat) => `${threat.type} (${threat.severity})`)
-+          .map((threat) => {
-+            const label = `${threat.type} (${threat.severity})`;
-+            return threat.evidence ? `${label} matched ${JSON.stringify(threat.evidence)}` : label;
-+          })
-           .join(", ")}.`,
-       };
-     },
-```
-
-**File**: `agent-governance-claude-code/test/policy.test.mjs` (modified, +24/-0)
-```diff
-@@ -145,6 +145,30 @@ test("evaluatePreToolUse denies direct URL metadata access regardless of paramet
-   await rm(root, { recursive: true, force: true });
- });
- 
-+test("evaluatePreToolUse names the matched text when the MCP scan denies", async () => {
-+  const root = await mkdtemp(join(tmpdir(), "agt-claude-scan-"));
-+  const auditPath = join(root, "audit.json");
-+  const state = await loadPolicy({ auditPath, policyPath: join(root, "no-user-policy.json") });
-+
-+  const result = await evaluatePreToolUse(state, {
-+    tool_name: "Write",
-+    tool_input: {
-+      file_path: join(root, "notes.md"),
-+      content: "Please override the default settings.",
-+    },
-+    session_id: "scan-session",
-+    cwd: root,
-+  });
-+
-+  assert.equal(result.hookSpecificOutput.permissionDecision, "deny");
-+  assert.match(
-+    result.hookSpecificOutput.permissionDecisionReason,
-+    /tool_poisoning \(critical\) matched "override"/,
-+  );
-+
-+  await rm(root, { recursive: true, force: true });
-+});
-+
- test("checkArbitraryText surfaces poisoning and MCP scan findings", async () => {
-   const root = await mkdtemp(join(tmpdir(), "agt-claude-check-"));
-   const state = await loadPolicy({
-```
-
----
-
-### Incident Patch 3: `8b2c9647` (2026-10-16)
-**Commit Message**: fix(agent-mesh): serialize JCS numbers per RFC 8785 (#4341)
-
-* fix(agent-mesh): serialize JCS numbers per RFC 8785
-
-approval_protocol.canonicalize wrote finite floats with Python's repr and
-turned integer-valued floats into exact integers, so 1e-06, 1e-07 and 1e21
-came out as 1e-06, 1e-07 and 1000000000000000000000 where RFC 8785 section
-3.2.2.3 requires 0.000001, 1e-7 and 1e+21. Format floats as ECMAScript
-Number::toString does: the shortest round-trip digits, plain notation for
-decimal exponents from -6 through 21, exponent notation outside it.
-
-Pin the RFC 8785 Appendix B number table in the tests.
-
-Signed-off-by: Sankalp Gilda <[REDACTED_EMAIL]>
-
-* docs(agent-mesh): note that affected approvals must be re-requested
-
-Keep the Security list in the changelog contiguous and say that an
-approval computed by an earlier version over a float in the changed
-ranges no longer binds.
-
-Signed-off-by: Sankalp Gilda <[REDACTED_EMAIL]>
-
-* test(agent-mesh): mark the Appendix B hex pattern for the spell check
-
-Add a cspell directive above the IEEE 754 bit pattern ffefffffffffffff,
-which the changed-lines spell check reads as a word, and split the long
-assertion in test_number_inside_object to st
-
-**File**: `agent-governance-python/agent-mesh/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Security
- 
-+- **RFC 8785 number serialization in the approval action digest**: `approval_protocol.canonicalize` now writes floats the way ECMAScript `Number::toString` does, as RFC 8785 section 3.2.2.3 requires (`1e-06` becomes `0.000001`, `1e-07` becomes `1e-7`, `1e21` becomes `1e+21`). Digests over action parameters holding such floats change; they now match other JCS implementations, and an approval computed by an earlier version over such a parameter no longer binds and must be requested again. The RFC 8785 Appendix B number table is pinned in the tests.
- - **HTTP trust middleware request authentication.** `TrustMiddleware` no longer
-   accepts a caller-supplied `X-Agent-DID` header as proof of identity. It
-   previously started from a trust score of `1.0` and only lowered it inside an
-```
-
-**File**: `agent-governance-python/agent-mesh/src/agentmesh/governance/approval_protocol/digest.py` (modified, +39/-13)
-```diff
-@@ -15,21 +15,25 @@
-   (CPython's ``json.dumps(..., ensure_ascii=False)`` matches JCS string
-   escaping: short escapes for ``\\b \\t \\n \\f \\r`` and lowercase ``\\uXXXX``
-   for the remaining control characters);
--* integers serialize with no decimal point; finite floats use CPython's
--  shortest round-trip ``repr`` with integer-valued floats normalized to
--  integers; ``NaN``/``Infinity`` are rejected.
--
--Byte-for-byte parity with non-Python JCS implementations across all float
--magnitudes (full ECMAScript ``Number`` formatting) is tracked as cross-SDK
--parity work (ADR-0030 step 6). Within the Python governance surface the
--serialization is internally consistent, which is exactly what the action-digest
--binding requires: a digest computed here always reproduces here.
-+* integers serialize with no decimal point; finite floats serialize as
-+  ECMAScript ``Number::toString`` does (RFC 8785 section 3.2.2.3): the
-+  shortest round-trip digits, plain notation for decimal exponents from -6
-+  through 21 and ``e+N`` / ``e-N`` notation outside it, so ``1e-06`` becomes
-+  ``0.000001``, ``1e-07`` becomes ``1e-7`` and ``1e21`` becomes ``1e+21``;
-+  ``-0.0`` serializes as ``0``; ``NaN``/``Infinity`` are rejected.
-+
-+Python ``int`` values serialize exactly. An integer outside the IEEE 754
-+double's exact range (above 2**53 in magnitude) therefore has no counterpart
-+in a JCS implementation that parses numbers as doubles, so callers that need
-+cross-SDK digests should keep integers within that range.
- """
- 
- from __future__ import annotations
- 
- import hashlib
- import json
-+import math
-+from decimal import Decimal
- from typing import Any
- 
- __all__ = ["canonicalize", "sha256_jcs", "DIGEST_PREFIX"]
-@@ -43,11 +47,33 @@ def _format_number(value: int | float) -> str:
-     # ``bool`` is a subclass of ``int``; callers screen it out before here.
-     if isinstance(value, int):
-         return str(value)
--    if value != value or value in (float("inf"), float("-inf")):
-+    if not math.isfinite(value):
-         raise ValueError("JCS cannot serialize NaN or Infinity")
--    if value.is_integer():
--        return str(int(value))
--    return repr(value)
-+    return _format_double(value)
-+
-+
-+def _format_double(value: float) -> str:
-+    """Serialize a finite double as ECMAScript ``Number::toString`` does."""
-+    if value == 0:
-+        return "0"
-+    if value < 0:
-+        return "-" + _format_double(-value)
-+    # ``repr`` yields the shortest digit string that round-trips, which is the
-+    # digit string ECMAScript selects; only the layout differs.
-+    sign, digit_tuple, exponent = Decimal(repr(value)).as_tuple()
-+    digits = "".join(map(str, digit_tuple)).rstrip("0")
-+    exponent += len(digit_tuple) - len(digits)
-+    k = len(digits)
-+    n = exponent + k  # value == 0.<digits> * 10**n
-+    if k <= n <= 21:
-+        return digits + "0" * (n - k)
-+    if 0 < n <= 21:
-+        return digits[:n] + "." + digits[n:]
-+    if -6 < n <= 0:
-+        return "0." + "0" * (-n) + digits
-+    e = n - 1
-+    mantissa = digits if k == 1 else digits[0] + "." + digits[1:]
-+    return f"{mantissa}e{'+' if e >= 0 else '-'}{abs(e)}"
- 
- 
- def _utf16_units(key: str) -> bytes:
-```
-
-**File**: `agent-governance-python/agent-mesh/tests/test_approval_protocol.py` (modified, +55/-0)
-```diff
-@@ -2,6 +2,7 @@
- # Licensed under the MIT License.
- """Tests for the action-bound approval protocol (ADR-0030, step 1 foundation)."""
- 
-+import struct
- from datetime import datetime, timedelta, timezone
- 
- import pytest
-@@ -116,6 +117,60 @@ def test_sha256_prefix(self):
-         assert len(digest) == len("sha256:") + 64
- 
- 
-+# RFC 8785 Appendix B: IEEE 754 bit patterns and the serialization every
-+# conforming JCS implementation emits for them.
-+RFC8785_APPENDIX_B = [
-+    ("0000000000000000", "0"),
-+    ("8000000000000000", "0"),
-+    ("0000000000000001", "5e-324"),
-+    ("8000000000000001", "-5e-324"),
-+    ("7fefffffffffffff", "1.7976931348623157e+308"),
-+    # cspell:disable-next-line
-+    ("ffefffffffffffff", "-1.7976931348623157e+308"),
-+    ("4340000000000000", "9007199254740992"),
-+    ("c340000000000000", "-9007199254740992"),
-+    ("4430000000000000", "295147905179352830000"),
-+    ("44b52d02c7e14af5", "9.999999999999997e+22"),
-+    ("44b52d02c7e14af6", "1e+23"),
-+    ("44b52d02c7e14af7", "1.0000000000000001e+23"),
-+    ("444b1ae4d6e2ef4e", "999999999999999700000"),
-+    ("444b1ae4d6e2ef4f", "999999999999999900000"),
-+    ("444b1ae4d6e2ef50", "1e+21"),
-+    ("3eb0c6f7a0b5ed8c", "9.999999999999997e-7"),
-+    ("3eb0c6f7a0b5ed8d", "0.000001"),
-+    ("41b3de4355555553", "333333333.3333332"),
-+    ("41b3de4355555554", "333333333.33333325"),
-+    ("41b3de4355555555", "333333333.3333333"),
-+    ("41b3de4355555556", "333333333.3333334"),
-+    ("41b3de4355555557", "333333333.33333343"),
-+    ("becbf647612f3696", "-0.0000033333333333333333"),
-+    ("43143ff3c1cb0959", "1424953923781206.2"),
-+]
-+
-+
-+class TestJcsNumberSerialization:
-+    @pytest.mark.parametrize(("bits", "expected"), RFC8785_APPENDIX_B)
-+    def test_rfc8785_appendix_b(self, bits: str, expected: str):
-+        value = struct.unpack(">d", bytes.fromhex(bits))[0]
-+        assert canonicalize(value) == expected.encode("ascii")
-+
-+    @pytest.mark.parametrize(
-+        ("value", "expected"),
-+        [(1e-6, b"0.000001"), (1e-7, b"1e-7"), (1e21, b"1e+21"), (1e20, b"100000000000000000000")],
-+    )
-+    def test_exponent_boundaries(self, value: float, expected: bytes):
-+        assert canonicalize(value) == expected
-+
-+    def test_number_inside_object(self):
-+        canonical = canonicalize({"tolerance": 1e-6, "big": 1e21})
-+        assert canonical == b'{"big":1e+21,"tolerance":0.000001}'
-+
-+    @pytest.mark.parametrize("value", [float("inf"), float("-inf")])
-+    def test_rejects_infinity(self, value: float):
-+        with pytest.raises(ValueError):
-+            canonicalize(value)
-+
-+
- # --------------------------------------------------------------------------- #
- # Action binding
- # --------------------------------------------------------------------------- #
+@@ -319,6 +319,37 @@ def test_check_command_wrapper_runs_denied_command(self):
+             "! env curl",
+             "$(env curl)",
+             "env >out curl",
++            "sudo curl",
++            "sudo -u root curl",
++            "sudo -uroot -E curl",
++            "sudo -nH -g wheel -D /tmp curl",
++            "sudo --user=root --preserve-env=PATH curl",
++            "sudo --preserve-env curl",
++            "sudo --us root curl",
++            "sudo -k curl",
++            "sudo FOO=1 'BAR=a b' curl",
++            # sudo reads options again after an environment word
++            "sudo FOO=1 -u root curl",
++            "sudo FOO=1 -- curl",
++            "sudo -u root FOO=1 -E curl",
++            "sudo -- curl",
++            "/usr/bin/sudo curl",
++            "doas curl",
++            "doas -u root curl",
++            "doas -nu root curl",
++            "xargs curl",
++            "xargs -n1 curl",
++            "xargs -0 -I{} curl {}",
++            "xargs -i curl",
++            "xargs -i{} curl {}",
++            "xargs -l1 curl",
++            "xargs -e curl",
++            "xargs --max-lines=2 curl",
++            "xargs --replace curl",
++            "xargs -P 4 -n 1 -a urls.txt curl",
++            "xargs -- curl",
++            "nice sudo xargs env curl",
++            "sudo -u root timeout 5 curl",
+         ):
+             result = self.enforcer.check_command(command)
+             assert result.allowed is False, command
+@@ -335,6 +366,14 @@ def test_check_command_wrapper_keeps_wrapped_executable(self):
+             ("stdbuf -oL grep x", "grep"),
+             # nohup runs the program named "FOO=x", not an assignment
+             ("nohup FOO=x curl", "FOO=x"),
++            ("sudo apt-get update", "apt-get"),
++            ("sudo -u www-data ls /var/www", "ls"),
++            ("sudo FOO=1 -u root ls", "ls"),
++            ("doas -u root ls", "ls"),
++            ("xargs grep -l x", "grep"),
++            ("xargs -r -n 1 rm", "rm"),
++            # xargs reads its own input, so "echo" is still the first command run
++            ("echo x | xargs curl", "echo"),
+         ):
+             result = self.enforcer.check_command(command)
+             assert result.allowed is True, command
+@@ -353,6 +392,21 @@ def test_check_command_wrapper_without_command(self):
+             ("command -V curl", "command"),
+             ("nohup --help", "nohup"),
+             ("env --version curl", "env"),
++            ("sudo", "sudo"),
++            ("sudo -k", "sudo"),
++            ("sudo -v", "sudo"),
++            ("sudo -l curl", "sudo"),
++            ("sudo -ll", "sudo"),
++            ("sudo --list -U alice", "sudo"),
++            ("sudo -e /etc/hosts", "sudo"),
++            ("sudo -K", "sudo"),
++            ("sudo -V", "sudo"),
++            ("sudo --help", "sudo"),
++            ("doas -L", "doas"),
++            ("doas -C /etc/doas.conf curl", "doas"),
++            ("xargs", "xargs"),
++            ("xargs -r", "xargs"),
++            ("xargs --help", "xargs"),
+         ):
+             result = self.enforcer.check_command(command)
+             assert result.allowed is True, command
+@@ -376,6 +430,22 @@ def test_check_command_wrapper_options_not_read_fail_closed(self):
+             "stdbuf -x curl",
+             "command -x curl",
+             "env --=x curl",
++            # A shell reads the command words again (sudo -s curl runs "$SHELL -c curl")
++            "sudo -s",
++            "sudo -s curl",
++            "sudo -i curl",
++            "sudo --login curl",
++            "sudo -h",
++            "sudo -hhost curl",
++            "sudo -u",
++            "sudo --user",
++            "sudo -x curl",
++            "doas -s",
++            "doas -u",
++            "doas --help",
++            "xargs -Z curl",
++            "xargs -n",
++            "xargs --max curl",
+         ):
+             result = self.enforcer.check_command(command)
+             assert result.allowed is False, command
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4362** (2026-10-18): fix(dotnet): deny MCP calls from authenticated principals whose identifier is not a DID (@Micahscodingjourney)
+- **PR #4361** (2026-10-19): fix(agent-hypervisor): check the command behind sudo, doas and xargs (@ShivamSharma43)
 - **PR #4359** (2026-10-18): fix(agent-runtime): lowercase kubernetes pod names built from agent ids (@ShivamSharma43)
 - **PR #4353** (2026-10-18): fix(claude-code): name the matched text in MCP scan deny reasons (@Micahscodingjourney)
 - **PR #4352** (2026-10-17): fix(agent-mesh): expire MemoryStorageProvider keys after their TTL (@ShivamSharma43)
 - **PR #4351** (2026-10-17): fix(agent-mesh): parse marketplace dependency specifiers like agent_marketplace (@ShivamSharma43)
-- **PR #4350** (2026-10-17): fix(agent-compliance): normalize PyPI names in the typosquat check (@ShivamSharma43)
 
 ---
 
@@ -837,21 +759,26 @@ assertion in test_number_inside_object to st
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-compliance): drop extras and parentheses from parsed requirement names (#4
+## X. agent-hypervisor): check the command behind sudo, doas and xargs (#4361)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce75bd82`: agent-compliance): drop extras and parentheses from parsed requirement names (#4348). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86db4607`: agent-hypervisor): check the command behind sudo, doas and xargs (#4361). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Supply-chain checks keep the package name of a requirement with extras or a parenthesized specifier.** `_parse_requirements_line` kept PEP 508 extras and the opening parenthesis in the package name, so `requests[security]==2.31.0` was read as the package `requests[security]` and `requests (>=2.28.0)` as `requests (` with the specifier `>=2.28.0)`. `scan_lockfile_drift` then reported every package written with extras as missing from a lockfile that lists it, `check_requirements` and `check_pyproject` reported findings under that name, and the typosquatting check ran on it, so a typosquatted name written with extras was not flagged. The extras and the parentheses are now dropped from the name, and the parentheses from the specifier.
+askpass
+findutils
+hhost
+oprtx
+procs
+uroot
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -861,4 +788,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce75bd82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86db4607` are properly handled with clean fallback behavior.

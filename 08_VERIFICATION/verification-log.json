@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-NVXH",
-    "timestamp": "2026-10-18T23:32:57.317Z",
-    "repository": "dingodb/dingo",
-    "learningId": "learn-github-dingodb-dingo",
-    "contentHash": "5946ad139816081eb2624eb4e1517fb0b5d4ff94809b1d3a7ddef2dcbe6e2120",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VSEC",
-    "timestamp": "2026-10-18T23:39:05.988Z",
-    "repository": "searchkit/searchkit",
-    "learningId": "learn-github-searchkit-searchkit",
-    "contentHash": "d230e3d5b5c1ec886d3073a9e4282cb6b6fb916e87d7ba70a00f1949c09ecc9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VT4U",
-    "timestamp": "2026-10-18T23:39:06.942Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VWAS",
-    "timestamp": "2026-10-18T23:39:11.044Z",
-    "repository": "wix/Detox",
-    "learningId": "learn-github-wix-detox",
-    "contentHash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VZ1Y",
-    "timestamp": "2026-10-18T23:39:14.614Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "215c4a9be72fe77073c7be80c3353dcf8e55dbfd1f38ee158e46f34f09cb9bd9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-W03N",
     "timestamp": "2026-10-18T23:39:15.971Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7492,6 +7417,81 @@
     "contentHash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V1UC",
+    "timestamp": "2026-10-19T09:54:23.124Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V44X",
+    "timestamp": "2026-10-19T09:54:26.097Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V6ZS",
+    "timestamp": "2026-10-19T09:54:29.800Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V9RG",
+    "timestamp": "2026-10-19T09:54:33.388Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VI6V",
+    "timestamp": "2026-10-19T09:54:44.311Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

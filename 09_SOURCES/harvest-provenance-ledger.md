@@ -3142,3 +3142,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-19T09:48:06.754Z |
 | `learn-github-louiscad-splitties` | `https://github.com/LouisCAD/Splitties` | `1ed56ba2` | Multi-dimensional audit evidence | 2026-10-19T09:48:09.439Z |
 | `learn-github-volcengine-minecontext` | `https://github.com/volcengine/MineContext` | `171c7a9e` | Multi-dimensional audit evidence | 2026-10-19T09:48:15.514Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `fb767a7c` | Multi-dimensional audit evidence | 2026-10-19T09:54:23.127Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `230a5e48` | Multi-dimensional audit evidence | 2026-10-19T09:54:26.102Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `86db4607` | Multi-dimensional audit evidence | 2026-10-19T09:54:29.803Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `5d27942c` | Multi-dimensional audit evidence | 2026-10-19T09:54:33.391Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T09:54:44.313Z |

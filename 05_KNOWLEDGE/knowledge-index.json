@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T09:48:15.456Z",
-  "total_verified_learnings": 774,
+  "last_updated": "2026-10-19T09:54:44.250Z",
+  "total_verified_learnings": 777,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1748,22 +1748,35 @@
     "learn-github-apache-arrow": {
       "learning_id": "learn-github-apache-arrow",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apache-arrow",
+      "source": "apache/arrow",
+      "repository": "apache/arrow",
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "HEAD",
-      "content_hash": "df7e562f190cd83e2a9e1f6624c1afdc428d1cfabb71c9a9a7a5a437f21e23a1",
+      "source_version": "fb767a7c",
+      "content_hash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2478,
+          "title": "GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.816Z"
+      "verified_at": "2026-10-19T09:54:23.063Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apache-incubator-pegasus": {
       "learning_id": "learn-github-apache-incubator-pegasus",
@@ -5654,22 +5667,35 @@
     "learn-github-crosspaste-crosspaste-desktop": {
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "crosspaste-crosspaste-desktop",
+      "source": "CrossPaste/crosspaste-desktop",
+      "repository": "CrossPaste/crosspaste-desktop",
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "HEAD",
-      "content_hash": "c50583a4fdf17189c6120b8eff280b9d5c727840287a964d169ffd80009e6777",
+      "source_version": "230a5e48",
+      "content_hash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2479,
+          "title": ":bug: report Windows plugin script failures as a single line (#5229)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.440Z"
+      "verified_at": "2026-10-19T09:54:26.038Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crossplane-crossplane": {
       "learning_id": "learn-github-crossplane-crossplane",
@@ -19258,7 +19284,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "3c560fbd2e2193ddf7d2d55fb45e6f7eb909e613c4ab697ee9d1ea4219e5476d",
+      "content_hash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "promoted_rules": [
@@ -19332,7 +19358,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
       ],
-      "verified_at": "2026-10-18T01:52:12.273Z",
+      "verified_at": "2026-10-19T09:54:44.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24225,22 +24251,35 @@
     "learn-github-infiniflow-infinity": {
       "learning_id": "learn-github-infiniflow-infinity",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "infiniflow-infinity",
+      "source": "infiniflow/infinity",
+      "repository": "infiniflow/infinity",
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "HEAD",
-      "content_hash": "112e40dd92b6cac51a90c6db3852c0e1d4446bd79f11684974bc9589745e87b1",
+      "source_version": "5d27942c",
+      "content_hash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2481,
+          "title": "corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.570Z"
+      "verified_at": "2026-10-19T09:54:33.334Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-infiniflow-ragflow": {
       "learning_id": "learn-github-infiniflow-ragflow",
@@ -29094,14 +29133,19 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "78894c81",
-      "content_hash": "797a339604d2ebafcc280d766b58f429efcae11052667094939236f27dadeda7",
+      "source_version": "86db4607",
+      "content_hash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
         {
           "number": 1693,
           "title": "agent-compliance): drop extras and parentheses from parsed requirement names (#4",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2480,
+          "title": "agent-hypervisor): check the command behind sudo, doas and xargs (#4361)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29110,7 +29154,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:00:53.068Z",
+      "verified_at": "2026-10-19T09:54:29.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84863,6 +84907,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T09:48:15.446Z"
+    },
+    "rule-2478": {
+      "learning_id": "rule-2478",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2478,
+      "title": "GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "fb767a7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:54:23.063Z"
+    },
+    "rule-2479": {
+      "learning_id": "rule-2479",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2479,
+      "title": ":bug: report Windows plugin script failures as a single line (#5229)",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "230a5e48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:54:26.038Z"
+    },
+    "rule-2480": {
+      "learning_id": "rule-2480",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2480,
+      "title": "agent-hypervisor): check the command behind sudo, doas and xargs (#4361)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "86db4607",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:54:29.743Z"
+    },
+    "rule-2481": {
+      "learning_id": "rule-2481",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2481,
+      "title": "corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429)",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "5d27942c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:54:33.334Z"
     }
   },
   "aliases": {

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
+> **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
+> **Source Version**: `fb767a7c`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T09:54:22.834Z  
+> **Learning ID**: `learn-github-apache-arrow`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): apache/arrow
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-07T21:29:41.726Z  
+> **Harvest Timestamp**: 2026-10-19T09:54:21.841Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17185 stars
+- **Stars / Engagement**: 17213 stars
 
 ---
 
@@ -1357,438 +1371,23 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ```
 
-### Core Architecture Module: `cpp/src/arrow/c/util_internal.h`
-```
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations
-// under the License.
-
-#pragma once
-
-#include "arrow/c/helpers.h"
-
-namespace arrow {
-namespace internal {
-
-struct SchemaExportTraits {
-  typedef struct ArrowSchema CType;
-  static constexpr auto IsReleasedFunc = &ArrowSchemaIsReleased;
-  static constexpr auto ReleaseFunc = &ArrowSchemaRelease;
-};
-
-struct ArrayExportTraits {
-  typedef struct ArrowArray CType;
-  static constexpr auto IsReleasedFunc = &ArrowArrayIsReleased;
-  static constexpr auto ReleaseFunc = &ArrowArrayRelease;
-  static constexpr auto MoveFunc = &ArrowArrayMove;
-  static constexpr auto MarkReleased = &ArrowArrayMarkReleased;
-};
-
-struct ArrayDeviceExportTraits {
-  typedef struct ArrowDeviceArray CType;
-  static constexpr auto IsReleasedFunc = &ArrowDeviceArrayIsReleased;
-  static constexpr auto ReleaseFunc = &ArrowDeviceArrayRelease;
-  static constexpr auto MoveFunc = &ArrowDeviceArrayMove;
-  static constexpr auto MarkReleased = &ArrowDeviceArrayMarkReleased;
-};
-
-struct ArrayStreamExportTraits {
-  typedef struct ArrowArrayStream CType;
-  static constexpr auto IsReleasedFunc = &ArrowArrayStreamIsReleased;
-  static constexpr auto ReleaseFunc = &ArrowArrayStreamRelease;
-  static constexpr auto MoveFunc = &ArrowArrayStreamMove;
-  static constexpr auto MarkReleased = &ArrowArrayStreamMarkReleased;
-};
-
-struct ArrayDeviceStreamExportTraits {
-  typedef struct ArrowDeviceArrayStream CType;
-  static constexpr auto IsReleasedFunc = &ArrowDeviceArrayStreamIsReleased;
-  static constexpr auto ReleaseFunc = &ArrowDeviceArrayStreamRelease;
-  static constexpr auto MoveFunc = &ArrowDeviceArrayStreamMove;
-  static constexpr auto MarkReleased = &ArrowDeviceArrayStreamMarkReleased;
-};
-
-// A RAII-style object to release a C Array / Schema struct at block scope exit.
-template <typename Traits>
-class ExportGuard {
- public:
-  using CType = typename Traits::CType;
-
-  explicit ExportGuard(CType* c_export) : c_export_(c_export) {}
-
-  ExportGuard(ExportGuard&& other) : c_export_(other.c_export_) {
-    other.c_export_ = nullptr;
-  }
-
-  ExportGuard& operator=(ExportGuard&& other) {
-    Release();
-    c_export_ = other.c_export_;
-    other.c_export_ = nullptr;
-  }
-
-  ~ExportGuard() { Release(); }
-
-  void Detach() { c_export_ = nullptr; }
-
-  void Reset(CType* c_export) { c_export_ = c_export; }
-
-  void Release() {
-    if (c_export_) {
-      Traits::ReleaseFunc(c_export_);
-      c_export_ = nullptr;
-    }
-  }
-
- private:
-  ARROW_DISALLOW_COPY_AND_ASSIGN(ExportGuard);
-
-  CType* c_export_;
-};
-
-using SchemaExportGuard = ExportGuard<SchemaExportTraits>;
-using ArrayExportGuard = ExportGuard<ArrayExportTraits>;
-using DeviceArrayExportGuard = ExportGuard<ArrayDeviceExportTraits>;
-using ArrayStreamExportGuard = ExportGuard<ArrayStreamExportTraits>;
-using DeviceArrayStreamExportGuard = ExportGuard<ArrayDeviceStreamExportTraits>;
-
-}  // namespace internal
-}  // namespace arrow
-
-```
-
-### Core Architecture Module: `cpp/src/arrow/compute/kernels/ree_util_internal.h`
-```
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations
-// under the License.
-
-#pragma once
-
-// Useful operations to implement kernels handling run-end encoded arrays
-
-#include <algorithm>
-#include <cstdint>
-#include <limits>
-#include <memory>
-
-#include "arrow/array/data.h"
-#include "arrow/compute/exec.h"
-#include "arrow/compute/kernel.h"
-#include "arrow/compute/visibility.h"
-#include "arrow/result.h"
-#include "arrow/status.h"
-#include "arrow/type_traits.h"
-#include "arrow/util/bit_util.h"
-#include "arrow/util/logging.h"
-
-namespace arrow {
-namespace compute {
-namespace internal {
-namespace ree_util {
-
-template <typename ArrowType, bool in_has_validity_buffer,
-          bool out_has_validity_buffer = in_has_validity_buffer, typename Enable = void>
-struct ReadWriteValue {};
-
-// Numeric and primitive C-compatible types
-template <typename ArrowType, bool in_has_validity_buffer, bool out_has_validity_buffer>
-class ReadWriteValue<ArrowType, in_has_validity_buffer, out_has_validity_buffer,
-                     enable_if_has_c_type<ArrowType>> {
- public:
-  using ValueRepr = typename ArrowType::c_type;
-
- private:
-  const uint8_t* input_validity_;
-  const uint8_t* input_values_;
-
-  // Needed only by the writing functions
-  uint8_t* output_validity_;
-  uint8_t* output_values_;
-
- public:
-  explicit ReadWriteValue(const ArraySpan& input_values_array,
-                          ArrayData* output_values_array_data)
-      : input_validity_(in_has_validity_buffer ? input_values_array.buffers[0].data
-                                               : NULLPTR),
-        input_values_(input_values_array.buffers[1].data),
-        output_validity_((out_has_validity_buffer && output_values_array_data)
-                             ? output_values_array_data->buffers[0]->mutable_data()
-                             : NULLPTR),
-        output_values_(output_values_array_data
-                           ? output_values_array_data->buffers[1]->mutable_data()
-                           : NULLPTR) {}
-
-  [[nodiscard]] bool ReadValue(ValueRepr* out, int64_t read_offset) const {
-    bool valid = true;
-    if constexpr (in_has_validity_buffer) {
-      valid = bit_util::GetBit(input_validity_, read_offset);
-    }
-    if constexpr (std::is_same_v<ArrowType, BooleanType>) {
-      *out = bit_util::GetBit(input_values_, read_offset);
-    } else {
-      *out = (reinterpret_cast<const ValueRepr*>(input_values_))[read_offset];
-    }
-    return valid;
-  }
-
-  /// Pre-conditions guaranteed by the callers:
-  /// - i and j are valid indices into the values buffer
-  /// - the values in i and j are valid
-  bool CompareValuesAt(int64_t i, int64_t j) const {
-    if constexpr (std::is_same_v<ArrowType, BooleanType>) {
-      return bit_util::GetBit(input_values_, i) == bit_util::GetBit(input_values_, j);
-    } else {
-      return (reinterpret_cast<const ValueRepr*>(input_values_))[i] ==
-             (reinterpret_cast<const ValueRepr*>(input_values_))[j];
-    }
-  }
-
-  /// \brief Ensure padding is zeroed in validity bitmap.
-  void ZeroValidityPadding(int64_t length) const {
-    ARROW_DCHECK(output_values_);
-    if constexpr (out_has_validity_buffer) {
-      ARROW_DCHECK(output_validity_);
-      const int64_t validity_buffer_size = bit_util::BytesForBits(length);
-      output_validity_[validity_buffer_size - 1] = 0;
-    }
-  }
-
-  void WriteValue(int64_t write_offset, bool valid, ValueRepr value) const {
-    if constexpr (out_has_validity_buffer) {
-      bit_util::SetBitTo(output_validity_, write_offset, valid);
-    }
-    if (valid) {
-      if constexpr (std::is_same_v<ArrowType, BooleanType>) {
-        bit_util::SetBitTo(output_values_, write_offset, value);
-      } else {
-        (reinterpret_cast<ValueRepr*>(output_values_))[write_offset] = value;
-      }
-    }
-  }
-
-  void WriteRun(int64_t write_offset, int64_t run_length, bool valid,
-                ValueRepr value) const {
-    if constexpr (out_has_validity_buffer) {
-      bit_util::SetBitsTo(output_validity_, write_offset, run_length, valid);
-    }
-    if (valid) {
-      if constexpr (std::is_same_v<ArrowType, BooleanType>) {
-        bit_util::SetBitsTo(reinterpret_cast<uint8_t*>(output_values_), write_offset,
-                            run_length, value);
-      } else {
-        auto* output_values_c = reinterpret_cast<ValueRepr*>(output_values_);
-        std::fill(output_values_c + write_offset,
-                  output_values_c + write_offset + run_length, value);
-      }
-    }
-  }
-
-  bool Compare(ValueRepr lhs, ValueRepr rhs) const { return lhs == rhs; }
-};
-
-// FixedSizeBinary, Decimal128
-template <typename ArrowType, bool in_has_validity_buffer, bool out_has_validity_buffer>
-class ReadWriteValue<ArrowType, in_has_validity_buffer, out_has_validity_buffer,
-                     enable_if_fixed_size_binary<ArrowType>> {
- public:
-  // Every value is represented as a pointer to byte_width_ bytes
-  using ValueRepr = const uint8_t*;
-
- private:
-  const uint8_t* input_validity_;
-  const uint8_t* input_values_;
-
-  // Needed only by the writing functions
-  uint8_t* output_validity_;
-  uint8_t* output_values_;
-
-  const size_t byte_width_;
-
- public:
-  ReadWriteValue(const ArraySpan& input_values_array, ArrayData* output_values_array_data)
-      : input_validity_(in_has_validity_buffer ? input_values_array.buffers[0].data
-                                               : NULLPTR),
-        input_values_(input_values_array.buffers[1].data),
-        output_validity_((out_has_validity_buffer && output_values_array_data)
-                             ? output_values_array_data->buffers[0]->mutable_data()
-                             : NULLPTR),
-        output_values_(output_values_array_data
-                           ? output_values_array_data->buffers[1]->mutable_data()
-                           : NULLPTR),
-        byte_width_(input_values_array.type->byte_width()) {}
-
-  [[nodiscard]] bool ReadValue(ValueRepr* out, int64_t read_offset) const {
-    bool valid = true;
-    if constexpr (in_has_validity_buffer) {
-      valid = bit_util::GetBit(input_validity_, read_offset);
-    }
-    *out = input_values_ + (read_offset * byte_width_);
-    return valid;
-  }
-
-  bool CompareValuesAt(int64_t i, int64_t j) const {
-    return 0 == memcmp(input_values_ + (i * byte_width_),
-                       input_values_ + (j * byte_width_), byte_width_);
-  }
-
-  /// \brief Ensure padding is zeroed in validity bitmap.
-  void ZeroValidityPadding(int64_t length) const {
-    ARROW_DCHECK(output_values_);
-    if constexpr (out_has_validity_buffer) {
-      ARROW_DCHECK(output_validity_);
-      const int64_t validity_buffer_size = bit_util::BytesForBits(length);
-      output_validity_[validity_buffer_size - 1] = 0;
-    }
-  }
-
-  void WriteValue(int64_t write_offset, bool valid, ValueRepr value) const {
-    if constexpr (out_has_validity_buffer) {
-      bit_util::SetBitTo(output_validity_, write_offset, valid);
-    }
-    if (valid) {
-      memcpy(output_values_ + (write_offset * byte_width_), value, byte_width_);
-    }
-  }
-
-  void WriteRun(int64_t write_offset, int64_t run_length, bool valid,
-                ValueRepr value) const {
-    if constexpr (out_has_validity_buffer) {
-      bit_util::SetBitsTo(output_validity_, write_offset, run_length, valid);
-    }
-    if (valid) {
-      uint8_t* ptr = output_values_ + (write_offset * byte_width_);
-      for (int64_t i = 0; i < run_length; ++i) {
-        memcpy(ptr, value, byte_width_);
-        ptr += byte_width_;
-      }
-    }
-  }
-
-  bool Compare(ValueRepr lhs, ValueRepr rhs) const {
-    return memcmp(lhs, rhs, byte_width_) == 0;
-  }
-};
-
-// Binary, String...
-template <typename ArrowType, bool in_has_validity_buffer, bool out_has_validity_buffer>
-class ReadWriteValue<ArrowType, in_has_validity_buffer, out_has_validity_buffer,
-                     enable_if_base_binary<ArrowType>> {
- public:
-  using ValueRepr = std::string_view;
-  using offset_type = typename ArrowType::offset_type;
-
- private:
-  const uint8_t* input_validity_;
-  const offset_type* input_offsets_;
-  const uint8_t* input_values_;
-
-  // Needed only by the writing functions
-  uint8_t* output_validity_;
-  offset_type* output_offsets_;
-  uint8_t* output_values_;
-
- public:
-  ReadWriteValue(const ArraySpan& input_values_array, ArrayData* output_values_array_data)
-      : input_validity_(in_has_validity_buffer ? input_values_array.buffers[0].data
-                                               : NULLPTR),
-        input_offsets_(input_values_array.template GetValues<offset_type>(1, 0)),
-        input_values_(input_values_array.buffers[2].data),
-        output_validity_((out_has_validity_buffer && output_values_array_data)
-                             ? output_values_array_data->buffers[0]->mutable_data()
-                             : NULLPTR),
-        output_offsets_(
-            output_values_array_data
-                ? output_values_array_data->template GetMutableValues<offset_type>(1, 0)
-                : NULLPTR),
-        output_values_(output_values_array_data
-                           ? output_values_array_data->buffers[2]->mutable_data()
-                           : NULLPTR) {}
-
-  [[nodiscard]] bool ReadValue(ValueRepr* out, int64_t read_offset) const {
-    bool valid = true;
-    if constexpr (in_has_validity_buffer) {
-      valid = bit_util::
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #51898** (2026-10-07): **GH-50004: [CI][Python] Revert pinning miniforge**
-  *Symptoms*: ### Rationale for this change  Undoes pinning the miniforge version, which is no longer required because [miniforge now uses mamba 2.9.0](https://github.com/conda-forge/miniforge/releases/tag/26.7.2-0), which includes the fix for https://github.com/mamba-org/mamba/issues/4274. Unpinning allows us to benefit from improvements in new versions. See #49998 for context.   ### What changes are included in this PR?  Use the latest version of miniforge when installing it in Docker, instead of 26.1.1-3.  ### Are these changes tested?  They will be once CI runs :smile:   ### Are there any user-facing changes?  No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #50004
+- **Issue #54572** (2026-10-19): **GH-54571: [GLib] Add support for returning string view array from C++**
+  *Symptoms*: ### Rationale for this change  `garrow_array_new_raw_valist()` misses string view array detection. If we miss it, we can't return a string view array from C++ to GLib.  ### What changes are included in this PR?  Add missing string view array detection.  ### Are these changes tested?  Yes.  ### Are there any user-facing changes?  Yes.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #54571
   **Post-Mortem & Fix Analysis**:
-  > :warning: GitHub issue #50004 **has been automatically assigned in GitHub** to PR creator.
-  > @github-actions crossbow submit verify-rc-source-*conda-*amd64
-  > Revision: fadee4936ad0cf86196e108b067cba06530230cb  Submitted crossbow builds: [ursacomputing/crossbow @ actions-6985bb8d80](https://github.com/ursacomputing/crossbow/branches/all?query=actions-6985bb8d80)  |Task|Status| |----|------| |verify-rc-source-cpp-linux-conda-latest-amd64|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-6985bb8d80-github-verify-rc-source-cpp-linux-conda-latest-amd64)](https://github.com/ursacomputing/crossbow/actions/runs/37581270704/job/112661254520)| |verify-rc-source-integration-linux-conda-latest-amd64|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-6985bb8d80-github-verify-rc-source-integration-linux-conda-latest-amd64)](https://github.com/ursacomputing/crossbow/actions/runs/37581270282/job/112661253256)| |verify-rc-source-python-linux-conda-latest-amd64|[![GitHub Actions](https://github.com/ursacomputing/crossbow/action
+  > :warning: GitHub issue #54571 **has been automatically assigned in GitHub** to PR creator.
+  > +1  Confirmed: https://github.com/apache/arrow/issues/54571#issuecomment-6261048628
 
-- **Issue #51818** (2026-10-06): **GH-51817: [Dev][Release] Add support for RC curl in `download_rc_binaries.py`**
-  *Symptoms*: ### Rationale for this change  `curl --version` uses the `${MAJOR}.${MINOR}.${PATCH}-rc${RC}` format for RC curl and Debian GNU/Linux sid uses RC curl.  ### What changes are included in this PR?  Accept the `-rc${RC}` part and ignore it.  ### Are these changes tested?  Yes.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #51817
+- **Issue #54571** (2026-10-19): **[Ruby] Casting to string_view aborts the process**
+  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  Casting an array to string_view aborts the process. The error cannot be rescued.  ``` require "arrow"  Arrow::StringArray.new(["a", "b", "c"]).cast(Arrow::StringViewDataType.new) # GLib-GObject-ERROR **: cannot create instance of abstract (non-instantiatable) type 'GArrowArray' # (process exits with status 133) ```  Casting to binary_view works:  ``` Arrow::BinaryArray.new(["a", "b", "c"]).cast(Arrow::BinaryViewDataType.new).class # => Arrow::BinaryViewArray ```  garrow_array_new_raw_valist() in c_glib/arrow-glib/basic-array.cpp seems to have a case for BINARY_VIEW but not for STRING_VIEW.  Environment: red-arrow 25.0.1, apache-arrow-glib 25.0.1 (Homebrew), Ruby 3.4.1, macOS 15 (arm64)   ### Component(s)  Ruby
   **Post-Mortem & Fix Analysis**:
-  > :warning: GitHub issue #51817 **has been automatically assigned in GitHub** to PR creator.
-
-- **Issue #51817** (2026-10-06): **[Dev][Release] `download_rc_binaries.py` doesn't accept RC curl**
-  *Symptoms*: ### Describe the enhancement requested  `download_rc_binaries.py` has a workaround for old curl:  https://github.com/apache/arrow/blob/e85e181188ac3c5e8407b2160331faf5e78fd429/dev/release/download_rc_binaries.py#L234-L236  It doesn't accept RC curl version such as `curl 8.23.0-rc2 (x86_64-pc-linux-gnu) libcurl/8.23.0-rc2 OpenSSL/3.6.5 zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.23.3 libssh2/1.11.1 nghttp2/1.70.0 ngtcp2/1.24.0 nghttp3/1.17.0 mit-krb5/1.22.1 OpenLDAP/2.6.14`.    ### Component(s)  Developer Tools, Release
-  **Post-Mortem & Fix Analysis**:
-  > Issue resolved by pull request 51818 https://github.com/apache/arrow/pull/51818
-
-- **Issue #51811** (2026-10-07): **GH-51780: [C++][IPC] Remove the mislabeled null check on schema fields in GetSchema**
-  *Symptoms*: ### Rationale for this change  In `GetSchema`, the loop over the schema's fields checked each `Field` for null with the label `"DictionaryEncoding.indexType"`. That label belongs to a different check, so if this one ever failed, the error would point at the wrong field. As the `XXX` comment next to it said, the check also can't fail: for a vector of tables, `fields()->Get(i)` returns the element's address plus its stored offset, never null. `Schema.fields` itself is already checked for null just above.  ### What changes are included in this PR?  The check and its comment are removed, which is the first option in the issue. Child fields in `FieldFromFlatbuffer` are already read through `children->Get(i)` without a null check, so top-level fields now match.  ### Are these changes tested?  No new test, since the removed check couldn't fail. The `arrow-ipc-*` tests pass locally.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #51780
-  **Post-Mortem & Fix Analysis**:
-  > :warning: GitHub issue #51780 **has been automatically assigned in GitHub** to PR creator.
-  > :warning: GitHub issue #51780 **has been automatically assigned in GitHub** to PR creator.
-
-- **Issue #51780** (2026-10-07): **[C++] GetSchema labels its null check on each schema field as "DictionaryEncoding.indexType"**
-  *Symptoms*: > [!NOTE] > I discovered this issue and wrote it up with help from Claude Opus 5.5.  ### Describe the enhancement requested  In [`GetSchema`](https://github.com/apache/arrow/blob/e85e181188ac3c5e8407b2160331faf5e78fd429/cpp/src/arrow/ipc/metadata_internal.cc#L1450-L1457) in `cpp/src/arrow/ipc/metadata_internal.cc`, the loop over a schema's fields checks each field for null with the wrong label:  ```cpp for (int i = 0; i < num_fields; ++i) {   const flatbuf::Field* field = schema->fields()->Get(i);   // XXX I don't think this check is necessary (AP)   CHECK_FLATBUFFERS_NOT_NULL(field, "DictionaryEncoding.indexType");   RETURN_NOT_OK(       FieldFromFlatbuffer(field, field_pos.child(i), dictionary_memo, &fields[i])); } ```  The value being checked is a `Field`, not `DictionaryEncoding.indexType`. If the check ever failed, it would report `Unexpected null field DictionaryEncoding.indexType in flatbuffer-encoded metadata`. That message already belongs to the real check on dictionary index types at [line 901](https://github.com/apache/arrow/blob/e85e181188ac3c5e8407b2160331faf5e78fd429/cpp/src/arrow/ipc/metadata_internal.cc#L899-L902), so the two errors would be indistinguishable.  As the comment beside it suggests, the check also appears unable to fail. For a vector of tables, the vendored flatbuffers [`IndirectHelper<Offset<T>>::Read`](https://github.com/apache/arrow/blob/e85e181188ac3c5e8407b2160331faf5e78fd429/cpp/thirdparty/flatbuffers/include/flatbuffers/buffer.h#L121-L130) 
-  **Post-Mortem & Fix Analysis**:
-  > Closed by https://github.com/apache/arrow/pull/51811
-  > @CaptainAni187 Can you post here so that we can assign this issue to you?
-
-- **Issue #51758** (2026-10-07): **GH-51757: [C++] Limit max JSON nesting depth in JSON parser**
-  *Symptoms*: ### Rationale for this change  Our JSON parser is inherently recursive, and a crafted JSON document with huge nesting can send it into a stack overflow.  Given that real-world JSON files will not have thousands levels of nesting, we limit the JSON nesting to an arbitrary value of 300.  ### Are these changes tested?  Yes, by new tests.  ### Are there any user-facing changes?  **This PR contains a "Critical Fix".** A crafted JSON document with a large nesting depth could trigger a denial of service through stack overflow.  ### Was AI used for this PR?  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human (self-reviewed) - [ ] AI - [ ] Not reviewed  * GitHub Issue: #51757
-  **Post-Mortem & Fix Analysis**:
-  > Hmm, the macOS Python builds don't like our new PyArrow tests. I think it's because the default stack size for new threads on macOS is quite smaller (512 kiB by default), debug builds might add some stack overhead, and some of our JSON reading tests are multi-threaded.  It's a bit unexpected that 512 kiB of stack isn't enough for 300 levels of nesting (the current limit). I'm now trying to make stack consumption a bit smaller still, by removing the functional overhead in `RawBuilderSet::Finish`. 
-  > > Hmm, the macOS Python builds don't like our new PyArrow tests. I think it's because the default stack size for new threads on macOS is quite smaller (512 kiB by default), debug builds might add some stack overhead, and some of our JSON reading tests are multi-threaded. >  > It's a bit unexpected that 512 kiB of stack isn't enough for 300 levels of nesting (the current limit). I'm now trying to make stack consumption a bit smaller still, by removing the functional overhead in `RawBuilderSet::Finish`.  Hmm, still getting crashes on macOS Python. Does anyone have a macOS machine so as to get a stack trace?  @taepper @Reranko05 
-  > That said, it seems that stack consumption in debug mode on Linux can be huge as well (each nesting level in `StructType::~StructType` is about 1kB of stack space!). It's just that default stack size on Linux is much larger, 8 MB IIRC.  Perhaps we should just disable these PyArrow tests in debug mode on macOS.
-
-- **Issue #51757** (2026-10-07): **[C++] Limit JSON max nesting depth**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  Arbitrarily nested JSON can run our JSON parser into a stack overflow.  We should hard-code the max JSON nesting depth to a reasonable value that's enough for any actual use case, and doesn't risk crashing.  ### Component(s)  C++
-  **Post-Mortem & Fix Analysis**:
-  > Issue resolved by pull request 51758 https://github.com/apache/arrow/pull/51758
-
-- **Issue #51756** (2026-10-06): **GH-51751: [CI][Packaging] Fix formula path for homebrew-cpp job**
-  *Symptoms*: ### Rationale for this change Fix #51751 homebrew-core's formulae got letter-folders in 2023 but our macro from commit 5ad5ddc kept copying to top-level `Formula/` hence homebrew-cpp job tested homebrew-core's formulae instead of both apache-arrow.rb and apache-arrow-glib.rb in `dev/tasks/homebrew-formulae/`  ### What changes are included in this PR? Copy to `Formula/a/` and change to `formula_opt_prefix("llvm")` per audit check  ### Are these changes tested? Yes.  ### Are there any user-facing changes? No.  ### Was AI used for this PR?  **PR code and description written by:**  - [X] Human - [ ] AI  **Reviewed before submission by:**  - [X] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #51751
-  **Post-Mortem & Fix Analysis**:
-  > <!--   Licensed to the Apache Software Foundation (ASF) under one   or more contributor license agreements.  See the NOTICE file   distributed with this work for additional information   regarding copyright ownership.  The ASF licenses this file   to you under the Apache License, Version 2.0 (the   "License"); you may not use this file except in compliance   with the License.  You may obtain a copy of the License at      http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,   software distributed under the License is distributed on an   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY   KIND, either express or implied.  See the License for the   specific language governing permissions and limitations   under the License. -->  Thanks for opening a pull request!  **This pull request has been automatically converted to a draft because its title doesn't match Arrow's required format.**  If this is not a [minor PR](https://github.com/
-  > @github-actions crossbow submit homebrew-cpp
-  > :warning: GitHub issue #51751 **has been automatically assigned in GitHub** to PR creator.
+  > Thanks for your report. Could you try #54572?
+  > I tried [apache/arrow#54572](https://github.com/apache/arrow/pull/54572) on top of 25.0.1, and it fixes the problem: ``` irb> Arrow::StringArray.new(["a", "b", "c"]).cast(Arrow::StringViewDataType.new) => #<Arrow::StringViewArray:0x0000000107c061f8 ptr=0x0000600002981360 [   "a",   "b",   "c" ]> ``` Thanks!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1805,1581 +1404,558 @@ class ReadWriteValue<ArrowType, in_has_validity_buffer, out_has_validity_buffer,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c82e246` (2026-10-07)
-**Commit Message**: GH-51780: [C++][IPC] Remove the mislabeled null check on schema fields in GetSchema (#51811)
+### Incident Patch 1: `c4a0850e` (2026-10-13)
+**Commit Message**: GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)
 
 ### Rationale for this change
 
-In `GetSchema`, the loop over the schema's fields checked each `Field` for null with the label `"DictionaryEncoding.indexType"`. That label belongs to a different check, so if this one ever failed, the error would point at the wrong field. As the `XXX` comment next to it said, the check also can't fail: for a vector of tables, `fields()->Get(i)` returns the element's address plus its stored offset, never null. `Schema.fields` itself is already checked for null just above.
-
-### What changes are included in this PR?
-
-The check and its comment are removed, which is the first option in the issue. Child fields in `FieldFromFlatbuffer` are already read through `children->Get(i)` without a null check, so top-level fields now match.
+`pyarrow.compute.indices_nonzero()` segfaults (SIGSEGV) on a `ChunkedArray` with zero chunks. A zero-length `Array` and a `ChunkedArray` holding one empty chunk both work; only the chunkless case crashes.
 
 ### Are these changes tested?
 
-No new test, since the removed check couldn't fail. The `arrow-ipc-*` tests pass locally.
+Yes, by new test case.
 
 ### Are there any user-facing changes?
 
-No.
+Only a bugfix.
 
-### Was AI used for this PR?
+* GitHub Issue: #51018
 
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose
+Authored-by: waterWang <[REDACTED_EMAIL]>
+Signed-off-by: Rok Mihevc <[REDACTED_EMAIL]>
 
-**File**: `cpp/src/arrow/ipc/metadata_internal.cc` (modified, +0/-2)
+**File**: `cpp/src/arrow/compute/kernels/vector_selection.cc` (modified, +4/-2)
 ```diff
-@@ -1450,8 +1450,6 @@ Status GetSchema(const void* opaque_schema, DictionaryMemo* dictionary_memo,
-   std::vector<std::shared_ptr<Field>> fields(num_fields);
-   for (int i = 0; i < num_fields; ++i) {
-     const flatbuf::Field* field = schema->fields()->Get(i);
--    // XXX I don't think this check is necessary (AP)
--    CHECK_FLATBUFFERS_NOT_NULL(field, "DictionaryEncoding.indexType");
-     RETURN_NOT_OK(
-         FieldFromFlatbuffer(field, field_pos.child(i), dictionary_memo, &fields[i]));
-   }
-```
-
----
-
-### Incident Patch 2: `a3df1973` (2026-10-07)
-**Commit Message**: GH-50004: [CI][Python] Revert pinning miniforge (#51898)
-
-### Rationale for this change
-
-Undoes pinning the miniforge version, which is no longer required because [miniforge now uses mamba 2.9.0](https://github.com/conda-forge/miniforge/releases/tag/26.7.2-0), which includes the fix for https://github.com/mamba-org/mamba/issues/4274. Unpinning allows us to benefit from improvements in new versions. See #49998 for context. 
-
-### What changes are included in this PR?
-
-Use the latest version of miniforge when installing it in Docker, instead of 26.1.1-3.
-
-### Are these changes tested?
-
-They will be once CI runs :smile: 
-
-### Are there any user-facing changes?
-
-No
-
-### Was AI used for this PR?
-
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
-**PR code and description written by:**
-
-- [x] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #50004
-
-Authored-by: Adam Reeve <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
-
-**File**: `ci/docker/conda.dockerfile` (modified, +1/-3)
-```diff
-@@ -32,10 +32,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
-     rm -rf /var/lib/apt/lists/*
+@@ -264,8 +264,10 @@ Status DoNonZero(const std::vector<ArraySpan>& arrays, int64_t total_length,
+   UInt64Builder builder;
+   RETURN_NOT_OK(builder.Reserve(total_length));
  
- # Install conda and mamba via miniforge.
--# Temporarily pin to an old version of miniforge due to a regression in the mamba solver.
--# See https://github.com/apache/arrow/issues/49998.
- COPY ci/scripts/install_conda.sh /arrow/ci/scripts/
--RUN /arrow/ci/scripts/install_conda.sh miniforge3 26.1.1-3 /opt/conda
-+RUN /arrow/ci/scripts/install_conda.sh miniforge3 latest /opt/conda
- ENV PATH=/opt/conda/bin:$PATH
- 
- # create a conda environment
-```
-
-**File**: `ci/docker/ubuntu-22.04-verify-rc.dockerfile` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ RUN INSTALL_PYTHON=0 /setup-ubuntu.sh && \
- # conda-forge (without activating Conda env) for non-Conda verify-rc job
- ARG python=3.12
- COPY ci/scripts/install_conda.sh /arrow/ci/scripts/
--RUN /arrow/ci/scripts/install_conda.sh miniforge3 26.1.1-3 /opt/conda && \
-+RUN /arrow/ci/scripts/install_conda.sh miniforge3 latest /opt/conda && \
-     /opt/conda/bin/mamba create -y -p /opt/python python=${python} && \
-     rm -rf \
-         /etc/profile.d/conda.sh \
-```
-
----
-
-### Incident Patch 3: `1afe206b` (2026-10-06)
-**Commit Message**: GH-51301: Fix deprecation warnings in the tests with numpy/pandas nightly (#51404)
-
-### Rationale for this change
-
-Test warnings accumulated in our CI.
-
-### What changes are included in this PR?
-
-The warnings are fixed or filtered if the deprecated functionality is still being tested.
-
-### Are these changes tested?
-
-Yes.
-
-### Are there any user-facing changes?
-
-No. Fixing test warnings in our CI.
-
-### Was AI used for this PR?
-
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
-**PR code and description written by:**
-
-- [x] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51301
-
-Lead-authored-by: AlenkaF <[REDACTED_EMAIL]>
-Co-authored-by: Alenka Frim <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-Co-authored-by: Rok Mihevc <[REDACTED_EMAIL]>
-Co-authored-by: Joris Van den Bossche <[REDACTED_EMAIL]>
-Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
-
-**File**: `python/pyarrow/tests/test_array.py` (modified, +9/-4)
-```diff
-@@ -36,6 +36,7 @@
- import pyarrow as pa
- import pyarrow.tests.strategies as past
- import pyarrow.compute as pc
-+from pyarrow.vendored.version import Version
- 
- 
- @pytest.mark.processes
-@@ -2737,6 +2738,8 @@ def test_array_from_list_of_timestamps(unit):
- 
- @pytest.mark.numpy
- def test_array_from_timestamp_with_generic_unit():
-+    if Version(np.__version__) >= Version("2.5.0"):
-+        pytest.skip("generic units of timedelta64 deprecated")
-     n = np.datetime64('NaT')
-     x = np.datetime64('2017-01-01 01:01:01.111111111')
-     y = np.datetime64('2018-11-22 12:24:48.111111111')
-@@ -2778,11 +2781,13 @@ def test_array_from_numpy_timedelta(dtype, type):
- @pytest.mark.numpy
- def test_array_from_numpy_timedelta_incorrect_unit():
-     # generic (no unit)
--    td = np.timedelta64(1)
-+    if Version(np.__version__) < Version("2.5.0"):
-+        # Generic units of timedelta64 deprecated in NumPy 2.5
-+        td = np.timedelta64(1)
- 
--    for data in [[td], np.array([td])]:
--        with pytest.raises(NotImplementedError):
--            pa.array(data)
-+        for data in [[td], np.array([td])]:
-+            with pytest.raises(NotImplementedError):
-+                pa.array(data)
- 
-     # unsupported unit
-     td = np.timedelta64(1, 'M')
-```
-
-**File**: `python/pyarrow/tests/test_compute.py` (modified, +3/-3)
-```diff
-@@ -2656,8 +2656,8 @@ def _check_datetime_components(timestamps, timezone=None):
-     year = ts.dt.year.astype("int64")
-     month = ts.dt.month.astype("int64")
-     day = ts.dt.day.astype("int64")
--    dayofweek = ts.dt.dayofweek.astype("int64")
--    dayofyear = ts.dt.dayofyear.astype("int64")
-+    dayofweek = ts.dt.day_of_week.astype("int64")
-+    dayofyear = ts.dt.day_of_year.astype("int64")
-     quarter = ts.dt.quarter.astype("int64")
-     hour = ts.dt.hour.astype("int64")
-     minute = ts.dt.minute.astype("int64")
-@@ -2980,7 +2980,7 @@ def test_round_temporal(unit):
-     if sys.platform == "win32":
-         timestamps = timestamps[:3] + timestamps[5:]
- 
--    ts = pd.Series([pd.Timestamp(x, unit="ns") for x in timestamps])
-+    ts = pd.Series([pd.Timestamp(x).as_unit("ns") for x in timestamps])
-     _check_temporal_rounding(ts, values, unit)
- 
-     timezones = ["Asia/Kolkata", "America/New_York", "Etc/GMT-4", "Etc/GMT+4",
-```
-
-**File**: `python/pyarrow/tests/test_dataset.py` (modified, +1/-1)
-```diff
-@@ -240,7 +240,7 @@ def multisourcefs(request):
- 
-     # create one with schema partitioning by weekday and color
-     mockfs.create_dir('schema')
--    for part, chunk in df_b.groupby([df_b.date.dt.dayofweek, df_b.color]):
-+    for part, chunk in df_b.groupby([df_b.date.dt.day_of_week, df_b.color]):
-         folder = f'schema/{part[0]}/{part[1]}'
-         path = f'{folder}/chunk.parquet'
-         mockfs.create_dir(folder)
-```
-
-**File**: `python/pyarrow/tests/test_pandas.py` (modified, +6/-5)
-```diff
-@@ -99,8 +99,8 @@ def _alltypes_example(size=100):
- 
- def _check_pandas_roundtrip(df, expected=None, use_threads=False,
-                             expected_schema=None,
--                            check_dtype=True, schema=None,
--                            preserve_index=False,
-+                            check_dtype=True, check_freq=True,
-+                            schema=None, preserve_index=False,
-                             as_batch=False):
-     klass = pa.RecordBatch if as_batch else pa.Table
-     table = klass.from_pandas(df, schema=schema,
-@@ -125,7 +125,8 @@ def _check_pandas_roundtrip(df, expected=None, use_threads=False,
-             "ignore", "elementwise comparison failed", DeprecationWarning)
-         tm.assert_frame_equal(result, expected, check_dtype=check_dtype,
-                               check_index_type=('equiv' if preserve_index
--                                                else False))
-+                                                else False),
-+                              check_freq=check_freq)
- 
- 
- def _check_series_roundtrip(s, type_=None, expected_pa_type=None):
-@@ -223,7 +224,7 @@ def test_column_index_names_datetime(self, tz):
-             np.random.randn(5, 3),
-             columns=pd.date_range("2021-01-01", periods=3, freq="50D", tz=tz)
-         )
--        _check_pandas_roundtrip(df, preserve_index=True)
-+        _check_pandas_roundtrip(df, preserve_index=True, check_freq=False)
- 
-     def test_column_index_names_with_decimal(self):
-         # GH-41503: Test valid roundtrip with decimal value in column index
-@@ -5016,7 +5017,7 @@ def test_does_not_mutate_timedelta_dtype():
- 
-     assert np.dtype(np.timedelta64) == expected
- 
--    df = pd.DataFrame({"a": [np.timedelta64()]})
-+    df = pd.DataFrame({"a": [np.timedelta64(0, "s")]})
-     t = pa.Table.from_pandas(df)
-     t.to_pandas()
- 
-```
-
----
-
-### Incident Patch 4: `0e9fca31` (2026-10-06)
-**Commit Message**: GH-51751: [CI][Packaging] Fix formula path for homebrew-cpp job (#51756)
-
-### Rationale for this change
-Fix #51751
-homebrew-core's formulae got letter-folders in 2023 but our macro from commit 5ad5ddc kept copying to top-level `Formula/` hence homebrew-cpp job tested homebrew-core's formulae instead of both apache-arrow.rb and apache-arrow-glib.rb in `dev/tasks/homebrew-formulae/`
-
-### What changes are included in this PR?
-Copy to `Formula/a/` and
-change to `formula_opt_prefix("llvm")` per audit check
-
-### Are these changes tested?
-Yes.
-
-### Are there any user-facing changes?
-No.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [x] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51751
-
-Authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Signed-off-by: Sutou Kouhei <[REDACTED_EMAIL]>
-
-**File**: `dev/tasks/homebrew-formulae/apache-arrow.rb` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ def install
-     # We set `ARROW_ORC=OFF` because it fails to build with Protobuf 27.0
-     args = %W[
-       -DCMAKE_INSTALL_RPATH=#{rpath}
--      -DLLVM_ROOT=#{Formula["llvm"].opt_prefix}
-+      -DLLVM_ROOT=#{formula_opt_prefix("llvm")}
-       -DARROW_DEPENDENCY_SOURCE=SYSTEM
-       -DARROW_ACERO=ON
-       -DARROW_COMPUTE=ON
-```
-
-**File**: `dev/tasks/macros.jinja` (modified, +1/-1)
-```diff
-@@ -175,7 +175,7 @@ env:
-         # Make sure there's only one
-         sed -i '' -E -e 's@.git.git@.git@' ${formula}
-         cat ${formula}
--        cp ${formula} $(brew --repository homebrew/core)/Formula/
-+        cp ${formula} $(brew --repository homebrew/core)/Formula/a/
-       done
- {% endmacro %}
- 
-```
-
----
-
-### Incident Patch 5: `e85e1811` (2026-10-02)
-**Commit Message**: GH-51670: [C++][Dev] Fix shellcheck errors in the cpp/examples/minimal_build directory (#51671)
-
-### Rationale for this change
-
-This is the sub issue #44748.
-
-* SC2046: Quote this to prevent word splitting
-* SC2086: Double quote to prevent globbing and word splitting
-* SC2223: This default assignment may cause DoS due to globbing. Quote it
-
-```
-In build_arrow.sh line 23:
-mkdir -p $ARROW_BUILD_DIR
-         ^--------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
-
-Did you mean:
-mkdir -p "$ARROW_BUILD_DIR"
-
-In build_arrow.sh line 24:
-pushd $ARROW_BUILD_DIR
-      ^--------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
-
-Did you mean:
-pushd "$ARROW_BUILD_DIR"
-
-In build_arrow.sh line 30:
-    $ARROW_CMAKE_OPTIONS
-    ^------------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
-
-Did you mean:
-    "$ARROW_CMAKE_OPTIONS"
-
-In build_arrow.sh line 32:
-make -j$NPROC
-       ^----^ SC2086 (info): Double quote to prevent globbing and word splitting.
-
-Did you mean:
-make -j"$NPROC"
-
-In build_example.sh line 21:
-mkdir -p $EXAMPLE_BUILD_DIR
-         ^----------------^ SC2086 (info): Double quote to prevent globbing and 
-
-**File**: `.pre-commit-config.yaml` (modified, +1/-5)
-```diff
-@@ -284,11 +284,7 @@ repos:
-           (
-           ?^c_glib/.*\.sh$|
-           ?^ci/.*\.sh$|
--          ?^cpp/build-support/.*\.sh$|
--          ?^cpp/examples/minimal_build/run\.sh$|
--          ?^cpp/examples/tutorial_examples/.*\.sh$|
--          ?^cpp/src/.*\.sh$|
--          ?^cpp/thirdparty/download_dependencies\.sh$|
-+          ?^cpp/.*\.sh$|
-           ?^dev/release/05-binary-upload\.sh$|
-           ?^dev/release/07-flightsqlodbc-upload\.sh$|
-           ?^dev/release/08-publish-gh-release\.sh$|
-```
-
-**File**: `cpp/examples/minimal_build/build_arrow.sh` (modified, +8/-4)
-```diff
-@@ -20,16 +20,20 @@ set -ex
- 
- NPROC=$(nproc)
- 
--mkdir -p $ARROW_BUILD_DIR
--pushd $ARROW_BUILD_DIR
-+mkdir -p "$ARROW_BUILD_DIR"
-+pushd "$ARROW_BUILD_DIR"
-+
-+# Convert the space-separated CMake options into a Bash array.
-+# This avoids ShellCheck SC2086 and preserves argument boundaries.
-+read -r -a ARROW_CMAKE_OPTIONS_ARRAY <<< "$ARROW_CMAKE_OPTIONS"
- 
- # Enable the CSV reader as it's used by the example third-party build
- cmake /arrow/cpp \
-     -DARROW_CSV=ON \
-     -DARROW_MIMALLOC=OFF \
--    $ARROW_CMAKE_OPTIONS
-+    "${ARROW_CMAKE_OPTIONS_ARRAY[@]}"
- 
--make -j$NPROC
-+make -j"$NPROC"
- make install
- 
- popd
-```
-
-**File**: `cpp/examples/minimal_build/build_example.sh` (modified, +2/-2)
-```diff
-@@ -18,8 +18,8 @@
- 
- set -ex
- 
--mkdir -p $EXAMPLE_BUILD_DIR
--pushd $EXAMPLE_BUILD_DIR
-+mkdir -p "$EXAMPLE_BUILD_DIR"
-+pushd "$EXAMPLE_BUILD_DIR"
- 
- cmake /io
- make
-```
-
-**File**: `cpp/examples/minimal_build/run_static.sh` (modified, +33/-25)
-```diff
-@@ -18,34 +18,38 @@
- 
- set -e
- 
--: ${ARROW_DIR:=/arrow}
--: ${EXAMPLE_DIR:=/io}
--: ${ARROW_BUILD_DIR:=/build/arrow}
--: ${EXAMPLE_BUILD_DIR:=/build/example}
-+: "${ARROW_DIR:=/arrow}"
-+: "${EXAMPLE_DIR:=/io}"
-+: "${ARROW_BUILD_DIR:=/build/arrow}"
-+: "${EXAMPLE_BUILD_DIR:=/build/example}"
- 
--: ${ARROW_DEPENDENCY_SOURCE:=BUNDLED}
-+: "${ARROW_DEPENDENCY_SOURCE:=BUNDLED}"
- 
- echo
- echo "=="
- echo "== Building Arrow C++ library"
- echo "=="
- echo
- 
--mkdir -p $ARROW_BUILD_DIR
--pushd $ARROW_BUILD_DIR
-+mkdir -p "$ARROW_BUILD_DIR"
-+pushd "$ARROW_BUILD_DIR"
- 
- NPROC=$(nproc)
- 
--cmake $ARROW_DIR/cpp \
-+# Convert the space-separated CMake options into a Bash array.
-+# This avoids ShellCheck SC2086 and preserves argument boundaries.
-+read -r -a ARROW_CMAKE_OPTIONS_ARRAY <<< "$ARROW_CMAKE_OPTIONS"
-+
-+cmake "$ARROW_DIR"/cpp \
-     -DARROW_BUILD_SHARED=OFF \
-     -DARROW_BUILD_STATIC=ON \
-     -DARROW_CSV=ON \
--    -DARROW_DEPENDENCY_SOURCE=${ARROW_DEPENDENCY_SOURCE} \
-+    -DARROW_DEPENDENCY_SOURCE="${ARROW_DEPENDENCY_SOURCE}" \
-     -DARROW_DEPENDENCY_USE_SHARED=OFF \
-     -Dxsimd_SOURCE=BUNDLED \
--    $ARROW_CMAKE_OPTIONS
-+    "${ARROW_CMAKE_OPTIONS_ARRAY[@]}"
- 
--make -j$NPROC
-+make -j"$NPROC"
- make install
- 
- popd
-@@ -57,11 +61,11 @@ echo "== Building example project using Arrow C++ library"
- echo "=="
- echo
- 
--rm -rf $EXAMPLE_BUILD_DIR
--mkdir -p $EXAMPLE_BUILD_DIR
--pushd $EXAMPLE_BUILD_DIR
-+rm -rf "$EXAMPLE_BUILD_DIR"
-+mkdir -p "$EXAMPLE_BUILD_DIR"
-+pushd "$EXAMPLE_BUILD_DIR"
- 
--cmake $EXAMPLE_DIR -DARROW_LINK_SHARED=OFF
-+cmake "$EXAMPLE_DIR" -DARROW_LINK_SHARED=OFF
- make
- 
- popd
-@@ -73,9 +77,9 @@ echo "== Running example project"
- echo "=="
- echo
- 
--pushd $EXAMPLE_DIR
-+pushd "$EXAMPLE_DIR"
- 
--$EXAMPLE_BUILD_DIR/arrow-example
-+"${EXAMPLE_BUILD_DIR}/arrow-example"
- 
- echo
- echo "=="
-@@ -84,13 +88,17 @@ echo "== Building example project using Arrow C++ library"
- echo "=="
- echo
- 
--rm -rf $EXAMPLE_BUILD_DIR
--mkdir -p $EXAMPLE_BUILD_DIR
-+read -ra ARROW_BUILD_FLAGS <<< "$(
-+  PKG_CONFIG_PATH="$ARROW_BUILD_DIR/lib/pkgconfig" \
-+    pkg-config --cflags --libs --static arrow
-+)"
-+
-+rm -rf "$EXAMPLE_BUILD_DIR"
-+mkdir -p "$EXAMPLE_BUILD_DIR"
- ${CXX:-c++} -std=c++20 \
--  -o $EXAMPLE_BUILD_DIR/arrow-example \
--  $EXAMPLE_DIR/example.cc \
--  $(PKG_CONFIG_PATH=$ARROW_BUILD_DIR/lib/pkgconfig \
--     pkg-config --cflags --libs --static arrow)
-+  -o "${EXAMPLE_BUILD_DIR}/arrow-example" \
-+  "${EXAMPLE_DIR}/example.cc" \
-+  "${ARROW_BUILD_FLAGS[@]}"
- 
- popd
- 
-@@ -101,6 +109,6 @@ echo "== Running example project"
- echo "=="
- echo
- 
--pushd $EXAMPLE_DIR
-+pushd "$EXAMPLE_DIR"
- 
--$EXAMPLE_BUILD_DIR/arrow-example
-+"${EXAMPLE_BUILD_DIR}/arrow-example"
-```
-
----
-
-### Incident Patch 6: `676dd43c` (2026-10-02)
-**Commit Message**: GH-51687: [C++] Skipt tests that require threads if ARROW_ENABLE_THREADING=OFF (#51688)
-
-### Rationale for this change
-
-The following PR introduced some tests that require threeading but those are not skipped when ARROW_ENABLE_THREADING=OFF failing on jobs like emscripten.
-- https://github.com/apache/arrow/pull/51498
-
-### What changes are included in this PR?
-
-Skip the tests if ARROW_ENABLE_THREADING=OFF
-
-### Are these changes tested?
-
-Yes via archer with the failing job.
-
-### Are there any user-facing changes?
-
-No
-
-### Was AI used for this PR?
-
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
-**PR code and description written by:**
-
-- [x] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51687
-
-Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Rossi Sun <[REDACTED_EMAIL]>
-
-**File**: `cpp/src/arrow/util/async_generator_test.cc` (modified, +9/-0)
-```diff
-@@ -976,6 +976,9 @@ TEST_F(MergedGeneratorErrorHookTest, OuterErrorToWaiterNotOvertakenByLaterPull)
- // receives the error has completed, even when it is requested while the generator is
- // already completing.
- TEST_F(MergedGeneratorErrorHookTest, InnerErrorToWaiterNotOvertakenDuringCompletion) {
-+#ifndef ARROW_ENABLE_THREADING
-+  GTEST_SKIP() << "Test requires threading support";
-+#endif
-   auto failing = Future<TestInt>::Make();
-   AsyncGenerator<TestInt> failing_sub = [failing]() { return failing; };
-   std::vector<AsyncGenerator<TestInt>> subs = {failing_sub};
-@@ -994,6 +997,9 @@ TEST_F(MergedGeneratorErrorHookTest, InnerErrorToWaiterNotOvertakenDuringComplet
- }
- 
- TEST_F(MergedGeneratorErrorHookTest, OuterErrorToWaiterNotOvertakenDuringCompletion) {
-+#ifndef ARROW_ENABLE_THREADING
-+  GTEST_SKIP() << "Test requires threading support";
-+#endif
-   auto failing = Future<AsyncGenerator<TestInt>>::Make();
-   AsyncGenerator<AsyncGenerator<TestInt>> source = [failing]() { return failing; };
-   MergedGenerator<TestInt> gen(std::move(source), 1);
-@@ -1011,6 +1017,9 @@ TEST_F(MergedGeneratorErrorHookTest, OuterErrorToWaiterNotOvertakenDuringComplet
- }
- 
- TEST_F(MergedGeneratorErrorHookTest, ClaimedErrorNotOvertakenDuringCompletion) {
-+#ifndef ARROW_ENABLE_THREADING
-+  GTEST_SKIP() << "Test requires threading support";
-+#endif
-   auto failing = Future<TestInt>::Make();
-   AsyncGenerator<TestInt> failing_sub = [failing]() { return failing; };
-   std::vector<AsyncGenerator<TestInt>> subs = {MakeVectorGenerator<TestInt>({TestInt(1)}),
-```
-
----
-
-### Incident Patch 7: `46e09d33` (2026-10-01)
-**Commit Message**: GH-51675: [Python][Packaging] Apply upstream fix to UriParser from vcpkg and force Windows image rebuild to fix builds on wheels (#51676)
-
-### Rationale for this change
-
-We have bumped UriParser from a vendored version to be built from external sources. We have to rebuild Windows wheels and we have to apply a fix for older GLIBC see the following upstream commit:
-- https://github.com/uriparser/uriparser/commit/072a97c604a05d120686d8ada8eff093a983d75d
-
-### What changes are included in this PR?
-
-Apply to vcpkg the upstream commit to fix older GLIBC.
-
-### Are these changes tested?
-
-Yes via archery wheels builds
-
-### Are there any user-facing changes?
-
-No
-
-### Was AI used for this PR?
-
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
-**PR code and description written by:**
-
-- [x] Human
-- [x] AI
-
-I've used AI to analyze the errors. Changes have been added and applied by me locally.
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51675
-
-Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Sutou 
-
-**File**: `.env` (modified, +1/-1)
-```diff
-@@ -98,6 +98,6 @@ VCPKG="9b965a116838c6cdcd36bca60d1b81b030c8ab8d"    # 2026.05.27 (not release, u
- # ci/docker/python-*-windows-*.dockerfile or the vcpkg config.
- # This is a workaround for our CI problem that "archery docker build" doesn't
- # use pulled built images in dev/tasks/python-wheels/github.windows.yml.
--PYTHON_WHEEL_WINDOWS_IMAGE_REVISION=2026-09-09
-+PYTHON_WHEEL_WINDOWS_IMAGE_REVISION=2026-10-01
- PYTHON_WHEEL_WINDOWS_TEST_IMAGE_REVISION=2026-09-14
- 
-```
-
-**File**: `ci/vcpkg/ports.patch` (modified, +34/-0)
-```diff
-@@ -80,3 +80,37 @@ index 278bc17a1c..d47d859360 100644
-  )
-  file(GLOB modules "${SOURCE_PATH}/cmake_modules/Find*.cmake")
-  file(REMOVE ${modules} "${SOURCE_PATH}/c++/libs/libhdfspp/libhdfspp.tar.gz")
-+diff --git a/ports/uriparser/fix-glibc-2.28-reallocarray.diff b/ports/uriparser/fix-glibc-2.28-reallocarray.diff
-+new file mode 100644
-+index 0000000..57adef4
-+--- /dev/null
-++++ b/ports/uriparser/fix-glibc-2.28-reallocarray.diff
-+@@ -0,0 +1,15 @@
-++diff --git a/src/UriMemory.c b/src/UriMemory.c
-++--- a/src/UriMemory.c
-+++++ b/src/UriMemory.c
-++@@ -50,6 +50,11 @@
-++ #    define _DEFAULT_SOURCE 1
-++ #  endif
-++ 
-+++// For glibc <2.29
-+++#  if !defined(_GNU_SOURCE)
-+++#    define _GNU_SOURCE 1
-+++#  endif
-+++
-++ // For NetBSD (stdlib.h revision 1.122 of 2020-05-26)
-++ #  if defined(__NetBSD__) && !defined(_OPENBSD_SOURCE)
-++ #    define _OPENBSD_SOURCE 1
-+diff --git a/ports/uriparser/portfile.cmake b/ports/uriparser/portfile.cmake
-+index 5df5e94..225e5fb 100644
-+--- a/ports/uriparser/portfile.cmake
-++++ b/ports/uriparser/portfile.cmake
-+@@ -4,6 +4,8 @@ vcpkg_from_github(
-+     REF "uriparser-${VERSION}"
-+     SHA512 1e4c397418e71e705b5712de2dc3ea6e95163c9d95bfbaa5f7d2fd2344d34eaf167d7d9389ab9671cfb314af026621b56e632ea34b681c2f4d7951a1b32a98b4
-+     HEAD_REF master
-++    PATCHES
-++        fix-glibc-2.28-reallocarray.diff
-+ )
-+ 
-+ if("tool" IN_LIST FEATURES)
-```
-
----
-
-### Incident Patch 8: `ccfcdd24` (2026-10-01)
-**Commit Message**: GH-31076: [C++] Reject overflowing STL allocation sizes (#51477)
-
-### Rationale for this change
-
-The STL allocator computes `n * sizeof(T)` without checking for overflow. On a 64-bit platform, requesting `2^61` uint64_t elements wraps the byte count to zero. Requesting one more element wraps it to eight. Both allocations incorrectly succeed on upstream commit `5448aa7a916e73116ccc009454e3c19572dd5aad`, returning less storage than requested.
-
-### What changes are included in this PR?
-
-Check the element count before multiplication against both the size_t limit and the int64_t limit used by MemoryPool. Reject oversized requests with the existing BadAlloc exception, which derives from std::bad_alloc.
-
-Add one regression test covering wraparound to zero and eight bytes. The test frees any unexpectedly successful allocation before reporting the missing exception.
-
-### Are these changes tested?
-
-Yes, by additional unit test.
-
-### Are there any user-facing changes?
-
-Just a bugfix.
-
-### Was AI used for this PR?
-
-**PR code and description written by**
-
-- [ ] Human
-- [x] AI
-
-**Reviewed before submission by**
-
-- [x] Human
-- [x] AI
-- [ ] Not reviewed
-
-OpenAI Codex researched the issue and relat
-
-**File**: `cpp/src/arrow/stl_allocator.h` (modified, +4/-0)
-```diff
-@@ -19,6 +19,7 @@
- 
- #include <algorithm>
- #include <cstddef>
-+#include <limits>
- #include <memory>
- #include <string>
- #include <utility>
-@@ -72,6 +73,9 @@ class allocator {
-   const_pointer address(const_reference r) const noexcept { return std::addressof(r); }
- 
-   pointer allocate(size_type n, const void* /*hint*/ = NULLPTR) {
-+    if (n > size_max() || n > std::numeric_limits<int64_t>::max() / sizeof(T)) {
-+      throw BadAlloc(Status::OutOfMemory("Memory allocation size too large"));
-+    }
-     uint8_t* data;
-     Status s = pool_->Allocate(n * sizeof(T), &data);
-     if (!s.ok()) throw BadAlloc(std::move(s));
-```
-
-**File**: `cpp/src/arrow/stl_test.cc` (modified, +14/-0)
-```diff
-@@ -558,6 +558,20 @@ TEST(allocator, MemoryTracking) {
-   ASSERT_EQ(0, pool->bytes_allocated());
- }
- 
-+TEST(allocator, AllocationSizeOverflow) {
-+  allocator<uint64_t> alloc;
-+  const size_t first_overflow = std::numeric_limits<size_t>::max() / sizeof(uint64_t) + 1;
-+  for (const size_t n : {first_overflow, first_overflow + 1}) {
-+    SCOPED_TRACE(n);
-+    EXPECT_THROW(
-+        {
-+          auto* data = alloc.allocate(n);
-+          alloc.deallocate(data, n);
-+        },
-+        std::bad_alloc);
+-  NonZeroVisitor visitor(&builder, arrays);
+-  RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
++  if (!arrays.empty()) {
++    NonZeroVisitor visitor(&builder, arrays);
++    RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
 +  }
-+}
-+
- #if !(defined(ARROW_VALGRIND) || defined(ADDRESS_SANITIZER) || defined(ARROW_JEMALLOC))
- 
- TEST(allocator, TestOOM) {
-```
-
----
-
-### Incident Patch 9: `f0d043cd` (2026-10-01)
-**Commit Message**: MINOR: [Docs][C++] Fix doxygenfile path for arrow/flight/transport.h (#51677)
-
-### Rationale for this change
-- Empty [26.0 dev implementing-custom-transports](https://arrow.apache.org/docs/dev/cpp/api/flight.html#implementing-custom-transports) `Warning: doxygenfile: Cannot find file “arrow/flight/transport.h`
-(and Sphinx building html shows the same [warning at flight.rst:207](https://github.com/apache/arrow/actions/runs/36746074972/job/109992487223?pr=51661#step:6:4145))
-- While [25.0 docs](https://arrow.apache.org/docs/cpp/api/flight.html#implementing-custom-transports) renders "Implementing Custom Transports" OK.
-
-New Breathe version 5.0.0 (breathe-doc/breathe#967, breathe-doc/breathe#1029) checks `doxygenfile` against Doxygen's index (file name transport.h) and no longer full path.
-
-### What changes are included in this PR?
-Use path `transport.h` which works both with Breathe 4.x and 5.x
-
-### Are these changes tested?
-Yes.
-
-### Are there any user-facing changes?
-No.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-- [X] AI, only for analysis
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [ ] AI
-- [ ] Not reviewed
-
-Authored-by: Tadeja Kadu
-
-**File**: `docs/source/cpp/api/flight.rst` (modified, +1/-1)
-```diff
-@@ -204,5 +204,5 @@ error codes.
- Implementing Custom Transports
- ==============================
- 
--.. doxygenfile:: arrow/flight/transport.h
-+.. doxygenfile:: transport.h
-    :sections: briefdescription detaileddescription
-```
-
----
-
-### Incident Patch 10: `e6adb62b` (2026-10-01)
-**Commit Message**: MINOR: [Docs][C++] Fix Sphinx building html warning (#51672)
-
-### Rationale for this change
-Fix Sphinx building [html] [warning](https://github.com/apache/arrow/actions/runs/36743843708/job/109984877241#step:7:5190)
-```
-/build/python/docs/source/cpp/api/filesystem.rst:81: WARNING: doxygenfunction: Unable to resolve function "arrow::fs::InitializeS3" with arguments "(const S3GlobalOptions&)".
-Candidate function could not be parsed. Parsing error is
-...
-ARROW_S3_EXPORT Status InitializeS3 (const S3GlobalOptions &options)
-```
-
-### What changes are included in this PR?
-Add new macro `ARROW_S3_EXPORT` to the PREDEFINED list in `Doxyfile`
-
-### Are these changes tested?
-Yes.
-
-### Are there any user-facing changes?
-No.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [ ] AI
-- [ ] Not reviewed
-
-Authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
-
-**File**: `cpp/apidoc/Doxyfile` (modified, +1/-0)
-```diff
-@@ -2484,6 +2484,7 @@ PREDEFINED             = __attribute__(x)= \
-                          ARROW_EXTERN_TEMPLATE= \
-                          ARROW_FLIGHT_EXPORT= \
-                          ARROW_FLIGHT_SQL_EXPORT= \
-+                         ARROW_S3_EXPORT= \
-                          ARROW_SUPPRESS_DEPRECATION_WARNING= \
-                          ARROW_UNSUPPRESS_DEPRECATION_WARNING= \
-                          GANDIVA_EXPORT= \
-```
-
----
-
-### Incident Patch 11: `275872bf` (2026-10-01)
-**Commit Message**: GH-51651: [C++][CI] Fix static linking for system Abseil and bundled GCS (#51653)
-
-### Rationale for this change
-Static Arrow linking can fail for bundled GCS and system Abseil.
-
-### What changes are included in this PR?
-Export Abseil dependencies via CMake target and pkg-config metadata.
-
-### Are these changes tested?
-To be additionally verified by CI.
-
-### Are there any user-facing changes?
-This improves downstream static linking.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-- [X] AI
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [X] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51651
-
-Authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +35/-0)
-```diff
-@@ -4460,6 +4460,41 @@ if(ARROW_BUILD_STATIC)
-      AND NOT WIN32)
-     arrow_append_pc_system_library("libxml-2.0" ARROW_LIBXML2_PC "-lxml2")
-   endif()
-+  if(ARROW_GCS
-+     AND google_cloud_cpp_storage_SOURCE STREQUAL "BUNDLED"
-+     AND absl_SOURCE STREQUAL "SYSTEM")
-+    # Bundled google-cloud-cpp needs system Abseil for static linking.
-+    # Abseil .pc files include indirect link dependencies that -labsl_* flags omit
-+    find_package(PkgConfig QUIET)
-+    if(PkgConfig_FOUND)
-+      foreach(ARROW_GCS_ABSL_PC_PACKAGE
-+              absl_base
-+              absl_cord
-+              absl_crc32c
-+              absl_memory
-+              absl_optional
-+              absl_span
-+              absl_str_format
-+              absl_strings
-+              absl_time
-+              absl_variant)
-+        pkg_check_modules(ARROW_GCS_${ARROW_GCS_ABSL_PC_PACKAGE}_PC
-+                          ${ARROW_GCS_ABSL_PC_PACKAGE}
-+                          NO_CMAKE_PATH
-+                          NO_CMAKE_ENVIRONMENT_PATH
-+                          QUIET)
-+        if(ARROW_GCS_${ARROW_GCS_ABSL_PC_PACKAGE}_PC_FOUND)
-+          string(APPEND ARROW_PC_REQUIRES_PRIVATE " ${ARROW_GCS_ABSL_PC_PACKAGE}")
-+        else()
-+          message(STATUS "No .pc for ${ARROW_GCS_ABSL_PC_PACKAGE}; "
-+                         "static pkg-config metadata may be incomplete. Consider CMake")
-+        endif()
-+      endforeach()
-+    else()
-+      message(STATUS "PkgConfig not available. Skipping Abseil dependencies from arrow.pc"
-+      )
-+    endif()
-+  endif()
- endif()
- 
- # ----------------------------------------------------------------------
-```
-
-**File**: `cpp/src/arrow/CMakeLists.txt` (modified, +15/-0)
-```diff
-@@ -38,6 +38,21 @@ if(ARROW_GCS)
-     list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS google-cloud-cpp::storage)
-   elseif(google_cloud_cpp_storage_SOURCE STREQUAL "BUNDLED")
-     list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS CURL::libcurl)
-+    if(absl_SOURCE STREQUAL "SYSTEM")
-+      # Bundled google-cloud-cpp with system Abseil needs these for static consumers.
-+      list(APPEND
-+           ARROW_STATIC_INSTALL_INTERFACE_LIBS
-+           absl::base
-+           absl::cord
-+           absl::crc32c
-+           absl::memory
-+           absl::optional
-+           absl::span
-+           absl::str_format
-+           absl::strings
-+           absl::time
-+           absl::variant)
-+    endif()
-   endif()
- endif()
- 
-```
-
----
-
-### Incident Patch 12: `45801eb4` (2026-10-01)
-**Commit Message**: GH-50440: [C++][Gandiva] Fix out-of-bounds read in set_error_for_date (#50441)
-
-### Rationale for this change
-
-`set_error_for_date` formats the invalid-date/timestamp message with `snprintf(error, size, "%s%s", msg, input)`, but `input` is a Gandiva string passed as pointer plus `length` and is not NUL-terminated, so the `%s` conversion scans past the `length` bytes looking for a terminator and over-reads the values buffer (past its end for the last value). It is reached from `castDATE_utf8`/`castTIMESTAMP_utf8` on any invalid `CAST(str AS DATE/TIMESTAMP)` input. Switching to the bounded `%.*s` form with the explicit length keeps the read inside the string, matching every other error formatter in the precompiled sources.
-
-### What changes are included in this PR?
-
-Use `%.*s` with `length` in `set_error_for_date`, which covers all of its call sites in both `castDATE_utf8` and `castTIMESTAMP_utf8`.
-
-### Are these changes tested?
-
-Yes. Added `TestTime.TestCastDateInvalidUnterminated`, which feeds an invalid date held in an exactly-sized heap buffer with no trailing NUL so the over-read trips AddressSanitizer, and checks the error string is bounded to the input length.
-
-### Are there a
-
-**File**: `cpp/src/gandiva/precompiled/time.cc` (modified, +1/-1)
-```diff
-@@ -631,7 +631,7 @@ void set_error_for_date(gdv_int32 length, const char* input, const char* msg,
-                         int64_t execution_context) {
-   int size = length + static_cast<int>(strlen(msg)) + 1;
-   char* error = reinterpret_cast<char*>(malloc(size));
--  snprintf(error, size, "%s%s", msg, input);
-+  snprintf(error, size, "%s%.*s", msg, length, input);
-   gdv_fn_context_set_error_msg(execution_context, error);
-   free(error);
- }
-```
-
-**File**: `cpp/src/gandiva/precompiled/time_test.cc` (modified, +54/-0)
-```diff
-@@ -18,6 +18,10 @@
- #include <gmock/gmock.h>
- #include <gtest/gtest.h>
- 
-+#include <cstring>
-+#include <memory>
-+#include <string>
-+
- #include "arrow/util/logging_internal.h"
- #include "gandiva/execution_context.h"
- #include "gandiva/precompiled/testing.h"
-@@ -59,6 +63,56 @@ TEST(TestTime, TestCastDate) {
-   EXPECT_EQ(castDATE_date32(1), 86400000);
+   return builder.FinishInternal(out);
  }
  
-+TEST(TestTime, TestCastDateInvalidUnterminated) {
-+  ExecutionContext context;
-+  int64_t context_ptr = reinterpret_cast<int64_t>(&context);
-+
-+  // The invalid-value error message is built from the raw input pointer. Hold
-+  // the input in an exactly-sized heap buffer with no trailing NUL so that
-+  // formatting the error must respect `length` instead of scanning for a NUL;
-+  // any over-read past the buffer trips AddressSanitizer.
-+  const std::string value = "197201234";
-+  const auto length = static_cast<int32_t>(value.size());
-+  std::unique_ptr<char[]> input(new char[length]);
-+  std::memcpy(input.get(), value.data(), length);
-+
-+  EXPECT_EQ(castDATE_utf8(context_ptr, input.get(), length), 0);
-+  EXPECT_EQ(context.get_error(), "Not a valid date value 197201234");
-+  context.Reset();
-+}
-+
-+TEST(TestTime, TestCastTimestampInvalidUnterminated) {
-+  ExecutionContext context;
-+  int64_t context_ptr = reinterpret_cast<int64_t>(&context);
-+
-+  // castTIMESTAMP_utf8 reaches the same set_error_for_date helper, so exercise
-+  // the over-read path from that entry point with an unterminated buffer too.
-+  const std::string value = "2000-01-01 24:00:00";
-+  const auto length = static_cast<int32_t>(value.size());
-+  std::unique_ptr<char[]> input(new char[length]);
-+  std::memcpy(input.get(), value.data(), length);
-+
-+  EXPECT_EQ(castTIMESTAMP_utf8(context_ptr, input.get(), length), 0);
-+  EXPECT_EQ(context.get_error(),
-+            "Not a valid time for timestamp value 2000-01-01 24:00:00");
-+  context.Reset();
-+}
-+
-+TEST(TestTime, TestCastTimeInvalidUnterminated) {
-+  ExecutionContext context;
-+  int64_t context_ptr = reinterpret_cast<int64_t>(&context);
-+
-+  // castTIME_utf8 reaches set_error_for_date as well.
-+  const std::string value = "24H00H00";
-+  const auto length = static_cast<int32_t>(value.size());
-+  std::unique_ptr<char[]> input(new char[length]);
-+  std::memcpy(input.get(), value.data(), length);
-+
-+  EXPECT_EQ(castTIME_utf8(context_ptr, input.get(), length), 0);
-+  EXPECT_EQ(context.get_error(), "Invalid character in time 24H00H00");
-+  context.Reset();
-+}
-+
- TEST(TestTime, TestCastTimestamp) {
-   ExecutionContext context;
-   int64_t context_ptr = reinterpret_cast<int64_t>(&context);
 ```
 
----
-
-### Incident Patch 13: `fcac3dfd` (2026-09-30)
-**Commit Message**: GH-48072: [C++][Acero] fix a bug of materialize boolean (#48073)
-
-
-### Rationale for this change
-Use the correct offset when accessing boolean values from the buffer.
-
-### What changes are included in this PR?
-In `unmaterialized_table_internal.h`, use the correct offset when accessing boolean values from the buffer. Also, add a unit test to regress this bug.
-### Are these changes tested?
-Yes
-### Are there any user-facing changes?
-No
-
-**This PR contains a "Critical Fix".** 
-
-Yes, fix a bug that caused incorrect data
-
-* GitHub Issue: #48072
-
-Lead-authored-by: jsonwu <[REDACTED_EMAIL]>
-Co-authored-by: Nic Crane <[REDACTED_EMAIL]>
-Co-authored-by: Rossi Sun <[REDACTED_EMAIL]>
-Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
-
-**File**: `cpp/src/arrow/acero/sorted_merge_node_test.cc` (modified, +116/-0)
+**File**: `cpp/src/arrow/compute/kernels/vector_selection_test.cc` (modified, +8/-0)
 ```diff
-@@ -16,16 +16,22 @@
- // under the License.
- 
- #include <gtest/gtest.h>
-+#include <limits>
-+#include <memory>
-+#include <vector>
- 
- #include "arrow/acero/exec_plan.h"
- #include "arrow/acero/map_node.h"
- #include "arrow/acero/options.h"
- #include "arrow/acero/test_nodes.h"
- #include "arrow/array/builder_base.h"
-+#include "arrow/array/builder_primitive.h"
- #include "arrow/array/concatenate.h"
- #include "arrow/compute/ordering.h"
-+#include "arrow/record_batch.h"
- #include "arrow/result.h"
- #include "arrow/scalar.h"
-+#include "arrow/status.h"
- #include "arrow/table.h"
- #include "arrow/testing/generator.h"
- #include "arrow/testing/gtest_util.h"
-@@ -83,4 +89,114 @@ TEST(SortedMergeNode, Basic) {
-   AssertArraysEqual(*expected_ts, *output_ts);
- }
- 
-+TEST(SortedMergeNode, TestSortedMergeTwoInputsWithBool) {
-+  const int64_t row_count = (16 << 10);  // 16k rows per input
-+  // Not a multiple of 8, so that batches start at non-byte-aligned offsets
-+  const int64_t batch_size = 1001;
+@@ -2920,6 +2920,14 @@ TEST(TestIndicesNonZero, IndicesNonZero) {
+         actual, CallFunction("indices_nonzero", {static_cast<Datum>(chunked_arr_empty)}));
+     AssertArraysEqual(*ArrayFromJSON(uint64(), "[0, 2, 3, 5]"), *actual.make_array(),
+                       /*verbose*/ true);
 +
-+  // Create schema with int column A and bool column B
-+  auto test_schema = arrow::schema(
-+      {arrow::field("col_a", arrow::int32()), arrow::field("col_b", arrow::boolean())});
-+
-+  // Helper lambda to create table source with specific pattern
-+  auto make_source = [&](int64_t cnt, int offset) -> arrow::Result<Declaration> {
-+    // Create column A (int) - values from offset to offset+cnt-1
-+    arrow::Int32Builder col_a_builder;
-+    std::vector<int32_t> col_a_values;
-+    col_a_values.reserve(cnt);
-+    for (int64_t i = 0; i < cnt; ++i) {
-+      col_a_values.push_back(static_cast<int32_t>(offset + i));
-+    }
-+    ARROW_RETURN_NOT_OK(col_a_builder.AppendValues(col_a_values));
-+    std::shared_ptr<arrow::Array> col_a_arr;
-+    ARROW_RETURN_NOT_OK(col_a_builder.Finish(&col_a_arr));
-+
-+    // Create column B (bool) - pattern: null if col_a % 7 == 0, otherwise
-+    // true if col_a % 5 == 0, false otherwise
-+    arrow::BooleanBuilder col_b_builder;
-+    for (int64_t i = 0; i < cnt; ++i) {
-+      int32_t a_value = static_cast<int32_t>(offset + i);
-+      if (a_value % 7 == 0) {
-+        ARROW_RETURN_NOT_OK(col_b_builder.AppendNull());
-+        continue;
-+      }
-+      bool b_value = (a_value % 5 == 0);
-+      ARROW_RETURN_NOT_OK(col_b_builder.Append(b_value));
-+    }
-+    std::shared_ptr<arrow::Array> col_b_arr;
-+    ARROW_RETURN_NOT_OK(col_b_builder.Finish(&col_b_arr));
-+
-+    auto table = arrow::Table::Make(test_schema, {col_a_arr, col_b_arr});
-+    auto table_source =
-+        Declaration("table_source", TableSourceNodeOptions(table, batch_size));
-+    return table_source;
-+  };
-+
-+  ASSERT_OK_AND_ASSIGN(auto source1, make_source(row_count, 0));
-+  ASSERT_OK_AND_ASSIGN(auto source2, make_source(row_count, 8192));
-+
-+  // Create sorted merge by column A
-+  auto ops = OrderByNodeOptions(compute::Ordering({compute::SortKey("col_a")}));
-+  Declaration sorted_merge{"sorted_merge", {source1, source2}, ops};
-+
-+  // Execute plan and collect result
-+  ASSERT_OK_AND_ASSIGN(auto result_table,
-+                       arrow::acero::DeclarationToTable(sorted_merge, false));
-+
-+  ASSERT_TRUE(result_table != nullptr);
-+
-+  // Verify results
-+  auto col_a = result_table->GetColumnByName("col_a");
-+  auto col_b = result_table->GetColumnByName("col_b");
-+  ASSERT_TRUE(col_a != nullptr);
-+  ASSERT_TRUE(col_b != nullptr);
-+
-+  // Verify sorting and bool values
-+  int32_t last_a_value = std::numeric_limits<int32_t>::min();
-+  int64_t total_rows_checked = 0;
-+
-+  for (int i = 0; i < col_a->num_chunks(); i++) {
-+    auto a_chunk = std::static_pointer_cast<arrow::Int32Array>(col_a->chunk(i));
-+    auto b_chunk = std::static_pointer_cast<arrow::BooleanArray>(col_b->chunk(i));
-+
-+    ASSERT_EQ(a_chunk->length(), b_chunk->length())
-+        << "Column A and B must have same length in chunk " << i;
-+
-+    for (int64_t j = 0; j < a_chunk->length(); j++) {
-+      ASSERT_FALSE(a_chunk->IsNull(j)) << "Column A should not have null values";
-+
-+      int32_t a_value = a_chunk->Value(j);
-+
-+      // Verify sorting by column A
-+      ASSERT_GE(a_value, last_a_value)
-+          << "Values not sorted at chunk " << i << ", row " << j
-+          << ": current=" << a_value << ", last=" << last_a_value;
-+      last_a_value = a_value;
-+
-+      // Verify bool validity: should be null if a_value % 7 == 0
-+      bool expected_b_null = (a_value % 7 == 0);
-+      ASSERT_EQ(b_chunk->IsNull(j), expected_b_null)
-+          << "Bool validity incorrect at chunk " << i << ", row " << j
-+          << ": col_a=" << a_value;
-+
-+      if (!expected_b_null) {
-+        // Verify bool value correctness: should be true if a_value % 5 == 0
-+        bool b_value = b_chunk->Value(j);
-+        bool expected_b_value = (a_value % 5 == 0);
-+        ASSERT_EQ(b_value, expected_b_value)
-+            << "Bool value incorrect at chunk " << i << ", row " << j
-+            << ": col_a=" << a_value << ", col_b=" << b_value
-+            << ", expected=" << expected_b_value;
-+      }
-+
-+      total_rows_che
-```
-
-**File**: `cpp/src/arrow/acero/unmaterialized_table_internal.h` (modified, +4/-1)
-```diff
-@@ -172,7 +172,10 @@ class UnmaterializedCompositeTable {
-       builder.UnsafeAppendNull();
-       return Status::OK();
-     }
--    builder.UnsafeAppend(bit_util::GetBit(source->template GetValues<uint8_t>(1), row));
-+
-+    const int64_t bit_offset = source->offset + static_cast<int64_t>(row);
-+    builder.UnsafeAppend(
-+        bit_util::GetBit(source->template GetValues<uint8_t>(1, 0), bit_offset));
-     return Status::OK();
++    // chunked with zero chunks (GH-51018)
++    ChunkedArray chunked_arr_no_chunks({}, type);
++    ASSERT_OK_AND_ASSIGN(
++        actual,
++        CallFunction("indices_nonzero", {static_cast<Datum>(chunked_arr_no_chunks)}));
++    AssertArraysEqual(*ArrayFromJSON(uint64(), "[]"), *actual.make_array(),
++                      /*verbose*/ true);
    }
- 
-```
-
----
-
-### Incident Patch 14: `e3150f2c` (2026-09-30)
-**Commit Message**: GH-51487: [CI] Fix Emscripten wheel load failure by disabling llvm-strip on install (#51488)
-
-### Rationale for this change
-Fix #51487 - starting with LLVM 23 the required dylink.0 is not kept during CMake install strip. (see https://github.com/llvm/llvm-project/commit/52eb82e4f942db5e639c018c7757a1cca670333f)
-
-### What changes are included in this PR?
-Disable wheel install stripping with `SKBUILD_INSTALL_STRIP=false`
-(applying alternative workaround llvm-strip --keep-section=dylink.0 would require more code changes)
-
-### Are these changes tested?
-Verified by CI.
-
-### Are there any user-facing changes?
-No.
-
-### Was AI used for this PR?
-Just gpt-6-sol during initial analysis
-**PR code and description written by:**
-- [x] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-- [x] Human
-- [ ] AI
-- [ ] Not reviewed
-* GitHub Issue: #51487
-
-Lead-authored-by: tadeja <[REDACTED_EMAIL]>
-Co-authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Co-authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
-
-**File**: `ci/scripts/python_build_emscripten.sh` (modified, +3/-0)
-```diff
-@@ -44,5 +44,8 @@ if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
- fi
- 
- pushd "${python_build_dir}"
-+# scikit-build-core strips unnecessary symbols by default.
-+# LLVM 23 also removes the required dylink.0 section (llvm/llvm-project#180246)
-+export SKBUILD_INSTALL_STRIP=false
- pyodide build
- popd
-```
-
----
-
-### Incident Patch 15: `382ffd94` (2026-09-30)
-**Commit Message**: GH-51329: [C++][CI] Test static linking with S3 and fix Azure/GCS dependencies on static builds (#51280)
-
-### Rationale for this change
-Fix #51329
-Additional downstream static-linking test, after #50195 moved S3 into the separate ArrowS3 library.
-
-### What changes are included in this PR?
-Test downstream static linking of `ArrowS3::arrow_s3_static` via minimal_build example and `cpp_test.sh`,
-Fix dependencies for static Azure and GCS consumers: append `libcurl` for bundled GCS, append `libcurl` and `LibXml2` for bundled Azure(NOT WIN32),
-append links for system Azure SDK
-and pkg-config --static arrow to include `libcurl` and `libxml-2.0` for bundled GCS/Azure
-
-### Are these changes tested?
-Verified by CI
-
-### Are there any user-facing changes?
-Downstream consumers now have required static dependencies for Azure/GCS
-
-* GitHub Issue: #51329
-
-Authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
-
-**File**: `ci/scripts/cpp_test.sh` (modified, +7/-0)
-```diff
-@@ -146,12 +146,19 @@ if [ "${ARROW_USE_MESON:-OFF}" = "OFF" ] && \
-   cmake \
-     -S "${source_dir}/examples/minimal_build" \
-     -B "${build_dir}/examples/minimal_build" \
-+    -DARROW_EXAMPLE_S3_STATIC_CHECK=ON \
-     -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}"
-   cmake --build "${build_dir}/examples/minimal_build"
-   pushd "${source_dir}/examples/minimal_build"
-   # PATH= is for Windows.
-   PATH="${CMAKE_INSTALL_PREFIX:-${ARROW_HOME}}/bin:${PATH}" \
-     "${build_dir}/examples/minimal_build/arrow-example"
-+  # Test static linking with S3
-+  s3_example="${build_dir}/examples/minimal_build/arrow-example-s3-static"
-+  if [ -x "${s3_example}" ]; then
-+    PATH="${CMAKE_INSTALL_PREFIX:-${ARROW_HOME}}/bin:${PATH}" \
-+      "${s3_example}"
-+  fi
-   popd
- fi
- 
-```
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +40/-0)
-```diff
-@@ -1419,6 +1419,27 @@ macro(find_curl ARROW_CURL_PACKAGE_PREFIX)
-   endif()
- endmacro()
- 
-+# ----------------------------------------------------------------------
-+# pkg-config
-+
-+# SDK libraries (on macOS) may be available without .pc files
-+macro(arrow_append_pc_system_library PC_PACKAGE PC_PREFIX FALLBACK)
-+  find_package(PkgConfig QUIET)
-+  if(PkgConfig_FOUND)
-+    pkg_check_modules(${PC_PREFIX}
-+                      ${PC_PACKAGE}
-+                      NO_CMAKE_PATH
-+                      NO_CMAKE_ENVIRONMENT_PATH
-+                      QUIET)
-+  endif()
-+  if(PkgConfig_FOUND AND ${PC_PREFIX}_FOUND)
-+    string(APPEND ARROW_PC_REQUIRES_PRIVATE " ${PC_PACKAGE}")
-+  else()
-+    message(STATUS "No .pc for ${PC_PACKAGE}. Using ${FALLBACK} in arrow.pc")
-+    string(APPEND ARROW_PC_LIBS_PRIVATE " ${FALLBACK}")
-+  endif()
-+endmacro()
-+
- # ----------------------------------------------------------------------
- # Snappy
- 
-@@ -4365,6 +4386,25 @@ if(ARROW_WITH_AZURE_SDK)
-   resolve_dependency(Azure REQUIRED_VERSION 1.10.2)
-   set(AZURE_SDK_LINK_LIBRARIES Azure::azure-storage-files-datalake
-                                Azure::azure-storage-blobs Azure::azure-identity)
-+  if(AZURE_SDK_VENDORED AND NOT WIN32)
-+    find_curl(ARROW)
-+    find_package(LibXml2 REQUIRED)
-+    list(APPEND ARROW_SYSTEM_DEPENDENCIES LibXml2)
-+  endif()
-+endif()
-+
-+if(ARROW_BUILD_STATIC)
-+  if((ARROW_GCS AND google_cloud_cpp_storage_SOURCE STREQUAL "BUNDLED")
-+     OR (ARROW_AZURE
-+         AND AZURE_SDK_VENDORED
-+         AND NOT WIN32))
-+    arrow_append_pc_system_library("libcurl" ARROW_CURL_PC "-lcurl")
-+  endif()
-+  if(ARROW_AZURE
-+     AND AZURE_SDK_VENDORED
-+     AND NOT WIN32)
-+    arrow_append_pc_system_library("libxml-2.0" ARROW_LIBXML2_PC "-lxml2")
-+  endif()
- endif()
- 
- # ----------------------------------------------------------------------
-```
-
-**File**: `cpp/examples/minimal_build/CMakeLists.txt` (modified, +18/-0)
-```diff
-@@ -49,3 +49,21 @@ if(ARROW_LINK_SHARED)
- else()
-   target_link_libraries(arrow-example PRIVATE Arrow::arrow_static)
- endif()
-+
-+option(ARROW_EXAMPLE_S3_STATIC_CHECK "Verify S3 and static linking" OFF)
-+# Check only when Arrow got built with S3 by ArrowOptions.cmake via find_package
-+if(ARROW_EXAMPLE_S3_STATIC_CHECK
-+   AND ARROW_S3
-+   AND TARGET Arrow::arrow_static)
-+  find_package(ArrowS3 REQUIRED)
-+  if(NOT TARGET ArrowS3::arrow_s3_static)
-+    message(FATAL_ERROR "ArrowS3::arrow_s3_static not found")
-+  endif()
-+  add_executable(arrow-example-s3-static example.cc)
-+  target_compile_definitions(arrow-example-s3-static
-+                             PRIVATE ARROW_EXAMPLE_S3_STATIC_CHECK)
-+  target_link_libraries(arrow-example-s3-static PRIVATE ArrowS3::arrow_s3_static)
-+elseif(ARROW_EXAMPLE_S3_STATIC_CHECK)
-+  message(STATUS "Skipping arrow-example-s3-static: "
-+                 "requires ARROW_S3 and Arrow::arrow_static")
-+endif()
-```
-
-**File**: `cpp/examples/minimal_build/example.cc` (modified, +9/-0)
-```diff
-@@ -16,6 +16,9 @@
- // under the License.
- 
- #include <arrow/csv/api.h>
-+#ifdef ARROW_EXAMPLE_S3_STATIC_CHECK
-+#  include <arrow/filesystem/s3fs.h>
-+#endif
- #include <arrow/io/api.h>
- #include <arrow/ipc/api.h>
- #include <arrow/pretty_print.h>
-@@ -54,6 +57,12 @@ Status RunMain(int argc, char** argv) {
-   ARROW_RETURN_NOT_OK(batch_writer->WriteTable(*table));
-   ARROW_RETURN_NOT_OK(batch_writer->Close());
- 
-+#ifdef ARROW_EXAMPLE_S3_STATIC_CHECK
-+  std::cerr << "* Verify S3 initializes and finalizes" << std::endl;
-+  ARROW_RETURN_NOT_OK(arrow::fs::EnsureS3Initialized());
-+  ARROW_RETURN_NOT_OK(arrow::fs::EnsureS3Finalized());
-+#endif
-+
-   return Status::OK();
  }
  
 ```
 
-**File**: `cpp/src/arrow/CMakeLists.txt` (modified, +12/-0)
+---
+
+### Incident Patch 2: `402a71cb` (2026-10-16)
+**Commit Message**: GH-51341: [C++][FlightRPC][ODBC] Fix statement descriptor and cursor lifecycle (#51342)
+
+### Rationale for this change
+
+The Flight SQL ODBC statement implementation had a cluster of related descriptor and cursor lifecycle defects:
+
+- the implicit application row descriptor (ARD) was initialized from the application parameter descriptor (APD), aliasing two descriptor roles;
+- `SQL_NULL_HANDLE` did not restore built-in application descriptors;
+- freeing a statement left dangling registrations in explicit descriptors;
+- `SQLFetch` and `SQLGetData` without an open cursor could dereference a null result or report the wrong diagnostic; and
+- `SQLMoreResults` did not close the current cursor when returning `SQL_NO_DATA`.
+
+### What changes are included in this PR?
+
+- Initialize the active ARD from `built_in_ard_`.
+- Map null APD/ARD assignments to the corresponding built-in descriptor and detach the outgoing explicit descriptor.
+- Detach explicit descriptors before releasing a statement.
+- Return SQLSTATE `24000` from `SQLFetch` and `SQLGetData` when no cursor is open.
+- Close the current cursor when `SQLMoreResults` returns `SQL_NO_DATA`.
+
+### Are there any user-facing changes?
+
+Yes. Spec
+
+**File**: `cpp/src/arrow/flight/sql/odbc/odbc_impl/odbc_statement.cc` (modified, +24/-5)
 ```diff
-@@ -36,6 +36,18 @@ set(ARROW_STATIC_INSTALL_INTERFACE_LIBS)
- if(ARROW_GCS)
-   if(google_cloud_cpp_storage_SOURCE STREQUAL "SYSTEM")
-     list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS google-cloud-cpp::storage)
-+  elseif(google_cloud_cpp_storage_SOURCE STREQUAL "BUNDLED")
-+    list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS CURL::libcurl)
-+  endif()
-+endif()
+@@ -241,7 +241,7 @@ ODBCStatement::ODBCStatement(ODBCConnection& connection,
+       ird_(std::make_shared<ODBCDescriptor>(spi_statement_->GetDiagnostics(), nullptr,
+                                             this, false, false,
+                                             connection.IsOdbc2Connection())),
+-      current_ard_(built_in_apd_.get()),
++      current_ard_(built_in_ard_.get()),
+       current_apd_(built_in_apd_.get()),
+       row_number_(0),
+       max_rows_(0),
+@@ -323,6 +323,10 @@ void ODBCStatement::ExecuteDirect(const std::string& query) {
+ 
+ bool ODBCStatement::Fetch(size_t rows, SQLULEN* row_count_ptr,
+                           SQLUSMALLINT* row_status_array) {
++  if (!current_result_) {
++    throw DriverException("Invalid cursor state", "24000");
++  }
 +
-+if(ARROW_AZURE)
-+  if(Azure_SOURCE STREQUAL "SYSTEM")
-+    list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS ${AZURE_SDK_LINK_LIBRARIES})
-+  elseif(Azure_SOURCE STREQUAL "BUNDLED")
-+    if(NOT WIN32)
-+      list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS CURL::libcurl LibXml2::LibXml2)
-+    endif()
-   endif()
- endif()
+   if (has_reached_end_of_result_) {
+     ird_->SetRowsProcessed(0);
+     return false;
+@@ -558,8 +562,9 @@ void ODBCStatement::SetStmtAttr(SQLINTEGER statement_attribute, SQLPOINTER value
+ 
+   switch (statement_attribute) {
+     case SQL_ATTR_APP_PARAM_DESC: {
+-      ODBCDescriptor* desc = static_cast<ODBCDescriptor*>(value);
+-      if (desc && current_apd_ != desc) {
++      ODBCDescriptor* desc =
++          value ? static_cast<ODBCDescriptor*>(value) : built_in_apd_.get();
++      if (current_apd_ != desc) {
+         if (current_apd_ != built_in_apd_.get()) {
+           current_apd_->DetachFromStatement(this, true);
+         }
+@@ -571,12 +576,14 @@ void ODBCStatement::SetStmtAttr(SQLINTEGER statement_attribute, SQLPOINTER value
+       return;
+     }
+     case SQL_ATTR_APP_ROW_DESC: {
+-      ODBCDescriptor* desc = static_cast<ODBCDescriptor*>(value);
+-      if (desc && current_ard_ != desc) {
++      ODBCDescriptor* desc =
++          value ? static_cast<ODBCDescriptor*>(value) : built_in_ard_.get();
++      if (current_ard_ != desc) {
+         if (current_ard_ != built_in_ard_.get()) {
+           current_ard_->DetachFromStatement(this, false);
+         }
+         current_ard_ = desc;
++        current_ard_->NotifyBindingsHaveChanged();
+         if (current_ard_ != built_in_ard_.get()) {
+           desc->RegisterToStatement(this, false);
+         }
+@@ -718,6 +725,7 @@ void ODBCStatement::RevertAppDescriptor(bool isApd) {
+     current_apd_ = built_in_apd_.get();
+   } else {
+     current_ard_ = built_in_ard_.get();
++    current_ard_->NotifyBindingsHaveChanged();
+   }
+ }
+ 
+@@ -740,6 +748,10 @@ void ODBCStatement::CloseCursor(bool suppress_errors) {
+ SQLRETURN ODBCStatement::GetData(SQLSMALLINT record_number, SQLSMALLINT c_type,
+                                  SQLPOINTER data_ptr, SQLLEN buffer_length,
+                                  SQLLEN* indicator_ptr) {
++  if (!current_result_) {
++    throw DriverException("Invalid cursor state", "24000");
++  }
++
+   if (record_number == 0) {
+     throw DriverException("Bookmarks are not supported", "07009");
+   } else if (static_cast<size_t>(record_number) > ird_->GetRecords().size()) {
+@@ -785,6 +797,7 @@ SQLRETURN ODBCStatement::GetData(SQLSMALLINT record_number, SQLSMALLINT c_type,
+ 
+ SQLRETURN ODBCStatement::GetMoreResults() {
+   // Multiple result sets are not supported by Arrow protocol.
++  CloseCursor(/*suppress_errors=*/true);
+   return SQL_NO_DATA;
+ }
+ 
+@@ -811,6 +824,12 @@ void ODBCStatement::GetRowCount(SQLLEN* row_count_ptr) {
+ 
+ void ODBCStatement::ReleaseStatement() {
+   CloseCursor(true);
++  if (current_apd_ != built_in_apd_.get()) {
++    current_apd_->DetachFromStatement(this, true);
++  }
++  if (current_ard_ != built_in_ard_.get()) {
++    current_ard_->DetachFromStatement(this, false);
++  }
+   connection_.DropStatement(this);
+ }
  
 ```
 
-**File**: `dev/tasks/linux-packages/apache-arrow/apt/debian-forky/Dockerfile` (modified, +1/-0)
+**File**: `cpp/src/arrow/flight/sql/odbc/tests/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -68,6 +68,7 @@ RUN \
-     libssl-dev \
-     libthrift-dev \
-     libutf8proc-dev \
-+    libxml2-dev \
-     libxxhash-dev \
-     libzstd-dev \
-     llvm-dev \
+@@ -35,6 +35,7 @@ set(ARROW_FLIGHT_SQL_ODBC_TEST_SRCS
+     errors_test.cc
+     get_functions_test.cc
+     statement_attr_test.cc
++    statement_driver_api_test.cc
+     statement_test.cc
+     tables_test.cc
+     type_info_test.cc
 ```
 
-**File**: `dev/tasks/linux-packages/apache-arrow/apt/debian-trixie/Dockerfile` (modified, +1/-0)
+**File**: `cpp/src/arrow/flight/sql/odbc/tests/connection_test.cc` (modified, +40/-3)
 ```diff
-@@ -68,6 +68,7 @@ RUN \
-     libssl-dev \
-     libthrift-dev \
-     libutf8proc-dev \
-+    libxml2-dev \
-     libxxhash-dev \
-     libzstd-dev \
-     llvm-dev \
+@@ -528,6 +528,7 @@ TYPED_TEST(ConnectionTest, TestSQLSetStmtAttrDescriptor) {
+ 
+   EXPECT_EQ(SQL_SUCCESS, SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, &internal_ard,
+                                         sizeof(internal_ard), 0));
++  EXPECT_NE(internal_apd, internal_ard);
+ 
+   // Set APD descriptor to explicitly allocated handle
+   EXPECT_EQ(SQL_SUCCESS, SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC,
+@@ -549,12 +550,31 @@ TYPED_TEST(ConnectionTest, TestSQLSetStmtAttrDescriptor) {
+ 
+   EXPECT_EQ(ard_descriptor, value);
+ 
+-  // Free explicitly allocated APD and ARD descriptor handles
+-  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, apd_descriptor));
++  // Assign replacement descriptors. Freeing the old descriptors must not revert these
++  // replacements, which proves switching descriptors detached the old handles. Null
++  // descriptor restoration is covered through the direct driver API because some driver
++  // managers intercept it.
++  SQLHDESC replacement_apd, replacement_ard;
++  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &replacement_apd));
++  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &replacement_ard));
++  ASSERT_EQ(SQL_SUCCESS,
++            SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC, replacement_apd, 0));
++  ASSERT_EQ(SQL_SUCCESS,
++            SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, replacement_ard, 0));
+ 
++  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, apd_descriptor));
+   ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, ard_descriptor));
++  EXPECT_EQ(SQL_SUCCESS, SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC, &value,
++                                        sizeof(value), 0));
++  EXPECT_EQ(replacement_apd, value);
++  EXPECT_EQ(SQL_SUCCESS,
++            SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, &value, sizeof(value), 0));
++  EXPECT_EQ(replacement_ard, value);
+ 
+-  // Verify APD and ARD descriptors has been reverted to implicit descriptors
++  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, replacement_apd));
++  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, replacement_ard));
++
++  // Freeing the active explicit descriptors restores the implicit descriptors.
+   value = nullptr;
+ 
+   EXPECT_EQ(SQL_SUCCESS, SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC, &value,
+@@ -568,4 +588,21 @@ TYPED_TEST(ConnectionTest, TestSQLSetStmtAttrDescriptor) {
+   EXPECT_EQ(internal_ard, value);
+ }
+ 
++TYPED_TEST(ConnectionTest, TestExplicitDescriptorsOutliveStatement) {
++  SQLHSTMT statement;
++  SQLHDESC apd_descriptor, ard_descriptor;
++  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_STMT, this->conn, &statement));
++  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &apd_descriptor));
++  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &ard_descriptor));
++
++  ASSERT_EQ(SQL_SUCCESS,
++            SQLSetStmtAttr(statement, SQL_ATTR_APP_PARAM_DESC, apd_descriptor, 0));
++  ASSERT_EQ(SQL_SUCCESS,
++            SQLSetStmtAttr(statement, SQL_ATTR_APP_ROW_DESC, ard_descriptor, 0));
++
++  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_STMT, statement));
++  EXPECT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, apd_descriptor));
++  EXPECT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, ard_descriptor));
++}
++
+ }  // namespace arrow::flight::sql::odbc
 ```
 
-**File**: `dev/tasks/linux-packages/apache-arrow/apt/ubuntu-jammy/Dockerfile` (modified, +1/-0)
+**File**: `cpp/src/arrow/flight/sql/odbc/tests/statement_driver_api_test.cc` (added, +167/-0)
 ```diff
-@@ -60,6 +60,7 @@ RUN \
-     libssl-dev \
-     libthrift-dev \
-     libutf8proc-dev \
-+    libxml2-dev \
-     libxxhash-dev \
-     libzstd-dev \
-     llvm-dev \
+@@ -0,0 +1,167 @@
++// Licensed to the Apache Software Foundation (ASF) under one
++// or more contributor license agreements.  See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership.  The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License.  You may obtain a copy of the License at
++//
++//   http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing,
++// software distributed under the License is distributed on an
++// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++// KIND, either express or implied.  See the License for the
++// specific language governing permissions and limitations
++// under the License.
++#include "arrow/flight/sql/odbc/tests/odbc_test_suite.h"
++
++#include "arrow/flight/sql/odbc/odbc_api_internal.h"
++#include "arrow/flight/sql/odbc/odbc_impl/odbc_statement.h"
++
++#include <cstdint>
++#include <string_view>
++#include <vector>
++
++#include <gtest/gtest.h>
++
++namespace arrow::flight::sql::odbc {
++
++class StatementDriverApiTest : public FlightSQLODBCMockTestBase {
++ protected:
++  void SetUp() override {
++    FlightSQLODBCMockTestBase::SetUp();
++
++    ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLAllocHandle(
++                               SQL_HANDLE_ENV, SQL_NULL_HANDLE, &driver_env_));
++    ASSERT_EQ(SQL_SUCCESS,
++              arrow::flight::sql::odbc::SQLSetEnvAttr(
++                  driver_env_, SQL_ATTR_ODBC_VERSION,
++                  reinterpret_cast<SQLPOINTER>(static_cast<intptr_t>(SQL_OV_ODBC3)), 0));
++    ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLAllocHandle(
++                               SQL_HANDLE_DBC, driver_env_, &driver_conn_));
++
++    const std::string connect_string = GetConnectionString();
++    std::vector<SQLWCHAR> wide_connect_string(connect_string.begin(),
++                                              connect_string.end());
++    SQLWCHAR output[kOdbcBufferSize];
++    SQLSMALLINT output_length;
++    ASSERT_EQ(SQL_SUCCESS,
++              arrow::flight::sql::odbc::SQLDriverConnect(
++                  driver_conn_, nullptr, wide_connect_string.data(),
++                  static_cast<SQLSMALLINT>(wide_connect_string.size()), output,
++                  kOdbcBufferSize, &output_length, SQL_DRIVER_NOPROMPT));
++    driver_connected_ = true;
++
++    ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLAllocHandle(
++                               SQL_HANDLE_STMT, driver_conn_, &driver_stmt_));
++  }
++
++  void TearDown() override {
++    if (driver_stmt_ != SQL_NULL_HSTMT) {
++      EXPECT_EQ(SQL_SUCCESS,
++                arrow::flight::sql::odbc::SQLFreeHandle(SQL_HANDLE_STMT, driver_stmt_));
++    }
++    if (driver_connected_) {
++      EXPECT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLDisconnect(driver_conn_));
++    }
++    if (driver_conn_ != SQL_NULL_HDBC) {
++      EXPECT_EQ(SQL_SUCCESS,
++                arrow::flight::sql::odbc::SQLFreeHandle(SQL_HANDLE_DBC, driver_conn_));
++    }
++    if (driver_env_ != SQL_NULL_HENV) {
++      EXPECT_EQ(SQL_SUCCESS,
++                arrow::flight::sql::odbc::SQLFreeHandle(SQL_HANDLE_ENV, driver_env_));
++    }
++    FlightSQLODBCMockTestBase::TearDown();
++  }
++
++  void VerifyDriverErrorState(std::string_view expected_state) {
++    ODBC::ODBCStatement* statement = ODBC::ODBCStatement::Of(driver_stmt_);
++    ASSERT_TRUE(statement->GetDiagnostics().HasRecord(0));
++    EXPECT_EQ(expected_state, statement->GetDiagnostics().GetSQLState(0));
++  }
++
++  SQLHENV driver_env_ = SQL_NULL_HENV;
++  SQLHDBC driver_conn_ = SQL_NULL_HDBC;
++  SQLHSTMT driver_stmt_ = SQL_NULL_HSTMT;
++  bool driver_connected_ = false;
++};
++
++TEST_F(StatementDriverApiTest, TestSQLFetchWithoutCursor) {
++  ASSERT_EQ(SQL_ERROR, arrow::flight::sql::odbc::SQLFetch(driver_stmt_));
++  VerifyDriverErrorState(kErrorState24000);
++}
++
++TEST_F(StatementDriverApiTest, TestSQLGetDataWithoutCursor) {
++  SQLINTEGER value;
++  SQLLEN indicator;
++  ASSERT_EQ(SQL_ERROR,
++            arrow::flight::sql::odbc::SQLGetData(driver_stmt_, 1, SQL_C_LONG, &value,
++                                                 sizeof(value), &indicator));
++  VerifyDriverErrorState(kErrorState24000);
++}
++
++TEST_F(StatementDriverApiTest, TestChangingAppRowDescriptorRebindsColumns) {
++  SQLINTEGER implicit_value = -1;
++  SQLLEN implicit_indicator;
++  ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLBindCol(
++                             driver_stmt_, 1, SQL_C_LONG, &implicit_value,
++                             sizeof(implicit_value), &implicit_indicator));
++
++  ASSIGN_SQLWCHAR_ARR_AND_LEN(wsql,
++                              LR"(
++   SELECT 1 AS value
++   UNION ALL SELECT 2
++   UNION ALL SELECT 3
++   UNION ALL SELECT 4
++   UNION ALL SELECT 5;
++ )");
++  ASSERT_EQ(SQL_SUCCESS,
++            arrow::flight::sql::odbc::SQLExecDirect(driver_stmt_, wsql, wsql_len));
++
++  ASSERT_EQ(SQL_SUCCESS, arrow::fli
+```
+
+**File**: `cpp/src/arrow/flight/sql/odbc/tests/statement_test.cc` (modified, +60/-0)
+```diff
+@@ -1781,6 +1781,41 @@ TYPED_TEST(StatementTest, TestSQLBindColRowFetching) {
+   ASSERT_EQ(SQL_NO_DATA, SQLFetch(this->stmt));
+ }
+ 
++TYPED_TEST(StatementTest, TestChangingAppRowDescriptorRebindsColumns) {
++  SQLINTEGER implicit_value = -1;
++  SQLLEN implicit_indicator;
++  ASSERT_EQ(SQL_SUCCESS, SQLBindCol(this->stmt, 1, SQL_C_LONG, &implicit_value,
++                                    sizeof(implicit_value), &implicit_indicator));
++
++  ASSIGN_SQLWCHAR_ARR_AND_LEN(wsql,
++                              LR"(
++   SELECT 1 AS value
++   UNION ALL SELECT 2
++   UNION ALL SELECT 3;
++ )");
++  ASSERT_EQ(SQL_SUCCESS, SQLExecDirect(this->stmt, wsql, wsql_len));
++
++  ASSERT_EQ(SQL_SUCCESS, SQLFetch(this->stmt));
++  EXPECT_EQ(1, implicit_value);
++
++  SQLHDESC explicit_ard;
++  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &explicit_ard));
++  ASSERT_EQ(SQL_SUCCESS,
++            SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, explicit_ard, 0));
++  SQLINTEGER explicit_value = -1;
++  SQLLEN explicit_indicator;
++  ASSERT_EQ(SQL_SUCCESS, SQLBindCol(this->stmt, 1, SQL_C_LONG, &explicit_value,
++                                    sizeof(explicit_value), &explicit_indicator));
++  ASSERT_EQ(SQL_SUCCESS, SQLFetch(this->stmt));
++  EXPECT_EQ(2, explicit_value);
++
++  // Releasing an active explicit ARD restores and rebinds the implicit ARD.
++  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, explicit_ard));
++  ASSERT_EQ(SQL_SUCCESS, SQLFetch(this->stmt));
++  EXPECT_EQ(3, implicit_value);
++  EXPECT_EQ(2, explicit_value);
++}
++
+ TYPED_TEST(StatementTest, TestSQLBindColRowArraySize) {
+   // Set SQL_ATTR_ROW_ARRAY_SIZE to fetch 3 rows at once
+ 
+@@ -1981,12 +2016,37 @@ TYPED_TEST(StatementTest, TestSQLMoreResultsNoData) {
+   ASSERT_EQ(SQL_SUCCESS, SQLExecDirect(this->stmt, wsql, wsql_len));
+ 
+   ASSERT_EQ(SQL_NO_DATA, SQLMoreResults(this->stmt));
++
++  // SQLMoreResults closes the current cursor when there is no next result.
++  ASSERT_EQ(SQL_ERROR, SQLCloseCursor(this->stmt));
++  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorState24000);
+ }
+ 
+ TYPED_TEST(StatementTest, TestSQLMoreResultsWithoutQuery) {
+   ASSERT_EQ(SQL_NO_DATA, SQLMoreResults(this->stmt));
+ }
+ 
++TYPED_TEST(StatementTest, TestDriverManagerSQLFetchWithoutCursor) {
++  ASSERT_EQ(SQL_ERROR, SQLFetch(this->stmt));
++#ifdef __APPLE__
++  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateS1010);
++#else
++  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateHY010);
++#endif
++}
++
++TYPED_TEST(StatementTest, TestDriverManagerSQLGetDataWithoutCursor) {
++  SQLINTEGER value;
++  SQLLEN indicator;
++  ASSERT_EQ(SQL_ERROR,
++            SQLGetData(this->stmt, 1, SQL_C_LONG, &value, sizeof(value), &indicator));
++#ifdef __APPLE__
++  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateS1010);
++#else
++  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateHY010);
++#endif
++}
++
+ TYPED_TEST(StatementTest, TestSQLNativeSqlReturnsInputString) {
+   SQLWCHAR buf[1024];
+   SQLINTEGER buf_char_len = sizeof(buf) / GetSqlWCharSize();
+```
+
+---
+
+### Incident Patch 3: `d26582ee` (2026-10-16)
+**Commit Message**: GH-50544: [C++][Gandiva] Fix out-of-bounds read in round with most negative precision (#50545)
+
+### Rationale for this change
+
+`round_int32_int32` and `round_int64_int32` negate the caller-supplied precision into `abs_precision` before range-checking it, so the check `abs_precision > 9` (and `> 18` for the int64 overload) never fires for `precision == INT32_MIN`, where the negation leaves the value negative. That value reaches `get_power_of_10`, which indexes a 19-element static table behind `DCHECK_GE`/`DCHECK_LE` only. The DCHECKs compile out in release builds, so `round(int_col, -2147483648)` reads far outside the table and either faults or returns arbitrary memory as the rounding multiplier. Both overloads are registered in `function_registry_arithmetic.cc`, so the precision comes straight from user SQL.
+
+`truncate_int64_int32` in the same file already compares the signed scale directly (`out_scale < -38`) and is unaffected; the two `round` overloads are the only sites that negate first.
+
+### What changes are included in this PR?
+
+Check the bound against the signed `precision` before negating, at both sites. Every precision that was in range before still takes the same path, an
+
+**File**: `cpp/src/gandiva/precompiled/extended_math_ops.cc` (modified, +8/-6)
+```diff
+@@ -324,12 +324,13 @@ gdv_int32 round_int32_int32(gdv_int32 number, gdv_int32 precision) {
+   if (precision >= 0) {
+     return number;
+   }
+-  gdv_int32 abs_precision = -precision;
+   // This is to ensure that there is no overflow while calculating 10^precision, 9 is
+-  // the smallest N for which 10^N does not fit into 32 bits, so we can safely return 0
+-  if (abs_precision > 9) {
++  // the smallest N for which 10^N does not fit into 32 bits, so we can safely return 0.
++  // The bound is checked before negating because -INT32_MIN is still negative.
++  if (precision < -9) {
+     return 0;
+   }
++  gdv_int32 abs_precision = -precision;
+   gdv_int32 num_sign = (number > 0) ? 1 : -1;
+   gdv_int32 abs_number = number * num_sign;
+   gdv_int32 power_of_10 = static_cast<gdv_int32>(get_power_of_10(abs_precision));
+@@ -349,12 +350,13 @@ gdv_int64 round_int64_int32(gdv_int64 number, gdv_int32 precision) {
+   if (precision >= 0) {
+     return number;
+   }
+-  gdv_int32 abs_precision = -precision;
+   // This is to ensure that there is no overflow while calculating 10^precision, 19 is
+-  // the smallest N for which 10^N does not fit into 64 bits, so we can safely return 0
+-  if (abs_precision > 18) {
++  // the smallest N for which 10^N does not fit into 64 bits, so we can safely return 0.
++  // The bound is checked before negating because -INT32_MIN is still negative.
++  if (precision < -18) {
+     return 0;
+   }
++  gdv_int32 abs_precision = -precision;
+   gdv_int32 num_sign = (number > 0) ? 1 : -1;
+   gdv_int64 abs_number = number * num_sign;
+   gdv_int64 power_of_10 = get_power_of_10(abs_precision);
+```
+
+**File**: `cpp/src/gandiva/precompiled/extended_math_ops_test.cc` (modified, +12/-0)
+```diff
+@@ -203,6 +203,18 @@ TEST(TestExtendedMathOps, TestRound) {
+   EXPECT_EQ(round_int64_int32(-23453462343, -4), -23453460000);
+   EXPECT_EQ(round_int64_int32(-23453462343, -5), -23453500000);
+   EXPECT_EQ(round_int64_int32(345353425343, -12), 0);
++
++  // The last in-range precision still rounds; one past it returns 0. These guard
++  // against an off-by-one in the range check at both overloads' boundary.
++  EXPECT_EQ(round_int32_int32(1234567890, -9), 1000000000);
++  EXPECT_EQ(round_int32_int32(1234567890, -10), 0);
++  EXPECT_EQ(round_int64_int32(1234567890123456789, -18), 1000000000000000000);
++  EXPECT_EQ(round_int64_int32(1234567890123456789, -19), 0);
++
++  // The most negative precision must be rejected by the range check rather than
++  // negated into an out-of-range table index.
++  EXPECT_EQ(round_int32_int32(1234, std::numeric_limits<int32_t>::min()), 0);
++  EXPECT_EQ(round_int64_int32(345353425343, std::numeric_limits<int32_t>::min()), 0);
+ }
+ 
+ TEST(TestExtendedMathOps, TestTruncate) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #51898** (2026-10-07): GH-50004: [CI][Python] Revert pinning miniforge (@adamreeve)
-- **PR #51818** (2026-10-06): GH-51817: [Dev][Release] Add support for RC curl in `download_rc_binaries.py` (@kou)
-- **PR #51811** (2026-10-07): GH-51780: [C++][IPC] Remove the mislabeled null check on schema fields in GetSchema (@CaptainAni187)
-- **PR #51758** (2026-10-07): GH-51757: [C++] Limit max JSON nesting depth in JSON parser (@pitrou)
-- **PR #51756** (2026-10-06): GH-51751: [CI][Packaging] Fix formula path for homebrew-cpp job (@tadeja)
-- **PR #51705** (2026-10-07): GH-51673: [C++][Parquet] Skip missing min/max in metadata printer (@Sunny-Island)
-- **PR #51701** (closed): GH-37900: [Python][FlightRPC] Add cooperative payload admission example (@shatrughnaupadhyay)
-- **PR #51699** (closed): GH-41840: [Python][FlightRPC] Add experimental capability negotiation example (@shatrughnaupadhyay)
+- **PR #54572** (2026-10-19): GH-54571: [GLib] Add support for returning string view array from C++ (@kou)
+- **PR #54510** (closed): MINOR: [C++][Compute] Avoid signed overflow in slice kernel output sizing (@Nayana-Naik73)
+- **PR #54490** (2026-10-19): GH-54489: [CI][Integration] Install jpype1 from conda-forge in conda-integration image (@CurtHagenlocher)
+- **PR #54376** (closed): MINOR: [C++][Compute] Reject non-UTF-8 padding in utf8 pad kernels (@Nayana-Naik73)
+- **PR #54024** (2026-10-19): GH-51008: [C++] Remove vendored whereami (@Reranko05)
+- **PR #53974** (closed): GH-53500: Guard Parquet metadata equality against None (@1932819331hy-debug)
 
 ---
 
@@ -3393,3 +1969,38 @@ Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)
+
+**RULE**:
+When implementing operations in `cpp/src/arrow/compute/kernels/vector_selection.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c4a0850e`: GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/compute/kernels/vector_selection.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+  if (!arrays.empty()) {
+    NonZeroVisitor visitor(&builder, arrays);
+    RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
+  }
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+  NonZeroVisitor visitor(&builder, arrays);
+  RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c4a0850e` are properly handled with clean fallback behavior.

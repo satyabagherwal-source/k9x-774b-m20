@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "3c560fbd2e2193ddf7d2d55fb45e6f7eb909e613c4ab697ee9d1ea4219e5476d",
-    "lastHarvestedAt": "2026-10-18T01:52:12.319Z",
+    "contentHash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
+    "lastHarvestedAt": "2026-10-19T09:54:44.313Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "78894c81",
+    "sourceVersion": "86db4607",
     "license": "MIT",
-    "contentHash": "797a339604d2ebafcc280d766b58f429efcae11052667094939236f27dadeda7",
-    "lastHarvestedAt": "2026-10-18T21:00:53.110Z",
+    "contentHash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
+    "lastHarvestedAt": "2026-10-19T09:54:29.803Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -7588,5 +7588,35 @@
     "contentHash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
     "lastHarvestedAt": "2026-10-19T09:48:15.514Z",
     "learningId": "learn-github-volcengine-minecontext"
+  },
+  "apache-arrow": {
+    "repository": "apache/arrow",
+    "platform": "github",
+    "sourceUrl": "https://github.com/apache/arrow",
+    "sourceVersion": "fb767a7c",
+    "license": "Apache-2.0",
+    "contentHash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
+    "lastHarvestedAt": "2026-10-19T09:54:23.127Z",
+    "learningId": "learn-github-apache-arrow"
+  },
+  "crosspaste-crosspaste-desktop": {
+    "repository": "CrossPaste/crosspaste-desktop",
+    "platform": "github",
+    "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
+    "sourceVersion": "230a5e48",
+    "license": "AGPL-3.0",
+    "contentHash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
+    "lastHarvestedAt": "2026-10-19T09:54:26.102Z",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop"
+  },
+  "infiniflow-infinity": {
+    "repository": "infiniflow/infinity",
+    "platform": "github",
+    "sourceUrl": "https://github.com/infiniflow/infinity",
+    "sourceVersion": "5d27942c",
+    "license": "Apache-2.0",
+    "contentHash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
+    "lastHarvestedAt": "2026-10-19T09:54:33.391Z",
+    "learningId": "learn-github-infiniflow-infinity"
   }
 }

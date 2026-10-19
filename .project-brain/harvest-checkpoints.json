@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T09:48:15.522Z",
+  "last_updated": "2026-10-19T09:54:44.319Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1054,14 +1054,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "content_hash": "3c560fbd2e2193ddf7d2d55fb45e6f7eb909e613c4ab697ee9d1ea4219e5476d",
-      "verified_at": "2026-10-18T01:52:12.322Z",
+      "content_hash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
+      "verified_at": "2026-10-19T09:54:44.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:52:12.322Z"
+      "last_updated": "2026-10-19T09:54:44.319Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
@@ -3318,14 +3318,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "797a339604d2ebafcc280d766b58f429efcae11052667094939236f27dadeda7",
-      "verified_at": "2026-10-18T21:00:53.113Z",
+      "content_hash": "f9b796a216d07bc79a743a44f3078c909900c890512100e58a0c2acd3a4c313b",
+      "verified_at": "2026-10-19T09:54:29.808Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:00:53.113Z"
+      "last_updated": "2026-10-19T09:54:29.808Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -11426,6 +11426,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T09:48:15.521Z"
+    },
+    "apache/arrow": {
+      "repository": "apache/arrow",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apache-arrow",
+      "content_hash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
+      "verified_at": "2026-10-19T09:54:23.132Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:54:23.132Z"
+    },
+    "CrossPaste/crosspaste-desktop": {
+      "repository": "CrossPaste/crosspaste-desktop",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-crosspaste-crosspaste-desktop",
+      "content_hash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
+      "verified_at": "2026-10-19T09:54:26.109Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:54:26.109Z"
+    },
+    "infiniflow/infinity": {
+      "repository": "infiniflow/infinity",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-infiniflow-infinity",
+      "content_hash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
+      "verified_at": "2026-10-19T09:54:33.397Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:54:33.397Z"
     }
   },
   "repos": {
