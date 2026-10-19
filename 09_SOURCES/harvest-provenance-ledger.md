@@ -3173,3 +3173,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T10:34:56.076Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `b1d0fa51` | Multi-dimensional audit evidence | 2026-10-19T10:35:00.496Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7ce08434` | Multi-dimensional audit evidence | 2026-10-19T10:35:01.975Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-19T10:41:11.159Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `b951cd70` | Multi-dimensional audit evidence | 2026-10-19T10:41:12.241Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `573ace30` | Multi-dimensional audit evidence | 2026-10-19T10:41:16.980Z |

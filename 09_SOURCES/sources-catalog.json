@@ -865,8 +865,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "689be1e7c58b13ae0a0da3ec07e2b96ffe99a1cd7ecf11ad15118e16bd8b2e5a",
-    "lastHarvestedAt": "2026-10-18T02:17:12.688Z",
+    "contentHash": "d9a05a48edfb4e708169c5ed572a6e1dc00eb234fe977bf2e53631b75b590c76",
+    "lastHarvestedAt": "2026-10-19T10:41:11.159Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3"
   },
   "hf-qwen-qwen3.8-flash-next": {
@@ -7738,5 +7738,25 @@
     "contentHash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
     "lastHarvestedAt": "2026-10-19T10:34:52.757Z",
     "learningId": "learn-github-pointfreeco-swift-composable-architecture"
+  },
+  "pola-rs-polars": {
+    "repository": "pola-rs/polars",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pola-rs/polars",
+    "sourceVersion": "b951cd70",
+    "license": "MIT",
+    "contentHash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
+    "lastHarvestedAt": "2026-10-19T10:41:12.241Z",
+    "learningId": "learn-github-pola-rs-polars"
+  },
+  "mrkai77-loop": {
+    "repository": "mrkai77/Loop",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mrkai77/Loop",
+    "sourceVersion": "573ace30",
+    "license": "GPL-3.0",
+    "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
+    "lastHarvestedAt": "2026-10-19T10:41:16.980Z",
+    "learningId": "learn-github-mrkai77-loop"
   }
 }

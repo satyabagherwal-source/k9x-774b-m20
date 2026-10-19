@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:35:01.980Z",
+  "last_updated": "2026-10-19T10:41:16.987Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1114,14 +1114,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "689be1e7c58b13ae0a0da3ec07e2b96ffe99a1cd7ecf11ad15118e16bd8b2e5a",
-      "verified_at": "2026-10-18T02:17:12.692Z",
+      "content_hash": "d9a05a48edfb4e708169c5ed572a6e1dc00eb234fe977bf2e53631b75b590c76",
+      "verified_at": "2026-10-19T10:41:11.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:17:12.692Z"
+      "last_updated": "2026-10-19T10:41:11.166Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -11651,6 +11651,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:34:52.762Z"
+    },
+    "pola-rs/polars": {
+      "repository": "pola-rs/polars",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pola-rs-polars",
+      "content_hash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
+      "verified_at": "2026-10-19T10:41:12.247Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:41:12.247Z"
+    },
+    "mrkai77/Loop": {
+      "repository": "mrkai77/Loop",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mrkai77-loop",
+      "content_hash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
+      "verified_at": "2026-10-19T10:41:16.987Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:41:16.987Z"
     }
   },
   "repos": {

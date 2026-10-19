@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:35:01.946Z",
-  "total_verified_learnings": 789,
+  "last_updated": "2026-10-19T10:41:16.934Z",
+  "total_verified_learnings": 791,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -19498,7 +19498,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "689be1e7c58b13ae0a0da3ec07e2b96ffe99a1cd7ecf11ad15118e16bd8b2e5a",
+      "content_hash": "d9a05a48edfb4e708169c5ed572a6e1dc00eb234fe977bf2e53631b75b590c76",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -19531,7 +19531,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-18T02:17:12.651Z",
+      "verified_at": "2026-10-19T10:41:11.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30381,22 +30381,35 @@
     "learn-github-mrkai77-loop": {
       "learning_id": "learn-github-mrkai77-loop",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mrkai77-loop",
+      "source": "mrkai77/Loop",
+      "repository": "mrkai77/Loop",
       "slug": "mrkai77-loop",
       "platform": "github",
       "source_url": "https://github.com/mrkai77/Loop",
-      "source_version": "HEAD",
-      "content_hash": "8152773b8accabbbb3aa6fbb4befc99edd241ee9fa22444a27ce3c41e8cd5bf9",
+      "source_version": "573ace30",
+      "content_hash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
       "dossier_path": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2502,
+          "title": "🐞 Fix updater crash when updating download progress off the main thread (#1166)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.497Z"
+      "verified_at": "2026-10-19T10:41:16.921Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-msasikanth-twine": {
       "learning_id": "learn-github-msasikanth-twine",
@@ -34167,22 +34180,35 @@
     "learn-github-pola-rs-polars": {
       "learning_id": "learn-github-pola-rs-polars",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pola-rs-polars",
+      "source": "pola-rs/polars",
+      "repository": "pola-rs/polars",
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "HEAD",
-      "content_hash": "3e02fdc41903a24a79920cebbe24c0e962e3f40febc34877a70be2326b7ea0cc",
+      "source_version": "b951cd70",
+      "content_hash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2501,
+          "title": "Check SQL casts to STRUCT[]/MAP[] and specify cast failure (#30026)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.081Z"
+      "verified_at": "2026-10-19T10:41:12.182Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-postgresml-postgresml": {
       "learning_id": "learn-github-postgresml-postgresml",
@@ -85418,6 +85444,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:35:01.939Z"
+    },
+    "rule-2501": {
+      "learning_id": "rule-2501",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2501,
+      "title": "Check SQL casts to STRUCT[]/MAP[] and specify cast failure (#30026)",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "b951cd70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:41:12.182Z"
+    },
+    "rule-2502": {
+      "learning_id": "rule-2502",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2502,
+      "title": "🐞 Fix updater crash when updating download progress off the main thread (#1166)",
+      "source_url": "https://github.com/mrkai77/Loop",
+      "source_version": "573ace30",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:41:16.921Z"
     }
   },
   "aliases": {

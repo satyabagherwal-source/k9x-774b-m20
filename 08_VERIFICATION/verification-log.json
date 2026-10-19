@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-RUSA",
-    "timestamp": "2026-10-19T00:04:02.074Z",
-    "repository": "XAMPPRocky/tokei",
-    "learningId": "learn-github-xampprocky-tokei",
-    "contentHash": "429729a57793309f9028ae540874aa2a48f77ce046082aff36d37cd8f7a360aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-RXVA",
-    "timestamp": "2026-10-19T00:04:06.070Z",
-    "repository": "akveo/react-native-ui-kitten",
-    "learningId": "learn-github-akveo-react-native-ui-kitten",
-    "contentHash": "2c4b247dd9e0c368917cb67d807a8a8dd6c02e71309881499a91a233c9a2e268",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-S064",
-    "timestamp": "2026-10-19T00:04:09.052Z",
-    "repository": "go-dev-frame/sponge",
-    "learningId": "learn-github-go-dev-frame-sponge",
-    "contentHash": "91b94fed531e3ac0b5e072013db5b5dba5afc63d3d6ddafc834a26bf593f5aef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-S395",
     "timestamp": "2026-10-19T00:04:13.049Z",
     "repository": "spacejam/sled",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J8J8",
+    "timestamp": "2026-10-19T10:41:11.156Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "d9a05a48edfb4e708169c5ed572a6e1dc00eb234fe977bf2e53631b75b590c76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J9DA",
+    "timestamp": "2026-10-19T10:41:12.238Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JD0X",
+    "timestamp": "2026-10-19T10:41:16.977Z",
+    "repository": "mrkai77/Loop",
+    "learningId": "learn-github-mrkai77-loop",
+    "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
