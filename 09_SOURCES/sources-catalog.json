@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "eb874362c0eb229db9586ec0a79a29dbcbea59e961eacd5bc3407c6c6dded21c",
-    "lastHarvestedAt": "2026-10-18T02:54:49.782Z",
+    "contentHash": "ce6071ad3c00323ecf8c02baecd32a0af85a71782c8b0a9c6cc2538fb4986868",
+    "lastHarvestedAt": "2026-10-19T11:48:30.962Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "acf4f934",
+    "sourceVersion": "19c32e68",
     "license": "GPL-3.0",
-    "contentHash": "76c97f07f4549c137526f388848405d476185d820c5fd6bf8e4c73c1a9da7dd0",
-    "lastHarvestedAt": "2026-10-17T13:03:38.393Z",
+    "contentHash": "d2bb389efc813e4ab89360ec512cb81865e466938281cfba526ec1ddb752309b",
+    "lastHarvestedAt": "2026-10-19T11:48:32.212Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -7928,5 +7928,15 @@
     "contentHash": "30240e46243227bd9d9447a748eb128f942aa0d179637ebaae0c1324385834e1",
     "lastHarvestedAt": "2026-10-19T11:42:12.170Z",
     "learningId": "learn-github-sindresorhus-gifski"
+  },
+  "swiftuix-swiftuix": {
+    "repository": "SwiftUIX/SwiftUIX",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SwiftUIX/SwiftUIX",
+    "sourceVersion": "3a99044b",
+    "license": "MIT",
+    "contentHash": "6bd4dc26274f9a55bf1c215733c181e17b1a270f4c9a9be9a37b57f53c4d8423",
+    "lastHarvestedAt": "2026-10-19T11:48:38.361Z",
+    "learningId": "learn-github-swiftuix-swiftuix"
   }
 }

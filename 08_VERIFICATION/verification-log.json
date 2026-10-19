@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-3JNL",
-    "timestamp": "2026-10-19T00:41:07.137Z",
-    "repository": "ekzhang/bore",
-    "learningId": "learn-github-ekzhang-bore",
-    "contentHash": "2f36d4dae5920a939fec2b606962eee0915dfe517984347cbf0396de653973e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3O2N",
-    "timestamp": "2026-10-19T00:41:12.863Z",
-    "repository": "oblador/react-native-animatable",
-    "learningId": "learn-github-oblador-react-native-animatable",
-    "contentHash": "d1548f59f52a1daee49a9107749a4f84efd96e436a64eb9b6c5968bacef0e3f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3Q9X",
-    "timestamp": "2026-10-19T00:41:15.717Z",
-    "repository": "nitrictech/nitric",
-    "learningId": "learn-github-nitrictech-nitric",
-    "contentHash": "ec223709845312709f182ed16cfb43acd9aa67e1c0eacbc0232f9a2208e94329",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-3TT7",
     "timestamp": "2026-10-19T00:41:20.299Z",
     "repository": "skytable/skytable",
@@ -7490,6 +7445,51 @@
     "repository": "sindresorhus/Gifski",
     "learningId": "learn-github-sindresorhus-gifski",
     "contentHash": "30240e46243227bd9d9447a748eb128f942aa0d179637ebaae0c1324385834e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XTNY",
+    "timestamp": "2026-10-19T11:48:30.958Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "ce6071ad3c00323ecf8c02baecd32a0af85a71782c8b0a9c6cc2538fb4986868",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XUMO",
+    "timestamp": "2026-10-19T11:48:32.208Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "d2bb389efc813e4ab89360ec512cb81865e466938281cfba526ec1ddb752309b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XZDI",
+    "timestamp": "2026-10-19T11:48:38.358Z",
+    "repository": "SwiftUIX/SwiftUIX",
+    "learningId": "learn-github-swiftuix-swiftuix",
+    "contentHash": "6bd4dc26274f9a55bf1c215733c181e17b1a270f4c9a9be9a37b57f53c4d8423",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -3210,3 +3210,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-19T11:42:06.443Z |
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `04e93bd5` | Multi-dimensional audit evidence | 2026-10-19T11:42:07.112Z |
 | `learn-github-sindresorhus-gifski` | `https://github.com/sindresorhus/Gifski` | `e184b284` | Multi-dimensional audit evidence | 2026-10-19T11:42:12.170Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T11:48:30.962Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `19c32e68` | Multi-dimensional audit evidence | 2026-10-19T11:48:32.212Z |
+| `learn-github-swiftuix-swiftuix` | `https://github.com/SwiftUIX/SwiftUIX` | `3a99044b` | Multi-dimensional audit evidence | 2026-10-19T11:48:38.361Z |

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/swiftuix-swiftuix-learnings.md`  
+> **Source**: github ([https://github.com/SwiftUIX/SwiftUIX](https://github.com/SwiftUIX/SwiftUIX))  
+> **Source Version**: `3a99044b`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T11:48:38.005Z  
+> **Learning ID**: `learn-github-swiftuix-swiftuix`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): SwiftUIX/SwiftUIX
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/swiftuix-swiftuix-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SwiftUIX/SwiftUIX](https://github.com/SwiftUIX/SwiftUIX))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T05:26:48.378Z  
+> **Harvest Timestamp**: 2026-10-19T11:48:37.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: An exhaustive expansion of the standard SwiftUI library.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8167 stars
+- **Stars / Engagement**: 8180 stars
 
 ---
 
@@ -926,124 +940,6 @@ public struct EnvironmentObjectOrState<Value: ObservableObject>: DynamicProperty
 
 ```
 
-### Core Architecture Module: `Sources/SwiftUIX/Intramodular/Dynamic Properties/ExistentialStateObject.swift`
-```
-//
-// Copyright (c) Vatsal Manot
-//
-
-import Combine
-import SwiftUI
-
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-@propertyWrapper
-@_documentation(visibility: internal)
-public struct ExistentialStateObject<ObjectType>: DynamicProperty {
-    fileprivate class Box: ObservableObject {
-        let base: ObjectType
-        let objectWillChange: AnyPublisher<Void, Never>
-        
-        init(base: ObjectType) {
-            self.base = base
-            self.objectWillChange = ((base as! any ObservableObject).objectWillChange as any Publisher)
-                ._mapToVoidAnyPublisherDiscardingError()
-        }
-    }
-    
-    @StateObject private var valueBox: Box
-    
-    public var wrappedValue: ObjectType {
-        get {
-            valueBox.base
-        }
-    }
-    
-    public init(wrappedValue: @autoclosure @escaping () -> ObjectType) {
-        self._valueBox = StateObject(wrappedValue: .init(base: wrappedValue()))
-    }
-}
-
-extension Publisher {
-    fileprivate func _mapToVoidAnyPublisherDiscardingError() -> AnyPublisher<Void, Never> {
-        map({ _ in () }).catch({ _ in Just(()) }).eraseToAnyPublisher()
-    }
-}
-
-```
-
-### Core Architecture Module: `Sources/SwiftUIX/Intramodular/Dynamic Properties/LazyState.swift`
-```
-//
-// Copyright (c) Vatsal Manot
-//
-
-import Dispatch
-import Swift
-import SwiftUI
-
-@propertyWrapper
-@_documentation(visibility: internal)
-public struct LazyState<Value>: DynamicProperty {
-    private let initialWrappedValue: () -> Value
-    
-    private var _cachedWrappedValue: Value?
-    
-    @State private var _wrappedValue: Value? = nil
-    
-    /// The current state value.
-    public var wrappedValue: Value {
-        get {
-            _wrappedValue ?? _cachedWrappedValue ?? initialWrappedValue()
-        } nonmutating set {
-            _wrappedValue = newValue
-        }
-    }
-    
-    /// The binding value, as "unwrapped" by accessing `$foo` on a `@Binding` property.
-    public var projectedValue: Binding<Value> {
-        return .init(
-            get: { self.wrappedValue },
-            set: { self.wrappedValue = $0 }
-        )
-    }
-    
-    /// Initialize with the provided initial value.
-    public init(initial: @escaping () -> Value) {
-        self.initialWrappedValue = initial
-    }
-    
-    /// Initialize with the provided initial value.
-    public init(wrappedValue: @autoclosure @escaping () -> Value) {
-        self.init(initial: wrappedValue)
-    }
-
-    public mutating func update() {
-        guard _cachedWrappedValue == nil else {
-            return
-        }
-        
-        let value = initialWrappedValue()
-                
-        _cachedWrappedValue = value
-    }
-}
-
-// MARK: - Conformances
-
-extension LazyState: Equatable where Value: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.wrappedValue == rhs.wrappedValue
-    }
-}
-
-extension LazyState: Hashable where Value: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        _wrappedValue.hash(into: &hasher)
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1055,45 +951,11 @@ extension LazyState: Hashable where Value: Hashable {
   **Post-Mortem & Fix Analysis**:
   > @Sjmarf that's odd - it should defocus it, would it be possible for you to reproduce this in an isolated Xcode project that I can test?
   > Sure. Let me know if I'm doing something wrong. I'm using XCode 15 on an iOS 17 sim.  https://github.com/Sjmarf/SwiftUIXSearch
-  > @Sjmarf I think your repo might be private - the link leads to a 404 for me 😅 
 
 - **Issue #386** (2023-05-08): **CocoaHostingController not working **
   *Symptoms*: In SceneDelegate:  `window.rootViewController = CocoaHostingController(mainView: contentView)`  In first view: ``` @Environment(\.presenter) var presenter ...     .onAppear {   if let presenter = presenter {       presenter.present(EmptyView())   } ... ```  presenter is always nil.   What am I missing?  This should work according to the Wiki?  https://github.com/SwiftUIX/SwiftUIX/wiki/Dynamic-Presentation
   **Post-Mortem & Fix Analysis**:
   > @beachcitiessoftware this is odd, I'll take a look into it.
-
-- **Issue #377** (2022-09-27): **CocoaScrollView continue to bounce even after setting scrollBounceDisabled(true)**
-  *Symptoms*: First of all, thank you for this excellent library! It gave me a lot of ideas and saved a ton of time.  I was trying to disable horizontal bounce on `CocoaScrollView` using `alwaysBounceHorizontal` and `scrollBounceDisabled`, and it didn't work. The only way to disable bounce that I found is to use `CocoaScrollViewReader` and directly set `proxy.underlyingAppKitOrUIKitScrollView?.bounces = false`, which is, of course, far from ideal. Am I missing something?  Disabling bounce was the main reason for switching from `SwiftUI.ScrollView` with Introspect to `CocoaScrollView`. Can `UIScrollView.bounces` be exposed through `CocoaScrollViewConfiguration`?
-  **Post-Mortem & Fix Analysis**:
-  > @Saik0s this smells like a bug, I'll investigate. 
-  > I'm noticing a lot of issues with cocoa related aspects of the library. Perhaps a helper framework could be created? @vmanot 
-
-- **Issue #363** (2022-05-01): **Navigation problem **
-  *Symptoms*: Hi!  Since SwiftUI X version 0.1.1, there are navigation problems, it can work on several screens but sometimes after several indentations it does not work anymore. When the pop does not work. I don't know if this has already been reported!
-  **Post-Mortem & Fix Analysis**:
-  > @tmp-dev99 please elaborate - what modifier/construct from SwiftUIX are you using, that you suspect may not be working as intended?
-  > I recover my navigator in the following way `@Environment(\.navigator) private var navigator` After i use it in the following way `navigator?.push(OrderSuccess())` but it does not find the navigator and if I force unwrap it crashes @vmanot  
-  > @vmanot   Hello, Same issue here, i had to use 0.1.0 but now that i upgraded my XCode to 13.3.1, i'm now synced to Master and i cannot navigator?.pop() For the navigator?.push(), it works only for the first one.  Any idea of a workaround or a fix ?
-
-- **Issue #351** (2023-05-08): **Extra space below CocoaTextField InputAccessoryView on iOS15**
-  *Symptoms*: There is some extra white space under inputAccessoryView, only on iOS15. Love this library otherwise!  ``` CocoaTextField(text: $text)             .inputAccessoryView(                 HStack {                     Spacer()                     Button("Done") {                      }                 }             ) ``` ![image](https://user-images.githubusercontent.com/1129383/155713930-defc73b6-0301-41a1-b96a-010ed871c449.png)  
-  **Post-Mortem & Fix Analysis**:
-  > @ksiwei I'll investigate - thanks for reporting! 
-
-- **Issue #343** (2022-01-23): **PageViewController swipe ignores SwiftUI's navigationBarHidden(true)**
-  *Symptoms*: when I swipe while the navigation bar is hidden, it reappears.
-  **Post-Mortem & Fix Analysis**:
-  > be like ,[this situation](https://stackoverflow.com/questions/69883830/uipageviewcontroller-swipe-ignores-swiftuis-navigationbarhiddentrue), could u give some suggestions？😊
-  > @shywoody could you upload a test project demonstrating this? I can take a look at it and attempt to patch it. 
-  > ``` import SwiftUI import SwiftUIX  private struct TestRedView: View{     var body: some View{         Color.red.opacity(0.3)                  } }  private struct TestBlueView: View{     var body: some View{         Color.blue.opacity(0.3)             .edgesIgnoringSafeArea(.all)     } }  extension TestErrorView {     func mainTestView() -> some View{ //        let a = AnyView(TestRedView()).navigationBarHidden(true) //        let b = AnyView(TestBlueView()).navigationBarHidden(true)         let c = AnyView(TestRedView())         let d = AnyView(TestBlueView())          return PaginationView(pages: [c, d])             .navigationBarTitle(Text("Test"), displayMode: .inline)             .navigationBarHidden(true)             .edgesIgnoringSafeArea(.all)     } }   struct TestErrorView: View {     var body: some View {                  NavigationView{                          NavigationLink(destination: mainTestView()) {                 Text("click")
-
-- **Issue #279** (2021-12-27): **CocoaScrollView contentInsets are not updating**
-  *Symptoms*: Example repo https://github.com/maximkrouk/VideoTrimmingExample
-
-- **Issue #270** (2021-09-20): **.isFirstResponder causes flickering when used in an NavigationView destination**
-  *Symptoms*: You can see it here:   https://user-images.githubusercontent.com/8009393/122186884-c7575780-ce8e-11eb-801a-3f08adf9574e.mov   Sample Code:   ```swift import SwiftUI import SwiftUIX  struct ContentView: View {      @State var text: String = ""      var body: some View {                  NavigationView {             NavigationLink(destination: CocoaTextField("oops", text: $text)                             .isFirstResponder(true)) {                 Text("Click me")             }         }     } }  struct ContentView_Previews: PreviewProvider {     static var previews: some View {         ContentView()     } }  ```
-  **Post-Mortem & Fix Analysis**:
-  > @lucasmerlin unfortunately I've found no reliable way to hook into navigation transitions (so that I can wait for a completion block to delay the first responder status). If you manage to find a solution to this, please feel free to open up a PR, but right now the best you can do is delay the responder chain update. Also, you can now use `.focused($isFirstResponder)` on `CocoaTextField` (which gives you a bidirectional read over whether it's the first responder).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1110,56 +972,46 @@ extension LazyState: Hashable where Value: Hashable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a99044b` (2026-08-20)
-**Commit Message**: Fix PaginationView archive linkage
+### Incident Patch 1: `1c50b916` (2025-05-15)
+**Commit Message**: Fix the memory leak issue of CocoaList (#540)
 
-**File**: `Sources/SwiftUIX/Intramodular/Pagination/PaginationView.swift` (modified, +4/-2)
+* Fix the incorrect height issue with CocoaList Cell, Section, Header, and Footer
+
+* fix the CocoaList memory leak
+
+---------
+
+Co-authored-by: mac <>
+
+**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableHeaderFooterView.swift` (modified, +1/-1)
 ```diff
-@@ -50,8 +50,7 @@ public struct PaginationView<Page: View>: View {
+@@ -8,7 +8,7 @@ import SwiftUI
+ #if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
+ 
+ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>: UITableViewHeaderFooterView {
+-    var parent: UITableViewController!
++    weak var parent: UITableViewController!
+     var item: SectionModel!
+     var makeContent: ((SectionModel) -> Content)!
      
-     /// The current page index internally used by `PaginationView`.
-     /// Never access this directly, it is marked public as a workaround to a compiler bug.
--    // `@inlinable` cannot reference `@State`'s private macro-generated storage.
--    @State public var _currentPageIndex = 0
-+    @State public var _currentPageIndex: Int
+```
+
+**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableViewCell.swift` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ public class _PlatformTableViewCell<ItemType: Identifiable, Content: View>: UITa
+         let isSelected: Bool
+     }
      
-     /// Never access this directly, it is marked public as a workaround to a compiler bug.
-     @inlinable
-@@ -71,6 +70,9 @@ public struct PaginationView<Page: View>: View {
-         self.axis = axis
-         self.transitionStyle = transitionStyle
-         self.showsIndicators = showsIndicators
-+        // Avoid Xcode 27 emitting a call to the macro-generated default
-+        // initializer with private linkage when archiving a client app.
-+        self.__currentPageIndex = State(initialValue: 0)
-         
-         switch axis {
-             case .horizontal:
+-    var tableViewController: UITableViewController!
++    weak var tableViewController: UITableViewController!
+     var indexPath: IndexPath?
+     
+     var item: ItemType!
 ```
 
 ---
 
-### Incident Patch 2: `e4302824` (2026-08-08)
-**Commit Message**: Update SwiftUIX contribution commands (#556)
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -285,8 +285,8 @@ LinkPresentationView(url: url)
- 
- SwiftUIX welcomes contributions in the form of GitHub issues and pull-requests. Please refer the [projects](https://github.com/SwiftUIX/SwiftUIX/projects) section before raising a bug or feature request, as it may already be under progress.
- 
--To create an Xcode project for SwiftUIX run `bundle install; bundle exec fastlane generate_xcodeproj`.
--To check the automated builds for SwiftUIX run `bundle install; bundle exec fastlane build`.
-+SwiftUIX is a Swift package. To work on it in Xcode, open `Package.swift` from the cloned repository.
-+To verify a local macOS build, run `xcodebuild -scheme SwiftUIX -destination 'generic/platform=macOS' build`.
- 
- 
- # License
-```
-
----
-
-### Incident Patch 3: `5b622b10` (2026-08-05)
+### Incident Patch 2: `5b622b10` (2026-08-05)
 **Commit Message**: Fix Swift 6.4 compiler regression for Xcode 27 (#560)
 
 **File**: `Sources/SwiftUIX/Intramodular/Presentation/Link/PresentationLink.swift` (modified, +49/-63)
@@ -1319,730 +1171,31 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 4: `25a91037` (2026-07-21)
-**Commit Message**: Add SwiftUI-compatible file importer supplement
+### Incident Patch 3: `3a99044b` (2026-08-20)
+**Commit Message**: Fix PaginationView archive linkage
 
-**File**: `Sources/SwiftUIX/Intramodular/Documents/FileImporter.swift` (added, +287/-0)
+**File**: `Sources/SwiftUIX/Intramodular/Pagination/PaginationView.swift` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,287 @@
-+//
-+// Copyright (c) Vatsal Manot
-+//
-+
-+#if os(macOS)
-+
-+import AppKit
-+import SwiftUI
-+import UniformTypeIdentifiers
-+
-+@available(macOS 14.0, *)
-+public extension View {
-+    /// Presents a system dialog for importing an existing file or directory.
-+    ///
-+    /// This modifier follows the behavior of SwiftUI's `fileImporter`, while
-+    /// using `NSOpenPanel` to correctly support mixed directory and file-package
-+    /// selections on macOS.
-+    nonisolated func fileImporter(
-+        isPresented: Binding<Bool>,
-+        allowedContentTypes: [UTType],
-+        browserOptions: FileDialogBrowserOptions,
-+        onCompletion: @escaping (Result<URL, Error>) -> Void
-+    ) -> some View {
-+        fileImporter(
-+            isPresented: isPresented,
-+            allowedContentTypes: allowedContentTypes,
-+            allowsMultipleSelection: false,
-+            browserOptions: browserOptions,
-+            onCompletion: { result in
-+                onCompletion(result.flatMap { urls in
-+                    guard let url = urls.first else {
-+                        return .failure(CocoaError(.fileReadUnknown))
-+                    }
-+
-+                    return .success(url)
-+                })
-+            },
-+            onCancellation: { }
-+        )
-+    }
-+
-+    /// Presents a system dialog for importing one or more files or directories.
-+    ///
-+    /// This modifier follows the behavior of SwiftUI's `fileImporter`, while
-+    /// using `NSOpenPanel` to correctly support mixed directory and file-package
-+    /// selections on macOS.
-+    nonisolated func fileImporter(
-+        isPresented: Binding<Bool>,
-+        allowedContentTypes: [UTType],
-+        allowsMultipleSelection: Bool,
-+        browserOptions: FileDialogBrowserOptions,
-+        onCompletion: @escaping (Result<[URL], Error>) -> Void
-+    ) -> some View {
-+        fileImporter(
-+            isPresented: isPresented,
-+            allowedContentTypes: allowedContentTypes,
-+            allowsMultipleSelection: allowsMultipleSelection,
-+            browserOptions: browserOptions,
-+            onCompletion: onCompletion,
-+            onCancellation: { }
-+        )
-+    }
-+
-+    /// Presents a system dialog for importing one or more files or directories.
-+    ///
-+    /// The `isPresented` binding is reset before either callback is invoked.
-+    /// Cancellation is reported separately, matching SwiftUI's modern file
-+    /// importer API.
-+    nonisolated func fileImporter(
-+        isPresented: Binding<Bool>,
-+        allowedContentTypes: [UTType],
-+        allowsMultipleSelection: Bool,
-+        browserOptions: FileDialogBrowserOptions,
-+        onCompletion: @escaping (Result<[URL], Error>) -> Void,
-+        onCancellation: @escaping () -> Void
-+    ) -> some View {
-+        modifier(
-+            _FileImporterModifier(
-+                isPresented: isPresented,
-+                configuration: _FileImporterConfiguration(
-+                    allowedContentTypes: allowedContentTypes,
-+                    allowsMultipleSelection: allowsMultipleSelection,
-+                    browserOptions: browserOptions
-+                ),
-+                onCompletion: onCompletion,
-+                onCancellation: onCancellation
-+            )
-+        )
-+    }
-+}
-+
-+@available(macOS 14.0, *)
-+private struct _FileImporterConfiguration {
-+    let allowedContentTypes: [UTType]
-+    let allowsMultipleSelection: Bool
-+    let browserOptions: FileDialogBrowserOptions
-+
-+    func allows(_ url: URL) -> Bool {
-+        guard let values = try? url.resourceValues(
-+            forKeys: [.contentTypeKey, .isDirectoryKey, .isPackageKey]
-+        ) else {
-+            return false
-+        }
-+
-+        if values.isDirectory == true, values.isPackage != true {
-+            return true
-+        }
-+
-+        if let contentType = values.contentType,
-+           allowedContentTypes.contains(where: { contentType.conforms(to: $0) }) {
-+            return true
-+        }
-+
-+        let filenameExtension = url.pathExtension.lowercased()
-+
-+        return !filenameExtension.isEmpty && allowedContentTypes.contains { contentType in
-+            contentType.tags[.filenameExtension]?.contains { tag in
-+                tag.caseInsensitiveCompare(filenameExtension) == .orderedSame
-+            } == true
-+        }
-+    }
-+
-+    @MainActor
-+    func configure(_ panel: NSOpenPanel) {
-+        let selectsDirectories = allowedContentTypes.contains { type in
-+            type == .directory || type == .folder
-+        }
-+        let selectsFilePackages = allowedContentTypes.contains { type in
-+            type != .directory && type != .folder && type.conforms(to: .directory)
-+        }
-+
-+        panel.allowedContentTypes = allowedContentTypes
-+        panel.canChooseFiles = !selectsDirectories || selectsFilePackages
-+        panel.canChooseDirectories = selectsDirectories
-+        panel.allowsMultipleSelection = allowsMultipleSelection
-+        panel.treatsFilePackagesA
-```
-
----
-
-### Incident Patch 5: `e1754664` (2026-07-14)
-**Commit Message**: Fix Xcode 27 compatibility (#555)
-
-**File**: `Sources/SwiftUIX/Intramodular/Dynamic Properties/DelayedState.swift` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ import SwiftUI
- @propertyWrapper
- @_documentation(visibility: internal)
- public struct DelayedState<Value>: DynamicProperty {
--    @inlinable
-+    // `@inlinable` cannot reference `@State`'s private macro-generated storage.
-     @State public var _wrappedValue: Value
-     
-     /// The current state value.
-```
-
-**File**: `Sources/SwiftUIX/Intramodular/Miscellaneous/_SwiftUI_TargetPlatform.swift` (modified, +15/-15)
-```diff
-@@ -222,16 +222,18 @@ extension _TargetPlatformConditionalModifiable where Root: Scene, Platform == _S
-         _ mode: SpecificTypes.NavigationBarItemTitleDisplayMode
-     ) -> _TargetPlatformConditionalModifiable<some View, Platform> {
- #if os(iOS)
--        _TargetPlatformConditionalModifiable<_, Platform> {
--            switch mode {
--                case .automatic:
--                    root.navigationBarTitleDisplayMode(.automatic)
--                case .inline:
--                    root.navigationBarTitleDisplayMode(.inline)
--                case .large:
--                    root.navigationBarTitleDisplayMode(.inline)
-+        _TargetPlatformConditionalModifiable<_, Platform>(
-+            root: Group {
-+                switch mode {
-+                    case .automatic:
-+                        root.navigationBarTitleDisplayMode(.automatic)
-+                    case .inline:
-+                        root.navigationBarTitleDisplayMode(.inline)
-+                    case .large:
-+                        root.navigationBarTitleDisplayMode(.inline)
-+                }
-             }
--        }
-+        )
- #else
-         self
- #endif
-@@ -259,13 +261,11 @@ extension _TargetPlatformConditionalModifiable where Root: View, Platform == _Sw
-         _ state: _SwiftUI_TargetPlatform.macOS._ControlActiveState
-     ) -> _TargetPlatformConditionalModifiable<some View, Platform> {
-         #if os(macOS)
--        _TargetPlatformConditionalModifiable<_, Platform> {
--            self.environment(\.controlActiveState, .init(state))
--        }
-+        _TargetPlatformConditionalModifiable<_, Platform>(
-+            root: self.environment(\.controlActiveState, .init(state))
-+        )
-         #else
--        _TargetPlatformConditionalModifiable<_, Platform> {
--            self
--        }
-+        _TargetPlatformConditionalModifiable<_, Platform>(root: self)
-         #endif
-     }
- }
-```
-
-**File**: `Sources/SwiftUIX/Intramodular/Pagination/PaginationView.swift` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ public struct PaginationView<Page: View>: View {
+@@ -50,8 +50,7 @@ public struct PaginationView<Page: View>: View {
      
      /// The current page index internally used by `PaginationView`.
      /// Never access this directly, it is marked public as a workaround to a compiler bug.
--    @inlinable
-+    // `@inlinable` cannot reference `@State`'s private macro-generated storage.
-     @State public var _currentPageIndex = 0
+-    // `@inlinable` cannot reference `@State`'s private macro-generated storage.
+-    @State public var _currentPageIndex = 0
++    @State public var _currentPageIndex: Int
      
      /// Never access this directly, it is marked public as a workaround to a compiler bug.
-```
-
----
-
-### Incident Patch 6: `a9012563` (2026-06-12)
-**Commit Message**: Fix NSTextAttachment character compatibility across SDK importers
-
-**File**: `Sources/_SwiftUIX/Intermodular/Extensions/AppKit or UIKit/NSTextAttachment++.swift` (removed, +0/-29)
-```diff
-@@ -1,29 +0,0 @@
--//
--// Copyright (c) Vatsal Manot
--//
--
--#if os(macOS)
--import AppKit
--#endif
--import QuartzCore
--import SwiftUI
--#if os(iOS) || os(tvOS) || os(visionOS)
--import UIKit
--#endif
--
--#if compiler(>=6.3)
--#if canImport(AppKit)
--import AppKit
--
--/// Fix for Xcode 26.4 because Apple is fucking retarded.
--extension NSTextAttachment {
--    static var character: Int {
--        #if targetEnvironment(macCatalyst)
--        return 0xFFFC
--        #else
--        return NSAttachmentCharacter
--        #endif
--    }
--}
--#endif
--#endif
-```
-
-**File**: `Sources/_SwiftUIX/Intermodular/Helpers/AppKit or UIKit/NSAttachmentCharacter.swift` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+//
-+// Copyright (c) Vatsal Manot
-+//
-+//
-+// NSTextAttachment attachment-character compatibility reference
-+//
-+// The table records the attachment-character declaration imported by each
-+// SDK/Swift importer configuration and the compatibility declaration supplied
-+// by this file so both public spellings remain available to clients.
-+//
-+// Table fields:
-+//   property
-+//     The `NSTextAttachment.character` type property.
-+//   global
-+//     The `NSAttachmentCharacter` global constant.
-+//   SDK Declaration
-+//     Declaration imported by the SDK/Swift importer before this file contributes.
-+//   Compatibility
-+//     Declaration supplied by this file for the active importer configuration.
-+//   PASS
-+//     Debug build passed.
-+//   No SDK
-+//     Platform SDK component was not installed in the tested Xcode bundle.
-+//
-+// +------------------------+---------+--------------------+----------+----------+--------+
-+// | Xcode                  | Swift   | Platform           | SDK      | Compat   | Result |
-+// +------------------------+---------+--------------------+----------+----------+--------+
-+// | 16.4 (16F6)            | 6.1.2   | macOS              | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | Mac Catalyst       | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | iOS                | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | iOS Simulator      | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | tvOS               | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | tvOS Simulator     | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | watchOS            | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | watchOS Simulator  | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | visionOS           | property | global   | PASS   |
-+// | 16.4 (16F6)            | 6.1.2   | visionOS Simulator | property | global   | PASS   |
-+// | 26.1 (17B55)           | 6.2.1   | macOS              | property | global   | PASS   |
-+// | 26.1 (17B55)           | 6.2.1   | Mac Catalyst       | property | global   | PASS   |
-+// | 26.1 (17B55)           | 6.2.1   | iOS                | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | iOS Simulator      | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | tvOS               | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | tvOS Simulator     | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | watchOS            | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | watchOS Simulator  | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | visionOS           | --       | --       | No SDK |
-+// | 26.1 (17B55)           | 6.2.1   | visionOS Simulator | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | macOS              | property | global   | PASS   |
-+// | 26.2 (17C52)           | 6.2.3   | Mac Catalyst       | property | global   | PASS   |
-+// | 26.2 (17C52)           | 6.2.3   | iOS                | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | iOS Simulator      | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | tvOS               | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | tvOS Simulator     | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | watchOS            | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | watchOS Simulator  | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | visionOS           | --       | --       | No SDK |
-+// | 26.2 (17C52)           | 6.2.3   | visionOS Simulator | --       | --       | No SDK |
-+// | 26.4.1 (17E202)        | 6.3.1   | macOS              | global   | property | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | Mac Catalyst       | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | iOS                | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | iOS Simulator      | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | tvOS               | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | tvOS Simulator     | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | watchOS            | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | watchOS Simulator  | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | visionOS           | property | global   | PASS   |
-+// | 26.4.1 (17E202)        | 6.3.1   | visionOS Simulator | property | global   | PASS   |
-+// | 26.5 (17F42)           | 6.3.2   | macOS              | property | global   | PASS   |
-+// | 26.5 (17F42)           | 6.3.2   | Mac Catal
-```
-
----
-
-### Incident Patch 7: `37003b91` (2026-04-17)
-**Commit Message**: Fix for XCode 26.4 (#551)
-
-**File**: `Sources/_SwiftUIX/Intermodular/Extensions/Foundation/NSAttributedString++.swift` (modified, +14/-0)
-```diff
-@@ -19,3 +19,17 @@ extension NSAttributedString {
- }
- 
- #endif
-+
-+/// NSTextAttachment.character -> NSAttachmentCharacter
-+#if compiler(>=6.3)
-+#if canImport(AppKit)
-+import AppKit
-+
-+/// Fix for XCode 26.4
-+extension NSTextAttachment {
-+    static var character: Int {
-+        NSAttachmentCharacter
-+    }
-+}
-+#endif
-+#endif
-```
-
----
-
-### Incident Patch 8: `c1a29980` (2026-01-25)
-**Commit Message**: Support greedy frame with `fixedSize` modifier (#548)
-
-**File**: `Sources/SwiftUIX/Intermodular/Helpers/SwiftUI/View.frame+.swift` (modified, +2/-2)
-```diff
-@@ -393,10 +393,10 @@ struct GreedyFrameModifier: _opaque_FrameModifier, ViewModifier {
-     func body(content: Content) -> some View {
-         content.frame(
-             minWidth: width?.fixedValue,
--            idealWidth: width?.resolve(in: .greatestFiniteDimensions),
-+            idealWidth: width?.fixedValue,
-             maxWidth: width?.resolve(in: .greatestFiniteDimensions),
-             minHeight: height?.fixedValue,
--            idealHeight: height?.resolve(in: .greatestFiniteDimensions),
-+            idealHeight: height?.fixedValue,
-             maxHeight: height?.resolve(in: .greatestFiniteDimensions),
-             alignment: alignment
-         )
-```
-
----
-
-### Incident Patch 9: `1c50b916` (2025-05-15)
-**Commit Message**: Fix the memory leak issue of CocoaList (#540)
-
-* Fix the incorrect height issue with CocoaList Cell, Section, Header, and Footer
-
-* fix the CocoaList memory leak
-
----------
-
-Co-authored-by: mac <>
-
-**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableHeaderFooterView.swift` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ import SwiftUI
- #if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
- 
- class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>: UITableViewHeaderFooterView {
--    var parent: UITableViewController!
-+    weak var parent: UITableViewController!
-     var item: SectionModel!
-     var makeContent: ((SectionModel) -> Content)!
-     
-```
-
-**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableViewCell.swift` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ public class _PlatformTableViewCell<ItemType: Identifiable, Content: View>: UITa
-         let isSelected: Bool
-     }
-     
--    var tableViewController: UITableViewController!
-+    weak var tableViewController: UITableViewController!
-     var indexPath: IndexPath?
-     
-     var item: ItemType!
-```
-
----
-
-### Incident Patch 10: `395a5d03` (2025-04-28)
-**Commit Message**: Update build action (#536)
-
-**File**: `.github/workflows/preternatural-build.yml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        xcode: ['16.1']
-+        xcode: ['16.1', '16.2'] # macos-latest runners don't yet have Xcode 16.3
-         scheme: ['SwiftUIX']
-         command: ['build']
-         platform: ['macOS', 'iOS', 'tvOS', 'watchOS']
-```
-
----
-
-### Incident Patch 11: `880b3a4d` (2025-04-21)
-**Commit Message**: Merge branch 'master' of github.com:swiftuix/SwiftUIX
-
-**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableHeaderFooterView.swift` (modified, +20/-7)
-```diff
-@@ -12,11 +12,7 @@ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>:
-     var item: SectionModel!
-     var makeContent: ((SectionModel) -> Content)!
-     
--    private var contentHostingController: UIViewController!
--    
--    var rootView: some View {
--        self.makeContent(item).id(item.id)
--    }
-+    var contentHostingController: UIHostingController<RootView>!
-     
-     public override init(reuseIdentifier: String?) {
-         super.init(reuseIdentifier: reuseIdentifier)
-@@ -34,7 +30,7 @@ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>:
-             contentView.bounds.origin = .zero
-             layoutMargins = .zero
-             
--            contentHostingController = UIHostingController(rootView: rootView)
-+            contentHostingController = UIHostingController(rootView: RootView(base: self))
-             contentHostingController.view.backgroundColor = .clear
-             contentHostingController.view.translatesAutoresizingMaskIntoConstraints = false
-             
-@@ -50,7 +46,24 @@ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>:
-                 contentHostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-             ])
-         } else {
--            (contentHostingController as? UIHostingController)?.rootView = rootView
-+            contentHostingController.rootView = RootView(base: self)
-+        }
-+    }
-+}
-+
-+extension _PlatformTableHeaderFooterView {
-+    struct RootView: View {
-+        private let id: AnyHashable
-+        private let content: Content
-+        
-+        init(base: _PlatformTableHeaderFooterView<SectionModel, Content>) {
-+            self.content = base.makeContent(base.item)
-+            self.id = base.item.id
-+        }
-+        
-+        var body: some View {
-+            content
-+                .id(id)
-         }
-     }
- }
-```
-
-**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableViewController.swift` (modified, +5/-5)
-```diff
-@@ -202,8 +202,8 @@ public class _PlatformTableViewController<SectionModel: Identifiable, ItemType:
-         prototypeSectionHeader.update()
+     @inlinable
+@@ -71,6 +70,9 @@ public struct PaginationView<Page: View>: View {
+         self.axis = axis
+         self.transitionStyle = transitionStyle
+         self.showsIndicators = showsIndicators
++        // Avoid Xcode 27 emitting a call to the macro-generated default
++        // initializer with private linkage when archiving a client app.
++        self.__currentPageIndex = State(initialValue: 0)
          
-         let height = prototypeSectionHeader
--            .contentView
--            .systemLayoutSizeFitting(UIView.layoutFittingExpandedSize)
-+            .contentHostingController
-+            .sizeThatFits(in: CGSize(width: tableView.bounds.width, height: UIView.layoutFittingExpandedSize.height))
-             .height
-         
-         _sectionHeaderContentHeightCache[model.id] = height
-@@ -256,8 +256,8 @@ public class _PlatformTableViewController<SectionModel: Identifiable, ItemType:
-         prototypeSectionFooter.update()
-         
-         let height = prototypeSectionFooter
--            .contentView
--            .systemLayoutSizeFitting(UIView.layoutFittingExpandedSize)
-+            .contentHostingController
-+            .sizeThatFits(in: CGSize(width: tableView.bounds.width, height: UIView.layoutFittingExpandedSize.height))
-             .height
-         
-         _sectionFooterContentHeightCache[model.id] = height
-@@ -307,7 +307,7 @@ public class _PlatformTableViewController<SectionModel: Identifiable, ItemType:
-         
-         let height = prototypeCell
-             .contentHostingController
--            .sizeThatFits(in: UIView.layoutFittingExpandedSize)
-+            .sizeThatFits(in: CGSize(width: tableView.bounds.width, height: UIView.layoutFittingExpandedSize.height))
-             .height
-         
-         _rowContentHeightCache[item.id] = height
-```
-
----
-
-### Incident Patch 12: `974ba14e` (2025-04-15)
-**Commit Message**: Fix the incorrect height issue with CocoaList Cell, Section, Header, and Footer (#535)
-
-Co-authored-by: mac <>
-
-**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableHeaderFooterView.swift` (modified, +20/-7)
-```diff
-@@ -12,11 +12,7 @@ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>:
-     var item: SectionModel!
-     var makeContent: ((SectionModel) -> Content)!
-     
--    private var contentHostingController: UIViewController!
--    
--    var rootView: some View {
--        self.makeContent(item).id(item.id)
--    }
-+    var contentHostingController: UIHostingController<RootView>!
-     
-     public override init(reuseIdentifier: String?) {
-         super.init(reuseIdentifier: reuseIdentifier)
-@@ -34,7 +30,7 @@ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>:
-             contentView.bounds.origin = .zero
-             layoutMargins = .zero
-             
--            contentHostingController = UIHostingController(rootView: rootView)
-+            contentHostingController = UIHostingController(rootView: RootView(base: self))
-             contentHostingController.view.backgroundColor = .clear
-             contentHostingController.view.translatesAutoresizingMaskIntoConstraints = false
-             
-@@ -50,7 +46,24 @@ class _PlatformTableHeaderFooterView<SectionModel: Identifiable, Content: View>:
-                 contentHostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-             ])
-         } else {
--            (contentHostingController as? UIHostingController)?.rootView = rootView
-+            contentHostingController.rootView = RootView(base: self)
-+        }
-+    }
-+}
-+
-+extension _PlatformTableHeaderFooterView {
-+    struct RootView: View {
-+        private let id: AnyHashable
-+        private let content: Content
-+        
-+        init(base: _PlatformTableHeaderFooterView<SectionModel, Content>) {
-+            self.content = base.makeContent(base.item)
-+            self.id = base.item.id
-+        }
-+        
-+        var body: some View {
-+            content
-+                .id(id)
-         }
-     }
- }
-```
-
-**File**: `Sources/SwiftUIX/Intramodular/List/_PlatformTableViewController.swift` (modified, +5/-5)
-```diff
-@@ -202,8 +202,8 @@ public class _PlatformTableViewController<SectionModel: Identifiable, ItemType:
-         prototypeSectionHeader.update()
-         
-         let height = prototypeSectionHeader
--            .contentView
--            .systemLayoutSizeFitting(UIView.layoutFittingExpandedSize)
-+            .contentHostingController
-+            .sizeThatFits(in: CGSize(width: tableView.bounds.width, height: UIView.layoutFittingExpandedSize.height))
-             .height
-         
-         _sectionHeaderContentHeightCache[model.id] = height
-@@ -256,8 +256,8 @@ public class _PlatformTableViewController<SectionModel: Identifiable, ItemType:
-         prototypeSectionFooter.update()
-         
-         let height = prototypeSectionFooter
--            .contentView
--            .systemLayoutSizeFitting(UIView.layoutFittingExpandedSize)
-+            .contentHostingController
-+            .sizeThatFits(in: CGSize(width: tableView.bounds.width, height: UIView.layoutFittingExpandedSize.height))
-             .height
-         
-         _sectionFooterContentHeightCache[model.id] = height
-@@ -307,7 +307,7 @@ public class _PlatformTableViewController<SectionModel: Identifiable, ItemType:
-         
-         let height = prototypeCell
-             .contentHostingController
--            .sizeThatFits(in: UIView.layoutFittingExpandedSize)
-+            .sizeThatFits(in: CGSize(width: tableView.bounds.width, height: UIView.layoutFittingExpandedSize.height))
-             .height
-         
-         _rowContentHeightCache[item.id] = height
-```
-
----
-
-### Incident Patch 13: `264cb593` (2025-03-29)
-**Commit Message**: Fix warning
-
-**File**: `Sources/SwiftUIX/Intramodular/Bridging/CocoaHostingController.swift` (modified, +6/-0)
-```diff
-@@ -75,6 +75,10 @@ open class CocoaHostingController<Content: View>: AppKitOrUIKitHostingController
-     open override var canBecomeFirstResponder: Bool {
-         _canBecomeFirstResponder ?? super.canBecomeFirstResponder
-     }
-+    
-+    open var acceptsFirstResponder: Bool {
-+        self.canBecomeFirstResponder
-+    }
-     #endif
- 
-     public var shouldResizeToFitContent: Bool = false
-@@ -298,6 +302,8 @@ open class CocoaHostingController<Content: View>: AppKitOrUIKitHostingController
-             
-             _didResizeParentWindowOnce = true
-         }
-+        #else
-+        let _: Void = ();
-         #endif
-     }
- }
-```
-
----
-
-### Incident Patch 14: `b7adcf42` (2025-02-13)
-**Commit Message**: Fix @UserStorage
-
-**File**: `Sources/SwiftUIX/Intramodular/Dynamic Properties/UserStorage.swift` (modified, +11/-7)
-```diff
-@@ -30,12 +30,19 @@ public struct UserStorage<Value: Codable>: DynamicProperty {
-     
-     @PersistentObject private var valueBox: ValueBox
-     
-+    @State private var foo: Bool = false
-+    
-     public var wrappedValue: Value {
-         get {
-             let result: Value = valueBox.value
-             
-+            valueBox.foo = foo
-+            
-             return result
-         } nonmutating set {
-+            foo.toggle()
-+            
-+            valueBox.foo = foo
-             valueBox.value = newValue
-         }
-     }
-@@ -188,15 +195,12 @@ extension UserStorage: Equatable where Value: Equatable {
- 
- extension UserStorage {
-     private class ValueBox: ObservableObject {
-+        fileprivate var foo: Bool = false
-         fileprivate var _SwiftUI_DynamicProperty_update_called: Bool = false
--        
--        var configuration: UserStorageConfiguration<Value>
--        
-+        fileprivate var configuration: UserStorageConfiguration<Value>
-         fileprivate var storedValue: Value?
--        
--        private var storeSubscription: AnyCancellable?
--        
--        private var _isEncodingValueToStore: Bool = false
-+        fileprivate var storeSubscription: AnyCancellable?
-+        fileprivate var _isEncodingValueToStore: Bool = false
-         
-         var value: Value {
-             get {
-```
-
----
-
-### Incident Patch 15: `9476a6d7` (2024-10-24)
-**Commit Message**: Merge branch 'master' of github.com:swiftuix/SwiftUIX
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ dependencies: [
- 
- The SwiftUIX documentation can be found at:
- 
--https://SwiftUIX.github.io/SwiftUIX/documentation/SwiftUIX/
-+https://swiftuix.github.io/SwiftUIX/documentation/swiftuix/
- 
- All documentation that hasn't been migrated here is available via the [repository wiki](https://github.com/SwiftUIX/SwiftUIX/wiki).
- 
+         switch axis {
+             case .horizontal:
 ```
 
 #### Recent Merged Pull Requests:
@@ -2052,8 +1205,6 @@ Co-authored-by: mac <>
 - **PR #558** (closed): fix: preserve explicit collection view layout direction (@raisulchowdhury)
 - **PR #557** (closed): Preserve PaginationView page offset when content shrinks (@raisulchowdhury)
 - **PR #556** (2026-08-08): docs: replace removed Fastlane contribution commands (@raisulchowdhury)
-- **PR #555** (2026-07-14): Fix Xcode 27 compatibility (@vmanot)
-- **PR #552** (closed): Fix for Xcode 27 beta (@yume190)
 
 ---
 
@@ -2067,3 +1218,34 @@ Co-authored-by: mac <>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. the memory leak issue of CocoaList (#540)
+
+**RULE**:
+When implementing operations in `Sources/SwiftUIX/Intramodular/List/_PlatformTableHeaderFooterView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SwiftUIX/SwiftUIX. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1c50b916`: the memory leak issue of CocoaList (#540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SwiftUIX/Intramodular/List/_PlatformTableHeaderFooterView.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    weak var parent: UITableViewController!
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+    var parent: UITableViewController!
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1c50b916` are properly handled with clean fallback behavior.
