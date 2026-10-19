@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `89acffc2`  
+> **Source Version**: `508b0013`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:21:16.402Z  
+> **Timestamp**: 2026-10-19T16:24:49.361Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:21:16.396Z  
+> **Harvest Timestamp**: 2026-10-19T16:24:49.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1969,466 +1969,122 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89acffc2` (2026-10-19)
-**Commit Message**: Merge pull request #4563 from aleo-labs-protocol/deps/zip-9
+### Incident Patch 1: `508b0013` (2026-10-19)
+**Commit Message**: Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/itertools-0.15.0
 
-Bump self_update to 1.3.1 for zip 9 (RUSTSEC-2026-0367, -0368, -0369)
+chore(deps): bump itertools from 0.14.0 to 0.15.0
 
-**File**: `Cargo.lock` (modified, +31/-18)
+**File**: `Cargo.lock` (modified, +13/-4)
 ```diff
-@@ -847,7 +847,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -1660,7 +1660,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2386,7 +2386,7 @@ dependencies = [
-  "libc",
-  "percent-encoding",
-  "pin-project-lite",
-- "socket2 0.5.10",
-+ "socket2 0.6.5",
-  "system-configuration",
-  "tokio",
-  "tower-service",
-@@ -3185,6 +3185,18 @@ dependencies = [
-  "libc",
+@@ -2645,6 +2645,15 @@ dependencies = [
+  "either",
  ]
  
 +[[package]]
-+name = "nix"
-+version = "0.31.3"
++name = "itertools"
++version = "0.15.0"
 +source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
++checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
 +dependencies = [
-+ "bitflags 2.13.1",
-+ "cfg-if",
-+ "cfg_aliases",
-+ "libc",
++ "either",
 +]
 +
  [[package]]
- name = "nom"
- version = "7.1.3"
-@@ -3222,7 +3234,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ name = "itoa"
+ version = "1.0.18"
+@@ -3792,7 +3801,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
  dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -3841,7 +3853,7 @@ dependencies = [
-  "quinn-udp",
-  "rustc-hash",
-  "rustls",
-- "socket2 0.5.10",
-+ "socket2 0.6.5",
-  "thiserror 2.0.20",
-  "tokio",
-  "tracing",
-@@ -3880,9 +3892,9 @@ dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-- "socket2 0.5.10",
-+ "socket2 0.6.5",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -4387,7 +4399,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.12.1",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -4446,7 +4458,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -4601,9 +4613,9 @@ dependencies = [
- 
- [[package]]
- name = "self_update"
--version = "1.3.0"
-+version = "1.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c39da82b90ac89d099e21109c81c91b70bd85a582d8e382a5e88aa007f5310b"
-+checksum = "9253f1675d280b3e348d63a03ad6af3fa32d515b0959406758342561655c4aa0"
- dependencies = [
-  "flate2",
-  "http 1.5.0",
-@@ -6648,10 +6660,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "rustix 1.1.4",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -7768,7 +7780,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -8097,24 +8109,25 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "8.6.0"
-+version = "9.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2d04a6b5381502aa6087c94c669499eb1602eb9c5e8198e534de571f7154809b"
-+checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
- dependencies = [
-  "crc32fast",
-  "flate2",
+  "anyhow",
+- "itertools 0.14.0",
++ "itertools 0.13.0",
+  "proc-macro2",
+  "quote 1.0.47",
+  "syn 2.0.119",
+@@ -5075,7 +5084,7 @@ dependencies = [
+  "deadline",
+  "futures",
   "indexmap 2.14.2",
-  "memchr",
-+ "nix 0.31.3",
-  "time",
-  "typed-path",
-  "zopfli",
- ]
+- "itertools 0.14.0",
++ "itertools 0.15.0",
+  "locktick",
+  "lru",
+  "mockall",
+@@ -5199,7 +5208,7 @@ dependencies = [
+  "anyhow",
+  "cfg-if",
+  "indexmap 2.14.2",
+- "itertools 0.14.0",
++ "itertools 0.15.0",
+  "locktick",
+  "lru",
+  "once_cell",
+@@ -5354,7 +5363,7 @@ dependencies = [
+  "anyhow",
+  "futures",
+  "indexmap 2.14.2",
+- "itertools 0.14.0",
++ "itertools 0.15.0",
+  "locktick",
+  "parking_lot",
+  "rand 0.10.3",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -140,7 +140,7 @@ version = "0.7"
+ version = "1.5"
  
- [[package]]
- name = "zipsign-api"
--version = "0.2.1"
-+version = "0.2.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "32a55ebb27e67d9a9d116dd3a19637ee8cc0570c8ef816fb504c453f15448c99"
-+checksum = "00d866e1d567fd67738668647c2e06587851e0e3583df84298cc363c14602316"
- dependencies = [
-  "base64 0.22.1",
-  "ed25519-dalek",
+ [workspace.dependencies.itertools]
+-version = "0.14"
++version = "0.15"
+ 
+ [workspace.dependencies.indexmap]
+ version = "2"
+```
+
+**File**: `node/bft/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -170,7 +170,7 @@ features = [ "derive" ]
+ version = "0.2"
+ 
+ [dev-dependencies.itertools]
+-version = "0.14"
++version = "0.15"
+ 
+ [dev-dependencies.open]
+ version = "5"
+```
+
+**File**: `node/bft/tests/common/primary.rs` (modified, +1/-1)
+```diff
+@@ -263,7 +263,7 @@ impl TestNetwork {
+ 
+     // Connects all nodes to each other.
+     pub async fn connect_all(&self) {
+-        for (validator, other_validator) in self.validators.values().tuple_combinations() {
++        for [validator, other_validator] in self.validators.values().array_combinations() {
+             // Connect to the node.
+             let ip = other_validator.primary.gateway().local_ip();
+             let _ = validator.primary.gateway().connect(ip);
 ```
 
 ---
 
-### Incident Patch 2: `aa492b8c` (2026-10-19)
-**Commit Message**: Merge pull request #4561 from aleo-labs-protocol/ci/merge-testnet-into-staging
+### Incident Patch 2: `db6f7195` (2026-10-19)
+**Commit Message**: Merge pull request #4560 from aleo-labs-protocol/ci/merge-mainnet-into-staging
 
-Merge testnet into staging
+Merge mainnet into staging
 
-**File**: `cli/src/commands/start.rs` (modified, +39/-1)
-```diff
-@@ -97,6 +97,10 @@ fn num_verifying_solutions_parser() -> RangedU64ValueParser<usize> {
-     RangedU64ValueParser::<usize>::new().range(1..=DEFAULT_NUM_VERIFYING_SOLUTIONS as u64)
- }
- 
-+fn proposal_spent_limit_multiplier_parser() -> RangedU64ValueParser<u64> {
-+    RangedU64ValueParser::<u64>::new().range(1..)
-+}
-+
- // A mapping of `staker_address` to `(validator_address, withdrawal_address, amount)`.
- #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
- pub struct BondedBalances(IndexMap<String, (String, String, u64)>);
-@@ -176,6 +180,19 @@ pub struct Start {
-     #[clap(long, requires = "validator")]
-     pub bft: Option<SocketAddr>,
- 
-+    /// Multiply the batch spend limit used when this validator builds a proposal.
-+    ///
-+    /// This argument is only allowed for validator nodes.
-+    /// The default of 1 leaves the batch spend limit unchanged.
-+    #[clap(
-+        long,
-+        requires = "validator",
-+        conflicts_with_all = ["client", "prover", "bootstrap_client"],
-+        default_value_t = 1,
-+        value_parser = proposal_spent_limit_multiplier_parser()
-+    )]
-+    pub proposal_spent_limit_multiplier: u64,
-+
-     /// Specify the host:port address pairs of the peer(s) to connect to (as a comma-separated list).
-     ///
-     /// These peers will be set as "trusted", which means the node will not disconnect from them when performing peer rotation.
-@@ -985,7 +1002,7 @@ impl Start {
- 
-         // Initialize the node.
-         let node = match node_type {
--            NodeType::Validator => Node::new_validator(node_ip, self.bft, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, &trusted_validators, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), dev_txs, self.dev, dev_hotswap_config, signal_handler.clone()).await,
-+            NodeType::Validator => Node::new_validator(node_ip, self.bft, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, &trusted_validators, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), dev_txs, self.dev, dev_hotswap_config, self.proposal_spent_limit_multiplier, signal_handler.clone()).await,
-             NodeType::Prover => Node::new_prover(node_ip, account, &trusted_peers, genesis, node_data_dir, self.trusted_peers_only, self.dev, signal_handler.clone()).await,
-             NodeType::Client => Node::new_client(node_ip, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), self.dev, signal_handler.clone()).await,
-             NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), self.dev).await,
-@@ -1589,6 +1606,27 @@ mod tests {
-         assert!(Start::try_parse_from(["snarkos", "--norest", "--history-compat-mode"].iter()).is_err());
-     }
- 
-+    #[test]
-+    fn proposal_spent_limit_multiplier_requires_validator() {
-+        assert!(Start::try_parse_from(["snarkos", "--proposal-spent-limit-multiplier", "5"]).is_err());
-+        assert!(Start::try_parse_from(["snarkos", "--client", "--proposal-spent-limit-multiplier", "5"]).is_err());
-+        assert!(Start::try_parse_from(["snarkos", "--prover", "--proposal-spent-limit-multiplier", "5"]).is_err());
-+        assert!(
-+            Start::try_parse_from(["snarkos", "--bootstrap-client", "--proposal-spent-limit-multiplier", "5"]).is_err()
-+        );
-+        assert!(Start::try_parse_from(["snarkos", "--validator", "--proposal-spent-limit-multiplier", "0"]).is_err());
-+
-+        let config = Start::try_parse_from(["snarkos", "--client"]).unwrap();
-+        assert_eq!(config.proposal_spent_limit_multiplier, 1);
-+
-+        let config = Start::try_parse_from(["snarkos", "--validator"]).unwrap();
-+        assert_eq!(config.proposal_spent_limit_multiplier, 1);
-+
-+        let config =
-+            Start::try_parse_from(["snarkos", "--validator", "--proposal-spent-limit-multiplier", "5"]).unwrap();
-+        assert_eq!(config.proposal_spent_limit_multiplier, 5);
-+    }
-+
-     #[test]
-     fn history_json_flag_conflicts_with_compat_mode() {
-         let config = Start::try_parse_from(["snarkos", "--client", "--history-json"].iter()).unwrap();
-```
 
-**File**: `node/bft/examples/simple_node.rs` (modified, +2/-0)
-```diff
-@@ -161,6 +161,7 @@ pub async fn start_bft(
-         trusted_peers_only,
-         node_data_dir,
-         None,
-+        1,
-     )?;
-     // Run the BFT instance.
-     bft.run(None, Some(consensus_sender), sender.clone(), receiver).await?;
-@@ -211,6 +212,7 @@ pub async fn start_primary(
-         trusted_peers_only,
-         node_data_dir,
-         None,
-+        1,
-     )?;
-     // Run the primary instance.
-     primary.run(None, None, None, sender.clone(), receiver).await?;
-```
-
-**File**: `node/bft/src/bft.rs` (modified, +3/-0)
-```diff
-@@ -90,6 +90,7 @@ impl<N: Network> BFT<N> {
-         trusted_peers_only: bool,
-         node_data_dir: NodeDataDir,
-         dev: Option<u16>,
-+        proposal_spent_limit_multiplier: u64,
-     ) -> Result<Self> {
-         Ok(Self {
-             primary: Primary::new(
-@@ -102,6 +103,7 @@ impl<N: Network> BFT<N> {
-                 trusted_peers_only,
-                 node_data_dir,
-                 dev,
-+                proposal_spent_limit_multiplier,
-             )?,
-             dag: Default::default(),
-             leader_certificate: Default::default(),
-@@ -1027,6 +1029,7 @@ mod tests {
-             false,
-             NodeDataDir::new_test(None),
-             None,
-+            1,
-         )
-     }
- 
-```
-
-**File**: `node/bft/src/primary.rs` (modified, +10/-4)
-```diff
-@@ -197,6 +197,9 @@ pub struct Primary<N: Network> {
-     /// Used to wake up a the dedicated round-increment task, if we may be able to advance to the next round.
-     /// This is used, so the timeout for round advancement is reset on every round increment.
-     round_increment_notify: Arc<Notify>,
-+
-+    /// Factor applied to the batch spend limit while this primary builds a proposal.
-+    proposal_spent_limit_multiplier: u64,
- }
- 
- impl<N: Network> Primary<N> {
-@@ -215,6 +218,7 @@ impl<N: Network> Primary<N> {
-         trusted_peers_only: bool,
-         node_data_dir: NodeDataDir,
-         dev: Option<u16>,
-+        proposal_spent_limit_multiplier: u64,
-     ) -> Result<Self> {
-         // Initialize the gateway.
-         let gateway = Gateway::new(
-@@ -248,6 +252,7 @@ impl<N: Network> Primary<N> {
-             handles: Default::default(),
-             proposal_task: Default::default(),
-             round_increment_notify: Default::default(),
-+            proposal_spent_limit_multiplier,
-         })
-     }
- 
-@@ -768,11 +773,12 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
- 
-                         // Check if the next proposal cost exceeds the batch proposal spend limit.
-                         let batch_spend_limit = BatchHeader::<N>::batch_spend_limit(current_block_height);
--                        if next_proposal_cost > batch_spend_limit {
-+                        let proposal_spend_limit =
-+                            batch_spend_limit.saturating_mul(self.proposal_spent_limit_multiplier);
-+                        if next_proposal_cost > proposal_spend_limit {
-                             debug!(
--                                "Proposing - Skipping transaction '{}' - Batch spend limit surpassed ({next_proposal_cost} > {})",
-+                                "Proposing - Skipping transaction '{}' - Batch spend limit surpassed ({next_proposal_cost} > {proposal_spend_limit})",
-                                 fmt_id(transaction_id),
--                                batch_spend_limit
-                             );
- 
-                             // Reinsert the transmission into the worker.
-@@ -2220,7 +2226,7 @@ mod tests {
-         let account = accounts[account_index].1.clone();
-         let block_sync = Arc::new(BlockSync::new(ledger.clone(), ConnectionMode::Gateway));
-         let primary =
--            Primary::new(account, storage, ledger, block_sync, None, &[], false, NodeDataDir::new_test(None), None)
-+            Primary::new(account, storage, ledger, block_sync, None, &[], false, NodeDataDir::new_test(None), None, 1)
-                 .unwrap();
- 
-         // Construct a worker instance.
-```
-
-**File**: `node/bft/src/sync/mod.rs` (modified, +5/-0)
-```diff
-@@ -1377,6 +1377,7 @@ mod tests {
-             false,
-             NodeDataDir::new_test(None),
-             None,
-+            1,
-         )
-         .unwrap();
- 
-@@ -1446,6 +1447,7 @@ mod tests {
-             false,
-             NodeDataDir::new_test(None),
-             None,
-+            1,
-         )
-         .unwrap();
- 
-@@ -1537,6 +1539,7 @@ mod tests {
-             false,
-             NodeDataDir::new_test(None),
-             None,
-+            1,
-         )
-         .unwrap();
- 
-@@ -1622,6 +1625,7 @@ mod tests {
-             false,
-             NodeDataDir::new_test(None),
-             None,
-+            1,
-         )
-         .unwrap();
- 
-@@ -1704,6 +1708,7 @@ mod tests {
-             false,
-             NodeDataDir::new_test(None),
-             None,
-+            1,
-         )
-         .unwrap();
- 
-```
-
-**File**: `node/bft/tests/common/primary.rs` (modified, +2/-0)
-```diff
-@@ -177,6 +177,7 @@ impl TestNetwork {
-                     false,
-                     NodeDataDir::new_test(None),
-                     None,
-+                    1,
-                 )
-                 .unwrap();
-                 (bft.primary().clone(), Some(bft))
-@@ -191,6 +192,7 @@ impl TestNetwork {
-                     false,
-                     NodeDataDir::new_test(None),
-                     None,
-+                    1,
-                 )
-                 .unwrap();
-                 (primary, None)
-```
-
-**File**: `node/consensus/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -142,6 +142,7 @@ impl<N: Network> Consensus<N> {
-         node_data_dir: NodeDataDir,
-         ping: Arc<Ping<N>>,
-         dev: Option<u16>,
-+        proposal_spent_limit_multiplier: u64,
-     ) -> Result<Self> {
-         // Initialize the primary channels.
-         let (primary_sender, primary_receiver) = init_primary_channels::<N>();
-@@ -161,6 +162,7 @@ impl<N: Network> Consensus<N> {
-             trusted_peers_only,
-             node_data_dir,
-             dev,
-+            proposal_spent_limit_multiplier,
-         )?;
-         // Initialize the consensus channels.
-         let (consensus_sender, consensus_receiver) = init_consensus_channels();
-```
-
-**File**: `node/src/node.rs` (modified, +2/-0)
-```diff
-@@ -107,6 +107,7 @@ impl<N: Network> Node<N> {
-         dev_txs: bool,
-         dev: Option<u16>,
-         dev_hotswap_config: Option<DevHotswapConfig>,
-+        proposal_spent_limit_multiplier: u64,
-         signal_handler: Arc<SignalHandler>,
-     ) -> Result<Self> {
-         let validator = Arc::new(
-@@ -129,6 +130,7 @@ impl<N: Network> Node<N> {
-                 dev_txs,
-                 dev,
-                 dev_hotswap_config,
-+                proposal_spent_limit_multiplier,
-                 signal_handler,
-             )
-             .await?,
-```
 
 #### Recent Merged Pull Requests:
+- **PR #4567** (2026-10-19): chore(deps): bump mockall from 0.13.1 to 0.15.0 (@dependabot[bot])
+- **PR #4566** (2026-10-19): chore(deps): bump itertools from 0.14.0 to 0.15.0 (@dependabot[bot])
+- **PR #4565** (2026-10-19): chore(deps): bump nix from 0.30.1 to 0.31.3 (@dependabot[bot])
+- **PR #4564** (2026-10-19): ci: check advisories nightly instead of on every pull request (@cbeck88)
 - **PR #4563** (2026-10-19): Bump self_update to 1.3.1 for zip 9 (RUSTSEC-2026-0367, -0368, -0369) (@cbeck88)
 - **PR #4561** (2026-10-19): Merge testnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4557** (2026-10-17): Cap proptest cases for message round-trip tests (@cbeck88)
-- **PR #4556** (2026-10-17): Make test_db_backup restore from the checkpoint it wrote (@cbeck88)
-- **PR #4555** (2026-10-17): tests: Check sync locator tests at boundary heights instead of every height (@cbeck88)
-- **PR #4554** (2026-10-17): ci: open pull requests that merge testnet and mainnet into staging (@cbeck88)
 
 ---
 
@@ -2448,13 +2104,13 @@ Merge testnet into staging
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4563 from aleo-labs-protocol/deps/zip-9
+## X. Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89acffc2`: Merge pull request #4563 from aleo-labs-protocol/deps/zip-9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `508b0013`: Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/itertools-0.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2462,61 +2118,29 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
- "socket2 0.6.5",
 [[package]]
-name = "nix"
-version = "0.31.3"
+name = "itertools"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
+checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
 dependencies = [
- "bitflags 2.13.1",
- "cfg-if",
- "cfg_aliases",
- "libc",
+ "either",
 ]
 
- "windows-sys 0.59.0",
- "socket2 0.6.5",
- "socket2 0.6.5",
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
-version = "1.3.1"
-checksum = "9253f1675d280b3e348d63a03ad6af3fa32d515b0959406758342561655c4aa0"
- "getrandom 0.4.3",
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
-version = "9.0.5"
-checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
- "nix 0.31.3",
-version = "0.2.2"
-checksum = "00d866e1d567fd67738668647c2e06587851e0e3583df84298cc363c14602316"
+ "itertools 0.13.0",
+ "itertools 0.15.0",
+ "itertools 0.15.0",
+ "itertools 0.15.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "socket2 0.5.10",
- "windows-sys 0.61.2",
- "socket2 0.5.10",
- "socket2 0.5.10",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "1.3.0"
-checksum = "1c39da82b90ac89d099e21109c81c91b70bd85a582d8e382a5e88aa007f5310b"
- "getrandom 0.3.4",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "8.6.0"
-checksum = "2d04a6b5381502aa6087c94c669499eb1602eb9c5e8198e534de571f7154809b"
-version = "0.2.1"
-checksum = "32a55ebb27e67d9a9d116dd3a19637ee8cc0570c8ef816fb504c453f15448c99"
+ "itertools 0.14.0",
+ "itertools 0.14.0",
+ "itertools 0.14.0",
+ "itertools 0.14.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89acffc2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `508b0013` are properly handled with clean fallback behavior.

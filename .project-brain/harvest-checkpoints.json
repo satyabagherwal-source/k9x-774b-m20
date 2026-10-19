@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T16:18:27.690Z",
+  "last_updated": "2026-10-19T16:24:49.667Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2524,14 +2524,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "f60ba6be407581dd095ab99a5324b23b53ca62bb509c5d86d4c26da3381e74af",
-      "verified_at": "2026-10-19T14:15:06.781Z",
+      "content_hash": "6046861bc56d63c6f2cc69b4d702be232b19cd1c01b164fbf6974eca1a5eda76",
+      "verified_at": "2026-10-19T16:24:49.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:15:06.781Z"
+      "last_updated": "2026-10-19T16:24:49.666Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -2854,14 +2854,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-davo20019-seo-analysis",
-      "content_hash": "8ceb4c4fab29399c39accaefa70b9553bc545c5108d0d5c2657a54f71741bd02",
-      "verified_at": "2026-10-18T04:59:14.700Z",
+      "content_hash": "47d509313268644b40a60e3c15e9f1d208d19449dfa978800c45e3dd5cc7e598",
+      "verified_at": "2026-10-19T16:24:45.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:59:14.700Z"
+      "last_updated": "2026-10-19T16:24:45.088Z"
     },
     "serpapi/google-search-results-nodejs": {
       "repository": "serpapi/google-search-results-nodejs",
@@ -12567,6 +12567,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T16:18:27.690Z"
+    },
+    "exyte/PopupView": {
+      "repository": "exyte/PopupView",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-exyte-popupview",
+      "content_hash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
+      "verified_at": "2026-10-19T16:24:46.444Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T16:24:46.444Z"
     }
   },
   "repos": {

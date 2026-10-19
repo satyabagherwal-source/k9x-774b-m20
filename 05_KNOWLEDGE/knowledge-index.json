@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:18:27.651Z",
-  "total_verified_learnings": 850,
+  "last_updated": "2026-10-19T16:24:49.602Z",
+  "total_verified_learnings": 851,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8944,22 +8944,35 @@
     "learn-github-exyte-popupview": {
       "learning_id": "learn-github-exyte-popupview",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "exyte-popupview",
+      "source": "exyte/PopupView",
+      "repository": "exyte/PopupView",
       "slug": "exyte-popupview",
       "platform": "github",
       "source_url": "https://github.com/exyte/PopupView",
-      "source_version": "HEAD",
-      "content_hash": "4690c55ea9bde2b4b080b21b442ec815da5cbc4ce0e345b7e6e8722d2814aa3f",
+      "source_version": "99695337",
+      "content_hash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
       "dossier_path": "07_PROJECT_LEARNING/exyte-popupview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/exyte-popupview-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2678,
+          "title": "watchOS build: don't use NSEdgeInsets outside macOS",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.852Z"
+      "verified_at": "2026-10-19T16:24:46.379Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-facebook-folly": {
       "learning_id": "learn-github-facebook-folly",
@@ -53185,13 +53198,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "89acffc2",
-      "content_hash": "f60ba6be407581dd095ab99a5324b23b53ca62bb509c5d86d4c26da3381e74af",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "508b0013",
+      "content_hash": "6046861bc56d63c6f2cc69b4d702be232b19cd1c01b164fbf6974eca1a5eda76",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -53207,6 +53220,11 @@
           "number": 2605,
           "title": "Merge pull request #4563 from aleo-labs-protocol/deps/zip-9",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 2679,
+          "title": "Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53214,7 +53232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:15:06.722Z",
+      "verified_at": "2026-10-19T16:24:49.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54006,17 +54024,23 @@
       "slug": "davo20019-seo-analysis",
       "platform": "github",
       "source_url": "https://github.com/davo20019/seo-analysis",
-      "source_version": "HEAD",
-      "content_hash": "8ceb4c4fab29399c39accaefa70b9553bc545c5108d0d5c2657a54f71741bd02",
+      "source_version": "902c09fd",
+      "content_hash": "47d509313268644b40a60e3c15e9f1d208d19449dfa978800c45e3dd5cc7e598",
       "dossier_path": "07_PROJECT_LEARNING/davo20019-seo-analysis-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/davo20019-seo-analysis-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2677,
+          "title": "extract): scope failed-rule log dedup per crawl, not per process",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:14.603Z",
+      "verified_at": "2026-10-19T16:24:45.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89319,6 +89343,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:18:27.642Z"
+    },
+    "rule-2677": {
+      "learning_id": "rule-2677",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2677,
+      "title": "extract): scope failed-rule log dedup per crawl, not per process",
+      "source_url": "https://github.com/davo20019/seo-analysis",
+      "source_version": "902c09fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:24:45.005Z"
+    },
+    "rule-2678": {
+      "learning_id": "rule-2678",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2678,
+      "title": "watchOS build: don't use NSEdgeInsets outside macOS",
+      "source_url": "https://github.com/exyte/PopupView",
+      "source_version": "99695337",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:24:46.379Z"
+    },
+    "rule-2679": {
+      "learning_id": "rule-2679",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2679,
+      "title": "Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "508b0013",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:24:49.591Z"
     }
   },
   "aliases": {

@@ -3358,3 +3358,6 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `c8832db4` | Multi-dimensional audit evidence | 2026-10-19T16:18:20.318Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `8647602b` | Multi-dimensional audit evidence | 2026-10-19T16:18:24.376Z |
 | `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-19T16:18:27.685Z |
+| `learn-github-davo20019-seo-analysis` | `https://github.com/davo20019/seo-analysis` | `902c09fd` | Multi-dimensional audit evidence | 2026-10-19T16:24:45.082Z |
+| `learn-github-exyte-popupview` | `https://github.com/exyte/PopupView` | `99695337` | Multi-dimensional audit evidence | 2026-10-19T16:24:46.437Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `508b0013` | Multi-dimensional audit evidence | 2026-10-19T16:24:49.660Z |

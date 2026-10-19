@@ -6016,12 +6016,12 @@
     "revisionIdentifier": "5f8add11"
   },
   "vi-websocat": {
-    "name": "vi/websocat",
+    "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T01:16:20.167Z",
-    "lastVerified": "2026-10-19T01:16:20.167Z",
+    "lastChecked": "2026-10-19T16:24:34.235Z",
+    "lastVerified": "2026-10-19T16:24:34.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vi-websocat",
@@ -6030,7 +6030,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3a3574cd"
   },
   "keenthemes-reui": {
     "name": "reui",
@@ -9179,12 +9180,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dockview-dockview": {
-    "name": "dockview/dockview",
+    "name": "dockview",
     "officialUrl": "https://github.com/dockview/dockview",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T05:12:41.755Z",
-    "lastVerified": "2026-10-19T05:12:41.755Z",
+    "lastChecked": "2026-10-19T16:24:31.782Z",
+    "lastVerified": "2026-10-19T16:24:31.782Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dockview-dockview",
@@ -9193,7 +9194,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1eb9c69a"
   },
   "thecodingmachine-react-native-boilerplate": {
     "name": "thecodingmachine/react-native-boilerplate",
@@ -10064,12 +10066,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pingcap-talent-plan": {
-    "name": "pingcap/talent-plan",
+    "name": "talent-plan",
     "officialUrl": "https://github.com/pingcap/talent-plan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T03:20:31.243Z",
-    "lastVerified": "2026-10-19T03:20:31.243Z",
+    "lastChecked": "2026-10-19T16:24:46.774Z",
+    "lastVerified": "2026-10-19T16:24:46.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-talent-plan",
@@ -10078,7 +10080,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "18d81c90"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -10181,12 +10184,12 @@
     "revisionIdentifier": "70717f65"
   },
   "architect-architect": {
-    "name": "architect/architect",
+    "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-19T04:07:12.249Z",
-    "lastVerified": "2026-10-19T04:07:12.249Z",
+    "lastChecked": "2026-10-19T16:24:41.796Z",
+    "lastVerified": "2026-10-19T16:24:41.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-architect-architect",
@@ -10195,7 +10198,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9924cd0a"
   },
   "open-webui-open-webui": {
     "name": "open-webui/open-webui",
@@ -17478,14 +17482,15 @@
     "officialUrl": "https://github.com/exyte/PopupView",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-01T01:51:22.016Z",
-    "lastVerified": "2026-10-01T01:51:22.016Z",
+    "lastChecked": "2026-10-19T16:24:46.132Z",
+    "lastVerified": "2026-10-19T16:24:46.132Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 54,
+    "learningId": "learn-github-exyte-popupview",
+    "contentHash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18253,8 +18258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T15:59:41.242Z",
-    "lastVerified": "2026-10-19T15:59:41.242Z",
+    "lastChecked": "2026-10-19T16:24:49.319Z",
+    "lastVerified": "2026-10-19T16:24:49.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -22978,12 +22983,12 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T13:21:16.396Z",
-    "lastVerified": "2026-10-19T13:21:16.396Z",
+    "lastChecked": "2026-10-19T16:24:49.353Z",
+    "lastVerified": "2026-10-19T16:24:49.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "ab84324d762c4894d541bbaf55c1ea87eb9284bba9a4f5da05ae7722672125a6",
+    "contentHash": "6046861bc56d63c6f2cc69b4d702be232b19cd1c01b164fbf6974eca1a5eda76",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -24675,11 +24680,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "davo20019-seo-analysis": {
-    "name": "seo-analysis",
+    "name": "davo20019/seo-analysis",
     "officialUrl": "https://github.com/davo20019/seo-analysis",
-    "lastChecked": "2026-10-18T05:27:02.504Z",
-    "revisionIdentifier": "HEAD",
-    "lastVerified": "2026-10-18T05:27:02.504Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-19T16:24:42.503Z",
+    "lastVerified": "2026-10-19T16:24:42.503Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-davo20019-seo-analysis",
+    "contentHash": "47d509313268644b40a60e3c15e9f1d208d19449dfa978800c45e3dd5cc7e598",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
@@ -26242,8 +26257,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T16:18:30.215Z",
-    "lastVerified": "2026-10-19T16:18:30.215Z",
+    "lastChecked": "2026-10-19T16:24:52.198Z",
+    "lastVerified": "2026-10-19T16:24:52.198Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
