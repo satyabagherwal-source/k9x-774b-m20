@@ -3576,3 +3576,6 @@ Every entry in this ledger must capture:
 | `learn-github-ming1016-swiftpamphletapp` | `https://github.com/ming1016/SwiftPamphletApp` | `0d07d106` | Multi-dimensional audit evidence | 2026-10-19T23:40:55.444Z |
 | `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `4fc05696` | Multi-dimensional audit evidence | 2026-10-19T23:47:13.375Z |
 | `learn-github-wooorm-parse-entities` | `https://github.com/wooorm/parse-entities` | `07f0abed` | Multi-dimensional audit evidence | 2026-10-19T23:47:25.385Z |
+| `learn-github-sindresorhus-got` | `https://github.com/sindresorhus/got` | `05b44769` | Multi-dimensional audit evidence | 2026-10-19T23:53:46.387Z |
+| `learn-github-sdwebimage-sdwebimageswiftui` | `https://github.com/SDWebImage/SDWebImageSwiftUI` | `d1f7b2b4` | Multi-dimensional audit evidence | 2026-10-19T23:53:48.384Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `d9f61c0d` | Multi-dimensional audit evidence | 2026-10-19T23:53:56.890Z |

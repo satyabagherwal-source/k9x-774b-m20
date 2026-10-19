@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:47:25.337Z",
-  "total_verified_learnings": 970,
+  "last_updated": "2026-10-19T23:53:56.828Z",
+  "total_verified_learnings": 972,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -28817,8 +28817,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "bcfbd7af",
-      "content_hash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
+      "source_version": "d9f61c0d",
+      "content_hash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -28833,7 +28833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:35:20.649Z",
+      "verified_at": "2026-10-19T23:53:56.807Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38529,22 +38529,35 @@
     "learn-github-sdwebimage-sdwebimageswiftui": {
       "learning_id": "learn-github-sdwebimage-sdwebimageswiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sdwebimage-sdwebimageswiftui",
+      "source": "SDWebImage/SDWebImageSwiftUI",
+      "repository": "SDWebImage/SDWebImageSwiftUI",
       "slug": "sdwebimage-sdwebimageswiftui",
       "platform": "github",
       "source_url": "https://github.com/SDWebImage/SDWebImageSwiftUI",
-      "source_version": "HEAD",
-      "content_hash": "a8ab35650c6d7fa3fe5d8e088d21962b1d1792db2829afe25f298170259e0207",
+      "source_version": "d1f7b2b4",
+      "content_hash": "9433299913571b7d652eb0e3a28775ec7d2f076b4e782f275f612a549ca09f54",
       "dossier_path": "07_PROJECT_LEARNING/sdwebimage-sdwebimageswiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sdwebimage-sdwebimageswiftui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2904,
+          "title": "Merge pull request #341 from SDWebImage/bugfix/progress_block_data_race",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.412Z"
+      "verified_at": "2026-10-19T23:53:48.295Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-seabdulbasit-musicapp-kmp": {
       "learning_id": "learn-github-seabdulbasit-musicapp-kmp",
@@ -57906,20 +57919,35 @@
     "learn-github-sindresorhus-got": {
       "learning_id": "learn-github-sindresorhus-got",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sindresorhus/got",
       "repository": "sindresorhus/got",
       "slug": "sindresorhus-got",
       "platform": "github",
       "source_url": "https://github.com/sindresorhus/got",
-      "source_version": "main",
-      "content_hash": "eda2c0c6db58fcb8ff1beaa35d1f1fb25b32fbd27f864a58cbf489582883d3cd",
+      "source_version": "05b44769",
+      "content_hash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
       "dossier_path": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2903,
+          "title": "Do not arm timeouts that Node.js cannot represent",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:53:46.312Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nodejs-undici": {
       "learning_id": "learn-github-nodejs-undici",
@@ -94757,6 +94785,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:47:25.324Z"
+    },
+    "rule-2903": {
+      "learning_id": "rule-2903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2903,
+      "title": "Do not arm timeouts that Node.js cannot represent",
+      "source_url": "https://github.com/sindresorhus/got",
+      "source_version": "05b44769",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:53:46.312Z"
+    },
+    "rule-2904": {
+      "learning_id": "rule-2904",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2904,
+      "title": "Merge pull request #341 from SDWebImage/bugfix/progress_block_data_race",
+      "source_url": "https://github.com/SDWebImage/SDWebImageSwiftUI",
+      "source_version": "d1f7b2b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:53:48.295Z"
     }
   },
   "aliases": {

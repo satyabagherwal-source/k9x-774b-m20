@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-QXKQ",
-    "timestamp": "2026-10-19T07:59:12.506Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R2JZ",
-    "timestamp": "2026-10-19T07:59:18.959Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R36Z",
-    "timestamp": "2026-10-19T07:59:19.787Z",
-    "repository": "JetBrains/kotlinconf-app",
-    "learningId": "learn-github-jetbrains-kotlinconf-app",
-    "contentHash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-R40P",
     "timestamp": "2026-10-19T07:59:20.857Z",
     "repository": "zeromicro/go-zero",
@@ -7492,6 +7447,51 @@
     "contentHash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-UIDS",
+    "timestamp": "2026-10-19T23:53:46.384Z",
+    "repository": "sindresorhus/got",
+    "learningId": "learn-github-sindresorhus-got",
+    "contentHash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-UJX9",
+    "timestamp": "2026-10-19T23:53:48.381Z",
+    "repository": "SDWebImage/SDWebImageSwiftUI",
+    "learningId": "learn-github-sdwebimage-sdwebimageswiftui",
+    "contentHash": "9433299913571b7d652eb0e3a28775ec7d2f076b4e782f275f612a549ca09f54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-UQHJ",
+    "timestamp": "2026-10-19T23:53:56.887Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

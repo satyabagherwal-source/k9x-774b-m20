@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T23:40:55.448Z",
+  "last_updated": "2026-10-19T23:53:56.895Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2015,6 +2015,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-ming1016-swiftpamphletapp"
+    },
+    {
+      "id": "CD-UQHR",
+      "directive_title": "Empirical Invariant Guard in ChangeLog.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "d9f61c0d",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
     }
   ]
 }

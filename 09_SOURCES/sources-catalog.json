@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "bcfbd7af",
+    "sourceVersion": "d9f61c0d",
     "license": "NOASSERTION",
-    "contentHash": "1c85e52502769a53bddae00f81b28d6231fd114bb4ee53aad76a61af53783ee6",
-    "lastHarvestedAt": "2026-10-19T11:35:20.721Z",
+    "contentHash": "43ba2c1f5971fc11ca1c47aa4e7951d45b624b11f0010e2fd864977ad02ab551",
+    "lastHarvestedAt": "2026-10-19T23:53:56.890Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -9548,5 +9548,25 @@
     "contentHash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
     "lastHarvestedAt": "2026-10-19T23:47:25.385Z",
     "learningId": "learn-github-wooorm-parse-entities"
+  },
+  "sindresorhus-got": {
+    "repository": "sindresorhus/got",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sindresorhus/got",
+    "sourceVersion": "05b44769",
+    "license": "MIT",
+    "contentHash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
+    "lastHarvestedAt": "2026-10-19T23:53:46.387Z",
+    "learningId": "learn-github-sindresorhus-got"
+  },
+  "sdwebimage-sdwebimageswiftui": {
+    "repository": "SDWebImage/SDWebImageSwiftUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SDWebImage/SDWebImageSwiftUI",
+    "sourceVersion": "d1f7b2b4",
+    "license": "MIT",
+    "contentHash": "9433299913571b7d652eb0e3a28775ec7d2f076b4e782f275f612a549ca09f54",
+    "lastHarvestedAt": "2026-10-19T23:53:48.384Z",
+    "learningId": "learn-github-sdwebimage-sdwebimageswiftui"
   }
 }
