@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:05:31.013Z",
-  "total_verified_learnings": 838,
+  "last_updated": "2026-10-19T15:11:43.155Z",
+  "total_verified_learnings": 839,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3415,22 +3415,35 @@
     "learn-github-bernaferrari-figmatocode": {
       "learning_id": "learn-github-bernaferrari-figmatocode",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bernaferrari-figmatocode",
+      "source": "bernaferrari/FigmaToCode",
+      "repository": "bernaferrari/FigmaToCode",
       "slug": "bernaferrari-figmatocode",
       "platform": "github",
       "source_url": "https://github.com/bernaferrari/FigmaToCode",
-      "source_version": "HEAD",
-      "content_hash": "842d95797c248cb328b67a53f2f6a5587e559b723c8ad42702266bc38d8908ab",
+      "source_version": "f5c4831d",
+      "content_hash": "532c18d46c65425c0354a0738d30aa96d57b3336f1436f860660affb45a0397d",
       "dossier_path": "07_PROJECT_LEARNING/bernaferrari-figmatocode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bernaferrari-figmatocode-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2647,
+          "title": "styled component inconsistent naming and missing component definition (#246)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.060Z"
+      "verified_at": "2026-10-19T15:11:35.518Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-berty-berty": {
       "learning_id": "learn-github-berty-berty",
@@ -8669,14 +8682,19 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "22cc5d9a",
-      "content_hash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
+      "source_version": "6782f522",
+      "content_hash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
         {
           "number": 2004,
           "title": "CHANGELOG(3.7): add processMessages order fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2648,
+          "title": "client: Added new session option to set timeout for session creation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8685,7 +8703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:03:23.493Z",
+      "verified_at": "2026-10-19T15:11:43.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18254,7 +18272,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "b4003197f6c2d4c692477de068cb4cb99a018fff9f17a9bfbec6758981fabad1",
+      "content_hash": "c520bb2ca387f4b397696b8c90a73ad0f47bf08d7c3daaabf4b256f5cedc1586",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [
@@ -18305,7 +18323,7 @@
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
       ],
-      "verified_at": "2026-10-18T04:39:47.392Z",
+      "verified_at": "2026-10-19T15:11:28.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35162,8 +35180,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "10f1967c",
-      "content_hash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
+      "source_version": "e78e9dde",
+      "content_hash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -35178,7 +35196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:20:37.343Z",
+      "verified_at": "2026-10-19T15:11:39.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88612,6 +88630,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:05:31.001Z"
+    },
+    "rule-2647": {
+      "learning_id": "rule-2647",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2647,
+      "title": "styled component inconsistent naming and missing component definition (#246)",
+      "source_url": "https://github.com/bernaferrari/FigmaToCode",
+      "source_version": "f5c4831d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:11:35.518Z"
+    },
+    "rule-2648": {
+      "learning_id": "rule-2648",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2648,
+      "title": "client: Added new session option to set timeout for session creation",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "6782f522",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:11:43.149Z"
     }
   },
   "aliases": {

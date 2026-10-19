@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `10f1967c`  
+> **Source Version**: `e78e9dde`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:20:37.197Z  
+> **Timestamp**: 2026-10-19T15:11:39.624Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:20:37.003Z  
+> **Harvest Timestamp**: 2026-10-19T15:11:39.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32107 stars
+- **Stars / Engagement**: 32126 stars
 
 ---
 
@@ -1407,987 +1407,283 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5715288` (2026-10-13)
-**Commit Message**: fix(runtime): honor cancellation in HTTP and headless waits (#7814)
+### Incident Patch 1: `a3109229` (2026-10-19)
+**Commit Message**: fix dials
 
-* fix(http): cancel per-host rate admission
-
-* fix: address PR review comments
-
-* test: keep request coverage with request tests
-
-* fix(headless): bound browser setup by request context
-
-* fix: address PR review comments
-
-* fix: address PR review comments
-
-* fix cancellation-safe rate and headless cleanup
-
-* fix: cancel global rate admission waits
-
-* chore: bump ratelimit to v0.0.93
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `pkg/protocols/common/hostbackoff/hostbackoff.go` (modified, +4/-0)
 ```diff
-@@ -93,7 +93,7 @@ require (
- 	github.com/projectdiscovery/mapcidr v1.1.97
- 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
- 	github.com/projectdiscovery/networkpolicy v0.1.54
--	github.com/projectdiscovery/ratelimit v0.0.92
-+	github.com/projectdiscovery/ratelimit v0.0.93
- 	github.com/projectdiscovery/rawhttp v0.1.92
- 	github.com/projectdiscovery/rdap v0.9.0
- 	github.com/projectdiscovery/retryabledns v1.0.116
-@@ -130,6 +130,7 @@ require (
- 	golang.org/x/sys v0.47.0
- 	golang.org/x/term v0.45.0
- 	golang.org/x/text v0.41.0
-+	golang.org/x/time v0.15.0
- 	golang.org/x/tools v0.49.0
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
-@@ -459,7 +460,6 @@ require (
- 	golang.org/x/arch v0.3.0 // indirect
- 	golang.org/x/crypto v0.55.0 // indirect
- 	golang.org/x/mod v0.39.0 // indirect
--	golang.org/x/time v0.15.0 // indirect
- 	google.golang.org/api v0.264.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -983,8 +983,8 @@ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5 h1:L/e8z8yw
- github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5/go.mod h1:pGW2ncnTxTxHtP9wzcIJAB+3/NMp6IiuQWd2NK7K+oc=
- github.com/projectdiscovery/networkpolicy v0.1.54 h1:+v7yyuRBu2S7dzeIJToDENy1i+HjRhNzqnQrDlm00z8=
- github.com/projectdiscovery/networkpolicy v0.1.54/go.mod h1:tN+YAFVlJjHv/znPEhkcSAjmBMkMhslC9XpWKTrKEHw=
--github.com/projectdiscovery/ratelimit v0.0.92 h1:2h2/AU81Lbn/xevb4KtZCMhaQej+u7W3uLXFUD163iU=
--github.com/projectdiscovery/ratelimit v0.0.92/go.mod h1:Tqpx1QKdFI63L01T2gpSvV5Uro9CnZkZWr80ciSXSBY=
-+github.com/projectdiscovery/ratelimit v0.0.93 h1:k2rRpCR31DqeqrORSgGzJ+z0T7+QGCt0Z0+Ov/TVrgk=
-+github.com/projectdiscovery/ratelimit v0.0.93/go.mod h1:Tqpx1QKdFI63L01T2gpSvV5Uro9CnZkZWr80ciSXSBY=
- github.com/projectdiscovery/rawhttp v0.1.92 h1:38GRsVLNllES/dZcEcA6s6P+rYBp34H9mDphMJMDvvg=
- github.com/projectdiscovery/rawhttp v0.1.92/go.mod h1:spfXTPjxCj+bfWLynMVB7uOb+LS3PDNAI9HexMEV1Zg=
- github.com/projectdiscovery/rdap v0.9.0 h1:wPhHx5pQ2QI+WGhyNb2PjhTl0NtB39Nk7YFZ9cp8ZGA=
-```
-
-**File**: `pkg/protocols/common/hostratelimit/limiter.go` (modified, +1/-2)
-```diff
-@@ -6,12 +6,11 @@ import (
- 
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
--	"github.com/projectdiscovery/ratelimit"
- )
- 
- // GetPerHostRateLimiter gets or creates a rate limiter for a specific host
- // Returns nil if per-host rate limiting is not enabled
--func GetPerHostRateLimiter(options *types.Options, hostname string) (*ratelimit.Limiter, error) {
-+func GetPerHostRateLimiter(options *types.Options, hostname string) (*PerHostRateLimiter, error) {
- 	if !options.PerHostRateLimit {
- 		return nil, nil
+@@ -216,6 +216,10 @@ func (g *Governor) ObserveDial(host string, err error) {
+ 		g.decay(state)
+ 	case state.reachable:
+ 		g.grow(state, 0)
++	default:
++		// A port that never accepted is closed or filtered. Storing it would
++		// fill the cache and evict hosts that actually have a delay.
++		return
  	}
+ 	_ = g.hosts.Set(host, state)
+ }
 ```
 
-**File**: `pkg/protocols/common/hostratelimit/pool.go` (modified, +169/-25)
+**File**: `pkg/protocols/common/hostbackoff/hostbackoff_test.go` (modified, +6/-0)
 ```diff
-@@ -3,15 +3,15 @@ package hostratelimit
- import (
- 	"context"
- 	"fmt"
-+	"math"
- 	"sync"
- 	"sync/atomic"
- 	"time"
- 
- 	"github.com/hashicorp/golang-lru/v2/expirable"
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
--	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
--	"github.com/projectdiscovery/ratelimit"
-+	"golang.org/x/time/rate"
- )
- 
- type PerHostRateLimitPool struct {
-@@ -31,7 +31,7 @@ type PerHostRateLimitPool struct {
- const ppsWindowSize = 100
- 
- type rateLimitEntry struct {
--	limiter        *ratelimit.Limiter
-+	limiter        *PerHostRateLimiter
- 	createdAt      time.Time
- 	accessCount    atomic.Uint64
- 	requestCount   atomic.Uint64
-@@ -46,6 +46,154 @@ type rateLimitEntry struct {
- 	requestMu         sync.Mutex
+@@ -232,6 +232,12 @@ func TestDialFailureOnNeverReachedHostIsIgnored(t *testing.T) {
+ 		g.ObserveDial("acme.test:22", errors.New("connection refused"))
+ 	}
+ 	require.Zero(t, g.Delay("acme.test:22"))
++	_, err := g.hosts.GetIFPresent("acme.test:22")
++	require.Error(t, err, "a port that never accepted must not take a cache slot")
++
++	g.ObserveDial("ok.test:22", nil)
++	_, err = g.hosts.GetIFPresent("ok.test:22")
++	require.NoError(t, err, "a port that accepted is tracked so a later refusal can slow it")
  }
  
-+// PerHostRateLimiter serializes admission for one normalized host.
-+type PerHostRateLimiter struct {
-+	limiter   *rate.Limiter
-+	ctx       context.Context
-+	cancel    context.CancelFunc
-+	admission chan struct{}
-+	unlimited bool
-+	mu        sync.RWMutex
-+	limit     uint
-+	duration  time.Duration
-+}
-+
-+// Wait blocks until the host budget admits one request or ctx is canceled.
-+func (l *PerHostRateLimiter) Wait(ctx context.Context) error {
-+	if ctx == nil {
-+		ctx = context.Background()
-+	}
-+	if err := ctx.Err(); err != nil {
-+		return context.Cause(ctx)
-+	}
-+	if l == nil || l.ctx == nil || l.ctx.Err() != nil {
-+		return nil
-+	}
-+	l.mu.RLock()
-+	unlimited := l.unlimited
-+	l.mu.RUnlock()
-+	if unlimited {
-+		return nil
-+	}
-+
-+	select {
-+	case l.admission <- struct{}{}:
-+		defer func() { <-l.admission }()
-+	case <-ctx.Done():
-+		return context.Cause(ctx)
-+	case <-l.ctx.Done():
-+		return nil
-+	}
-+
-+	l.mu.RLock()
-+	if l.unlimited {
-+		l.mu.RUnlock()
-+		return nil
-+	}
-+	reservation := l.limiter.Reserve()
-+	l.mu.RUnlock()
-+	if !reservation.OK() {
-+		return fmt.Errorf("host rate limiter cannot reserve one request")
-+	}
-+	delay := reservation.Delay()
-+	if delay <= 0 {
-+		return nil
-+	}
-+
-+	timer := time.NewTimer(delay)
-+	defer timer.Stop()
-+	select {
-+	case <-timer.C:
-+		return nil
-+	case <-ctx.Done():
-+		reservation.Cancel()
-+		return context.Cause(ctx)
-+	case <-l.ctx.Done():
-+		reservation.Cancel()
-+		return nil
-+	}
-+}
-+
-+// Take waits for one request using a non-cancelable context.
-+func (l *PerHostRateLimiter) Take() {
-+	if err := l.Wait(context.Background()); err != nil {
-+		gologger.Warning().Msgf("Could not take per-host rate limit: %s", err)
-+	}
-+}
-+
-+// CanTake reports whether the limiter can admit a request immediately.
-+func (l *PerHostRateLimiter) CanTake() bool {
-+	if l == nil || l.ctx == nil {
-+		return true
-+	}
-+	if l.ctx.Err() != nil {
-+		return false
-+	}
-+	l.mu.RLock()
-+	defer l.mu.RUnlock()
-+	return l.unlimited || (len(l.admission) == 0 && l.limiter.Tokens() > 0)
-+}
-+
-+// GetLimit returns the current request budget for the configured duration.
-+func (l *PerHostRateLimiter) GetLimit() uint {
-+	if l == nil {
-+		return 0
-+	}
-+	l.mu.RLock()
-+	defer l.mu.RUnlock()
-+	return l.limit
-+}
-+
-+// SetLimit changes the request budget while preserving the configured duration.
-+func (l *PerHostRateLimiter) SetLimit(limit uint) {
-+	if l == nil {
-+		return
-+	}
-+	l.mu.Lock()
-+	defer l.mu.Unlock()
-+	l.limit = limit
-+	l.configureLocked()
-+}
-+
-+// SetDuration changes the duration over which the request budget is refilled.
-+func (l *PerHostRateLimiter) SetDuration(duration time.Duration) {
-+	if duration <= 0 {
-+		panic("rate limit duration must be positive")
-+	}
-+	if l == nil {
-+		return
-+	}
-+	l.mu.Lock()
-+	defer l.mu.Unlock()
-+	l.duration = duration
-+	l.configureLocked()
-+}
-+
-+func (l *PerHostRateLimiter) configureLocked() {
-+	if l.duration == 0 {
-+		l.unlimited = true
-+		return
-+	}
-+	requestsPerSecond := rate.Limit(float64(l.limit) / l.duration.Seconds())
-+	if l.limiter == nil {
-+		l.limiter = rate.NewLimiter(requestsPerSecond, int(l.limit))
-+	} else {
-+		l.limiter.SetLimit(requestsPerSecond)
-+		l.limiter.SetBurst(int(l.limit))
-+	}
-+	if l.admission == nil {
-+		l.admission = make(chan struct{}, 1)
-+	}
-+	l.unlimited = false
-+}
-+
-+// Stop releases current and future waiters without reporting a scan error.
-+func (l *PerHostRateLimiter) Stop() {
-+	if l != nil && l.cancel != nil {
-+		l.cancel()
-+	}
-+}
-+
- func NewPerHostRateLimitPool(size int, maxIdleTime, maxLifetime time.Duration, options *types.Options) *PerHostRateLimitPool {
- 	if size < 0 {
- 		size = 0
-@@ -68,9 +216,6 @@ func NewPerHostRateLimitPool(size int, maxIdleTime, maxLifetime time.Duration, o
- 		cache: expirable.NewLRU[string, *rateLimitEntry](
- 			size,
- 			func(key string, value *rateLimitEntry) {
--				if value.limiter != nil {
--					value.limiter.Stop()
--				}
- 				gologger.Debug().Msgf("[perhost-ratelimit-pool] Evicted rate limiter for %s (age: %v, accesses: %d)",
- 					key, time.Since(value.createdAt), value.accessCount.Load())
- 			},
-@@ -88,7 +233,7 @@ func NewPerHostRateLimitPool(size int, maxIdleTime, maxLifetime time.Duration, o
- 
- func (p *PerHostRateLimitPool) GetOrCreate(
- 	host string,
-
+ func TestResponseMarksHostReachableForDials(t *testing.T) {
 ```
 
-**File**: `pkg/protocols/common/hostratelimit/pool_close_test.go` (modified, +119/-0)
+**File**: `pkg/protocols/network/request.go` (modified, +4/-0)
 ```diff
-@@ -1,6 +1,7 @@
- package hostratelimit
+@@ -69,7 +69,11 @@ func (request *Request) getOpenPorts(target *contextargs.Context) ([]string, err
+ 			request.dialer, _ = networkclientpool.Get(request.options.Options, &networkclientpool.Configuration{})
+ 		}
  
- import (
-+	"context"
- 	"fmt"
- 	"runtime"
- 	"testing"
-@@ -48,6 +49,124 @@ func TestPerHostRateLimitPoolSmoothsLowRates(t *testing.T) {
- 		"the first request beyond the initial bucket should be continuously refilled, not wait for a fixed window")
- }
- 
-+func TestPerHostRateLimitCancellationReleasesReservation(t *testing.T) {
-+	opts := &types.Options{RateLimit: 1, RateLimitDuration: 300 * time.Millisecond}
-+	pool := NewPerHostRateLimitPool(1, time.Hour, time.Hour, opts)
-+	t.Cleanup(pool.Close)
-+
-+	limiter, err := pool.GetOrCreate("https://cancel.example.com")
-+	require.NoError(t, err)
-+	require.NoError(t, limiter.Wait(context.Background()))
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	result := make(chan error, 1)
-+	go func() { result <- limiter.Wait(ctx) }()
-+	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
-+	cancel()
-+	require.ErrorIs(t, <-result, context.Canceled)
-+
-+	started := time.Now()
-+	require.NoError(t, limiter.Wait(context.Background()))
-+	require.Less(t, time.Since(started), 450*time.Millisecond)
-+}
-+
-+func TestPerHostRateLimitCancellationAdvancesQueuedWaiter(t *testing.T) {
-+	opts := &types.Options{RateLimit: 1, RateLimitDuration: 500 * time.Millisecond}
-+	pool := NewPerHostRateLimitPool(1, time.Hour, time.Hour, opts)
-+	t.Cleanup(pool.Close)
-+
-+	limiter, err := pool.GetOrCreate("https://queue.example.com")
-+	require.NoError(t, err)
-+	require.NoError(t, limiter.Wait(context.Background()))
-+
-+	firstCtx, cancelFirst := context.WithCancel(context.Background())
-+	firstResult := make(chan error, 1)
-+	go func() { firstResult <- limiter.Wait(firstCtx) }()
-+	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
-+
-+	secondResult := make(chan error, 1)
-+	started := time.Now()
-+	go func() { secondResult <- limiter.Wait(context.Background()) }()
-+	cancelFirst()
-+
-+	require.ErrorIs(t, <-firstResult, context.Canceled)
-+	require.NoError(t, <-secondResult)
-+	require.Less(t, time.Since(started), 850*time.Millisecond)
-+}
-+
-+func TestPerHostRateLimitStopReleasesWaitersWithoutError(t *testing.T) {
-+	opts := &types.Options{RateLimit: 1, RateLimitDuration: time.Second}
-+	limiter, err := newPerHostRateLimiter(opts)
-+	require.NoError(t, err)
-+	require.NoError(t, limiter.Wait(context.Background()))
-+
-+	result := make(chan error, 1)
-+	go func() { result <- limiter.Wait(context.Background()) }()
-+	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
-+	limiter.Stop()
-+
-+	require.NoError(t, <-result)
-+	require.NoError(t, limiter.Wait(context.Background()))
-+}
-+
-+func TestPerHostRateLimiterZeroValueIsUnlimited(t *testing.T) {
-+	var limiter PerHostRateLimiter
-+	require.NoError(t, limiter.Wait(context.Background()))
-+	require.True(t, limiter.CanTake())
-+	limiter.Stop()
-+}
-+
-+func TestPerHostRateLimiterRetainsMutableLimitAPI(t *testing.T) {
-+	limiter, err := newPerHostRateLimiter(&types.Options{RateLimit: 2, RateLimitDuration: time.Second})
-+	require.NoError(t, err)
-+	t.Cleanup(limiter.Stop)
-+
-+	require.Equal(t, uint(2), limiter.GetLimit())
-+	limiter.SetLimit(4)
-+	limiter.SetDuration(2 * time.Second)
-+	require.Equal(t, uint(4), limiter.GetLimit())
-+	require.NoError(t, limiter.Wait(context.Background()))
-+
-+	unlimited, err := newPerHostRateLimiter(nil)
-+	require.NoError(t, err)
-+	t.Cleanup(unlimited.Stop)
-+	require.Equal(t, uint(^uint32(0)), unlimited.GetLimit())
-+	unlimited.SetLimit(2)
-+	require.Equal(t, uint(2), unlimited.GetLimit())
-+	require.NoError(t, unlimited.Wait(context.Background()))
-+}
-+
-+func TestPerHostRateLimiterImmediateWaitHasBoundedAllocations(t *testing.T) {
-+	limiter, err := newPerHostRateLimiter(&types.Options{RateLimit: 100, RateLimitDuration: time.Second})
-+	require.NoError(t, err)
-+	t.Cleanup(limiter.Stop)
-+
-+	allocations := testing.AllocsPerRun(10, func() {
-+		if waitErr := limiter.Wait(context.Background()); waitErr != nil {
-+			t.Fatal(waitErr)
++		if err := request.options.HostBackoffWait(target.Context(), addr); err != nil {
++			return nil, err
 +		}
-+	})
-+	require.LessOrEqual(t, allocations, float64(1))
-+}
-+
-+func TestPerHostRateLimitEvictionKeepsInflightWaitValid(t *testing.T) {
-+	opts := &types.Options{RateLimit: 1, RateLimitDuration: 100 * time.Millisecond}
-+	pool := NewPerHostRateLimitPool(1, time.Hour, time.Hour, opts)
-+	t.Cleanup(pool.Close)
-+
-+	limiter, err := pool.GetOrCreate("https://first.example.com")
-+	require.NoError(t, err)
-+	require.NoError(t, limiter.Wait(context.Background()))
-+
-+	result := make(chan error, 1)
-+	go func() { result <- limiter.Wait(context.Background()) }()
-+	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
-+
-+	_, err = pool.GetOrCreate("https://second.example.com")
-+	require.NoError(t, err)
-+	require.NoError(t, <-result)
-+}
-+
- func TestUnboundedPerHostRateLimitPoolRetainsBudgetsBeyondDefaultCapacity(t *testing.T) {
- 	opts := &types.Options{RateLimit: 10, RateLimitDuration: time.Second}
- 	pool := NewPerHos
+ 		conn, err := request.dialer.Dial(target.Context(), "tcp", addr)
++		request.options.HostBackoffObserveDial(addr, err)
+ 		if err != nil {
+ 			errs = append(errs, err)
+ 			continue
 ```
 
-**File**: `pkg/protocols/dns/request.go` (modified, +1/-1)
+**File**: `pkg/protocols/network/request_backoff_test.go` (modified, +88/-0)
 ```diff
-@@ -163,7 +163,7 @@ func (request *Request) execute(input *contextargs.Context, domain string, metad
- 	}
- 
- 	// per host means per queried domain: resolvers are shared by every target
--	if err := request.options.RateLimitTake(question); err != nil {
-+	if err := request.options.RateLimitTakeContext(input.Context(), question); err != nil {
- 		request.options.Output.Request(request.options.TemplatePath, domain, request.Type().String(), err)
- 		request.options.Progress.IncrementFailedRequestsBy(1)
- 		return errors.Wrap(err, "could not take rate limit")
-```
-
-**File**: `pkg/protocols/headless/engine/instance.go` (modified, +81/-2)
-```diff
-@@ -7,6 +7,7 @@ import (
- 
- 	"github.com/go-rod/rod"
- 	"github.com/go-rod/rod/lib/utils"
-+	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/render"
- )
-@@ -21,6 +22,8 @@ type Instance struct {
- 	requestLog map[string]string // contains actual request that was sent
+@@ -96,3 +96,91 @@ func TestSuccessfulDialWaitsThenDecays(t *testing.T) {
+ 	require.GreaterOrEqual(t, time.Since(start), step, "a host that earned a delay is paced")
+ 	require.Zero(t, g.Delay(address), "a connection that succeeds is recovery")
  }
- 
-+const browserCleanupTimeout = 5 * time.Second
 +
- // NewInstance creates a new instance for the current browser.
- //
- // The login process is repeated only once for a browser, and the created
-@@ -29,7 +32,67 @@ type Instance struct {
- // Users can also choose to run the login->actions process again
- // which uses a new incognito browser instance to run actions.
- func (b *Browser) NewInstance() (*Instance, error) {
--	browser, err := b.engine.Incognito()
-+	return b.newInstanceBrowser(b.engine)
-+}
-+
-+// NewInstanceWithContext bounds browser-context creation and all subsequent instance calls.
-+func (b *Browser) NewInstanceWithContext(ctx context.Context, timeout time.Duration) (*Instance, error) {
-+	if ctx == nil {
-+		ctx = context.Background()
-+	}
-+	if err := ctx.Err(); err != nil {
-+		return nil, context.Cause(ctx)
-+	}
-+
-+	if timeout <= 0 {
-+		timeout = browserCleanupTimeout
-+	}
-+	creationCtx, cancelCreation := context.WithTimeout(b.engine.GetContext(), timeout)
-+	type result struct {
-+		instance *Instance
-+		err      error
-+	}
-+	resultCh := make(chan result, 1)
++func TestMultiPortProbeWaitsThenDecays(t *testing.T) {
++	openLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	t.Cleanup(func() { _ = openLn.Close() })
 +	go func() {
-+		instance, err := b.newInstanceBrowser(b.engine.Context(creationCtx))
-+		resultCh <- result{instance: instance, err: err}
-+	}()
-+
-+	cleanup := func(instance *Instance) {
-+		if instance == nil {
-+			return
-+		}
-+		if err := instance.Close(); err != nil {
-+			gologger.Warning().Msgf("Could not close canceled browser instance: %s", err)
-+		}
-+	}
-+
-+	select {
-+	case created := <-resultCh:
-+		cancelCreation()
-+		if created.err != nil {
-+			return nil, created.err
-+		}
-+		if err := ctx.Err(); err != nil {
-+			go cleanup(created.instance)
-+			return nil, context.Cause(ctx)
-+		}
-+		created.instance.engine = created.instance.engine.Context(ctx)
-+		return created.instance, nil
-+	case <-ctx.Done():
-+		go func() {
-+			created := <-resultCh
-+			cancelCreation()
-+			if created.err == nil {
-+				cleanup(created.instance)
++		for {
++			conn, err := openLn.Accept()
++			if err != nil {
++				return
 +			}
-+		}()
-+		return nil, context.Cause(ctx)
-+	}
-+}
-+
-+func (b *Browser) newInstanceBrowser(engine *rod.Browser) (*Instance, error) {
-+	browser, err := engine.Incognito()
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -49,7 +112,23 @@ func (i *Instance) GetRequestLog() map[string]string {
- 
- // Close closes all the tabs and pages for a browser instance
- func (i *Instance) Close() error {
--	return i.engine.Close()
-+	ctx, cancel := context.WithTimeout(context.Background(), browserCleanupTimeout)
-+	defer cancel()
-+	return i.close(ctx)
-+}
-+
-+// CloseWithPage closes a page and its isolated browser context within one cleanup deadline.
-+func (i *Instance) CloseWithPage(page *Page) error {
-+	ctx, cancel := context.WithTimeout(context.Background(), browserCleanupTimeout)
-+	defer cancel()
-+	if page != nil {
-+		page.close(ctx)
-+	}
-+	return i.close(ctx)
-+}
-+
-+func (i *Instance) close(ctx context.Context) error {
-+	return i.engine.Context(ctx).Close()
- }
- 
- // SetInteractsh client
-```
-
-**File**: `pkg/protocols/headless/engine/instance_test.go` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+package engine
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/go-rod/rod"
-+	"github.com/go-rod/rod/lib/cdp"
-+	"github.com/go-rod/rod/lib/proto"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+type cleanupCDPClient struct {
-+	events      chan *cdp.Event
-+	contextErrs chan error
-+}
-+
-+type lateCreateCDPClient struct {
-+	events   chan *cdp.Event
-+	disposed chan struct{}
-+	delay    time.Duration
-+}
-+
-+func (c *lateCreateCDPClient) Event() <-chan *cdp.Event {
-+	return c.events
-+}
-+
-+func (c *lateCreateCDPClient) Call(_ context.Context, _ string, method string, _ interface{}) ([]byte, error) {
-+	switch method {
-+	case "Target.createBrowserContext":
-+		time.Sleep(c.delay)
-+		return []byte(`{"browserContextId":"context-id"}`), nil
-+	case "Target.disposeBrowserContext":
-+		select {
-+		case c.disposed <- struct{}{}:
-+		default:
++			_ = conn.Close()
 +		}
-+	}
-+	return []byte("{}"), nil
-+}
++	}()
++	openAddr := openLn.Addr().String()
++	_, openPort, err := net.SplitHostPort(openAddr)
++	require.NoError(t, err)
 +
-+func (c *cleanupCDPClient) Event() <-chan *cdp.Event {
-+	return c.events
-+}
++	closedLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	closedAddr := closedLn.Addr().String()
++	_, closedPort, err := net.SplitHostPort(closedAddr)
++	require.NoError(t, err)
++	require.NoError(t, closedLn.Close())
 +
-+func (c *cleanupCDPClient) Call(ctx context.Context, _ string, method string, _ interface{}) ([]byte, error) {
-+	if method == "Target.disposeBrowserContext" {
-+		c.contextErrs <- ctx.Err()
-+	}
-+	return []byte("{}"), nil
-+}
-+
-+func TestNewInstanceWithContextCancelsBlockedBrowserContextCreation(t *testing.T) {
-+	client := newBlockingCDPClient("Target.createBrowserContext", 500*time.Millisecond)
-+	browser := &Browser{engine: rod.New().Client(client)}
-+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
-+	defer cancel()
-+
-+	started := time.Now()
-+	_, err := browser.NewInstanceWithContext(ctx, time.Second)
-+
-+	require.ErrorIs(t, err, context.DeadlineExceeded)
-+	require.Less(t, time.Since(started), 200*time.Millisecond)
-+}
-+
-+func TestNewInstanceWithContextDisposesContextCreatedAfterCancellation(t *testing.T) {
-+	client := &lateCreateCDPClient{
-+		events:   make(chan *cdp.Event),
-+		disposed: make(chan struct{}, 1),
-+		delay:    50 * time.Millisecond,
-+	}
-+	browser := &Browser{engine: rod.New().Client(client)}
-+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-+	defer cancel()
-+
-+	started := time.Now()
-+	_, err := browser.NewInstanceWithContext(ctx, time.Second)
-+	require.ErrorIs(t, err, context.DeadlineExceeded)
-+	require.Less(t, time.Since(started), 100*time.Millisecond)
-+
-+	select {
-+	case <-client.disposed:
-+	case <-time.After(time.Second):
-+		t.Fatal("browser context created after cancellation was not disposed")
-+	}
-+}
-+
-+func TestInstanceCloseUsesLiveCleanupContext(t *testing.T) {
-+	client := &cleanupCDPClient{
-+		events:      make(chan *cdp.Event),
-+		contextErrs: make(chan error, 1),
-+	}
-+	canceledCtx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	browser := rod.New().Client(client).Context(canceledCtx)
-+	browser.BrowserContextID = proto.BrowserBrowserContextID("context-id")
-+	instance := &Instance{engine: browser}
-+
-+	require.NoError(t, instance.Close())
-+	require.NoError(t, <-client.contextErrs)
-+}
-```
-
----
-
-### Incident Patch 2: `59e6ffa6` (2026-10-12)
-**Commit Message**: Merge pull request #7822 from projectdiscovery/fix/7821-js-call-cancellation
-
-cancel javascript library calls with the template execution timeout
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -81,7 +81,7 @@ require (
- 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
- 	github.com/projectdiscovery/goflags v0.2.1
- 	github.com/projectdiscovery/goimpacket v0.1.0
--	github.com/projectdiscovery/goja v0.0.0-20260618133720-acb73e419534
-+	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
- 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
- 	github.com/projectdiscovery/gologger v1.1.73
- 	github.com/projectdiscovery/gostruct v0.0.2
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -953,8 +953,8 @@ github.com/projectdiscovery/goflags v0.2.1 h1:XnSYvsCjUwHbZaaJUZ3YznCJPoXRk/IhTF
- github.com/projectdiscovery/goflags v0.2.1/go.mod h1:7nAP1r2Dqgn/rwmOE3EWbZWUCEJKNIhVSBGpuzJAIns=
- github.com/projectdiscovery/goimpacket v0.1.0 h1:pX7YKn11GzplEWzLsgR1b1Ad1diACXLhzvVZ1w7h3sw=
- github.com/projectdiscovery/goimpacket v0.1.0/go.mod h1:bfgULaYf+6pjjcLCekpXIYElnLJbmhvTttxMAbQJvhY=
--github.com/projectdiscovery/goja v0.0.0-20260618133720-acb73e419534 h1:hYd1zQA/dxO2ASyQ6Re73TcJkW1LjLQvt4+86Hxefz8=
--github.com/projectdiscovery/goja v0.0.0-20260618133720-acb73e419534/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
-+github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlue9PIwsCM1IGxOynDI7cir+emXuDvGJTLJs=
-+github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
- github.com/projectdiscovery/gologger v1.1.73 h1:WX2nzq29cL7HdvOHqIttacoid/5lMwapyM7ukGU1jFY=
-```
-
-**File**: `pkg/js/compiler/session.go` (modified, +4/-0)
-```diff
-@@ -153,6 +153,9 @@ func (s *session) prepareCommon() {
- 	}
- 	s.config.runtime.SetContextValue("executionId", s.config.opts.ExecutionId)
- 	s.config.runtime.SetContextValue("ctx", executionCtx)
-+	// Go calls derive their context from this, so the execution timeout also
-+	// cancels a library call in flight instead of leaving it running
-+	s.config.runtime.SetContext(executionCtx)
- 	enableRequire(s.config.runtime)
- }
- 
-@@ -221,6 +224,7 @@ func (s *session) cleanupCommon() {
- 	}
- 	s.config.runtime.RemoveContextValue("executionId")
- 	s.config.runtime.RemoveContextValue("ctx")
-+	s.config.runtime.SetContext(context.TODO())
- 	s.config.runtime.RemoveContextValue("timeoutVariants")
- 	s.config.runtime.RemoveContextValue("proxyURL")
- 	s.config.runtime.RemoveContextValue("customHeaders")
-```
-
-**File**: `pkg/js/libs/smb/smb_auth_test.go` (modified, +7/-1)
-```diff
-@@ -46,8 +46,14 @@ func TestAuthenticateSessionStatus(t *testing.T) {
- 				assert.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
- 				t.Cleanup(func() { protocolstate.Close(executionID) })
- 				port, done := serveAuthentication(t, tc.flags, tc.status)
-+				// production runs carry the js execution timeout in their context;
-+				// without one a stalled exchange holds the package until go
-+				// test's 1h timeout instead of failing this test
-+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+				defer cancel()
- 				if javascript {
- 					vm := goja.New()
-+					vm.SetContext(ctx)
- 					new(require.Registry).Enable(vm)
- 					vm.SetContextValue("executionId", executionID)
- 					assert.NoError(t, vm.Set("port", port))
-@@ -65,7 +71,7 @@ func TestAuthenticateSessionStatus(t *testing.T) {
- 						assert.Equal(t, []interface{}{tc.want.Success, tc.want.IsGuest, tc.want.IsNullSession}, value.Export())
- 					}
- 				} else {
--					ctx := context.WithValue(context.Background(), "executionId", executionID) //nolint:staticcheck
-+					ctx := context.WithValue(ctx, "executionId", executionID) //nolint:staticcheck
- 					result, err := (&smb.SMBClient{}).Authenticate(ctx, "127.0.0.1", port, tc.user, password)
- 					if tc.status != 0 {
- 						assert.Error(t, err)
-```
-
----
-
-### Incident Patch 3: `10f1967c` (2026-10-18)
-**Commit Message**: Merge pull request #7879 from projectdiscovery/fix/7878-dump-body-race
-
-keep the request body in the dump taken after sending
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ require (
- 	github.com/projectdiscovery/tlsx v1.4.1
- 	github.com/projectdiscovery/uncover v1.2.1
- 	github.com/projectdiscovery/useragent v0.0.109
--	github.com/projectdiscovery/utils v0.11.9
-+	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
- 	github.com/projectdiscovery/wappalyzergo v0.3.4
- 	github.com/projectdiscovery/yamldoc-go v1.0.7
- 	github.com/redis/go-redis/v9 v9.19.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1003,8 +1003,8 @@ github.com/projectdiscovery/uncover v1.2.1 h1:8U46T/96CLT7BPoXBgkTvWqB06lOyeTSLv
- github.com/projectdiscovery/uncover v1.2.1/go.mod h1:0p8onrWxfpXQEYs90ZDzTSpu1107gWmodX1NWqu/+z4=
- github.com/projectdiscovery/useragent v0.0.109 h1:b86BPdZvmgbJousa04jAugDRY4Y+rAvEamE0TFCPmeE=
- github.com/projectdiscovery/useragent v0.0.109/go.mod h1:sRyBqDAcD31RKYrO8fyXGowLd36fNwY1g0MNW9mp7zk=
--github.com/projectdiscovery/utils v0.11.9 h1:aKLje3zPcZuOGmopN51PasWxPX/CypPwzP2ke/Qa2bA=
--github.com/projectdiscovery/utils v0.11.9/go.mod h1:d3BcbsHhuxW9T3jpvrgzwshvqhaL9qPSkoi+3h/DY8E=
-+github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99 h1:1RG4XinX0GqkAqIBxG92ldRWCvU6yZn9YdSFh2EiH2o=
-+github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99/go.mod h1:d3BcbsHhuxW9T3jpvrgzwshvqhaL9qPSkoi+3h/DY8E=
- github.com/projectdiscovery/wappalyzergo v0.3.4 h1:yO+xel+C0d/vOFWcUKVZRpIDAfcEmsjpVDjQ0jifAUw=
- github.com/projectdiscovery/wappalyzergo v0.3.4/go.mod h1:6xTRCUQhX8m+L1eqJDQIALJlRv2Bnhrmku80YU9bBXE=
- github.com/projectdiscovery/yamldoc-go v1.0.7 h1:Odmjd1o4EkMff2F6QHi1dIYPIQPZUFy24YqmQCprmTk=
-```
-
-**File**: `pkg/protocols/http/request.go` (modified, +23/-15)
-```diff
-@@ -51,7 +51,6 @@ import (
- 	convUtil "github.com/projectdiscovery/utils/conversion"
- 	"github.com/projectdiscovery/utils/errkit"
- 	httpUtils "github.com/projectdiscovery/utils/http"
--	"github.com/projectdiscovery/utils/reader"
- 	sliceutil "github.com/projectdiscovery/utils/slice"
- 	stringsutil "github.com/projectdiscovery/utils/strings"
- 	unitutils "github.com/projectdiscovery/utils/unit"
-@@ -983,6 +982,25 @@ func extractorAppliesToRequest(part string, requestIndex int) bool {
- 
- const drainReqSize = int64(8 * unitutils.Kilo)
- 
-+// reuseRequestBody reads the body once and installs GetBody copies. The
-+// post-send dump reads one while the transport may still be writing another.
-+// GET, HEAD, and chunked requests keep their existing content length.
-+func reuseRequestBody(req *retryablehttp.Request) error {
-+	body, err := io.ReadAll(req.Body)
-+	if err != nil {
-+		return err
-+	}
-+	keepLength := stringsutil.EqualFoldAny(req.Method, http.MethodGet, http.MethodHead) || req.Header.Get("Transfer-Encoding") == "chunked"
-+	contentLength := req.ContentLength
-+	if err = req.SetBody(body); err != nil {
-+		return err
-+	}
-+	if keepLength {
-+		req.ContentLength = contentLength
-+	}
-+	return nil
-+}
-+
- // executeRequest executes the actual generated request and returns error if occurred
- func (request *Request) executeRequest(input *contextargs.Context, generatedRequest *generatedRequest, previousEvent output.InternalEvent, hasInteractMatchers bool, processEvent protocols.OutputEventCallback, requestCount int) (err error) {
- 	// Check if hosts keep erroring
-@@ -1022,20 +1040,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 	// For race conditions we can't dump the request body at this point as it's already waiting the open-gate event, already handled with a similar code within the race function
- 	if !generatedRequest.original.Race {
- 
--		// change encoding type to content-length unless transfer-encoding header is manually set
--		if generatedRequest.request != nil && !stringsutil.EqualFoldAny(generatedRequest.request.Method, http.MethodGet, http.MethodHead) && generatedRequest.request.Body != nil && generatedRequest.request.Header.Get("Transfer-Encoding") != "chunked" {
--			var newReqBody *reader.ReusableReadCloser
--			newReqBody, ok := generatedRequest.request.Body.(*reader.ReusableReadCloser)
--			if !ok {
--				newReqBody, err = reader.NewReusableReadCloser(generatedRequest.request.Body)
--			}
--			if err == nil {
--				// update the request body with the reusable reader
--				generatedRequest.request.SetBodyReader(newReqBody)
--				// get content length
--				length, _ := io.Copy(io.Discard, newReqBody)
--				generatedRequest.request.ContentLength = length
--			} else {
-+		// Buffer every body so the post-send dump reads its own copy. GET, HEAD,
-+		// and chunked requests keep the content length they already had.
-+		if generatedRequest.request != nil && generatedRequest.request.Body != nil {
-+			if err = reuseRequestBody(generatedRequest.request); err != nil {
- 				// log error and continue
- 				gologger.Verbose().Msgf("[%v] Could not read request body while forcing transfer encoding: %s\n", request.options.TemplateID, err)
- 				err = nil
-```
-
-**File**: `pkg/protocols/http/request_test.go` (modified, +97/-0)
-```diff
-@@ -24,6 +24,8 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/ratelimit"
-+	"github.com/projectdiscovery/retryablehttp-go"
-+	"io"
- )
- 
- func executeDynamicHTTPTestRequest(t *testing.T, request *Request, target string) {
-@@ -1562,3 +1564,98 @@ func TestPerHostRateLimitHonorsRequestContextCancellation(t *testing.T) {
- 	require.ErrorIs(t, err, context.Canceled)
- 	require.Less(t, cancellationDelay, 250*time.Millisecond)
- }
-+
-+func TestDumpedRequestKeepsBodyServerDidNotRead(t *testing.T) {
-+	// The server answers in full, then holds the connection without reading
-+	// the body, so the transport is still writing it when the response arrives.
-+	release := make(chan struct{})
-+	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Length", "2")
-+		_, _ = w.Write([]byte("ok"))
-+		w.(http.Flusher).Flush()
-+		<-release
-+	}))
-+	defer target.Close()
-+	defer close(release)
++	const step = 150 * time.Millisecond
++	g := hostbackoff.New(hostbackoff.Config{Step: step})
++	g.Observe(openAddr, http.StatusTooManyRequests, 0, nil)
 +
 +	options := testutils.DefaultOptions.Copy()
 +	options.SetExecutionID(t.Name())
 +	testutils.Init(options)
 +	t.Cleanup(func() { testutils.Cleanup(options) })
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+		ID:   "dump-body",
-+		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+	})
++	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "network-host-backoff"})
++	executerOpts.HostBackoff = g
 +
-+	body := strings.Repeat("A", 4<<20)
-+	requests := []*Request{
-+		{
-+			ID:     "post",
-+			Method: HTTPMethodTypeHolder{MethodType: HTTPPost},
-+			Path:   []string{"{{BaseURL}}/"},
-+			Body:   body,
-+		},
-+		{
-+			ID:  "get",
-+			Raw: []string{"GET / HTTP/1.1\nHost: {{Hostname}}\n\n" + body},
-+		},
-+		{
-+			ID:  "chunked",
-+			Raw: []string{"POST / HTTP/1.1\nHost: {{Hostname}}\nTransfer-Encoding: chunked\n\n" + body},
-+		},
++	request := &Request{
++		ID:       "network-host-backoff",
++		Address:  []string{"{{Hostname}}"},
++		Port:     openPort + "," + closedPort,
++		ReadSize: 2,
 +	}
-+	for _, request := range requests {
-+		require.NoError(t, request.Compile(executerOpts))
-+		// how much the transport has written when the response lands varies, so
-+		// a few rounds make a lost body show up reliably
-+		for range 3 {
-+			var dumped string
-+			input := contextargs.NewWithInput(context.Background(), target.URL)
-+			err := request.ExecuteWithResults(input, output.InternalEvent{}, output.InternalEvent{}, func(event *output.InternalWrappedEvent) {
-+				dumped, _ = event.InternalEvent["request"].(string)
-+			})
-+			require.NoError(t, err)
-+			require.True(t, strings.HasSuffix(dumped, "\r\n\r\n"+body), "%s recorded request lost its body: %d of %d bytes", request.ID, len(dumped), len(body))
-+		}
-+	}
++	require.NoError(t, request.Compile(executerOpts))
++
++	start := time.Now()
++	require.NoError(t, execute(request, "127.0.0.1"))
++	require.GreaterOrEqual(t, time.Since(start), step, "a multi-port probe waits on a host:port that already has a delay")
++	require.Zero(t, g.Delay(openAddr), "a probe that connects is recovery")
++	require.Zero(t, g.Delay(closedAddr), "a port that never accepted stays unpaced")
 +}
 +
-+func TestReuseRequestBodyKeepsExcludedEncoding(t *testing.T) {
-+	body := []byte("original")
-+	for _, tc := range []struct {
-+		name          string
-+		method        string
-+		header        string
-+		contentLength int64
-+		wantLength    int64
-+	}{
-+		{name: "post", method: http.MethodPost, contentLength: 1, wantLength: int64(len(body))},
-+		{name: "get", method: http.MethodGet, contentLength: 3, wantLength: 3},
-+		{name: "head", method: http.MethodHead, contentLength: 0, wantLength: 0},
-+		{name: "chunked", method: http.MethodPost, header: "chunked", contentLength: -1, wantLength: -1},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			req, err := retryablehttp.NewRequest(tc.method, "https://example.com/", body)
-+			require.NoError(t, err)
-+			req.ContentLength = tc.contentLength
-+			if tc.header != "" {
-+				req.Header.Set("Transfer-Encoding", tc.header)
-+			}
++func TestMultiPortProbeFailureBacksOffPreviouslyOpenPort(t *testing.T) {
++	closedLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	closedAddr := closedLn.Addr().String()
++	_, closedPort, err := net.SplitHostPort(closedAddr)
++	require.NoError(t, err)
++	require.NoError(t, closedLn.Close())
 +
-+			require.NoError(t, reuseRequestBody(req))
-+			require.Equal(t, tc.wantLength, req.ContentLength)
-+			if tc.header != "" {
-+				require.Equal(t, tc.header, req.Header.Get("Transfer-Encoding"))
-+			}
++	otherLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	otherAddr := otherLn.Addr().String()
++	_, otherPort, err := net.SplitHostPort(otherAddr)
++	require.NoError(t, err)
++	require.NoError(t, otherLn.Close())
 +
-+			got, err := io.ReadAll(req.Body)
-+			require.NoError(t, err)
-+			require.Equal(t, body, got)
-+			fresh, err := req.GetBody()
-+			require.NoError(t, err)
-+			got, err = io.ReadAll(fresh)
-+			require.NoError(t, err)
-+			require.Equal(t, body, got)
-+		})
++	const step = 100 * time.Millisecond
++	g := hostbackoff.New(hostbackoff.Config{Step: step})
++	g.ObserveDial(closedAddr, nil)
++
++	options := testutils.DefaultOptions.Copy()
++	options.SetExecutionID(t.Name())
++	testutils.Init(options)
++	t.Cleanup(func() { testutils.Cleanup(options) })
++	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "network-host-backoff"})
++	executerOpts.HostBackoff = g
++
++	request := &Request{
++		ID:      "network-host-backoff",
++		Address: []string{"{{Hostname}}"},
++		Port:    closedPort + "," + otherPort,
 +	}
++	require.NoError(t, request.Compile(executerOpts))
++
++	require.Error(t, execute(request, "127.0.0.1"))
++	require.Equal(t, step, g.Delay(closedAddr), "a probe that fails on a port that accepted before slows it")
++	require.Zero(t, g.Delay(otherAddr), "a port that never accepted stays unpaced")
 +}
 ```
 
-**File**: `pkg/protocols/http/utils.go` (modified, +10/-2)
+**File**: `pkg/protocols/websocket/websocket.go` (modified, +17/-4)
 ```diff
-@@ -13,8 +13,16 @@ import (
- // dump creates a dump of the http request in form of a byte slice
- func dump(req *generatedRequest, reqURL string) ([]byte, error) {
- 	if req.request != nil {
--		// Use a clone to avoid a race condition with the http transport
--		bin, err := req.request.Clone(req.request.Context()).Dump()
-+		// Use a clone to avoid a race condition with the http transport. The
-+		// clone shares the body, which the transport may still be sending, so
-+		// dump a fresh copy of it where one is available.
-+		clone := req.request.Clone(req.request.Context())
-+		if clone.GetBody != nil {
-+			if body, err := clone.GetBody(); err == nil {
-+				clone.Body = body
-+			}
-+		}
-+		bin, err := clone.Dump()
- 		if err != nil {
- 			return nil, errkit.Wrapf(err, "could not dump request: %v", req.request.String())
- 		}
+@@ -1,6 +1,7 @@
+ package websocket
+ 
+ import (
++	"context"
+ 	"crypto/tls"
+ 	"fmt"
+ 	"io"
+@@ -220,10 +221,20 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
+ 		tlsConfig.ServerName = requestOptions.Options.SNI
+ 	}
+ 
++	// Dial reports both a refused TCP connection and a rejected HTTP upgrade.
++	// Only the TCP result belongs to host backoff: an upgrade failure means
++	// the port already accepted the connection.
++	var dialed bool
++	var dialErr error
+ 	websocketDialer := ws.Dialer{
+-		Header:    ws.HandshakeHeaderHTTP(header),
+-		Timeout:   time.Duration(requestOptions.Options.Timeout) * time.Second,
+-		NetDial:   request.dialer.Dial,
++		Header:  ws.HandshakeHeaderHTTP(header),
++		Timeout: time.Duration(requestOptions.Options.Timeout) * time.Second,
++		NetDial: func(ctx context.Context, network, address string) (net.Conn, error) {
++			dialed = true
++			conn, err := request.dialer.Dial(ctx, network, address)
++			dialErr = err
++			return conn, err
++		},
+ 		TLSConfig: tlsConfig,
+ 	}
+ 
+@@ -268,7 +279,9 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
+ 	timeStart := time.Now()
+ 	conn, readBuffer, _, err := websocketDialer.Dial(target.Context(), addressToDial)
+ 	handshakeDuration := time.Since(timeStart)
+-	requestOptions.HostBackoffObserveDial(addressToDial, err)
++	if dialed {
++		requestOptions.HostBackoffObserveDial(addressToDial, dialErr)
++	}
+ 	if err != nil {
+ 		requestOptions.Output.Request(requestOptions.TemplateID, input, request.Type().String(), err)
+ 		requestOptions.Progress.IncrementFailedRequestsBy(1)
+```
+
+**File**: `pkg/protocols/websocket/websocket_backoff_test.go` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++package websocket
++
++import (
++	"context"
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hostbackoff"
++)
++
++func newBackoffWebsocket(t *testing.T, address string, g *hostbackoff.Governor) *Request {
++	t.Helper()
++	options := testutils.DefaultOptions.Copy()
++	options.SetExecutionID(t.Name())
++	testutils.Init(options)
++	t.Cleanup(func() { testutils.Cleanup(options) })
++	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "websocket-host-backoff"})
++	executerOpts.HostBackoff = g
++
++	request := &Request{ID: "websocket-host-backoff", Address: address}
++	require.NoError(t, request.Compile(executerOpts))
++	return request
++}
++
++func executeWebsocket(request *Request, address string) error {
++	input := contextargs.NewWithInput(context.Background(), address)
++	return request.ExecuteWithResults(input, output.InternalEvent{}, output.InternalEvent{}, func(*output.InternalWrappedEvent) {})
++}
++
++func TestWebsocketHandshakeFailureDoesNotBackOff(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		http.NotFound(w, r)
++	}))
++	t.Cleanup(server.Close)
++
++	address := strings.Replace(server.URL, "http://", "ws://", 1)
++	host := server.Listener.Addr().String()
++
++	const step = 100 * time.Millisecond
++	g := hostbackoff.New(hostbackoff.Config{Step: step})
++	g.ObserveDial(host, nil)
++
++	request := newBackoffWebsocket(t, address, g)
++	require.Error(t, executeWebsocket(request, address))
++	require.Zero(t, g.Delay(host), "a rejected upgrade means the port accepted the connection")
++}
++
++func TestWebsocketDialFailureBacksOffPreviouslyOpenPort(t *testing.T) {
++	listener, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	host := listener.Addr().String()
++	require.NoError(t, listener.Close())
++
++	address := "ws://" + host
++	const step = 100 * time.Millisecond
++	g := hostbackoff.New(hostbackoff.Config{Step: step})
++	g.ObserveDial(host, nil)
++
++	request := newBackoffWebsocket(t, address, g)
++	require.Error(t, executeWebsocket(request, address))
++	require.Equal(t, step, g.Delay(host), "a refused TCP dial on a port that accepted before slows it")
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7895** (2026-10-19): apply host backoff to network, ssl and websocket dials (@dogancanbakir)
+- **PR #7887** (closed): fix(protocolstate): refresh low-memory warning (@knakul853)
+- **PR #7884** (closed): fix(headless): avoid waiting for an already-fired load event (@knakul853)
 - **PR #7881** (2026-10-18): skip stdin when targets are given with -u or -l (@dogancanbakir)
 - **PR #7879** (2026-10-18): keep the request body in the dump taken after sending (@dogancanbakir)
 - **PR #7872** (closed): fix(flow): bound runtime execution (@knakul853)
-- **PR #7869** (2026-10-13): chore(deps): bump the modules group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #7866** (closed): chore(deps): bump the modules group with 7 updates (@dependabot[bot])
-- **PR #7858** (2026-10-13): fix(http): preserve iterate-all extraction branches (@knakul853)
 
 ---
 
@@ -2407,30 +1703,31 @@ keep the request body in the dump taken after sending
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): honor cancellation in HTTP and headless waits (#7814)
+## X. Empirical Invariant Guard in hostbackoff.go
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/common/hostbackoff/hostbackoff.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5715288`: runtime): honor cancellation in HTTP and headless waits (#7814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3109229`: dials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/hostbackoff/hostbackoff.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/projectdiscovery/ratelimit v0.0.93
-	golang.org/x/time v0.15.0
+	default:
+		// A port that never accepted is closed or filtered. Storing it would
+		// fill the cache and evict hosts that actually have a delay.
+		return
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/projectdiscovery/ratelimit v0.0.92
-	golang.org/x/time v0.15.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5715288` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3109229` are properly handled with clean fallback behavior.

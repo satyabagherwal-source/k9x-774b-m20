@@ -3314,3 +3314,8 @@
 | `CYCLE-20261019-Z19T` | `2026-10-19T15:05:24.785Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`32fc4c78...`) |
 | `CYCLE-20261019-Z1F6` | `2026-10-19T15:05:24.978Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2645` | Yes (`896dbcab...`) |
 | `CYCLE-20261019-Z63Y` | `2026-10-19T15:05:31.054Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2646` | Yes (`9bd8cb4c...`) |
+| `CYCLE-20261019-6U0G` | `2026-10-19T15:11:28.624Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`c520bb2c...`) |
+| `CYCLE-20261019-6U0M` | `2026-10-19T15:11:28.630Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`eb0f2edc...`) |
+| `CYCLE-20261019-6ZCY` | `2026-10-19T15:11:35.554Z` | `bernaferrari/FigmaToCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2647` | Yes (`532c18d4...`) |
+| `CYCLE-20261019-72L9` | `2026-10-19T15:11:39.741Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`e0dd1d03...`) |
+| `CYCLE-20261019-758R` | `2026-10-19T15:11:43.179Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2648` | Yes (`49306bc6...`) |

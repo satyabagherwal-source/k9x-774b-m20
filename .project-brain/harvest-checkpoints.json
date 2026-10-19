@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T15:05:31.064Z",
+  "last_updated": "2026-10-19T15:11:43.187Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1579,14 +1579,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
-      "content_hash": "b4003197f6c2d4c692477de068cb4cb99a018fff9f17a9bfbec6758981fabad1",
-      "verified_at": "2026-10-18T04:39:47.416Z",
+      "content_hash": "c520bb2ca387f4b397696b8c90a73ad0f47bf08d7c3daaabf4b256f5cedc1586",
+      "verified_at": "2026-10-19T15:11:28.631Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:39:47.416Z"
+      "last_updated": "2026-10-19T15:11:28.631Z"
     },
     "argmaxinc/whisperkit-coreml": {
       "repository": "argmaxinc/whisperkit-coreml",
@@ -5299,14 +5299,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
-      "verified_at": "2026-10-18T23:20:37.388Z",
+      "content_hash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
+      "verified_at": "2026-10-19T15:11:39.754Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:20:37.388Z"
+      "last_updated": "2026-10-19T15:11:39.754Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7279,14 +7279,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
-      "verified_at": "2026-10-19T02:03:23.556Z",
+      "content_hash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
+      "verified_at": "2026-10-19T15:11:43.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:03:23.556Z"
+      "last_updated": "2026-10-19T15:11:43.187Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -8569,14 +8569,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
-      "verified_at": "2026-10-19T04:13:11.177Z",
+      "content_hash": "eb0f2edca2a3697f2587eccb3f9b1364595e05062b252155a8db0c3f3f0db812",
+      "verified_at": "2026-10-19T15:11:28.657Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:13:11.177Z"
+      "last_updated": "2026-10-19T15:11:28.657Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",
@@ -12387,6 +12387,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T15:05:31.063Z"
+    },
+    "bernaferrari/FigmaToCode": {
+      "repository": "bernaferrari/FigmaToCode",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-bernaferrari-figmatocode",
+      "content_hash": "532c18d46c65425c0354a0738d30aa96d57b3336f1436f860660affb45a0397d",
+      "verified_at": "2026-10-19T15:11:35.562Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T15:11:35.562Z"
     }
   },
   "repos": {

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-VOD8",
-    "timestamp": "2026-10-19T02:54:58.076Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VR4V",
-    "timestamp": "2026-10-19T02:55:01.663Z",
-    "repository": "midudev/preguntas-entrevista-react",
-    "learningId": "learn-github-midudev-preguntas-entrevista-react",
-    "contentHash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VRV9",
-    "timestamp": "2026-10-19T02:55:02.613Z",
-    "repository": "Orange-Cyberdefense/GOAD",
-    "learningId": "learn-github-orange-cyberdefense-goad",
-    "contentHash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VWA1",
-    "timestamp": "2026-10-19T02:55:08.329Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3UIP",
-    "timestamp": "2026-10-19T03:01:19.297Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "f4d8d95ee79ec5c821358da7d4450d319480fb2aa399157a4e6e600f68a84eef",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-3UPQ",
     "timestamp": "2026-10-19T03:01:19.550Z",
     "repository": "pinterest/gestalt",
@@ -7490,6 +7415,81 @@
     "repository": "maziyarpanahi/openmed",
     "learningId": "learn-github-maziyarpanahi-openmed",
     "contentHash": "9bd8cb4cc8c76ce717126a1fa0d474ce06200d581e95cb6e602414496b605320",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6U0G",
+    "timestamp": "2026-10-19T15:11:28.624Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "c520bb2ca387f4b397696b8c90a73ad0f47bf08d7c3daaabf4b256f5cedc1586",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6U0M",
+    "timestamp": "2026-10-19T15:11:28.630Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "eb0f2edca2a3697f2587eccb3f9b1364595e05062b252155a8db0c3f3f0db812",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6ZCY",
+    "timestamp": "2026-10-19T15:11:35.554Z",
+    "repository": "bernaferrari/FigmaToCode",
+    "learningId": "learn-github-bernaferrari-figmatocode",
+    "contentHash": "532c18d46c65425c0354a0738d30aa96d57b3336f1436f860660affb45a0397d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-72L9",
+    "timestamp": "2026-10-19T15:11:39.741Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-758R",
+    "timestamp": "2026-10-19T15:11:43.179Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

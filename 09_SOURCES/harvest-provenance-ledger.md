@@ -3321,3 +3321,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T15:05:24.789Z |
 | `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `af861d17` | Multi-dimensional audit evidence | 2026-10-19T15:05:24.980Z |
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `8440bdac` | Multi-dimensional audit evidence | 2026-10-19T15:05:31.057Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-19T15:11:28.626Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-19T15:11:28.652Z |
+| `learn-github-bernaferrari-figmatocode` | `https://github.com/bernaferrari/FigmaToCode` | `f5c4831d` | Multi-dimensional audit evidence | 2026-10-19T15:11:35.556Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `e78e9dde` | Multi-dimensional audit evidence | 2026-10-19T15:11:39.747Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `6782f522` | Multi-dimensional audit evidence | 2026-10-19T15:11:43.182Z |

@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "b4003197f6c2d4c692477de068cb4cb99a018fff9f17a9bfbec6758981fabad1",
-    "lastHarvestedAt": "2026-10-18T04:39:47.414Z",
+    "contentHash": "c520bb2ca387f4b397696b8c90a73ad0f47bf08d7c3daaabf4b256f5cedc1586",
+    "lastHarvestedAt": "2026-10-19T15:11:28.626Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "10f1967c",
+    "sourceVersion": "e78e9dde",
     "license": "MIT",
-    "contentHash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
-    "lastHarvestedAt": "2026-10-18T23:20:37.382Z",
+    "contentHash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
+    "lastHarvestedAt": "2026-10-19T15:11:39.747Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "22cc5d9a",
+    "sourceVersion": "6782f522",
     "license": "Apache-2.0",
-    "contentHash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
-    "lastHarvestedAt": "2026-10-19T02:03:23.552Z",
+    "contentHash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
+    "lastHarvestedAt": "2026-10-19T15:11:43.182Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "408149a277354371f531cc1efc2e372206f0942549dee86f2cc5f42954095e15",
-    "lastHarvestedAt": "2026-10-19T04:13:11.173Z",
+    "contentHash": "eb0f2edca2a3697f2587eccb3f9b1364595e05062b252155a8db0c3f3f0db812",
+    "lastHarvestedAt": "2026-10-19T15:11:28.652Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {
@@ -8238,5 +8238,15 @@
     "contentHash": "9bd8cb4cc8c76ce717126a1fa0d474ce06200d581e95cb6e602414496b605320",
     "lastHarvestedAt": "2026-10-19T15:05:31.057Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
+  },
+  "bernaferrari-figmatocode": {
+    "repository": "bernaferrari/FigmaToCode",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bernaferrari/FigmaToCode",
+    "sourceVersion": "f5c4831d",
+    "license": "GPL-3.0",
+    "contentHash": "532c18d46c65425c0354a0738d30aa96d57b3336f1436f860660affb45a0397d",
+    "lastHarvestedAt": "2026-10-19T15:11:35.556Z",
+    "learningId": "learn-github-bernaferrari-figmatocode"
   }
 }

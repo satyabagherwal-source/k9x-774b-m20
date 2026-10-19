@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T13:37:22.188Z",
+  "last_updated": "2026-10-19T15:11:39.751Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1861,6 +1861,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-trailbaseio-trailbase"
+    },
+    {
+      "id": "CD-72LJ",
+      "directive_title": "Empirical Invariant Guard in hostbackoff.go",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "e78e9dde",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-projectdiscovery-nuclei"
     }
   ]
 }

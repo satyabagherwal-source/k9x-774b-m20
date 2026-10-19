@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T15:05:31.061Z",
-  "total_cycles_completed": 3291,
-  "total_learnings_persisted": 3291,
-  "total_rules_promoted": 2442,
+  "last_updated": "2026-10-19T15:11:43.185Z",
+  "total_cycles_completed": 3296,
+  "total_learnings_persisted": 3296,
+  "total_rules_promoted": 2445,
   "history": [
-    {
-      "timestamp": "2026-10-19T09:06:40.704Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:06:47.846Z",
-      "repository": "oramasearch/orama",
-      "learningId": "learn-github-oramasearch-orama",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:12:43.274Z",
-      "repository": "pamburus/hl",
-      "learningId": "learn-github-pamburus-hl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:12:48.215Z",
-      "repository": "linkwarden/linkwarden",
-      "learningId": "learn-github-linkwarden-linkwarden",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:12:49.480Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T09:12:56.330Z",
       "repository": "databendlabs/databend",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T15:05:31.061Z",
       "repository": "maziyarpanahi/openmed",
       "learningId": "learn-github-maziyarpanahi-openmed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:11:28.629Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:11:28.655Z",
+      "repository": "franken-ui/ui",
+      "learningId": "learn-github-franken-ui-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:11:35.560Z",
+      "repository": "bernaferrari/FigmaToCode",
+      "learningId": "learn-github-bernaferrari-figmatocode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:11:39.752Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:11:43.185Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
