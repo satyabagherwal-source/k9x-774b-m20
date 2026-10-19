@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:31:57.103Z",
+  "last_updated": "2026-10-19T15:35:04.650Z",
   "total_verified_learnings": 843,
-  "total_canonical_rules": 1689,
-  "total_dossiers": 1528,
+  "total_canonical_rules": 2660,
+  "total_dossiers": 1529,
   "items": {
     "learn-github-0x4m4-hexstrike-ai": {
       "learning_id": "learn-github-0x4m4-hexstrike-ai",
@@ -88880,6 +88880,25 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:31:57.092Z"
+    },
+    "learn-local-ict-trading-indicator": {
+      "learning_id": "learn-local-ict-trading-indicator",
+      "category": "PROJECT_LEARNING_DOSSIER",
+      "repository": "local/ICT-trading-indicator",
+      "slug": "ict-trading-indicator",
+      "platform": "local",
+      "source_url": "c:/ICT trading indicator",
+      "source_version": "HEAD",
+      "dossier_path": "07_PROJECT_LEARNING/ict-trading-indicator-learnings.md",
+      "promoted_rules": [
+        2658,
+        2659,
+        2660
+      ],
+      "status": "VERIFIED_PROMOTED",
+      "verification_status": "VERIFIED",
+      "verified": true,
+      "verified_at": "2026-10-19T15:35:04.651Z"
     }
   },
   "aliases": {
