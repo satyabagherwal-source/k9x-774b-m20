@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `a46af5dd`  
+> **Source Version**: `02ebdf27`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:01:09.967Z  
+> **Timestamp**: 2026-10-19T03:01:38.373Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:01:09.959Z  
+> **Harvest Timestamp**: 2026-10-19T03:01:38.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,213 +1799,505 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a46af5dd` (2026-10-19)
-**Commit Message**: feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (#274)
+### Incident Patch 1: `02ebdf27` (2026-10-19)
+**Commit Message**: feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (#275)
 
-* feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute
+* feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI
 
-The agent may now submit a paid_usdc compute job on an owner turn when
-compute.paid.enabled is on and the coordinator offers paid work; the job
-stops at awaiting_payment and its quote becomes a review hold. Nothing the
-agent can call funds it.
+Memory (§4.7): every finished job the agent or owner started becomes an
+`episode` chunk (compute/episode/<job>, one per job and outcome), emitted
+by the watcher on both the live and the reconcile path and written by the
+default agent's memory manager, which registers the sink on build and hands
+it back on close. The working-memory synthesis receives a compute block
+over the last 7 days from the local ledger and delivery tables (pools and
+trust, jobs consumed per origin and outcome, embedding batches by route and
+class, paid jobs funded) as soon as there is any activity, and The Niche
+instructions ask for it; a node without compute gets no block.
 
-Funding runs through one path, approveComputeFunding in
-src/compute/awareness/payment.ts: re-quote, bind to the quote hash the
-approver saw, already-funded and in-flight guards from the compute ledger,
-mint an approval token (refusing agent and internal origins, chat replies,
-backend-mode internal connections, missing operator.admin/approvals scope,
-paid off, per-job and rolling daily caps), verify it without consuming,
-then call the backend's fund() inside the spend gate as an rpc spend. The
-backend's signer verifies and consumes the token itself. Every exit is a
-row in compute_payment_events and a consideration; doctor reports the week
-under "Compute payments" and treats an agent-origin refusal as an error.
+Owner surfaces: compute.status and compute.jobs (operator.read),
+compute.pause (admin, optional backend.pauseWorker) and compute.trust
+(admin; writes compute.pools.<id>.trust into the resolved config file,
+refuses an invalid or missing config, forbidden keys and the local pool).
+`bitterbot compute` gains status, jobs, pause and 
 
-Surfaces: compute.quote (operator.read) and 
-
-**File**: `docs/cli/compute.md` (added, +51/-0)
+**File**: `docs/cli/compute.md` (modified, +22/-4)
 ```diff
-@@ -0,0 +1,51 @@
-+---
-+summary: "CLI reference for `bitterbot compute` (quote and approve paid compute jobs)"
-+read_when:
-+  - A paid compute job is waiting for payment and you want to fund it from the terminal
-+  - You want to see what a paid job would cost before approving it
-+title: "compute"
-+---
+@@ -8,24 +8,42 @@ title: "compute"
+ 
+ # `bitterbot compute`
+ 
+-The owner's terminal surface for paid compute (PLAN-57). The agent can
+-quote and, where paid compute is enabled, submit a paid job; only you can
+-fund one. These commands hold an admin connection to the gateway, and the
+-funding is bound to that connection.
++The owner's terminal surface for compute pools (PLAN-57). `status` and
++`jobs` show what the agent sees. `quote` and `approve` handle a paid job:
++the agent can quote and, where paid compute is enabled, submit one; only
++you can fund it, and the funding is bound to the admin connection these
++commands hold. `pause` rests one of this node's workers; `trust` decides
++what memory may reach a pool.
+ 
+ Related:
+ 
+ - The agent's tool and the paid path: [compute](/tools/compute)
++- The network view, trust model and every setting: [Compute pools](/network/compute)
+ - Holds in the review queue: [Action review](/tools/action-review)
+ 
+ ## Commands
+ 
+ ```bash
++bitterbot compute status                   # pools, workers, credits, jobs in flight
++bitterbot compute jobs [--limit 20] [--status running]
+ bitterbot compute quote <jobId>            # what the job is waiting for
+ bitterbot compute approve <jobId>          # show the quote; nothing funded
+ bitterbot compute approve <jobId> --yes    # fund it at the quoted amount
++bitterbot compute pause <workerId>         # pause one of this node's workers
++bitterbot compute pause <workerId> --resume
++bitterbot compute trust <poolId> trusted   # or untrusted
+ ```
+ 
++`status` prints the coordinator's reachability, credits, each pool with its
++trust (and your configured trust when it differs from what the coordinator
++reports), each worker's state and pinned model, the jobs in flight, and
++whether paid jobs are enabled and offered. `jobs` lists recent jobs with
++their outcome and verification level.
 +
-+# `bitterbot compute`
++`pause` and `trust` need `operator.admin`. `trust` writes
++`compute.pools.<poolId>.trust`; the egress policy reads it when the memory
++system starts, so it applies after the next gateway restart.
 +
-+The owner's terminal surface for paid compute (PLAN-57). The agent can
-+quote and, where paid compute is enabled, submit a paid job; only you can
-+fund one. These commands hold an admin connection to the gateway, and the
-+funding is bound to that connection.
-+
-+Related:
-+
-+- The agent's tool and the paid path: [compute](/tools/compute)
-+- Holds in the review queue: [Action review](/tools/action-review)
-+
-+## Commands
-+
-+```bash
-+bitterbot compute quote <jobId>            # what the job is waiting for
-+bitterbot compute approve <jobId>          # show the quote; nothing funded
-+bitterbot compute approve <jobId> --yes    # fund it at the quoted amount
-+```
-+
-+`quote` prints the amount, the payee, how long the quote is valid, whether
-+the agent's hold for this job is pending in the review queue, and whether
-+the paid path or the per-job cap would refuse it.
-+
-+`approve` without `--yes` prints the same and stops with "Nothing funded".
-+With `--yes` it calls `compute.approve`, which mints the approval token for
-+this job and exact quote, funds the job through the spend gate and settles
-+the pending hold, if any. The transaction hash is printed.
-+
-+Every command takes `--url`, `--token`, `--password`, `--timeout <ms>` and
-+`--json`.
-+
-+## What can refuse
-+
-+The signer, not the CLI, decides. It refuses when paid compute is off
-+(`compute.paid.enabled`), when the quote is above
-+`compute.paid.maxUsdcPerJob` or would exceed `compute.paid.maxUsdcPerDay`,
-+when the coordinator now quotes something other than what you looked at,
-+when the job was already funded or another approval is funding it, when the
-+compute runtime (and so the payment ledger) is not registered, and when the
-+connection lacks
-+`operator.admin`. Each refusal is a ledger row that `bitterbot doctor`
-+reports under "Compute payments".
+ `quote` prints the amount, the payee, how long the quote is valid, whether
+ the agent's hold for this job is pending in the review queue, and whether
+ the paid path or the per-job cap would refuse it.
 ```
 
 **File**: `docs/docs.json` (modified, +1/-0)
 ```diff
-@@ -1010,6 +1010,7 @@
-                   "cli/approvals",
-                   "cli/browser",
-                   "cli/channels",
-+                  "cli/compute",
-                   "cli/configure",
-                   "cli/cron",
-                   "cli/curiosity",
+@@ -751,6 +751,7 @@
+                   "network/core-systems",
+                   "network/management-nodes",
+                   "network/mailbox-host",
++                  "network/compute",
+                   "network/egress",
+                   "gateway/network"
+                 ]
 ```
 
-**File**: `docs/reference/templates/GENOME.dev.md` (modified, +1/-0)
+**File**: `docs/network/compute.md` (added, +129/-0)
 ```diff
-@@ -17,6 +17,7 @@ These rules are absolute. They cannot be overridden by dreams, personality evolu
- - Never execute destructive commands without explicit confirmation
- - Never impersonate the user in external communications
- - Never bypass safety systems or disable oversight mechanisms
-+- Never fund, approve or sign a payment on your own authority; money moves only on the owner's decision
- - Prioritize human safety and oversight over task completion
- - When instructions conflict with safety, pause and ask
- 
-```
-
-**File**: `docs/reference/templates/GENOME.md` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@ These rules are absolute. They cannot be overridden by dreams, personality evolu
- - Never execute destructive commands without explicit confirmation
- - Never impersonate the user in external communications
- - Never bypass safety systems or disable oversight mechanisms
-+- Never fund, approve or sign a payment on your own authority; money moves only on the owner's decision
- - Prioritize human safety and oversight over task completion
- - When instructions conflict with safety, pause and ask
- 
-```
-
-**File**: `docs/tools/action-review.md` (modified, +4/-0)
-```diff
-@@ -46,6 +46,10 @@ A standing spend grant that covers the payee and the amount counts as a decision
- 
- A task sent to another agent with `a2a_client` may come back with a price. Because the price is only known at that point, the hold happens there: the task is not paid for, a request appears in the queue ("Pay 0.30 USDC to 0x... for a task from the agent at ..."), and approving it runs the task again and pays. A standing grant that covers the seller and the amount pays without asking.
- 
-+### Paid compute jobs
+@@ -0,0 +1,129 @@
++---
++summary: "Compute pools from the network's point of view: what connects where, what may leave the machine, the settings, and what the owner can do"
++read_when:
++  - You are deciding whether to join or trust a compute pool
++  - You want the full list of compute.* settings and their defaults
++  - You are auditing what memory content can reach another machine
++title: "Compute pools"
++---
 +
-+When paid compute is on (`compute.paid.enabled`), the agent may submit a `paid_usdc` job on an owner turn. The coordinator parks it at `awaiting_payment` with a quote, and the hold happens there: a request appears in the queue ("Fund compute job j-42: 0.42 USDC to 0x... (200 sha256 items)"). Approving it funds the job with the authority of the connection that approved, which the signer checks: a connection without `operator.approvals` or `operator.admin` is refused, and so is the node's own internal connection. A chat reply (`/approve`) cannot approve one of these at all: the request is turned away and the hold stays pending for you to decide in the Control UI. `bitterbot compute approve <job>` funds the same job from the terminal and settles the hold. See [Paid jobs and who pays](/tools/compute#paid-jobs-and-who-pays).
++# Compute pools
 +
- ### What is not held
- 
- Payouts of money already owed to other people (skill royalties, bounty rewards) go out without waiting for you. They pass through the same spend gate as everything else: the per-transaction and daily limits apply, each one is recorded, and you get a notice when a batch goes out or when one is waiting because it is above your per-transaction limit.
++A compute pool is a set of machines that run batches of work for each
++other: SHA-256 batches and text embeddings on a pinned model today. This
++node can run its own work locally, send it to a private pool of machines
++you trust, to a collective pool shared with a group, or (when paid compute
++is on) to a paid job the owner funds. The agent knows which pools exist,
++what they cost and when its work finishes ([the compute tool](/tools/compute)).
++This page is the owner's view: the network, the trust model, the settings
++and the controls.
++
++## What connects where
++
++The coordinator and workers are run by the Soapbox plugin, which registers
++the compute backend with the gateway. Nothing here dials out until that
++plugin is configured with a coordinator; a node without one spends no
++tokens and opens no connections for compute. The coordinator URL and every
++pool endpoint are listed in [What this node connects to](/network/egress).
++
++- The gateway polls the coordinator for job status only while a job it
++  started is in flight, with backoff, and stops when idle.
++- Results come back through the coordinator; the agent reads them with the
++  `compute` tool. Results over 20,000 characters are written to
++  `<workspace>/compute/<job id>.json`.
++- Nothing secret reaches the agent: tokens, RPC URLs, escrow addresses and
++  wallet details are stripped from the snapshot it sees.
++
++## Trust and what may leave the machine
++
++Memory governance tags every chunk `normal`, `personal` or `confidential`.
++The egress policy decides which pool trust each class may reach:
++
++| content class  | may run on                                  |
++| -------------- | ------------------------------------------- |
++| `confidential` | this machine only                           |
++| `personal`     | this machine and pools you marked `trusted` |
++| `normal`       | any pool, including `untrusted` ones        |
++
++Every pool you join is `untrusted` until you say otherwise. Session
++transcripts default to `personal` (`compute.egress.transcriptsDefaultClass`).
++The policy is enforced in the embedding provider itself and again in the
++pool routing; a batch that would cross a line runs locally and is recorded
++as a policy violation for `bitterbot doctor`.
++
++To raise or lower a pool's trust:
++
++```bash
++bitterbot compute trust <pool-id> trusted
++bitterbot compute trust <pool-id> untrusted
++```
++
++This writes `compute.pools.<pool-id>.trust` and applies to new embedding
++batches after the next gateway restart.
++
++## The owner's controls
++
++```bash
++bitterbot compute status                 # pools, workers, credits, jobs in flight
++bitterbot compute jobs [--limit 20] [--status running]
++bitterbot compute quote <job>            # what a paid job is waiting for
++bitterbot compute approve <job> --yes    # fund it (owner only)
++bitterbot compute pause <worker>         # rest one of this node's workers
++bitterbot compute pause <worker> --resume
++bitterbot compute trust <pool> trusted|untrusted
++```
++
++Reading methods (`compute.status`, `compute.jobs`, `compute.quote`) need
++`operator.read`; `compute.approve`, `compute.pause` and `compute.trust`
++need `operator.admin`. See [bitterbot compute](/cli/compute).
++
++## Money
++
++Paid jobs are off by default. When `compute.paid.enabled` is on and the
++coordinator offers paid work to this node, the agent may submit a paid job;
++it waits at `awaiting_payment` until you approve it in the review queue or
++with `bitterbot compute approve`. The signer refuses anything that is not an
++authenticated owner decision for an exact quote inside the caps. The full
++rules and refusal reasons are in
++[Paid jobs and who pays](/tools/compute#paid-jobs-and-who-pays).
++
++## What memory keeps
++
++- Every finished job the agent or you started becomes an `episode` chunk
++  ("Compute job j-42 (sha256 x200, private in lab on worker w1) succeeded, recorded ... UTC; started by the agent"),
++  so "what did the pool run for me last week" is answerable from memory.
++  The node's own embedding batches are not episodes.
++- Every dream cycle's working-memory rewrite receives a compute block over
++  the last 7 days (pools and their trust, jobs consumed and how they went,
++  embedding batches routed and where, paid jobs funded) as soon as there is
++  any compute activity, and The Niche section reflects it. A node with no
++  pools and no routed batches gets no block and pays no tokens for it. The
++  success rate counts succeeded against succeeded, failed and expired jobs.
++- Episodes are written to the default agent's mem
 ```
 
-**File**: `docs/tools/compute.md` (modified, +99/-14)
+**File**: `docs/network/egress.md` (modified, +18/-0)
 ```diff
-@@ -60,7 +60,7 @@ names the actions, and sets four rules:
-    is not a proof; `redundant` means a second worker agreed.
- 3. Personal and confidential memory never leaves this machine.
- 4. The agent may quote a paid job; only the owner funds it. A paid job waits
--   at `awaiting_payment` until the owner approves it in the Compute tab or
-+   at `awaiting_payment` until the owner approves it in the Control UI or
-    on the command line.
+@@ -173,6 +173,24 @@ not change the default.
+   the store fetches to identify the agent. No card or account details.
+ - **Off switch:** `shop.enabled: false`.
  
- The section carries no numbers, so it sits in the cached part of the prompt
-@@ -133,16 +133,19 @@ use (those jobs are recorded with origin `internal`).
- On an owner turn, and only when the node's backend supports it, the tool
- also offers:
++## 9. Compute pools (runtime, only with a coordinator configured)
++
++- **When:** only when the Soapbox plugin is configured with a coordinator
++  and this node has joined a pool, started a job, or routed a memory
++  embedding batch to a pool worker. A node with no coordinator opens nothing.
++- **Where:** the coordinator URL the plugin is configured with, and the
++  pool's workers through it. The local pool is loopback only.
++- **What:** job specs (hashes to compute, or the texts of memory chunks to
++  embed), job status polls while a job is in flight, and results. Which
++  memory content may leave the machine is decided by the egress policy in
++  [Compute pools](/network/compute): `confidential` never, `personal` only to
++  pools you marked `trusted`, `normal` to any pool. Paid jobs additionally
++  reach the settlement network the coordinator names, only after you approve
++  the quote.
++- **Off switch:** `compute.enabled: false` (everything), or
++  `compute.embeddings.provider: "local"` (memory stays local, the tool
++  remains).
++
+ ## Everything else is opt-in
  
--| action   | what it does                                                                                                                                                                                                                                                                                                              |
--| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
--| `submit` | run a batch on a `private` pool or a `collective` project: `mode`, `scope` (pool or project id), `workload`, `inputs` (1 to 128 strings, 256 KiB total), and for embeddings `model` and `model_digest`. Optional `task_id` links the job to a long-horizon task; optional `reason` is recorded on it. Returns the job id. |
--| `cancel` | cancel a job this agent started. `job_id`. Jobs started by the owner or by the memory system cannot be cancelled from here.                                                                                                                                                                                               |
-+| action   | what it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-+| `submit` | run a batch on a `private` pool or a `collective` project: `mode`, `scope` (pool or project id), `workload`, `inputs` (1 to 128 strings, 256 KiB total), and for embeddings `model` and `model_digest`. Optional `task_id` links the job to a long-horizon task; optional `reason` is recorded on it. Returns the job id. Where paid compute is enabled, `mode: paid_usdc` with `max_cost_usdc` and no `scope` submits a paid job that waits for the owner (see [Paid jobs](#paid-jobs-and-who-pays)). |
-+| `cancel` | cancel a job this agent started. `job_id`. Jobs started by the owner or by the memory system cannot be cancelled from here.                                                                                                                                                                                                                                                                                                                                                                            |
- 
- Rules the code enforces, not the prompt:
- 
- - Non-owner turns get a refusal before anything reaches the coordinator.
--- `paid` and `paid_usdc` are rejected. The agent can quote a paid job with
--  `estimate`; only the owner submits and funds paid work.
-+- `paid` (credits) is rejected. `paid_usdc` is accepted only when
-+  `compute.paid.enabled` is on and the coordinator offers paid work to this
-+  node; the job then stops at `awaiting_payment` and the owner decides (see
-+  [Paid jobs](#paid-jobs-and-who-pays)). Otherwise the agent can quote a
-+  paid job with `estimate` and nothing more.
- - Inputs are validated gateway-side (count, size, embedding model present)
-   before the coordinator sees them; the coordinator's limits are the second
-   line.
-@@ -239,12 +242,81 @@ bitterbot memory migrate-embeddings --yes    # rebuilds under the new profile
- `bitterbot memory index --force` does the same rebuild. Both re-embed every
- chunk, so on a large index expect the same time a
+ Web search (Brave/Tavily/Perplexity/xAI/Serply with your key; Parallel Search MCP at
 ```
 
-**File**: `scripts/check-payment-paths.mjs` (modified, +4/-0)
+**File**: `docs/tools/compute.md` (modified, +16/-0)
 ```diff
-@@ -34,6 +34,10 @@ const SPEND_ALLOW = new Set([
-   "src/gateway/server-methods/wallet.ts", // the wallet gateway RPC (pay_for_resource)
-   "src/memory/manager.ts", // PLAN-8 revenue/bounty payout dispatch (markPaymentProcessed)
-   "src/payments/ap2/gate.ts", // the spend gate: wraps the service's two paying methods
-+  // PLAN-57 §4.8: the one path that funds a paid compute job. The call is on a
-+  // wallet returned by gatedWallet(), so the gate records and limits it; the
-+  // wallet underneath is the backend's fund() behind a verified approval token.
-+  "src/compute/awareness/payment.ts",
- ]);
+@@ -304,6 +304,22 @@ still approve it from the Control UI or the CLI. Denying from chat works.
+ payments". An `agent_origin` refusal is an error there: nothing moved, but
+ something tried.
  
- // Pattern C (PLAN-53 C0): a wallet that pays must be one the spend gate
++## What memory keeps
++
++Every finished job the agent or the owner started becomes an `episode`
++chunk in memory ("Compute job j-42 (sha256 x200, private in lab on worker
++w1) succeeded, recorded 2026-10-18 14:02 UTC; started by the agent."),
++written when the watcher delivers the completion (after a gateway outage,
++when it reconciles), so later questions about what the pool ran are
++answered from memory rather than from the coordinator. The node's own
++embedding batches are never episodes, and only the first clause of a
++coordinator error is kept. Episodes go to the default agent's memory. The dream cycle's
++working-memory rewrite also receives a compute block built from the ledger
++(pools and trust, jobs consumed and their outcomes, embedding batches by
++route and class, paid jobs funded), which The Niche section reflects; a
++node with no compute activity gets no block. See
++[Compute pools](/network/compute).
++
+ ## What the agent can never do
+ 
+ There is no action that funds, approves or signs anything. The paid path
 ```
 
-**File**: `src/agents/system-prompt.compute.test.ts` (modified, +1/-1)
+**File**: `src/agents/tools/compute-tool.ts` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,7 @@ describe("compute section in the system prompt", () => {
-     expect(prompt).toContain("never guess counts");
-     expect(prompt).toContain("shape_only_trusted_worker");
-     expect(prompt).toContain("Personal and confidential memory never leaves this machine");
--    expect(prompt).toContain("only the owner funds it");
-+    expect(prompt).toContain("You cannot fund, approve or sign a payment");
+@@ -548,7 +548,7 @@ export function isInFlight(status: string): boolean {
+   return status === "queued" || status === "running" || status === "settlement_pending";
+ }
+ 
+-function renderJob(j: ComputeJobSummary) {
++export function renderJob(j: ComputeJobSummary) {
+   return {
+     id: j.id,
+     status: j.status,
+```
+
+**File**: `src/cli/compute-cli.test.ts` (modified, +80/-1)
+```diff
+@@ -1,5 +1,11 @@
+ import { describe, expect, it } from "vitest";
+-import { type ComputeQuoteView, describeQuote } from "./compute-cli.js";
++import {
++  type ComputeQuoteView,
++  type ComputeStatusView,
++  describeJobs,
++  describeQuote,
++  describeStatus,
++} from "./compute-cli.js";
+ 
+ const view = (over: Partial<ComputeQuoteView> = {}): ComputeQuoteView => ({
+   jobId: "j-42",
+@@ -38,3 +44,76 @@ describe("bitterbot compute: describeQuote", () => {
+     ).toContain("per-job cap");
    });
+ });
++
++describe("bitterbot compute: describeStatus and describeJobs", () => {
++  const status: ComputeStatusView = {
++    backend: true,
++    reachable: true,
++    as_of: "2026-10-18T14:00:00.000Z",
++    settlement: "base-sepolia",
++    credits: { available: 42, reserved: 0, currency: "TEST_CREDIT" },
++    pools: [
++      {
++        id: "lab",
++        kind: "private",
++        trust: "untrusted",
++        configured_trust: "trusted",
++        workers_online: 1,
++        workers_total: 2,
++        gpu_workers_online: 1,
++      },
++    ],
++    workers: [{ id: "w1", online: true, paused: true, gpu: true, model: "nomic" }],
++    jobs_in_flight: [{ id: "j1", status: "running", workload: "sha256", items: 3 }],
++    paid: { enabled: false, available: true, maxUsdcPerJob: 5, maxUsdcPerDay: 20 },
++    runtime: false,
++  };
++
++  it("prints pools, workers, jobs and the paid flags one per line", () => {
++    const lines = describeStatus(status);
++    expect(lines[0]).toContain("Coordinator: reachable");
++    expect(lines).toContain(
++      "  lab  private, untrusted, configured trusted, 1/2 workers online (1 GPU)",
++    );
++    expect(lines).toContain("  w1  paused, GPU, model nomic");
++    expect(lines.some((l) => l.startsWith("Jobs in flight: j1 (running, sha256 x3)"))).toBe(true);
++    expect(lines.some((l) => l.includes("off (compute.paid.enabled)"))).toBe(true);
++    expect(lines.at(-1)).toContain("no compute runtime is registered");
++    expect(describeStatus({ ...status, backend: false })[0]).toContain("No compute backend");
++  });
++
++  it("lists jobs compactly", () => {
++    expect(describeJobs([])).toEqual(["No jobs."]);
++    expect(
++      describeJobs([
++        {
++          id: "j1",
++          status: "succeeded",
++          mode: "private",
++          scope: "lab",
++          workload: "sha256",
++          items: 3,
++          worker: "w1",
++          verification: "recomputed",
++          error: null,
++          awaiting_usdc: null,
++        },
++        {
++          id: "j2",
++          status: "awaiting_payment",
++          mode: "paid_usdc",
++          scope: null,
++          workload: "embeddings",
++          items: 8,
++          worker: null,
++          verification: null,
++          error: null,
++          awaiting_usdc: 0.5,
++        },
++      ]),
++    ).toEqual([
++      "j1  succeeded  private lab  sha256 x3 on w1, recomputed",
++      "j2  awaiting_payment  paid_usdc  embeddings x8, awaiting 0.5 USDC",
++    ]);
++  });
++});
+```
+
+**File**: `src/cli/compute-cli.ts` (modified, +206/-6)
+```diff
+@@ -1,9 +1,10 @@
+ /**
+- * `bitterbot compute` (PLAN-57 §4.8): the owner's terminal surface for paid
+- * compute. `quote` shows what a job is waiting for; `approve` funds it. The
+- * CLI holds an admin connection, so `compute.approve` binds the funding to
+- * that authority; the agent has no equivalent. Phase 5 adds status, jobs,
+- * pause and trust here.
++ * `bitterbot compute` (PLAN-57 Phases 4 and 5): the owner's terminal surface
++ * for compute pools. `status` and `jobs` show what the agent sees; `quote`
++ * and `approve` handle a paid job (the CLI holds an admin connection, so
++ * `compute.approve` binds the funding to that authority; the agent has no
++ * equivalent); `pause` rests one of this node's workers; `trust` sets what
++ * memory may reach a pool.
+  */
  
-   it("is absent in minimal (subagent) mode", () => {
+ import type { Command } from "commander";
+@@ -94,10 +95,209 @@ export function describeQuote(view: ComputeQuoteView): string[] {
+   return lines;
+ }
+ 
++export type ComputeStatusView = {
++  backend: boolean;
++  reachable: boolean;
++  as_of?: string;
++  settlement?: string | null;
++  credits?: { available: number; reserved: number; currency: string } | null;
++  pools: Array<{
++    id: string;
++    kind: string;
++    trust: string;
++    configured_trust?: string;
++    workers_online: number;
++    workers_total: number;
++    gpu_workers_online: number;
++  }>;
++  workers: Array<{
++    id: string;
++    online: boolean;
++    paused: boolean;
++    gpu: boolean;
++    model: string | null;
++  }>;
++  jobs_in_flight: Array<{ id: string; status: string; workload: string; items: number }>;
++  paid?: { enabled: boolean; available: boolean; maxUsdcPerJob: number; maxUsdcPerDay: number };
++  runtime?: boolean;
++};
++
++export type ComputeJobView = {
++  id: string;
++  status: string;
++  mode: string;
++  scope: string | null;
++  workload: string;
++  items: number;
++  worker: string | null;
++  verification: string | null;
++  error: string | null;
++  awaiting_usdc: number | null;
++};
++
++/** The status a person reads: one line per pool and worker, then what is running. */
++export function describeStatus(view: ComputeStatusView): string[] {
++  if (!view.backend) {
++    return ["No compute backend is loaded on this node (the Soapbox plugin registers one)."];
++  }
++  const lines: string[] = [];
++  lines.push(
++    `Coordinator: ${view.reachable ? "reachable" : "unreachable"}${view.as_of ? ` (as of ${view.as_of})` : ""}${view.settlement ? `, settlement ${view.settlement}` : ""}`,
++  );
++  if (view.credits) {
++    lines.push(
++      `Credits: ${view.credits.available} available, ${view.credits.reserved} reserved (${view.credits.currency})`,
++    );
++  }
++  if (view.pools.length === 0) {
++    lines.push("Pools: none joined (local machine only).");
++  } else {
++    lines.push("Pools:");
++    for (const p of view.pools) {
++      const trust =
++        p.configured_trust && p.configured_trust !== p.trust
++          ? `${p.trust}, configured ${p.configured_trust}`
++          : p.trust;
++      lines.push(
++        `  ${p.id}  ${p.kind}, ${trust}, ${p.workers_online}/${p.workers_total} workers online (${p.gpu_workers_online} GPU)`,
++      );
++    }
++  }
++  if (view.workers.length > 0) {
++    lines.push("Workers:");
++    for (const w of view.workers) {
++      const state = w.paused ? "paused" : w.online ? "online" : "offline";
++      lines.push(
++        `  ${w.id}  ${state}${w.gpu ? ", GPU" : ""}${w.model ? `, model ${w.model}` : ""}`,
++      );
++    }
++  }
++  lines.push(
++    view.jobs_in_flight.length === 0
++      ? "Jobs in flight: none."
++      : `Jobs in flight: ${view.jobs_in_flight.map((j) => `${j.id} (${j.status}, ${j.workload} x${j.items})`).join(", ")}`,
++  );
++  if (view.paid) {
++    lines.push(
++      `Paid jobs: ${view.paid.enabled ? "enabled" : "off (compute.paid.enabled)"}, ${view.paid.available ? "offered by the coordinator" : "not offered to this node"}; caps ${view.paid.maxUsdcPerJob} USDC per job, ${view.paid.maxUsdcPerDay} per day`,
++    );
++  }
++  if (view.runtime === false) {
++    lines.push(
++      "Note: no compute runtime is registered; the agent cannot submit and nothing is delivered.",
++    );
++  }
++  return lines;
++}
++
++export function describeJobs(jobs: ComputeJobView[]): string[] {
++  if (jobs.length === 0) {
++    return ["No jobs."];
++  }
++  return jobs.map((j) => {
++    const scope = j.scope ? ` ${j.scope}` : "";
++    const worker = j.worker ? ` on ${j.worker}` : "";
++    const ver = j.verification ? `, ${j.verification}` : "";
++    const usdc = j.awaiting_usdc !== null ? `, awaiting ${j.awaiting_usdc} USDC` : "";
++    const err = j.error ? `, error: ${j.error}` : "";
++    return `${j.id}  ${j.status}  ${j.mode}${scope}  ${j.workload} x${j.items}${worker}${ver}${usdc}${err}`;
++  });
++}
++
+ export function registerComputeCli(program: Command) {
+   const compute = program
+     .command("compute")
+-    .description("Compute pools: quotes and approvals for paid jobs");
++    .description("Compute pools: status, jobs, paid-job approvals, worker pause and 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #275** (2026-10-19): feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (@VGIL77)
 - **PR #274** (2026-10-19): feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (@VGIL77)
 - **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
 - **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
 - **PR #270** (2026-10-18): feat(compute): PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery (@VGIL77)
 - **PR #268** (2026-10-18): feat(compute): PLAN-57 Phase 0, the read-only compute tool and its prompt section (@VGIL77)
-- **PR #266** (2026-10-17): ci(installer): run the PATH and sudo steps in test mode against the local fake releases (@VGIL77)
 
 ---
 
@@ -2025,13 +2317,13 @@ Surfaces: compute.quote (operator.read) and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid com
+## X. compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the own
 
 **RULE**:
 When implementing operations in `docs/cli/compute.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a46af5dd`: compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (#274). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02ebdf27`: compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (#275). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/compute.md`.
@@ -2039,46 +2331,36 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-summary: "CLI reference for `bitterbot compute` (quote and approve paid compute jobs)"
-read_when:
-  - A paid compute job is waiting for payment and you want to fund it from the terminal
-  - You want to see what a paid job would cost before approving it
-title: "compute"
----
+The owner's terminal surface for compute pools (PLAN-57). `status` and
+`jobs` show what the agent sees. `quote` and `approve` handle a paid job:
+the agent can quote and, where paid compute is enabled, submit one; only
+you can fund it, and the funding is bound to the admin connection these
+commands hold. `pause` rests one of this node's workers; `trust` decides
+what memory may reach a pool.
+- The network view, trust model and every setting: [Compute pools](/network/compute)
+bitterbot compute status                   # pools, workers, credits, jobs in flight
+bitterbot compute jobs [--limit 20] [--status running]
+bitterbot compute pause <workerId>         # pause one of this node's workers
+bitterbot compute pause <workerId> --resume
+bitterbot compute trust <poolId> trusted   # or untrusted
+`status` prints the coordinator's reachability, credits, each pool with its
+trust (and your configured trust when it differs from what the coordinator
+reports), each worker's state and pinned model, the jobs in flight, and
+whether paid jobs are enabled and offered. `jobs` lists recent jobs with
+their outcome and verification level.
 
-# `bitterbot compute`
-
-The owner's terminal surface for paid compute (PLAN-57). The agent can
-quote and, where paid compute is enabled, submit a paid job; only you can
-fund one. These commands hold an admin connection to the gateway, and the
-funding is bound to that connection.
-
-Related:
-
-- The agent's tool and the paid path: [compute](/tools/compute)
-- Holds in the review queue: [Action review](/tools/action-review)
-
-## Commands
-
-```bash
-bitterbot compute quote <jobId>            # what the job is waiting for
-bitterbot compute approve <jobId>          # show the quote; nothing funded
-bitterbot compute approve <jobId> --yes    # fund it at the quoted amount
-```
-
-`quote` prints the amount, the payee, how long the quote is valid, whether
-the agent's hold for this job is pending in the review queue, and whether
-the paid path or the per-job cap would refuse it.
-
-`approve` without `--yes` prints the same and stop
+`pause` and `trust` need `operator.admin`. `trust` writes
+`compute.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The owner's terminal surface for paid compute (PLAN-57). The agent can
+quote and, where paid compute is enabled, submit a paid job; only you can
+fund one. These commands hold an admin connection to the gateway, and the
+funding is bound to that connection.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a46af5dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02ebdf27` are properly handled with clean fallback behavior.

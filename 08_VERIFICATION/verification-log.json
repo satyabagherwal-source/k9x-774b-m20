@@ -1,110 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-XOSG",
-    "timestamp": "2026-10-17T22:00:55.744Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "da4322f4df4939f811c7020fa499dfefbb0e5f645583a0566e76b6c5841a192b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-2WI9",
-    "timestamp": "2026-10-17T22:04:59.025Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-8JMN",
-    "timestamp": "2026-10-17T22:09:22.271Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "6635a7accf735734ac1c846e25b74b0075b12e05c1758ddc0cafc837133cc740",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-CQCK",
-    "timestamp": "2026-10-17T22:12:37.604Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "8e5b6de583a6f513cec0599d23abaf2d31268e9e8e0b0a94b1b327450ba42822",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-HAAM",
-    "timestamp": "2026-10-17T22:16:10.078Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "6bb110832c9d84e5a14522a7a52448e5d01b26d2412ea34aaa9931a9ef996ace",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-LCX9",
-    "timestamp": "2026-10-17T22:19:20.109Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "299a72472186bb40e4791c9157ad07a99a9ac6d938e1b84e2c6fc1110a453692",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-Q82V",
-    "timestamp": "2026-10-17T22:23:07.111Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-UCAA",
     "timestamp": "2026-10-17T22:26:19.186Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7385,111 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3UIP",
+    "timestamp": "2026-10-19T03:01:19.297Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "f4d8d95ee79ec5c821358da7d4450d319480fb2aa399157a4e6e600f68a84eef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3UPQ",
+    "timestamp": "2026-10-19T03:01:19.550Z",
+    "repository": "pinterest/gestalt",
+    "learningId": "learn-github-pinterest-gestalt",
+    "contentHash": "9ac3883290df3cfa948cc68d3480f749d1d8895ef32a346f89b44ae426953cb1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3WE2",
+    "timestamp": "2026-10-19T03:01:21.722Z",
+    "repository": "tokio-rs/console",
+    "learningId": "learn-github-tokio-rs-console",
+    "contentHash": "8f1a92773f1a327af6911ca8c2ae4dcabf980e87b32ad6af6ee8a07311842308",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-41ZI",
+    "timestamp": "2026-10-19T03:01:28.974Z",
+    "repository": "fangwei716/30-days-of-react-native",
+    "learningId": "learn-github-fangwei716-30-days-of-react-native",
+    "contentHash": "ecd42b343c2558f7eff5fd867431bd5e6c5936fc7fa557c15581f990625dda0c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-42JX",
+    "timestamp": "2026-10-19T03:01:29.709Z",
+    "repository": "bridgecrewio/checkov",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-462M",
+    "timestamp": "2026-10-19T03:01:34.270Z",
+    "repository": "apache/zookeeper",
+    "learningId": "learn-github-apache-zookeeper",
+    "contentHash": "d919aecb72c3fc8f054fc499a6b5e320d0079229ac74d1177d788b139b135869",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-49G4",
+    "timestamp": "2026-10-19T03:01:38.644Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "f5484937352b3ba076e04c2c8121b98ed5925cc9ad55af8c7035b26a186f9ac3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

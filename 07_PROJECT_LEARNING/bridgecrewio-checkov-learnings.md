@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
+> **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
+> **Source Version**: `7a6782e3`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:01:29.446Z  
+> **Learning ID**: `learn-github-bridgecrewio-checkov`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): bridgecrewio/checkov
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:05:22.148Z  
+> **Harvest Timestamp**: 2026-10-19T03:01:29.439Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9056 stars
+- **Stars / Engagement**: 9076 stars
 
 ---
 
@@ -911,193 +925,6 @@ check = SQSQueueEncryption()
 
 ```
 
-### Core Architecture Module: `checkov/cloudformation/checks/utils/iam_cloudformation_document_to_policy_converter.py`
-```
-from __future__ import annotations
-
-from typing import Any
-
-from checkov.common.util.data_structures_utils import pickle_deepcopy
-
-
-def convert_cloudformation_conf_to_iam_policy(conf: dict[str, Any]) -> dict[str, Any]:
-    """
-        converts terraform parsed configuration to iam policy document
-    """
-    result = pickle_deepcopy(conf)
-    if "Statement" in result.keys():
-        result["Statement"] = result.pop("Statement")
-        for statement in map(dict, result["Statement"]):
-            if "Action" in statement:
-                statement["Action"] = str(statement.pop("Action")[0])
-            if "Resource" in statement:
-                resources = statement.pop("Resource")
-                if isinstance(resources, list):
-                    statement["Resource"] = str(resources[0])
-                else:
-                    statement["Resource"] = str(resources)
-            if "NotAction" in statement:
-                statement["NotAction"] = str(statement.pop("NotAction")[0])
-            if "NotResource" in statement:
-                not_resources = statement.pop("NotResource")
-                if isinstance(not_resources, list):
-                    statement["NotResource"] = str(not_resources[0])
-                else:
-                    statement["NotResource"] = str(not_resources)
-            if "Effect" in statement:
-                statement["Effect"] = str(statement.pop("Effect"))
-            if "Effect" not in statement:
-                statement["Effect"] = "Allow"
-    return result
-
-```
-
-### Core Architecture Module: `checkov/common/sca/reachability/package_alias_mapping/nodejs/utils.py`
-```
-from __future__ import annotations
-
-import logging
-import os.path
-from json import JSONDecodeError
-from typing import Dict, Set, Any
-import re
-import json
-import os
-
-
-MODULE_EXPORTS_PATTERN = r'module\.exports\s*=\s*({.*?});'
-EXPORT_DEFAULT_PATTERN = r'export\s*default\s*({.*?});'
-
-
-def load_json_with_comments(json_str: str) -> Any:
-    # Regular expression to remove comments (both single line and multi-line)
-    pattern = r'(?<!\\)(["\'])(?:(?=(\\?))\2.)*?\1|//.*?$|/\*[\s\S]*?\*/'
-    regex = re.compile(pattern, re.MULTILINE)
-    clean_json_str = regex.sub(lambda match: match.group(0) if match.group(1) else '', json_str)
-    return json.loads(clean_json_str)
-
-
-def _parse_export(file_content: str, pattern: str) -> Dict[str, Any] | None:
-    module_export_match = re.search(pattern, file_content, re.DOTALL)
-
-    if module_export_match:
-        module_exports_str = module_export_match.group(1)
-        # for having for all the keys and values double quotes and removing spaces
-        module_exports_str = re.sub(r'\s+', '', re.sub(r'([{\s,])(\w+):', r'\1"\2":', module_exports_str)
-                                    .replace("'", "\""))
-        module_exports: Dict[str, Any] = json.loads(module_exports_str)
-        return module_exports
-    return None
-
-
-def parse_webpack_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    module_exports_json = _parse_export(file_content, MODULE_EXPORTS_PATTERN)
-    if module_exports_json:
-        aliases = module_exports_json.get("resolve", {}).get("alias", {})
-        for imported_name in aliases:
-            package_name = aliases[imported_name]
-            if package_name in relevant_packages:
-                output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-
-def parse_tsconfig_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    tsconfig_json = load_json_with_comments(file_content)
-    paths = tsconfig_json.get("compilerOptions", {}).get("paths", {})
-    for imported_name in paths:
-        for package_relative_path in paths[imported_name]:
-            package_name = os.path.basename(package_relative_path)
-            if package_name in relevant_packages:
-                output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-
-def parse_babel_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    babelrc_json = load_json_with_comments(file_content)
-    plugins = babelrc_json.get("plugins", {})
-    for plugin in plugins:
-        if len(plugin) > 1:
-            plugin_object = plugin[1]
-            aliases = plugin_object.get("alias", {})
-            for imported_name in aliases:
-                package_name = aliases[imported_name]
-                if package_name in relevant_packages:
-                    output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-
-def parse_rollup_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    export_default_match = re.search(EXPORT_DEFAULT_PATTERN, file_content, re.DOTALL)
-    if export_default_match:
-        export_default_str = export_default_match.group(1)
-        # for having for all the keys and values double quotes and removing spaces
-        export_default_str = re.sub(r'\s+', '', re.sub(r'([{\s,])(\w+):', r'\1"\2":', export_default_str)
-                                    .replace("'", "\""))
-
-        # Defining a regular expression pattern to match the elements within the "plugins" list
-        pattern = r'alias\(\{[^)]*\}\)'
-        matches = re.findall(pattern, export_default_str)
-
-        for alias_object_str in matches:
-            alias_object = json.loads(alias_object_str[6:-1])  # removing 'alias(' and ')'
-            for entry in alias_object.get("entries", []):
-                package_name = entry["replacement"]
-                if entry["replacement"] in relevant_packages:
-                    imported_name = entry["find"]
-                    output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-
-def parse_package_json_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    try:
-        package_json = load_json_with_comments(file_content)
-    except JSONDecodeError:
-        logging.warning('unable to parse package json file')
-        return output
-
-    aliases: Dict[str, str] = dict()
-    if "alias" in package_json:
-        aliases.update(package_json["alias"])
-    if package_json.get("aliasify", {}).get("aliases"):
-        aliases.update(package_json["aliasify"]["aliases"])
-    for imported_name in aliases:
-        package_name = aliases[imported_name]
-        if package_name in relevant_packages:
-            output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-
-def parse_snowpack_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    module_exports_json = _parse_export(file_content, MODULE_EXPORTS_PATTERN)
-    if module_exports_json:
-        aliases = module_exports_json.get("alias", {})
-        for imported_name in aliases:
-            package_name = aliases[imported_name]
-            if package_name in relevant_packages:
-                if package_name in relevant_packages:
-                    output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-
-def parse_vite_file(file_content: str, relevant_packages: Set[str]) -> Dict[str, Any]:
-    output: Dict[str, Any] = {"packageAliases": {}}
-    export_default_match = _parse_export(file_content, EXPORT_DEFAULT_PATTERN)
-    if export_default_match:
-        aliases = export_default_match.get("resolve", {}).get("alias", {})
-        for imported_name in aliases:
-            package_name = aliases[imported_name]
-            if package_name in relevant_packages:
-                output["packageAliases"].setdefault(package_name, {"packageAliases": []})["packageAliases"].append(imported_name)
-    return output
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1109,49 +936,9 @@ def parse_vite_file(file_content: str, relevant_packages: Set[str]) -> Dict[str,
   **Post-Mortem & Fix Analysis**:
   > Not normal, bug in generation i imagine.
   > Thx, you think this may be resolved rapidly or it will takes longer time to be resolved ?
-  > Hello, Any new about this bug ?
 
 - **Issue #5742** (2023-11-21): **Chekov GitHub Actions Workflow Schema Outdated & not Scanning**
   *Symptoms*: **Describe the issue** When running checkov, various GH workflow files are being ignored. After doing some digging, it looks like the [actions workflow schema](https://github.com/bridgecrewio/checkov/blob/4875adc472f409bc7039a879347b404468e88215/checkov/github_actions/schemas.py#L657) is outdated. Any workflow that contains the [run-name](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#run-name) property is not scanned. Adding this property to the schema on my local install fixes this.   I also did some more digging to see if there are other outdated properties in this schema since it looks like it has not been updated in about a year, and I found a few probably worth mentioning.   - The `check_suit` event trigger should only have `completed` as an activity type, not [these](https://github.com/bridgecrewio/checkov/blob/4875adc472f409bc7039a879347b404468e88215/checkov/github_actions/schemas.py#L1648) 3. Here are the [GitHub docs](https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/events-that-trigger-workflows#check_suite). -  I don’t think [member events](https://github.com/bridgecrewio/checkov/blob/4875adc472f409bc7039a879347b404468e88215/checkov/github_actions/schemas.py#L1821) can trigger workflows anymore. - I don't think `project` events can trigger a workflow on `update` events. Here are the [GitHub docs](https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/events-that-trigger-work
-  **Post-Mortem & Fix Analysis**:
-  > Hi @bakosa, thank you for reaching out with this issue.  It is indeed looks like a case Checkov doesn't support, and it seems like you've found the right spots in code that should be addressed. How do you feel about contributing a PR with the solution? 😄  
-  > Fixed by @bakosa 😄 
-
-- **Issue #4333** (2023-02-06): **broken links in policy index**
-  *Symptoms*: https://www.checkov.io/5.Policy%20Index/all.html  782 links to files directly in [`main/checkov/terraform/checks/graph_checks/`](https://github.com/bridgecrewio/checkov/tree/main/checkov/terraform/checks/graph_checks) (missing the provider subdirectories before the direct file name)  ---  unrelated, it'd also be nice if all policy index links were clickable as well
-  **Post-Mortem & Fix Analysis**:
-  > hey @PatMyron thanks for reaching out. Nice catch 🥇 should be no problem to add the provider to the link. For the link I need to check, where exactly the docs are generated 🧐 
-
-- **Issue #4278** (2023-05-16): **Suppression is failing for docker graph checks**
-  *Symptoms*: On an M1 mac:  Cant suppress any of the CKV2_DOCKER issues:  In the following dockerfile we have a violation of CKV2_DOCKER_2 and a suppression of it: ``` FROM arm64v8/alpine:3.17.1 # checkov:skip=CKV_DOCKER_3: Not a service # checkov:skip=CKV_DOCKER_2: Not a service # checkov:skip=CKV2_DOCKER_2: Not a service  RUN apk --no-cache add build-base git curl jq bash RUN curl -s -k https://api.github.com/repos/bridgecrewio/yor/releases/latest | jq '.assets[] | select(.name | contains("linux_arm64")) | select(.content_type | contains("gzip")) | .browser_download_url' -r | awk '{print "curl -L -k " $0 " -o /usr/bin/yor.tar.gz"}' | sh RUN tar -xf /usr/bin/yor.tar.gz -C /usr/bin/ && rm /usr/bin/yor.tar.gz && chmod +x /usr/bin/yor && echo 'alias yor="/usr/bin/yor"' >> ~/.bashrc COPY entrypoint.sh /entrypoint.sh  # Code file to execute when the docker container starts up (`entrypoint.sh`) ENTRYPOINT ["/entrypoint.sh"] ```  The latest checkov- -2.2.278 gives us: ` check: CKV2_DOCKER_2: "Ensure that certificate validation isn't disabled with curl"         FAILED for resource: /Dockerfile.RUN         File: /Dockerfile:7-7                  7 | RUN curl -s -k https://api.github.com/repos/bridgecrewio/yor/releases/latest | jq '.assets[] | select(.name | contains("linux_386")) | select(.content_type | contains("gzip")) | .browser_download_url' -r | awk '{print "curl -L -k " $0 " -o /usr/bin/yor.tar.gz"}' | sh   `
-  **Post-Mortem & Fix Analysis**:
-  > I also stumbled upon this issue.   After a bit of code review it looks like `checkov\dockerfile\runner.py` contains code for skipping checks implemented in python (see `checkov\dockerfile\runner.py:142`) using comments, but similar code for graph checks seems to be missing.  `checkov\dockerfile\runner.py:211` calls `BaseRunner.run_graph_checks_results(...)` which relies on the `runner_filter` to decide which result to include in the return value. A quick scan of the `RunnerFilter` class didn't come up with anything related to checking suppression comments in the scanned file. So it looks like the functionality to skip yaml based policies in dockerfiles is missing.  Maybe these findings help you to get to the core of the issue faster.
-
-- **Issue #3551** (2022-09-22): **docs(general): Fix TOC rendering issue on checkov.io**
-  *Symptoms*: **By submitting this pull request, I confirm that my contribution is made under the terms of the Apache 2.0 license.**  ## Title Fix TOC rendering issue on checkov.io  ## Description  Rendering doesn't like 4 layers of markdown titles on our current stylesheets  ## Checklist:  - [X] My code follows the style guidelines of this project - [X] I have performed a self-review of my own code - [X] I have commented my code, particularly in hard-to-understand areas - [X] I have made corresponding changes to the documentation - [X] I have added tests that prove my feature, policy, or fix is effective and works - [X] New and existing tests pass locally with my changes - [X] Any dependent changes have been merged and published in downstream modules 
-  **Post-Mortem & Fix Analysis**:
-  > @gruebel @schosterbarak Could one of you approve my humongous chunk of a code change? 😂 
-
-- **Issue #3475** (2022-11-16): **Prisma Policy Labels not working**
-  *Symptoms*: **Description**  At the company I work at we are using Checkov together with Prisma Cloud Code Security, and I'm having trouble using the policy labels in Prisma to filter checks.  On Prisma's side, I've added a label to the "Default namespace is used" policy check called "mikko-testaa". ![image](https://user-images.githubusercontent.com/35505856/188586726-f6b34b89-58fd-425a-8927-954af6fe7222.png)  Filtering on Prisma via this label works, as it only shows the namespace policy check. ![image](https://user-images.githubusercontent.com/35505856/188586865-2bcbec64-178f-46df-92d8-45025864267b.png)  **Execution and Results**  With that in mind these are the checkov commands that I used both locally and on Jenkins; checkov -d . --framework helm -o json --output-file-path . --prisma-api-url [PRISMAURL] --bc-api-key [PRISMAUSER::PRISMAKEY]] --policy-metadata-filter policy.label=mikko-testaa  I tried running as-is and also running via a config file, both returning the same result; ![image](https://user-images.githubusercontent.com/35505856/188587531-7377bffb-65e6-4f8c-8518-4dccbb18672e.png)  Have I misunderstood the policy-metadata-filter parameter? What am I doing wrong?  **Version** Checkov version 2.1.179
-  **Post-Mortem & Fix Analysis**:
-  > The fact that the Available options: shows empty makes me think there is something wrong with getting policies from prisma?
-  > Hey @MikkoMyllyniemi I haven't been able to reproduce this issue. I applied a similar label to the poicy and it worked as expected.  ``` ❯ ckv -l --policy-metadata-filter policy.label=kartik-test --bc-api-key "$PC_ACCESS_KEY::$PC_SECRET_KEY" |    | Id         | Type     | Entity                            | Policy                    | IaC       | |----|------------|----------|-----------------------------------|---------------------------|-----------| |  0 | CKV_K8S_21 | resource | kubernetes_config_map             | Default namespace is used | Terraform | |  1 | CKV_K8S_21 | resource | kubernetes_cron_job               | Default namespace is used | Terraform | |  2 | CKV_K8S_21 | resource | kubernetes_daemonset              | Default namespace is used | Terraform | |  3 | CKV_K8S_21 | resource | kubernetes_deployment             | Default namespace is used | Terraform | |  4 | CKV_K8S_21 | resource | kubernetes_ingress                | Default namespace is used | Terraform |
-  > Never mind, I found the issue. It appears that  `GET https://api.prismacloud.io/filter/policy/suggest` returns only "recently used" filters and therefore a new label may or may not be returned. I'll fix this to use this method instead https://prisma.pan.dev/api/cloud/cspm/policy#operation/get-policy-filter-options
-
-- **Issue #2632** (2022-03-25): **Bicep false CKV_AZURE_23**
-  *Symptoms*: Hi, I get CKV_AZURE_23 on this simple bicep file:  ` @description('SQL Logical server.') param sqlLogicalServer object  @description('The SQL Logical Server password.') @secure() param password string  param tags object  var defaultAuditActionsAndGroups = [   'SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP'   'FAILED_DATABASE_AUTHENTICATION_GROUP'   'BATCH_COMPLETED_GROUP' ]  resource sqlLogicalServerRes 'Microsoft.Sql/servers@2021-02-01-preview' = {   name: sqlLogicalServer.name   location: resourceGroup().location   tags: tags   identity: {     type: sqlLogicalServer.systemManagedIdentity ? 'SystemAssigned' : 'None'   }   properties: {     administratorLogin: sqlLogicalServer.userName     administratorLoginPassword: password     version: '12.0'     minimalTlsVersion: sqlLogicalServer.minimalTlsVersion     publicNetworkAccess: sqlLogicalServer.publicNetworkAccess   } }  // Audit settings need for enabling auditing to Log Analytics workspace resource auditSettings 'Microsoft.Sql/servers/auditingSettings@2021-02-01-preview' = {   name: 'default'   parent: sqlLogicalServerRes   properties: {     state: 'Enabled'     auditActionsAndGroups: defaultAuditActionsAndGroups     storageEndpoint: ''     storageAccountAccessKey: ''     storageAccountSubscriptionId: '00000000-0000-0000-0000-000000000000'     retentionDays: 0     isAzureMonitorTargetEnabled: sqlLogicalServer.diagnosticLogsAndMetrics.auditLogs     isDevopsAuditEnabled: sqlLogicalServ
-  **Post-Mortem & Fix Analysis**:
-  > hi @acorbos thanks for creating this issue and I'm happy that you gave the Bicep runner a try. It is still in an early stage and I'm improving it step by step.
-  > @gruebel thanks for looking into it, I couldn't find the code. Is it somehow converting to ARM and then using the ARM checks? I'm asking because I wanted to switch to ARM and I have the same problem with it. See https://github.com/bridgecrewio/checkov/blob/master/checkov/arm/checks/resource/SQLServerAuditingEnabled.py I think it should check on server level, not on database level if the message is "Ensure that 'Auditing' is set to 'Enabled' **for SQL servers**". By the way, that blank there... shouldn't it be a slash between MicrosoftSql and servers? "Microsoft.Sql servers/databases/auditingSettings"  Why is it not working for me: This code expects a resource with type "auditingSettings" nested inside "Microsoft.Sql/servers". I have a resource with type "Microsoft.Sql/servers/auditingSettings" outside resource "Microsoft.Sql/servers". This is how the Azure portal exports templates.  
-  > @acorbos you are right, but it is even a bit more complicated, but I'm working on a fix. It won't cover all possibilities, but it should be better than now 🙂 
-
-- **Issue #2457** (2022-02-21): **Kustomize reorders yaml and crashes checkov**
-  *Symptoms*: **Describe the issue**  Checkov should be able to scan Kubernetes objects with arbitrary element names when using kustomize.  I am scanning a rook-ceph deployment, that contains a Storage class with a key `allowVolumeExpansion`. The storage class is included through a `kustomization.yaml`.   This key will be listed before `apiVersion`, and make Checkov break - at it expects the apiVersion to be [the first entry](https://github.com/bridgecrewio/checkov/blob/master/checkov/kustomize/runner.py#L328). However, this is not guaranteed - kustomize will order the items in the .yaml file alphabetically.  **Examples** Please share an example code sample (in the IaC of your choice) + the expected outcomes.  Storageclass: ```yaml apiVersion: storage.k8s.io/v1 kind: StorageClass metadata:   name: rook-ceph-block   annotations:     storageclass.kubernetes.io/is-default-class: "true" # Change "rook-ceph" provisioner prefix to match the operator namespace if needed provisioner: rook-ceph.rbd.csi.ceph.com parameters:   # [...] allowVolumeExpansion: true reclaimPolicy: Delete ```  Kustomization: ```yaml apiVersion: kustomize.config.k8s.io/v1beta1 kind: Kustomization  resources: - storageclass.yaml ```  Storageclass.yaml built with kustomize:  ```sh /code/components/rook-ceph/bases/v1.7.8 # kustomize build allowVolumeExpansion: true apiVersion: storage.k8s.io/v1 kind: StorageClass metadata:   annotations:     storageclass.kubernetes.io/is-default-cla
-  **Post-Mortem & Fix Analysis**:
-  > Hey @MajorFlamingo many thanks for the detailed issue report!  I've never actually seen a Kubernetes manifest that didn't start with the API line, or a Kustomize example that did that!  Could you point me to the rook-ceph deployment codebase if it's public for my own intrigue?   Currently working on an alternative check for file sanity when processing the kustomize output!
-  > See https://github.com/bridgecrewio/checkov/pull/2478 
-  > Thanks for responding and submitting a fix so quickly.   I think this storageclass example might help you recreate this issue: [storageclass.yaml](https://github.com/rook/rook/blob/master/deploy/examples/csi/cephfs/storageclass.yaml).  Even though the file starts with the apiVersion, kustomize will sort the file internally - meaning that the `allowVolumeExpansion` key will be ordered before the `apiVersion` key. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1168,248 +955,223 @@ def parse_vite_file(file_content: str, relevant_packages: Set[str]) -> Dict[str,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06b86ed0` (2026-10-05)
-**Commit Message**: fix(sca): apply --skip-path regex and hidden-dir filtering to sca_package (#7712)
+### Incident Patch 1: `e5f995a6` (2026-10-06)
+**Commit Message**: fix(terraform): avoid tmp_path in git loader tests (#7726)
 
-* fix(sca): use filter_ignored_paths in sca_package runner
+* test(terraform): avoid tmp_path in git loader tests to fix py3.9/3.10 hang
 
-* test(sca): mock bc_api_key in sca_package skip-path tests
+* fix(general): make _is_within lexical to avoid py3.9/3.10 realpath segfault
 
-* fix(sca): keep scanning hidden dirs in sca_package
+---------
+
+Co-authored-by: Yuval Michaeli <[REDACTED_EMAIL]>
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.3.22'
-+version = '3.3.23'
+-version = '3.3.25'
++version = '3.3.26'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.3.22
-+checkov==3.3.23
+-checkov==3.3.25
++checkov==3.3.26
 ```
 
 ---
 
-### Incident Patch 2: `e7d3dd92` (2026-10-05)
-**Commit Message**: fix(sca): apply --skip-path regex and hidden-dir filtering to sca_package (#7712)
+### Incident Patch 2: `1af12e0d` (2026-10-06)
+**Commit Message**: fix(terraform): avoid tmp_path in git loader tests (#7726)
 
-* fix(sca): use filter_ignored_paths in sca_package runner
+* test(terraform): avoid tmp_path in git loader tests to fix py3.9/3.10 hang
 
-* test(sca): mock bc_api_key in sca_package skip-path tests
+* fix(general): make _is_within lexical to avoid py3.9/3.10 realpath segfault
 
-* fix(sca): keep scanning hidden dirs in sca_package
+---------
 
-**File**: `checkov/sca_package_2/runner.py` (modified, +21/-11)
+Co-authored-by: Yuval Michaeli <[REDACTED_EMAIL]>
+
+**File**: `checkov/common/util/file_utils.py` (modified, +8/-4)
 ```diff
-@@ -3,7 +3,7 @@
- import logging
- import os
- from pathlib import Path
--from typing import Any, List
-+from typing import Any, Iterable, List
+@@ -46,11 +46,15 @@ def safe_relpath(file_path: str, root_folder: str | Path | None) -> str:
  
- from checkov.common.bridgecrew.bc_source import IDEsSourceTypes
- from checkov.common.sca.commons import should_run_scan
-@@ -15,7 +15,7 @@
- from checkov.common.models.enums import ErrorStatus
- from checkov.common.output.report import Report
- from checkov.common.bridgecrew.check_type import CheckType
--from checkov.common.runners.base_runner import BaseRunner, ignored_directories
-+from checkov.common.runners.base_runner import BaseRunner, filter_ignored_paths
- from checkov.runner_filter import RunnerFilter
- from checkov.sca_package_2.scanner import Scanner
  
-@@ -69,14 +69,11 @@ def prepare_and_scan(
-             bc_integration.setup_http_manager()
-             bc_integration.set_s3_client()
- 
--        excluded_paths = {*ignored_directories}
--        if runner_filter.excluded_paths:
--            excluded_paths.update(runner_filter.excluded_paths)
--
-+        # ignored directories (ex. 'node_modules') are handled by 'filter_ignored_paths'
-         uploaded_files: List[FileToPersist] | None = self.upload_package_files(
-             root_path=self._code_repo_path,
-             files=files,
--            excluded_paths=excluded_paths,
-+            excluded_paths=set(runner_filter.excluded_paths or []),
-             excluded_file_names=excluded_file_names,
-         )
-         if uploaded_files is None:
-@@ -147,6 +144,19 @@ def run(
- 
-         return report
- 
-+    def _walk_files(self, root_path: Path, excluded_paths: Iterable[str]) -> Iterable[Path]:
-+        """Walks the given root path and yields the not excluded files via 'filter_ignored_paths'"""
-+        excluded_paths_list = list(excluded_paths)
-+        for root, d_names, f_names in os.walk(root_path):
-+            # unlike other frameworks, hidden directories and files are scanned to keep the existing SCA coverage,
-+            # therefore they are passed as included paths. Ignored directories (ex. 'node_modules') are still skipped.
-+            hidden_names = [name for name in (*d_names, *f_names) if name.startswith(".")]
-+            filter_ignored_paths(root, d_names, excluded_paths_list, hidden_names)
-+            filter_ignored_paths(root, f_names, excluded_paths_list, hidden_names)
-+            for file_name in f_names:
-+                # 'Path' normalizes the path and drops a leading './' to keep it aligned with 'Path.glob()' output
-+                yield Path(root) / file_name
+ def _is_within(base: str, target: str) -> bool:
+-    """Return True iff target resolves inside base (both realpath'd)."""
+-    base_real = os.path.realpath(base)
+-    target_real = os.path.realpath(target)
++    """Return True iff target is inside base, after normalizing both paths ('..', '.', duplicate separators).
 +
-     def _persist_file_if_required(self, package_files_to_persist: List[FileToPersist],
-                                   file_path: Path, root_path: Path | None) -> None:
-         if file_path.name in SCANNABLE_PACKAGE_FILES or file_path.suffix in SCANNABLE_PACKAGE_FILES_EXTENSIONS:
-@@ -167,8 +177,8 @@ def upload_package_files(
-         package_files_to_persist: List[FileToPersist] = []
-         try:
-             if root_path:
--                for file_path in root_path.glob("**/*"):
--                    if any(p in file_path.parts for p in excluded_paths) or file_path.name in excluded_file_names:
-+                for file_path in self._walk_files(root_path, excluded_paths):
-+                    if file_path.name in excluded_file_names:
-                         logging.debug(f"[sca_package:runner](upload_package_files) - File {file_path} was excluded")
-                         continue
-                     self._persist_file_if_required(package_files_to_persist, file_path, root_path)
-@@ -205,8 +215,8 @@ def find_scannable_files(
-         if root_path:
-             input_paths = {
-                 file_path
--                for file_path in root_path.glob("**/*")
--                if file_path.name in SUPPORTED_PACKAGE_FILES.union(extra_supported_package_files) and not any(p in file_path.parts for p in excluded_paths)
-+                for file_path in self._walk_files(root_path, excluded_paths)
-+                if file_path.name in SUPPORTED_PACKAGE_FILES.union(extra_supported_package_files)
-             }
++    The check is lexical only (os.path.abspath), without accessing the file system. os.path.realpath segfaults
++    on Python 3.9/3.10 in some environments, which hangs scans running in a subprocess.
++    """
++    base_abs = os.path.abspath(base)
++    target_abs = os.path.abspath(target)
+     try:
+-        return os.path.commonpath([base_real, target_real]) == base_real
++        return os.path.commonpath([base_abs, target_abs]) == base_abs
+     except ValueError:
+         return False
  
-             package_json_lock_parent_paths = set()
 ```
 
-**File**: `tests/sca_package_2/test_runner.py` (modified, +179/-1)
+**File**: `tests/common/utils/test_file_utils.py` (modified, +39/-1)
 ```diff
-@@ -1,13 +1,17 @@
- import os
-+import re
- from pathlib import Path
- from unittest.mock import MagicMock
+@@ -7,7 +7,8 @@
  
-+import pytest
- from pytest_mock import MockerFixture
- from packaging import version as packaging_version
+ import pytest
  
- from checkov.common.bridgecrew.bc_source import SourceTypes, BCSourceType
- from checkov.common.bridgecrew.code_categories import CodeCategoryType
- from checkov.common.bridgecrew.platform_integration import bc_integration, FileToPersist
-+from checkov.common.models.consts import SCANNABLE_PACKAGE_FILES, SCANNABLE_PACKAGE_FILES_EXTENSIONS
-+from checkov.common.runners.base_runner import ignored_directories
- from checkov.runner_filter import RunnerFilter
- from checkov.sca_package_2.runner import Runner
- from checkov.common.bridgecrew.check_type import CheckType
-@@ -287,4 +291,178 @@ def test_run_with_ide_source_and_bc_api_key(mocker: MockerFixture):
-     assert report.error_status == ErrorStatus.SUCCESS  # shouldn't be ERROR
+-from checkov.common.util.file_utils import read_file_safe, get_file_size_safe, extract_tar_archive, safe_relpath
++from checkov.common.util.file_utils import read_file_safe, get_file_size_safe, extract_tar_archive, safe_relpath, \
++    _is_within
  
-     # scanner shouldn't be invoked
--    scanner_mock.assert_not_called()
-\ No newline at end of file
-+    scanner_mock.assert_not_called()
+ def test_sanity_read_file():
+     file_to_check = f"{os.path.dirname(os.path.realpath(__file__))}/resources/existing_file"
+@@ -119,3 +120,40 @@ def test_safe_relpath_cross_drive_fallback(caplog: pytest.LogCaptureFixture) ->
+ 
+     assert result == os.path.basename(file_path)
+     assert any("falling back" in record.message for record in caplog.records)
 +
-+HIDDEN_CACHE_FILE = ".cache/14.5.2/Cypress/resources/app/packages/errors/package.json"
-+TREE_FILES = (
-+    "app/package.json",
-+    HIDDEN_CACHE_FILE,
-+    ".github/actions/foo/package.json",
-+    "node_modules/x/package.json",
-+    "sub/dir1/requirements.txt",
++
++@pytest.mark.parametrize(
++    "target, expected",
++    [
++        ("base", True),
++        ("base/a.yaml", True),
++        ("base/sub/dir/a.yaml", True),
++        ("base/./a.yaml", True),
++        ("base//a.yaml", True),
++        ("base/sub/../a.yaml", True),
++        ("base/my..file.yaml", True),
++        ("base/..", False),
++        ("base/../outside/a.yaml", False),
++        ("base/sub/../../outside", False),
++        ("base_sibling/a.yaml", False),
++        ("outside/a.yaml", False),
++        ("/etc/passwd", False),
++    ],
 +)
++def test_is_within(target: str, expected: bool) -> None:
++    root = os.path.abspath("checkov_is_within_test_root")
++    target_path = target if os.path.isabs(target) else os.path.join(root, target)
++
++    assert _is_within(os.path.join(root, "base"), target_path) is expected
 +
 +
-+@pytest.fixture()
-+def mock_bc_api_key(mocker: MockerFixture) -> None:
-+    # patched (not assigned) to avoid leaking the api key into other tests
-+    mocker.patch.object(bc_integration, "bc_api_key", "abcd1234-abcd-1234-abcd-1234abcd1234")
++def test_is_within_does_not_access_the_file_system() -> None:
++    # os.path.realpath segfaults on python 3.9/3.10 in some environments, the check must stay lexical
++    with patch("os.path.realpath", side_effect=AssertionError("realpath must not be called")):
++        assert _is_within("/base", "/base/a.yaml")
++        assert not _is_within("/base", "/base/../a.yaml")
 +
 +
-+def _create_tree(base: Path) -> None:
-+    for rel in TREE_FILES:
-+        file_path = base / rel
-+        file_path.parent.mkdir(parents=True, exist_ok=True)
-+        file_path.write_text("{}")
++def test_is_within_different_drives_returns_false() -> None:
++    with patch("os.path.commonpath", side_effect=ValueError("Paths don't have the same drive")):
++        assert not _is_within("C:\\base", "D:\\base\\a.yaml")
+```
+
+**File**: `tests/terraform/module_loading/loaders/test_git_loader.py` (modified, +25/-18)
+```diff
+@@ -46,6 +46,13 @@ def test__parse_module_source(source: str, expected_root_module: str, expected_i
+     assert module_source.inner_module == expected_inner_module
+ 
+ 
++@pytest.fixture
++def root_dir() -> Path:
++    # these tests only compute paths and never write to disk, so a fixed (non existing) folder is enough.
++    # avoids pytest's tmp_path, which crashes the xdist worker on python 3.9/3.10 (see verification/conftest.py)
++    return Path(os.path.abspath("checkov_git_loader_test_root"))
 +
 +
-+def _upload_relative(tmp_path: Path, excluded_paths, excluded_file_names=None):
-+    """simulates 'checkov -d .' from within tmp_path"""
-+    _create_tree(tmp_path)
-+    origin_cwd = os.getcwd()
-+    try:
-+        os.chdir(tmp_path)
-+        return Runner().upload_package_files(
-+            root_path=Path("."),
-+            files=None,
-+            excluded_paths=excluded_paths,
-+            excluded_file_names=excluded_file_names,
-+        )
-+    finally:
-+        os.chdir(origin_cwd)
-+
-+
-+def _s3_keys(uploaded):
-+    return {item.s3_file_key for item in uploaded}
-+
-+
-+@pytest.mark.usefixtures("mock_bc_api_key")
-+def test_upload_package_files_default_filtering(tmp_path: Path):
-+    uploaded = _upload_relative(tmp_path, excluded_paths=set())
-+
-+    # only ignored directories (ex. node_modules) are skipped, hidden directories are still scanned
-+    assert set(uploaded) == {
-+        FileToPersist(full_file_path="app/package.json", s3_file_key="app/package.json"),
-+        FileToPersist(full_file_path=HIDDEN_CACHE_FILE, s3_file_key=HIDDEN_CACHE_FILE),
-+        FileToPersist(full_file_path=".github/actions/foo/package.json",
-+                      s3_file_key=".github/actions/foo/package.json"),
-+        FileToPersist(full_file_path="sub/dir1/requirements.txt", s3_file_key="sub/dir1/requirements.txt"),
-+    }
-+
-+
-+@pytest.mark.parametrize("ignore_hidden", [True, False])
-+@pytest.mark.usefixtures("mock_bc_api_key")
-+def test_upload_package_files_same_files_as_glob_without_skip_path(
-+    tmp_path: Path, mocker: MockerFixture, ignore_hidden: bool
-+):
-+    # without '--skip-path' the scanned files must stay the same as in the previous 'Path.glob' based implementation,
-+    # independent of the 'CKV_IGNORE_HIDDEN_DIRECTORIES' setting
-+    mocker.patch("checkov.common.runners.base_runner.IGNORE_HIDDEN_DIRECTORY_ENV", ignore_hidden)
-+    for rel in (
-+        *TREE_FILES,
-+        ".hidden.csproj",
-+        ".venv/lib/requirements.txt",
-+        ".config/.nested/go.sum",
-+        "app/.yarn/cache/package.json",
-+        "app/node_modules/y/package.json",
-+        "infra/.terraform/modules/m/package.json",
-+        "svc/.serverless/package.json",
-+        "svc/Pipfile",
-+        "svc/Pipfile.lock",
-+        "svc/README.md",
-+    ):
-+        file_path = tmp_path / rel
-+        file_path.parent.mkdir(parents=True, exist_ok=True)
-+        file_path.write_text("{}")
-+
-+    uploaded = Runner().upload_package_files(root_path=tmp_path, files=None, excluded_paths=set())
-+
-+    # previous implementation
-+    expected = set()
-+    for file_path in tmp_path.glob("**/*"):
-+        if any(p in file_path.parts for p in ignored_directories):
-+            continue
-+        if file_path.name in SCANNABLE_PACKAGE_FILES or file_path.suffix in SCANNABLE_PACKAGE_FILES_EXTENSIONS:
-+            expected.add(FileToPersist(str(file_path), os.path.relpath(str(file_path), tmp_path)))
-+
-+    assert set(uploaded) == expected
-+    assert {item.s3_file_key for item in expected} >= {
-+        ".hidden.csproj", ".venv/lib/requirements.txt", ".config/.nested/go.sum", "app/.yarn/cache/package.json"
-+    }
-+
-+
-+@pytest.mark.parametrize("skip_path", [r"^\./\.cache(/|$)", r"\./\.ca
+ def _module_params(root_dir: Path, source: str) -> ModuleParams:
+     return ModuleParams(
+         root_dir=str(root_dir),
+@@ -58,7 +65,7 @@ def _module_params(root_dir: Path, source: str) -> ModuleParams:
+ 
+ 
+ def _is_inside(base: Path, path: str) -> bool:
+-    return os.path.commonpath([os.path.realpath(base), os.path.realpath(path)]) == os.path.realpath(base)
++    return os.path.commonpath([os.path.abspath(base), os.path.abspath(path)]) == os.path.abspath(base)
+ 
+ 
+ @pytest.mark.parametrize(
+@@ -126,13 +133,13 @@ def _is_inside(base: Path, path: str) -> bool:
+     ],
+ )
+ def test_valid_sources_stay_in_external_modules_dir(
+-    tmp_path: Path, source: str, expected_dest_dir: str, expected_module_path: str
++    root_dir: Path, source: str, expected_dest_dir: str, expected_module_path: str
+ ) -> None:
+-    external_modules_dir = tmp_path / EXTERNAL_MODULES_FOLDER_NAME
++    external_modules_dir = root_dir / EXTERNAL_MODULES_FOLDER_NAME
+     loader = GenericGitLoader()
+ 
+-    module_path = loader._find_module_path(_module_params(tmp_path, source))
+-    module_params = _module_params(tmp_path, source)
++    module_path = loader._find_module_path(_module_params(root_dir, source))
++    module_params = _module_params(root_dir, source)
+     loader._process_generic_git_repo(module_params)
+ 
+     assert module_params.dest_dir == str(external_modules_dir / expected_dest_dir)
+@@ -168,31 +175,31 @@ def test_valid_sources_stay_in_external_modules_dir(
+         "local_file_repo_traversal",
+     ],
+ )
+-def test_path_traversal_in_source_is_rejected(tmp_path: Path, source: str) -> None:
++def test_path_traversal_in_source_is_rejected(root_dir: Path, source: str) -> None:
+     loader = GenericGitLoader()
+ 
+     with pytest.raises(ValueError):
+-        loader._process_generic_git_repo(_module_params(tmp_path, source))
++        loader._process_generic_git_repo(_module_params(root_dir, source))
+     with pytest.raises(ValueError):
+-        loader._find_module_path(_module_params(tmp_path, source))
++        loader._find_module_path(_module_params(root_dir, source))
+ 
+ 
+-def test_traversal_in_inner_module_param_is_rejected(tmp_path: Path) -> None:
+-    module_params = _module_params(tmp_path, "git::https://github.com/org/repo.git?ref=v1")
++def test_traversal_in_inner_module_param_is_rejected(root_dir: Path) -> None:
++    module_params = _module_params(root_dir, "git::https://github.com/org/repo.git?ref=v1")
+     module_params.inner_module = "../../../../../tmp"
+ 
+     with pytest.raises(ValueError):
+         GenericGitLoader()._find_module_path(module_params)
+ 
+ 
+-def test_dest_dir_outside_external_modules_dir_is_rejected(tmp_path: Path) -> None:
++def test_dest_dir_outside_external_modules_dir_is_rejected(root_dir: Path) -> None:
+     # defense in depth - even if parsing returns an unexpected value, never use a folder outside the modules folder
+     loader = GenericGitLoader()
+-    with mock.patch.object(GenericGitLoader, "_get_module_dir", return_value=tmp_path / "outside"):
++    with mock.patch.object(GenericGitLoader, "_get_module_dir", return_value=root_dir / "outside"):
+         with pytest.raises(ValueError):
+-            loader._process_generic_git_repo(_module_params(tmp_path, "git::https://github.com/org/repo.git"))
++            loader._process_generic_git_repo(_module_params(root_dir, "git::https://github.com/org/repo.git"))
+         with pytest.raises(ValueError):
+-            loader._find_module_path(_module_params(tmp_path, "git::https://github.com/org/repo.git"))
++            loader._find_module_path(_module_params(root_dir, "git::https://github.com/org/repo.git"))
+ 
+ 
+ TRAVERSAL_REF = "?ref=../../../../../../../../tmp/target"
+@@ -225,21 +232,21 @@ def test_dest_dir_outside_external_modules_dir_is_rejected(tmp_path: Path) -> No
+ )
+ @mock.patch("checkov.terraform.module_loading.loaders.git_loader.GitGetter", autospec=True)
+ def test_git_based_loaders_do_not_clone_outside_external_modules_dir(
+-    git_getter, tmp_path: Path, loader_class, source: str, env: dict
++    git_getter, root_dir: Path, loader_class, source: str, env: dict
+ ) -> None:
+     with mock.patch.dict(os.environ, env):
+         loader = loader_class()
+-        module_params = _module_params(tmp_path, source)
++        module_params = _module_params(root_dir, source)
+         loader.discover(module_params)
+         assert loader._is_matching_loader(module_params)
+ 
+         with pytest.raises(ValueError):
+-            loader.load(_module_params(tmp_path, source
 ```
 
 ---
@@ -1674,828 +1436,13 @@ Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
 +    template, file_lines = pars
 ```
 
----
-
-### Incident Patch 4: `d89e8dd4` (2026-07-10)
-**Commit Message**: fix(terraform_plan): skip resources being removed from state ('forget' action)
-
-**File**: `checkov/version.py` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--version = '3.3.19'
-+version = '3.3.20'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.19
-+checkov==3.3.20
-```
-
----
-
-### Incident Patch 5: `06ac5717` (2026-09-27)
-**Commit Message**: fix(terraform_plan): skip resources being removed from state ('forget' action) (#7676)
-
-**File**: `checkov/terraform/plan_parser.py` (modified, +8/-1)
-```diff
-@@ -19,6 +19,7 @@
- TF_PLAN_RESOURCE_ADDRESS = CustomAttributes.TF_RESOURCE_ADDRESS
- TF_PLAN_RESOURCE_CHANGE_ACTIONS = "__change_actions__"
- TF_PLAN_RESOURCE_CHANGE_KEYS = "__change_keys__"
-+TF_PLAN_RESOURCE_FORGET_ACTION = "forget"
- TF_PLAN_RESOURCE_PROVISIONERS = "provisioners"
- TF_PLAN_RESOURCE_AFTER_UNKNOWN = 'after_unknown'
- 
-@@ -211,7 +212,13 @@ def _prepare_resource_block(
- 
-         changes = resource_changes.get(resource_address)  # type:ignore[arg-type]  # because it can be None
-         if changes:
--            resource_conf[TF_PLAN_RESOURCE_CHANGE_ACTIONS] = changes.get("change", {}).get("actions") or []
-+            actions = changes.get("change", {}).get("actions") or []
-+            # Skip resources being removed from state ('forget' action). 'Forgotten' resources are mistakenly
-+            # included with no values in planned_values due to Terraform bug (issue: hashicorp/terraform#38641).
-+            if actions == [TF_PLAN_RESOURCE_FORGET_ACTION]:
-+                return resource_block, block_type, False
-+
-+            resource_conf[TF_PLAN_RESOURCE_CHANGE_ACTIONS] = actions
-             resource_conf[TF_PLAN_RESOURCE_CHANGE_KEYS] = changes.get(TF_PLAN_RESOURCE_CHANGE_KEYS) or []
-             # enrich conf with after_unknown values
-             _eval_after_unknown(changes, resource_conf)
-```
-
-**File**: `tests/terraform/runner/resources/plan_forget_action/tfplan.json` (added, +238/-0)
-```diff
-@@ -0,0 +1,238 @@
-+{
-+  "format_version": "1.2",
-+  "terraform_version": "1.9.8",
-+  "planned_values": {
-+    "root_module": {
-+      "resources": [
-+        {
-+          "address": "aws_s3_bucket.forgotten",
-+          "mode": "managed",
-+          "type": "aws_s3_bucket",
-+          "name": "forgotten",
-+          "provider_name": "registry.terraform.io/hashicorp/aws",
-+          "schema_version": 0,
-+          "sensitive_values": false
-+        }
-+      ]
-+    }
-+  },
-+  "resource_changes": [
-+    {
-+      "address": "aws_s3_bucket.forgotten",
-+      "mode": "managed",
-+      "type": "aws_s3_bucket",
-+      "name": "forgotten",
-+      "provider_name": "registry.terraform.io/hashicorp/aws",
-+      "change": {
-+        "actions": [
-+          "forget"
-+        ],
-+        "before": {
-+          "acceleration_status": "",
-+          "acl": null,
-+          "arn": "arn:aws:s3:::forgotten-bucket",
-+          "bucket": "forgotten-bucket",
-+          "bucket_domain_name": "forgotten-bucket.s3.amazonaws.com",
-+          "bucket_prefix": "",
-+          "bucket_regional_domain_name": "forgotten-bucket.s3.us-west-2.amazonaws.com",
-+          "cors_rule": [],
-+          "force_destroy": false,
-+          "grant": [
-+            {
-+              "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
-+              "permissions": [
-+                "FULL_CONTROL"
-+              ],
-+              "type": "CanonicalUser",
-+              "uri": ""
-+            }
-+          ],
-+          "hosted_zone_id": "Z3BJ6K6RIION7M",
-+          "id": "forgotten-bucket",
-+          "lifecycle_rule": [],
-+          "logging": [],
-+          "object_lock_configuration": [],
-+          "object_lock_enabled": false,
-+          "policy": "",
-+          "region": "us-west-2",
-+          "replication_configuration": [],
-+          "request_payer": "BucketOwner",
-+          "server_side_encryption_configuration": [
-+            {
-+              "rule": [
-+                {
-+                  "apply_server_side_encryption_by_default": [
-+                    {
-+                      "kms_master_key_id": "arn:aws:kms:us-west-2:123456789012:key/12345678-1234-1234-1234-123456789012",
-+                      "sse_algorithm": "aws:kms"
-+                    }
-+                  ],
-+                  "bucket_key_enabled": false
-+                }
-+              ]
-+            }
-+          ],
-+          "tags": null,
-+          "tags_all": {},
-+          "timeouts": null,
-+          "versioning": [
-+            {
-+              "enabled": false,
-+              "mfa_delete": false
-+            }
-+          ],
-+          "website": [],
-+          "website_domain": null,
-+          "website_endpoint": null
-+        },
-+        "after": null,
-+        "after_unknown": {},
-+        "before_sensitive": {
-+          "cors_rule": [],
-+          "grant": [
-+            {
-+              "permissions": [
-+                false
-+              ]
-+            }
-+          ],
-+          "lifecycle_rule": [],
-+          "logging": [],
-+          "object_lock_configuration": [],
-+          "replication_configuration": [],
-+          "server_side_encryption_configuration": [
-+            {
-+              "rule": [
-+                {
-+                  "apply_server_side_encryption_by_default": [
-+                    {}
-+                  ]
-+                }
-+              ]
-+            }
-+          ],
-+          "tags_all": {},
-+          "versioning": [
-+            {}
-+          ],
-+          "website": []
-+        },
-+        "after_sensitive": false
-+      },
-+      "action_reason": "delete_because_no_resource_config"
-+    }
-+  ],
-+  "prior_state": {
-+    "format_version": "1.0",
-+    "terraform_version": "1.9.8",
-+    "values": {
-+      "root_module": {
-+        "resources": [
-+          {
-+            "address": "aws_s3_bucket.forgotten",
-+            "mode": "managed",
-+            "type": "aws_s3_bucket",
-+            "name": "forgotten",
-+            "provider_name": "registry.terraform.io/hashicorp/aws",
-+            "schema_version": 0,
-+            "values": {
-+              "acceleration_status": "",
-+              "acl": null,
-+              "arn": "arn:aws:s3:::forgotten-bucket",
-+              "bucket": "forgotten-bucket",
-+              "bucket_domain_name": "forgotten-bucket.s3.amazonaws.com",
-+              "bucket_prefix": "",
-+              "bucket_regional_domain_name": "forgotten-bucket.s3.us-west-2.amazonaws.com",
-+              "cors_rule": [],
-+              "force_destroy": false,
-+              "grant": [
-+                {
-+                  "id": "75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a",
-+                  "permissions": [
-+                    "FULL_CONTROL"
-+                  ],
-+                  "type": "CanonicalUser",
-+                  "uri": ""
-+                }
-+              ],
-+              "hosted_zone_id": "Z3BJ6K6RIION7M",
-+              "id": "forgotten-bucket",
-+              "
-```
-
-**File**: `tests/terraform/runner/test_plan_runner.py` (modified, +21/-0)
-```diff
-@@ -397,6 +397,27 @@ def test_runner_root_module_resources_no_values_route53(self):
- 
-         self.assertCountEqual(passed_check_ids, expected_passed_check_ids)
- 
-+    def test_runner_skip_forget_action_resources(self):
-+        # A resource being removed from state (no destroy) via a 'removed' block has a 'forget' change action and will
-+        # appear in planned_values without values due to a Terraform bug (issue: hashicorp/terraform#38641), causing false positives.
-+        # This test verifies 'forgotten' resources are getting skipped to account for the bug.
-+        current_dir = os.path.dirname(os.path.realpath(__file__))
-+        plan_path = current_dir + "/resources/plan_forget_action/tfplan.json"
-+
-+        report = Runner().run(
-+            root_folder=None,
-+            files=[plan_path],
-+            external_checks_dir=None,
-+            runner_filter=RunnerFilter(framework=["terraform_plan"]),
-+        )
-+
-+        scanned_resources = {
-+            record.resource
-+            for record in itertools.chain(report.passed_checks, report.failed_checks, report.skipped_checks)
-+        }
-+
-+        self.assertNotIn("aws_s3_bucket.forgotten", scanned_resources)
-+
-     def test_runner_data_resource_partial_values(self):
-         # In rare circumstances a data resource with partial values in the plan could cause false negatives
-         # Often 'data' does not even appear in the *_modules[x].resources field within planned_values and is not scanned as expected
-```
-
----
-
-### Incident Patch 6: `f6824442` (2026-09-10)
-**Commit Message**: fix(general): honour scope.provider for platform-downloaded custom po… (#7677)
-
-fix(general): honour scope.provider for platform-downloaded custom policies
-
-Co-authored-by: mblonder <[REDACTED_EMAIL]>
-
-**File**: `checkov/version.py` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--version = '3.3.16'
-+version = '3.3.17'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.16
-+checkov==3.3.17
-```
-
----
-
-### Incident Patch 7: `ba421a3a` (2026-09-10)
-**Commit Message**: fix(general): honour scope.provider for platform-downloaded custom po… (#7677)
-
-fix(general): honour scope.provider for platform-downloaded custom policies
-
-Co-authored-by: mblonder <[REDACTED_EMAIL]>
-
-**File**: `checkov/common/bridgecrew/integration_features/features/custom_policies_integration.py` (modified, +2/-2)
-```diff
-@@ -68,7 +68,7 @@ def pre_scan(self) -> None:
-                         policy['severity'] = Severities[policy['severity']]
-                         self.bc_cloned_checks[source_incident_id].append(policy)
-                         continue
--                    resource_types = Registry._get_resource_types(converted_check['metadata'])
-+                    resource_types = Registry._get_resource_types(converted_check)
- 
-                     if policy.get('category') == LICENSES_CATEGORY:
-                         continue
-@@ -105,10 +105,10 @@ def _convert_raw_check(policy: dict[str, Any]) -> dict[str, Any]:
-             'name': policy['title'],
-             'category': policy['category'],
-             'frameworks': policy.get('frameworks', []),
--            'scope': {'provider': policy.get('provider', '').lower()}
-         }
-         check = {
-             'metadata': metadata,
-+            'scope': {'provider': policy.get('provider', '').lower()},
-             'definition': json.loads(policy['code'])
-         }
-         return check
-```
-
-**File**: `tests/common/integration_features/test_custom_policies_integration.py` (modified, +33/-2)
-```diff
-@@ -495,8 +495,39 @@ def test_policy_load_with_resources_types_as_str(self):
-             Path(__file__).parent.parent.parent.parent / "checkov" / "terraform" / "checks" / "graph_checks"))
-         checks = [parser.parse_raw_check(CustomPoliciesIntegration._convert_raw_check(p)) for p in policies]
-         registry.checks = checks  # simulate that the policy downloader will do
--        
--        
-+
-+    def test_convert_raw_check_places_scope_at_top_level(self):
-+        policy = {
-+            "id": "test_azure_taggable_1",
-+            "title": "Ensure taggable Azure resources are tagged",
-+            "category": "General",
-+            "provider": "azure",
-+            "frameworks": ["Terraform"],
-+            "severity": "MEDIUM",
-+            "code": json.dumps({
-+                "cond_type": "attribute",
-+                "resource_types": "taggable",
-+                "attribute": "tags",
-+                "operator": "exists",
-+            }),
-+        }
-+
-+        converted = CustomPoliciesIntegration._convert_raw_check(policy)
-+
-+        self.assertEqual(converted["scope"], {"provider": "azure"})
-+        self.assertNotIn("scope", converted["metadata"])
-+
-+        parser = GraphCheckParser()
-+        resource_types = Registry._get_resource_types(converted)
-+        check = parser.parse_raw_check(converted, resources_types=resource_types)
-+        self.assertTrue(check.resource_types)
-+        self.assertTrue(
-+            all(rt.startswith("azurerm_") for rt in check.resource_types),
-+            f"Azure-scoped taggable policy leaked to non-azure resources: "
-+            f"{[rt for rt in check.resource_types if not rt.startswith('azurerm_')][:5]}"
-+        )
-+
-+
- def mock_custom_policies_response():
-     return {
-         "customPolicies": [
-```
-
-**File**: `tests/terraform/graph/runner/test_graph_builder.py` (modified, +5/-0)
-```diff
-@@ -48,6 +48,11 @@ def test_build_graph_new_tf_module(self):
-     def test_run_clean(self):
-         resources_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "graph_files_test")
-         runner = Runner(db_connector=self.db_connector())
-+        # Isolate from cross-test pollution of the shared terraform graph_checks
-+        # registry (same pattern used by tests in tests/terraform/runner/test_runner.py,
-+        # e.g. lines 1220-1221) so the hard-coded pass/fail counts below stay stable.
-+        runner.graph_registry.checks = []
-+        runner.graph_registry.load_checks()
-         report = runner.run(root_folder=resources_path)
-         self.assertEqual(6, len(report.failed_checks))
-         self.assertEqual(5, len(report.passed_checks))
-```
-
----
-
-### Incident Patch 8: `48dbc906` (2026-08-30)
-**Commit Message**: fix(terraform): Added current Azure Terraform resources and taggable resources as of hashicorp/azurerm provider version 4.81 (#7652)
-
-* Added current Azure Terraform resources as of provider version 4.81
-
-* Fixed copy/past issues with azure resource types
-
----------
-
-Co-authored-by: Joshua Brule <[REDACTED_EMAIL]>
-
-**File**: `checkov/version.py` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--version = '3.3.15'
-+version = '3.3.16'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.15
-+checkov==3.3.16
-```
-
----
-
-### Incident Patch 9: `8c7c152b` (2026-08-30)
-**Commit Message**: fix(terraform): Added current Azure Terraform resources and taggable resources as of hashicorp/azurerm provider version 4.81 (#7652)
-
-* Added current Azure Terraform resources as of provider version 4.81
-
-* Fixed copy/past issues with azure resource types
-
----------
-
-Co-authored-by: Joshua Brule <[REDACTED_EMAIL]>
-
-
-
----
-
-### Incident Patch 10: `9514f12d` (2026-08-26)
-**Commit Message**: fix(sca): match CVE suppressions case-insensitively (#7659)
-
-* fix(sca): match CVE suppressions case-insensitively
-
-* chore(ci): pin pipenv on all python versions
-
-* chore(ci): pin pipenv and bump danger-check to node 20
-
-**File**: `checkov/version.py` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--version = '3.3.14'
-+version = '3.3.15'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.14
-+checkov==3.3.15
-```
-
----
-
-### Incident Patch 11: `2637543b` (2026-08-26)
-**Commit Message**: fix(sca): match CvesAccounts suppressions on unprefixed account ids (#7660)
-
-**File**: `checkov/common/bridgecrew/integration_features/features/suppressions_integration.py` (modified, +2/-1)
-```diff
-@@ -232,7 +232,8 @@ def _check_suppression(self, record: Record, suppression: dict[str, Any]) -> boo
-         elif type == 'CvesAccounts':
-             if 'accountIds' not in suppression:
-                 return False
--            if self.bc_integration.source_id in suppression['accountIds']:
-+            if self.bc_integration.source_id in suppression['accountIds'] or \
-+                    any(self.bc_integration.repo_matches(account) for account in suppression['accountIds']):
-                 if record.vulnerability_details and record.vulnerability_details['id'].lower() in {
-                         cve.lower() for cve in suppression['cves']}:
-                     return True
-```
-
-**File**: `tests/common/integration_features/test_suppressions_integration.py` (modified, +30/-0)
-```diff
-@@ -352,6 +352,36 @@ def test_suppress_by_cve_accounts_with_repo_id_package_scan(self):
-         self.assertTrue(suppressions_integration._check_suppression(record2, suppression))
-         self.assertFalse(suppressions_integration._check_suppression(record3, suppression))
- 
-+    def test_suppress_by_cve_accounts_unprefixed_account_id(self):
-+        instance = BcPlatformIntegration()
-+        instance.repo_id = 'some/repo'
-+        instance.source_id = f"customer_{instance.repo_id}"
-+        suppressions_integration = SuppressionsIntegration(instance)
-+        suppressions_integration._init_repo_regex()
-+
-+        suppression = {
-+            'suppressionType': 'CvesAccounts',
-+            'policyId': 'BC_VUL_2',
-+            'comment': 'suppress by accounts',
-+            'cves': ['CVE-2021-44420'],
-+            'accountIds': ['some/repo'],
-+            'checkovPolicyId': 'BC_VUL_2'
-+        }
-+
-+        matching = Record(check_id='BC_VUL_2', check_name=None, check_result=None,
-+                          code_block=None, file_path=None, file_line_range=None,
-+                          resource=None, evaluations=None, check_class=None,
-+                          file_abs_path='.', entity_tags=None,
-+                          vulnerability_details={'id': 'CVE-2021-44420'})
-+        other_repo = Record(check_id='BC_VUL_2', check_name=None, check_result=None,
-+                            code_block=None, file_path=None, file_line_range=None,
-+                            resource=None, evaluations=None, check_class=None,
-+                            file_abs_path='.', entity_tags=None,
-+                            vulnerability_details={'id': 'CVE-2021-99999'})
-+
-+        self.assertTrue(suppressions_integration._check_suppression(matching, suppression))
-+        self.assertFalse(suppressions_integration._check_suppression(other_repo, suppression))
-+
-     def test_suppress_by_cve_accounts_without_repo_id_package_scan(self):
-         instance = BcPlatformIntegration()
-         suppressions_integration = SuppressionsIntegration(instance)
-```
-
----
-
-### Incident Patch 12: `317f4a68` (2026-08-26)
-**Commit Message**: fix(sca): match CVE suppressions case-insensitively (#7659)
-
-* fix(sca): match CVE suppressions case-insensitively
-
-* chore(ci): pin pipenv on all python versions
-
-* chore(ci): pin pipenv and bump danger-check to node 20
-
-**File**: `checkov/version.py` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--version = '3.3.13'
-+version = '3.3.14'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.13
-+checkov==3.3.14
-```
-
----
-
-### Incident Patch 13: `8519304f` (2026-08-26)
-**Commit Message**: fix(sca): match CVE suppressions case-insensitively (#7659)
-
-* fix(sca): match CVE suppressions case-insensitively
-
-* chore(ci): pin pipenv on all python versions
-
-* chore(ci): pin pipenv and bump danger-check to node 20
-
-**File**: `.github/workflows/pr-test.yml` (modified, +2/-7)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-       - name: Install Node.js
-         uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e  # v4
-         with:
--          node-version: "18"
-+          node-version: "20"
-       - name: Install and run DangerJS
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-@@ -92,12 +92,7 @@ jobs:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-       - name: Install pipenv
-         run: |
--          if [ "${{ matrix.python }}" = "3.12" ] || [ "${{ matrix.python }}" = "3.13" ]; then
--            # needed for numpy
--            python -m pip install --no-cache-dir --upgrade pipenv==2024.4.0
--          else
--            python -m pip install --no-cache-dir --upgrade pipenv
--          fi
-+          python -m pip install --no-cache-dir --upgrade pipenv==2024.4.0
-       - name: Install dependencies
-         run: |
-           # remove venv, if exists
-```
-
-**File**: `checkov/common/bridgecrew/integration_features/features/suppressions_integration.py` (modified, +6/-3)
-```diff
-@@ -184,8 +184,10 @@ def _check_cve_suppression(self, record: Record, suppression: dict[str, Any]) ->
-                     file_abs_path.endswith("".join([repo_name, suppression_path])) or \
-                     removeprefix(repo_file_path, '/') == removeprefix(suppression_path, '/') \
-                     or record.file_path == suppression_path:
--                return any(record.vulnerability_details and record.vulnerability_details['id'] == cve['cve']
--                           for cve in suppression['cves'])
-+                if not record.vulnerability_details:
-+                    return False
-+                record_cve_id = record.vulnerability_details['id'].lower()
-+                return any(record_cve_id == cve['cve'].lower() for cve in suppression['cves'])
-         return False
- 
-     def _check_suppression(self, record: Record, suppression: dict[str, Any]) -> bool:
-@@ -231,7 +233,8 @@ def _check_suppression(self, record: Record, suppression: dict[str, Any]) -> boo
-             if 'accountIds' not in suppression:
-                 return False
-             if self.bc_integration.source_id in suppression['accountIds']:
--                if record.vulnerability_details and record.vulnerability_details['id'] in suppression['cves']:
-+                if record.vulnerability_details and record.vulnerability_details['id'].lower() in {
-+                        cve.lower() for cve in suppression['cves']}:
-                     return True
-             return False
- 
-```
-
-**File**: `tests/common/integration_features/test_suppressions_integration.py` (modified, +31/-0)
-```diff
-@@ -529,6 +529,37 @@ def test_supress_by_cve_for_package_scan(self):
-         self.assertFalse(suppressions_integration._check_suppression(record4, suppression))
-         self.assertTrue(suppressions_integration._check_suppression(record5, suppression))
- 
-+    def test_supress_by_cve_is_case_insensitive(self):
-+        instance = BcPlatformIntegration()
-+        instance.repo_id = 'some/repo'
-+        instance.source_id = f"customer_{instance.repo_id}"
-+        suppressions_integration = SuppressionsIntegration(instance)
-+        suppressions_integration._init_repo_regex()
-+
-+        suppression = {
-+            'suppressionType': 'Cves',
-+            'policyId': 'BC_VUL_2',
-+            'comment': 'suppress ghsa',
-+            'accountIds': ['customer_some/repo'],
-+            'cves': [{'uuid': '11111111-2222-3333-4444-555555555555', 'id': '/package.json',
-+                      'cve': 'GHSA-aaaa-bbbb-cccc'}],
-+            'checkovPolicyId': 'BC_VUL_2'
-+        }
-+
-+        matching = Record(check_id='BC_VUL_2', check_name=None, check_result=None,
-+                          code_block=None, file_path=None, file_line_range=None,
-+                          resource=None, evaluations=None, check_class=None,
-+                          file_abs_path='package.json', entity_tags=None,
-+                          vulnerability_details={'id': 'GHSA-AAAA-BBBB-CCCC'})
-+        other_cve = Record(check_id='BC_VUL_2', check_name=None, check_result=None,
-+                           code_block=None, file_path=None, file_line_range=None,
-+                           resource=None, evaluations=None, check_class=None,
-+                           file_abs_path='package.json', entity_tags=None,
-+                           vulnerability_details={'id': 'GHSA-dddd-eeee-ffff'})
-+
-+        self.assertTrue(suppressions_integration._check_suppression(matching, suppression))
-+        self.assertFalse(suppressions_integration._check_suppression(other_cve, suppression))
-+
-     def test_suppress_by_cve_with_empty_cves(self):
-         instance = BcPlatformIntegration()
-         instance.repo_id = 'repo/path'
-```
-
----
-
-### Incident Patch 14: `e5745d49` (2026-08-20)
-**Commit Message**: fix(kubernetes): Fix K8S suppressions annotations (#7651)
-
-fix k8s supressions
-
-**File**: `checkov/kubernetes/kubernetes_utils.py` (modified, +2/-1)
-```diff
-@@ -24,6 +24,7 @@
- K8_POSSIBLE_ENDINGS = {".yaml", ".yml", ".json"}
- DEFAULT_NESTED_RESOURCE_TYPE = "Pod"
- SUPPORTED_POD_CONTAINERS_TYPES = {"Deployment", "DeploymentConfig", "DaemonSet", "Job", "ReplicaSet", "ReplicationController", "StatefulSet"}
-+SKIP_ANNOTATION_PREFIXES = ("checkov.io/skip", "bridgecrew.io/skip", "cortex.io/skip")
- PARENT_RESOURCE_KEY_NAME = "_parent_resource"
- PARENT_RESOURCE_ID_KEY_NAME = "_parent_resource_id"
- FILTERED_RESOURCES_FOR_EDGE_BUILDERS = ["NetworkPolicy"]
-@@ -96,7 +97,7 @@ def get_skipped_checks(entity_conf: dict[str, Any]) -> list[_SkippedCheck]:
-                 continue
-             for key in annotation:
-                 skipped_item: "_SkippedCheck" = {}
--                if "checkov.io/skip" in key or "bridgecrew.io/skip" in key:
-+                if any(prefix in key for prefix in SKIP_ANNOTATION_PREFIXES):
-                     if "=" in annotation[key]:
-                         (skipped_item["id"], skipped_item["suppress_comment"]) = annotation[key].split("=")
-                     else:
-```
-
-**File**: `tests/kubernetes/checks/example_Suppressed/suppress-checks-PASSED.yaml` (modified, +32/-0)
-```diff
-@@ -64,6 +64,38 @@ spec:
-         - -c
-         - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
- ---
-+apiVersion: v1
-+kind: Pod
-+metadata:
-+  labels:
-+    test: cortexliveness
-+  name: cortexliveness-exec
-+  annotations:
-+    cortex.io/skip1: CKV_K8S_20=I don't care about Privilege Escalation in the first container in this pod
-+    cortex.io/skip2: CKV_K8S_14
-+    cortex.io/skip3: CKV_K8S_11=I don't care about CPU limits
-+spec:
-+  containers:
-+    - name: cortexliveness
-+      image: k8s.gcr.io/busybox
-+      args:
-+        - /bin/sh
-+        - -c
-+        - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
-+      livenessProbe:
-+        exec:
-+          command:
-+            - cat
-+            - /tmp/healthy
-+        initialDelaySeconds: 5
-+        periodSeconds: 5
-+    - name: cortexnoliveness
-+      image: k8s.gcr.io/busybox
-+      args:
-+        - /bin/sh
-+        - -c
-+        - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
-+---
- apiVersion: apps/v1
- kind: StatefulSet
- metadata:
-```
-
-**File**: `tests/kubernetes/checks/test_SuppressedAnnotations.py` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ def test_summary(self):
- 
-         self.assertEqual(summary['passed'], 0)
-         self.assertEqual(summary['failed'], 1)
--        self.assertEqual(summary['skipped'], 8)
-+        self.assertEqual(summary['skipped'], 9)
-         self.assertEqual(summary['parsing_errors'], 0)
- 
- 
-```
-
-**File**: `tests/kubernetes/test_kubernetes_utils.py` (modified, +66/-0)
-```diff
-@@ -56,3 +56,69 @@ def test_get_skipped_checks():
-         ],
-         key=itemgetter("id"),
-     )
-+
-+
-+def test_get_skipped_checks_supported_prefixes():
-+    # given
-+    manifest = {
-+        "apiVersion": "v1",
-+        "kind": "Pod",
-+        "metadata": {
-+            "name": "nginx",
-+            "annotations": {
-+                "checkov.io/skip1": "CKV_K8S_11=checkov prefix",
-+                "bridgecrew.io/skip1": "CKV_K8S_14=bridgecrew prefix",
-+                "cortex.io/skip1": "CKV_K8S_16=cortex prefix",
-+                "__startline__": 6,
-+                "__endline__": 9,
-+            },
-+            "__startline__": 4,
-+            "__endline__": 9,
-+        },
-+        "spec": {"containers": [], "__startline__": 10, "__endline__": 10},
-+        "__startline__": 1,
-+        "__endline__": 10,
-+    }
-+
-+    # when
-+    skipped = get_skipped_checks(entity_conf=manifest)
-+
-+    # then
-+    for skip in skipped:
-+        skip.pop("bc_id", None)
-+
-+    assert sorted(skipped, key=itemgetter("id")) == sorted(
-+        [
-+            {"id": "CKV_K8S_11", "suppress_comment": "checkov prefix"},
-+            {"id": "CKV_K8S_14", "suppress_comment": "bridgecrew prefix"},
-+            {"id": "CKV_K8S_16", "suppress_comment": "cortex prefix"},
-+        ],
-+        key=itemgetter("id"),
-+    )
-+
-+
-+def test_get_skipped_checks_ignores_unknown_prefix():
-+    # given
-+    manifest = {
-+        "apiVersion": "v1",
-+        "kind": "Pod",
-+        "metadata": {
-+            "name": "nginx",
-+            "annotations": {
-+                "example.com/skip1": "CKV_K8S_16=unsupported prefix",
-+                "__startline__": 6,
-+                "__endline__": 7,
-+            },
-+            "__startline__": 4,
-+            "__endline__": 7,
-+        },
-+        "spec": {"containers": [], "__startline__": 8, "__endline__": 8},
-+        "__startline__": 1,
-+        "__endline__": 8,
-+    }
-+
-+    # when
-+    skipped = get_skipped_checks(entity_conf=manifest)
-+
-+    # then
-+    assert skipped == []
-```
-
----
-
-### Incident Patch 15: `bbacb3a1` (2026-08-19)
-**Commit Message**: fix(sca): correct Windows path handling in image referencer (#7650)
-
-* fix(sca): correct Windows path handling in image referencer rootless paths
-
-* fix(sca): align platform image paths to forward slashes on Windows
-
-* fix(sca): apply Windows path handling only on Windows
-
-* test(sca): drop version-dependent path case from rootless path test
-
-* chore(secrets): bump detect-secrets to 1.5.50
-
-**File**: `checkov/version.py` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--version = '3.3.11'
-+version = '3.3.12'
-```
-
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--checkov==3.3.11
-+checkov==3.3.12
-```
-
 #### Recent Merged Pull Requests:
-- **PR #7712** (2026-10-05): fix(sca): apply --skip-path regex and hidden-dir filtering to sca_package (@omriyoffe-panw)
-- **PR #7708** (2026-10-01): chore(secrets): bump bc-detect-secrets from 1.5.50 to 1.5.52 (@mayblo)
-- **PR #7707** (2026-09-30): fix(terraform_json): handle HCL JSON array and single-dict block formats in parser (@talazuri)
-- **PR #7688** (2026-09-17): fix(secrets): disable spawn mode in frozen environment (@AdamDev)
-- **PR #7687** (2026-09-17): chore(general): upgrade parallelism and drain (@GillSami)
-- **PR #7677** (2026-09-10): fix(general): honour scope.provider for platform-downloaded custom po… (@mayblo)
-- **PR #7676** (2026-09-27): fix(terraform_plan): skip resources being removed from state ('forget' action) (@v3n7i)
-- **PR #7662** (closed): fix(terraform): create edges to outputs of modules called with count or for_each (@AlexKantor87)
+- **PR #7739** (closed): fix(terraform): Handle dynamic DNSSEC key specs (@botaoshi1)
+- **PR #7738** (closed): fix(terraform): Handle Athena managed encryption (@botaoshi1)
+- **PR #7737** (2026-10-13): fix(terraform): extend MySQL public access check to cover flexible server resources (@talazuri)
+- **PR #7736** (2026-10-12): fix(terraform): resolve graph edges for count/for_each indexed resource references (@talazuri)
+- **PR #7734** (2026-10-11): fix(secrets): detect paired AWS secret in bare CSV/delimited format (@MaryArmaly)
+- **PR #7726** (2026-10-06): fix(terraform): avoid tmp_path in git loader tests (@yuvalmich)
 
 ---
 
@@ -2509,3 +1456,44 @@ fix k8s supressions
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. terraform): avoid tmp_path in git loader tests (#7726)
+
+**RULE**:
+When implementing operations in `checkov/common/util/file_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1af12e0d`: terraform): avoid tmp_path in git loader tests (#7726). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/util/file_utils.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    """Return True iff target is inside base, after normalizing both paths ('..', '.', duplicate separators).
+
+    The check is lexical only (os.path.abspath), without accessing the file system. os.path.realpath segfaults
+    on Python 3.9/3.10 in some environments, which hangs scans running in a subprocess.
+    """
+    base_abs = os.path.abspath(base)
+    target_abs = os.path.abspath(target)
+        return os.path.commonpath([base_abs, target_abs]) == base_abs
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+    """Return True iff target resolves inside base (both realpath'd)."""
+    base_real = os.path.realpath(base)
+    target_real = os.path.realpath(target)
+        return os.path.commonpath([base_real, target_real]) == base_real
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1af12e0d` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:55:08.288Z",
-  "total_verified_learnings": 529,
+  "last_updated": "2026-10-19T03:01:38.600Z",
+  "total_verified_learnings": 534,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1682,22 +1682,35 @@
     "learn-github-apache-zookeeper": {
       "learning_id": "learn-github-apache-zookeeper",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apache-zookeeper",
+      "source": "apache/zookeeper",
+      "repository": "apache/zookeeper",
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "HEAD",
-      "content_hash": "669724684c8e32bc1fe82591562153e9ee38bc7eb0b0dfda4e536115941b09e8",
+      "source_version": "48f7cb00",
+      "content_hash": "d919aecb72c3fc8f054fc499a6b5e320d0079229ac74d1177d788b139b135869",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2051,
+          "title": "Add new CVEs to Security page related to 3.8.7 and 3.9.6",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.825Z"
+      "verified_at": "2026-10-19T03:01:34.214Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apify-apify-mcp-server": {
       "learning_id": "learn-github-apify-apify-mcp-server",
@@ -3069,8 +3082,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "a46af5dd",
-      "content_hash": "c448bb78b2baa7f4c3e912a38f95d73527b6bfeb566a5fa55eefee1a6cbc6404",
+      "source_version": "02ebdf27",
+      "content_hash": "f5484937352b3ba076e04c2c8121b98ed5925cc9ad55af8c7035b26a186f9ac3",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3083,6 +3096,11 @@
           "number": 1844,
           "title": "compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an e",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2052,
+          "title": "compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the own",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3090,7 +3108,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:01:10.031Z",
+      "verified_at": "2026-10-19T03:01:38.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3255,22 +3273,35 @@
     "learn-github-bridgecrewio-checkov": {
       "learning_id": "learn-github-bridgecrewio-checkov",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bridgecrewio-checkov",
+      "source": "bridgecrewio/checkov",
+      "repository": "bridgecrewio/checkov",
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "HEAD",
-      "content_hash": "5932cf2b1e594e1dda25dd2427b060a37b8a94d73e4c19fe85613ab0d75a228d",
+      "source_version": "7a6782e3",
+      "content_hash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2050,
+          "title": "terraform): avoid tmp_path in git loader tests (#7726)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.123Z"
+      "verified_at": "2026-10-19T03:01:29.653Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-brightdata-brightdata-mcp": {
       "learning_id": "learn-github-brightdata-brightdata-mcp",
@@ -7722,22 +7753,29 @@
     "learn-github-fangwei716-30-days-of-react-native": {
       "learning_id": "learn-github-fangwei716-30-days-of-react-native",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "fangwei716-30-days-of-react-native",
+      "source": "fangwei716/30-days-of-react-native",
+      "repository": "fangwei716/30-days-of-react-native",
       "slug": "fangwei716-30-days-of-react-native",
       "platform": "github",
       "source_url": "https://github.com/fangwei716/30-days-of-react-native",
-      "source_version": "HEAD",
-      "content_hash": "f9602a9f924566fab04cbb2d0d48f5c303de76971c29856f770ff80ee2d79c48",
+      "source_version": "66af6134",
+      "content_hash": "ecd42b343c2558f7eff5fd867431bd5e6c5936fc7fa557c15581f990625dda0c",
       "dossier_path": "07_PROJECT_LEARNING/fangwei716-30-days-of-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fangwei716-30-days-of-react-native-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.872Z"
+      "verified_at": "2026-10-19T03:01:28.899Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-farama-foundation-chatarena": {
       "learning_id": "learn-github-farama-foundation-chatarena",
@@ -21515,7 +21553,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "265fec8fe61c162de6b7b69fae8e168fb505ee9cacdf514ec3b16d0848da5278",
+      "content_hash": "f4d8d95ee79ec5c821358da7d4450d319480fb2aa399157a4e6e600f68a84eef",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -21567,7 +21605,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-17T22:26:19.143Z",
+      "verified_at": "2026-10-19T03:01:19.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30898,22 +30936,35 @@
     "learn-github-pinterest-gestalt": {
       "learning_id": "learn-github-pinterest-gestalt",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pinterest-gestalt",
+      "source": "pinterest/gestalt",
+      "repository": "pinterest/gestalt",
       "slug": "pinterest-gestalt",
       "platform": "github",
       "source_url": "https://github.com/pinterest/gestalt",
-      "source_version": "HEAD",
-      "content_hash": "15995728741d3f3343f182fc0db56e75fd4ff96ce48a03095a184746c55411f9",
+      "source_version": "7c1f32cb",
+      "content_hash": "9ac3883290df3cfa948cc68d3480f749d1d8895ef32a346f89b44ae426953cb1",
       "dossier_path": "07_PROJECT_LEARNING/pinterest-gestalt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pinterest-gestalt-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2048,
+          "title": "Docs: Re-enable legacy banner button for Gestalt 2.0 [UXE-229] (#4095)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.046Z"
+      "verified_at": "2026-10-19T03:01:19.494Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pipeshub-ai-pipeshub-ai": {
       "learning_id": "learn-github-pipeshub-ai-pipeshub-ai",
@@ -36680,22 +36731,35 @@
     "learn-github-tokio-rs-console": {
       "learning_id": "learn-github-tokio-rs-console",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tokio-rs-console",
+      "source": "tokio-rs/console",
+      "repository": "tokio-rs/console",
       "slug": "tokio-rs-console",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/console",
-      "source_version": "HEAD",
-      "content_hash": "55b4710767f77a0df55beaccab9bebf74026e9eb9dd8db2f682fdcc5c77eb607",
+      "source_version": "b59758e5",
+      "content_hash": "8f1a92773f1a327af6911ca8c2ae4dcabf980e87b32ad6af6ee8a07311842308",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-console-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-console-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2049,
+          "title": "Nix builds and update the lock file (#641)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.996Z"
+      "verified_at": "2026-10-19T03:01:21.665Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tokio-rs-tokio": {
       "learning_id": "learn-github-tokio-rs-tokio",
@@ -74703,6 +74767,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:55:08.272Z"
+    },
+    "rule-2048": {
+      "learning_id": "rule-2048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2048,
+      "title": "Docs: Re-enable legacy banner button for Gestalt 2.0 [UXE-229] (#4095)",
+      "source_url": "https://github.com/pinterest/gestalt",
+      "source_version": "7c1f32cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:01:19.494Z"
+    },
+    "rule-2049": {
+      "learning_id": "rule-2049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2049,
+      "title": "Nix builds and update the lock file (#641)",
+      "source_url": "https://github.com/tokio-rs/console",
+      "source_version": "b59758e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:01:21.665Z"
+    },
+    "rule-2050": {
+      "learning_id": "rule-2050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2050,
+      "title": "terraform): avoid tmp_path in git loader tests (#7726)",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "7a6782e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:01:29.653Z"
+    },
+    "rule-2051": {
+      "learning_id": "rule-2051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2051,
+      "title": "Add new CVEs to Security page related to 3.8.7 and 3.9.6",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "48f7cb00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:01:34.214Z"
+    },
+    "rule-2052": {
+      "learning_id": "rule-2052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2052,
+      "title": "compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the own",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "02ebdf27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:01:38.587Z"
     }
   },
   "aliases": {

@@ -2825,3 +2825,10 @@ Every entry in this ledger must capture:
 | `learn-github-midudev-preguntas-entrevista-react` | `https://github.com/midudev/preguntas-entrevista-react` | `7093d802` | Multi-dimensional audit evidence | 2026-10-19T02:55:01.670Z |
 | `learn-github-orange-cyberdefense-goad` | `https://github.com/Orange-Cyberdefense/GOAD` | `992307ad` | Multi-dimensional audit evidence | 2026-10-19T02:55:02.621Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `a966380e` | Multi-dimensional audit evidence | 2026-10-19T02:55:08.336Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-19T03:01:19.301Z |
+| `learn-github-pinterest-gestalt` | `https://github.com/pinterest/gestalt` | `7c1f32cb` | Multi-dimensional audit evidence | 2026-10-19T03:01:19.558Z |
+| `learn-github-tokio-rs-console` | `https://github.com/tokio-rs/console` | `b59758e5` | Multi-dimensional audit evidence | 2026-10-19T03:01:21.728Z |
+| `learn-github-fangwei716-30-days-of-react-native` | `https://github.com/fangwei716/30-days-of-react-native` | `66af6134` | Multi-dimensional audit evidence | 2026-10-19T03:01:28.977Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `7a6782e3` | Multi-dimensional audit evidence | 2026-10-19T03:01:29.715Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `48f7cb00` | Multi-dimensional audit evidence | 2026-10-19T03:01:34.276Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `02ebdf27` | Multi-dimensional audit evidence | 2026-10-19T03:01:38.650Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T02:27:41.575Z",
+  "last_updated": "2026-10-19T03:01:28.980Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1707,6 +1707,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-sharkdp-pastel"
+    },
+    {
+      "id": "CD-41ZO",
+      "directive_title": "broken Markdown headings",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "fangwei716/30-days-of-react-native",
+      "source_commit": "66af6134",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-fangwei716-30-days-of-react-native"
     }
   ]
 }

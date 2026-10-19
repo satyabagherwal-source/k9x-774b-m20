@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:55:08.350Z",
+  "last_updated": "2026-10-19T03:01:38.656Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -348,14 +348,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "265fec8fe61c162de6b7b69fae8e168fb505ee9cacdf514ec3b16d0848da5278",
-      "verified_at": "2026-10-17T22:26:19.192Z",
+      "content_hash": "f4d8d95ee79ec5c821358da7d4450d319480fb2aa399157a4e6e600f68a84eef",
+      "verified_at": "2026-10-19T03:01:19.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:26:19.192Z"
+      "last_updated": "2026-10-19T03:01:19.308Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -3584,14 +3584,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "c448bb78b2baa7f4c3e912a38f95d73527b6bfeb566a5fa55eefee1a6cbc6404",
-      "verified_at": "2026-10-19T01:01:10.094Z",
+      "content_hash": "f5484937352b3ba076e04c2c8121b98ed5925cc9ad55af8c7035b26a186f9ac3",
+      "verified_at": "2026-10-19T03:01:38.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:01:10.094Z"
+      "last_updated": "2026-10-19T03:01:38.655Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7732,6 +7732,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:55:08.350Z"
+    },
+    "pinterest/gestalt": {
+      "repository": "pinterest/gestalt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pinterest-gestalt",
+      "content_hash": "9ac3883290df3cfa948cc68d3480f749d1d8895ef32a346f89b44ae426953cb1",
+      "verified_at": "2026-10-19T03:01:19.563Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:01:19.563Z"
+    },
+    "tokio-rs/console": {
+      "repository": "tokio-rs/console",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tokio-rs-console",
+      "content_hash": "8f1a92773f1a327af6911ca8c2ae4dcabf980e87b32ad6af6ee8a07311842308",
+      "verified_at": "2026-10-19T03:01:21.733Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:01:21.733Z"
+    },
+    "fangwei716/30-days-of-react-native": {
+      "repository": "fangwei716/30-days-of-react-native",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-fangwei716-30-days-of-react-native",
+      "content_hash": "ecd42b343c2558f7eff5fd867431bd5e6c5936fc7fa557c15581f990625dda0c",
+      "verified_at": "2026-10-19T03:01:28.983Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:01:28.983Z"
+    },
+    "bridgecrewio/checkov": {
+      "repository": "bridgecrewio/checkov",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-bridgecrewio-checkov",
+      "content_hash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
+      "verified_at": "2026-10-19T03:01:29.721Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:01:29.721Z"
+    },
+    "apache/zookeeper": {
+      "repository": "apache/zookeeper",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apache-zookeeper",
+      "content_hash": "d919aecb72c3fc8f054fc499a6b5e320d0079229ac74d1177d788b139b135869",
+      "verified_at": "2026-10-19T03:01:34.281Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:01:34.281Z"
     }
   },
   "repos": {
