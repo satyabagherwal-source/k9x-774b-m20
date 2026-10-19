@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-EZR3",
-    "timestamp": "2026-10-19T04:33:58.143Z",
-    "repository": "typestack/routing-controllers",
-    "learningId": "learn-github-typestack-routing-controllers",
-    "contentHash": "11ebf75dd3d5ae18a6aaaeda5aaaf92b2078d8b4bf579c280042c66e347cb4c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-EZZQ",
-    "timestamp": "2026-10-19T04:33:58.454Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F0U9",
-    "timestamp": "2026-10-19T04:33:59.553Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F50M",
-    "timestamp": "2026-10-19T04:34:04.966Z",
-    "repository": "learnapollo/learnapollo",
-    "learningId": "learn-github-learnapollo-learnapollo",
-    "contentHash": "ad8a3fd9f8c6933185b025c6fa6f8aea738562d422c8f89488e4a592b005bd87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F6Y7",
-    "timestamp": "2026-10-19T04:34:07.471Z",
-    "repository": "someengineering/fixinventory",
-    "learningId": "learn-github-someengineering-fixinventory",
-    "contentHash": "7b2e4a3222d2c140aafdcfab15c3da1bf5dbc8c031ae8ff397c263d74622518d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-FAWD",
     "timestamp": "2026-10-19T04:34:12.589Z",
     "repository": "MariaDB/server",
@@ -7490,6 +7415,81 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "b8ec47d6fa809c4ed33ce17a1726bc5e263ff228861a366280c80aeab19fde34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SUZM",
+    "timestamp": "2026-10-19T18:16:34.018Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+    "contentHash": "4a72a461f045e8c286cafdb17ea39a0ed92f1bacf95ab4a79d093f5dcd13086b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-SYPD",
+    "timestamp": "2026-10-19T18:16:38.833Z",
+    "repository": "rickclephas/KMP-NativeCoroutines",
+    "learningId": "learn-github-rickclephas-kmp-nativecoroutines",
+    "contentHash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-T25Q",
+    "timestamp": "2026-10-19T18:16:43.310Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "fb0223cc39aae3b52c96ef7f63f5262e22985bde2858887500601a22d988e909",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-T299",
+    "timestamp": "2026-10-19T18:16:43.437Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "3c75c7531298ffee8b946f1d03ed145b0884b2ed0d73b504c0013aa2ab0dbf8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-T5B9",
+    "timestamp": "2026-10-19T18:16:47.397Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

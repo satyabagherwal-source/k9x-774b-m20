@@ -18151,5 +18151,17 @@
     "qualityScore": 2725,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-19T17:27:33.859Z"
+  },
+  {
+    "name": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "fullName": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meta-models/Muse-Spark-Open-816B-A42B-NVFP4 (180 likes, 3672 downloads)",
+    "likes": 180,
+    "downloads": 3672,
+    "qualityScore": 3800,
+    "discoveredAt": "2026-10-19T18:14:12.746Z"
   }
 ]

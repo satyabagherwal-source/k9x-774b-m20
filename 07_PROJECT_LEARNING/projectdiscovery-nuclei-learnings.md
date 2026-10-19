@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `e78e9dde`  
+> **Source Version**: `be87581d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:11:39.624Z  
+> **Timestamp**: 2026-10-19T18:16:43.099Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:11:39.619Z  
+> **Harvest Timestamp**: 2026-10-19T18:16:43.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32126 stars
+- **Stars / Engagement**: 32130 stars
 
 ---
 
@@ -1407,283 +1407,230 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3109229` (2026-10-19)
-**Commit Message**: fix dials
+### Incident Patch 1: `be87581d` (2026-10-19)
+**Commit Message**: chore(deps): bump the modules group with 7 updates (#7891)
 
-**File**: `pkg/protocols/common/hostbackoff/hostbackoff.go` (modified, +4/-0)
-```diff
-@@ -216,6 +216,10 @@ func (g *Governor) ObserveDial(host string, err error) {
- 		g.decay(state)
- 	case state.reachable:
- 		g.grow(state, 0)
-+	default:
-+		// A port that never accepted is closed or filtered. Storing it would
-+		// fill the cache and evict hosts that actually have a delay.
-+		return
- 	}
- 	_ = g.hosts.Set(host, state)
- }
-```
+* chore(deps): bump the modules group with 7 updates
 
-**File**: `pkg/protocols/common/hostbackoff/hostbackoff_test.go` (modified, +6/-0)
+Bumps the modules group with 7 updates:
+
+| Package | From | To |
+| --- | --- | --- |
+| [github.com/projectdiscovery/fastdialer](https://github.com/projectdiscovery/fastdialer) | `0.5.25` | `0.5.26` |
+| [github.com/projectdiscovery/networkpolicy](https://github.com/projectdiscovery/networkpolicy) | `0.1.54` | `0.1.55` |
+| [github.com/projectdiscovery/ratelimit](https://github.com/projectdiscovery/ratelimit) | `0.0.93` | `0.0.94` |
+| [github.com/projectdiscovery/rawhttp](https://github.com/projectdiscovery/rawhttp) | `0.1.92` | `0.2.0` |
+| [github.com/projectdiscovery/retryablehttp-go](https://github.com/projectdiscovery/retryablehttp-go) | `1.3.30` | `1.3.31` |
+| [github.com/projectdiscovery/wappalyzergo](https://github.com/projectdiscovery/wappalyzergo) | `0.3.4` | `0.3.5` |
+| [github.com/projectdiscovery/cdncheck](https://github.com/projectdiscovery/cdncheck) | `1.3.1` | `1.3.2` |
+
+
+Updates `github.com/projectdiscovery/fastdialer` from 0.5.25 to 0.5.26
+- [Release notes](https://github.com/projectdiscovery/fastdialer/releases)
+- [Commits](https://github.com/projectdisco
+
+**File**: `go.mod` (modified, +20/-17)
 ```diff
-@@ -232,6 +232,12 @@ func TestDialFailureOnNeverReachedHostIsIgnored(t *testing.T) {
- 		g.ObserveDial("acme.test:22", errors.New("connection refused"))
- 	}
- 	require.Zero(t, g.Delay("acme.test:22"))
-+	_, err := g.hosts.GetIFPresent("acme.test:22")
-+	require.Error(t, err, "a port that never accepted must not take a cache slot")
-+
-+	g.ObserveDial("ok.test:22", nil)
-+	_, err = g.hosts.GetIFPresent("ok.test:22")
-+	require.NoError(t, err, "a port that accepted is tracked so a later refusal can slow it")
- }
+@@ -76,7 +76,7 @@ require (
+ 	github.com/praetorian-inc/fingerprintx v1.1.15
+ 	github.com/projectdiscovery/clistats v0.1.7
+ 	github.com/projectdiscovery/dsl v0.8.24
+-	github.com/projectdiscovery/fastdialer v0.5.25
++	github.com/projectdiscovery/fastdialer v0.5.26
+ 	github.com/projectdiscovery/fasttemplate v0.0.2
+ 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
+ 	github.com/projectdiscovery/goflags v0.2.1
+@@ -92,18 +92,18 @@ require (
+ 	github.com/projectdiscovery/interactsh v1.4.1
+ 	github.com/projectdiscovery/mapcidr v1.1.97
+ 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
+-	github.com/projectdiscovery/networkpolicy v0.1.54
+-	github.com/projectdiscovery/ratelimit v0.0.93
+-	github.com/projectdiscovery/rawhttp v0.1.92
++	github.com/projectdiscovery/networkpolicy v0.1.55
++	github.com/projectdiscovery/ratelimit v0.0.94
++	github.com/projectdiscovery/rawhttp v0.2.0
+ 	github.com/projectdiscovery/rdap v0.9.0
+ 	github.com/projectdiscovery/retryabledns v1.0.116
+-	github.com/projectdiscovery/retryablehttp-go v1.3.30
++	github.com/projectdiscovery/retryablehttp-go v1.3.31
+ 	github.com/projectdiscovery/sarif v0.1.0
+ 	github.com/projectdiscovery/tlsx v1.4.1
+ 	github.com/projectdiscovery/uncover v1.2.1
+ 	github.com/projectdiscovery/useragent v0.0.109
+ 	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
+-	github.com/projectdiscovery/wappalyzergo v0.3.4
++	github.com/projectdiscovery/wappalyzergo v0.3.5
+ 	github.com/projectdiscovery/yamldoc-go v1.0.7
+ 	github.com/redis/go-redis/v9 v9.19.0
+ 	github.com/remeh/sizedwaitgroup v1.0.0
+@@ -124,12 +124,12 @@ require (
+ 	go.mongodb.org/mongo-driver v1.17.9
+ 	go.uber.org/multierr v1.11.0
+ 	golang.org/x/exp v0.0.0-20260527015227-08cc5374adb3
+-	golang.org/x/net v0.58.0
++	golang.org/x/net v0.59.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.22.0
+-	golang.org/x/sys v0.47.0
+-	golang.org/x/term v0.45.0
+-	golang.org/x/text v0.41.0
++	golang.org/x/sync v0.23.0
++	golang.org/x/sys v0.48.0
++	golang.org/x/term v0.46.0
++	golang.org/x/text v0.42.0
+ 	golang.org/x/time v0.15.0
+ 	golang.org/x/tools v0.49.0
+ 	google.golang.org/grpc v1.83.2
+@@ -375,7 +375,7 @@ require (
+ 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+ 	github.com/projectdiscovery/asnmap v1.1.1 // indirect
+ 	github.com/projectdiscovery/blackrock v0.0.2 // indirect
+-	github.com/projectdiscovery/cdncheck v1.3.1 // indirect
++	github.com/projectdiscovery/cdncheck v1.3.2 // indirect
+ 	github.com/projectdiscovery/freeport v0.0.7 // indirect
+ 	github.com/projectdiscovery/jarm-go v0.0.0-20260910160638-430e2bae86f6 // indirect
+ 	github.com/projectdiscovery/ldapserver v1.0.2-0.20240219154113-dcc758ebc0cb // indirect
+@@ -389,7 +389,7 @@ require (
+ 	github.com/sergi/go-diff v1.4.0 // indirect
+ 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
+ 	github.com/shirou/gopsutil/v4 v4.26.3 // indirect
+-	github.com/sirupsen/logrus v1.9.4 // indirect
++	github.com/sirupsen/logrus v1.10.2 // indirect
+ 	github.com/skeema/knownhosts v1.3.1 // indirect
+ 	github.com/sorairolake/lzip-go v0.3.8 // indirect
+ 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+@@ -418,7 +418,7 @@ require (
+ 	github.com/vmihailenco/tagparser v0.1.2 // indirect
+ 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+ 	github.com/vulncheck-oss/go-exploit v1.51.0 // indirect
+-	github.com/weppos/publicsuffix-go v0.50.3 // indirect
++	github.com/weppos/publicsuffix-go v0.50.4-0.20260821095816-b0fdb5c2d345 // indirect
+ 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
+ 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+ 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+@@ -440,7 +440,7 @@ require (
+ 	github.com/zcalusic/sysinfo v1.1.3 // indirect
+ 	github.com/zeebo/blake3 v0.2.4 // indirect
+ 	github.com/zmap/rc2 v0.0.0-20190804163417-abaa70531248 // indirect
+-	github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77 // indirect
++	github.com/zmap/zcrypto v0.0.0-20260906180147-3ed30b1e9340 // indirect
+ 	go.etcd.io/bbolt v1.4.3 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+@@ -458,8 +458,8 @@ require (
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+ 	goftp.io/server/v2 v2.0.1 // indirect
+ 	golang.org/x/arch v0.3.0 // indirect
+-	golang.org/x/crypto v0.55.0 // indirect
+-	golang.org/x/mod v0.39.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
+ 	google.golang.org/api v0.264.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+@@ -472,5 +472,8 @@ require (
+ 	software.sslmate.com/src/go-pkcs12 v0.7.2 // indirect
+ )
  
- func TestResponseMarksHostReachableForDials(t *testing.T) {
++// fastdialer 0.5.26 selects a zcrypto that no longer has GetHeartbleedLog or NextProtoNeg.
++replace github.com/zmap/zcrypto => github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77
++
+ // https://go.dev/ref/mod#go-
 ```
 
-**File**: `pkg/protocols/network/request.go` (modified, +4/-0)
+**File**: `go.sum` (modified, +32/-44)
 ```diff
-@@ -69,7 +69,11 @@ func (request *Request) getOpenPorts(target *contextargs.Context) ([]string, err
- 			request.dialer, _ = networkclientpool.Get(request.options.Options, &networkclientpool.Configuration{})
+@@ -591,11 +591,9 @@ github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeN
+ github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
+-github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
+ github.com/google/go-github/v50 v50.2.0/go.mod h1:VBY8FB6yPIjrtKhozXv4FQupxKLS6H4m6xFZlT43q8Q=
+ github.com/google/go-github/v92 v92.0.0 h1:4vW4RVffwIvoEfIA4RX09mRSB47qQX557/2+HgeWRRg=
+ github.com/google/go-github/v92 v92.0.0/go.mod h1:w3CH62ZcmRfvW1cdXpyTztSOVMtdjxtKpgo0GouLmjY=
+-github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
+ github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
+ github.com/google/go-querystring v1.2.0 h1:yhqkPbu2/OH+V9BfpCVPZkNmUXhb2gBxJArfhIxNtP0=
+ github.com/google/go-querystring v1.2.0/go.mod h1:8IFJqpSRITyJ8QhQ13bmbeMBDfmeEJZD5A0egEOmkqU=
+@@ -865,7 +863,6 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
+ github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
+ github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8eaE=
+ github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
+-github.com/mreiferson/go-httpclient v0.0.0-20160630210159-31f0106b4474/go.mod h1:OQA4XLvDbMgS8P0CevmM4m9Q3Jq4phKUzcocxuGJ5m8=
+ github.com/mreiferson/go-httpclient v0.0.0-20201222173833-5e475fde3a4d/go.mod h1:OQA4XLvDbMgS8P0CevmM4m9Q3Jq4phKUzcocxuGJ5m8=
+ github.com/muesli/reflow v0.3.0 h1:IFsN6K9NfGtjeggFP+68I4chLZV2yIKsXJFNZ+eWh6s=
+ github.com/muesli/reflow v0.3.0/go.mod h1:pbwTDkVPibjO2kyvBQRBxTWEEGDGq0FlB1BIKtnHY/8=
+@@ -935,14 +932,14 @@ github.com/projectdiscovery/asnmap v1.1.1 h1:ImJiKIaACOT7HPx4Pabb5dksolzaFYsD1kI
+ github.com/projectdiscovery/asnmap v1.1.1/go.mod h1:QT7jt9nQanj+Ucjr9BqGr1Q2veCCKSAVyUzLXfEcQ60=
+ github.com/projectdiscovery/blackrock v0.0.2 h1:mxXdu0uM8P2L2Qi210COlU8QiICPFW/Rxk5QUhlPO2k=
+ github.com/projectdiscovery/blackrock v0.0.2/go.mod h1:ANUtjDfaVrqB453bzToU+YB4cUbvBRpLvEwoWIwlTss=
+-github.com/projectdiscovery/cdncheck v1.3.1 h1:+qPKwqdf3mFtrw3ZoVti7hembmVaapnJBjRosYTNdRo=
+-github.com/projectdiscovery/cdncheck v1.3.1/go.mod h1:5IkUMMlcGaeg1DWW5oJVd3r9X3EpJ88j5HxBeF4Me9M=
++github.com/projectdiscovery/cdncheck v1.3.2 h1:I453ZWNBeG0WWIy3wi9412l4PTzorLgebEnqmbcpSfo=
++github.com/projectdiscovery/cdncheck v1.3.2/go.mod h1:5IkUMMlcGaeg1DWW5oJVd3r9X3EpJ88j5HxBeF4Me9M=
+ github.com/projectdiscovery/clistats v0.1.7 h1:NXf4lUzx1QcbJd6QycNwwYHTv2FsW9MchQ2LsgSL6C0=
+ github.com/projectdiscovery/clistats v0.1.7/go.mod h1:RxRGxhMzkT344VTTvZWIrojurUXdQQRN1yfwgg/88I8=
+ github.com/projectdiscovery/dsl v0.8.24 h1:rN2w6LSIjA16qKGRjyj70oxdwXGaspe6sAjEkP7F2fk=
+ github.com/projectdiscovery/dsl v0.8.24/go.mod h1:V+EludvS5PS19UNMlM3CuBwZ+sFnMaQhCFGxysDUanQ=
+-github.com/projectdiscovery/fastdialer v0.5.25 h1:xGFpc5B7cmogqnBrcVYV5yXh6UFlqRA6u5KqautKgD0=
+-github.com/projectdiscovery/fastdialer v0.5.25/go.mod h1:CZZ0PwdTw2KCI/PrZTW9wyBY88MIjpT8WhsKWSw3bkw=
++github.com/projectdiscovery/fastdialer v0.5.26 h1:wCCsopLsO1EF1V1+9Wqkxj1bMm6sRo8NdlzwE2Ib2Ss=
++github.com/projectdiscovery/fastdialer v0.5.26/go.mod h1:dZzEPnpsxqCiD3IkM5CN3RglW3l1gXJNyTkxqjPZIbs=
+ github.com/projectdiscovery/fasttemplate v0.0.2 h1:h2cISk5xDhlJEinlBQS6RRx0vOlOirB2y3Yu4PJzpiA=
+ github.com/projectdiscovery/fasttemplate v0.0.2/go.mod h1:XYWWVMxnItd+r0GbjA1GCsUopMw1/XusuQxdyAIHMCw=
+ github.com/projectdiscovery/freeport v0.0.7 h1:Q6uXo/j8SaV/GlAHkEYQi8WQoPXyJWxyspx+aFmz9Qk=
+@@ -981,18 +978,18 @@ github.com/projectdiscovery/mapcidr v1.1.97 h1:7FkxNNVXp+m1rIu5Nv/2SrF9k4+LwP8Qu
+ github.com/projectdiscovery/mapcidr v1.1.97/go.mod h1:9dgTJh1SP02gYZdpzMjm6vtYFkEHQHoTyaVNvaeJ7lA=
+ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5 h1:L/e8z8yw1pfT6bg35NiN7yd1XKtJap5Nk6lMwQ0RNi8=
+ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5/go.mod h1:pGW2ncnTxTxHtP9wzcIJAB+3/NMp6IiuQWd2NK7K+oc=
+-github.com/projectdiscovery/networkpolicy v0.1.54 h1:+v7yyuRBu2S7dzeIJToDENy1i+HjRhNzqnQrDlm00z8=
+-github.com/projectdiscovery/networkpolicy v0.1.54/go.mod h1:tN+YAFVlJjHv/znPEhkcSAjmBMkMhslC9XpWKTrKEHw=
+-github.com/projectdiscovery/ratelimit v0.0.93 h1:k2rRpCR31DqeqrORSgGzJ+z0T7+QGCt0Z0+Ov/TVrgk=
+-github.com/projectdiscovery/ratelimit v0.0.93/go.mod h1:Tqpx1QKdFI63L01T2gpSvV5Uro9CnZkZWr80ciSXSBY=
+-github.com/projectdiscovery/rawhttp v0.1.92 h1:38GRsVLNllES/dZcEcA6s6P+rYBp34H9mDphMJMDvvg=
+-github.com/projectdiscovery/rawhttp v0.1.92/go.mod h1:spfXTPjxCj+bfWLynMVB7uOb+LS3PDNAI9HexMEV1Zg=
++github.com/projectdiscovery/networkpolicy v0.1.55 h1:D30pipxOdWnSq3r7sX0kQvGyb18sUgopuda1j9NAmnQ=
++github.com/projectdiscovery/networkpolicy v0.1.55/go.mod h1:N5bXm8L3UsDw51CeA1nhTsGEbQMbg
+```
+
+**File**: `pkg/protocols/headless/engine/http_client.go` (modified, +7/-6)
+```diff
+@@ -89,13 +89,15 @@ func newHttpClient(options *types.Options) (*http.Client, error) {
+ 	// causing "malformed HTTP response" errors. We use http2.Transport directly
+ 	// with utls dialing to properly handle h2 connections (see #6360).
+ 	if options.TlsImpersonate {
+-		roundTripper = &http2.Transport{
+-			DialTLSContext: func(ctx context.Context, network, addr string, _ *tls.Config) (net.Conn, error) {
++		// utls conns are not *tls.Conn, so http.Transport speaks HTTP/1 on an h2 session.
++		// http2.Transport is deprecated in x/net 0.59, and it is still the dial that keeps h2. See #6360.
++		roundTripper = &http2.Transport{ //nolint:staticcheck // SA1019
++			DialTLSContext: func(ctx context.Context, network, addr string, _ *tls.Config) (net.Conn, error) { //nolint:staticcheck // SA1019
+ 				return dialers.Fastdialer.DialTLSWithConfigImpersonate(ctx, network, addr, tlsConfig, impersonate.Random, nil)
+ 			},
+-			TLSClientConfig:    tlsConfig,
+-			AllowHTTP:          false,
+-			DisableCompression: false,
++			TLSClientConfig:    tlsConfig, //nolint:staticcheck // SA1019
++			AllowHTTP:          false,     //nolint:staticcheck // SA1019
++			DisableCompression: false,     //nolint:staticcheck // SA1019
  		}
+ 	}
  
-+		if err := request.options.HostBackoffWait(target.Context(), addr); err != nil {
-+			return nil, err
-+		}
- 		conn, err := request.dialer.Dial(target.Context(), "tcp", addr)
-+		request.options.HostBackoffObserveDial(addr, err)
- 		if err != nil {
- 			errs = append(errs, err)
- 			continue
-```
-
-**File**: `pkg/protocols/network/request_backoff_test.go` (modified, +88/-0)
-```diff
-@@ -96,3 +96,91 @@ func TestSuccessfulDialWaitsThenDecays(t *testing.T) {
- 	require.GreaterOrEqual(t, time.Since(start), step, "a host that earned a delay is paced")
- 	require.Zero(t, g.Delay(address), "a connection that succeeds is recovery")
+@@ -113,4 +115,3 @@ func newHttpClient(options *types.Options) (*http.Client, error) {
+ 
+ 	return httpclient, nil
  }
-+
-+func TestMultiPortProbeWaitsThenDecays(t *testing.T) {
-+	openLn, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = openLn.Close() })
-+	go func() {
-+		for {
-+			conn, err := openLn.Accept()
-+			if err != nil {
-+				return
-+			}
-+			_ = conn.Close()
-+		}
-+	}()
-+	openAddr := openLn.Addr().String()
-+	_, openPort, err := net.SplitHostPort(openAddr)
-+	require.NoError(t, err)
-+
-+	closedLn, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	closedAddr := closedLn.Addr().String()
-+	_, closedPort, err := net.SplitHostPort(closedAddr)
-+	require.NoError(t, err)
-+	require.NoError(t, closedLn.Close())
-+
-+	const step = 150 * time.Millisecond
-+	g := hostbackoff.New(hostbackoff.Config{Step: step})
-+	g.Observe(openAddr, http.StatusTooManyRequests, 0, nil)
-+
-+	options := testutils.DefaultOptions.Copy()
-+	options.SetExecutionID(t.Name())
-+	testutils.Init(options)
-+	t.Cleanup(func() { testutils.Cleanup(options) })
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "network-host-backoff"})
-+	executerOpts.HostBackoff = g
-+
-+	request := &Request{
-+		ID:       "network-host-backoff",
-+		Address:  []string{"{{Hostname}}"},
-+		Port:     openPort + "," + closedPort,
-+		ReadSize: 2,
-+	}
-+	require.NoError(t, request.Compile(executerOpts))
-+
-+	start := time.Now()
-+	require.NoError(t, execute(request, "127.0.0.1"))
-+	require.GreaterOrEqual(t, time.Since(start), step, "a multi-port probe waits on a host:port that already has a delay")
-+	require.Zero(t, g.Delay(openAddr), "a probe that connects is recovery")
-+	require.Zero(t, g.Delay(closedAddr), "a port that never accepted stays unpaced")
-+}
-+
-+func TestMultiPortProbeFailureBacksOffPreviouslyOpenPort(t *testing.T) {
-+	closedLn, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	closedAddr := closedLn.Addr().String()
-+	_, closedPort, err := net.SplitHostPort(closedAddr)
-+	require.NoError(t, err)
-+	require.NoError(t, closedLn.Close())
-+
-+	otherLn, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	otherAddr := otherLn.Addr().String()
-+	_, otherPort, err := net.SplitHostPort(otherAddr)
-+	require.NoError(t, err)
-+	require.NoError(t, otherLn.Close())
-+
-+	const step = 100 * time.Millisecond
-+	g := hostbackoff.New(hostbackoff.Config{Step: step})
-+	g.ObserveDial(closedAddr, nil)
-+
-+	options := testutils.DefaultOptions.Copy()
-+	options.SetExecutionID(t.Name())
-+	testutils.Init(options)
-+	t.Cleanup(func() { testutils.Cleanup(options) })
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "network-host-backoff"})
-+	executerOpts.HostBackoff = g
-+
-+	request := &Request{
-+		ID:      "network-host-backoff",
-+		Address: []string{"{{Hostname}}"},
-+		Port:    closedPort + "," + otherPort,
-+	}
-+	require.NoError(t, request.Compile(executerOpts))
-+
-+	require.Error(t, execute(request, "127.0.0.1"))
-+	require.Equal(t, step, g.Delay(closedAddr), "a probe that fails on a port that accepted before slows it")
-+	require.Zero(t, g.Delay(otherAddr), "a port that never accepted stays unpaced")
-+}
-```
-
-**File**: `pkg/protocols/websocket/websocket.go` (modified, +17/-4)
-```diff
-@@ -1,6 +1,7 @@
- package websocket
- 
- import (
-+	"context"
- 	"crypto/tls"
- 	"fmt"
- 	"io"
-@@ -220,10 +221,20 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
- 		tlsConfig.ServerName = requestOptions.Options.SNI
- 	}
- 
-+	// Dial reports both a refused TCP connection and a rejected HTTP upgrade.
-+	// Only the TCP result belongs to host backoff: an upgrade failure means
-+	// the port already accepted the connection.
-+	var dialed bool
-+	var dialErr error
- 	websocketDialer := ws.Dialer{
--		Header:    ws.HandshakeHeaderHTTP(header),
--		Timeout:   time.Duration(requestOptions.Options.Timeout) * time.Second,
--		NetDial:   request.dialer.Dial,
-+		Header:  ws.HandshakeHeaderHTTP(header),
-+		Timeout: time.Duration(requestOptions.Options.Timeout) * time.Second,
-+		NetDial: func(ctx context.Context, network, address string) (net.Conn, error) {
-+			dialed = true
-+			conn, err := request.dialer.Dial(ctx, network, address)
-+			dialErr = err
-+			return conn, err
-+		},
- 		TLSConfig: tlsConfig,
- 	}
- 
-@@ -268,7 +279,9 @@ func (request *Request) executeRequestWithPayloads(target *contextargs.Context,
- 	timeStart := time.Now()
- 	conn, readBuffer, _, err := websocketDialer.Dial(target.Context(), addressToDial)
- 	handshakeDuration := time.Since(timeStart)
--	requestOptions.HostBackoffObserveDial(addressToDial, err)
-+	if dialed {
-+		requestOptions.HostBackoffObserveDial(addressToDial, dialErr)
-+	}
- 	if err != nil {
- 		requestOptions.Output.Request(requestOptions.TemplateID, input, request.Type().String(), err)
- 		requestOptions.Progress.IncrementFailedRequestsBy(1)
-```
-
-**File**: `pkg/protocols/websocket/websocket_backoff_test.go` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+package websocket
-+
-+import (
-+	"context"
-+	"net"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hostbackoff"
-+)
-+
-+func newBackoffWebsocket(t *testing.T, address string, g *hostbackoff.Governor) *Request {
-+	t.Helper()
-+	options := testutils.DefaultOptions.Copy()
-+	options.SetExecutionID(t.Name())
-+	testutils.Init(options)
-+	t.Cleanup(func() { testutils.Cleanup(options) })
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "websocket-host-backoff"})
-+	executerOpts.HostBackoff = g
-+
-+	request := &Request{ID: "websocket-host-backoff", Address: address}
-+	require.NoError(t, request.Compile(executerOpts))
-+	return request
-+}
-+
-+func executeWebsocket(request *Request, address string) error {
-+	input := contextargs.NewWithInput(context.Background(), address)
-+	return request.ExecuteWithResults(input, output.InternalEvent{}, output.InternalEvent{}, func(*output.InternalWrappedEvent) {})
-+}
-+
-+func TestWebsocketHandshakeFailureDoesNotBackOff(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		http.NotFound(w, r)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	address := strings.Replace(server.URL, "http://", "ws://", 1)
-+	host := server.Listener.Addr().String()
-+
-+	const step = 100 * time.Millisecond
-+	g := hostbackoff.New(hostbackoff.Config{Step: step})
-+	g.ObserveDial(host, nil)
-+
-+	request := newBackoffWebsocket(t, address, g)
-+	require.Error(t, executeWebsocket(request, address))
-+	require.Zero(t, g.Delay(host), "a rejected upgrade means the port accepted the connection")
-+}
-+
-+func TestWebsocketDialFailureBacksOffPreviouslyOpenPort(t *testing.T) {
-+	listener, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	host := listener.Addr().String()
-+	require.NoError(t, listener.Close())
-+
-+	address := "ws://" + host
-+	const step = 100 * time.Millisecond
-+	g := hostbackoff.New(hostbackoff.Config{Step: step})
-+	g.ObserveDial(host, nil)
-+
-+	request := newBackoffWebsocket(t, address, g)
-+	require.Error(t, executeWebsocket(request, address))
-+	require.Equal(t, step, g.Delay(host), "a refused TCP dial on a port that accepted before slows it")
-+}
+-
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7895** (2026-10-19): apply host backoff to network, ssl and websocket dials (@dogancanbakir)
+- **PR #7891** (2026-10-19): chore(deps): bump the modules group with 7 updates (@dependabot[bot])
 - **PR #7887** (closed): fix(protocolstate): refresh low-memory warning (@knakul853)
 - **PR #7884** (closed): fix(headless): avoid waiting for an already-fired load event (@knakul853)
 - **PR #7881** (2026-10-18): skip stdin when targets are given with -u or -l (@dogancanbakir)
 - **PR #7879** (2026-10-18): keep the request body in the dump taken after sending (@dogancanbakir)
-- **PR #7872** (closed): fix(flow): bound runtime execution (@knakul853)
 
 ---
 
@@ -1703,31 +1650,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in hostbackoff.go
+## X. deps): bump the modules group with 7 updates (#7891)
 
 **RULE**:
-When implementing operations in `pkg/protocols/common/hostbackoff/hostbackoff.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3109229`: dials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be87581d`: deps): bump the modules group with 7 updates (#7891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/hostbackoff/hostbackoff.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	default:
-		// A port that never accepted is closed or filtered. Storing it would
-		// fill the cache and evict hosts that actually have a delay.
-		return
+	github.com/projectdiscovery/fastdialer v0.5.26
+	github.com/projectdiscovery/networkpolicy v0.1.55
+	github.com/projectdiscovery/ratelimit v0.0.94
+	github.com/projectdiscovery/rawhttp v0.2.0
+	github.com/projectdiscovery/retryablehttp-go v1.3.31
+	github.com/projectdiscovery/wappalyzergo v0.3.5
+	golang.org/x/net v0.59.0
+	golang.org/x/sync v0.23.0
+	golang.org/x/sys v0.48.0
+	golang.org/x/term v0.46.0
+	golang.org/x/text v0.42.0
+	github.com/projectdiscovery/cdncheck v1.3.2 // indirect
+	github.com/sirupsen/logrus v1.10.2 // indirect
+	github.com/weppos/publicsuffix-go v0.50.4-0.20260821095816-b0fdb5c2d345 // indirect
+	github.com/zmap/zcrypto v0.0.0-20260906180147-3ed30b1e9340 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/mod v0.41.0 // indirect
+// fastdialer 0.5.26 selects a zcrypto that no longer has GetHeartbleedLog or NextProtoNeg.
+replace github.com/zmap/zcrypto => github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/projectdiscovery/fastdialer v0.5.25
+	github.com/projectdiscovery/networkpolicy v0.1.54
+	github.com/projectdiscovery/ratelimit v0.0.93
+	github.com/projectdiscovery/rawhttp v0.1.92
+	github.com/projectdiscovery/retryablehttp-go v1.3.30
+	github.com/projectdiscovery/wappalyzergo v0.3.4
+	golang.org/x/net v0.58.0
+	golang.org/x/sync v0.22.0
+	golang.org/x/sys v0.47.0
+	golang.org/x/term v0.45.0
+	golang.org/x/text v0.41.0
+	github.com/projectdiscovery/cdncheck v1.3.1 // indirect
+	github.com/sirupsen/logrus v1.9.4 // indirect
+	github.com/weppos/publicsuffix-go v0.50.3 // indirect
+	github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77 // indirect
+	golang.org/x/crypto v0.55.0 // indirect
+	golang.org/x/mod v0.39.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3109229` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be87581d` are properly handled with clean fallback behavior.

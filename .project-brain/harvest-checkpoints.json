@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T18:10:27.287Z",
+  "last_updated": "2026-10-19T18:16:47.407Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5299,14 +5299,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
-      "verified_at": "2026-10-19T15:11:39.754Z",
+      "content_hash": "3c75c7531298ffee8b946f1d03ed145b0884b2ed0d73b504c0013aa2ab0dbf8a",
+      "verified_at": "2026-10-19T18:16:43.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:11:39.754Z"
+      "last_updated": "2026-10-19T18:16:43.445Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -9304,14 +9304,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
-      "verified_at": "2026-10-19T05:12:57.163Z",
+      "content_hash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
+      "verified_at": "2026-10-19T18:16:47.406Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:12:57.163Z"
+      "last_updated": "2026-10-19T18:16:47.406Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -9784,14 +9784,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
-      "verified_at": "2026-10-19T05:58:49.508Z",
+      "content_hash": "fb0223cc39aae3b52c96ef7f63f5262e22985bde2858887500601a22d988e909",
+      "verified_at": "2026-10-19T18:16:43.320Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:58:49.508Z"
+      "last_updated": "2026-10-19T18:16:43.320Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -12882,6 +12882,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T18:10:20.358Z"
+    },
+    "meta-models/Muse-Spark-Open-816B-A42B-NVFP4": {
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "content_hash": "4a72a461f045e8c286cafdb17ea39a0ed92f1bacf95ab4a79d093f5dcd13086b",
+      "verified_at": "2026-10-19T18:16:34.026Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:16:34.026Z"
+    },
+    "rickclephas/KMP-NativeCoroutines": {
+      "repository": "rickclephas/KMP-NativeCoroutines",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
+      "content_hash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
+      "verified_at": "2026-10-19T18:16:38.842Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:16:38.842Z"
     }
   },
   "repos": {

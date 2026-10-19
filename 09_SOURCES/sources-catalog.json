@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "e78e9dde",
+    "sourceVersion": "be87581d",
     "license": "MIT",
-    "contentHash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
-    "lastHarvestedAt": "2026-10-19T15:11:39.747Z",
+    "contentHash": "3c75c7531298ffee8b946f1d03ed145b0884b2ed0d73b504c0013aa2ab0dbf8a",
+    "lastHarvestedAt": "2026-10-19T18:16:43.439Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "1a9f1f6f",
+    "sourceVersion": "d67db71a",
     "license": "NOASSERTION",
-    "contentHash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
-    "lastHarvestedAt": "2026-10-19T05:12:57.157Z",
+    "contentHash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
+    "lastHarvestedAt": "2026-10-19T18:16:47.400Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "f4318206",
+    "sourceVersion": "27897c11",
     "license": "MIT",
-    "contentHash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
-    "lastHarvestedAt": "2026-10-19T05:58:49.504Z",
+    "contentHash": "fb0223cc39aae3b52c96ef7f63f5262e22985bde2858887500601a22d988e909",
+    "lastHarvestedAt": "2026-10-19T18:16:43.313Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -8558,5 +8558,25 @@
     "contentHash": "4cf00ff447532311394f9c9e0e3e90c240cab2de789c29e3a2bdd286cc29e68c",
     "lastHarvestedAt": "2026-10-19T18:10:20.351Z",
     "learningId": "learn-github-kdchang-reactjs101"
+  },
+  "hf-meta-models-muse-spark-open-816b-a42b-nvfp4": {
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+    "license": "Open-Source",
+    "contentHash": "4a72a461f045e8c286cafdb17ea39a0ed92f1bacf95ab4a79d093f5dcd13086b",
+    "lastHarvestedAt": "2026-10-19T18:16:34.020Z",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
+  },
+  "rickclephas-kmp-nativecoroutines": {
+    "repository": "rickclephas/KMP-NativeCoroutines",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
+    "sourceVersion": "54a45fbb",
+    "license": "MIT",
+    "contentHash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
+    "lastHarvestedAt": "2026-10-19T18:16:38.836Z",
+    "learningId": "learn-github-rickclephas-kmp-nativecoroutines"
   }
 }

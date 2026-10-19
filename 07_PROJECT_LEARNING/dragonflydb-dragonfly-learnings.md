@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `1a9f1f6f`  
+> **Source Version**: `d67db71a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:12:56.924Z  
+> **Timestamp**: 2026-10-19T18:16:47.166Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:12:56.916Z  
+> **Harvest Timestamp**: 2026-10-19T18:16:47.159Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31796 stars
+- **Stars / Engagement**: 31797 stars
 
 ---
 
@@ -1815,6 +1815,12 @@ class DashTable : public detail::DashTableBase {
   template <typename U> const_iterator Find(U&& key) const;
   template <typename U> iterator Find(U&& key);
 
+  // Same as Find(key), for a caller that already has key_hash == DoHash(key).
+  template <typename U> iterator Find(U&& key, uint64_t key_hash) {
+    assert(key_hash == DoHash(key));
+    return FindFirst(key_hash, EqPred(key));
+  }
+
   // Prefetches the memory where the key would resize into the cache.
   template <typename U> void Prefetch(U&& key) const;
 
@@ -1953,14 +1959,7 @@ class DashTable : public detail::DashTableBase {
     // Same as Split()
     uint32_t buddy_chunk_size = 1u << (global_depth_ - buddy->local_depth());
     uint32_t buddy_start = buddy_id & ~(buddy_chunk_size - 1u);
-    for (size_t i = buddy_start; i < buddy_start + buddy_chunk_size; ++i) {
-      segment_[i] = keep;
-    }
-
-    // Free buddy segment
-    PMR_NS::polymorphic_allocator<SegmentType> pa(segment_.get_allocator());
-    using alloc_traits = std::allocator_traits<decltype(pa)>;
-    alloc
+    for (size_t i = buddy_start; i < buddy_start 
 ```
 
 ### Core Architecture Module: `src/core/dash_internal.h`
@@ -2322,410 +2321,884 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d040e3b` (2026-10-15)
-**Commit Message**: fix(server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575)
+### Incident Patch 1: `b3e85383` (2026-10-19)
+**Commit Message**: fix(server): Ensure storage for TS read lives long enough (#8539)
 
-InvokeCmd converted the absolute cycle counter with CycleClock::ToUsec() to key a per-thread
-cache of used/rss memory. The product cycles * 1e6 wraps uint64 after ~5h of host uptime at
-1GHz (~1.4h at 3.7GHz); ToUsec() then returns 0 for one microsecond after each wrap and
-DCHECK_NE(now_usec, 0u) aborts the first DENYOOM command that lands in that window.
+* server: use shared ptr for mget to ensure lifetime
 
-ShouldDenyOnOOM() now reads the counters directly. The cache only coalesced two relaxed loads
-for commands dispatched within the same microsecond while its key cost a multiply and a divide
-per DENYOOM command.
+mget is idempotent. if it runs:
 
-Fixes #8572
+- multi-shard
+- optimistic exec on a shard
+- that schedules read from tiered storage
+- and another shard schedule fails
 
-**File**: `src/server/dragonfly_test.cc` (modified, +18/-0)
+then we run into a problem. the code in MGetGeneric overwrites the area
+where tiered storage read will store its value, causing a crash.
+
+So the area where these writes are done changed to shared pointers. Read
+from tiered storage can access its storage location even if the callback
+is retried. The memory is freed when the read attempt ends.
+
+Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
+
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -24,6 +24,7 @@ extern "C" {
- #include "redis/redis_aux.h"
- #include "server/command_registry.h"
- #include "server/main_service.h"
-+#include "server/server_state.h"
- #include "server/test_utils.h"
- #include "util/accept_server.h"
+@@ -107,6 +107,7 @@ git log --oneline -10
+ **Code Style**: [.clang-format](.clang-format) - snake_case vars, PascalCase functions, kPascalCase constants
  
-@@ -554,6 +555,23 @@ TEST_F(DflyEngineTest, OOM) {
-   }
- }
- 
-+TEST_F(DflyEngineTest, DenyOnOOMReadsLiveCounters) {
-+  auto [denied, allowed, denials] = pp_->at(0)->Await([] {
-+    ServerState* ss = ServerState::tlocal();
-+    uint64_t before = ss->stats.oom_error_cmd_cnt;
-+    max_memory_limit = 1ULL << 29;
-+    used_mem_current = 1ULL << 30;
-+    bool denied = ss->ShouldDenyOnOOM();
-+    used_mem_current = 1ULL << 28;
-+    bool allowed = !ss->ShouldDenyOnOOM();
-+    used_mem_current = 0;
-+    return tuple{denied, allowed, ss->stats.oom_error_cmd_cnt - before};
-+  });
-+  EXPECT_TRUE(denied);
-+  EXPECT_TRUE(allowed);
-+  EXPECT_EQ(denials, 1u);
-+}
-+
- /// Reproduces the case where items with expiry data were evicted,
- /// and then written with the same key.
- TEST_F(DflyEngineTest, Bug207) {
+ **DO ✅**:
++- Function parameters: inputs first, output arguments (pointers the function writes to) last
+ - Fiber-aware: `util::fb2::Mutex`, `util::fb2::Fiber` → [helio/util/fibers/](helio/util/fibers/)
+ - Per-shard ops (no global state) → [docs/df-share-nothing.md](docs/df-share-nothing.md)
+ - Command pattern → [src/server/set_family.cc](src/server/set_family.cc)
 ```
 
-**File**: `src/server/main_service.cc` (modified, +1/-2)
+**File**: `src/server/string_family.cc` (modified, +64/-39)
 ```diff
-@@ -1688,8 +1688,7 @@ DispatchResult Service::InvokeCmd(const facade::ParsedArgs& tail_args, CommandCo
- 
-   ServerState& ss = *ServerState::tlocal();
- 
--  if ((cid->opt_mask() & CO::DENYOOM) &&
--      ss.ShouldDenyOnOOM(base::CycleClock::ToUsec(cmd_cntx->start_cycle))) {
-+  if ((cid->opt_mask() & CO::DENYOOM) && ss.ShouldDenyOnOOM()) {
-     cmd_cntx->SendError(ErrorReply{OpStatus::OUT_OF_MEMORY});
-     return DispatchResult::OOM;
-   }
-```
-
-**File**: `src/server/server_state.cc` (modified, +11/-21)
-```diff
-@@ -183,28 +183,18 @@ void ServerState::EnterLameDuck() {
-   watcher_cv_.notify_all();
- }
- 
--ServerState::MemoryUsageStats ServerState::GetMemoryUsage(uint64_t now_usec) const {
--  if (now_usec != used_mem_last_read_usec_) {
--    used_mem_last_read_usec_ = now_usec;
--    memory_stats_cached_.used_mem = used_mem_current.load(std::memory_order_relaxed);
--    memory_stats_cached_.rss_mem = rss_mem_current.load(std::memory_order_relaxed);
--  }
--  return memory_stats_cached_;
--}
-+bool ServerState::ShouldDenyOnOOM() {
-+  if (!is_master)
-+    return false;
- 
--bool ServerState::ShouldDenyOnOOM(uint64_t now_usec) {
--  DCHECK_NE(now_usec, 0u);
--  if (is_master) {
--    auto memory_stats = GetMemoryUsage(now_usec);
--
--    size_t limit = max_memory_limit.load(memory_order_relaxed);
--    if (memory_stats.used_mem > limit ||
--        (rss_oom_deny_ratio > 0 && memory_stats.rss_mem > (limit * rss_oom_deny_ratio))) {
--      DLOG(WARNING) << "Out of memory, used " << memory_stats.used_mem << " ,rss "
--                    << memory_stats.rss_mem << " ,limit " << limit;
--      stats.oom_error_cmd_cnt++;
--      return true;
--    }
-+  size_t limit = max_memory_limit.load(memory_order_relaxed);
-+  size_t used_mem = used_mem_current.load(memory_order_relaxed);
-+  size_t rss_mem = rss_mem_current.load(memory_order_relaxed);
-+  if (used_mem > limit || (rss_oom_deny_ratio > 0 && rss_mem > limit * rss_oom_deny_ratio)) {
-+    DLOG(WARNING) << "Out of memory, used " << used_mem << " ,rss " << rss_mem << " ,limit "
-+                  << limit;
-+    stats.oom_error_cmd_cnt++;
-+    return true;
-   }
-   return false;
- }
-```
-
-**File**: `src/server/server_state.h` (modified, +1/-11)
-```diff
-@@ -193,13 +193,7 @@ class ServerState {  // public struct - to allow initialization.
-     gstate_ = s;
-   }
- 
--  struct MemoryUsageStats {
--    uint64_t used_mem = 0;
--    uint64_t rss_mem = 0;
--  };
--
--  MemoryUsageStats GetMemoryUsage(uint64_t now_usec) const;
--  bool ShouldDenyOnOOM(uint64_t now_usec);
-+  bool ShouldDenyOnOOM();
- 
-   bool AllowInlineScheduling() const;
- 
-@@ -342,10 +336,6 @@ class ServerState {  // public struct - to allow initialization.
- 
-   detail::EgressThrottler egress_throttler_{0};
- 
--  mutable uint64_t used_mem_last_read_usec_ = 0;
--  mutable MemoryUsageStats
--      memory_stats_cached_;  // thread local cache of used and rss memory current
--
-   static __thread ServerState* state_;
+@@ -559,11 +559,33 @@ struct GetResp {
+   uint32_t ttl_sec = 0;
  };
  
++// Per shard MGET state, updated in place by every attempt of the shard callback. The callback is
++// retried when an optimistic schedule is cancelled, tiered reads of a discarded attempt may still
++// be in flight. They reference this struct, so it must outlive all of them. MGetGeneric waits for
++// the reads of all attempts before destroying it.
+ struct alignas(64) MGetResponse {
+-  explicit MGetResponse(size_t size = 0) : resp_arr(size) {
++  // Starts a new attempt for num_keys keys. Reads issued by previous attempts see the new attempt
++  // and write nothing.
++  void Reset(size_t num_keys) {
++    ++seq_id;
++    err = {};
++    resp_arr.clear();
++    resp_arr.resize(num_keys);
++  }
++
++  // Returns a buffer of at least size bytes, reusing the buffer of a previous attempt if it fits.
++  char* Reserve(size_t size) {
++    if (!storage || size > capacity) {
++      storage = make_unique_for_overwrite<char[]>(size);
++      capacity = size;
++    }
++    return storage.get();
+   }
+ 
+-  std::unique_ptr<char[]> storage;
++  std::unique_ptr<char[]> storage;  // GetResp::value points into it unless borrowed
++  size_t capacity = 0;              // size of storage
++  uint32_t seq_id = 0;              // bumped at the start of every attempt
++  std::error_code err;              // tiered read error of the current attempt
+   absl::InlinedVector<std::optional<GetResp>, 2> resp_arr;
+ };
+ 
+@@ -576,9 +598,9 @@ using SearchMut = SearchKey<DbSlice::Iterator>;
+ using SearchConst = SearchKey<DbSlice::ConstIterator>;
+ 
+ template <typename Iter>
+-MGetResponse CollectKeys(BlockingCounter wait_bc, AggregateError* err, bool is_mc,
+-                         MemcacheCmdFlags cmd_flags, const Transaction* t, EngineShard* shard,
+-                         SearchKey<Iter> find_op) {
++void CollectKeys(BlockingCounter wait_bc, bool is_mc, MemcacheCmdFlags cmd_flags,
++                 const Transaction* t, EngineShard* shard, SearchKey<Iter> find_op,
++                 MGetResponse* response) {
+   ShardArgs keys = t->GetShardArgs(shard->shard_id());
+   DCHECK(!keys.Empty());
+ 
+@@ -587,7 +609,8 @@ MGetResponse CollectKeys(BlockingCounter wait_bc, AggregateError* err, bool is_m
+     DCHECK(!cid->IsReadOnly()) << "mutable iterator used with read-only command " << cid->name();
+   }
+ 
+-  MGetResponse response(keys.Size());
++  response->Reset(keys.Size());
++
+   struct Item {
+     Iter it;
+     optional<cmn::BorrowedString> borrowed;
+@@ -621,9 +644,7 @@ MGetResponse CollectKeys(BlockingCounter wait_bc, AggregateError* err, bool is_m
+ 
+   VLOG_IF(1, total_size > 10000000) << "OpMGet: allocating " << total_size << " bytes";
+ 
+-  // Allocate enough for all values
+-  response.storage = make_unique<char[]>(total_size);
+-  char* next = response.storage.get();
++  char* next = response->Reserve(total_size);
+   bool fetch_mcflag = cmd_flags.return_flags;
+   bool fetch_cas = cmd_flags.return_cas;
+   const DbSlice& db_slice = t->GetDbSlice(shard->shard_id());
+@@ -633,7 +654,7 @@ MGetResponse CollectKeys(BlockingCounter wait_bc, AggregateError* err, bool is_m
+     if (it.is_done())
+       continue;
+ 
+-    auto& resp = response.resp_arr[i].emplace();
++    auto& resp = response->resp_arr[i].emplace();
+ 
+     // Borrow, copy to buffer or trigger tiered read that will eventually write to buffer.
+     const PrimeValue& value = it->second;
+@@ -643,11 +664,17 @@ MGetResponse CollectKeys(BlockingCounter wait_bc, AggregateError* err, bool is_m
+         resp.value = resp.borrowed->view();
+     } else if (value.IsExternal()) {
+       wait_bc->Add(1);
+-      auto cb = [next, err, wait_bc](const io::Result<string_view>& v) mutable {
+-        if (v.has_value())
+-          memcpy(next, v->data(), v->size());
+-        else
+-          *err = v.error();
++      // A read orphaned by a newer attempt writes nothing, `next` may point into a freed or reused
++      // buffer. Read callbacks and attempts run on the shard thread, and the callback does not
++      // suspend, so a new attempt can't start between the check and the write.
++      auto cb = [response, cb_seq_id = response->seq_id, next,
++                 wait_bc](const io::Result<string_view>& v) mutable {
++        if (cb_seq_id == response->seq_id) {
++          if (v.has_value())
++            memcpy(next, v->data(), v->size());
++          else
++            response->err = v.error();
++        }
+         wait_bc->Dec();
+       };
+       ReadTiered(t->GetDbIndex(), it.key(), value, std::move(cb), shard->tiered_storage());
+@@ -678,7 +705,6 @@ MGetResponse CollectKeys(BlockingCounter wait_bc, AggregateError* err, bool is_m
+       }
+     }
+   }
+-  return response;
+ }
+ 
+ // Extend key with value, either prepend or append. Return size of stored string
+@@ -883,9 +909,8 @@ OpResult<DbSlice::Iterator> FindKeyAndSetExpiry(const GetAndTouchParams& params)
+   return find_res->it;
+ }
+ 
+-MGetResponse OpMGet(BlockingCounter wait_bc, AggregateError* err, bool is_mc,
+-         
+```
+
+**File**: `src/server/tiered_storage_test.cc` (modified, +78/-3)
+```diff
+@@ -17,6 +17,7 @@
+ #include "server/db_slice.h"
+ #include "server/engine_shard_set.h"
+ #include "server/namespaces.h"
++#include "server/server_state.h"
+ #ifdef WITH_SEARCH
+ #include "server/search/doc_index.h"
+ #endif
+@@ -87,9 +88,8 @@ class TieredStorageTest : public BaseFamilyTest {
+         [](EngineShard* shard) { shard->tiered_storage()->UpdateFromFlags(); });
+   }
+ 
+-  // src=[1,2] with offloaded BY weights (w_2 < w_1) and GET targets; uploads are disabled so every
+-  // later lookup reads from disk. Returns the GET values.
+-  pair<string, string> OffloadSortOperands() {
++  // Disables uploads on all shards so that offloaded values will stay on disk
++  void DisableUploads() {
+     SetFlag(&FLAGS_tiered_upload_threshold, 1.0f);
+     UpdateFromFlags();
+     // The budget turns negative once the heartbeat's CacheStats() has run on every shard.
+@@ -100,6 +100,11 @@ class TieredStorageTest : public BaseFamilyTest {
+       });
+       return *std::ranges::max_element(budgets) < 0;
+     });
++  }
++
++  // src=[1,2] with offloaded BY weights (w_2 < w_1) and GET targets. uploads are disabled
++  pair<string, string> OffloadSortOperands() {
++    DisableUploads();
+ 
+     string o1 = BuildString(3000, 'a'), o2 = BuildString(3000, 'b');
+     Run({"RPUSH", "src", "1", "2"});
+@@ -2434,4 +2439,74 @@ TEST_P(IndexedHashTieringTest, BorrowedHnswVectorsStayResident) {
+ 
+ #endif  // WITH_SEARCH
+ 
++// MGET runs optimistically and when cancelled reruns its shard callback while tiered reads of the
++// previous attempt may still be in flight. These orphaned reads must not write into the response
++// buffer, which the new attempt reuses or reallocates.
++TEST_F(PureDiskTSMTTest, MGetRescheduleWithPendingReads) {
++  DisableUploads();
++
++  const auto sz = shard_set->size();
++  // big - tiered, read from disk
++  // pad - keep flipping size, always allocated before big in the resp storage
++  // hot - on another shard concurrent write so that MGET's optimistic run there is cancelled.
++  // other - makes the writers of hot multi-shard and prevent inlining
++  const string big = "big", hot = "hot", other = "y";
++  string pad;
++  unsigned i = 0;
++  do {
++    pad = absl::StrCat("pad", i++);
++  } while (Shard(pad, sz) != Shard(big, sz));
++
++  ASSERT_NE(Shard(big, sz), Shard(hot, sz));
++  ASSERT_NE(Shard(other, sz), Shard(big, sz));
++  ASSERT_NE(Shard(other, sz), Shard(hot, sz));
++
++  const string value(8_KB, 'x');
++  const string small_pad(16, 'a'), large_pad(48, 'b');
++
++  Run({"SET", big, value});
++  ExpectConditionWithinTimeout([&] { return GetMetrics().db_stats[0].tiered_entries == 1; });
++  Run({"SET", hot, "v"});
++  Run({"SET", pad, small_pad});
++
++  atomic_bool done{false};
++  vector<Fiber> writers;
++  for (size_t i = 0; i < 4; i++) {
++    writers.push_back(pp_->at(i)->LaunchFiber([&] {
++      // contends with mget hot
++      while (!done.load(memory_order_relaxed))
++        Run({"MSET", hot, "v", other, "v"});
++    }));
++  }
++  writers.push_back(pp_->at(4)->LaunchFiber([&] {
++    // keep changing the size of pad, so that on retries the location for big also changes (next to
++    // pad)
++    for (unsigned i = 0; !done.load(memory_order_relaxed); ++i)
++      Run({"SET", pad, i % 2 ? small_pad : large_pad});
++  }));
++
++  // Run MGETs until enough of them were rescheduled. The counter is incremented on the coordinator
++  // thread, so reading it on the MGET thread counts only the MGET cancellations.
++  constexpr uint64_t kMinCancels = 50;
++  const auto deadline = absl::Now() + absl::Seconds(30);
++  uint64_t cancels = 0;
++  pp_->at(pp_->size() - 1)->Await([&] {
++    const auto& stats = ServerState::tlocal()->stats;
++    const auto base = stats.tx_schedule_cancel_cnt;
++    while (cancels < kMinCancels && absl::Now() < deadline) {
++      // if our attempt comparison is broken we would get mixed bytes here due to overwriting the
++      // buffer
++      EXPECT_THAT(Run({"MGET", pad, big, hot}),
++                  RespElementsAre(AnyOf(small_pad, large_pad), value, "v"));
++      cancels = stats.tx_schedule_cancel_cnt - base;
++    }
++  });
++
++  done = true;
++  for (auto& fb : writers)
++    fb.Join();
++
++  EXPECT_GE(cancels, kMinCancels);
++}
++
+ }  // namespace dfly
 ```
 
 ---
 
-### Incident Patch 2: `8e075228` (2026-10-14)
-**Commit Message**: fix(resp): preserve V2 control ordering (#8547)
+### Incident Patch 2: `d67db71a` (2026-10-19)
+**Commit Message**: fix(stream): serve every ready stream to a woken multi-stream read (#8595)
 
-Stop new control-plane messages from entering a connection once it
-starts draining a parser error. Continue accepting checkpoints so their
-blocking counters are released after commands already in flight
-complete.
+* fix(stream): serve every ready stream to a woken multi-stream read
 
-Test that earlier control messages still reply in order, later control
-messages are dropped, and checkpoints continue tracking in-flight
-dispatch.
+A blocked XREAD/XREADGROUP over several streams, woken by a transaction that made several of
+them ready, returned only the stream that woke it.
 
-Signed-off-by: Gil Levkovich <[REDACTED_EMAIL]>
+- WaitOnWatch takes a WakeMode (tx_base.h). With kAllReadyKeys a transaction already woken on
+  a shard also reserves further ready keys it heads there. Only XREADGROUP uses it; pop
+  commands pass kSingleKey and keep waking other waiters in parallel.
+- A woken XREADGROUP serves all its reserved streams; a woken XREAD reads all streams on the
+  waking shard.
+- Document in BlockingController what reserving a key means.
+- Cross-shard wakes remain best effort, as before.
 
-**File**: `src/facade/dragonfly_connection.cc` (modified, +9/-0)
+Fixes #8071
+
+* refactor(stream): express wake-all-ready-keys as a command flag
+
+XREADGROUP is the only command that consumes every ready key it waits on, so mark it with
+CO::WAKE_ALL_READY_KEYS and let NotifySuspended read the flag from the command, as suggested in
+review. WaitOnWatch keeps its signature, and the WakeMode enum and its call-site changes go away.
+A DCHECK in XReadBlock keeps the flag in sync with ReadOpts::read_group
+
+**File**: `src/server/blocking_controller.h` (modified, +7/-0)
 ```diff
-@@ -2713,6 +2713,15 @@ void Connection::SendAsync(MessageHandle msg) {
-   // here.
-   DCHECK(!(checkpoint && cc_->conn_closing && ioloop_v2_));
+@@ -16,6 +16,13 @@ namespace dfly {
+ // Used for tracking keys of blocking transactions and properly notifying them.
+ // First, keys are marked as watched and associated with an owner transaction. A mutating
+ // transaction marks them as touched, and once it concludes, the watching transactions are notified.
++//
++// Each watched key has a FIFO queue of waiting transactions. Notifying wakes the first waiter for
++// which the key is ready and reserves the key for it: the queue turns ACTIVE with the woken
++// transaction at its head, and no other waiter on the key is woken until that transaction
++// concludes. Then the queue is SUSPENDED again and the key is re-checked for the next waiter.
++// The shard also pauses its transaction queue while a woken transaction is pending, so other
++// transactions cannot take the data it was woken for before it runs.
+ class BlockingController {
+  public:
+   explicit BlockingController(EngineShard* owner, Namespace* ns);
+```
+
+**File**: `src/server/command_registry.h` (modified, +5/-0)
+```diff
+@@ -55,6 +55,11 @@ enum CommandOpt : uint32_t {
+   // ACL: only the key at this offset among the command's keys needs write; others need read.
+   WRITE_KEY_OFFSET_0 = 1U << 19,
+   WRITE_KEY_OFFSET_1 = 1U << 20,
++
++  // Blocking command that consumes every ready key it waits on, like XREADGROUP. When it is woken,
++  // each watched key that is ready on the waking shard is reserved for it, not only the key that
++  // woke it (see BlockingController).
++  WAKE_ALL_READY_KEYS = 1U << 21,
+ };
  
-+  if (parser_error_draining_) {
-+    DCHECK(ioloop_v2_);
-+    // Preserve checkpoints so their blocking counters are released only after any command that
-+    // was already dispatching has completed. All other control messages are cut off by draining.
-+    if (!checkpoint) {
-+      return;
+ };  // namespace CO
+```
+
+**File**: `src/server/main_service.cc` (modified, +1/-0)
+```diff
+@@ -752,6 +752,7 @@ string_view CommandOptName(CO::CommandOpt opt, bool enabled) {
+     case IDEMPOTENT:
+     case WRITE_KEY_OFFSET_0:
+     case WRITE_KEY_OFFSET_1:
++    case WAKE_ALL_READY_KEYS:
+       return "";
+   }
+   return "";
+```
+
+**File**: `src/server/stream_family.cc` (modified, +21/-11)
+```diff
+@@ -3124,12 +3124,14 @@ void XReadBlock(ParsedArgs args, ReadOpts* opts, Transaction* tx, SinkReplyBuild
+                                                          : KeyReadyResult::kNotReady;
+   };
+ 
++  // XREADGROUP consumes the streams it reads, so it is registered with CO::WAKE_ALL_READY_KEYS:
++  // when woken, every ready stream it heads on the waking shard is reserved for it.
++  DCHECK_EQ(opts->read_group, (tx->GetCId()->opt_mask() & CO::WAKE_ALL_READY_KEYS) != 0);
+   if (auto status = tx->WaitOnWatch(tp, Transaction::kShardArgs, key_checker, cntx);
+       status != OpStatus::OK)
+     return status == OpStatus::UNBLOCKED ? rb->SendError(status) : rb->SendNullArray();
+ 
+-  // Read the streams reserved for us on the waking shard: the stream that woke us. Others may be
+-  // reserved for other waiters.
++  // Records read on the waking shard, indexed by the stream's position among the STREAMS arguments.
+   vector<RecordVec> results(opts->stream_ids.size());
+   OpStatus wake_status = OpStatus::OK;
+ 
+@@ -3195,8 +3197,9 @@ void XReadBlock(ParsedArgs args, ReadOpts* opts, Transaction* tx, SinkReplyBuild
+     }
+   }
+ 
+-  // Reads one reserved stream, moving the delivered entries into the consumer PEL for XREADGROUP.
+-  auto read_woken_stream = [&](const OpArgs& op_args, string_view wake_key) -> OpResult<RecordVec> {
++  // Reads one stream on the waking shard. XREADGROUP also moves the delivered entries into the
++  // consumer PEL.
++  auto read_woken_stream = [&](const OpArgs& op_args, string_view key) -> OpResult<RecordVec> {
+     RangeOpts range_opts;
+     // Ensure the woken read honors COUNT like the non-blocking path
+     // (OpRead) does: without it, a consumer woken by a transaction that
+@@ -3206,7 +3209,7 @@ void XReadBlock(ParsedArgs args, ReadOpts* opts, Transaction* tx, SinkReplyBuild
+                                         .ms = UINT64_MAX,
+                                         .seq = UINT64_MAX,
+                                     }};
+-    StreamIDsItem& sitem = opts->stream_ids.at(wake_key);
++    StreamIDsItem& sitem = opts->stream_ids.at(key);
+     range_opts.start = sitem.id;
+ 
+     // '>' is encoded as UINT64_MAX-UINT64_MAX and is only accepted for XREADGROUP, so the start
+@@ -3236,7 +3239,7 @@ void XReadBlock(ParsedArgs args, ReadOpts* opts, Transaction* tx, SinkReplyBuild
+         return OpStatus::CANCELLED;
+       }
+ 
+-      auto it = op_args.GetDbSlice().FindMutable(op_args.db_cntx, wake_key, OBJ_STREAM);
++      auto it = op_args.GetDbSlice().FindMutable(op_args.db_cntx, key, OBJ_STREAM);
+       DCHECK(it);
+       if (it) {
+         tracker->UpdateStreamSize(it->it->second);
+@@ -3246,10 +3249,14 @@ void XReadBlock(ParsedArgs args, ReadOpts* opts, Transaction* tx, SinkReplyBuild
+     range_opts.noack = opts->noack;
+     range_opts.access_kind = StreamAccessKind::kSequential;
+ 
+-    auto result = OpRange(op_args, wake_key, range_opts);
++    auto result = OpRange(op_args, key, range_opts);
++    // A plain XREAD also reads streams that did not wake it. A missing stream or another type has
++    // nothing to serve.
++    if (!result && !opts->read_group)
++      return RecordVec{};
+     if (result) {
+-      JournalConsumerCreationIfNeeded(op_args, *opts, wake_key);
+-      JournalXReadGroupIfNeeded(op_args, *opts, *result, wake_key);
++      JournalConsumerCreationIfNeeded(op_args, *opts, key);
++      JournalXReadGroupIfNeeded(op_args, *opts, *result, key);
+     }
+     return result;
+   };
+@@ -3271,7 +3278,9 @@ void XReadBlock(ParsedArgs args, ReadOpts* opts, Transaction* tx, SinkReplyBuild
+     }
+ 
+     for (auto it = keys.begin(); it != keys.end(); ++it) {
+-      if (!t->IsWakeKey(sid, *it))
++      // XREADGROUP consumes what it reads, so it skips streams reserved for other waiters. XREAD
++      // consumes nothing and reads every stream on the waking shard.
++      if (opts->read_group && !t->IsWakeKey(sid, *it))
+         continue;
+       auto result = read_woken_stream(op_args, *it);
+       if (!result) {
+@@ -4328,7 +4337,8 @@ void StreamFamily::Register(CommandRegistry* registry) {
+             << CI{"XREVRANGE", CO::READONLY, -4, 1, 1, acl::kXRevRange}.HFUNC(XRevRange)
+             << CI{"XREAD", kReadFlags, -3, 3, 3, acl::kXRead}.HFUNC(XRead)
+             << CI{"XREADGROUP",
+-                  CO::VARIADIC_KEYS | CO::BLOCKING | CO::JOURNALED | CO::NO_AUTOJOURNAL,
++                  CO::VARIADIC_KEYS | CO::BLOCKING | CO::JOURNALED | CO::NO_AUTOJOURNAL |
++                      CO::WAKE_ALL_READY_KEYS,
+                   -6,
+                   6,
+                   6,
+```
+
+**File**: `src/server/stream_family_test.cc` (modified, +110/-0)
+```diff
+@@ -24,6 +24,14 @@ const auto kMatchNil = ArgType(RespExpr::NIL);
+ 
+ class StreamFamilyTest : public BaseFamilyTest {
+  protected:
++  // Returns another key, named prefix<N>, that lives on the same shard as key.
++  static string KeyOnShardOf(string_view key, string_view prefix) {
++    for (unsigned i = 0;; ++i) {
++      string candidate = absl::StrCat(prefix, i);
++      if (candidate != key && Shard(candidate, shard_set->size()) == Shard(key, shard_set->size()))
++        return candidate;
++    }
++  }
+ };
+ 
+ TEST_F(StreamFamilyTest, Add) {
+@@ -1089,6 +1097,108 @@ TEST_F(StreamFamilyTest, XReadGroupBlockHonorsCount) {
+   EXPECT_THAT(resp.GetVec()[0].GetVec(), ElementsAre("foo", ArrLen(2)));
+ }
+ 
++// Repro for #8071: a blocked multi-stream read woken by a transaction that makes several of its
++// streams ready must return all of them.
++TEST_F(StreamFamilyTest, XReadBlockMultiStreamWakeSameShard) {
++  const string s1 = "s1", s2 = KeyOnShardOf(s1, "s");
++
++  for (bool group : {false, true}) {
++    Run({"del", s1, s2});
++    Run({"xgroup", "create", s1, "g", "0", "MKSTREAM"});
++    Run({"xgroup", "create", s2, "g", "0", "MKSTREAM"});
++
++    RespExpr resp;
++    auto reader = pp_->at(0)->LaunchFiber(Launch::dispatch, [&] {
++      if (group)
++        resp = Run({"xreadgroup", "group", "g", "c", "block", "0", "streams", s1, s2, ">", ">"});
++      else
++        resp = Run({"xread", "block", "0", "streams", s1, s2, "$", "$"});
++    });
++    ASSERT_TRUE(WaitUntilCondition([&] { return IsConnBlocked("IO0"); }, 500ms));
++
++    pp_->at(1)->Await([&] {
++      Run({"multi"});
++      Run({"xadd", s1, "1-0", "f", "one"});
++      Run({"xadd", s2, "1-0", "f", "two"});
++      return Run({"exec"});
++    });
++    reader.Join();
++
++    ASSERT_THAT(resp, ArrLen(2)) << "group=" << group;
++    EXPECT_THAT(resp.GetVec()[0].GetVec(), ElementsAre(s1, ArrLen(1))) << "group=" << group;
++    EXPECT_THAT(resp.GetVec()[1].GetVec(), ElementsAre(s2, ArrLen(1))) << "group=" << group;
++    if (group) {
++      EXPECT_THAT(Run({"xpending", s1, "g"}), RespElementsAre(IntArg(1), _, _, _));
++      EXPECT_THAT(Run({"xpending", s2, "g"}), RespElementsAre(IntArg(1), _, _, _));
++    }
++  }
++}
++
++// Two consumers of one group: A waits on s1+s2, B on s2 only. Reservation must never wake B to an
++// empty read, whichever of them heads the s2 queue.
++TEST_F(StreamFamilyTest, XReadGroupBlockMultiStreamWakeNoSteal) {
++  const string s1 = "s1", s2 = KeyOnShardOf(s1, "s");
++
++  for (bool b_first : {false, true}) {
++    Run({"del", s1, s2});
++    Run({"xgroup", "create", s1, "g", "0", "MKSTREAM"});
++    Run({"xgroup", "create", s2, "g", "0", "MKSTREAM"});
++
++    RespExpr resp_a, resp_b;
++    auto block_a = [&] {
++      return pp_->at(0)->LaunchFiber(Launch::dispatch, [&] {
++        resp_a =
++            Run("a", {"xreadgroup", "group", "g", "a", "block", "0", "streams", s1, s2, ">", ">"});
++      });
++    };
++    auto block_b = [&] {
++      return pp_->at(2)->LaunchFiber(Launch::dispatch, [&] {
++        resp_b = Run("b", {"xreadgroup", "group", "g", "b", "block", "0", "streams", s2, ">"});
++      });
++    };
++    util::fb2::Fiber fa, fb;
++    if (b_first) {
++      fb = block_b();
++      ASSERT_TRUE(WaitUntilCondition([&] { return IsConnBlocked("b"); }, 500ms));
++      fa = block_a();
++      ASSERT_TRUE(WaitUntilCondition([&] { return IsConnBlocked("a"); }, 500ms));
++    } else {
++      fa = block_a();
++      ASSERT_TRUE(WaitUntilCondition([&] { return IsConnBlocked("a"); }, 500ms));
++      fb = block_b();
++      ASSERT_TRUE(WaitUntilCondition([&] { return IsConnBlocked("b"); }, 500ms));
++    }
++
++    pp_->at(1)->Await([&] {
++      Run({"multi"});
++      Run({"xadd", s1, "1-0", "f", "one"});
++      Run({"xadd", s2, "1-0", "f", "two"});
++      return Run({"exec"});
++    });
++    fa.Join();
++
++    if (b_first) {
++      // B heads s2, so s2 is reserved for B and A only gets s1.
++      fb.Join();
++      ASSERT_THAT(resp_a, ArrLen(1)) << resp_a;
++      EXPECT_THAT(resp_a.GetVec()[0].GetVec(), ElementsAre(s1, ArrLen(1))) << resp_a;
++      EXPECT_THAT(resp_b.GetVec()[0].GetVec(), ElementsAre(s2, ArrLen(1))) << resp_b;
++    } else {
++      // A heads both queues and takes both streams; B stays blocked until s2 grows again.
++      ASSERT_THAT(resp_a, ArrLen(2)) << resp_a;
++      EXPECT_THAT(resp_a.GetVec()[1].GetVec(), ElementsAre(s2, ArrLen(1)));
++      ThisFiber::SleepFor(20ms);
++      EXPECT_TRUE(IsConnBlocked("b"));
++      Run({"xadd", s2, "2-0", "f", "three"});
++      fb.Join();
++      // B gets the new entry, not the one A already consumed.
++      EXPECT_THAT(resp_b.GetVec()[0].GetVec(),
++                  ElementsAre(s2, RespElementsAre(RespElementsAre("2-0", _))))
++          << resp_b;
++    }
++  }
++}
++
+ TEST_F(StreamFamilyTest, XReadInvalidArgs) {
+   // Invalid COUNT value.
+   auto resp = Run({"xread", "count", "invalid", "streams", "s1", "s2", "0", "0"});
+```
+
+**File**: `src/server/transaction.cc` (modified, +7/-7)
+```diff
+@@ -1605,25 +1605,25 @@ bool Transaction::IsGlobal() const {
+ }
+ 
+ // Runs only in the shard thread.
+-// Returns true if the transacton has changed its state from suspended to awakened,
+-// false, otherwise.
+ bool Transaction::NotifySuspended(ShardId sid) {
++  auto& sd = shard_data_[SidToId(sid)];
++
++  // This shard already woke us and we have not run yet. Commands that consume every ready key
++  // (CO::WAKE_ALL_READY_KEYS) reserve this one as well; others leave it to the next waiter.
++  if (sd.local_mask & AWAKED_Q)
++    return (cid_->opt_mask() & CO::WAKE_ALL_READY_KEYS) != 0;
++
+   // Wake a transaction only once on the first notify.
+   // We don't care about preserving the strict order with multiple operations running on blocking
+   // keys in parallel, because the internal order is not observable from outside either way.
+   if (!blocking_barrier_.TryClaim())
+     return false;
+ 
+-  auto& sd = shard_data_[SidToId(sid)];
+-
+   DVLOG(1) << "NotifySuspended " << DebugId() << ", local_mask:" << sd.local_mask;
+ 
+   // We're the first and only to wake this transaction, expect the shard to be suspended.
+   CHECK(sd.local_mask & WAS_SUSPENDED);
+ 
+-  // We wake at most once.
+-  CHECK_EQ(sd.local_mask & AWAKED_Q, 0);
+-
+   // Change state to awaked. The key that woke it stays reserved for it in the blocking controller:
+   // its watch queue is ACTIVE with this transaction at the head (see IsWakeKey).
+   sd.local_mask |= AWAKED_Q;
+```
+
+**File**: `src/server/transaction.h` (modified, +4/-4)
+```diff
+@@ -231,8 +231,8 @@ class Transaction {
+                                facade::ConnectionContext* cntx);
+ 
+   // Called when this transaction heads the watch queue of a ready key on shard sid. Returns true
+-  // if this call woke it, which reserves the key for it. Returns false if it was already woken
+-  // (or cancelled) and can be dropped from the queue.
++  // if the key is reserved for it: either this call woke it, or this shard already did and the
++  // command has CO::WAKE_ALL_READY_KEYS. Returns false if it can be dropped from the queue.
+   bool NotifySuspended(ShardId sid);
+ 
+   // Cancel all blocking watches. Set COORD_CANCELLED.
+@@ -302,8 +302,8 @@ class Transaction {
+   // Runs only in the shard thread, since it queries the shard's BlockingController.
+   bool IsWakeKey(ShardId sid, std::string_view key) const;
+ 
+-  // If blocking tx was woken up on this shard, the key reserved for it. Runs only in the shard
+-  // thread, like IsWakeKey.
++  // If blocking tx was woken up on this shard, the first reserved key in argument order. Runs only
++  // in the shard thread, like IsWakeKey.
+   std::optional<std::string_view> GetWakeKey(ShardId sid) const;
+ 
+   // Get OpArgs for specific shard
+```
+
+---
+
+### Incident Patch 3: `52510513` (2026-10-19)
+**Commit Message**: fix(blocking): do not suspend while NotifyPending iterates watch tables (#8593)
+
+NotifyPending's readiness checks may expire the watched keys, and journaling the expiry could
+suspend on blocked journal writes or in the journal throttle. Meanwhile other fibers could run
+blocked transactions whose RemovedWatched erased the watch queues being iterated.
+
+NotifyPending now waits for blocked journal writes before it iterates and runs the checks with
+journal flushing disabled, in an atomic section, like OpScan. The expired events that TryExpire
+queues meanwhile are sent after the iteration.
+
+After the wait it returns if a transaction is running or continuing on the shard: a woken waiter
+runs ahead of the transaction queue, and that transaction notifies when it concludes. A first hop
+that suspended is running but not yet the continuation. NotifyPendingAtomic DCHECKs both.
+
+Fixes #8553
+
+**File**: `src/server/blocking_controller.cc` (modified, +31/-4)
+```diff
+@@ -11,6 +11,7 @@
+ #include "base/logging.h"
+ #include "server/db_slice.h"
+ #include "server/engine_shard_set.h"
++#include "server/journal/journal.h"
+ #include "server/namespaces.h"
+ #include "server/transaction.h"
+ 
+@@ -151,6 +152,36 @@ void BlockingController::NotifyPending() {
+   const Transaction* tx = owner_->GetContTx();
+   CHECK(tx == nullptr) << tx->DebugId();
+ 
++  if (awakened_indices_.empty())
++    return;
++
++  // Readiness checks may expire keys, and journaling an expiry may suspend and let other fibers
++  // change the watch tables. So wait for blocked journal writes up front and iterate with journal
++  // flushing disabled, in an atomic section; the expired events are sent after the iteration.
++  DbSlice& db_slice = ns_->GetDbSlice(owner_->shard_id());
++  db_slice.WaitForUnblockedJournalWrites();
++
++  // A transaction may have started running while we waited; it notifies when it concludes. Check
++  // running_tx() too: a first hop that suspended is not the continuation transaction yet, and
++  // waking a waiter now would let it run ahead of that continuation.
++  if (owner_->GetContTx() != nullptr || owner_->running_tx() != nullptr)
++    return;
++
++  {
++    journal::DisableFlushGuard flush_guard;
++    NotifyPendingAtomic();
++  }
++
++  db_slice.SendQueuedExpiredKeyEvents();
++}
++
++void BlockingController::NotifyPendingAtomic() {
++  DCHECK(util::fb2::detail::IsFiberAtomicSection());
++  // A waiter woken now runs ahead of the transaction queue (see PollExecutionInternal), so no
++  // transaction may be running or continuing.
++  DCHECK(owner_->running_tx() == nullptr) << owner_->running_tx()->DebugId();
++  DCHECK(owner_->GetContTx() == nullptr) << owner_->GetContTx()->DebugId();
++
+   DbContext context;
+   context.ns = ns_;
+   context.time_now_ms = GetCurrentTimeMs();
+@@ -179,10 +210,6 @@ void BlockingController::NotifyPending() {
+     }
+   }
+   awakened_indices_.clear();
+-
+-  // The readiness checks may expire keys. Send their events now that the iteration is done:
+-  // sending may suspend.
+-  ns_->GetDbSlice(owner_->shard_id()).SendQueuedExpiredKeyEvents();
+ }
+ 
+ void BlockingController::AddWatched(Keys watch_keys, KeyReadyChecker krc, Transaction* trans) {
+```
+
+**File**: `src/server/blocking_controller.h` (modified, +5/-1)
+```diff
+@@ -48,7 +48,7 @@ class BlockingController {
+   // Mark all watched keys in a specific db as awakened.
+   void AwakenWatched(DbIndex db_index);
+ 
+-  // Notify transactions of awakened keys
++  // Notify transactions of awakened keys. May suspend, but not while it iterates the watch tables.
+   void NotifyPending();
+ 
+   // Whether key's watch queue is reserved for tx, i.e. tx was woken while heading it and has not
+@@ -63,6 +63,10 @@ class BlockingController {
+   struct WatchQueue;
+   struct DbWatchTable;
+ 
++  // Runs the readiness checks of the awakened keys. Must not suspend: called with journal flushing
++  // disabled, in an atomic section.
++  void NotifyPendingAtomic();
++
+   void NotifyWatchQueue(std::string_view key, WatchQueue* wqm, const DbContext& context);
+ 
+   EngineShard* owner_;
+```
+
+**File**: `src/server/dragonfly_test.cc` (modified, +138/-0)
+```diff
+@@ -7,6 +7,7 @@ extern "C" {
+ #include "redis/zmalloc.h"
+ }
+ 
++#include <absl/cleanup/cleanup.h>
+ #include <absl/container/flat_hash_set.h>
+ #include <absl/strings/ascii.h>
+ #include <absl/strings/str_join.h>
+@@ -22,7 +23,9 @@ extern "C" {
+ #include "facade/error.h"
+ #include "facade/facade_test.h"
+ #include "redis/redis_aux.h"
++#include "server/blocking_controller.h"
+ #include "server/command_registry.h"
++#include "server/journal/journal.h"
+ #include "server/main_service.h"
+ #include "server/server_state.h"
+ #include "server/test_utils.h"
+@@ -51,6 +54,7 @@ using testing::ElementsAre;
+ using testing::HasSubstr;
+ using testing::Key;
+ using testing::Pair;
++using testing::UnorderedElementsAre;
+ 
+ namespace {
+ 
+@@ -1207,6 +1211,140 @@ TEST_F(DflyEngineTest, ExpireInlineKeyAccounting) {
+   EXPECT_EQ(stats.memory_usage_by_type[OBJ_KEY], 0);
+ }
+ 
++namespace {
++
++// Records the journaled commands. The first DEL parks in ThrottleIfNeeded, i.e. after the record
++// has been appended but before control returns to the code that appended it.
++class ParkFirstDel : public journal::JournalConsumerInterface {
++ public:
++  void ConsumeJournalChange(const journal::JournalChangeItem& item) override {
++    cmds_.emplace_back(item.cmd);
++    if (armed_ && item.cmd == "DEL") {
++      armed_ = false;
++      park_pending_ = true;
 +    }
 +  }
 +
-   // If we launch while closing, it won't be awaited. Control messages will be processed on cleanup.
-   if (!cc_->conn_closing && !ioloop_v2_) {
-     LaunchAsyncFiberIfNeeded();
-```
-
-**File**: `src/server/dragonfly_connection_test.cc` (modified, +69/-0)
-```diff
-@@ -288,6 +288,26 @@ TEST_P(DragonflyV2ConnectionTest, DoesNotExecuteCommandsAfterProtocolError) {
-   EXPECT_EQ(Run({"GET", "prefix-before-error"}), "value");
-   EXPECT_EQ(Run({"GET", "after-error"}).type, facade::RespExpr::NIL);
- }
++  void ThrottleIfNeeded() override {
++    if (std::exchange(park_pending_, false)) {
++      parked.Notify();
++      release.Wait();  // A blocking wait that pauses the execution until the release is notified
++    }
++  }
 +
-+// An older control message must reply before a later parsed prefix and terminal protocol error.
-+TEST_P(DragonflyV2ConnectionTest, DrainsOlderControlMessageBeforePipelinePrefix) {
-+  RawRespClient client{port_};
-+  ASSERT_TRUE(client.valid());
++  // Call on the proactor that the consumer is registered on.
++  vector<string> cmds() const {
++    return cmds_;
++  }
++
++  // parked and release are used to coordinate the blocking and resuming of the first DEL command.
++  fb2::Done parked, release;
++
++ private:
++  bool armed_ = true;
++  bool park_pending_ = false;
++  vector<string> cmds_;
++};
++
++}  // namespace
++
++// NotifyPending's readiness checks may expire the watched keys. Expiry used to suspend in the
++// journal throttle in the middle of the iteration over the watch tables, and fibers that ran
++// meanwhile could erase the queues and the table being iterated (#8553). Here the blocked readers
++// finish while the first expiry is parked: had the iteration been suspended, they would time out
++// and free their watch queues under it. Now the checks run with journal flushing disabled: both
++// expiries are journaled and both readers are woken before the first throttle, and the keyspace
++// events are sent after the iteration.
++TEST_F(DflyEngineTest, NotifyPendingExpiresWithoutSuspending) {
++  string key2;
++  for (unsigned i = 0; key2.empty(); ++i) {
++    string candidate = StrCat("s", i);
++    if (candidate != kKeySid0 && Shard(candidate, shard_set->size()) == 0)
++      key2 = candidate;
++  }
++
++  const string prev_notify =
++      Run({"CONFIG", "GET", "notify_keyspace_events"}).GetVec()[1].GetString();
++  Run({"CONFIG", "SET", "notify_keyspace_events", "Ex"});
++  absl::Cleanup restore_notify = [&] {
++    Run({"CONFIG", "SET", "notify_keyspace_events", prev_notify});
++  };
++  single_response_ = false;
++  ASSERT_THAT(pp_->at(3)->Await([&] {
++    return Run({"subscribe", "__keyevent@0__:expired"});
++  }),
++              ArrLen(3));
++  single_response_ = true;
++
++  for (string_view key : {string_view{kKeySid0}, string_view{key2}}) {
++    Run({"xadd", key, "*", "f", "v"});
++    Run({"xgroup", "create", key, "g", "$"});
++    Run({"pexpire", key, "10"});
++  }
++
++  // Block a consumer group reader on each stream, with a timeout so that it can give up while the
++  // expiry below is parked. The keys are locked by the blocked transactions, so the heartbeat will
++  // not expire them.
++  constexpr string_view kBlockMs = "5000";
++  RespExpr resp1, resp2;
++  auto reader1 = pp_->at(1)->LaunchFiber([&] {
++    resp1 = Run("reader1",
++                {"xreadgroup", "group", "g", "c", "block", kBlockMs, "streams", kKeySid0, ">"});
++  });
++  auto reader2 = pp_->at(2)->LaunchFiber([&] {
++    resp2 =
++        Run("reader2", {"xreadgroup", "group", "g", "c", "block", kBlockMs, "streams", key2, ">"});
++  });
++  // On an early failure, wait for the readers to time out instead of leaving them running.
++  absl::Cleanup join_readers = [&] {
++    reader1.JoinIfNeeded();
++    reader2.JoinIfNeeded();
++  };
 +  ASSERT_TRUE(
-+      client.SendAll("*3\r\n$6\r\nCLIENT\r\n$7\r\nSETNAME\r\n"
-+                     "$13\r\ncontrol-order\r\n"));
-+  ASSERT_EQ(client.ReadLine(), "+OK\r\n");
++      WaitUntilCondition([&] { return IsConnBlocked("reader1") && IsConnBlocked("reader2"); }, 1s));
 +
-+  ASSERT_TRUE(SendMonitorMessage("control-order", "older-control-message"));
-+  ASSERT_TRUE(client.SendAll("*1\r\n$4\r\nPING\r\n*x\r\n"));
-+  ASSERT_EQ(client.ReadLine(), "+older-control-message\r\n");
-+  ASSERT_EQ(client.ReadLine(), "+PONG\r\n");
-+  auto error = client.ReadLine();
-+  ASSERT_TRUE(error.has_value());
-+  EXPECT_THAT(*error, HasSubstr("Protocol error"));
-+  EXPECT_TRUE(client.ReadEof());
-+}
++  ParkFirstDel consumer;
++  const uint32_t consumer_id = StartJournalWithConsumer(&consumer, 0);
++  absl::Cleanup unregister = [&] {
++    pp_->at(0)->AwaitBrief([&] { journal::UnregisterConsumer(consumer_id); });
++  };
 +
- // A synchronous command behind an async prefix returns WOULD_BLOCK until that prefix drains.
- TEST_P(DragonflyV2ConnectionTest, DrainsWouldBlockCommandBeforeProtocolError) {
-   RawRespClient client{port_};
-@@ -309,7 +329,56 @@ TEST_P(DragonflyV2ConnectionTest, DrainsWouldBlockCommandBeforeProtocolError) {
-   EXPECT_THAT(*error, HasSubstr("Protocol error"));
-   EXPECT_TRUE(client.ReadEof());
- }
-+// A checkpoint sent during parser-error draining must wait for the command that was dispatching
-+// when the error latched.
-+TEST_P(DragonflyV2ConnectionTest, CheckpointWaitsForDispatchDuringParserErrorDrain) {
-+  RawRespClient client{port_};
-+  ASSERT_TRUE(client.valid());
-+  ASSERT_TRUE(
-+      client.SendAll("*3\r\n$6\r\nCLIENT\r\n$7\r\nSETNAME\r\n"
-+                     "$16\r\ncheckpoint-drain\r\n"));
-+  ASSERT_EQ(client.ReadLine(), "+OK\r\n");
-+
-+  ASSERT_TRUE(client.SendAll("*3\r\n$5\r\nDEBUG\r\n$7\r\nIOSTATS\r\n$2\r\nPS\r\n*x\r\n"));
-+  ASSERT_TRUE(WaitForSyncDispatch("checkpoint-drain"));
-+  ASSERT_FALSE(client.HasPendingData(100ms));
-+  facade::DispatchTracker tracker{{listener_}, nullptr, true, true};
-+  tracker.TrackAll();
-+  EXPECT_FALSE(tracker.Wait(absl::Milliseconds(100)));
-+
-+  auto error = client.ReadUntilContains("Protocol error", 256);
-+  ASSERT_TRUE(error.has_value());
-+  EXPECT_TRUE(client.ReadEof());
-+  EXPECT_TRUE(tracker.Wait(absl::Milliseconds(100)));
-+}
- 
-+// Control work produced after terminal draining starts must not enter dispatch_q_.
-+TEST_P(DragonflyV2ConnectionTest, RejectsControlMessagesAfterProtocolError) {
-+  RawRespClient client{port_};
-+  ASSERT_TRUE(client.valid());
-+  ASSERT_TRUE(
-+      client.SendAll("*3\r\n$6\r\nCLIENT\r\n$7\r\nSETNAME\r\n"
-+                     "$11\r\ngated-drain\r\n"));
-+  ASSERT_EQ(client.ReadLine(), "+OK\r\n");
-+  ASSERT_TRUE(
-+      client.SendAll("*3\r\n$5\r\nBLPOP\r\n$16\r\ngated-drain-list\r\n$1\r\n0\r\n"
-+                     "*1\r\n$4\r\nPING\r\n"
-+                     "*x\r\n"));
-+  ASSERT_TRUE(WaitForBlockedConnection("gated-drain"));
-+  ASSERT_TRUE(SendMonitorMessage("gated-drain", "must-not-be-enqueued"));
-+
-+  EXPECT_THAT(Run({"RPUSH", "gated-drain-list", "value"}), IntArg(1));
-+  ASSERT_EQ(client.ReadLine(), "*2\r\n");
-+  ASSERT_EQ(client.ReadLine(), "$16\r\n");
-+  ASSERT_EQ(client.ReadLine(), "gated-drain-list\r\n");
-+  ASSERT_EQ(client.ReadLine(), "$5\r\n");
-+  ASSERT_EQ(client.ReadLine(), "value\r\n");
-+  ASSERT_EQ(client.ReadLine(), "+PONG\r\n");
-+  auto error = client.ReadLine();
-+  ASSERT_TRUE(error.has_value());
-+  EXPECT_THAT(*error, HasSubstr("Protocol error"));
-+  EXPECT_TRUE(client.ReadEof());
-+}
- INSTANTIATE_TEST_SUITE_P(PrivateAndSharedReadBuffer, DragonflyV2ConnectionTest,
-                          testing::Values(false, true));
- 
++  // Expire both streams and run the readiness checks, as the heartbeat does. The clock advances
++  // on the shard thread right before, so the heartbeat cannot interleave.
++  auto notify = pp_->at(0)->LaunchFiber([&] {
++    AdvanceTime(20);
++    auto* bc = namespaces->GetDefaultNamespace().GetBlockingControl
 ```
 
----
-
-### Incident Patch 3: `46b0548b` (2026-10-17)
-**Commit Message**: fix(search): keep synonyms over FT.ALTER (#8580)
-
-* fix(search): keep synonyms over FT.ALTER and stop the old builder first
-
-FT.ALTER re-created the shard index without its synonym groups and destroyed the old index
-inside the transaction callback, where joining a still running builder fiber can deadlock (see
-FT.DROPINDEX). Stop the old builder outside the callback before the replacement builder starts,
-carry the synonym groups over to the new index and destroy the old one after the transaction.
-Cancelling a build is now safe for several fibers at once: the worker signals its end and every
-caller waits for it, keeping the builder alive meanwhile.
-
-* refactor(search): destroy the replaced FT.ALTER index inside the transaction callback
-
-The builder of the old index is already stopped and cannot restart, so its destructor joins
-nothing and the extra shard round trip after the transaction is not needed.
-
-* refactor(search): keep the FT.ALTER index swap in one transaction callback
-
-Since #6962 the index builder never dispatches work to the shard queue, so waiting for it inside a
-transaction callback cannot deadlock. FT.ALTER goes back to the lifecycle it had before this PR:
-drop the old
-
-**File**: `src/server/search/doc_index.cc` (modified, +3/-1)
+**File**: `src/server/engine_shard.cc` (modified, +1/-1)
 ```diff
-@@ -1394,8 +1394,10 @@ OpStatus ShardDocIndices::DeleteAlias(string_view alias) {
- }
+@@ -873,7 +873,7 @@ void EngineShard::RetireExpiredAndEvict() {
+   }
  
- void ShardDocIndices::InitIndex(const OpArgs& op_args, std::string_view name,
--                                shared_ptr<const DocIndex> index_ptr, bool is_journal) {
-+                                shared_ptr<const DocIndex> index_ptr, bool is_journal,
-+                                Synonyms synonyms) {
-   auto shard_index = make_unique<ShardDocIndex>(std::move(index_ptr), &hash_index_count_);
-+  shard_index->GetSynonyms() = std::move(synonyms);
-   auto [it, _] = indices_.emplace(name, std::move(shard_index));
- 
-   it->second->InitHnswShardIndices();
-```
-
-**File**: `src/server/search/doc_index.h` (modified, +2/-1)
-```diff
-@@ -651,7 +651,8 @@ class ShardDocIndices {
- 
-   // Init index: create shard local state for given index with given name.
-   void InitIndex(const OpArgs& op_args, std::string_view name,
--                 std::shared_ptr<const DocIndex> index, bool is_journal = false);
-+                 std::shared_ptr<const DocIndex> index, bool is_journal = false,
-+                 Synonyms synonyms = {});
- 
-   // Drop index, return the dropped index if it existed or nullptr otherwise
-   std::unique_ptr<ShardDocIndex> DropIndex(std::string_view name);
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +8/-2)
-```diff
-@@ -2776,8 +2776,14 @@ void CmdFtAlter(CmdArgParser parser, CommandContext* cmd_cntx) {
-   // TODO: Introduce partial rebuild
-   const bool is_journal = cmd_cntx->server_conn_cntx()->journal_emulated;
-   auto upd_cb = [idx_name, index_info, is_journal](Transaction* tx, EngineShard* es) {
--    (void)es->search_indices()->DropIndex(idx_name);
--    es->search_indices()->InitIndex(tx->GetOpArgs(es), idx_name, index_info, is_journal);
-+    unique_ptr<ShardDocIndex> old_index = es->search_indices()->DropIndex(idx_name);
-+    Synonyms synonyms = old_index ? old_index->GetSynonyms() : Synonyms{};
-+    // Destroying the old index waits for its builder, so the replacement builder never runs next
-+    // to it on the same global vector index. The old index is already unregistered, so no new
-+    // caller can reach that builder meanwhile.
-+    old_index.reset();
-+    es->search_indices()->InitIndex(tx->GetOpArgs(es), idx_name, index_info, is_journal,
-+                                    std::move(synonyms));
-     return OpStatus::OK;
-   };
-   cmd_cntx->tx()->Execute(upd_cb, true);
-```
-
-**File**: `src/server/search/search_family_test.cc` (modified, +48/-0)
-```diff
-@@ -4066,6 +4066,54 @@ TEST_F(SearchFamilyTest, FieldExpiryStalePostingIsSkipped) {
-   EXPECT_THAT(Run({"FT.SEARCH", "idx", "other", "NOCONTENT"}), AreNoContentDocIds("d:2"));
- }
- 
-+TEST_F(SearchFamilyTest, FtAlterKeepsSynonyms) {
-+  EXPECT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "PREFIX", "1", "d:", "SCHEMA", "title", "TEXT"}),
-+            "OK");
-+  EXPECT_EQ(Run({"FT.SYNUPDATE", "idx", "g1", "car", "automobile"}), "OK");
-+  EXPECT_THAT(Run({"HSET", "d:1", "title", "car"}), IntArg(1));
-+  EXPECT_THAT(Run({"HSET", "d:2", "title", "automobile"}), IntArg(1));
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "car", "NOCONTENT"}), AreNoContentDocIds("d:1", "d:2"));
-+
-+  EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", "extra", "TEXT"}), "OK");
-+  WaitForIndexReady("idx");
-+
-+  EXPECT_THAT(Run({"FT.SYNDUMP", "idx"}),
-+              IsUnordArray("car", IsArray("g1"), "automobile", IsArray("g1")));
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "car", "NOCONTENT"}), AreNoContentDocIds("d:1", "d:2"));
-+  EXPECT_THAT(Run({"HSET", "d:3", "title", "automobile"}), IntArg(1));
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "car", "NOCONTENT"}),
-+              AreNoContentDocIds("d:1", "d:2", "d:3"));
-+
-+  // The copied groups stay the live state of the index: a later update is seen by indexing.
-+  EXPECT_EQ(Run({"FT.SYNUPDATE", "idx", "g1", "vehicle"}), "OK");
-+  EXPECT_THAT(Run({"HSET", "d:4", "title", "vehicle"}), IntArg(1));
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "car", "NOCONTENT"}),
-+              AreNoContentDocIds("d:1", "d:2", "d:3", "d:4"));
-+  EXPECT_THAT(Run({"FT.SYNDUMP", "idx"}), IsUnordArray("car", IsArray("g1"), "automobile",
-+                                                       IsArray("g1"), "vehicle", IsArray("g1")));
-+}
-+
-+// A second FT.ALTER stops the rebuild of the first one wherever it is; the final index must be
-+// complete and keep the synonyms whatever the interleaving.
-+TEST_F(SearchFamilyTest, FtAlterWhileBuilding) {
-+  EXPECT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "PREFIX", "1", "d:", "SCHEMA", "title", "TEXT"}),
-+            "OK");
-+  EXPECT_EQ(Run({"FT.SYNUPDATE", "idx", "g1", "car", "automobile"}), "OK");
-+  for (int i = 0; i < 500; i++)
-+    EXPECT_THAT(Run({"HSET", absl::StrCat("d:", i), "title", i % 2 ? "car" : "automobile"}),
-+                IntArg(1));
-+
-+  EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", "extra", "TEXT"}), "OK");
-+  EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", "more", "TEXT"}), "OK");
-+  WaitForIndexReady("idx");
-+
-+  for (string_view query : {"car", "automobile", "@extra:x | car"})
-+    EXPECT_THAT(Run({"FT.SEARCH", "idx", query, "LIMIT", "0", "0"}), RespElementsAre(IntArg(500)))
-+        << query;
-+  EXPECT_THAT(Run({"FT.SYNDUMP", "idx"}),
-+              IsUnordArray("car", IsArray("g1"), "automobile", IsArray("g1")));
-+}
-+
- TEST_F(SearchFamilyTest, SearchSortByOptionNonSortableFieldJson) {
-   Run({"JSON.SET", "json1", "$", R"({"text":"2"})"});
-   Run({"JSON.SET", "json2", "$", R"({"text":"1"})"});
+   // Expiry/eviction above only marks watchers as awakened. Dispatch here, outside the atomic
+-  // section, because readiness checks read the db slice and may preempt.
++  // section, because NotifyPending may preempt before and after its readiness checks.
+   if (auto* bc = namespaces->GetDefaultNamespace().GetBlockingController(shard_id());
+       bc && GetContTx() == nullptr) {
+     bc->NotifyPending();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8613** (2026-10-19): refactor: remove unused C++ code (@vyavdoshenko)
+- **PR #8611** (2026-10-19): chore(server): fix compiler and clang-tidy warnings (@romange)
+- **PR #8610** (2026-10-19): feat(aof): read once and buffer (@kostasrim)
 - **PR #8605** (2026-10-18): test: Make test_pubsub_slow_subscriber_closed more reliable. (@glevkovich)
 - **PR #8602** (2026-10-17): fix(server): write PFMERGE destination only on its own shard (@vyavdoshenko)
-- **PR #8600** (2026-10-17): refactor: improve search union op performance (@BorysTheDev)
-- **PR #8598** (closed): refactor: remove redundancies of expire functions (@kostasrim)
-- **PR #8597** (2026-10-17): feat: avoid key slot recalculation (@BorysTheDev)
-- **PR #8592** (2026-10-16): refactor: improve search queries performance (@BorysTheDev)
+- **PR #8601** (2026-10-19): chore(server): add single-key transaction micro-benchmark (@romange)
 
 ---
 
@@ -2745,38 +3218,21 @@ drop the old
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575)
+## X. server): Ensure storage for TS read lives long enough (#8539)
 
 **RULE**:
-When implementing operations in `src/server/dragonfly_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d040e3b`: server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3e85383`: server): Ensure storage for TS read lives long enough (#8539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dragonfly_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "server/server_state.h"
-TEST_F(DflyEngineTest, DenyOnOOMReadsLiveCounters) {
-  auto [denied, allowed, denials] = pp_->at(0)->Await([] {
-    ServerState* ss = ServerState::tlocal();
-    uint64_t before = ss->stats.oom_error_cmd_cnt;
-    max_memory_limit = 1ULL << 29;
-    used_mem_current = 1ULL << 30;
-    bool denied = ss->ShouldDenyOnOOM();
-    used_mem_current = 1ULL << 28;
-    bool allowed = !ss->ShouldDenyOnOOM();
-    used_mem_current = 0;
-    return tuple{denied, allowed, ss->stats.oom_error_cmd_cnt - before};
-  });
-  EXPECT_TRUE(denied);
-  EXPECT_TRUE(allowed);
-  EXPECT_EQ(denials, 1u);
-}
-
+- Function parameters: inputs first, output arguments (pointers the function writes to) last
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2786,4 +3242,4 @@ TEST_F(DflyEngineTest, DenyOnOOMReadsLiveCounters) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d040e3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3e85383` are properly handled with clean fallback behavior.

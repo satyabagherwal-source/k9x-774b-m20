@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T18:10:27.284Z",
-  "total_cycles_completed": 3380,
-  "total_learnings_persisted": 3380,
-  "total_rules_promoted": 2531,
+  "last_updated": "2026-10-19T18:16:47.404Z",
+  "total_cycles_completed": 3385,
+  "total_learnings_persisted": 3385,
+  "total_rules_promoted": 2538,
   "history": [
-    {
-      "timestamp": "2026-10-19T11:48:30.966Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:48:32.216Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:48:38.365Z",
-      "repository": "SwiftUIX/SwiftUIX",
-      "learningId": "learn-github-swiftuix-swiftuix",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:54:44.479Z",
-      "repository": "mui/base-ui",
-      "learningId": "learn-github-mui-base-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:54:50.401Z",
-      "repository": "MochiDiffusion/MochiDiffusion",
-      "learningId": "learn-github-mochidiffusion-mochidiffusion",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T11:54:55.316Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T18:10:27.284Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:16:34.024Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:16:38.839Z",
+      "repository": "rickclephas/KMP-NativeCoroutines",
+      "learningId": "learn-github-rickclephas-kmp-nativecoroutines",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:16:43.317Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:16:43.443Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:16:47.404Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

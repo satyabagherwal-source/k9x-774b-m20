@@ -3410,3 +3410,8 @@ Every entry in this ledger must capture:
 | `learn-github-kdchang-reactjs101` | `https://github.com/kdchang/reactjs101` | `9a6f238b` | Multi-dimensional audit evidence | 2026-10-19T18:10:20.351Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `0b57789d` | Multi-dimensional audit evidence | 2026-10-19T18:10:22.436Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `8c0552d4` | Multi-dimensional audit evidence | 2026-10-19T18:10:27.274Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-19T18:16:34.020Z |
+| `learn-github-rickclephas-kmp-nativecoroutines` | `https://github.com/rickclephas/KMP-NativeCoroutines` | `54a45fbb` | Multi-dimensional audit evidence | 2026-10-19T18:16:38.836Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `27897c11` | Multi-dimensional audit evidence | 2026-10-19T18:16:43.313Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `be87581d` | Multi-dimensional audit evidence | 2026-10-19T18:16:43.439Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `d67db71a` | Multi-dimensional audit evidence | 2026-10-19T18:16:47.400Z |

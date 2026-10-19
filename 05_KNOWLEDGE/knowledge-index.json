@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:10:27.229Z",
-  "total_verified_learnings": 871,
+  "last_updated": "2026-10-19T18:16:47.364Z",
+  "total_verified_learnings": 873,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7545,14 +7545,19 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "1a9f1f6f",
-      "content_hash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
+      "source_version": "d67db71a",
+      "content_hash": "8e065f57c2f7ab74b65d789d3d7f76c1938f034637716301bfb4c7a51e105ca2",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
         {
           "number": 2169,
           "title": "server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2739,
+          "title": "server): Ensure storage for TS read lives long enough (#8539)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7561,7 +7566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:12:57.104Z",
+      "verified_at": "2026-10-19T18:16:47.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35481,14 +35486,19 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "e78e9dde",
-      "content_hash": "e0dd1d035669d352a07875e78d25c477d1bb1845189c107d6a2066029c811697",
+      "source_version": "be87581d",
+      "content_hash": "3c75c7531298ffee8b946f1d03ed145b0884b2ed0d73b504c0013aa2ab0dbf8a",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
         {
           "number": 1841,
           "title": "runtime): honor cancellation in HTTP and headless waits (#7814)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2738,
+          "title": "deps): bump the modules group with 7 updates (#7891)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35497,7 +35507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:11:39.676Z",
+      "verified_at": "2026-10-19T18:16:43.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36844,22 +36854,35 @@
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rickclephas-kmp-nativecoroutines",
+      "source": "rickclephas/KMP-NativeCoroutines",
+      "repository": "rickclephas/KMP-NativeCoroutines",
       "slug": "rickclephas-kmp-nativecoroutines",
       "platform": "github",
       "source_url": "https://github.com/rickclephas/KMP-NativeCoroutines",
-      "source_version": "HEAD",
-      "content_hash": "8bea077182064b6b3179c1698e90b99e79ea8b93d0870102c4b94aa4a556a058",
+      "source_version": "54a45fbb",
+      "content_hash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
       "dossier_path": "07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rickclephas-kmp-nativecoroutines-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2736,
+          "title": "Add Kotlin version suffix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.266Z"
+      "verified_at": "2026-10-19T18:16:38.793Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ricky-7-yan-intelligent-audit-system": {
       "learning_id": "learn-github-ricky-7-yan-intelligent-audit-system",
@@ -41278,14 +41301,19 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "f4318206",
-      "content_hash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
+      "source_version": "27897c11",
+      "content_hash": "fb0223cc39aae3b52c96ef7f63f5262e22985bde2858887500601a22d988e909",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
         {
           "number": 2213,
           "title": "timeskipping clock mismatch (#12609)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2737,
+          "title": "[Elasticsearch] Fix handling shard failure reason in Count API (#12605)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41294,7 +41322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:58:49.473Z",
+      "verified_at": "2026-10-19T18:16:43.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -90606,6 +90634,147 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:10:27.220Z"
+    },
+    "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4": {
+      "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "slug": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "content_hash": "4a72a461f045e8c286cafdb17ea39a0ed92f1bacf95ab4a79d093f5dcd13086b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2733,
+          "title": "Quantization Scale Factor Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2734,
+          "title": "Mixture-of-Experts (MoE) Routing Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2735,
+          "title": "Memory Bandwidth Optimization for Large MoE Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T18:16:33.971Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2733": {
+      "learning_id": "rule-2733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2733,
+      "title": "Quantization Scale Factor Precision Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:33.971Z"
+    },
+    "rule-2734": {
+      "learning_id": "rule-2734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2734,
+      "title": "Mixture-of-Experts (MoE) Routing Consistency Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:33.971Z"
+    },
+    "rule-2735": {
+      "learning_id": "rule-2735",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2735,
+      "title": "Memory Bandwidth Optimization for Large MoE Models",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:33.971Z"
+    },
+    "rule-2736": {
+      "learning_id": "rule-2736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2736,
+      "title": "Add Kotlin version suffix",
+      "source_url": "https://github.com/rickclephas/KMP-NativeCoroutines",
+      "source_version": "54a45fbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:38.793Z"
+    },
+    "rule-2737": {
+      "learning_id": "rule-2737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2737,
+      "title": "[Elasticsearch] Fix handling shard failure reason in Count API (#12605)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "27897c11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:43.259Z"
+    },
+    "rule-2738": {
+      "learning_id": "rule-2738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2738,
+      "title": "deps): bump the modules group with 7 updates (#7891)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "be87581d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:43.390Z"
+    },
+    "rule-2739": {
+      "learning_id": "rule-2739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2739,
+      "title": "server): Ensure storage for TS read lives long enough (#8539)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "d67db71a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:16:47.356Z"
     }
   },
   "aliases": {

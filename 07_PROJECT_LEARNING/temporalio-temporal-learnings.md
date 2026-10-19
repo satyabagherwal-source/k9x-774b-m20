@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `f4318206`  
+> **Source Version**: `27897c11`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:58:49.349Z  
+> **Timestamp**: 2026-10-19T18:16:43.070Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:58:49.343Z  
+> **Harvest Timestamp**: 2026-10-19T18:16:43.064Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23815 stars
+- **Stars / Engagement**: 23830 stars
 
 ---
 
@@ -2121,679 +2121,105 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4318206` (2026-10-18)
-**Commit Message**: Fix timeskipping clock mismatch (#12609)
-
-- **Completed workflow ID reuse:** 
-- bypass the minimum interval when a time-skipped run’s `StartTime` is
-ahead of the shard clock
-   - so an allowed same-ID start is not rejected
-   - Unit and functional tests verify reuse and completion.
-   
-- **Replacing a running workflow:** 
-- Apply the same future-start check to `TERMINATE_EXISTING` to avoid
-`ResourceExhausted`.
-   - A functional test verifies termination and replacement.
-   
-- **Continue-as-New:** Keep the existing backoff calculation because it
-already uses virtual time for time-skipped runs; add a comment
-explaining this. No behavior change.
-- **Activity metrics:** Omit inaccurate latency metrics when the clock
-offset is nonzero, while retaining outcome counters. Unit tests cover
-both.
-
-**File**: `service/history/api/respondactivitytaskcanceled/api.go` (modified, +7/-4)
-```diff
-@@ -45,6 +45,7 @@ func Invoke(
- 	var firstScheduledTime time.Time
- 	var taskQueue string
- 	var workflowTypeName string
-+	var hasTimeSkippingClockOffset bool
- 	var versioningBehavior enumspb.VersioningBehavior
- 	err = api.GetAndUpdateWorkflowWithNew(
- 		ctx,
-@@ -100,6 +101,7 @@ func Invoke(
- 
- 			attemptStartedTime = timestamp.TimeValue(ai.StartedTime)
- 			firstScheduledTime = timestamp.TimeValue(ai.FirstScheduledTime)
-+			hasTimeSkippingClockOffset = workflow.NewTimeSkippingInfoUtil(mutableState.GetExecutionInfo().GetTimeSkippingInfo()).HasTimeSkippingClockOffset()
- 			taskQueue = ai.TaskQueue
- 			versioningBehavior = mutableState.GetEffectiveVersioningBehavior()
- 			return &api.UpdateWorkflowAction{
-@@ -118,10 +120,11 @@ func Invoke(
- 			namespaceName,
- 			taskQueue,
- 			workflow.ActivityCompletionMetrics{
--				Status:             workflow.ActivityStatusCanceled,
--				AttemptStartedTime: attemptStartedTime,
--				FirstScheduledTime: firstScheduledTime,
--				Closed:             true,
-+				Status:                     workflow.ActivityStatusCanceled,
-+				AttemptStartedTime:         attemptStartedTime,
-+				FirstScheduledTime:         firstScheduledTime,
-+				HasTimeSkippingClockOffset: hasTimeSkippingClockOffset,
-+				Closed:                     true,
- 				VersioningInfo: workflow.VersioningMetricContext{
- 					Behavior:          versioningBehavior,
- 					DeploymentVersion: worker_versioning.DeploymentVersionFromOptions(request.GetDeploymentOptions()),
-```
-
-**File**: `service/history/api/respondactivitytaskcompleted/api.go` (modified, +7/-4)
-```diff
-@@ -46,6 +46,7 @@ func Invoke(
- 	var taskQueue string
- 	var workflowTypeName string
- 	var fabricateStartedEvent bool
-+	var hasTimeSkippingClockOffset bool
- 	var versioningBehavior enumspb.VersioningBehavior
- 	err = api.GetAndUpdateWorkflowWithNew(
- 		ctx,
-@@ -118,6 +119,7 @@ func Invoke(
- 				attemptStartedTime = timestamp.TimeValue(ai.StartedTime)
- 			}
- 			firstScheduledTime = timestamp.TimeValue(ai.FirstScheduledTime)
-+			hasTimeSkippingClockOffset = workflow.NewTimeSkippingInfoUtil(mutableState.GetExecutionInfo().GetTimeSkippingInfo()).HasTimeSkippingClockOffset()
- 			taskQueue = ai.TaskQueue
- 			versioningBehavior = mutableState.GetEffectiveVersioningBehavior()
- 			return &api.UpdateWorkflowAction{
-@@ -136,10 +138,11 @@ func Invoke(
- 			namespaceName,
- 			taskQueue,
- 			workflow.ActivityCompletionMetrics{
--				AttemptStartedTime: attemptStartedTime,
--				FirstScheduledTime: firstScheduledTime,
--				Status:             workflow.ActivityStatusSucceeded,
--				Closed:             true,
-+				AttemptStartedTime:         attemptStartedTime,
-+				FirstScheduledTime:         firstScheduledTime,
-+				HasTimeSkippingClockOffset: hasTimeSkippingClockOffset,
-+				Status:                     workflow.ActivityStatusSucceeded,
-+				Closed:                     true,
- 				VersioningInfo: workflow.VersioningMetricContext{
- 					Behavior:          versioningBehavior,
- 					DeploymentVersion: worker_versioning.DeploymentVersionFromOptions(request.GetDeploymentOptions()),
-```
-
-**File**: `service/history/api/respondactivitytaskfailed/api.go` (modified, +7/-4)
-```diff
-@@ -47,6 +47,7 @@ func Invoke(
- 	var taskQueue string
- 	var workflowTypeName string
- 	var closed bool
-+	var hasTimeSkippingClockOffset bool
- 	var versioningBehavior enumspb.VersioningBehavior
- 	err = api.GetAndUpdateWorkflowWithNew(
- 		ctx,
-@@ -101,6 +102,7 @@ func Invoke(
- 			// Capture the metric inputs before that mutation so we record the attempt that just finished.
- 			attemptStartedTime = timestamp.TimeValue(ai.GetStartedTime())
- 			firstScheduledTime = timestamp.TimeValue(ai.FirstScheduledTime)
-+			hasTimeSkippingClockOffset = workflow.NewTimeSkippingInfoUtil(mutableState.GetExecutionInfo().GetTimeSkippingInfo()).HasTimeSkippingClockOffset()
- 			taskQueue = ai.TaskQueue
- 			mutableState.RecordLastActivityCompleteTime(ai)
- 			retryState, err := mutableState.RetryActivity(ai, failure)
-@@ -130,10 +132,11 @@ func Invoke(
- 	)
- 	if err == nil {
- 		completionMetrics := workflow.ActivityCompletionMetrics{
--			AttemptStartedTime: attemptStartedTime,
--			FirstScheduledTime: firstScheduledTime,
--			Status:             workflow.ActivityStatusFailed,
--			Closed:             closed,
-+			AttemptStartedTime:         attemptStartedTime,
-+			FirstScheduledTime:         firstScheduledTime,
-+			HasTimeSkippingClockOffset: hasTimeSkippingClockOffset,
-+			Status:                     workflow.ActivityStatusFailed,
-+			Closed:                     closed,
- 			VersioningInfo: workflow.VersioningMetricContext{
- 				Behavior:          versioningBehavior,
- 				DeploymentVersion: worker_versioning.DeploymentVersionFromOptions(request.GetDeploymentOptions()),
-```
-
-**File**: `service/history/api/workflow_id_dedup.go` (modified, +14/-2)
-```diff
-@@ -263,7 +263,13 @@ func ResolveWorkflowIDReusePolicy(
- 	now := shardContext.GetTimeSource().Now()
- 	timeSinceStart := now.Sub(currentWorkflowStartTime.UTC())
- 
--	if minimalReuseInterval == 0 || minimalReuseInterval < timeSinceStart {
-+	// A time-skipped StartTime can be ahead of the shard clock, so a negative
-+	// timeSinceStart must not block reuse allowed by the policy. Without time skipping,
-+	// clock skew can also make timeSinceStart negative and bypass the minimum interval.
-+	// Once the shard clock catches up with a virtual StartTime, this check can reject
-+	// a valid reuse for up to minimalReuseInterval; retrying later can succeed.
-+	// TODO@time-skipping: Pass ExecutionInfo to calculate elapsed wall-clock time accurately.
-+	if minimalReuseInterval == 0 || timeSinceStart < 0 || minimalReuseInterval < timeSinceStart {
- 		// ie "allow" starting a new workflow
- 		return nil
- 	}
-@@ -306,7 +312,13 @@ func resolveDuplicateWorkflowStart(
- 	now := shardContext.GetTimeSource().Now()
- 	timeSinceStart := now.Sub(currentWorkflowStartTime.UTC())
- 
--	if minimalReuseInterval == 0 || minimalReuseInterval < timeSinceStart {
-+	// A time-skipped StartTime can be ahead of the shard clock, so a negative
-+	// timeSinceStart must not block TERMINATE_EXISTING. Without time skipping,
-+	// clock skew can also make timeSinceStart negative and bypass the minimum interval.
-+	// Once the shard clock catches up with a virtual StartTime, this check can reject
-+	// a valid replacement for up to minimalReuseInterval; retrying later can succeed.
-+	// TODO@time-skipping: Pass ExecutionInfo to calculate elapsed wall-clock time accurately.
-+	if minimalReuseInterval == 0 || timeSinceStart < 0 || minimalReuseInterval < timeSinceStart {
- 		return terminateWorkflowAction(newRunID, parentExecutionInfo, childWorkflowOnly)
- 	}
- 
-```
-
-**File**: `service/history/api/workflow_id_dedup_test.go` (modified, +62/-0)
-```diff
-@@ -55,6 +55,16 @@ func TestResolveDuplicateWorkflowStart(t *testing.T) {
- 			currentWorkflowStart: now.Add(-2 * time.Second),
- 			expectError:          false,
- 		},
-+		{
-+			gracePeriod:          time.Second,
-+			currentWorkflowStart: now.Add(time.Hour),
-+			expectError:          false,
-+		},
-+		{
-+			gracePeriod:          time.Second,
-+			currentWorkflowStart: time.Time{},
-+			expectError:          false,
-+		},
- 	}
- 
- 	config := tests.NewDynamicConfig()
-@@ -92,6 +102,58 @@ func TestResolveDuplicateWorkflowStart(t *testing.T) {
- 	}
- }
- 
-+func TestResolveWorkflowIDReusePolicyMinimalInterval(t *testing.T) {
-+	timeSource := clock.NewEventTimeSource()
-+	now := timeSource.Now()
-+	config := tests.NewDynamicConfig()
-+	shardContext := shard.NewTestContextWithTimeSource(
-+		gomock.NewController(t),
-+		&persistencespb.ShardInfo{RangeId: 1},
-+		config,
-+		timeSource,
-+	)
-+	namespaceEntry := namespace.NewLocalNamespaceForTest(
-+		&persistencespb.NamespaceInfo{},
-+		&persistencespb.NamespaceConfig{},
-+		"target_cluster",
-+	)
-+	workflowKey := definition.WorkflowKey{WorkflowID: "workflowID", RunID: "oldRunID"}
-+
-+	for _, tc := range []struct {
-+		name        string
-+		interval    time.Duration
-+		startTime   time.Time
-+		policy      enumspb.WorkflowIdReusePolicy
-+		expectError bool
-+	}{
-+		{"no interval", 0, now, enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE, false},
-+		{"within interval", time.Second, now, enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE, true},
-+		{"after interval", time.Second, now.Add(-2 * time.Second), enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE, false},
-+		{"future virtual start", time.Second, now.Add(time.Hour), enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE, false},
-+		{"start-time validation disabled", time.Second, time.Time{}, enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE, false},
-+		{"reject duplicate", time.Second, now.Add(time.Hour), enumspb.WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE, true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			config.WorkflowIdReuseMinimalInterval = dynamicconfig.GetDurationPropertyFnFilteredByNamespace(tc.interval)
-+			err := ResolveWorkflowIDReusePolicy(
-+				shardContext,
-+				workflowKey,
-+				namespaceEntry,
-+				enumspb.WORKFLOW_EXECUTION_STATUS_COMPLETED,
-+				nil,
-+				workflowKey.RunID,
-+				tc.policy,
-+				tc.startTime,
-+			)
-+			if tc.expectError {
-+				require.Error(t, err)
-+			} else {
-+				require.NoError(t, err)
-+			}
-+		})
-+	}
-+}
-+
- func TestOrphanedChildReplacementDoesNotReplaceUnrelatedWorkflow(t *testing.T) {
- 	parentExecutionInfo := &workflowspb.ParentExecutionInfo{
- 		NamespaceId: "parent-namespace",
-```
-
-**File**: `service/history/timer_queue_active_task_executor.go` (modified, +6/-5)
-```diff
-@@ -335,11 +335,12 @@ func (t *timerQueueActiveTaskExecutor) processSingleActivityTimeoutTask(
- 		mutableState.GetNamespaceEntry().Name(),
- 		ai.TaskQueue,
- 		workflow.ActivityCompletionMetrics{
--			Status:             workflow.ActivityStatusTimeout,
--			AttemptStartedTime: timestamp.TimeValue(ai.StartedTime),
--			FirstScheduledTime: timestamp.TimeValue(ai.FirstScheduledTime),
--			Closed:             retryState != enumspb.RETRY_STATE_IN_PROGRESS,
--			TimerType:          timerSequenceID.TimerType,
-+			Status:                     workflow.ActivityStatusTimeout,
-+			AttemptStartedTime:         timestamp.TimeValue(ai.StartedTime),
-+			FirstScheduledTime:         timestamp.TimeValue(ai.FirstScheduledTime),
-+			HasTimeSkippingClockOffset: workflow.NewTimeSkippingInfoUtil(mutableState.GetExecutionInfo().GetTimeSkippingInfo()).HasTimeSkippingClockOffset(),
-+			Closed:                     retryState != enumspb.RETRY_STATE_IN_PROGRESS,
-+			TimerType:                  timerSequenceID.TimerType,
- 			VersioningInfo: workflow.VersioningMetricContext{
- 				Behavior:          mutableState.GetEffectiveVersioningBehavior(),
- 				DeploymentVersion: deploymentVersion,
-```
-
-**File**: `service/history/workflow/metrics.go` (modified, +8/-2)
-```diff
-@@ -256,6 +256,12 @@ type ActivityCompletionMetrics struct {
- 	AttemptStartedTime time.Time
- 	// FirstScheduledTime is the scheduled time of the first attempt
- 	FirstScheduledTime time.Time
-+	// HasTimeSkippingClockOffset indicates that skipped time has shifted the workflow clock.
-+	// Latency metrics are omitted because activity timestamps may use different clock offsets;
-+	// activity counters are still recorded.
-+	// TODO@time-skipping: Use the workflow's virtual clock to calculate and report activity
-+	// latency if doing so has no unexpected customer-facing impact.
-+	HasTimeSkippingClockOffset bool
- 	// Closed is true if no more attempts will be made to execute the activity.
- 	Closed bool
- 	// TimerType is the type of timer that caused the activity execution to timeout.
-@@ -287,7 +293,7 @@ func RecordActivityCompletionMetrics(
- 	)
- 
- 	now := shard.GetTimeSource().Now()
--	if completion.Status != ActivityStatusTimeout &&
-+	if !completion.HasTimeSkippingClockOffset && completion.Status != ActivityStatusTimeout &&
- 		!completion.AttemptStartedTime.IsZero() &&
- 		!completion.AttemptStartedTime.After(now) {
- 		latency := now.Sub(completion.AttemptStartedTime)
-@@ -297,7 +303,7 @@ func RecordActivityCompletionMetrics(
- 	}
- 
- 	// Record true end-to-end duration only for terminal states (includes retries and backoffs)
--	if completion.Closed && !completion.FirstScheduledTime.IsZero() {
-+	if !completion.HasTimeSkippingClockOffset && completion.Closed && !completion.FirstScheduledTime.IsZero() {
- 		scheduleToCloseLatency := now.Sub(completion.FirstScheduledTime)
- 		metrics.ActivityScheduleToCloseLatency.With(metricsHandler).Record(scheduleToCloseLatency)
- 	}
-```
-
-**File**: `service/history/workflow/metrics_test.go` (modified, +66/-0)
-```diff
-@@ -379,6 +379,72 @@ func TestRecordActivityCompletionMetrics_SkipsFutureStartTime(t *testing.T) {
- 	)
- }
- 
-+func TestRecordActivityCompletionMetrics_HasTimeSkippingClockOffset(t *testing.T) {
-+	for _, tc := range []struct {
-+		name    string
-+		status  ActivityExecutionStatus
-+		counter string
-+		closed  bool
-+	}{
-+		{name: "succeeded", status: ActivityStatusSucceeded, counter: metrics.ActivitySuccess.Name(), closed: true},
-+		{name: "failed attempt", status: ActivityStatusFailed, counter: metrics.ActivityTaskFail.Name()},
-+		{name: "canceled", status: ActivityStatusCanceled, counter: metrics.ActivityCancel.Name(), closed: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			controller := gomock.NewController(t)
-+			handler := metrics.NewMockHandler(controller)
-+			shard := newActivityMetricsTestShard(controller, handler)
-+			expectActivityMetricsScope(handler, metrics.HistoryRespondActivityTaskCompletedScope)
-+
-+			counter := metrics.NewMockCounterIface(controller)
-+			counter.EXPECT().Record(int64(1))
-+			handler.EXPECT().Counter(tc.counter).Return(counter)
-+
-+			RecordActivityCompletionMetrics(
-+				shard,
-+				namespace.Name("test-namespace"),
-+				"test-task-queue",
-+				ActivityCompletionMetrics{
-+					Status:                     tc.status,
-+					AttemptStartedTime:         time.Now().Add(-time.Minute),
-+					FirstScheduledTime:         time.Now().Add(-2 * time.Minute),
-+					HasTimeSkippingClockOffset: true,
-+					Closed:                     tc.closed,
-+				},
-+				testActivityMetricTags(metrics.HistoryRespondActivityTaskCompletedScope)...,
-+			)
-+		})
-+	}
-+}
-+
-+func TestRecordActivityCompletionMetrics_TimeoutWithAccumulatedTimeSkip(t *testing.T) {
-+	controller := gomock.NewController(t)
-+	handler := metrics.NewMockHandler(controller)
-+	shard := newActivityMetricsTestShard(controller, handler)
-+	expectActivityMetricsScope(handler, metrics.TimerActiveTaskActivityTimeoutScope)
-+
-+	for _, metricName := range []string{metrics.ActivityTaskTimeout.Name(), metrics.ActivityTimeout.Name()} {
-+		counter := metrics.NewMockCounterIface(controller)
-+		counter.EXPECT().Record(int64(1), metrics.StringTag("timeout_type", enumspb.TIMEOUT_TYPE_HEARTBEAT.String()))
-+		handler.EXPECT().Counter(metricName).Return(counter)
-+	}
-+
-+	RecordActivityCompletionMetrics(
-+		shard,
-+		namespace.Name("test-namespace"),
-+		"test-task-queue",
-+		ActivityCompletionMetrics{
-+			Status:                     ActivityStatusTimeout,
-+			AttemptStartedTime:         time.Now().Add(-time.Minute),
-+			FirstScheduledTime:         time.Now().Add(-2 * time.Minute),
-+			HasTimeSkippingClockOffset: true,
-+			Closed:                     true,
-+			TimerType:                  enumspb.TIMEOUT_TYPE_HEARTBEAT,
-+		},
-+		testActivityMetricTags(metrics.TimerActiveTaskActivityTimeoutScope)...,
-+	)
-+}
-+
- func TestRecordActivityCompletionMetrics_RecordsLargeLatency(t *testing.T) {
- 	controller := gomock.NewController(t)
- 	handler := metrics.NewMockHandler(controller)
-```
-
----
-
-### Incident Patch 2: `aa39df3b` (2026-10-15)
-**Commit Message**: Fix concurrent request limiter charging non long-poll requests (#11125)
+### Incident Patch 1: `d2839a09` (2026-10-19)
+**Commit Message**: [Elasticsearch] Fix handling shard failure reason in Count API (#12605)
 
 ## What changed?
-ConcurrentRequestLimitInterceptor.Allow only exempted non-long-poll
-GetWorkflowExecutionHistory from the long-running concurrency quota.
-DescribeActivityExecution and DescribeNexusOperationExecution are also
-long-running only when their long_poll_token is set, but every call
-(including plain point-reads) was charged a token. Now all three are
-gated on their long-poll parameter.
+Elasticsearch and OpenSearch have slightly different error messages when
+a request fails.
+This PR handles them properly.
 
 ## Why?
-Plain DescribeActivityExecution / DescribeNexusOperationExecution calls
-could be rejected with "namespace concurrent poller limit exceeded"
-under load despite not being long-running, and could starve real
-long-poll capacity.
+^
 
 ## How did you test it?
-- [X] built
-- [ ] run locally and tested manually
-- [X] covered by existing tests
-- [X] added new unit test(s)
+- [x] built
+- [x] run locally and tested manually
+- [ ] covered by existing tests
+- [x] added new unit test(s)
 - [ ] added new functional test(s)
 
 ## Potential risks
-Seems safe, because the original intent is to charge only long polls
 
----------
-
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `common/rpc/interceptor/concurrent_request_limit.go` (modified, +15/-5)
+**File**: `common/persistence/visibility/store/elasticsearch/client/client_v7.go` (modified, +11/-2)
 ```diff
-@@ -120,11 +120,21 @@ func (ni *ConcurrentRequestLimitInterceptor) Allow(
- 	if token == 0 {
- 		return func() {}, nil
+@@ -185,14 +185,14 @@ func newShardFailuresError(shards *elastic.ShardsInfo) *elastic.Error {
+ 		if f == nil {
+ 			continue
+ 		}
+-		if f.Status != "TOO_MANY_REQUESTS" && f.Reason["type"] != "es_rejected_execution_exception" {
++		// Shard failures don't include a status field, so it's derived from the reason type.
++		if !isRejectedExecutionType(f.Reason["type"]) {
+ 			status = http.StatusServiceUnavailable
+ 		}
+ 		failedShards = append(failedShards, map[string]any{
+ 			"shard":  f.Shard,
+ 			"index":  f.Index,
+ 			"node":   f.Node,
+-			"status": f.Status,
+ 			"reason": f.Reason,
+ 		})
  	}
--	// for GetWorkflowExecutionHistoryRequest, we only care about long poll requests
--	longPollReq, ok := req.(*workflowservice.GetWorkflowExecutionHistoryRequest)
--	if ok && !longPollReq.WaitNewEvent {
--		// ignore non-long-poll GetHistory calls.
--		return func() {}, nil
-+	// Some APIs are only long-running when their long-poll parameter is set
-+	switch req.(type) {
-+	case *workflowservice.GetWorkflowExecutionHistoryRequest:
-+		if !IsLongPollGetWorkflowExecutionHistoryRequest(req) {
-+			return func() {}, nil
-+		}
-+	case *workflowservice.DescribeActivityExecutionRequest:
-+		if !IsLongPollDescribeActivityExecutionRequest(req) {
-+			return func() {}, nil
-+		}
-+	case *workflowservice.DescribeNexusOperationExecutionRequest:
-+		if !IsLongPollDescribeNexusOperationExecutionRequest(req) {
-+			return func() {}, nil
-+		}
-+	default:
+@@ -206,6 +206,15 @@ func newShardFailuresError(shards *elastic.ShardsInfo) *elastic.Error {
  	}
- 
- 	// Task-queue polls on an internal per-namespace queue use a separate budget so regular
-```
-
-**File**: `common/rpc/interceptor/concurrent_request_limit_test.go` (modified, +52/-0)
-```diff
-@@ -138,6 +138,58 @@ func TestNamespaceCountLimitInterceptor_Intercept(t *testing.T) {
- 			},
- 			expectRateLimit: false,
- 		},
-+		{
-+			name:               "long poll describe activity execution",
-+			request:            &workflowservice.DescribeActivityExecutionRequest{LongPollToken: []byte("token")},
-+			numBlockedRequests: 3,
-+			perInstanceLimit:   2,
-+			globalLimit:        4,
-+			memberCounter:      quotastest.NewFakeMemberCounter(2),
-+			methodName:         "/temporal.api.workflowservice.v1.WorkflowService/DescribeActivityExecution",
-+			tokens: map[string]int{
-+				"/temporal.api.workflowservice.v1.WorkflowService/DescribeActivityExecution": 1,
-+			},
-+			expectRateLimit: true,
-+		},
-+		{
-+			name:               "non-long poll describe activity execution",
-+			request:            &workflowservice.DescribeActivityExecutionRequest{},
-+			numBlockedRequests: 3,
-+			perInstanceLimit:   2,
-+			globalLimit:        4,
-+			memberCounter:      quotastest.NewFakeMemberCounter(2),
-+			methodName:         "/temporal.api.workflowservice.v1.WorkflowService/DescribeActivityExecution",
-+			tokens: map[string]int{
-+				"/temporal.api.workflowservice.v1.WorkflowService/DescribeActivityExecution": 1,
-+			},
-+			expectRateLimit: false,
-+		},
-+		{
-+			name:               "long poll describe nexus operation execution",
-+			request:            &workflowservice.DescribeNexusOperationExecutionRequest{LongPollToken: []byte("token")},
-+			numBlockedRequests: 3,
-+			perInstanceLimit:   2,
-+			globalLimit:        4,
-+			memberCounter:      quotastest.NewFakeMemberCounter(2),
-+			methodName:         "/temporal.api.workflowservice.v1.WorkflowService/DescribeNexusOperationExecution",
-+			tokens: map[string]int{
-+				"/temporal.api.workflowservice.v1.WorkflowService/DescribeNexusOperationExecution": 1,
-+			},
-+			expectRateLimit: true,
-+		},
-+		{
-+			name:               "non-long poll describe nexus operation execution",
-+			request:            &workflowservice.DescribeNexusOperationExecutionRequest{},
-+			numBlockedRequests: 3,
-+			perInstanceLimit:   2,
-+			globalLimit:        4,
-+			memberCounter:      quotastest.NewFakeMemberCounter(2),
-+			methodName:         "/temporal.api.workflowservice.v1.WorkflowService/DescribeNexusOperationExecution",
-+			tokens: map[string]int{
-+				"/temporal.api.workflowservice.v1.WorkflowService/DescribeNexusOperationExecution": 1,
-+			},
-+			expectRateLimit: false,
-+		},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			t.Parallel()
-```
-
-**File**: `common/rpc/interceptor/namespace_rate_limit.go` (modified, +0/-21)
-```diff
-@@ -6,7 +6,6 @@ import (
- 
- 	enumspb "go.temporal.io/api/enums/v1"
- 	"go.temporal.io/api/serviceerror"
--	"go.temporal.io/api/workflowservice/v1"
- 	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/headers"
-@@ -224,23 +223,3 @@ func (ni *NamespaceRateLimitInterceptorImpl) AllowN(
- 	}
- 	return nil
  }
--
--func IsLongPollGetWorkflowExecutionHistoryRequest(
--	req any,
--) bool {
--	switch request := req.(type) {
--	case *workflowservice.GetWorkflowExecutionHistoryRequest:
--		return request.GetWaitNewEvent()
--	}
--	return false
--}
--
--func IsLongPollDescribeActivityExecutionRequest(
--	req any,
--) bool {
--	switch request := req.(type) {
--	case *workflowservice.DescribeActivityExecutionRequest:
--		return len(request.GetLongPollToken()) > 0
--	}
--	return false
--}
-```
-
-**File**: `common/rpc/interceptor/request.go` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+package interceptor
-+
-+import (
-+	"go.temporal.io/api/workflowservice/v1"
-+)
-+
-+// IsLongPollGetWorkflowExecutionHistoryRequest reports whether req is a
-+// GetWorkflowExecutionHistory request in long-poll mode.
-+func IsLongPollGetWorkflowExecutionHistoryRequest(
-+	req any,
-+) bool {
-+	switch request := req.(type) {
-+	case *workflowservice.GetWorkflowExecutionHistoryRequest:
-+		return request.GetWaitNewEvent()
-+	}
-+	return false
-+}
-+
-+// IsLongPollDescribeActivityExecutionRequest reports whether req is a
-+// DescribeActivityExecution request in long-poll mode.
-+func IsLongPollDescribeActivityExecutionRequest(
-+	req any,
-+) bool {
-+	switch request := req.(type) {
-+	case *workflowservice.DescribeActivityExecutionRequest:
-+		return len(request.GetLongPollToken()) > 0
-+	}
-+	return false
-+}
-+
-+// IsLongPollDescribeNexusOperationExecutionRequest reports whether req is a
-+// DescribeNexusOperationExecution request in long-poll mode.
-+func IsLongPollDescribeNexusOperationExecutionRequest(
-+	req any,
-+) bool {
-+	switch request := req.(type) {
-+	case *workflowservice.DescribeNexusOperationExecutionRequest:
-+		return len(request.GetLongPollToken()) > 0
-+	}
-+	return false
-+}
-```
-
----
-
-### Incident Patch 3: `acd40d63` (2026-10-16)
-**Commit Message**: schedule: fix test flake (#12557)
-
-## What changed?
-`completeRunningWorkflows` in `tests/schedule_test.go` now retries its
-`DescribeSchedule` call with `await.Require` instead of failing on the
-first error.
-
-## Why?
-`TestScheduleV1SharedSuite/TestBufferOneDeferredFiresAfterCompletion`
-flakes at about 5% in CI. Every sampled failure is at the
-`completeRunningWorkflows` call with:
-
-```
-consistent query buffer is full, this may be caused by too many queries and workflow not able to process query fast enough
-```
-
-In V1, `DescribeSchedule` is a consistent query against the scheduler
-workflow. While the workflow has a workflow task in flight (the 1s
-interval keeps one in flight often), history buffers queries, and
-`history.MaxBufferedQueryCount` defaults to 1. The test calls
-`require.Never` with a Describe condition right before
-`completeRunningWorkflows`. testify's `Never` returns when its window
-ends without waiting for the in-flight condition goroutine. So the
-helper's Describe can overlap the leaked one and get rejected.
-
-The other polling assertions in these tests already ignore Describe
-errors. Only this helper treated a transient query rejection as fatal.
-Raising `MaxBufferedQuery
-
-**File**: `tests/schedule_test.go` (modified, +18/-12)
-```diff
-@@ -304,12 +304,16 @@ func scheduleClosed(ctx context.Context, env *testcore.TestEnv, sid string) bool
- // of the schedule and returns the number it signaled.
- func completeRunningWorkflows(ctx context.Context, t *testing.T, env *testcore.TestEnv, sid string) int {
- 	t.Helper()
--	desc, err := env.FrontendClient().DescribeSchedule(ctx, &workflowservice.DescribeScheduleRequest{
--		Namespace:  env.Namespace().String(),
--		ScheduleId: sid,
--	})
--	require.NoError(t, err)
--	running := desc.GetInfo().GetRunningWorkflows()
-+	// Retry transient query-buffer rejections from overlapping V1 Describe calls.
-+	var running []*commonpb.WorkflowExecution
-+	await.Require(ctx, t, func(at *await.T) {
-+		desc, err := env.FrontendClient().DescribeSchedule(at.Context(), &workflowservice.DescribeScheduleRequest{
-+			Namespace:  env.Namespace().String(),
-+			ScheduleId: sid,
-+		})
-+		require.NoError(at, err)
-+		running = desc.GetInfo().GetRunningWorkflows()
-+	}, awaitTimeout, pollInterval)
- 	for _, wf := range running {
- 		_, err := env.FrontendClient().SignalWorkflowExecution(ctx, &workflowservice.SignalWorkflowExecutionRequest{
- 			Namespace:         env.Namespace().String(),
-@@ -5064,12 +5068,14 @@ func (suite *ScheduleSuite) TestPausedScheduleNeverIdles(chasmEnabled bool) {
- 		3*shortIdleTime, pollInterval,
- 		"paused schedule must not close from idle even past IdleTime")
  
--	desc, err := s.FrontendClient().DescribeSchedule(ctx, &workflowservice.DescribeScheduleRequest{
--		Namespace:  s.Namespace().String(),
--		ScheduleId: sid,
--	})
--	require.NoError(t, err)
--	require.True(t, desc.Schedule.State.Paused, "paused schedule must stay paused")
-+	await.Require(ctx, t, func(at *await.T) {
-+		desc, err := s.FrontendClient().DescribeSchedule(at.Context(), &workflowservice.DescribeScheduleRequest{
-+			Namespace:  s.Namespace().String(),
-+			ScheduleId: sid,
-+		})
-+		require.NoError(at, err)
-+		require.True(at, desc.Schedule.State.Paused, "paused schedule must stay paused")
-+	}, awaitTimeout, pollInterval)
- 
- 	// Also verify by unpausing and seeing actions resume.
- 	runsBeforeUnpause := runs.Load()
++func isRejectedExecutionType(reasonType any) bool {
++	switch reasonType {
++	case "es_rejected_execution_exception", // Elasticsearch
++		"rejected_execution_exception": // OpenSearch
++		return true
++	}
++	return false
++}
++
+ func (c *clientImpl) CountGroupBy(
+ 	ctx context.Context,
+ 	index string,
+```
+
+**File**: `common/persistence/visibility/store/elasticsearch/client/client_v7_test.go` (modified, +13/-4)
+```diff
+@@ -44,17 +44,26 @@ func TestCount(t *testing.T) {
+ 			expectedCount: 42,
+ 		},
+ 		{
+-			name: "all shard failures are rejections",
++			name: "all shard failures are rejections (Elasticsearch)",
+ 			response: `{"count": 10, "_shards": {"total": 2, "successful": 1, "skipped": 0, "failed": 1, "failures": [
+-				{"shard": 0, "index": "test-index", "status": "TOO_MANY_REQUESTS", "reason": {"type": "es_rejected_execution_exception", "reason": "rejected"}}
++				{"shard": 0, "index": "test-index", "node": "node-1", "reason": {"type": "es_rejected_execution_exception", "reason": "rejected"}}
++			]}}`,
++			expectedStatus: http.StatusTooManyRequests,
++		},
++		{
++			name: "all shard failures are rejections (OpenSearch)",
++			response: `{"count": 21, "_shards": {"total": 8, "successful": 5, "skipped": 0, "failed": 3, "failures": [
++				{"shard": 3, "index": "test-index", "node": "node-1", "reason": {"type": "rejected_execution_exception", "reason": "rejected"}},
++				{"shard": 6, "index": "test-index", "node": "node-2", "reason": {"type": "rejected_execution_exception", "reason": "rejected"}},
++				{"shard": 7, "index": "test-index", "node": "node-1", "reason": {"type": "rejected_execution_exception", "reason": "rejected"}}
+ 			]}}`,
+ 			expectedStatus: http.StatusTooManyRequests,
+ 		},
+ 		{
+ 			name: "mixed shard failures",
+ 			response: `{"count": 10, "_shards": {"total": 3, "successful": 1, "skipped": 0, "failed": 2, "failures": [
+-				{"shard": 0, "index": "test-index", "status": "TOO_MANY_REQUESTS", "reason": {"type": "es_rejected_execution_exception", "reason": "rejected"}},
+-				{"shard": 1, "index": "test-index", "status": "INTERNAL_SERVER_ERROR", "reason": {"type": "node_disconnected_exception", "reason": "disconnected"}}
++				{"shard": 0, "index": "test-index", "node": "node-1", "reason": {"type": "rejected_execution_exception", "reason": "rejected"}},
++				{"shard": 1, "index": "test-index", "node": "node-2", "reason": {"type": "node_disconnected_exception", "reason": "disconnected"}}
+ 			]}}`,
+ 			expectedStatus: http.StatusServiceUnavailable,
+ 		},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12616** (2026-10-19): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12614** (2026-10-18): Make oss-foundations code owner of chasm workflow nexus package (@feiyang3cat)
 - **PR #12612** (2026-10-18): move time-skipping validator to CHASM for nexus (@feiyang3cat)
 - **PR #12610** (2026-10-18): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12609** (2026-10-18): Fix timeskipping clock mismatch (@feiyang3cat)
 - **PR #12608** (2026-10-18): time skipping: add system total-max-skip-duration (@feiyang3cat)
-- **PR #12606** (2026-10-17): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 
 ---
 
@@ -2813,37 +2239,39 @@ Raising `MaxBufferedQuery
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. timeskipping clock mismatch (#12609)
+## X. [Elasticsearch] Fix handling shard failure reason in Count API (#12605)
 
 **RULE**:
-When implementing operations in `service/history/api/respondactivitytaskcanceled/api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/persistence/visibility/store/elasticsearch/client/client_v7.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4318206`: timeskipping clock mismatch (#12609). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2839a09`: [Elasticsearch] Fix handling shard failure reason in Count API (#12605). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/api/respondactivitytaskcanceled/api.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/visibility/store/elasticsearch/client/client_v7.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	var hasTimeSkippingClockOffset bool
-			hasTimeSkippingClockOffset = workflow.NewTimeSkippingInfoUtil(mutableState.GetExecutionInfo().GetTimeSkippingInfo()).HasTimeSkippingClockOffset()
-				Status:                     workflow.ActivityStatusCanceled,
-				AttemptStartedTime:         attemptStartedTime,
-				FirstScheduledTime:         firstScheduledTime,
-				HasTimeSkippingClockOffset: hasTimeSkippingClockOffset,
-				Closed:                     true,
+		// Shard failures don't include a status field, so it's derived from the reason type.
+		if !isRejectedExecutionType(f.Reason["type"]) {
+func isRejectedExecutionType(reasonType any) bool {
+	switch reasonType {
+	case "es_rejected_execution_exception", // Elasticsearch
+		"rejected_execution_exception": // OpenSearch
+		return true
+	}
+	return false
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				Status:             workflow.ActivityStatusCanceled,
-				AttemptStartedTime: attemptStartedTime,
-				FirstScheduledTime: firstScheduledTime,
-				Closed:             true,
+		if f.Status != "TOO_MANY_REQUESTS" && f.Reason["type"] != "es_rejected_execution_exception" {
+			"status": f.Status,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4318206` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2839a09` are properly handled with clean fallback behavior.
