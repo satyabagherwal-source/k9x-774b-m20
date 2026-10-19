@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "38d5d6bd480fc2208b3fc594c276f48ab54b7c05fe61baeeee328dfe6a81ae65",
-    "lastHarvestedAt": "2026-10-18T01:14:56.197Z",
+    "contentHash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
+    "lastHarvestedAt": "2026-10-19T08:59:47.648Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "534bfac1",
+    "sourceVersion": "8e5e985c",
     "license": "NOASSERTION",
-    "contentHash": "07e89ba95e3f9d1c8b88a9bcccf7a1067fd1270a13cbb845bfca93bf1a6b33b3",
-    "lastHarvestedAt": "2026-10-19T01:35:03.597Z",
+    "contentHash": "811b2473e4d71dcbe32a5e348bfdcd669b126defbccea7d78e4232750f725be1",
+    "lastHarvestedAt": "2026-10-19T08:58:51.379Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7408,5 +7408,35 @@
     "contentHash": "7151778c49b0ec2fd4d94fb36d1f6995126e964527099dbac6629e6cd51b8c35",
     "lastHarvestedAt": "2026-10-19T08:50:22.146Z",
     "learningId": "learn-github-killercup-cargo-edit"
+  },
+  "bahdotsh-wrkflw": {
+    "repository": "bahdotsh/wrkflw",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bahdotsh/wrkflw",
+    "sourceVersion": "248a4190",
+    "license": "MIT",
+    "contentHash": "9683f885c164d0f64d380994fc9d32b8a91736cfcbf48b3c61b83b519a897d93",
+    "lastHarvestedAt": "2026-10-19T08:58:37.174Z",
+    "learningId": "learn-github-bahdotsh-wrkflw"
+  },
+  "jordanbaird-ice": {
+    "repository": "jordanbaird/Ice",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jordanbaird/Ice",
+    "sourceVersion": "11edd391",
+    "license": "GPL-3.0",
+    "contentHash": "457264c56a3fec735980663245f3e5269e6553fb9482f0474239401c39ee3b3c",
+    "lastHarvestedAt": "2026-10-19T08:58:40.808Z",
+    "learningId": "learn-github-jordanbaird-ice"
+  },
+  "lancedb-lancedb": {
+    "repository": "lancedb/lancedb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lancedb/lancedb",
+    "sourceVersion": "a4f6e5fe",
+    "license": "Apache-2.0",
+    "contentHash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
+    "lastHarvestedAt": "2026-10-19T08:58:49.156Z",
+    "learningId": "learn-github-lancedb-lancedb"
   }
 }

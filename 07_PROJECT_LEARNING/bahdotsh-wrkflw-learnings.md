@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
+> **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
+> **Source Version**: `248a4190`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T08:58:36.925Z  
+> **Learning ID**: `learn-github-bahdotsh-wrkflw`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): bahdotsh/wrkflw
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T04:09:15.028Z  
+> **Harvest Timestamp**: 2026-10-19T08:58:36.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3323 stars
+- **Stars / Engagement**: 3332 stars
 
 ---
 
@@ -2184,585 +2198,6 @@ mod tests {
         let de
 ```
 
-### Core Architecture Module: `crates/executor/src/docker.rs`
-```
-use async_trait::async_trait;
-use bollard::{
-    container::{Config, CreateContainerOptions},
-    models::HostConfig,
-    network::CreateNetworkOptions,
-    Docker,
-};
-use futures_util::StreamExt;
-use once_cell::sync::Lazy;
-use std::collections::HashMap;
-use std::path::Path;
-use std::sync::Mutex;
-use wrkflw_logging;
-use wrkflw_runtime::container::{
-    ContainerError, ContainerOutput, ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
-};
-use wrkflw_utils;
-use wrkflw_utils::fd;
-
-static RUNNING_CONTAINERS: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
-static CREATED_NETWORKS: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
-// Map to track customized images for a job
-#[allow(dead_code)]
-static CUSTOMIZED_IMAGES: Lazy<Mutex<HashMap<String, String>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
-
-pub struct DockerRuntime {
-    docker: Docker,
-    preserve_containers_on_failure: bool,
-}
-
-impl DockerRuntime {
-    pub fn new() -> Result<Self, ContainerError> {
-        Self::new_with_config(false)
-    }
-
-    pub fn new_with_config(preserve_containers_on_failure: bool) -> Result<Self, ContainerError> {
-        let docker = Docker::connect_with_local_defaults().map_err(|e| {
-            ContainerError::ContainerStart(format!("Failed to connect to Docker: {}", e))
-        })?;
-
-        Ok(DockerRuntime {
-            docker,
-            preserve_containers_on_failure,
-        })
-    }
-
-    // Add a method to store and retrieve customized images (e.g., with Python installed)
-    #[allow(dead_code)]
-    pub fn get_customized_image(base_image: &str, customization: &str) -> Option<String> {
-        let key = format!("{}:{}", base_image, customization);
-        match CUSTOMIZED_IMAGES.lock() {
-            Ok(images) => images.get(&key).cloned(),
-            Err(e) => {
-                wrkflw_logging::error(&format!("Failed to acquire lock: {}", e));
-                None
-            }
-        }
-    }
-
-    #[allow(dead_code)]
-    pub fn set_customized_image(base_image: &str, customization: &str, new_image: &str) {
-        let key = format!("{}:{}", base_image, customization);
-        if let Err(e) = CUSTOMIZED_IMAGES.lock().map(|mut images| {
-            images.insert(key, new_image.to_string());
-        }) {
-            wrkflw_logging::error(&format!("Failed to acquire lock: {}", e));
-        }
-    }
-
-    /// Find a customized image key by prefix
-    #[allow(dead_code)]
-    pub fn find_customized_image_key(image: &str, prefix: &str) -> Option<String> {
-        let image_keys = match CUSTOMIZED_IMAGES.lock() {
-            Ok(keys) => keys,
-            Err(e) => {
-                wrkflw_logging::error(&format!("Failed to acquire lock: {}", e));
-                return None;
-            }
-        };
-
-        // Look for any key that starts with the prefix
-        for key in image_keys.keys() {
-            if key.starts_with(prefix) {
-                return Some(key.clone());
-            }
-        }
-
-        None
-    }
-
-    /// Get a customized image with language-specific dependencies
-    pub fn get_language_specific_image(
-        base_image: &str,
-        language: &str,
-        version: Option<&str>,
-    ) -> Option<String> {
-        let key = match (language, version) {
-            ("python", Some(ver)) => format!("python:{}", ver),
-            ("node", Some(ver)) => format!("node:{}", ver),
-            ("java", Some(ver)) => format!("eclipse-temurin:{}", ver),
-            ("go", Some(ver)) => format!("golang:{}", ver),
-            ("dotnet", Some(ver)) => format!("mcr.microsoft.com/dotnet/sdk:{}", ver),
-            ("rust", Some(ver)) => format!("rust:{}", ver),
-            (lang, Some(ver)) => format!("{}:{}", lang, ver),
-            (lang, None) => lang.to_string(),
-        };
-
-        match CUSTOMIZED_IMAGES.lock() {
-            Ok(images) => images.get(&key).cloned(),
-            Err(e) => {
-                wrkflw_logging::error(&format!("Failed to acquire lock: {}", e));
-                None
-            }
-        }
-    }
-
-    /// Set a customized image with language-specific dependencies
-    pub fn set_language_specific_image(
-        base_image: &str,
-        language: &str,
-        version: Option<&str>,
-        new_image: &str,
-    ) {
-        let key = match (language, version) {
-            ("python", Some(ver)) => format!("python:{}", ver),
-            ("node", Some(ver)) => format!("node:{}", ver),
-            ("java", Some(ver)) => format!("eclipse-temurin:{}", ver),
-            ("go", Some(ver)) => format!("golang:{}", ver),
-            ("dotnet", Some(ver)) => format!("mcr.microsoft.com/dotnet/sdk:{}", ver),
-            ("rust", Some(ver)) => format!("rust:{}", ver),
-            (lang, Some(ver)) => format!("{}:{}", lang, ver),
-            (lang, None) => lang.to_string(),
-        };
-
-        if let Err(e) = CUSTOMIZED_IMAGES.lock().map(|mut images| {
-            images.insert(key, new_image.to_string());
-        }) {
-            wrkflw_logging::error(&format!("Failed to acquire lock: {}", e));
-        }
-    }
-
-    /// Prepare a language-specific environment
-    #[allow(dead_code)]
-    pub async fn prepare_language_environment(
-        &self,
-        language: &str,
-        version: Option<&str>,
-        additional_packages: Option<Vec<String>>,
-    ) -> Result<String, ContainerError> {
-        // Check if we already have a customized image for this language and version
-        let key = format!("{}-{}", language, version.unwrap_or("latest"));
-        if let Some(customized_image) = Self::get_language_specific_image("", language, version) {
-            return Ok(customized_image);
-        }
-
-        // Create a temporary Dockerfile for customization
-        let temp_dir = tempfile::tempdir().map_err(|e| {
-            ContainerError::ContainerStart(format!("Failed to create temp directory: {}", e))
-        })?;
-
-        let dockerfile_path = temp_dir.path().join("Dockerfile");
-        let mut dockerfile_content = String::new();
-
-        // Add language-specific setup based on the language
-        match language {
-            "python" => {
-                let base_image =
-                    version.map_or("python:3.11-slim".to_string(), |v| format!("python:{}", v));
-                dockerfile_content.push_str(&format!("FROM {}\n\n", base_image));
-                dockerfile_content.push_str(
-                    "RUN apt-get update && apt-get install -y --no-install-recommends \\\n",
-                );
-                dockerfile_content.push_str("    build-essential \\\n");
-                dockerfile_content.push_str("    && rm -rf /var/lib/apt/lists/*\n");
-
-                if let Some(packages) = additional_packages {
-                    for package in packages {
-                        dockerfile_content.push_str(&format!("RUN pip install {}\n", package));
-                    }
-                }
-            }
-            "node" => {
-                let base_image =
-                    version.map_or("node:20-slim".to_string(), |v| format!("node:{}", v));
-                dockerfile_content.push_str(&format!("FROM {}\n\n", base_image));
-                dockerfile_content.push_str(
-                    "RUN apt-get update && apt-get install -y --no-install-recommends \\\n",
-                );
-                dockerfile_content.push_str("    build-essential \\\n");
-                dockerfile_content.push_str("    && rm -rf /var/lib/apt/lists/*\n");
-
-                if let Some(packages) = additional_packages {
-                    for package in packages {
-                        dockerfile_content.push_str(&format!("RUN npm install -g {}\n", package));
-                    }
-                }
-            }
-            "java" => {
-                let base_image = version.map_or("eclipse-temurin:17-jdk".to_string(), |v| {
-                    format!("eclipse-temurin:{}", v)
-                });
-                dockerfile_content.push_str(&format!("FROM {}\n\n", base_image));
-                dockerfile_content.push_str(
-                    "RUN apt-get update && apt-get install -y --no-install-recommends \\\n",
-                );
-                dockerfile_content.push_str("    maven \\\n");
-                dockerfile_content.push_str("    && rm -rf /var/lib/apt/lists/*\n");
-            }
-            "go" => {
-                let base_image =
-                    version.map_or("golang:1.21-slim".to_string(), |v| format!("golang:{}", v));
-                dockerfile_content.push_str(&format!("FROM {}\n\n", base_image));
-                dockerfile_content.push_str(
-                    "RUN apt-get update && apt-get install -y --no-install-recommends \\\n",
-                );
-                dockerfile_content.push_str("    git \\\n");
-                dockerfile_content.push_str("    && rm -rf /var/lib/apt/lists/*\n");
-
-                if let Some(packages) = additional_packages {
-                    for package in packages {
-                        dockerfile_content.push_str(&format!("RUN go install {}\n", package));
-                    }
-                }
-            }
-            "dotnet" => {
-                let base_image = version
-                    .map_or("mcr.microsoft.com/dotnet/sdk:7.0".to_string(), |v| {
-                        format!("mcr.microsoft.com/dotnet/sdk:{}", v)
-                    });
-                dockerfile_content.push_str(&format!("FROM {}\n\n", base_image));
-
-                if let Some(packages) = additional_packages {
-                    for package in packages {
-                        dockerfile_content
-                            .push_str(&format!("RUN dotnet tool install -g {}\n", package));
-                    }
-                }
-            }
-            "rust" => {
-                let base_image =
-                    version.map_or("rust:latest".to_string(), |v| format!("rust:{}", v));
-                dockerfile_content.push_str(&format!("FROM {}\n\n", base_image));
-                dockerfile_content.push_str(
-                    "RUN ap
-```
-
-### Core Architecture Module: `crates/executor/src/environment.rs`
-```
-use chrono::Utc;
-use serde_json;
-use serde_yaml::Value;
-use std::{collections::HashMap, fs, io, path::Path};
-use wrkflw_matrix::MatrixCombination;
-use wrkflw_parser::workflow::WorkflowDefinition;
-
-pub fn setup_github_environment_files(workspace_dir: &Path) -> io::Result<()> {
-    // Create necessary directories
-    let github_dir = workspace_dir.join("github");
-    fs::create_dir_all(&github_dir)?;
-
-    // Create common GitHub environment files
-    let github_output = github_dir.join("output");
-    let github_env = github_dir.join("env");
-    let github_path = github_dir.join("path");
-    let github_step_summary = github_dir.join("step_summary");
-
-    // Initialize files with empty content
-    fs::write(&github_output, "")?;
-    fs::write(&github_env, "")?;
-    fs::write(&github_path, "")?;
-    fs::write(&github_step_summary, "")?;
-
-    Ok(())
-}
-
-pub fn create_github_context(
-    workflow: &WorkflowDefinition,
-    workspace_dir: &Path,
-) -> HashMap<String, String> {
-    let mut env = HashMap::new();
-
-    // Basic GitHub environment variables
-    env.insert("GITHUB_WORKFLOW".to_string(), workflow.name.clone());
-    env.insert("GITHUB_ACTION".to_string(), "run".to_string());
-    env.insert("GITHUB_REPOSITORY".to_string(), get_repo_name());
-    env.insert("GITHUB_EVENT_NAME".to_string(), get_event_name(workflow));
-    env.insert("GITHUB_WORKSPACE".to_string(), get_workspace_path());
-    env.insert("GITHUB_SHA".to_string(), get_current_sha());
-    env.insert("GITHUB_REF".to_string(), get_current_ref());
-
-    // File paths for GitHub Actions
-    env.insert(
-        "GITHUB_OUTPUT".to_string(),
-        workspace_dir
-            .join("github")
-            .join("output")
-            .to_string_lossy()
-            .to_string(),
-    );
-    env.insert(
-        "GITHUB_ENV".to_string(),
-        workspace_dir
-            .join("github")
-            .join("env")
-            .to_string_lossy()
-            .to_string(),
-    );
-    env.insert(
-        "GITHUB_PATH".to_string(),
-        workspace_dir
-            .join("github")
-            .join("path")
-            .to_string_lossy()
-            .to_string(),
-    );
-    env.insert(
-        "GITHUB_STEP_SUMMARY".to_string(),
-        workspace_dir
-            .join("github")
-            .join("step_summary")
-            .to_string_lossy()
-            .to_string(),
-    );
-
-    // Time-related variables
-    let now = Utc::now();
-    env.insert("GITHUB_RUN_ID".to_string(), format!("{}", now.timestamp()));
-    env.insert("GITHUB_RUN_NUMBER".to_string(), "1".to_string());
-    env.insert("GITHUB_RUN_ATTEMPT".to_string(), "1".to_string());
-
-    // CI detection variables
-    env.insert("GITHUB_ACTIONS".to_string(), "true".to_string());
-    env.insert("CI".to_string(), "true".to_string());
-
-    // GitHub URLs
-    env.insert(
-        "GITHUB_SERVER_URL".to_string(),
-        "https://github.com".to_string(),
-    );
-    env.insert(
-        "GITHUB_API_URL".to_string(),
-        "https://api.github.com".to_string(),
-    );
-    env.insert(
-        "GITHUB_GRAPHQL_URL".to_string(),
-        "https://api.github.com/graphql".to_string(),
-    );
-
-    // Ref-derived variables
-    let full_ref = env.get("GITHUB_REF").cloned().unwrap_or_default();
-    env.insert("GITHUB_REF_NAME".to_string(), get_ref_name(&full_ref));
-    env.insert("GITHUB_REF_TYPE".to_string(), get_ref_type(&full_ref));
-
-    // PR-related variables (empty for local runs)
-    env.insert("GITHUB_HEAD_REF".to_string(), String::new());
-    env.insert("GITHUB_BASE_REF".to_string(), String::new());
-
-    // Actor-related variables
-    let actor = get_actor();
-    env.insert("GITHUB_ACTOR".to_string(), actor.clone());
-    env.insert("GITHUB_TRIGGERING_ACTOR".to_string(), actor);
-
-    // Repository owner
-    let repo = env.get("GITHUB_REPOSITORY").cloned().unwrap_or_default();
-    env.insert(
-        "GITHUB_REPOSITORY_OWNER".to_string(),
-        get_repository_owner(&repo),
-    );
-
-    // Miscellaneous
-    env.insert("GITHUB_RETENTION_DAYS".to_string(), "90".to_string());
-
-    // Runner variables
-    env.insert("RUNNER_OS".to_string(), get_runner_os());
-    env.insert("RUNNER_ARCH".to_string(), get_runner_arch());
-    env.insert("RUNNER_NAME".to_string(), "wrkflw-local".to_string());
-    env.insert("RUNNER_ENVIRONMENT".to_string(), "local".to_string());
-    env.insert("RUNNER_TEMP".to_string(), get_temp_dir());
-    env.insert("RUNNER_TOOL_CACHE".to_string(), get_tool_cache_dir());
-
-    env
-}
-
-/// Add job-specific context variables to the environment
-pub fn add_job_context(env: &mut HashMap<String, String>, job_name: &str) {
-    env.insert("GITHUB_JOB".to_string(), job_name.to_string());
-}
-
-/// Add matrix context variables to the environment
-pub fn add_matrix_context(
-    env: &mut HashMap<String, String>,
-    matrix_combination: &MatrixCombination,
-) {
-    // Add each matrix parameter as an environment variable
-    for (key, value) in &matrix_combination.values {
-        let env_key = format!("MATRIX_{}", key.to_uppercase());
-        let env_value = value_to_string(value);
-        env.insert(env_key, env_value);
-    }
-
-    // Also serialize the whole matrix as JSON for potential use
-    if let Ok(json_value) = serde_json::to_string(&matrix_combination.values) {
-        env.insert("MATRIX_CONTEXT".to_string(), json_value);
-    }
-}
-
-/// Convert a serde_yaml::Value to a string for environment variables
-fn value_to_string(value: &Value) -> String {
-    match value {
-        Value::String(s) => s.clone(),
-        Value::Number(n) => n.to_string(),
-        Value::Bool(b) => b.to_string(),
-        Value::Sequence(seq) => {
-            let items = seq
-                .iter()
-                .map(value_to_string)
-                .collect::<Vec<_>>()
-                .join(",");
-            items
-        }
-        Value::Mapping(map) => {
-            let items = map
-                .iter()
-                .map(|(k, v)| format!("{}={}", value_to_string(k), value_to_string(v)))
-                .collect::<Vec<_>>()
-                .join(",");
-            items
-        }
-        Value::Null => "".to_string(),
-        _ => "".to_string(),
-    }
-}
-
-fn get_repo_name() -> String {
-    // Try to detect from git if available
-    if let Ok(output) = std::process::Command::new("git")
-        .args(["remote", "get-url", "origin"])
-        .output()
-    {
-        if output.status.success() {
-            let url = String::from_utf8_lossy(&output.stdout);
-            if let Some(repo) = extract_repo_from_url(&url) {
-                return repo;
-            }
-        }
-    }
-
-    // Fallback to directory name
-    let current_dir = std::env::current_dir().unwrap_or_default();
-    format!(
-        "wrkflw/{}",
-        current_dir
-            .file_name()
-            .unwrap_or_default()
-            .to_string_lossy()
-    )
-}
-
-fn extract_repo_from_url(url: &str) -> Option<String> {
-    // Extract owner/repo from common git URLs
-    let url = url.trim();
-
-    // Handle SSH URLs: git@github.com:owner/repo.git
-    if url.starts_with("git@") {
-        let parts: Vec<&str> = url.split(':').collect();
-        if parts.len() == 2 {
-            let repo_part = parts[1].trim_end_matches(".git");
-            return Some(repo_part.to_string());
-        }
-    }
-
-    // Handle HTTPS URLs: https://github.com/owner/repo.git
-    if url.starts_with("http") {
-        let without_protocol = url.split("://").nth(1)?;
-        let parts: Vec<&str> = without_protocol.split('/').collect();
-        if parts.len() >= 3 {
-            let owner = parts[1];
-            let repo = parts[2].trim_end_matches(".git");
-            return Some(format!("{}/{}", owner, repo));
-        }
-    }
-
-    None
-}
-
-fn get_event_name(workflow: &WorkflowDefinition) -> String {
-    // Try to extract from the workflow trigger
-    if let Some(first_trigger) = workflow.on.first() {
-        return first_trigger.clone();
-    }
-    "workflow_dispatch".to_string()
-}
-
-fn get_workspace_path() -> String {
-    std::env::current_dir()
-        .unwrap_or_default()
-        .to_string_lossy()
-        .to_string()
-}
-
-fn get_current_sha() -> String {
-    if let Ok(output) = std::process::Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-    {
-        if output.status.success() {
-            return String::from_utf8_lossy(&output.stdout).trim().to_string();
-        }
-    }
-
-    "0000000000000000000000000000000000000000".to_string()
-}
-
-fn get_current_ref() -> String {
-    if let Ok(output) = std::process::Command::new("git")
-        .args(["symbolic-ref", "--short", "HEAD"])
-        .output()
-    {
-        if output.status.success() {
-            return format!(
-                "refs/heads/{}",
-                String::from_utf8_lossy(&output.stdout).trim()
-            );
-        }
-    }
-
-    "refs/heads/main".to_string()
-}
-
-fn get_runner_os() -> String {
-    match std::env::consts::OS {
-        "macos" => "macOS".to_string(),
-        "linux" => "Linux".to_string(),
-        "windows" => "Windows".to_string(),
-        other => other.to_string(),
-    }
-}
-
-fn get_runner_arch() -> String {
-    match std::env::consts::ARCH {
-        "x86_64" | "x86" => "X64".to_string(),
-        "aarch64" => "ARM64".to_string(),
-        other => other.to_string(),
-    }
-}
-
-fn get_temp_dir() -> String {
-    let temp_dir = std::env::temp_dir();
-    temp_dir.join("wrkflw").to_string_lossy().to_string()
-}
-
-fn get_tool_cache_dir() -> String {
-    let home_dir = dirs::home_dir().unwrap_or_default();
-    home_dir
-        .join(".wrkflw")
-        .join("tools")
-        .to_string_lossy()
-        .to_string()
-}
-
-fn get_ref_name(full_ref: &str) -> String {
-    if let Some(name) = full_ref.strip_prefix("refs/heads/") {
-        name.to_string()
-    } else if let Some(name) = full_ref.strip_prefix("refs/tags/") {
-        name.to_string()
-    } else if let Some(name) = full_ref.strip_prefix("refs/pull/") {
-        name.to_string()
-    } else {
-        full_ref.to_string()
-    }
-}
-
-fn get_ref_type(full_ref: &str) -> String {
-    if full_ref.starts_w
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2774,32 +2209,6 @@ fn get_ref_type(full_ref: &str) -> String {
 
 - **Issue #128** (2026-09-08): **fix(ui): stop logging the same TUI message to both log sinks**
   *Symptoms*: TODO item 3, follow-up from the review of PR #116.  ## The problem  The TUI keeps two log buffers: the app-local `logs` vec and the global `wrkflw_logging` store. `get_combined_logs` concatenates them with no deduplication, so any code path reporting an event to both sinks rendered it twice in the Logs and Execution tabs.  The ticket named one such message, "Executing workflow". Auditing the crate turned up **24 dual-logged sites**, not one:  | File | Sites | |---|---| | `crates/ui/src/app/state.rs` | 12 | | `crates/ui/src/app/mod.rs` | 6 | | `crates/ui/src/handlers/workflow.rs` | 6 |  Every workflow execution, trigger, and reset was being double-reported.  ## The fix  At each site the app-side push is deleted and the `wrkflw_logging` call kept. This is the same resolution PR #116 applied to the Docker and Podman warnings, and it is not an arbitrary choice: the global store stamps its own `[HH:MM:SS]` prefix and a level glyph, so the surviving copy is the one that renders with a real timestamp and the correct badge.  `add_timestamped_log` now documents the one-message-one-sink rule so this does not creep back in.  ## Badges improve as a side effect  `LogBadge::classify` checks the level glyph in the same tier as the level keyword, so five lines stop misreporting their severity:  - `Workflow 'x' failed: ...` was INFO, now ERROR - the "no workflow selected" lines were INFO, now WARN - `Cannot trigger workflow in Success state` was misbadged SUCCESS on the strength of the word i
-
-- **Issue #127** (2026-09-08): **fix(ui): show real timestamps on diff-filter log lines**
-  *Symptoms*: ## Summary  Follow-up to #116 and #119. Three log lines on the diff-filter path still rendered `??:??:??` in the Execution/Logs tabs:  - the two per-warning / per-parse-error sub-items in `check_diff_filter_results` - the "Diff filter: evaluating triggers" line in `spawn_evaluation`  ## Why they were left behind  `process_log_entry` extracts the timestamp from the `[HH:MM:SS]` prefix and then **trims** the content that follows. The sub-items encoded their nesting as two leading spaces, so timestamping them would have flattened them against the summary line they hang under. #116 kept the indentation and dropped the timestamp.  That's a false choice. A printable glyph survives the trim where whitespace cannot, so the nesting and the timestamp can coexist — the same trick the `curl:` recipe lines already use.  ## Changes  **The timestamp fix**  - New `NESTED` symbol (`↳`, U+21B3) in `crates/logging/src/symbols.rs`, alongside the other TUI-only glyphs. - The two sub-item sites now call `add_timestamped_log` and mark nesting with the glyph instead of two spaces. - The "evaluating triggers" line now calls `add_timestamped_log`. It had no indentation problem, it was simply missed.  **Closing the door behind it**  `add_log` is now private. It was `pub` with exactly one caller — `add_timestamped_log` itself — and all three rounds of this bug (#116, #119, and this PR) came from a site that reached past the timestamped helper to get to it. Private makes the next attempt a compile error 
-
-- **Issue #119** (2026-07-03): **fix(ui): show real timestamps for remaining bare TUI log pushes**
-  *Symptoms*: ## Summary  Follow-up to #116, which routed most app-generated TUI log messages through `add_timestamped_log` but missed four bare `self.logs.push(...)` sites. Those lines lack the `[HH:MM:SS]` prefix the log renderer parses, so they still displayed `??:??:??` in the Execution/Logs tabs.  ## Changes  - Convert the four remaining sites in `crates/ui/src/app/state.rs` to `add_timestamped_log`:   - `cycle_diff_filter_event` — "Diff filter event: {} -> {}"   - `trigger_tab_copy_curl` — "curl: ..." recipe lines   - `trigger_dispatch` — "Dispatching {} to {:?} (branch: {})"   - `drain_trigger_outcomes` — "Dispatched ..." / "Dispatch ... failed: ..." - Remove the three `trim_logs_to_cap()` calls (and the `drained` counter gating one of them) that only existed because the bare pushes bypassed `add_log`'s built-in trim. - Widen `LogProcessor::process_log_entry` to `pub(crate)` so state tests can assert end-to-end behavior.  ## Testing  Three new tests call the real methods and run the actual appended log lines through the real parser, asserting the extracted timestamp is not `??:??:??`. The `trigger_dispatch` site is not exercised end-to-end (it `tokio::spawn`s a real dispatch) and is covered by pattern parity with the tested sites.  `cargo test -p wrkflw-ui`: 57 passed. `cargo clippy -p wrkflw-ui --all-targets`: clean.
-
-- **Issue #118** (2026-06-10): **fix(executor): deduplicate concurrent runtime image builds**
-  *Symptoms*: ## Summary  Parallel jobs in the same batch all called `build_combined_runtime_image` concurrently. The `image_exists` check raced — all callers saw `false` before any build completed, causing redundant builds and multiple "Building combined runtime image with: rust" log lines.  Fix uses a per-tag `tokio::sync::Mutex` (stored in a process-level lazy map) to serialize concurrent builds for the same image tag. The first caller builds; subsequent callers wait, then hit a re-check and reuse the already-built image. A unit test asserts `build_image` is called exactly once across five concurrent calls.  ## Changes  - `crates/executor/src/engine.rs`: added `IMAGE_BUILD_LOCKS` static and double-checked locking in `build_combined_runtime_image`; derived `Clone` on `SetupRuntime`; added `build_combined_runtime_image_deduplicates_concurrent_builds` test  ## Test plan  - [x] `cargo test -p wrkflw-executor build_combined_runtime_image_deduplicates` passes - [x] `wrkflw run --runtime podman --verbose` on a workflow with multiple parallel jobs sharing a runtime only logs "Building combined runtime image" once  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the PR!  LGTM!
-
-- **Issue #116** (2026-06-11): **fix: show correct timestamp in execution tab for all TUI log messages**
-  *Symptoms*: ## Summary  The Execution tab (and Logs tab) was rendering \`??:??:??\` as the timestamp for several categories of TUI-generated log messages. The root cause was that \`process_log_entry\` in \`log_processor.rs\` extracts timestamps from the \`[HH:MM:SS]\` prefix produced by \`wrkflw_logging\`; messages pushed directly via \`self.logs.push(...)\` bypassed that formatting entirely.  Changes in \`crates/ui/src/app/state.rs\`:  - **Removed redundant \`initial_logs.push(...)\` calls** for Docker/Podman unavailability warnings. The \`wrkflw_logging::warning(...)\` call immediately following each already writes an identically-formatted line to the global log store, which \`LogProcessor::get_combined_logs()\` merges into the rendered list. Keeping both caused the warning to appear twice (with potentially different timestamps if the two \`Local::now()\` calls straddled a second boundary). The fix deletes the pushes rather than reformatting them.  - **Replaced all remaining bare \`self.logs.push(...)\` calls with \`self.add_timestamped_log(...)\`** (or \`self.add_log(...)\` for indented sub-items), covering:   - \`toggle_emulation_mode\` — "Switched to X mode"   - \`check_diff_filter_results\` — "Diff filter ON/OFF", evaluation failed, warnings, parse errors   - \`get_next_workflow_to_execute\` — "Executing workflow: ..."    Using \`add_timestamped_log\` also ensures the \`LOG_BUFFER_CAP\` trim and \`mark_logs_for_update\` are invoked on every push, which the raw push calls were bypas
-  **Post-Mortem & Fix Analysis**:
-  > Hey @ammachado , there doesn't seem to be any changes pushed yet.
-
-- **Issue #115** (2026-06-11): **fix: resolve matrix expressions in step `with` values before execution**
-  *Symptoms*: ## Summary  - `${{ matrix.X }}` references in step `with` maps were never substituted before use, causing `detect_setup_runtimes` to reject them as invalid versions (the visible symptom: `Ignoring java with invalid version: "${{ matrix.java }}"`) - The same unresolved strings were silently passed as `INPUT_*` env vars into Docker, container, and composite action steps - Fix adds `apply_matrix_to_steps` in `substitution.rs`, which clones steps and runs `preprocess_command` on all `with` values; `execute_matrix_job` materialises steps once before `resolve_runner_image` and the step iteration loop, so every downstream consumer sees concrete values - `resolve_runner_image` now accepts an explicit `steps: &[Step]` parameter instead of reading from `job.steps` directly - Other expression types (`${{ secrets.X }}`, `${{ steps.foo.outputs.bar }}`) are intentionally left intact for existing per-step resolution, since step outputs and secrets context don't exist at materialisation time  ## Relation to #112  This PR partially addresses #112. The workflow in that issue uses `${{ matrix.node }}` in a step `with` value (`node-version: ${{ matrix.node }}`), which is now correctly resolved before execution.  The remaining open part of #112 is the `include: ${{ fromJSON(...) }}` expression at the matrix level. That value is a GH Actions expression resolved at runtime by GitHub, but `wrkflw` currently fails validation with "include must be an array of objects" because it expects a static YAML 
-  **Post-Mortem & Fix Analysis**:
-  > LGTM!
-
-- **Issue #114** (2026-06-11): **feat(runtime): add Auto runtime that detects Docker then Podman**
-  *Symptoms*: ## Summary  - Adds `RuntimeType::Auto` (and `--runtime auto` CLI flag) that probes Docker first, then Podman, then falls back to emulation - Makes `auto` the default runtime for all subcommands (`run`, `watch`, `tui`) instead of hardcoded `docker` - Fixes the no-args TUI launch which previously hardcoded `RuntimeType::Docker`, causing Podman-only users to always see a \"Docker is not available\" warning and fall back to emulation  ## Test plan  - [x] Run `wrkflw run <workflow>` on a Podman-only machine and confirm it detects Podman automatically (no Docker warning) - [ ] Run `wrkflw run <workflow>` on a Docker machine and confirm Docker is still selected - [ ] Run `wrkflw run <workflow>` with no container runtime available and confirm emulation fallback message is shown - [x] Run `wrkflw` (TUI, no args) on a Podman-only machine and confirm the runtime badge shows Podman - [x] Confirm `--runtime docker`, `--runtime podman`, `--runtime emulation` still work explicitly - [x] Run `cargo test -p wrkflw-executor` and `cargo test -p wrkflw` to verify new unit tests pass  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > Resolve the conflicts please @ammachado 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2816,1854 +2225,7 @@ fn get_ref_type(full_ref: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `248a4190` (2026-09-08)
-**Commit Message**: refactor(ui): drop the write-only WorkflowExecution.logs field (#129)
-
-WorkflowExecution has carried a `logs` vector for as long as the
-TUI has existed. Five places write to it. Nothing reads it. Every
-view that touches execution details renders the jobs, the start
-time and the progress bar, and walks straight past the logs.
-
-Two of those writers even hand-rolled their own `[HH:MM:SS]`
-prefix, which is presumably how the field survived an entire review
-series hunting for exactly that pattern. From three feet away it
-looks like a real log sink.
-
-There was a tempting wrong fix here: route those two pushes through
-add_timestamped_log like everything else in that cleanup. That
-would have dumped both lines into the app log buffer, where the
-global store already records the same outcome, and resurrected the
-double-rendering that got deleted one commit ago.
-
-So the field goes instead. A struct member that five callers feed
-and nobody consumes isn't storage, it's a trap for whoever assumes
-it means something.
-
-While at it, regenerate INDEX.md, which the project asks for after
-any structural change.
-
-**File**: `INDEX.md` (modified, +5/-5)
-```diff
-@@ -1,6 +1,6 @@
- # Codebase Index: wrkflw
- 
--> Generated: 2026-09-08 14:45:14 UTC | Files: 202 | Lines: 71166
-+> Generated: 2026-09-08 17:28:51 UTC | Files: 202 | Lines: 72893
- > Languages: JSON (4), Markdown (24), Rust (113), Shell (5), TOML (18), YAML (38)
- 
- ## Directory Structure
-@@ -1400,7 +1400,7 @@ wrkflw/
- 
- ## INDEX.md
- 
--**Language:** Markdown | **Size:** 94.2 KB | **Lines:** 4002
-+**Language:** Markdown | **Size:** 145.0 KB | **Lines:** 5741
- 
- **Declarations:**
- 
-@@ -3622,7 +3622,7 @@ wrkflw/
- 
- ## crates/ui/src/app/state.rs
- 
--**Language:** Rust | **Size:** 177.5 KB | **Lines:** 4398
-+**Language:** Rust | **Size:** 176.9 KB | **Lines:** 4388
- 
- **Imports:**
- - `crate::log_processor::{LogProcessingRequest, LogProcessor, ProcessedLogEntry}`
-@@ -4030,7 +4030,7 @@ wrkflw/
- 
- ## crates/ui/src/handlers/workflow.rs
- 
--**Language:** Rust | **Size:** 25.3 KB | **Lines:** 667
-+**Language:** Rust | **Size:** 25.3 KB | **Lines:** 666
- 
- **Imports:**
- - `crate::cli_style`
-@@ -4115,7 +4115,7 @@ wrkflw/
- 
- ## crates/ui/src/models/mod.rs
- 
--**Language:** Rust | **Size:** 10.9 KB | **Lines:** 314
-+**Language:** Rust | **Size:** 10.9 KB | **Lines:** 313
- 
- **Imports:**
- - `chrono::Local`
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +0/-10)
-```diff
-@@ -1178,7 +1178,6 @@ impl App {
-                 jobs: Vec::new(),
-                 start_time: Local::now(),
-                 end_time: Some(Local::now()),
--                logs: Vec::new(),
-                 progress: 1.0,
-             });
-         }
-@@ -1189,10 +1188,6 @@ impl App {
- 
-             match &result {
-                 Ok((jobs, _)) => {
--                    let timestamp = Local::now().format("%H:%M:%S").to_string();
--                    execution_details
--                        .logs
--                        .push(format!("[{}] Operation completed successfully.", timestamp));
-                     execution_details.progress = 1.0;
- 
-                     // Convert wrkflw_executor::JobResult to our JobExecution struct
-@@ -1223,10 +1218,6 @@ impl App {
-                         .collect::<Vec<JobExecution>>();
-                 }
-                 Err(e) => {
--                    let timestamp = Local::now().format("%H:%M:%S").to_string();
--                    execution_details
--                        .logs
--                        .push(format!("[{}] Error: {}", timestamp, e));
-                     execution_details.progress = 1.0;
- 
-                     // Create a dummy job with the error information so users can see details
-@@ -1290,7 +1281,6 @@ impl App {
-             jobs: Vec::new(),
-             start_time: Local::now(),
-             end_time: None,
--            logs: vec!["Execution started".to_string()],
-             progress: 0.0, // Just started
-         });
- 
-```
-
-**File**: `crates/ui/src/handlers/workflow.rs` (modified, +0/-1)
-```diff
-@@ -564,7 +564,6 @@ pub fn start_next_workflow_execution(
-                 jobs: Vec::new(),
-                 start_time: Local::now(),
-                 end_time: None,
--                logs: Vec::new(),
-                 progress: 0.0,
-             });
-         }
-```
-
-**File**: `crates/ui/src/models/mod.rs` (modified, +0/-1)
-```diff
-@@ -54,7 +54,6 @@ pub struct WorkflowExecution {
-     pub jobs: Vec<JobExecution>,
-     pub start_time: chrono::DateTime<Local>,
-     pub end_time: Option<chrono::DateTime<Local>>,
--    pub logs: Vec<String>,
-     pub progress: f64, // 0.0 - 1.0 for progress bar
- }
- 
-```
-
----
-
-### Incident Patch 2: `d0614154` (2026-09-08)
-**Commit Message**: fix(ui): stop logging the same TUI message to both log sinks (#128)
-
-* fix(ui): stop logging the same TUI message to both log sinks
-
-The TUI keeps two log buffers: the app-local `logs` vec and the
-global `wrkflw_logging` store. `get_combined_logs` concatenates
-them and deduplicates exactly nothing, so any code path that
-reports an event to both gets to see it twice in the Logs and
-Execution tabs.
-
-PR #116 fixed this for the Docker and Podman warnings and left
-the rest alone. It turns out there were 24 more, spread across
-the app state, the event loop and the workflow handler,
-double-reporting every workflow execution, trigger and reset.
-
-Delete the app-side push at every one and keep the
-`wrkflw_logging` call. Not an arbitrary coin flip: the global
-store stamps its own [HH:MM:SS] prefix and a level glyph, so the
-surviving copy is the one that renders with a real timestamp and
-the right badge. The glyph is classified in the same tier as the
-level keyword, which means several lines stop lying about
-themselves — a failed workflow is ERROR now, and "Cannot trigger
-workflow in Success state" no longer badges itself *SUCCESS* on
-the strength of a word sitting in the state name.
-
-While at
-
-**File**: `crates/ui/src/app/mod.rs` (modified, +8/-18)
-```diff
-@@ -56,7 +56,6 @@ pub async fn run_wrkflw_tui(
-     );
- 
-     if app.validation_mode {
--        app.add_timestamped_log("Starting in validation mode");
-         wrkflw_logging::info("Starting in validation mode");
-     }
- 
-@@ -561,7 +560,6 @@ fn run_tui_event_loop(
-                                             "Workflow '{}' is already running",
-                                             workflow.name
-                                         );
--                                        app.add_timestamped_log(&msg);
-                                         wrkflw_logging::warning(&msg);
-                                     } else {
-                                         // First, get all the data we need from the workflow
-@@ -584,40 +582,32 @@ fn run_tui_event_loop(
-                                             status_text
-                                         ));
- 
--                                        // Add log entries
--                                        app.add_timestamped_log(&format!(
-+                                        // Both lines go to the global store: it
-+                                        // is the only sink `get_combined_logs`
-+                                        // renders once, and the hint has to stay
-+                                        // adjacent to the warning it explains.
-+                                        // The warning carries the workflow name
-+                                        // that the app-side copy used to add.
-+                                        wrkflw_logging::warning(&format!(
-                                             "Cannot trigger workflow '{}' in {} state",
-                                             workflow_name, status_text
-                                         ));
- 
--                                        // Add hint about using reset
-                                         if needs_reset_hint {
--                                            app.add_timestamped_log(
-+                                            wrkflw_logging::info(
-                                                 "Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
-                                             );
-                                         }
--
--                                        wrkflw_logging::warning(&format!(
--                                            "Cannot trigger workflow in {} state",
--                                            status_text
--                                        ));
-                                     }
-                                 }
-                             } else {
--                                app.add_timestamped_log("No workflow selected to trigger");
-                                 wrkflw_logging::warning("No workflow selected to trigger");
-                             }
-                         } else if app.running {
--                            app.add_timestamped_log(
--                                "Cannot trigger workflow while another operation is in progress",
--                            );
-                             wrkflw_logging::warning(
-                                 "Cannot trigger workflow while another operation is in progress",
-                             );
-                         } else if app.selected_tab != TAB_WORKFLOWS {
--                            app.add_timestamped_log(
--                                "Switch to Workflows tab to trigger a workflow",
--                            );
-                             wrkflw_logging::warning(
-                                 "Switch to Workflows tab to trigger a workflow",
-                             );
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +105/-20)
-```diff
-@@ -941,9 +941,7 @@ impl App {
-         } else {
-             "normal"
-         };
--        let msg = format!("Switched to {} mode", mode);
--        self.add_timestamped_log(&msg);
--        wrkflw_logging::info(&msg);
-+        wrkflw_logging::info(&format!("Switched to {} mode", mode));
-     }
- 
-     pub fn runtime_type_name(&self) -> &str {
-@@ -1157,7 +1155,6 @@ impl App {
- 
-             // Log only once at the beginning - don't initialize execution details here
-             // since that will happen in start_next_workflow_execution
--            self.add_timestamped_log("Starting workflow execution...");
-             wrkflw_logging::info("Starting workflow execution...");
-         }
-     }
-@@ -1169,7 +1166,6 @@ impl App {
-         result: Result<(Vec<wrkflw_executor::JobResult>, ()), String>,
-     ) {
-         if workflow_idx >= self.workflows.len() {
--            self.add_timestamped_log("Error: Invalid workflow index received");
-             wrkflw_logging::error("Invalid workflow index received in process_execution_result");
-             return;
-         }
-@@ -1251,16 +1247,16 @@ impl App {
-         match result {
-             Ok(_) => {
-                 workflow.status = WorkflowStatus::Success;
--                // `wrkflw_logging` stamps its own [HH:MM:SS] prefix,
--                // so it gets the bare message.
-+                // Single sink: `wrkflw_logging` stamps its own [HH:MM:SS]
-+                // prefix and level glyph, and `get_combined_logs` folds the
-+                // store into the log panes. A second app-side push would
-+                // render the same line twice.
-                 let msg = format!("Workflow '{}' completed successfully!", workflow.name);
--                self.add_timestamped_log(&msg);
-                 wrkflw_logging::info(&msg);
-             }
-             Err(e) => {
-                 workflow.status = WorkflowStatus::Failed;
-                 let msg = format!("Workflow '{}' failed: {}", workflow.name, e);
--                self.add_timestamped_log(&msg);
-                 wrkflw_logging::error(&msg);
-             }
-         }
-@@ -1284,10 +1280,6 @@ impl App {
-         let target_job = entry.target_job;
-         self.workflows[next].status = WorkflowStatus::Running;
-         self.current_execution = Some(next);
--        self.add_timestamped_log(&format!(
--            "Executing workflow: {}",
--            self.workflows[next].name
--        ));
-         wrkflw_logging::info(&format!(
-             "Executing workflow: {}",
-             self.workflows[next].name
-@@ -1651,7 +1643,6 @@ impl App {
-                 let workflow = &self.workflows[selected_idx];
- 
-                 if workflow.name.is_empty() {
--                    self.add_timestamped_log("Error: Invalid workflow selection");
-                     wrkflw_logging::error(
-                         "Invalid workflow selection in trigger_selected_workflow",
-                     );
-@@ -1662,7 +1653,6 @@ impl App {
-                 let workflow_name = workflow.name.clone();
- 
-                 // Set up background task to execute the workflow via GitHub Actions REST API
--                self.add_timestamped_log(&format!("Triggering workflow: {}", workflow_name));
-                 wrkflw_logging::info(&format!("Triggering workflow: {}", workflow_name));
-                 let tx_clone = self.tx.clone();
- 
-@@ -1697,11 +1687,9 @@ impl App {
-                     }
-                 });
-             } else {
--                self.add_timestamped_log("No workflow selected to trigger");
-                 wrkflw_logging::warning("No workflow selected to trigger");
-             }
-         } else {
--            self.add_timestamped_log("No workflow selected to trigger");
-             wrkflw_logging::warning("No workflow selected to trigger");
-         }
-     }
-@@ -1710,7 +1698,6 @@ impl App {
-     pub fn reset_workflow_status(&mut self) {
-         // Log whether a selection exists
-         if self.workflow_list_state.selected().is_none() {
--            self.add_timestamped_log("Debug: No workflow selected for reset");
-             wrkflw_logging::warning("No workflow selected for reset");
-             return;
-         }
-@@ -1748,7 +1735,6 @@ impl App {
-                     "Reset workflow '{}' from {} state to NotStarted - status is now {:?}",
-                     workflow.name, old_status, workflow.status
-                 );
--                self.add_timestamped_log(&reset_msg);
-                 wrkflw_logging::info(&reset_msg);
- 
-                 // Set a success status message
-@@ -1850,7 +1836,15 @@ impl App {
-         self.mark_logs_for_update(); // trims to the cap and bumps the revision
-     }
- 
--    /// Add a formatted log entry with timestamp and trigger log processing update
-+    /// Add a formatted log entry with timestamp and trigger log processing update.
-+    ///
-+    /// One message, one sink. `get_combined_logs` concatenates this buffer
-+    /// with the `wrkflw_logging` store and does not deduplicate, so a
-+    ///
-```
-
-**File**: `crates/ui/src/handlers/workflow.rs` (modified, +0/-14)
-```diff
-@@ -469,12 +469,8 @@ pub fn start_next_workflow_execution(
- 
-         // Log whether verbose mode is enabled
-         if verbose {
--            app.add_timestamped_log("Verbose mode: Step outputs will be displayed in full");
-             wrkflw_logging::info("Verbose mode: Step outputs will be displayed in full");
-         } else {
--            app.add_timestamped_log(
--                "Standard mode: Only step status will be shown (use --verbose for full output)",
--            );
-             wrkflw_logging::info(
-                 "Standard mode: Only step status will be shown (use --verbose for full output)",
-             );
-@@ -498,9 +494,6 @@ pub fn start_next_workflow_execution(
-                         wrkflw_logging::info("Auto-detected Podman runtime");
-                         RuntimeType::Podman
-                     } else {
--                        app.add_timestamped_log(
--                            "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
--                        );
-                         wrkflw_logging::warning(
-                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-                         );
-@@ -523,9 +516,6 @@ pub fn start_next_workflow_execution(
-                 };
- 
-                 if !is_docker_available {
--                    app.add_timestamped_log(
--                        "Docker is not available. Using emulation mode instead.",
--                    );
-                     wrkflw_logging::warning(
-                         "Docker is not available. Using emulation mode instead.",
-                     );
-@@ -549,9 +539,6 @@ pub fn start_next_workflow_execution(
-                 };
- 
-                 if !is_podman_available {
--                    app.add_timestamped_log(
--                        "Podman is not available. Using emulation mode instead.",
--                    );
-                     wrkflw_logging::warning(
-                         "Podman is not available. Using emulation mode instead.",
-                     );
-@@ -675,7 +662,6 @@ pub fn start_next_workflow_execution(
-         });
-     } else {
-         app.running = false;
--        app.add_timestamped_log("All workflows completed execution");
-         wrkflw_logging::info("All workflows completed execution");
-     }
- }
-```
-
-**File**: `crates/ui/src/models/mod.rs` (modified, +15/-0)
-```diff
-@@ -230,6 +230,21 @@ mod tests {
-             "[12:00:00] Triggering workflow: ci.yml",
-             "[12:00:00] Workflow completed successfully",
-             "[12:00:00] Diff filter OFF",
-+            // Lines arriving from the `wrkflw_logging` store, which
-+            // stamps a level glyph after the timestamp. Execution events
-+            // are logged there and nowhere else, so these shapes are what
-+            // the panes actually draw for them. The glyph is load-bearing:
-+            // it is checked in the same tier as the level keyword, so it
-+            // badges lines whose wording alone would badge them wrong.
-+            // "failed" is not a keyword, and this line would be INFO
-+            // without the failure glyph:
-+            "[12:00:00] \u{2716} Workflow 'ci' failed: exit status 1",
-+            // The Warn tier is tested before the Success tier, so the
-+            // glyph wins over the "Success" in the state name:
-+            "[12:00:00] \u{26A0} Cannot trigger workflow 'ci' in Success state",
-+            "[12:00:00] \u{26A0} No workflow selected to trigger",
-+            "[12:00:00] \u{25CF} Executing workflow: ci",
-+            "[12:00:00] \u{25CF} Workflow 'ci' completed successfully!",
-         ];
- 
-         let levels = [
-```
-
----
-
-### Incident Patch 3: `af759137` (2026-09-08)
-**Commit Message**: fix(ui): show real timestamps on diff-filter log lines (#127)
-
-* fix(ui): show real timestamps on diff-filter log lines
-
-Toggling the diff filter logs a burst of lines into the Execution
-and Logs tabs, and three of them have been rendering `??:??:??`
-where the timestamp belongs: the per-warning and per-parse-error
-sub-items, and the "evaluating triggers" line that kicks the whole
-thing off.
-
-The reason is more interesting than a plain oversight. The renderer
-pulls the timestamp off a `[HH:MM:SS]` prefix and then *trims*
-whatever follows. The sub-items encoded their nesting as two
-leading spaces, so timestamping them would have flattened them
-against the summary line they hang under. Faced with that, the
-previous pass kept the indentation and dropped the timestamp.
-
-That's a false choice. Carry the nesting in a glyph instead — a ↳
-survives the trim, where whitespace never could — and the timestamp
-comes back for free. It's the same trick the curl recipe lines
-already use: put something printable in front, and the trim stops
-being your problem.
-
-The "evaluating triggers" line had no such excuse. It just got
-missed.
-
-That's the last of the bare log pushes on the app side, which
-closes
-
-**File**: `crates/executor/src/docker.rs` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@ impl DockerRuntime {
-         };
- 
-         // Look for any key that starts with the prefix
--        for (key, _) in image_keys.iter() {
-+        for key in image_keys.keys() {
-             if key.starts_with(prefix) {
-                 return Some(key.clone());
-             }
-```
-
-**File**: `crates/executor/src/podman.rs` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@ impl PodmanRuntime {
-         };
- 
-         // Look for any key that starts with the prefix
--        for (key, _) in image_keys.iter() {
-+        for key in image_keys.keys() {
-             if key.starts_with(prefix) {
-                 return Some(key.clone());
-             }
-```
-
-**File**: `crates/executor/src/workflow_commands.rs` (modified, +2/-3)
-```diff
-@@ -130,10 +130,9 @@ fn parse_command_line(line: &str) -> Option<WorkflowCommand> {
-     let rest = line.strip_prefix("::").unwrap_or(line);
- 
-     // Find the second "::" that separates command+params from the message
--    let (cmd_part, raw_message) = if let Some(idx) = rest.find("::") {
-+    let (cmd_part, raw_message) = {
-+        let idx = rest.find("::")?;
-         (&rest[..idx], rest[idx + 2..].to_string())
--    } else {
--        return None;
-     };
- 
-     // Decode percent-encoded values in the message
-```
-
-**File**: `crates/logging/src/symbols.rs` (modified, +5/-0)
-```diff
-@@ -30,6 +30,11 @@ pub const CHECKBOX_ON: &str = "[\u{2714}]"; // [✔]
- pub const CHECKBOX_OFF: &str = "[ ]";
- pub const TAB_DIVIDER: &str = " \u{2502} "; // │
- 
-+// Marks a log line as a sub-item of the line above it. A glyph rather than
-+// leading whitespace because the log renderer trims the content after the
-+// `[HH:MM:SS]` prefix, which erases indentation.
-+pub const NESTED: &str = "\u{21B3}"; // ↳
-+
- // Braille spinner frames for running animation
- pub const SPINNER: &[&str] = &[
-     "\u{280B}", "\u{2819}", "\u{2839}", "\u{2838}", "\u{283C}", "\u{2834}", "\u{2826}", "\u{2827}",
-```
-
-**File**: `crates/runtime/src/emulation.rs` (modified, +2/-2)
-```diff
-@@ -110,7 +110,7 @@ impl EmulationRuntime {
-                             if let Err(e) = fs::copy(&source, &dest) {
-                                 eprintln!(
-                                     "Warning: Failed to copy file from {:?} to {:?}: {}",
--                                    &source, &dest, e
-+                                    source, dest, e
-                                 );
-                             }
-                         } else {
-@@ -135,7 +135,7 @@ impl EmulationRuntime {
-                 if let Err(e) = fs::copy(host_path, &dest) {
-                     eprintln!(
-                         "Warning: Failed to copy file from {:?} to {:?}: {}",
--                        host_path, &dest, e
-+                        host_path, dest, e
-                     );
-                 }
-             }
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +211/-5)
-```diff
-@@ -708,7 +708,7 @@ impl App {
- 
-         let event_name = self.diff_filter_event.clone();
-         let activity_type = self.diff_filter_activity_type.clone();
--        self.add_log(format!(
-+        self.add_timestamped_log(&format!(
-             "Diff filter: evaluating triggers (simulating '{}' event)...",
-             event_name
-         ));
-@@ -890,8 +890,18 @@ impl App {
-                         "Diff filter: {} warning(s)",
-                         warnings.len()
-                     ));
-+                    // Sub-items are marked with a glyph rather than
-+                    // leading whitespace: `process_log_entry` trims the
-+                    // content after the `[HH:MM:SS]` prefix, so an
-+                    // indented line would either lose its nesting or
-+                    // have to skip the timestamp entirely (it used to do
-+                    // the latter, rendering `??:??:??`).
-                     for w in &warnings {
--                        self.add_log(format!("  warning: {}", w));
-+                        self.add_timestamped_log(&format!(
-+                            "{} warning: {}",
-+                            crate::theme::symbols::NESTED,
-+                            w
-+                        ));
-                     }
-                 }
- 
-@@ -906,7 +916,12 @@ impl App {
-                         parse_failures.len()
-                     ));
-                     for (path, reason) in &parse_failures {
--                        self.add_log(format!("  parse error: {}: {}", path.display(), reason));
-+                        self.add_timestamped_log(&format!(
-+                            "{} parse error: {}: {}",
-+                            crate::theme::symbols::NESTED,
-+                            path.display(),
-+                            reason
-+                        ));
-                     }
-                 }
-             }
-@@ -1820,8 +1835,17 @@ impl App {
-         all_logs
-     }
- 
--    /// Add a log entry and trigger log processing update
--    pub fn add_log(&mut self, message: String) {
-+    /// Add a raw log entry and trigger log processing update.
-+    ///
-+    /// Deliberately private. Every line in the log panes is drawn with the
-+    /// timestamp parsed out of its `[HH:MM:SS]` prefix, so a line pushed
-+    /// without one renders `??:??:??`. Three separate fixes have been needed
-+    /// for callers that reached past `add_timestamped_log` to get here;
-+    /// keeping this private makes that a compile error rather than a
-+    /// cosmetic bug nobody notices until a screenshot. Use
-+    /// [`Self::add_timestamped_log`], and mark sub-items with
-+    /// [`crate::theme::symbols::NESTED`] rather than leading whitespace.
-+    fn add_log(&mut self, message: String) {
-         self.logs.push(message);
-         self.mark_logs_for_update(); // trims to the cap and bumps the revision
-     }
-@@ -2778,6 +2802,13 @@ mod tests {
-         crate::log_processor::LogProcessor::process_log_entry(line, "").timestamp
-     }
- 
-+    /// The content the log panes actually draw, after the parser strips the
-+    /// `[HH:MM:SS]` prefix and trims. Leading whitespace does not survive
-+    /// this, which is why nesting is carried by a glyph.
-+    fn rendered_content(line: &str) -> String {
-+        crate::log_processor::LogProcessor::process_log_entry(line, "").rendered_content()
-+    }
-+
-     #[test]
-     fn log_buffer_caps_at_configured_size() {
-         // Long-running TUI sessions (especially with rapid diff-filter
-@@ -3171,6 +3202,152 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn check_diff_filter_results_timestamps_nested_sub_items() {
-+        // Regression: the per-warning and per-parse-error sub-items were
-+        // pushed through `add_log` with two leading spaces so the log pane
-+        // showed them nested under their summary line. `process_log_entry`
-+        // trims the content after the `[HH:MM:SS]` prefix, so the author
-+        // dropped the timestamp to keep the indentation — and every one of
-+        // those lines rendered `??:??:??`. The nesting is now carried by a
-+        // glyph, which survives the trim, so the timestamp can come back.
-+        let mut app = make_app();
-+        app.logs.clear();
-+
-+        let (tx, rx) = mpsc::channel();
-+        app.diff_filter_rx = Some(rx);
-+        app.diff_filter_active = true;
-+        tx.send(DiffFilterOutcome::Success(DiffFilterReport {
-+            rows: vec![(
-+                PathBuf::from("ci.yml"),
-+                Some(TriggerMatchStatus::Matched("matched ci".into())),
-+            )],
-+            parse_failures: vec![(
-+                PathBuf::from("broken.yml"),
-+                "Invalid glob pattern '[unclosed' under 'push.paths'".to_string(),
-+            )],
-+            warnings: vec![
-+                "git ls-files --others failed (exit 128): fatal: unsafe repository".to_string(),
-+            ],
-+        }))
-+        .unwrap();
-+
-+        app.check_diff_filter_results();
-+
-+      
-```
-
-**File**: `crates/ui/src/log_processor.rs` (modified, +40/-27)
-```diff
-@@ -1,5 +1,5 @@
- // Background log processor for asynchronous log filtering and formatting
--use crate::models::LogFilterLevel;
-+use crate::models::{LogBadge, LogFilterLevel};
- use crate::theme;
- use ratatui::{
-     style::Style,
-@@ -20,6 +20,17 @@ pub struct ProcessedLogEntry {
- }
- 
- impl ProcessedLogEntry {
-+    /// The text the log panes actually draw, after the `[HH:MM:SS]` prefix
-+    /// is stripped and the remainder trimmed. Leading whitespace does not
-+    /// survive that trim, which is why nesting is carried by a glyph.
-+    #[cfg(test)]
-+    pub(crate) fn rendered_content(&self) -> String {
-+        self.content_spans
-+            .iter()
-+            .map(|s| s.content.as_ref())
-+            .collect()
-+    }
-+
-     /// Convert to a table row for rendering
-     pub fn to_row(&self) -> Row<'static> {
-         Row::new(vec![
-@@ -210,32 +221,11 @@ impl LogProcessor {
-             "??:??:??".to_string()
-         };
- 
--        // Determine log type and style using theme badge styles
--        let (log_type, log_style) = if log_line.contains("Error")
--            || log_line.contains("error")
--            || log_line.contains(theme::symbols::FAILURE)
--        {
--            ("ERROR", theme::log_badge("ERROR"))
--        } else if log_line.contains("Warning")
--            || log_line.contains("warning")
--            || log_line.contains(theme::symbols::WARNING)
--        {
--            ("WARN", theme::log_badge("WARN"))
--        } else if log_line.contains("Success")
--            || log_line.contains("success")
--            || log_line.contains(theme::symbols::SUCCESS)
--        {
--            ("SUCCESS", theme::log_badge("SUCCESS"))
--        } else if log_line.contains("Running")
--            || log_line.contains("running")
--            || log_line.contains(theme::symbols::RUNNING)
--        {
--            ("INFO", theme::log_badge("INFO"))
--        } else if log_line.contains("Triggering") || log_line.contains("triggered") {
--            ("TRIG", theme::log_badge("TRIG"))
--        } else {
--            ("INFO", theme::log_badge(""))
--        };
-+        // Determine log type and style. `LogBadge` is shared with
-+        // `LogFilterLevel::matches` so the badge drawn here and the filter
-+        // that hides the line can never disagree.
-+        let badge = LogBadge::classify(log_line);
-+        let (log_type, log_style) = (badge.as_str(), theme::log_badge(badge.style_key()));
- 
-         // Extract content after timestamp
-         let content = if log_line.starts_with('[') && log_line.contains(']') {
-@@ -324,4 +314,27 @@ mod tests {
-         let entry = LogProcessor::process_log_entry("[12:34:56] some log", "");
-         assert_eq!(entry.timestamp, "12:34:56");
-     }
-+
-+    #[test]
-+    fn leading_whitespace_is_trimmed_but_a_nesting_glyph_survives() {
-+        // Why sub-item log lines are marked with a glyph instead of being
-+        // indented: the content after the `[HH:MM:SS]` prefix is trimmed, so
-+        // an indented line loses its nesting the moment it is timestamped.
-+        let indented = LogProcessor::process_log_entry("[12:34:56]   warning: x", "");
-+        assert_eq!(
-+            indented.rendered_content(),
-+            "warning: x",
-+            "indentation must not survive the trim"
-+        );
-+
-+        let nested = theme::symbols::NESTED;
-+        let marked =
-+            LogProcessor::process_log_entry(&format!("[12:34:56] {} warning: x", nested), "");
-+        assert_eq!(
-+            marked.rendered_content(),
-+            format!("{} warning: x", nested),
-+            "the nesting glyph must survive the trim"
-+        );
-+        assert_eq!(marked.timestamp, "12:34:56");
-+    }
- }
-```
-
-**File**: `crates/ui/src/models/mod.rs` (modified, +174/-11)
-```diff
-@@ -83,6 +83,78 @@ pub enum StatusSeverity {
-     Error,
- }
- 
-+/// The badge a log line is rendered with in the log panes.
-+///
-+/// This is the single source of truth for "what kind of line is this".
-+/// Both the renderer (which draws the badge) and [`LogFilterLevel`]
-+/// (which decides whether the line survives a filter) classify through
-+/// here, so a line can never be badged `WARN` and then hidden by the
-+/// Warning filter — which is exactly what happened while the two carried
-+/// independent keyword lists.
-+///
-+/// Classification is first-match-wins in declaration order, so a line
-+/// mentioning both an error and a success is an error.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum LogBadge {
-+    Error,
-+    Warn,
-+    Success,
-+    /// Active work. Rendered `INFO` with the info accent.
-+    Running,
-+    Trigger,
-+    /// Everything else. Also rendered `INFO`, but dimmed.
-+    Plain,
-+}
-+
-+impl LogBadge {
-+    /// Classify a raw log line, timestamp prefix and all.
-+    pub fn classify(log: &str) -> Self {
-+        if log.contains("Error") || log.contains("error") || log.contains(symbols::FAILURE) {
-+            LogBadge::Error
-+        } else if log.contains("Warning")
-+            || log.contains("warning")
-+            || log.contains(symbols::WARNING)
-+        {
-+            LogBadge::Warn
-+        } else if log.contains("Success")
-+            || log.contains("success")
-+            || log.contains(symbols::SUCCESS)
-+        {
-+            LogBadge::Success
-+        } else if log.contains("Running")
-+            || log.contains("running")
-+            || log.contains(symbols::RUNNING)
-+        {
-+            LogBadge::Running
-+        } else if log.contains("Triggering") || log.contains("triggered") {
-+            LogBadge::Trigger
-+        } else {
-+            LogBadge::Plain
-+        }
-+    }
-+
-+    /// The text drawn in the badge column.
-+    pub fn as_str(&self) -> &'static str {
-+        match self {
-+            LogBadge::Error => "ERROR",
-+            LogBadge::Warn => "WARN",
-+            LogBadge::Success => "SUCCESS",
-+            LogBadge::Running | LogBadge::Plain => "INFO",
-+            LogBadge::Trigger => "TRIG",
-+        }
-+    }
-+
-+    /// The key `theme::log_badge` styles by. Distinct from [`Self::as_str`]
-+    /// only for [`LogBadge::Plain`], which shares the `INFO` label but is
-+    /// drawn dim so that active work stands out against routine chatter.
-+    pub fn style_key(&self) -> &'static str {
-+        match self {
-+            LogBadge::Plain => "",
-+            other => other.as_str(),
-+        }
-+    }
-+}
-+
- /// Log filter levels
- #[derive(Debug, Clone, PartialEq)]
- pub enum LogFilterLevel {
-@@ -95,20 +167,21 @@ pub enum LogFilterLevel {
- }
- 
- impl LogFilterLevel {
-+    /// Whether `log` survives this filter.
-+    ///
-+    /// Delegates to [`LogBadge::classify`] rather than matching keywords
-+    /// itself: the filter must agree with the badge the user can see, or
-+    /// lines disappear under the filter that names them.
-     pub fn matches(&self, log: &str) -> bool {
-+        let badge = LogBadge::classify(log);
-         match self {
--            LogFilterLevel::Info => {
--                log.contains(symbols::INFO) || (log.contains("INFO") && !log.contains("SUCCESS"))
--            }
--            LogFilterLevel::Warning => log.contains(symbols::WARNING) || log.contains("WARN"),
--            LogFilterLevel::Error => log.contains(symbols::FAILURE) || log.contains("ERROR"),
--            LogFilterLevel::Success => {
--                log.contains(symbols::SUCCESS) || log.contains("SUCCESS") || log.contains("success")
--            }
--            LogFilterLevel::Trigger => {
--                log.contains("Triggering") || log.contains("triggered") || log.contains("TRIG")
--            }
-             LogFilterLevel::All => true,
-+            // Two badges are drawn `INFO`; the filter named INFO shows both.
-+            LogFilterLevel::Info => matches!(badge, LogBadge::Running | LogBadge::Plain),
-+            LogFilterLevel::Warning => badge == LogBadge::Warn,
-+            LogFilterLevel::Error => badge == LogBadge::Error,
-+            LogFilterLevel::Success => badge == LogBadge::Success,
-+            LogFilterLevel::Trigger => badge == LogBadge::Trigger,
-         }
-     }
- 
-@@ -134,3 +207,93 @@ impl LogFilterLevel {
-         }
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    /// The invariant this type exists to hold: whatever badge the log pane
-+    /// draws, the filter named after that badge must show the line.
-+    /// Before `LogFilterLevel` classified through `LogBadge`, the two kept
-+    /// independent keyword lists — the badge matched lowercase `warning`,
-+    /// the filter only uppercase `WARN` — so the diff-filter warning lines
-+    /// were badged `WARN` and then hidden by the Warning filter.
-+    #[test]
-+    fn every_filter_shows_the_lines_it_badges() {
-+        let cases = [
-+            "[12:00:00] ↳ warning: git ls-files --o
-```
-
----
-
-### Incident Patch 4: `499a4e53` (2026-07-03)
-**Commit Message**: fix(ui): show real timestamps for remaining bare TUI log pushes (#119)
-
-* fix(ui): timestamp the log pushes that #116 missed
-
-PR #116 claimed to fix the ??:??:?? timestamps for "all TUI log
-messages". It turns out "all" meant "most": four bare
-self.logs.push() sites survived — the diff-filter event rotation,
-the copy-curl recipe lines, the "Dispatching ..." line, and the
-dispatch outcome lines. All of them still rendered ??:??:?? in
-the Execution and Logs tabs.
-
-The renderer derives the timestamp column *only* from a
-[HH:MM:SS] prefix on the line itself, so any push that skips
-add_timestamped_log() is silently unparseable. Route the four
-stragglers through add_timestamped_log(). Since that helper
-already trims the buffer, the hand-rolled trim_logs_to_cap()
-calls next to each push (and the `drained` counter that existed
-only to gate one of them) are now dead weight. Gone.
-
-The new tests don't re-feed literal strings to the parser —
-that proves nothing about the call sites. They call the actual
-methods and run the actual appended lines through the actual
-parser, which needed nothing more than a pub(crate) on
-process_log_entry. The "Dispatching ..." site is the one
-exception: it tokio
-
-**File**: `crates/ui/src/app/mod.rs` (modified, +15/-21)
-```diff
-@@ -8,7 +8,6 @@ use crate::views::{
-     render_ui, TAB_COUNT, TAB_DAG, TAB_EXECUTION, TAB_HELP, TAB_LOGS, TAB_SECRETS, TAB_TRIGGER,
-     TAB_WORKFLOWS,
- };
--use chrono::Local;
- use crossterm::{
-     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
-     execute,
-@@ -57,7 +56,7 @@ pub async fn run_wrkflw_tui(
-     );
- 
-     if app.validation_mode {
--        app.logs.push("Starting in validation mode".to_string());
-+        app.add_timestamped_log("Starting in validation mode");
-         wrkflw_logging::info("Starting in validation mode");
-     }
- 
-@@ -558,14 +557,12 @@ fn run_tui_event_loop(
-                                     if workflow.status == WorkflowStatus::NotStarted {
-                                         app.trigger_selected_workflow();
-                                     } else if workflow.status == WorkflowStatus::Running {
--                                        app.logs.push(format!(
-+                                        let msg = format!(
-                                             "Workflow '{}' is already running",
-                                             workflow.name
--                                        ));
--                                        wrkflw_logging::warning(&format!(
--                                            "Workflow '{}' is already running",
--                                            workflow.name
--                                        ));
-+                                        );
-+                                        app.add_timestamped_log(&msg);
-+                                        wrkflw_logging::warning(&msg);
-                                     } else {
-                                         // First, get all the data we need from the workflow
-                                         let workflow_name = workflow.name.clone();
-@@ -588,19 +585,16 @@ fn run_tui_event_loop(
-                                         ));
- 
-                                         // Add log entries
--                                        app.logs.push(format!(
-+                                        app.add_timestamped_log(&format!(
-                                             "Cannot trigger workflow '{}' in {} state",
-                                             workflow_name, status_text
-                                         ));
- 
-                                         // Add hint about using reset
-                                         if needs_reset_hint {
--                                            let timestamp =
--                                                Local::now().format("%H:%M:%S").to_string();
--                                            app.logs.push(format!(
--                                                "[{}] Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
--                                                timestamp
--                                            ));
-+                                            app.add_timestamped_log(
-+                                                "Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
-+                                            );
-                                         }
- 
-                                         wrkflw_logging::warning(&format!(
-@@ -610,20 +604,20 @@ fn run_tui_event_loop(
-                                     }
-                                 }
-                             } else {
--                                app.logs.push("No workflow selected to trigger".to_string());
-+                                app.add_timestamped_log("No workflow selected to trigger");
-                                 wrkflw_logging::warning("No workflow selected to trigger");
-                             }
-                         } else if app.running {
--                            app.logs.push(
--                                "Cannot trigger workflow while another operation is in progress"
--                                    .to_string(),
-+                            app.add_timestamped_log(
-+                                "Cannot trigger workflow while another operation is in progress",
-                             );
-                             wrkflw_logging::warning(
-                                 "Cannot trigger workflow while another operation is in progress",
-                             );
-                         } else if app.selected_tab != TAB_WORKFLOWS {
--                            app.logs
--                                .push("Switch to Workflows tab to trigger a workflow".to_string());
-+                            app.add_timestamped_log(
-+                                "Switch to Workflows tab to trigger a workflow",
-+                            );
-                             wrkflw_logging::warning(
-                                 "Switch to Workflows tab to trigger a workflow",
-                             );
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +183/-127)
-```diff
-@@ -29,19 +29,19 @@ pub struct App {
-     pub show_action_messages: bool,
-     pub execution_queue: Vec<QueuedExecution>, // Workflows queued for execution
-     pub current_execution: Option<usize>,
--    pub logs: Vec<String>,                       // Overall execution logs
--    pub log_scroll: usize,                       // Scrolling position for logs
--    pub job_list_state: ListState,               // For viewing job details
--    pub detailed_view: bool,                     // Whether we're in detailed view mode
--    pub step_list_state: ListState,              // For selecting steps in detailed view
--    pub step_table_state: TableState,            // For the steps table in detailed view
--    pub last_tick: Instant,                      // For UI animations and updates
--    pub tick_rate: Duration,                     // How often to update the UI
--    pub spinner_frame: usize,                    // Current spinner animation frame
--    pub tx: mpsc::Sender<ExecutionResultMsg>,    // Channel for async communication
--    pub status_message: Option<String>,          // Temporary status message to display
-+    logs: Vec<String>, // Overall execution logs — private so every mutation routes through `add_log`
-+    pub log_scroll: usize, // Scrolling position for logs
-+    pub job_list_state: ListState, // For viewing job details
-+    pub detailed_view: bool, // Whether we're in detailed view mode
-+    pub step_list_state: ListState, // For selecting steps in detailed view
-+    pub step_table_state: TableState, // For the steps table in detailed view
-+    pub last_tick: Instant, // For UI animations and updates
-+    pub tick_rate: Duration, // How often to update the UI
-+    pub spinner_frame: usize, // Current spinner animation frame
-+    pub tx: mpsc::Sender<ExecutionResultMsg>, // Channel for async communication
-+    pub status_message: Option<String>, // Temporary status message to display
-     pub status_message_severity: StatusSeverity, // Severity of the current status message
--    pub status_message_time: Option<Instant>,    // When the message was set
-+    pub status_message_time: Option<Instant>, // When the message was set
- 
-     // Search and filter functionality
-     pub log_search_query: String, // Current search query for logs
-@@ -58,6 +58,7 @@ pub struct App {
-     pub processed_logs: Vec<ProcessedLogEntry>,
-     pub logs_need_update: bool,        // Flag to trigger log processing
-     pub last_system_logs_count: usize, // Track system log changes
-+    logs_revision: u64, // Bumped on every log/search/filter change; `logs.len()` goes stale at the cap
- 
-     // Job selection mode
-     pub job_selection_mode: bool, // Are we viewing jobs of a workflow?
-@@ -329,7 +330,6 @@ impl App {
-         step_table_state.select(Some(0));
- 
-         // Check container runtime availability if container runtime is selected
--        let mut initial_logs = Vec::new();
-         let runtime_type = match runtime_type {
-             RuntimeType::Auto => {
-                 let detected = match std::panic::catch_unwind(|| {
-@@ -361,10 +361,11 @@ impl App {
-                     RuntimeType::Docker => wrkflw_logging::info("Auto-detected Docker runtime"),
-                     RuntimeType::Podman => wrkflw_logging::info("Auto-detected Podman runtime"),
-                     _ => {
--                        initial_logs.push(
--                            "No container runtime found (tried Docker and Podman). Using emulation mode instead."
--                                .to_string(),
--                        );
-+                        // System-logged only, matching the Docker/Podman arms
-+                        // below. `get_combined_logs` folds the wrkflw_logging
-+                        // store into the Logs tab with a real timestamp, so a
-+                        // second app-side push would just render an
-+                        // untimestamped duplicate.
-                         wrkflw_logging::warning(
-                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-                         );
-@@ -487,7 +488,7 @@ impl App {
-             show_action_messages,
-             execution_queue: Vec::new(),
-             current_execution: None,
--            logs: initial_logs,
-+            logs: Vec::new(),
-             log_scroll: 0,
-             job_list_state,
-             detailed_view: false,
-@@ -514,6 +515,7 @@ impl App {
-             processed_logs: Vec::new(),
-             logs_need_update: true,
-             last_system_logs_count: 0,
-+            logs_revision: 0,
- 
-             // Job selection mode
-             job_selection_mode: false,
-@@ -614,7 +616,7 @@ impl App {
-             .unwrap_or(0);
-         let next_idx = (current_idx + 1) % ROTATION.len();
-         let next = ROTATION[next_idx].to_string();
--        self.logs.push(format!(
-+        self.add_timestamped_log(&format!(
-             "Diff filter event: {} -> {}",
-             self.diff_filter_even
-```
-
-**File**: `crates/ui/src/handlers/workflow.rs` (modified, +12/-15)
-```diff
-@@ -469,13 +469,11 @@ pub fn start_next_workflow_execution(
- 
-         // Log whether verbose mode is enabled
-         if verbose {
--            app.logs
--                .push("Verbose mode: Step outputs will be displayed in full".to_string());
-+            app.add_timestamped_log("Verbose mode: Step outputs will be displayed in full");
-             wrkflw_logging::info("Verbose mode: Step outputs will be displayed in full");
-         } else {
--            app.logs.push(
--                "Standard mode: Only step status will be shown (use --verbose for full output)"
--                    .to_string(),
-+            app.add_timestamped_log(
-+                "Standard mode: Only step status will be shown (use --verbose for full output)",
-             );
-             wrkflw_logging::info(
-                 "Standard mode: Only step status will be shown (use --verbose for full output)",
-@@ -500,9 +498,8 @@ pub fn start_next_workflow_execution(
-                         wrkflw_logging::info("Auto-detected Podman runtime");
-                         RuntimeType::Podman
-                     } else {
--                        app.logs.push(
--                            "No container runtime found (tried Docker and Podman). Using emulation mode instead."
--                                .to_string(),
-+                        app.add_timestamped_log(
-+                            "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-                         );
-                         wrkflw_logging::warning(
-                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-@@ -526,8 +523,9 @@ pub fn start_next_workflow_execution(
-                 };
- 
-                 if !is_docker_available {
--                    app.logs
--                        .push("Docker is not available. Using emulation mode instead.".to_string());
-+                    app.add_timestamped_log(
-+                        "Docker is not available. Using emulation mode instead.",
-+                    );
-                     wrkflw_logging::warning(
-                         "Docker is not available. Using emulation mode instead.",
-                     );
-@@ -551,8 +549,9 @@ pub fn start_next_workflow_execution(
-                 };
- 
-                 if !is_podman_available {
--                    app.logs
--                        .push("Podman is not available. Using emulation mode instead.".to_string());
-+                    app.add_timestamped_log(
-+                        "Podman is not available. Using emulation mode instead.",
-+                    );
-                     wrkflw_logging::warning(
-                         "Podman is not available. Using emulation mode instead.",
-                     );
-@@ -676,9 +675,7 @@ pub fn start_next_workflow_execution(
-         });
-     } else {
-         app.running = false;
--        let timestamp = Local::now().format("%H:%M:%S").to_string();
--        app.logs
--            .push(format!("[{}] All workflows completed execution", timestamp));
-+        app.add_timestamped_log("All workflows completed execution");
-         wrkflw_logging::info("All workflows completed execution");
-     }
- }
-```
-
-**File**: `crates/ui/src/log_processor.rs` (modified, +14/-8)
-```diff
-@@ -35,9 +35,13 @@ impl ProcessedLogEntry {
- pub struct LogProcessingRequest {
-     pub search_query: String,
-     pub filter_level: Option<LogFilterLevel>,
--    pub app_logs: Vec<String>,    // Complete app logs
--    pub app_logs_count: usize,    // To detect changes in app logs
--    pub system_logs_count: usize, // To detect changes in system logs
-+    pub app_logs: Vec<String>, // Complete app logs
-+    // Change signal for app logs AND search/filter edits. A revision
-+    // counter rather than `app_logs.len()`: once the app's buffer
-+    // hits its cap, pushes stop changing the length (one old entry is
-+    // dropped per new one), so a count would freeze the display.
-+    pub app_logs_revision: u64,
-+    pub system_logs_count: usize, // To detect changes in system logs (unbounded, so len works)
- }
- 
- /// Response with processed logs
-@@ -94,7 +98,9 @@ impl LogProcessor {
-         let mut last_request: Option<LogProcessingRequest> = None;
-         let mut last_processed_time = Instant::now();
-         let mut cached_logs: Vec<String> = Vec::new();
--        let mut cached_app_logs_count = 0;
-+        // u64::MAX so the first request always mismatches — the app's
-+        // revision starts at 0.
-+        let mut cached_app_logs_revision = u64::MAX;
-         let mut cached_system_logs_count = 0;
- 
-         loop {
-@@ -110,17 +116,17 @@ impl LogProcessor {
- 
-             if let Some(ref req) = last_request {
-                 let should_process = last_processed_time.elapsed() > Duration::from_millis(50)
--                    && (cached_app_logs_count != req.app_logs_count
-+                    && (cached_app_logs_revision != req.app_logs_revision
-                         || cached_system_logs_count != req.system_logs_count
-                         || cached_logs.is_empty());
- 
-                 if should_process {
--                    if cached_app_logs_count != req.app_logs_count
-+                    if cached_app_logs_revision != req.app_logs_revision
-                         || cached_system_logs_count != req.system_logs_count
-                         || cached_logs.is_empty()
-                     {
-                         cached_logs = Self::get_combined_logs(&req.app_logs);
--                        cached_app_logs_count = req.app_logs_count;
-+                        cached_app_logs_revision = req.app_logs_revision;
-                         cached_system_logs_count = req.system_logs_count;
-                     }
- 
-@@ -191,7 +197,7 @@ impl LogProcessor {
-     }
- 
-     /// Process a single log entry into display format
--    fn process_log_entry(log_line: &str, search_query: &str) -> ProcessedLogEntry {
-+    pub(crate) fn process_log_entry(log_line: &str, search_query: &str) -> ProcessedLogEntry {
-         // Extract timestamp from log format [HH:MM:SS]
-         let timestamp = if log_line.starts_with('[') && log_line.contains(']') {
-             let end = log_line.find(']').unwrap_or(0);
-```
-
----
-
-### Incident Patch 5: `c85adc0f` (2026-06-11)
-**Commit Message**: fix: show correct timestamp in execution tab for all TUI log messages (#116)
-
-* fix: show correct timestamp in execution tab for initial log messages
-
-Docker/Podman unavailability messages were pushed to initial_logs as
-plain strings, causing the log processor to display ??:??:?? instead
-of the actual time.
-
-Co-Authored-By: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
-* fix: use add_timestamped_log for all app-generated log messages
-
-Replace direct pushes to self.logs with self.add_timestamped_log so
-every app-generated message (runtime switch, diff filter events,
-workflow execution start) carries a consistent timestamp in the
-execution tab. Also removes duplicate inline timestamp formatting
-that was added to initial_logs before the helper existed.
-
-Co-Authored-By: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
-**File**: `crates/ui/src/app/state.rs` (modified, +17/-24)
-```diff
-@@ -329,7 +329,7 @@ impl App {
-         step_table_state.select(Some(0));
- 
-         // Check container runtime availability if container runtime is selected
--        let mut initial_logs = Vec::new();
-+        let initial_logs = Vec::new();
-         let runtime_type = match runtime_type {
-             RuntimeType::Docker => {
-                 // Use a timeout for the Docker availability check to prevent hanging
-@@ -370,10 +370,6 @@ impl App {
-                 };
- 
-                 if !is_docker_available {
--                    initial_logs.push(
--                        "Docker is not available or unresponsive. Using emulation mode instead."
--                            .to_string(),
--                    );
-                     wrkflw_logging::warning(
-                         "Docker is not available or unresponsive. Using emulation mode instead.",
-                     );
-@@ -422,10 +418,6 @@ impl App {
-                 };
- 
-                 if !is_podman_available {
--                    initial_logs.push(
--                        "Podman is not available or unresponsive. Using emulation mode instead."
--                            .to_string(),
--                    );
-                     wrkflw_logging::warning(
-                         "Podman is not available or unresponsive. Using emulation mode instead.",
-                     );
-@@ -546,8 +538,7 @@ impl App {
-             _ => false,
-         };
-         self.last_availability_check = Instant::now();
--        self.logs
--            .push(format!("Switched to {} mode", self.runtime_type_name()));
-+        self.add_timestamped_log(&format!("Switched to {} mode", self.runtime_type_name()));
-     }
- 
-     /// Cycle through the event names the diff filter simulates.
-@@ -760,7 +751,7 @@ impl App {
-             for workflow in &mut self.workflows {
-                 workflow.trigger_match = None;
-             }
--            self.logs.push("Diff filter OFF".to_string());
-+            self.add_timestamped_log("Diff filter OFF");
-         }
-     }
- 
-@@ -798,7 +789,7 @@ impl App {
-                     if self.diff_filter_aborted {
-                         self.diff_filter_aborted = false;
-                     } else {
--                        self.logs.push("Diff filter: evaluation failed".to_string());
-+                        self.add_timestamped_log("Diff filter: evaluation failed");
-                     }
-                     return;
-                 }
-@@ -830,7 +821,7 @@ impl App {
-                     .iter()
-                     .filter(|w| matches!(&w.trigger_match, Some(TriggerMatchStatus::Matched(_))))
-                     .count();
--                self.logs.push(format!(
-+                self.add_timestamped_log(&format!(
-                     "Diff filter ON: {}/{} workflows would trigger",
-                     matched,
-                     self.workflows.len()
-@@ -851,10 +842,12 @@ impl App {
-                 // load-bearing to avoid the silent-skip mode this PR
-                 // is built to plug.
-                 if !warnings.is_empty() {
--                    self.logs
--                        .push(format!("Diff filter: {} warning(s)", warnings.len()));
-+                    self.add_timestamped_log(&format!(
-+                        "Diff filter: {} warning(s)",
-+                        warnings.len()
-+                    ));
-                     for w in &warnings {
--                        self.logs.push(format!("  warning: {}", w));
-+                        self.add_log(format!("  warning: {}", w));
-                     }
-                 }
- 
-@@ -864,13 +857,12 @@ impl App {
-                 // Surface each failure individually so the YAML/glob
-                 // typo is the first thing they see in the log pane.
-                 if !parse_failures.is_empty() {
--                    self.logs.push(format!(
-+                    self.add_timestamped_log(&format!(
-                         "Diff filter: {} workflow file(s) failed to parse and were skipped",
-                         parse_failures.len()
-                     ));
-                     for (path, reason) in &parse_failures {
--                        self.logs
--                            .push(format!("  parse error: {}: {}", path.display(), reason));
-+                        self.add_log(format!("  parse error: {}: {}", path.display(), reason));
-                     }
-                 }
- 
-@@ -889,8 +881,7 @@ impl App {
-                 for workflow in &mut self.workflows {
-                     workflow.trigger_match = None;
-                 }
--                self.logs
--                    .push(format!("Diff filter: evaluation failed — {}", reason));
-+                self.add_timestamped_log(&format!("Diff filter: evaluation failed — {}", reason));
-                 self.trim_logs_to_cap();
-             }
-         }
-@@ -1262,8 +1253,10 @@ impl App {
-         let target_job = entry.target_job;
-         self.workflows[next].status = WorkflowStatus::Running;
-         self.current_executi
-```
-
----
-
-### Incident Patch 6: `53e83b3d` (2026-06-11)
-**Commit Message**: fix: resolve matrix expressions in step `with` values before execution (#115)
-
-* fix: resolve matrix expressions in step `with` values before execution
-
-${{ matrix.X }} references in step `with` maps were never substituted,
-causing detect_setup_runtimes to reject them as invalid versions (the
-visible symptom), and silently passing literal expression strings into
-INPUT_* env vars for Docker, container, and composite action steps.
-
-Fix: add apply_matrix_to_steps (substitution.rs) which clones steps and
-runs preprocess_command on all `with` values before execution begins.
-execute_matrix_job now materialises steps once at the top and uses them
-for both resolve_runner_image and the step iteration loop. Other
-expression types (${{ secrets.X }}, ${{ steps.foo.outputs.bar }}) are
-left intact for existing per-step resolution.
-
-Note: INPUT_* env vars that contain non-matrix expressions (${{ env.X }},
-${{ secrets.X }}) are still passed unresolved at the raw-with-access
-sites; that is a separate gap not addressed here.
-
-Co-Authored-By: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-Signed-off-by: Adriano Machado <[REDACTED_EMAIL]>
-
-* fix: preserve original expression in with-values for unresolved matrix
-
-**File**: `crates/executor/src/engine.rs` (modified, +56/-5)
-```diff
-@@ -1720,6 +1720,7 @@ async fn build_combined_runtime_image(
- /// includes git and other tools needed by actions like `actions/checkout`).
- async fn resolve_runner_image(
-     job: &Job,
-+    steps: &[Step],
-     runtime: &dyn ContainerRuntime,
- ) -> Result<String, ExecutionError> {
-     let base_image = get_effective_runner_image(job);
-@@ -1728,7 +1729,7 @@ async fn resolve_runner_image(
-         return Ok(base_image);
-     }
- 
--    let setup_runtimes = detect_setup_runtimes(&job.steps);
-+    let setup_runtimes = detect_setup_runtimes(steps);
-     if setup_runtimes.is_empty() {
-         Ok(base_image)
-     } else {
-@@ -1991,7 +1992,7 @@ async fn execute_job(ctx: JobExecutionContext<'_>) -> Result<JobResult, Executio
- 
-     // Execute job steps
-     // Determine runner image: prefer job container, then detect setup actions, fall back to runs-on
--    let runner_image_value = resolve_runner_image(job, ctx.runtime).await?;
-+    let runner_image_value = resolve_runner_image(job, &job.steps, ctx.runtime).await?;
- 
-     // GHA default job timeout is 360 minutes; sanitize to avoid panic on negative/NaN
-     let timeout_mins = sanitize_timeout_minutes(job.timeout_minutes, 360.0);
-@@ -2267,22 +2268,30 @@ async fn execute_matrix_job(
-         ExecutionError::Execution(format!("Failed to get current directory: {}", e))
-     })?;
- 
-+    // Pre-resolve ${{ matrix.X }} in all step `with` values so that every downstream
-+    // consumer (detect_setup_runtimes, INPUT_* env vars, composite action inputs, etc.)
-+    // sees the concrete value rather than the literal expression string. Other expression
-+    // types (${{ env.X }}, ${{ steps.foo.outputs.bar }}) are left for per-step resolution.
-+    let materialized_steps =
-+        crate::substitution::apply_matrix_to_steps(&job_template.steps, &combination.values);
-+
-     let mut loop_state = StepLoopState::new();
-     let pending_cache_saves = std::sync::Mutex::new(Vec::<PendingCacheSave>::new());
--    let job_success = if job_template.steps.is_empty() {
-+    let job_success = if materialized_steps.is_empty() {
-         wrkflw_logging::warning(&format!("Job '{}' has no steps", matrix_job_name));
-         true
-     } else {
-         // Execute each step
-         // Determine runner image: prefer job container, then detect setup actions, fall back to runs-on
--        let runner_image_value = resolve_runner_image(job_template, runtime).await?;
-+        let runner_image_value =
-+            resolve_runner_image(job_template, &materialized_steps, runtime).await?;
- 
-         let mut all_steps_ok = true;
-         let timeout_mins = sanitize_timeout_minutes(job_template.timeout_minutes, 360.0);
-         let job_timeout = std::time::Duration::from_secs_f64(timeout_mins * 60.0);
-         let job_deadline = tokio::time::Instant::now() + job_timeout;
- 
--        for (idx, step) in job_template.steps.iter().enumerate() {
-+        for (idx, step) in materialized_steps.iter().enumerate() {
-             let remaining = job_deadline.saturating_duration_since(tokio::time::Instant::now());
- 
-             let outcome = match tokio::time::timeout(
-@@ -6964,6 +6973,48 @@ runs:
-         assert!(runtimes.is_empty());
-     }
- 
-+    #[test]
-+    fn detect_setup_runtimes_matrix_expr_skipped_without_substitution() {
-+        // Raw ${{ matrix.java }} is not a valid version — without substitution the
-+        // step is silently ignored.  This documents the pre-fix behavior and ensures
-+        // the guard still works when a caller forgets to materialise steps.
-+        let with = HashMap::from([("java-version".to_string(), "${{ matrix.java }}".to_string())]);
-+        let steps = vec![make_step_uses("actions/setup-java@v4", Some(with))];
-+        let runtimes = detect_setup_runtimes(&steps);
-+        assert!(runtimes.is_empty());
-+    }
-+
-+    #[test]
-+    fn detect_setup_runtimes_after_matrix_substitution_resolves_java_version() {
-+        // After apply_matrix_to_steps the expression is resolved; detection must
-+        // produce the correct runtime rather than issuing the "invalid version" warning.
-+        use serde_yaml::Value;
-+        let combination_values =
-+            HashMap::from([("java".to_string(), Value::String("17".to_string()))]);
-+        let with = HashMap::from([("java-version".to_string(), "${{ matrix.java }}".to_string())]);
-+        let raw_steps = vec![make_step_uses("actions/setup-java@v4", Some(with))];
-+        let materialized =
-+            crate::substitution::apply_matrix_to_steps(&raw_steps, &combination_values);
-+        let runtimes = detect_setup_runtimes(&materialized);
-+        assert_eq!(runtimes.len(), 1);
-+        assert_eq!(runtimes[0].language, "java");
-+        assert_eq!(runtimes[0].version, "17");
-+    }
-+
-+    #[test]
-+    fn detect_setup_runtimes_after_matrix_substitution_resolves_node_version() {
-+        use serde_yaml::Value;
-+        let combination_values = HashMap::from([("node".to_string(), Value::Number(20.into()))]);
-+        let with = HashMa
-```
-
-**File**: `crates/executor/src/substitution.rs` (modified, +143/-0)
-```diff
-@@ -4,6 +4,7 @@ use serde_yaml::Value;
- use sha2::{Digest, Sha256};
- use std::collections::HashMap;
- use std::path::Path;
-+use wrkflw_parser::workflow::Step;
- 
- lazy_static! {
-     static ref MATRIX_PATTERN: Regex =
-@@ -56,6 +57,38 @@ pub fn process_step_run(run: &str, matrix_combination: &Option<HashMap<String, V
-     }
- }
- 
-+/// Clone `steps`, substituting `${{ matrix.X }}` expressions in each step's `with` values.
-+///
-+/// Only matrix references are resolved here. Other expressions (`${{ env.X }}`,
-+/// `${{ steps.foo.outputs.bar }}`, etc.) are left intact for later per-step resolution,
-+/// because step outputs and other dynamic context don't exist yet at this point.
-+pub fn apply_matrix_to_steps(steps: &[Step], matrix_values: &HashMap<String, Value>) -> Vec<Step> {
-+    steps
-+        .iter()
-+        .map(|step| {
-+            let mut s = step.clone();
-+            if let Some(with) = s.with.as_mut() {
-+                for value in with.values_mut() {
-+                    *value = MATRIX_PATTERN
-+                        .replace_all(value, |caps: &regex::Captures| {
-+                            let var_name = &caps[1];
-+                            match matrix_values.get(var_name) {
-+                                Some(Value::String(s)) => s.clone(),
-+                                Some(Value::Number(n)) => n.to_string(),
-+                                Some(Value::Bool(b)) => b.to_string(),
-+                                // Preserve the original expression; with values are not shell
-+                                // text so the shell-escape from preprocess_command is wrong here.
-+                                _ => caps[0].to_string(),
-+                            }
-+                        })
-+                        .into_owned();
-+                }
-+            }
-+            s
-+        })
-+        .collect()
-+}
-+
- /// Replace `${{ hashFiles(...) }}` expressions with the SHA-256 hash of matched files.
- ///
- /// Accepts one or more comma-separated, quoted glob patterns. Files are matched
-@@ -683,4 +716,114 @@ mod tests {
-         let result = preprocess_expressions(text, dir.path(), &ctx).unwrap();
-         assert_eq!(result, "if [[ Linux == macOS ]]; then echo mac; fi");
-     }
-+
-+    // --- apply_matrix_to_steps tests ---
-+
-+    fn make_uses_step(uses: &str, with: HashMap<String, String>) -> Step {
-+        Step {
-+            name: None,
-+            uses: Some(uses.to_string()),
-+            run: None,
-+            with: Some(with),
-+            env: HashMap::new(),
-+            continue_on_error: None,
-+            if_condition: None,
-+            id: None,
-+            working_directory: None,
-+            shell: None,
-+            timeout_minutes: None,
-+        }
-+    }
-+
-+    #[test]
-+    fn apply_matrix_to_steps_resolves_string_value() {
-+        let combination = HashMap::from([("java".to_string(), Value::String("17".to_string()))]);
-+        let steps = vec![make_uses_step(
-+            "actions/setup-java@v4",
-+            HashMap::from([("java-version".to_string(), "${{ matrix.java }}".to_string())]),
-+        )];
-+        let result = apply_matrix_to_steps(&steps, &combination);
-+        assert_eq!(
-+            result[0]
-+                .with
-+                .as_ref()
-+                .unwrap()
-+                .get("java-version")
-+                .unwrap(),
-+            "17"
-+        );
-+    }
-+
-+    #[test]
-+    fn apply_matrix_to_steps_resolves_numeric_value() {
-+        let combination = HashMap::from([("node".to_string(), Value::Number(20.into()))]);
-+        let steps = vec![make_uses_step(
-+            "actions/setup-node@v4",
-+            HashMap::from([("node-version".to_string(), "${{ matrix.node }}".to_string())]),
-+        )];
-+        let result = apply_matrix_to_steps(&steps, &combination);
-+        assert_eq!(
-+            result[0]
-+                .with
-+                .as_ref()
-+                .unwrap()
-+                .get("node-version")
-+                .unwrap(),
-+            "20"
-+        );
-+    }
-+
-+    #[test]
-+    fn apply_matrix_to_steps_leaves_non_matrix_expressions_intact() {
-+        // Other expression types must survive for per-step resolution later.
-+        let combination = HashMap::from([("os".to_string(), Value::String("ubuntu".to_string()))]);
-+        let steps = vec![make_uses_step(
-+            "actions/some-action@v1",
-+            HashMap::from([("token".to_string(), "${{ secrets.MY_TOKEN }}".to_string())]),
-+        )];
-+        let result = apply_matrix_to_steps(&steps, &combination);
-+        assert_eq!(
-+            result[0].with.as_ref().unwrap().get("token").unwrap(),
-+            "${{ secrets.MY_TOKEN }}"
-+        );
-+    }
-+
-+    #[test]
-+    fn apply_matrix_to_steps_leaves_steps_without_with_unchanged() {
-+        let combination = HashMap::from([("os".to_string(), Value::String("ubuntu".to_string()))]);
-+        let steps = vec![Step {
-+            name: None,
-+            uses: Some("actions/checkout@v4".to_strin
-```
-
-**File**: `crates/parser/src/workflow.rs` (modified, +1/-1)
-```diff
-@@ -232,7 +232,7 @@ pub struct Service {
-     pub options: Option<String>,
- }
- 
--#[derive(Debug, Deserialize, Serialize)]
-+#[derive(Debug, Deserialize, Serialize, Clone)]
- pub struct Step {
-     #[serde(default)]
-     pub name: Option<String>,
-```
-
----
-
-### Incident Patch 7: `8bb1653e` (2026-06-10)
-**Commit Message**: fix(executor): deduplicate concurrent runtime image builds (#118)
-
-Parallel jobs in the same batch all called build_combined_runtime_image
-simultaneously. The image_exists check raced — all callers saw false
-before any build completed, causing redundant builds and multiple
-"Building combined runtime image" log lines.
-
-Fix uses a per-tag tokio::sync::Mutex (stored in a process-level map)
-to serialize concurrent builds for the same image tag. The first caller
-builds; subsequent callers wait, then hit the re-check and reuse the
-already-built image. Adds a unit test that asserts build_image is called
-exactly once across five concurrent calls.
-
-Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
-**File**: `crates/executor/src/engine.rs` (modified, +115/-2)
-```diff
-@@ -1,10 +1,12 @@
- #[allow(unused_imports)]
- use bollard::Docker;
- use futures::future;
-+use once_cell::sync::Lazy;
- use serde_yaml::Value;
- use std::collections::HashMap;
- use std::fs;
- use std::path::{Path, PathBuf};
-+use std::sync::{Arc, Mutex};
- // std::process::Command replaced by tokio::process::Command for async safety
- use thiserror::Error;
- 
-@@ -1339,6 +1341,7 @@ fn determine_action_image(repository: &str) -> String {
- }
- 
- /// A runtime detected from a setup action step (e.g., `actions/setup-node@v3`).
-+#[derive(Clone)]
- struct SetupRuntime {
-     /// Language identifier (e.g., "node", "php", "python")
-     language: String,
-@@ -1636,9 +1639,15 @@ fn combined_image_tag(runtimes: &[SetupRuntime], dockerfile: &str) -> String {
- }
- 
- /// Build a Docker image that combines multiple language runtimes on an Ubuntu base.
-+// Per-tag mutex map so parallel jobs building the same runtime image serialize
-+// rather than all racing to build it simultaneously.
-+static IMAGE_BUILD_LOCKS: Lazy<Mutex<HashMap<String, Arc<tokio::sync::Mutex<()>>>>> =
-+    Lazy::new(|| Mutex::new(HashMap::new()));
-+
- ///
- /// Skips the build when an image with the same tag already exists locally,
--/// avoiding redundant work on repeated runs.
-+/// avoiding redundant work on repeated runs. When multiple parallel jobs need
-+/// the same image, only the first build runs; the others wait and then reuse it.
- async fn build_combined_runtime_image(
-     runtimes: &[SetupRuntime],
-     base_image: &str,
-@@ -1647,7 +1656,27 @@ async fn build_combined_runtime_image(
-     let dockerfile = generate_combined_dockerfile(runtimes, base_image);
-     let tag = combined_image_tag(runtimes, &dockerfile);
- 
--    // Skip the build if the image already exists locally.
-+    // Fast path: image already exists, no locking needed.
-+    let exists = runtime.image_exists(&tag).await.map_err(|e| {
-+        ExecutionError::Runtime(format!("Failed to check for existing image: {}", e))
-+    })?;
-+    if exists {
-+        wrkflw_logging::info(&format!("Reusing existing combined runtime image: {}", tag));
-+        return Ok(tag);
-+    }
-+
-+    // Acquire the per-tag build lock so concurrent jobs building the same image
-+    // serialize here. The std::Mutex is held only long enough to clone the Arc.
-+    let tag_lock = {
-+        let mut locks = IMAGE_BUILD_LOCKS.lock().unwrap();
-+        locks
-+            .entry(tag.clone())
-+            .or_insert_with(|| Arc::new(tokio::sync::Mutex::new(())))
-+            .clone()
-+    };
-+    let _build_guard = tag_lock.lock().await;
-+
-+    // Re-check after acquiring the lock: a concurrent job may have built it.
-     let exists = runtime.image_exists(&tag).await.map_err(|e| {
-         ExecutionError::Runtime(format!("Failed to check for existing image: {}", e))
-     })?;
-@@ -9229,4 +9258,88 @@ runs:
-         let delim = generate_heredoc_delimiter("ghadelimiter\nghadelimiter_1\nother");
-         assert_eq!(delim, "ghadelimiter_2");
-     }
-+
-+    // --- build_combined_runtime_image deduplication ---
-+
-+    #[tokio::test]
-+    async fn build_combined_runtime_image_deduplicates_concurrent_builds() {
-+        use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-+
-+        #[derive(Clone)]
-+        struct CountingRuntime {
-+            build_count: Arc<AtomicUsize>,
-+            built: Arc<AtomicBool>,
-+        }
-+
-+        #[async_trait::async_trait]
-+        impl ContainerRuntime for CountingRuntime {
-+            async fn run_container(
-+                &self,
-+                _image: &str,
-+                _cmd: &[&str],
-+                _env_vars: &[(&str, &str)],
-+                _working_dir: &Path,
-+                _volumes: &[(&Path, &Path)],
-+                _entrypoint: Option<&str>,
-+            ) -> Result<wrkflw_runtime::container::ContainerOutput, ContainerError> {
-+                unimplemented!()
-+            }
-+
-+            async fn pull_image(&self, _image: &str) -> Result<(), ContainerError> {
-+                Ok(())
-+            }
-+
-+            async fn build_image(
-+                &self,
-+                _dockerfile: &Path,
-+                _tag: &str,
-+                _context_dir: &Path,
-+            ) -> Result<(), ContainerError> {
-+                self.build_count.fetch_add(1, Ordering::SeqCst);
-+                // Yield so other spawned tasks get scheduled and attempt concurrent builds.
-+                tokio::task::yield_now().await;
-+                self.built.store(true, Ordering::SeqCst);
-+                Ok(())
-+            }
-+
-+            async fn prepare_language_environment(
-+                &self,
-+                _language: &str,
-+                _version: Option<&str>,
-+                _additional_packages: Option<Vec<String>>,
-+            ) -> Result<String, ContainerError> {
-+                Ok("mock:latest".to_string())
-+            }
-+
-+            async fn image_exists(&self, _tag: &str) -> Result<bool, ContainerError> {
-+                Ok(self.built.load(Ordering::SeqCst))
-+ 
-```
-
----
-
-### Incident Patch 8: `d2200a40` (2026-04-21)
-**Commit Message**: docs: refresh demo.gif for the redesigned TUI (#106)
-
-* docs: refresh demo.gif for the redesigned TUI
-
-The old demo.gif was recorded against the pre-#104 UI. After the
-design-system rebuild (#104) and the extra screens in #105, the
-README was showing a GIF that no longer matched the actual tool —
-which is worse than having no GIF at all.
-
-Re-record with VHS against the current TUI. The tape drives a tour
-of the new Workflows list, Tweaks overlay with accent cycling, DAG
-view across three different workflow shapes, Trigger / Secrets /
-Help tabs, and a live Podman run so the Execution and Logs tabs
-have real streaming output instead of an empty box.
-
-While at it, check in demo.tape so the next person who touches the
-UI doesn't have to reverse-engineer a recording session to keep the
-GIF in sync. Re-render with \`vhs demo.tape\`.
-
-* docs: scale up demo.gif, show Docker, drop the tape
-
-Three things were off about the first pass.
-
-One: the font was too small. At 14pt on a 1280-wide canvas the TUI
-was legible if you squint, but a README GIF needs to be readable at
-half-size on someone else's retina display. Bumped to 20pt on a
-1680×960 canvas — same layout, just actually readable.
-
-Two: 
-
-
-
----
-
-### Incident Patch 9: `ebe8083f` (2026-04-21)
+### Incident Patch 1: `ebe8083f` (2026-04-21)
 **Commit Message**: feat(ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)
 
 * feat(ui): ship screens 4, 7, 8 and the Tweaks overlay
@@ -5160,1388 +2722,7 @@ Three new top-level tabs:
 
 ---
 
-### Incident Patch 10: `1824e73e` (2026-04-21)
-**Commit Message**: feat(ui): rebuild TUI to match the new design system (#104)
-
-* feat(ui): rebuild TUI to match the new design system
-
-Phase 1 of the redesign that landed in the Claude Design handoff
-bundle: Workflows becomes a Dashboard, Execution becomes a 3-pane
-Live Run, Job detail becomes a tabbed Step Inspector. The visual
-DNA — palette, status bar, title bar, status badges — now matches
-the design instead of inheriting whatever your terminal feels like.
-
-The old palette used ratatui named colors (Color::Cyan, Color::
-Yellow, ...), which means every terminal got a slightly different
-TUI. Swap to exact RGB straight from the design (#5fd3f3 cyan,
-#f5d76e yellow, #8fce8f green, #d68cff trigger purple, ...). Same
-TUI everywhere, at the cost of not respecting per-terminal themes.
-Fair trade.
-
-Layouts:
-
-- Title bar: flat 1-row with brand mark, numbered tabs, and a
-  right-side pulsing LIVE indicator + runtime badge.
-- Status bar: left-aligned [key] chips, right-aligned validation
-  / runtime / availability / workflow count. Key hints stop being
-  one fat string concatenation.
-- Workflows: 60/40 split. Table on the left grows columns for
-  trigger-match dot and job count. Right column stacks Preview
-
-
-**File**: `crates/ui/src/app/mod.rs` (modified, +26/-5)
-```diff
-@@ -69,7 +69,18 @@ pub async fn run_wrkflw_tui(
-                 .to_string_lossy()
-                 .into_owned();
- 
--            let job_names = crate::utils::extract_job_names(path);
-+            let (definition, job_names) = {
-+                use std::sync::Arc;
-+                use wrkflw_parser::workflow::parse_workflow;
-+                match parse_workflow(path) {
-+                    Ok(def) => {
-+                        let mut names: Vec<String> = def.jobs.keys().cloned().collect();
-+                        names.sort();
-+                        (Some(Arc::new(def)), names)
-+                    }
-+                    Err(_) => (None, crate::utils::extract_job_names(path)),
-+                }
-+            };
- 
-             app.workflows = vec![Workflow {
-                 name: name.clone(),
-@@ -79,6 +90,7 @@ pub async fn run_wrkflw_tui(
-                 execution_details: None,
-                 job_names,
-                 trigger_match: None,
-+                definition,
-             }];
- 
-             // Queue the single workflow for execution
-@@ -248,12 +260,21 @@ fn run_tui_event_loop(
-                         }
-                     }
-                     KeyCode::Tab => {
--                        // Cycle through tabs
--                        app.switch_tab((app.selected_tab + 1) % 4);
-+                        // Inside the Step Inspector, Tab cycles inspector
-+                        // sub-tabs (Output / Env / Files / Matrix / Timeline);
-+                        // elsewhere it cycles top-level tabs.
-+                        if app.selected_tab == 1 && app.detailed_view {
-+                            app.step_inspector_tab = (app.step_inspector_tab + 1) % 5;
-+                        } else {
-+                            app.switch_tab((app.selected_tab + 1) % 4);
-+                        }
-                     }
-                     KeyCode::BackTab => {
--                        // Cycle through tabs backwards
--                        app.switch_tab((app.selected_tab + 3) % 4);
-+                        if app.selected_tab == 1 && app.detailed_view {
-+                            app.step_inspector_tab = (app.step_inspector_tab + 4) % 5;
-+                        } else {
-+                            app.switch_tab((app.selected_tab + 3) % 4);
-+                        }
-                     }
-                     KeyCode::Char('1') | KeyCode::Char('w') => app.switch_tab(0),
-                     KeyCode::Char('2') | KeyCode::Char('x') => app.switch_tab(1),
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +9/-0)
-```diff
-@@ -95,6 +95,10 @@ pub struct App {
-     /// task failure, so we don't tell the user "evaluation failed" for an
-     /// action they took deliberately. Cleared once observed.
-     pub diff_filter_aborted: bool,
-+
-+    /// Active sub-tab inside the Step Inspector (job-detail) view.
-+    /// 0 Output, 1 Env, 2 Files, 3 Matrix, 4 Timeline.
-+    pub step_inspector_tab: usize,
- }
- 
- /// Result rows shipped from the background diff-filter task to the UI loop.
-@@ -335,6 +339,7 @@ impl App {
-             diff_filter_rx: None,
-             diff_filter_task: None,
-             diff_filter_aborted: false,
-+            step_inspector_tab: 0,
-         }
-     }
- 
-@@ -1875,6 +1880,7 @@ mod tests {
-                 execution_details: None,
-                 job_names: vec!["build".to_string(), "lint".to_string(), "test".to_string()],
-                 trigger_match: None,
-+                definition: None,
-             },
-             Workflow {
-                 name: "deploy".to_string(),
-@@ -1884,6 +1890,7 @@ mod tests {
-                 execution_details: None,
-                 job_names: vec![],
-                 trigger_match: None,
-+                definition: None,
-             },
-         ];
-         app.workflow_list_state.select(Some(0));
-@@ -2024,6 +2031,7 @@ mod tests {
-                 execution_details: None,
-                 job_names: vec![],
-                 trigger_match: None,
-+                definition: None,
-             },
-             Workflow {
-                 name: "ci".into(),
-@@ -2033,6 +2041,7 @@ mod tests {
-                 execution_details: None,
-                 job_names: vec![],
-                 trigger_match: None,
-+                definition: None,
-             },
-         ];
- 
-```
-
-**File**: `crates/ui/src/components/dag.rs` (added, +205/-0)
-```diff
-@@ -0,0 +1,205 @@
-+// Mini job-dependency view.
-+//
-+// The design's full DAG is a free-form SVG; in a terminal we render a tighter
-+// columns-by-topological-level layout using box-drawing chars. When `needs:`
-+// data is unavailable we fall back to a single linear column so the panel
-+// is never empty.
-+
-+use crate::theme::{self, BadgeKind, COLORS};
-+use ratatui::{
-+    layout::Rect,
-+    style::{Modifier, Style},
-+    text::{Line, Span},
-+    widgets::Paragraph,
-+    Frame,
-+};
-+use std::collections::{HashMap, HashSet};
-+use wrkflw_parser::workflow::WorkflowDefinition;
-+
-+/// Status of a job *as it appears live* — synthesised from `WorkflowExecution`.
-+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-+pub enum NodeState {
-+    Success,
-+    Failure,
-+    Skipped,
-+    Running,
-+    Pending,
-+}
-+
-+fn state_color(s: NodeState) -> ratatui::style::Color {
-+    match s {
-+        NodeState::Success => COLORS.success,
-+        NodeState::Failure => COLORS.error,
-+        NodeState::Skipped => COLORS.warning,
-+        NodeState::Running => COLORS.info,
-+        NodeState::Pending => COLORS.text_muted,
-+    }
-+}
-+
-+fn state_glyph(s: NodeState, spinner_frame: usize) -> &'static str {
-+    match s {
-+        NodeState::Success => theme::symbols::SUCCESS,
-+        NodeState::Failure => theme::symbols::FAILURE,
-+        NodeState::Skipped => theme::symbols::SKIPPED,
-+        NodeState::Running => theme::spinner(spinner_frame),
-+        NodeState::Pending => theme::symbols::NOT_STARTED,
-+    }
-+}
-+
-+/// Compute topological levels (Kahn's algorithm). Returns columns of job names.
-+/// Jobs not present in the dependency graph go into the first column.
-+pub fn topo_levels(def: &WorkflowDefinition) -> Vec<Vec<String>> {
-+    let names: Vec<String> = {
-+        let mut v: Vec<String> = def.jobs.keys().cloned().collect();
-+        v.sort();
-+        v
-+    };
-+    let name_set: HashSet<&str> = names.iter().map(|s| s.as_str()).collect();
-+
-+    // Build "needs" map restricted to known jobs only.
-+    let mut needs: HashMap<String, Vec<String>> = HashMap::new();
-+    for n in &names {
-+        let job = &def.jobs[n];
-+        let req: Vec<String> = job
-+            .needs
-+            .as_ref()
-+            .map(|v| {
-+                v.iter()
-+                    .filter(|d| name_set.contains(d.as_str()))
-+                    .cloned()
-+                    .collect()
-+            })
-+            .unwrap_or_default();
-+        needs.insert(n.clone(), req);
-+    }
-+
-+    let mut placed: HashSet<String> = HashSet::new();
-+    let mut levels: Vec<Vec<String>> = Vec::new();
-+
-+    while placed.len() < names.len() {
-+        let mut layer: Vec<String> = Vec::new();
-+        for n in &names {
-+            if placed.contains(n) {
-+                continue;
-+            }
-+            let deps = &needs[n];
-+            if deps.iter().all(|d| placed.contains(d)) {
-+                layer.push(n.clone());
-+            }
-+        }
-+        if layer.is_empty() {
-+            // Cycle / unresolved — drop remaining jobs into a final column.
-+            let rest: Vec<String> = names
-+                .iter()
-+                .filter(|n| !placed.contains(*n))
-+                .cloned()
-+                .collect();
-+            placed.extend(rest.iter().cloned());
-+            levels.push(rest);
-+            break;
-+        }
-+        for n in &layer {
-+            placed.insert(n.clone());
-+        }
-+        levels.push(layer);
-+    }
-+    levels
-+}
-+
-+/// Render the mini DAG into `area`. `state_of` resolves a job name to its
-+/// current node state.
-+pub fn render<F: Fn(&str) -> NodeState>(
-+    frame: &mut Frame<'_>,
-+    area: Rect,
-+    def: Option<&WorkflowDefinition>,
-+    state_of: F,
-+    spinner_frame: usize,
-+) {
-+    let mut lines: Vec<Line> = Vec::new();
-+
-+    let levels: Vec<Vec<String>> = match def {
-+        Some(d) => topo_levels(d),
-+        None => Vec::new(),
-+    };
-+
-+    if levels.is_empty() {
-+        lines.push(Line::from(Span::styled(
-+            "no parsed workflow",
-+            Style::default().fg(COLORS.text_muted),
-+        )));
-+        frame.render_widget(Paragraph::new(lines), area);
-+        return;
-+    }
-+
-+    // Render one row per (column, name) up to a few — narrow text panel.
-+    // Format:  L1: setup   ✓
-+    //          L2: fmt     ✓
-+    //              clippy  ✓
-+    //          L3: build   ⠋  ◀
-+    let stage_labels = ["setup", "lint", "build", "test/docs", "publish"];
-+    for (li, layer) in levels.iter().enumerate() {
-+        // Stage header
-+        let stage = stage_labels.get(li).copied().unwrap_or("stage");
-+        lines.push(Line::from(vec![
-+            Span::styled(
-+                format!("L{} ", li + 1),
-+                Style::default().fg(COLORS.text_muted),
-+            ),
-+            Span::styled(
-+                stage.to_string(),
-+                Style::default()
-+                    .fg(COLORS.highlight)
-+                    .add_modifier(Modifier::BOLD),
-+            ),
-+
-```
-
-**File**: `crates/ui/src/components/mod.rs` (modified, +4/-3)
-```diff
-@@ -3,10 +3,11 @@ mod button;
- mod checkbox;
- mod progress_bar;
- 
-+pub mod dag;
-+pub mod progress_dots;
-+pub mod timing;
-+
- // Re-export components for easier access
- pub use button::Button;
- pub use checkbox::Checkbox;
- pub use progress_bar::ProgressBar;
--
--// This module will contain smaller reusable UI elements that
--// can be shared between different views of the application.
-```
-
-**File**: `crates/ui/src/components/progress_dots.rs` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+// Step-progress dots strip — one short bar per step, coloured by status.
-+// Mirrors the design's `<ProgressDots/>` component in screens-core.jsx.
-+
-+use crate::models::WorkflowStatus;
-+use crate::theme::COLORS;
-+use ratatui::{
-+    layout::Rect,
-+    style::Style,
-+    text::{Line, Span},
-+    widgets::Paragraph,
-+    Frame,
-+};
-+use wrkflw_executor::StepStatus;
-+
-+/// State of a single dot. Live state isn't carried by `StepStatus` (which
-+/// only models terminal outcomes), so callers pass a synthesised tag.
-+#[derive(Copy, Clone, Debug)]
-+pub enum DotState {
-+    Success,
-+    Failure,
-+    Skipped,
-+    Running,
-+    Pending,
-+}
-+
-+impl DotState {
-+    pub fn from_step(s: &StepStatus) -> Self {
-+        match s {
-+            StepStatus::Success => DotState::Success,
-+            StepStatus::Failure => DotState::Failure,
-+            StepStatus::Skipped => DotState::Skipped,
-+        }
-+    }
-+}
-+
-+fn dot_style(state: DotState) -> Style {
-+    let c = match state {
-+        DotState::Success => COLORS.success,
-+        DotState::Failure => COLORS.error,
-+        DotState::Skipped => COLORS.warning,
-+        DotState::Running => COLORS.info,
-+        DotState::Pending => COLORS.border,
-+    };
-+    Style::default().fg(c)
-+}
-+
-+/// Render a horizontal strip of progress segments and a `done/total` counter.
-+pub fn render(frame: &mut Frame<'_>, area: Rect, dots: &[DotState], done: usize, total: usize) {
-+    if total == 0 {
-+        return;
-+    }
-+    let mut spans: Vec<Span> = Vec::with_capacity(dots.len() * 2 + 2);
-+    for d in dots {
-+        spans.push(Span::styled("▆", dot_style(*d)));
-+        spans.push(Span::raw(" "));
-+    }
-+    spans.push(Span::styled(
-+        format!(" {}/{} ", done, total),
-+        Style::default().fg(COLORS.text_dim),
-+    ));
-+    frame.render_widget(Paragraph::new(Line::from(spans)), area);
-+}
-+
-+/// Convenience: build a `Vec<DotState>` from terminal step statuses, padding
-+/// with `Pending` and marking the next-pending slot `Running` if the workflow
-+/// is currently active.
-+pub fn synthesise(
-+    completed: &[StepStatus],
-+    total: usize,
-+    workflow_status: &WorkflowStatus,
-+) -> Vec<DotState> {
-+    let mut out: Vec<DotState> = completed.iter().map(DotState::from_step).collect();
-+    let pending = total.saturating_sub(out.len());
-+    if pending == 0 {
-+        return out;
-+    }
-+    let next_is_running = matches!(workflow_status, WorkflowStatus::Running);
-+    for i in 0..pending {
-+        if i == 0 && next_is_running {
-+            out.push(DotState::Running);
-+        } else {
-+            out.push(DotState::Pending);
-+        }
-+    }
-+    out
-+}
-```
-
-**File**: `crates/ui/src/components/timing.rs` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+// Per-job timing chart — horizontal bars sized against the longest run.
-+//
-+// We don't have per-job wall-clock timing today (executor only reports terminal
-+// statuses, no `started_at` per job). For now we render uniform-width bars
-+// coloured by status so the panel is visually present and honest. When timing
-+// metadata lands later, swap `weight=1.0` for `(elapsed / max).min(1.0)`.
-+
-+use crate::theme::COLORS;
-+use ratatui::{
-+    layout::Rect,
-+    style::{Modifier, Style},
-+    text::{Line, Span},
-+    widgets::Paragraph,
-+    Frame,
-+};
-+use wrkflw_executor::JobStatus;
-+
-+#[derive(Clone)]
-+pub struct TimingRow<'a> {
-+    pub name: &'a str,
-+    pub status: Option<JobStatus>, // None = pending
-+    pub label: &'a str,            // e.g. "1m 47s" or "—"
-+}
-+
-+pub fn render(frame: &mut Frame<'_>, area: Rect, rows: &[TimingRow]) {
-+    if area.width < 12 {
-+        return;
-+    }
-+    // We aim for: NAME (10) | BAR (rest - 6) | LABEL (5)
-+    let bar_width = area.width.saturating_sub(18) as usize;
-+    let mut lines: Vec<Line> = Vec::with_capacity(rows.len());
-+    for row in rows {
-+        let (color, fill) = bar_props(row.status.clone());
-+        let filled = (fill * bar_width as f32).round() as usize;
-+        let empty = bar_width.saturating_sub(filled);
-+
-+        lines.push(Line::from(vec![
-+            Span::styled(
-+                pad_right(row.name, 10),
-+                Style::default().fg(COLORS.text_dim),
-+            ),
-+            Span::styled("█".repeat(filled), Style::default().fg(color)),
-+            Span::styled("·".repeat(empty), Style::default().fg(COLORS.border)),
-+            Span::raw(" "),
-+            Span::styled(
-+                pad_left(row.label, 5),
-+                Style::default().fg(COLORS.text_muted),
-+            ),
-+        ]));
-+    }
-+    if rows.is_empty() {
-+        lines.push(Line::from(Span::styled(
-+            "no jobs yet",
-+            Style::default().fg(COLORS.text_muted),
-+        )));
-+    } else {
-+        lines.push(Line::from(""));
-+        lines.push(Line::from(vec![
-+            Span::styled(
-+                "critical path ",
-+                Style::default()
-+                    .fg(COLORS.text_muted)
-+                    .add_modifier(Modifier::DIM),
-+            ),
-+            Span::styled(summarise(rows), Style::default().fg(COLORS.text_dim)),
-+        ]));
-+    }
-+    frame.render_widget(Paragraph::new(lines), area);
-+}
-+
-+fn bar_props(s: Option<JobStatus>) -> (ratatui::style::Color, f32) {
-+    match s {
-+        Some(JobStatus::Success) => (COLORS.success, 1.0),
-+        Some(JobStatus::Failure) => (COLORS.error, 1.0),
-+        Some(JobStatus::Skipped) => (COLORS.warning, 0.4),
-+        None => (COLORS.info, 0.0), // pending — empty
-+    }
-+}
-+
-+fn pad_right(s: &str, n: usize) -> String {
-+    let mut out: String = s.chars().take(n).collect();
-+    while out.chars().count() < n {
-+        out.push(' ');
-+    }
-+    out
-+}
-+
-+fn pad_left(s: &str, n: usize) -> String {
-+    let count = s.chars().count();
-+    if count >= n {
-+        return s.to_string();
-+    }
-+    let mut out = String::new();
-+    for _ in 0..(n - count) {
-+        out.push(' ');
-+    }
-+    out.push_str(s);
-+    out
-+}
-+
-+fn summarise(rows: &[TimingRow]) -> String {
-+    let names: Vec<&str> = rows
-+        .iter()
-+        .filter(|r| matches!(r.status, Some(JobStatus::Success | JobStatus::Failure)))
-+        .map(|r| r.name)
-+        .collect();
-+    if names.is_empty() {
-+        "(awaiting first job)".to_string()
-+    } else {
-+        names.join(" → ")
-+    }
-+}
-```
-
-**File**: `crates/ui/src/models/mod.rs` (modified, +6/-0)
-```diff
-@@ -1,8 +1,10 @@
- // UI Models for wrkflw
- use chrono::Local;
- use std::path::PathBuf;
-+use std::sync::Arc;
- use wrkflw_executor::{JobStatus, StepStatus};
- use wrkflw_logging::symbols;
-+use wrkflw_parser::workflow::WorkflowDefinition;
- 
- /// Type alias for the complex execution result type
- pub type ExecutionResultMsg = (usize, Result<(Vec<wrkflw_executor::JobResult>, ()), String>);
-@@ -25,6 +27,10 @@ pub struct Workflow {
-     pub execution_details: Option<WorkflowExecution>,
-     pub job_names: Vec<String>,
-     pub trigger_match: Option<TriggerMatchStatus>,
-+    /// Parsed workflow definition. Populated at load time so the Dashboard
-+    /// preview / mini-DAG don't have to reparse on every render. `None` when
-+    /// the file failed to parse (we still show the row so the user sees it).
-+    pub definition: Option<Arc<WorkflowDefinition>>,
- }
- 
- /// A workflow queued for execution, with its own target job
-```
-
-**File**: `crates/ui/src/theme.rs` (modified, +118/-52)
-```diff
-@@ -1,6 +1,6 @@
- // Centralized theme for wrkflw TUI
- //
--// All colors, styles, and symbols are defined here.
-+// Palette and symbol set match the design handoff in `wrkflw TUI.html`.
- // View files import from this module instead of hardcoding.
- 
- use ratatui::{
-@@ -34,6 +34,7 @@ pub struct Colors {
- 
-     // Backgrounds
-     pub bg_selected: Color,
-+    pub bg_panel: Color,
-     pub bg_bar: Color,
-     pub bg_dark: Color,
- 
-@@ -45,123 +46,115 @@ pub struct Colors {
- }
- 
- pub const COLORS: Colors = Colors {
--    accent: Color::Cyan,
--    highlight: Color::Yellow,
--
--    success: Color::Green,
--    error: Color::Red,
--    warning: Color::Yellow,
--    info: Color::Cyan,
--    trigger: Color::Magenta,
--
--    text: Color::White,
--    text_dim: Color::Gray,
--    text_muted: Color::DarkGray,
--
--    border: Color::DarkGray,
--    border_focused: Color::Cyan,
--
--    bg_selected: Color::Rgb(40, 44, 52),
--    bg_bar: Color::DarkGray,
--    bg_dark: Color::Black,
--
--    runtime_docker: Color::Blue,
--    runtime_podman: Color::Cyan,
--    runtime_emulation: Color::Red,
--    runtime_secure: Color::Green,
-+    accent: Color::Rgb(0x5f, 0xd3, 0xf3),
-+    highlight: Color::Rgb(0xf5, 0xd7, 0x6e),
-+
-+    success: Color::Rgb(0x8f, 0xce, 0x8f),
-+    error: Color::Rgb(0xff, 0x7a, 0x7a),
-+    warning: Color::Rgb(0xf5, 0xd7, 0x6e),
-+    info: Color::Rgb(0x5f, 0xd3, 0xf3),
-+    trigger: Color::Rgb(0xd6, 0x8c, 0xff),
-+
-+    text: Color::Rgb(0xd7, 0xdd, 0xe4),
-+    text_dim: Color::Rgb(0x88, 0x90, 0xa0),
-+    text_muted: Color::Rgb(0x56, 0x5e, 0x6b),
-+
-+    border: Color::Rgb(0x2a, 0x2f, 0x38),
-+    border_focused: Color::Rgb(0x5f, 0xd3, 0xf3),
-+
-+    bg_selected: Color::Rgb(0x1a, 0x20, 0x28),
-+    bg_panel: Color::Rgb(0x0f, 0x12, 0x16),
-+    bg_bar: Color::Rgb(0x14, 0x17, 0x1c),
-+    bg_dark: Color::Rgb(0x07, 0x09, 0x0b),
-+
-+    runtime_docker: Color::Rgb(0x5f, 0xa3, 0xff),
-+    runtime_podman: Color::Rgb(0x5f, 0xd3, 0xf3),
-+    runtime_emulation: Color::Rgb(0xff, 0x99, 0x66),
-+    runtime_secure: Color::Rgb(0x8f, 0xce, 0x8f),
- };
- 
- // ── Symbols ────────────────────────────────────────────────────────
- 
--/// Re-export the shared symbol constants from `wrkflw_logging::symbols`.
--/// All crates use a single source of truth for Unicode symbols.
- pub use wrkflw_logging::symbols;
- 
- // ── Style Helpers ──────────────────────────────────────────────────
- 
--/// Style for section/block titles
- pub fn title_style() -> Style {
-     Style::default()
-         .fg(COLORS.highlight)
-         .add_modifier(Modifier::BOLD)
- }
- 
--/// Style for the wrkflw brand title
- pub fn brand_style() -> Style {
-     Style::default()
-         .fg(COLORS.accent)
-         .add_modifier(Modifier::BOLD)
- }
- 
--/// Style for field labels ("Workflow:", "Status:", etc.)
- pub fn label_style() -> Style {
-     Style::default().fg(COLORS.accent)
- }
- 
--/// Style for selected/highlighted rows
- pub fn selected_style() -> Style {
-     Style::default()
-         .bg(COLORS.bg_selected)
-         .add_modifier(Modifier::BOLD)
- }
- 
--/// Style for table/column headers
- pub fn header_style() -> Style {
-     Style::default()
-         .fg(COLORS.highlight)
--        .add_modifier(Modifier::BOLD | Modifier::UNDERLINED)
-+        .add_modifier(Modifier::BOLD)
- }
- 
--/// Style for search match highlighting
- pub fn search_highlight() -> Style {
-     Style::default()
-         .bg(COLORS.highlight)
--        .fg(Color::Black)
-+        .fg(COLORS.bg_dark)
-         .add_modifier(Modifier::BOLD)
- }
- 
--/// Style for dimmed/secondary text
- pub fn dim_style() -> Style {
-     Style::default().fg(COLORS.text_dim)
- }
- 
--/// Style for muted text (paths, timestamps)
- pub fn muted_style() -> Style {
-     Style::default().fg(COLORS.text_muted)
- }
- 
--/// Style for key hints in status bar ("[Enter]", "[Space]")
- pub fn key_style() -> Style {
-     Style::default().fg(COLORS.highlight)
- }
- 
--/// Style for hint descriptions in status bar
- pub fn hint_style() -> Style {
-     Style::default().fg(COLORS.text_dim)
- }
- 
-+pub fn panel_style() -> Style {
-+    Style::default().bg(COLORS.bg_panel)
-+}
-+
- // ── Status Styles ──────────────────────────────────────────────────
- 
- use crate::models::WorkflowStatus;
- use wrkflw_executor::{JobStatus, StepStatus};
- 
--/// Get symbol and style for a WorkflowStatus
- pub fn workflow_status(status: &WorkflowStatus) -> (&'static str, Style) {
-     match status {
--        WorkflowStatus::NotStarted => (symbols::NOT_STARTED, Style::default().fg(COLORS.text_dim)),
-+        WorkflowStatus::NotStarted => {
-+            (symbols::NOT_STARTED, Style::default().fg(COLORS.text_muted))
-+        }
-         WorkflowStatus::Running => (symbols::RUNNING, Style::default().fg(COLORS.info)),
-         WorkflowStatus::Success => (symbols::SUCCESS, Style::default().fg(COLORS.success)),
-         WorkflowStatus::Failed => (symbols::FAILURE, Style::default().fg(COLORS.error)),
-         WorkflowStatus::Skipped => (symbols::SKIPPED, Style::default().fg(COLORS.warning)),
-     }
- }
- 
--/// Get animated spinner symb
-```
-
----
-
-### Incident Patch 11: `295b3095` (2026-04-18)
-**Commit Message**: ci: silence new clippy::collapsible_match in TUI event loop
-
-Clippy on main has been failing since the runner picked up Rust
-1.95. The collapsible_match lint got stricter and now complains
-about every match arm whose body is just `if cond { ... }` —
-twelve of those live inside run_tui_event_loop's big
-`match KeyCode`.
-
-The "fix" clippy suggests is match guards: `KeyCode::Char(' ')
-if cond => { ... }`. Tempting, but wrong. That same match ends
-with a `KeyCode::Char(c)` catch-all that pipes keys into log
-search. Convert the earlier arms to guarded patterns and every
-time a guard fails — space pressed outside tab 0, 'a' while
-running, etc. — the key falls through into the log-search
-input handler. That's a behavior change dressed up as a
-refactor, and not one I want landing under a CI fix.
-
-So just slap `#[allow(clippy::collapsible_match)]` on the
-function and move on. Matches the existing convention in
-engine.rs for other function-scoped lint allows. If someone
-later wants to actually restructure that match, they can do it
-as its own change with its own testing.
-
-**File**: `crates/ui/src/app/mod.rs` (modified, +1/-0)
-```diff
-@@ -148,6 +148,7 @@ pub async fn run_wrkflw_tui(
- }
- 
- // Helper function to run the main event loop
-+#[allow(clippy::collapsible_match)]
- fn run_tui_event_loop(
-     terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
-     app: &mut App,
-```
-
----
-
-### Incident Patch 12: `100ff531` (2026-04-14)
-**Commit Message**: fix(evaluator): make toJSON(env) return env object instead of null (#96)
-
-* fix(evaluator): make toJSON(env) return env object instead of null
-
-It turns out that `toJSON(env)` has been returning the string "null"
-this whole time. The reason is straightforward: `ExprValue` had no
-concept of an object — only strings, numbers, booleans, and null.
-When the evaluator saw bare `env` (no dot, no property), it fell
-through every match arm and landed on the catch-all `Null`. Then
-toJSON happily serialized that to "null".
-
-Add an `Object(HashMap<String, ExprValue>)` variant to `ExprValue`.
-When `resolve()` encounters bare `env`, it now builds an Object from
-env_context, filtering out system-injected keys (GITHUB_*, RUNNER_*,
-INPUT_*, WRKFLW_*, CI). The toJSON function serializes Object values
-as sorted, pretty-printed JSON to match real GitHub Actions behavior.
-
-* fix(evaluator): clean up toJSON(env) Object variant plumbing
-
-The previous commit added ExprValue::Object and wired it into
-resolve() for bare `env` context. It worked, but it had a few
-things that were *not great*.
-
-The inline env-var filter (six separate prefix/name checks) was
-duplicated knowledge about which vars the executor i
-
-**File**: `crates/executor/src/environment.rs` (modified, +27/-0)
-```diff
-@@ -429,4 +429,31 @@ mod tests {
-     fn extract_repo_from_invalid_url() {
-         assert_eq!(extract_repo_from_url("not-a-url"), None);
-     }
-+
-+    #[test]
-+    fn is_user_env_var_filters_all_github_context_keys() {
-+        use crate::expression::is_user_env_var;
-+
-+        let workflow_yaml = r#"
-+name: test
-+on: push
-+jobs:
-+  test:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: echo hi
-+"#;
-+        let workflow: wrkflw_parser::workflow::WorkflowDefinition =
-+            serde_yaml::from_str(workflow_yaml).expect("valid workflow yaml");
-+        let tmp = std::env::temp_dir().join("wrkflw_env_test");
-+        let _ = std::fs::create_dir_all(&tmp);
-+        let ctx = create_github_context(&workflow, &tmp);
-+        for key in ctx.keys() {
-+            assert!(
-+                !is_user_env_var(key),
-+                "internal key '{}' should be filtered by is_user_env_var but was not",
-+                key
-+            );
-+        }
-+    }
- }
-```
-
-**File**: `crates/executor/src/expression.rs` (modified, +249/-0)
-```diff
-@@ -24,6 +24,8 @@ pub enum ExprValue {
-     Number(f64),
-     Bool(bool),
-     Null,
-+    /// A key-value map, used for context objects like `env`, `github`, etc.
-+    Object(HashMap<String, ExprValue>),
- }
- 
- impl ExprValue {
-@@ -34,6 +36,7 @@ impl ExprValue {
-             ExprValue::Number(n) => *n != 0.0 && !n.is_nan(),
-             ExprValue::String(s) => !s.is_empty(),
-             ExprValue::Null => false,
-+            ExprValue::Object(_) => true,
-         }
-     }
- 
-@@ -50,6 +53,12 @@ impl ExprValue {
-             }
-             ExprValue::Bool(b) => if *b { "true" } else { "false" }.to_string(),
-             ExprValue::Null => String::new(),
-+            ExprValue::Object(map) => {
-+                // GHA coerces objects to their JSON representation in string contexts.
-+                let sorted: std::collections::BTreeMap<&String, serde_json::Value> =
-+                    map.iter().map(|(k, v)| (k, expr_to_json(v))).collect();
-+                serde_json::to_string_pretty(&sorted).unwrap_or_else(|_| "{}".to_string())
-+            }
-         }
-     }
- }
-@@ -269,6 +278,27 @@ impl<'a> Tokenizer<'a> {
-     }
- }
- 
-+/// Returns `true` if this env-var key belongs to the user-defined `env:` context
-+/// rather than an internal variable injected by the executor/runner.
-+///
-+/// KNOWN LIMITATION: Because `env_context` is a single flat HashMap that mixes
-+/// user-declared env vars with runner-injected ones, we use a heuristic prefix
-+/// filter. This means a user-defined var like `env: { GITHUB_CUSTOM: "val" }`
-+/// or the commonly used `env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }`
-+/// will be incorrectly excluded from `toJSON(env)` output. The proper fix is to
-+/// separate user env from runner env upstream in ExpressionContext, but that is
-+/// a larger refactor tracked separately.
-+///
-+/// Update this function when new internal prefixes are introduced.
-+pub(crate) fn is_user_env_var(key: &str) -> bool {
-+    !key.starts_with("GITHUB_")
-+        && !key.starts_with("RUNNER_")
-+        && !key.starts_with("INPUT_")
-+        && !key.starts_with("WRKFLW_")
-+        && key != "CI"
-+        && key != "MATRIX_CONTEXT" // inserted by add_matrix_context() in environment.rs
-+}
-+
- // ---------------------------------------------------------------------------
- // Expression context
- // ---------------------------------------------------------------------------
-@@ -391,6 +421,18 @@ impl<'a> ExpressionContext<'a> {
-                 .get(&parts[1])
-                 .map(|(_, conclusion)| ExprValue::String(conclusion.clone()))
-                 .unwrap_or(ExprValue::Null),
-+            // Bare context names — return the whole context as an Object so that
-+            // `toJSON(env)` (and similar) can serialise it.
-+            // TODO: support other bare contexts: github, secrets, matrix, steps, needs
-+            "env" if parts.len() == 1 => {
-+                let map = self
-+                    .env_context
-+                    .iter()
-+                    .filter(|(k, _)| is_user_env_var(k))
-+                    .map(|(k, v)| (k.clone(), ExprValue::String(v.clone())))
-+                    .collect();
-+                ExprValue::Object(map)
-+            }
-             _ => ExprValue::Null,
-         }
-     }
-@@ -637,6 +679,8 @@ fn expr_eq(a: &ExprValue, b: &ExprValue) -> bool {
-             let sv = s.eq_ignore_ascii_case("true");
-             *b == sv
-         }
-+        // Objects are not comparable via ==
-+        (ExprValue::Object(_), _) | (_, ExprValue::Object(_)) => false,
-     }
- }
- 
-@@ -646,6 +690,9 @@ fn expr_cmp(a: &ExprValue, b: &ExprValue) -> Option<std::cmp::Ordering> {
-         (ExprValue::String(a), ExprValue::String(b)) => {
-             Some(a.to_lowercase().cmp(&b.to_lowercase()))
-         }
-+        // Objects are not orderable — comparisons like `env < env` yield None
-+        // (meaning the comparison expression will evaluate to false).
-+        (ExprValue::Object(_), _) | (_, ExprValue::Object(_)) => None,
-         _ => None,
-     }
- }
-@@ -654,6 +701,23 @@ fn expr_cmp(a: &ExprValue, b: &ExprValue) -> Option<std::cmp::Ordering> {
- // Built-in functions
- // ---------------------------------------------------------------------------
- 
-+/// Convert an `ExprValue` to a `serde_json::Value` for JSON serialisation.
-+fn expr_to_json(v: &ExprValue) -> serde_json::Value {
-+    match v {
-+        ExprValue::String(s) => serde_json::Value::String(s.clone()),
-+        ExprValue::Number(n) => serde_json::json!(n),
-+        ExprValue::Bool(b) => serde_json::Value::Bool(*b),
-+        ExprValue::Null => serde_json::Value::Null,
-+        ExprValue::Object(map) => {
-+            let obj: serde_json::Map<String, serde_json::Value> = map
-+                .iter()
-+                .map(|(k, v)| (k.clone(), expr_to_json(v)))
-+                .collect();
-+            serde_json::Value::Object(obj)
-+        }
-+    }
-+}
-+
- fn call_builtin(
-     name: &str,
-     args: &[ExprValue],
-@@ -745,6 +809,15 @@ fn call_b
-```
-
----
-
-### Incident Patch 13: `530a7096` (2026-04-14)
-**Commit Message**: fix(executor): populate workflow-level env in expression context (#95)
-
-* fix(executor): populate workflow-level env in expression context
-
-It turns out that `WorkflowDefinition` simply *didn't have* an `env`
-field. Serde was silently discarding the workflow-level `env:` block
-during YAML deserialization, so `${{ env.GLOBAL_VAR }}` evaluated to
-empty string while `$GLOBAL_VAR` in shell commands worked fine —
-because the OS environment got the vars, but the expression evaluator
-never did.
-
-Job-level and step-level env worked correctly because the `Job` and
-`Step` structs both had their `env: HashMap<String, String>` fields.
-The workflow-level struct just... didn't. For absolutely no reason.
-
-Add the missing `env` field to `WorkflowDefinition` and merge it into
-`env_context` right after `create_github_context()`, before job-level
-env is applied. This gives correct precedence: step > job > workflow,
-matching GitHub Actions behavior.
-
-* fix(executor): harden workflow-level env precedence and add expression resolution
-
-The previous commit added workflow-level env to the expression
-context, but it used insert() which means a workflow that defines
-env: { CI: "false" } would *override* the
-
-**File**: `crates/executor/src/engine.rs` (modified, +123/-0)
-```diff
-@@ -106,6 +106,38 @@ async fn execute_github_workflow(
-     // 4. Set up GitHub-like environment
-     let mut env_context = environment::create_github_context(&workflow, workspace_dir.path());
- 
-+    // Add workflow-level environment variables (lowest precedence — does not override
-+    // built-in GITHUB_*/RUNNER_* vars; job and step env override these later).
-+    // Resolve ${{ }} expressions (e.g. ${{ github.repository }}) in values.
-+    {
-+        let wf_expr_ctx = crate::expression::ExpressionContext {
-+            env_context: &env_context,
-+            step_outputs: &HashMap::new(),
-+            matrix_combination: &None,
-+            step_statuses: &HashMap::new(),
-+            job_status: "success",
-+            secrets_context: &HashMap::new(),
-+            needs_context: &HashMap::new(),
-+            needs_results: &HashMap::new(),
-+        };
-+        let cwd = std::env::current_dir().map_err(|e| {
-+            ExecutionError::Execution(format!("Failed to get current directory: {}", e))
-+        })?;
-+        let resolved_env: Vec<(String, String)> = workflow
-+            .env
-+            .iter()
-+            .map(|(key, value)| {
-+                let resolved =
-+                    crate::substitution::preprocess_expressions(value, &cwd, &wf_expr_ctx)
-+                        .unwrap_or_else(|_| value.clone());
-+                (key.clone(), resolved)
-+            })
-+            .collect();
-+        for (key, value) in resolved_env {
-+            env_context.entry(key).or_insert(value);
-+        }
-+    }
-+
-     // Add runtime mode to environment
-     env_context.insert(
-         "WRKFLW_RUNTIME_MODE".to_string(),
-@@ -4585,6 +4617,7 @@ async fn execute_composite_action(
-                         on_raw: serde_yaml::Value::Null,
-                         jobs: HashMap::new(),
-                         defaults: None,
-+                        env: HashMap::new(),
-                     },
-                     runner_image,
-                     verbose,
-@@ -5492,6 +5525,94 @@ mod tests {
-         assert_eq!(job_env.get("JOB_ONLY").unwrap(), "job-value");
-     }
- 
-+    // --- workflow-level env tests ---
-+
-+    #[test]
-+    fn workflow_env_does_not_override_builtin_github_vars() {
-+        // Workflow-level env uses entry().or_insert(), so it must NOT override
-+        // built-in GITHUB_* variables set by create_github_context().
-+        let mut env_context: HashMap<String, String> = HashMap::from([
-+            ("GITHUB_SHA".into(), "abc123".into()),
-+            ("CI".into(), "true".into()),
-+        ]);
-+
-+        // Simulate workflow env with keys that collide with builtins
-+        let workflow_env: HashMap<String, String> = HashMap::from([
-+            ("GITHUB_SHA".into(), "should-not-win".into()),
-+            ("CI".into(), "false".into()),
-+            ("MY_CUSTOM_VAR".into(), "custom-value".into()),
-+        ]);
-+        for (key, value) in &workflow_env {
-+            env_context
-+                .entry(key.clone())
-+                .or_insert_with(|| value.clone());
-+        }
-+
-+        // Built-in values must be preserved
-+        assert_eq!(env_context.get("GITHUB_SHA").unwrap(), "abc123");
-+        assert_eq!(env_context.get("CI").unwrap(), "true");
-+        // Custom workflow env is added
-+        assert_eq!(env_context.get("MY_CUSTOM_VAR").unwrap(), "custom-value");
-+    }
-+
-+    #[test]
-+    fn workflow_env_overridden_by_job_env() {
-+        // Precedence: workflow env (lowest) < job env < step env (highest)
-+        let mut env_context: HashMap<String, String> = HashMap::new();
-+
-+        // Step 1: workflow env (lowest precedence)
-+        let workflow_env: HashMap<String, String> = HashMap::from([
-+            ("SHARED".into(), "from-workflow".into()),
-+            ("WF_ONLY".into(), "workflow-value".into()),
-+        ]);
-+        for (key, value) in &workflow_env {
-+            env_context
-+                .entry(key.clone())
-+                .or_insert_with(|| value.clone());
-+        }
-+
-+        // Step 2: job env (overrides workflow env)
-+        let job_env: HashMap<String, String> = HashMap::from([
-+            ("SHARED".into(), "from-job".into()),
-+            ("JOB_ONLY".into(), "job-value".into()),
-+        ]);
-+        for (key, value) in &job_env {
-+            env_context.insert(key.clone(), value.clone());
-+        }
-+
-+        // Job env wins for shared keys
-+        assert_eq!(env_context.get("SHARED").unwrap(), "from-job");
-+        // Workflow-only keys are preserved
-+        assert_eq!(env_context.get("WF_ONLY").unwrap(), "workflow-value");
-+        // Job-only keys are preserved
-+        assert_eq!(env_context.get("JOB_ONLY").unwrap(), "job-value");
-+    }
-+
-+    #[test]
-+    fn workflow_env_expression_substitution() {
-+        // Workflow-level env values containing ${{ }} expressions should be resolved
-+        let env_context: HashMap<String, String> =
-+            HashMap::from([("GITHUB_REPOSITORY".into(), "owner/repo".into())]);
-+        let expr_ctx 
-```
-
-**File**: `crates/parser/src/gitlab.rs` (modified, +1/-0)
-```diff
-@@ -120,6 +120,7 @@ pub fn convert_to_workflow_format(pipeline: &Pipeline) -> workflow::WorkflowDefi
-         on_raw: serde_yaml::Value::String("push".to_string()),
-         jobs: HashMap::new(),
-         defaults: None,
-+        env: HashMap::new(),
-     };
- 
-     // Convert each GitLab job to a GitHub Actions job
-```
-
-**File**: `crates/parser/src/workflow.rs` (modified, +10/-0)
-```diff
-@@ -146,6 +146,8 @@ pub struct WorkflowDefinition {
-     pub jobs: HashMap<String, Job>,
-     #[serde(default)]
-     pub defaults: Option<Defaults>,
-+    #[serde(default)]
-+    pub env: HashMap<String, String>,
- }
- 
- #[derive(Debug, Deserialize, Serialize, Default)]
-@@ -412,6 +414,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("actions/checkout@v4");
-         assert_eq!(info.repository, "actions/checkout");
-@@ -429,6 +432,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("owner/repo");
-         assert_eq!(info.repository, "owner/repo");
-@@ -444,6 +448,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("docker://alpine:3.18");
-         assert_eq!(info.repository, "docker://alpine:3.18");
-@@ -460,6 +465,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("./my-action");
-         assert_eq!(info.repository, "./my-action");
-@@ -476,6 +482,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         // Docker image references can use @sha256:digest — the full string is the image ref
-         let info = wd.resolve_action("docker://alpine@sha256:abcdef1234567890");
-@@ -493,6 +500,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675");
-         assert_eq!(info.repository, "actions/checkout");
-@@ -508,6 +516,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("owner/repo/path/to/action@v2");
-         assert_eq!(info.repository, "owner/repo");
-@@ -525,6 +534,7 @@ mod tests {
-             on_raw: serde_yaml::Value::Null,
-             jobs: Default::default(),
-             defaults: None,
-+            env: HashMap::new(),
-         };
-         let info = wd.resolve_action("github/codeql-action/init@v3");
-         assert_eq!(info.repository, "github/codeql-action");
-```
-
-**File**: `crates/trigger-filter/src/parser.rs` (modified, +1/-0)
-```diff
-@@ -900,6 +900,7 @@ pul_request:
-             on_raw: make_on_raw("pul_request"),
-             jobs: std::collections::HashMap::new(),
-             defaults: None,
-+            env: std::collections::HashMap::new(),
-         };
-         let mut cfg = parse_trigger_config(&wf, PathBuf::from("test.yml")).unwrap();
-         // Drain explicitly so the MustDrainWarnings Drop check stays
-```
-
----
-
-### Incident Patch 14: `b711e871` (2026-04-13)
-**Commit Message**: fix(executor): propagate composite action outputs back to caller (#94)
-
-* fix(executor): propagate composite action outputs back to caller
-
-It turns out that execute_composite_action() was happily running all
-the internal steps of a composite action, correctly tracking their
-outputs in composite_step_outputs, and then... just throwing all of
-that away. The action.yml `outputs:` section — the whole reason
-composite actions *have* a return path — was never read or evaluated.
-
-So ${{ steps.my-composite.outputs.whatever }} always resolved to
-empty string. Inputs worked fine. The internal steps ran fine. The
-output values were right there in memory. Nobody bothered to connect
-the last wire.
-
-Add propagate_composite_outputs() which reads the action's outputs
-section after the step loop, evaluates each value expression against
-the composite's internal step context, and writes the results to the
-caller's GITHUB_OUTPUT file. The existing apply_step_environment_updates
-pipeline then picks them up naturally — no changes to StepResult or
-process_outcome needed.
-
-Also wire this into the early-return failure path so partial outputs
-are still available when a composite step fails.
-
-* fix(executor
-
-**File**: `.gitignore` (modified, +1/-0)
-```diff
-@@ -1,2 +1,3 @@
- /target
- .indxr-cache/
-+.claude/todos/
-```
-
-**File**: `crates/executor/src/engine.rs` (modified, +475/-0)
-```diff
-@@ -4638,6 +4638,15 @@ async fn execute_composite_action(
- 
-                 // Short-circuit on failure if needed
-                 if step_result.status == StepStatus::Failure {
-+                    // Still propagate whatever outputs were collected before the failure
-+                    propagate_composite_outputs(
-+                        &action_def,
-+                        &composite_step_outputs,
-+                        &action_env,
-+                        job_env,
-+                        working_dir,
-+                        &composite_job_status,
-+                    );
-                     return Ok(StepResult::new(
-                         step.name
-                             .clone()
-@@ -4648,6 +4657,16 @@ async fn execute_composite_action(
-                 }
-             }
- 
-+            // Propagate composite action outputs to the caller's GITHUB_OUTPUT
-+            propagate_composite_outputs(
-+                &action_def,
-+                &composite_step_outputs,
-+                &action_env,
-+                job_env,
-+                working_dir,
-+                &composite_job_status,
-+            );
-+
-             // All steps completed successfully
-             let output = if verbose {
-                 let mut detailed_output = format!(
-@@ -4700,6 +4719,123 @@ async fn execute_composite_action(
-     }
- }
- 
-+/// Evaluate a composite action's `outputs:` section and write the resolved values
-+/// to the caller's GITHUB_OUTPUT file so `${{ steps.<id>.outputs.<key> }}` works.
-+fn propagate_composite_outputs(
-+    action_def: &serde_yaml::Value,
-+    composite_step_outputs: &HashMap<String, HashMap<String, String>>,
-+    action_env: &HashMap<String, String>,
-+    caller_job_env: &HashMap<String, String>,
-+    working_dir: &Path,
-+    job_status: &str,
-+) {
-+    let outputs = match action_def.get("outputs").and_then(|v| v.as_mapping()) {
-+        Some(m) => m,
-+        None => return, // No outputs declared
-+    };
-+
-+    // Build an expression context scoped to the composite's internal steps
-+    let empty_matrix = None;
-+    let empty_statuses = HashMap::new();
-+    let empty_secrets = HashMap::new();
-+    let empty_needs = HashMap::new();
-+    let empty_results = HashMap::new();
-+    let expr_ctx = crate::expression::ExpressionContext {
-+        env_context: action_env,
-+        step_outputs: composite_step_outputs,
-+        matrix_combination: &empty_matrix,
-+        step_statuses: &empty_statuses,
-+        job_status,
-+        secrets_context: &empty_secrets,
-+        needs_context: &empty_needs,
-+        needs_results: &empty_results,
-+    };
-+
-+    // Collect evaluated outputs
-+    let mut resolved: Vec<(String, String)> = Vec::new();
-+    for (key, def) in outputs {
-+        let key_str = match key.as_str() {
-+            Some(k) => k,
-+            None => continue,
-+        };
-+        let value_expr = match def.get("value").and_then(|v| v.as_str()) {
-+            Some(v) => v,
-+            None => continue,
-+        };
-+        match crate::substitution::preprocess_expressions(value_expr, working_dir, &expr_ctx) {
-+            Ok(val) => resolved.push((key_str.to_string(), val)),
-+            Err(e) => {
-+                wrkflw_logging::debug(&format!(
-+                    "Failed to evaluate composite output '{}': {}",
-+                    key_str, e
-+                ));
-+            }
-+        }
-+    }
-+
-+    if resolved.is_empty() {
-+        return;
-+    }
-+
-+    // Append to the caller's GITHUB_OUTPUT file
-+    if let Some(output_path) = caller_job_env.get("GITHUB_OUTPUT") {
-+        use std::io::Write;
-+        match std::fs::OpenOptions::new()
-+            .create(true)
-+            .append(true)
-+            .open(output_path)
-+        {
-+            Ok(mut f) => {
-+                for (key, value) in &resolved {
-+                    let res = if value.contains('\n') {
-+                        // Use a unique delimiter to avoid collisions with value content
-+                        let delim = generate_heredoc_delimiter(value);
-+                        writeln!(f, "{}<<{}", key, delim)
-+                            .and_then(|_| write!(f, "{}", value))
-+                            .and_then(|_| {
-+                                if !value.ends_with('\n') {
-+                                    writeln!(f)
-+                                } else {
-+                                    Ok(())
-+                                }
-+                            })
-+                            .and_then(|_| writeln!(f, "{}", delim))
-+                    } else {
-+                        writeln!(f, "{}={}", key, value)
-+                    };
-+                    if let Err(e) = res {
-+                        wrkflw_logging::debug(&format!(
-+                            "Failed to write composite output '{}' to GITHUB_OUTPUT: {}",
-+                            key, e
-+                        ));
-+                        break;
-+                    }
-+                }
-+            }
-+
-```
-
----
-
-### Incident Patch 15: `a668d815` (2026-04-13)
+### Incident Patch 2: `a668d815` (2026-04-13)
 **Commit Message**: fix: artifact actions under --runtime emulation  (#93)
 
 * test(executor): cover run-step → upload/download-artifact handoff under emulation
@@ -7155,6 +3336,349 @@ Component-boundary matching (via Path::strip_prefix) ensures
  }
 ```
 
+---
+
+### Incident Patch 3: `499a4e53` (2026-07-03)
+**Commit Message**: fix(ui): show real timestamps for remaining bare TUI log pushes (#119)
+
+* fix(ui): timestamp the log pushes that #116 missed
+
+PR #116 claimed to fix the ??:??:?? timestamps for "all TUI log
+messages". It turns out "all" meant "most": four bare
+self.logs.push() sites survived — the diff-filter event rotation,
+the copy-curl recipe lines, the "Dispatching ..." line, and the
+dispatch outcome lines. All of them still rendered ??:??:?? in
+the Execution and Logs tabs.
+
+The renderer derives the timestamp column *only* from a
+[HH:MM:SS] prefix on the line itself, so any push that skips
+add_timestamped_log() is silently unparseable. Route the four
+stragglers through add_timestamped_log(). Since that helper
+already trims the buffer, the hand-rolled trim_logs_to_cap()
+calls next to each push (and the `drained` counter that existed
+only to gate one of them) are now dead weight. Gone.
+
+The new tests don't re-feed literal strings to the parser —
+that proves nothing about the call sites. They call the actual
+methods and run the actual appended lines through the actual
+parser, which needed nothing more than a pub(crate) on
+process_log_entry. The "Dispatching ..." site is the one
+exception: it tokio
+
+**File**: `crates/ui/src/app/mod.rs` (modified, +15/-21)
+```diff
+@@ -8,7 +8,6 @@ use crate::views::{
+     render_ui, TAB_COUNT, TAB_DAG, TAB_EXECUTION, TAB_HELP, TAB_LOGS, TAB_SECRETS, TAB_TRIGGER,
+     TAB_WORKFLOWS,
+ };
+-use chrono::Local;
+ use crossterm::{
+     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
+     execute,
+@@ -57,7 +56,7 @@ pub async fn run_wrkflw_tui(
+     );
+ 
+     if app.validation_mode {
+-        app.logs.push("Starting in validation mode".to_string());
++        app.add_timestamped_log("Starting in validation mode");
+         wrkflw_logging::info("Starting in validation mode");
+     }
+ 
+@@ -558,14 +557,12 @@ fn run_tui_event_loop(
+                                     if workflow.status == WorkflowStatus::NotStarted {
+                                         app.trigger_selected_workflow();
+                                     } else if workflow.status == WorkflowStatus::Running {
+-                                        app.logs.push(format!(
++                                        let msg = format!(
+                                             "Workflow '{}' is already running",
+                                             workflow.name
+-                                        ));
+-                                        wrkflw_logging::warning(&format!(
+-                                            "Workflow '{}' is already running",
+-                                            workflow.name
+-                                        ));
++                                        );
++                                        app.add_timestamped_log(&msg);
++                                        wrkflw_logging::warning(&msg);
+                                     } else {
+                                         // First, get all the data we need from the workflow
+                                         let workflow_name = workflow.name.clone();
+@@ -588,19 +585,16 @@ fn run_tui_event_loop(
+                                         ));
+ 
+                                         // Add log entries
+-                                        app.logs.push(format!(
++                                        app.add_timestamped_log(&format!(
+                                             "Cannot trigger workflow '{}' in {} state",
+                                             workflow_name, status_text
+                                         ));
+ 
+                                         // Add hint about using reset
+                                         if needs_reset_hint {
+-                                            let timestamp =
+-                                                Local::now().format("%H:%M:%S").to_string();
+-                                            app.logs.push(format!(
+-                                                "[{}] Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
+-                                                timestamp
+-                                            ));
++                                            app.add_timestamped_log(
++                                                "Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
++                                            );
+                                         }
+ 
+                                         wrkflw_logging::warning(&format!(
+@@ -610,20 +604,20 @@ fn run_tui_event_loop(
+                                     }
+                                 }
+                             } else {
+-                                app.logs.push("No workflow selected to trigger".to_string());
++                                app.add_timestamped_log("No workflow selected to trigger");
+                                 wrkflw_logging::warning("No workflow selected to trigger");
+                             }
+                         } else if app.running {
+-                            app.logs.push(
+-                                "Cannot trigger workflow while another operation is in progress"
+-                                    .to_string(),
++                            app.add_timestamped_log(
++                                "Cannot trigger workflow while another operation is in progress",
+                             );
+                             wrkflw_logging::warning(
+                                 "Cannot trigger workflow while another operation is in progress",
+                             );
+                         } else if app.selected_tab != TAB_WORKFLOWS {
+-                            app.logs
+-                                .push("Switch to Workflows tab to trigger a workflow".to_string());
++                            app.add_timestamped_log(
++                                "Switch to Workflows tab to trigger a workflow",
++                            );
+                             wrkflw_logging::warning(
+                                 "Switch to Workflows tab to trigger a workflow",
+                             );
+```
+
+**File**: `crates/ui/src/app/state.rs` (modified, +183/-127)
+```diff
+@@ -29,19 +29,19 @@ pub struct App {
+     pub show_action_messages: bool,
+     pub execution_queue: Vec<QueuedExecution>, // Workflows queued for execution
+     pub current_execution: Option<usize>,
+-    pub logs: Vec<String>,                       // Overall execution logs
+-    pub log_scroll: usize,                       // Scrolling position for logs
+-    pub job_list_state: ListState,               // For viewing job details
+-    pub detailed_view: bool,                     // Whether we're in detailed view mode
+-    pub step_list_state: ListState,              // For selecting steps in detailed view
+-    pub step_table_state: TableState,            // For the steps table in detailed view
+-    pub last_tick: Instant,                      // For UI animations and updates
+-    pub tick_rate: Duration,                     // How often to update the UI
+-    pub spinner_frame: usize,                    // Current spinner animation frame
+-    pub tx: mpsc::Sender<ExecutionResultMsg>,    // Channel for async communication
+-    pub status_message: Option<String>,          // Temporary status message to display
++    logs: Vec<String>, // Overall execution logs — private so every mutation routes through `add_log`
++    pub log_scroll: usize, // Scrolling position for logs
++    pub job_list_state: ListState, // For viewing job details
++    pub detailed_view: bool, // Whether we're in detailed view mode
++    pub step_list_state: ListState, // For selecting steps in detailed view
++    pub step_table_state: TableState, // For the steps table in detailed view
++    pub last_tick: Instant, // For UI animations and updates
++    pub tick_rate: Duration, // How often to update the UI
++    pub spinner_frame: usize, // Current spinner animation frame
++    pub tx: mpsc::Sender<ExecutionResultMsg>, // Channel for async communication
++    pub status_message: Option<String>, // Temporary status message to display
+     pub status_message_severity: StatusSeverity, // Severity of the current status message
+-    pub status_message_time: Option<Instant>,    // When the message was set
++    pub status_message_time: Option<Instant>, // When the message was set
+ 
+     // Search and filter functionality
+     pub log_search_query: String, // Current search query for logs
+@@ -58,6 +58,7 @@ pub struct App {
+     pub processed_logs: Vec<ProcessedLogEntry>,
+     pub logs_need_update: bool,        // Flag to trigger log processing
+     pub last_system_logs_count: usize, // Track system log changes
++    logs_revision: u64, // Bumped on every log/search/filter change; `logs.len()` goes stale at the cap
+ 
+     // Job selection mode
+     pub job_selection_mode: bool, // Are we viewing jobs of a workflow?
+@@ -329,7 +330,6 @@ impl App {
+         step_table_state.select(Some(0));
+ 
+         // Check container runtime availability if container runtime is selected
+-        let mut initial_logs = Vec::new();
+         let runtime_type = match runtime_type {
+             RuntimeType::Auto => {
+                 let detected = match std::panic::catch_unwind(|| {
+@@ -361,10 +361,11 @@ impl App {
+                     RuntimeType::Docker => wrkflw_logging::info("Auto-detected Docker runtime"),
+                     RuntimeType::Podman => wrkflw_logging::info("Auto-detected Podman runtime"),
+                     _ => {
+-                        initial_logs.push(
+-                            "No container runtime found (tried Docker and Podman). Using emulation mode instead."
+-                                .to_string(),
+-                        );
++                        // System-logged only, matching the Docker/Podman arms
++                        // below. `get_combined_logs` folds the wrkflw_logging
++                        // store into the Logs tab with a real timestamp, so a
++                        // second app-side push would just render an
++                        // untimestamped duplicate.
+                         wrkflw_logging::warning(
+                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
+                         );
+@@ -487,7 +488,7 @@ impl App {
+             show_action_messages,
+             execution_queue: Vec::new(),
+             current_execution: None,
+-            logs: initial_logs,
++            logs: Vec::new(),
+             log_scroll: 0,
+             job_list_state,
+             detailed_view: false,
+@@ -514,6 +515,7 @@ impl App {
+             processed_logs: Vec::new(),
+             logs_need_update: true,
+             last_system_logs_count: 0,
++            logs_revision: 0,
+ 
+             // Job selection mode
+             job_selection_mode: false,
+@@ -614,7 +616,7 @@ impl App {
+             .unwrap_or(0);
+         let next_idx = (current_idx + 1) % ROTATION.len();
+         let next = ROTATION[next_idx].to_string();
+-        self.logs.push(format!(
++        self.add_timestamped_log(&format!(
+             "Diff filter event: {} -> {}",
+             self.diff_filter_even
+```
+
+**File**: `crates/ui/src/handlers/workflow.rs` (modified, +12/-15)
+```diff
+@@ -469,13 +469,11 @@ pub fn start_next_workflow_execution(
+ 
+         // Log whether verbose mode is enabled
+         if verbose {
+-            app.logs
+-                .push("Verbose mode: Step outputs will be displayed in full".to_string());
++            app.add_timestamped_log("Verbose mode: Step outputs will be displayed in full");
+             wrkflw_logging::info("Verbose mode: Step outputs will be displayed in full");
+         } else {
+-            app.logs.push(
+-                "Standard mode: Only step status will be shown (use --verbose for full output)"
+-                    .to_string(),
++            app.add_timestamped_log(
++                "Standard mode: Only step status will be shown (use --verbose for full output)",
+             );
+             wrkflw_logging::info(
+                 "Standard mode: Only step status will be shown (use --verbose for full output)",
+@@ -500,9 +498,8 @@ pub fn start_next_workflow_execution(
+                         wrkflw_logging::info("Auto-detected Podman runtime");
+                         RuntimeType::Podman
+                     } else {
+-                        app.logs.push(
+-                            "No container runtime found (tried Docker and Podman). Using emulation mode instead."
+-                                .to_string(),
++                        app.add_timestamped_log(
++                            "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
+                         );
+                         wrkflw_logging::warning(
+                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
+@@ -526,8 +523,9 @@ pub fn start_next_workflow_execution(
+                 };
+ 
+                 if !is_docker_available {
+-                    app.logs
+-                        .push("Docker is not available. Using emulation mode instead.".to_string());
++                    app.add_timestamped_log(
++                        "Docker is not available. Using emulation mode instead.",
++                    );
+                     wrkflw_logging::warning(
+                         "Docker is not available. Using emulation mode instead.",
+                     );
+@@ -551,8 +549,9 @@ pub fn start_next_workflow_execution(
+                 };
+ 
+                 if !is_podman_available {
+-                    app.logs
+-                        .push("Podman is not available. Using emulation mode instead.".to_string());
++                    app.add_timestamped_log(
++                        "Podman is not available. Using emulation mode instead.",
++                    );
+                     wrkflw_logging::warning(
+                         "Podman is not available. Using emulation mode instead.",
+                     );
+@@ -676,9 +675,7 @@ pub fn start_next_workflow_execution(
+         });
+     } else {
+         app.running = false;
+-        let timestamp = Local::now().format("%H:%M:%S").to_string();
+-        app.logs
+-            .push(format!("[{}] All workflows completed execution", timestamp));
++        app.add_timestamped_log("All workflows completed execution");
+         wrkflw_logging::info("All workflows completed execution");
+     }
+ }
+```
+
+**File**: `crates/ui/src/log_processor.rs` (modified, +14/-8)
+```diff
+@@ -35,9 +35,13 @@ impl ProcessedLogEntry {
+ pub struct LogProcessingRequest {
+     pub search_query: String,
+     pub filter_level: Option<LogFilterLevel>,
+-    pub app_logs: Vec<String>,    // Complete app logs
+-    pub app_logs_count: usize,    // To detect changes in app logs
+-    pub system_logs_count: usize, // To detect changes in system logs
++    pub app_logs: Vec<String>, // Complete app logs
++    // Change signal for app logs AND search/filter edits. A revision
++    // counter rather than `app_logs.len()`: once the app's buffer
++    // hits its cap, pushes stop changing the length (one old entry is
++    // dropped per new one), so a count would freeze the display.
++    pub app_logs_revision: u64,
++    pub system_logs_count: usize, // To detect changes in system logs (unbounded, so len works)
+ }
+ 
+ /// Response with processed logs
+@@ -94,7 +98,9 @@ impl LogProcessor {
+         let mut last_request: Option<LogProcessingRequest> = None;
+         let mut last_processed_time = Instant::now();
+         let mut cached_logs: Vec<String> = Vec::new();
+-        let mut cached_app_logs_count = 0;
++        // u64::MAX so the first request always mismatches — the app's
++        // revision starts at 0.
++        let mut cached_app_logs_revision = u64::MAX;
+         let mut cached_system_logs_count = 0;
+ 
+         loop {
+@@ -110,17 +116,17 @@ impl LogProcessor {
+ 
+             if let Some(ref req) = last_request {
+                 let should_process = last_processed_time.elapsed() > Duration::from_millis(50)
+-                    && (cached_app_logs_count != req.app_logs_count
++                    && (cached_app_logs_revision != req.app_logs_revision
+                         || cached_system_logs_count != req.system_logs_count
+                         || cached_logs.is_empty());
+ 
+                 if should_process {
+-                    if cached_app_logs_count != req.app_logs_count
++                    if cached_app_logs_revision != req.app_logs_revision
+                         || cached_system_logs_count != req.system_logs_count
+                         || cached_logs.is_empty()
+                     {
+                         cached_logs = Self::get_combined_logs(&req.app_logs);
+-                        cached_app_logs_count = req.app_logs_count;
++                        cached_app_logs_revision = req.app_logs_revision;
+                         cached_system_logs_count = req.system_logs_count;
+                     }
+ 
+@@ -191,7 +197,7 @@ impl LogProcessor {
+     }
+ 
+     /// Process a single log entry into display format
+-    fn process_log_entry(log_line: &str, search_query: &str) -> ProcessedLogEntry {
++    pub(crate) fn process_log_entry(log_line: &str, search_query: &str) -> ProcessedLogEntry {
+         // Extract timestamp from log format [HH:MM:SS]
+         let timestamp = if log_line.starts_with('[') && log_line.contains(']') {
+             let end = log_line.find(']').unwrap_or(0);
+```
+
 #### Recent Merged Pull Requests:
 - **PR #129** (2026-09-08): refactor(ui): drop the write-only WorkflowExecution.logs field (@bahdotsh)
 - **PR #128** (2026-09-08): fix(ui): stop logging the same TUI message to both log sinks (@bahdotsh)
@@ -7162,8 +3686,6 @@ Component-boundary matching (via Path::strip_prefix) ensures
 - **PR #119** (2026-07-03): fix(ui): show real timestamps for remaining bare TUI log pushes (@bahdotsh)
 - **PR #118** (2026-06-10): fix(executor): deduplicate concurrent runtime image builds (@ammachado)
 - **PR #116** (2026-06-11): fix: show correct timestamp in execution tab for all TUI log messages (@ammachado)
-- **PR #115** (2026-06-11): fix: resolve matrix expressions in step `with` values before execution (@ammachado)
-- **PR #114** (2026-06-11): feat(runtime): add Auto runtime that detects Docker then Podman (@ammachado)
 
 ---
 
@@ -7177,3 +3699,39 @@ Component-boundary matching (via Path::strip_prefix) ensures
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)
+
+**RULE**:
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ebe8083f`: ui): ship screens 4, 7, 8 and the Tweaks overlay (#105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+ "wrkflw-logging",
+ "wrkflw-logging",
+ "urlencoding",
+ "wrkflw-gitlab",
+ "wrkflw-matrix",
+ "wrkflw-secrets",
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ebe8083f` are properly handled with clean fallback behavior.

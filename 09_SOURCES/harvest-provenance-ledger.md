@@ -3114,3 +3114,8 @@ Every entry in this ledger must capture:
 | `learn-github-zilliztech-claude-context` | `https://github.com/zilliztech/claude-context` | `6fc318b4` | Multi-dimensional audit evidence | 2026-10-19T08:49:00.355Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T08:49:48.462Z |
 | `learn-github-killercup-cargo-edit` | `https://github.com/killercup/cargo-edit` | `138d4e29` | Multi-dimensional audit evidence | 2026-10-19T08:50:22.146Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `248a4190` | Multi-dimensional audit evidence | 2026-10-19T08:58:37.174Z |
+| `learn-github-jordanbaird-ice` | `https://github.com/jordanbaird/Ice` | `11edd391` | Multi-dimensional audit evidence | 2026-10-19T08:58:40.808Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `a4f6e5fe` | Multi-dimensional audit evidence | 2026-10-19T08:58:49.156Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8e5e985c` | Multi-dimensional audit evidence | 2026-10-19T08:58:51.379Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-19T08:59:47.648Z |

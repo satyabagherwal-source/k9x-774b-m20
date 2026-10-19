@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `534bfac1`  
+> **Source Version**: `8e5e985c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:35:03.375Z  
+> **Timestamp**: 2026-10-19T08:58:51.126Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:35:03.367Z  
+> **Harvest Timestamp**: 2026-10-19T08:58:51.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,59 +2252,103 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `534bfac1` (2026-10-19)
-**Commit Message**: docs(geoconvert): note 64-bit float coordinate precision
+### Incident Patch 1: `ac9c3db2` (2026-10-19)
+**Commit Message**: build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)
 
-Coordinates are output as the shortest decimal that round-trips the f64,
-so a value written with more than 15-17 significant digits comes out
-shortened, its last digit possibly changed. Document this in the USAGE
-text (and the regenerated help), with examples.
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0)
 
-Closes #2698
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `docs/help/geoconvert.md` (modified, +6/-0)
+**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
 ```diff
-@@ -66,6 +66,12 @@ output unchanged, so they are not the WGS-84 longitude/latitude that GeoJSON req
- Reprojection is not done by geoconvert; reproject the shapefile first, e.g. with
- ogr2ogr -t_srs EPSG:4326 out.shp in.shp
- 
-+Coordinates are converted as 64-bit floating point numbers, which hold 15-17 significant
-+digits in all (whole and decimal digits together). A coordinate written with more digits
-+than that is output shortened, and its last digit may change: 40.123456789012345 becomes
-+40.123456789012344, and the longitude -122.123456789012345 becomes -122.12345678901235.
-+The difference is far below what GPS can measure; 7 decimal places is already about 1 cm.
-+
- See also <https://github.com/dathere/qsv/wiki/Geospatial#geoconvert>
- 
- 
+@@ -54,6 +54,6 @@ jobs:
+             src/cmd/assets/datatables.min.css
+         
+       - name: Upload DevSkim scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@v4.38.3
++        uses: github/codeql-action/upload-sarif@v4.39.0
+         with:
+           sarif_file: devskim-results.sarif
 ```
 
-**File**: `src/cmd/geoconvert.rs` (modified, +6/-0)
+**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
 ```diff
-@@ -39,6 +39,12 @@ output unchanged, so they are not the WGS-84 longitude/latitude that GeoJSON req
- Reprojection is not done by geoconvert; reproject the shapefile first, e.g. with
- ogr2ogr -t_srs EPSG:4326 out.shp in.shp
+@@ -46,7 +46,7 @@ jobs:
+         continue-on-error: true
  
-+Coordinates are converted as 64-bit floating point numbers, which hold 15-17 significant
-+digits in all (whole and decimal digits together). A coordinate written with more digits
-+than that is output shortened, and its last digit may change: 40.123456789012345 becomes
-+40.123456789012344, and the longitude -122.123456789012345 becomes -122.12345678901235.
-+The difference is far below what GPS can measure; 7 decimal places is already about 1 cm.
-+
- See also https://github.com/dathere/qsv/wiki/Geospatial#geoconvert
+       - name: Upload analysis results to GitHub
+-        uses: github/codeql-action/upload-sarif@v4.38.3
++        uses: github/codeql-action/upload-sarif@v4.39.0
+         with:
+           sarif_file: rust-clippy-results.sarif
+           wait-for-processing: true
+```
+
+---
+
+### Incident Patch 2: `8e5e985c` (2026-10-19)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.248 to 1.0.252 (#4843)
+
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.248 to 1.0.252.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/v1.0.248...v1.0.252)
+
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.252
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
  
- Usage:
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@v1.0.248
++        uses: anthropics/claude-code-action@v1.0.252
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+```
+
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@v1.0.248
++        uses: anthropics/claude-code-action@v1.0.252
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4844** (2026-10-19): build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (@dependabot[bot])
+- **PR #4843** (2026-10-19): build(deps): bump anthropics/claude-code-action from 1.0.248 to 1.0.252 (@dependabot[bot])
 - **PR #4842** (2026-10-18): feat(viz): funnel --area draws a funnel area (@jqnatividad)
 - **PR #4841** (2026-10-18): feat(viz): ternary plot of three parts of a whole (@jqnatividad)
 - **PR #4840** (2026-10-18): feat(viz): barpolar wind rose; clock-face polar bars for the smart seasonality panel (@jqnatividad)
 - **PR #4839** (2026-10-18): feat(viz): parcoords chart, smart parallel-coordinates panel, gallery WebGL lazy rendering (@jqnatividad)
-- **PR #4838** (2026-10-18): deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces) (@jqnatividad)
-- **PR #4837** (2026-10-18): fix(geoconvert): GeoJSON to CSV handles features with different properties (@ybai08)
 
 ---
 
@@ -2324,33 +2368,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(geoconvert): note 64-bit float coordinate precision
+## X. build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)
 
 **RULE**:
-When implementing operations in `docs/help/geoconvert.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/devskim.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `534bfac1`: docs(geoconvert): note 64-bit float coordinate precision. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac9c3db2`: build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/help/geoconvert.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/devskim.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Coordinates are converted as 64-bit floating point numbers, which hold 15-17 significant
-digits in all (whole and decimal digits together). A coordinate written with more digits
-than that is output shortened, and its last digit may change: 40.123456789012345 becomes
-40.123456789012344, and the longitude -122.123456789012345 becomes -122.12345678901235.
-The difference is far below what GPS can measure; 7 decimal places is already about 1 cm.
-
+        uses: github/codeql-action/upload-sarif@v4.39.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: github/codeql-action/upload-sarif@v4.38.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `534bfac1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac9c3db2` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:50:22.114Z",
-  "total_verified_learnings": 755,
+  "last_updated": "2026-10-19T08:59:47.590Z",
+  "total_verified_learnings": 758,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3073,22 +3073,35 @@
     "learn-github-bahdotsh-wrkflw": {
       "learning_id": "learn-github-bahdotsh-wrkflw",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bahdotsh-wrkflw",
+      "source": "bahdotsh/wrkflw",
+      "repository": "bahdotsh/wrkflw",
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "HEAD",
-      "content_hash": "c64063c87d8a8a300d5cb2483f50d00798332d77537c50bf4c0ef68481a717cb",
+      "source_version": "248a4190",
+      "content_hash": "9683f885c164d0f64d380994fc9d32b8a91736cfcbf48b3c61b83b519a897d93",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2446,
+          "title": "ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.031Z"
+      "verified_at": "2026-10-19T08:58:37.121Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bai-lab-memoryos": {
       "learning_id": "learn-github-bai-lab-memoryos",
@@ -6171,8 +6184,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "534bfac1",
-      "content_hash": "07e89ba95e3f9d1c8b88a9bcccf7a1067fd1270a13cbb845bfca93bf1a6b33b3",
+      "source_version": "8e5e985c",
+      "content_hash": "811b2473e4d71dcbe32a5e348bfdcd669b126defbccea7d78e4232750f725be1",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6195,6 +6208,11 @@
           "number": 1980,
           "title": "docs(geoconvert): note 64-bit float coordinate precision",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2449,
+          "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6202,7 +6220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:35:03.546Z",
+      "verified_at": "2026-10-19T08:58:51.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14802,7 +14820,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "38d5d6bd480fc2208b3fc594c276f48ab54b7c05fe61baeeee328dfe6a81ae65",
+      "content_hash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -14835,6 +14853,21 @@
           "number": 1502,
           "title": "Modular Component Separation for VRAM Optimization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2450,
+          "title": "Heterogeneous Latent-Domain VAE Precision Segregation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2451,
+          "title": "Runtime Hardware Feature Fallback for Exotic Quantization (NVFP4 / ConvRot)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2452,
+          "title": "CUDA Toolkit/PyTorch ABI Boundary Invariant for Rotational Matrix Packing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14855,7 +14888,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-18T01:14:56.152Z",
+      "verified_at": "2026-10-19T08:59:47.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25060,22 +25093,35 @@
     "learn-github-jordanbaird-ice": {
       "learning_id": "learn-github-jordanbaird-ice",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jordanbaird-ice",
+      "source": "jordanbaird/Ice",
+      "repository": "jordanbaird/Ice",
       "slug": "jordanbaird-ice",
       "platform": "github",
       "source_url": "https://github.com/jordanbaird/Ice",
-      "source_version": "HEAD",
-      "content_hash": "4410a225e4330d3cf3c8ce5ea39b0c777853f29f79db456804ca8ee616420a29",
+      "source_version": "11edd391",
+      "content_hash": "457264c56a3fec735980663245f3e5269e6553fb9482f0474239401c39ee3b3c",
       "dossier_path": "07_PROJECT_LEARNING/jordanbaird-ice-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jordanbaird-ice-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2447,
+          "title": "Minor UI reworks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.721Z"
+      "verified_at": "2026-10-19T08:58:40.745Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jordansinger-swiftui-kit": {
       "learning_id": "learn-github-jordansinger-swiftui-kit",
@@ -26610,22 +26656,35 @@
     "learn-github-lancedb-lancedb": {
       "learning_id": "learn-github-lancedb-lancedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lancedb-lancedb",
+      "source": "lancedb/lancedb",
+      "repository": "lancedb/lancedb",
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "HEAD",
-      "content_hash": "6ccd71be5b001139c73fcd855850ac8518fcdee55a6221dccde992033262c243",
+      "source_version": "a4f6e5fe",
+      "content_hash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2448,
+          "title": "require a primary key to enable MemWAL (#4561)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.938Z"
+      "verified_at": "2026-10-19T08:58:49.092Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-langbot-app-langbot": {
       "learning_id": "learn-github-langbot-app-langbot",
@@ -84104,6 +84163,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:50:22.108Z"
+    },
+    "rule-2446": {
+      "learning_id": "rule-2446",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2446,
+      "title": "ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "248a4190",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:58:37.121Z"
+    },
+    "rule-2447": {
+      "learning_id": "rule-2447",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2447,
+      "title": "Minor UI reworks",
+      "source_url": "https://github.com/jordanbaird/Ice",
+      "source_version": "11edd391",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:58:40.745Z"
+    },
+    "rule-2448": {
+      "learning_id": "rule-2448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2448,
+      "title": "require a primary key to enable MemWAL (#4561)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "a4f6e5fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:58:49.093Z"
+    },
+    "rule-2449": {
+      "learning_id": "rule-2449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2449,
+      "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8e5e985c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:58:51.326Z"
+    },
+    "rule-2450": {
+      "learning_id": "rule-2450",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2450,
+      "title": "Heterogeneous Latent-Domain VAE Precision Segregation",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:59:47.579Z"
+    },
+    "rule-2451": {
+      "learning_id": "rule-2451",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2451,
+      "title": "Runtime Hardware Feature Fallback for Exotic Quantization (NVFP4 / ConvRot)",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:59:47.579Z"
+    },
+    "rule-2452": {
+      "learning_id": "rule-2452",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2452,
+      "title": "CUDA Toolkit/PyTorch ABI Boundary Invariant for Rotational Matrix Packing",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:59:47.579Z"
     }
   },
   "aliases": {
