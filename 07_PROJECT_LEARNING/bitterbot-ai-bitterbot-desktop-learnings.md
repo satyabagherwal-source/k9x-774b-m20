@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `02ebdf27`  
+> **Source Version**: `3ddb21ab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:01:38.373Z  
+> **Timestamp**: 2026-10-19T15:17:56.142Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:01:38.365Z  
+> **Harvest Timestamp**: 2026-10-19T15:17:56.136Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,505 +1799,597 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02ebdf27` (2026-10-19)
-**Commit Message**: feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (#275)
+### Incident Patch 1: `3ddb21ab` (2026-10-19)
+**Commit Message**: feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (#276)
 
-* feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI
+Hormones (§4.7, last by design): a job the owner can see succeed on the
+pool, one the watcher saw running, gives a recall-sized dopamine lift
+(0.05); a worker still listed but offline since a fresh previous poll, a
+coordinator that goes unreachable, or a sustained embedding fallback gives
+a cortisol rise of the same size. One nudge per kind every thirty minutes
+and four per rolling hour, so two nudges of one kind can never reach the
+dream engine's 0.15 rise trigger: compute colours the mood and never
+starts a dream or a scratch note. Internal batches never lift; jobs first
+seen already finished never nudge; a poll after an idle stretch rebuilds
+its baseline instead of blaming a worker for the gap. The memory manager
+registers the nudge sink only when compute.awareness.nudges is on (default
+on), so turning it off is a no-op path whatever a plugin passes.
 
-Memory (§4.7): every finished job the agent or owner started becomes an
-`episode` chunk (compute/episode/<job>, one per job and outcome), emitted
-by the watcher on both the live and the reconcile path and written by the
-default agent's memory manager, which registers the sink on build and hands
-it back on close. The working-memory synthesis receives a compute block
-over the last 7 days from the local ledger and delivery tables (pools and
-trust, jobs consumed per origin and outcome, embedding batches by route and
-class, paid jobs funded) as soon as there is any activity, and The Niche
-instructions ask for it; a node without compute gets no block.
+Settings: a Compute group (label, order, help) so the compute.* rows no
+longer fall into the unlabelled bucket; compute.awareness.nudges with
+label, help and default.
 
-Owner surfaces: compute.status and compute.jobs (operator.read),
-compute.pause (admin, optional backend.pauseWorker) and compute.trust
-(admin; writes compute.pools.<id>.trust into the resolved config file,
-refuses an invalid or missing config, forbidden keys and the local pool).
-`bitterbot compute` gains status, jobs, pause and 
+Upgrade: docs/network/compute.md says what the def
 
-**File**: `docs/cli/compute.md` (modified, +22/-4)
+**File**: `docs/memory/emotional-system.md` (modified, +14/-12)
 ```diff
-@@ -8,24 +8,42 @@ title: "compute"
+@@ -24,18 +24,20 @@ value = baseline + (value - baseline) × 2^(-elapsed / halfLife)
  
- # `bitterbot compute`
+ Events stimulate specific hormones. Each event has a magnitude (how much to add) and a target hormone:
  
--The owner's terminal surface for paid compute (PLAN-57). The agent can
--quote and, where paid compute is enabled, submit a paid job; only you can
--fund one. These commands hold an admin connection to the gateway, and the
--funding is bound to that connection.
-+The owner's terminal surface for compute pools (PLAN-57). `status` and
-+`jobs` show what the agent sees. `quote` and `approve` handle a paid job:
-+the agent can quote and, where paid compute is enabled, submit one; only
-+you can fund it, and the funding is bound to the admin connection these
-+commands hold. `pause` rests one of this node's workers; `trust` decides
-+what memory may reach a pool.
+-| Event               | Hormone            | Magnitude    | Trigger                                |
+-| ------------------- | ------------------ | ------------ | -------------------------------------- |
+-| `reward`            | dopamine           | +0.30        | Positive feedback                      |
+-| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough          |
+-| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                 |
+-| `error`             | cortisol           | +0.30        | Bug, error, frustration                |
+-| `urgency`           | cortisol           | +0.40        | Time pressure detected                 |
+-| `social`            | oxytocin           | +0.30        | Personal sharing, trust building       |
+-| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace              |
+-| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories            |
+-| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories            |
+-| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational memories |
++| Event               | Hormone            | Magnitude    | Trigger                                                                                               |
++| ------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
++| `reward`            | dopamine           | +0.30        | Positive feedback                                                                                     |
++| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
++| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
++| `error`             | cortisol           | +0.30        | Bug, error, frustration                                                                               |
++| `urgency`           | cortisol           | +0.40        | Time pressure detected                                                                                |
++| `social`            | oxytocin           | +0.30        | Personal sharing, trust building                                                                      |
++| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace                                                                             |
++| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories                                                                           |
++| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories                                                                           |
++| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational memories                                                                |
++| `compute_success`   | dopamine           | +0.05        | A compute job you can see succeeded on the pool (rate-limited)                                        |
++| `compute_setback`   | cortisol           | +0.05        | A pool worker went offline, the coordinator went away, or embeddings keep falling back (rate-limited) |
  
- Related:
+ Note the **recall events** have smaller magnitudes (0.05) than direct events (0.10-0.40) to prevent runaway feedback loops.
  
- - The agent's tool and the paid path: [compute](/tools/compute)
-+- The network view, trust model and every setting: [Compute pools](/network/compute)
- - Holds in the review queue: [Action review](/tools/action-review)
- 
- ## Commands
- 
- ```bash
-+bitterbot compute status                   # pools, workers, credits, jobs in flight
-+bitterbot compute jobs [--limit 20] [--status running]
- bitterbot compute quote <jobId>            # what the job is waiting for
- bitterbot compute approve <jobId>          # show the quote; nothing funded
- bitterbot compute approve <jobId> --yes    # fund it at the quoted amount
-+bitterbot compute pause <workerId>         # pause one of this node's workers
-+bitterbot compute pause <workerId> --resume
-+bitterbot compute trust <poolId> trusted   # or untrusted
- ```
- 
-+`status` prints the coordinator's reachability, credits, each pool with its
-+trust (and your configured trust when it differs from what the coordinator
-+reports), each worker's state and pinned model, the jobs in flight, and
-+whether paid jobs are enabled and offered. `jobs` lists recent jobs with
-+their outcome and verification level.
-+
-+`pause` and `trust` need `operator.admin`. `trust` writes
-+`compute.pools.<poolId>.trust`; the egress policy reads it when the memory
-+system starts, so it applies after the next gateway restart.
-+
- `quote` prints the amount, the payee, how long the quote is valid, whether
- the agent's hold for this job is pending in the review queue, and whether
- the paid path or the per-job cap would refuse it.
 ```
 
-**File**: `docs/docs.json` (modified, +1/-0)
+**File**: `docs/network/compute.md` (modified, +22/-0)
 ```diff
-@@ -751,6 +751,7 @@
-                   "network/core-systems",
-                   "network/management-nodes",
-                   "network/mailbox-host",
-+                  "network/compute",
-                   "network/egress",
-                   "gateway/network"
-                 ]
+@@ -105,6 +105,27 @@ rules and refusal reasons are in
+ - `bitterbot doctor` has two sections, "Compute embeddings" and "Compute
+   payments", read from the same local ledger.
+ 
++## Upgrading
++
++Compute awareness is on by default, on new installs and on upgrades alike:
++a config without a `compute` key behaves as `compute.enabled: true`. On a
++node without the Soapbox plugin loaded that means nothing at all. The
++`compute` tool and its prompt section exist only when a backend (the
++plugin with a coordinator) is loaded, the state block renders only when
++something is actionable, the compute block in working memory appears only
++once there is activity, and no connection is opened. An idle upgraded node
++spends no extra tokens and dials nothing new. The Settings form does gain a
++Compute group with every key below on every node, so the switches are
++visible before they matter.
++
++What does change once the plugin is loaded and a pool exists: memory
++embedding batches may route to eligible pool workers under the egress
++policy (`compute.embeddings.provider: pool` is the default; set `local` to
++keep them home), finished jobs become episodes, and compute colours the
++agent's mood a little. Paid jobs stay off until you turn
++`compute.paid.enabled` on. `compute.enabled: false` turns everything off at
++once.
++
+ ## Settings
+ 
+ All keys live under `compute` in `~/.bitterbot/bitterbot.json` and in the
+@@ -117,6 +138,7 @@ Settings form.
+ | `compute.awareness.maxTokens`            | `120`       | Token budget for that block.                                                                   |
+ | `compute.awareness.creditFloor`          | `10`        | Below this many credits the block says so.                                                     |
+ | `compute.awareness.wakeBudgetPerHour`    | `20`        | Most agent wakes per hour from compute completions; the rest are deferred, never dropped.      |
++| `compute.awareness.nudges`               | `true`      | Small hormonal nudges on owner-visible successes and setbacks; rate-limited.                   |
+ | `compute.pools.<id>.trust`               | `untrusted` | Which memory classes may reach the pool (see above).                                           |
+ | `compute.embeddings.provider`            | `pool`      | Route memory embedding batches to eligible pool workers; `local` turns routing off.            |
+ | `compute.embeddings.marginMs`            | `500`       | A worker must beat the local estimate by this much to be chosen.                               |
 ```
 
-**File**: `docs/network/compute.md` (added, +129/-0)
+**File**: `docs/tools/compute.md` (modified, +24/-1)
 ```diff
-@@ -0,0 +1,129 @@
-+---
-+summary: "Compute pools from the network's point of view: what connects where, what may leave the machine, the settings, and what the owner can do"
-+read_when:
-+  - You are deciding whether to join or trust a compute pool
-+  - You want the full list of compute.* settings and their defaults
-+  - You are auditing what memory content can reach another machine
-+title: "Compute pools"
-+---
-+
-+# Compute pools
-+
-+A compute pool is a set of machines that run batches of work for each
-+other: SHA-256 batches and text embeddings on a pinned model today. This
-+node can run its own work locally, send it to a private pool of machines
-+you trust, to a collective pool shared with a group, or (when paid compute
-+is on) to a paid job the owner funds. The agent knows which pools exist,
-+what they cost and when its work finishes ([the compute tool](/tools/compute)).
-+This page is the owner's view: the network, the trust model, the settings
-+and the controls.
-+
-+## What connects where
-+
-+The coordinator and workers are run by the Soapbox plugin, which registers
-+the compute backend with the gateway. Nothing here dials out until that
-+plugin is configured with a coordinator; a node without one spends no
-+tokens and opens no connections for compute. The coordinator URL and every
-+pool endpoint are listed in [What this node connects to](/network/egress).
-+
-+- The gateway polls the coordinator for job status only while a job it
-+  started is in flight, with backoff, and stops when idle.
-+- Results come back through the coordinator; the agent reads them with the
-+  `compute` tool. Results over 20,000 characters are written to
-+  `<workspace>/compute/<job id>.json`.
-+- Nothing secret reaches the agent: tokens, RPC URLs, escrow addresses and
-+  wallet details are stripped from the snapshot it sees.
-+
-+## Trust and what may leave the machine
-+
-+Memory governance tags every chunk `normal`, `personal` or `confidential`.
-+The egress policy decides which pool trust each class may reach:
-+
-+| content class  | may run on                                  |
-+| -------------- | ------------------------------------------- |
-+| `confidential` | this machine only                           |
-+| `personal`     | this machine and pools you marked `trusted` |
-+| `normal`       | any pool, including `untrusted` ones        |
-+
-+Every pool you join is `untrusted` until you say otherwise. Session
-+transcripts default to `personal` (`compute.egress.transcriptsDefaultClass`).
-+The policy is enforced in the embedding provider itself and again in the
-+pool routing; a batch that would cross a line runs locally and is recorded
-+as a policy violation for `bitterbot doctor`.
-+
-+To raise or lower a pool's trust:
-+
-+```bash
-+bitterbot compute trust <pool-id> trusted
-+bitterbot compute trust <pool-id> untrusted
-+```
-+
-+This writes `compute.pools.<pool-id>.trust` and applies to new embedding
-+batches after the next gateway restart.
-+
-+## The owner's controls
-+
-+```bash
-+bitterbot compute status                 # pools, workers, credits, jobs in flight
-+bitterbot compute jobs [--limit 20] [--status running]
-+bitterbot compute quote <job>            # what a paid job is waiting for
-+bitterbot compute approve <job> --yes    # fund it (owner only)
-+bitterbot compute pause <worker>         # rest one of this node's workers
-+bitterbot compute pause <worker> --resume
-+bitterbot compute trust <pool> trusted|untrusted
-+```
-+
-+Reading methods (`compute.status`, `compute.jobs`, `compute.quote`) need
-+`operator.read`; `compute.approve`, `compute.pause` and `compute.trust`
-+need `operator.admin`. See [bitterbot compute](/cli/compute).
-+
-+## Money
-+
-+Paid jobs are off by default. When `compute.paid.enabled` is on and the
-+coordinator offers paid work to this node, the agent may submit a paid job;
-+it waits at `awaiting_payment` until you approve it in the review queue or
-+with `bitterbot compute approve`. The signer refuses anything that is not an
-+authenticated owner decision for an exact quote inside the caps. The full
-+rules and refusal reasons are in
-+[Paid jobs and who pays](/tools/compute#paid-jobs-and-who-pays).
-+
-+## What memory keeps
-+
-+- Every finished job the agent or you started becomes an `episode` chunk
-+  ("Compute job j-42 (sha256 x200, private in lab on worker w1) succeeded, recorded ... UTC; started by the agent"),
-+  so "what did the pool run for me last week" is answerable from memory.
-+  The node's own embedding batches are not episodes.
-+- Every dream cycle's working-memory rewrite receives a compute block over
-+  the last 7 days (pools and their trust, jobs consumed and how they went,
-+  embedding batches routed and where, paid jobs funded) as soon as there is
-+  any compute activity, and The Niche section reflects it. A node with no
-+  pools and no routed batches gets no block and pays no tokens for it. The
-+  success rate counts succeeded against succeeded, failed and expired jobs.
-+- Episodes are written to the default agent's mem
-```
-
-**File**: `docs/network/egress.md` (modified, +18/-0)
-```diff
-@@ -173,6 +173,24 @@ not change the default.
-   the store fetches to identify the agent. No card or account details.
- - **Off switch:** `shop.enabled: false`.
+@@ -320,6 +320,25 @@ route and class, paid jobs funded), which The Niche section reflects; a
+ node with no compute activity gets no block. See
+ [Compute pools](/network/compute).
  
-+## 9. Compute pools (runtime, only with a coordinator configured)
++## Hormones
 +
-+- **When:** only when the Soapbox plugin is configured with a coordinator
-+  and this node has joined a pool, started a job, or routed a memory
-+  embedding batch to a pool worker. A node with no coordinator opens nothing.
-+- **Where:** the coordinator URL the plugin is configured with, and the
-+  pool's workers through it. The local pool is loopback only.
-+- **What:** job specs (hashes to compute, or the texts of memory chunks to
-+  embed), job status polls while a job is in flight, and results. Which
-+  memory content may leave the machine is decided by the egress policy in
-+  [Compute pools](/network/compute): `confidential` never, `personal` only to
-+  pools you marked `trusted`, `normal` to any pool. Paid jobs additionally
-+  reach the settlement network the coordinator names, only after you approve
-+  the quote.
-+- **Off switch:** `compute.enabled: false` (everything), or
-+  `compute.embeddings.provider: "local"` (memory stays local, the tool
-+  remains).
++Compute leaves a small mark on the agent's mood, nothing more. A job you
++can see succeed on the pool, one the watcher saw running, gives a dopamine
++lift the size of a recalled happy memory (0.05); a worker still listed but
++offline since the previous poll, the coordinator going unreachable, or
++memory embeddings falling back to local for a sustained run gives a
++cortisol rise of the same size. The node's own batches never lift; their
++one setback is that sustained-fallback event. Jobs first seen already
++finished (after an outage) never nudge, and a poll after an idle stretch
++starts a fresh baseline instead of blaming the gap on a worker.
 +
- ## Everything else is opt-in
- 
- Web search (Brave/Tavily/Perplexity/xAI/Serply with your key; Parallel Search MCP at
-```
-
-**File**: `docs/tools/compute.md` (modified, +16/-0)
-```diff
-@@ -304,6 +304,22 @@ still approve it from the Control UI or the CLI. Denying from chat works.
- payments". An `agent_origin` refusal is an error there: nothing moved, but
- something tried.
- 
-+## What memory keeps
-+
-+Every finished job the agent or the owner started becomes an `episode`
-+chunk in memory ("Compute job j-42 (sha256 x200, private in lab on worker
-+w1) succeeded, recorded 2026-10-18 14:02 UTC; started by the agent."),
-+written when the watcher delivers the completion (after a gateway outage,
-+when it reconciles), so later questions about what the pool ran are
-+answered from memory rather than from the coordinator. The node's own
-+embedding batches are never episodes, and only the first clause of a
-+coordinator error is kept. Episodes go to the default agent's memory. The dream cycle's
-+working-memory rewrite also receives a compute block built from the ledger
-+(pools and trust, jobs consumed and their outcomes, embedding batches by
-+route and class, paid jobs funded), which The Niche section reflects; a
-+node with no compute activity gets no block. See
-+[Compute pools](/network/compute).
++The bounds are the point: one nudge per kind every thirty minutes and four
++per hour, and at that size and spacing two nudges of one kind cannot add up
++to the dream engine's hormonal rise trigger (0.15), so compute colours the
++mood and never starts a dream or an automatic scratch note.
++`compute.awareness.nudges: false` registers no sink at all, and every nudge
++is then a no-op whatever the plugin passes.
 +
  ## What the agent can never do
  
  There is no action that funds, approves or signs anything. The paid path
-```
-
-**File**: `src/agents/tools/compute-tool.ts` (modified, +1/-1)
-```diff
-@@ -548,7 +548,7 @@ export function isInFlight(status: string): boolean {
-   return status === "queued" || status === "running" || status === "settlement_pending";
- }
+@@ -346,7 +365,11 @@ secrets never reach the agent.
+ To get the state block and completion delivery, also:
  
--function renderJob(j: ComputeJobSummary) {
-+export function renderJob(j: ComputeJobSummary) {
-   return {
-     id: j.id,
-     status: j.status,
+ - open the delivery store (`ComputeDeliveryStore.open()`) and start the
+-  watcher (`startComputeWatcher({ backend, store, ownerSessionKey })`);
++  watcher (`startComputeWatcher({ backend, store, ownerSessionKey, wakeBudgetPerHour, nudges })`,
++  passing `compute.awareness.wakeBudgetPerHour` and `compute.awareness.nudges`
++  from the config; report an unreachable coordinator as `reachable: false`
++  in the snapshot rather than throwing, so the state block and the setback
++  nudge can see it);
+ - record an origin for every job you submit, before or right after the
+   coordinator accepts it: `store.recordOrigin(jobId, "owner", null)` for the
+   Compute tab and CLI, `"agent"` with the task's session key for
 ```
 
-**File**: `src/cli/compute-cli.test.ts` (modified, +80/-1)
+**File**: `src/compute/awareness/index.ts` (modified, +11/-0)
 ```diff
-@@ -1,5 +1,11 @@
- import { describe, expect, it } from "vitest";
--import { type ComputeQuoteView, describeQuote } from "./compute-cli.js";
+@@ -140,3 +140,14 @@ export {
+   hasComputeActivity,
+   renderComputeNicheInput,
+ } from "./niche.js";
++export {
++  type ComputeNudge,
++  type ComputeNudgeKind,
++  type ComputeNudgeSink,
++  COMPUTE_NUDGE_COOLDOWN_MS,
++  COMPUTE_NUDGE_HOURLY_CAP,
++  getComputeNudgeSink,
++  nudgeCompute,
++  registerComputeNudgeSink,
++  resetComputeNudgesForTest,
++} from "./nudges.js";
+```
+
+**File**: `src/compute/awareness/nudges.test.ts` (added, +261/-0)
+```diff
+@@ -0,0 +1,261 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import type {
++  ComputeBackend,
++  ComputeJobSummary,
++  ComputeSnapshot,
++  ComputeWorker,
++} from "./backend.js";
++import { ComputeDeliveryStore } from "./deliveries.js";
++import { resetComputeEpisodesForTest } from "./episodes.js";
 +import {
-+  type ComputeQuoteView,
-+  type ComputeStatusView,
-+  describeJobs,
-+  describeQuote,
-+  describeStatus,
-+} from "./compute-cli.js";
- 
- const view = (over: Partial<ComputeQuoteView> = {}): ComputeQuoteView => ({
-   jobId: "j-42",
-@@ -38,3 +44,76 @@ describe("bitterbot compute: describeQuote", () => {
-     ).toContain("per-job cap");
-   });
- });
++  COMPUTE_NUDGE_COOLDOWN_MS,
++  COMPUTE_NUDGE_HOURLY_CAP,
++  type ComputeNudge,
++  nudgeCompute,
++  registerComputeNudgeSink,
++  resetComputeNudgesForTest,
++} from "./nudges.js";
++import { resetComputeStateForTest } from "./state.js";
++import { type ComputeWatcher, startComputeWatcher } from "./watcher.js";
 +
-+describe("bitterbot compute: describeStatus and describeJobs", () => {
-+  const status: ComputeStatusView = {
-+    backend: true,
-+    reachable: true,
-+    as_of: "2026-10-18T14:00:00.000Z",
-+    settlement: "base-sepolia",
-+    credits: { available: 42, reserved: 0, currency: "TEST_CREDIT" },
-+    pools: [
-+      {
-+        id: "lab",
-+        kind: "private",
-+        trust: "untrusted",
-+        configured_trust: "trusted",
-+        workers_online: 1,
-+        workers_total: 2,
-+        gpu_workers_online: 1,
-+      },
-+    ],
-+    workers: [{ id: "w1", online: true, paused: true, gpu: true, model: "nomic" }],
-+    jobs_in_flight: [{ id: "j1", status: "running", workload: "sha256", items: 3 }],
-+    paid: { enabled: false, available: true, maxUsdcPerJob: 5, maxUsdcPerDay: 20 },
-+    runtime: false,
-+  };
++const NOW = 1_700_000_000_000;
 +
-+  it("prints pools, workers, jobs and the paid flags one per line", () => {
-+    const lines = describeStatus(status);
-+    expect(lines[0]).toContain("Coordinator: reachable");
-+    expect(lines).toContain(
-+      "  lab  private, untrusted, configured trusted, 1/2 workers online (1 GPU)",
-+    );
-+    expect(lines).toContain("  w1  paused, GPU, model nomic");
-+    expect(lines.some((l) => l.startsWith("Jobs in flight: j1 (running, sha256 x3)"))).toBe(true);
-+    expect(lines.some((l) => l.includes("off (compute.paid.enabled)"))).toBe(true);
-+    expect(lines.at(-1)).toContain("no compute runtime is registered");
-+    expect(describeStatus({ ...status, backend: false })[0]).toContain("No compute backend");
++describe("compute nudges are bounded (PLAN-57 Phase 6)", () => {
++  afterEach(() => resetComputeNudgesForTest());
++
++  it("does nothing without a sink or when disabled", () => {
++    expect(nudgeCompute({ kind: "success", reason: "x", now: NOW })).toBe(false);
++    const sink = vi.fn();
++    registerComputeNudgeSink(sink);
++    expect(nudgeCompute({ kind: "success", reason: "x", enabled: false, now: NOW })).toBe(false);
++    expect(sink).not.toHaveBeenCalled();
 +  });
 +
-+  it("lists jobs compactly", () => {
-+    expect(describeJobs([])).toEqual(["No jobs."]);
++  it("allows one nudge per kind per cooldown, caps the rolling hour, and survives a throwing sink", () => {
++    const seen: ComputeNudge[] = [];
++    registerComputeNudgeSink((n) => {
++      seen.push(n);
++    });
++    expect(nudgeCompute({ kind: "success", reason: "job a", now: NOW })).toBe(true);
++    expect(nudgeCompute({ kind: "success", reason: "job b", now: NOW + 1000 })).toBe(false);
++    expect(nudgeCompute({ kind: "setback", reason: "worker", now: NOW + 1000 })).toBe(true);
 +    expect(
-+      describeJobs([
-+        {
-+          id: "j1",
-+          status: "succeeded",
-+          mode: "private",
-+          scope: "lab",
-+          workload: "sha256",
-+          items: 3,
-+          worker: "w1",
-+          verification: "recomputed",
-+          error: null,
-+          awaiting_usdc: null,
-+        },
-+        {
-+          id: "j2",
-+          status: "awaiting_payment",
-+          mode: "paid_usdc",
-+          scope: null,
-+          workload: "embeddings",
-+          items: 8,
-+          worker: null,
-+          verification: null,
-+          error: null,
-+          awaiting_usdc: 0.5,
-+        },
-+      ]),
-+    ).toEqual([
-+      "j1  succeeded  private lab  sha256 x3 on w1, recomputed",
-+      "j2  awaiting_payment  paid_usdc  embeddings x8, awaiting 0.5 USDC",
-+    ]);
++      nudgeCompute({ kind: "success", reason: "job c", now: NOW + COMPUTE_NUDGE_COOLDOWN_MS }),
++    ).toBe(true);
++    expect(
++      nudgeCompute({
++        kind: "setback",
++        reason: "again",
++        now: NOW + COMPUTE_NUDGE_COOLDOWN_MS + 1000,
++      }),
++    ).toBe(true);
++    expect(seen.map((n) => n.reason)).toEqual(["job a", "worker", "job c", "again"]);
++    expect(seen).toHaveLength(COMPUTE_NUDGE_HOURLY_CAP);
++    // Two kinds at one per cooldown is exactly the hourly cap; nothing more fits
++    // until the oldest ages out of the rolling hour.
++    expect(nudgeCompute({ kind: "success", reason: "capped", now: NOW + 59 * 60_000 })).toBe(false);
++    expect(nudgeCompute({ kind: "success", reason: "aged out", now: NOW + 60 * 60_000 })).toBe(
++      true,
++    );
++    registerComputeNudgeSink(() => {
++      throw new Error("boom");
++    });
++    expect(() =>
++      nudgeCompute({ kind: "success", reason: "x", now: NOW + 10 * 60 * 60_000 }),
++    ).not.toThrow();
++  });
++});
++
++describe("the watcher nudges on owner-visible successes and setbacks", () => {
++  let store: ComputeDeliveryStore;
++  let w: ComputeWatcher | null = null;
++  const jobs: ComputeJobSummary[] = [];
++  const workers: ComputeWorker[] = [];
++  const timers: Array<{ fn: () => void; ms: number }> = [];
++  const nudges: ComputeNudge[] = [];
++  const clock = { now: NOW };
++  let reachable = true;
++
++  function worker(id: string, online = true): ComputeWorker {
++    return {
++      id,
++      online,
++      paused: false,
++      gpu: false,
++      cpuThreads: 2,
++      memoryMib: 512,
++      pools: ["lab"],
++      projects: [],
++      modes: ["private"],
++    };
++  }
++  function job(over: Partial<ComputeJobSummary> & { id: string }): ComputeJobSummary {
++    return {
++      status: "running",
++      mode: "private",
++      scope: "lab",
++      workload: "sha256",
++      items: 2,
++      attempts: 1,
++      ...over,
++    };
++  }
++  async function flush() {
++    for (let i = 0; i < 6; i += 1) {
++      await new Promise((r) => setImmediate(r));
++    }
++  }
++  async function runTimers() {
++    for (const t of timers.splice(0)) {
++      t.fn();
++      await flush();
++    }
++  }
++
++  beforeEach(() => {
++    resetComputeStateForTest();
++    resetComputeEpisodesForTest();
++    resetComputeNudgesForTest();
++    store = ComputeDeliveryStore.inMemory();
++    jobs.length = 0;
++    workers.length = 0;
++    timers.length = 0;
++    nudges.length = 0;
++    clock.now = NOW;
++    reachable = true;
++    registerComputeNudgeSink((n) => {
++      nudges.push(n);
++    });
++  });
++
++  afterEach(() => {
++    w?.stop();
++    w = null;
++    store.close();
++    resetComputeNudgesForTest();
++  });
++
++  async function start(over: { nudges?: boolean } = {}) {
++    let version = 0;
++    const backend: ComputeBackend = {
++      snapshot: async (): Promise<ComputeSnapshot> => ({
++        version: ++version,
++        asOf: clock.now,
++        reachable,
++        pools: [],
++        workers: workers.slice(),
++        jobs: jobs.slice(),
++      }),
++      jobs: async () => jobs.slice(),
++      job: async (id) => jobs.find((j) => j.id === id) ?? null,
++      result: async () => null,
++    };
++    w = startComputeWatcher({
++      backend,
++      store,
++      ownerSessionKey: () => "agent:main:main",
++      wakeBudgetPerHour: 20,
++   
+```
+
+**File**: `src/compute/awareness/nudges.ts` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++/**
++ * PLAN-57 §4.7, Phase 6: hormonal nudges from compute. Flavour, not
++ * function: a small dopamine lift when a job the owner can see succeeds, a
++ * small cortisol rise when a worker drops out, the coordinator goes
++ * unreachable, or pool embeddings fall back to local for a sustained run.
++ *
++ * Bounded by construction: one nudge per kind per 30-minute window and a
++ * cap per rolling hour across kinds; internal traffic never lifts (callers
++ * only nudge successes for owner- or agent-started jobs), and the one
++ * internal setback is the sustained-fallback event. The magnitude (0.05, the
++ * recall class) and the spacing are chosen so that two nudges of one kind
++ * can never add up to the dream engine's hormonal rise trigger (0.15 by
++ * default) even before decay: compute colours the mood, it never starts a
++ * dream. `compute.awareness.nudges: false` keeps the sink from being
++ * registered at all, and without a sink every nudge is a no-op.
++ */
++
++import { createSubsystemLogger } from "../../logging/subsystem.js";
++
++const log = createSubsystemLogger("compute/nudges");
++
++export type ComputeNudgeKind = "success" | "setback";
++
++export type ComputeNudge = {
++  kind: ComputeNudgeKind;
++  /** What happened, for the log; never rendered to the model. */
++  reason: string;
++  at: number;
++};
++
++export type ComputeNudgeSink = (nudge: ComputeNudge) => unknown;
++
++/** At most one nudge of a kind inside this window. */
++export const COMPUTE_NUDGE_COOLDOWN_MS = 30 * 60_000;
++/** At most this many nudges of any kind per rolling hour. */
++export const COMPUTE_NUDGE_HOURLY_CAP = 4;
++const HOUR_MS = 60 * 60_000;
++
++let sink: ComputeNudgeSink | null = null;
++const lastByKind = new Map<ComputeNudgeKind, number>();
++let recent: number[] = [];
++
++export function registerComputeNudgeSink(next: ComputeNudgeSink | null): void {
++  sink = next;
++}
++
++export function getComputeNudgeSink(): ComputeNudgeSink | null {
++  return sink;
++}
++
++export function resetComputeNudgesForTest(): void {
++  sink = null;
++  lastByKind.clear();
++  recent = [];
++}
++
++/**
++ * Apply a nudge if one is due. Returns true when the sink was called.
++ * `enabled` is the config switch; callers pass `compute.awareness.nudges`.
++ */
++export function nudgeCompute(input: {
++  kind: ComputeNudgeKind;
++  reason: string;
++  enabled?: boolean;
++  now?: number;
++}): boolean {
++  if (input.enabled === false || !sink) {
++    return false;
++  }
++  const now = input.now ?? Date.now();
++  recent = recent.filter((t) => now - t < HOUR_MS);
++  if (recent.length >= COMPUTE_NUDGE_HOURLY_CAP) {
++    return false;
++  }
++  const last = lastByKind.get(input.kind);
++  if (last !== undefined && now - last < COMPUTE_NUDGE_COOLDOWN_MS) {
++    return false;
++  }
++  lastByKind.set(input.kind, now);
++  recent.push(now);
++  try {
++    sink({ kind: input.kind, reason: input.reason.slice(0, 120), at: now });
++    log.debug(`compute nudge ${input.kind}: ${input.reason}`);
++    return true;
++  } catch (err) {
++    log.debug(`compute nudge sink threw: ${String(err)}`);
++    return false;
++  }
++}
+```
+
+**File**: `src/compute/awareness/upgrade-idle.test.ts` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++/**
++ * PLAN-57 Phase 6: the default-on flip on upgrade. A node whose config has
++ * no `compute` key behaves as enabled, and on an idle node (no backend, no
++ * pool, nothing routed) that must cost nothing: no tool, no prompt section,
++ * no state block, no compute block in working memory, no nudges.
++ */
++import { afterEach, describe, expect, it } from "vitest";
++import { buildAgentSystemPrompt } from "../../agents/system-prompt.js";
++import { createComputeTool } from "../../agents/tools/compute-tool.js";
++import { FIELD_DEFAULTS } from "../../config/schema.defaults.js";
++import { buildWorkingMemorySynthesisPrompt } from "../../memory/working-memory-prompt.js";
++import { resetComputeBackendForTest } from "./backend.js";
++import { nudgeCompute, resetComputeNudgesForTest } from "./nudges.js";
++import { resetComputeRuntimeForTest } from "./runtime.js";
++import { resetComputeStateForTest, resolveComputeStateBlockFromConfig } from "./state.js";
++
++const upgradedConfig = {} as Record<string, never>;
++
++describe("upgrade to compute awareness on an idle node", () => {
++  afterEach(() => {
++    resetComputeBackendForTest();
++    resetComputeRuntimeForTest();
++    resetComputeStateForTest();
++    resetComputeNudgesForTest();
++  });
++
++  it("is on by default and costs nothing without a backend", () => {
++    expect(FIELD_DEFAULTS["compute.enabled"]).toBe(true);
++    expect(FIELD_DEFAULTS["compute.awareness.nudges"]).toBe(true);
++    // No backend registered: the tool does not exist, so the prompt section does not either.
++    expect(createComputeTool({ config: upgradedConfig })).toBeUndefined();
++    const toolNames = ["wallet", "exec", "memory_search"];
++    const before = buildAgentSystemPrompt({ workspaceDir: "/tmp/bitterbot", toolNames });
++    expect(before).not.toContain("## Compute Pools");
++    // The state block needs a snapshot; an upgraded config and no snapshot render nothing.
++    expect(resolveComputeStateBlockFromConfig(upgradedConfig)).toBeFalsy();
++    expect(resolveComputeStateBlockFromConfig({ compute: { enabled: true } })).toBeFalsy();
++    // Working memory synthesis carries no compute block without facts.
++    const synthesis = buildWorkingMemorySynthesisPrompt({
++      oldState: "",
++      scratchNotes: "",
++      recentCrystals: [],
++      dreamInsights: [],
++      curiosityTargets: [],
++      emergingSkills: [],
++      hormonalState: { dopamine: 0.5, cortisol: 0.2, oxytocin: 0.4, mood: "calm" },
++      timestamp: "2026-10-18T00:00:00Z",
++    });
++    expect(synthesis).not.toContain("## Input: Compute");
++    // Nudges have no sink and no effect.
++    expect(nudgeCompute({ kind: "success", reason: "x" })).toBe(false);
++  });
++
++  it("turns everything off with the one kill switch", () => {
++    expect(createComputeTool({ config: { compute: { enabled: false } } })).toBeUndefined();
++    expect(resolveComputeStateBlockFromConfig({ compute: { enabled: false } })).toBeFalsy();
 +  });
 +});
 ```
 
-**File**: `src/cli/compute-cli.ts` (modified, +206/-6)
+**File**: `src/compute/awareness/watcher.ts` (modified, +57/-0)
 ```diff
-@@ -1,9 +1,10 @@
- /**
-- * `bitterbot compute` (PLAN-57 §4.8): the owner's terminal surface for paid
-- * compute. `quote` shows what a job is waiting for; `approve` funds it. The
-- * CLI holds an admin connection, so `compute.approve` binds the funding to
-- * that authority; the agent has no equivalent. Phase 5 adds status, jobs,
-- * pause and trust here.
-+ * `bitterbot compute` (PLAN-57 Phases 4 and 5): the owner's terminal surface
-+ * for compute pools. `status` and `jobs` show what the agent sees; `quote`
-+ * and `approve` handle a paid job (the CLI holds an admin connection, so
-+ * `compute.approve` binds the funding to that authority; the agent has no
-+ * equivalent); `pause` rests one of this node's workers; `trust` sets what
-+ * memory may reach a pool.
-  */
+@@ -24,6 +24,7 @@ import { createSubsystemLogger } from "../../logging/subsystem.js";
+ import type { ComputeBackend, ComputeJobSummary, ComputeSnapshot } from "./backend.js";
+ import type { ComputeDeliveryStore, ComputeJobOrigin } from "./deliveries.js";
+ import { emitComputeEpisode, episodeFromJob } from "./episodes.js";
++import { nudgeCompute } from "./nudges.js";
+ import {
+   publishComputeSnapshot,
+   pushComputeTransition,
+@@ -55,6 +56,8 @@ export type ComputeWatcherOptions = {
+   /** The owner's main session: where owner-started jobs report. */
+   ownerSessionKey: () => string;
+   wakeBudgetPerHour?: number;
++  /** PLAN-57 Phase 6: hormonal nudges on owner-visible successes and setbacks (compute.awareness.nudges, default on). */
++  nudges?: boolean;
+   minPollMs?: number;
+   maxPollMs?: number;
+   reconcileLimit?: number;
+@@ -95,6 +98,14 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
+   let stopped = false;
+   let polling = false;
+   let lastStatuses = new Map<string, string>();
++  // Phase 6: what the previous poll saw, to notice a worker dropping out or
++  // the coordinator going away.
++  let lastOnlineWorkers: Set<string> | null = null;
++  let lastReachable: boolean | null = null;
++  let lastPollAt: number | null = null;
++  const nudgesOn = opts.nudges !== false;
++  // A baseline older than this says nothing about what happened since.
++  const baselineMaxAgeMs = 2 * maxPoll;
+   const wakes: number[] = [];
  
- import type { Command } from "commander";
-@@ -94,10 +95,209 @@ export function describeQuote(view: ComputeQuoteView): string[] {
-   return lines;
- }
+   const unsubscribe = subscribe((evt) => {
+@@ -179,6 +190,45 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
+     });
+   }
  
-+export type ComputeStatusView = {
-+  backend: boolean;
-+  reachable: boolean;
-+  as_of?: string;
-+  settlement?: string | null;
-+  credits?: { available: number; reserved: number; currency: string } | null;
-+  pools: Array<{
-+    id: string;
-+    kind: string;
-+    trust: string;
-+    configured_trust?: string;
-+    workers_online: number;
-+    workers_total: number;
-+    gpu_workers_online: number;
-+  }>;
-+  workers: Array<{
-+    id: string;
-+    online: boolean;
-+    paused: boolean;
-+    gpu: boolean;
-+    model: string | null;
-+  }>;
-+  jobs_in_flight: Array<{ id: string; status: string; workload: string; items: number }>;
-+  paid?: { enabled: boolean; available: boolean; maxUsdcPerJob: number; maxUsdcPerDay: number };
-+  runtime?: boolean;
-+};
-+
-+export type ComputeJobView = {
-+  id: string;
-+  status: string;
-+  mode: string;
-+  scope: string | null;
-+  workload: string;
-+  items: number;
-+  worker: string | null;
-+  verification: string | null;
-+  error: string | null;
-+  awaiting_usdc: number | null;
-+};
-+
-+/** The status a person reads: one line per pool and worker, then what is running. */
-+export function describeStatus(view: ComputeStatusView): string[] {
-+  if (!view.backend) {
-+    return ["No compute backend is loaded on this node (the Soapbox plugin registers one)."];
-+  }
-+  const lines: string[] = [];
-+  lines.push(
-+    `Coordinator: ${view.reachable ? "reachable" : "unreachable"}${view.as_of ? ` (as of ${view.as_of})` : ""}${view.settlement ? `, settlement ${view.settlement}` : ""}`,
-+  );
-+  if (view.credits) {
-+    lines.push(
-+      `Credits: ${view.credits.available} available, ${view.credits.reserved} reserved (${view.credits.currency})`,
-+    );
-+  }
-+  if (view.pools.length === 0) {
-+    lines.push("Pools: none joined (local machine only).");
-+  } else {
-+    lines.push("Pools:");
-+    for (const p of view.pools) {
-+      const trust =
-+        p.configured_trust && p.configured_trust !== p.trust
-+          ? `${p.trust}, configured ${p.configured_trust}`
-+          : p.trust;
-+      lines.push(
-+        `  ${p.id}  ${p.kind}, ${trust}, ${p.workers_online}/${p.workers_total} workers online (${p.gpu_workers_online} GPU)`,
-+      );
++  /**
++   * A worker that was online at the previous poll and is now listed offline,
++   * or a coordinator that went away. The previous poll must be recent: after
++   * an idle stretch the baseline says nothing about what happened since, and
++   * a worker that simply left the pool is not a setback.
++   */
++  function noticeSetbacks(snapshot: ComputeSnapshot): void {
++    const at = now();
++    const fresh = lastPollAt !== null && at - lastPollAt <= baselineMaxAgeMs;
++    if (fresh && lastReachable === true && !snapshot.reachable) {
++      nudgeCompute({
++        kind: "setback",
++        reason: "coordinator unreachable",
++        enabled: nudgesOn,
++        now: at,
++      });
 +    }
-+  }
-+  if (view.workers.length > 0) {
-+    lines.push("Workers:");
-+    for (const w of view.workers) {
-+      const state = w.paused ? "paused" : w.online ? "online" : "offline";
-+      lines.push(
-+        `  ${w.id}  ${state}${w.gpu ? ", GPU" : ""}${w.model ? `, model ${w.model}` : ""}`,
-+      );
++    lastReachable = snapshot.reachable;
++    const byId = new Map(snapshot.workers.map((w) => [w.id, w]));
++    if (fresh && lastOnlineWorkers && snapshot.reachable) {
++      const lost = [...lastOnlineWorkers].filter((id) => {
++        const w = byId.get(id);
++        return w !== undefined && !w.online;
++      });
++      if (lost.length > 0) {
++        nudgeCompute({
++          kind: "setback",
++          reason: `worker offline: ${lost.slice(0, 3).join(", ")}`,
++          enabled: nudgesOn,
++          now: at,
++        });
++      }
 +    }
++    if (snapshot.reachable) {
++      lastOnlineWorkers = new Set(snapshot.workers.filter((w) => w.online).map((w) => w.id));
++    }
++    lastPollAt = at;
 +  }
-+  lines.push(
-+    view.jobs_in_flight.length === 0
-+      ? "Jobs in flight: none."
-+      : `Jobs in flight: ${view.jobs_in_flight.map((j) => `${j.id} (${j.status}, ${j.workload} x${j.items})`).join(", ")}`,
-+  );
-+  if (view.paid) {
-+    lines.push(
-+      `Paid jobs: ${view.paid.enabled ? "enabled" : "off (compute.paid.enabled)"}, ${view.paid.available ? "offered by the coordinator" : "not offered to this node"}; caps ${view.paid.maxUsdcPerJob} USDC per job, ${view.paid.maxUsdcPerDay} per day`,
-+    );
-+  }
-+  if (view.runtime === false) {
-+    lines.push(
-+      "Note: no compute runtime is registered; the agent cannot submit and nothing is delivered.",
-+    );
-+  }
-+  return lines;
-+}
 +
-+export function describeJobs(jobs: ComputeJobView[]): string[] {
-+  if (jobs.length === 0) {
-+    return ["No jobs."];
-+  }
-+  return jobs.map((j) => {
-+    const scope = j.scope ? ` ${j.scope}` : "";
-+    const worker = j.worker ? ` on ${j.worker}` : "";
-+    const ver = j.verification ? `, ${j.verification}` : "";
-+    const usdc = j.awaiting_usdc !== null ? `, awaiting ${j.awaiting_usdc} USDC` : "";
-+    const err = j.error ? `, error: ${j.error}` : "";
-+    return `${j.id}  ${j.status}  ${j.mode}${scope}  ${j.workload} x${j.items}${worker}${ver}${usdc}${err}`;
-+  });
-+}
-+
- export function registerComputeCli(program: Command) {
-   const compute = program
-     .command("compute")
--    .description("Compute pools: quotes and approvals for paid jobs");
-+    .description("Compute pools: status, jobs, paid-job approvals, worker pause and 
+   function handleTransitions(jobs: ComputeJobSummary[]): void {
+     for (const job of jobs) {
+       const prev = lastStatuses.get(job.id);
+@@ -198,6 +248,12 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
+         linkTask(route, job);
+         // §4.7: a finished job the agent or owner started becomes an episode.
+         emitComputeEpisode(episodeFromJob(job, route, now()));
++        // Phase 6: an owner-visible success the watcher saw in flight is a
++        // small lift. A job first seen already finished (reconciled after an
++        // outage, or found by a refresh during startup) does not nudge.
++        if (job.status === "succeeded" && prev !== undefined) {
++          nudgeCompute({ kind: "success", reason: `job ${job.id}`, enabled: nudgesOn, now: now() });
++        }
+       }
+     }
+   }
+@@ -229,6 +285,7 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
+       const snapshot = await opts.backend.snapshot();
+       publishComputeSnapshot(snapshot);
+       setComputeInternalJobs(opts.store.internalJobIds());
++      noticeSetbacks(snapshot);
+       handleTransitions(snapshot.jobs);
+       lastStatuses = new Map(snapshot.jobs.map((j) => [j.id, j.status]));
+       retryDeferred();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #276** (2026-10-19): feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (@VGIL77)
 - **PR #275** (2026-10-19): feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (@VGIL77)
 - **PR #274** (2026-10-19): feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (@VGIL77)
 - **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
 - **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
 - **PR #270** (2026-10-18): feat(compute): PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery (@VGIL77)
-- **PR #268** (2026-10-18): feat(compute): PLAN-57 Phase 0, the read-only compute tool and its prompt section (@VGIL77)
 
 ---
 
@@ -2317,50 +2409,46 @@ refuses an invalid or missing config, forbidden keys and the local pool).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the own
+## X. compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, 
 
 **RULE**:
-When implementing operations in `docs/cli/compute.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/emotional-system.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02ebdf27`: compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (#275). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ddb21ab`: compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (#276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/compute.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/emotional-system.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-The owner's terminal surface for compute pools (PLAN-57). `status` and
-`jobs` show what the agent sees. `quote` and `approve` handle a paid job:
-the agent can quote and, where paid compute is enabled, submit one; only
-you can fund it, and the funding is bound to the admin connection these
-commands hold. `pause` rests one of this node's workers; `trust` decides
-what memory may reach a pool.
-- The network view, trust model and every setting: [Compute pools](/network/compute)
-bitterbot compute status                   # pools, workers, credits, jobs in flight
-bitterbot compute jobs [--limit 20] [--status running]
-bitterbot compute pause <workerId>         # pause one of this node's workers
-bitterbot compute pause <workerId> --resume
-bitterbot compute trust <poolId> trusted   # or untrusted
-`status` prints the coordinator's reachability, credits, each pool with its
-trust (and your configured trust when it differs from what the coordinator
-reports), each worker's state and pinned model, the jobs in flight, and
-whether paid jobs are enabled and offered. `jobs` lists recent jobs with
-their outcome and verification level.
-
-`pause` and `trust` need `operator.admin`. `trust` writes
-`compute.
+| Event               | Hormone            | Magnitude    | Trigger                                                                                               |
+| ------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
+| `reward`            | dopamine           | +0.30        | Positive feedback                                                                                     |
+| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
+| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
+| `error`             | cortisol           | +0.30        | Bug, error, frustration                                                                               |
+| `urgency`           | cortisol           | +0.40        | Time pressure detected                                                                                |
+| `social`            | oxytocin           | +0.30  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-The owner's terminal surface for paid compute (PLAN-57). The agent can
-quote and, where paid compute is enabled, submit a paid job; only you can
-fund one. These commands hold an admin connection to the gateway, and the
-funding is bound to that connection.
+| Event               | Hormone            | Magnitude    | Trigger                                |
+| ------------------- | ------------------ | ------------ | -------------------------------------- |
+| `reward`            | dopamine           | +0.30        | Positive feedback                      |
+| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough          |
+| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                 |
+| `error`             | cortisol           | +0.30        | Bug, error, frustration                |
+| `urgency`           | cortisol           | +0.40        | Time pressure detected                 |
+| `social`            | oxytocin           | +0.30        | Personal sharing, trust building       |
+| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace              |
+| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories            |
+| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories            |
+| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02ebdf27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ddb21ab` are properly handled with clean fallback behavior.

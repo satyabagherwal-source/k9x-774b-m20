@@ -3326,3 +3326,7 @@ Every entry in this ledger must capture:
 | `learn-github-bernaferrari-figmatocode` | `https://github.com/bernaferrari/FigmaToCode` | `f5c4831d` | Multi-dimensional audit evidence | 2026-10-19T15:11:35.556Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `e78e9dde` | Multi-dimensional audit evidence | 2026-10-19T15:11:39.747Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `6782f522` | Multi-dimensional audit evidence | 2026-10-19T15:11:43.182Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-19T15:17:39.978Z |
+| `learn-github-adonisjs-core` | `https://github.com/adonisjs/core` | `b808c9eb` | Multi-dimensional audit evidence | 2026-10-19T15:17:40.230Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `e6deae85` | Multi-dimensional audit evidence | 2026-10-19T15:17:46.625Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3ddb21ab` | Multi-dimensional audit evidence | 2026-10-19T15:17:56.315Z |

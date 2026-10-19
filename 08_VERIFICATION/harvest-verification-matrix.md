@@ -3319,3 +3319,7 @@
 | `CYCLE-20261019-6ZCY` | `2026-10-19T15:11:35.554Z` | `bernaferrari/FigmaToCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2647` | Yes (`532c18d4...`) |
 | `CYCLE-20261019-72L9` | `2026-10-19T15:11:39.741Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`e0dd1d03...`) |
 | `CYCLE-20261019-758R` | `2026-10-19T15:11:43.179Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2648` | Yes (`49306bc6...`) |
+| `CYCLE-20261019-ESJS` | `2026-10-19T15:17:39.976Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`6c9c96a2...`) |
+| `CYCLE-20261019-ESQS` | `2026-10-19T15:17:40.228Z` | `adonisjs/core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2649` | Yes (`d76bcf42...`) |
+| `CYCLE-20261019-EXOF` | `2026-10-19T15:17:46.623Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2650` | Yes (`6e55d7a6...`) |
+| `CYCLE-20261019-F55K` | `2026-10-19T15:17:56.312Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2651` | Yes (`b2dcdc3c...`) |

@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "bdbc13d6af9f2384ee0c40d4b030ca1cb2a499ab1c82d36321acd9a6658cf142",
-    "lastHarvestedAt": "2026-10-18T04:43:07.428Z",
+    "contentHash": "6c9c96a2d8076aff403634cb9d79fbb4719a388675a85c67cb9a24905e7464c7",
+    "lastHarvestedAt": "2026-10-19T15:17:39.978Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "02ebdf27",
+    "sourceVersion": "3ddb21ab",
     "license": "MIT",
-    "contentHash": "f5484937352b3ba076e04c2c8121b98ed5925cc9ad55af8c7035b26a186f9ac3",
-    "lastHarvestedAt": "2026-10-19T03:01:38.650Z",
+    "contentHash": "b2dcdc3c44902a159b57fc83233eb2190e878329b392e0eb9b2ee995b04c05e9",
+    "lastHarvestedAt": "2026-10-19T15:17:56.315Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -5683,10 +5683,10 @@
     "repository": "adonisjs/core",
     "platform": "github",
     "sourceUrl": "https://github.com/adonisjs/core",
-    "sourceVersion": "ed6bb1fa",
+    "sourceVersion": "b808c9eb",
     "license": "MIT",
-    "contentHash": "1533dc79dbebb014348484a3c0ade535619cd4df896a787c3f0b96bd84437399",
-    "lastHarvestedAt": "2026-10-19T04:19:27.687Z",
+    "contentHash": "d76bcf42ff8bf948333866c1cefec6d9cc63d4ed9c9ff28d1326a39f38d5471b",
+    "lastHarvestedAt": "2026-10-19T15:17:40.230Z",
     "learningId": "learn-github-adonisjs-core"
   },
   "mlua-rs-mlua": {
@@ -8248,5 +8248,15 @@
     "contentHash": "532c18d46c65425c0354a0738d30aa96d57b3336f1436f860660affb45a0397d",
     "lastHarvestedAt": "2026-10-19T15:11:35.556Z",
     "learningId": "learn-github-bernaferrari-figmatocode"
+  },
+  "buresdv-cork": {
+    "repository": "buresdv/Cork",
+    "platform": "github",
+    "sourceUrl": "https://github.com/buresdv/Cork",
+    "sourceVersion": "e6deae85",
+    "license": "NOASSERTION",
+    "contentHash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
+    "lastHarvestedAt": "2026-10-19T15:17:46.625Z",
+    "learningId": "learn-github-buresdv-cork"
   }
 }

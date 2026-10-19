@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-3UPQ",
-    "timestamp": "2026-10-19T03:01:19.550Z",
-    "repository": "pinterest/gestalt",
-    "learningId": "learn-github-pinterest-gestalt",
-    "contentHash": "9ac3883290df3cfa948cc68d3480f749d1d8895ef32a346f89b44ae426953cb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3WE2",
-    "timestamp": "2026-10-19T03:01:21.722Z",
-    "repository": "tokio-rs/console",
-    "learningId": "learn-github-tokio-rs-console",
-    "contentHash": "8f1a92773f1a327af6911ca8c2ae4dcabf980e87b32ad6af6ee8a07311842308",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-41ZI",
-    "timestamp": "2026-10-19T03:01:28.974Z",
-    "repository": "fangwei716/30-days-of-react-native",
-    "learningId": "learn-github-fangwei716-30-days-of-react-native",
-    "contentHash": "ecd42b343c2558f7eff5fd867431bd5e6c5936fc7fa557c15581f990625dda0c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-42JX",
-    "timestamp": "2026-10-19T03:01:29.709Z",
-    "repository": "bridgecrewio/checkov",
-    "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-462M",
     "timestamp": "2026-10-19T03:01:34.270Z",
     "repository": "apache/zookeeper",
@@ -7490,6 +7430,66 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "49306bc64a77c9e0575fb9161a7f09bafb16e2b319e0048423471c7646c296cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ESJS",
+    "timestamp": "2026-10-19T15:17:39.976Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "6c9c96a2d8076aff403634cb9d79fbb4719a388675a85c67cb9a24905e7464c7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ESQS",
+    "timestamp": "2026-10-19T15:17:40.228Z",
+    "repository": "adonisjs/core",
+    "learningId": "learn-github-adonisjs-core",
+    "contentHash": "d76bcf42ff8bf948333866c1cefec6d9cc63d4ed9c9ff28d1326a39f38d5471b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EXOF",
+    "timestamp": "2026-10-19T15:17:46.623Z",
+    "repository": "buresdv/Cork",
+    "learningId": "learn-github-buresdv-cork",
+    "contentHash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F55K",
+    "timestamp": "2026-10-19T15:17:56.312Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "b2dcdc3c44902a159b57fc83233eb2190e878329b392e0eb9b2ee995b04c05e9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

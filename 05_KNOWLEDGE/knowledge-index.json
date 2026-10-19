@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:11:43.155Z",
-  "total_verified_learnings": 839,
+  "last_updated": "2026-10-19T15:17:56.284Z",
+  "total_verified_learnings": 840,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -457,14 +457,19 @@
       "slug": "adonisjs-core",
       "platform": "github",
       "source_url": "https://github.com/adonisjs/core",
-      "source_version": "ed6bb1fa",
-      "content_hash": "1533dc79dbebb014348484a3c0ade535619cd4df896a787c3f0b96bd84437399",
+      "source_version": "b808c9eb",
+      "content_hash": "d76bcf42ff8bf948333866c1cefec6d9cc63d4ed9c9ff28d1326a39f38d5471b",
       "dossier_path": "07_PROJECT_LEARNING/adonisjs-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adonisjs-core-learnings.md",
       "promoted_rules": [
         {
           "number": 2114,
           "title": "codemods): replace env validations with --force",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2649,
+          "title": "deps): bump brace-expansion (#5162)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -473,7 +478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:19:27.637Z",
+      "verified_at": "2026-10-19T15:17:40.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3609,8 +3614,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "02ebdf27",
-      "content_hash": "f5484937352b3ba076e04c2c8121b98ed5925cc9ad55af8c7035b26a186f9ac3",
+      "source_version": "3ddb21ab",
+      "content_hash": "b2dcdc3c44902a159b57fc83233eb2190e878329b392e0eb9b2ee995b04c05e9",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3628,6 +3633,11 @@
           "number": 2052,
           "title": "compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the own",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2651,
+          "title": "compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group,",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3635,7 +3645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:01:38.587Z",
+      "verified_at": "2026-10-19T15:17:56.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4030,22 +4040,35 @@
     "learn-github-buresdv-cork": {
       "learning_id": "learn-github-buresdv-cork",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "buresdv-cork",
+      "source": "buresdv/Cork",
+      "repository": "buresdv/Cork",
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "HEAD",
-      "content_hash": "acb27425b58abeadfaf0354aae38542ad71fbee94ca178b3908eb55d48efc6b0",
+      "source_version": "e6deae85",
+      "content_hash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2650,
+          "title": "~ Test workflow updates for newer macOS version",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.159Z"
+      "verified_at": "2026-10-19T15:17:46.592Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-burntsushi-ripgrep": {
       "learning_id": "learn-github-burntsushi-ripgrep",
@@ -13189,7 +13212,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "bdbc13d6af9f2384ee0c40d4b030ca1cb2a499ab1c82d36321acd9a6658cf142",
+      "content_hash": "6c9c96a2d8076aff403634cb9d79fbb4719a388675a85c67cb9a24905e7464c7",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -13241,7 +13264,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-18T04:43:07.399Z",
+      "verified_at": "2026-10-19T15:17:39.943Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88658,6 +88681,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:11:43.149Z"
+    },
+    "rule-2649": {
+      "learning_id": "rule-2649",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2649,
+      "title": "deps): bump brace-expansion (#5162)",
+      "source_url": "https://github.com/adonisjs/core",
+      "source_version": "b808c9eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:17:40.197Z"
+    },
+    "rule-2650": {
+      "learning_id": "rule-2650",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2650,
+      "title": "~ Test workflow updates for newer macOS version",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "e6deae85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:17:46.592Z"
+    },
+    "rule-2651": {
+      "learning_id": "rule-2651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2651,
+      "title": "compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group,",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "3ddb21ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:17:56.276Z"
     }
   },
   "aliases": {

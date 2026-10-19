@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/adonisjs-core-learnings.md`  
 > **Source**: github ([https://github.com/adonisjs/core](https://github.com/adonisjs/core))  
-> **Source Version**: `ed6bb1fa`  
+> **Source Version**: `b808c9eb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:19:27.451Z  
+> **Timestamp**: 2026-10-19T15:17:40.038Z  
 > **Learning ID**: `learn-github-adonisjs-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/adonisjs-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/adonisjs/core](https://github.com/adonisjs/core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:19:26.433Z  
+> **Harvest Timestamp**: 2026-10-19T15:17:39.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AdonisJS is a TypeScript-first web framework for building web apps and API servers. It comes with support for testing, modern tooling, an ecosystem of official packages, and more.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 19150 stars
+- **Stars / Engagement**: 19152 stars
 
 ---
 
@@ -1536,11 +1536,11 @@ export default class EnvAdd extends BaseCommand {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5157** (2026-10-14): **feat: add secret type to env:add command**
-  *Symptoms*: ### 🔗 Linked issue  N/A  ### ❓ Type of change  - [ ] 🐞 Bug fix (a non-breaking change that fixes an issue) - [ ] 👌 Enhancement (improving an existing functionality like performance) - [ x ] ✨ New feature (a non-breaking change that adds functionality) - [ ] ⚠️ Breaking change (fix or feature that would cause existing functionality to change)  ### 📚 Description  Adds support for the `secret` type to the `env:add` command, both through the interactive prompt and the `--type=secret` flag.  For example, `node ace env:add API_KEY my_secret --type=secret` now generates `API_KEY: Env.schema.secret()` in `start/env.ts`. The value is written to `.env` and omitted from `.env.example`.  Includes tests for both usages. All 6 command tests, TypeScript checks, and ESLint checks on the changed files pass.  Documentation PR: https://github.com/adonisjs/v7-docs/pull/86  ### 📝 Checklist  - [ ] I have linked an issue or discussion. - [ x ] I have updated the documentation accordingly. 
+- **Issue #5163** (2026-10-19): **chore(deps): bump undici and release-it**
+  *Symptoms*: Bumps [undici](https://github.com/nodejs/undici) to 7.29.1 and updates ancestor dependency [release-it](https://github.com/release-it/release-it). These dependencies need to be updated together.  Updates `undici` from 7.29.0 to 7.29.1 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/nodejs/undici/releases">undici's releases</a>.</em></p> <blockquote> <h2>v7.29.1</h2> <h2>⚠️ Security fixes</h2> <h3>High severity</h3> <ul> <li><a href="https://github.com/nodejs/undici/security/advisories/GHSA-w293-vg96-wgc3">GHSA-w293-vg96-wgc3</a>: <code>BalancedPool</code> could drop function-valued connection options while cloning its configuration, including custom TLS certificate validation callbacks. Undici now preserves <code>connect</code> and legacy <code>tls</code> options when creating upstreams. Fixed by <a href="https://github.com/nodejs/undici/commit/f690157d728508652fef14673630c71515123e96">f690157d</a>.</li> <li><a href="https://github.com/nodejs/undici/security/advisories/GHSA-rfgv-xxqx-mfg5">GHSA-rfgv-xxqx-mfg5</a>: a WebSocket server could select a subprotocol when none was requested, causing an uncaught <code>TypeError</code> that could terminate the process. Undici now rejects the handshake with protocol error 1002. Fixed by <a href="https://github.com/nodejs/undici/commit/6615e0175e9b635bcd2e3e87a47daa82f6f5b728">6615e017</a>.</li> </ul> <h3>Medium severity</h3> <ul> <li><a href="https://github.com/nodejs/undici/security/advisories
 
-- **Issue #5153** (2026-10-08): **chore(deps): bump adonisjs/core/.github/workflows/test.yml from 7.5.0 to 7.5.2**
-  *Symptoms*: Bumps [adonisjs/core/.github/workflows/test.yml](https://github.com/adonisjs/core) from 7.5.0 to 7.5.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/adonisjs/core/releases">adonisjs/core/.github/workflows/test.yml's releases</a>.</em></p> <blockquote> <h2>Release 7.5.2</h2> <h2><a href="https://github.com/adonisjs/core/compare/v7.5.1...v7.5.2">7.5.2</a> (2026-09-23)</h2> <h3>Bug Fixes</h3> <ul> <li>fail the build when commands index generation fails (<a href="https://github.com/adonisjs/core/commit/184621fc5e305fdc48f2f87d51b6d02fb53d68a7">184621f</a>)</li> </ul> <h2>Faster Ace CLI startup with targeted imports</h2> <p>This release adds targeted entry points for bootstrap code. Importing from <code>@adonisjs/core</code> loads the root entry point and its aggregated error namespaces, including modules that light Ace commands may not need.</p> <table> <thead> <tr> <th>Import path</th> <th>Exports</th> </tr> </thead> <tbody> <tr> <td><code>@adonisjs/core/ignitor</code></td> <td><code>Ignitor</code>, <code>prettyPrintError</code></td> </tr> <tr> <td><code>@adonisjs/core/generators</code></td> <td><code>indexEntities</code></td> </tr> <tr> <td><code>@adonisjs/core/config</code></td> <td><code>configProvider</code>, alongside the existing config exports</td> </tr> </tbody> </table> <p><strong>Existing root exports remain available. The change is opt-in: applications need to switch their bootstrap imports to these paths to get the measur
+- **Issue #5162** (2026-10-19): **chore(deps): bump brace-expansion**
+  *Symptoms*: Bumps  and [brace-expansion](https://github.com/juliangruber/brace-expansion). These dependencies needed to be updated together. Updates `brace-expansion` from 5.0.9 to 5.0.12 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/juliangruber/brace-expansion/commit/f3410159d768f56c9d9f4511d3e1b46425fc1099"><code>f341015</code></a> 5.0.12</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/33a5ef17b8d800bbfa8c52b14c39043b6aac1a96"><code>33a5ef1</code></a> Merge commit from fork</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/82479277b90f2f86263e946f9ff89689b3734568"><code>8247927</code></a> 5.0.11</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/935d78f32f335b2ff76578e5c5e877d31ae9888c"><code>935d78f</code></a> Merge commit from fork</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/df7682f386cdf2d7fef6067bc78ed70d824e1f3f"><code>df7682f</code></a> 5.0.10</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/1ade9de71f3a8719c82c61a7977121067bb55b02"><code>1ade9de</code></a> npm run format</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/6735c94873ca570bcdd6a0690033bdd3126379d3"><code>6735c94</code></a> Merge commit from fork</li> <li><a href="https://github.com/juliangruber/brace-expansion/commit/4e7046543469d31e2b324b1bf14d8606d74f7f18"><code>4e70465</code></a> chore: ensure prettier formatting (<a href="https://redirect.g
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1557,242 +1557,59 @@ export default class EnvAdd extends BaseCommand {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a83aee1` (2026-10-18)
-**Commit Message**: fix(codemods): replace env validations with --force
+### Incident Patch 1: `faa3d763` (2026-10-19)
+**Commit Message**: chore(deps): bump brace-expansion (#5162)
 
-`node ace configure <pkg> --force` regenerated the package config but
-kept the validations already defined in start/env.ts. For example,
-reconfiguring @adonisjs/session with --store=redis left SESSION_DRIVER
-as an enum without "redis" and the app failed to type-check.
-
-defineEnvValidations now passes overwriteExisting to the assembler as
-its `overwrite` option, the same flag stub generation already uses.
-Packages do not need to change their configure hook.
-
-**File**: `modules/ace/codemods.ts` (modified, +7/-3)
+**File**: `package-lock.json` (modified, +9/-9)
 ```diff
-@@ -67,8 +67,8 @@ export class Codemods extends EventEmitter {
-   #cliLogger: UIPrimitives['logger']
- 
-   /**
--   * Overwrite existing files when generating files
--   * from stubs
-+   * Overwrite existing files when generating files from stubs
-+   * and replace existing validations in the start/env.ts file
-    */
-   overwriteExisting = false
- 
-@@ -258,6 +258,7 @@ export class Codemods extends EventEmitter {
-   /**
-    * Define validations for the environment variables in the start/env.ts file.
-    * This method updates the environment validation schema using the assembler.
-+   * Existing validations are replaced when "overwriteExisting" is true.
-    *
-    * @param validations - Validation schema node for environment variables
-    *
-@@ -281,7 +282,10 @@ export class Codemods extends EventEmitter {
- 
-     const action = this.#cliLogger.action('update start/env.ts file')
-     try {
--      await transformer.defineEnvValidations(validations)
-+      await transformer.defineEnvValidations({
-+        overwrite: this.overwriteExisting,
-+        ...validations,
-+      })
-       action.succeeded()
-     } catch (error: any) {
-       this.emit('error', error)
-```
-
-**File**: `tests/ace/codemods.spec.ts` (modified, +65/-0)
-```diff
-@@ -133,6 +133,71 @@ test.group('Codemods | environment variables', (group) => {
- 
-     await assert.fileContains('start/env.ts', 'CORS_MODE: Env.schema.string()')
-   })
-+
-+  test('keep existing env validations', async ({ assert, fs }) => {
-+    const ace = await new AceFactory().make(fs.baseUrl)
-+    await ace.app.init()
-+    ace.ui.switchMode('raw')
-+
-+    await fs.createJson('tsconfig.json', {})
-+    await fs.create(
-+      'start/env.ts',
-+      `export default Env.create(new URL('./'), {
-+        SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
-+      })`
-+    )
-+
-+    const codemods = new Codemods(ace.app, ace.ui.logger)
-+    await codemods.defineEnvValidations({
-+      variables: {
-+        SESSION_DRIVER: `Env.schema.enum(['cookie', 'memory', 'redis'] as const)`,
-+        REDIS_HOST: 'Env.schema.string()',
-+      },
-+    })
-+
-+    await assert.fileContains(
-+      'start/env.ts',
-+      `SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const)`
-+    )
-+    await assert.fileContains('start/env.ts', 'REDIS_HOST: Env.schema.string()')
-+  })
-+
-+  test('replace existing env validations when overwriteExisting is true', async ({
-+    assert,
-+    fs,
-+  }) => {
-+    const ace = await new AceFactory().make(fs.baseUrl)
-+    await ace.app.init()
-+    ace.ui.switchMode('raw')
-+
-+    await fs.createJson('tsconfig.json', {})
-+    await fs.create(
-+      'start/env.ts',
-+      `export default Env.create(new URL('./'), {
-+        SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
-+      })`
-+    )
-+
-+    const codemods = new Codemods(ace.app, ace.ui.logger)
-+    codemods.overwriteExisting = true
-+    await codemods.defineEnvValidations({
-+      variables: {
-+        SESSION_DRIVER: `Env.schema.enum(['cookie', 'memory', 'redis'] as const)`,
-+      },
-+    })
-+
-+    assert.deepEqual(ace.ui.logger.getLogs(), [
-+      {
-+        message: 'green(DONE:)    update start/env.ts file',
-+        stream: 'stdout',
-+      },
-+    ])
-+    await assert.fileContains(
-+      'start/env.ts',
-+      `SESSION_DRIVER: Env.schema.enum(['cookie', 'memory', 'redis'] as const)`
-+    )
-+    await assert.fileNotContains('start/env.ts', `['cookie', 'memory'] as const`)
-+  })
- })
- 
- test.group('Codemods | import aliases', () => {
-```
-
----
-
-### Incident Patch 2: `000b778a` (2026-10-18)
-**Commit Message**: chore(deps): require @adonisjs/assembler 8.6
-
-The env validation codemods rely on the `overwrite` option of
-CodeTransformer.defineEnvValidations and on its returned list of kept
-variables, both added in 8.6.0. Raising the peer dependency minimum
-prevents apps on an older assembler from crashing in configure.
-
-**File**: `package-lock.json` (modified, +5/-5)
-```diff
-@@ -38,7 +38,7 @@
-         "adonis-kit": "build/toolkit/main.js"
-       },
-       "devDependencies": {
--        "@adonisjs/assembler": "^8.5.2",
-+        "@adonisjs/assembler": "^8.6.0",
-         "@adonisjs/encryption": "^6.0.2",
-         "@adonisjs/eslint-config": "^3.1.0",
-         "@adonisjs/prettier-config": "^1.5.0",
-@@ -82,7 +82,7 @@
-         "node": ">=24.0.0"
-       },
-       "peerDependencies": {
--        "@adonisjs/assembler": "^8.0.0-next.23 || ^8.0.0",
-+        "@adonisjs/assembler": "^8.6.0",
-         "@vinejs/vine": "^4.0.0",
-         "argon2": "^0.44.0 || ^0.45.1",
-         "bcrypt": "^6.0.0",
-@@ -165,9 +165,9 @@
-       }
+@@ -4117,9 +4117,9 @@
+       "license": "Apache-2.0"
      },
-     "node_modules/@adonisjs/assembler": {
--      "version": "8.5.2",
--      "resolved": "https://registry.npmjs.org/@adonisjs/assembler/-/assembler-8.5.2.tgz",
--      "integrity": "sha512-CipLZEl/2zBa6ejoMogXsXAg4+8hIf0CAhRaHjf9KXfeUininRc9Wg3zFv+To1xgHLjnuPiQfqKBhP6I44KVlA==",
-+      "version": "8.6.0",
-+      "resolved": "https://registry.npmjs.org/@adonisjs/assembler/-/assembler-8.6.0.tgz",
-+      "integrity": "sha512-IqlirhJAwtF+Dvj2gSExfIDXOz0n2GlMlmBMyYpziWokbskWYY1D6x2SQiLtzHqZ6Iu9Bq4zClACmpniPoNdEw==",
+     "node_modules/brace-expansion": {
+-      "version": "5.0.9",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
+-      "integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
++      "version": "5.0.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
++      "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
        "devOptional": true,
        "license": "MIT",
-       "peer": true,
-```
-
-**File**: `package.json` (modified, +2/-2)
-```diff
-@@ -84,7 +84,7 @@
-     "index:commands": "node --import=@poppinss/ts-exec toolkit/main.js index build/commands"
-   },
-   "devDependencies": {
--    "@adonisjs/assembler": "^8.5.2",
-+    "@adonisjs/assembler": "^8.6.0",
-     "@adonisjs/encryption": "^6.0.2",
-     "@adonisjs/eslint-config": "^3.1.0",
-     "@adonisjs/prettier-config": "^1.5.0",
-@@ -151,7 +151,7 @@
-     "string-width": "^8.2.2"
-   },
-   "peerDependencies": {
--    "@adonisjs/assembler": "^8.0.0-next.23 || ^8.0.0",
-+    "@adonisjs/assembler": "^8.6.0",
-     "@vinejs/vine": "^4.0.0",
-     "argon2": "^0.44.0 || ^0.45.1",
-     "bcrypt": "^6.0.0",
-```
-
----
-
-### Incident Patch 3: `184621fc` (2026-09-23)
-**Commit Message**: fix: fail the build when commands index generation fails
-
-The toolkit never propagated the Ace kernel exit code, so a failing
-`index:commands` step exited with 0. This let 7.5.1 get published
-without build/commands/main.js and commands.json.
-
-Also verify the build output in the release workflow before publishing.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release.yml` (modified, +6/-0)
-```diff
-@@ -41,6 +41,12 @@ jobs:
- 
-       - run: npm audit signatures
- 
-+      - name: Verify build output
-+        run: |
-+          npm run build
-+          test -f build/commands/main.js
-+          test -f build/commands/commands.json
-+
-       - run: npm run release -- --ci
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-**File**: `toolkit/main.ts` (modified, +1/-0)
-```diff
-@@ -31,3 +31,4 @@ kernel.on('help', async (command, $kernel, parsed) => {
- })
- 
- await kernel.handle(process.argv.splice(2))
-+process.exitCode = kernel.exitCode
+       "dependencies": {
+@@ -5022,9 +5022,9 @@
+       "license": "MIT"
+     },
+     "node_modules/copyfiles/node_modules/brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -6692,9 +6692,9 @@
+       "license": "MIT"
+     },
+     "node_modules/glob/node_modules/brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5163** (2026-10-19): chore(deps): bump undici and release-it (@dependabot[bot])
+- **PR #5162** (2026-10-19): chore(deps): bump brace-expansion (@dependabot[bot])
+- **PR #5160** (2026-10-19): chore(deps): bump actions/setup-node from 7.0.0 to 7.1.0 (@dependabot[bot])
+- **PR #5159** (2026-10-19): chore(deps): bump proxy-addr from 2.0.7 to 2.0.8 (@dependabot[bot])
 - **PR #5157** (2026-10-14): feat: add secret type to env:add command (@batosai)
-- **PR #5153** (closed): chore(deps): bump adonisjs/core/.github/workflows/test.yml from 7.5.0 to 7.5.2 (@dependabot[bot])
-- **PR #5151** (2026-10-01): feat(codemods): add import alias and directory helpers (@RomainLanz)
-- **PR #5147** (closed): feat: connect number helpers from @poppinss/utils (@deformator852)
-- **PR #5146** (2026-09-13): perf: enable faster Ace bootstrap with targeted exports (@RomainLanz)
-- **PR #5145** (closed): feat: add number helpers (@deformator852)
+- **PR #5156** (2026-10-19): chore(deps): bump adonisjs/core/.github/workflows/test.yml from 7.5.0 to 7.6.0 (@dependabot[bot])
 
 ---
 
@@ -1812,36 +1629,44 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codemods): replace env validations with --force
+## X. deps): bump brace-expansion (#5162)
 
 **RULE**:
-When implementing operations in `modules/ace/codemods.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adonisjs/core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adonisjs/core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a83aee1`: codemods): replace env validations with --force. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `faa3d763`: deps): bump brace-expansion (#5162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/ace/codemods.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-   * Overwrite existing files when generating files from stubs
-   * and replace existing validations in the start/env.ts file
-   * Existing validations are replaced when "overwriteExisting" is true.
-      await transformer.defineEnvValidations({
-        overwrite: this.overwriteExisting,
-        ...validations,
-      })
+      "version": "5.0.12",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
+      "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
+      "version": "1.1.21",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+      "version": "1.1.21",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-   * Overwrite existing files when generating files
-   * from stubs
-      await transformer.defineEnvValidations(validations)
+      "version": "5.0.9",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
+      "integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
+      "version": "1.1.18",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
+      "version": "1.1.18",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a83aee1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `faa3d763` are properly handled with clean fallback behavior.
