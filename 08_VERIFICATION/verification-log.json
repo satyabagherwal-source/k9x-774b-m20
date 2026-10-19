@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-7CX6",
-    "timestamp": "2026-10-19T05:52:00.810Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8GF3",
-    "timestamp": "2026-10-19T05:52:51.999Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FXTJ",
-    "timestamp": "2026-10-19T05:58:41.143Z",
-    "repository": "dip/cmdk",
-    "learningId": "learn-github-dip-cmdk",
-    "contentHash": "9140e0fd684e74d1948b911604de744f57f8169a0f6a5286461f14d87feb81cd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FYRP",
-    "timestamp": "2026-10-19T05:58:42.373Z",
-    "repository": "graphprotocol/graph-node",
-    "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-G248",
     "timestamp": "2026-10-19T05:58:46.712Z",
     "repository": "hungps/flutter_pokedex",
@@ -7490,6 +7430,66 @@
     "repository": "siderolabs/talos",
     "learningId": "learn-github-siderolabs-talos",
     "contentHash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YQ6B",
+    "timestamp": "2026-10-19T20:41:05.795Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YQL2",
+    "timestamp": "2026-10-19T20:41:06.326Z",
+    "repository": "joshcarty/google-searchconsole",
+    "learningId": "learn-github-joshcarty-google-searchconsole",
+    "contentHash": "0312cba101f694148f3163b56a84d1488ffe436fccf9cdf69fb9e2388a8af4cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YTPS",
+    "timestamp": "2026-10-19T20:41:10.384Z",
+    "repository": "gonzalezreal/swift-markdown-ui",
+    "learningId": "learn-github-gonzalezreal-swift-markdown-ui",
+    "contentHash": "a4ef9eba2af3930a7f3c21197a957780a6213eb97926c25d513bf4538cfaa03b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z0DX",
+    "timestamp": "2026-10-19T20:41:19.029Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

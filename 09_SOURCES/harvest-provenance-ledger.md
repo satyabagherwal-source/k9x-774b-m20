@@ -3486,3 +3486,7 @@ Every entry in this ledger must capture:
 | `learn-github-melihandic-deep-in-gsc` | `https://github.com/melihandic/deep-in-gsc` | `bf8cb859` | Multi-dimensional audit evidence | 2026-10-19T20:35:05.882Z |
 | `learn-github-damascenorafael-reminders-menubar` | `https://github.com/DamascenoRafael/reminders-menubar` | `3ee6f0ac` | Multi-dimensional audit evidence | 2026-10-19T20:35:08.113Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `b1ba5d4d` | Multi-dimensional audit evidence | 2026-10-19T20:35:12.115Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `9177f90c` | Multi-dimensional audit evidence | 2026-10-19T20:41:05.798Z |
+| `learn-github-joshcarty-google-searchconsole` | `https://github.com/joshcarty/google-searchconsole` | `9ab5a265` | Multi-dimensional audit evidence | 2026-10-19T20:41:06.328Z |
+| `learn-github-gonzalezreal-swift-markdown-ui` | `https://github.com/gonzalezreal/swift-markdown-ui` | `8371aeb3` | Multi-dimensional audit evidence | 2026-10-19T20:41:10.387Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `d1e88ab4` | Multi-dimensional audit evidence | 2026-10-19T20:41:19.031Z |

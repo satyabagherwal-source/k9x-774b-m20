@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:35:12.122Z",
+  "last_updated": "2026-10-19T20:41:19.036Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9604,14 +9604,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
-      "verified_at": "2026-10-19T05:45:25.619Z",
+      "content_hash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
+      "verified_at": "2026-10-19T20:41:05.802Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:45:25.619Z"
+      "last_updated": "2026-10-19T20:41:05.802Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",
@@ -10789,14 +10789,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
-      "verified_at": "2026-10-19T07:59:32.947Z",
+      "content_hash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
+      "verified_at": "2026-10-19T20:41:19.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:59:32.947Z"
+      "last_updated": "2026-10-19T20:41:19.036Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -13512,6 +13512,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:35:08.119Z"
+    },
+    "joshcarty/google-searchconsole": {
+      "repository": "joshcarty/google-searchconsole",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-joshcarty-google-searchconsole",
+      "content_hash": "0312cba101f694148f3163b56a84d1488ffe436fccf9cdf69fb9e2388a8af4cf",
+      "verified_at": "2026-10-19T20:41:06.334Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:41:06.334Z"
+    },
+    "gonzalezreal/swift-markdown-ui": {
+      "repository": "gonzalezreal/swift-markdown-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gonzalezreal-swift-markdown-ui",
+      "content_hash": "a4ef9eba2af3930a7f3c21197a957780a6213eb97926c25d513bf4538cfaa03b",
+      "verified_at": "2026-10-19T20:41:10.392Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:41:10.392Z"
     }
   },
   "repos": {

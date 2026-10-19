@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:35:12.070Z",
-  "total_verified_learnings": 913,
+  "last_updated": "2026-10-19T20:41:18.985Z",
+  "total_verified_learnings": 915,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2965,14 +2965,19 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "2e6a47fc",
-      "content_hash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
+      "source_version": "9177f90c",
+      "content_hash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
         {
           "number": 2201,
           "title": "cli): run on a 16 MB stack so Windows debug builds do not overflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2801,
+          "title": "build git2 without network transports so macOS needs no OpenSSL (#522)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2981,7 +2986,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:45:25.552Z",
+      "verified_at": "2026-10-19T20:41:05.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11055,22 +11060,29 @@
     "learn-github-gonzalezreal-swift-markdown-ui": {
       "learning_id": "learn-github-gonzalezreal-swift-markdown-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gonzalezreal-swift-markdown-ui",
+      "source": "gonzalezreal/swift-markdown-ui",
+      "repository": "gonzalezreal/swift-markdown-ui",
       "slug": "gonzalezreal-swift-markdown-ui",
       "platform": "github",
       "source_url": "https://github.com/gonzalezreal/swift-markdown-ui",
-      "source_version": "HEAD",
-      "content_hash": "77fa1532add1bf0a514622891869b08975a16a4bb8a814f5ce7c0c17801f4602",
+      "source_version": "8371aeb3",
+      "content_hash": "a4ef9eba2af3930a7f3c21197a957780a6213eb97926c25d513bf4538cfaa03b",
       "dossier_path": "07_PROJECT_LEARNING/gonzalezreal-swift-markdown-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gonzalezreal-swift-markdown-ui-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.123Z"
+      "verified_at": "2026-10-19T20:41:10.347Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-goodrain-rainbond": {
       "learning_id": "learn-github-goodrain-rainbond",
@@ -41000,8 +41012,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "c7c266c3",
-      "content_hash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
+      "source_version": "d1e88ab4",
+      "content_hash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -41019,6 +41031,11 @@
           "number": 2359,
           "title": "Keyboard Auto-Repeat and In-Flight Execution Race Shield",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2803,
+          "title": "layout): sharper inner panel corners (#12600)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41026,7 +41043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:59:32.883Z",
+      "verified_at": "2026-10-19T20:41:18.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56246,22 +56263,36 @@
     "learn-github-joshcarty-google-searchconsole": {
       "learning_id": "learn-github-joshcarty-google-searchconsole",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "joshcarty/google-searchconsole",
       "repository": "joshcarty/google-searchconsole",
       "slug": "joshcarty-google-searchconsole",
       "platform": "github",
       "source_url": "https://github.com/joshcarty/google-searchconsole",
-      "source_version": "main",
-      "content_hash": "58a8809f042b83e34b2b820b5703b9ea86d7af4884149e6ed933a81c5d030dbe",
+      "source_version": "9ab5a265",
+      "content_hash": "0312cba101f694148f3163b56a84d1488ffe436fccf9cdf69fb9e2388a8af4cf",
       "dossier_path": "07_PROJECT_LEARNING/joshcarty-google-searchconsole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joshcarty-google-searchconsole-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2802,
+          "title": "Travis CI builds due to dependency conflict",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:41:06.295Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-trybyte-app-sitemap-validator": {
       "learning_id": "learn-github-trybyte-app-sitemap-validator",
@@ -92279,6 +92310,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:35:12.058Z"
+    },
+    "rule-2801": {
+      "learning_id": "rule-2801",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2801,
+      "title": "build git2 without network transports so macOS needs no OpenSSL (#522)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "9177f90c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:41:05.750Z"
+    },
+    "rule-2802": {
+      "learning_id": "rule-2802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2802,
+      "title": "Travis CI builds due to dependency conflict",
+      "source_url": "https://github.com/joshcarty/google-searchconsole",
+      "source_version": "9ab5a265",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:41:06.295Z"
+    },
+    "rule-2803": {
+      "learning_id": "rule-2803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2803,
+      "title": "layout): sharper inner panel corners (#12600)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "d1e88ab4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:41:18.978Z"
     }
   },
   "aliases": {

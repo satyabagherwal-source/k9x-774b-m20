@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "2e6a47fc",
+    "sourceVersion": "9177f90c",
     "license": "Apache-2.0",
-    "contentHash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
-    "lastHarvestedAt": "2026-10-19T05:45:25.613Z",
+    "contentHash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
+    "lastHarvestedAt": "2026-10-19T20:41:05.798Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "c7c266c3",
+    "sourceVersion": "d1e88ab4",
     "license": "Apache-2.0",
-    "contentHash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
-    "lastHarvestedAt": "2026-10-19T07:59:32.941Z",
+    "contentHash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
+    "lastHarvestedAt": "2026-10-19T20:41:19.031Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -8978,5 +8978,25 @@
     "contentHash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
     "lastHarvestedAt": "2026-10-19T20:35:08.113Z",
     "learningId": "learn-github-damascenorafael-reminders-menubar"
+  },
+  "joshcarty-google-searchconsole": {
+    "repository": "joshcarty/google-searchconsole",
+    "platform": "github",
+    "sourceUrl": "https://github.com/joshcarty/google-searchconsole",
+    "sourceVersion": "9ab5a265",
+    "license": "MIT",
+    "contentHash": "0312cba101f694148f3163b56a84d1488ffe436fccf9cdf69fb9e2388a8af4cf",
+    "lastHarvestedAt": "2026-10-19T20:41:06.328Z",
+    "learningId": "learn-github-joshcarty-google-searchconsole"
+  },
+  "gonzalezreal-swift-markdown-ui": {
+    "repository": "gonzalezreal/swift-markdown-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gonzalezreal/swift-markdown-ui",
+    "sourceVersion": "8371aeb3",
+    "license": "MIT",
+    "contentHash": "a4ef9eba2af3930a7f3c21197a957780a6213eb97926c25d513bf4538cfaa03b",
+    "lastHarvestedAt": "2026-10-19T20:41:10.387Z",
+    "learningId": "learn-github-gonzalezreal-swift-markdown-ui"
   }
 }
