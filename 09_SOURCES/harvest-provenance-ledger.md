@@ -2976,3 +2976,9 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `712b9c97` | Multi-dimensional audit evidence | 2026-10-19T05:39:10.838Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `e81264f5` | Multi-dimensional audit evidence | 2026-10-19T05:39:13.709Z |
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `8bc8254d` | Multi-dimensional audit evidence | 2026-10-19T05:39:18.756Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-19T05:45:24.253Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `3070b510` | Multi-dimensional audit evidence | 2026-10-19T05:45:24.410Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `2e6a47fc` | Multi-dimensional audit evidence | 2026-10-19T05:45:25.613Z |
+| `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `95935997` | Multi-dimensional audit evidence | 2026-10-19T05:45:30.134Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `105b18bb` | Multi-dimensional audit evidence | 2026-10-19T05:45:32.710Z |
+| `learn-github-surrealdb-surrealdb` | `https://github.com/surrealdb/surrealdb` | `18971ffb` | Multi-dimensional audit evidence | 2026-10-19T05:45:38.681Z |

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-5NVX",
-    "timestamp": "2026-10-18T16:46:52.461Z",
-    "repository": "bvaughn/react-virtualized",
-    "learningId": "learn-github-bvaughn-react-virtualized",
-    "contentHash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-87D1",
-    "timestamp": "2026-10-18T21:00:47.558Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "a436164bfc7aaf37819de0f646e2bb36141b2a70c241fdb6be369903bbb05fe5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-89RP",
-    "timestamp": "2026-10-18T21:00:50.677Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "6a5321d7e7df3b83fd1783448446213c158d2cc14784788b826313f1caffbe6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-8BN7",
-    "timestamp": "2026-10-18T21:00:53.107Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "797a339604d2ebafcc280d766b58f429efcae11052667094939236f27dadeda7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-8FKI",
-    "timestamp": "2026-10-18T21:00:58.194Z",
-    "repository": "SynaLinks/synalinks-skills",
-    "learningId": "learn-github-synalinks-synalinks-skills",
-    "contentHash": "7c1d2f9e9f5f9b8f68e65f4e237ca5d17ee298d0f1061248c376eaebba531611",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-97XP",
-    "timestamp": "2026-10-18T21:01:34.957Z",
-    "repository": "facebook/docusaurus",
-    "learningId": "learn-github-facebook-docusaurus",
-    "contentHash": "0d3e7c4a91d43dec09916a868bf32c5f42bb273c51cf325b3f0e6d32663c36d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-9BFS",
     "timestamp": "2026-10-18T21:01:39.496Z",
     "repository": "TabbyML/tabby",
@@ -7492,6 +7402,96 @@
     "contentHash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YUXM",
+    "timestamp": "2026-10-19T05:45:24.250Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YV1Z",
+    "timestamp": "2026-10-19T05:45:24.407Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YVZD",
+    "timestamp": "2026-10-19T05:45:25.609Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YZGZ",
+    "timestamp": "2026-10-19T05:45:30.131Z",
+    "repository": "komi-store/komi-store",
+    "learningId": "learn-github-komi-store-komi-store",
+    "contentHash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z1GK",
+    "timestamp": "2026-10-19T05:45:32.708Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "0730c7ad4b7ca8fad3890795baf71ad5ee16d5d35f39d61d0649f605d3b11e13",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z62D",
+    "timestamp": "2026-10-19T05:45:38.677Z",
+    "repository": "surrealdb/surrealdb",
+    "learningId": "learn-github-surrealdb-surrealdb",
+    "contentHash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

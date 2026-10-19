@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:39:18.762Z",
+  "last_updated": "2026-10-19T05:45:38.687Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -664,14 +664,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "2263d69a516779cca76d20ccf12befda89b7cdd54efd5bef1c4c1538d1f3e837",
-      "verified_at": "2026-10-17T23:49:17.334Z",
+      "content_hash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
+      "verified_at": "2026-10-19T05:45:24.260Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:49:17.334Z"
+      "last_updated": "2026-10-19T05:45:24.260Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -3105,14 +3105,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "19d5105b2527652df2f72e80745ab15c2570ebd7d24a03e690e7b6d5df809104",
-      "verified_at": "2026-10-18T07:39:13.279Z",
+      "content_hash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
+      "verified_at": "2026-10-19T05:45:24.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:39:13.279Z"
+      "last_updated": "2026-10-19T05:45:24.416Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -9593,6 +9593,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:39:13.715Z"
+    },
+    "Ataraxy-Labs/sem": {
+      "repository": "Ataraxy-Labs/sem",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ataraxy-labs-sem",
+      "content_hash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
+      "verified_at": "2026-10-19T05:45:25.619Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:45:25.619Z"
+    },
+    "komi-store/komi-store": {
+      "repository": "komi-store/komi-store",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-komi-store-komi-store",
+      "content_hash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
+      "verified_at": "2026-10-19T05:45:30.141Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:45:30.141Z"
+    },
+    "opentofu/opentofu": {
+      "repository": "opentofu/opentofu",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-opentofu-opentofu",
+      "content_hash": "0730c7ad4b7ca8fad3890795baf71ad5ee16d5d35f39d61d0649f605d3b11e13",
+      "verified_at": "2026-10-19T05:45:32.716Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:45:32.716Z"
+    },
+    "surrealdb/surrealdb": {
+      "repository": "surrealdb/surrealdb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-surrealdb-surrealdb",
+      "content_hash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
+      "verified_at": "2026-10-19T05:45:38.686Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:45:38.686Z"
     }
   },
   "repos": {

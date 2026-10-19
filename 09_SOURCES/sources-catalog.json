@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "2263d69a516779cca76d20ccf12befda89b7cdd54efd5bef1c4c1538d1f3e837",
-    "lastHarvestedAt": "2026-10-17T23:49:17.332Z",
+    "contentHash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
+    "lastHarvestedAt": "2026-10-19T05:45:24.253Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -6328,5 +6328,55 @@
     "contentHash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
     "lastHarvestedAt": "2026-10-19T05:39:18.756Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
+  },
+  "fastapi-fastapi": {
+    "repository": "fastapi/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fastapi/fastapi",
+    "sourceVersion": "3070b510",
+    "license": "MIT",
+    "contentHash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
+    "lastHarvestedAt": "2026-10-19T05:45:24.410Z",
+    "learningId": "learn-github-fastapi-fastapi"
+  },
+  "ataraxy-labs-sem": {
+    "repository": "Ataraxy-Labs/sem",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
+    "sourceVersion": "2e6a47fc",
+    "license": "Apache-2.0",
+    "contentHash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
+    "lastHarvestedAt": "2026-10-19T05:45:25.613Z",
+    "learningId": "learn-github-ataraxy-labs-sem"
+  },
+  "komi-store-komi-store": {
+    "repository": "komi-store/komi-store",
+    "platform": "github",
+    "sourceUrl": "https://github.com/komi-store/komi-store",
+    "sourceVersion": "95935997",
+    "license": "Apache-2.0",
+    "contentHash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
+    "lastHarvestedAt": "2026-10-19T05:45:30.134Z",
+    "learningId": "learn-github-komi-store-komi-store"
+  },
+  "opentofu-opentofu": {
+    "repository": "opentofu/opentofu",
+    "platform": "github",
+    "sourceUrl": "https://github.com/opentofu/opentofu",
+    "sourceVersion": "105b18bb",
+    "license": "MPL-2.0",
+    "contentHash": "0730c7ad4b7ca8fad3890795baf71ad5ee16d5d35f39d61d0649f605d3b11e13",
+    "lastHarvestedAt": "2026-10-19T05:45:32.710Z",
+    "learningId": "learn-github-opentofu-opentofu"
+  },
+  "surrealdb-surrealdb": {
+    "repository": "surrealdb/surrealdb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/surrealdb/surrealdb",
+    "sourceVersion": "18971ffb",
+    "license": "NOASSERTION",
+    "contentHash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
+    "lastHarvestedAt": "2026-10-19T05:45:38.681Z",
+    "learningId": "learn-github-surrealdb-surrealdb"
   }
 }

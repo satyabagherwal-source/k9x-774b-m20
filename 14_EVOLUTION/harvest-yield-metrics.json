@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:39:18.759Z",
-  "total_cycles_completed": 2946,
-  "total_learnings_persisted": 2946,
-  "total_rules_promoted": 1983,
+  "last_updated": "2026-10-19T05:45:38.684Z",
+  "total_cycles_completed": 2952,
+  "total_learnings_persisted": 2952,
+  "total_rules_promoted": 1987,
   "history": [
-    {
-      "timestamp": "2026-10-19T01:50:58.869Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:56:56.795Z",
-      "repository": "stenciljs/core",
-      "learningId": "learn-github-stenciljs-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:56:59.433Z",
-      "repository": "chmln/sd",
-      "learningId": "learn-github-chmln-sd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:57:04.133Z",
-      "repository": "DylanVann/react-native-fast-image",
-      "learningId": "learn-github-dylanvann-react-native-fast-image",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:57:08.907Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:57:10.301Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T01:57:11.149Z",
       "repository": "sqlpage/SQLPage",
@@ -1403,6 +1361,48 @@
       "repository": "Open-Source-Legal/OpenContracts",
       "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:45:24.257Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:45:24.414Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:45:25.617Z",
+      "repository": "Ataraxy-Labs/sem",
+      "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:45:30.138Z",
+      "repository": "komi-store/komi-store",
+      "learningId": "learn-github-komi-store-komi-store",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:45:32.714Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:45:38.684Z",
+      "repository": "surrealdb/surrealdb",
+      "learningId": "learn-github-surrealdb-surrealdb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

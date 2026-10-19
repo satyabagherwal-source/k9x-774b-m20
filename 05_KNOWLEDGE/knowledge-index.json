@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:39:18.714Z",
-  "total_verified_learnings": 651,
+  "last_updated": "2026-10-19T05:45:38.626Z",
+  "total_verified_learnings": 655,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2600,22 +2600,35 @@
     "learn-github-ataraxy-labs-sem": {
       "learning_id": "learn-github-ataraxy-labs-sem",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ataraxy-labs-sem",
+      "source": "Ataraxy-Labs/sem",
+      "repository": "Ataraxy-Labs/sem",
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "HEAD",
-      "content_hash": "20e2dc832fa72976ace2027b90e5f839747bec37dad6b85503ac06982cfaebe2",
+      "source_version": "2e6a47fc",
+      "content_hash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2201,
+          "title": "cli): run on a 16 MB stack so Windows debug builds do not overflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.969Z"
+      "verified_at": "2026-10-19T05:45:25.552Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ath-maas-comfyui-copilot": {
       "learning_id": "learn-github-ath-maas-comfyui-copilot",
@@ -8312,13 +8325,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "fastapi/fastapi",
       "repository": "fastapi/fastapi",
-      "slug": "tiangolo-fastapi",
+      "slug": "fastapi-fastapi",
       "platform": "github",
-      "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "b23d78f2",
-      "content_hash": "19d5105b2527652df2f72e80745ab15c2570ebd7d24a03e690e7b6d5df809104",
-      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "3070b510",
+      "content_hash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
+      "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
         {
           "number": 1664,
@@ -8334,6 +8347,11 @@
           "number": 1666,
           "title": "Starlette Route Extraction Invariant for Included Sub-Routers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2200,
+          "title": "✨ Add WebSocket support to security dependencies (#10147)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8341,7 +8359,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:39:13.235Z",
+      "verified_at": "2026-10-19T05:45:24.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21865,7 +21883,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "2263d69a516779cca76d20ccf12befda89b7cdd54efd5bef1c4c1538d1f3e837",
+      "content_hash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -21913,7 +21931,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-10-17T23:49:17.305Z",
+      "verified_at": "2026-10-19T05:45:24.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24999,22 +25017,35 @@
     "learn-github-komi-store-komi-store": {
       "learning_id": "learn-github-komi-store-komi-store",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "komi-store-komi-store",
+      "source": "komi-store/komi-store",
+      "repository": "komi-store/komi-store",
       "slug": "komi-store-komi-store",
       "platform": "github",
       "source_url": "https://github.com/komi-store/komi-store",
-      "source_version": "HEAD",
-      "content_hash": "ac7cc0ff20621021b69ad0b21cec85b48dfd77969f3d228f12fe1e83f059b82e",
+      "source_version": "95935997",
+      "content_hash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
       "dossier_path": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2202,
+          "title": "db): bind the installed record to the release it came from (#998)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.837Z"
+      "verified_at": "2026-10-19T05:45:30.075Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kong-kubernetes-ingress-controller": {
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
@@ -31118,22 +31149,35 @@
     "learn-github-opentofu-opentofu": {
       "learning_id": "learn-github-opentofu-opentofu",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "opentofu-opentofu",
+      "source": "opentofu/opentofu",
+      "repository": "opentofu/opentofu",
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "HEAD",
-      "content_hash": "72c0a31c92900c719b15e133b4819b2767bd676848d07bc1adcd6636f0a41204",
+      "source_version": "105b18bb",
+      "content_hash": "0730c7ad4b7ca8fad3890795baf71ad5ee16d5d35f39d61d0649f605d3b11e13",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2203,
+          "title": "Context-based panic handler and stack tracing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.886Z"
+      "verified_at": "2026-10-19T05:45:32.643Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-openyurtio-openyurt": {
       "learning_id": "learn-github-openyurtio-openyurt",
@@ -36810,22 +36854,29 @@
     "learn-github-surrealdb-surrealdb": {
       "learning_id": "learn-github-surrealdb-surrealdb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "surrealdb-surrealdb",
+      "source": "surrealdb/surrealdb",
+      "repository": "surrealdb/surrealdb",
       "slug": "surrealdb-surrealdb",
       "platform": "github",
       "source_url": "https://github.com/surrealdb/surrealdb",
-      "source_version": "HEAD",
-      "content_hash": "c607a9c1c41596b7541960660c6d6f318a4b8112134c7db470ee9cdd4502e401",
+      "source_version": "18971ffb",
+      "content_hash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
       "dossier_path": "07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.764Z"
+      "verified_at": "2026-10-19T05:45:38.613Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-svenstaro-miniserve": {
       "learning_id": "learn-github-svenstaro-miniserve",
@@ -78547,6 +78598,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:39:18.704Z"
+    },
+    "rule-2200": {
+      "learning_id": "rule-2200",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2200,
+      "title": "✨ Add WebSocket support to security dependencies (#10147)",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "3070b510",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:45:24.356Z"
+    },
+    "rule-2201": {
+      "learning_id": "rule-2201",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2201,
+      "title": "cli): run on a 16 MB stack so Windows debug builds do not overflow",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "2e6a47fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:45:25.552Z"
+    },
+    "rule-2202": {
+      "learning_id": "rule-2202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2202,
+      "title": "db): bind the installed record to the release it came from (#998)",
+      "source_url": "https://github.com/komi-store/komi-store",
+      "source_version": "95935997",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:45:30.075Z"
+    },
+    "rule-2203": {
+      "learning_id": "rule-2203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2203,
+      "title": "Context-based panic handler and stack tracing",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "105b18bb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:45:32.643Z"
     }
   },
   "aliases": {

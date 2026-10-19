@@ -2969,3 +2969,9 @@
 | `CYCLE-20261019-QUSZ` | `2026-10-19T05:39:10.835Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2197` | Yes (`0bd3c8bf...`) |
 | `CYCLE-20261019-QX0Q` | `2026-10-19T05:39:13.706Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2198` | Yes (`c3208c0b...`) |
 | `CYCLE-20261019-R0WX` | `2026-10-19T05:39:18.753Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2199` | Yes (`c9a36992...`) |
+| `CYCLE-20261019-YUXM` | `2026-10-19T05:45:24.250Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`7706bbbb...`) |
+| `CYCLE-20261019-YV1Z` | `2026-10-19T05:45:24.407Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2200` | Yes (`693159c1...`) |
+| `CYCLE-20261019-YVZD` | `2026-10-19T05:45:25.609Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2201` | Yes (`f65d97b6...`) |
+| `CYCLE-20261019-YZGZ` | `2026-10-19T05:45:30.131Z` | `komi-store/komi-store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2202` | Yes (`a87e8d30...`) |
+| `CYCLE-20261019-Z1GK` | `2026-10-19T05:45:32.708Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2203` | Yes (`0730c7ad...`) |
+| `CYCLE-20261019-Z62D` | `2026-10-19T05:45:38.677Z` | `surrealdb/surrealdb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md` | Yes (`86ba2c14...`) |
