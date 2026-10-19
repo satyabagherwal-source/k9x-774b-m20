@@ -3006,3 +3006,9 @@ Every entry in this ledger must capture:
 | `learn-github-vercel-labs-opensrc` | `https://github.com/vercel-labs/opensrc` | `b51de608` | Multi-dimensional audit evidence | 2026-10-19T06:12:23.978Z |
 | `learn-github-tremorlabs-tremor` | `https://github.com/tremorlabs/tremor` | `ca4d588f` | Multi-dimensional audit evidence | 2026-10-19T06:12:29.919Z |
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-19T06:12:47.863Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-19T06:18:57.267Z |
+| `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `67ddd304` | Multi-dimensional audit evidence | 2026-10-19T06:18:57.447Z |
+| `learn-github-insertkoinio-koin` | `https://github.com/InsertKoinIO/koin` | `dc86ef8d` | Multi-dimensional audit evidence | 2026-10-19T06:19:03.125Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `5aed393a` | Multi-dimensional audit evidence | 2026-10-19T06:19:04.890Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `50a71b68` | Multi-dimensional audit evidence | 2026-10-19T06:19:09.980Z |
+| `learn-github-epicweb-dev-advanced-react-patterns` | `https://github.com/epicweb-dev/advanced-react-patterns` | `97a16015` | Multi-dimensional audit evidence | 2026-10-19T06:20:19.332Z |

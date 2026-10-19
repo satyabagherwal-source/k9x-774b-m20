@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:12:47.823Z",
-  "total_verified_learnings": 674,
+  "last_updated": "2026-10-19T06:20:19.291Z",
+  "total_verified_learnings": 678,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -255,22 +255,35 @@
     "learn-github-actions-actions-runner-controller": {
       "learning_id": "learn-github-actions-actions-runner-controller",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "actions-actions-runner-controller",
+      "source": "actions/actions-runner-controller",
+      "repository": "actions/actions-runner-controller",
       "slug": "actions-actions-runner-controller",
       "platform": "github",
       "source_url": "https://github.com/actions/actions-runner-controller",
-      "source_version": "HEAD",
-      "content_hash": "5e2b5ac31c69c569829f3913a9138e6d4f2a6ea6126dac221584a71e6ec880cb",
+      "source_version": "5aed393a",
+      "content_hash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
       "dossier_path": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2233,
+          "title": "custom runner mode volume injection (#4693)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.529Z"
+      "verified_at": "2026-10-19T06:19:04.836Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-activeloopai-deeplake": {
       "learning_id": "learn-github-activeloopai-deeplake",
@@ -1066,22 +1079,35 @@
     "learn-github-alexpasmantier-television": {
       "learning_id": "learn-github-alexpasmantier-television",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alexpasmantier-television",
+      "source": "alexpasmantier/television",
+      "repository": "alexpasmantier/television",
       "slug": "alexpasmantier-television",
       "platform": "github",
       "source_url": "https://github.com/alexpasmantier/television",
-      "source_version": "HEAD",
-      "content_hash": "0eadd045ccea68b4a99f3c8c766c8bce834686cc290a5cf2cc3f57e2b5f7c13e",
+      "source_version": "67ddd304",
+      "content_hash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
       "dossier_path": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2231,
+          "title": "website): better code block copy icon alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.716Z"
+      "verified_at": "2026-10-19T06:18:57.394Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alibaba-formily": {
       "learning_id": "learn-github-alibaba-formily",
@@ -7581,18 +7607,29 @@
     "learn-github-epicweb-dev-advanced-react-patterns": {
       "learning_id": "learn-github-epicweb-dev-advanced-react-patterns",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "epicweb-dev-advanced-react-patterns",
+      "source": "epicweb-dev/advanced-react-patterns",
+      "repository": "epicweb-dev/advanced-react-patterns",
       "slug": "epicweb-dev-advanced-react-patterns",
       "platform": "github",
       "source_url": "https://github.com/epicweb-dev/advanced-react-patterns",
-      "source_version": "8f9992a4",
-      "content_hash": "6aed2937354f633dae2d0347890d3a5dbb30c6dcd9434987ddd78d60d7ff7abd",
+      "source_version": "97a16015",
+      "content_hash": "9cadb5c2e881a6103b485c6ce618162569c01801c1c3a75b95029c11d5db41d3",
       "dossier_path": "07_PROJECT_LEARNING/epicweb-dev-advanced-react-patterns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/epicweb-dev-advanced-react-patterns-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2235,
+          "title": "Inversion of Control Event Composition via Safe Multicast Chaining (`callAll`)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2236,
+          "title": "Immutable Initial State Sealing via Persistent Ref Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 322,
       "historical_learning_ids": [
@@ -7919,7 +7956,7 @@
         "learn-github-epicweb-dev-advanced-react-patterns-mv0di3db",
         "learn-github-epicweb-dev-advanced-react-patterns-mv0dkic4"
       ],
-      "verified_at": "2026-10-09T02:57:34.456Z",
+      "verified_at": "2026-10-19T06:20:19.280Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18979,7 +19016,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "9f7df8bd90712df71d068a69e4c79093f95b315219256fd41d9f482dbc28a71e",
+      "content_hash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
       "dossier_path": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "promoted_rules": [
@@ -19008,7 +19045,7 @@
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
       ],
-      "verified_at": "2026-10-18T00:05:52.838Z",
+      "verified_at": "2026-10-19T06:18:57.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23621,22 +23658,35 @@
     "learn-github-insertkoinio-koin": {
       "learning_id": "learn-github-insertkoinio-koin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "insertkoinio-koin",
+      "source": "InsertKoinIO/koin",
+      "repository": "InsertKoinIO/koin",
       "slug": "insertkoinio-koin",
       "platform": "github",
       "source_url": "https://github.com/InsertKoinIO/koin",
-      "source_version": "HEAD",
-      "content_hash": "1b85adfa2af81ddf75cf8984b266210809573f5ae617c1737a434953a532959d",
+      "source_version": "dc86ef8d",
+      "content_hash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
       "dossier_path": "07_PROJECT_LEARNING/insertkoinio-koin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/insertkoinio-koin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2232,
+          "title": "#2379 - CoreResolverV2 resolved root factory's scoped deps from _root_",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.599Z"
+      "verified_at": "2026-10-19T06:19:03.068Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-insforge-insforge": {
       "learning_id": "learn-github-insforge-insforge",
@@ -39669,22 +39719,35 @@
     "learn-github-vectifyai-pageindex": {
       "learning_id": "learn-github-vectifyai-pageindex",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vectifyai-pageindex",
+      "source": "VectifyAI/PageIndex",
+      "repository": "VectifyAI/PageIndex",
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "HEAD",
-      "content_hash": "42ade56f6e8fccb92880af3c33be40c895d7f477a9548ed912e97fd380b81713",
+      "source_version": "50a71b68",
+      "content_hash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2234,
+          "title": "claude): keep the cloud API key off the Claude Code command line (#594)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.202Z"
+      "verified_at": "2026-10-19T06:19:09.925Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-veirt-weathr": {
       "learning_id": "learn-github-veirt-weathr",
@@ -79348,6 +79411,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:12:47.813Z"
+    },
+    "rule-2231": {
+      "learning_id": "rule-2231",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2231,
+      "title": "website): better code block copy icon alignment",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "67ddd304",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:18:57.394Z"
+    },
+    "rule-2232": {
+      "learning_id": "rule-2232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2232,
+      "title": "#2379 - CoreResolverV2 resolved root factory's scoped deps from _root_",
+      "source_url": "https://github.com/InsertKoinIO/koin",
+      "source_version": "dc86ef8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:19:03.068Z"
+    },
+    "rule-2233": {
+      "learning_id": "rule-2233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2233,
+      "title": "custom runner mode volume injection (#4693)",
+      "source_url": "https://github.com/actions/actions-runner-controller",
+      "source_version": "5aed393a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:19:04.836Z"
+    },
+    "rule-2234": {
+      "learning_id": "rule-2234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2234,
+      "title": "claude): keep the cloud API key off the Claude Code command line (#594)",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "50a71b68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:19:09.925Z"
+    },
+    "rule-2235": {
+      "learning_id": "rule-2235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2235,
+      "title": "Inversion of Control Event Composition via Safe Multicast Chaining (`callAll`)",
+      "source_url": "https://github.com/epicweb-dev/advanced-react-patterns",
+      "source_version": "97a16015",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:20:19.280Z"
+    },
+    "rule-2236": {
+      "learning_id": "rule-2236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2236,
+      "title": "Immutable Initial State Sealing via Persistent Ref Invariant",
+      "source_url": "https://github.com/epicweb-dev/advanced-react-patterns",
+      "source_version": "97a16015",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:20:19.280Z"
     }
   },
   "aliases": {

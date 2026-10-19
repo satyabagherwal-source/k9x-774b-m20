@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T06:12:47.869Z",
+  "last_updated": "2026-10-19T06:20:19.338Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -107,17 +107,18 @@
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-epicweb-dev-advanced-react-patterns-mv0dkic4",
-      "content_hash": "6aed2937354f633dae2d0347890d3a5dbb30c6dcd9434987ddd78d60d7ff7abd",
-      "verified_at": "2026-10-09T02:57:34.482Z",
+      "learning_id": "learn-github-epicweb-dev-advanced-react-patterns",
+      "content_hash": "9cadb5c2e881a6103b485c6ce618162569c01801c1c3a75b95029c11d5db41d3",
+      "verified_at": "2026-10-19T06:20:19.338Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T02:57:34.482Z"
+      "last_updated": "2026-10-19T06:20:19.338Z"
     },
     "BAAI/bge-small-en-v1.5": {
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1878,14 +1879,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "9f7df8bd90712df71d068a69e4c79093f95b315219256fd41d9f482dbc28a71e",
-      "verified_at": "2026-10-18T00:05:52.866Z",
+      "content_hash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
+      "verified_at": "2026-10-19T06:18:57.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:05:52.866Z"
+      "last_updated": "2026-10-19T06:18:57.273Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -9939,6 +9940,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T06:12:29.925Z"
+    },
+    "alexpasmantier/television": {
+      "repository": "alexpasmantier/television",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alexpasmantier-television",
+      "content_hash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
+      "verified_at": "2026-10-19T06:18:57.453Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:18:57.453Z"
+    },
+    "InsertKoinIO/koin": {
+      "repository": "InsertKoinIO/koin",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-insertkoinio-koin",
+      "content_hash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
+      "verified_at": "2026-10-19T06:19:03.132Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:19:03.132Z"
+    },
+    "actions/actions-runner-controller": {
+      "repository": "actions/actions-runner-controller",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-actions-actions-runner-controller",
+      "content_hash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
+      "verified_at": "2026-10-19T06:19:04.896Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:19:04.896Z"
+    },
+    "VectifyAI/PageIndex": {
+      "repository": "VectifyAI/PageIndex",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vectifyai-pageindex",
+      "content_hash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
+      "verified_at": "2026-10-19T06:19:09.987Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:19:09.987Z"
     }
   },
   "repos": {

@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T06:12:47.867Z",
-  "total_cycles_completed": 2976,
-  "total_learnings_persisted": 2976,
-  "total_rules_promoted": 2016,
+  "last_updated": "2026-10-19T06:20:19.335Z",
+  "total_cycles_completed": 2982,
+  "total_learnings_persisted": 2982,
+  "total_rules_promoted": 2022,
   "history": [
-    {
-      "timestamp": "2026-10-19T02:29:05.552Z",
-      "repository": "arco-design/arco-design",
-      "learningId": "learn-github-arco-design-arco-design",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:37:02.496Z",
-      "repository": "system-ui/theme-ui",
-      "learningId": "learn-github-system-ui-theme-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:37:03.261Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:37:04.231Z",
-      "repository": "mtkennerly/ludusavi",
-      "learningId": "learn-github-mtkennerly-ludusavi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:37:09.595Z",
-      "repository": "nativewind/nativewind",
-      "learningId": "learn-github-nativewind-nativewind",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:37:11.476Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T02:37:16.779Z",
       "repository": "apple/foundationdb",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T06:12:47.867Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:18:57.270Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:18:57.451Z",
+      "repository": "alexpasmantier/television",
+      "learningId": "learn-github-alexpasmantier-television",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:19:03.129Z",
+      "repository": "InsertKoinIO/koin",
+      "learningId": "learn-github-insertkoinio-koin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:19:04.894Z",
+      "repository": "actions/actions-runner-controller",
+      "learningId": "learn-github-actions-actions-runner-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:19:09.984Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:20:19.335Z",
+      "repository": "epicweb-dev/advanced-react-patterns",
+      "learningId": "learn-github-epicweb-dev-advanced-react-patterns",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

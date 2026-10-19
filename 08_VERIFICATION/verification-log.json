@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-4U4E",
-    "timestamp": "2026-10-18T21:26:10.046Z",
-    "repository": "ducaale/xh",
-    "learningId": "learn-github-ducaale-xh",
-    "contentHash": "4eaa9881de4f76cb3d3cf45f7d5d24fa9483771994b82d30715c6530c5ee5659",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-4XVZ",
-    "timestamp": "2026-10-18T21:26:14.927Z",
-    "repository": "NervJS/taro",
-    "learningId": "learn-github-nervjs-taro",
-    "contentHash": "61f8e5bfc88b174dc9f410de801236135d6cbf33502a2c766fb42f3101d4a553",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-51OJ",
-    "timestamp": "2026-10-18T21:26:19.843Z",
-    "repository": "kubeedge/kubeedge",
-    "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "8e1d5b5c10717259e0d8c9773be7be56aabbf27407f1ac4b82a561652b90d03e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-51UX",
-    "timestamp": "2026-10-18T21:26:20.073Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "de4ff29bca18a1bc990508bbccaed93da1ff30273d160ca45d7f1d2ff2fbd6fe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-53VT",
-    "timestamp": "2026-10-18T21:26:22.697Z",
-    "repository": "giancarloerra/SocratiCode",
-    "learningId": "learn-github-giancarloerra-socraticode",
-    "contentHash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-D4HA",
-    "timestamp": "2026-10-18T21:32:36.718Z",
-    "repository": "jaredpalmer/formik",
-    "learningId": "learn-github-jaredpalmer-formik",
-    "contentHash": "627dcc2530b040de45ca8f8989dc131243b58c3a617a1eb0dc206bd803ea4f59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-D6J5",
     "timestamp": "2026-10-18T21:32:39.377Z",
     "repository": "alexellis/k3sup",
@@ -7490,6 +7400,96 @@
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
     "contentHash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-606N",
+    "timestamp": "2026-10-19T06:18:57.263Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-60BO",
+    "timestamp": "2026-10-19T06:18:57.444Z",
+    "repository": "alexpasmantier/television",
+    "learningId": "learn-github-alexpasmantier-television",
+    "contentHash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-64PE",
+    "timestamp": "2026-10-19T06:19:03.122Z",
+    "repository": "InsertKoinIO/koin",
+    "learningId": "learn-github-insertkoinio-koin",
+    "contentHash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-662F",
+    "timestamp": "2026-10-19T06:19:04.887Z",
+    "repository": "actions/actions-runner-controller",
+    "learningId": "learn-github-actions-actions-runner-controller",
+    "contentHash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-69ZT",
+    "timestamp": "2026-10-19T06:19:09.977Z",
+    "repository": "VectifyAI/PageIndex",
+    "learningId": "learn-github-vectifyai-pageindex",
+    "contentHash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-7RI9",
+    "timestamp": "2026-10-19T06:20:19.329Z",
+    "repository": "epicweb-dev/advanced-react-patterns",
+    "learningId": "learn-github-epicweb-dev-advanced-react-patterns",
+    "contentHash": "9cadb5c2e881a6103b485c6ce618162569c01801c1c3a75b95029c11d5db41d3",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

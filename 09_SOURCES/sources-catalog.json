@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "9f7df8bd90712df71d068a69e4c79093f95b315219256fd41d9f482dbc28a71e",
-    "lastHarvestedAt": "2026-10-18T00:05:52.865Z",
+    "contentHash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
+    "lastHarvestedAt": "2026-10-19T06:18:57.267Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -6578,5 +6578,55 @@
     "contentHash": "7ad415214bbfc05aea4ce23dc64731037eca41b0004834dc7357f073cdd28c22",
     "lastHarvestedAt": "2026-10-19T06:12:29.919Z",
     "learningId": "learn-github-tremorlabs-tremor"
+  },
+  "alexpasmantier-television": {
+    "repository": "alexpasmantier/television",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alexpasmantier/television",
+    "sourceVersion": "67ddd304",
+    "license": "MIT",
+    "contentHash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
+    "lastHarvestedAt": "2026-10-19T06:18:57.447Z",
+    "learningId": "learn-github-alexpasmantier-television"
+  },
+  "insertkoinio-koin": {
+    "repository": "InsertKoinIO/koin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/InsertKoinIO/koin",
+    "sourceVersion": "dc86ef8d",
+    "license": "Apache-2.0",
+    "contentHash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
+    "lastHarvestedAt": "2026-10-19T06:19:03.125Z",
+    "learningId": "learn-github-insertkoinio-koin"
+  },
+  "actions-actions-runner-controller": {
+    "repository": "actions/actions-runner-controller",
+    "platform": "github",
+    "sourceUrl": "https://github.com/actions/actions-runner-controller",
+    "sourceVersion": "5aed393a",
+    "license": "Apache-2.0",
+    "contentHash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
+    "lastHarvestedAt": "2026-10-19T06:19:04.890Z",
+    "learningId": "learn-github-actions-actions-runner-controller"
+  },
+  "vectifyai-pageindex": {
+    "repository": "VectifyAI/PageIndex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/VectifyAI/PageIndex",
+    "sourceVersion": "50a71b68",
+    "license": "MIT",
+    "contentHash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
+    "lastHarvestedAt": "2026-10-19T06:19:09.980Z",
+    "learningId": "learn-github-vectifyai-pageindex"
+  },
+  "epicweb-dev-advanced-react-patterns": {
+    "repository": "epicweb-dev/advanced-react-patterns",
+    "platform": "github",
+    "sourceUrl": "https://github.com/epicweb-dev/advanced-react-patterns",
+    "sourceVersion": "97a16015",
+    "license": "NOASSERTION",
+    "contentHash": "9cadb5c2e881a6103b485c6ce618162569c01801c1c3a75b95029c11d5db41d3",
+    "lastHarvestedAt": "2026-10-19T06:20:19.332Z",
+    "learningId": "learn-github-epicweb-dev-advanced-react-patterns"
   }
 }
