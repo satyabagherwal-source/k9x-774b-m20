@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T19:04:31.265Z",
+  "last_updated": "2026-10-20T21:27:33.639Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2345,6 +2345,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
+    },
+    {
+      "id": "CD-2BYF",
+      "directive_title": "Insight 1: Special‑Token Integrity",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef-flash",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-cloudflare-clef-flash"
+    },
+    {
+      "id": "CD-2BYF",
+      "directive_title": "Insight 2: Head‑Backbone Compatibility",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef-flash",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-cloudflare-clef-flash"
+    },
+    {
+      "id": "CD-2BYF",
+      "directive_title": "Insight 3: Inference‑Mode Enforcement",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef-flash",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-cloudflare-clef-flash"
     }
   ]
 }

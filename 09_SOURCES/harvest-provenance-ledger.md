@@ -4041,3 +4041,8 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5d9f2d4b` | Multi-dimensional audit evidence | 2026-10-20T21:15:06.856Z |
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-20T21:21:21.494Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `10acebc0` | Multi-dimensional audit evidence | 2026-10-20T21:21:26.235Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `a9aa73d2` | Multi-dimensional audit evidence | 2026-10-20T21:27:32.718Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-20T21:27:33.635Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `e9e85210` | Multi-dimensional audit evidence | 2026-10-20T21:27:34.013Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `a7c66820` | Multi-dimensional audit evidence | 2026-10-20T21:27:39.978Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `d7a619c7` | Multi-dimensional audit evidence | 2026-10-20T21:27:45.208Z |

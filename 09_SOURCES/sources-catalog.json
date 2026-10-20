@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
-    "lastHarvestedAt": "2026-10-19T07:50:52.629Z",
+    "contentHash": "75c12e2bf6a803b339ffe5b4aef2ea0a3f4c30566dc95752f0077dbd6a376ba5",
+    "lastHarvestedAt": "2026-10-20T21:27:33.635Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "f748c1a4",
+    "sourceVersion": "a9aa73d2",
     "license": "Apache-2.0",
-    "contentHash": "e00a9f4cc287d6407e4dbc43f6936f772bd517fcd2d0b24c21cdbe55c1086675",
-    "lastHarvestedAt": "2026-10-18T21:39:32.845Z",
+    "contentHash": "92a2da3d3219e1be545e1b0a8d3d9fbe5071f400d06a244b8958c698814a9926",
+    "lastHarvestedAt": "2026-10-20T21:27:32.718Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "b76eff1c",
+    "sourceVersion": "d7a619c7",
     "license": "NOASSERTION",
-    "contentHash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
-    "lastHarvestedAt": "2026-10-20T05:10:36.175Z",
+    "contentHash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
+    "lastHarvestedAt": "2026-10-20T21:27:45.208Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "69992333",
+    "sourceVersion": "a7c66820",
     "license": "Apache-2.0",
-    "contentHash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
-    "lastHarvestedAt": "2026-10-20T06:07:11.484Z",
+    "contentHash": "44d5167b78c12c30cf467b8e732da62acfa3d50d593d55f0e202e55e66db98d4",
+    "lastHarvestedAt": "2026-10-20T21:27:39.978Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "230a5e48",
+    "sourceVersion": "e9e85210",
     "license": "AGPL-3.0",
-    "contentHash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
-    "lastHarvestedAt": "2026-10-19T09:54:26.102Z",
+    "contentHash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
+    "lastHarvestedAt": "2026-10-20T21:27:34.013Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

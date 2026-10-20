@@ -4034,3 +4034,8 @@
 | `CYCLE-20261020-MBQ9` | `2026-10-20T21:15:06.849Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3386` | Yes (`7a1c3d3e...`) |
 | `CYCLE-20261020-UCSU` | `2026-10-20T21:21:21.486Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3387, Rule 3388` | Yes (`96fffd25...`) |
 | `CYCLE-20261020-UGGK` | `2026-10-20T21:21:26.228Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3389` | Yes (`42bbad92...`) |
+| `CYCLE-20261020-2B8M` | `2026-10-20T21:27:32.710Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3390` | Yes (`92a2da3d...`) |
+| `CYCLE-20261020-2BY3` | `2026-10-20T21:27:33.627Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1120, Rule 3391, Rule 1396` | Yes (`75c12e2b...`) |
+| `CYCLE-20261020-2C8Q` | `2026-10-20T21:27:34.010Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md` | Yes (`41078197...`) |
+| `CYCLE-20261020-2GUB` | `2026-10-20T21:27:39.971Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3392` | Yes (`44d5167b...`) |
+| `CYCLE-20261020-2KVK` | `2026-10-20T21:27:45.200Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3393` | Yes (`33c7b96f...`) |

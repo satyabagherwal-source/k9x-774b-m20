@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `230a5e48`  
+> **Source Version**: `e9e85210`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:54:25.806Z  
+> **Timestamp**: 2026-10-20T21:27:33.834Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:54:25.798Z  
+> **Harvest Timestamp**: 2026-10-20T21:27:33.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2642 stars
+- **Stars / Engagement**: 2647 stars
 
 ---
 
@@ -768,920 +768,224 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `745449b7` (2026-10-17)
-**Commit Message**: :bug: report Windows plugin script failures as a single line (#5229)
+### Incident Patch 1: `e9e85210` (2026-10-20)
+**Commit Message**: :fire: remove the sort toggle from the search window (#5235)
 
-Wrap translate/run.ps1 and the uppercase sample in try/catch, write only the exception message to stderr as raw UTF-8 bytes and exit 1, so the failure notification shows the cause instead of the tail of a PowerShell error record, and localized messages are not mangled by the OEM code page.
-
-**File**: `app/src/desktopMain/resources/plugins/translate/run.ps1` (modified, +17/-8)
+**File**: `app/src/commonMain/kotlin/com/crosspaste/ui/model/GeneralPasteSearchViewModel.kt` (modified, +0/-1)
 ```diff
-@@ -17,11 +17,20 @@ function Translate-Text([string]$text, [string]$target) {
-     return ($response[0] | ForEach-Object { $_[0] }) -join ''
- }
- 
--$reader = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $utf8)
--$paste = $reader.ReadToEnd() | ConvertFrom-Json
--$text = if ($paste.content) { $paste.content } else { $paste.rawContent }
--$target = if ($env:CROSSPASTE_ACTION) { $env:CROSSPASTE_ACTION } else { 'en' }
--$bytes = $utf8.GetBytes((Translate-Text $text $target))
--$stdout = [Console]::OpenStandardOutput()
--$stdout.Write($bytes, 0, $bytes.Length)
--$stdout.Flush()
-+try {
-+    $reader = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $utf8)
-+    $paste = $reader.ReadToEnd() | ConvertFrom-Json
-+    $text = if ($paste.content) { $paste.content } else { $paste.rawContent }
-+    $target = if ($env:CROSSPASTE_ACTION) { $env:CROSSPASTE_ACTION } else { 'en' }
-+    $bytes = $utf8.GetBytes((Translate-Text $text $target))
-+    $stdout = [Console]::OpenStandardOutput()
-+    $stdout.Write($bytes, 0, $bytes.Length)
-+    $stdout.Flush()
-+} catch {
-+    # CrossPaste shows the tail of stderr to the user; one line reads better than an error record
-+    $errBytes = $utf8.GetBytes($_.Exception.Message + "`n")
-+    $stderr = [Console]::OpenStandardError()
-+    $stderr.Write($errBytes, 0, $errBytes.Length)
-+    $stderr.Flush()
-+    exit 1
-+}
+@@ -49,7 +49,6 @@ class GeneralPasteSearchViewModel(
+                 searchPasteData
+                     .searchPasteDataFlow(
+                         searchTerms = params.searchTerms,
+-                        sort = params.sort,
+                         pasteTypeList = params.pasteTypeList,
+                         tag = params.tag,
+                         limit = params.limit,
 ```
 
-**File**: `doc/plugins/README.md` (modified, +1/-1)
+**File**: `app/src/commonMain/kotlin/com/crosspaste/ui/model/PasteSearchViewModel.kt` (modified, +0/-10)
 ```diff
-@@ -88,7 +88,7 @@ are found either way.
+@@ -33,7 +33,6 @@ abstract class PasteSearchViewModel : ViewModel() {
+         MutableStateFlow(
+             SearchBaseParams(
+                 pasteTypeList = listOf(),
+-                sort = true,
+                 tag = null,
+                 limit = QUERY_BATCH_SIZE,
+             ),
+@@ -67,7 +66,6 @@ abstract class PasteSearchViewModel : ViewModel() {
+             SearchParams(
+                 searchTerms = searchTerms,
+                 pasteTypeList = searchBaseParams.pasteTypeList,
+-                sort = searchBaseParams.sort,
+                 tag = searchBaseParams.tag,
+                 limit = searchBaseParams.limit,
+             )
+@@ -87,13 +85,6 @@ abstract class PasteSearchViewModel : ViewModel() {
+         _loadAll.value = false
+     }
  
- ## Platform notes
- 
--- **Windows PowerShell 5.1** reads and writes the console in the OEM code page. Read stdin and write stdout as raw
-+- **Windows PowerShell 5.1** reads and writes the console in the OEM code page. Read stdin and write stdout and stderr as raw
-   UTF-8 bytes, as `uppercase/run.ps1` does.
- - **macOS**: running a script through an interpreter (`/bin/sh run.sh`) is not affected by Gatekeeper quarantine;
-   a downloaded native binary is.
+-    fun switchSort() {
+-        _searchBaseParams.value =
+-            _searchBaseParams.value.copy(
+-                sort = !_searchBaseParams.value.sort,
+-            )
+-    }
+-
+     fun updatePasteType(pasteTypeList: List<Int>) {
+         pendingLoadJob?.cancel()
+         _searchBaseParams.value =
+@@ -162,7 +153,6 @@ abstract class PasteSearchViewModel : ViewModel() {
+         _searchBaseParams.value =
+             _searchBaseParams.value.copy(
+                 pasteTypeList = listOf(),
+-                sort = true,
+                 tag = null,
+                 limit = QUERY_BATCH_SIZE,
+             )
 ```
 
-**File**: `doc/plugins/uppercase/run.ps1` (modified, +16/-7)
+**File**: `app/src/commonMain/kotlin/com/crosspaste/ui/model/SearchParams.kt` (modified, +0/-2)
 ```diff
-@@ -4,10 +4,19 @@
- # so read and write raw UTF-8 bytes instead of using Read-Host / Write-Output.
- $ErrorActionPreference = 'Stop'
- $utf8 = New-Object System.Text.UTF8Encoding $false
--$reader = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $utf8)
--$paste = $reader.ReadToEnd() | ConvertFrom-Json
--$text = if ($paste.rawContent) { $paste.rawContent } else { $paste.content }
--$bytes = $utf8.GetBytes($text.ToUpperInvariant())
--$stdout = [Console]::OpenStandardOutput()
--$stdout.Write($bytes, 0, $bytes.Length)
--$stdout.Flush()
-+try {
-+    $reader = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $utf8)
-+    $paste = $reader.ReadToEnd() | ConvertFrom-Json
-+    $text = if ($paste.rawContent) { $paste.rawContent } else { $paste.content }
-+    $bytes = $utf8.GetBytes($text.ToUpperInvariant())
-+    $stdout = [Console]::OpenStandardOutput()
-+    $stdout.Write($bytes, 0, $bytes.Length)
-+    $stdout.Flush()
-+} catch {
-+    # CrossPaste shows the tail of stderr to the user; one line reads better than an error record
-+    $errBytes = $utf8.GetBytes($_.Exception.Message + "`n")
-+    $stderr = [Console]::OpenStandardError()
-+    $stderr.Write($errBytes, 0, $errBytes.Length)
-+    $stderr.Flush()
-+    exit 1
-+}
+@@ -2,15 +2,13 @@ package com.crosspaste.ui.model
+ 
+ data class SearchBaseParams(
+     val pasteTypeList: List<Int>,
+-    val sort: Boolean,
+     val tag: Long?,
+     val limit: Int,
+ )
+ 
+ data class SearchParams(
+     val searchTerms: List<String>,
+     val pasteTypeList: List<Int>,
+-    val sort: Boolean,
+     val tag: Long?,
+     val limit: Int,
+ )
 ```
 
----
-
-### Incident Patch 2: `98ea433d` (2026-10-18)
-**Commit Message**: :bug: fix macOS search window dismissal and tray toggle races (#5215)
-
-Remove the one-second macOS search-window dismissal delay and prevent tray
-clicks from hiding and immediately reopening the window.
-
-- Use per-appearance focus sessions and deferred focus rechecks, rejecting
-  stale callbacks after focus recovery, hiding, or reopening.
-- Wait for the window to be showing before requesting focus, and preserve
-  search-owned popups, edit bubbles, and appearance previews.
-- Detect a pressed left mouse button over this process's visible status-item
-  windows during focus rechecks, leaving tray dismissal to the toggle while
-  allowing Cmd+Tab to dismiss when the pointer only hovers over the icon.
-- Retain focus and tray diagnostics and add regression tests for callback
-  ordering and focus-session isolation.
-
-Co-authored-by: bifangknt <[REDACTED_EMAIL]>
-Co-authored-by: Yiqun Zhang <[REDACTED_EMAIL]>
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/macos/MacAppUtils.kt` (modified, +4/-0)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/side/SidePasteboardContentView.kt` (modified, +1/-2)
 ```diff
-@@ -78,6 +78,10 @@ object MacAppUtils {
+@@ -133,12 +133,11 @@ fun SidePasteboardContentView() {
+     }
  
-     fun getCurrentActiveAppInfo(): String? = MacosApi.getString(INSTANCE.getCurrentActiveAppInfo())
- 
-+    fun isApplicationActive(): Boolean = INSTANCE.isApplicationActive() != 0
-+
-+    fun isPointerOnStatusItem(): Boolean = INSTANCE.isPointerOnStatusItem() != 0
-+
-     fun getRunningApplications(): List<Pair<String, String>> {
-         val raw = MacosApi.getString(INSTANCE.getRunningApplications()) ?: return emptyList()
-         return raw.split("\n\n").mapNotNull { entry ->
+     // Reset selection to the first match and scroll to the top whenever the search query or any
+-    // filter changes (term, sort, type, or tag). Input is debounced, so the matching results
++    // filter changes (term, type, or tag). Input is debounced, so the matching results
+     // arrive a moment after the params change: re-assert once they land so the first item is
+     // selected and scrolled into view. This also covers the case where nothing matches.
+     LaunchedEffect(
+         inputSearch,
+-        searchBaseParams.sort,
+         searchBaseParams.pasteTypeList,
+         searchBaseParams.tag,
+     ) {
 ```
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/macos/api/MacosApi.kt` (modified, +4/-0)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/search/SearchTrailingIcon.kt` (modified, +0/-33)
 ```diff
-@@ -52,6 +52,10 @@ interface MacosApi : Library {
- 
-     fun getCurrentActiveAppInfo(): Pointer?
- 
-+    fun isApplicationActive(): Int
-+
-+    fun isPointerOnStatusItem(): Int
-+
-     fun getRunningApplications(): Pointer?
- 
-     fun getAppInfoAtPath(path: String): Pointer?
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/MacSearchWindowFocusSession.kt` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+package com.crosspaste.ui
-+
-+/** A status item can take key-window focus while the application remains active. */
-+internal data class MacSearchWindowFocusState(
-+    val appActive: Boolean,
-+    val searchFocused: Boolean,
-+    val bubbleFocused: Boolean,
-+    val mainFocused: Boolean,
-+    // The tray toggle handles a status item click; dismissing first would make it reopen.
-+    val pointerOnStatusItem: Boolean = false,
-+) {
-+    val shouldDismiss: Boolean
-+        get() = !pointerOnStatusItem && !searchFocused && !bubbleFocused && (!appActive || mainFocused)
-+}
-+
-+/** Focus protection belongs to one interactive appearance, without a timed grace period. */
-+internal class MacSearchWindowFocusSession(
-+    private var gainedFocus: Boolean = false,
-+) {
-+    private var active = true
-+    private var focusGeneration = 0
-+
-+    @Synchronized
-+    fun onFocusGained() {
-+        if (!active) return
-+        gainedFocus = true
-+        focusGeneration++
-+    }
-+
-+    fun deferFocusLoss(
-+        enqueue: (() -> Unit) -> Unit,
-+        shouldDismiss: () -> Boolean,
-+        isCurrentAppearance: () -> Boolean = { true },
-+        dismiss: () -> Unit,
-+    ) {
-+        val generation =
-+            synchronized(this) {
-+                if (!active || !gainedFocus) return
-+                focusGeneration
-+            }
-+        enqueue {
-+            synchronized(this) {
-+                if (active && generation == focusGeneration && isCurrentAppearance() && shouldDismiss()) {
-+                    active = false
-+                    dismiss()
-+                }
-+            }
-+        }
-+    }
-+
-+    @Synchronized
-+    fun close() {
-+        active = false
-+    }
-+}
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/SearchWindow.kt` (modified, +180/-4)
-```diff
-@@ -44,9 +44,16 @@ import kotlinx.coroutines.delay
- import kotlinx.coroutines.flow.first
- import kotlinx.coroutines.withContext
+@@ -7,15 +7,13 @@ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.PaddingValues
+ import androidx.compose.foundation.layout.Row
+-import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.height
+ import androidx.compose.foundation.layout.padding
+ import androidx.compose.foundation.layout.width
+ import androidx.compose.foundation.layout.wrapContentHeight
+ import androidx.compose.foundation.layout.wrapContentSize
+ import androidx.compose.foundation.layout.wrapContentWidth
+ import androidx.compose.material3.HorizontalDivider
+-import androidx.compose.material3.IconButtonDefaults.iconButtonColors
+ import androidx.compose.material3.MaterialTheme
+ import androidx.compose.material3.OutlinedButton
+ import androidx.compose.material3.Text
+@@ -36,25 +34,18 @@ import androidx.compose.ui.unit.TextUnit
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.window.Popup
+ import androidx.compose.ui.window.PopupProperties
+-import com.composables.icons.materialsymbols.MaterialSymbols
+-import com.composables.icons.materialsymbols.rounded.Arrow_downward
+-import com.composables.icons.materialsymbols.rounded.Arrow_upward
+ import com.crosspaste.i18n.GlobalCopywriter
+ import com.crosspaste.paste.PasteType
+ import com.crosspaste.paste.PasteType.Companion.ALL_TYPES
+-import com.crosspaste.ui.base.GeneralIconButton
+ import com.crosspaste.ui.base.MenuItemView
+ import com.crosspaste.ui.model.PasteSearchViewModel
+ import com.crosspaste.ui.theme.AppUIFont.getFontWidth
+ import com.crosspaste.ui.theme.AppUISize.huge
+-import com.crosspaste.ui.theme.AppUISize.large2X
+ import com.crosspaste.ui.theme.AppUISize.small
+ import com.crosspaste.ui.theme.AppUISize.small3X
+-import com.crosspaste.ui.theme.AppUISize.tiny2X
+ import com.crosspaste.ui.theme.AppUISize.tiny2XRoundedCornerShape
+ import com.crosspaste.ui.theme.AppUISize.tiny3X
+ import com.crosspaste.ui.theme.AppUISize.tiny5X
+-import com.crosspaste.ui.theme.AppUISize.xLarge
+ import com.crosspaste.ui.theme.AppUISize.xxxxLarge
+ import com.crosspaste.ui.theme.AppUISize.zero
  import org.koin.compose.koinInject
-+import java.awt.Desktop
- import java.awt.EventQueue
-+import java.awt.KeyboardFocusManager
-+import java.awt.Window
-+import java.awt.desktop.AppForegroundEvent
-+import java.awt.desktop.AppForegroundListener
- import java.awt.event.WindowAdapter
- import java.awt.event.WindowEvent
-+import java.beans.PropertyChangeEvent
-+import java.beans.PropertyChangeListener
- import java.util.concurrent.atomic.AtomicBoolean
- import kotlin.time.Duration.Companion.milliseconds
- 
-@@ -101,7 +108,7 @@ fun SearchWindow(windowIcon: Painter?) {
-         }
-     val ignoreFocusLoss =
-         remember(searchWindowInfo.show, searchWindowInfo.trigger) {
--            AtomicBoolean(searchWindowInfo.show && !isWindows && !(isLinux && gainedFocus.get()))
-+            AtomicBoolean(searchWindowInfo.show && !isWindows && !isMac && !(isLinux && gainedFocus.get()))
-         }
-     // The focus listener is registered once per window; it reads the flags of the
-     // current show cycle through these, so re-showing does not re-register it.
-@@ -119,6 +126,18 @@ fun SearchWindow(windowIcon: Painter?) {
-     DisposableEffect(windowsFocusSession) {
-         onDispose { windowsFocusSession?.close() }
-     }
-+    val macFocusSession =
-+        remember(searchWindowInfo.show, searchWindowInfo.trigger) {
-+            if (isMac && searchWindowInfo.show && searchWindowInfo.trigger != WindowTrigger.PREVIEW) {
-+                MacSearchWindowFocusSession(appWindowManager.searchComposeWindow?.isFocused == true)
-+            } else {
-+                null
-+            }
-+        }
-+    val currentMacFocusSession by rememberUpdatedState(macFocusSession)
-+    DisposableEffect(macFocusSession) {
-+        onDispose { macFocusSession?.close() }
-+    }
- 
-     // Compute and apply the effective window position synchronously during composition.
-     // This ensures the Window composable always sees the correct off-screen position on the
-@@ -138,9 +157,16 @@ fun SearchWindow(windowIcon: Painter?) {
-     }
- 
-     LaunchedEffect(searchWindowInfo.show, searchWindowInfo.trigger) {
--        // Windows activation starts inside the window, after its manager registration.
--        // Native foreground events provide protection there without a timed grace period.
--        if (isWindows) return@LaunchedEffect
-+        if (isMac) {
-+            logger.info {
-+                "Mac search visibility: show=${searchWindowInfo.show}, trigger=${searchWindowInfo.trigger}, " +
-+                    "session=${macFocusSession?.let { System.identityHashCode(it) }}, " +
-+                    "mainShow=${appWindowManager.getCurrentMainWindowInfo().show}"
-+            }
-+        }
-+        // Windows and macOS activation starts after the window is registered and showing.
-+        // Their focus sessions protect startup without a timed grace period.
-+        if (isWindows || isMac) return@LaunchedEffect
-         if (searchWindowInfo.show) {
-             if (searchWindowInfo.trigger != WindowTrigger.PREVIEW) {
-                 // Reset selection and scroll before an interactive window paints. Preview must
-@@ -229,6 +255,80 @@ fun SearchWindow(windowIcon: Painter?) {
-                     )
-                 }
- 
-+                fun macWindowLabel(value: Any?): String =
-+                    when (value) {
-+                        null -> "null"
-+                        window -> "search"
-+                        appWindowManager.bubbleComposeWindow -> "bubble"
-+                        appWindowManager.mainComposeWindow -> "main"
-+                        else -> "${value.javaClass.simpleName}@${System.identityHashCode(value)}"
-+                    }
-+
-+                fun deferMacFocusLoss(
-+                    session: MacSearchWindowFocusSession,
-+                    source: String,
-+                ) {
-+                    val sessionId = System.identityHashCode(session)
-+                    val appearance = appWindowManager.getCurrentSearchWindowInfo()
-+                    logger.info {
-+                        "Mac search focus loss requested: source=$source, session=$sessionId, " +
-+                            "show=${appWindowManager.getCurrentSearchWindowInfo().show}"
-+                    }
-+                    session.deferFocusLoss(
-+                        enqueue = { check ->
-+                            logger.info { "Mac search focus recheck queued: source=$source, session=$sessionId" }
-+                            EventQueue.invokeLater {
-+                                logger.info {
-+                                    "Mac search focus recheck dispatched: source=$source, session=$sessionId, " +
-+                                        "currentSession=${currentMacFocusSession?.let { System.identityHashCode(it) }}"
-+                                }
-+                                check()
-+                            }
-+   
+@@ -96,30 +87,6 @@ fun SearchTrailingIcon() {
+         horizontalArrangement = Arrangement.Start,
+         verticalAlignment = Alignment.CenterVertically,
+     ) {
+-        // The arrow shows the current order, following the list-header convention:
+-        // pointing down = descending (newest first), pointing up = ascending (oldest first).
+-        GeneralIconButton(
+-            imageVector =
+-                if (searchBaseParams.sort) {
+-                    MaterialSymbols.Rounded.Arrow_downward
+-                } else {
+-                    MaterialSymbols.Rounded.Arrow_upward
+-                },
+-            desc = if (searchBaseParams.sort) "sort_newest_first" else "sort_oldest_first",
+-            colors =
+-                iconButtonColors(
+-                    containerColor = Color.Transparent,
+-                    contentColor = MaterialTheme.colorScheme.primary,
+-                ),
+-            buttonSize = xLarge,
+-            iconSize = large2X,
+-            shape = tiny2XRoundedCornerShape,
+-        ) {
+-            pasteSearchViewModel.switchSort()
+-        }
+-
+-        Spacer(modifier = Modifier.width(tiny2X))
+-
+         OutlinedButton(
+             onClick = {
+                 showTypes = true
 ```
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/tray/TrayView.kt` (modified, +27/-1)
+**File**: `app/src/desktopMain/resources/i18n/de.properties` (modified, +0/-2)
 ```diff
-@@ -28,6 +28,7 @@ import com.crosspaste.utils.GlobalCoroutineScope.mainCoroutineDispatcher
- import dev.nucleusframework.composenativetray.menu.api.TrayMenuBuilder
- import dev.nucleusframework.composenativetray.tray.api.Tray
- import dev.nucleusframework.composenativetray.utils.isMenuBarInDarkMode
-+import io.github.oshai.kotlinlogging.KotlinLogging
- import kotlinx.coroutines.launch
- import org.jetbrains.compose.resources.painterResource
- import org.koin.compose.koinInject
-@@ -45,6 +46,7 @@ fun ApplicationScope.TrayView(windowIcon: Painter) {
- 
-     val isMacos = remember { platform.isMacos() }
-     val isLinux = remember { platform.isLinux() }
-+    val logger = remember { KotlinLogging.logger("TrayView") }
- 
-     // Windows portable-zip only: an actionable "update to vX.Y.Z" entry.
-     val isPortableZip =
-@@ -57,7 +59,11 @@ fun ApplicationScope.TrayView(windowIcon: Painter) {
-     // alone is not enough: KDE Plasma's tray does not take focus away, so a
-     // second click must close the window explicitly.
-     val toggleSearchWindow: suspend () -> Unit = {
--        if (appWindowManager.getCurrentSearchWindowInfo().show) {
-+        val shown = appWindowManager.getCurrentSearchWindowInfo().show
-+        if (isMacos) {
-+            logger.info { "Mac tray toggle decision: searchShow=$shown, action=${if (shown) "hide" else "show"}" }
-+        }
-+        if (shown) {
-             appWindowManager.dismissSearchWindow()
-         } else {
-             appWindowManager.saveCurrentActiveAppInfo()
-@@ -118,9 +124,29 @@ fun ApplicationScope.TrayView(windowIcon: Painter) {
-             },
-             tooltip = AppName,
-             primaryAction = {
-+                val clickId = System.nanoTime()
-+                logger.info {
-+                    "Mac tray primaryAction received: click=$clickId, " +
-+                        "searchShow=${appWindowManager.getCurrentSearchWindowInfo().show}, " +
-+                        "mainShow=${appWindowManager.getCurrentMainWindowInfo().show}"
-+                }
-                 mainCoroutineDispatcher.launch {
-+                    logger.info {
-+                        "Mac tray primaryAction dispatched: click=$clickId, " +
-+                            "queueDelayMs=${(System.nanoTime() - clickId) / 1_000_000.0}, " +
-+                            "searchShow=${appWindowManager.getCurrentSearchWindowInfo().show}"
-+                    }
-                     appWindowManager.hideMainWindow()
-+                    logger.info {
-+                        "Mac tray toggle starting: click=$clickId, " +
-+                            "searchShow=${appWindowManager.getCurrentSearchWindowInfo().show}, " +
-+                            "mainShow=${appWindowManager.getCurrentMainWindowInfo().show}"
-+                    }
-                     toggleSearchWindow()
-+                    logger.info {
-+                        "Mac tray toggle completed: click=$clickId, " +
-+                            "searchShow=${appWindowManager.getCurrentSearchWindowInfo().show}"
-+                    }
-                 }
-             },
-             menuContent = menuContent,
+@@ -362,8 +362,6 @@ show_search=Suchfenster ein- oder ausblenden
+ size=Größe
+ size_limits=Größenlimits
+ skip_pre_launch_pasteboard_content=Zwischenablage-Inhalt von vor dem Start ignorieren
+-sort_newest_first=Neueste zuerst
+-sort_oldest_first=Älteste zuerst
+ sound_effect=Töne
+ source=Quelle
+ source_control_settings=Zwischenablage-Quellen
 ```
 
-**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +27/-0)
+**File**: `app/src/desktopMain/resources/i18n/en.properties` (modified, +0/-2)
 ```diff
-@@ -501,6 +501,33 @@ public func getCurrentActiveAppInfo() -> UnsafePointer<CChar>? {
-     return nil
- }
- 
-+@_cdecl("isApplicationActive")
-+public func isApplicationActive() -> Int32 {
-+    if Thread.isMainThread {
-+        return NSApp.isActive ? 1 : 0
-+    }
-+    return DispatchQueue.main.sync { NSApp.isActive ? 1 : 0 }
-+}
-+
-+@_cdecl("isPointerOnStatusItem")
-+public func isPointerOnStatusItem() -> Int32 {
-+    if !Thread.isMainThread {
-+        return DispatchQueue.main.sync { isPointerOnStatusItem() }
-+    }
-+    // macOS 27 deactivates the app before it forwards the status item mouse-down,
-+    // so the click event arrives too late. Hardware state is already current:
-+    // the button is down over the icon. Requiring the press keeps Cmd+Tab while
-+    // hovering the icon a real dismissal.
-+    guard NSEvent.pressedMouseButtons & 1 != 0 else { return 0 }
-+    let pointer = NSEvent.mouseLocation
-+    let onStatusItem = NSApp.windows.contains { window in
-+        NSStringFromClass(type(of: window)) == "NSStatusBarWindow" &&
-+            window.isVisible &&
-+            window.frame.contains(pointer)
-+    }
-+    return onStatusItem ? 1 : 0
-+}
-+
- @_cdecl("getRunningApplications")
- public func getRunningApplications() -> UnsafePointer<CChar>? {
-     let apps = NSWorkspace.shared.runningApplications
+@@ -362,8 +362,6 @@ show_search=Show or hide search window
+ size=Size
+ size_limits=Size limits
+ skip_pre_launch_pasteboard_content=Ignore clipboard contents from before launch
+-sort_newest_first=Newest first
+-sort_oldest_first=Oldest first
+ sound_effect=Sounds
+ source=Source
+ source_control_settings=Clipboard sources
 ```
 
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/ui/MacSearchWindowFocusSessionTest.kt` (added, +263/-0)
+**File**: `app/src/desktopMain/resources/i18n/es.properties` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,263 @@
-+package com.crosspaste.ui
-+
-+import androidx.compose.ui.window.WindowState
-+import com.crosspaste.app.WindowInfo
-+import com.crosspaste.app.WindowTrigger
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+import kotlin.test.assertTrue
-+
-+class MacSearchWindowFocusSessionTest {
-+    @Test
-+    fun `tray click preserves the window when the focus recheck arrives before toggle`() {
-+        for (appActive in listOf(true, false)) {
-+            val session = MacSearchWindowFocusSession(gainedFocus = true)
-+            val queued = mutableListOf<() -> Unit>()
-+            var shown = true
-+            session.deferFocusLoss(
-+                queued::add,
-+                { focusState(appActive = appActive, pointerOnStatusItem = true).shouldDismiss },
-+            ) {
-+                error("Only the tray toggle may hide the window during a tray click")
-+            }
-+
-+            // macOS 27 can deactivate the app before delivering the tray callback.
-+            queued.single()()
-+            assertTrue(shown)
-+            shown = !shown
-+            assertFalse(shown, "The delayed tray toggle must hide instead of reopening")
-+        }
-+    }
-+
-+    @Test
-+    fun `tray toggle arriving first leaves queued focus loss unable to close a new appearance`() {
-+        val session = MacSearchWindowFocusSession(gainedFocus = true)
-+        val queued = mutableListOf<() -> Unit>()
-+        val appearance = WindowInfo(true, WindowState(), WindowTrigger.TRAY_ICON)
-+        var current = appearance
-+        session.deferFocusLoss(
-+            enqueue = queued::add,
-+            shouldDismiss = { focusState(appActive = false).shouldDismiss },
-+            isCurrentAppearance = { current === appearance },
-+            dismiss = { error("An old tray departure must not close a reopened window") },
-+        )
-+
-+        // The tray callback hides first; a shortcut then opens a new appearance.
-+        current = current.copy(show = !current.show)
-+        assertFalse(current.show)
-+        current = current.copy(show = true, trigger = WindowTrigger.SHORTCUT)
-+        // Run before Compose has disposed the original session.
-+        queued.single()()
-+        assertTrue(current.show)
-+
-+        val reopened = MacSearchWindowFocusSession(gainedFocus = true)
-+        reopened.deferFocusLoss({ it() }, { focusState(appActive = false).shouldDismiss }) {
-+            current = current.copy(show = false)
-+        }
-+        assertFalse(current.show, "A real outside click must still dismiss the new appearance")
-+    }
-+
-+    @Test
-+    fun `stale queued losses are rejected after focus recheck then tray toggle and reopen`() {
-+        val session = MacSearchWindowFocusSession(gainedFocus = true)
-+        val queued = mutableListOf<() -> Unit>()
-+        val appearance = WindowInfo(true, WindowState(), WindowTrigger.TRAY_ICON)
-+        var current = appearance
-+        var pointerOnStatusItem = true
-+        repeat(2) {
-+            session.deferFocusLoss(
-+                enqueue = queued::add,
-+                shouldDismiss = {
-+                    focusState(appActive = false, pointerOnStatusItem = pointerOnStatusItem).shouldDismiss
-+                },
-+                isCurrentAppearance = { current === appearance },
-+                dismiss = { error("The old appearance must leave dismissal to the tray toggle") },
-+            )
-+        }
-+        queued[0]()
-+        current = current.copy(show = !current.show)
-+        pointerOnStatusItem = false
-+        assertFalse(current.show)
-+        // Even an identical show/trigger pair is a different window appearance.
-+        current = current.copy(show = true)
-+        queued[1]()
-+        assertTrue(current.show)
-+    }
-+
-+    @Test
-+    fun `focus loss away from the status item still dismisses`() {
-+        val session = MacSearchWindowFocusSession(gainedFocus = true)
-+        val queued = mutableListOf<() -> Unit>()
-+        var dismissed = false
-+        // Hovering the icon without a pressed button (Cmd+Tab) is not a tray click.
-+        session.deferFocusLoss(
-+            queued::add,
-+            { focusState(appActive = false, pointerOnStatusItem = false).shouldDismiss },
-+        ) { dismissed = true }
-+        queued.single()()
-+        assertTrue(dismissed)
-+    }
-+
-+    @Test
-+    fun `app deactivation after a retained key-window loss still dismisses`() {
-+        val session = MacSearchWindowFocusSession(gainedFocus = true)
-+        val queued = mutableListOf<() -> Unit>()
-+        var focus = focusState(appActive = true)
-+        var dismissed = false
-+        session.deferFocusLoss(queued::add, { focus.shouldDismiss }) { dismissed = true }
-+        queued.removeAt(0)()
-+        assertFalse(dismissed)
-+
-+        // Deactivation can arrive without a second windowLostFocus event.
-+        focus = focusState(appActive = false)
-+        session.deferFocusLoss(queued::add, { focus.shouldDismiss }) { dismissed = true
-```
-
----
-
-### Incident Patch 3: `29082017` (2026-10-16)
-**Commit Message**: :bug: skip non-web URLs in clipboard previews (#5224)
-
-* fix: skip non-web URLs in clipboard previews
-
-- Restrict favicon and Open Graph requests to HTTP(S) URLs with a host
-- Validate preview image URLs before fetching them
-- Preserve local file links and cached web favicons
-
-* :bug: filter Open Graph image candidates by isHttpUrl before selecting fallback
-
----------
-
-Co-authored-by: Yiqun Zhang <[REDACTED_EMAIL]>
-
-**File**: `app/src/commonMain/kotlin/com/crosspaste/image/AbstractFaviconLoader.kt` (modified, +10/-0)
-```diff
-@@ -6,6 +6,7 @@ import com.crosspaste.path.UserDataPathProvider
- import com.crosspaste.utils.ConcurrentLoader
- import com.crosspaste.utils.StripedMutex
- import com.crosspaste.utils.getFileUtils
-+import com.crosspaste.utils.getUrlUtils
- import io.github.oshai.kotlinlogging.KLogger
- import io.ktor.http.*
- import okio.Path
-@@ -20,6 +21,8 @@ abstract class AbstractFaviconLoader(
- 
-     protected val fileUtils = getFileUtils()
- 
-+    private val urlUtils = getUrlUtils()
-+
-     override val mutex = StripedMutex()
- 
-     private fun getGoogleIconUrl(host: String): String =
-@@ -32,6 +35,13 @@ abstract class AbstractFaviconLoader(
-         path: Path,
-     ): Path?
- 
-+    override suspend fun load(value: String): Path? {
-+        if (!urlUtils.isHttpUrl(value)) {
-+            return null
-+        }
-+        return super<ConcurrentLoader>.load(value)
-+    }
-+
-     override fun resolve(
-         key: String,
-         value: String,
-```
-
-**File**: `app/src/commonMain/kotlin/com/crosspaste/rendering/OpenGraphService.kt` (modified, +9/-2)
-```diff
-@@ -15,6 +15,7 @@ import com.crosspaste.paste.item.getLegacyRenderingFilePath
- import com.crosspaste.paste.item.getRenderingFilePath
- import com.crosspaste.path.UserDataPathProvider
- import com.crosspaste.utils.getFileUtils
-+import com.crosspaste.utils.getUrlUtils
- import com.fleeksoft.ksoup.Ksoup
- import com.fleeksoft.ksoup.nodes.Document
- import io.github.oshai.kotlinlogging.KotlinLogging
-@@ -36,11 +37,16 @@ class OpenGraphService<Image>(
- 
-     private val fileUtils = getFileUtils()
- 
-+    private val urlUtils = getUrlUtils()
-+
-     override suspend fun render(pasteData: PasteData) {
-         if (!configManager.getCurrentConfig().enableUrlPreview) {
-             return
-         }
-         pasteData.getPasteItem(UrlPasteItem::class)?.let { urlPasteItem ->
-+            if (!urlUtils.isHttpUrl(urlPasteItem.url)) {
-+                return
-+            }
-             val openGraphImage =
-                 urlPasteItem.getRenderingFilePath(
-                     pasteData.getPasteCoordinate(),
-@@ -136,7 +142,7 @@ class OpenGraphService<Image>(
-                 { doc.select("header img").firstOrNull()?.attr("src") },
-                 // 8. The largest image on the page (final fallback)
-                 { findLargestImage(doc) },
--            ).mapNotNull { it() }.firstOrNull { it.isNotBlank() }
-+            ).mapNotNull { it() }.firstOrNull { urlUtils.isHttpUrl(it) }
- 
-         ogImage?.let { imageUrl ->
-             resourcesClient.request(imageUrl, ResourceRequestLimits.IMAGE).onSuccess { imageResponse ->
-@@ -203,7 +209,8 @@ class OpenGraphService<Image>(
-             .select("img[src]")
-             .filter { img ->
-                 val src = img.attr("src")
--                !src.contains("pixel") &&
-+                urlUtils.isHttpUrl(src) &&
-+                    !src.contains("pixel") &&
-                     !src.contains("tracking") &&
-                     !src.contains("1x1") &&
-                     !src.endsWith(".gif")
-```
-
-**File**: `app/src/commonMain/kotlin/com/crosspaste/utils/UrlUtils.kt` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ interface UrlUtils {
- 
-     fun isValidUrl(string: String): Boolean
- 
-+    fun isHttpUrl(string: String): Boolean
-+
-     fun createMiddleEllipsisText(
-         url: String,
-         maxLines: Int,
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/utils/UrlUtils.desktop.kt` (modified, +6/-0)
-```diff
-@@ -10,4 +10,10 @@ object DesktopUrlUtils : UrlUtils {
-             URI(string).toURL()
-             true
-         }.getOrElse { false }
-+
-+    override fun isHttpUrl(string: String): Boolean =
-+        runCatching {
-+            val url = URI(string).toURL()
-+            (url.protocol == "http" || url.protocol == "https") && url.host.isNotBlank()
-+        }.getOrElse { false }
- }
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/image/AbstractFaviconLoaderTest.kt` (modified, +72/-0)
-```diff
-@@ -5,12 +5,18 @@ import com.crosspaste.config.TestAppConfig
- import com.crosspaste.config.TestConfigManager
- import com.crosspaste.path.UserDataPathProvider
- import io.github.oshai.kotlinlogging.KotlinLogging
-+import io.mockk.Called
-+import io.mockk.every
- import io.mockk.mockk
-+import io.mockk.verify
- import kotlinx.coroutines.test.runTest
- import okio.Path
- import okio.Path.Companion.toPath
-+import java.nio.file.Files
-+import kotlin.io.path.createTempFile
- import kotlin.test.Test
- import kotlin.test.assertEquals
-+import kotlin.test.assertNull
- 
- class AbstractFaviconLoaderTest {
- 
-@@ -32,6 +38,72 @@ class AbstractFaviconLoaderTest {
-         }
-     }
- 
-+    @Test
-+    fun `load skips local file URLs before resolving the favicon cache`() =
-+        runTest {
-+            val pathProvider = mockk<UserDataPathProvider>()
-+            val loader = RecordingFaviconLoader(TestConfigManager(TestAppConfig()), pathProvider)
-+
-+            listOf(
-+                "file:/tmp/example.txt",
-+                "file:///tmp/example.txt",
-+                "file://server/shared/example.txt",
-+            ).forEach { url ->
-+                assertNull(loader.load(url), url)
-+            }
-+
-+            assertEquals(emptyList(), loader.requestedUrls)
-+            verify { pathProvider wasNot Called }
-+        }
-+
-+    @Test
-+    fun `load skips unsupported schemes and HTTP URLs without a host`() =
-+        runTest {
-+            val pathProvider = mockk<UserDataPathProvider>()
-+            val loader = RecordingFaviconLoader(TestConfigManager(TestAppConfig()), pathProvider)
-+
-+            listOf(
-+                "ftp://files.example.com/readme.txt",
-+                "mailto:user@example.com",
-+                "data:text/plain,hello",
-+                "https:///favicon.ico",
-+                "http://",
-+                "https://example.com:invalid/page",
-+                "//example.com/page",
-+                "/relative/path",
-+                "",
-+            ).forEach { url ->
-+                assertNull(loader.load(url), url)
-+            }
-+
-+            assertEquals(emptyList(), loader.requestedUrls)
-+            verify { pathProvider wasNot Called }
-+        }
-+
-+    @Test
-+    fun `load preserves cached web favicons when url preview is disabled`() =
-+        runTest {
-+            val pathProvider = mockk<UserDataPathProvider>()
-+            val loader =
-+                RecordingFaviconLoader(
-+                    TestConfigManager(TestAppConfig(enableUrlPreview = false)),
-+                    pathProvider,
-+                )
-+            val cache =
-+                createTempFile("crosspaste-favicon-", ".ico")
-+                    .toString()
-+                    .toPath()
-+
-+            try {
-+                every { pathProvider.resolve("example.com.ico", any()) } returns cache
-+
-+                assertEquals(cache, loader.load("https://example.com/page"))
-+                assertEquals(emptyList(), loader.requestedUrls)
-+            } finally {
-+                Files.deleteIfExists(cache.toNioPath())
-+            }
-+        }
-+
-     @Test
-     fun `save skips favicon download when url preview is disabled`() =
-         runTest {
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/rendering/OpenGraphServiceTest.kt` (modified, +131/-0)
-```diff
-@@ -59,6 +59,137 @@ class OpenGraphServiceTest {
-             verify { resourcesClient wasNot Called }
-         }
- 
-+    @Test
-+    fun `render skips non-web URLs and HTTP URLs without a host`() =
-+        runTest {
-+            val resourcesClient = mockk<ResourcesClient>()
-+            val pathProvider = mockk<UserDataPathProvider>()
-+            val service =
-+                OpenGraphService<Any>(
-+                    configManager = TestConfigManager(TestAppConfig()),
-+                    generateImageService = mockk(),
-+                    imageHandler = mockk(),
-+                    resourcesClient = resourcesClient,
-+                    updatePasteItemHelper = mockk(),
-+                    userDataPathProvider = pathProvider,
-+                    pasteDao = mockk(),
-+                )
-+
-+            listOf(
-+                "file:/tmp/example.txt",
-+                "file:///tmp/example.txt",
-+                "file://server/shared/example.txt",
-+                "ftp://files.example.com/readme.txt",
-+                "mailto:user@example.com",
-+                "data:text/plain,hello",
-+                "https:///favicon.ico",
-+                "http://",
-+                "https://example.com:invalid/page",
-+                "//example.com/page",
-+                "/relative/path",
-+            ).forEachIndexed { index, url ->
-+                service.render(createPasteData(8000L + index, createUrlPasteItem(url = url)))
-+            }
-+
-+            verify { resourcesClient wasNot Called }
-+            verify { pathProvider wasNot Called }
-+        }
-+
-+    @Test
-+    fun `render still fetches HTTP and HTTPS pages`() =
-+        runTest {
-+            val resourcesClient = mockk<ResourcesClient>()
-+            val service =
-+                OpenGraphService<Any>(
-+                    configManager = TestConfigManager(TestAppConfig()),
-+                    generateImageService = mockk(),
-+                    imageHandler = mockk(),
-+                    resourcesClient = resourcesClient,
-+                    updatePasteItemHelper = mockk(),
-+                    userDataPathProvider = createPathProvider(),
-+                    pasteDao = mockk(),
-+                )
-+            coEvery { resourcesClient.request(any(), ResourceRequestLimits.HTML) } returns
-+                Result.failure(IllegalStateException("No response"))
-+
-+            listOf("http://example.com/page", "https://example.com/page", "HTTPS://example.com/page")
-+                .forEachIndexed { index, url ->
-+                    service.render(createPasteData(8100L + index, createUrlPasteItem(url = url)))
-+                    coVerify(exactly = 1) { resourcesClient.request(url, ResourceRequestLimits.HTML) }
-+                }
-+        }
-+
-+    @Test
-+    fun `render skips non-web image URLs in page metadata`() =
-+        runTest {
-+            val item = createUrlPasteItem(url = "https://example.com/non-web-image")
-+            val resourcesClient = mockk<ResourcesClient>()
-+            val imageHandler = mockk<ImageHandler<Any>>()
-+            val service =
-+                OpenGraphService(
-+                    configManager = TestConfigManager(TestAppConfig()),
-+                    generateImageService = mockk(),
-+                    imageHandler = imageHandler,
-+                    resourcesClient = resourcesClient,
-+                    updatePasteItemHelper = mockk(),
-+                    userDataPathProvider = createPathProvider(),
-+                    pasteDao = mockk(),
-+                )
-+
-+            listOf("file:///tmp/preview.png", "data:image/png;base64,AAAA", "https:///preview.png")
-+                .forEachIndexed { index, imageUrl ->
-+                    val response = mockk<ClientResponse>()
-+                    every { response.getContentType() } returns ContentType.Text.Html
-+                    coEvery { response.getBody() } returns
-+                        ByteReadChannel("""<meta property="og:image" content="$imageUrl">""")
-+                    coEvery { resourcesClient.request(item.url, ResourceRequestLimits.HTML) } returns
-+                        Result.success(response)
-+
-+                    service.render(createPasteData(8200L + index, item))
-+                }
-+
-+            coVerify(exactly = 3) { resourcesClient.request(item.url, ResourceRequestLimits.HTML) }
-+            coVerify(exactly = 0) { resourcesClient.request(any(), ResourceRequestLimits.IMAGE) }
-+            verify { imageHandler wasNot Called }
-+        }
-+
-+    @Test
-+    fun `render falls back past non-web image candidates to valid HTTP image`() =
-+        runTest {
-+            val item = createUrlPasteItem(url = "https://example.com/fallback-image")
-+            val fallbackImageUrl = "https://cdn.example.com/hero.png"
-+            val resourcesClient = mockk<ResourcesClient>()
-+            val service =
-+                OpenGraphService<Any>(
-+                    configManager = TestConfigManager(TestAppConfig()),
-+                    generateIma
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/utils/UrlUtilsTest.kt` (modified, +44/-0)
-```diff
-@@ -45,6 +45,50 @@ class UrlUtilsTest {
-         assertFalse(urlUtils.isValidUrl("/relative/path"))
-     }
- 
-+    @Test
-+    fun `isValidUrl accepts a local file URL`() {
-+        assertTrue(urlUtils.isValidUrl("file:///tmp/example.txt"))
-+    }
-+
-+    @Test
-+    fun `isHttpUrl accepts web URLs with a host`() {
-+        listOf(
-+            "http://example.com/page",
-+            "https://example.com/page",
-+            "HTTPS://example.com/page",
-+            "http://localhost:8080/page",
-+            "https://[::1]:8443/page",
-+            "https://例子.测试/page",
-+        ).forEach { url -> assertTrue(urlUtils.isHttpUrl(url), url) }
-+    }
-+
-+    @Test
-+    fun `isHttpUrl rejects unsupported schemes`() {
-+        listOf(
-+            "file:/tmp/example.txt",
-+            "file:///tmp/example.txt",
-+            "file://server/shared/example.txt",
-+            "ftp://files.example.com/readme.txt",
-+            "mailto:user@example.com",
-+            "data:text/plain,hello",
-+        ).forEach { url -> assertFalse(urlUtils.isHttpUrl(url), url) }
-+    }
-+
-+    @Test
-+    fun `isHttpUrl rejects missing hosts and malformed URLs`() {
-+        listOf(
-+            "http://",
-+            "https:///favicon.ico",
-+            "http://?query=value",
-+            "http://#fragment",
-+            "https://example.com:invalid/page",
-+            "https://example.com/a b",
-+            "//example.com/page",
-+            "/relative/path",
-+            "",
-+        ).forEach { url -> assertFalse(urlUtils.isHttpUrl(url), url) }
-+    }
-+
-     @Test
-     fun `removeUrlScheme strips http scheme`() {
-         assertEquals("example.com/path", urlUtils.removeUrlScheme("http://example.com/path"))
+@@ -362,8 +362,6 @@ show_search=Mostrar u ocultar la ventana de búsqueda
+ size=Tamaño
+ size_limits=Límites de tamaño
+ skip_pre_launch_pasteboard_content=Ignorar el contenido del portapapeles anterior al inicio
+-sort_newest_first=Más recientes primero
+-sort_oldest_first=Más antiguos primero
+ sound_effect=Sonidos
+ source=Fuente
+ source_control_settings=Fuentes del portapapeles
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5235** (2026-10-20): :fire: remove the sort toggle from the search window (@guiyanakuang)
 - **PR #5234** (2026-10-19): :bug: discard remote pastes with invalid content instead of writing them to the clipboard (@guiyanakuang)
 - **PR #5233** (2026-10-18): :sparkles: catch up on missed pastes when a peer reconnects (@guiyanakuang)
 - **PR #5232** (2026-10-18): :construction_worker: refresh README contributors when an outside contributor's PR is merged (@guiyanakuang)
 - **PR #5231** (2026-10-17): :hammer: expose the pairing v3 dialog state as a StateFlow (@guiyanakuang)
 - **PR #5229** (2026-10-17): :bug: report Windows plugin script failures as a single line (@guiyanakuang)
-- **PR #5227** (2026-10-17): fix(windows): stabilize search window activation and dismissal (@BiFangKNT)
 
 ---
 
@@ -1695,57 +999,3 @@ Co-authored-by: Yiqun Zhang <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. :bug: report Windows plugin script failures as a single line (#5229)
-
-**RULE**:
-When implementing operations in `app/src/desktopMain/resources/plugins/translate/run.ps1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `745449b7`: :bug: report Windows plugin script failures as a single line (#5229). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/resources/plugins/translate/run.ps1`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```kotlin
-// Verified production-grade fix pattern:
-try {
-    $reader = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $utf8)
-    $paste = $reader.ReadToEnd() | ConvertFrom-Json
-    $text = if ($paste.content) { $paste.content } else { $paste.rawContent }
-    $target = if ($env:CROSSPASTE_ACTION) { $env:CROSSPASTE_ACTION } else { 'en' }
-    $bytes = $utf8.GetBytes((Translate-Text $text $target))
-    $stdout = [Console]::OpenStandardOutput()
-    $stdout.Write($bytes, 0, $bytes.Length)
-    $stdout.Flush()
-} catch {
-    # CrossPaste shows the tail of stderr to the user; one line reads better than an error record
-    $errBytes = $utf8.GetBytes($_.Exception.Message + "`n")
-    $stderr = [Console]::OpenStandardError()
-    $stderr.Write($errBytes, 0, $errBytes.Length)
-    $stderr.Flush()
-    exit 1
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-$reader = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $utf8)
-$paste = $reader.ReadToEnd() | ConvertFrom-Json
-$text = if ($paste.content) { $paste.content } else { $paste.rawContent }
-$target = if ($env:CROSSPASTE_ACTION) { $env:CROSSPASTE_ACTION } else { 'en' }
-$bytes = $utf8.GetBytes((Translate-Text $text $target))
-$stdout = [Console]::OpenStandardOutput()
-$stdout.Write($bytes, 0, $bytes.Length)
-$stdout.Flush()
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `745449b7` are properly handled with clean fallback behavior.

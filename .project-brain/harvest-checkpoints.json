@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T21:21:26.243Z",
+  "last_updated": "2026-10-20T21:27:45.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
-      "verified_at": "2026-10-19T07:50:52.634Z",
+      "content_hash": "75c12e2bf6a803b339ffe5b4aef2ea0a3f4c30566dc95752f0077dbd6a376ba5",
+      "verified_at": "2026-10-20T21:27:33.643Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:50:52.634Z"
+      "last_updated": "2026-10-20T21:27:33.643Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "e00a9f4cc287d6407e4dbc43f6936f772bd517fcd2d0b24c21cdbe55c1086675",
-      "verified_at": "2026-10-18T21:39:32.851Z",
+      "content_hash": "92a2da3d3219e1be545e1b0a8d3d9fbe5071f400d06a244b8958c698814a9926",
+      "verified_at": "2026-10-20T21:27:32.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:39:32.851Z"
+      "last_updated": "2026-10-20T21:27:32.742Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
-      "verified_at": "2026-10-20T05:10:36.182Z",
+      "content_hash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
+      "verified_at": "2026-10-20T21:27:45.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:10:36.182Z"
+      "last_updated": "2026-10-20T21:27:45.234Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
-      "verified_at": "2026-10-20T06:07:11.491Z",
+      "content_hash": "44d5167b78c12c30cf467b8e732da62acfa3d50d593d55f0e202e55e66db98d4",
+      "verified_at": "2026-10-20T21:27:39.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:07:11.491Z"
+      "last_updated": "2026-10-20T21:27:39.985Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
-      "verified_at": "2026-10-19T09:54:26.109Z",
+      "content_hash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
+      "verified_at": "2026-10-20T21:27:34.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:54:26.109Z"
+      "last_updated": "2026-10-20T21:27:34.019Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

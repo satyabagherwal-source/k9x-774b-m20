@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `f748c1a4`  
+> **Source Version**: `a9aa73d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:39:32.666Z  
+> **Timestamp**: 2026-10-20T21:27:32.364Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:39:32.432Z  
+> **Harvest Timestamp**: 2026-10-20T21:27:32.227Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 60831 stars
+- **Stars / Engagement**: 60868 stars
 
 ---
 
@@ -608,823 +608,10 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9b112b6` (2026-10-01)
-**Commit Message**: Exit quietly on broken pipe in auxiliary output paths
+### Incident Patch 1: `2fd71ad5` (2026-10-20)
+**Commit Message**: Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang
 
-The main output path has exited with status 0 on EPIPE since #232, but
-auxiliary outputs still used println!/print!/io::stdout().flush().unwrap()
-and panicked (exit code 101) when the reader of a piped stdout went away
-early, e.g. 'bat --completion bash | head -n0'.
-
-Route them through the existing convention instead: write!/writeln! to
-io::stdout() and '?' so that Error::Io(BrokenPipe) reaches
-default_error_handler, which exits with status 0. This covers
---completion, --config-file, --diagnostic (bugreport's print() becomes
-format() + writeln!), --generate-config-file, the 'cache' subcommand
-progress messages, the OSC title sequence of --set-terminal-title, and
-the 'built without feature' notices.
-
-Closes #4034
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -25,6 +25,7 @@
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
- 
- ## Bugfixes
-+- Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232. Closes #4034 (@Mathjk)
- - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
- - Allow boolean flags to be given more than once, so that a flag set in the config file can also be passed on the command line without erroring, see #3912 (@logarithmone1128)
- - Use parsed CLI arguments to detect number flags, see #3908 (@cuishuang)
-```
-
-**File**: `src/assets/build_assets.rs` (modified, +25/-15)
-```diff
-@@ -1,4 +1,5 @@
- use std::convert::TryInto;
-+use std::io::{self, Write};
- use std::path::Path;
- 
- use syntect::highlighting::ThemeSet;
-@@ -24,7 +25,7 @@ pub fn build(
- 
-     let acknowledgements = build_acknowledgements(source_dir, include_acknowledgements)?;
- 
--    print_unlinked_contexts(&syntax_set);
-+    print_unlinked_contexts(&syntax_set)?;
- 
-     write_assets(
-         &theme_set,
-@@ -46,16 +47,18 @@ fn build_theme_set(source_dir: &Path, include_integrated_assets: bool) -> Result
-     if theme_dir.exists() {
-         let res = theme_set.add_from_folder(&theme_dir);
-         if let Err(err) = res {
--            println!(
-+            writeln!(
-+                io::stdout(),
-                 "Failed to load one or more themes from '{}' (reason: '{err}')",
-                 theme_dir.to_string_lossy(),
--            );
-+            )?;
-         }
-     } else {
--        println!(
-+        writeln!(
-+            io::stdout(),
-             "No themes were found in '{}', using the default set",
-             theme_dir.to_string_lossy()
--        );
-+        )?;
-     }
- 
-     theme_set.try_into()
-@@ -78,23 +81,25 @@ fn build_syntax_set_builder(
-     if syntax_dir.exists() {
-         syntax_set_builder.add_from_folder(syntax_dir, true)?;
-     } else {
--        println!(
-+        writeln!(
-+            io::stdout(),
-             "No syntaxes were found in '{}', using the default set.",
-             syntax_dir.to_string_lossy()
--        );
-+        )?;
-     }
- 
-     Ok(syntax_set_builder)
- }
- 
--fn print_unlinked_contexts(syntax_set: &SyntaxSet) {
-+fn print_unlinked_contexts(syntax_set: &SyntaxSet) -> Result<()> {
-     let missing_contexts = syntax_set.find_unlinked_contexts();
-     if !missing_contexts.is_empty() {
--        println!("Some referenced contexts could not be found!");
-+        writeln!(io::stdout(), "Some referenced contexts could not be found!")?;
-         for context in missing_contexts {
--            println!("- {context}");
-+            writeln!(io::stdout(), "- {context}")?;
-         }
-     }
-+    Ok(())
- }
- 
- fn write_assets(
-@@ -127,12 +132,13 @@ fn write_assets(
-         )?;
-     }
- 
--    print!(
-+    write!(
-+        io::stdout(),
-         "Writing metadata to folder {} ... ",
-         target_dir.to_string_lossy()
--    );
-+    )?;
-     crate::assets_metadata::AssetsMetadata::new(current_version).save_to_folder(target_dir)?;
--    println!("okay");
-+    writeln!(io::stdout(), "okay")?;
- 
-     Ok(())
- }
-@@ -161,10 +167,14 @@ fn asset_to_cache<T: serde::Serialize>(
-     description: &str,
-     compressed: bool,
- ) -> Result<()> {
--    print!("Writing {description} to {} ... ", path.to_string_lossy());
-+    write!(
-+        io::stdout(),
-+        "Writing {description} to {} ... ",
-+        path.to_string_lossy()
-+    )?;
-     let contents = asset_to_contents(asset, description, compressed)?;
-     std::fs::write(path, &contents[..])
-         .map_err(|_| format!("Could not save {description} to {}", path.to_string_lossy()))?;
--    println!("okay");
-+    writeln!(io::stdout(), "okay")?;
-     Ok(())
- }
-```
-
-**File**: `src/bin/bat/assets.rs` (modified, +15/-10)
-```diff
-@@ -1,5 +1,5 @@
- use std::fs;
--use std::io;
-+use std::io::{self, Write};
- use std::path::Path;
- use std::path::PathBuf;
- 
-@@ -9,10 +9,11 @@ use bat::assets::HighlightingAssets;
- use bat::assets_metadata::AssetsMetadata;
- use bat::error::*;
- 
--pub fn clear_assets(cache_dir: &Path) {
--    clear_asset(cache_dir.join("themes.bin"), "theme set cache");
--    clear_asset(cache_dir.join("syntaxes.bin"), "syntax set cache");
--    clear_asset(cache_dir.join("metadata.yaml"), "metadata file");
-+pub fn clear_assets(cache_dir: &Path) -> Result<()> {
-+    clear_asset(cache_dir.join("themes.bin"), "theme set cache")?;
-+    clear_asset(cache_dir.join("syntaxes.bin"), "syntax set cache")?;
-+    clear_asset(cache_dir.join("metadata.yaml"), "metadata file")?;
-+    Ok(())
- }
- 
- pub fn assets_from_cache_or_binary(
-@@ -43,15 +44,19 @@ pub fn assets_from_cache_or_binary(
-     Ok(custom_assets.unwrap_or_else(HighlightingAssets::from_binary))
- }
- 
--fn clear_asset(path: PathBuf, description: &str) {
--    print!("Clearing {description} ... ");
-+fn clear_asset(path: PathBuf, description: &str) -> Result<()> {
-+    write!(io::stdout(), "Clearing {description} ... ")?;
-     match fs::remove_file(&path) {
-         Err(err) if err.kind() == io::ErrorKind::NotFound => {
--            println!("skipped (not present)");
-+            writeln!(io::stdout(), "skipped (not present)")?;
-         }
-         Err(err) => {
--            println!("could not remove the cache file {path:?}: {err}");
-+            writeln!(
-+                io::stdout(),
-+                "could not remove the cache file {path:?}: {err}"
-+            )?;
-         }
--        Ok(_) => println!("okay"),
-+        Ok(_) => writeln!(io::stdout(), "okay")?,
-     }
-+    Ok(())
- }
-```
-
-**File**: `src/bin/bat/config.rs` (modified, +7/-5)
-```diff
-@@ -32,12 +32,13 @@ pub fn config_file() -> PathBuf {
- pub fn generate_config_file() -> bat::error::Result<()> {
-     let config_file = config_file();
-     if config_file.is_file() {
--        println!(
-+        writeln!(
-+            io::stdout(),
-             "A config file already exists at: {}",
-             config_file.to_string_lossy()
--        );
-+        )?;
- 
--        print!("Overwrite? (y/N): ");
-+        write!(io::stdout(), "Overwrite? (y/N): ")?;
-         io::stdout().flush()?;
-         let mut decision = String::new();
-         io::stdin().read_line(&mut decision)?;
-@@ -93,10 +94,11 @@ pub fn generate_config_file() -> bat::error::Result<()> {
-         )
-     })?;
- 
--    println!(
-+    writeln!(
-+        io::stdout(),
-         "Success! Config file written to {}",
-         config_file.to_string_lossy()
--    );
-+    )?;
- 
-     Ok(())
- }
-```
-
-**File**: `src/bin/bat/main.rs` (modified, +23/-17)
-```diff
-@@ -74,9 +74,9 @@ fn run_cache_subcommand(
-         #[cfg(feature = "build-assets")]
-         build_assets(matches, config_dir, cache_dir)?;
-         #[cfg(not(feature = "build-assets"))]
--        println!("bat has been built without the 'build-assets' feature. The 'cache --build' option is not available.");
-+        writeln!(io::stdout(), "bat has been built without the 'build-assets' feature. The 'cache --build' option is not available.")?;
-     } else if matches.get_flag("clear") {
--        clear_assets(cache_dir);
-+        clear_assets(cache_dir)?;
-     }
- 
-     Ok(())
-@@ -262,13 +262,17 @@ pub fn list_themes(
-     Ok(())
- }
- 
--fn set_terminal_title_to(new_terminal_title: String) {
-+fn set_terminal_title_to(new_terminal_title: String) -> Result<()> {
-     let osc_command_for_setting_terminal_title = "\x1b]0;";
-     let osc_end_command = "\x07";
-     // Prevent BEL/ESC/C1 bytes in the title from terminating or nesting the OSC.
-     let safe_title = bat::sanitize_for_terminal(&new_terminal_title);
--    print!("{osc_command_for_setting_terminal_title}{safe_title}{osc_end_command}");
--    io::stdout().flush().unwrap();
-+    write!(
-+        io::stdout(),
-+        "{osc_command_for_setting_terminal_title}{safe_title}{osc_end_command}"
-+    )?;
-+    io::stdout().flush()?;
-+    Ok(())
- }
- 
- fn get_new_terminal_title(inputs: &Vec<Input>) -> String {
-@@ -286,13 +290,13 @@ fn run_controller(inputs: Vec<Input>, config: &Config, cache_dir: &Path) -> Resu
-     let assets = assets_from_cache_or_binary(config.use_custom_assets, cache_dir)?;
-     let controller = Controller::new(config, &assets);
-     if config.paging_mode != PagingMode::Never && config.set_terminal_title {
--        set_terminal_title_to(get_new_terminal_title(&inputs));
-+        set_terminal_title_to(get_new_terminal_title(&inputs))?;
-     }
-     controller.run(inputs, None)
- }
- 
- #[cfg(feature = "bugreport")]
--fn invoke_bugreport(app: &App, cache_dir: &Path) {
-+fn invoke_bugreport(app: &App, cache_dir: &Path) -> Result<()> {
-     use bugreport::{bugreport, collector::*, format::Markdown, report::ReportEntry};
- 
-     struct ColorSchemeCollector;
-@@ -370,7 +374,8 @@ fn invoke_bugreport(app: &App, cache_dir: &Path) {
-         ))
-     };
- 
--    report.print::<Markdown>();
-+    writeln!(io::stdout(), "{}", report.format::<Markdown>())?;
-+    Ok(())
- }
- 
- /// Returns `Err(..)` upon fatal errors. Otherwise, returns `Ok(true)` on full success and
-@@ -382,21 +387,22 @@ fn run() -> Result<bool> {
- 
-     if app.matches.get_flag("diagnostic") {
-         #[cfg(feature = "bugreport")]
--        invoke_bugreport(&app, cache_dir);
-+        invoke_bugreport(&app, cache_dir)?;
-         #[cfg(not(feature = "bugreport"))]
--        println!("bat has been built without the 'bugreport' feature. The '--diagnostic' option is not available.");
-+        writeln!(io::stdout(), "bat has been built without the 'bugreport' feature. The '--diagnostic' option is not available.")?;
-         return Ok(true);
-     }
- 
-     #[cfg(feature = "application")]
-     if let Some(shell) = app.matches.get_one::<String>("completion") {
--        match shell.as_str() {
--            "bash" => println!("{}", completions::BASH_COMPLETION),
--            "fish" => println!("{}", completions::FISH_COMPLETION),
--            "ps1" => println!("{}", completions::PS1_COMPLETION),
--            "zsh" => println!("{}", completions::ZSH_COMPLETION),
-+        let completion = match shell.as_str() {
-+            "bash" => completions::BASH_COMPLETION,
-+            "fish" => completions::FISH_COMPLETION,
-+            "ps1" => completions::PS1_COMPLETION,
-+            "zsh" => completions::ZSH_COMPLETION,
-             _ => unreachable!("No completion for shell '{shell}' available."),
--        }
-+        };
-+        writeln!(io::stdout(), "{completion}")?;
-         return Ok(true);
-     }
- 
-@@ -435,7 +441,7 @@ fn run() -> Result<bool> {
-                 list_themes(&config, config_dir, cache_dir, app.theme_options())?;
-                 Ok(true)
-             } else if app.matches.get_flag("config-file") {
--                println!("{}", config_file().to_string_lossy());
-+                writeln!(io::stdout(), "{}", config_file().to_string_lossy())?;
-                 Ok(true)
-             } else if app.matches.get_flag("generate-config-file") {
-                 generate_config_file()?;
-```
-
-**File**: `tests/integration_tests.rs` (modified, +62/-3)
-```diff
-@@ -25,10 +25,8 @@ mod unix {
- use unix::*;
- 
- mod utils;
--use utils::command::{bat, bat_with_config};
-+use utils::command::{bat, bat_raw_command, bat_raw_command_with_config, bat_with_config};
- 
--#[cfg(unix)]
--use utils::command::bat_raw_command;
- use utils::mocked_pagers;
- 
- const EXAMPLES_DIR: &str = "tests/examples";
-@@ -60,6 +58,67 @@ fn stdin() {
-         .stdout("foo\nbar\n");
- }
- 
-+/// Runs `bat` with `args` while its stdout is a pipe whose read end has
-+/// already been closed, so the very first write fails with `BrokenPipe`
-+/// (EPIPE on Unix, `ERROR_NO_DATA` on Windows).
-+fn assert_quiet_exit_when_stdout_is_closed(command: &mut std::process::Command, args: &[&str]) {
-+    use std::process::Stdio;
-+
-+    let (pipe_reader, pipe_writer) = std::io::pipe().expect("could not create a pipe");
-+    drop(pipe_reader);
-+
-+    let output = command
-+        .args(args)
-+        .stdin(Stdio::null())
-+        .stdout(pipe_writer)
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .and_then(|child| child.wait_with_output())
-+        .expect("could not run bat");
-+
-+    assert!(
-+        output.status.success(),
-+        "bat {args:?} should exit quietly when stdout is closed, status: {}, stderr: {}",
-+        output.status,
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+    assert!(
-+        output.stderr.is_empty(),
-+        "bat {args:?} should not print to stderr when stdout is closed, stderr: {}",
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+}
-+
-+#[test]
-+fn auxiliary_output_does_not_panic_on_closed_stdout() {
-+    // Auxiliary outputs used to be written via `println!`, which panics when
-+    // the reader of a piped stdout is already gone (e.g. `bat --config-file |
-+    // head -n 0`). The main output path has exited quietly on `BrokenPipe`
-+    // since #232; auxiliary outputs should behave the same way.
-+    assert_quiet_exit_when_stdout_is_closed(&mut bat_raw_command(), &["--config-file"]);
-+    assert_quiet_exit_when_stdout_is_closed(&mut bat_raw_command(), &["--diagnostic"]);
-+
-+    // The `cache` subcommand is only enabled when the working directory does
-+    // not contain a file named `cache` (see `cache_clear`), and it conflicts
-+    // with top-level flags like `--no-config`. Run it from a temporary
-+    // directory that doubles as `BAT_CACHE_PATH`, leaving the real cache alone.
-+    let temp_dir = tempdir().expect("could not create a temporary directory");
-+    let mut command = bat_raw_command_with_config();
-+    command
-+        .current_dir(temp_dir.path())
-+        .env("BAT_CONFIG_PATH", temp_dir.path().join("config"))
-+        .env("BAT_CACHE_PATH", temp_dir.path());
-+    assert_quiet_exit_when_stdout_is_closed(&mut command, &["cache", "--clear"]);
-+}
-+
-+#[cfg(feature = "application")]
-+#[test]
-+fn completion_does_not_panic_on_closed_stdout() {
-+    for shell in ["bash", "fish", "ps1", "zsh"] {
-+        assert_quiet_exit_when_stdout_is_closed(&mut bat_raw_command(), &["--completion", shell]);
-+    }
-+}
-+
- #[test]
- fn concatenate() {
-     bat()
-```
-
----
-
-### Incident Patch 2: `d9559c69` (2026-10-07)
-**Commit Message**: Merge pull request #4035 from Mathjk/fix/aux-epipe
-
-Fix panic on closed stdout in auxiliary output paths
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -25,6 +25,7 @@
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
- 
- ## Bugfixes
-+- Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
- - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
- - Allow boolean flags to be given more than once, so that a flag set in the config file can also be passed on the command line without erroring, see #3912 (@logarithmone1128)
- - Use parsed CLI arguments to detect number flags, see #3908 (@cuishuang)
-```
-
-**File**: `src/assets/build_assets.rs` (modified, +25/-15)
-```diff
-@@ -1,4 +1,5 @@
- use std::convert::TryInto;
-+use std::io::{self, Write};
- use std::path::Path;
- 
- use syntect::highlighting::ThemeSet;
-@@ -24,7 +25,7 @@ pub fn build(
- 
-     let acknowledgements = build_acknowledgements(source_dir, include_acknowledgements)?;
- 
--    print_unlinked_contexts(&syntax_set);
-+    print_unlinked_contexts(&syntax_set)?;
- 
-     write_assets(
-         &theme_set,
-@@ -46,16 +47,18 @@ fn build_theme_set(source_dir: &Path, include_integrated_assets: bool) -> Result
-     if theme_dir.exists() {
-         let res = theme_set.add_from_folder(&theme_dir);
-         if let Err(err) = res {
--            println!(
-+            writeln!(
-+                io::stdout(),
-                 "Failed to load one or more themes from '{}' (reason: '{err}')",
-                 theme_dir.to_string_lossy(),
--            );
-+            )?;
-         }
-     } else {
--        println!(
-+        writeln!(
-+            io::stdout(),
-             "No themes were found in '{}', using the default set",
-             theme_dir.to_string_lossy()
--        );
-+        )?;
-     }
- 
-     theme_set.try_into()
-@@ -78,23 +81,25 @@ fn build_syntax_set_builder(
-     if syntax_dir.exists() {
-         syntax_set_builder.add_from_folder(syntax_dir, true)?;
-     } else {
--        println!(
-+        writeln!(
-+            io::stdout(),
-             "No syntaxes were found in '{}', using the default set.",
-             syntax_dir.to_string_lossy()
--        );
-+        )?;
-     }
- 
-     Ok(syntax_set_builder)
- }
- 
--fn print_unlinked_contexts(syntax_set: &SyntaxSet) {
-+fn print_unlinked_contexts(syntax_set: &SyntaxSet) -> Result<()> {
-     let missing_contexts = syntax_set.find_unlinked_contexts();
-     if !missing_contexts.is_empty() {
--        println!("Some referenced contexts could not be found!");
-+        writeln!(io::stdout(), "Some referenced contexts could not be found!")?;
-         for context in missing_contexts {
--            println!("- {context}");
-+            writeln!(io::stdout(), "- {context}")?;
-         }
-     }
-+    Ok(())
- }
- 
- fn write_assets(
-@@ -127,12 +132,13 @@ fn write_assets(
-         )?;
-     }
- 
--    print!(
-+    write!(
-+        io::stdout(),
-         "Writing metadata to folder {} ... ",
-         target_dir.to_string_lossy()
--    );
-+    )?;
-     crate::assets_metadata::AssetsMetadata::new(current_version).save_to_folder(target_dir)?;
--    println!("okay");
-+    writeln!(io::stdout(), "okay")?;
- 
-     Ok(())
- }
-@@ -161,10 +167,14 @@ fn asset_to_cache<T: serde::Serialize>(
-     description: &str,
-     compressed: bool,
- ) -> Result<()> {
--    print!("Writing {description} to {} ... ", path.to_string_lossy());
-+    write!(
-+        io::stdout(),
-+        "Writing {description} to {} ... ",
-+        path.to_string_lossy()
-+    )?;
-     let contents = asset_to_contents(asset, description, compressed)?;
-     std::fs::write(path, &contents[..])
-         .map_err(|_| format!("Could not save {description} to {}", path.to_string_lossy()))?;
--    println!("okay");
-+    writeln!(io::stdout(), "okay")?;
-     Ok(())
- }
-```
-
-**File**: `src/bin/bat/assets.rs` (modified, +15/-10)
-```diff
-@@ -1,5 +1,5 @@
- use std::fs;
--use std::io;
-+use std::io::{self, Write};
- use std::path::Path;
- use std::path::PathBuf;
- 
-@@ -9,10 +9,11 @@ use bat::assets::HighlightingAssets;
- use bat::assets_metadata::AssetsMetadata;
- use bat::error::*;
- 
--pub fn clear_assets(cache_dir: &Path) {
--    clear_asset(cache_dir.join("themes.bin"), "theme set cache");
--    clear_asset(cache_dir.join("syntaxes.bin"), "syntax set cache");
--    clear_asset(cache_dir.join("metadata.yaml"), "metadata file");
-+pub fn clear_assets(cache_dir: &Path) -> Result<()> {
-+    clear_asset(cache_dir.join("themes.bin"), "theme set cache")?;
-+    clear_asset(cache_dir.join("syntaxes.bin"), "syntax set cache")?;
-+    clear_asset(cache_dir.join("metadata.yaml"), "metadata file")?;
-+    Ok(())
- }
- 
- pub fn assets_from_cache_or_binary(
-@@ -43,15 +44,19 @@ pub fn assets_from_cache_or_binary(
-     Ok(custom_assets.unwrap_or_else(HighlightingAssets::from_binary))
- }
- 
--fn clear_asset(path: PathBuf, description: &str) {
--    print!("Clearing {description} ... ");
-+fn clear_asset(path: PathBuf, description: &str) -> Result<()> {
-+    write!(io::stdout(), "Clearing {description} ... ")?;
-     match fs::remove_file(&path) {
-         Err(err) if err.kind() == io::ErrorKind::NotFound => {
--            println!("skipped (not present)");
-+            writeln!(io::stdout(), "skipped (not present)")?;
-         }
-         Err(err) => {
--            println!("could not remove the cache file {path:?}: {err}");
-+            writeln!(
-+                io::stdout(),
-+                "could not remove the cache file {path:?}: {err}"
-+            )?;
-         }
--        Ok(_) => println!("okay"),
-+        Ok(_) => writeln!(io::stdout(), "okay")?,
-     }
-+    Ok(())
- }
-```
-
-**File**: `src/bin/bat/config.rs` (modified, +7/-5)
-```diff
-@@ -32,12 +32,13 @@ pub fn config_file() -> PathBuf {
- pub fn generate_config_file() -> bat::error::Result<()> {
-     let config_file = config_file();
-     if config_file.is_file() {
--        println!(
-+        writeln!(
-+            io::stdout(),
-             "A config file already exists at: {}",
-             config_file.to_string_lossy()
--        );
-+        )?;
- 
--        print!("Overwrite? (y/N): ");
-+        write!(io::stdout(), "Overwrite? (y/N): ")?;
-         io::stdout().flush()?;
-         let mut decision = String::new();
-         io::stdin().read_line(&mut decision)?;
-@@ -93,10 +94,11 @@ pub fn generate_config_file() -> bat::error::Result<()> {
-         )
-     })?;
- 
--    println!(
-+    writeln!(
-+        io::stdout(),
-         "Success! Config file written to {}",
-         config_file.to_string_lossy()
--    );
-+    )?;
- 
-     Ok(())
- }
-```
-
-**File**: `src/bin/bat/main.rs` (modified, +23/-17)
-```diff
-@@ -74,9 +74,9 @@ fn run_cache_subcommand(
-         #[cfg(feature = "build-assets")]
-         build_assets(matches, config_dir, cache_dir)?;
-         #[cfg(not(feature = "build-assets"))]
--        println!("bat has been built without the 'build-assets' feature. The 'cache --build' option is not available.");
-+        writeln!(io::stdout(), "bat has been built without the 'build-assets' feature. The 'cache --build' option is not available.")?;
-     } else if matches.get_flag("clear") {
--        clear_assets(cache_dir);
-+        clear_assets(cache_dir)?;
-     }
- 
-     Ok(())
-@@ -262,13 +262,17 @@ pub fn list_themes(
-     Ok(())
- }
- 
--fn set_terminal_title_to(new_terminal_title: String) {
-+fn set_terminal_title_to(new_terminal_title: String) -> Result<()> {
-     let osc_command_for_setting_terminal_title = "\x1b]0;";
-     let osc_end_command = "\x07";
-     // Prevent BEL/ESC/C1 bytes in the title from terminating or nesting the OSC.
-     let safe_title = bat::sanitize_for_terminal(&new_terminal_title);
--    print!("{osc_command_for_setting_terminal_title}{safe_title}{osc_end_command}");
--    io::stdout().flush().unwrap();
-+    write!(
-+        io::stdout(),
-+        "{osc_command_for_setting_terminal_title}{safe_title}{osc_end_command}"
-+    )?;
-+    io::stdout().flush()?;
-+    Ok(())
- }
- 
- fn get_new_terminal_title(inputs: &Vec<Input>) -> String {
-@@ -286,13 +290,13 @@ fn run_controller(inputs: Vec<Input>, config: &Config, cache_dir: &Path) -> Resu
-     let assets = assets_from_cache_or_binary(config.use_custom_assets, cache_dir)?;
-     let controller = Controller::new(config, &assets);
-     if config.paging_mode != PagingMode::Never && config.set_terminal_title {
--        set_terminal_title_to(get_new_terminal_title(&inputs));
-+        set_terminal_title_to(get_new_terminal_title(&inputs))?;
-     }
-     controller.run(inputs, None)
- }
- 
- #[cfg(feature = "bugreport")]
--fn invoke_bugreport(app: &App, cache_dir: &Path) {
-+fn invoke_bugreport(app: &App, cache_dir: &Path) -> Result<()> {
-     use bugreport::{bugreport, collector::*, format::Markdown, report::ReportEntry};
- 
-     struct ColorSchemeCollector;
-@@ -370,7 +374,8 @@ fn invoke_bugreport(app: &App, cache_dir: &Path) {
-         ))
-     };
- 
--    report.print::<Markdown>();
-+    writeln!(io::stdout(), "{}", report.format::<Markdown>())?;
-+    Ok(())
- }
- 
- /// Returns `Err(..)` upon fatal errors. Otherwise, returns `Ok(true)` on full success and
-@@ -382,21 +387,22 @@ fn run() -> Result<bool> {
- 
-     if app.matches.get_flag("diagnostic") {
-         #[cfg(feature = "bugreport")]
--        invoke_bugreport(&app, cache_dir);
-+        invoke_bugreport(&app, cache_dir)?;
-         #[cfg(not(feature = "bugreport"))]
--        println!("bat has been built without the 'bugreport' feature. The '--diagnostic' option is not available.");
-+        writeln!(io::stdout(), "bat has been built without the 'bugreport' feature. The '--diagnostic' option is not available.")?;
-         return Ok(true);
-     }
- 
-     #[cfg(feature = "application")]
-     if let Some(shell) = app.matches.get_one::<String>("completion") {
--        match shell.as_str() {
--            "bash" => println!("{}", completions::BASH_COMPLETION),
--            "fish" => println!("{}", completions::FISH_COMPLETION),
--            "ps1" => println!("{}", completions::PS1_COMPLETION),
--            "zsh" => println!("{}", completions::ZSH_COMPLETION),
-+        let completion = match shell.as_str() {
-+            "bash" => completions::BASH_COMPLETION,
-+            "fish" => completions::FISH_COMPLETION,
-+            "ps1" => completions::PS1_COMPLETION,
-+            "zsh" => completions::ZSH_COMPLETION,
-             _ => unreachable!("No completion for shell '{shell}' available."),
--        }
-+        };
-+        writeln!(io::stdout(), "{completion}")?;
-         return Ok(true);
-     }
- 
-@@ -435,7 +441,7 @@ fn run() -> Result<bool> {
-                 list_themes(&config, config_dir, cache_dir, app.theme_options())?;
-                 Ok(true)
-             } else if app.matches.get_flag("config-file") {
--                println!("{}", config_file().to_string_lossy());
-+                writeln!(io::stdout(), "{}", config_file().to_string_lossy())?;
-                 Ok(true)
-             } else if app.matches.get_flag("generate-config-file") {
-                 generate_config_file()?;
-```
-
-**File**: `tests/integration_tests.rs` (modified, +62/-3)
-```diff
-@@ -25,10 +25,8 @@ mod unix {
- use unix::*;
- 
- mod utils;
--use utils::command::{bat, bat_with_config};
-+use utils::command::{bat, bat_raw_command, bat_raw_command_with_config, bat_with_config};
- 
--#[cfg(unix)]
--use utils::command::bat_raw_command;
- use utils::mocked_pagers;
- 
- const EXAMPLES_DIR: &str = "tests/examples";
-@@ -60,6 +58,67 @@ fn stdin() {
-         .stdout("foo\nbar\n");
- }
- 
-+/// Runs `bat` with `args` while its stdout is a pipe whose read end has
-+/// already been closed, so the very first write fails with `BrokenPipe`
-+/// (EPIPE on Unix, `ERROR_NO_DATA` on Windows).
-+fn assert_quiet_exit_when_stdout_is_closed(command: &mut std::process::Command, args: &[&str]) {
-+    use std::process::Stdio;
-+
-+    let (pipe_reader, pipe_writer) = std::io::pipe().expect("could not create a pipe");
-+    drop(pipe_reader);
-+
-+    let output = command
-+        .args(args)
-+        .stdin(Stdio::null())
-+        .stdout(pipe_writer)
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .and_then(|child| child.wait_with_output())
-+        .expect("could not run bat");
-+
-+    assert!(
-+        output.status.success(),
-+        "bat {args:?} should exit quietly when stdout is closed, status: {}, stderr: {}",
-+        output.status,
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+    assert!(
-+        output.stderr.is_empty(),
-+        "bat {args:?} should not print to stderr when stdout is closed, stderr: {}",
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+}
-+
-+#[test]
-+fn auxiliary_output_does_not_panic_on_closed_stdout() {
-+    // Auxiliary outputs used to be written via `println!`, which panics when
-+    // the reader of a piped stdout is already gone (e.g. `bat --config-file |
-+    // head -n 0`). The main output path has exited quietly on `BrokenPipe`
-+    // since #232; auxiliary outputs should behave the same way.
-+    assert_quiet_exit_when_stdout_is_closed(&mut bat_raw_command(), &["--config-file"]);
-+    assert_quiet_exit_when_stdout_is_closed(&mut bat_raw_command(), &["--diagnostic"]);
-+
-+    // The `cache` subcommand is only enabled when the working directory does
-+    // not contain a file named `cache` (see `cache_clear`), and it conflicts
-+    // with top-level flags like `--no-config`. Run it from a temporary
-+    // directory that doubles as `BAT_CACHE_PATH`, leaving the real cache alone.
-+    let temp_dir = tempdir().expect("could not create a temporary directory");
-+    let mut command = bat_raw_command_with_config();
-+    command
-+        .current_dir(temp_dir.path())
-+        .env("BAT_CONFIG_PATH", temp_dir.path().join("config"))
-+        .env("BAT_CACHE_PATH", temp_dir.path());
-+    assert_quiet_exit_when_stdout_is_closed(&mut command, &["cache", "--clear"]);
-+}
-+
-+#[cfg(feature = "application")]
-+#[test]
-+fn completion_does_not_panic_on_closed_stdout() {
-+    for shell in ["bash", "fish", "ps1", "zsh"] {
-+        assert_quiet_exit_when_stdout_is_closed(&mut bat_raw_command(), &["--completion", shell]);
-+    }
-+}
-+
- #[test]
- fn concatenate() {
-     bat()
-```
-
----
-
-### Incident Patch 3: `dbe6ec26` (2026-10-17)
-**Commit Message**: Merge pull request #4076 from cindykrafft/fix/utf16be-first-line
-
-Fix the first line of UTF-16BE input swallowing the second line
+Fix hang on block comment after an expression in JavaScript
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1432,61 +619,153 @@ Fix the first line of UTF-16BE input swallowing the second line
  - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
  ## Bugfixes
-+- Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
++- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
+ - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
  - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
  - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
- - Allow boolean flags to be given more than once, so that a flag set in the config file can also be passed on the command line without erroring, see #3912 (@logarithmone1128)
 ```
 
-**File**: `src/input.rs` (modified, +6/-1)
+**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
 ```diff
-@@ -291,7 +291,12 @@ impl<'a> InputReader<'a> {
- 
-         if content_type == Some(ContentType::UTF_16LE) {
-             read_utf16_line(&mut reader, &mut first_line, 0x00, 0x0A)?;
--        } else if content_type == Some(ContentType::UTF_16BE) {
-+        } else if content_type == Some(ContentType::UTF_16BE)
-+            // In UTF-16BE a newline is encoded as 0x00 0x0A, so `read_until(b'\n')` above
-+            // may already have read a complete first line. Only keep reading if it did not
-+            // (e.g. the 0x0A byte was part of another character such as U+4E0A).
-+            && !(first_line.len() % 2 == 0 && first_line.ends_with(&[0x00, 0x0A]))
-+        {
-             read_utf16_line(&mut reader, &mut first_line, 0x0A, 0x00)?;
-         }
- 
+@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
+  scope: source.js
+  variables:
+    bin_digit: '[01_]'
++@@ -93,7 +93,8 @@ variables:
++       (?! \+\+ | -- )
++       (?=
++         != |
++-        [-+*/%><=&|^\[(;,.:?] |
+++        [-+*%><=&|^\[(;,.:?] |
+++        /(?!\*) |
++         (?:in|instanceof){{identifier_break}}
++       )
++     ))
 ```
 
-**File**: `tests/integration_tests.rs` (modified, +13/-0)
+**File**: `tests/syntax-tests/highlighted/Svelte/comment_after_expression.svelte` (added, +5/-0)
 ```diff
-@@ -2101,6 +2101,19 @@ fn utf16be() {
-         .stdout("   1 上一伊刀\n   2 foo bar\n   3 hello world\n");
- }
- 
-+#[test]
-+fn utf16be_first_line_not_merged_with_second() {
-+    // The first line of a UTF-16BE file must not swallow the second line
-+    bat()
-+        .arg("--decorations=always")
-+        .arg("--style=numbers")
-+        .arg("--color=never")
-+        .arg("test_UTF-16BE.txt")
-+        .assert()
-+        .success()
-+        .stdout("   1 hello world\n   2 this is a test\n");
+@@ -0,0 +1,5 @@
++[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m
++[38;2;248;248;242m  [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m
++[38;2;248;248;242m}[0m
++
++[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m[38;2;248;248;242m [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m[38;2;248;248;242m}[0m
+```
+
+**File**: `tests/syntax-tests/source/Svelte/comment_after_expression.svelte` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{a
++  /* comment */
 +}
 +
- // Regression test for https://github.com/sharkdp/bat/issues/1922
- #[test]
- fn bom_not_stripped_in_loop_through_mode() {
++{a /* comment */}
+```
+
+---
+
+### Incident Patch 2: `54b1f9c6` (2026-10-20)
+**Commit Message**: Fix hang on block comment after an expression in JavaScript
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@
+ - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
+ 
+ ## Bugfixes
++- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #XXXX (@NavpreetSSidhu)
+ - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
+ - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
+ - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
+```
+
+**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
+```diff
+@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
+  scope: source.js
+  variables:
+    bin_digit: '[01_]'
++@@ -93,7 +93,8 @@ variables:
++       (?! \+\+ | -- )
++       (?=
++         != |
++-        [-+*/%><=&|^\[(;,.:?] |
+++        [-+*%><=&|^\[(;,.:?] |
+++        /(?!\*) |
++         (?:in|instanceof){{identifier_break}}
++       )
++     ))
+```
+
+**File**: `tests/syntax-tests/highlighted/Svelte/comment_after_expression.svelte` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m
++[38;2;248;248;242m  [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m
++[38;2;248;248;242m}[0m
++
++[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m[38;2;248;248;242m [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m[38;2;248;248;242m}[0m
+```
+
+**File**: `tests/syntax-tests/source/Svelte/comment_after_expression.svelte` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{a
++  /* comment */
++}
++
++{a /* comment */}
+```
+
+---
+
+### Incident Patch 3: `a9aa73d2` (2026-10-20)
+**Commit Message**: Merge pull request #3895 from 1t1sCooL/fix-vcredist-link
+
+docs: fix dead Visual C++ Redistributable link in README
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ 
+ ## Other
+ 
++- Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
+ - Document `StripAnsiMode` and its variants in rustdoc, see #4067 (@ump45nose)
+ - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
+ - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
+```
+
+**File**: `README.md` (modified, +2/-2)
+```diff
+@@ -417,7 +417,7 @@ scoop install bat
+ 
+ You can download prebuilt binaries from the [Release page](https://github.com/sharkdp/bat/releases),
+ 
+-You will need to install the [Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) package.
++You will need to install the [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) package.
+ 
+ ### From binaries
+ 
+@@ -794,7 +794,7 @@ Example configuration file:
+ 
+ ### Prerequisites
+ 
+-You will need to install the [Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) package.
++You will need to install the [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) package.
+ 
+ ### Paging
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4091** (2026-10-20): Fix hang on block comment after an expression in JavaScript (@NavpreetSSidhu)
 - **PR #4076** (2026-10-17): Fix the first line of UTF-16BE input swallowing the second line (@cindykrafft)
 - **PR #4069** (2026-10-17): Add syntax mapping for Podman `.quadlets` files (@injust)
 - **PR #4067** (2026-10-17): Document StripAnsiMode and its variants (@ump45nose)
 - **PR #4065** (2026-10-14): Document WrappingMode::NoWrapping's bool payload with a doc comment (@ump45nose)
 - **PR #4064** (2026-10-14): Document RangeCheckResult variants with doc comments (@ump45nose)
-- **PR #4063** (2026-10-14): Document 4 public Config fields with doc comments (@ump45nose)
 
 ---
 
@@ -1506,13 +785,13 @@ Fix the first line of UTF-16BE input swallowing the second line
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Exit quietly on broken pipe in auxiliary output paths
+## X. Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9b112b6`: Exit quietly on broken pipe in auxiliary output paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2fd71ad5`: Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1520,7 +799,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232. Closes #4034 (@Mathjk)
+- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1530,4 +809,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9b112b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2fd71ad5` are properly handled with clean fallback behavior.

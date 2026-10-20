@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:21:26.181Z",
+  "last_updated": "2026-10-20T21:27:45.100Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6454,8 +6454,8 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "230a5e48",
-      "content_hash": "55506c314b449f6e4880ae9cbf7e71dff2f692275258d2ba9041b62e899c9d19",
+      "source_version": "e9e85210",
+      "content_hash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
@@ -6470,7 +6470,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:54:26.038Z",
+      "verified_at": "2026-10-20T21:27:33.927Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16189,7 +16189,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
+      "content_hash": "75c12e2bf6a803b339ffe5b4aef2ea0a3f4c30566dc95752f0077dbd6a376ba5",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -16253,7 +16253,7 @@
         {
           "number": 1120,
           "title": "**Special‑Token Integrity Rule**",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1121,
@@ -16294,6 +16294,11 @@
           "number": 1284,
           "title": "Joint Head Output Shape Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1396,
+          "title": "**Inference‑Mode Enforcement Rule**",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1397,
@@ -16354,6 +16359,11 @@
           "number": 2334,
           "title": "Strict 3D Coordinate Interleaved MRoPE Unification for Heterogeneous Multimodal Tokens",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3391,
+          "title": "**Head‑Backbone Compatibility Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16374,7 +16384,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-19T07:50:52.567Z",
+      "verified_at": "2026-10-20T21:27:33.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27920,8 +27930,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "69992333",
-      "content_hash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
+      "source_version": "a7c66820",
+      "content_hash": "44d5167b78c12c30cf467b8e732da62acfa3d50d593d55f0e202e55e66db98d4",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -27939,6 +27949,11 @@
           "number": 3092,
           "title": "Restrict test suites to main/release branches on push (#14803)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3392,
+          "title": "Rootless v3 (#14746)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27946,7 +27961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:07:11.410Z",
+      "verified_at": "2026-10-20T21:27:39.913Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40925,14 +40940,19 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "f748c1a4",
-      "content_hash": "e00a9f4cc287d6407e4dbc43f6936f772bd517fcd2d0b24c21cdbe55c1086675",
+      "source_version": "a9aa73d2",
+      "content_hash": "92a2da3d3219e1be545e1b0a8d3d9fbe5071f400d06a244b8958c698814a9926",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
         {
           "number": 1735,
           "title": "Exit quietly on broken pipe in auxiliary output paths",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3390,
+          "title": "Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40941,7 +40961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:39:32.798Z",
+      "verified_at": "2026-10-20T21:27:32.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48238,8 +48258,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "b76eff1c",
-      "content_hash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
+      "source_version": "d7a619c7",
+      "content_hash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -48257,6 +48277,11 @@
           "number": 3065,
           "title": "[PLAT-22745] YBA: Keep openssl_require_fips on when it comes in the deprecated g",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3393,
+          "title": "[#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryT",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48264,7 +48289,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:10:36.090Z",
+      "verified_at": "2026-10-20T21:27:45.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72301,15 +72326,15 @@
       "learning_id": "rule-1120",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1120,
-      "title": "**Special‑Token Integrity Rule** (Harvested from Cloudflare/clef-flash)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "**Special‑Token Integrity Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-20T21:27:33.570Z"
     },
     "rule-1121": {
       "learning_id": "rule-1121",
@@ -76165,15 +76190,15 @@
       "learning_id": "rule-1396",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1396,
-      "title": "**Inference‑Mode Enforcement Rule** (Harvested from Cloudflare/clef)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "**Inference‑Mode Enforcement Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.819Z"
+      "verified_at": "2026-10-20T21:27:33.570Z"
     },
     "rule-1397": {
       "learning_id": "rule-1397",
@@ -104949,6 +104974,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:21:26.171Z"
+    },
+    "rule-3390": {
+      "learning_id": "rule-3390",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3390,
+      "title": "Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "a9aa73d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:27:32.651Z"
+    },
+    "rule-3391": {
+      "learning_id": "rule-3391",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3391,
+      "title": "**Head‑Backbone Compatibility Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:27:33.570Z"
+    },
+    "rule-3392": {
+      "learning_id": "rule-3392",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3392,
+      "title": "Rootless v3 (#14746)",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "a7c66820",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:27:39.913Z"
+    },
+    "rule-3393": {
+      "learning_id": "rule-3393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3393,
+      "title": "[#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryT",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "d7a619c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:27:45.088Z"
     }
   },
   "aliases": {

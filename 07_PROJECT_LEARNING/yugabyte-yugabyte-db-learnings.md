@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `b76eff1c`  
+> **Source Version**: `d7a619c7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T05:10:35.797Z  
+> **Timestamp**: 2026-10-20T21:27:44.814Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T05:10:35.121Z  
+> **Harvest Timestamp**: 2026-10-20T21:27:44.807Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10612 stars
+- **Stars / Engagement**: 10613 stars
 
 ---
 
@@ -2249,14 +2249,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35412** (2026-10-19): **[YSQL] Build 9c4dd250 on master: 5 tests fail the same way**
-  *Symptoms*: Jira Link: [DB-24815](https://yugabyte.atlassian.net/browse/DB-24815) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at 9c4dd250 has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `arm-mac15-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - 5 tests fail with one `java` template on arm-mac15-clang21-release:        org.yb.pgsql.TestYbBackup.txt =====    - `org.yb.pgsql.TestYbBackup#testBackupRestoreTablespaces`   - `org.yb.pgsql.TestYbBackup#testGeoPartitioning`   - `org.yb.pgsql.TestYbBackup#testGeoPartitioningNoRegions`   - `org.yb.pgsql.TestYbBackup#testGeoPartitioningOneRegion`   - `org.yb.pgsql.TestYbBackup#testGeoPartitioningOneRegionWithTablespaces`  ## Frequency and origin  The previous scheduled build on `master` was 6734d402; the change is in `(6734d402, 9c4dd250]` (3 commits): https://github.com/yugabyte/yugabyte-db/compare/6734d402...9c4dd250  Assigned to @iSignal
+- **Issue #35482** (2026-10-20): **[YSQL] Build b76eff1c on master: arm-mac15-clang21-release broken**
+  *Symptoms*: Jira Link: [DB-24866](https://yugabyte.atlassian.net/browse/DB-24866) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at b76eff1c has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `arm-mac15-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `arm-mac15-clang21-release`: reported 1207 results, expected >= 6636 ([CSI launch 181771](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/181771))   - 5 x `java`: org.yb.pgsql.TestYbBackup.txt =====   - 4 x `java`: org.yb.pgsql.TestPgReplicationSlot.txt =====   - 3 x `java`: org.yb.pgsql.TestPgSequencesWithCacheFlag.txt =====   - 3 x `java`: org.yb.pgsql.TestPgSequencesWithServerCacheFlag.txt =====   - 2 x `java`: org.yb.cdc.ysql.TestArrayTypes.txt =====  ## Frequency and origin  The previous scheduled build on `master` was a2825c67; the change is in `(a2825c67, b76eff1c]` (1 commit): https://github.com/yugabyte/yugabyte-db/compare/a28
   **Post-Mortem & Fix Analysis**:
-  > Grissom: **where this build broke**. The commit range between the previous scheduled build and this one; no single commit is suspected.  Range [`(6734d402, 9c4dd250]`](https://github.com/yugabyte/yugabyte-db/compare/6734d402...9c4dd250): 3 commits. A build-level break: 5 tests failed with one template in this build, so the onset is this build; the range starts at the previous scheduled build.  The ranker found no candidate that explains the failure: The failure is an UpdateTransaction RPC to a (likely tablespace-local) transaction status tablet that the tserver reports as NotFound until the 5s deadline passes, during the geo-partitioned backup/restore flow. That is a stale status-tablet location or a timing race, and no candidate touches status-tablet handling. 9c4dd250 is the only tserver-side change, but it is a behavior-preserving refactor of PgTableCache invalidation. The other two are planner-only and UI-only. With no passing log on this lane to compare against, the evidence does 
-  > Duplicate of #35239: the same TestYbBackup failure on arm-mac15-clang21-release, filed again after a build in between fell below the build-report bar.
+  > Grissom: **the commit that broke this build**. The range between the previous scheduled build and this one holds exactly one commit, so it is named without ranking.  Range [`(a2825c67, b76eff1c]`](https://github.com/yugabyte/yugabyte-db/compare/a2825c67...b76eff1c): 1 commit. A build-level break: 1 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  The range holds one commit; nothing to rank.  Assigned to @arpit-saxena as the author of the top candidate (the broken build's range is exactly one commit). To change it: `/grissom reassign @someone` or `/grissom unassign` in a comment, or set the assignee here; Grissom never re-assigns on its own after that.  <!-- grissom-attribution -->
+  > @arpit-saxena this was assigned to you by mistake; unassigning. b76eff1c is not the cause:  - The `arm-mac15-clang21-release` run was cut short at the test harness's failure cap (201 failures, 1207 of >= 6636 results), and the tests listed above are just the first ones that failed before the run stopped. None of them is a Connection Manager test. - The same short run has hit this lane before: 5dadd9f7 (2026-10-12, 1228 results, 200 failures), a2debe00 and 81222a45 (2026-10-18, 1192 and 8433 results), with full runs of about 12,300 results in between. It is intermittent and mac-only, so the one-commit range bounds nothing.  Assigning to @svarnau, as an environment or harness issue on the mac host. 
 
-- **Issue #35396** (2026-10-19): **Build f95ef2a5 on master: alma8-clang21-tsan broken by an infrastructure error (cargo could not download from crates.io)**
-  *Symptoms*: _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at f95ef2a5 failed on 1 lane(s), on an infrastructure error rather than on the code: cargo could not download from crates.io. No commit is ranked for it; this issue is for whoever keeps the build environment working.  - Failing lanes: `alma8-clang21-tsan` - Failing build types: tsan  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types tsan, release, fastdebug, asan, debug).  ## What is the failure  - `alma8-clang21-tsan`: build step failed while compiling, on an infrastructure error (cargo could not download from crates.io); no tests ran ([CSI launch 181343](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/181343), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/181343/859727501/859727503/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-alma8-master-clang21-tsan/1487/console))    ```   error: failed to get `cargo_metadata` as a dependency of package `cargo-pgrx v0.18.1 (/share/jenkins/workspace/github-yugabyte-db-alma8-master-clang21-tsan/y
+- **Issue #35478** (2026-10-20): **[DocDB][xCluster] Automatic-mode DDL replication pauses for good when CREATE INDEX on a partitioned table adopts a source-only INVALID partition index**
+  *Symptoms*: Jira Link: [DB-24864](https://yugabyte.atlassian.net/browse/DB-24864) ### Description  ### Description  Version - 2025.2.8.0-b60. Source universe and target universe of 3 nodes each, transactional xCluster in automatic DDL mode, default gflags. The same pause also happened twice in long stress runs on 2026.1.2.0-b137, where the target named `acct2_p0_bal_idx` and `skewacct_p0_bal_idx`. Not tried on master.  When `CREATE INDEX` on a partition fails on the source, the failed DDL is never replicated, so its INVALID index exists on the source only. A later `CREATE INDEX` on the partitioned parent then diverges between the two universes: - **Source:** reuses that existing INVALID child index instead of building a new one (PostgreSQL `DefineIndex` attaches a matching child index). - **Target:** has no such child, so it builds a new one under the default name `p0_v_idx`.  The source's DDL queue records the relations of the parent `CREATE INDEX` as `p_v` and `p0_v`. `p0_v_idx` matches neither, so the target master refuses it ("lacks source table ID"). The DDL handler retries 5 times and then pauses DDL replication for the database. The database's safe time stops, and nothing written on the source afterwards reaches the target until someone fixes it by hand.  **Repro.** Set up automatic-mode replication of database `db`, then run on the source: ```sql create table p (k int, v int, primary key (k, v)) partition by list (v); create table p0 partition of p for values in (7); insert into
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2273,182 +2273,522 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc41ad30` (2026-10-19)
-**Commit Message**: [PLAT-22745] YBA: Keep openssl_require_fips on when it comes in the deprecated gflags fields
+### Incident Patch 1: `9066cefc` (2026-10-20)
+**Commit Message**: [#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryTexts concurrent modification
 
 Summary:
-D58919 closed the `fipsEnabled: false` hole on universe create. The other case in the ticket was still open on 2.31.0.0-b544: on a FIPS YBA, `openssl_require_fips=false` sent in the deprecated `userIntent.masterGFlags` / `tserverGFlags` of `POST /universes/clusters` is accepted, and masters and tservers run with FIPS off (YSQL `md5()` works).
+Each tserver's log printer thread appends lines to `logBackendMemoryContextsResults`, which is a `Collections.synchronizedList`. The test iterated over that list with a for-each loop without holding its lock, so a log line arriving mid-scan threw `ConcurrentModificationException`. The test now copies the list into a new `ArrayList` inside `synchronized (logBackendMemoryContextsResults)` and checks the copy. Log lines can still arrive after the query returns, so the check is retried with `TestUtils.waitFor` for up to 1s.
 
-`GFlagsUtil.validateFipsCompliancy` checked only `specificGFlags`. The create handler converts the deprecated maps into `specificGFlags` only after `Cluster.validate` has run that check.
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
 
-- `validateFipsCompliancy` now also checks the deprecated maps when `specificGFlags` is not set.
-- `processUserGFlags` drops a user `openssl_require_fips` that isn't `true` whenever YBA generated `true` for the node (i.e. on a FIPS universe), even with `yb.gflags.allow_user_override`. The validators can be bypassed, and this also repairs a universe already created with the flag off on its next configure or gflags change.
+Test Plan:
+./yb_build.sh fastdebug --gcc15 --java-test 'org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryTexts' -n 180 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for ref
 
-Test Plan: `sbt "testOnly com.yugabyte.yw.common.gflags.GFlagsUtilTest"`: new tests for the deprecated master and tserver maps (rejected 
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/gflags/GFlagsUtil.java` (modified, +31/-16)
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgBackendMemoryContext.java` (modified, +17/-15)
 ```diff
-@@ -1234,34 +1234,37 @@ public static void validateFipsCompliancy(
-             String.format(
-                 "FIPS compliant universes are not supported on provider(s): %s", nonSupported));
-       }
--      // This is for new universes only, so don't consider old form of GFLags
--      if (userIntent.specificGFlags != null && !userIntent.specificGFlags.isInheritFromPrimary()) {
-+      if (userIntent.specificGFlags == null) {
-+        // Create still accepts the deprecated maps and converts them to specificGFlags only after
-+        // this check runs.
-+        checkFipsGFlagNotDisabled(userIntent.masterGFlags);
-+        checkFipsGFlagNotDisabled(userIntent.tserverGFlags);
-+      } else if (!userIntent.specificGFlags.isInheritFromPrimary()) {
-         Collection<UUID> azUuids = new ArrayList<>(Collections.singletonList(null));
-         if (userIntent.specificGFlags.getPerAZ() != null) {
-           azUuids.addAll(userIntent.specificGFlags.getPerAZ().keySet());
+@@ -13,7 +13,6 @@
+ package org.yb.pgsql;
+ 
+ import static org.yb.AssertionWrappers.assertEquals;
+-import static org.yb.AssertionWrappers.assertTrue;
+ 
+ import java.sql.Statement;
+ import java.util.ArrayList;
+@@ -25,6 +24,7 @@
+ import org.junit.Before;
+ import org.junit.Test;
+ import org.junit.runner.RunWith;
++import org.yb.client.TestUtils;
+ import org.yb.minicluster.LogErrorListener;
+ import org.yb.minicluster.MiniYBDaemon;
+ import org.yb.minicluster.MiniYBClusterBuilder;
+@@ -86,9 +86,6 @@ public void testLogBackendMemoryTexts() throws Exception {
+     try (Statement stmt = connection.createStatement()) {
+       stmt.execute("SELECT pg_log_backend_memory_contexts(pg_backend_pid());");
+ 
+-      assertTrue("pg_log_backend_memory_contexts should output logs",
+-                !logBackendMemoryContextsResults.isEmpty());
+-
+       // With connection manager, getPgBackendPid can return the PID of any
+       // backend process out of pool of physical connections it is maintaining.
+       // Therefore running the test in NONE mode of connection manager to return
+@@ -107,19 +104,24 @@ public void testLogBackendMemoryTexts() throws Exception {
+       expectedMessages.add("YB TCMalloc pageheap unmapped bytes: ");
+       expectedMessages.add("YB PGGate bytes: ");
+ 
+-      for (String result : logBackendMemoryContextsResults) {
+-        if (expectedMessages.isEmpty()) {
+-          // If we have already found all expected messages, we can skip further checks.
+-          break;
++      // Log lines may still arrive after the query returns, and log printer threads append
++      // concurrently, so poll over a snapshot taken under the list's lock.
++      TestUtils.waitFor(() -> {
++        List<String> results;
++        synchronized (logBackendMemoryContextsResults) {
++          results = new ArrayList<>(logBackendMemoryContextsResults);
          }
-         for (UUID azUuid : azUuids) {
--          Map<String, String> masterGFlags =
--              userIntent.specificGFlags.getGFlags(azUuid, UniverseTaskBase.ServerType.MASTER);
--          if (masterGFlags.containsKey(GFlagsUtil.OPENSSL_REQUIRE_FIPS)
--              && !masterGFlags.get(GFlagsUtil.OPENSSL_REQUIRE_FIPS).equals("true")) {
--            throw new PlatformServiceException(
--                BAD_REQUEST, "FIPS enabled YBAnywhere only supports FIPS enabled universe");
--          }
--          Map<String, String> tserverGFlags =
--              userIntent.specificGFlags.getGFlags(azUuid, ServerType.TSERVER);
--          if (tserverGFlags.containsKey(GFlagsUtil.OPENSSL_REQUIRE_FIPS)
--              && !tserverGFlags.get(GFlagsUtil.OPENSSL_REQUIRE_FIPS).equals("true")) {
--            throw new PlatformServiceException(
--                BAD_REQUEST, "FIPS enabled YBAnywhere only supports FIPS enabled universe");
--          }
-+          checkFipsGFlagNotDisabled(
-+              userIntent.specificGFlags.getGFlags(azUuid, UniverseTaskBase.ServerType.MASTER));
-+          checkFipsGFlagNotDisabled(
-+              userIntent.specificGFlags.getGFlags(azUuid, ServerType.TSERVER));
+-        if (result.contains(expectedMessages.get(0))) {
+-          expectedMessages.remove(0);
++        int next = 0;
++        for (String result : results) {
++          if (next == expectedMessages.size()) {
++            break;
++          }
++          if (result.contains(expectedMessages.get(next))) {
++            next++;
++          }
          }
-       }
-       validateFipsCompliancyOfHelmOverrides(
-           userIntent.universeOverrides, userIntent.azOverrides, fipsEnabled);
+-      }
+-
+-      assertTrue(String.format("Expected to find all messages in pg_log_backend_memory_contexts %s",
+-                               expectedMessages.toString()),
+-                 expectedMessages.isEmpty());
++        return next == expectedMessages.size();
++      }, 1000 /* timeoutMs */);
      }
    }
  
-+  private static void checkFipsGFlagNotDisabled(@Nullable Map<String, String> gflags) {
-+    if (gflags != null
-+        && gflags.containsKey(OPENSSL_REQUIRE_FIPS)
-+        && !"true".equals(gflags.get(OPENSSL_REQUIRE_FIPS))) {
-+      throw new PlatformServiceException(
-+          BAD_REQUEST, "FIPS enabled YBAnywhere only supports FIPS enabled universe");
-+    }
-+  }
-+
-   /**
-    * Kubernetes helm overrides carry gflags too (gflags.master and gflags.tserver in the values) and
-    * are merged over the gflags YBA generates, so they could turn the FIPS gflag off where the
-@@ -1395,6 +1398,18 @@ public static void processUserGFlags(
-             }
-           });
-     }
-+    // Enforced even with allowOverrideAll: the gflags validators can be bypassed, and a FIPS
-+    // universe must never run with FIPS off.
-+    if ("true".equals(platformGFlags.get(OPENSSL_REQUIRE_FIPS))
-+        && userGFlags.containsKey(OPENSSL_REQUIRE_FIPS)
-+        && !"true".equals(userGFlags.get(OPENSSL_REQUIRE_FIPS))) {
-+      LOG.warn(
-+          "Removing {}={} from user gflags of FIPS universe node {}",
-+          OPENSSL_REQUIRE_FIPS,
-+          userGFlags.get(OPENSSL_REQUIRE_FIPS),
-+          node.nodeName);
-+      userGFlags.remove(OPENSSL_REQUIRE_FIPS);
-+    }
- 
-     if (userGFlags.containsKey(PSQL_PROXY_BIND_ADDRESS)) {
-       // If user is changing the port during configure YSQL upgrade, need to use the new port.
 ```
 
-**File**: `managed/src/test/java/com/yugabyte/yw/common/gflags/GFlagsUtilTest.java` (modified, +61/-0)
+---
+
+### Incident Patch 2: `79afc37d` (2026-10-16)
+**Commit Message**: [#34485] YSQL: Fix stale function after rollback of a function replacement
+
+Summary:
+Background: how cached functions are validated
+
+PL/pgSQL keeps compiled functions in plpgsql_HashTable. In PG, each entry stores the
+xmin and TID of the pg_proc tuple it was compiled from. On every call, these are
+compared with the current tuple, and a mismatch causes a recompile.
+CREATE OR REPLACE FUNCTION writes a new tuple version, so the entry stops matching.
+ROLLBACK TO SAVEPOINT restores the old tuple, so it stops matching again. Savepoints
+need no extra handling.
+
+YB catalog tuples have no meaningful xmin/TID. Instead, each cached function stores
+yb_catalog_version at compile time and is valid only while that equals
+YBGetActiveCatalogCacheVersion(). The C function cache (fmgr.c), plpython and plperl
+use the same check. Without transactional DDL this is enough: every DDL commits on
+its own and bumps the catalog version, so everything compiled earlier stops matching.
+
+With transactional DDL (ysql_yb_ddl_transaction_block_enabled), the catalog version
+only moves at commit. Inside the block, YBGetActiveCatalogCacheVersion() has to be
+adjusted by hand. #29424 and #29881 did that by adding counter
+
+**File**: `src/postgres/src/backend/utils/misc/pg_yb_utils.c` (modified, +67/-44)
 ```diff
-@@ -32,6 +32,7 @@
- import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.UserIntent;
- import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.UserIntent.ManagedLoadBalancerConfig;
- import com.yugabyte.yw.models.Universe;
-+import com.yugabyte.yw.models.helpers.NodeDetails;
- import java.io.IOException;
- import java.util.ArrayList;
- import java.util.Arrays;
-@@ -1016,6 +1017,66 @@ public void testValidateFipsCompliancyRejectsDisablingTheFipsGFlag() {
-         exception.getLocalizedMessage());
-   }
+@@ -199,10 +199,28 @@ typedef struct YbSkipIntentsTxnState
+ static YbSkipIntentsTxnState skip_intents_txn_state = {0};
  
-+  @Test
-+  public void testValidateFipsCompliancyRejectsDisablingTheFipsGFlagInDeprecatedFields() {
-+    for (ServerType serverType : List.of(ServerType.MASTER, ServerType.TSERVER)) {
-+      UserIntent userIntent = new UserIntent();
-+      userIntent.providerType = Common.CloudType.aws;
-+      Map<String, String> gflags = new HashMap<>(Map.of(GFlagsUtil.OPENSSL_REQUIRE_FIPS, "false"));
-+      if (serverType == ServerType.MASTER) {
-+        userIntent.masterGFlags = gflags;
-+      } else {
-+        userIntent.tserverGFlags = gflags;
-+      }
+ static bool YbHasDdlMadeChanges();
+-static int YbGetNumCreateFunctionStmts();
+-static int YbGetNumRollbackToSavepointStmts();
+ static bool YBIsCurrentStmtCreateFunction();
+ 
++/*
++ * Added to the catalog version in YBGetActiveCatalogCacheVersion to
++ * invalidate cached functions (plpgsql_HashTable and the like) when a DDL
++ * transaction block changes a function definition that the catalog version
++ * does not yet reflect: each CREATE (OR REPLACE) FUNCTION/PROCEDURE in the
++ * block, and each rollback of a subtransaction or transaction that may undo
++ * one.  It is not reset at transaction end; the only decrement offsets this
++ * backend's own catalog version increment at commit.  So the active version
++ * never goes back, and a version a function was compiled at cannot recur
++ * after one of these events.
++ */
++static uint64_t function_cache_generation = 0;
 +
-+      PlatformServiceException exception =
-+          assertThrows(
-+              PlatformServiceException.class,
-+              () -> GFlagsUtil.validateFipsCompliancy(userIntent, true));
-+      assertEquals(
-+          "FIPS enabled YBAnywhere only supports FIPS enabled universe",
-+          exception.getLocalizedMessage());
-+    }
-+  }
++/*
++ * Set while YBCommitTransactionContainingDDL commits a transaction block that
++ * ran DDL. The DDL transaction state is cleared before the commit RPC, so this
++ * is what tells YBCAbortTransaction that a failed commit rolled back DDL.
++ */
++static bool ddl_txn_block_commit_in_progress = false;
 +
-+  @Test
-+  public void testValidateFipsCompliancyAcceptsFipsGFlagEnabledInDeprecatedFields() {
-+    UserIntent userIntent = new UserIntent();
-+    userIntent.providerType = Common.CloudType.aws;
-+    userIntent.masterGFlags = new HashMap<>(Map.of(GFlagsUtil.OPENSSL_REQUIRE_FIPS, "true"));
-+    userIntent.tserverGFlags = new HashMap<>(Map.of("max_log_size", "256"));
+ static void yb_maybe_test_fail_ddl(void);
+ static YbcPgSkipIntentsOptimizationInfo YbGetSkipIntentsOptimizationInfoRead(Relation rel);
+ 
+@@ -216,15 +234,8 @@ YBGetActiveCatalogCacheVersion()
+ 		 * FUNCTION and CREATE (OR REPLACE) PROCEDURE.
+ 		 */
+ 		if (YBGetDdlNestingLevel() > 0 && YBIsCurrentStmtCreateFunction())
+-			return yb_catalog_cache_version + 1;
+-		if (YBIsDdlTransactionBlockEnabled())
+-		{
+-			uint64_t active_catalog_version = yb_catalog_cache_version +
+-											  YbGetNumRollbackToSavepointStmts();
+-			if (YBIsCurrentStmtCreateFunction())
+-				active_catalog_version += YbGetNumCreateFunctionStmts();
+-			return active_catalog_version;
+-		}
++			return yb_catalog_cache_version + function_cache_generation + 1;
++		return yb_catalog_cache_version + function_cache_generation;
+ 	}
+ 	return yb_catalog_cache_version;
+ }
+@@ -1302,17 +1313,9 @@ typedef struct
+ 	CommandTag	breaking_ddl_command_tag;
+ 	Oid			database_oid;
+ 	int			num_committed_pg_txns;
++	/* Whether this transaction incremented function_cache_generation. */
++	bool		function_cache_generation_bumped;
+ 
+-	/*
+-	 * Number of create function or procedure statements in the current ddl
+-	 * transaction block. Only used when ddl transaction block is enabled.
+-	 */
+-	int			num_create_function_stmts;
+-	/*
+-	 * Number of rollback to savepoint statements in the current ddl
+-	 * transaction block. Only used when ddl transaction block is enabled.
+-	 */
+-	int			num_rollback_to_savepoint_stmts;
+ 	/*
+ 	 * This indicates whether we need to increment logical client version at
+ 	 * commit. This is needed by Connection Manager to handle `ALTER ... SET`
+@@ -1411,6 +1414,12 @@ YBCAbortTransaction()
+ 	if (!IsYugaByteEnabled() || !YBTransactionsEnabled())
+ 		return;
+ 
++	/* The abort may undo a function definition change. */
++	if (ddl_transaction_state.use_regular_txn_block ||
++		ddl_txn_block_commit_in_progress)
++		++function_cache_generation;
++	ddl_txn_block_commit_in_progress = false;
 +
-+    GFlagsUtil.validateFipsCompliancy(userIntent, true);
-+  }
+ 	if (ddl_transaction_state.use_regular_txn_block)
+ 		YBResetDdlState();
+ 
+@@ -1503,6 +1512,13 @@ YBCRollbackToSubTransaction(SubTransactionId id)
+ 			 id, YBCMessageAsCString(status));
+ 
+ 	YbInvalidateTableCacheForAlteredTables();
 +
-+  @Test
-+  public void testProcessUserGFlagsKeepsFipsOnEvenWhenOverrideAllIsAllowed() {
-+    NodeDetails node = new NodeDetails();
-+    node.nodeName = "host-n1";
-+    for (boolean allowOverrideAll : List.of(false, true)) {
-+      Map<String, String> userGFlags =
-+          new HashMap<>(Map.of(GFlagsUtil.OPENSSL_REQUIRE_FIPS, "false", "max_log_size", "100"));
-+      Map<String, String> platformGFlags =
-+          new HashMap<>(Map.of(GFlagsUtil.OPENSSL_REQUIRE_FIPS, "true", "max_log_size", "256"));
++	/* The rollback may undo a function definition change. */
++	if (ddl_transaction_state.use_regular_txn_block)
++	{
++		++function_cache_generation;
++		ddl_transaction_state.function_cache_generation_bumped = true;
++	}
+ }
+ 
+ static bool yb_connected_to_template_db = false;
+@@ -2809,13 +2825,6 @@ YBAddDdlTxnState(YbDdlMode mode)
+ 		 */
+ 		ddl_transaction_state.catalog_modification_aspects.pending |= mode;
+ 
+-		/*
+-		 * Note that T_CreateFunctionStmt is for both CREATE (OR REPLACE) FUNCTION
+-		 * and CREATE (OR REPLACE) PROCEDURE.
+-		 */
+-		ddl_transaction_state.num_create_function_stmts +=
+-			ddl_transaction_state.current_stmt_node_tag == T_CreateFunctionStmt ? 1 : 0;
+-
+ 		/*
+ 		 * On a transaction restart, we need call YBCPgSetDdlStateInPlainTransaction()
+ 		 * again because it has been reset.
+@@ -2833,8 +2842,6 @@ YBAddDdlTxnState(YbDdlMode mode)
+ 	 * this YB DDL transaction.
+ 	 */
+ 	ddl_transaction_state.num_committed_pg_txns = 0;
+-	ddl_transaction_state.num_create_function_stmts =
+-		ddl_transaction_state.current_stmt_node_tag == T_CreateFunctionStmt ? 1 : 0;
+ 	Assert(TopTransactionContext != NULL);
+ 	ddl_transaction_state.mem_context =
+ 		AllocSetContextCreate(TopTransactionContext,
+@@ -3026,18 +3033,6 @@ YbIncrementPgTxnsCommitted()
+ 	++ddl_transaction_state.num_committed_pg_txns;
+ }
+ 
+-static int
+-YbGetNumCreateFunctionStmts()
+-{
+-	return ddl_transaction_state.num_create_function_stmts;
+-}
+-
+-static int
+-YbGetNumRollbackToSavepointStmts()
+-{
+-	return ddl_transaction_state.n
+```
+
+**File**: `src/postgres/src/pl/plpgsql/src/pl_comp.c` (modified, +1/-32)
+```diff
+@@ -175,49 +175,18 @@ plpgsql_compile(FunctionCallInfo fcinfo, bool forValidator)
+ 	{
+ 		/* We have a compiled function, but is it still valid? */
+ 		if (IsYugaByteEnabled() ?
+-			(!function->yb_invalid && function->yb_catalog_version == YBGetActiveCatalogCacheVersion()) :
++			function->yb_catalog_version == YBGetActiveCatalogCacheVersion() :
+ 			(function->fn_xmin == HeapTupleHeaderGetRawXmin(procTup->t_data) &&
+ 			 ItemPointerEquals(&function->fn_tid, &procTup->t_self)))
+ 			function_valid = true;
+ 		else
+ 		{
+-			/*
+-			 * A Trigger Function (a function that RETURNS TRIGGER) is like a template, when first
+-			 * time created it is inserted into plpgsql_HashTable. Later when a trigger is fired,
+-			 * a second entry will be inserted into plpgsql_HashTable. In a sense, this second entry
+-			 * is like an "instantiation" of this trigger function so that its OLD/NEW are bound to
+-			 * the table on which the trigger is fired. The condition function->yb_catalog_version <
+-			 * YBGetActiveCatalogCacheVersion() indicates that the function is being replaced. When
+-			 * ddl transaction block is enabled, during the CREATE (OR REPLACE) statement
+-			 * YBGetActiveCatalogCacheVersion() will return the current catalog version + 1. After
+-			 * the CREATE (OR REPLACE) statement YBGetActiveCatalogCacheVersion() will return the
+-			 * current catalog version. If the current catalog version is equal to the value of
+-			 * yb_catalog_version of those secondary entries, we would incorrectly accept them as
+-			 * still valid. Therefore we need to also invalidate all those secondary entries of this
+-			 * function in case it is a Trigger Function.
+-			 */
+-			bool yb_invalidate_trigger_fns =
+-				function->fn_is_trigger != PLPGSQL_NOT_TRIGGER &&
+-				IsYugaByteEnabled() && YBIsDdlTransactionBlockEnabled() &&
+-				!function->yb_invalid &&
+-				function->yb_catalog_version < YBGetActiveCatalogCacheVersion();
+-
+ 			/*
+ 			 * Nope, so remove it from hashtable and try to drop associated
+ 			 * storage (if not done already).
+ 			 */
+ 			delete_function(function);
+ 
+-			if (yb_invalidate_trigger_fns)
+-			{
+-				HASH_SEQ_STATUS status;
+-				plpgsql_HashEnt *hentry;
+-				hash_seq_init(&status, plpgsql_HashTable);
+-				while ((hentry = hash_seq_search(&status)) != NULL)
+-					if (hentry->function->fn_oid == funcOid)
+-						hentry->function->yb_invalid = true;
+-			}
+-
+ 			/*
+ 			 * If the function isn't in active use then we can overwrite the
+ 			 * func struct with new data, allowing any other existing fn_extra
+```
+
+**File**: `src/postgres/src/pl/plpgsql/src/plpgsql.h` (modified, +0/-1)
+```diff
+@@ -1022,7 +1022,6 @@ typedef struct PLpgSQL_function
+ 	/* YB */
+ 	uint64		yb_catalog_version; /* Catalog version when this function was
+ 									 * compiled */
+-	bool		yb_invalid; /* this function is now invalid */
+ } PLpgSQL_function;
+ 
+ /*
+```
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_savepoint.out` (modified, +95/-0)
+```diff
+@@ -577,3 +577,98 @@ SELECT COUNT(*) FROM users3;
+ ERROR:  relation "users3" does not exist
+ LINE 1: SELECT COUNT(*) FROM users3;
+                              ^
++-- #34485: a function replaced after a savepoint must run its old definition
++-- after ROLLBACK TO.
++BEGIN;
++CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
++SELECT f_34485_a();
++ f_34485_a 
++-----------
++       401
++(1 row)
 +
-+      GFlagsUtil.processUserGFlags(node, userGFlags, platformGFlags, allowOverrideAll, null, null);
++SAVEPOINT sp1;
++CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
++SELECT f_34485_a();
++ f_34485_a 
++-----------
++       402
++(1 row)
 +
-+      assertEquals(Map.of("max_log_size", "100"), userGFlags);
-+    }
-+  }
++ROLLBACK TO SAVEPOINT sp1;
++SELECT f_34485_a();
++ f_34485_a 
++-----------
++       401
++(1 row)
 +
-+  @Test
-+  public void testProcessUserGFlagsLeavesFipsGFlagAloneOnNonFipsUniverse() {
-+    NodeDetails node = new NodeDetails();
-+    node.nodeName = "host-n1";
-+    Map<String, String> userGFlags =
-+        new HashMap<>(Map.of(GFlagsUtil.OPENSSL_REQUIRE_FIPS, "false"));
++ROLLBACK;
++-- Same, with the function created before the transaction.
++CREATE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
++CREATE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 1; END $$;
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       401
++(1 row)
 +
-+    GFlagsUtil.processUserGFlags(node, userGFlags, new HashMap<>(), false, null, null);
++BEGIN;
++SAVEPOINT sp1;
++CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
++CREATE OR REPLACE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 2; END $$;
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       402
++(1 row)
 +
-+    assertEquals(Map.of(GFlagsUtil.OPENSSL_REQUIRE_FIPS, "false"), userGFlags);
-+  }
++ROLLBACK TO SAVEPOINT sp1;
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       401
++(1 row)
 +
-   @Test
-   public void testValidateFipsCompliancyRejectsHelmOverridesDisablingTheFipsGFlag() {
-     // Helm overrides are merged over the generated gflags, so they are checked like specificGFlags.
++ROLLBACK;
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       401
++(1 row)
++
++-- Same, with the replacement undone by an exception block instead of
++-- ROLLBACK TO.
++BEGIN;
++DO $d$
++BEGIN
++  CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 403; END $$;
++  RAISE NOTICE 'inside block: %', f_34485_b();
++  RAISE EXCEPTION 'undo';
++EXCEPTION WHEN raise_exception THEN
++  RAISE NOTICE 'after block: %', f_34485_b();
++END $d$;
++NOTICE:  inside block: 403
++NOTICE:  after block: 401
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       401
++(1 row)
++
++ROLLBACK;
++-- Same, with the replacement undone by aborting the whole transaction.
++BEGIN;
++CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 404; END $$;
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       404
++(1 row)
++
++ROLLBACK;
++SELECT f_34485_b();
++ f_34485_b 
++-----------
++       401
++(1 row)
++
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_savepoint.sql` (modified, +47/-0)
+```diff
+@@ -360,3 +360,50 @@ SELECT process_work3();
+ -- Check the final state of the table
+ SELECT * FROM audit_log3 ORDER BY id;
+ SELECT COUNT(*) FROM users3;
++
++-- #34485: a function replaced after a savepoint must run its old definition
++-- after ROLLBACK TO.
++BEGIN;
++CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
++SELECT f_34485_a();
++SAVEPOINT sp1;
++CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
++SELECT f_34485_a();
++ROLLBACK TO SAVEPOINT sp1;
++SELECT f_34485_a();
++ROLLBACK;
++
++-- Same, with the function created before the transaction.
++CREATE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
++CREATE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 1; END $$;
++SELECT f_34485_b();
++BEGIN;
++SAVEPOINT sp1;
++CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
++CREATE OR REPLACE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 2; END $$;
++SELECT f_34485_b();
++ROLLBACK TO SAVEPOINT sp1;
++SELECT f_34485_b();
++ROLLBACK;
++SELECT f_34485_b();
++
++-- Same, with the replacement undone by an exception block instead of
++-- ROLLBACK TO.
++BEGIN;
++DO $d$
++BEGIN
++  CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 403; END $$;
++  RAISE NOTICE 'inside block: %', f_34485_b();
++  RAISE EXCEPTION 'undo';
++EXCEPTION WHEN raise_exception THEN
++  RAISE NOTICE 'after block: %', f_34485_b();
++END $d$;
++SELECT f_34485_b();
++ROLLBACK;
++
++-- Same, with the replacement undone by aborting the whole transaction.
++BEGIN;
++CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 404; END $$;
++SELECT f_34485_b();
++ROLLBACK;
++SELECT f_34485_b();
+```
+
+---
+
+### Incident Patch 3: `172a2d87` (2026-10-10)
+**Commit Message**: [#34937] DocDB: Fix QLTabletTest.LeaderLease by stepping down each leader once
+
+Summary:
+`StepDownAllTablets` went through the tablet servers one at a time and stepped down whichever peer was leader when it reached that server, so it could also step down a leader that an earlier step-down in the same loop had just elected. That new leader had not committed its no-op yet and so held no lease, which let the original leader win the next term and serve the write immediately, since a leader ignores its own old lease; the test expected the write to time out but got `Status: OK`. The helper now takes a snapshot of the current leaders with `ListTabletPeers(cluster, ListPeersFilter::kLeaders, UserTabletsOnly::kFalse)` and steps down only those, so each tablet's leader is stepped down exactly once.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
+
+Test Plan:
+./yb_build.sh fastdebug --gcc15 --cxx-test ql-tablet-test --gtest-filter QLTabletTest.LeaderLease -n 100 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the 
+
+**File**: `src/yb/integration-tests/mini_cluster.cc` (modified, +8/-7)
+```diff
+@@ -1067,13 +1067,14 @@ std::vector<server::SkewedClockDeltaChanger> JumpClocks(
+ }
+ 
+ void StepDownAllTablets(MiniCluster* cluster) {
+-  for (size_t i = 0; i != cluster->num_tablet_servers(); ++i) {
+-    for (const auto& peer : cluster->GetTabletPeers(i)) {
+-      consensus::LeaderStepDownRequestPB req;
+-      req.set_tablet_id(peer->tablet_id());
+-      consensus::LeaderStepDownResponsePB resp;
+-      ASSERT_OK(ASSERT_RESULT(peer->GetConsensus())->StepDown(&req, &resp));
+-    }
++  // Snapshot leaders first, so a leader elected by an earlier step down in this loop is not
++  // stepped down again before it acquires a lease.
++  auto leaders = ListTabletPeers(cluster, ListPeersFilter::kLeaders, UserTabletsOnly::kFalse);
++  for (const auto& peer : leaders) {
++    consensus::LeaderStepDownRequestPB req;
++    req.set_tablet_id(peer->tablet_id());
++    consensus::LeaderStepDownResponsePB resp;
++    ASSERT_OK(ASSERT_RESULT(peer->GetConsensus())->StepDown(&req, &resp));
+   }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #35442** (2026-10-20): [PLAT-23184] YBA: Keep PITR schedules on a Kubernetes upgrade that needs no finalize (@vipul-yb)
+- **PR #35391** (2026-10-20): [PLAT-23111] YBA: Capture the rollback checkpoint on a retry after an auto-rollback (@vipul-yb)
 - **PR #35389** (2026-10-19): [PLAT-23142] YBA: Pre-fill runtime-config dev user tags in v2 create universe (@haikarthikssk)
 - **PR #35309** (2026-10-18): [BACKPORT 2025.2][#34805] DocDB: Remove non-block-based vector index backends (#34806) (@yb-agentk-dev[bot])
 - **PR #35304** (2026-10-19): [#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCHECK on promotion race (@csi-fix)
-- **PR #35290** (2026-10-18): [#34685] YSQL: Scale the hand-over window of PgCronTest.UngracefulLeaderChangeMarksJobFailed for sanitizers (@iSignal)
-- **PR #35287** (2026-10-19): [#35286] YSQL: Fix PgBgWorkersTest.ValidateIdleWaitEventsNotPresent by reading the ASH wait event only once (@csi-fix)
-- **PR #35279** (2026-10-19): [#35278] YSQL: Fix org.yb.ysqlconnmgr.TestDropAndRenameDb#TestConcurrentOperations (@csi-fix)
+- **PR #35296** (2026-10-20): [#35283] DocDB: Track vector deletions of tables without reverse mapping (@spolitov)
 
 ---
 
@@ -2468,65 +2808,58 @@ Test Plan: `sbt "testOnly com.yugabyte.yw.common.gflags.GFlagsUtilTest"`: new te
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-22745] YBA: Keep openssl_require_fips on when it comes in the deprecated g
+## X. [#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryT
 
 **RULE**:
-When implementing operations in `managed/src/main/java/com/yugabyte/yw/common/gflags/GFlagsUtil.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgBackendMemoryContext.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc41ad30`: [PLAT-22745] YBA: Keep openssl_require_fips on when it comes in the deprecated gflags fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9066cefc`: [#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryTexts concurrent modification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/src/main/java/com/yugabyte/yw/common/gflags/GFlagsUtil.java`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgBackendMemoryContext.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-      if (userIntent.specificGFlags == null) {
-        // Create still accepts the deprecated maps and converts them to specificGFlags only after
-        // this check runs.
-        checkFipsGFlagNotDisabled(userIntent.masterGFlags);
-        checkFipsGFlagNotDisabled(userIntent.tserverGFlags);
-      } else if (!userIntent.specificGFlags.isInheritFromPrimary()) {
-          checkFipsGFlagNotDisabled(
-              userIntent.specificGFlags.getGFlags(azUuid, UniverseTaskBase.ServerType.MASTER));
-          checkFipsGFlagNotDisabled(
-              userIntent.specificGFlags.getGFlags(azUuid, ServerType.TSERVER));
-  private static void checkFipsGFlagNotDisabled(@Nullable Map<String, String> gflags) {
-    if (gflags != null
-        && gflags.containsKey(OPENSSL_REQUIRE_FIPS)
-        && !"true".equals(gflags.get(OPENSSL_REQUIRE_FIPS))) {
-      throw new PlatformServiceException(
-          BAD_REQUEST, "FIPS enabled YBAnywhere only supports FIPS enabled universe");
-    }
-  }
-
-    // Enforced even with allowOverrideAll: the gflags validators can be bypassed, and a FIPS
-    // universe must never run with FIPS off.
-    if ("true".equals(platformGFlags.get(OPENSSL_REQUIRE_FIPS))
-        && user
+import org.yb.client.TestUtils;
+      // Log lines may still arrive after the query returns, and log printer threads append
+      // concurrently, so poll over a snapshot taken under the list's lock.
+      TestUtils.waitFor(() -> {
+        List<String> results;
+        synchronized (logBackendMemoryContextsResults) {
+          results = new ArrayList<>(logBackendMemoryContextsResults);
+        int next = 0;
+        for (String result : results) {
+          if (next == expectedMessages.size()) {
+            break;
+          }
+          if (result.contains(expectedMessages.get(next))) {
+            next++;
+          }
+        return next == expectedMessages.size();
+      }, 1000 /* timeoutMs */);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-      // This is for new universes only, so don't consider old form of GFLags
-      if (userIntent.specificGFlags != null && !userIntent.specificGFlags.isInheritFromPrimary()) {
-          Map<String, String> masterGFlags =
-              userIntent.specificGFlags.getGFlags(azUuid, UniverseTaskBase.ServerType.MASTER);
-          if (masterGFlags.containsKey(GFlagsUtil.OPENSSL_REQUIRE_FIPS)
-              && !masterGFlags.get(GFlagsUtil.OPENSSL_REQUIRE_FIPS).equals("true")) {
-            throw new PlatformServiceException(
-                BAD_REQUEST, "FIPS enabled YBAnywhere only supports FIPS enabled universe");
-          }
-          Map<String, String> tserverGFlags =
-              userIntent.specificGFlags.getGFlags(azUuid, ServerType.TSERVER);
-          if (tserverGFlags.containsKey(GFlagsUtil.OPENSSL_REQUIRE_FIPS)
-              && !tserverGFlags.get(GFlagsUtil.OPENSSL_REQUIRE_FIPS).equals("true")) {
-            throw new PlatformServiceException(
-                BAD_REQUEST, "FIPS enabled YBAnywhere only supports FIPS enabled universe");
-          }
+import static org.yb.AssertionWrappers.assertTrue;
+      assertTrue("pg_log_backend_memory_contexts should output logs",
+                !logBackendMemoryContextsResults.isEmpty());
+
+      for (String result : logBackendMemoryContextsResults) {
+        if (expectedMessages.isEmpty()) {
+          // If we have already found all expected messages, we can skip further checks.
+          break;
+        if (result.contains(expectedMessages.get(0))) {
+          expectedMessages.remove(0);
+      }
+
+      assertTrue(String.format("Expected to find all messages in pg_log_backend_memory_contexts %s",
+                               expectedMessages.toString()),
+                 expectedMessages.isEmpty());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc41ad30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9066cefc` are properly handled with clean fallback behavior.
