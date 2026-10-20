@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:19:36.786Z",
-  "total_cycles_completed": 3659,
-  "total_learnings_persisted": 3659,
-  "total_rules_promoted": 2824,
+  "last_updated": "2026-10-20T03:28:26.671Z",
+  "total_cycles_completed": 3663,
+  "total_learnings_persisted": 3663,
+  "total_rules_promoted": 2827,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:41:19.034Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:47:13.898Z",
-      "repository": "trybyte-app/sitemap-validator",
-      "learningId": "learn-github-trybyte-app-sitemap-validator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:47:15.063Z",
-      "repository": "oblador/hush",
-      "learningId": "learn-github-oblador-hush",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:47:22.667Z",
-      "repository": "valeriansaliou/sonic",
-      "learningId": "learn-github-valeriansaliou-sonic",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:53:16.558Z",
       "repository": "lucky-media/astro-seo",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T03:19:36.786Z",
       "repository": "signerlabs/Klee",
       "learningId": "learn-github-signerlabs-klee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:28:13.630Z",
+      "repository": "carbon-design-system/carbon",
+      "learningId": "learn-github-carbon-design-system-carbon",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:28:16.997Z",
+      "repository": "testing-library/react-testing-library",
+      "learningId": "learn-github-testing-library-react-testing-library",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:28:20.290Z",
+      "repository": "sweetpad-dev/sweetpad",
+      "learningId": "learn-github-sweetpad-dev-sweetpad",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:28:26.671Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

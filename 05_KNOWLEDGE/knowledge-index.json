@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:19:36.710Z",
-  "total_verified_learnings": 1032,
+  "last_updated": "2026-10-20T03:28:26.619Z",
+  "total_verified_learnings": 1034,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4659,8 +4659,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "50efc61f",
-      "content_hash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
+      "source_version": "f065999b",
+      "content_hash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -4683,6 +4683,11 @@
           "number": 2687,
           "title": "ci): pin runners to ubuntu-24.04 (#23779)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3020,
+          "title": "deps): bump chromaui/action from 18.12.2 to 18.13.0 (#23776)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4690,7 +4695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:43:34.753Z",
+      "verified_at": "2026-10-20T03:28:13.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39348,8 +39353,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "028aa1fc",
-      "content_hash": "1dec4a2149060c28e375b797444c5610f07701c3d4743159d84440d67d925bb2",
+      "source_version": "d584197e",
+      "content_hash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -39362,6 +39367,11 @@
           "number": 2643,
           "title": "build(rust): bump itertools from 0.14.0 to 0.15.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3022,
+          "title": "Merge pull request #999 from tschm/rhiza_fix_977_20261008",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39369,7 +39379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:59:13.804Z",
+      "verified_at": "2026-10-20T03:28:26.607Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41749,22 +41759,29 @@
     "learn-github-sweetpad-dev-sweetpad": {
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sweetpad-dev-sweetpad",
+      "source": "sweetpad-dev/sweetpad",
+      "repository": "sweetpad-dev/sweetpad",
       "slug": "sweetpad-dev-sweetpad",
       "platform": "github",
       "source_url": "https://github.com/sweetpad-dev/sweetpad",
-      "source_version": "HEAD",
-      "content_hash": "37dc6a05153b8b4d1a84c455085391eb007d935112d2e0b0fb60bbe22b0301ab",
+      "source_version": "5ded4409",
+      "content_hash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
       "dossier_path": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.775Z"
+      "verified_at": "2026-10-20T03:28:20.220Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-swiftkickmobile-swiftmessages": {
       "learning_id": "learn-github-swiftkickmobile-swiftmessages",
@@ -59798,20 +59815,35 @@
     "learn-github-testing-library-react-testing-library": {
       "learning_id": "learn-github-testing-library-react-testing-library",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "testing-library/react-testing-library",
       "repository": "testing-library/react-testing-library",
       "slug": "testing-library-react-testing-library",
       "platform": "github",
       "source_url": "https://github.com/testing-library/react-testing-library",
-      "source_version": "main",
-      "content_hash": "d5a03a2ae0af72496d53471d0a4047ee1c9446f7c6e6519a4ab27ed3fe75d5ff",
+      "source_version": "20ce75f2",
+      "content_hash": "c7aeacb7158e0a0ecd02954d7525e4ac17b6026a916a4bbeccb35cbfdb58cc9b",
       "dossier_path": "07_PROJECT_LEARNING/testing-library-react-testing-library-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/testing-library-react-testing-library-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3021,
+          "title": "Avoid act() re-entrant when dispatching events (#1468)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:28:16.933Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-testing-library-dom-testing-library": {
       "learning_id": "learn-github-testing-library-dom-testing-library",
@@ -97582,6 +97614,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:19:36.689Z"
+    },
+    "rule-3020": {
+      "learning_id": "rule-3020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3020,
+      "title": "deps): bump chromaui/action from 18.12.2 to 18.13.0 (#23776)",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "f065999b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:28:13.564Z"
+    },
+    "rule-3021": {
+      "learning_id": "rule-3021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3021,
+      "title": "Avoid act() re-entrant when dispatching events (#1468)",
+      "source_url": "https://github.com/testing-library/react-testing-library",
+      "source_version": "20ce75f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:28:16.933Z"
+    },
+    "rule-3022": {
+      "learning_id": "rule-3022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3022,
+      "title": "Merge pull request #999 from tschm/rhiza_fix_977_20261008",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "d584197e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:28:26.607Z"
     }
   },
   "aliases": {

@@ -3682,3 +3682,7 @@
 | `CYCLE-20261020-Z430` | `2026-10-20T03:13:18.444Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3018` | Yes (`b72463d4...`) |
 | `CYCLE-20261020-74RM` | `2026-10-20T03:19:32.578Z` | `mswjs/msw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mswjs-msw-learnings.md` | Yes (`f0139935...`) |
 | `CYCLE-20261020-780B` | `2026-10-20T03:19:36.779Z` | `signerlabs/Klee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3019` | Yes (`e221660c...`) |
+| `CYCLE-20261020-IAT2` | `2026-10-20T03:28:13.622Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3020` | Yes (`ee585cc0...`) |
+| `CYCLE-20261020-IDEL` | `2026-10-20T03:28:16.989Z` | `testing-library/react-testing-library` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3021` | Yes (`c7aeacb7...`) |
+| `CYCLE-20261020-IFY1` | `2026-10-20T03:28:20.281Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md` | Yes (`fa63212c...`) |
+| `CYCLE-20261020-IKVC` | `2026-10-20T03:28:26.664Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3022` | Yes (`00537a60...`) |

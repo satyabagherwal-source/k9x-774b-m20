@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
+> **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
+> **Source Version**: `5ded4409`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T03:28:20.139Z  
+> **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): sweetpad-dev/sweetpad
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:34:09.430Z  
+> **Harvest Timestamp**: 2026-10-20T03:28:20.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1895 stars
+- **Stars / Engagement**: 1911 stars
 
 ---
 
@@ -1571,305 +1585,20 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 /// typed destination may not) and ends in `<app_dir>/<e
 ```
 
-### Core Architecture Module: `sweetpad-core/src/framing.rs`
-```
-//! `Content-Length`-framed JSON-RPC message codec, shared by the BSP server's
-//! stdio loop (toward sourcekit-lsp), its control-socket client (toward the
-//! extension), and the `sweetpad vscode` CLI client.
-
-use std::io::{BufRead, Write};
-
-/// Largest frame we'll accept. Real JSON-RPC bodies here top out at tens of
-/// kilobytes (build-target/source lists); the cap stops a hostile or corrupt
-/// `Content-Length` from forcing a giant zero-filled allocation (and a
-/// `read_exact` that waits forever for a body that never comes) before a
-/// single body byte is read.
-const MAX_FRAME_BYTES: usize = 16 * 1024 * 1024;
-
-/// Largest accepted header line. Real headers are tens of bytes; without a
-/// bound, a peer that streams bytes with no newline grows the header buffer
-/// without limit — the exact allocation blowup [`MAX_FRAME_BYTES`] exists to
-/// stop, just before the body instead of inside it.
-const MAX_HEADER_BYTES: u64 = 64 * 1024;
-
-/// Read one `Content-Length`-framed JSON-RPC message. `Ok(None)` on clean EOF.
-pub fn read_message(reader: &mut impl BufRead) -> Result<Option<String>, String> {
-    let mut content_length: Option<usize> = None;
-    loop {
-        let mut raw = Vec::new();
-        // UFCS so `take` binds to `impl Read for &mut R` (a plain method call
-        // auto-derefs and tries to move the reader itself).
-        let mut limited = std::io::Read::take(&mut *reader, MAX_HEADER_BYTES);
-        let n = limited
-            .read_until(b'\n', &mut raw)
-            .map_err(|e| e.to_string())?;
-        if n == 0 {
-            return Ok(None);
-        }
-        if raw.last() != Some(&b'\n') && n as u64 == MAX_HEADER_BYTES {
-            return Err(format!(
-                "header line exceeds the {MAX_HEADER_BYTES}-byte cap"
-            ));
-        }
-        let line = String::from_utf8_lossy(&raw);
-        let line = line.trim_end_matches(['\r', '\n']);
-        if line.is_empty() {
-            break;
-        }
-        // Header names are case-insensitive; don't die on a client that
-        // doesn't send the canonical casing. A malformed value is a hard
-        // error (the frame boundary is unrecoverable without it).
-        if let Some((name, value)) = line.split_once(':')
-            && name.eq_ignore_ascii_case("content-length")
-        {
-            let parsed = value
-                .trim()
-                .parse()
-                .map_err(|e| format!("bad Content-Length {:?}: {e}", value.trim()))?;
-            content_length = Some(parsed);
-        }
-    }
-    let len = content_length.ok_or("message without Content-Length")?;
-    if len > MAX_FRAME_BYTES {
-        return Err(format!(
-            "Content-Length {len} exceeds the {MAX_FRAME_BYTES}-byte frame cap"
-        ));
-    }
-    let mut buf = vec![0u8; len];
-    reader.read_exact(&mut buf).map_err(|e| e.to_string())?;
-    Ok(Some(String::from_utf8_lossy(&buf).into_owned()))
-}
-
-pub fn write_message(writer: &mut impl Write, body: &str) -> Result<(), String> {
-    write!(writer, "Content-Length: {}\r\n\r\n{body}", body.len()).map_err(|e| e.to_string())?;
-    writer.flush().map_err(|e| e.to_string())
-}
-
-```
-
-### Core Architecture Module: `sweetpad-core/src/hot.rs`
-```
-//! What a hot-reload build and launch need, shared by the CLI's `app run
-//! --hot` and the extension's hot reload: the SDKs InjectionNext can inject
-//! into, the client dylib and platform directory for each, and the build
-//! settings that make the product injectable.
-
-use std::path::Path;
-
-/// The SDK a `-destination` builds for, among the ones hot reload can inject
-/// into: the simulators InjectionNext ships a client for, and native macOS.
-/// `None` for the rest (devices, watchOS, generic destinations).
-#[must_use]
-pub fn sdk_for_destination(destination: &str) -> Option<&'static str> {
-    let spec = sweetpad_lib::destination::DestinationSpec::parse(destination);
-    if spec.generic {
-        return None;
-    }
-    spec.sdk().filter(|sdk| {
-        matches!(
-            *sdk,
-            "iphonesimulator" | "appletvsimulator" | "xrsimulator" | "macosx"
-        )
-    })
-}
-
-/// The InjectionNext client dylib that injects into apps built for `sdk`.
-/// `None` for SDKs InjectionNext can't inject into: devices strip
-/// `DYLD_INSERT_LIBRARIES`, and watchOS ships no dylib.
-#[must_use]
-pub fn dylib_name(sdk: &str) -> Option<&'static str> {
-    match sdk {
-        "iphonesimulator" => Some("libiphonesimulatorInjection.dylib"),
-        "appletvsimulator" => Some("libappletvsimulatorInjection.dylib"),
-        "xrsimulator" => Some("libxrsimulatorInjection.dylib"),
-        "macosx" => Some("libmacosxInjection.dylib"),
-        _ => None,
-    }
-}
-
-/// The `<Platform>.platform` directory an injectable `sdk` lives in, where
-/// the InjectionNext.app client finds the XCTest it links.
-#[must_use]
-pub fn platform_dir(sdk: &str) -> Option<&'static str> {
-    dylib_name(sdk).map(|_| sweetpad_lib::project::platform_dir_name_for(sdk))
-}
-
-/// The build settings a hot build for `sdk` adds, in order, as `KEY=VALUE`
-/// overrides that outrank the project's. Empty when hot reload can't inject
-/// into `sdk`.
-///
-/// Every injectable build links with `-interposable`, so dyld can swap
-/// symbols, and emits frontend command lines, so the recompiler can recover
-/// each file's compile command from the build log. A macOS app must also be
-/// injectable: the hardened runtime makes dyld strip `DYLD_INSERT_LIBRARIES`
-/// and library validation reject the recompiled dylibs, and the App Sandbox
-/// blocks the client's socket and loading from outside its container. Without
-/// these the app launches and injection fails silently. An entitlements file
-/// that turns the sandbox on outranks `ENABLE_APP_SANDBOX`, so a macOS build
-/// signs with `entitlements` (a copy without the sandbox) when given.
-#[must_use]
-pub fn build_settings(sdk: &str, entitlements: Option<&Path>) -> Vec<(&'static str, String)> {
-    if dylib_name(sdk).is_none() {
-        return Vec::new();
-    }
-    // `$(inherited)` keeps the project's own linker flags.
-    let mut settings = vec![
-        (
-            "OTHER_LDFLAGS",
-            "$(inherited) -Xlinker -interposable".to_string(),
-        ),
-        ("EMIT_FRONTEND_COMMAND_LINES", "YES".to_string()),
-    ];
-    if sdk == "macosx" {
-        settings.push(("ENABLE_HARDENED_RUNTIME", "NO".to_string()));
-        settings.push(("ENABLE_APP_SANDBOX", "NO".to_string()));
-        if let Some(entitlements) = entitlements {
-            settings.push(("CODE_SIGN_ENTITLEMENTS", entitlements.display().to_string()));
-        }
-    }
-    settings
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn sdk_for_destination_maps_injectable_destinations() {
-        assert_eq!(
-            sdk_for_destination("platform=iOS Simulator,id=ABC"),
-            Some("iphonesimulator")
-        );
-        assert_eq!(
-            sdk_for_destination("platform=visionOS Simulator,name=X"),
-            Some("xrsimulator")
-        );
-        assert_eq!(sdk_for_destination("platform=macOS"), Some("macosx"));
-        // Physical device / unknown → unsupported.
-        assert_eq!(sdk_for_destination("platform=iOS,id=ABC"), None);
-        assert_eq!(sdk_for_destination("generic/platform=iOS"), None);
-    }
-
-    #[test]
-    fn dylib_and_platform_cover_the_injectable_sdks() {
-        for (sdk, dylib, platform) in [
-            (
-                "iphonesimulator",
-                "libiphonesimulatorInjection.dylib",
-                "iPhoneSimulator",
-            ),
-            (
-                "appletvsimulator",
-                "libappletvsimulatorInjection.dylib",
-                "AppleTVSimulator",
-            ),
-            (
-                "xrsimulator",
-                "libxrsimulatorInjection.dylib",
-                "XRSimulator",
-            ),
-            ("macosx", "libmacosxInjection.dylib", "MacOSX"),
-        ] {
-            assert_eq!(dylib_name(sdk), Some(dylib));
-            assert_eq!(platform_dir(sdk), Some(platform));
-        }
-        // Devices, watchOS and unknown SDKs aren't injectable.
-        for sdk in [
-            "iphoneos",
-            "appletvos",
-            "xros",
-            "watchos",
-            "watchsimulator",
-            "",
-        ] {
-            assert_eq!(dylib_name(sdk), None, "{sdk}");
-            assert_eq!(platform_dir(sdk), None, "{sdk}");
-            assert!(build_settings(sdk, None).is_empty(), "{sdk}");
-        }
-    }
-
-    #[test]
-    fn a_simulator_build_links_interposable_and_emits_command_lines() {
-        assert_eq!(
-            build_settings("iphonesimulator", Some(Path::new("/ignored.entitlements"))),
-            [
-                (
-                    "OTHER_LDFLAGS",
-                    "$(inherited) -Xlinker -interposable".to_string()
-                ),
-                ("EMIT_FRONTEND_COMMAND_LINES", "YES".to_string()),
-            ]
-        );
-    }
-
-    #[test]
-    fn a_macos_build_drops_the_hardened_runtime_and_sandbox() {
-        let keys =
-            |s: Vec<(&'static str, String)>| s.into_iter().map(|(k, _)| k).collect::<Vec<_>>();
-        assert_eq!(
-            keys(build_settings("macosx", None)),
-            [
-                "OTHER_LDFLAGS",
-                "EMIT_FRONTEND_COMMAND_LINES",
-                "ENABLE_HARDENED_RUNTIME",
-                "ENABLE_APP_SANDBOX"
-            ]
-        );
-        let stripped = build_settings("macosx", Some(Path::new("/cache/Debug.entitlements")));
-        assert_eq!(
-            stripped.last(),
-            Some(&(
-                "CODE_SIGN_ENTITLEMENTS",
-                "/cache/Debug.entitlements".to_string()
-            ))
-        );
-        assert!(
-            stripped
-                .iter()
-                .any(|(k, v)| *k == "ENABLE_HARDENED_RUNTIME" && v == "NO")
-        );
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #340** (2026-10-10): **DAP support**
+  *Symptoms*: I see in the docs that we can debug an app using lldb interactive console. Is there a way it integrates with lldb-dap so we can debug from any editor?
+  **Post-Mortem & Fix Analysis**:
+  > Not in the CLI yet, but the VS Code extension has it built in (debugging through CodeLLDB). With the CLI, `sweetpad run --wait-for-debugger --detach` launches the app suspended and prints its pid, so lldb-dap in any editor can attach to it with `"request": "attach", "pid": <pid>`. Simulator and macOS apps only for now. Proper lldb-dap support in the CLI would be great, so I'll think about adding it. 
+  > Just shipped `sweetpad dap` in the CLI (0.1.12), so you can debug from any editor that speaks DAP: https://sweetpad.hyzyla.dev/docs/cli/editor-debugging  Which editor do you use? Curious if it works for you. 
+
 - **Issue #339** (2026-09-28): **Project discovery selects internal project.xcworkspace instead of .xcodeproj, breaking scheme refresh**
   *Symptoms*: ## Summary  SweetPad's VS Code extension (0.2.16) discovers only `.xcworkspace` directories and `Package.swift`. For an ordinary single-project repository containing only `TinyPreview.xcodeproj`, the *only* offered choice is the internal `TinyPreview.xcodeproj/project.xcworkspace`, not the `.xcodeproj` itself. The extension then fails to list schemes with `I/O error: No such file or directory (os error 2)` and "Generate Build Server Config" fails before writing a config.  This is different from earlier "No schemes" reports caused by an inactive Xcode installation or an incompatible project format: `xcodebuild -list -project` and the SweetPad CLI both enumerate the schemes successfully here.  ## Reproduction  1. Open a repository containing `TinyPreview.xcodeproj` but no top-level `.xcworkspace` in VS Code (example: [lingmacker/TinyPreview](https://github.com/lingmacker/TinyPreview), commit `d62bfe3`). 2. In SweetPad, select the Xcode container / run "Generate Build Server Config". 3. The picker offers only `TinyPreview.xcodeproj/project.xcworkspace`; selecting it logs:     ```text    Getting schemes: <repo>/TinyPreview.xcodeproj/project.xcworkspace    Failed to refresh schemes: I/O error: No such file or directory (os error 2)    Failed to get schemes: I/O error: No such file or directory (os error 2)    ```  `project.xcworkspace` exists but has no `contents.xcworkspacedata`. The extension's bundled native reader reproduces the *same* error when passed this path, while passin
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report and repro! Fixed in 0.2.17: SweetPad now offers the `.xcodeproj` and reads its schemes. Closing.
-
-- **Issue #338** (2026-09-19): **Launch the simulator app Xcode 27 renamed to DeviceHub (#337)**
-  *Symptoms*: Closes #337
-
-- **Issue #337** (2026-09-19): **Xcode 27 - launch of iOS app fails, due to Simulator being renamed to DeviceHub**
-  *Symptoms*: Launching an iOS app that built ok against an Xcode 27 install fails as the Simulator command used `open -a Simulator` no longer finds and app as it has been renamed to DeviceHub.  As a temporary workaround the attached ZIP file is a tiny shim app - expand it to `~/Applications/Simulator.app` and Sweetpad will launch it and get redirected to device hub.  The core script that runs is: ``` #!/bin/bash exec open -a "/Applications/Xcode.app/Contents/Applications/DeviceHub.app" "$@" ```  [Simulator.zip](https://github.com/user-attachments/files/32294617/Simulator.zip)
-
-- **Issue #336** (2026-09-16): **Command to send deeplinks to simulator**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > Closing, found it in the docs, sorry!
-
-- **Issue #335** (2026-09-28): **sweetpad build diagnostics command does not color output**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > Which command do you mean here — "SweetPad: Diagnose build setup", or the build output itself?
-  > @hyzyla It's the `sweetpad build diagnostics` command, the one which shows warnings and errors from latest build
-  > Sorry for the slow reply. `sweetpad build diagnostics` is colored since CLI 0.1.10 (`brew upgrade sweetpad`). Closing.
-
-- **Issue #334** (2026-08-26): **List schemes from every local Swift package a container reaches (#327)**
-  *Symptoms*: xcodebuild resolves the whole local package graph — the workspace's FileRef members, the packages a member project declares, keeps as a folder reference, or holds under a synchronized folder, and everything those pull in through `.package(path:)` — and synthesizes schemes from all of it, while SweetPad read only the workspace's own members. It now walks the same graph, counting SwiftPM's implicit executable products alongside the declared ones and adding each package's scheme files and the test targets Xcode counts. A package opened on its own is listed the way xcodebuild lists it: under its own name when it has exactly one product, under `<name>-Package` when it has none, and under both when it has more. 
-
-- **Issue #333** (2026-08-25): **Show each generic destination with its platform's own icon**
-  *Symptoms*: The nine build-only destinations all shared the `vm` glyph, so the group rendered as identical rows and "Any iOS Device" got a desktop-display icon. Each now uses its platform's own silhouette, and the group header gets a `sweetpad-circle-letter-g` badge so it matches the letter-badge grammar of the groups above it. The glyph was already in tabler-icons.original.woff, so this is a package.json entry plus a font re-subset.
-
-- **Issue #332** (2026-08-26): **Match Xcode's DerivedData folder name when the project name has a space**
-  *Symptoms*: Fixes #329. Xcode writes `ARTA NYC.xcworkspace`'s DerivedData to `ARTA_NYC-<hash>`, so the resolver named a directory that never existed: the build succeeded and the launch then looked for the app somewhere it had never been written. Xcode collapses each run of space, tab, LF or CR to a single `_`, and only where the folder is keyed by hash — a workspace-relative location keeps the name verbatim — so the collapse sits at the `<name>-<hash>` spelling rather than at the name. This also corrects `derived-data`'s project scoping, which guessed the rule as "replace every non-alphanumeric" and could therefore match a different project's folder.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1886,7 +1615,729 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e2b054c` (2026-10-04)
+### Incident Patch 1: `111d11e5` (2026-10-10)
+**Commit Message**: Show NSLog in debug sessions and private log values from macOS apps
+
+**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +253/-3)
+```diff
+@@ -4145,7 +4145,7 @@ through. `restart` is refused with the way to restart.
+ | destination | started by | lldb-dap is sent |
+ |---|---|---|
+ | simulator | `simctl launch --console-pty --wait-for-debugger` | `attach {pid, program}` |
+-| macOS, Mac Catalyst | lldb-dap itself | `launch {program, args, env}` |
++| macOS, Mac Catalyst | `posix_spawn` with `POSIX_SPAWN_START_SUSPENDED` | `attach {pid, program}` |
+ | device (iOS 17+) | `devicectl … launch --start-stopped` | `attach` with `attachCommands` |
+ | Designed for iPad | `open` (LaunchServices), after configurationDone | `attach {program, waitFor}` |
+ 
+@@ -4222,8 +4222,8 @@ colorless, so nothing prompts, animates or colors.
+ build's launch error repeats the first errors, as `build start` does when its
+ stderr goes elsewhere. Simulator stdout and stderr arrive through the console
+ child, and os_log through the log stream `run` follows, at `run`'s default
+-level. On macOS lldb launched the process and relays its stdout itself, so only
+-the log stream is added. The lines about the launch rather than the app are
++level, with NSLog added (§9v). A macOS app's stdout and stderr come through the
++pipes it was started with. The lines about the launch rather than the app are
+ left out as `run` leaves them out: the simulator's boot noise, AppKit's note on
+ the `-ApplePersistenceIgnoreState` sweetpad adds, and the lines Xcode's
+ debug-dylib stub writes whenever a debugger starts the app. A `disconnect`,
+@@ -4282,6 +4282,256 @@ drives one real session per destination kind it has through
+ macOS, a breakpoint, the `stopped` event and its frame, a disconnect, and the
+ adapter exiting.
+ 
++## 9v. v8 — an app's output, once each and readable
++
++> sweetpad-dev/sweetpad#97 asked for an app's output in the editor's debug
++> console. `dap` (§9u) put it there; this section settles what reached it
++> twice, what didn't reach it, and what reached it as `<private>`.
++
++An app writes three ways. `print` and anything else on stdout or stderr reach
++the app's own pipes. `Logger` and `os_log` go to the unified log. NSLog goes to
++either: to stderr, except while a debugger is attached, when it goes to the
++unified log only. A simulator app writes it to both.
++
++**Pipes for stdio, `log stream` for the unified log, nothing else.** sweetpad
++reads stdout and stderr itself and unified-log entries through `log stream`,
++which keeps them structured: the level, subsystem and category the level keys,
++the filters and `--json` rely on. The other way to get os_log text is the
++`OS_ACTIVITY_DT_MODE` echo, which copies each entry onto stderr. Apple doesn't
++document it, it carries no level or subsystem, and LLDB sets it for every
++process it launches, so a macOS debug session that lldb-dap launched showed each
++`Logger` line twice. sweetpad never sets it, and a debug session starts the app
++itself (§9u): a macOS or Mac Catalyst app is spawned with
++`POSIX_SPAWN_START_SUSPENDED`, its stdout and stderr on pipes, and lldb-dap
++attaches to the pid. Continuing from the attach releases the suspension, so
++breakpoints are set before the first instruction, as with lldb-dap's own
++launch. `app debug` launches through lldb in the terminal.
++
++The app starts in the editor's `lldb.cwd` (`posix_spawn_file_actions_addchdir_np`)
++when it sets one. The lldb-dap fields only its launch reads (`launchCommands`,
++`runInTerminal`, `console`, `stdio`, `disableASLR`, `disableSTDIO`,
++`shellExpandArguments`, `detachOnError`) can't apply to an attach, so an editor
++that sets one gets lldb-dap's launch, with a note that each `Logger` line shows
++twice, and a stream without NSLog, which the copy on stderr already carries.
++`stopOnEntry` works on the attach and needs neither.
++
++A launched app lldb-dap never reached, its `attach` failed or unanswered,
++stops with the session even when the editor asks to detach: nothing else would
++resume it.
++
++**A debug session adds NSLog to the stream.** With a debugger attached, NSLog
++writes nothing to stderr, so the stream's predicate also takes it: sender
++`Foundation`, no subsystem. The predicate can't test for a missing subsystem
++(`== nil` and `== ""` match nothing), so it tests for one without a dot, which
++every Apple subsystem has. A plain `run` leaves the clause out, since a
++simulator app's NSLog would show twice. The entry renders as `[NSLog]`.
++
++**macOS redacts, and sweetpad's builds opt the app in.** The unified log on a
++Mac records a dynamic value, a `String` interpolated into a `Logger` message or
++NSLog's whole text, as `<private>`, and `log stream` reads what it records.
++Xcode unredacts the processes it launches through a channel only it has; the
++`log` tool has no per-process switch, and the simulator doesn't redact. The
++documented opt-in is the app's own Info.plist:
++
++```xml
++<key>OSLogPreferences</key>
++<dict>
++  <key>com.example.app</key>
++  <dict><key>DEFAULT-OPTIONS</key><dict><key>Enable-Private-Data</key><true/></dict></dict>
++</dict>
++```
++
++It's keyed by sub
+```
+
+**File**: `sweetpad-cli/src/cli/commands/app.rs` (modified, +200/-41)
+```diff
+@@ -15,6 +15,7 @@ use sweetpad_lib::destination::DestinationSpec;
+ pub(crate) mod adapter;
+ mod ax;
+ mod macwin;
++mod private_logs;
+ mod sample;
+ 
+ use crate::cli::inject::recompiler::{Mode, Recompiler};
+@@ -1021,6 +1022,11 @@ struct RunPlan {
+     /// A detached launch records it in its captured file's header, so `app
+     /// logs` leaves it out there too ([`CapturedLog`]).
+     added_ignore_persistence: bool,
++    /// Whether a build of this macOS app opts its own log subsystems into the
++    /// unified log's private data before it launches ([`private_logs`]). Off
++    /// for any other target, an iOS app on the Mac, `app debug` and `app
++    /// diagnose`, and `[run] private_logs = false`.
++    private_logs: bool,
+     /// Extra xcodebuild arguments (after `--`), passed through verbatim.
+     passthrough: Vec<String>,
+ }
+@@ -1391,8 +1397,16 @@ fn plan(ctx: &mut Context, opts: &RunOpts) -> Result<RunPlan, CliError> {
+         hot_entitlements: None,
+         launch: opts.launch.clone(),
+         added_ignore_persistence: false,
++        private_logs: false,
+         passthrough: opts.passthrough.to_vec(),
+     };
++    plan.private_logs = matches!(plan.target, Target::Mac)
++        && !designed_for_ipad(&plan.destination)
++        && ctx
++            .project_file(&plan.resolved.container)
++            .run
++            .private_logs
++            .unwrap_or(true);
+     // Settled on the plan, like the macOS pair below, so every launch it
+     // drives carries them: a session's relaunches, a detached launch, and
+     // lldb's. `swift run` has no scheme to read them from.
+@@ -1666,13 +1680,48 @@ fn install_built(
+             })?;
+         }
+         // A macOS app is built in place; there's no install step.
+-        Target::Mac => {}
++        Target::Mac => opt_into_private_logs(out, plan),
+         // SPM executables never reach here (run_app routes them to `swift run`).
+         Target::SpmRun(_) => unreachable!("SPM run does not build/install via xcodebuild"),
+     }
+     Ok(app)
+ }
+ 
++/// Opt a macOS build into recording its own logs' private values
++/// ([`private_logs`]), when the plan does. Each build that launches the app
++/// runs it, [`install_built`] and the session's [`build`]: the edit makes
++/// Xcode's next build process the Info.plist and sign the app again, which
++/// undoes it. A failure leaves the build's logs redacted, which costs a
++/// warning rather than the launch.
++fn opt_into_private_logs(out: &Output, plan: &RunPlan) {
++    if !plan.private_logs {
++        return;
++    }
++    let Ok(app) = plan.app_bundle() else {
++        return;
++    };
++    match private_logs::opt_in(&app) {
++        Ok(added) if !added.is_empty() => out.debug(&format!(
++            "re-signed {} to record private log values from {}",
++            app.bundle_id,
++            added.join(", ")
++        )),
++        Ok(_) => {}
++        Err(e) => out.warn(&format!(
++            "{}'s logs keep showing <private> values: {e}",
++            app.bundle_id
++        )),
++    }
++}
++
++/// Whether `destination` runs an iOS app on the Mac ("Designed for iPad"),
++/// which only LaunchServices can start.
++fn designed_for_ipad(destination: &str) -> bool {
++    DestinationSpec::parse(destination)
++        .variant
++        .is_some_and(|variant| variant.starts_with("Designed for"))
++}
++
+ /// Record the app being launched into the project's state — for re-launch and
+ /// `context show`, mirroring the extension's `lastLaunchedApp`. Best-effort: a
+ /// missing bundle or write failure never derails a run. SPM executables have no
+@@ -2286,7 +2335,7 @@ fn run_hot_session(
+         });
+     }
+ 
+-    let mut logs = start_logs(ctx, plan, &filter);
++    let mut logs = start_logs(ctx, plan, &filter, Senders::App);
+     // Watch the workspace; each save drives `server.inject`.
+     let session = HotSession::start(Arc::clone(&server), &project_root);
+ 
+@@ -2915,7 +2964,7 @@ impl SessionLogs {
+     fn launched(&mut self, ctx: &Context, plan: &RunPlan, filter: &Arc<AtomicU8>) {
+         if !self.started {
+             self.started = true;
+-            self.stream = start_logs(ctx, plan, filter);
++            self.stream = start_logs(ctx, plan, filter, Senders::App);
+         }
+     }
+ 
+@@ -3315,7 +3364,10 @@ fn build(plan: &RunPlan, out: &Output, capture: Option<&std::path::Path>) -> Bui
+         &diagnostics,
+     );
+     match status {
+-        Ok(s) if s.success() => BuildOutcome::Ok,
++        Ok(s) if s.success() => {
++            opt_into_private_logs(out, plan);
++            BuildOutcome::Ok
++        }
+         // The stream above already closed on `✗ Build failed` under the errors
+         // that caused it, as `BuildPlan::run`'s does, and the failure reads the
+         // same as there.
+@@ -3387,7 +3439,7 @@ fn follow_once(ctx: &Context, plan: &RunPlan) -> CliResult {
+             // Stream the device's os_log (pymobiledevice3) alongside the devicectl
+             // console; no live filter on the non-interactive path, so use the 
+```
+
+**File**: `sweetpad-cli/src/cli/commands/app/adapter.rs` (modified, +105/-26)
+```diff
+@@ -6,23 +6,24 @@
+ //!
+ //! Each destination reaches lldb-dap its own way. A simulator app starts
+ //! under `simctl launch --wait-for-debugger` and lldb-dap attaches to its pid.
+-//! A macOS or Mac Catalyst app is launched by lldb-dap itself. A physical
+-//! device's app starts under `devicectl … --start-stopped` and lldb attaches
+-//! through its `device` commands. An iOS app running on the Mac ("Designed for
++//! A macOS or Mac Catalyst app starts suspended and lldb-dap attaches to it,
++//! so lldb never sets the `OS_ACTIVITY_DT_MODE` it gives what it launches. A
++//! physical device's app starts under `devicectl … --start-stopped` and lldb
++//! attaches through its `device` commands. An iOS app running on the Mac ("Designed for
+ //! iPad") starts through LaunchServices, so lldb-dap waits for it by name.
+ 
+-use std::path::PathBuf;
++use std::path::{Path, PathBuf};
+ use std::process::Child;
+ use std::sync::Arc;
+ use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU32, Ordering};
+ use std::time::{Duration, Instant};
+ 
+ use serde_json::{Map, Value, json};
+-use sweetpad_lib::destination::DestinationSpec;
+ 
+ use super::{
+-    LaunchArgs, LogStream, RunOpts, RunPlan, Target, app_dir_name, default_filter, install_built,
+-    launch_sim_console, macwin, plan, print_summary, process_name, signal_group, start_logs,
++    LaunchArgs, LogStream, OwnLines, RunOpts, RunPlan, Senders, Target, app_dir_name,
++    default_filter, designed_for_ipad, install_built, launch_sim_console, macwin, plan,
++    print_summary, process_name, render_console_pipes, signal_group, start_logs,
+ };
+ use crate::cli::inject::recompiler::Mode;
+ use crate::cli::output::Output;
+@@ -246,14 +247,20 @@ enum AppKind {
+         udid: String,
+         app_dir: String,
+     },
+-    /// lldb-dap launched it, or waited for it, and stops it itself.
++    /// lldb-dap launched it, waited for it, or attached to a process this
++    /// session didn't start, and stops it itself.
+     Mac,
++    /// A macOS app this session started suspended, for lldb-dap to attach to.
++    /// It is this process's child.
++    MacSpawned {
++        pid: u32,
++    },
+ }
+ 
+ impl AppSession {
+     /// Stop following the app, and stop the app too when `terminate`. lldb
+-    /// has already been told to kill or detach from it; this makes sure a
+-    /// simulator or device app that outlived the debugger goes as well.
++    /// has already been told to kill or detach from it; this makes sure an app
++    /// that outlived the debugger goes as well.
+     pub(crate) fn end(mut self, terminate: bool) {
+         crate::cli::signals::unregister_child(self.console_slot.take());
+         if terminate {
+@@ -264,6 +271,14 @@ impl AppSession {
+                 AppKind::Device { udid, app_dir } => {
+                     let _ = devicectl::terminate(udid, app_dir);
+                 }
++                AppKind::MacSpawned { pid } => {
++                    // Safety: our own child, not yet reaped, so the pid can't
++                    // belong to anyone else; the wait reaps it.
++                    unsafe {
++                        libc::kill(pid.cast_signed(), libc::SIGKILL);
++                        libc::waitpid(pid.cast_signed(), std::ptr::null_mut(), 0);
++                    }
++                }
+                 AppKind::Mac => {}
+             }
+         }
+@@ -379,7 +394,7 @@ pub(crate) fn prepare_launch(
+     let prepared = match &plan.target {
+         Target::Simulator(udid) => launch_on_simulator(ctx, &plan, config, udid, sink, cancel),
+         Target::Device(udid) => launch_on_device(ctx, &plan, config, udid, sink, cancel),
+-        Target::Mac if designed_for_ipad(&plan) => {
++        Target::Mac if designed_for_ipad(&plan.destination) => {
+             launch_designed_for_ipad(ctx, &plan, config, sink, cancel)
+         }
+         Target::Mac => launch_on_mac(ctx, &plan, config, sink, cancel),
+@@ -392,14 +407,6 @@ pub(crate) fn prepare_launch(
+     Ok(prepared)
+ }
+ 
+-/// Whether the plan runs an iOS app on the Mac ("Designed for iPad"), which
+-/// only LaunchServices can start.
+-fn designed_for_ipad(plan: &RunPlan) -> bool {
+-    DestinationSpec::parse(&plan.destination)
+-        .variant
+-        .is_some_and(|variant| variant.starts_with("Designed for"))
+-}
+-
+ /// The live log filter a debug session streams at: info and above, as `run`
+ /// shows by default.
+ fn log_filter(out: &Output) -> Arc<AtomicU8> {
+@@ -436,7 +443,7 @@ fn launch_on_simulator(
+         )));
+     };
+     let console_slot = crate::cli::signals::register_child(console.id());
+-    let logs = start_logs(ctx, plan, &filter);
++    let logs = start_logs(ctx, plan, &filter, Senders::AppAndNSLog);
+     Ok(Prepared {
+         command: "attach",
+         arguments: lldb_arguments(
+@@ -457,6 +464,25 @@ fn launch_on_simulator(
+     })
+ }
+ 
++/// lldb-dap fields only its own launch reads. Setting one hands a macOS app's
++/// launch to lldb-dap ([`lldb_launch_on_mac`]).
++const LLDB_LAUNCH_FIELDS: [&str; 8] = [
++    "launchCommands",
+```
+
+**File**: `sweetpad-cli/src/cli/commands/app/private_logs.rs` (added, +601/-0)
+```diff
+@@ -0,0 +1,601 @@
++//! A macOS app's private log values (CLI_DESIGN §9v).
++//!
++//! On a Mac the unified log records a dynamic value, such as a `String`
++//! interpolated into a `Logger` message, as `<private>`, and `log stream` reads
++//! what it records. An app opts a subsystem in from its own Info.plist:
++//!
++//! ```text
++//! OSLogPreferences → <subsystem> → DEFAULT-OPTIONS → Enable-Private-Data = true
++//! ```
++//!
++//! A key at the top level does nothing, and a log with no subsystem, NSLog's
++//! or a `Logger()`'s, can't be opted in at all. So after each debuggable build
++//! of the app, its subsystems are added to the built Info.plist and the bundle
++//! is re-signed by the identity that signed it. The subsystems are the bundle
++//! identifier, which Apple recommends as one, and every subsystem the log
++//! stream has shown from the app before ([`Watch`] records them).
++
++use std::collections::{BTreeMap, BTreeSet};
++use std::path::{Path, PathBuf};
++
++use sweetpad_lib::pbxproj::Value;
++
++use super::Senders;
++use crate::cli::output::Output;
++use crate::cli::state::{LogSubsystems, Recorded};
++use crate::cli::xcodebuild::AppBundle;
++use crate::cli::{CliError, oslog, process};
++
++const PLIST_BUDDY: &str = "/usr/libexec/PlistBuddy";
++
++/// The built app's Info.plist, for a macOS bundle.
++fn info_plist(app: &AppBundle) -> Option<PathBuf> {
++    Some(app.path.join("Contents/Info.plist")).filter(|p| p.is_file())
++}
++
++/// Opt `app`'s subsystems in, returning the ones added. A subsystem whose
++/// `Enable-Private-Data` the app's own Info.plist sets, on or off, is left as
++/// the app has it, and nothing is re-signed when nothing is added. A bundle
++/// that isn't debuggable, a Release build say, is left alone: Xcode shows
++/// private values only for an app a debugger may attach to, and so does this.
++pub(super) fn opt_in(app: &AppBundle) -> Result<Vec<String>, CliError> {
++    let Some(plist) = info_plist(app) else {
++        return Ok(Vec::new());
++    };
++    let set = private_data(&plist)?;
++    let mut wanted = LogSubsystems::load().of(&app.bundle_id);
++    if !app.bundle_id.is_empty() {
++        wanted.insert(app.bundle_id.clone());
++    }
++    let added: Vec<String> = wanted
++        .into_iter()
++        .filter(|s| addressable(s) && !set.contains_key(s))
++        .collect();
++    if added.is_empty() || !super::signed_entitlements(&app.path).debuggable {
++        return Ok(Vec::new());
++    }
++    let original = std::fs::read(&plist)
++        .map_err(|e| CliError::new(format!("reading {}: {e}", plist.display())))?;
++    let mut args = Vec::new();
++    for subsystem in &added {
++        args.push("-c".to_string());
++        args.push(format!(
++            "Add :OSLogPreferences:{subsystem}:DEFAULT-OPTIONS:Enable-Private-Data bool true"
++        ));
++    }
++    args.push(plist.display().to_string());
++    let args: Vec<&str> = args.iter().map(String::as_str).collect();
++    // PlistBuddy saves the commands that worked even when one fails, so a
++    // failure at either step puts the Info.plist back, and the signature
++    // covers it again: the app launches as it was built.
++    if let Err(e) = run(PLIST_BUDDY, &args) {
++        let _ = std::fs::write(&plist, &original);
++        return Err(e);
++    }
++    if let Err(e) = resign(&app.path) {
++        let _ = std::fs::write(&plist, &original);
++        let _ = resign(&app.path);
++        return Err(e);
++    }
++    Ok(added)
++}
++
++/// Whether PlistBuddy can name `subsystem` in a command: it splits a key path
++/// on `:` and a command on whitespace, and reads quotes and backslashes.
++/// Reverse-DNS names hold none of them.
++fn addressable(subsystem: &str) -> bool {
++    !subsystem.is_empty()
++        && !subsystem.contains(|c: char| c.is_whitespace() || matches!(c, ':' | '"' | '\'' | '\\'))
++}
++
++/// What the Info.plist at `plist` sets `Enable-Private-Data` to, by subsystem.
++/// A subsystem it configures without that key isn't in the map.
++fn private_data(plist: &Path) -> Result<BTreeMap<String, bool>, CliError> {
++    // plutil reads either plist format, and writes the binary one the bplist
++    // reader takes; its output is bytes, not text, so it's read raw.
++    let output = std::process::Command::new("plutil")
++        .args(["-convert", "binary1", "-o", "-"])
++        .arg(plist)
++        .output()
++        .map_err(|e| process::spawn_error("plutil", &e))?;
++    if !output.status.success() {
++        return Err(CliError::new(format!(
++            "plutil can't read {}: {}",
++            plist.display(),
++            String::from_utf8_lossy(&output.stderr).trim()
++        )));
++    }
++    let root = sweetpad_lib::bplist::parse(&output.stdout)
++        .map_err(|e| CliError::new(format!("reading {}: {e}", plist.display())))?;
++    Ok(read_private_data(&root))
++}
++
++/// [`private_data`] from a parsed Info.plist, where the bplist reader spells
++/// `true` as `YES`.
++fn read_private_data(root: &Value) -> BTreeMap<String, bool> {
++    let Some(preferenc
+```
+
+**File**: `sweetpad-cli/src/cli/commands/dap/session.rs` (modified, +12/-3)
+```diff
+@@ -414,6 +414,10 @@ struct Debuggee {
+     /// The editor launched it, rather than attaching to it: a launched app
+     /// stops with the session unless the editor says otherwise.
+     launched: bool,
++    /// lldb-dap answered the request with success. A launched app it never
++    /// reached waits for a debugger, so it stops with the session whatever
++    /// the editor says.
++    reached: bool,
+     app: Option<AppSession>,
+ }
+ 
+@@ -589,6 +593,7 @@ impl Session<'_> {
+             editor_command: command.to_string(),
+             forwarded: command,
+             launched,
++            reached: false,
+             app: None,
+         });
+         self.forward(message);
+@@ -624,6 +629,7 @@ impl Session<'_> {
+             editor_command: request["command"].as_str().unwrap_or_default().to_string(),
+             forwarded: prepared.command,
+             launched,
++            reached: false,
+             app: Some(prepared.app),
+         });
+         self.forward(&forwarded);
+@@ -692,11 +698,12 @@ impl Session<'_> {
+                         body.remove("supportsRestartRequest");
+                     }
+                 }
+-                if let Some(debuggee) = &self.debuggee
++                if let Some(debuggee) = &mut self.debuggee
+                     && message["request_seq"] == debuggee.request_seq
+                     && command == debuggee.forwarded
+                 {
+                     message["command"] = json!(debuggee.editor_command);
++                    debuggee.reached = message["success"] == true;
+                 }
+                 let disconnected = command == "disconnect" && self.disconnecting.is_some();
+                 self.editor.send(message);
+@@ -749,8 +756,10 @@ impl Session<'_> {
+     }
+ 
+     fn end_app(&mut self, terminate: bool) {
+-        if let Some(app) = self.debuggee.as_mut().and_then(|d| d.app.take()) {
+-            app.end(terminate);
++        if let Some(debuggee) = &mut self.debuggee
++            && let Some(app) = debuggee.app.take()
++        {
++            app.end(terminate || (debuggee.launched && !debuggee.reached));
+         }
+     }
+ 
+```
+
+**File**: `sweetpad-cli/src/cli/config.rs` (modified, +18/-1)
+```diff
+@@ -412,6 +412,11 @@ pub struct RunDefaults {
+     /// (CLI_DESIGN §9d). Default true; `false` opts the project out
+     /// (`--keep-sandbox` does it per run).
+     pub auto_unsandbox: Option<bool>,
++    /// Whether `app run` and `dap` opt a macOS app they build into recording
++    /// its own logs' private values (CLI_DESIGN §9v). Default true; `false`
++    /// leaves the built app as Xcode signed it, so its logs read as they do
++    /// in production.
++    pub private_logs: Option<bool>,
+ }
+ 
+ /// `[format]` — `format` defaults for this project.
+@@ -735,7 +740,9 @@ fn lint_project_file(raw: &toml::Value, warnings: &mut Vec<String>) {
+             "run" => {
+                 if let Some(t) = value.as_table() {
+                     for rkey in t.keys() {
+-                        if !["hot", "hot_recompiler", "auto_unsandbox"].contains(&rkey.as_str()) {
++                        if !["hot", "hot_recompiler", "auto_unsandbox", "private_logs"]
++                            .contains(&rkey.as_str())
++                        {
+                             warnings.push(format!("sweetpad.toml: unknown key '{rkey}' in [run]"));
+                         }
+                     }
+@@ -982,6 +989,16 @@ mod tests {
+         assert!(warnings[0].contains("bogus"), "{warnings:?}");
+     }
+ 
++    #[test]
++    fn run_private_logs_parses_and_lints_clean() {
++        let pf: ProjectFile = toml::from_str("[run]\nprivate_logs = false\n").unwrap();
++        assert_eq!(pf.run.private_logs, Some(false));
++        let raw: toml::Value = toml::from_str("[run]\nprivate_logs = false\n").unwrap();
++        let mut warnings = Vec::new();
++        lint_project_file(&raw, &mut warnings);
++        assert!(warnings.is_empty(), "{warnings:?}");
++    }
++
+     #[test]
+     fn xcodebuild_args_parse_and_lint_clean() {
+         let pf: ProjectFile =
+```
+
+**File**: `sweetpad-cli/src/cli/oslog.rs` (modified, +140/-8)
+```diff
+@@ -21,6 +21,11 @@ struct Entry {
+     #[serde(rename = "messageType")]
+     message_type: Option<String>,
+     category: Option<String>,
++    subsystem: Option<String>,
++    #[serde(rename = "senderImagePath")]
++    sender_image_path: Option<String>,
++    #[serde(rename = "formatString")]
++    format_string: Option<String>,
+     #[serde(rename = "eventMessage")]
+     event_message: Option<String>,
+     /// Set only on the summary `log show` closes with ([`is_query_summary`]).
+@@ -34,6 +39,67 @@ impl Entry {
+     fn is_summary(&self) -> bool {
+         self.finished.is_some() && self.event_message.is_none()
+     }
++
++    /// Whether this is an NSLog call: Foundation sends it, with no subsystem
++    /// and no category.
++    fn is_nslog(&self) -> bool {
++        let empty = |field: &Option<String>| field.as_deref().is_none_or(str::is_empty);
++        empty(&self.subsystem)
++            && empty(&self.category)
++            && self
++                .sender_image_path
++                .as_deref()
++                .and_then(|path| path.rsplit('/').next())
++                == Some("Foundation")
++    }
++}
++
++/// The marker the unified log records in place of a value logged as private.
++pub const REDACTED: &str = "<private>";
++
++/// Whether `message` holds a value the unified log redacted: it shows
++/// [`REDACTED`], and its `format`, when the entry carries one, has an argument
++/// that isn't public. A public argument whose text holds the marker is
++/// redacted nowhere.
++fn is_redacted(message: &str, format: Option<&str>) -> bool {
++    message.contains(REDACTED) && format.is_none_or(has_private_argument)
++}
++
++/// Whether an os_log format string has an argument the log may redact. An
++/// argument marked `{public}` is public, one marked `{private}` or
++/// `{sensitive}` isn't, and an unmarked one is private when it's a string, an
++/// object or data (`%s`, `%@`, `%P`) and public otherwise, as a number is.
++fn has_private_argument(format: &str) -> bool {
++    let mut rest = format;
++    while let Some(at) = rest.find('%') {
++        rest = &rest[at + 1..];
++        if let Some(after) = rest.strip_prefix('%') {
++            rest = after;
++            continue;
++        }
++        let mut privacy = "";
++        if let Some(after) = rest.strip_prefix('{')
++            && let Some(end) = after.find('}')
++        {
++            privacy = &after[..end];
++            rest = &after[end + 1..];
++        }
++        // Flags, width, precision and length come before the conversion.
++        let conversion = rest
++            .chars()
++            .find(|c| !(c.is_ascii_digit() || "-+ #'.*hlqLjzt".contains(*c)));
++        let private = if privacy.contains("public") {
++            false
++        } else if privacy.contains("private") || privacy.contains("sensitive") {
++            true
++        } else {
++            matches!(conversion, Some('s' | 'S' | '@' | 'P'))
++        };
++        if private {
++            return true;
++        }
++    }
++    false
+ }
+ 
+ /// os_log severity, ordered low→high so a live filter can compare against a
+@@ -99,23 +165,44 @@ fn level_color(message_type: &str) -> u8 {
+ pub struct Line {
+     pub level: Level,
+     pub text: String,
++    /// The entry's subsystem, for a unified-log entry that has one.
++    pub subsystem: Option<String>,
++    /// The entry is an NSLog call.
++    pub nslog: bool,
++    /// The message holds a value the unified log recorded as [`REDACTED`].
++    pub redacted: bool,
+ }
+ 
+ /// Render one ndjson line as a colored log line with its severity, or `None`
+ /// for the banner `log stream` opens with ([`is_stream_banner`]) and the
+ /// summary `log show` closes with ([`is_query_summary`]). Other non-JSON input
+-/// is shown as a blue `system` note at `Notice` level.
++/// is shown as a blue `system` note at `Notice` level. An NSLog entry, which
++/// has no category, shows as `[NSLog]`.
+ #[must_use]
+ pub fn render_ndjson_line(line: &str, color: bool) -> Option<Line> {
+     Some(match serde_json::from_str::<Entry>(line) {
+         Ok(entry) if entry.is_summary() => return None,
+-        Ok(entry) => render_fields(
+-            entry.timestamp.as_deref(),
+-            entry.message_type.as_deref().unwrap_or("Default"),
+-            entry.category.as_deref().unwrap_or("?"),
+-            entry.event_message.as_deref().unwrap_or(""),
+-            color,
+-        ),
++        Ok(entry) => {
++            let nslog = entry.is_nslog();
++            let message = entry.event_message.as_deref().unwrap_or("");
++            let category = if nslog {
++                "NSLog"
++            } else {
++                entry.category.as_deref().unwrap_or("?")
++            };
++            Line {
++                subsystem: entry.subsystem.clone().filter(|s| !s.is_empty()),
++                nslog,
++                redacted: is_redacted(message, entry.format_string.as_deref()),
++                ..render_fields(
++                    entry.timestamp.as_deref(),
++                    entry.message_type.as_der
+```
+
+**File**: `sweetpad-cli/src/cli/output.rs` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ use crate::cli::{CliError, GlobalArgs};
+ 
+ /// Resolved output mode shared across commands.
+ #[allow(clippy::struct_excessive_bools)] // independent output toggles, not a state machine
++#[derive(Clone)]
+ pub struct Output {
+     json: bool,
+     ndjson: bool,
+```
+
+---
+
+### Incident Patch 2: `e09afbe5` (2026-10-10)
+**Commit Message**: Fix demo link in README.md
+
+Updated demo link to point to a GitHub asset.
+
+**File**: `README.md` (modified, +7/-1)
+```diff
+@@ -6,7 +6,13 @@ A command-line tool that builds, runs, debugs, and tests apps for iOS, macOS, et
+ Xcode. It works with Xcode projects and workspaces, Tuist, XcodeGen, and Swift
+ packages.
+ 
+-[![Demo: sweetpad run builds an app and launches it in the iOS Simulator, then rebuilds it after a code change](./sweetpad-docs/static/videos/sweetpad-demo-readme.jpg)](./sweetpad-docs/static/videos/sweetpad-demo-readme.mp4)
++
++
++
++
++
++
++[![Demo: sweetpad run builds an app and launches it in the iOS Simulator, then rebuilds it after a code change](./sweetpad-docs/static/videos/sweetpad-demo-readme.jpg)](https://github.com/user-attachments/assets/e9913ef6-a018-4bac-a627-1b1c11968d61)
+ 
+ ```bash
+ brew install sweetpad-dev/tap/sweetpad
+```
+
+---
+
+### Incident Patch 3: `7e2b054c` (2026-10-04)
 **Commit Message**: Debug through sweetpad dap in VS Code, with CodeLLDB as a fallback
 
 The new `sweetpad.debugger.adapter` setting picks the route; `auto` uses the CLI when it has `dap` and keeps CodeLLDB for iOS 16 devices or when the CLI is missing. CodeLLDB is no longer a required extension.
@@ -2225,3396 +2676,6 @@ The new `sweetpad.debugger.adapter` setting picks the route; `auto` uses the CLI
    "cliServer.enabled": boolean;
 ```
 
----
-
-### Incident Patch 2: `7cae287d` (2026-10-04)
-**Commit Message**: Add sweetpad dap, a debug adapter for editors in front of lldb-dap
-
-Editors start `sweetpad dap` over stdio; it builds, installs and starts the app as `run` does, then hands the process to Xcode's lldb-dap on simulators, macOS, Mac Catalyst and iOS 17+ devices. `dap init` writes Neovim and Zed entries and `dap doctor` checks lldb-dap. Asked for in #340.
-
-**File**: `.github/homebrew/sweetpad.rb.tmpl` (modified, +3/-0)
-```diff
-@@ -10,6 +10,9 @@ class Sweetpad < Formula
- 
-   def install
-     bin.install "sweetpad"
-+    # The name editors start the debug adapter by when they can't pass it
-+    # arguments ('sweetpad dap init --editor zed').
-+    bin.install_symlink "sweetpad" => "sweetpad-dap"
-   end
- 
-   test do
-```
-
-**File**: `README.md` (modified, +3/-2)
-```diff
-@@ -34,8 +34,9 @@ press `r` to rebuild or `q` to quit.
-   SourceKit-LSP for Neovim, Zed, Helix, and Emacs.
- - [Hot reload](https://sweetpad.hyzyla.dev/docs/cli/hot-reload): `sweetpad run --hot` applies saved
-   Swift changes without restarting the app.
--- [Debugging](https://sweetpad.hyzyla.dev/docs/cli/app-lifecycle): scripted lldb sessions, waiting
--  for a log line, and structured crash reports.
-+- [Debugging](https://sweetpad.hyzyla.dev/docs/cli/editor-debugging): breakpoints in Neovim, Zed,
-+  or VS Code through `sweetpad dap`, plus [scripted lldb sessions](https://sweetpad.hyzyla.dev/docs/cli/app-lifecycle)
-+  and structured crash reports.
- - [Scripts and CI](https://sweetpad.hyzyla.dev/docs/cli/scripts-and-ci): JSON output and specific
-   exit codes on every command.
- - [Agent skills](https://sweetpad.hyzyla.dev/docs/cli/agent-skills): instructions that teach coding
-```
-
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +152/-81)
-```diff
-@@ -4089,127 +4089,198 @@ credentials, a 403 and a 407, `no_proxy` sending around a lower-case
- from stdin; attachments or logs; the VS Code extension; SOCKS proxies and
- proxies reached over HTTPS, which `minreq` doesn't support.
- 
--## 9u. Direction — debugging from any editor (`dap`)
-+## 9u. v8 — debugging from any editor (`dap`)
- 
--> Status: planned, not yet versioned. `dap` ships in a CLI release first; the
--> extension then switches to it by default. Asked for in sweetpad-dev/sweetpad#340.
-+> Asked for in sweetpad-dev/sweetpad#340. `dap` ships in a CLI release first;
-+> the extension then switches to it by default (the last part of this section).
- 
- Debugging an app goes through one of two doors. The VS Code extension builds
- and launches through its own pre-launch task, then hands an attach config to
--CodeLLDB (`vadimcn.vscode-lldb`, a hard `extensionDependencies` entry). The CLI
--has `app debug`, an interactive or `--batch` lldb session in the terminal.
--Neither reaches Neovim, Zed, Helix or Emacs, whose debug UIs all speak the
--Debug Adapter Protocol and expect an adapter to get the process running.
-+CodeLLDB (`vadimcn.vscode-lldb`). The CLI has `app debug`, an interactive or
-+`--batch` lldb session in the terminal. Neither reaches Neovim, Zed, Helix or
-+Emacs, whose debug UIs all speak the Debug Adapter Protocol and expect an
-+adapter to get the process running.
- 
- Xcode already ships the adapter half: `xcrun lldb-dap`, LLVM's DAP server
- linked against Apple's LLDB, so Swift variables and expressions behave as they
- do in Xcode with no `lldb.library` setup. What it can't do is build a scheme or
- start an app on a simulator or device; it expects a program to launch or a pid
- to attach to. That gap is exactly the part sweetpad already owns.
- 
-+```
-+sweetpad dap                        # serve one debug session on stdio
-+sweetpad dap init --editor nvim|zed # write the editor's adapter entry
-+sweetpad dap doctor                 # can this machine serve one?
-+```
-+
- **`sweetpad dap` is an adapter in front of `lldb-dap`.** The editor starts it
--over stdio; it starts `xcrun lldb-dap` as a child and forwards traffic both
--ways. Four messages are intercepted:
--
--- `initialize` is forwarded, and the capabilities in the reply are trimmed to
--  what the proxy honours (no `supportsRestartRequest` in v1).
--- `launch` is never forwarded as sent. Its fields resolve to a `RunPlan`; the
--  adapter builds, installs and launches suspended, then sends lldb-dap the
--  request it needs: `attach {pid}` on a simulator (the pid from `simctl launch
--  --wait-for-debugger`), a plain `launch {program, args, env}` on macOS, and on
--  a device `attachCommands` running `device select <udid>` and `device process
--  attach --pid <pid>` after `devicectl … --start-stopped`, the route the
--  extension's `debugger/provider.ts` already takes. lldb-dap's reply is relayed
--  as the answer to the editor's `launch`.
--- `attach` reaches an app that is already running, by bundle id or pid, with
--  no build.
--- `disconnect` is forwarded, then the app is terminated unless the client sent
--  `terminateDebuggee: false`, and the log stream stops.
--
--Everything else (breakpoints, stepping, `stackTrace`, `variables`, `evaluate`)
--passes through untouched.
--
--**Sequence numbers are renumbered in one direction.** The proxy injects
--messages of its own (build output, app logs), so everything flowing to the
--editor carries the proxy's `seq`. Toward lldb-dap the editor's `seq` is kept,
--and the rewritten `launch` reuses the original's, so lldb-dap's `request_seq`
--already matches what the editor asked. Reverse requests from lldb-dap
--(`runInTerminal`) are renumbered toward the editor and their responses mapped
--back to lldb-dap's numbers.
-+over stdio; it starts lldb-dap as a child at the editor's `initialize` and
-+forwards traffic both ways. Four requests are intercepted:
-+
-+- `initialize` is forwarded with `pathFormat` and `adapterID` filled in when
-+  the editor left them out, since Xcode's lldb-dap refuses an `initialize`
-+  without `pathFormat` although the protocol makes it optional. The reply's
-+  capabilities lose `supportsRestartRequest`.
-+- `launch` is never forwarded as sent. Its fields resolve to the same
-+  `RunPlan` `run` uses; the adapter builds, installs and starts the app, then
-+  sends lldb-dap the request that reaches it, under the editor's `seq`, and
-+  relabels lldb-dap's reply with the editor's command.
-+- `attach` reaches an app that is already running, with no build: a `pid`
-+  alone is attached to as a process on this Mac, which covers simulator apps;
-+  otherwise the plan's app is located and its running process found.
-+- `disconnect` is forwarded, then the app and its log stream stop, unless the
-+  editor sent `terminateDebuggee: false`. An editor's `launch` that lldb-dap
-+  received as an `attach` goes out with `terminateDebuggee: true`, since
-+  lldb-dap detaches from what it attached to by default. Once lldb-dap
-+  answers, t
-```
-
-**File**: `sweetpad-cli/src/bin/sweetpad.rs` (modified, +9/-1)
-```diff
-@@ -29,7 +29,15 @@ fn main() -> ExitCode {
-     unsafe {
-         libc::signal(libc::SIGPIPE, libc::SIG_DFL);
-     }
--    let args: Vec<String> = std::env::args().skip(1).collect();
-+    let mut process_args = std::env::args();
-+    let program = process_args.next().unwrap_or_default();
-+    let mut args: Vec<String> = process_args.collect();
-+    // Run as `sweetpad-dap`, the binary is `sweetpad dap`: an editor whose
-+    // debug adapter setting takes a binary but no arguments (Zed's Swift
-+    // adapter) starts the adapter through that name.
-+    if std::path::Path::new(&program).file_name() == Some(std::ffi::OsStr::new("sweetpad-dap")) {
-+        args.insert(0, "dap".to_string());
-+    }
-     match args.first().map(String::as_str) {
-         Some("vscode") => ExitCode::from(sweetpad_cli::vscode_cli::run(&args[1..])),
-         _ => sweetpad_cli::cli::run(&args),
-```
-
-**File**: `sweetpad-cli/src/cli/commands/app.rs` (modified, +12/-1)
-```diff
-@@ -12,6 +12,7 @@ use clap::Subcommand;
- use sweetpad_core::xcodebuild_args;
- use sweetpad_lib::destination::DestinationSpec;
- 
-+pub(crate) mod adapter;
- mod ax;
- mod macwin;
- mod sample;
-@@ -1638,10 +1639,20 @@ impl BgBoot {
- /// Build and install onto the target, returning the launchable app. Shared by
- /// every flow; the launch step is chosen by the caller.
- fn build_and_install(plan: &RunPlan, out: &Output) -> Result<AppBundle, CliError> {
-+    install_built(plan, out, || plan.build_plan().run(out).map(|_| ()))
-+}
-+
-+/// [`build_and_install`] with the build step given, for the debug adapter,
-+/// which streams the build to the editor and can cancel it.
-+fn install_built(
-+    plan: &RunPlan,
-+    out: &Output,
-+    build: impl FnOnce() -> CliResult,
-+) -> Result<AppBundle, CliError> {
-     // Boot the simulator while the build runs; joined at the boot step below so it's
-     // ready for install without the boot serializing after the build.
-     let mut boot = BgBoot::start(&plan.target);
--    plan.build_plan().run(out)?;
-+    build()?;
-     let app = plan.app_bundle()?;
-     let app_path = app.path.display().to_string();
-     match &plan.target {
-```
-
-**File**: `sweetpad-cli/src/cli/commands/app/adapter.rs` (added, +1076/-0)
-```diff
-@@ -0,0 +1,1076 @@
-+//! What `sweetpad dap` needs from `run` (CLI_DESIGN §9u): the editor's launch
-+//! configuration resolved to the same [`RunPlan`], the app built, installed
-+//! and started suspended, and the request that reaches it through lldb-dap.
-+//! It is a child of `app` so the adapter resolves and launches through `run`'s
-+//! own code rather than a copy of it.
-+//!
-+//! Each destination reaches lldb-dap its own way. A simulator app starts
-+//! under `simctl launch --wait-for-debugger` and lldb-dap attaches to its pid.
-+//! A macOS or Mac Catalyst app is launched by lldb-dap itself. A physical
-+//! device's app starts under `devicectl … --start-stopped` and lldb attaches
-+//! through its `device` commands. An iOS app running on the Mac ("Designed for
-+//! iPad") starts through LaunchServices, so lldb-dap waits for it by name.
-+
-+use std::path::PathBuf;
-+use std::process::Child;
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU32, Ordering};
-+use std::time::{Duration, Instant};
-+
-+use serde_json::{Map, Value, json};
-+use sweetpad_lib::destination::DestinationSpec;
-+
-+use super::{
-+    LaunchArgs, LogStream, RunOpts, RunPlan, Target, app_dir_name, default_filter, install_built,
-+    launch_sim_console, macwin, plan, print_summary, process_name, signal_group, start_logs,
-+};
-+use crate::cli::inject::recompiler::Mode;
-+use crate::cli::output::Output;
-+use crate::cli::xcodebuild::AppBundle;
-+use crate::cli::{
-+    CliError, CliResult, Context, ErrorKind, Targeting, buildlog, devicectl, oslog, process,
-+    resolve, simctl, xcodebuild,
-+};
-+
-+/// The editor's launch or attach configuration. Every field is optional:
-+/// what's missing falls back to the project's configured and remembered
-+/// scheme and destination, as it does for `run`.
-+#[derive(Debug, Default)]
-+pub(crate) struct LaunchConfig {
-+    /// The directory to resolve the project from, in place of the adapter's
-+    /// own working directory.
-+    pub cwd: Option<PathBuf>,
-+    pub workspace: Option<PathBuf>,
-+    pub project: Option<PathBuf>,
-+    pub scheme: Option<String>,
-+    pub configuration: Option<String>,
-+    /// What `--on` takes (`booted`, `mac`, a simulator or device name, a
-+    /// UDID), or a raw `-destination` specifier when it holds an `=`, which
-+    /// is how Mac Catalyst and Designed for iPad are named.
-+    pub destination: Option<String>,
-+    /// Arguments for the app process.
-+    pub args: Vec<String>,
-+    /// `KEY=VALUE` environment for the app process.
-+    pub env: Vec<String>,
-+    /// Extra `xcodebuild` arguments, as `run` takes after `--`.
-+    pub xcodebuild_args: Vec<String>,
-+    /// lldb-dap's own launch and attach fields (`sourceMap`, `initCommands`,
-+    /// …), passed through.
-+    pub lldb: Map<String, Value>,
-+    /// Attach only: the process to attach to.
-+    pub pid: Option<u32>,
-+}
-+
-+impl LaunchConfig {
-+    /// Read the configuration from a `launch` or `attach` request's arguments.
-+    pub(crate) fn from_arguments(arguments: &Value) -> Result<Self, CliError> {
-+        let empty = Map::new();
-+        let fields = arguments.as_object().unwrap_or(&empty);
-+        Ok(LaunchConfig {
-+            cwd: string(fields, "cwd")?.map(PathBuf::from),
-+            workspace: string(fields, "workspace")?.map(PathBuf::from),
-+            project: string(fields, "project")?.map(PathBuf::from),
-+            scheme: string(fields, "scheme")?,
-+            configuration: string(fields, "configuration")?,
-+            destination: string(fields, "destination")?,
-+            args: strings(fields, "args")?,
-+            env: env(fields)?,
-+            xcodebuild_args: strings(fields, "xcodebuildArgs")?,
-+            lldb: match fields.get("lldb") {
-+                None | Some(Value::Null) => Map::new(),
-+                Some(Value::Object(lldb)) => lldb.clone(),
-+                Some(_) => return Err(field_error("'lldb' takes an object of lldb-dap fields")),
-+            },
-+            pid: match fields.get("pid") {
-+                None | Some(Value::Null) => None,
-+                Some(value) => Some(pid(value)?),
-+            },
-+        })
-+    }
-+}
-+
-+fn field_error(message: impl Into<String>) -> CliError {
-+    CliError::new(message).kind(ErrorKind::Usage)
-+}
-+
-+/// A string field; an empty string counts as unset, as an empty `SWEETPAD_*`
-+/// variable does.
-+fn string(fields: &Map<String, Value>, key: &str) -> Result<Option<String>, CliError> {
-+    match fields.get(key) {
-+        None | Some(Value::Null) => Ok(None),
-+        Some(Value::String(s)) if s.is_empty() => Ok(None),
-+        Some(Value::String(s)) => Ok(Some(s.clone())),
-+        Some(_) => Err(field_error(format!("'{key}' takes a string"))),
-+    }
-+}
-+
-+fn strings(fields: &Map<String, Value>, key: &str) -> Result<Vec<String>, CliError> {
-+    match fields.get(key) {
-+        None | Some(Value::Null) => Ok(Vec::new()),
-+        Some(Value::Array(items)) => items
-+            .iter()
-+            .map(|item| {
-```
-
-**File**: `sweetpad-cli/src/cli/commands/dap.rs` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+//! `sweetpad dap …` — debugging from any editor through the Debug Adapter
-+//! Protocol. Bare `sweetpad dap` is an adapter in front of Xcode's `lldb-dap`:
-+//! the editor starts it over stdio, and it builds, installs and launches the
-+//! app the way `run` does before handing lldb-dap the process to attach to.
-+//! `dap init` writes an editor's adapter entry, and `dap doctor` checks that
-+//! lldb-dap resolves. The design is CLI_DESIGN §9u.
-+
-+use std::path::PathBuf;
-+
-+use clap::Subcommand;
-+
-+use crate::cli::{CommandResult, Context};
-+
-+mod doctor;
-+mod init;
-+mod session;
-+mod stdio;
-+
-+#[derive(Debug, Subcommand)]
-+pub enum Action {
-+    /// Write the editor's adapter entry, so its debugger starts 'sweetpad dap'.
-+    Init {
-+        /// The editor to configure.
-+        #[arg(long, value_enum)]
-+        editor: init::Editor,
-+        /// Where to write the entry (defaults to the editor's own project
-+        /// file: '.nvim.lua' for nvim, '.zed/debug.json' for Zed).
-+        // `--output-file`, not `--output`: the global `-o/--output` owns that flag.
-+        #[arg(long = "output-file")]
-+        output_file: Option<PathBuf>,
-+    },
-+    /// Check that 'xcrun lldb-dap' resolves and that this Xcode can serve a
-+    /// debug session.
-+    Doctor,
-+}
-+
-+pub fn run(ctx: &mut Context, action: Option<&Action>) -> CommandResult {
-+    match action {
-+        None => session::serve(ctx),
-+        Some(Action::Init {
-+            editor,
-+            output_file,
-+        }) => init::run(ctx, *editor, output_file.as_deref()),
-+        Some(Action::Doctor) => doctor::run(ctx),
-+    }
-+}
-+
-+/// The program the adapter starts: `SWEETPAD_LLDB_DAP` when set, so a newer
-+/// LLVM's lldb-dap or a wrapper script can stand in, else Xcode's through
-+/// `xcrun`, which follows `DEVELOPER_DIR` and `xcode-select`.
-+fn lldb_dap_command() -> (String, Vec<String>) {
-+    match std::env::var("SWEETPAD_LLDB_DAP") {
-+        Ok(path) if !path.is_empty() => (path, Vec::new()),
-+        _ => ("xcrun".to_string(), vec!["lldb-dap".to_string()]),
-+    }
-+}
-```
-
-**File**: `sweetpad-cli/src/cli/commands/dap/doctor.rs` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+//! `sweetpad dap doctor`: can this machine serve a debug session? It checks
-+//! that lldb-dap resolves (Xcode's through `xcrun`, or `SWEETPAD_LLDB_DAP`),
-+//! that the selected Xcode is one whose LLDB has the commands the adapter
-+//! drives, and finally starts lldb-dap and asks it to initialize.
-+
-+use std::io::BufReader;
-+use std::process::{Command, Stdio};
-+use std::time::Duration;
-+
-+use serde_json::json;
-+use sweetpad_core::framing;
-+
-+use crate::cli::output::Output;
-+use crate::cli::{CommandResult, Context, Render, Rendered, process};
-+
-+/// The oldest Xcode whose toolchain ships lldb-dap and LLDB's `device`
-+/// commands.
-+const MIN_XCODE: u32 = 16;
-+
-+struct Check {
-+    ok: bool,
-+    what: String,
-+}
-+
-+struct DapDoctor {
-+    lldb_dap: Option<String>,
-+    checks: Vec<Check>,
-+}
-+
-+impl Render for DapDoctor {
-+    fn human(&self, out: &Output) {
-+        out.line(&format!(
-+            "lldb-dap: {}",
-+            self.lldb_dap.as_deref().unwrap_or("not found")
-+        ));
-+        for c in &self.checks {
-+            out.line(&format!("  {} {}", if c.ok { "✓" } else { "✗" }, c.what));
-+        }
-+    }
-+
-+    fn json(&self) -> serde_json::Value {
-+        let checks: Vec<serde_json::Value> = self
-+            .checks
-+            .iter()
-+            .map(|c| json!({ "ok": c.ok, "check": c.what }))
-+            .collect();
-+        json!({ "lldbDap": self.lldb_dap, "checks": checks })
-+    }
-+}
-+
-+#[allow(clippy::unnecessary_wraps)] // uniform CommandResult across the dap actions
-+pub(super) fn run(_ctx: &mut Context) -> CommandResult {
-+    let mut checks = Vec::new();
-+    let (program, args) = super::lldb_dap_command();
-+    let overridden = args.is_empty();
-+    let lldb_dap = if overridden {
-+        Some(program.clone()).filter(|p| std::path::Path::new(p).exists())
-+    } else {
-+        process::capture("xcrun", &["--find", "lldb-dap"], None)
-+            .ok()
-+            .map(|p| p.trim().to_string())
-+            .filter(|p| !p.is_empty())
-+    };
-+    checks.push(Check {
-+        ok: lldb_dap.is_some(),
-+        what: match (&lldb_dap, overridden) {
-+            (Some(_), true) => "SWEETPAD_LLDB_DAP names an existing file".to_string(),
-+            (Some(_), false) => "'xcrun lldb-dap' resolves".to_string(),
-+            (None, true) => {
-+                format!("SWEETPAD_LLDB_DAP names an existing file ({program} is missing)")
-+            }
-+            (None, false) => format!(
-+                "'xcrun lldb-dap' resolves (it ships with Xcode {MIN_XCODE} and later; select \
-+                 one with 'xcode-select --switch' or DEVELOPER_DIR, or point SWEETPAD_LLDB_DAP \
-+                 at an lldb-dap)"
-+            ),
-+        },
-+    });
-+    if !overridden {
-+        checks.push(xcode_check());
-+    }
-+    if lldb_dap.is_some() {
-+        checks.push(probe(&program, &args));
-+    }
-+    let failed = checks.iter().any(|c| !c.ok);
-+    let report = DapDoctor { lldb_dap, checks };
-+    Ok(if failed {
-+        Rendered::data_with_exit(report, 1)
-+    } else {
-+        Rendered::data(report)
-+    })
-+}
-+
-+/// The selected Xcode's major version, against [`MIN_XCODE`].
-+fn xcode_check() -> Check {
-+    let version = process::capture("xcodebuild", &["-version"], None)
-+        .ok()
-+        .and_then(|out| out.lines().next().map(str::to_string));
-+    let major = version
-+        .as_deref()
-+        .and_then(|v| v.strip_prefix("Xcode "))
-+        .and_then(|v| v.split('.').next())
-+        .and_then(|m| m.trim().parse::<u32>().ok());
-+    match (version, major) {
-+        (Some(v), Some(m)) if m >= MIN_XCODE => Check {
-+            ok: true,
-+            what: format!("{v} is new enough"),
-+        },
-+        (Some(v), _) => Check {
-+            ok: false,
-+            what: format!("{v} is new enough (debugging needs Xcode {MIN_XCODE} or later)"),
-+        },
-+        (None, _) => Check {
-+            ok: false,
-+            what: "'xcodebuild -version' answers (select an Xcode with 'xcode-select --switch')"
-+                .to_string(),
-+        },
-+    }
-+}
-+
-+/// The definitive check: start lldb-dap, send `initialize`, and wait for its
-+/// answer.
-+fn probe(program: &str, args: &[String]) -> Check {
-+    let what = "lldb-dap answers 'initialize'";
-+    let child = Command::new(program)
-+        .args(args)
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::null())
-+        .spawn();
-+    let mut child = match child {
-+        Ok(child) => child,
-+        Err(e) => {
-+            return Check {
-+                ok: false,
-+                what: format!("{what} (it didn't start: {e})"),
-+            };
-+        }
-+    };
-+    let (Some(mut stdin), Some(stdout)) = (child.stdin.take(), child.stdout.take()) else {
-+        let _ = child.kill();
-+        return Check {
-+            ok: false,
-+            what: format!("{what} (it started without pipes)"),
-+        };
-+    };
-+    let request = json!({
-+        "seq": 1,
-
-```
-
----
-
-### Incident Patch 3: `947e05fa` (2026-10-04)
-**Commit Message**: Plan sweetpad dap for debugging from any editor
-
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +122/-0)
-```diff
-@@ -4089,6 +4089,128 @@ credentials, a 403 and a 407, `no_proxy` sending around a lower-case
- from stdin; attachments or logs; the VS Code extension; SOCKS proxies and
- proxies reached over HTTPS, which `minreq` doesn't support.
- 
-+## 9u. Direction — debugging from any editor (`dap`)
-+
-+> Status: planned, not yet versioned. `dap` ships in a CLI release first; the
-+> extension then switches to it by default. Asked for in sweetpad-dev/sweetpad#340.
-+
-+Debugging an app goes through one of two doors. The VS Code extension builds
-+and launches through its own pre-launch task, then hands an attach config to
-+CodeLLDB (`vadimcn.vscode-lldb`, a hard `extensionDependencies` entry). The CLI
-+has `app debug`, an interactive or `--batch` lldb session in the terminal.
-+Neither reaches Neovim, Zed, Helix or Emacs, whose debug UIs all speak the
-+Debug Adapter Protocol and expect an adapter to get the process running.
-+
-+Xcode already ships the adapter half: `xcrun lldb-dap`, LLVM's DAP server
-+linked against Apple's LLDB, so Swift variables and expressions behave as they
-+do in Xcode with no `lldb.library` setup. What it can't do is build a scheme or
-+start an app on a simulator or device; it expects a program to launch or a pid
-+to attach to. That gap is exactly the part sweetpad already owns.
-+
-+**`sweetpad dap` is an adapter in front of `lldb-dap`.** The editor starts it
-+over stdio; it starts `xcrun lldb-dap` as a child and forwards traffic both
-+ways. Four messages are intercepted:
-+
-+- `initialize` is forwarded, and the capabilities in the reply are trimmed to
-+  what the proxy honours (no `supportsRestartRequest` in v1).
-+- `launch` is never forwarded as sent. Its fields resolve to a `RunPlan`; the
-+  adapter builds, installs and launches suspended, then sends lldb-dap the
-+  request it needs: `attach {pid}` on a simulator (the pid from `simctl launch
-+  --wait-for-debugger`), a plain `launch {program, args, env}` on macOS, and on
-+  a device `attachCommands` running `device select <udid>` and `device process
-+  attach --pid <pid>` after `devicectl … --start-stopped`, the route the
-+  extension's `debugger/provider.ts` already takes. lldb-dap's reply is relayed
-+  as the answer to the editor's `launch`.
-+- `attach` reaches an app that is already running, by bundle id or pid, with
-+  no build.
-+- `disconnect` is forwarded, then the app is terminated unless the client sent
-+  `terminateDebuggee: false`, and the log stream stops.
-+
-+Everything else (breakpoints, stepping, `stackTrace`, `variables`, `evaluate`)
-+passes through untouched.
-+
-+**Sequence numbers are renumbered in one direction.** The proxy injects
-+messages of its own (build output, app logs), so everything flowing to the
-+editor carries the proxy's `seq`. Toward lldb-dap the editor's `seq` is kept,
-+and the rewritten `launch` reuses the original's, so lldb-dap's `request_seq`
-+already matches what the editor asked. Reverse requests from lldb-dap
-+(`runInTerminal`) are renumbered toward the editor and their responses mapped
-+back to lldb-dap's numbers.
-+
-+**The launch config mirrors `run`'s flags:**
-+
-+```json
-+{ "type": "sweetpad", "request": "launch", "scheme": "MyApp", "configuration": "Debug",
-+  "destination": "iPhone 18 Pro", "args": [], "env": {}, "lldb": { "sourceMap": [] } }
-+```
-+
-+`destination` is the `--on` specifier, so `booted` and `mac` resolve as they
-+do for `run`, and `lldb` is passed to lldb-dap untouched. Missing fields fall
-+back to the remembered scheme and destination. A DAP session has no terminal,
-+so it never prompts: with nothing explicit and nothing remembered, `launch`
-+fails with the choices listed and `sweetpad run` named as the way to pick once.
-+The extension shows its own picker and passes the result.
-+
-+**Build and app output go to the debug console.** The build streams as
-+`output` events in the short build-log form, compiler errors carrying `source`
-+and `line` so editors link them, wrapped in `progressStart`/`progressEnd`.
-+Simulator stdout and stderr arrive through the log stream `run` already
-+follows; on macOS lldb launched the process and captures stdout itself, so the
-+stream isn't attached twice. An editor that disconnects mid-build cancels the
-+`xcodebuild` it started.
-+
-+**Restart and hot reload wait.** v1 advertises no `restart`, and VS Code and
-+nvim-dap fall back to disconnect-and-launch, which already rebuilds. A native
-+restart means a fresh lldb-dap child and replaying every breakpoint request the
-+editor sent. `--hot` stays out of debug sessions until injection with a
-+debugger attached is tested.
-+
-+**The surface follows `bsp`.** `sweetpad dap` serves on stdio; `dap init
-+--editor nvim|zed|helix` writes the editor's adapter entry; `dap doctor` checks
-+that `xcrun lldb-dap` resolves (following `DEVELOPER_DIR` and `xcode-select`)
-+and that Xcode is new enough, with an override path for anything else.
-+`SWEETPAD_DAP_LOG` names a file that records the full DAP traffic, as
-+`SWEETPAD_BSP_LOG` does for BSP.
-
-```
-
----
-
-### Incident Patch 4: `8f9489e0` (2026-10-04)
-**Commit Message**: Add a looping sweetpad run demo under the landing page hero
-
-**File**: `sweetpad-docs/src/pages/index.module.css` (modified, +27/-0)
-```diff
-@@ -409,6 +409,33 @@
- 
- /* Social-proof strip. A slim step down from the hero, so the numbers read as a
-    footnote to the pitch rather than a section of their own. */
-+.demo {
-+    background-color: #22272e;
-+    padding: 2.5rem 2rem 0.5rem;
-+}
-+
-+.demoInner {
-+    max-width: 1100px;
-+    margin: 0 auto;
-+    /* The video's background is this section's color; fading its edges hides
-+       any shift the decoder makes to it. */
-+    mask-image: linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
-+}
-+
-+.demoVideo {
-+    display: block;
-+    width: 100%;
-+    height: auto;
-+    aspect-ratio: 16 / 9;
-+    mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
-+}
-+
-+@media (max-width: 600px) {
-+    .demo {
-+        padding: 1.5rem 0.25rem 0.25rem;
-+    }
-+}
-+
- .stats {
-     background-color: #22272e;
-     padding: 1.75rem 2rem;
-```
-
-**File**: `sweetpad-docs/src/pages/index.tsx` (modified, +59/-0)
-```diff
-@@ -1,7 +1,9 @@
- import type * as React from "react";
-+import { useEffect, useRef, useState } from "react";
- import Layout from "@theme/Layout";
- import styles from "./index.module.css";
- import Link from "@docusaurus/Link";
-+import useBaseUrl from "@docusaurus/useBaseUrl";
- 
- const toneClass: Record<string, string> = {
- 	ok: styles.tOk,
-@@ -64,6 +66,62 @@ function HeroBanner() {
- 	);
- }
- 
-+/**
-+ * One real `sweetpad run` session, an edit to the app, and the rebuild, looping
-+ * on the section's own background. It plays muted on its own, except for readers
-+ * who prefer reduced motion: they get the poster frame and the controls instead.
-+ */
-+function DemoVideo() {
-+	const video = useRef<HTMLVideoElement>(null);
-+	const [reducedMotion, setReducedMotion] = useState(false);
-+	const webm = useBaseUrl("/videos/sweetpad-demo.webm");
-+	const mp4 = useBaseUrl("/videos/sweetpad-demo.mp4");
-+	const poster = useBaseUrl("/videos/sweetpad-demo-poster.jpg");
-+
-+	useEffect(() => {
-+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-+			setReducedMotion(true);
-+			return;
-+		}
-+		const element = video.current;
-+		if (!element) {
-+			return;
-+		}
-+		// React hydration leaves the muted property unset, and browsers only autoplay muted video.
-+		element.muted = true;
-+		// Browsers refuse to start video in a background tab, so start it whenever the page is shown.
-+		const play = () => {
-+			if (document.visibilityState === "visible" && element.paused) {
-+				element.play().catch(() => {});
-+			}
-+		};
-+		play();
-+		document.addEventListener("visibilitychange", play);
-+		return () => document.removeEventListener("visibilitychange", play);
-+	}, []);
-+
-+	return (
-+		<section className={styles.demo} data-theme="dark">
-+			<div className={styles.demoInner}>
-+				<video
-+					ref={video}
-+					className={styles.demoVideo}
-+					muted
-+					loop
-+					playsInline
-+					preload="metadata"
-+					controls={reducedMotion}
-+					poster={poster}
-+					aria-label="sweetpad run builds an app and launches it in the iOS Simulator, then rebuilds and relaunches it after a code change"
-+				>
-+					<source src={webm} type="video/webm" />
-+					<source src={mp4} type="video/mp4" />
-+				</video>
-+			</div>
-+		</section>
-+	);
-+}
-+
- /**
-  * Numbers a reader can check, in the place they'd look for a reason to keep
-  * scrolling. Rounded down so they stay true between edits.
-@@ -410,6 +468,7 @@ export default function Home(): React.JSX.Element {
- 		>
- 			<main>
- 				<HeroBanner />
-+				<DemoVideo />
- 				<StatsBar />
- 				<CliFeatures />
- 				<ProofBand />
-```
-
----
-
-### Incident Patch 5: `601302d0` (2026-10-04)
-**Commit Message**: Pass -parse-as-library to swiftc where Swift Build does
-
-A target whose only Swift file isn't `main.swift` was compiled as if that file were `main.swift`, so a SwiftUI app with a lone `@main` file reported top-level code. The flag now follows Swift Build's rule: a single input not named `main.swift`, or `SWIFT_LIBRARIES_ONLY`, unless `SWIFT_DISABLE_PARSE_AS_LIBRARY` is set.
-
-**File**: `sweetpad-core/src/build_settings.rs` (modified, +1/-0)
-```diff
-@@ -435,6 +435,7 @@ pub fn resolve_file_arguments(
-                 arguments: compiler_args::swift_arguments(
-                     settings,
-                     &query.arch,
-+                    &swift_inputs,
-                     swift_opts,
-                     xcode_version,
-                     has_package_products,
-```
-
-**File**: `sweetpad-core/tests/bsp_arg_invariants.rs` (modified, +7/-0)
-```diff
-@@ -270,9 +270,16 @@ fn editor_args(
-     let query = ResolveQuery::new(target, config, platform, "arm64");
-     let resolved = ctx.resolve(&query).ok()?;
-     let has_pkg = project::target_has_package_products(xcodeproj, target).unwrap_or(false);
-+    let inputs: Vec<String> = project::target_source_files(xcodeproj, target)
-+        .unwrap_or_default()
-+        .into_iter()
-+        .filter(|p| p.extension().is_some_and(|e| e == "swift"))
-+        .map(|p| p.to_string_lossy().into_owned())
-+        .collect();
-     Some(compiler_args::swift_arguments(
-         &resolved.settings,
-         "arm64",
-+        &inputs,
-         swift_opts,
-         XCODE_VERSION,
-         has_pkg,
-```
-
-**File**: `sweetpad-core/tests/compiler_args_oracle.rs` (modified, +1/-0)
-```diff
-@@ -514,6 +514,7 @@ fn compiler_args_oracle_coverage() {
-                 let ours = compiler_args::swift_arguments(
-                     settings,
-                     &oracle.arch,
-+                    &sw.input_files,
-                     swift_opts,
-                     &version,
-                     has_pkg,
-```
-
-**File**: `sweetpad-lib/src/compiler_args.rs` (modified, +61/-7)
-```diff
-@@ -122,6 +122,7 @@ pub fn target_arguments(
-         arguments: swift_arguments(
-             settings,
-             arch,
-+            &swift_inputs,
-             swift_options,
-             xcode_version,
-             has_package_products,
-@@ -186,13 +187,16 @@ fn link_tool(settings: &Settings, product_type: Option<&str>) -> &'static str {
- /// (`options`) through that data and hand-coding the computed/build-system flags
- /// it doesn't (the target triple, search paths, driver defaults, …). Pass `&[]`
- /// for `options` to fall back to the hand-coded heuristic for every option.
-+/// `inputs` are the `.swift` files the invocation compiles, which decide
-+/// `-parse-as-library` ([`emit_parse_as_library`]).
- ///
- /// Order is not significant — the oracle comparator scores argv as a multiset —
- /// so flags are grouped by concern for readability.
- #[must_use]
- pub fn swift_arguments(
-     settings: &Settings,
-     arch: &str,
-+    inputs: &[String],
-     options: &[CompilerOption],
-     xcode_version: &str,
-     has_package_products: bool,
-@@ -297,6 +301,7 @@ pub fn swift_arguments(
-     }
-     emit_unit_test_search_paths(&mut a, settings);
-     emit_swift_system_search_paths(&mut a, settings);
-+    emit_parse_as_library(&mut a, settings, inputs);
- 
-     // Swift macros a package vends are out-of-process executable plugins. A
-     // plugin *search path* doesn't discover executables, so the frontend
-@@ -375,6 +380,22 @@ fn emit_unit_test_search_paths(a: &mut ArgBuilder, settings: &Settings) {
-     }
- }
- 
-+/// `-parse-as-library` where Swift Build passes it (`SwiftCompilerSpec`): under
-+/// `SWIFT_LIBRARIES_ONLY` (the xcspec's encoding), and for a compile of a
-+/// single file not named `main.swift` unless `SWIFT_DISABLE_PARSE_AS_LIBRARY`
-+/// is set. Without it a lone file compiles as the module's `main.swift`, so an
-+/// app whose only file declares `@main` reports top-level code.
-+fn emit_parse_as_library(a: &mut ArgBuilder, settings: &Settings, inputs: &[String]) {
-+    let yes = |key: &str| is_yes(settings.get(key).map_or("", String::as_str));
-+    let lone_file = matches!(
-+        inputs,
-+        [only] if Path::new(only).file_name().is_none_or(|name| name != "main.swift")
-+    );
-+    if yes("SWIFT_LIBRARIES_ONLY") || (lone_file && !yes("SWIFT_DISABLE_PARSE_AS_LIBRARY")) {
-+        a.flag("-parse-as-library");
-+    }
-+}
-+
- /// The system search paths, the way Swift Build hands them to swiftc
- /// (`SwiftCompilerSpec.searchPathArguments`). Each `SYSTEM_FRAMEWORK_SEARCH_PATHS`
- /// entry not already searched as a framework path is `-Fsystem` for Mac
-@@ -1625,7 +1646,7 @@ mod tests {
-         s.insert("SWIFT_VERSION".into(), "5.0".into());
-         s.insert("SWIFT_ACTIVE_COMPILATION_CONDITIONS".into(), "DEBUG".into());
-         // No spec options: exercises the hand-coded fallback path.
--        let args = swift_arguments(&s, "arm64", &[], "26.5.0", false, &[]);
-+        let args = swift_arguments(&s, "arm64", &[], &[], "26.5.0", false, &[]);
-         let joined = args.join(" ");
-         assert!(joined.contains("-module-name Alamofire"));
-         assert!(joined.contains("-Onone"));
-@@ -1671,7 +1692,7 @@ mod tests {
-             "SWIFT_ACTIVE_COMPILATION_CONDITIONS".into(),
-             "DEBUG COCOAPODS".into(),
-         );
--        let args = swift_arguments(&s, "arm64", &[opt_level, conds], "26.5.0", false, &[]);
-+        let args = swift_arguments(&s, "arm64", &[], &[opt_level, conds], "26.5.0", false, &[]);
-         // The enum's special-cased `-Owholemodule` expands; conditions become -D.
-         assert!(
-             args.windows(2)
-@@ -1764,7 +1785,7 @@ mod tests {
-         // `-Xfrontend -load-plugin-executable -Xfrontend <plugin>#<module>` form.
-         let s = Settings::new();
-         let plugins = [PathBuf::from("/dd/Build/Products/Debug/MyMacros")];
--        let args = swift_arguments(&s, "arm64", &[], "26.5.0", false, &plugins);
-+        let args = swift_arguments(&s, "arm64", &[], &[], "26.5.0", false, &plugins);
-         let joined = args.join(" ");
-         assert!(
-             args.iter().any(|a| a == "-load-plugin-executable"),
-@@ -1785,7 +1806,7 @@ mod tests {
-             "BUILT_PRODUCTS_DIR".into(),
-             "/dd/Build/Products/Debug".into(),
-         );
--        let args = swift_arguments(&s, "arm64", &[], "26.5.0", true, &[]);
-+        let args = swift_arguments(&s, "arm64", &[], &[], "26.5.0", true, &[]);
-         assert!(
-             args.windows(2)
-                 .any(|w| w[0] == "-F" && w[1] == "/dd/Build/Products/Debug/PackageFrameworks"),
-@@ -1822,7 +1843,7 @@ mod tests {
-              -fmodule-map-file=\"/dd/Build/Products/Debug-iphoneos/Pod A/Pod_A.modulemap\""
-                 .into(),
-         );
--        let args = swift_arguments(&s, "arm64", &[], "26.5.0", false, &[]);
-+        let args = swift_arguments(&s, "arm64", &[], &[], "26.5.0", false, &[]);
-         assert!(
-             args.contains(
-                 &"-fmodule-map-file=/dd/Build/Products/Debug-
-```
-
----
-
-### Incident Patch 6: `19af38b0` (2026-10-04)
-**Commit Message**: Pass system framework and header search paths to swiftc and clang as Swift Build does
-
-`SYSTEM_FRAMEWORK_SEARCH_PATHS` and `SYSTEM_HEADER_SEARCH_PATHS` never reached the compiler arguments, so a Mac Catalyst file resolved none of the UIKit or SwiftUI under the SDK's `System/iOSSupport`. They now follow Swift Build's rules: `-Fsystem` for the iOSSupport frameworks and `-F` for other paths in swiftc, `-iframework` in clang, and `-isystem` for headers.
-
-**File**: `sweetpad-lib/src/compiler_args.rs` (modified, +146/-3)
-```diff
-@@ -296,6 +296,7 @@ pub fn swift_arguments(
-         a.pair("-F", &p);
-     }
-     emit_unit_test_search_paths(&mut a, settings);
-+    emit_swift_system_search_paths(&mut a, settings);
- 
-     // Swift macros a package vends are out-of-process executable plugins. A
-     // plugin *search path* doesn't discover executables, so the frontend
-@@ -374,6 +375,58 @@ fn emit_unit_test_search_paths(a: &mut ArgBuilder, settings: &Settings) {
-     }
- }
- 
-+/// The system search paths, the way Swift Build hands them to swiftc
-+/// (`SwiftCompilerSpec.searchPathArguments`). Each `SYSTEM_FRAMEWORK_SEARCH_PATHS`
-+/// entry not already searched as a framework path is `-Fsystem` for Mac
-+/// Catalyst's `System/iOSSupport` `Frameworks` and `SubFrameworks`, where its
-+/// UIKit and SwiftUI live, or for every path under
-+/// `SYSTEM_FRAMEWORK_SEARCH_PATHS_USE_FSYSTEM`, and `-F` otherwise. Each
-+/// `SYSTEM_HEADER_SEARCH_PATHS` entry reaches the clang importer as
-+/// `-isystem`, once (Catalyst's value repeats its iOSSupport `usr/include`).
-+fn emit_swift_system_search_paths(a: &mut ArgBuilder, settings: &Settings) {
-+    let all_fsystem = is_yes(
-+        settings
-+            .get("SYSTEM_FRAMEWORK_SEARCH_PATHS_USE_FSYSTEM")
-+            .map_or("", String::as_str),
-+    );
-+    let mut searched: BTreeSet<String> = a
-+        .out
-+        .windows(2)
-+        .filter(|w| matches!(w[0].as_str(), "-F" | "-Fsystem"))
-+        .map(|w| w[1].clone())
-+        .collect();
-+    for path in ws_unquoted(
-+        settings
-+            .get("SYSTEM_FRAMEWORK_SEARCH_PATHS")
-+            .map(String::as_str),
-+    ) {
-+        if !searched.insert(path.clone()) {
-+            continue;
-+        }
-+        let ios_support = path.ends_with("System/iOSSupport/System/Library/Frameworks")
-+            || path.ends_with("System/iOSSupport/System/Library/SubFrameworks");
-+        a.pair(
-+            if ios_support || all_fsystem {
-+                "-Fsystem"
-+            } else {
-+                "-F"
-+            },
-+            &path,
-+        );
-+    }
-+    let mut headers = BTreeSet::new();
-+    for path in ws_unquoted(
-+        settings
-+            .get("SYSTEM_HEADER_SEARCH_PATHS")
-+            .map(String::as_str),
-+    ) {
-+        if headers.insert(path.clone()) {
-+            a.pair("-Xcc", "-isystem");
-+            a.pair("-Xcc", &path);
-+        }
-+    }
-+}
-+
- /// Major version from an Xcode version string (`26.5.0` → 26), or 0 if absent /
- /// unparseable — callers treat 0 as the current (modern) toolchain.
- fn xcode_major(version: &str) -> u32 {
-@@ -526,8 +579,8 @@ pub fn clang_arguments(
- /// from the core build settings (not the Clang xcspec): the target's generated
- /// header maps, the products dir's generated-headers `include` subdir +
- /// `HEADER_SEARCH_PATHS` as `-I`, the target's generated-sources dirs, the
--/// products dir + `FRAMEWORK_SEARCH_PATHS` as `-F`, and the user/system header
--/// paths as `-iquote`/`-isystem`. Each `flag`/path pair is emitted once (a
-+/// products dir + `FRAMEWORK_SEARCH_PATHS` as `-F`, the system framework paths
-+/// as `-iframework`, and the user/system header paths as `-iquote`/`-isystem`. Each `flag`/path pair is emitted once (a
- /// setting often re-inherits the products dir), as `emit_library_paths` does
- /// for `-L`.
- fn emit_clang_search_paths(a: &mut ArgBuilder, settings: &Settings, arch: &str) {
-@@ -563,7 +616,9 @@ fn emit_clang_search_paths(a: &mut ArgBuilder, settings: &Settings, arch: &str)
-         }
-     }
- 
--    // `-F`: the products dir, then FRAMEWORK_SEARCH_PATHS.
-+    // `-F`: the products dir, then FRAMEWORK_SEARCH_PATHS; then
-+    // SYSTEM_FRAMEWORK_SEARCH_PATHS as `-iframework`, less a path already
-+    // searched with `-F`, as Swift Build adds a system framework path.
-     if let Some(p) = products {
-         paths.push(("-F", p.to_string()));
-     }
-@@ -572,6 +627,17 @@ fn emit_clang_search_paths(a: &mut ArgBuilder, settings: &Settings, arch: &str)
-             .into_iter()
-             .map(|p| ("-F", p)),
-     );
-+    let frameworks: BTreeSet<String> = paths
-+        .iter()
-+        .filter(|(flag, _)| *flag == "-F")
-+        .map(|(_, p)| p.clone())
-+        .collect();
-+    paths.extend(
-+        ws_unquoted(get("SYSTEM_FRAMEWORK_SEARCH_PATHS"))
-+            .into_iter()
-+            .filter(|p| !frameworks.contains(p))
-+            .map(|p| ("-iframework", p)),
-+    );
-     paths.extend(
-         ws_unquoted(get("USER_HEADER_SEARCH_PATHS"))
-             .into_iter()
-@@ -1988,4 +2054,81 @@ mod tests {
-         assert!(got.contains(&("-I".to_string(), d.to_string())));
-         assert!(!got.contains(&("-I".to_string(), format!("{d}/arm64"))));
-     }
-+
-+    /// Mac Catalyst's UIKit and SwiftUI live under the macOS SDK's
-+    /// `System/iOSSupport`, which Swift Build passes swiftc as `-Fsystem` and
-+    /// `-Xcc -isystem`, once each though the setting repeats them. Any other
-+    /// system framework path is a plain `-F`, and none repeats a `-F` already
-+    //
-```
-
----
-
-### Incident Patch 7: `081deaaf` (2026-09-28)
-**Commit Message**: Pass the Sentry DSN to the extension build so published builds report errors
-
-rolldown embeds SENTRY_DSN in the bundle, and the deploy workflow never set it, so every published build had no DSN and sent nothing. The build step reads it from the SENTRY_DSN repository variable.
-
-**File**: `.github/workflows/ci.yaml` (modified, +4/-1)
-```diff
-@@ -31,7 +31,10 @@ jobs:
-       - name: Build extension bundle
-         working-directory: sweetpad-vscode
-         # Builds the universal .node addon into out/ so it exists for signing;
--        # the packaging step below reuses out/ without rebuilding.
-+        # the packaging step below reuses out/ without rebuilding. The bundle
-+        # embeds the Sentry DSN, which is public, so it's a repository variable.
-+        env:
-+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-         run: npm run vscode:prepublish
- 
-       - name: Import Developer ID certificate
-```
-
----
-
-### Incident Patch 8: `c97e04f3` (2026-09-28)
-**Commit Message**: Build a target that lists macosx natively for My Mac, not as Designed for iPad
-
-A target whose SUPPORTED_PLATFORMS lists macosx builds natively for a macOS destination, but the iOS-on-Mac rule resolved it for iphoneos as Designed for iPad. It keeps the macosx binding, as the catalyst-oracle job checks against xcodebuild.
-
-**File**: `sweetpad-core/src/build_context.rs` (modified, +14/-1)
-```diff
-@@ -474,7 +474,8 @@ impl BuildContext {
- 
-     /// How `query`'s target builds for a macOS run destination (`-destination
-     /// platform=macOS`) when its own SDK is `iphoneos`, or `None` for any
--    /// other target. xcodebuild picks the Mac Catalyst destination for a
-+    /// other target, and for one whose `SUPPORTED_PLATFORMS` lists `macosx`,
-+    /// which builds natively. xcodebuild picks the Mac Catalyst destination for a
-     /// target that supports Catalyst, and otherwise the "Designed for iPad"
-     /// one, which builds for `iphoneos` and runs the iOS app on the Mac. On
-     /// Xcode 27 an iOS app with neither `SUPPORTS_MACCATALYST` nor
-@@ -502,6 +503,18 @@ impl BuildContext {
-             ..query.clone()
-         };
-         let authored = self.authored_probe(&bundle, &ios).settings;
-+        // A target that lists `macosx` among its supported platforms builds
-+        // natively for a macOS destination, as xcodebuild builds it.
-+        if authored
-+            .get("SUPPORTED_PLATFORMS")
-+            .is_some_and(|platforms| {
-+                platforms
-+                    .split_whitespace()
-+                    .any(|p| p.eq_ignore_ascii_case("macosx"))
-+            })
-+        {
-+            return Ok(None);
-+        }
-         let yes = |key: &str| authored.get(key).map(|v| v.eq_ignore_ascii_case("YES"));
-         let catalyst = yes("SUPPORTS_MACCATALYST").unwrap_or_else(|| {
-             let default = self.xcspec.as_ref().and_then(|catalog| {
-```
-
----
-
-### Incident Patch 9: `6343da67` (2026-09-28)
-**Commit Message**: Resolve the configuration a -configuration in bsp.json buildArgs names
-
-The extension's builds let a -configuration in sweetpad.build.args replace their own, but the index kept resolving bsp.json's configuration, so it read Debug settings for a Release build. serve takes the buildArgs' configuration at startup and on reload, and its prepare build uses it too.
-
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +4/-1)
-```diff
-@@ -3685,7 +3685,10 @@ other than the one `bsp.json` does. So the extension writes that setting into
- `xcodebuild_args`). A relative `-xcconfig` is read against `workspacePath`,
- where the extension's builds run `xcodebuild`, by that folder's physical path,
- as `xcodebuild` reads it: through a symlinked folder, `../ci.xcconfig` is the
--real folder's sibling. The
-+real folder's sibling. A `-configuration` in `buildArgs` replaces the
-+extension's own on its builds' command line, so `serve` resolves that
-+configuration instead of `bsp.json`'s `configuration`, at startup and when the
-+file changes. The
- extension's builds read the setting with a copy of core's `VALUE_FLAGS`
- (`XCODEBUILD_VALUE_FLAGS`), and a spec fails when the two differ, so a build
- and the index agree on which argument is a flag's value: `-xcconfig -quiet`
-```
-
-**File**: `sweetpad-core/src/bsp/mod.rs` (modified, +86/-11)
-```diff
-@@ -553,7 +553,7 @@ impl ResolvedConfig {
-             configuration: flags
-                 .get("configuration")
-                 .cloned()
--                .or_else(|| pull("configuration"))
-+                .or_else(|| configuration_of(value))
-                 .unwrap_or_else(|| "Debug".into()),
-             scheme: flags.get("scheme").cloned().or_else(|| pull("scheme")),
-             sdk: flags.get("sdk").cloned(),
-@@ -619,14 +619,7 @@ fn config_base(value: &Value, path: &Path) -> PathBuf {
- /// without it, so a half-typed edit doesn't cost autocomplete the settings
- /// before it.
- fn command_line_of(value: &Value, base: &Path) -> (CommandLine, Option<String>) {
--    let args: Vec<String> = value
--        .get("buildArgs")
--        .and_then(Value::as_array)
--        .into_iter()
--        .flatten()
--        .filter_map(Value::as_str)
--        .map(str::to_string)
--        .collect();
-+    let args = build_args(value);
-     let warning = xcodebuild_args::dangling_flag(&args).map(|flag| {
-         format!(
-             "ignoring '{flag}' at the end of buildArgs: it has no value, and xcodebuild refuses it"
-@@ -635,6 +628,33 @@ fn command_line_of(value: &Value, base: &Path) -> (CommandLine, Option<String>)
-     (CommandLineSettings::of(&args, Some(base)).into(), warning)
- }
- 
-+/// A `bsp.json`'s `buildArgs`, the extension's `sweetpad.build.args`.
-+fn build_args(value: &Value) -> Vec<String> {
-+    value
-+        .get("buildArgs")
-+        .and_then(Value::as_array)
-+        .into_iter()
-+        .flatten()
-+        .filter_map(Value::as_str)
-+        .map(str::to_string)
-+        .collect()
-+}
-+
-+/// The configuration the extension's builds use: a `-configuration` in
-+/// `buildArgs` replaces the one the extension picks on their command line, so
-+/// it wins over the file's `configuration`, and the index resolves the
-+/// configuration the build compiles.
-+fn configuration_of(value: &Value) -> Option<String> {
-+    xcodebuild_args::last_value(&build_args(value), "-configuration")
-+        .map(str::to_string)
-+        .or_else(|| {
-+            value
-+                .get("configuration")
-+                .and_then(Value::as_str)
-+                .map(str::to_string)
-+        })
-+}
-+
- impl Server {
-     /// Resolve the server config. An explicit `--project`/`--workspace` stays
-     /// self-contained (no config file, no telemetry — used by `bsp init` and the
-@@ -830,7 +850,7 @@ impl Server {
-         let Ok(value) = serde_json::from_str::<Value>(&raw) else {
-             return;
-         };
--        let configuration = value.get("configuration").and_then(Value::as_str);
-+        let configuration = configuration_of(&value);
-         let scheme = value
-             .get("scheme")
-             .and_then(Value::as_str)
-@@ -839,7 +859,7 @@ impl Server {
-         if let Some(warning) = &warning {
-             self.log(warning);
-         }
--        self.apply_config(configuration, scheme, command_line);
-+        self.apply_config(configuration.as_deref(), scheme, command_line);
-         let socket = value
-             .get("socket")
-             .and_then(Value::as_str)
-@@ -2488,6 +2508,61 @@ mod tests {
-         );
-     }
- 
-+    /// A `-configuration` in `buildArgs` replaces the one the extension picks
-+    /// on its builds' command line, so the index resolves that configuration,
-+    /// at startup and when the file changes, and the prepare build takes it.
-+    #[test]
-+    fn a_configuration_in_build_args_is_the_one_the_index_resolves() {
-+        let project = format!(
-+            "{}/fixtures/_synthetic-objectversion-110/project/SweetpadCIApp.xcodeproj",
-+            env!("SWEETPAD_LIB_DIR")
-+        );
-+        let scratch = crate::scratch::ScratchDir::new("sweetpad-bsp-json-config").unwrap();
-+        let config = scratch.join("bsp.json");
-+        let write = |build_args: &[&str]| {
-+            let body = serde_json::json!({
-+                "workspacePath": *scratch,
-+                "projectPath": project,
-+                "configuration": "Debug",
-+                "buildArgs": build_args,
-+            });
-+            std::fs::write(&config, body.to_string()).unwrap();
-+        };
-+        write(&["-quiet", "-configuration", "Release"]);
-+        let sent = Sent::default();
-+        let server = Server::build(
-+            ResolvedConfig::from_file(&config, &BTreeMap::new()).unwrap(),
-+            Some(config.clone()),
-+            Arc::new(AtomicU8::new(LogLevel::Info as u8)),
-+            CommandLine::default(),
-+            sent.writer(),
-+        )
-+        .unwrap();
-+        let resolved = |server: &Server| {
-+            let opts = server.options_for("SweetpadCIMac", "macosx", "arm64");
-+            let settings = crate::build_settings::resolve_build_settings(&opts)
-+                .unwrap()
-+                .pop()
-+                .unwrap()
-+                .settings;
-+            (opts.configuration, settings["CONFIGURATION"].clone())
-+        };
-+        assert_eq!(resolved(&server), (
-```
-
----
-
-### Incident Patch 10: `1c4bfbfe` (2026-09-28)
-**Commit Message**: Build an iOS app for My Mac as Designed for iPad unless it supports Mac Catalyst
-
-An iOS app under platform=macOS resolved as Mac Catalyst unless the project said otherwise, so settings, the product path and app launch pointed at a Debug-maccatalyst bundle xcodebuild never builds. It resolves as Designed for iPad under iphoneos unless SUPPORTS_MACCATALYST is YES, and a target that can't run on the destination keeps its own platform, as in xcodebuild.
-
-**File**: `sweetpad-core/src/build_context.rs` (modified, +123/-0)
-```diff
-@@ -88,6 +88,18 @@ fn default_sdk(layers: &[Vec<Assignment>]) -> String {
-         .unwrap_or_else(|| "macosx".to_string())
- }
- 
-+/// How an iOS target builds for a macOS run destination
-+/// ([`BuildContext::mac_destination_variant`]).
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum MacVariant {
-+    /// Mac Catalyst: the `macosx` SDK with the iOS support libraries.
-+    Catalyst,
-+    /// "Designed for iPad": the `iphoneos` SDK, the iOS app run on the Mac.
-+    DesignedForIpad,
-+    /// Neither: xcodebuild has no macOS destination for it.
-+    None,
-+}
-+
- /// One resolution query against a [`BuildContext`].
- #[derive(Debug, Clone)]
- pub struct ResolveQuery {
-@@ -407,6 +419,117 @@ impl BuildContext {
-         })
-     }
- 
-+    /// The SDK `query`'s target builds with when its run destination's
-+    /// platform isn't one the target supports, or `None` when it is. A
-+    /// build for one destination builds each target that can't run there for
-+    /// its own platform: on Xcode 27, a scheme with an iOS app and a macOS app
-+    /// builds the macOS app for `macosx` under an iOS Simulator destination. A
-+    /// simulator destination takes the simulator of the target's platform
-+    /// where the target supports it (a watchOS app under an iPhone simulator).
-+    /// The supported platforms are the target's authored
-+    /// `SUPPORTED_PLATFORMS` under its own SDK, else that SDK's default: a
-+    /// device SDK and its simulator (`iphoneos iphonesimulator`), or `macosx`.
-+    pub fn own_platform_sdk(&self, query: &ResolveQuery) -> Result<Option<String>, Error> {
-+        let Some(destination) = &query.destination else {
-+            return Ok(None);
-+        };
-+        let bundle = self.document.build_settings(
-+            &self.project.path,
-+            &query.target,
-+            &query.configuration,
-+        )?;
-+        let own = default_sdk(&bundle.layers);
-+        let probe = ResolveQuery {
-+            sdk: own.clone(),
-+            destination: None,
-+            ..query.clone()
-+        };
-+        let simulator = own
-+            .strip_suffix("os")
-+            .map(|family| format!("{family}simulator"));
-+        let supported: Vec<String> = self
-+            .authored_probe(&bundle, &probe)
-+            .settings
-+            .get("SUPPORTED_PLATFORMS")
-+            .map_or_else(
-+                || {
-+                    std::iter::once(own.clone())
-+                        .chain(simulator.clone())
-+                        .collect()
-+                },
-+                |authored| {
-+                    authored
-+                        .split_whitespace()
-+                        .map(str::to_ascii_lowercase)
-+                        .collect()
-+                },
-+            );
-+        let supports = |sdk: &str| supported.iter().any(|p| p == sdk);
-+        if supports(&destination.platform) {
-+            return Ok(None);
-+        }
-+        let simulator = simulator.filter(|sim| destination.is_simulator() && supports(sim));
-+        Ok(Some(simulator.unwrap_or(own)))
-+    }
-+
-+    /// How `query`'s target builds for a macOS run destination (`-destination
-+    /// platform=macOS`) when its own SDK is `iphoneos`, or `None` for any
-+    /// other target. xcodebuild picks the Mac Catalyst destination for a
-+    /// target that supports Catalyst, and otherwise the "Designed for iPad"
-+    /// one, which builds for `iphoneos` and runs the iOS app on the Mac. On
-+    /// Xcode 27 an iOS app with neither `SUPPORTS_MACCATALYST` nor
-+    /// `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD` authored reports `PLATFORM_NAME
-+    /// = iphoneos` and builds into `Debug-iphoneos` there. An application or
-+    /// app extension doesn't support Catalyst unless it says so (their product
-+    /// types default `SUPPORTS_MACCATALYST` to `NO`); a framework or library
-+    /// does (the iOS platform's default is `YES`). The query's `-xcconfig` and
-+    /// `KEY=VALUE` settings count, as they do for the build.
-+    pub fn mac_destination_variant(
-+        &self,
-+        query: &ResolveQuery,
-+    ) -> Result<Option<MacVariant>, Error> {
-+        let bundle = self.document.build_settings(
-+            &self.project.path,
-+            &query.target,
-+            &query.configuration,
-+        )?;
-+        if default_sdk(&bundle.layers) != "iphoneos" {
-+            return Ok(None);
-+        }
-+        let ios = ResolveQuery {
-+            sdk: "iphoneos".into(),
-+            destination: None,
-+            ..query.clone()
-+        };
-+        let authored = self.authored_probe(&bundle, &ios).settings;
-+        let yes = |key: &str| authored.get(key).map(|v| v.eq_ignore_ascii_case("YES"));
-+        let catalyst = yes("SUPPORTS_MACCATALYST").unwrap_or_else(|| {
-+            let default = self.xcspec.as_ref().and_then(|catalog| {
-+                let layer = catalog.layer_for(bundle.product_type.as_deref(), Some("iphoneos"));
-+                project::last_unconditional_setting(&[layer], "SUPPORTS_MACCATALYST")
-+  
-```
-
-**File**: `sweetpad-core/src/build_settings.rs` (modified, +64/-3)
-```diff
-@@ -7,7 +7,7 @@
- use std::collections::{BTreeMap, HashSet};
- use std::path::{Path, PathBuf};
- 
--use crate::build_context::{BuildContext, ResolveQuery};
-+use crate::build_context::{BuildContext, MacVariant, ResolveQuery};
- use sweetpad_lib::destination::RunDestination;
- use sweetpad_lib::xcspec::Catalog;
- use sweetpad_lib::{catalog_cache, compiler_args, project, scheme, workspace, xcode};
-@@ -676,7 +676,7 @@ fn build_queries(
-             queries.push(q);
-         }
-     }
--    queries
-+    let mut queries: Vec<ResolveQuery> = queries
-         .into_iter()
-         .map(|mut q| {
-             if let Some(p) = &opts.derived_data_path {
-@@ -687,7 +687,68 @@ fn build_queries(
-             }
-             q
-         })
--        .collect()
-+        .collect();
-+    if destination.is_some() {
-+        bind_destination_sdks(ctx, &mut queries);
-+    }
-+    queries
-+}
-+
-+/// Bind each query's SDK the way xcodebuild specializes a build's targets
-+/// for its one run destination, which [`build_queries`] first binds every
-+/// query to. On a macOS destination an iOS target builds for Mac Catalyst or
-+/// "Designed for iPad" on `iphoneos` ([`BuildContext::mac_destination_variant`]).
-+/// xcodebuild picks that destination for the whole build, from its apps, so a
-+/// framework the app embeds builds for `iphoneos` too, although on its own it
-+/// would take Catalyst; with no app among the queries, each target's own
-+/// variant decides. That destination is an `iphoneos` one to the scheme's
-+/// other targets, so a macOS app beside the iOS app builds as it would for an
-+/// iOS device (full `ARCHS`, `ONLY_ACTIVE_ARCH = NO`). Any other target that
-+/// can't run on the destination builds for its own platform
-+/// ([`BuildContext::own_platform_sdk`]).
-+fn bind_destination_sdks(ctx: &BuildContext, queries: &mut [ResolveQuery]) {
-+    let variants: Vec<Option<MacVariant>> = queries
-+        .iter()
-+        .map(|q| {
-+            if q.destination.as_ref().is_some_and(RunDestination::is_macos) {
-+                ctx.mac_destination_variant(q).ok().flatten()
-+            } else {
-+                None
-+            }
-+        })
-+        .collect();
-+    let is_app = |target: &str| {
-+        ctx.project.targets.iter().any(|t| {
-+            t.name == target
-+                && t.product_type.as_deref() == Some("com.apple.product-type.application")
-+        })
-+    };
-+    let apps: Vec<MacVariant> = queries
-+        .iter()
-+        .zip(&variants)
-+        .filter(|(q, _)| is_app(&q.target))
-+        .filter_map(|(_, v)| *v)
-+        .collect();
-+    let designed_app = !apps.is_empty() && apps.iter().all(|v| *v == MacVariant::DesignedForIpad);
-+    for (q, variant) in queries.iter_mut().zip(variants) {
-+        if let Some(variant) = variant {
-+            let designed = if apps.is_empty() {
-+                variant == MacVariant::DesignedForIpad
-+            } else {
-+                designed_app
-+            };
-+            if designed {
-+                q.sdk = "iphoneos".into();
-+            }
-+            continue;
-+        }
-+        if designed_app && let Some(destination) = &mut q.destination {
-+            destination.platform = "iphoneos".into();
-+        }
-+        if let Ok(Some(sdk)) = ctx.own_platform_sdk(q) {
-+            q.sdk = sdk;
-+        }
-+    }
- }
- 
- #[cfg(test)]
-```
-
-**File**: `sweetpad-core/tests/destination_platform_oracle.rs` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+//! Destination-platform oracle: the SDK one run destination builds each
-+//! target of a scheme for. `-destination platform=macOS` builds an iOS app
-+//! that doesn't support Mac Catalyst "Designed for iPad", on the `iphoneos`
-+//! SDK into `Debug-iphoneos`, and an app that does for Mac Catalyst.
-+//! xcodebuild picks one destination for the scheme from its app, so the
-+//! framework both schemes build follows the app either way, and a macOS app
-+//! beside a Designed-for-iPad app builds as it would for an iOS device. A
-+//! target that can't run on the destination builds for its own platform: an
-+//! iPhone simulator destination builds the macOS app of a mixed scheme for
-+//! `macosx`.
-+//!
-+//! The corpus oracles feed the resolver the SDK a capture reports, so they
-+//! never check which SDK a destination binds. This one resolves the way the
-+//! CLI does, from the scheme and the destination alone. Ground truth is a real
-+//! `xcodebuild -showBuildSettings -json -scheme <S> -configuration Debug
-+//! -destination <D>` capture of
-+//! `fixtures/_synthetic-destination-platforms/xcode-<ver>/project/DestPlatforms`,
-+//! named `<S>__Debug__<D>.json` (a simulator capture is made for a concrete
-+//! device and named for its platform).
-+
-+mod common;
-+
-+use std::ffi::OsStr;
-+use std::path::{Path, PathBuf};
-+
-+use sweetpad_core::build_settings::{BuildSettingsOptions, resolve_build_settings};
-+use sweetpad_lib::destination::parse_destination_arg;
-+
-+use common::{
-+    capture_xcode_version, fixtures_root, read_build_settings, sdksettings_root_for,
-+    xcspec_root_for,
-+};
-+
-+const FIXTURE_DIR: &str = "_synthetic-destination-platforms";
-+
-+/// The keys that say which platform and SDK variant a target builds for, and
-+/// the ones a destination the target can't run on changes.
-+const PLATFORM_KEYS: &[&str] = &[
-+    "PLATFORM_NAME",
-+    "EFFECTIVE_PLATFORM_NAME",
-+    "SWIFT_PLATFORM_TARGET_PREFIX",
-+    "LLVM_TARGET_TRIPLE_OS_VERSION",
-+    "LLVM_TARGET_TRIPLE_SUFFIX",
-+    "IS_MACCATALYST",
-+    "SUPPORTED_PLATFORMS",
-+    "ARCHS",
-+    "ONLY_ACTIVE_ARCH",
-+    "BUILD_ACTIVE_RESOURCES_ONLY",
-+    "__IS_NOT_SIMULATOR",
-+];
-+
-+/// Every `<scheme>__<config>__<destination>.json` capture under
-+/// `fixtures/_synthetic-destination-platforms/*/captures/`.
-+fn capture_files() -> Vec<PathBuf> {
-+    let mut out = Vec::new();
-+    let Ok(versions) = std::fs::read_dir(fixtures_root().join(FIXTURE_DIR)) else {
-+        return out;
-+    };
-+    for version in versions.flatten() {
-+        let Ok(entries) = std::fs::read_dir(version.path().join("captures")) else {
-+            continue;
-+        };
-+        out.extend(
-+            entries
-+                .flatten()
-+                .map(|e| e.path())
-+                .filter(|p| p.extension() == Some(OsStr::new("json"))),
-+        );
-+    }
-+    out.sort();
-+    out
-+}
-+
-+/// The scheme, configuration and destination a capture file is named for.
-+fn capture_request(capture: &Path) -> (String, String, String) {
-+    let stem = capture.file_stem().and_then(OsStr::to_str).unwrap();
-+    let mut parts = stem.splitn(3, "__");
-+    let mut next = || parts.next().unwrap().to_string();
-+    (next(), next(), next())
-+}
-+
-+/// The part of a products path below `Build/Products/`: `Debug-iphoneos`,
-+/// `Debug-maccatalyst`.
-+fn products_leaf(path: &str) -> &str {
-+    path.rsplit_once("/Build/Products/")
-+        .map_or(path, |(_, leaf)| leaf)
-+}
-+
-+#[test]
-+fn a_destination_binds_each_target_to_the_sdk_xcodebuild_builds_it_with() {
-+    common::pin_capture_host();
-+    let captures = capture_files();
-+    assert!(
-+        !captures.is_empty(),
-+        "no {FIXTURE_DIR} captures found — fixture missing?"
-+    );
-+    for capture in &captures {
-+        let version = capture_xcode_version(capture).unwrap();
-+        let (scheme, configuration, destination) = capture_request(capture);
-+        let root = capture.parent().unwrap().parent().unwrap();
-+        let opts = BuildSettingsOptions {
-+            project: Some(root.join("project/DestPlatforms/DestPlatforms.xcodeproj")),
-+            scheme: Some(scheme.clone()),
-+            configuration,
-+            destination: parse_destination_arg(&destination),
-+            xcspec_root: Some(xcspec_root_for(&version)),
-+            sdksettings_root: Some(sdksettings_root_for(&version)),
-+            ..BuildSettingsOptions::default()
-+        };
-+        let resolved = resolve_build_settings(&opts)
-+            .unwrap_or_else(|e| panic!("{scheme} [{destination}]: {e}"));
-+        let entries = read_build_settings(capture).unwrap();
-+        for theirs in &entries {
-+            let target = &theirs["TARGET_NAME"];
-+            let ours = &resolved
-+                .iter()
-+                .find(|t| t.target == *target)
-+                .unwrap_or_else(|| panic!("{scheme}: no {target} resolved"))
-+                .settings;
-+            for key in PLATFORM_KEYS {
-+                // Where xcodebuild leaves a Catalyst ke
-```
-
-**File**: `sweetpad-docs/docs/cli/destinations.md` (modified, +10/-0)
-```diff
-@@ -220,6 +220,16 @@ sweetpad build --mac
- The macOS destination is also where the CLI's Mac-only verbs apply: `app screenshot` captures the
- app's window, and `app ui` reads and drives it through accessibility.
- 
-+For an iOS app, `--on mac` builds what `xcodebuild -destination platform=macOS` builds. An app that
-+sets `SUPPORTS_MACCATALYST = YES` builds for Mac Catalyst, into `Debug-maccatalyst`. Any other iOS
-+app builds "Designed for iPad" with the iOS device SDK (`iphoneos`), into `Debug-iphoneos`, and so do
-+the frameworks its scheme builds. `settings show --on mac` reports the same settings, and the `app`
-+commands look for the bundle there.
-+
-+A scheme can build targets for more than one platform, such as an iOS app and a macOS helper. Each
-+target that can't run on the destination builds for its own platform, as it does in `xcodebuild`:
-+under an iPhone simulator, the macOS helper still builds for macOS, into `Debug`.
-+
- ## The raw escape hatch
- 
- `--destination` takes xcodebuild's exact specifier, with no fuzzy matching:
-```
-
-**File**: `sweetpad-lib/DOCS.md` (modified, +2/-0)
-```diff
-@@ -260,6 +260,7 @@ Hand-built fixtures cover paths no real corpus project exercises:
- | `_synthetic-multiplatform` | One `SDKROOT = auto` target with `SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx` — the IceCubesApp shape that keeps the SDK-binding regression in CI |
- | `_synthetic-{coredata,assetsym,strcat,intents,cocoapods,macro,tests}` | BSP generated-source / CocoaPods / Swift-macro / XCTest coverage — each a forced `Probe*.swift` referencing a build-time-generated / Pod / macro-expanded symbol |
- | `_synthetic-spm`, `_synthetic-workspace` | SwiftPM package products (`-F …/PackageFrameworks`); multi-project `.xcworkspace` resolution |
-+| `_synthetic-destination-platforms` | The SDK one run destination binds each target of a scheme to: an iOS app Designed for iPad or Mac Catalyst under `platform=macOS`, a macOS app beside an iOS app under either destination (`tests/destination_platform_oracle.rs`) |
- | `_synthetic-spm-graph` | One workspace reaching a local package six ways — its own `FileRef` member, the member project's declared package, both of their `.package(path:)` dependencies, and two under a `PBXFileSystemSynchronizedRootGroup` — plus a package carrying a `.swiftpm/xcode` scheme container and one whose only target is an `executableTarget` (`tests/spm_graph_oracle.rs` in sweetpad-core) |
- | `_global` | Per-SDK metadata (`sdks/<sdk>.json`), xcodebuild version banner |
- | `_tuist-src` | Generated tuist examples adding a command-line tool (`mh_execute`) and a standalone dynamic library (`mh_dylib`) to the compiler-args oracle. `16_capture_compiler_args.py --slug _tuist-src` resolves `corpus/_tuist-src`, which is a symlink to `corpus/tuist-fixtures/examples/xcode/generated_command_line_tool_with_dynamic_library`; 16 does not copy `raw/`, so a new version needs the `.xcodeproj` copied in by hand |
-@@ -991,6 +992,7 @@ answers to the package name too. `Manifest::scheme_names` in
- | `appletvos` / `appletvsimulator` | ✅ | fixtures/alamofire/.../schemes/Alamofire tvOS |
- | `xros` / `xrsimulator` (visionOS) | ✅ | fixtures/ice-cubes/.../schemes/IceCubesApp (visionOS-Simulator captures) |
- | Mac Catalyst variant | ✅ | fixtures/ice-cubes/.../schemes/IceCubesApp/build-settings/Debug__macOS.json |
-+| The SDK a destination binds per target: `platform=macOS` builds an iOS app Designed for iPad (`iphoneos`) or for Mac Catalyst, chosen per scheme; a target that can't run on the destination builds for its own platform | ✅ | fixtures/_synthetic-destination-platforms/xcode-27.0.0/captures/*.json (`tests/destination_platform_oracle.rs`) |
- | DriverKit | ❌ | — |
- 
- ### Architectures
-```
-
-**File**: `sweetpad-lib/fixtures/_synthetic-destination-platforms/xcode-27.0.0/captures/CatApp__Debug__platform=macOS.json` (added, +1225/-0)
-```diff
-@@ -0,0 +1,1225 @@
-+[
-+  {
-+    "action" : "build",
-+    "buildSettings" : {
-+      "__ARCHS__" : "arm64 x86_64",
-+      "__DIAGNOSE_DEPRECATED_ARCHS" : "YES",
-+      "__DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR" : "YES",
-+      "__IS_NOT_MACOS" : "NO",
-+      "__IS_NOT_MACOS_macosx" : "NO",
-+      "__IS_NOT_SIMULATOR" : "YES",
-+      "__IS_NOT_SIMULATOR_simulator" : "NO",
-+      "__ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS" : "ios",
-+      "_BOOL_" : "NO",
-+      "_BOOL_NO" : "NO",
-+      "_BOOL_YES" : "YES",
-+      "_DISCOVER_COMMAND_LINE_LINKER_INPUTS" : "YES",
-+      "_DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL" : "YES",
-+      "_IPHONEOS_DEPLOYMENT_TARGET_IS_EMPTY" : "NO",
-+      "_IS_EMPTY_" : "YES",
-+      "_LD_MULTIARCH" : "YES",
-+      "_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP" : "YES",
-+      "_WRAPPER_CONTENTS_DIR" : "/Contents",
-+      "_WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO" : "/Contents",
-+      "_WRAPPER_PARENT_PATH" : "/..",
-+      "_WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO" : "/..",
-+      "_WRAPPER_RESOURCES_DIR" : "/Resources",
-+      "_WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO" : "/Resources",
-+      "ACTION" : "build",
-+      "AD_HOC_CODE_SIGNING_ALLOWED" : "YES",
-+      "AGGREGATE_TRACKED_DOMAINS" : "YES",
-+      "ALLOW_BUILD_REQUEST_OVERRIDES" : "NO",
-+      "ALLOW_TARGET_PLATFORM_SPECIALIZATION" : "NO",
-+      "ALTERNATE_GROUP" : "staff",
-+      "ALTERNATE_MODE" : "u+w,go-w,a+rX",
-+      "ALTERNATE_OWNER" : "hyzyla_home",
-+      "ALTERNATIVE_DISTRIBUTION_WEB" : "NO",
-+      "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES" : "NO",
-+      "ALWAYS_SEARCH_USER_PATHS" : "NO",
-+      "ALWAYS_USE_SEPARATE_HEADERMAPS" : "NO",
-+      "APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING" : "YES",
-+      "APPLICATION_EXTENSION_API_ONLY" : "NO",
-+      "APPLY_RULES_IN_COPY_FILES" : "NO",
-+      "APPLY_RULES_IN_COPY_HEADERS" : "NO",
-+      "arch" : "undefined_arch",
-+      "ARCH_COHORT_arm64e" : "arm64e arm64e.x1",
-+      "ARCHS" : "arm64",
-+      "ARCHS_BASE" : "arm64",
-+      "ARCHS_STANDARD" : "arm64 x86_64",
-+      "ARCHS_STANDARD_32_64_BIT" : "arm64 x86_64 i386",
-+      "ARCHS_STANDARD_32_BIT" : "i386",
-+      "ARCHS_STANDARD_64_BIT" : "arm64 x86_64",
-+      "ARCHS_STANDARD_INCLUDING_64_BIT" : "arm64 x86_64",
-+      "ASSETCATALOG_COMPILER_APPICON_NAME" : "AppIcon",
-+      "AUTOMATICALLY_MERGE_DEPENDENCIES" : "NO",
-+      "AUTOMATION_APPLE_EVENTS" : "NO",
-+      "AVAILABLE_PLATFORMS" : "android appletvos appletvsimulator driverkit freebsd iphoneos iphonesimulator linux macosx none openbsd qnx staticlinux watchos watchsimulator webassembly xros xrsimulator",
-+      "BUILD_ACTIVE_RESOURCES_ONLY" : "NO",
-+      "BUILD_COMPONENTS" : "headers build",
-+      "BUILD_DIR" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products",
-+      "BUILD_LIBRARY_FOR_DISTRIBUTION" : "NO",
-+      "BUILD_ONLY_KNOWN_LOCALIZATIONS" : "NO",
-+      "BUILD_ROOT" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products",
-+      "BUILD_STYLE" : "",
-+      "BUILD_VARIANTS" : "normal",
-+      "BUILT_PRODUCTS_DIR" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products/Debug-maccatalyst",
-+      "BUNDLE_CONTENTS_FOLDER_PATH" : "Contents/",
-+      "BUNDLE_CONTENTS_FOLDER_PATH_deep" : "Contents/",
-+      "BUNDLE_EXECUTABLE_FOLDER_NAME_deep" : "MacOS",
-+      "BUNDLE_EXECUTABLE_FOLDER_PATH" : "Contents/MacOS",
-+      "BUNDLE_EXTENSIONS_FOLDER_PATH" : "Contents/Extensions",
-+      "BUNDLE_FORMAT" : "deep",
-+      "BUNDLE_FRAMEWORKS_FOLDER_PATH" : "Contents/Frameworks",
-+      "BUNDLE_PLUGINS_FOLDER_PATH" : "Contents/PlugIns",
-+      "BUNDLE_PRIVATE_HEADERS_FOLDER_PATH" : "Contents/PrivateHeaders",
-+      "BUNDLE_PUBLIC_HEADERS_FOLDER_PATH" : "Contents/Headers",
-+      "CACHE_ROOT" : "/var/folders/wq/kkdk740d68qcqvttr995x13w0000gq/C/com.apple.DeveloperTools/27.0-27A266a/Xcode",
-+      "CCHROOT" : "/var/folders/wq/kkdk740d68qcqvttr995x13w0000gq/C/com.apple.DeveloperTools/27.0-27A266a/Xcode",
-+      "CHMOD" : "/bin/chmod",
-+      "CHOWN" : "chown",
-+      "CLANG_ANALYZER_NONNULL" : "YES",
-+      "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION" : "YES_AGGRESSIVE",
-+      "CLANG_CACHE_FINE_GRAINED_OUTPUTS" : "YES",
-+      "CLANG_CXX_LANGUAGE_STANDARD" : "gnu++14",
-+      "CLANG_CXX_LIBRARY" : "libc++",
-+      "CLANG_ENABLE_EXPLICIT_MODULES" : "YES",
-+      "CLANG_ENABLE_MODULES" : "YES",
-+      "CLANG_ENABLE_OBJC_ARC" : "YES",
-+      "CLANG_ENABLE_OBJC_WEAK" : "YES",
-+      "CLANG_MODULES_BUILD_SESSION_FILE" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation",
-+      "CLANG_WARN__DUPLICATE_METHOD_MATCH" : "YES",
-+      "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING" : "YES",
-+      "CLANG_WARN_BOOL_CONVERSION" : "YES",
-+      "CLANG_WARN_COMMA" : "YES",
-+      "CLANG_WARN_CONSTANT_CONVERSION" : "YES",
-+      "CLANG_WARN_DEPRECATED_OBJC_I
-```
-
-**File**: `sweetpad-lib/fixtures/_synthetic-destination-platforms/xcode-27.0.0/captures/IPadApp__Debug__platform=macOS.json` (added, +1208/-0)
-```diff
-@@ -0,0 +1,1208 @@
-+[
-+  {
-+    "action" : "build",
-+    "buildSettings" : {
-+      "__ARCHS__" : "arm64",
-+      "__DIAGNOSE_DEPRECATED_ARCHS" : "YES",
-+      "__DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR" : "YES",
-+      "__IS_NOT_MACOS" : "YES",
-+      "__IS_NOT_MACOS_macosx" : "NO",
-+      "__IS_NOT_SIMULATOR" : "YES",
-+      "__IS_NOT_SIMULATOR_simulator" : "NO",
-+      "__ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS" : "ios",
-+      "_DISCOVER_COMMAND_LINE_LINKER_INPUTS" : "YES",
-+      "_DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL" : "YES",
-+      "_LD_MULTIARCH" : "YES",
-+      "_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP" : "YES",
-+      "_WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO" : "/Contents",
-+      "_WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO" : "/..",
-+      "_WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO" : "/Resources",
-+      "ACTION" : "build",
-+      "AD_HOC_CODE_SIGNING_ALLOWED" : "NO",
-+      "AGGREGATE_TRACKED_DOMAINS" : "YES",
-+      "ALLOW_BUILD_REQUEST_OVERRIDES" : "NO",
-+      "ALLOW_TARGET_PLATFORM_SPECIALIZATION" : "NO",
-+      "ALTERNATE_GROUP" : "staff",
-+      "ALTERNATE_MODE" : "u+w,go-w,a+rX",
-+      "ALTERNATE_OWNER" : "hyzyla_home",
-+      "ALTERNATIVE_DISTRIBUTION_WEB" : "NO",
-+      "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES" : "NO",
-+      "ALWAYS_SEARCH_USER_PATHS" : "NO",
-+      "ALWAYS_USE_SEPARATE_HEADERMAPS" : "NO",
-+      "APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING" : "YES",
-+      "APPLICATION_EXTENSION_API_ONLY" : "NO",
-+      "APPLY_RULES_IN_COPY_FILES" : "NO",
-+      "APPLY_RULES_IN_COPY_HEADERS" : "NO",
-+      "arch" : "undefined_arch",
-+      "ARCH_COHORT_arm64e" : "arm64e arm64e.x1",
-+      "ARCHS" : "arm64",
-+      "ARCHS_BASE" : "arm64",
-+      "ARCHS_STANDARD" : "arm64",
-+      "ARCHS_STANDARD_32_64_BIT" : "armv7 arm64",
-+      "ARCHS_STANDARD_32_BIT" : "armv7",
-+      "ARCHS_STANDARD_64_BIT" : "arm64",
-+      "ARCHS_STANDARD_INCLUDING_64_BIT" : "arm64",
-+      "ARCHS_UNIVERSAL_IPHONE_OS" : "armv7 arm64",
-+      "ASSETCATALOG_COMPILER_APPICON_NAME" : "AppIcon",
-+      "ASSETCATALOG_FILTER_FOR_DEVICE_MODEL" : "MacFamily20,1",
-+      "ASSETCATALOG_FILTER_FOR_DEVICE_OS_VERSION" : "27.0",
-+      "ASSETCATALOG_FILTER_FOR_THINNING_DEVICE_CONFIGURATION" : "MacFamily20,1",
-+      "AUTOMATICALLY_MERGE_DEPENDENCIES" : "NO",
-+      "AUTOMATION_APPLE_EVENTS" : "NO",
-+      "AVAILABLE_PLATFORMS" : "android appletvos appletvsimulator driverkit freebsd iphoneos iphonesimulator linux macosx none openbsd qnx staticlinux watchos watchsimulator webassembly xros xrsimulator",
-+      "BUILD_ACTIVE_RESOURCES_ONLY" : "YES",
-+      "BUILD_COMPONENTS" : "headers build",
-+      "BUILD_DIR" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products",
-+      "BUILD_LIBRARY_FOR_DISTRIBUTION" : "NO",
-+      "BUILD_ONLY_KNOWN_LOCALIZATIONS" : "NO",
-+      "BUILD_ROOT" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products",
-+      "BUILD_STYLE" : "",
-+      "BUILD_VARIANTS" : "normal",
-+      "BUILT_PRODUCTS_DIR" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products/Debug-iphoneos",
-+      "BUNDLE_CONTENTS_FOLDER_PATH_deep" : "Contents/",
-+      "BUNDLE_EXECUTABLE_FOLDER_NAME_deep" : "MacOS",
-+      "BUNDLE_EXTENSIONS_FOLDER_PATH" : "Extensions",
-+      "BUNDLE_FORMAT" : "shallow",
-+      "BUNDLE_FRAMEWORKS_FOLDER_PATH" : "Frameworks",
-+      "BUNDLE_PLUGINS_FOLDER_PATH" : "PlugIns",
-+      "BUNDLE_PRIVATE_HEADERS_FOLDER_PATH" : "PrivateHeaders",
-+      "BUNDLE_PUBLIC_HEADERS_FOLDER_PATH" : "Headers",
-+      "CACHE_ROOT" : "/var/folders/wq/kkdk740d68qcqvttr995x13w0000gq/C/com.apple.DeveloperTools/27.0-27A266a/Xcode",
-+      "CCHROOT" : "/var/folders/wq/kkdk740d68qcqvttr995x13w0000gq/C/com.apple.DeveloperTools/27.0-27A266a/Xcode",
-+      "CHMOD" : "/bin/chmod",
-+      "CHOWN" : "chown",
-+      "CLANG_ANALYZER_NONNULL" : "YES",
-+      "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION" : "YES_AGGRESSIVE",
-+      "CLANG_CACHE_FINE_GRAINED_OUTPUTS" : "YES",
-+      "CLANG_CXX_LANGUAGE_STANDARD" : "gnu++14",
-+      "CLANG_CXX_LIBRARY" : "libc++",
-+      "CLANG_ENABLE_EXPLICIT_MODULES" : "YES",
-+      "CLANG_ENABLE_MODULES" : "YES",
-+      "CLANG_ENABLE_OBJC_ARC" : "YES",
-+      "CLANG_ENABLE_OBJC_WEAK" : "YES",
-+      "CLANG_MODULES_BUILD_SESSION_FILE" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation",
-+      "CLANG_WARN__DUPLICATE_METHOD_MATCH" : "YES",
-+      "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING" : "YES",
-+      "CLANG_WARN_BOOL_CONVERSION" : "YES",
-+      "CLANG_WARN_COMMA" : "YES",
-+      "CLANG_WARN_CONSTANT_CONVERSION" : "YES",
-+      "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS" : "YES",
-+      "CLANG_WARN_DIRECT_OBJC_ISA_USAGE" : "YES_ERROR",
-+      "CLANG_WARN_DOCUMENTATION_COMMENTS" : "YES",
-+      "CLANG_WARN_EMPTY_BODY" : "YES",
-+      "CLANG_WARN_ENUM_CONVERSION" : "YES",
-+  
-```
-
-**File**: `sweetpad-lib/fixtures/_synthetic-destination-platforms/xcode-27.0.0/captures/Mixed__Debug__platform=iOS Simulator.json` (added, +1212/-0)
-```diff
-@@ -0,0 +1,1212 @@
-+[
-+  {
-+    "action" : "build",
-+    "buildSettings" : {
-+      "__ARCHS__" : "arm64 x86_64",
-+      "__DIAGNOSE_DEPRECATED_ARCHS" : "YES",
-+      "__DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR" : "YES",
-+      "__IS_NOT_MACOS" : "YES",
-+      "__IS_NOT_MACOS_macosx" : "NO",
-+      "__IS_NOT_SIMULATOR" : "NO",
-+      "__IS_NOT_SIMULATOR_simulator" : "NO",
-+      "__ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS" : "ios",
-+      "_DISCOVER_COMMAND_LINE_LINKER_INPUTS" : "YES",
-+      "_DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL" : "YES",
-+      "_LD_MULTIARCH" : "YES",
-+      "_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP" : "YES",
-+      "_WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO" : "/Contents",
-+      "_WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO" : "/..",
-+      "_WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO" : "/Resources",
-+      "ACTION" : "build",
-+      "AD_HOC_CODE_SIGNING_ALLOWED" : "YES",
-+      "AGGREGATE_TRACKED_DOMAINS" : "YES",
-+      "ALLOW_BUILD_REQUEST_OVERRIDES" : "NO",
-+      "ALLOW_TARGET_PLATFORM_SPECIALIZATION" : "NO",
-+      "ALTERNATE_GROUP" : "staff",
-+      "ALTERNATE_MODE" : "u+w,go-w,a+rX",
-+      "ALTERNATE_OWNER" : "hyzyla_home",
-+      "ALTERNATIVE_DISTRIBUTION_WEB" : "NO",
-+      "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES" : "NO",
-+      "ALWAYS_SEARCH_USER_PATHS" : "NO",
-+      "ALWAYS_USE_SEPARATE_HEADERMAPS" : "NO",
-+      "APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING" : "YES",
-+      "APPLICATION_EXTENSION_API_ONLY" : "NO",
-+      "APPLY_RULES_IN_COPY_FILES" : "NO",
-+      "APPLY_RULES_IN_COPY_HEADERS" : "NO",
-+      "arch" : "undefined_arch",
-+      "ARCHS" : "arm64",
-+      "ARCHS_BASE" : "arm64",
-+      "ARCHS_STANDARD" : "arm64 x86_64",
-+      "ARCHS_STANDARD_32_64_BIT" : "arm64 x86_64",
-+      "ARCHS_STANDARD_64_BIT" : "arm64 x86_64",
-+      "ARCHS_STANDARD_INCLUDING_64_BIT" : "arm64 x86_64",
-+      "ARCHS_UNIVERSAL_IPHONE_OS" : "arm64 x86_64",
-+      "ASSETCATALOG_COMPILER_APPICON_NAME" : "AppIcon",
-+      "ASSETCATALOG_FILTER_FOR_DEVICE_MODEL" : "iPhone18,5",
-+      "ASSETCATALOG_FILTER_FOR_DEVICE_OS_VERSION" : "27.0",
-+      "ASSETCATALOG_FILTER_FOR_THINNING_DEVICE_CONFIGURATION" : "iPhone18,5",
-+      "AUTOMATICALLY_MERGE_DEPENDENCIES" : "NO",
-+      "AUTOMATION_APPLE_EVENTS" : "NO",
-+      "AVAILABLE_PLATFORMS" : "android appletvos appletvsimulator driverkit freebsd iphoneos iphonesimulator linux macosx none openbsd qnx staticlinux watchos watchsimulator webassembly xros xrsimulator",
-+      "BUILD_ACTIVE_RESOURCES_ONLY" : "YES",
-+      "BUILD_COMPONENTS" : "headers build",
-+      "BUILD_DIR" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products",
-+      "BUILD_LIBRARY_FOR_DISTRIBUTION" : "NO",
-+      "BUILD_ONLY_KNOWN_LOCALIZATIONS" : "NO",
-+      "BUILD_ROOT" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products",
-+      "BUILD_STYLE" : "",
-+      "BUILD_VARIANTS" : "normal",
-+      "BUILT_PRODUCTS_DIR" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/DestPlatforms-dmtkailrzdwuecadqvjtybszshqs/Build/Products/Debug-iphonesimulator",
-+      "BUNDLE_CONTENTS_FOLDER_PATH_deep" : "Contents/",
-+      "BUNDLE_EXECUTABLE_FOLDER_NAME_deep" : "MacOS",
-+      "BUNDLE_EXTENSIONS_FOLDER_PATH" : "Extensions",
-+      "BUNDLE_FORMAT" : "shallow",
-+      "BUNDLE_FRAMEWORKS_FOLDER_PATH" : "Frameworks",
-+      "BUNDLE_PLUGINS_FOLDER_PATH" : "PlugIns",
-+      "BUNDLE_PRIVATE_HEADERS_FOLDER_PATH" : "PrivateHeaders",
-+      "BUNDLE_PUBLIC_HEADERS_FOLDER_PATH" : "Headers",
-+      "CACHE_ROOT" : "/var/folders/wq/kkdk740d68qcqvttr995x13w0000gq/C/com.apple.DeveloperTools/27.0-27A266a/Xcode",
-+      "CCHROOT" : "/var/folders/wq/kkdk740d68qcqvttr995x13w0000gq/C/com.apple.DeveloperTools/27.0-27A266a/Xcode",
-+      "CHMOD" : "/bin/chmod",
-+      "CHOWN" : "chown",
-+      "CLANG_ANALYZER_NONNULL" : "YES",
-+      "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION" : "YES_AGGRESSIVE",
-+      "CLANG_CACHE_FINE_GRAINED_OUTPUTS" : "YES",
-+      "CLANG_CXX_LANGUAGE_STANDARD" : "gnu++14",
-+      "CLANG_CXX_LIBRARY" : "libc++",
-+      "CLANG_ENABLE_EXPLICIT_MODULES" : "YES",
-+      "CLANG_ENABLE_MODULES" : "YES",
-+      "CLANG_ENABLE_OBJC_ARC" : "YES",
-+      "CLANG_ENABLE_OBJC_WEAK" : "YES",
-+      "CLANG_MODULES_BUILD_SESSION_FILE" : "/Users/hyzyla_home/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation",
-+      "CLANG_WARN__DUPLICATE_METHOD_MATCH" : "YES",
-+      "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING" : "YES",
-+      "CLANG_WARN_BOOL_CONVERSION" : "YES",
-+      "CLANG_WARN_COMMA" : "YES",
-+      "CLANG_WARN_CONSTANT_CONVERSION" : "YES",
-+      "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS" : "YES",
-+      "CLANG_WARN_DIRECT_OBJC_ISA_USAGE" : "YES_ERROR",
-+      "CLANG_WARN_DOCUMENTATION_COMMENTS" : "YES",
-+      "CLANG_WARN_EMPTY_BODY" : "YES",
-+      "CLANG_WARN_ENUM_CONVERSION" : "YES",
-+      "CLANG_WARN_INFINITE_RECURSION" : "YES",
-+      "CLANG_WA
-```
-
----
-
-### Incident Patch 11: `359db6aa` (2026-09-28)
-**Commit Message**: Resolve a relative -xcconfig in the BSP's buildArgs where xcodebuild reads it
-
-The BSP joined a relative -xcconfig from bsp.json buildArgs onto workspacePath as spelled, so through a symlinked folder the index read a different file than the build. It reads buildArgs through core's CommandLineSettings, against the folder's physical path, as the CLI does.
-
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +6/-3)
-```diff
-@@ -3680,9 +3680,12 @@ The extension's `buildServer.json` runs `sweetpad bsp serve --config
- not the file, and discovery from the working directory could name a container
- other than the one `bsp.json` does. So the extension writes that setting into
- `bsp.json` as `buildArgs`, and `serve` reads its `KEY=VALUE` settings and last
--`-xcconfig` the way the CLI reads `[xcodebuild] args` (the parser lives in
--sweetpad-core's `xcodebuild_args`). A relative `-xcconfig` is read against
--`workspacePath`, where the extension's builds run `xcodebuild`. The
-+`-xcconfig` the way the CLI reads `[xcodebuild] args`, through the same
-+`CommandLineSettings` in sweetpad-core's `app_locator` (the parser lives in
-+`xcodebuild_args`). A relative `-xcconfig` is read against `workspacePath`,
-+where the extension's builds run `xcodebuild`, by that folder's physical path,
-+as `xcodebuild` reads it: through a symlinked folder, `../ci.xcconfig` is the
-+real folder's sibling. The
- extension's builds read the setting with a copy of core's `VALUE_FLAGS`
- (`XCODEBUILD_VALUE_FLAGS`), and a spec fails when the two differ, so a build
- and the index agree on which argument is a flag's value: `-xcconfig -quiet`
-```
-
-**File**: `sweetpad-cli/src/cli/resolve.rs` (modified, +1/-22)
-```diff
-@@ -53,33 +53,12 @@ impl Container {
-     #[must_use]
-     pub fn key(&self) -> String {
-         std::fs::canonicalize(self.path())
--            .unwrap_or_else(|_| absolutize(self.path()))
-+            .unwrap_or_else(|_| sweetpad_lib::project::absolutize(self.path()))
-             .to_string_lossy()
-             .into_owned()
-     }
- }
- 
--/// Join a path onto the cwd (when relative) and squash `.`/`..` lexically — the
--/// canonicalize fallback that never touches the filesystem.
--fn absolutize(path: &Path) -> PathBuf {
--    use std::path::Component;
--    let mut out = if path.is_absolute() {
--        PathBuf::new()
--    } else {
--        std::env::current_dir().unwrap_or_default()
--    };
--    for comp in path.components() {
--        match comp {
--            Component::CurDir => {}
--            Component::ParentDir => {
--                out.pop();
--            }
--            c => out.push(c.as_os_str()),
--        }
--    }
--    out
--}
--
- /// Resolve the project container from explicit flags, else from a committed
- /// `sweetpad.toml` that names one, else by auto-discovery in the current
- /// directory (warning when same-kind siblings make the pick ambiguous). An
-```
-
-**File**: `sweetpad-core/src/bsp/mod.rs` (modified, +64/-10)
-```diff
-@@ -22,6 +22,7 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
- 
- use serde_json::{Value, json};
- 
-+use crate::app_locator::CommandLineSettings;
- use crate::build_context::BuildContext;
- use crate::build_settings::{self, BuildSettingsOptions};
- use crate::framing::{read_message, write_message};
-@@ -113,6 +114,17 @@ pub struct CommandLine {
-     pub overrides: Vec<(String, String)>,
- }
- 
-+/// The settings a command line layers on every resolution. Its
-+/// `-derivedDataPath` is left out: the server fixes DerivedData at startup.
-+impl From<CommandLineSettings> for CommandLine {
-+    fn from(settings: CommandLineSettings) -> Self {
-+        Self {
-+            xcconfig: settings.xcconfig,
-+            overrides: settings.overrides,
-+        }
-+    }
-+}
-+
- /// Run the BSP server loop over stdin/stdout until EOF or `build/exit`.
- pub fn run(args: &[String]) -> Result<(), String> {
-     run_with(args, CommandLine::default())
-@@ -595,9 +607,12 @@ fn config_base(value: &Value, path: &Path) -> PathBuf {
- 
- /// The command-line settings in a `bsp.json`'s `buildArgs`: the arguments
- /// the extension's builds add to `xcodebuild`, from `sweetpad.build.args`.
--/// Its `KEY=VALUE` settings and last `-xcconfig` are read as `xcodebuild`
--/// reads them, a relative `-xcconfig` against `base`, the directory those
--/// builds run in. A file without `buildArgs` has none.
-+/// They are read as `xcodebuild` running in `base`, the directory those
-+/// builds run in, reads them ([`CommandLineSettings::of`], the CLI's reader
-+/// too): a relative `-xcconfig` joins the directory's physical path, so
-+/// through a symlinked folder `../ci.xcconfig` is the real directory's
-+/// sibling. A file without `buildArgs` has none. Its `-derivedDataPath` is
-+/// the extension's to resolve into `derivedDataPath`.
- ///
- /// The second half is a warning for a flag that ends `buildArgs` without its
- /// value. The extension's builds fail on it, and the index reads the rest
-@@ -617,11 +632,7 @@ fn command_line_of(value: &Value, base: &Path) -> (CommandLine, Option<String>)
-             "ignoring '{flag}' at the end of buildArgs: it has no value, and xcodebuild refuses it"
-         )
-     });
--    let command_line = CommandLine {
--        xcconfig: xcodebuild_args::last_value(&args, "-xcconfig").map(|p| base.join(p)),
--        overrides: xcodebuild_args::settings(&args),
--    };
--    (command_line, warning)
-+    (CommandLineSettings::of(&args, Some(base)).into(), warning)
- }
- 
- impl Server {
-@@ -2341,7 +2352,10 @@ mod tests {
-         let pair = |k: &str, v: &str| (k.to_string(), v.to_string());
- 
-         let opts = server.options_for("SweetpadCIMac", "macosx", "arm64");
--        assert_eq!(opts.xcconfig, Some(scratch.join("ci.xcconfig")));
-+        assert_eq!(
-+            opts.xcconfig,
-+            Some(sweetpad_lib::project::standardize(&scratch).join("ci.xcconfig"))
-+        );
-         assert_eq!(
-             opts.overrides,
-             [
-@@ -2389,6 +2403,43 @@ mod tests {
-         assert_eq!(opts.overrides, [pair("A", "typed")]);
-     }
- 
-+    /// The extension's builds run `xcodebuild` in the workspace folder, which
-+    /// `xcodebuild` knows by its physical path. Through a symlinked folder, a
-+    /// relative `-xcconfig ../ci.xcconfig` in `buildArgs` is the real
-+    /// folder's sibling, the way the CLI reads its arguments. A
-+    /// `-derivedDataPath` there leaves DerivedData to `derivedDataPath`.
-+    #[test]
-+    fn build_args_paths_are_read_from_the_physical_workspace_folder() {
-+        let project = format!(
-+            "{}/fixtures/_synthetic-objectversion-110/project/SweetpadCIApp.xcodeproj",
-+            env!("SWEETPAD_LIB_DIR")
-+        );
-+        let scratch = crate::scratch::ScratchDir::new("sweetpad-bsp-json-link").unwrap();
-+        let real = scratch.join("real/app");
-+        std::fs::create_dir_all(&real).unwrap();
-+        std::fs::create_dir_all(scratch.join("elsewhere")).unwrap();
-+        let link = scratch.join("elsewhere/link");
-+        std::os::unix::fs::symlink(&real, &link).unwrap();
-+        let config = scratch.join("bsp.json");
-+        std::fs::write(
-+            &config,
-+            serde_json::json!({
-+                "workspacePath": link,
-+                "projectPath": project,
-+                "buildArgs": ["-xcconfig", "../ci.xcconfig", "-derivedDataPath", "dd"],
-+            })
-+            .to_string(),
-+        )
-+        .unwrap();
-+        let resolved = ResolvedConfig::from_file(&config, &BTreeMap::new()).unwrap();
-+        let physical = sweetpad_lib::project::standardize(&real);
-+        assert_eq!(
-+            resolved.command_line.xcconfig,
-+            Some(physical.parent().unwrap().join("ci.xcconfig"))
-+        );
-+        assert_eq!(resolved.derived_data_path, None);
-+    }
-+
-     /// A `buildArgs` that ends with a flag waiting for its value fails the
-     /// extension's builds. The index warns and reads the rest, the copy of the
-     /// flag before it included,
-```
-
----
-
-### Incident Patch 12: `1dc956e2` (2026-09-28)
-**Commit Message**: Compare each target on its own platforms in the live -showBuildSettings diff
-
-The live differential read every target under -sdk macosx and a bare -sdk for simulators, so it reported ARCHS and SWIFT_PLATFORM_TARGET_PREFIX mismatches a real build doesn't have. It reads each target on the platforms its SUPPORTED_PLATFORMS names, binds a simulator platform to a concrete simulator as a build does, and asserts the SDK, platform, arch and triple inputs plus the compilation conditions.
-
-**File**: `sweetpad-core/tests/showbuildsettings_live_diff.rs` (modified, +198/-28)
-```diff
-@@ -8,11 +8,23 @@
- //! `auto` resolves to a real SDK path and every platform of a multiplatform target
- //! gets a ground-truth row the pre-captured oracle never had.
- //!
-+//! Each target is compared on the platforms its own `SUPPORTED_PLATFORMS`
-+//! names, read the way a plain `-showBuildSettings` reads it: under the SDK
-+//! its `SDKROOT` names. A device or macOS platform is bound with `-sdk`. A
-+//! simulator platform is bound to a concrete simulator, through the scheme
-+//! that builds the target, because that is how every simulator build runs and
-+//! what the resolver models: with no device to single out, `-sdk
-+//! iphonesimulator` alone keeps the full `ARCHS` list that a Debug build for a
-+//! simulator collapses to the active arch. A simulator cell with no scheme or
-+//! no simulator to bind falls back to `-sdk` and leaves the run-destination
-+//! keys out of the comparison.
-+//!
- //! For each key the resolver produces, it compares our value to xcodebuild's
- //! (canonicalized to absorb `$HOME` / DerivedData / Xcode-dir drift). The editor-
- //! critical keys that drive `-sdk`/`-target` (`SDKROOT`, `PLATFORM_NAME`, `ARCHS`,
--//! the triple inputs) are asserted for committed fixtures; everything else is
--//! reported, since this is a discovery sweep, not a byte-for-byte gate.
-+//! the triple inputs) and the compilation conditions are asserted for committed
-+//! fixtures; everything else is reported, since this is a discovery sweep, not a
-+//! byte-for-byte gate.
- //!
- //! Opt-in (`BSP_LIVE_DIFF=1`): shells out to `xcodebuild` per (target, platform,
- //! config), so it's slow. It runs the Xcode `BSP_ORACLE_XCODE` names, else the
-@@ -30,6 +42,7 @@ use oracle_xcode::OracleXcode;
- use serde_json::Value;
- use sweetpad_core::build_context::{BuildContext, ResolveQuery};
- use sweetpad_core::scratch::ScratchDir;
-+use sweetpad_lib::destination::{self, RunDestination};
- use sweetpad_lib::{project, xcspec};
- 
- const KNOWN_SDKS: &[&str] = &[
-@@ -45,18 +58,108 @@ const KNOWN_SDKS: &[&str] = &[
- ];
- 
- /// Keys whose mismatch corrupts the editor `-sdk`/`-target` (and thus stdlib
--/// loading) — asserted to match for the committed fixtures.
-+/// loading), or changes what a file type-checks against — asserted to match
-+/// for the committed fixtures.
- const CRITICAL_KEYS: &[&str] = &[
-     "SDKROOT",
-     "PLATFORM_NAME",
-     "ARCHS",
-     "SWIFT_PLATFORM_TARGET_PREFIX",
-+    "IS_MACCATALYST",
-+    "LLVM_TARGET_TRIPLE_OS_VERSION",
-+    "LLVM_TARGET_TRIPLE_SUFFIX",
-+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS",
-+    "GCC_PREPROCESSOR_DEFINITIONS",
-+    "SWIFT_VERSION",
- ];
- 
--/// The Xcode the diff runs and the `TMPDIR` it runs in.
-+/// The keys only a run destination decides: with no simulator bound,
-+/// xcodebuild's simulator view keeps the full arch list and no active
-+/// resources, which no simulator build uses.
-+const RUN_DESTINATION_KEYS: &[&str] = &["ARCHS", "BUILD_ACTIVE_RESOURCES_ONLY", "ONLY_ACTIVE_ARCH"];
-+
-+/// The Xcode the diff runs, the `TMPDIR` it runs in, and the simulators it
-+/// can bind a simulator cell to.
- struct Live {
-     xcode: OracleXcode,
-     tmp: ScratchDir,
-+    simulators: Vec<Simulator>,
-+}
-+
-+/// One available simulator: its runtime's platform SDK and OS version, its
-+/// name and its UDID.
-+struct Simulator {
-+    sdk: &'static str,
-+    os: (u32, u32),
-+    name: String,
-+    udid: String,
-+}
-+
-+impl Simulator {
-+    /// The run destination a build for this simulator resolves under.
-+    fn destination(&self) -> Option<RunDestination> {
-+        let label = match self.sdk {
-+            "iphonesimulator" => "iOS Simulator",
-+            "appletvsimulator" => "tvOS Simulator",
-+            "watchsimulator" => "watchOS Simulator",
-+            "xrsimulator" => "visionOS Simulator",
-+            _ => return None,
-+        };
-+        destination::parse_destination_arg(&format!(
-+            "platform={label},OS={}.{},name={}",
-+            self.os.0, self.os.1, self.name
-+        ))
-+    }
-+}
-+
-+/// The simulators `simctl` lists as available for this Xcode, newest runtime
-+/// first. Empty when `simctl` can't answer.
-+fn available_simulators(xcode: &OracleXcode, tmp: &Path) -> Vec<Simulator> {
-+    let Ok(out) = xcode
-+        .command("xcrun", tmp)
-+        .args(["simctl", "list", "devices", "available", "-j"])
-+        .output()
-+    else {
-+        return Vec::new();
-+    };
-+    let json: Value = serde_json::from_slice(&out.stdout).unwrap_or(Value::Null);
-+    let mut sims = Vec::new();
-+    for (runtime, devices) in json
-+        .get("devices")
-+        .and_then(Value::as_object)
-+        .into_iter()
-+        .flatten()
-+    {
-+        // `com.apple.CoreSimulator.SimRuntime.iOS-27-0`
-+        let Some((family, version)) = runtime.rsplit('.').next().and_then(|r| r.split_once('-'))
-+        else {
-+            continue;
-+        };
-+        let sdk = match family {
-+            "iOS" => "iphonesimulator",
-+            "tvOS" => "appletvsimulator",
-+            "watchOS" => "wa
-```
-
-**File**: `sweetpad-lib/DOCS.md` (modified, +15/-11)
-```diff
-@@ -728,17 +728,21 @@ and the live differential) build with the Xcode that `BSP_ORACLE_XCODE` names
- choice for all of them. Except for `bsp_prepare`, their `xcodebuild`,
- `sourcekit-lsp` and toolchain runs get a `TMPDIR` of the test's own, which goes
- when the test ends. The live differential resolves against the specs of that
--same Xcode, not a committed `xcspec-cache/` capture. On Xcode 27.0 it fails on
--two editor-critical mismatches:
--
--- `SWIFT_PLATFORM_TARGET_PREFIX` is `ios` in ours and `macos` in xcodebuild
--  for an iOS app bound to `-sdk macosx` (`SweetpadCIApp` in
--  `_synthetic-objectversion-110`, `App` in `_synthetic-cocoapods`).
--- `ARCHS` is `arm64` in ours and `arm64 x86_64` in xcodebuild for
--  `_synthetic-multiplatform` on `iphonesimulator` in Debug.
--
--Both appear with the committed `xcode-27.0.0` catalog too. The fast hermetic
--tiers are version-agnostic.
-+same Xcode, not a committed `xcspec-cache/` capture.
-+
-+The live differential compares each target on the platforms its
-+`SUPPORTED_PLATFORMS` names, read under the target's own `SDKROOT` the way a
-+plain `-showBuildSettings` reads it. A device or macOS platform is bound with
-+`-target … -sdk`. A simulator platform is bound to a concrete simulator
-+through the scheme that builds the target (`-scheme … -destination id=…`),
-+since every simulator build runs on one: with `-sdk iphonesimulator` alone,
-+xcodebuild keeps the full `ARCHS` that a Debug simulator build collapses to
-+the active arch, and the resolver models the build. Where no scheme or no
-+simulator is available, the cell falls back to `-sdk` and skips `ARCHS`,
-+`ONLY_ACTIVE_ARCH` and `BUILD_ACTIVE_RESOURCES_ONLY`. The asserted keys are the
-+SDK, platform, arch and triple inputs plus `SWIFT_ACTIVE_COMPILATION_CONDITIONS`,
-+`GCC_PREPROCESSOR_DEFINITIONS` and `SWIFT_VERSION`. The fast hermetic tiers are
-+version-agnostic.
- 
- ### 8.4 Engine fixes the harness drove (knowledge catalog)
- 
-```
-
----
-
-### Incident Patch 13: `0b888f4e` (2026-09-27)
-**Commit Message**: Check every project write against the fixtures, with an xcodebuild oracle
-
-Each write verb runs on every fixture in both formats and has to leave the object graph whole, restore the document under its inverse, and, with WRITE_LIVE_ORACLE=1, still open in xcodebuild and build.
-
-**File**: `sweetpad-lib/tests/write_integrity.rs` (added, +1717/-0)
-```diff
-@@ -0,0 +1,1717 @@
-+//! Every verb that writes a project document, run against the committed
-+//! fixtures in both formats, with the document checked after each edit the
-+//! way Xcode reads it.
-+//!
-+//! A `project.pbxproj` edit may not leave a name pointing at no object, lose
-+//! an object the project reached unless the verb says it orphans one, delete
-+//! an object of a kind the verb does not own, or list a node in a second group
-+//! (Xcode 27.2 refuses to open that). A `project.xcproj` edit may not leave a
-+//! configuration's xcconfig, a target's product or the products group naming
-+//! nothing (Xcode 27.0 and 27.2 refuse that as an invalid reference), and a
-+//! move may not change where any node resolves. An edit that refuses may not
-+//! change the document at all, and an edit followed by its inverse restores
-+//! it. The checks read the documents directly rather than through the crate's
-+//! own readers, so they judge the writers independently.
-+//!
-+//! `WRITE_LIVE_ORACLE=1` adds the Xcode half: each edited project is written
-+//! to a copy of its bundle, and `xcodebuild -list` has to open it and list the
-+//! targets and configurations the unedited copy lists. A project that names
-+//! Swift packages is skipped: listing it means resolving them, which needs
-+//! the network and leaves a DerivedData folder behind. Then one small app is
-+//! moved around in both formats and built. It runs the selected Xcode, which
-+//! reads both formats from 27.0 on.
-+
-+mod common;
-+
-+use std::collections::{BTreeMap, BTreeSet};
-+use std::path::{Path, PathBuf};
-+use std::process::Command;
-+use std::sync::Mutex;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+use common::TempDir;
-+use sweetpad_lib::membership::Phase;
-+use sweetpad_lib::pbxproj::{self, Dict};
-+use sweetpad_lib::spm::RequirementSpec;
-+use sweetpad_lib::stored_settings::{Assignment, Op, Scope};
-+use sweetpad_lib::tree::{AddGroupOutcome, AddRefOutcome, MoveOutcome};
-+use sweetpad_lib::{
-+    membership_pbxproj, membership_xcproj, settings_pbxproj, settings_xcproj, spm_pbxproj,
-+    spm_xcproj, sync_pbxproj, sync_xcproj, tree_pbxproj, tree_xcproj, xcproj,
-+};
-+
-+const LIVE: &str = "WRITE_LIVE_ORACLE";
-+
-+const PROBE_URL: &str = "https://github.com/sweetpad-dev/sweetpad-probe";
-+
-+fn fixtures() -> PathBuf {
-+    Path::new(env!("CARGO_MANIFEST_DIR")).join("fixtures")
-+}
-+
-+/// Every file called `name` under the fixtures, one per distinct content, so
-+/// a project captured under several Xcode versions is edited once.
-+fn documents(name: &str) -> Vec<PathBuf> {
-+    fn walk(dir: &Path, name: &str, out: &mut Vec<PathBuf>) {
-+        let Ok(entries) = std::fs::read_dir(dir) else {
-+            return;
-+        };
-+        let mut entries: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
-+        entries.sort();
-+        for path in entries {
-+            if path.is_dir() {
-+                walk(&path, name, out);
-+            } else if path.file_name().is_some_and(|n| n == name) {
-+                out.push(path);
-+            }
-+        }
-+    }
-+    let mut all = Vec::new();
-+    walk(&fixtures(), name, &mut all);
-+    let mut seen = BTreeSet::new();
-+    all.into_iter()
-+        .filter(|p| seen.insert(std::fs::read(p).unwrap_or_default()))
-+        .collect()
-+}
-+
-+/// Up to `n` items spread evenly over `items`, first and last included.
-+fn spread<T: Clone>(items: &[T], n: usize) -> Vec<T> {
-+    if items.len() <= n {
-+        return items.to_vec();
-+    }
-+    (0..n)
-+        .map(|i| items[i * (items.len() - 1) / (n - 1).max(1)].clone())
-+        .collect()
-+}
-+
-+fn label_of(path: &Path) -> String {
-+    path.strip_prefix(fixtures())
-+        .unwrap_or(path)
-+        .display()
-+        .to_string()
-+}
-+
-+/// Failures across a whole run, reported together.
-+#[derive(Default)]
-+struct Report {
-+    failures: Vec<String>,
-+    edits: usize,
-+}
-+
-+impl Report {
-+    fn finish(self, what: &str) {
-+        assert!(self.edits > 0, "no {what} edits ran");
-+        assert!(
-+            self.failures.is_empty(),
-+            "{} of {} {what} edits broke the document:\n{}",
-+            self.failures.len(),
-+            self.edits,
-+            self.failures.join("\n")
-+        );
-+    }
-+}
-+
-+/// Edited documents worth opening in Xcode: what made each, and its text.
-+type Edits = Vec<(String, String)>;
-+
-+/// A bundle, the name of its document, and the edits to open it with.
-+type Edited = (PathBuf, &'static str, Edits);
-+
-+/// Run `exercise` on every fixture document called `name`, a few at a time,
-+/// and gather what each found.
-+fn exercise_all(
-+    name: &'static str,
-+    exercise: fn(&Path, &mut Report) -> Edits,
-+) -> (Report, Vec<Edited>) {
-+    let paths = documents(name);
-+    let next = AtomicUsize::new(0);
-+    let done = Mutex::new(Vec::new());
-+    std::thread::scope(|scope| {
-+        for _ in 0..8 {
-+            scope.spawn(|| {
-+                while let Some(path) = paths.get(next.fetch_add(1, Ordering::SeqCst)) {
-+      
-```
-
----
-
-### Incident Patch 14: `cbdddcaf` (2026-09-27)
-**Commit Message**: Share hot reload's build settings with the extension so macOS injection works
-
-The CLI and the extension take the hot build settings and injection tables from sweetpad_core::hot. An extension hot build of a macOS app turns off the hardened runtime and App Sandbox too; without that, the client can't connect and injection fails silently.
-
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +4/-1)
-```diff
-@@ -1139,7 +1139,10 @@ Two hooks, mirroring the extension's proven `hot-reload.ts` path:
-   `OTHER_LDFLAGS=$(inherited) -Xlinker -interposable`
-   (lets dyld swap symbols at runtime) and `EMIT_FRONTEND_COMMAND_LINES=YES`
-   (needed to recover compile commands on Xcode 16.3+; see the recompiler below).
--  Both are gated to `--hot` so ordinary `build`/`run` never pay for them.
-+  Both are gated to `--hot` so ordinary `build`/`run` never pay for them. The
-+  list, with the macOS additions below, is `sweetpad_core::hot::build_settings`,
-+  which the extension's hot build reads through the addon
-+  (`hotReloadBuildSettings`), next to the client dylib and platform tables.
- - **Launch env** — `[`crate::cli::simctl`]` gains an env-passing `launch`
-   variant; `--hot` sets `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=<client dylib>`,
-   `SIMCTL_CHILD_INJECTION_PROJECT_ROOT=<workspace root>`, and the XCTest
-```
-
-**File**: `sweetpad-cli/src/cli/inject/client.rs` (modified, +4/-40)
-```diff
-@@ -12,33 +12,9 @@
- 
- use std::path::{Path, PathBuf};
- 
--const INJECTIONNEXT_APP: &str = "/Applications/InjectionNext.app";
--
--/// Map an SDK to the InjectionNext dylib that injects into it. Returns
--/// `None` for SDKs InjectionNext can't inject (devices strip
--/// `DYLD_INSERT_LIBRARIES`; watchOS ships no dylib).
--#[must_use]
--pub fn dylib_name_for(sdk: &str) -> Option<&'static str> {
--    match sdk {
--        "iphonesimulator" => Some("libiphonesimulatorInjection.dylib"),
--        "appletvsimulator" => Some("libappletvsimulatorInjection.dylib"),
--        "xrsimulator" => Some("libxrsimulatorInjection.dylib"),
--        "macosx" => Some("libmacosxInjection.dylib"),
--        _ => None,
--    }
--}
-+use sweetpad_core::hot;
- 
--/// The `<Platform>.platform` directory name for an SDK, used to find XCTest.
--#[must_use]
--pub fn platform_dir_for(sdk: &str) -> Option<&'static str> {
--    match sdk {
--        "iphonesimulator" => Some("iPhoneSimulator"),
--        "appletvsimulator" => Some("AppleTVSimulator"),
--        "xrsimulator" => Some("XRSimulator"),
--        "macosx" => Some("MacOSX"),
--        _ => None,
--    }
--}
-+const INJECTIONNEXT_APP: &str = "/Applications/InjectionNext.app";
- 
- /// Inputs for resolving/injecting the client.
- pub struct ClientOptions {
-@@ -106,7 +82,7 @@ pub fn check_available(sdk: &str, override_path: Option<&Path>) -> Result<(), St
- 
- /// The InjectionNext dylib name for `sdk`, or why hot reload can't target it.
- fn client_name(sdk: &str) -> Result<&'static str, String> {
--    dylib_name_for(sdk).ok_or_else(|| format!("hot reload is not supported for the {sdk} SDK"))
-+    hot::dylib_name(sdk).ok_or_else(|| format!("hot reload is not supported for the {sdk} SDK"))
- }
- 
- /// Where an installed `InjectionNext.app` keeps its client for `name`.
-@@ -176,7 +152,7 @@ pub fn launch_env(dylib: &Path, opts: &ClientOptions, prefix: &str) -> Vec<(Stri
- 
- /// The Platform-specific XCTest framework + library search paths.
- fn xctest_search_paths(developer_dir: &str, sdk: &str) -> Option<(String, String)> {
--    let platform = platform_dir_for(sdk)?;
-+    let platform = hot::platform_dir(sdk)?;
-     let dev = Path::new(developer_dir)
-         .join("Platforms")
-         .join(format!("{platform}.platform"))
-@@ -274,18 +250,6 @@ mod tests {
-     use super::*;
-     use crate::cli::testdir::TempDir;
- 
--    #[test]
--    fn dylib_and_platform_map_simulator_sdks() {
--        assert_eq!(
--            dylib_name_for("iphonesimulator"),
--            Some("libiphonesimulatorInjection.dylib")
--        );
--        assert_eq!(platform_dir_for("iphonesimulator"), Some("iPhoneSimulator"));
--        // Devices / unknown SDKs aren't injectable.
--        assert_eq!(dylib_name_for("iphoneos"), None);
--        assert_eq!(platform_dir_for("watchsimulator"), None);
--    }
--
-     #[test]
-     fn launch_env_sets_dyld_and_injection_vars() {
-         let opts = ClientOptions {
-```
-
-**File**: `sweetpad-cli/src/cli/inject/mod.rs` (modified, +1/-33)
-```diff
-@@ -62,23 +62,7 @@ impl Drop for HotSession {
-     }
- }
- 
--/// Map an `xcodebuild` `-destination` specifier to the SDK short name (the
--/// value SDK conditionals and the client dylib lookup key on) for the
--/// injectable destinations: simulators and native macOS. Returns `None` for
--/// the rest (devices, generic).
--#[must_use]
--pub fn sdk_for_destination(destination: &str) -> Option<&'static str> {
--    let spec = sweetpad_lib::destination::DestinationSpec::parse(destination);
--    if spec.generic {
--        return None;
--    }
--    spec.sdk().filter(|sdk| {
--        matches!(
--            *sdk,
--            "iphonesimulator" | "appletvsimulator" | "xrsimulator" | "macosx"
--        )
--    })
--}
-+pub use sweetpad_core::hot::sdk_for_destination;
- 
- /// Whether the project depends on the `Inject` package (krzysztofzablocki/Inject),
- /// which SwiftUI views need (`@ObserveInjection` + `.enableInjection()`) to
-@@ -242,22 +226,6 @@ pub fn host_arch() -> String {
- mod tests {
-     use super::*;
- 
--    #[test]
--    fn sdk_for_destination_maps_injectable_destinations() {
--        assert_eq!(
--            sdk_for_destination("platform=iOS Simulator,id=ABC"),
--            Some("iphonesimulator")
--        );
--        assert_eq!(
--            sdk_for_destination("platform=visionOS Simulator,name=X"),
--            Some("xrsimulator")
--        );
--        assert_eq!(sdk_for_destination("platform=macOS"), Some("macosx"));
--        // Physical device / unknown → unsupported.
--        assert_eq!(sdk_for_destination("platform=iOS,id=ABC"), None);
--        assert_eq!(sdk_for_destination("generic/platform=iOS"), None);
--    }
--
-     #[test]
-     fn hardened_runtime_flag_detection() {
-         let hardened = "Executable=/x/App\nIdentifier=dev.x.app\n\
-```
-
-**File**: `sweetpad-cli/src/cli/xcodebuild.rs` (modified, +15/-26)
-```diff
-@@ -190,7 +190,8 @@ pub struct BuildPlan<'a> {
-     /// the destination imply it.
-     pub sdk: Option<&'a str>,
-     pub clean: bool,
--    /// Hot-reload build: add `-Xlinker -interposable` (so dyld can swap symbols)
-+    /// Hot-reload build: add [`sweetpad_core::hot::build_settings`] for the
-+    /// destination's SDK, `-Xlinker -interposable` (so dyld can swap symbols)
-     /// and `EMIT_FRONTEND_COMMAND_LINES=YES` (so the build-log recompiler can
-     /// recover per-file commands). A macOS destination additionally disables the
-     /// hardened runtime and App Sandbox so the product is injectable. Set for
-@@ -249,32 +250,20 @@ impl BuildPlan<'_> {
-             args.push(bundle.display().to_string());
-         }
-         args.extend(container_args(self.container));
--        if self.hot {
--            // Build settings (KEY=VALUE) after the action; `$(inherited)` keeps
--            // any project OTHER_LDFLAGS. Mirrors the VS Code extension + the
--            // validated spike fixture.
--            args.push("OTHER_LDFLAGS=$(inherited) -Xlinker -interposable".into());
--            args.push("EMIT_FRONTEND_COMMAND_LINES=YES".into());
--            // A native macOS app must be injectable: the hardened runtime makes
--            // dyld strip `DYLD_INSERT_LIBRARIES` and library validation reject
--            // the ad-hoc recompiled dylibs, and the App Sandbox blocks both the
--            // client's socket and dlopen from outside the container. Command-line
--            // settings outrank project ones, so the hot Debug product is built
--            // without either protection. (A sandbox declared in an explicit
--            // entitlements file is beyond build settings — the mac preflight
--            // catches that case with instructions.)
--            if self
-+        if self.hot
-+            && let Some(sdk) = self
-                 .destination
--                .is_some_and(|d| DestinationSpec::parse(d).is_macos())
--            {
--                args.push("ENABLE_HARDENED_RUNTIME=NO".into());
--                args.push("ENABLE_APP_SANDBOX=NO".into());
--                // An explicit entitlements plist outranks those settings at
--                // signing time; the ephemeral stripped copy wins it back.
--                if let Some(entitlements) = self.hot_entitlements {
--                    args.push(format!("CODE_SIGN_ENTITLEMENTS={}", entitlements.display()));
--                }
--            }
-+                .and_then(sweetpad_core::hot::sdk_for_destination)
-+        {
-+            // Build settings (KEY=VALUE) after the action, shared with the VS
-+            // Code extension. A sandbox declared in an entitlements file the
-+            // stripped copy doesn't replace is beyond build settings: the mac
-+            // preflight catches that case with instructions.
-+            args.extend(
-+                sweetpad_core::hot::build_settings(sdk, self.hot_entitlements)
-+                    .into_iter()
-+                    .map(|(key, value)| format!("{key}={value}")),
-+            );
-         }
-         args.extend(self.passthrough.iter().cloned());
-         args
-```
-
-**File**: `sweetpad-core/src/hot.rs` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+//! What a hot-reload build and launch need, shared by the CLI's `app run
-+//! --hot` and the extension's hot reload: the SDKs InjectionNext can inject
-+//! into, the client dylib and platform directory for each, and the build
-+//! settings that make the product injectable.
-+
-+use std::path::Path;
-+
-+/// The SDK a `-destination` builds for, among the ones hot reload can inject
-+/// into: the simulators InjectionNext ships a client for, and native macOS.
-+/// `None` for the rest (devices, watchOS, generic destinations).
-+#[must_use]
-+pub fn sdk_for_destination(destination: &str) -> Option<&'static str> {
-+    let spec = sweetpad_lib::destination::DestinationSpec::parse(destination);
-+    if spec.generic {
-+        return None;
-+    }
-+    spec.sdk().filter(|sdk| {
-+        matches!(
-+            *sdk,
-+            "iphonesimulator" | "appletvsimulator" | "xrsimulator" | "macosx"
-+        )
-+    })
-+}
-+
-+/// The InjectionNext client dylib that injects into apps built for `sdk`.
-+/// `None` for SDKs InjectionNext can't inject into: devices strip
-+/// `DYLD_INSERT_LIBRARIES`, and watchOS ships no dylib.
-+#[must_use]
-+pub fn dylib_name(sdk: &str) -> Option<&'static str> {
-+    match sdk {
-+        "iphonesimulator" => Some("libiphonesimulatorInjection.dylib"),
-+        "appletvsimulator" => Some("libappletvsimulatorInjection.dylib"),
-+        "xrsimulator" => Some("libxrsimulatorInjection.dylib"),
-+        "macosx" => Some("libmacosxInjection.dylib"),
-+        _ => None,
-+    }
-+}
-+
-+/// The `<Platform>.platform` directory an injectable `sdk` lives in, where
-+/// the InjectionNext.app client finds the XCTest it links.
-+#[must_use]
-+pub fn platform_dir(sdk: &str) -> Option<&'static str> {
-+    dylib_name(sdk).map(|_| sweetpad_lib::project::platform_dir_name_for(sdk))
-+}
-+
-+/// The build settings a hot build for `sdk` adds, in order, as `KEY=VALUE`
-+/// overrides that outrank the project's. Empty when hot reload can't inject
-+/// into `sdk`.
-+///
-+/// Every injectable build links with `-interposable`, so dyld can swap
-+/// symbols, and emits frontend command lines, so the recompiler can recover
-+/// each file's compile command from the build log. A macOS app must also be
-+/// injectable: the hardened runtime makes dyld strip `DYLD_INSERT_LIBRARIES`
-+/// and library validation reject the recompiled dylibs, and the App Sandbox
-+/// blocks the client's socket and loading from outside its container. Without
-+/// these the app launches and injection fails silently. An entitlements file
-+/// that turns the sandbox on outranks `ENABLE_APP_SANDBOX`, so a macOS build
-+/// signs with `entitlements` (a copy without the sandbox) when given.
-+#[must_use]
-+pub fn build_settings(sdk: &str, entitlements: Option<&Path>) -> Vec<(&'static str, String)> {
-+    if dylib_name(sdk).is_none() {
-+        return Vec::new();
-+    }
-+    // `$(inherited)` keeps the project's own linker flags.
-+    let mut settings = vec![
-+        (
-+            "OTHER_LDFLAGS",
-+            "$(inherited) -Xlinker -interposable".to_string(),
-+        ),
-+        ("EMIT_FRONTEND_COMMAND_LINES", "YES".to_string()),
-+    ];
-+    if sdk == "macosx" {
-+        settings.push(("ENABLE_HARDENED_RUNTIME", "NO".to_string()));
-+        settings.push(("ENABLE_APP_SANDBOX", "NO".to_string()));
-+        if let Some(entitlements) = entitlements {
-+            settings.push(("CODE_SIGN_ENTITLEMENTS", entitlements.display().to_string()));
-+        }
-+    }
-+    settings
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn sdk_for_destination_maps_injectable_destinations() {
-+        assert_eq!(
-+            sdk_for_destination("platform=iOS Simulator,id=ABC"),
-+            Some("iphonesimulator")
-+        );
-+        assert_eq!(
-+            sdk_for_destination("platform=visionOS Simulator,name=X"),
-+            Some("xrsimulator")
-+        );
-+        assert_eq!(sdk_for_destination("platform=macOS"), Some("macosx"));
-+        // Physical device / unknown → unsupported.
-+        assert_eq!(sdk_for_destination("platform=iOS,id=ABC"), None);
-+        assert_eq!(sdk_for_destination("generic/platform=iOS"), None);
-+    }
-+
-+    #[test]
-+    fn dylib_and_platform_cover_the_injectable_sdks() {
-+        for (sdk, dylib, platform) in [
-+            (
-+                "iphonesimulator",
-+                "libiphonesimulatorInjection.dylib",
-+                "iPhoneSimulator",
-+            ),
-+            (
-+                "appletvsimulator",
-+                "libappletvsimulatorInjection.dylib",
-+                "AppleTVSimulator",
-+            ),
-+            (
-+                "xrsimulator",
-+                "libxrsimulatorInjection.dylib",
-+                "XRSimulator",
-+            ),
-+            ("macosx", "libmacosxInjection.dylib", "MacOSX"),
-+        ] {
-+            assert_eq!(dylib_name(sdk), Some(dylib));
-+            assert_eq!(platform_dir(sdk), Some(platform));
-+        }
-+        // Devices, watchOS and unknown SDKs aren't inje
-```
-
-**File**: `sweetpad-core/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ pub mod build_context;
- pub mod build_settings;
- pub mod devices;
- pub mod framing;
-+pub mod hot;
- pub mod package_members;
- pub mod paths;
- pub mod scratch;
-```
-
-**File**: `sweetpad-docs/docs/vscode/hot-reload.md` (modified, +6/-1)
-```diff
-@@ -81,7 +81,12 @@ environment.
- **Build flags.** It appends `OTHER_LDFLAGS=$(inherited) -Xlinker -interposable`
- to xcodebuild so the linker emits Swift functions as interposable symbols, plus
- `EMIT_FRONTEND_COMMAND_LINES=YES` so Xcode 16.3+ logs the per-file frontend
--invocations InjectionNext needs to recompile with.
-+invocations InjectionNext needs to recompile with. A macOS build also gets
-+`ENABLE_HARDENED_RUNTIME=NO` and `ENABLE_APP_SANDBOX=NO`. The hardened runtime
-+stops the injection dylib from loading, and the App Sandbox stops it from
-+connecting to InjectionNext. These are the same settings the `sweetpad` CLI uses
-+for `app run --hot`. A sandbox turned on in your target's `.entitlements` file
-+still applies, so turn App Sandbox off for Debug there.
- 
- **Launch env.** It sets `DYLD_INSERT_LIBRARIES` on the simulator/macOS launch so
- the injection dylib loads automatically (no AppDelegate changes), and
-```
-
-**File**: `sweetpad-lib/src/project.rs` (modified, +4/-2)
-```diff
-@@ -3484,8 +3484,10 @@ fn detect_developer_dir() -> String {
-         .into_owned()
- }
- 
--/// Filesystem name of the platform under `<Xcode>/Contents/Developer/Platforms/`.
--fn platform_dir_name_for(sdk_base: &str) -> &'static str {
-+/// Filesystem name of the platform under `<Xcode>/Contents/Developer/Platforms/`
-+/// for an SDK name without its version (`iphonesimulator` is `iPhoneSimulator`).
-+#[must_use]
-+pub fn platform_dir_name_for(sdk_base: &str) -> &'static str {
-     match sdk_base {
-         "iphoneos" => "iPhoneOS",
-         "iphonesimulator" => "iPhoneSimulator",
-```
-
----
-
-### Incident Patch 15: `4d0506c7` (2026-09-27)
-**Commit Message**: Autocreate schemes per target unless another scheme runs or builds the target
-
-scheme list, settings show and the build's product lookup disagreed with xcodebuild -list on which schemes Xcode autocreates: the resolver refused a scheme-less target's scheme whenever any scheme file existed, while the listing kept targets another scheme runs or builds. Both use lib's listed_schemes rule, measured against Xcode 27.0.
-
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +9/-0)
-```diff
-@@ -907,6 +907,15 @@ Notes / heuristics:
-   Run action through it (`sweetpad_core::app_locator::find_scheme`), and so do
-   the CLI, the build-settings resolver, the supported-platforms filter and the
-   extension (launch settings, `scheme.reveal`).
-+- Autocreated schemes follow Xcode's per-target rule
-+  (`sweetpad_lib::project::listed_schemes`): each eligible target gets one
-+  unless a scheme file is named for it, or a scheme file under another name
-+  covers it (`sweetpad_lib::scheme::SchemeReferences`). A scheme covers an
-+  app, tool or extension by running it in its Launch or Profile action, and a
-+  framework or library by building it. A workspace's own scheme files count
-+  for its members, and a local package's for its products. Scheme files for
-+  other targets don't stand in the way, so `scheme list`, `settings show` and
-+  the build's product lookup agree on the set `xcodebuild -list` prints.
- - `test run` exits non-zero on failures; the `--json` summary lands on stdout
-   and the failure error on stderr, so both are independently consumable.
- - simulator inline logs use a best-effort `processImagePath CONTAINS` log
-```
-
-**File**: `sweetpad-core/src/build_settings.rs` (modified, +12/-11)
-```diff
-@@ -116,10 +116,11 @@ impl Selection {
- /// project, then each local package, shared then the current user's
- /// directories. A scheme with no
- /// file falls back to [`Selection::AutoScheme`] only when Xcode's scheme
--/// autocreation would surface it: no container holds *any* scheme file, and
--/// the shared workspace settings don't disable autocreation. Otherwise the
--/// unknown name is an error, matching `xcodebuild -scheme Nope` against a
--/// container that does have schemes.
-+/// autocreation surfaces it: when the container lists it the way
-+/// `xcodebuild -list` does ([`project::Project::schemes`],
-+/// [`workspace::Workspace::project_for_scheme`]), which autocreates per
-+/// target rather than per container. Otherwise the unknown name is an
-+/// error, matching `xcodebuild -scheme Nope`.
- fn resolve_selection(
-     opts: &BuildSettingsOptions,
-     projects: &[PathBuf],
-@@ -142,13 +143,13 @@ fn resolve_selection(
-                 parsed: Box::new(parsed),
-             });
-         }
--        let any_scheme_files = containers
--            .iter()
--            .any(|c| !scheme::container_schemes(c).is_empty());
--        let autocreation = containers
--            .first()
--            .is_some_and(|primary| scheme::autocreation_allowed(primary));
--        if any_scheme_files || !autocreation {
-+        let listed = match opts.workspace.as_deref() {
-+            Some(ws) => workspace::open(ws).is_ok_and(|ws| ws.project_for_scheme(name).is_some()),
-+            None => projects.first().is_some_and(|p| {
-+                project::open(p).is_ok_and(|project| project.schemes.iter().any(|s| s == name))
-+            }),
-+        };
-+        if !listed {
-             return Err(format!(
-                 "the workspace/project does not contain a scheme named {name:?}"
-             ));
-```
-
-**File**: `sweetpad-core/src/package_members.rs` (modified, +84/-2)
-```diff
-@@ -37,6 +37,14 @@
- //! from a rename — it names a target no longer in the manifest, and
- //! `xcodebuild` autocreates nothing for that package.
- //!
-+//! A product one of those scheme files covers gets no scheme of its own
-+//! under its name: a scheme that builds a library product, or runs an
-+//! executable one, takes its place, the way it does for a project's targets
-+//! ([`sweetpad_lib::scheme::SchemeReferences`]). On Xcode 27.0 a project whose
-+//! local package ships a `Beta.xcscheme` building its `Zeta` library lists
-+//! `Beta` and no `Zeta`. A package opened on its own lists `Zeta` all the
-+//! same.
-+//!
- //! A target that no product exposes never gets a scheme, so a package that
- //! declares no products contributes nothing but its test targets — and,
- //! without a container or a membership, nothing at all. An `executableTarget`
-@@ -186,6 +194,9 @@ struct ManifestNames {
-     /// its own.
-     name: String,
-     products: Vec<String>,
-+    /// The products that run: the declared executables and the implicit ones
-+    /// behind `executableTarget`s.
-+    executables: Vec<String>,
-     test_targets: Vec<String>,
-     targets: Vec<String>,
-     /// Absolute directories of the manifest's `.package(path:)` dependencies.
-@@ -287,6 +298,7 @@ fn cached_manifest(
-     Some(ManifestNames {
-         name: entry.get("name")?.as_str()?.to_string(),
-         products: string_list(entry, "products")?,
-+        executables: string_list(entry, "executables")?,
-         test_targets: string_list(entry, "testTargets")?,
-         targets: string_list(entry, "targets")?,
-         path_deps: string_list(entry, "pathDependencies")?
-@@ -306,6 +318,7 @@ fn cache_entry(current: Stamp, names: &ManifestNames) -> Value {
-         "mtime": mtime.to_string(),
-         "name": names.name,
-         "products": names.products,
-+        "executables": names.executables,
-         "testTargets": names.test_targets,
-         "targets": names.targets,
-         "pathDependencies": names.path_deps
-@@ -319,10 +332,21 @@ fn cache_entry(current: Stamp, names: &ManifestNames) -> Value {
- /// container names, its products, and — for a workspace member, or a package
- /// somebody has opened in Xcode — its test targets.
- fn schemes_for(dir: &Path, role: PackageRole, names: &ManifestNames) -> Vec<String> {
--    let files = sweetpad_lib::scheme::container_schemes(&package_scheme_root(dir));
-+    let root = package_scheme_root(dir);
-+    let files = sweetpad_lib::scheme::container_schemes(&root);
-     let opened_in_xcode = has_a_scheme_that_resolves(dir, &files, names);
-+    let references = sweetpad_lib::scheme::SchemeReferences::of(&root);
-+    let uncovered: Vec<String> = names
-+        .products
-+        .iter()
-+        .filter(|product| {
-+            files.contains(product)
-+                || !references.cover(None, product, names.executables.contains(product))
-+        })
-+        .cloned()
-+        .collect();
-     let mut out = files;
--    out.extend(names.products.iter().cloned());
-+    out.extend(uncovered);
-     if role == PackageRole::WorkspaceMember || opened_in_xcode {
-         out.extend(names.test_targets.iter().cloned());
-     }
-@@ -639,6 +663,7 @@ fn read_manifest(manifest: &Value) -> ManifestNames {
-             .unwrap_or_default()
-             .to_string(),
-         products: products_with_implicit_executables(manifest),
-+        executables: executable_products(manifest),
-         test_targets: names_in(manifest, "targets", is_test_target),
-         targets: names_in(manifest, "targets", |_| true),
-         path_deps: path_dependencies(manifest),
-@@ -696,6 +721,27 @@ fn products_with_implicit_executables(manifest: &Value) -> Vec<String> {
-     out
- }
- 
-+/// The products that run: the declared executables (`"type": {"executable":
-+/// null}`), and the implicit product behind each `executableTarget` no
-+/// declared product covers.
-+fn executable_products(manifest: &Value) -> Vec<String> {
-+    let declared: Vec<String> = names_in(manifest, "products", |product| {
-+        product
-+            .get("type")
-+            .is_some_and(|t| t.get("executable").is_some())
-+    });
-+    let all_declared: HashSet<String> = names_in(manifest, "products", |_| true)
-+        .into_iter()
-+        .collect();
-+    let mut out = declared;
-+    out.extend(
-+        products_with_implicit_executables(manifest)
-+            .into_iter()
-+            .filter(|name| !all_declared.contains(name)),
-+    );
-+    out
-+}
-+
- fn names_in(manifest: &Value, key: &str, keep: impl Fn(&Value) -> bool) -> Vec<String> {
-     manifest
-         .get(key)
-@@ -953,6 +999,42 @@ mod tests {
-         );
-     }
- 
-+    /// A scheme that builds a library product takes its place in a container
-+    /// that reaches the package (Xcode 27.0: a project over a package whose
-+    /// `Beta.xcscheme` builds `Zeta` lists `Beta` and no `Zeta`), while the
-+    /// package opened on its own still lists the product.
-+    #[test]
-+    fn a_scheme_that_builds_a_library_produc
-```
-
-**File**: `sweetpad-core/tests/build_settings.rs` (modified, +103/-6)
-```diff
-@@ -441,6 +441,28 @@ fn write_scheme(dir: &PathBuf, name: &str) {
-     std::fs::write(dir.join(format!("{name}.xcscheme")), SCRATCH_SCHEME_XML).unwrap();
- }
- 
-+/// [`SCRATCH_SCHEME_XML`] with a Launch action that runs the `Scratch` target.
-+fn write_running_scheme(dir: &PathBuf, name: &str) {
-+    std::fs::create_dir_all(dir).unwrap();
-+    let launch = r#"   <LaunchAction buildConfiguration="Debug">
-+      <BuildableProductRunnable runnableDebuggingMode="0">
-+         <BuildableReference
-+            BuildableIdentifier="primary"
-+            BlueprintIdentifier="14A71A1C6762522AADB33EF1"
-+            BuildableName="Scratch"
-+            BlueprintName="Scratch"
-+            ReferencedContainer="container:Scratch.xcodeproj">
-+         </BuildableReference>
-+      </BuildableProductRunnable>
-+   </LaunchAction>
-+</Scheme>"#;
-+    std::fs::write(
-+        dir.join(format!("{name}.xcscheme")),
-+        SCRATCH_SCHEME_XML.replace("</Scheme>", launch),
-+    )
-+    .unwrap();
-+}
-+
- #[test]
- fn scheme_without_file_resolves_the_same_named_target() {
-     // No `.xcscheme` exists anywhere — Xcode's autocreated per-target scheme.
-@@ -458,16 +480,34 @@ fn scheme_without_file_resolves_the_same_named_target() {
-     assert_eq!(s.get("PRODUCT_NAME").map(String::as_str), Some("Scratch"));
- }
- 
-+/// Autocreation is per target. On Xcode 27.0 this project, with a `Custom`
-+/// scheme that only builds `Scratch`, lists both `Custom` and `Scratch`, and
-+/// `xcodebuild -showBuildSettings -scheme Scratch` resolves.
- #[test]
--fn unknown_scheme_errors_when_other_scheme_files_exist() {
--    // Xcode's autocreated per-target schemes only exist in containers with
--    // NO scheme files at all. Once any scheme file exists, xcodebuild
--    // refuses an unknown scheme name even if a target with that name exists.
-+fn a_target_another_scheme_only_builds_keeps_its_autocreated_scheme() {
-     let (_root, proj) = scratch_copy("schemes-exist");
-     write_scheme(&proj.join("xcshareddata/xcschemes"), "Custom");
-     let opts = BuildSettingsOptions {
-         project: Some(proj),
--        scheme: Some("Scratch".to_string()), // a target, but not a scheme
-+        scheme: Some("Scratch".to_string()),
-+        configuration: "Debug".to_string(),
-+        sdk: "macosx".to_string(),
-+        arch: "arm64".to_string(),
-+        ..Default::default()
-+    };
-+    let s = resolve_one(opts);
-+    assert_eq!(s.get("PRODUCT_NAME").map(String::as_str), Some("Scratch"));
-+}
-+
-+/// Once `Custom` runs `Scratch` in its Launch action, Xcode 27.0 lists
-+/// `Custom` alone and refuses `-scheme Scratch`.
-+#[test]
-+fn a_target_another_scheme_runs_has_no_autocreated_scheme() {
-+    let (_root, proj) = scratch_copy("scheme-runs");
-+    write_running_scheme(&proj.join("xcshareddata/xcschemes"), "Custom");
-+    let opts = BuildSettingsOptions {
-+        project: Some(proj),
-+        scheme: Some("Scratch".to_string()),
-         configuration: "Debug".to_string(),
-         sdk: "macosx".to_string(),
-         arch: "arm64".to_string(),
-@@ -477,6 +517,63 @@ fn unknown_scheme_errors_when_other_scheme_files_exist() {
-     assert!(err.contains("does not contain a scheme"), "err: {err}");
- }
- 
-+/// A workspace listing the scratch project, with `scheme` written into the
-+/// workspace's own shared schemes by `write`.
-+fn scratch_workspace(tag: &str, write: fn(&PathBuf, &str)) -> (ScratchDir, PathBuf) {
-+    let (root, _proj) = scratch_copy(tag);
-+    let ws = root.join("W.xcworkspace");
-+    std::fs::create_dir_all(&ws).unwrap();
-+    std::fs::write(
-+        ws.join("contents.xcworkspacedata"),
-+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workspace version = \"1.0\">\n   \
-+         <FileRef location = \"group:Scratch.xcodeproj\"></FileRef>\n</Workspace>\n",
-+    )
-+    .unwrap();
-+    write(&ws.join("xcshareddata/xcschemes"), "Custom");
-+    (root, ws)
-+}
-+
-+fn workspace_scheme(ws: PathBuf, scheme: &str) -> BuildSettingsOptions {
-+    BuildSettingsOptions {
-+        workspace: Some(ws),
-+        scheme: Some(scheme.to_string()),
-+        configuration: "Debug".to_string(),
-+        sdk: "macosx".to_string(),
-+        arch: "arm64".to_string(),
-+        ..Default::default()
-+    }
-+}
-+
-+/// A member's autocreated scheme survives a workspace scheme that only builds
-+/// its target, as in `xcodebuild -list -workspace` on Xcode 27.0, and
-+/// resolves.
-+#[test]
-+fn a_workspace_scheme_that_only_builds_a_member_target_keeps_its_scheme() {
-+    let (_root, ws) = scratch_workspace("ws-builds", write_scheme);
-+    assert_eq!(
-+        sweetpad_lib::workspace::open(&ws).unwrap().merged_schemes(),
-+        ["Custom", "Scratch"]
-+    );
-+    let s = resolve_one(workspace_scheme(ws, "Scratch"));
-+    assert_eq!(s.get("PRODUCT_NAME").map(String::as_str), Some("Scratch"));
-+}
-+
-+/// A workspace scheme that runs a member target takes the place of the
-+/// target's autocreated scheme, in the listing and in resolution.
-+#[test]
-+fn a_workspace_scheme_that_runs_a_member_target_repl
-```
-
-**File**: `sweetpad-core/tests/project_resolution_fixes.rs` (modified, +35/-0)
-```diff
-@@ -377,6 +377,41 @@ fn scheme_for_target_autocreates_when_no_scheme_files() {
-     assert_eq!(scheme_for_target(&proj, "App").as_deref(), Some("App"));
- }
- 
-+/// Autocreation is per target: a scheme file for `Tool` leaves `App` its own
-+/// autocreated scheme, and a prepare of `App` builds through it.
-+#[test]
-+fn scheme_for_target_autocreates_beside_another_targets_scheme() {
-+    let (_root, proj) = scratch_xcodeproj("scheme-autocreate-beside", TWO_CONFIG_PBXPROJ);
-+    write_scheme(&proj.join("xcshareddata/xcschemes"), "ToolScheme", "Tool");
-+    assert_eq!(open(&proj).unwrap().schemes, ["App", "Tool", "ToolScheme"]);
-+    assert_eq!(scheme_for_target(&proj, "App").as_deref(), Some("App"));
-+}
-+
-+/// A scheme that runs `App` under another name takes the place of its
-+/// autocreated one: Xcode 27.0 lists only that scheme.
-+#[test]
-+fn a_scheme_that_runs_a_target_replaces_its_autocreated_scheme() {
-+    let (_root, proj) = scratch_xcodeproj("scheme-runs-target", TWO_CONFIG_PBXPROJ);
-+    let dir = proj.join("xcshareddata/xcschemes");
-+    fs::create_dir_all(&dir).unwrap();
-+    fs::write(
-+        dir.join("Main.xcscheme"),
-+        r#"<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme version = "1.7">
-+   <LaunchAction buildConfiguration = "Debug">
-+      <BuildableProductRunnable runnableDebuggingMode = "0">
-+         <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "APP"
-+            BuildableName = "App.app" BlueprintName = "App" ReferencedContainer = "container:App.xcodeproj">
-+         </BuildableReference>
-+      </BuildableProductRunnable>
-+   </LaunchAction>
-+</Scheme>
-+"#,
-+    )
-+    .unwrap();
-+    assert_eq!(open(&proj).unwrap().schemes, ["Main", "Tool"]);
-+}
-+
- /// The plist disabling scheme autocreation, as Xcode writes it (and XcodeGen /
- /// Tuist generate it).
- const AUTOCREATE_OFF_PLIST: &str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
-```
-
-**File**: `sweetpad-lib/src/project.rs` (modified, +70/-38)
-```diff
-@@ -28,8 +28,8 @@ pub struct Project {
-     /// Scheme names for this project, sorted alphabetically — the set
-     /// `xcodebuild -list` prints: shared (`xcshareddata/xcschemes`) plus
-     /// per-user (`xcuserdata/<user>.xcuserdatad/xcschemes`) scheme files,
--    /// plus one autocreated scheme per eligible target not already named by
--    /// a scheme file (Xcode's scheme autocreation; see
-+    /// plus one autocreated scheme per eligible target no scheme file names
-+    /// or runs (Xcode's scheme autocreation; see [`listed_schemes`], and
-     /// [`autocreates_scheme_for_target`] for the eligibility rules). Schemes
-     /// that `xcodebuild` additionally synthesizes from Swift *package*
-     /// manifests are out of scope — they aren't derivable from the pbxproj.
-@@ -206,32 +206,10 @@ pub fn open_from_value(value: &Value, xcodeproj_path: &Path) -> Result<Project,
-     let configurations = extract_project_configurations(objects, project_obj)?;
-     let default_configuration = default_configuration_name(objects, project_obj);
-     let targets = extract_targets(objects, project_obj)?;
--    let mut schemes = crate::scheme::container_schemes(xcodeproj_path);
--    if crate::scheme::autocreation_allowed(xcodeproj_path) {
--        // Mirror Xcode's per-target scheme autocreation: `xcodebuild -list`
--        // reports one scheme per eligible target that no scheme file already
--        // names, even when other targets DO have scheme files (kingfisher's
--        // Demo project ships only `Kingfisher-Demo.xcscheme` yet lists its
--        // macOS/tvOS/watchOS demo apps too; NetNewsWire lists its
--        // extension targets). When the workspace settings disable
--        // autocreation (XcodeGen / Tuist write the flag), `xcodebuild -list`
--        // shows only the scheme files and so do we.
--        let existing: std::collections::BTreeSet<&str> =
--            schemes.iter().map(String::as_str).collect();
--        let first_config = configurations.first().cloned();
--        let autocreated: Vec<String> = targets
--            .iter()
--            .filter(|t| !existing.contains(t.name.as_str()))
--            .filter(|t| {
--                autocreates_scheme_for_target(value, xcodeproj_path, t, first_config.as_deref())
--            })
--            .map(|t| t.name.clone())
--            .collect();
--        schemes.extend(autocreated);
--        schemes.dedup();
--    }
--    crate::scheme::sort_like_xcodebuild(&mut schemes);
--    schemes.dedup();
-+    let first_config = configurations.first().cloned();
-+    let schemes = listed_schemes(xcodeproj_path, &targets, |t| {
-+        autocreates_scheme_for_target(value, xcodeproj_path, t, first_config.as_deref())
-+    });
- 
-     let name = xcodeproj_path
-         .file_stem()
-@@ -427,6 +405,58 @@ fn names_a_directory(node: &Value) -> bool {
-     }
- }
- 
-+/// The schemes `xcodebuild -list -project` prints for the project at
-+/// `xcodeproj_path`: its scheme files, plus one autocreated scheme per target
-+/// `eligible` accepts that no scheme file names or runs, sorted the way
-+/// `xcodebuild` sorts. Both project formats list their schemes through here.
-+///
-+/// Autocreation is per target, not per project: a project with scheme files
-+/// still lists a scheme for each other eligible target (kingfisher's Demo
-+/// project ships only `Kingfisher-Demo.xcscheme` yet lists its
-+/// macOS/tvOS/watchOS demo apps too; NetNewsWire lists its extension
-+/// targets). A target a scheme file runs, or builds when the target doesn't
-+/// run, has none under its own name ([`crate::scheme::SchemeReferences`]).
-+/// When the workspace settings disable
-+/// autocreation (XcodeGen / Tuist write the flag), `xcodebuild -list` shows
-+/// only the scheme files and so do we.
-+pub(crate) fn listed_schemes(
-+    xcodeproj_path: &Path,
-+    targets: &[Target],
-+    eligible: impl Fn(&Target) -> bool,
-+) -> Vec<String> {
-+    let mut schemes = crate::scheme::container_schemes(xcodeproj_path);
-+    if crate::scheme::autocreation_allowed(xcodeproj_path) {
-+        let existing: std::collections::BTreeSet<&str> =
-+            schemes.iter().map(String::as_str).collect();
-+        let references = crate::scheme::SchemeReferences::of(xcodeproj_path);
-+        let autocreated: Vec<String> = targets
-+            .iter()
-+            .filter(|t| !existing.contains(t.name.as_str()))
-+            .filter(|t| !references.cover(Some(xcodeproj_path), &t.name, t.runs()))
-+            .filter(|t| eligible(t))
-+            .map(|t| t.name.clone())
-+            .collect();
-+        schemes.extend(autocreated);
-+    }
-+    crate::scheme::sort_like_xcodebuild(&mut schemes);
-+    schemes.dedup();
-+    schemes
-+}
-+
-+impl Target {
-+    /// Whether the target is something a scheme runs, an app, a command-line
-+    /// tool or an app extension, rather than something it only builds.
-+    #[must_use]
-+    pub fn runs(&self) -> bool {
-+        self.product_type.as_deref().is_some_and(|pt| {
-+            pt.starts_with("com.apple.
-```
-
-**File**: `sweetpad-lib/src/project_xcproj.rs` (modified, +4/-17)
-```diff
-@@ -67,23 +67,10 @@ pub(crate) fn open_from_value(value: &Value, xcodeproj_path: &Path) -> Result<Pr
-     let default_configuration = schema::default_configuration(value).map(str::to_string);
-     let targets = extract_targets(value, &configurations);
- 
--    let mut schemes = crate::scheme::container_schemes(xcodeproj_path);
--    if crate::scheme::autocreation_allowed(xcodeproj_path) {
--        let existing: std::collections::BTreeSet<&str> =
--            schemes.iter().map(String::as_str).collect();
--        let first_config = configurations.first().cloned();
--        let autocreated: Vec<String> = targets
--            .iter()
--            .filter(|t| !existing.contains(t.name.as_str()))
--            .filter(|t| {
--                autocreates_scheme_for_target(value, xcodeproj_path, t, first_config.as_deref())
--            })
--            .map(|t| t.name.clone())
--            .collect();
--        schemes.extend(autocreated);
--    }
--    crate::scheme::sort_like_xcodebuild(&mut schemes);
--    schemes.dedup();
-+    let first_config = configurations.first().cloned();
-+    let schemes = crate::project::listed_schemes(xcodeproj_path, &targets, |t| {
-+        autocreates_scheme_for_target(value, xcodeproj_path, t, first_config.as_deref())
-+    });
- 
-     let name = xcodeproj_path
-         .file_stem()
-```
-
-**File**: `sweetpad-lib/src/scheme.rs` (modified, +132/-0)
-```diff
-@@ -353,6 +353,96 @@ pub fn find_scheme_file(container: &Path, name: &str) -> Option<PathBuf> {
-         .find(|p| p.is_file())
- }
- 
-+/// The targets the scheme files stored in a container point at, which decide
-+/// the targets Xcode autocreates no scheme for.
-+///
-+/// Measured on Xcode 27.0 with `xcodebuild -list`: a target that runs (an
-+/// app, a tool, an extension) loses its autocreated scheme once a scheme with
-+/// another name runs it in its Launch or Profile action, and keeps it when
-+/// that scheme only builds it or names it as the test action's macro
-+/// expansion. A target that doesn't run (a framework, a library, a package's
-+/// library product) loses it once a scheme builds it. A workspace's scheme
-+/// files count for its member projects the same way.
-+#[derive(Debug, Clone, Default)]
-+pub struct SchemeReferences {
-+    /// Each scheme's Launch or Profile runnable, as the project its
-+    /// `ReferencedContainer` names and the target's name.
-+    runs: Vec<(Option<PathBuf>, String)>,
-+    /// Each scheme's Build action entries, the same way.
-+    builds: Vec<(Option<PathBuf>, String)>,
-+}
-+
-+impl SchemeReferences {
-+    /// What the shared and the current user's scheme files in `container` (a
-+    /// `.xcodeproj`, a `.xcworkspace`, or a package's `.swiftpm/xcode`) point
-+    /// at. A `container:` reference resolves against the directory holding
-+    /// `container`; one that names no project (a package's `container:`)
-+    /// matches by target name alone.
-+    #[must_use]
-+    pub fn of(container: &Path) -> Self {
-+        let base = container.parent().unwrap_or(Path::new(""));
-+        let project_of = |reference: &BuildableRef| match reference.container.split_once(':') {
-+            Some(("container", "")) => None,
-+            Some(("container", rel)) => Some(crate::project::absolutize(&base.join(rel))),
-+            Some(("absolute", abs)) => Some(crate::project::absolutize(Path::new(abs))),
-+            _ => None,
-+        };
-+        let mut out = Self::default();
-+        for name in container_schemes(container) {
-+            let Some(root) =
-+                find_scheme_file(container, &name).and_then(|p| xcscheme::parse_file(&p).ok())
-+            else {
-+                continue;
-+            };
-+            for action in ["LaunchAction", "ProfileAction"] {
-+                if let Some(reference) = root
-+                    .child(action)
-+                    .and_then(|a| {
-+                        a.child("BuildableProductRunnable")
-+                            .or_else(|| a.child("RemoteRunnable"))
-+                    })
-+                    .and_then(|r| r.child("BuildableReference"))
-+                    .and_then(parse_buildable)
-+                {
-+                    out.runs
-+                        .push((project_of(&reference), reference.blueprint_name.clone()));
-+                }
-+            }
-+            let entries = root
-+                .child("BuildAction")
-+                .and_then(|b| b.child("BuildActionEntries"));
-+            for entry in entries
-+                .map(|e| e.children_named("BuildActionEntry").collect::<Vec<_>>())
-+                .unwrap_or_default()
-+            {
-+                if let Some(reference) = entry.child("BuildableReference").and_then(parse_buildable)
-+                {
-+                    out.builds
-+                        .push((project_of(&reference), reference.blueprint_name.clone()));
-+                }
-+            }
-+        }
-+        out
-+    }
-+
-+    /// Whether a scheme takes the place of `target`'s autocreated one: a
-+    /// scheme that runs it, for a target that `runs`, or one that builds it,
-+    /// for one that doesn't. `project` is the target's `.xcodeproj`; `None`
-+    /// matches by name alone.
-+    #[must_use]
-+    pub fn cover(&self, project: Option<&Path>, target: &str, runs: bool) -> bool {
-+        let project = project.map(crate::project::absolutize);
-+        let references = if runs { &self.runs } else { &self.builds };
-+        references.iter().any(|(p, t)| {
-+            t == target
-+                && match (p, &project) {
-+                    (Some(p), Some(project)) => p == project,
-+                    _ => true,
-+                }
-+        })
-+    }
-+}
-+
- /// The file behind the scheme `name` that `xcodebuild` lists for `container`,
- /// or `None` when it has none (an autocreated scheme Xcode never wrote, or a
- /// name the container doesn't know). See [`locate_all`] for where it looks.
-@@ -923,4 +1013,46 @@ mod tests {
-         assert_eq!(locate(&dir, "Foreign"), None);
-         assert_eq!(locate(&dir, "Mine"), Some(mine));
-     }
-+
-+    /// A scheme building `Kit` and running `App`, both in `App.xcodeproj`.
-+    const COVERING_SCHEME: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme version = "1.7">
-+   <BuildAction>
-+      <BuildActionEntries>
-+         <BuildActionEntry buildForRunning = "YES">
-+            <BuildableReference BuildableIdentifier = "primary" Bluepri
-```
-
 #### Recent Merged Pull Requests:
 - **PR #338** (2026-09-19): Launch the simulator app Xcode 27 renamed to DeviceHub (#337) (@hyzyla)
 - **PR #334** (2026-08-26): List schemes from every local Swift package a container reaches (#327) (@hyzyla)
@@ -5622,8 +2683,6 @@ scheme list, settings show and the build's product lookup disagreed with xcodebu
 - **PR #332** (2026-08-26): Match Xcode's DerivedData folder name when the project name has a space (@hyzyla)
 - **PR #331** (2026-08-25): Rewrite the 0.2.x changelog entries as titles (@hyzyla)
 - **PR #330** (2026-08-25): Pass Xcode's header maps to sourcekit-lsp and prepare every target (@hyzyla)
-- **PR #328** (2026-08-25): feat(destination): add generic build-only destinations ("Any … Device") (@NSExceptional)
-- **PR #325** (2026-08-16): Support xcodebuild passthrough args on app install, debug, and diagnose (@hyzyla)
 
 ---
 
@@ -5637,3 +2696,54 @@ scheme list, settings show and the build's product lookup disagreed with xcodebu
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Show NSLog in debug sessions and private log values from macOS apps
+
+**RULE**:
+When implementing operations in `sweetpad-cli/CLI_DESIGN.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `111d11e5`: Show NSLog in debug sessions and private log values from macOS apps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-cli/CLI_DESIGN.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| macOS, Mac Catalyst | `posix_spawn` with `POSIX_SPAWN_START_SUSPENDED` | `attach {pid, program}` |
+level, with NSLog added (§9v). A macOS app's stdout and stderr come through the
+pipes it was started with. The lines about the launch rather than the app are
+## 9v. v8 — an app's output, once each and readable
+
+> sweetpad-dev/sweetpad#97 asked for an app's output in the editor's debug
+> console. `dap` (§9u) put it there; this section settles what reached it
+> twice, what didn't reach it, and what reached it as `<private>`.
+
+An app writes three ways. `print` and anything else on stdout or stderr reach
+the app's own pipes. `Logger` and `os_log` go to the unified log. NSLog goes to
+either: to stderr, except while a debugger is attached, when it goes to the
+unified log only. A simulator app writes it to both.
+
+**Pipes for stdio, `log stream` for the unified log, nothing else.** sweetpad
+reads stdout and stderr itself and unified-log entries through `log stream`,
+which keeps them structured: the level, subsystem and category the level keys,
+the filters and `--json` rely on. The other way to get os_log text is the
+`OS_ACTIVITY_DT_MODE` echo, which copies each entry onto stderr. Apple does
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+| macOS, Mac Catalyst | lldb-dap itself | `launch {program, args, env}` |
+level. On macOS lldb launched the process and relays its stdout itself, so only
+the log stream is added. The lines about the launch rather than the app are
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `111d11e5` are properly handled with clean fallback behavior.

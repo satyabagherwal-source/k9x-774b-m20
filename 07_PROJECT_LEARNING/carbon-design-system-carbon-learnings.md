@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md`  
 > **Source**: github ([https://github.com/carbon-design-system/carbon](https://github.com/carbon-design-system/carbon))  
-> **Source Version**: `50efc61f`  
+> **Source Version**: `f065999b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:43:34.538Z  
+> **Timestamp**: 2026-10-20T03:28:13.327Z  
 > **Learning ID**: `learn-github-carbon-design-system-carbon`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/carbon-design-system/carbon](https://github.com/carbon-design-system/carbon))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:43:33.668Z  
+> **Harvest Timestamp**: 2026-10-20T03:28:12.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A design system built by IBM
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9562 stars
+- **Stars / Engagement**: 9563 stars
 
 ---
 
@@ -740,11 +740,11 @@ export default usePageInfo;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23779** (2026-10-19): **chore(ci): pin runners to ubuntu-24.04 (test)**
+- **Issue #23779** (2026-10-19): **chore(ci): pin runners to ubuntu-24.04**
   *Symptoms*: Closes N/A  We noticed CI is failing across several PRs, including [this merge queue run](https://github.com/carbon-design-system/carbon/actions/runs/39238443093/job/118015151821) and [this PR run](https://github.com/carbon-design-system/carbon/actions/runs/39244634437/job/118033469178).  Both used Ubuntu 26.04 and reported write errors. This may be related to the [`ubuntu-latest` migration starting October 19](https://github.blog/changelog/2026-09-17-ubuntu-26-generally-available-and-latest-migration/#ubuntu-latest-is-migrating-to-ubuntu-26-04).  This PR temporarily pins runners to Ubuntu 24.04 to check whether that restores CI while we investigate compatibility with 26.04.  ### Changelog  **New**  - {{new thing}}  **Changed**  - Replaced `ubuntu-latest` with `ubuntu-24.04` in `ci.yml`.  **Removed**  - {{removed thing}}  #### Testing / Reviewing  CI should pass  ## PR Checklist  <!--   Do not remove checklist items.   If some are incomplete, create a draft pull request using the create button dropdown.   If some do not apply, ~~strike through the item text with tildes~~. -->  As the author of this PR, before marking ready for review, confirm you:  - [X] Reviewed every line of the diff - ~[ ] Updated documentation and storybook examples~ - ~[ ] Followed the       [required v12 migration documentation](https://github.com/carbon-design-system/carbon/blob/main/docs/working-with-v12.md#required-v12-migration-documentation)       for any code change that affects v12, or struck thr
 
-- **Issue #23748** (2026-10-16): **chore(deps): update chromaui/action action to v18.12.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [chromaui/action](https://redirect.github.com/chromaui/action) | action | minor | `v18.11.0` → `v18.12.2` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/10450) for more information.  ---  ### Release Notes  <details> <summary>chromaui/action</summary>  ### [`v18.12.2`](https://redirect.github.com/chromaui/action/blob/HEAD/CHANGELOG.md#v18122-Wed-Oct-14-2026)  [Compare Source](https://redirect.github.com/chromaui/action/compare/v18.12.1...v18.12.2)  ##### 🐛 Bug Fix  - \[WFL-1206] Azure DevOps slug parsing [#&#8203;1517](https://redirect.github.com/chromaui/chromatic-cli/pull/1517) ([@&#8203;ax-vasquez](https://redirect.github.com/ax-vasquez)) - Remove alpha warning from React Native build [#&#8203;1520](https://redirect.github.com/chromaui/chromatic-cli/pull/1520) ([@&#8203;jmhobbs](https://redirect.github.com/jmhobbs))  ##### Authors: 2  - Armando Vasquez ([@&#8203;ax-vasquez](https://redirect.github.com/ax-vasquez)) - John Hobbs ([@&#8203;jmhobbs](https://redirect.github.com/jmhobbs))  ***  ### [`v18.12.1`](https://redirect.github.com/chromaui/action/blob/HEAD/CHANGELOG.md#v18121-Tue-Oct-13-2026)  [Compare Source](https://redirect.github.com/chromaui/action/compare/v18.11.0...v18.12.1)  ##### 🐛 Bug Fix  - List untracked files relative to the repository root [#&#8203;1519](https://redirect.github.com/chromaui/chromati
+- **Issue #23776** (2026-10-19): **chore(deps): bump chromaui/action from 18.12.2 to 18.13.0**
+  *Symptoms*: Bumps [chromaui/action](https://github.com/chromaui/action) from 18.12.2 to 18.13.0. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/chromaui/action/blob/main/CHANGELOG.md">chromaui/action's changelog</a>.</em></p> <blockquote> <h1>v18.13.0 (Fri Oct 16 2026)</h1> <h4>🚀 Enhancement</h4> <ul> <li>[TurboSnap v2] Apply gitignore values from sibling packages in monorepos <a href="https://redirect.github.com/chromaui/chromatic-cli/pull/1527">#1527</a> (<a href="https://github.com/ObviousApp"><code>@​ObviousApp</code></a> <a href="https://github.com/obvious-autobuild%5Bbot%5D"><code>@​obvious-autobuild[bot]</code></a>)</li> <li>[TurboSnap v2] Skip gitignored files in the Storybook config directory <a href="https://redirect.github.com/chromaui/chromatic-cli/pull/1525">#1525</a> (<a href="https://github.com/codykaup"><code>@​codykaup</code></a>)</li> <li>[TurboSnap v2] Add <code>--untraced</code> support <a href="https://redirect.github.com/chromaui/chromatic-cli/pull/1522">#1522</a> (<a href="https://github.com/codykaup"><code>@​codykaup</code></a>)</li> <li>[TurboSnap v2] Add <code>--externals</code> support <a href="https://redirect.github.com/chromaui/chromatic-cli/pull/1516">#1516</a> (<a href="https://github.com/codykaup"><code>@​codykaup</code></a>)</li> </ul> <h4>🐛 Bug Fix</h4> <ul> <li>Dedupe concurrent Release workflow runs <a href="https://redirect.github.com/chromaui/chromatic-cli/pull/1526">#1526</a> (<a href="https://github.com/Ob
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -761,285 +761,283 @@ export default usePageInfo;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50efc61f` (2026-10-19)
-**Commit Message**: chore(ci): pin runners to ubuntu-24.04 (#23779)
+### Incident Patch 1: `f065999b` (2026-10-19)
+**Commit Message**: chore(deps): bump chromaui/action from 18.12.2 to 18.13.0 (#23776)
 
-**File**: `.github/workflows/ci.yml` (modified, +13/-13)
+Bumps [chromaui/action](https://github.com/chromaui/action) from 18.12.2 to 18.13.0.
+- [Release notes](https://github.com/chromaui/action/releases)
+- [Changelog](https://github.com/chromaui/action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/chromaui/action/compare/18599f2ae5010524d496b86099c9b69a37f5d8d2...e50abd573c8a789526f165fec06137a7c21d7299)
+
+---
+updated-dependencies:
+- dependency-name: chromaui/action
+  dependency-version: 18.13.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ concurrency:
- 
- jobs:
-   dedupe:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -29,7 +29,7 @@ jobs:
-         run: yarn dedupe --check
- 
-   format:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -55,7 +55,7 @@ jobs:
-         run: yarn format:diff
- 
-   lint:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -83,7 +83,7 @@ jobs:
-         run: yarn lint:styles
- 
-   test:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -126,7 +126,7 @@ jobs:
-           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
- 
-   web-components-test:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -167,7 +167,7 @@ jobs:
-           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
- 
-   elements-previews:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -196,7 +196,7 @@ jobs:
- 
-   e2e:
-     name: 'test:e2e'
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       # Filter first so PRs that don't touch these paths skip install and build
-@@ -256,7 +256,7 @@ jobs:
-         run: yarn test:e2e
- 
-   avt-build:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -301,7 +301,7 @@ jobs:
-       matrix:
-         shardIndex: [1, 2, 3, 4]
-         shardTotal: [4]
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -359,7 +359,7 @@ jobs:
- 
-   avt:
-     if: ${{ always() }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     needs: avt-runner
-     steps:
-       - name: Check AVT Runner job status
-@@ -373,7 +373,7 @@ jobs:
-       github.event.pull_request.draft == false }}
-     needs: [avt-runner]
- 
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Use Node.js version from .nvmrc
-@@ -420,7 +420,7 @@ jobs:
-     if:
-       ${{ github.repository == 'carbon-design-system/carbon' &&
-       github.event.pull_request.draft == false }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     outputs:
-       buildUrl: ${{ steps.chromatic.outputs.buildUrl }}
-       storybookUrl: ${{ steps.chromatic.outputs.storybookUrl }}
-@@ -497,7 +497,7 @@ jobs:
-   # status checks. This avoids noisy/large comments for deploy previews.
-   react-storybook-preview:
-     if: github.event_name != 'merge_group'
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     needs: chromatic-react
-     environment:
-       name: '@carbon/react storybook preview'
+@@ -460,7 +460,7 @@ jobs:
+         run: yarn build
+       - id: chromatic
+         name: Run Chromatic
+-        uses: chromaui/action@18599f2ae5010524d496b86099c9b69a37f5d8d2 # v18.12.2
++        uses: chromaui/action@e50abd573c8a789526f165fec06137a7c21d7299 # v18.13.0
+         with:
+           # 👇 Token is intentionally plaintext
+           # https://www.chromatic.com/docs/github-actions/#run-chromatic-on-external-forks-of-open-source-projects
 ```
 
 ---
 
-### Incident Patch 2: `87a252ff` (2026-10-19)
-**Commit Message**: feat(search): design intent 2.0 (#23553)
+### Incident Patch 2: `9f940500` (2026-10-19)
+**Commit Message**: fix(popover): avoid caret style reads on rerender (#23654)
 
-* feat(search): v12 close button and input padding updates
+* fix(popover): avoid caret style reads on rerender
 
-* docs: document Search close button v12 migration
+* fix(ci): increase heap for Netlify deploy previews
 
-* fix(search): clear button padding
+Signed-off-by: Subhom1 <[REDACTED_EMAIL]>
 
-**File**: `docs/migration/v12.md` (modified, +16/-0)
+* fix(netlify): remove deploy preview node options
+
+---------
+
+Signed-off-by: Subhom1 <[REDACTED_EMAIL]>
+Co-authored-by: Anna Wen <[REDACTED_EMAIL]>
+Co-authored-by: Heloise Lui <[REDACTED_EMAIL]>
+
+**File**: `packages/react/src/components/Popover/__tests__/Popover-test.js` (modified, +47/-0)
 ```diff
-@@ -362,6 +362,22 @@ Notifications have rounded corners and updated close button sizing:
- Review custom notification border overrides, close button selectors, and visual
- snapshots across packages.
+@@ -8,6 +8,7 @@
+ import { render, screen } from '@testing-library/react';
+ import React, { forwardRef } from 'react';
+ import { Popover, PopoverContent } from '../../Popover';
++import { ClassPrefix } from '../../ClassPrefix';
+ import userEvent from '@testing-library/user-event';
+ import { waitForPosition } from '../../ListBox/test-helpers';
+ import RadioButton from '../../RadioButton';
+@@ -101,6 +102,52 @@ describe('Popover', () => {
+     expect(container.firstChild).toHaveAttribute('data-testid', 'test');
+   });
  
-+### Sass Search close button border radius and sizing
++  it('should only read computed style for caret dimensions when relevant inputs change', () => {
++    const getComputedStyleSpy = jest
++      .spyOn(window, 'getComputedStyle')
++      .mockImplementation(() => ({
++        getPropertyValue: jest.fn(() => ''),
++      }));
++    const TestPopover = ({ caret = true, label = 'Settings', prefix }) => (
++      <ClassPrefix prefix={prefix}>
++        <Popover open={false} caret={caret}>
++          <button type="button">{label}</button>
++          <PopoverContent>test</PopoverContent>
++        </Popover>
++      </ClassPrefix>
++    );
 +
-+Search close buttons in v12 are circular with updated sizing and insets:
++    try {
++      const { rerender } = render(<TestPopover prefix="cds" />);
 +
-+- Search close buttons (`.cds--search-close`) and their focus indicators now use
-+  `$border-radius-max`.
-+- Close button dimensions are reduced relative to the search input (`24px` for
-+  `xs`/`sm`/`md` search sizes, `32px` for `lg` search size) and vertically
-+  centered within the field.
-+- End padding on `.cds--search-input` adjusts dynamically based on search size
-+  and whether the clear button is visible.
++      expect(getComputedStyleSpy).toHaveBeenCalled();
 +
-+This style change supports both [`@carbon/react`](#carbonreact) and
-+[`@carbon/web-components`](#carbonweb-components). Review custom Search styles,
-+close button overrides, and visual snapshots across packages.
++      getComputedStyleSpy.mockClear();
 +
- ## `@carbon/web-components`
- 
- ### Popover Caret
++      rerender(<TestPopover prefix="cds" label="Updated settings" />);
++
++      expect(getComputedStyleSpy).not.toHaveBeenCalled();
++
++      rerender(<TestPopover prefix="custom" label="Updated settings" />);
++
++      expect(getComputedStyleSpy).toHaveBeenCalled();
++
++      getComputedStyleSpy.mockClear();
++
++      rerender(
++        <TestPopover prefix="custom" label="Updated settings" caret={false} />
++      );
++
++      expect(getComputedStyleSpy).not.toHaveBeenCalled();
++
++      rerender(<TestPopover prefix="custom" label="Updated settings" />);
++
++      expect(getComputedStyleSpy).toHaveBeenCalled();
++    } finally {
++      getComputedStyleSpy.mockRestore();
++    }
++  });
++
+   describe('PopoverContent', () => {
+     it('should support a ref on the popover-content element', () => {
+       const ref = jest.fn();
 ```
 
-**File**: `packages/styles/scss/components/search/_search.scss` (modified, +78/-0)
+**File**: `packages/react/src/components/Popover/index.tsx` (modified, +1/-1)
 ```diff
-@@ -89,6 +89,39 @@
-             $border-strong 100%
-           )
-           border-box;
-+
-+      // padding-inline-end: button_size + inset_inline_end + $spacing-03 (8px gap).
-+      // xs: 24px + 0px         + 8px = 32px
-+      // sm: 24px + $spacing-02 + 8px = 36px
-+      // md: 24px + $spacing-03 + 8px = 40px
-+      // lg: 32px + $spacing-03 + 8px = 48px
-+      // padding-inline-start stays as layout.size('height') (= icon_right_edge + gap):
-+      // xs: (24+16)/2 + 4px gap = 24px; sm: 32px; md: 40px; lg: 48px — all equal layout.size('height').
-+      .#{$prefix}--layout--size-xs & {
-+        padding-inline-end: calc(#{convert.to-rem(24px)} + #{$spacing-03});
-+      }
-+
-+      .#{$prefix}--layout--size-sm & {
-+        padding-inline-end: calc(
-+          #{convert.to-rem(24px)} + #{$spacing-02} + #{$spacing-03}
-+        );
-+      }
-+
-+      .#{$prefix}--layout--size-md & {
-+        padding-inline-end: calc(
-+          #{convert.to-rem(24px)} + #{$spacing-03} + #{$spacing-03}
-+        );
-+      }
-+
-+      .#{$prefix}--layout--size-lg & {
-+        padding-inline-end: calc(
-+          #{convert.to-rem(32px)} + #{$spacing-03} + #{$spacing-03}
-+        );
-+      }
-+      // When close button is hidden (empty input), use $spacing-03 (8px) padding-inline-end.
-+      &:has(~ .#{$prefix}--search-close--hidden) {
-+        padding-inline-end: $spacing-03;
-+      }
+@@ -366,7 +366,7 @@ export const Popover: PopoverComponent & {
+           : Number(caretProperty.split('rem', 1)[0]) * 16;
+       }
      }
+-  });
++  }, [caret, prefix]);
+   const { refs, floatingStyles, placement, middlewareData, elements, update } =
+     useFloating(
+       enableFloatingStyles
+```
+
+---
+
+### Incident Patch 3: `cf6a4a21` (2026-10-19)
+**Commit Message**: fix(TextInput): prevent invalid/warn when readonly or disabled (#20733) (#23765)
+
+**File**: `packages/web-components/src/components/text-input/__tests__/text-input-test.js` (modified, +84/-0)
+```diff
+@@ -108,6 +108,90 @@ describe('cds-text-input', () => {
+     expect(error.textContent).to.include('This is an error');
+   });
  
-     &:focus {
-@@ -154,6 +187,11 @@
-     background-clip: padding-box;
-     inset-block-start: 0;
-     inset-inline-end: 0;
++  it('should not have invalid classname when is disabled', async () => {
++    const el = await fixture(html`
++      <cds-text-input
++        label="test-label"
++        invalid
++        invalid-text="Invalid message"
++        disabled>
++      </cds-text-input>
++    `);
 +
-+    @if enabled('enable-v12-release') {
-+      inset-block-start: 50%;
-+      transform: translateY(-50%);
-+    }
-   }
++    const input = el.shadowRoot.querySelector('input');
++    expect(input.classList.contains('cds--text-input--invalid')).to.be.false;
++    expect(input.hasAttribute('data-invalid')).to.be.false;
++    const fieldWrapper = el.shadowRoot.querySelector(
++      '.cds--text-input__field-wrapper'
++    );
++    expect(fieldWrapper.hasAttribute('data-invalid')).to.be.false;
++    expect(el.shadowRoot.querySelector('.cds--form-requirement')).to.be.null;
++    expect(el.shadowRoot.querySelector('.cds--text-input__invalid-icon')).to.be
++      .null;
++  });
++
++  it('should not have invalid classname when is readonly', async () => {
++    const el = await fixture(html`
++      <cds-text-input
++        label="test-label"
++        invalid
++        invalid-text="Invalid message"
++        readonly>
++      </cds-text-input>
++    `);
++
++    const input = el.shadowRoot.querySelector('input');
++    expect(input.classList.contains('cds--text-input--invalid')).to.be.false;
++    expect(input.hasAttribute('data-invalid')).to.be.false;
++    const fieldWrapper = el.shadowRoot.querySelector(
++      '.cds--text-input__field-wrapper'
++    );
++    expect(fieldWrapper.hasAttribute('data-invalid')).to.be.false;
++    expect(el.shadowRoot.querySelector('.cds--form-requirement')).to.be.null;
++    expect(el.shadowRoot.querySelector('.cds--text-input__invalid-icon')).to.be
++      .null;
++  });
++
++  it('should not have warn classname when is disabled', async () => {
++    const el = await fixture(html`
++      <cds-text-input label="test-label" warn warn-text="Warn message" disabled>
++      </cds-text-input>
++    `);
++
++    const input = el.shadowRoot.querySelector('input');
++    expect(input.classList.contains('cds--text-input--warning')).to.be.false;
++    const fieldWrapper = el.shadowRoot.querySelector(
++      '.cds--text-input__field-wrapper'
++    );
++    expect(
++      fieldWrapper.classList.contains('cds--text-input__field-wrapper--warning')
++    ).to.be.false;
++    expect(el.shadowRoot.querySelector('.cds--form-requirement')).to.be.null;
++    expect(
++      el.shadowRoot.querySelector('.cds--text-input__invalid-icon--warning')
++    ).to.be.null;
++  });
++
++  it('should not have warn classname when is readonly', async () => {
++    const el = await fixture(html`
++      <cds-text-input label="test-label" warn warn-text="Warn message" readonly>
++      </cds-text-input>
++    `);
++
++    const input = el.shadowRoot.querySelector('input');
++    expect(input.classList.contains('cds--text-input--warning')).to.be.false;
++    const fieldWrapper = el.shadowRoot.querySelector(
++      '.cds--text-input__field-wrapper'
++    );
++    expect(
++      fieldWrapper.classList.contains('cds--text-input__field-wrapper--warning')
++    ).to.be.false;
++    expect(el.shadowRoot.querySelector('.cds--form-requirement')).to.be.null;
++    expect(
++      el.shadowRoot.querySelector('.cds--text-input__invalid-icon--warning')
++    ).to.be.null;
++  });
++
+   it('should render warning text', async () => {
+     const el = await fixture(html`
+       <cds-text-input
+```
+
+**File**: `packages/web-components/src/components/text-input/text-input.ts` (modified, +8/-4)
+```diff
+@@ -379,6 +379,8 @@ class CDSTextInput extends ValidityMixin(FormMixin(LitElement)) {
+       class: `${prefix}--text-input__invalid-icon ${prefix}--text-input__invalid-icon--warning`,
+     });
  
-   .#{$prefix}--search-button {
-@@ -210,6 +248,40 @@
-     }
-   }
- 
-+  .#{$prefix}--search-close {
-+    @if enabled('enable-v12-release') {
-+      // For v12: close button is smaller than the search field.
-+      // lg search (48px) → sm button (32px); md/sm/xs search → xs button (24px).
-+      @include layout.redefine-tokens(
-+        (
-+          size: (
-+            height: (
-+              xs: convert.to-rem(24px),
-+              sm: convert.to-rem(24px),
-+              md: convert.to-rem(24px),
-+              lg: convert.to-rem(32px),
-+            ),
-+          ),
-+        )
-+      );
-+      @include layout.use('size', $default: 'md', $min: 'xs', $max: 'lg');
++    const isInteractive = !readonly && !disabled;
 +
-+      // lg/md → 8px padding-inline-end; sm → 4px; xs → 0
-+      border-radius: $border-radius-max;
-+      block-size: layout.size('height');
-+      inline-size: layout.size('height');
-+      inset-inline-end: $spacing-03;
-+
-+      .#{$prefix}--layout--size-sm & {
-+        inset-inline-end: $spacing-02;
-+      }
-+
-+      .#{$prefix}--layout--size-xs & {
-+        inset-inline-end: 0;
-+      }
-+    }
-+  }
-+
-   // Preserve the field focus outline while the clear button is hovered.
-   .#{$prefix}--search-input:focus ~ .#{$prefix}--search-close:hover {
-     background-color: transparent;
-@@ -223,6 +295,12 @@
-       inset-block: $spacing-01;
-       inset-inline: 0 $spacing-01;
-       pointer-events: none;
-+
-+      @if enabled('enable-v12-release') {
-+        border-radius: $border-radius-max;
-+        inset-block: 0;
-+        inset-inline: 0;
-+      }
-     }
-   }
- 
+     const normalizedProps: {
+       disabled: boolean;
+       invalid: boolean;
+@@ -388,8 +390,8 @@ class CDSTextInput extends ValidityMixin(FormMixin(LitElement)) {
+       icon: ReturnType<typeof iconLoader>;
+     } = {
+       disabled: !readonly && disabled,
+-      invalid: !readonly && invalid,
+-      warn: !readonly && !invalid && warn,
++      invalid: isInteractive && invalid,
++      warn: isInteractive && !invalid && warn,
+       'slot-name': '',
+       'slot-text': '',
+       icon: null,
+@@ -552,12 +554,14 @@ class CDSTextInput extends ValidityMixin(FormMixin(LitElement)) {
+               ${labelWrapper}
+             </div>`}
+         <div class="${fieldOuterWrapperClasses}">
+-          <div class="${fieldWrapperClasses}" ?data-invalid="${invalid}">
++          <div
++            class="${fieldWrapperClasses}"
++            ?data-invalid="${normalizedProps.invalid}">
+             <input
+               autocomplete="${this.autocomplete}"
+               ?autofocus="${this.autofocus}"
+               class="${inputClasses}"
+-              ?data-invalid="${invalid}"
++              ?data-invalid="${normalizedProps.invalid}"
+               ?disabled="${disabled}"
+               aria-describedby="${ifDefined(describedBy)}"
+               id="input"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23779** (2026-10-19): chore(ci): pin runners to ubuntu-24.04 (test) (@heloiselui)
+- **PR #23779** (2026-10-19): chore(ci): pin runners to ubuntu-24.04 (@heloiselui)
+- **PR #23776** (2026-10-19): chore(deps): bump chromaui/action from 18.12.2 to 18.13.0 (@dependabot[bot])
+- **PR #23775** (2026-10-19): chore(release): v11.119.0-rc.0 (@carbon-automation[bot])
+- **PR #23766** (closed): chore(deps): update chromaui/action action to v18.13.0 - autoclosed (@renovate[bot])
+- **PR #23765** (2026-10-19): fix(TextInput): prevent invalid/warn when readonly or disabled (@jvictorfsilva)
 - **PR #23748** (2026-10-16): chore(deps): update chromaui/action action to v18.12.2 (@renovate[bot])
-- **PR #23747** (2026-10-16): chore(deps): update dependency typescript-eslint to v8.71.2 (@renovate[bot])
-- **PR #23746** (2026-10-16): chore: merge main into next (@carbon-automation[bot])
-- **PR #23743** (2026-10-15): docs: update contribution docs and templates (@adamalston)
-- **PR #23741** (2026-10-15): docs: update React and Web Components documentation (@adamalston)
 
 ---
 
@@ -1059,13 +1057,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): pin runners to ubuntu-24.04 (#23779)
+## X. deps): bump chromaui/action from 18.12.2 to 18.13.0 (#23776)
 
 **RULE**:
 When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50efc61f`: ci): pin runners to ubuntu-24.04 (#23779). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f065999b`: deps): bump chromaui/action from 18.12.2 to 18.13.0 (#23776). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
@@ -1073,38 +1071,14 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
+        uses: chromaui/action@e50abd573c8a789526f165fec06137a7c21d7299 # v18.13.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
+        uses: chromaui/action@18599f2ae5010524d496b86099c9b69a37f5d8d2 # v18.12.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50efc61f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f065999b` are properly handled with clean fallback behavior.

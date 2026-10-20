@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-J9WS",
-    "timestamp": "2026-10-19T11:09:12.556Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-JBAC",
-    "timestamp": "2026-10-19T11:09:14.340Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "ac2fca0bd377f03240a5535a854c4d708dfede01048981f17d4b483b2c093f59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R2US",
-    "timestamp": "2026-10-19T11:15:16.660Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R67W",
-    "timestamp": "2026-10-19T11:15:21.020Z",
-    "repository": "gao-sun/eul",
-    "learningId": "learn-github-gao-sun-eul",
-    "contentHash": "bf01ea57d7d2460dfce7e126f04bc5f4f1a9248f2d53e9abe553cc2bb11b305d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-R9BE",
     "timestamp": "2026-10-19T11:15:25.034Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7430,66 @@
     "repository": "signerlabs/Klee",
     "learningId": "learn-github-signerlabs-klee",
     "contentHash": "e221660c61cab792c76247df66335127514f3cb37af0ee339d1887feb84564c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IAT2",
+    "timestamp": "2026-10-20T03:28:13.622Z",
+    "repository": "carbon-design-system/carbon",
+    "learningId": "learn-github-carbon-design-system-carbon",
+    "contentHash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IDEL",
+    "timestamp": "2026-10-20T03:28:16.989Z",
+    "repository": "testing-library/react-testing-library",
+    "learningId": "learn-github-testing-library-react-testing-library",
+    "contentHash": "c7aeacb7158e0a0ecd02954d7525e4ac17b6026a916a4bbeccb35cbfdb58cc9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IFY1",
+    "timestamp": "2026-10-20T03:28:20.281Z",
+    "repository": "sweetpad-dev/sweetpad",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IKVC",
+    "timestamp": "2026-10-20T03:28:26.664Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

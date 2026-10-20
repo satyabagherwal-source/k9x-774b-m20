@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "028aa1fc",
+    "sourceVersion": "d584197e",
     "license": "MIT",
-    "contentHash": "1dec4a2149060c28e375b797444c5610f07701c3d4743159d84440d67d925bb2",
-    "lastHarvestedAt": "2026-10-19T14:59:13.881Z",
+    "contentHash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
+    "lastHarvestedAt": "2026-10-20T03:28:26.667Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -6273,10 +6273,10 @@
     "repository": "carbon-design-system/carbon",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon",
-    "sourceVersion": "50efc61f",
+    "sourceVersion": "f065999b",
     "license": "Apache-2.0",
-    "contentHash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
-    "lastHarvestedAt": "2026-10-19T16:43:34.811Z",
+    "contentHash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
+    "lastHarvestedAt": "2026-10-20T03:28:13.626Z",
     "learningId": "learn-github-carbon-design-system-carbon"
   },
   "emilkowalski-vaul": {
@@ -10168,5 +10168,25 @@
     "contentHash": "e221660c61cab792c76247df66335127514f3cb37af0ee339d1887feb84564c4",
     "lastHarvestedAt": "2026-10-20T03:19:36.782Z",
     "learningId": "learn-github-signerlabs-klee"
+  },
+  "testing-library-react-testing-library": {
+    "repository": "testing-library/react-testing-library",
+    "platform": "github",
+    "sourceUrl": "https://github.com/testing-library/react-testing-library",
+    "sourceVersion": "20ce75f2",
+    "license": "MIT",
+    "contentHash": "c7aeacb7158e0a0ecd02954d7525e4ac17b6026a916a4bbeccb35cbfdb58cc9b",
+    "lastHarvestedAt": "2026-10-20T03:28:16.992Z",
+    "learningId": "learn-github-testing-library-react-testing-library"
+  },
+  "sweetpad-dev-sweetpad": {
+    "repository": "sweetpad-dev/sweetpad",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
+    "sourceVersion": "5ded4409",
+    "license": "MIT",
+    "contentHash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
+    "lastHarvestedAt": "2026-10-20T03:28:20.284Z",
+    "learningId": "learn-github-sweetpad-dev-sweetpad"
   }
 }

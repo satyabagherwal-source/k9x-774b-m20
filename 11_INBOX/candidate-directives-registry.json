@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:06:51.394Z",
+  "last_updated": "2026-10-20T03:28:20.288Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2103,6 +2103,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-mijick-popups"
+    },
+    {
+      "id": "CD-IFY8",
+      "directive_title": "Show NSLog in debug sessions and private log values from macOS apps",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sweetpad-dev/sweetpad",
+      "source_commit": "5ded4409",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-sweetpad-dev-sweetpad"
     }
   ]
 }

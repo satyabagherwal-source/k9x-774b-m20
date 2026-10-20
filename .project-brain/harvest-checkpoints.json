@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T03:19:36.789Z",
+  "last_updated": "2026-10-20T03:28:26.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7129,14 +7129,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "1dec4a2149060c28e375b797444c5610f07701c3d4743159d84440d67d925bb2",
-      "verified_at": "2026-10-19T14:59:13.886Z",
+      "content_hash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
+      "verified_at": "2026-10-20T03:28:26.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:59:13.886Z"
+      "last_updated": "2026-10-20T03:28:26.674Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -9529,14 +9529,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon",
-      "content_hash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
-      "verified_at": "2026-10-19T16:43:34.817Z",
+      "content_hash": "ee585cc01605b2e7d16f3b1faee9f36a023781d1a557f47a6df8a3f942ab9e6a",
+      "verified_at": "2026-10-20T03:28:13.633Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:43:34.817Z"
+      "last_updated": "2026-10-20T03:28:13.633Z"
     },
     "emilkowalski/vaul": {
       "repository": "emilkowalski/vaul",
@@ -15297,6 +15297,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T03:19:36.788Z"
+    },
+    "testing-library/react-testing-library": {
+      "repository": "testing-library/react-testing-library",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-testing-library-react-testing-library",
+      "content_hash": "c7aeacb7158e0a0ecd02954d7525e4ac17b6026a916a4bbeccb35cbfdb58cc9b",
+      "verified_at": "2026-10-20T03:28:17.000Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:28:17.000Z"
+    },
+    "sweetpad-dev/sweetpad": {
+      "repository": "sweetpad-dev/sweetpad",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sweetpad-dev-sweetpad",
+      "content_hash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
+      "verified_at": "2026-10-20T03:28:20.293Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:28:20.293Z"
     }
   },
   "repos": {

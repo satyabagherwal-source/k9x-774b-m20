@@ -3689,3 +3689,7 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cc23e63f` | Multi-dimensional audit evidence | 2026-10-20T03:13:18.447Z |
 | `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `28c74aad` | Multi-dimensional audit evidence | 2026-10-20T03:19:32.581Z |
 | `learn-github-signerlabs-klee` | `https://github.com/signerlabs/Klee` | `64bce8db` | Multi-dimensional audit evidence | 2026-10-20T03:19:36.782Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `f065999b` | Multi-dimensional audit evidence | 2026-10-20T03:28:13.626Z |
+| `learn-github-testing-library-react-testing-library` | `https://github.com/testing-library/react-testing-library` | `20ce75f2` | Multi-dimensional audit evidence | 2026-10-20T03:28:16.992Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `5ded4409` | Multi-dimensional audit evidence | 2026-10-20T03:28:20.284Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `d584197e` | Multi-dimensional audit evidence | 2026-10-20T03:28:26.667Z |
