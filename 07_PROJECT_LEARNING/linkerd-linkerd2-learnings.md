@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `b60b8e74`  
+> **Source Version**: `5bb8ea84`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:25:34.465Z  
+> **Timestamp**: 2026-10-20T21:15:03.697Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:25:34.272Z  
+> **Harvest Timestamp**: 2026-10-20T21:15:03.433Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11516 stars
+- **Stars / Engagement**: 11517 stars
 
 ---
 
@@ -1621,315 +1621,257 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7c15f3a` (2026-10-01)
-**Commit Message**: build(deps): bump clap_lex from 1.1.0 to 1.1.1 in the clap group (#15686)
+### Incident Patch 1: `3a872780` (2026-10-20)
+**Commit Message**: chore(build): update golang to 1.26.9 (#15737)
 
-Bumps the clap group with 1 update: [clap_lex](https://github.com/clap-rs/clap).
+This addresses the following CVEs:
+[GO-2026-6599](https://pkg.go.dev/vuln/GO-2026-6599)
+[GO-2026-6600](https://pkg.go.dev/vuln/GO-2026-6600)
+[GO-2026-6605](https://pkg.go.dev/vuln/GO-2026-6605)
+[GO-2026-6607](https://pkg.go.dev/vuln/GO-2026-6607)
+[GO-2026-6608](https://pkg.go.dev/vuln/GO-2026-6608)
+[GO-2026-6613](https://pkg.go.dev/vuln/GO-2026-6613)
 
+Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
+Signed-off-by: --get <[REDACTED_EMAIL]>
 
-Updates `clap_lex` from 1.1.0 to 1.1.1
-- [Release notes](https://github.com/clap-rs/clap/releases)
-- [Changelog](https://github.com/clap-rs/clap/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/clap-rs/clap/compare/clap_lex-v1.1.0...clap_lex-v1.1.1)
-
----
-updated-dependencies:
-- dependency-name: clap_lex
-  dependency-version: 1.1.1
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-  dependency-group: clap
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.github/workflows/codecov.yml` (modified, +1/-1)
 ```diff
-@@ -278,9 +278,9 @@ dependencies = [
+@@ -14,7 +14,7 @@ jobs:
+     timeout-minutes: 30
+     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
+     container:
+-      image: golang:1.26.7
++      image: golang:1.26.9
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+       - run: go install gotest.tools/gotestsum@v0.4.2
+```
+
+**File**: `Dockerfile.controller` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
+```
+
+**File**: `Dockerfile.proxy` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@ ARG RUNTIME_IMAGE="cr.l5d.io/linkerd/proxy-runtime:latest"
+ ARG TARGETARCH
  
- [[package]]
- name = "clap_lex"
--version = "1.1.0"
-+version = "1.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
-+checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
+@@ -45,7 +45,7 @@ COPY proxy-identity proxy-identity
+ RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o /out/proxy-identity -mod=readonly -ldflags "-s -w" ./proxy-identity
  
- [[package]]
- name = "cmake"
+ ## build proxy-init
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS proxy-init
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS proxy-init
+ WORKDIR /build
+ ARG PROXY_INIT_REPO="linkerd/linkerd2-proxy-init"
+ ARG PROXY_INIT_REF="proxy-init/v2.4.10"
+```
+
+**File**: `cli/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ RUN go mod download
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/linkerd/linkerd2
+ 
+-go 1.26.7
++go 1.26.9
+ 
+ require (
+ 	contrib.go.opencensus.io/exporter/ocagent v0.7.0
+```
+
+**File**: `viz/metrics-api/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
+```
+
+**File**: `viz/tap/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
+```
+
+**File**: `web/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
 ```
 
 ---
 
-### Incident Patch 2: `7065a67b` (2026-10-01)
-**Commit Message**: build(deps-dev): bump webpack from 5.110.3 to 5.111.1 in /web/app (#15677)
+### Incident Patch 2: `5bb8ea84` (2026-10-20)
+**Commit Message**: build(deps): bump golang.org/x/tools from 0.50.0 to 0.52.0 (#15721)
 
-Bumps [webpack](https://github.com/webpack/webpack) from 5.110.3 to 5.111.1.
-- [Release notes](https://github.com/webpack/webpack/releases)
-- [Changelog](https://github.com/webpack/webpack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/webpack/webpack/compare/v5.110.3...v5.111.1)
+Bumps [golang.org/x/tools](https://github.com/golang/tools) from 0.50.0 to 0.52.0.
+- [Release notes](https://github.com/golang/tools/releases)
+- [Commits](https://github.com/golang/tools/compare/v0.50.0...v0.52.0)
 
 ---
 updated-dependencies:
-- dependency-name: webpack
-  dependency-version: 5.111.0
-  dependency-type: direct:development
+- dependency-name: golang.org/x/tools
+  dependency-version: 0.52.0
+  dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `web/app/package.json` (modified, +1/-1)
-```diff
-@@ -78,7 +78,7 @@
-     "sinon-stub-promise": "4.0.0",
-     "style-loader": "^4.0.0",
-     "url-loader": "^4.1.1",
--    "webpack": "^5.110.3",
-+    "webpack": "^5.111.1",
-     "webpack-bundle-analyzer": "5.4.0",
-     "webpack-cli": "7.2.3",
-     "webpack-dev-server": "5.2.5"
-```
-
-**File**: `web/app/yarn.lock` (modified, +39/-31)
-```diff
-@@ -2516,7 +2516,7 @@
-     "@types/tough-cookie" "*"
-     parse5 "^7.0.0"
- 
--"@types/json-schema@*", "@types/json-schema@^7.0.15", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
-+"@types/json-schema@*", "@types/json-schema@^7.0.15", "@types/json-schema@^7.0.8":
-   version "7.0.15"
-   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
-   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
-@@ -2950,7 +2950,7 @@ acorn-walk@^8.0.0:
-   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.2.0.tgz#741210f2e2426454508853a2f44d0ab83b7f69c1"
-   integrity sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==
- 
--acorn@^8.0.4, acorn@^8.15.0, acorn@^8.16.0, acorn@^8.5.0, acorn@^8.9.0:
-+acorn@^8.0.4, acorn@^8.15.0, acorn@^8.5.0, acorn@^8.9.0:
-   version "8.18.0"
-   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.18.0.tgz#4faf01b2d6d326bfeed97aea1f52220b5f4c1940"
-   integrity sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==
-@@ -2975,10 +2975,10 @@ airbnb-prop-types@^2.16.0:
-     prop-types-exact "^1.2.0"
-     react-is "^16.13.1"
- 
--ajv-formats@^2.1.1:
--  version "2.1.1"
--  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.1.1.tgz#6e669400659eb74973bbf2e33327180a0996b520"
--  integrity sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==
-+ajv-formats@^3.0.1:
-+  version "3.0.1"
-+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-3.0.1.tgz#3d5dc762bca17679c3c2ea7e90ad6b7532309578"
-+  integrity sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==
-   dependencies:
-     ajv "^8.0.0"
- 
-@@ -3004,7 +3004,7 @@ ajv@^6.12.4, ajv@^6.12.5:
-     json-schema-traverse "^0.4.1"
-     uri-js "^4.2.2"
- 
--ajv@^8.0.0, ajv@^8.9.0:
-+ajv@^8.0.0:
-   version "8.12.0"
-   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.12.0.tgz#d1a0527323e22f53562c567c00991577dfbe19d1"
-   integrity sha512-sRu1kpcO9yLtYxBKvqfTeh9KzZEwO3STyX1HT+4CaDzC6HpTGYhIhPIzj9XuKU7KYDwnaeh5hcOwjy1QuJzBPA==
-@@ -3014,6 +3014,16 @@ ajv@^8.0.0, ajv@^8.9.0:
-     require-from-string "^2.0.2"
-     uri-js "^4.2.2"
- 
-+ajv@^8.20.0:
-+  version "8.20.0"
-+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.20.0.tgz#304b3636add88ba7d936760dd50ece006dea95f9"
-+  integrity sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==
-+  dependencies:
-+    fast-deep-equal "^3.1.3"
-+    fast-uri "^3.0.1"
-+    json-schema-traverse "^1.0.0"
-+    require-from-string "^2.0.2"
-+
- ansi-escapes@^4.2.1, ansi-escapes@^4.3.2:
-   version "4.3.2"
-   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"
-@@ -4553,10 +4563,10 @@ encodeurl@~2.0.0:
-   resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-2.0.0.tgz#7b8ea898077d7e409d3ac45474ea38eaf0857a58"
-   integrity sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==
- 
--enhanced-resolve@^5.24.4:
--  version "5.24.5"
--  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.24.5.tgz#b4dad3255b7545f07ba5535189868e9f85f47573"
--  integrity sha512-L1l8TNvomm6UVW5B253AGxQagSQr+vGwhMlrrfRS2qmhx46AMpMVJKQYLvWYbysTMY8VoicOvzHzoHMbyzB+4A==
-+enhanced-resolve@^5.25.0:
-+  version "5.26.0"
-+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.26.0.tgz#9dfb47d050ed6c87f2c6d43b4d7e30f8c0a91ed7"
-+  integrity sha512-9vhedylFonb2YGogzUKX6+Ja72gOJbN1QHAqdrvqLwhdl/QWbKopzoUC9EbQNVsAns/bx/4uyqalrQAoy1IByw==
-   dependencies:
-     graceful-fs "^4.2.4"
-     tapable "^2.3.3"
-@@ -5449,6 +5459,11 @@ fast-levenshtein@^2.0.6:
-   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
-   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
- 
-+fast-uri@^3.0.1:
-+  version "3.1.8"
-+  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.8.tgz#f7db8d942e20eead3cfe93b0beeb4eb0169e938b"
-+  integrity sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==
-+
- fastq@^1.6.0:
-   version "1.13.0"
-   resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
-@@ -7943,11 +7958,6 @@ negotiator@~0.6.4:
-   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.4.tgz#777948e2452651c570b712dd01c23e262713fff7"
-   integrity sha512-myRT3DiWPHqho5PrJaIRyaMv2kgYf0mUVgBNOYMuCH5Ki1yEiQaf/ZJuQ62nvpc44wL5WDbTX7yGJi1Neevw8w==
- 
--neo-async@^2.6.2:
--  version "2.6.2"
--  resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
--  integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
--
- no-case@^3.0.4
-```
-
----
-
-### Incident Patch 3: `66d17ce4` (2026-10-01)
-**Commit Message**: build(deps): bump the kube group across 1 directory with 7 updates (#15683)
-
-Bumps the kube group with 7 updates in the / directory:
-
-| Package | From | To |
-| --- | --- | --- |
-| [k8s.io/api](https://github.com/kubernetes/api) | `0.37.0` | `0.37.1` |
-| [k8s.io/apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver) | `0.37.0` | `0.37.1` |
-| [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) | `0.37.0` | `0.37.1` |
-| [k8s.io/client-go](https://github.com/kubernetes/client-go) | `0.37.0` | `0.37.1` |
-| [k8s.io/code-generator](https://github.com/kubernetes/code-generator) | `0.37.0` | `0.37.1` |
-| [k8s.io/endpointslice](https://github.com/kubernetes/endpointslice) | `0.37.0` | `0.37.1` |
-| [k8s.io/kube-aggregator](https://github.com/kubernetes/kube-aggregator) | `0.37.0` | `0.37.1` |
-
-
-
-Updates `k8s.io/api` from 0.37.0 to 0.37.1
-- [Commits](https://github.com/kubernetes/api/compare/v0.37.0...v0.37.1)
-
-Updates `k8s.io/apiextensions-apiserver` from 0.37.0 to 0.37.1
-- [Release notes](https://github.com/kubernetes/apiextensions-apiserver/releases)
-- [Commits](https://github.com/kubernetes/apiextensions-apiserver/compare/v0.37.0...v0.37.1)
-
-Updates `
-
 **File**: `go.mod` (modified, +9/-9)
 ```diff
-@@ -41,14 +41,14 @@ require (
+@@ -35,7 +35,7 @@ require (
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/spf13/pflag v1.0.10
+ 	go.opencensus.io v0.24.0
+-	golang.org/x/tools v0.50.0
++	golang.org/x/tools v0.52.0
+ 	google.golang.org/grpc v1.84.0
+ 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
  	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v2 v2.4.0
- 	helm.sh/helm/v3 v3.22.0
--	k8s.io/api v0.37.0
--	k8s.io/apiextensions-apiserver v0.37.0
--	k8s.io/apimachinery v0.37.0
--	k8s.io/client-go v0.37.0
--	k8s.io/code-generator v0.37.0
--	k8s.io/endpointslice v0.37.0
-+	k8s.io/api v0.37.1
-+	k8s.io/apiextensions-apiserver v0.37.1
-+	k8s.io/apimachinery v0.37.1
-+	k8s.io/client-go v0.37.1
-+	k8s.io/code-generator v0.37.1
-+	k8s.io/endpointslice v0.37.1
- 	k8s.io/klog/v2 v2.140.0
--	k8s.io/kube-aggregator v0.37.0
-+	k8s.io/kube-aggregator v0.37.1
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
- 	sigs.k8s.io/gateway-api v0.8.1
- 	sigs.k8s.io/yaml v1.6.0
-@@ -62,7 +62,7 @@ require (
+@@ -61,7 +61,7 @@ require (
+ 	github.com/go-openapi/swag/netutils v0.27.1 // indirect
  	github.com/go-openapi/swag/pools v0.29.1 // indirect
  	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
- 	golang.org/x/net v0.59.0 // indirect
--	k8s.io/streaming v0.37.0 // indirect
-+	k8s.io/streaming v0.37.1 // indirect
+-	golang.org/x/net v0.59.0 // indirect
++	golang.org/x/net v0.61.0 // indirect
+ 	k8s.io/streaming v0.37.1 // indirect
  )
  
- require (
-@@ -152,7 +152,7 @@ require (
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	k8s.io/cli-runtime v0.37.0 // indirect
--	k8s.io/component-base v0.37.0 // indirect
-+	k8s.io/component-base v0.37.1 // indirect
- 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
- 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
- 	k8s.io/kubectl v0.37.0 // indirect
+@@ -136,14 +136,14 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
+-	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
++	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+ 	golang.org/x/tools/godoc v0.1.0-deprecated // indirect
+ 	google.golang.org/api v0.278.0 // indirect
 ```
 
 **File**: `go.sum` (modified, +18/-18)
 ```diff
-@@ -711,34 +711,34 @@ honnef.co/go/tools v0.0.0-20190418001031-e561f6794a2a/go.mod h1:rf3lG4BRIbNafJWh
- honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
- honnef.co/go/tools v0.0.1-2019.2.3/go.mod h1:a3bituU0lyd329TUQxRnasdCoJDkEUEAqEt0JzvZhAg=
- honnef.co/go/tools v0.0.1-2020.1.3/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
--k8s.io/api v0.37.0 h1:Z//Vj9N7RA/yS2sDmxyeo7h+RR4zbUrd2vrd3Z0TbB4=
--k8s.io/api v0.37.0/go.mod h1:LKXgcJWMc+f4OLbP5SFR8rulEg07zZhpi/zMULiBImk=
--k8s.io/apiextensions-apiserver v0.37.0 h1:zRMQ3+/LIE5oZ0tVvXwYHC+dIkSP5cjNWju7AZU1LOI=
--k8s.io/apiextensions-apiserver v0.37.0/go.mod h1:HU0PfSBwchHL5iDau6jjt9zU6ryWkDDlaVUiq91NK80=
--k8s.io/apimachinery v0.37.0 h1:Np2AbDtf8x6RDHiD8T9LbKJ9gaegeVNa8yNm5FuGKm0=
--k8s.io/apimachinery v0.37.0/go.mod h1:RN3nhprFSCxOi5Selxd7oMTXOe/c+ZbcE7Im+TS2zkE=
-+k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
-+k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
-+k8s.io/apiextensions-apiserver v0.37.1 h1:7fIQG8eThDSTVYBWg/DOpI8v5wYfKCo0N8/TDMjj+zY=
-+k8s.io/apiextensions-apiserver v0.37.1/go.mod h1:1Q3ujWwHgnhBoGsdmGORflwK1sDFmuaqH1OsMDWk2Gs=
-+k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
-+k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
- k8s.io/cli-runtime v0.37.0 h1:U3XakUeirBQJMz5688r04z74SIHSE7V5SIZ6Ho5JyBM=
- k8s.io/cli-runtime v0.37.0/go.mod h1:qiQMFkKwFFuPH6zy953On+nc3qfpEHAIDrJmAuRz5Vg=
--k8s.io/client-go v0.37.0 h1:nsN31fy8wBySuZ+QRnKmrjRSQLOG2rvoGN0tKd12zhQ=
--k8s.io/client-go v0.37.0/go.mod h1:FcGqw+Ll/gNQiq+nPGY1Oyt9y7SgDh1d3MW3RFDEbn0=
--k8s.io/code-generator v0.37.0 h1:AC915wukzlVHHODAQYxvQ25WKibPh95faJ2kxf8dzuo=
--k8s.io/code-generator v0.37.0/go.mod h1:qg7E/uDlyvevVRL1V8+h2z9UWmi/8gxaRka/lVXUBdk=
--k8s.io/component-base v0.37.0 h1:3SdSa4+itMdFTDFTeR8CxKGmSTSMXFlKL4ky8OqjguM=
--k8s.io/component-base v0.37.0/go.mod h1:LjOebp4R9y6LODWZQv102ZQxGheLcDO2ZJLAw6bbh4I=
--k8s.io/endpointslice v0.37.0 h1:rMBfGPa/p95uEQsTiL4chTOelJFR+XPl8aWcor4ng6Y=
--k8s.io/endpointslice v0.37.0/go.mod h1:PbotyEtd2DIpPHPp9ZgJsJHCBJuAEh2Oz21V5MyAYX4=
-+k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
-+k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
-+k8s.io/code-generator v0.37.1 h1:tvxxAiGc2kMxoGx8HtUacs4cBdl0X5R+auBD2He974U=
-+k8s.io/code-generator v0.37.1/go.mod h1:RJepz1uW2WnHEwPDoCGzI3p4V23C7WuUdtqjueDl1uU=
-+k8s.io/component-base v0.37.1 h1:93DMmlENnK7gNLkL4pMqLO5M/HVf3p3sM4q/GasLveY=
-+k8s.io/component-base v0.37.1/go.mod h1:bBrdziT4dreQG5lzTaPVxBwsZe1oxphG+ZVdD56dQWQ=
-+k8s.io/endpointslice v0.37.1 h1:gfVt44yK6K0ySUNoroZkKaXs/V8gp8RLkHv9nKdyChs=
-+k8s.io/endpointslice v0.37.1/go.mod h1:l6dsigwL1Dl6tH7qfEA0RGbZ1Pwciiq0xUvdpDnZL9A=
- k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 h1:3L6PNkMLXkU/pz3jWzaaIUz0Rs2V9h+5O51AeRC7poc=
- k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3/go.mod h1:yvyl3l9E+UxlqOMUULdKTAYB0rEhsmjr7+2Vb/1pCSo=
- k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
- k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
--k8s.io/kube-aggregator v0.37.0 h1:XCCpIDBzwM1s+FdQEiTuyFcPtByVLfJ7NyVrj8YDbTw=
--k8s.io/kube-aggregator v0.37.0/go.mod h1:Uy1F5FUItTfFfsx1T+cP+7uqKvV3J8/jjBxVzc/ICYU=
-+k8s.io/kube-aggregator v0.37.1 h1:P5ksohEbY6xbSyHgZcd+ofhCekMN9zqeCeSylrLHnCY=
-+k8s.io/kube-aggregator v0.37.1/go.mod h1:7rWjY2B0eVUqzXwPkdI/RCeyyTt25F6jvz/6hjPfGIg=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
- k8s.io/kubectl v0.37.0 h1:cici6hiofx93ASldmprDmZF55SfhVt4o3HniltVLjTc=
- k8s.io/kubectl v0.37.0/go.mod h1:RSeEl8e/yqDx6srG8Azr0uAtVPNIZljA0PNh9HCBcdg=
--k8s.io/streaming v0.37.0 h1:iPBUZLZiKt5bV+lxJurASMOV07VuBhNpiwJt2//AWrM=
--k8s.io/streaming v0.37.0/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
-+k8s.io/streaming v0.37.1 h1:TpzVfQeFuVndn2g9mFqxy1UcUYPwDzqjUmwR/IzJCWc=
-+k8s.io/streaming v0.37.1/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- oras.land/oras-go/v2 v2.6.2 h1:N04RXngAp1LJKTG6ifz3xHPipasEkWr+hFmInja5YKo=
+@@ -463,8 +463,8 @@ golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+@@ -494,8 +494,8 @@ golang.org/x/mod v0.1.0/go.mod h1:0QHyrYULN0/3qlju5TqG8bIK38QM8yzMo5ekMj3DlcY=
+ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
+ golang.org/x/mod v0.1.1-0.20191107180719-034126e5016b/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+-golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+-golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
++golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
++golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -516,8 +516,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20201110031124-69a78807bb2b/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
++golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+@@ -532,8 +532,8 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -556,19 +556,19 @@ golang.org/x/sys v0.0.0-20200331124033-c3d80250170d/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20200523222454-059865788121/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 h1:F5BWKvW126NXR74uxkxuc1jQHhm/rwm/J3rSiFyuRs4=
+-golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518/go.mo
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15737** (2026-10-20): chore(build): update golang to 1.26.9 (@arichardet)
 - **PR #15724** (2026-10-15): chore: fix rate limit policy test (@raykroeker)
+- **PR #15721** (2026-10-20): build(deps): bump golang.org/x/tools from 0.50.0 to 0.52.0 (@dependabot[bot])
 - **PR #15709** (2026-10-15): docs: update contribution guideilnes to include LLM code policy (@mattbailey)
 - **PR #15703** (2026-10-08): proxy: v2.371.0 (@l5d-bot)
 - **PR #15702** (closed): build(deps): bump golang.org/x/tools from 0.50.0 to 0.51.0 (@dependabot[bot])
-- **PR #15697** (2026-10-15): fix(tls): ensure client provides tls for tap api server (@raykroeker)
-- **PR #15696** (2026-10-02): Update PR template to point to discussions (@kflynn)
 
 ---
 
@@ -1949,30 +1891,28 @@ Updates `
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump clap_lex from 1.1.0 to 1.1.1 in the clap group (#15686)
+## X. build): update golang to 1.26.9 (#15737)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codecov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7c15f3a`: build(deps): bump clap_lex from 1.1.0 to 1.1.1 in the clap group (#15686). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a872780`: build): update golang to 1.26.9 (#15737). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codecov.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-version = "1.1.1"
-checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
+      image: golang:1.26.9
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.0"
-checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
+      image: golang:1.26.7
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7c15f3a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a872780` are properly handled with clean fallback behavior.

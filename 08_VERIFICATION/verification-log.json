@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-H87F",
-    "timestamp": "2026-10-19T22:19:27.819Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "4bcee21d27a4bbd7a098dcc5747fddb73ba0abc4d346735f80ebeceb24449036",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-IO1C",
-    "timestamp": "2026-10-19T22:20:34.992Z",
-    "repository": "microsoft/fluentui",
-    "learningId": "learn-github-microsoft-fluentui",
-    "contentHash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-QLF2",
-    "timestamp": "2026-10-19T22:26:44.846Z",
-    "repository": "buriy/python-readability",
-    "learningId": "learn-github-buriy-python-readability",
-    "contentHash": "a49a298e87b06503e27752dcc71158a1da746526f15f0b32c28fdee6bbaf9876",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-QMJQ",
     "timestamp": "2026-10-19T22:26:46.310Z",
     "repository": "Louis-CFM/coucou",
@@ -7490,6 +7445,51 @@
     "repository": "citusdata/citus",
     "learningId": "learn-github-citusdata-citus",
     "contentHash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-M736",
+    "timestamp": "2026-10-20T21:15:00.834Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "9560027c7312e86b1281107b15daa5e83f7824a13547be6527bcb4557a8d92b6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-M9J7",
+    "timestamp": "2026-10-20T21:15:04.003Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "8e2931cecbeda476d883633f4c28bf94e706fc73aa8ef6a31e38ea7291ce81a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MBQ9",
+    "timestamp": "2026-10-20T21:15:06.849Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "7a1c3d3e051ecd4bf28d7cc3a438b672ee780a70b7e05a3e3246f1c812a7b0a9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

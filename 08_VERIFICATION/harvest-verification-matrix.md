@@ -4029,3 +4029,6 @@
 | `CYCLE-20261020-D43B` | `2026-10-20T21:07:57.047Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`6d466de4...`) |
 | `CYCLE-20261020-D5OF` | `2026-10-20T21:07:59.103Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3381` | Yes (`b648c15c...`) |
 | `CYCLE-20261020-DEMO` | `2026-10-20T21:08:10.704Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3382` | Yes (`f9f364bc...`) |
+| `CYCLE-20261020-M736` | `2026-10-20T21:15:00.834Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3383, Rule 3384` | Yes (`9560027c...`) |
+| `CYCLE-20261020-M9J7` | `2026-10-20T21:15:04.003Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3385` | Yes (`8e2931ce...`) |
+| `CYCLE-20261020-MBQ9` | `2026-10-20T21:15:06.849Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3386` | Yes (`7a1c3d3e...`) |

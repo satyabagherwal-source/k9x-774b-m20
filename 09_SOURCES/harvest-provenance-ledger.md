@@ -4036,3 +4036,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T21:07:57.050Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `a4a3063c` | Multi-dimensional audit evidence | 2026-10-20T21:07:59.111Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `fadced9e` | Multi-dimensional audit evidence | 2026-10-20T21:08:10.713Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-20T21:15:00.842Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `5bb8ea84` | Multi-dimensional audit evidence | 2026-10-20T21:15:04.011Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5d9f2d4b` | Multi-dimensional audit evidence | 2026-10-20T21:15:06.856Z |

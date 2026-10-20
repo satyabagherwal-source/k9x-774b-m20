@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T21:08:10.722Z",
+  "last_updated": "2026-10-20T21:15:06.864Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "aeb118b2179e014eef151d651789b10c5c768d2cf370217edd10dc177547d3df",
-      "verified_at": "2026-10-19T07:29:39.896Z",
+      "content_hash": "9560027c7312e86b1281107b15daa5e83f7824a13547be6527bcb4557a8d92b6",
+      "verified_at": "2026-10-20T21:15:00.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:29:39.896Z"
+      "last_updated": "2026-10-20T21:15:00.850Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "0e8d50e4e7da6b8a37d4c04b6009c9ff7fa0ab0732a271d125a17defbf33c22c",
-      "verified_at": "2026-10-20T04:57:18.568Z",
+      "content_hash": "7a1c3d3e051ecd4bf28d7cc3a438b672ee780a70b7e05a3e3246f1c812a7b0a9",
+      "verified_at": "2026-10-20T21:15:06.863Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:57:18.568Z"
+      "last_updated": "2026-10-20T21:15:06.863Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "fbd6ee8c031b2231e38f2741d13560870eedcf2a784d4453572e035ddc70efff",
-      "verified_at": "2026-10-19T05:25:34.753Z",
+      "content_hash": "8e2931cecbeda476d883633f4c28bf94e706fc73aa8ef6a31e38ea7291ce81a6",
+      "verified_at": "2026-10-20T21:15:04.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:25:34.753Z"
+      "last_updated": "2026-10-20T21:15:04.019Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",

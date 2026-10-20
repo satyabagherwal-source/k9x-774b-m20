@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T21:08:10.718Z",
-  "total_cycles_completed": 4006,
-  "total_learnings_persisted": 4006,
-  "total_rules_promoted": 3210,
+  "last_updated": "2026-10-20T21:15:06.861Z",
+  "total_cycles_completed": 4009,
+  "total_learnings_persisted": 4009,
+  "total_rules_promoted": 3214,
   "history": [
-    {
-      "timestamp": "2026-10-20T13:47:02.651Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:47:03.028Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:47:13.943Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T13:53:38.100Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T21:08:10.718Z",
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:15:00.847Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:15:04.015Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:15:06.861Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

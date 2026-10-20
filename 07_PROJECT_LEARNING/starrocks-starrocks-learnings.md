@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `77815dba`  
+> **Source Version**: `5d9f2d4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:57:18.279Z  
+> **Timestamp**: 2026-10-20T21:15:06.549Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:57:18.271Z  
+> **Harvest Timestamp**: 2026-10-20T21:15:06.538Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12190 stars
+- **Stars / Engagement**: 12191 stars
 
 ---
 
@@ -1825,314 +1825,1056 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `65ff4b5f` (2026-10-20)
-**Commit Message**: [Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQL and the load RPCs (#80940)
+### Incident Patch 1: `affcfc60` (2026-10-20)
+**Commit Message**: [Feature] Read a security integration user's groups from a claim of the verified token (#80942)
 
 Signed-off-by: Planck Li <[REDACTED_EMAIL]>
 
-**File**: `be/src/base/auth/auth_info.h` (modified, +43/-10)
+**File**: `docs/en/_assets/user_priv/security_integration_jwt.mdx` (modified, +20/-1)
 ```diff
-@@ -27,6 +27,17 @@ struct AuthInfo {
-     std::string user_ip;
-     // -1 as unset
-     int64_t auth_code = -1;
-+    // Wire values for `auth_type`, kept here so the two spellings live in one place on the BE side.
-+    // The FE keeps the same pair on AuthCredentialKind.
-+    static constexpr const char* AUTH_TYPE_BASIC = "basic";
-+    static constexpr const char* AUTH_TYPE_BEARER = "bearer";
+@@ -9,7 +9,9 @@ PROPERTIES (
+     "jwks_url" = "",
+     "principal_field" = "",
+     "required_issuer" = "",
+-    "required_audience" = ""
++    "required_audience" = "",
++    "group_source" = "",
++    "group_claim" = "",
+     "comment" = ""
+ );
+ ```
+@@ -46,6 +48,23 @@ PROPERTIES (
+ - Required: No
+ - Description: The list of strings used to identify the audience (`aud`) in the JWT. The JWT is considered valid only if one of the values in the list match the JWT audience.
+ 
++##### group_source
 +
-+    // Credential shape. Empty (the default) is equivalent to AUTH_TYPE_BASIC and means `passwd`
-+    // holds a plaintext password; AUTH_TYPE_BEARER means `passwd` holds an IdP token instead. Maps
-+    // 1:1 to the FE-side AuthCredentialKind, and reaches the FE through the optional `auth_type`
-+    // thrift field on the requests that declare it: load txn begin, stream load put, and
-+    // TAuthenticateParams.
-+    std::string auth_type;
-     // Optional cluster-internal trust token used by the rejected_records
-     // sync daemon to authenticate its merge-commit RPCs without holding
-     // a real password. Empty for normal load paths. Only honored by the
-@@ -35,22 +46,44 @@ struct AuthInfo {
-     std::string internal_token;
- };
++- Required: No
++- Description: Where the groups of a user authenticated by this integration come from. Valid values:
++  - `group_provider` (default): only the group providers listed in `group_provider` are used. This is the behavior of earlier versions.
++  - `claim`: only the claim named by `group_claim` of the verified token is used. Group providers listed in `group_provider` are ignored, but their configuration is kept, so switching back takes one `ALTER SECURITY INTEGRATION`.
++  - `both`: the union of the two sources.
++
++  Taking the groups from the token is what lets an identity provider with no LDAP directory grant any privilege at all: the resolved groups take part in role mapping via `GRANT ... TO EXTERNAL GROUP`, in the `permitted_groups` login check, in `current_group()`, and in Apache Ranger authorization, exactly like the groups of a group provider. Supported from v4.2 onwards.
++
++##### group_claim
++
++- Required: Yes when `group_source` is `claim` or `both`. Setting it without `group_source` is refused, because it would have no effect; together with an explicit `group_source` of `group_provider` it is accepted and kept, so the claim can be put in place before an `ALTER SECURITY INTEGRATION` switches the source.
++- Description: The claim of the token that holds the user's groups, dot-separated for a claim nested inside another object. For example, `groups` for a top-level claim, `realm_access.roles` for the realm roles of Keycloak, and `resource_access.<client_id>.roles` for its client roles. The claim should hold an array of strings; a single string is accepted as one group. Surrounding whitespace is removed from each name; nothing else is rewritten - not the case, not a leading slash - because the names are handed to Apache Ranger, which matches them exactly. Whether a name matches a `GRANT ... TO EXTERNAL GROUP` or `permitted_groups` entry that differs only in case is decided by the FE configuration item `authentication_group_case_insensitive` (ignoring case by default; set it to `false` if your identity provider distinguishes groups by case).
++
++  There is deliberately no default: the claim an identity provider emits differs per provider, and a wrong guess would let users log in with no privileges instead of failing visibly. The claim is read only after the signature, the required issuer and the required audience have been verified, so the holder of a token cannot choose their own groups. If the claim is absent from a token, the login still succeeds with no groups and the reason is logged rather than reported as an authentication failure - Microsoft Entra ID drops the claim entirely for a user in more than 200 groups, so an absent claim is a state a correct configuration produces. Note that most identity providers do not put groups in a token unless asked to: Keycloak needs a group membership mapper on the client, and Entra ID needs the groups claim added to the token configuration. Supported from v4.2 onwards.
++
+ ##### comment
  
-+// Fill the credential fields of any request that carries one from one AuthInfo: the load RPCs and
-+// the BE HTTP gate's TAuthenticateParams. Every field that only some request types declare is guarded
-+// by a requires-expression, so the same template serves TLoadTxnBeginRequest (has them all),
-+// TMergeCommitRequest (no auth_code, no cluster) and TAuthenticateParams (client address is `host`).
-+// auth_type in particular lives here and nowhere else: a call site that set it by hand would work
-+// for the one request it remembered and silently drop the token for the next one.
- template <class T>
- void set_request_auth(T* req, const AuthInfo& auth) {
--    if (auth.auth_code != -1) {
--        // If 'auth_code' is set, no need to set other info.
--        req->__set_auth_code(auth.auth_code);
--        // User name and passwd is unused, but they are required field.
--        // so they have to be set.
--        req->user = "";
--        req->passwd = "";
--    } else {
--        req->user = auth.user;
--        req->passwd = auth.passwd;
-+    if constexpr (requires { req->__set_auth_code(auth.auth_code); }) {
-+        if (auth.auth_code != -1) {
-+            // If 'auth_code' is set, no need to set other info.
-+            req->__set_auth_code(auth.auth_code);
-+            // User name and passwd is unused, but they are required field.
-+            // so they have to be set.
-+            req->__set_user("");
-+            req->__set_passwd("");
-+            return;
-+        }
-+    }
-+    // Always through the setters: on a request where user/passwd are optional (TMergeCommitRequest)
-+    // a plain assignment leaves __isset false and the field is never serialized, so the FE would see
-+    // a null password and refuse the load.
-+    req->__set_user(auth.user);
-+    req->__set_passwd(auth.passwd);
-+    if constexpr (requires { req->__set_cluster(auth.cluster); }) {
-         if (!auth.cluster.empty()) {
-             req->__set_cluster(auth.cluster);
-         }
-+    }
-+    if constexpr (requires { req->__set_user_ip(auth.user_ip); }) {
-         req->__set_user_ip(auth.user_ip);
-+    } else if constexpr (requires { req->__set_host(auth.user_ip); }) {
-+        req->__set_host(auth.user_ip);
-+    }
-+    if constexpr (requires { req->__set_auth_type(auth.auth_type); }) {
-+        if (!auth.auth_type.empty()) {
-+            req->__set_auth_type(auth.auth_type);
-+        }
-     }
- }
+ - Required: No
+```
+
+**File**: `docs/en/_assets/user_priv/security_integration_oauth.mdx` (modified, +20/-1)
+```diff
+@@ -14,7 +14,9 @@ PROPERTIES (
+     "jwks_url" = "",
+     "principal_field" = "",
+     "required_issuer" = "",
+-    "required_audience" = ""
++    "required_audience" = "",
++    "group_source" = "",
++    "group_claim" = "",
+     "comment" = ""
+ )
+ ```
+@@ -76,6 +78,23 @@ PROPERTIES (
+ - Required: No
+ - Description: The list of strings used to identify the audience (`aud`) in the JWT. The JWT is considered valid only if one of the values in the list match the JWT audience.
+ 
++##### group_source
++
++- Required: No
++- Description: Where the groups of a user authenticated by this integration come from. Valid values:
++  - `group_provider` (default): only the group providers listed in `group_provider` are used. This is the behavior of earlier versions.
++  - `claim`: only the claim named by `group_claim` of the verified token is used. Group providers listed in `group_provider` are ignored, but their configuration is kept, so switching back takes one `ALTER SECURITY INTEGRATION`.
++  - `both`: the union of the two sources.
++
++  Taking the groups from the token is what lets an identity provider with no LDAP directory grant any privilege at all: the resolved groups take part in role mapping via `GRANT ... TO EXTERNAL GROUP`, in the `permitted_groups` login check, in `current_group()`, and in Apache Ranger authorization, exactly like the groups of a group provider. For an OAuth 2.0 integration this also covers the browser login over the MySQL protocol: there the token reaches StarRocks only after the user has signed in through the browser, so the groups are read from the ID token when it arrives, and `permitted_groups` is checked on the first statement after the browser login rather than when the connection opens. With `group_source` left at `group_provider`, nothing changes: the groups and the check are decided when the connection opens, as before. Supported from v4.2 onwards.
++
++##### group_claim
++
++- Required: Yes when `group_source` is `claim` or `both`; setting it with any other `group_source` is refused, because it would have no effect.
++- Description: The claim of the token that holds the user's groups, dot-separated for a claim nested inside another object. For example, `groups` for a top-level claim, `realm_access.roles` for the realm roles of Keycloak, and `resource_access.<client_id>.roles` for its client roles. The claim should hold an array of strings; a single string is accepted as one group. Surrounding whitespace is removed from each name; nothing else is rewritten - not the case, not a leading slash - because the names are handed to Apache Ranger, which matches them exactly. Whether a name matches a `GRANT ... TO EXTERNAL GROUP` or `permitted_groups` entry that differs only in case is decided by the FE configuration item `authentication_group_case_insensitive` (ignoring case by default; set it to `false` if your identity provider distinguishes groups by case).
++
++  There is deliberately no default: the claim an identity provider emits differs per provider, and a wrong guess would let users log in with no privileges instead of failing visibly. The claim is read only after the signature, the required issuer and the required audience have been verified, so the holder of a token cannot choose their own groups. If the claim is absent from a token, the login still succeeds with no groups and the reason is logged rather than reported as an authentication failure - Microsoft Entra ID drops the claim entirely for a user in more than 200 groups, so an absent claim is a state a correct configuration produces. Note that most identity providers do not put groups in a token unless asked to: Keycloak needs a group membership mapper on the client, and Entra ID needs the groups claim added to the token configuration. Supported from v4.2 onwards.
++
+ ##### comment
+ 
+ - Required: No
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
+```diff
+@@ -815,6 +815,15 @@ This topic introduces the following types of FE configurations:
+ 
+ <EditionSpecificFEItem />
+ 
++### `arrow_flight_max_header_size`
++
++- Default: 32768
++- Type: Int
++- Unit: Bytes
++- Is mutable: No
++- Description: Maximum size in bytes of the request header block the Arrow Flight SQL server accepts, counting all headers of one gRPC request together. The first request of an Arrow Flight SQL session carries the client's credential in a header, and a JWT that lists the user's groups grows with them: 200 group IDs, the most Microsoft Entra ID puts into a token, come to about 10 KB. The gRPC default of 8 KB would refuse such a request before authentication starts, so the default matches `http_max_header_size`. Raise it when clients send larger tokens. Changes require FE restart.
++- Introduced in: v4.2
++
+ ### `brpc_idle_wait_max_time`
+ 
+ - Default: 10000
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
+```diff
+@@ -945,6 +945,15 @@ This topic introduces the following types of FE configurations:
+ - Description: How long a credential rejected by the security integration chain is remembered, so that a client retrying the same wrong password does not produce one LDAP bind per attempt - which is what drives Active Directory's `badPwdCount` toward locking the account out. The cache key includes a hash of the credential, so correcting the password takes effect immediately instead of after the TTL, and a failure caused by the directory being unreachable is never cached. Set to `0` to disable.
+ - Introduced in: v4.2, v4.1.6
+ 
++### `authentication_group_case_insensitive`
++
++- Default: true
++- Type: Boolean
++- Unit: -
++- Is mutable: Yes
++- Description: Whether a group name from a login matches a `GRANT ... TO EXTERNAL GROUP` entry or a `permitted_groups` entry that differs from it only in case. On by default because an LDAP `cn` is case-insensitive in the directory, so a GRANT written in another case than the directory returns must not silently have no effect. Set it to `false` when the identity system behind the groups distinguishes them by case, for example groups read from a JWT claim, so that `Admins` and `admins` stay two groups. Only the comparison is affected: the names are stored and shown exactly as they arrived, and handed to Apache Ranger unchanged.
++- Introduced in: v4.2
++
+ ### `authentication_ldap_case_insensitive`
+ 
+ - Default: false
+```
+
+**File**: `docs/en/administration/user_privs/authentication/ldap_authentication.md` (modified, +1/-1)
+```diff
+@@ -131,7 +131,7 @@ There is no single answer for the whole LDAP configuration - some values are com
+ | `authentication_ldap_simple_group_source` | the FE | **No.** Surrounding blanks are ignored too. An unrecognized value is refused by `CREATE` / `ALTER SECURITY INTEGRATION`, and falls back to `group_provider` with an ERROR in the log when it arrives through the FE configuration. |
+ | DN values: `authentication_ldap_simple_bind_root_dn`, `..._bind_base_dn`, `..._bind_dn_pattern` | the directory | **Decided by the directory.** The attribute types in a DN (`cn=`, `ou=`, `dc=`) are always case-insensitive; whether their values are depends on the matching rule of each attribute, which for the usual `cn` / `ou` / `dc` is case-insensitive. |
+ | The login name | the FE, before the directory sees it | **No.** It is lower-cased before it is put into the search filter or substituted into the bind DN pattern, which matches how Active Directory treats account names. |
+-| Group names | the FE | **No for matching, yes for what you see.** `GRANT ... TO EXTERNAL GROUP` and `permitted_groups` are matched ignoring case, but the name itself is never rewritten: `current_group()` and the group set handed to Apache Ranger keep exactly the spelling the directory returned. Ranger matches group names case-sensitively, so its policies must use the directory's spelling. |
++| Group names | the FE | **No for matching, yes for what you see.** `GRANT ... TO EXTERNAL GROUP` and `permitted_groups` are matched ignoring case by default (FE configuration item `authentication_group_case_insensitive`; set it to `false` for exact matching), but the name itself is never rewritten: `current_group()` and the group set handed to Apache Ranger keep exactly the spelling the directory returned. Ranger matches group names case-sensitively, so its policies must use the directory's spelling. |
+ 
+ ## Create a user with LDAP
  
 ```
 
-**File**: `be/src/data_workflows/load/batch_write/isomorphic_batch_write.cpp` (modified, +4/-3)
+**File**: `docs/en/administration/user_privs/group_provider.md` (modified, +6/-0)
 ```diff
-@@ -21,6 +21,7 @@
- #include <atomic>
- #include <utility>
+@@ -15,6 +15,12 @@ Enable Group Provider in StarRocks to authenticate, and authorize user groups fr
  
-+#include "base/auth/auth_info.h"
- #include "base/testutil/sync_point.h"
- #include "common/config_merge_commit_fwd.h"
- #include "common/system/backend_options.h"
-@@ -450,9 +451,9 @@ Status IsomorphicBatchWrite::_send_rpc_request(StreamLoadContext* data_ctx) {
-     TMergeCommitRequest request;
-     request.__set_db(_batch_write_id.db);
-     request.__set_tbl(_batch_write_id.table);
--    request.__set_user(data_ctx->auth.user);
--    request.__set_passwd(data_ctx->auth.passwd);
--    request.__set_user_ip(data_ctx->auth.user_ip);
-+    // user / passwd / user_ip / auth_type: the same template every other load RPC uses, so a
-+    // Bearer token reaching this BE over Stream Load keeps its auth_type into the merge commit.
-+    set_request_auth(&request, data_ctx->auth);
-     if (!data_ctx->auth.internal_token.empty()) {
-         // Cluster-internal trust token (RejectedRecordSyncDaemon path):
-         // FE will treat the request as ROOT for system tables whitelisted
+ From v3.5.0 onwards, StarRocks supports Group Provider to collect group information from external authentication systems for user group management.
+ 
++:::note A group provider is not the only source of groups
++
++A security integration can also take a login's groups from the identity provider that authenticated it, without any group provider: an LDAP integration from the group membership attribute of the user's own entry, and a JWT or OAuth 2.0 integration from a claim of the verified token. Set `group_source` on the integration; see [Authenticate with Security Integration](./authentication/security_integration.md). Groups resolved that way are used for exactly the same things as the groups of a group provider.
++
++:::
++
+ ## Overview
+ 
+ To deepen its integration with external user authentication and authorization systems, such as LDAP and Apache Ranger, StarRocks supports collecting user group information for a better experience on the collective user management.
 ```
 
-**File**: `be/src/data_workflows/load/stream_load/transaction_mgr.cpp` (modified, +17/-3)
+**File**: `docs/ja/_assets/user_priv/security_integration_jwt.mdx` (modified, +20/-1)
 ```diff
-@@ -210,6 +210,7 @@ Status TransactionMgr::rollback_transaction(const HttpRequest* req, std::string*
-             *resp = _build_reply(label, TXN_ROLLBACK, st);
-             return st;
-         }
-+        _refresh_auth(req, ctx);
-         ctx->status = Status::Aborted(fmt::format("transaction is aborted by user."));
-         st = _rollback_transaction(ctx);
-     }
-@@ -259,6 +260,7 @@ Status TransactionMgr::commit_transaction(const HttpRequest* req, std::string* r
-             *resp = _build_reply(label, TXN_COMMIT, st);
-             return st;
-         }
-+        _refresh_auth(req, ctx);
+@@ -9,7 +9,9 @@ PROPERTIES (
+     "jwks_url" = "",
+     "principal_field" = "",
+     "required_issuer" = "",
+-    "required_audience" = ""
++    "required_audience" = "",
++    "group_source" = "",
++    "group_claim" = "",
+     "comment" = ""
+ )
+ ```
+@@ -46,6 +48,23 @@ PROPERTIES (
+ - 必須: いいえ
+ - 説明: JWT 内の受信者 (`aud`) を識別するために使用される文字列のリスト。リスト内のいずれかの値が JWT 受信者と一致する場合にのみ、JWT は有効と見なされます。
  
-         if (prepare) {
-             ctx->prepared_timeout_second = prepared_timeout_second;
-@@ -277,6 +279,18 @@ Status TransactionMgr::commit_transaction(const HttpRequest* req, std::string* r
-     }
++##### group_source
++
++- 必須: いいえ
++- 説明: このセキュリティインテグレーションで認証されたユーザーのグループの取得元。有効な値:
++  - `group_provider`（デフォルト）: `group_provider` で設定された Group Provider のみを使用します。以前のバージョンと同じ動作です。
++  - `claim`: 検証済みトークンのうち `group_claim` で指定した claim のみを使用します。`group_provider` で設定された Group Provider は無視されますが設定は保持されるため、元に戻すには `ALTER SECURITY INTEGRATION` 1 回で済みます。
++  - `both`: 両方の和集合。
++
++  トークンからグループを取得できることが、LDAP ディレクトリーを持たない ID プロバイダーでも権限を付与できる前提になります。解決されたグループは、Group Provider のグループと同様に、`GRANT ... TO EXTERNAL GROUP` によるロールマッピング、`permitted_groups` のログインチェック、`current_group()`、および Apache Ranger の認可に参加します。v4.2 以降でサポートされます。
++
++##### group_claim
++
++- 必須: `group_source` が `claim` または `both` の場合は必須です。`group_source` を設定せずにこのパラメータだけを設定すると、効果がないため拒否されます。明示的に `group_source` を `group_provider` に設定した場合は受け付けられ、設定も保持されるため、先に claim を用意してから `ALTER SECURITY INTEGRATION` でソースを切り替えられます。
++- 説明: ユーザーのグループを保持するトークンの claim。他のオブジェクトの中にネストされた claim はドット区切りで指定します。たとえば、トップレベルの claim は `groups`、Keycloak の realm ロールは `realm_access.roles`、その client ロールは `resource_access.<client_id>.roles` です。claim は文字列の配列であることが想定されますが、単一の文字列も 1 つのグループとして受け付けます。各グループ名の前後の空白は除去されます。それ以外は書き換えられません。大文字小文字も先頭のスラッシュもそのまま保持されます。グループ名は Apache Ranger にそのまま渡され、Ranger は厳密に照合するためです。大文字小文字だけが異なる `GRANT ... TO EXTERNAL GROUP` や `permitted_groups` のエントリーと一致するかどうかは、FE 設定項目 `authentication_group_case_insensitive` で決まります（デフォルトでは大文字小文字を無視します。ID プロバイダーが大文字小文字の異なるグループを別のグループとして扱う場合は `false` に設定してください）。
++
++  デフォルト値は意図的に設けていません。ID プロバイダーが発行する claim はプロバイダーごとに異なり、推測を誤ると明確なエラーにならずに「ログインできるが権限がない」状態になるためです。claim は署名、`required_issuer`、`required_audience` の検証がすべて通った後にのみ読み取られるため、トークンの保持者が自分でグループを選ぶことはできません。トークンに claim が存在しない場合でもログインは成功し、グループは空になり、その理由はログに記録されます（認証失敗として扱われません）。Microsoft Entra ID は 200 を超えるグループに所属するユーザーに対して claim 全体を省略するため、claim が存在しない状態は正しい設定でも発生します。また、ほとんどの ID プロバイダーは既定ではグループをトークンに含めません。Keycloak ではクライアントに group membership mapper を追加し、Entra ID ではトークン設定に groups claim を追加する必要があります。v4.2 以降でサポートされます。
++
+ ##### comment
+ 
+ - 必須: いいえ
+```
+
+**File**: `docs/ja/_assets/user_priv/security_integration_oauth.mdx` (modified, +20/-1)
+```diff
+@@ -14,7 +14,9 @@ PROPERTIES (
+     "jwks_url" = "",
+     "principal_field" = "",
+     "required_issuer" = "",
+-    "required_audience" = ""
++    "required_audience" = "",
++    "group_source" = "",
++    "group_claim" = "",
+     "comment" = ""
+ )
+ ```
+@@ -76,6 +78,23 @@ PROPERTIES (
+ - 必須: いいえ
+ - 説明: JWT 内の受信者 (`aud`) を識別するために使用される文字列のリスト。リスト内のいずれかの値が JWT 受信者と一致する場合にのみ、JWT は有効と見なされます。
+ 
++##### group_source
++
++- 必須: いいえ
++- 説明: このセキュリティインテグレーションで認証されたユーザーのグループの取得元。有効な値:
++  - `group_provider`（デフォルト）: `group_provider` で設定された Group Provider のみを使用します。以前のバージョンと同じ動作です。
++  - `claim`: 検証済みトークンのうち `group_claim` で指定した claim のみを使用します。`group_provider` で設定された Group Provider は無視されますが設定は保持されるため、元に戻すには `ALTER SECURITY INTEGRATION` 1 回で済みます。
++  - `both`: 両方の和集合。
++
++  トークンからグループを取得できることが、LDAP ディレクトリーを持たない ID プロバイダーでも権限を付与できる前提になります。解決されたグループは、Group Provider のグループと同様に、`GRANT ... TO EXTERNAL GROUP` によるロールマッピング、`permitted_groups` のログインチェック、`current_group()`、および Apache Ranger の認可に参加します。 OAuth 2.0 インテグレーションでは、MySQL プロトコル経由のブラウザーログインにも適用されます。この経路ではユーザーがブラウザーでサインインした後にトークンが StarRocks に届くため、グループは ID トークンの到着時に読み取られ、`permitted_groups` も接続確立時ではなくブラウザーログイン後の最初のステートメントで確認されます。`group_source` が `group_provider` のままの場合は変わらず、グループと確認は接続確立時に決まります。v4.2 以降でサポートされます。
++
++##### group_claim
++
++- 必須: `group_source` が `claim` または `both` の場合は必須です。それ以外の `group_source` と組み合わせて設定すると、効果がないため拒否されます。
++- 説明: ユーザーのグループを保持するトークンの claim。他のオブジェクトの中にネストされた claim はドット区切りで指定します。たとえば、トップレベルの claim は `groups`、Keycloak の realm ロールは `realm_access.roles`、その client ロールは `resource_access.<client_id>.roles` です。claim は文字列の配列であることが想定されますが、単一の文字列も 1 つのグループとして受け付けます。各グループ名の前後の空白は除去されます。それ以外は書き換えられません。大文字小文字も先頭のスラッシュもそのまま保持されます。グループ名は Apache Ranger にそのまま渡され、Ranger は厳密に照合するためです。大文字小文字だけが異なる `GRANT ... TO EXTERNAL GROUP` や `permitted_groups` のエントリーと一致するかどうかは、FE 設定項目 `authentication_group_case_insensitive` で決まります（デフォルトでは大文字小文字を無視します。ID プロバイダーが大文字小文字の異なるグループを別のグループとして扱う場合は `false` に設定してください）。
++
++  デフォルト値は意図的に設けていません。ID プロバイダーが発行する claim はプロバイダーごとに異なり、推測を誤ると明確なエラーにならずに「ログインできるが権限がない」状態になるためです。claim は署名、`required_issuer`、`required_audience` の検証がすべて通った後にのみ読み取られるため、トークンの保持者が自分でグループを選ぶことはできません。トークンに claim が存在しない場合でもログインは成功し、グループは空になり、その理由はログに記録されます（認証失敗として扱われません）。Microsoft Entra ID は 200 を超えるグループに所属するユーザーに対して claim 全体を省略するため、claim が存在しない状態は正しい設定でも発生します。また、ほとんどの ID プロバイダーは既定ではグループをトークンに含めません。Keycloak ではクライアントに group membership mapper を追加し、Entra ID ではトークン設定に groups claim を追加する必要があります。v4.2 以降でサポートされます。
++
+ ##### comment
+ 
+ - 必須: いいえ
+```
+
+---
+
+### Incident Patch 2: `5d9f2d4b` (2026-10-20)
+**Commit Message**: [BugFix] Skip empty segments in lake index fast path (#79456)
+
+Signed-off-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/storage/lake/add_index_schema_change.cpp` (modified, +75/-30)
+```diff
+@@ -155,6 +155,48 @@ Status feed_index_from_column(Writer* writer, const Column& col, size_t start_ro
+     return Status::OK();
  }
  
-+// The FE authenticates every transaction RPC with the credential the BE forwards, and until now that
-+// was always the one captured at begin. A token has an expiry, so a transaction that outlives it could
-+// neither be committed nor rolled back and its label stayed taken until the transaction timed out.
-+// When the commit or rollback request carries its own credential, forward that one instead; a request
-+// without one keeps the credential from begin, as before.
-+void TransactionMgr::_refresh_auth(const HttpRequest* req, StreamLoadContext* ctx) {
-+    AuthInfo fresh;
-+    if (parse_auth(*req, &fresh)) {
-+        ctx->auth = fresh;
++// Validate everything that does not depend on a physical segment. This must run
++// even for tablets with no segments and for segments with zero rows: apply_add_index
++// persists new_indexes without requiring a segment entry, so accepting an invalid
++// definition here would publish it without ever reaching the per-segment builder.
++Status validate_index_definition(const TabletSchema& schema, const TabletIndexPB& ix, const TabletColumn** out_column) {
++    if (out_column != nullptr) {
++        *out_column = nullptr;
 +    }
++    if (ix.col_unique_id_size() == 0) {
++        return Status::InternalError("TabletIndex has no columns");
++    }
++    if (!ix.has_index_type()) {
++        return Status::InternalError("TabletIndex has no index type");
++    }
++    // Multi-column indexes (GIN, VECTOR) aren't supported in this initial
++    // slice. BITMAP / NGRAMBF / bloom are single-column only.
++    if (ix.col_unique_id_size() > 1 && ix.index_type() != IndexType::GIN) {
++        return Status::NotSupported("multi-column non-GIN index unsupported");
++    }
++    switch (ix.index_type()) {
++    case IndexType::BITMAP:
++    case IndexType::NGRAMBF:
++    case IndexType::BLOOM_FILTER:
++        break;
++    case IndexType::GIN:
++    case IndexType::VECTOR:
++    default:
++        return Status::NotSupported(strings::Substitute("lake ADD INDEX fast path: index type $0 not yet supported",
++                                                        static_cast<int>(ix.index_type())));
++    }
++
++    const int col_uid = ix.col_unique_id(0);
++    const int32_t col_ordinal = schema.field_index(col_uid);
++    if (col_ordinal < 0) {
++        return Status::InternalError(strings::Substitute("column with unique_id $0 not found in schema", col_uid));
++    }
++    if (out_column != nullptr) {
++        *out_column = &schema.column(static_cast<size_t>(col_ordinal));
++    }
++    return Status::OK();
 +}
 +
- Status TransactionMgr::_begin_transaction(const HttpRequest* req, StreamLoadContext* ctx) {
-     // 1. parse request
-     ctx->load_type = TLoadType::MANUAL_LOAD;
-@@ -307,9 +321,9 @@ Status TransactionMgr::_begin_transaction(const HttpRequest* req, StreamLoadCont
-         ctx->idle_timeout_sec = timeout_second;
-     }
+ } // namespace
  
--    if (!parse_basic_auth(*req, &ctx->auth)) {
--        LOG(WARNING) << "parse basic authorization failed." << ctx->brief();
--        return Status::InternalError("no valid Basic authorization");
-+    if (!parse_auth(*req, &ctx->auth)) {
-+        LOG(WARNING) << "parse authorization failed." << ctx->brief();
-+        return Status::InternalError("no valid authorization");
+ AddIndexSchemaChange::AddIndexSchemaChange(TabletManager* tablet_mgr, int64_t txn_id, VersionedTablet base_tablet,
+@@ -180,6 +222,12 @@ Status AddIndexSchemaChange::run(TxnLogPB_OpAddIndex* op_add_index) {
+         // the bug this parameter exists to prevent.
+         return Status::InternalError("AddIndexSchemaChange: authoritative schema is null");
      }
- 
-     // 2. begin transaction
++    // Validate before mutating the output operation. Empty tablets and empty
++    // physical segments have no builder invocation that could reject a malformed
++    // or unsupported definition later.
++    for (const auto& ix : _indexes_to_build) {
++        RETURN_IF_ERROR(validate_index_definition(*_authoritative_schema, ix, /*out_column=*/nullptr));
++    }
+     op_add_index->set_alter_version(_alter_version);
+     for (const auto& ix : _indexes_to_build) {
+         op_add_index->add_new_indexes()->CopyFrom(ix);
+@@ -222,10 +270,10 @@ Status AddIndexSchemaChange::run(TxnLogPB_OpAddIndex* op_add_index) {
+                 IndexDeltaGroupEntryPB entry;
+                 RETURN_IF_ERROR(build_idg_for_segment(rowset_copy, seg_idx, rssid, &entry));
+                 if (entry.keys_size() == 0) {
+-                    // Every index was skipped on this segment because its column
+-                    // is physically absent (see classify_index_for_segment). No
+-                    // .idx file was written, so publishing an entry would point
+-                    // readers at payloads that do not exist.
++                    // Every index was skipped because the segment is empty or its
++                    // column is physically absent (see build_idg_for_segment).
++                    // No .idx file was written, so publishing an entry would
++                    // point readers at payloads that do not exist.
+                     return Status::OK();
+                 }
+                 std::lock_guard<std::mutex> lg(_op_mtx);
+@@ -257,10 +305,10 @@ Status AddIndexSchemaChange::run(TxnLogPB_OpAddIndex* op_add_index) {
+     if (!run_st.ok()) {
+         // Best-effort remove any .idx files already written by tasks that
+         // succeeded before the first failure. The caller (schema_change.cpp)
+-        // will fall back to the legacy rewrite path; without this cleanup
+-        // the orphan .idx files would sit on object storage until a later
+-        // compaction or vacuum reclaims them, and could also confuse any
+-        // tool that scans segment dirs.
++        // returns the error without falling back to the legacy rewrite path,
++        // so FE cancels the alter and no txn log ever references these files;
++        // without this cleanup they would sit on object storage as orphans
++        // and could also confuse any tool that scans segment dirs.
+         cleanup_written_idx_files();
+     }
+     return run_st;
+@@ -290,25 +338,9 @@ StatusOr<AddIndexSchemaChange::IndexDisposition> AddIndexSchemaChange::classify_
+     DCHECK(segment != nullptr
 ```
 
-**File**: `be/src/data_workflows/load/stream_load/transaction_mgr.h` (modified, +1/-0)
+**File**: `be/src/storage/lake/add_index_schema_change.h` (modified, +2/-2)
 ```diff
-@@ -38,6 +38,7 @@ class TransactionMgr {
-     Status list_transactions(const HttpRequest* req, std::string* resp);
+@@ -136,8 +136,8 @@ class AddIndexSchemaChange {
  
-     Status _begin_transaction(const HttpRequest* http_req, StreamLoadContext* ctx);
-+    void _refresh_auth(const HttpRequest* http_req, StreamLoadContext* ctx);
-     Status _commit_transaction(StreamLoadContext* ctx, bool prepare);
-     Status _rollback_transaction(StreamLoadContext* ctx);
- 
+     // Best-effort remove every .idx file whose path we recorded in
+     // `_written_paths`. Called from `run()` when the overall build fails so
+-    // we don't leak objects on S3 when the ADD INDEX fast path aborts and
+-    // the caller falls back to the legacy rewrite path. Errors here are
++    // we don't leak objects on S3 when the ADD INDEX fast path aborts; the
++    // caller returns the error and FE cancels the alter. Errors here are
+     // swallowed (logged): the cleanup is a courtesy, vacuum still reclaims
+     // these files later as orphans.
+     void cleanup_written_idx_files();
 ```
 
-**File**: `be/src/http/action/stream_load.cpp` (modified, +4/-4)
+**File**: `be/test/storage/lake/add_index_schema_change_test.cpp` (modified, +193/-4)
 ```diff
-@@ -299,10 +299,10 @@ int StreamLoadAction::on_header(HttpRequest* req) {
+@@ -30,6 +30,7 @@
+ #include "column/schema.h"
+ #include "common/config_rowset_fwd.h"
+ #include "common/thread/threadpool.h"
++#include "fs/bundle_file.h"
+ #include "fs/fs.h"
+ #include "fs/fs_factory.h"
+ #include "fs/fs_util.h"
+@@ -42,6 +43,7 @@
+ #include "storage/chunk_helper.h"
+ #include "storage/lake/delta_writer.h"
+ #include "storage/lake/fixed_location_provider.h"
++#include "storage/lake/general_tablet_writer.h"
+ #include "storage/lake/index_delta_group.h"
+ #include "storage/lake/index_delta_group_loader.h"
+ #include "storage/lake/index_file_writer.h"
+@@ -197,6 +199,55 @@ class AddIndexSchemaChangeTest : public ::testing::Test {
+         return version + 1;
+     }
+ 
++    std::shared_ptr<TabletMetadata> create_pk_tablet_metadata() {
++        auto metadata = create_base_tablet_metadata();
++        auto* schema = metadata->mutable_schema();
++        schema->set_keys_type(PRIMARY_KEYS);
++        schema->mutable_column()->DeleteSubrange(2, schema->column_size() - 2);
++        schema->mutable_column(1)->set_aggregation("REPLACE");
++        return metadata;
++    }
++
++    // DELETE-only writes leave an empty segment whose physical schema contains
++    // only the PK. Write that shape through a real tablet/segment writer, while
++    // retaining the full logical schema in tablet metadata.
++    SegmentPtr append_pk_rowset(TabletMetadata* metadata, bool key_only, int nrows, bool bundled) {
++        auto full_schema = TabletSchema::create(metadata->schema());
++        std::vector<ColumnUID> column_uids{_c0_uid};
++        if (!key_only) column_uids.push_back(_c1_uid);
++        auto write_schema = TabletSchema::create_with_uid(full_schema, column_uids);
++        Columns columns;
++        for (size_t c = 0; c < write_schema->num_columns(); ++c) {
++            auto column = Int32Column::create();
++            for (int i = 0; i < nrows; ++i) column->append_datum(Datum(i + 1));
++            columns.push_back(std::move(column));
++        }
++        Chunk chunk(std::move(columns), std::make_shared<Schema>(ChunkHelper::convert_schema(write_schema)));
++        BundleWritableFileContext bundle_context;
++        if (bundled) bundle_context.increase_active_writers();
++        HorizontalGeneralTabletWriter writer(_tablet_manager.get(), metadata->id(), write_schema, next_id(),
++                                             /*is_compaction=*/false, /*flush_pool=*/nullptr,
++                                             bundled ? &bundle_context : nullptr);
++        CHECK_OK(writer.open());
++        CHECK_OK(writer.write(chunk, /*segment=*/nullptr, /*eos=*/true));
++        CHECK_OK(writer.finish());
++        if (bundled) CHECK_OK(bundle_context.decrease_active_writers());
++        CHECK_EQ(1, writer.segments().size());
++
++        auto* rowset = metadata->add_rowsets();
++        rowset->set_id(metadata->rowsets_size());
++        rowset->set_num_rows(writer.num_rows());
++        const auto& segment_info = writer.segments().front();
++        CHECK_EQ(bundled, segment_info.bundle_file_offset.has_value());
++        segment_info.to_proto(/*segment_idx=*/0, rowset->add_segment_metas());
++        FileInfo file_info = segment_info;
++        file_info.path = _tablet_manager->segment_location(metadata->id(), segment_info.path);
++        writer.close();
++        ASSIGN_OR_ABORT(auto segment, _tablet_manager->load_segment(file_info, /*segment_id=*/0, LakeIOOptions{},
++                                                                    /*fill_meta_cache=*/false, full_schema));
++        return segment;
++    }
++
+     // Construct a single-column TabletIndexPB.
+     static TabletIndexPB make_index(IndexType type, int32_t col_uid, int64_t index_id = 0,
+                                     const std::string& props = "") {
+@@ -492,8 +543,146 @@ TEST_F(AddIndexSchemaChangeTest, run_empty_tablet_noop) {
+     EXPECT_EQ(IndexType::BITMAP, op.new_indexes(0).index_type());
  }
  
- Status StreamLoadAction::_on_header(HttpRequest* http_req, StreamLoadContext* ctx) {
--    // auth information
--    if (!parse_basic_auth(*http_req, &ctx->auth)) {
--        LOG(WARNING) << "parse basic authorization failed." << ctx->brief();
--        return Status::InternalError("no valid Basic authorization");
-+    // auth information (Basic or Bearer)
-+    if (!parse_auth(*http_req, &ctx->auth)) {
-+        LOG(WARNING) << "parse authorization failed." << ctx->brief();
-+        return Status::InternalError("no valid authorization");
-     }
- 
-     if (!http_req->header(HTTP_ENABLE_MERGE_COMMIT).empty()) {
+-// GIN -> NotSupported. Triggers cleanup_written_idx_files via the run()
+-// failure path.
++TEST_F(AddIndexSchemaChangeTest, run_empty_pk_segment_skips_indexes_without_default) {
++    for (bool bundled : {false, true}) {
++        for (bool record_num_rows : {false, true}) {
++            auto metadata = create_pk_tablet_metadata();
++            auto segment = append_pk_rowset(metadata.get(), /*key_only=*/true, /*nrows=*/0, bundled);
++            ASSERT_EQ(0, segment->num_rows());
++            ASSERT_NE(nullptr, segment->column_with_uid(_c0_uid));
++            ASSERT_EQ(nullptr, segment->column_with_uid(_c1_uid));
++            if (!record_num_rows) metadata->mutable_rowsets(0)->mutable_segment_metas(0)->clear_num_rows();
++
++            VersionedTablet vt(_tablet_manager.get(), metadata);
++            ASSERT_FALSE(vt.get_schema()->column(1).is_nullable());
++            ASSERT_FALSE(vt.get_schema()->column(1).has_default_value());
++            for (auto type : {IndexType::BITMAP, IndexType::BLOOM_FILTER}) {
++                SCOPED_TRACE(::testing::Message() << "bundled=" << bundled << " rec
 ```
 
-**File**: `be/src/platform/http/ev_http_server.cpp` (modified, +5/-3)
+**File**: `test/sql/test_schema_change/R/test_lake_add_index_after_pk_delete` (added, +97/-0)
 ```diff
-@@ -475,9 +475,11 @@ int EvHttpServer::on_header(struct evhttp_request* ev_req) {
-         auto failure = _auth_verifier(request.get(), handler->required_privilege());
-         if (failure.has_value()) {
-             evhttp_remove_header(evhttp_request_get_input_headers(ev_req), HttpHeaders::EXPECT);
--            if (!failure->www_authenticate.empty()) {
--                evhttp_add_header(evhttp_request_get_output_headers(ev_req), "WWW-Authenticate",
--                                  failure->www_authenticate.c_str());
-+            // One header line per challenge rather than a comma-joined list: RFC 7235 lets a
-+            // single line carry several challenges, but the comma also separates auth-params
-+            // and some clients get that wrong; separate lines are unambiguous.
-+            for (const auto& challenge : failure->www_authenticate) {
-+                evhttp_add_header(evhttp_request_get_output_headers(ev_req), "WWW-Authenticate", challenge.c_str());
+@@ -0,0 +1,97 @@
++-- name: test_lake_add_index_after_pk_delete @cloud
++create database lake_idx_pk_del_${uuid0};
++-- result:
++-- !result
++use lake_idx_pk_del_${uuid0};
++-- result:
++-- !result
++CREATE TABLE t1 (
++    k1 int NOT NULL,
++    v1 int NOT NULL,
++    v2 varchar(32) NOT NULL
++) PRIMARY KEY(k1)
++DISTRIBUTED BY HASH(k1) BUCKETS 1
++PROPERTIES ("replication_num" = "1");
++-- result:
++-- !result
++insert into t1 select x, 10 * (x % 6 + 1), concat('s_', x) from table(generate_series(1, 600)) t(x);
++-- result:
++-- !result
++delete from t1 where k1 <= 6;
++-- result:
++-- !result
++ALTER TABLE t1 ADD INDEX idx_v1(v1) USING BITMAP;
++-- result:
++-- !result
++function: wait_alter_table_finish()
++-- result:
++None
++-- !result
++ALTER TABLE t1 SET ("bloom_filter_columns" = "v2");
++-- result:
++-- !result
++function: wait_alter_table_finish()
++-- result:
++None
++-- !result
++select count(*) from t1;
++-- result:
++594
++-- !result
++select count(*) from t1 where v1 = 20;
++-- result:
++99
++-- !result
++select count(*) from t1 where v2 = 's_300';
++-- result:
++1
++-- !result
++select count(*) from t1 where v2 = 's_3';
++-- result:
++0
++-- !result
++set enable_profile = true;
++-- result:
++-- !result
++set enable_async_profile = false;
++-- result:
++-- !result
++[UC]select count(*) from t1 where v1 = 20;
++create table profile_bitmap properties("replication_num"="1") as
++    select line from table(unnest(split(get_query_profile(last_query_id()), "\n"))) t(line);
++-- result:
++-- !result
++select assert_true(max(cast(coalesce(nullif(regexp_extract(line, '.*- BitmapIndexIteratorInit: ([0-9.]+).*', 1), ''), '0') as double)) > 0)
++    from profile_bitmap
++    where line like '%- BitmapIndexIteratorInit%';
++-- result:
++1
++-- !result
++[UC]select count(*) from t1 where v2 = 's_300';
++create table profile_bloom properties("replication_num"="1") as
++    select line from table(unnest(split(get_query_profile(last_query_id()), "\n"))) t(line);
++-- result:
++-- !result
++select assert_true(max(cast(coalesce(nullif(regexp_extract(line, '.*- BloomFilterFilter: ([0-9.]+).*', 1), ''), '0') as double)) > 0)
++    from profile_bloom
++    where line like '%- BloomFilterFilter:%';
++-- result:
++1
++-- !result
++insert into t1 values (1, 20, 's_1');
++-- result:
++-- !result
++delete from t1 where k1 = 600;
++-- result:
++-- !result
++select count(*) from t1 where v1 = 20;
++-- result:
++100
++-- !result
++select * from t1 where k1 in (1, 600) order by k1;
++-- result:
++1	20	s_1
++-- !result
++drop database lake_idx_pk_del_${uuid0};
++-- result:
++-- !result
+```
+
+**File**: `test/sql/test_schema_change/T/test_lake_add_index_after_pk_delete` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++-- name: test_lake_add_index_after_pk_delete @cloud
++-- A DELETE on a primary key table writes only the key columns, and each of its
++-- flushes leaves a zero-row segment beside the .del file. That segment does not
++-- physically hold the value columns, so the ADD INDEX fast path must skip it
++-- instead of cancelling the alter for a NOT NULL column without a default.
++create database lake_idx_pk_del_${uuid0};
++use lake_idx_pk_del_${uuid0};
++
++CREATE TABLE t1 (
++    k1 int NOT NULL,
++    v1 int NOT NULL,
++    v2 varchar(32) NOT NULL
++) PRIMARY KEY(k1)
++DISTRIBUTED BY HASH(k1) BUCKETS 1
++PROPERTIES ("replication_num" = "1");
++
++insert into t1 select x, 10 * (x % 6 + 1), concat('s_', x) from table(generate_series(1, 600)) t(x);
++delete from t1 where k1 <= 6;
++
++-- wait_alter_table_finish() fails the case unless the job reaches FINISHED.
++ALTER TABLE t1 ADD INDEX idx_v1(v1) USING BITMAP;
++function: wait_alter_table_finish()
++ALTER TABLE t1 SET ("bloom_filter_columns" = "v2");
++function: wait_alter_table_finish()
++
++select count(*) from t1;
++select count(*) from t1 where v1 = 20;
++select count(*) from t1 where v2 = 's_300';
++select count(*) from t1 where v2 = 's_3';
++
++-- Both indexes were built for the segment holding the inserted rows, and scans read them.
++set enable_profile = true;
++set enable_async_profile = false;
++[UC]select count(*) from t1 where v1 = 20;
++create table profile_bitmap properties("replication_num"="1") as
++    select line from table(unnest(split(get_query_profile(last_query_id()), "\n"))) t(line);
++select assert_true(max(cast(coalesce(nullif(regexp_extract(line, '.*- BitmapIndexIteratorInit: ([0-9.]+).*', 1), ''), '0') as double)) > 0)
++    from profile_bitmap
++    where line like '%- BitmapIndexIteratorInit%';
++[UC]select count(*) from t1 where v2 = 's_300';
++create table profile_bloom properties("replication_num"="1") as
++    select line from table(unnest(split(get_query_profile(last_query_id()), "\n"))) t(line);
++select assert_true(max(cast(coalesce(nullif(regexp_extract(line, '.*- BloomFilterFilter: ([0-9.]+).*', 1), ''), '0') as double)) > 0)
++    from profile_bloom
++    where line like '%- BloomFilterFilter:%';
++
++-- Writes after the alter keep working on the indexed schema.
++insert into t1 values (1, 20, 's_1');
++delete from t1 where k1 = 600;
++select count(*) from t1 where v1 = 20;
++select * from t1 where k1 in (1, 600) order by k1;
++
++drop database lake_idx_pk_del_${uuid0};
+```
+
+---
+
+### Incident Patch 3: `eabbb850` (2026-10-20)
+**Commit Message**: [Enhancement] Support simultaneous NULL and MCV skew detection for JoinSkewRule (#78350)
+
+Signed-off-by: Tim Wendisch <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/SkewJoinOptimizeRule.java` (modified, +22/-25)
+```diff
+@@ -24,8 +24,6 @@
+ import com.starrocks.sql.ast.HintNode;
+ import com.starrocks.sql.ast.JoinOperator;
+ import com.starrocks.sql.ast.expression.ExprUtils;
+-import com.starrocks.sql.common.ErrorType;
+-import com.starrocks.sql.common.StarRocksPlannerException;
+ import com.starrocks.sql.common.TypeManager;
+ import com.starrocks.sql.optimizer.JoinHelper;
+ import com.starrocks.sql.optimizer.OptExpression;
+@@ -62,6 +60,7 @@
+ import com.starrocks.type.Type;
+ 
+ import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+@@ -194,33 +193,27 @@ record PredicateSkewInfo(ColumnRefOperator column, ColumnRefOperator otherColumn
+             final var skewJoinColumn = skewPredicate.column();
+             final var skewInfo = skewPredicate.skewInfo();
+ 
+-            // Handle NULL-only skew case: when MCV is empty but NULL fraction indicates skew
+-            List<ScalarOperator> skewValues;
+-            if (skewInfo.type() == DataSkew.SkewType.SKEWED_NULL) {
+-                // Create a special NULL skew value for NULL-only skew cases
+-                skewValues = Lists.newArrayList(ConstantOperator.createNull(skewJoinColumn.getType()));
+-            } else if (skewInfo.type() == DataSkew.SkewType.SKEWED_MCV) {
+-                // Use MCV-based skew values
+-                skewValues = skewInfo.maybeMcvs().get()
+-                        .stream() //
+-                        .map(mcv -> ConstantOperator.createVarchar(mcv.first) //
+-                                .castTo(skewJoinColumn.getType())) //
+-                        .filter(Optional::isPresent) //
+-                        .map(Optional::get) //
+-                        .collect(Collectors.toList());
+-
+-                if (skewValues.isEmpty()) {
+-                    // If all explicit casts failed.
+-                    continue;
+-                }
+-            } else {
+-                throw new StarRocksPlannerException("Did not handle skew type in SkewOptimizeRule", ErrorType.INTERNAL_ERROR);
++            List<ScalarOperator> skewValues = Lists.newArrayList();
++            if (skewInfo.hasNullSkew()) {
++                // Add a special skew value for NULLs
++                skewValues.add(ConstantOperator.createNull(skewJoinColumn.getType()));
++            }
++            // Add MCV-based skew values, if any
++            skewInfo.maybeMcvs().stream()
++                    .flatMap(Collection::stream)
++                    .map(mcv -> ConstantOperator.createVarchar(mcv.first) //
++                            .castTo(skewJoinColumn.getType())) //
++                    .filter(Optional::isPresent) //
++                    .map(Optional::get) //
++                    .forEach(skewValues::add);
++            if (skewValues.isEmpty()) {
++                continue;
              }
-             HttpChannel::send_reply_json(request.get(), failure->http_status, failure->body);
-             return 0;
+ 
+             // Check how many rows on the other side would be affected by salting, as this can lead to a
+             // cardinality blow up. We only check for MCVs since for NULLs this is not an issue as NULL does not join.
+             final var skewInfoMcvs = skewInfo.getMcvs();
+-            if (skewInfo.type() == DataSkew.SkewType.SKEWED_MCV && skewInfoMcvs.isPresent()) {
++            if (skewInfo.hasMcvSkew()) {
+                 final var rightChildStats = input.inputAt(1).getStatistics();
+                 if (rightChildStats != null && rightChildStats.getColumnStatistics().containsKey(skewPredicate.otherColumn)) {
+                     final var otherColumnStats = rightChildStats.getColumnStatistic(skewPredicate.otherColumn);
+@@ -229,7 +222,11 @@ record PredicateSkewInfo(ColumnRefOperator column, ColumnRefOperator otherColumn
+                         final var overlapRows = DataSkew.getOverlappingMcvRowCount(otherColumnStats.getHistogram().getMCV(),
+                                 skewInfoMcvs.get());
+                         if (overlapRows > maxOverlapRowCount) {
+-                            continue;
++                            if (skewInfo.hasNullSkew()) {
++                                skewValues = Lists.newArrayList(ConstantOperator.createNull(skewJoinColumn.getType()));
++                            } else {
++                                continue;
++                            }
+                         }
+                     }
+                 }
 ```
 
-**File**: `be/src/platform/http/ev_http_server.h` (modified, +4/-3)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/SplitWindowSkewToUnionRule.java` (modified, +19/-15)
 ```diff
-@@ -42,9 +42,10 @@ class EvHttpServer {
-     // response body — these HTTP primitives stay format-agnostic.
-     struct AuthVerifyFailure {
-         HttpStatus http_status = HttpStatus::UNAUTHORIZED;
--        // Value for the response's `WWW-Authenticate` header. Empty means the server
--        // will not add the header (e.g. for 403 where the header is semantically wrong).
--        std::string www_authenticate;
-+        // Values for the response's `WWW-Authenticate` header, one header line each (an endpoint
-+        // that accepts Basic and Bearer challenges with both). Empty means the server will not add
-+        // the header (e.g. for 403 where the header is semantically wrong).
-+        std::vector<std::string> www_authenticate;
-         // Pre-serialized response body sent to the client as-is (Content-Type: application/json).
-         std::string body;
-     };
-```
-
-**File**: `be/src/platform/http/http_auth.cpp` (modified, +44/-4)
-```diff
-@@ -14,6 +14,9 @@
+@@ -43,7 +43,6 @@
+ import com.starrocks.sql.optimizer.statistics.ColumnStatistic;
+ import com.starrocks.sql.optimizer.statistics.Statistics;
  
- #include "platform/http/http_auth.h"
+-import java.util.Collection;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Map;
+@@ -400,21 +399,26 @@ private List<SkewedInfo> findSkewedPartition(List<ScalarOperator> partitionExprs
+             }
  
-+#include <boost/algorithm/string.hpp>
-+#include <cctype>
-+
- #include "base/url_coding.h"
- #include "platform/http/http_headers.h"
- #include "platform/http/http_request.h"
-@@ -28,13 +31,23 @@ std::string encode_basic_auth(const std::string& user, const std::string& passwd
-     return s_prefix + encoded_auth;
- }
- 
-+// Split "<scheme> <value>" the way RFC 7235 reads it: the scheme is case-insensitive, any amount
-+// of blank separates it from the value, and blanks around the value carry no meaning. Returns false
-+// when the header does not start with this scheme (so the next scheme can be tried) or has no value.
-+static bool scheme_value(const std::string& header, const std::string& scheme, std::string* value) {
-+    std::string h = boost::algorithm::trim_copy(header);
-+    if (!boost::algorithm::istarts_with(h, scheme) || h.size() == scheme.size() || !std::isspace(h[scheme.size()])) {
-+        return false; // "Basicxyz" is not the Basic scheme, and a bare "Basic" has no value
-+    }
-+    *value = boost::algorithm::trim_copy(h.substr(scheme.size()));
-+    return !value->empty();
-+}
-+
- bool parse_basic_auth(const HttpRequest& req, std::string* user, std::string* passwd) {
--    const char k_basic[] = "Basic ";
--    auto& auth = req.header(HttpHeaders::AUTHORIZATION);
--    if (auth.compare(0, sizeof(k_basic) - 1, k_basic, sizeof(k_basic) - 1) != 0) {
-+    std::string encoded_str;
-+    if (!scheme_value(req.header(HttpHeaders::AUTHORIZATION), "Basic", &encoded_str)) {
-         return false;
+             ColumnStatistic colStat = statistics.getColumnStatistic(col);
+-            var skewInfo = DataSkew.getColumnSkewInfo(statistics, colStat, DataSkew.Thresholds.withMcvLimit(1));
+-            if (skewInfo.isSkewed()) {
+-
+-                if (skewInfo.type() == DataSkew.SkewType.SKEWED_NULL) {
+-                    return List.of(new SkewedInfo(col, ConstantOperator.createNull(col.getType())));
+-                }
+-
+-                return skewInfo.maybeMcvs().stream() //
+-                        .flatMap(Collection::stream) //
+-                        .map(mcv -> ConstantOperator.createVarchar(mcv.first).castTo(col.getType())) //
+-                        .filter(Optional::isPresent) //
+-                        .map(value -> new SkewedInfo(col, value.get())) //
+-                        .toList();
+-            }
++            // Window split can only peel off one value (see size-guard in transform) so we pick a single dominant skew
++            DataSkew.SkewCandidates candidates = 
++                    DataSkew.getSkewCandidates(statistics, colStat, DataSkew.Thresholds.withMcvLimit(1), 0.0);
++            return pickDominantSkew(col, candidates)
++                    .map(value -> List.of(new SkewedInfo(col, value)))
++                    .orElse(Collections.emptyList());       
+         }
+         return Collections.emptyList();
      }
--    std::string encoded_str = auth.substr(sizeof(k_basic) - 1);
-     std::string decoded_auth;
-     if (!base64_decode(encoded_str, &decoded_auth)) {
-         return false;
-@@ -71,4 +84,31 @@ bool parse_basic_auth(const HttpRequest& req, AuthInfo* auth) {
-     return true;
++
++    private Optional<ConstantOperator> pickDominantSkew(ColumnRefOperator col, DataSkew.SkewCandidates candidates) {
++        if (!candidates.isSkewed()) {
++            return Optional.empty();
++        }
++        double nullFraction = candidates.nullSkewFactor().orElse(0.0);
++        double mcvFraction = candidates.maxMcvRatio().orElse(0.0);
++        if (nullFraction >= mcvFraction) {
++            return Optional.of(ConstantOperator.createNull(col.getType()));
++        }
++        String topValue = candidates.mcvs().get(0).first;
++        return ConstantOperator.createVarchar(topValue).castTo(col.getType());
++    }
  }
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/skew/DataSkew.java` (modified, +11/-7)
+```diff
+@@ -44,7 +44,8 @@ public static Thresholds withMcvLimit(int mcvLimit) {
+     public enum SkewType {
+         NOT_SKEWED,
+         SKEWED_NULL,
+-        SKEWED_MCV
++        SKEWED_MCV,
++        SKEWED_MCV_AND_NULL
+     }
  
-+// Bearer: the token travels in `passwd` (there is no separate token field on the wire) and there is
-+// no declared user - the username comes out of the token's claims on the FE side.
-+static bool parse_bearer_auth(const HttpRequest& req, AuthInfo* auth) {
-+    std::string token;
-+    if (!scheme_value(req.header(HttpHeaders::AUTHORIZATION), "Bearer", &token)) {
-+        return false;
-+    }
-+    auth->passwd = std::move(token);
-+    auth->auth_type = AuthInfo::AUTH_TYPE_BEARER;
-+    if (req.remote_host() != nullptr) {
-+        auth->user_ip.assign(req.remote_host());
-+    } else {
-+        auth->user_ip.assign("");
-+    }
-+    return true;
-+}
+     public enum AdditionalInfo {
+@@ -68,6 +69,14 @@ public boolean isSkewed() {
+             return type != SkewType.NOT_SKEWED;
+         }
+ 
++        public boolean hasNullSkew() {
++            return type == SkewType.SKEWED_NULL || type == SkewType.SKEWED_MCV_AND_NULL;
++        }
 +
-+// Dispatch on the Authorization scheme:
-+//   "Bearer ..."  -> parse_bearer_auth
-+//   anything else -> parse_basic_auth, leaving auth_type empty, which the FE reads as basic
-+bool parse_auth(const HttpRequest& req, AuthInfo* auth) {
-+    if (parse_bearer_auth(req, auth)) {
-+        return true;
-+    }
-+    return parse_basic_auth(req, auth);
-+}
++        public boolean hasMcvSkew() {
++            return type == SkewType.SKEWED_MCV || type == SkewType.SKEWED_MCV_AND_NULL;
++        }
 +
- } // namespace starrocks
+         public Optional<Map<String, Long>> getMcvs() {
+             return maybeMcvs.map(mcvs -> mcvs.stream() //
+                     .collect(Collectors.toMap(pair -> pair.first, pair -> pair.second)));
+@@ -185,12 +194,7 @@ public static SkewInfo getColumnSkewInfo(@NotNull Statistics statistics, @NotNul
+         final var mcvSkewInfo = getMcvSkewInfo(statistics, columnStatistic, thresholds);
+ 
+         if (nullSkewInfo.skewed && mcvSkewInfo.skewed) {
+-            // If there is skew in the MCVs as well as NULLs, we decide for the one that is more skewed.
+-            if (nullSkewInfo.nullSkewFactor.get() >= mcvSkewInfo.mcvSkewFactor.get()) {
+-                return new SkewInfo(SkewType.SKEWED_NULL);
+-            } else {
+-                return new SkewInfo(SkewType.SKEWED_MCV, mcvSkewInfo.additionalInfo, mcvSkewInfo.mcvs);
+-            }
++            return new SkewInfo(SkewType.SKEWED_MCV_AND_NULL, mcvSkewInfo.additionalInfo, mcvSkewInfo.mcvs);
+         } else if (nullSkewInfo.skewed) {
+             return new SkewInfo(SkewType.SKEWED_NULL);
+         } else if (mcvSkewInfo.skewed) {
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/skew/DataSkewTest.java` (modified, +72/-24)
+```diff
+@@ -135,44 +135,90 @@ void itShouldDetectHistogramSkew() {
+     }
+ 
+     @Test
+-    void itShouldReturnMoreSkewedMetric() {
+-        // GIVEN
++    void itShouldReportOnlyNullSkewWhenMcvNotSkewed() {
++        // GIVEN: NULL fraction above threshold, MCVs are not skewed
++        final var nonSkewedHistogram = getNonSkewedHistogram();
++        final var col = createNewTestColumn();
++        final var colStats = ColumnStatistic.builder()
++                .setNullsFraction(0.9) // heavily null skewed
++                .setHistogram(nonSkewedHistogram) //
++                .build();
++
++        final var stats = new Statistics.Builder()
++                .setOutputRowCount(100_000)
++                .addColumnStatistic(col, colStats) //
++                .build();
++
++        // WHEN
++        final var skewInfo = DataSkew.getColumnSkewInfo(stats, colStats);
++
++        // THEN
++        assertTrue(skewInfo.isSkewed());
++        assertTrue(skewInfo.hasNullSkew());
++        assertFalse(skewInfo.hasMcvSkew());
++    }
++
++    @Test
++    void itShouldReportOnlyMcvSkewWhenNullNotSkewed() {
++        // GIVEN: MCVs above threshold, NULL fraction is not skewed
+         final var skewedHistogram = getSkewedHistogram();
+-        final var nullAndMcvButMoreNullSkewedCol = createNewTestColumn();
+-        final var nullAndMcvButMoreNullSkewedStats = ColumnStatistic.builder()
+-                .setNullsFraction(99) //
++        final var col = createNewTestColumn();
++        final var colStats = ColumnStatistic.builder()
++                .setNullsFraction(0.01) // not null skewed
+                 .setHistogram(skewedHistogram) //
+                 .build();
+ 
+-        final var nullAndMcvButMoreMcvSkewedCol = createNewTestColumn();
+-        final var nullAndMcvButMoreMcvSkewedStats = ColumnStatistic.builder()
++        final var stats = new Statistics.Builder()
++                .setOutputRowCount(100_000)
++                .addColumnStatistic(col, colStats) //
++                .build();
++
++        // WHEN
++        final var skewInfo = DataSkew.getColumnSkewInfo(stats, colStats);
++
++        // THEN
++        assertTrue(skewInfo.isSkewed());
++        assertFalse(skewInfo.hasNullSkew());
++        assertTrue(skewInfo.hasMcvSkew());
++
++        final var expectedMcvs =
++                List.of(Pair.create("1", 50000L), Pair.create("2", 20000L), Pair.create("3", 10000L),
++                        Pair.create("4", 5000L), Pair.create("5", 500L));
++        assertEquals(expectedMcvs.size(), skewInfo.maybeMcvs().get().size());
++        for (final var value : expectedMcvs) {
++            assertTrue(skewInfo.maybeMcvs().get().contains(value));
++        }
++    }
++
++    @Test
++    void itShouldReportBothNullAndMcvSkewWhenBothPresent() {
++        // GIVEN: NULL fraction and MCVs both above threshold at the same time
++        final var skewedHistogram = getSkewedHistogram();
++        final var col = createNewTestColumn();
++        final var colStats = ColumnStatistic.builder()
+                 .setNullsFraction(0.6) //
+                 .setHistogram(skewedHistogram) //
+                 .build();
+ 
+         final var stats = new Statistics.Builder()
+                 .setOutputRowCount(100_000)
+-                .addColumnStatistic(nullAndMcvButMoreNullSkewedCol, nullAndMcvButMoreNullSkewedStats) //
+-                .addColumnStatistic(nullAndMcvButMoreMcvSkewedCol, nullAndMcvButMoreMcvSkewedStats) //
++                .addColumnStatistic(col, colStats) //
+                 .build();
+ 
+-        // WHEN / THEN
+-        final var nullAndMcvButMoreNullSkewInfo = DataSkew.getColumnSkewInfo(stats, nullAndMcvButMoreNullSkewedStats);
+-        assertTrue(nullAndMcvButMoreNullSkewInfo.isSkewed());
+-        assertEquals(DataSkew.SkewType.SKEWED_NULL, nullAndMcvButMoreNullSkewInfo.type());
+-        assertFalse(nullAndMcvButMoreNullSkewInfo.maybeMcvs().isPresent());
++        // WHEN
++        final var skewInfo = DataSkew.getColumnSkewInfo(stats, colStats);
+ 
+-        final var nullAndMcvButMoreMcvSkewInfo = DataSkew.getColumnSkewInfo(stats, nullAndMcvButMoreMcvSkewedStats);
+-        assertTrue(nullAndMcvButMoreMcvSkewInfo.isSkewed());
+-        assertEquals(DataSkew.SkewType.SKEWED_MCV, nullAndMcvButMoreMcvSkewInfo.type());
+-        assertTrue(nullAndMcvButMoreMcvSkewInfo.maybeMcvs().isPresent());
++        // THEN: neither kind of skew is dropped
++        assertTrue(skewInfo.isSkewed());
++        assertTrue(skewInfo.hasNullSkew());
++        assertTrue(skewInfo.hasMcvSkew());
+ 
+         final var expectedMcvs =
+-                List.of(Pair.create("1", 50000L), Pair.create("2", 20000L), Pair.create("3", 10000L), Pair.create("4", 5000L),
+-                        Pair.create("5", 500L));
+-        assertEquals(expectedMcvs.size(), nullAndMcvButMoreMcvSkewInfo.maybeMcvs().get().size());
++                List.of(Pair.create("1", 50000L), Pair.create("2", 20000L), Pair.create("3", 10000L),
++                        Pair.create("4", 5000L), Pair.create("5", 500L));
++        assertEquals(
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/SkewJoinTest.java` (modified, +117/-6)
+```diff
+@@ -375,6 +375,7 @@ public ColumnStatistic getColumnStatistic(Table table, String column) {
+                 }
+             };
+             setTableStatistics(getOlapTable("t0"), 1337);
++            setTableStatistics(getOlapTable("t1"), 1337);
+             connectContext.getGlobalStateMgr().setStatisticStorage(emptyStatisticsStorage);
+             connectContext.getSessionVariable().setSkewJoinDataSkewThreshold(0.1);
+             connectContext.getSessionVariable().setEnableStatsToOptimizeSkewJoin(true);
+@@ -391,7 +392,6 @@ public ColumnStatistic getColumnStatistic(Table table, String column) {
+             // Left side should include CASE WHEN <col> IS NULL THEN round(...)
+             assertCContains(plan, "IS NULL THEN");
+             assertCContains(plan, """
+-                      5:Project
+                       |  <slot 9> : [NULL]
+                     """);
+         } finally {
+@@ -403,7 +403,56 @@ public ColumnStatistic getColumnStatistic(Table table, String column) {
+     }
+ 
+     @Test
+-    void testSkewJoinWithNullOnlySkewAndMcvSkew() throws Exception {
++    void testSkewJoinWithMcvOnlySkewByStats() throws Exception {
++        final var oldStatisticsStorage = connectContext.getGlobalStateMgr().getStatisticStorage();
++        final double oldThreshold = connectContext.getSessionVariable().getSkewJoinDataSkewThreshold();
++        final boolean oldEnableStats = connectContext.getSessionVariable().isEnableStatsToOptimizeSkewJoin();
++        final boolean oldEnableRewrite = connectContext.getSessionVariable().isEnableOptimizerSkewJoinOptimizeV1();
++        try {
++            final var emptyStatisticsStorage = new EmptyStatisticStorage() {
++                @Override
++                public ColumnStatistic getColumnStatistic(Table table, String column) {
++                    if (table.getName().equalsIgnoreCase("t0") && column.equalsIgnoreCase("v1")) {
++                        return ColumnStatistic.builder() //
++                                .setNullsFraction(0.01) //
++                                .setHistogram(new Histogram(List.of(), Map.of("11", 400L, "22", 200L))) // MCV skew
++                                .build();
++                    }
++
++                    return ColumnStatistic.builder() //
++                            .setNullsFraction(0.0) //
++                            .build();
++                }
++            };
++            setTableStatistics(getOlapTable("t0"), 1337);
++            setTableStatistics(getOlapTable("t1"), 1337);
++            connectContext.getGlobalStateMgr().setStatisticStorage(emptyStatisticsStorage);
++            connectContext.getSessionVariable().setSkewJoinDataSkewThreshold(0.1);
++            connectContext.getSessionVariable().setEnableStatsToOptimizeSkewJoin(true);
++            connectContext.getSessionVariable().setEnableOptimizerSkewJoinOptimizeV1(true);
++
++            // LEFT JOIN here to keep consistent with sibling tests; Only MCVs are skewed
++            String sql = "select * from t0 left join t1 on t0.v1 = t1.v4";
++            String plan = getFragmentPlan(sql);
++
++            // Rewrite should add rand_col equality and build skew value salt infra
++            assertCContains(plan, "rand_col = ");
++            assertCContains(plan, "unnest");
++            assertCContains(plan, "generate_serials");
++            // MCV-only
++            assertCContains(plan, """
++                      |  <slot 9> : [11,22]
++                    """);
++        } finally {
++            connectContext.getSessionVariable().setSkewJoinDataSkewThreshold(oldThreshold);
++            connectContext.getSessionVariable().setEnableStatsToOptimizeSkewJoin(oldEnableStats);
++            connectContext.getSessionVariable().setEnableOptimizerSkewJoinOptimizeV1(oldEnableRewrite);
++            connectContext.getGlobalStateMgr().setStatisticStorage(oldStatisticsStorage);
++        }
++    }
++
++    @Test
++    void testSkewJoinWithNullAndMcvSkewByStats() throws Exception {
+         final var oldStatisticsStorage = connectContext.getGlobalStateMgr().getStatisticStorage();
+         final double oldThreshold = connectContext.getSessionVariable().getSkewJoinDataSkewThreshold();
+         final boolean oldEnableStats = connectContext.getSessionVariable().isEnableStatsToOptimizeSkewJoin();
+@@ -442,11 +491,9 @@ public ColumnStatistic getColumnStatistic(Table table, String column) {
+             // Left side should include CASE WHEN <col> IS NULL THEN round(...)
+             assertCContains(plan, "IS NULL THEN");
+ 
+-            // In this case, the MCV should be selected since:
+-            //  - 0.3 null fractions * 1337 rows < 400 rows (11) + 200 rows (22)
++            // Both skews present, NULL and both MCVs are salted together
+             assertCContains(plan, """
+-                      5:Project
+-                      |  <slot 9> : [11,22]
++                      |  <slot 9> : [NULL,11,22]
+                     """);
+         } finally {
+             connectContext.getSessionVariable().setSkewJ
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/WindowSkewTest.java` (modified, +33/-0)
+```diff
+@@ -265,6 +265,39 @@ void testWindowWithMCVSkew() throws Exception {
+                         "  |  * sum(3: x)-->[-Infinity, Infinity, 0.0, 1.0, 1.0] UNKNOWN");
+     }
+ 
++    @Test
++    void testWindowBothSkewNullWins() throws Exception {
++        Histogram histogram = new Histogram(
++                /* buckets */ List.of(),
++                /* mcv */ Map.of("1", 300L));
++
++        refreshAndSetColumnStatForP(
++                ColumnStatistic.builder().setNullsFraction(0.4).setHistogram(histogram).build());
++
++        String plan = getCostPlan(BASIC_WINDOW_SQL);
++
++        assertContains(plan, "UNION");
++        // NULL split branch
++        assertNullSplit(plan);
++        // Did NOT split on MCV
++        assertNotContains(plan, "Predicates: [1: p, INT, true] = 1");
++    }
++
++    @Test
++    void testWindowBothSkewMcvWins() throws Exception {
++        Histogram histogram = new Histogram(
++                /* buckets */ List.of(),
++                /* mcv */ Map.of("1", 500L));
++
++        refreshAndSetColumnStatForP(
++                ColumnStatistic.builder().setNullsFraction(0.3).setHistogram(histogram).build());
++
++        String plan = getCostPlan(BASIC_WINDOW_SQL);
++
++        assertContains(plan, "UNION");
++        assertContains(plan, "Predicates: [1: p, INT, true] = 1");
++    }
++
+     @Test
+     void testOtherAnalyticalFunctionsWithSkew() throws Exception {
+         setColumnStatForP(0.5);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81121** (2026-10-20): [BugFix] Restore the brpc future timeout contract broken (backport #80783) (@mergify[bot])
-- **PR #81113** (2026-10-20): [Enhancement] Enable BE JVM metrics by default (@trueeyu)
-- **PR #81112** (closed): [Feature] Apply query_queue_mem_used_pct_limit per warehouse under Query Queue V2 (backport #81026) (@mergify[bot])
-- **PR #81107** (2026-10-20): [Enhancement] Speed up GEOGRAPHY ST_X and ST_Y (@ViktorGo86)
-- **PR #81105** (2026-10-20): [Enhancement] Prune edge pairs in GEOMETRY ST_Intersects (@ViktorGo86)
-- **PR #81100** (closed): [Enhancement] Stream large flat JSON compaction output instead of buffering the segment (backport #80470) (@mergify[bot])
+- **PR #81178** (2026-10-20): [UT] Expect REFRESH_TYPE ASYNC for a manual MV in test_task_run_status (@trueeyu)
+- **PR #81175** (2026-10-20): [BugFix] Add an urgent level for the shared-data primary key index cache, checked after every publish (backport #81168) (@mergify[bot])
+- **PR #81171** (2026-10-20): [Enhancement] Count JVM committed memory in the BE process memory tracker (backport #81127) (@mergify[bot])
+- **PR #81168** (2026-10-20): [BugFix] Add an urgent level for the shared-data primary key index cache, checked after every publish (@luohaha)
+- **PR #81166** (2026-10-20): [BugFix] Optimize the primary key index eviction policy in shared-data mode (backport #81143) (@mergify[bot])
+- **PR #81163** (2026-10-20): [Refactor] Drop unused preload memory limit from shared-nothing UpdateManager (backport #81151) (@mergify[bot])
 
 ---
 
@@ -2152,52 +2894,43 @@ Signed-off-by: Planck Li <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQ
+## X. [Feature] Read a security integration user's groups from a claim of the verified
 
 **RULE**:
-When implementing operations in `be/src/base/auth/auth_info.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/_assets/user_priv/security_integration_jwt.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `65ff4b5f`: [Enhancement] Authenticate security integration users over HTTP, Arrow Flight SQL and the load RPCs (#80940). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `affcfc60`: [Feature] Read a security integration user's groups from a claim of the verified token (#80942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/base/auth/auth_info.h`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/_assets/user_priv/security_integration_jwt.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    // Wire values for `auth_type`, kept here so the two spellings live in one place on the BE side.
-    // The FE keeps the same pair on AuthCredentialKind.
-    static constexpr const char* AUTH_TYPE_BASIC = "basic";
-    static constexpr const char* AUTH_TYPE_BEARER = "bearer";
+    "required_audience" = "",
+    "group_source" = "",
+    "group_claim" = "",
+##### group_source
 
-    // Credential shape. Empty (the default) is equivalent to AUTH_TYPE_BASIC and means `passwd`
-    // holds a plaintext password; AUTH_TYPE_BEARER means `passwd` holds an IdP token instead. Maps
-    // 1:1 to the FE-side AuthCredentialKind, and reaches the FE through the optional `auth_type`
-    // thrift field on the requests that declare it: load txn begin, stream load put, and
-    // TAuthenticateParams.
-    std::string auth_type;
-// Fill the credential fields of any request that carries one from one AuthInfo: the load RPCs and
-// the BE HTTP gate's TAuthenticateParams. Every field that only some request types declare is guarded
-// by a requires-expression, so the same template serves TLoadTxnBeginRequest (has them all),
-// TMergeCommitRequest (no auth_code, no cluster) and TAuthenticateParams (client address is `host`).
-// auth_type in particular lives here and nowhere else: a call site that set it b
+- Required: No
+- Description: Where the groups of a user authenticated by this integration come from. Valid values:
+  - `group_provider` (default): only the group providers listed in `group_provider` are used. This is the behavior of earlier versions.
+  - `claim`: only the claim named by `group_claim` of the verified token is used. Group providers listed in `group_provider` are ignored, but their configuration is kept, so switching back takes one `ALTER SECURITY INTEGRATION`.
+  - `both`: the union of the two sources.
+
+  Taking the groups from the token is what lets an identity provider with no LDAP directory grant any privilege at all: the resolved groups take part in role mapping via `GRANT ... TO EXTERNAL GROUP`, in the `permitted_groups` login check, in `current_group()`, and in Apache Ranger authorization, exactly like the groups of a group provider. Supported from v4.2 onwards.
+
+##### group_claim
+
+- Required: Yes when `group_source` is `claim` or `both`. Setting it without `group_source` is refused, because it would have no effect; together with an explicit `group_source` of `gro
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    if (auth.auth_code != -1) {
-        // If 'auth_code' is set, no need to set other info.
-        req->__set_auth_code(auth.auth_code);
-        // User name and passwd is unused, but they are required field.
-        // so they have to be set.
-        req->user = "";
-        req->passwd = "";
-    } else {
-        req->user = auth.user;
-        req->passwd = auth.passwd;
+    "required_audience" = ""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `65ff4b5f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `affcfc60` are properly handled with clean fallback behavior.
