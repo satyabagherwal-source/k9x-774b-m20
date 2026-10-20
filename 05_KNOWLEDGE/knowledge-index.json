@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T10:23:07.420Z",
+  "last_updated": "2026-10-20T10:35:14.484Z",
   "total_verified_learnings": 1052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27909,8 +27909,8 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "41fa3e37",
-      "content_hash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
+      "source_version": "319351b4",
+      "content_hash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
@@ -27933,6 +27933,21 @@
           "number": 2772,
           "title": "dependencies): bump `moby/go-archive` and `x.net` (#8114)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3132,
+          "title": "Reconciler Status Flap Suppression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3133,
+          "title": "Upstream Backend Specification Decoupling via Controller Index Gates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3134,
+          "title": "Gateway API Ancestor Status Array Bound and Deterministic Ordering",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27940,7 +27955,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:29:53.371Z",
+      "verified_at": "2026-10-20T10:32:10.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35111,14 +35126,29 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "ded09d3e",
-      "content_hash": "0be06f832b6208679795f5ea67b0d975c24bd89de5fe42736fbc86c47d64825e",
+      "source_version": "47b15100",
+      "content_hash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
         {
           "number": 1826,
           "title": "cli): use MinIO client image for RustFS cleanup (#4998)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3135,
+          "title": "Dual-Layer Bounded Decompression Stream Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3136,
+          "title": "Zero-Trust Tenant-Scoped CTE Mutation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3137,
+          "title": "Dynamic Moving-Window Time Ingestion Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35127,7 +35157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:08:21.323Z",
+      "verified_at": "2026-10-20T10:35:14.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99974,6 +100004,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T10:23:07.412Z"
+    },
+    "rule-3132": {
+      "learning_id": "rule-3132",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3132,
+      "title": "Reconciler Status Flap Suppression Invariant",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "319351b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:32:10.387Z"
+    },
+    "rule-3133": {
+      "learning_id": "rule-3133",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3133,
+      "title": "Upstream Backend Specification Decoupling via Controller Index Gates",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "319351b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:32:10.387Z"
+    },
+    "rule-3134": {
+      "learning_id": "rule-3134",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3134,
+      "title": "Gateway API Ancestor Status Array Bound and Deterministic Ordering",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "319351b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:32:10.387Z"
+    },
+    "rule-3135": {
+      "learning_id": "rule-3135",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3135,
+      "title": "Dual-Layer Bounded Decompression Stream Invariant",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "47b15100",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:35:14.473Z"
+    },
+    "rule-3136": {
+      "learning_id": "rule-3136",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3136,
+      "title": "Zero-Trust Tenant-Scoped CTE Mutation Invariant",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "47b15100",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:35:14.473Z"
+    },
+    "rule-3137": {
+      "learning_id": "rule-3137",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3137,
+      "title": "Dynamic Moving-Window Time Ingestion Invariant",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "47b15100",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T10:35:14.473Z"
     }
   },
   "aliases": {

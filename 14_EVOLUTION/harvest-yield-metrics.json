@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T10:23:07.470Z",
-  "total_cycles_completed": 3751,
-  "total_learnings_persisted": 3751,
-  "total_rules_promoted": 2938,
+  "last_updated": "2026-10-20T10:35:14.543Z",
+  "total_cycles_completed": 3753,
+  "total_learnings_persisted": 3753,
+  "total_rules_promoted": 2944,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:06:12.021Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:06:13.845Z",
-      "repository": "axios/axios",
-      "learningId": "learn-github-axios-axios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:06:16.541Z",
       "repository": "jasonjmcghee/rem",
@@ -1403,6 +1389,20 @@
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:32:10.458Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T10:35:14.543Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

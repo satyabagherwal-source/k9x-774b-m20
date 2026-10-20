@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-XX8B",
-    "timestamp": "2026-10-19T14:08:33.659Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Y2KP",
-    "timestamp": "2026-10-19T14:08:40.585Z",
-    "repository": "GitLiveApp/firebase-kotlin-sdk",
-    "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
-    "contentHash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-Y42P",
     "timestamp": "2026-10-19T14:08:42.529Z",
     "repository": "hashicorp/terraform",
@@ -7492,6 +7462,36 @@
     "contentHash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NHZM",
+    "timestamp": "2026-10-20T10:32:10.450Z",
+    "repository": "Kong/kubernetes-ingress-controller",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller",
+    "contentHash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-RG13",
+    "timestamp": "2026-10-20T10:35:14.535Z",
+    "repository": "openreplay/openreplay",
+    "learningId": "learn-github-openreplay-openreplay",
+    "contentHash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

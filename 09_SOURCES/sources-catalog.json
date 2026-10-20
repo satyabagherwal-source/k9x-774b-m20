@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "ded09d3e",
+    "sourceVersion": "47b15100",
     "license": "NOASSERTION",
-    "contentHash": "0be06f832b6208679795f5ea67b0d975c24bd89de5fe42736fbc86c47d64825e",
-    "lastHarvestedAt": "2026-10-18T23:08:21.371Z",
+    "contentHash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
+    "lastHarvestedAt": "2026-10-20T10:35:14.538Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "41fa3e37",
+    "sourceVersion": "319351b4",
     "license": "Apache-2.0",
-    "contentHash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
-    "lastHarvestedAt": "2026-10-19T19:29:53.428Z",
+    "contentHash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
+    "lastHarvestedAt": "2026-10-20T10:32:10.453Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {

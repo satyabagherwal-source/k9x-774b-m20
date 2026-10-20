@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T10:23:07.473Z",
+  "last_updated": "2026-10-20T10:35:14.547Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "0be06f832b6208679795f5ea67b0d975c24bd89de5fe42736fbc86c47d64825e",
-      "verified_at": "2026-10-18T23:08:21.379Z",
+      "content_hash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
+      "verified_at": "2026-10-20T10:35:14.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:08:21.379Z"
+      "last_updated": "2026-10-20T10:35:14.546Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
-      "verified_at": "2026-10-19T19:29:53.435Z",
+      "content_hash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
+      "verified_at": "2026-10-20T10:32:10.461Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:29:53.435Z"
+      "last_updated": "2026-10-20T10:32:10.461Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",

@@ -3781,3 +3781,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-20T10:19:20.846Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `94b3f965` | Multi-dimensional audit evidence | 2026-10-20T10:19:24.929Z |
 | `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-20T10:23:07.466Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `319351b4` | Multi-dimensional audit evidence | 2026-10-20T10:32:10.453Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `47b15100` | Multi-dimensional audit evidence | 2026-10-20T10:35:14.538Z |

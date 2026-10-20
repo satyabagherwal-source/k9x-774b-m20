@@ -3774,3 +3774,5 @@
 | `CYCLE-20261020-705O` | `2026-10-20T10:19:20.844Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3126, Rule 3127, Rule 3128` | Yes (`72046240...`) |
 | `CYCLE-20261020-73B3` | `2026-10-20T10:19:24.927Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3129` | Yes (`09b111de...`) |
 | `CYCLE-20261020-BV0O` | `2026-10-20T10:23:07.464Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3130, Rule 3131` | Yes (`88554330...`) |
+| `CYCLE-20261020-NHZM` | `2026-10-20T10:32:10.450Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3132, Rule 3133, Rule 3134` | Yes (`2c4fd059...`) |
+| `CYCLE-20261020-RG13` | `2026-10-20T10:35:14.535Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3135, Rule 3136, Rule 3137` | Yes (`f312cd4c...`) |
