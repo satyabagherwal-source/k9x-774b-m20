@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "fb767a7c",
+    "sourceVersion": "61f24ce2",
     "license": "Apache-2.0",
-    "contentHash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
-    "lastHarvestedAt": "2026-10-19T09:54:23.127Z",
+    "contentHash": "6716a7f3a75b5d961debff3e7e5970e4fd24e8b58e95e93e02e206af79b82068",
+    "lastHarvestedAt": "2026-10-20T00:06:12.017Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -9588,5 +9588,25 @@
     "contentHash": "33596226579fed16b57fead506499530c39e0cc2a6d3c4e41eb4bdd5fe47c9e7",
     "lastHarvestedAt": "2026-10-19T23:59:56.421Z",
     "learningId": "learn-github-jordansinger-swiftui-kit"
+  },
+  "axios-axios": {
+    "repository": "axios/axios",
+    "platform": "github",
+    "sourceUrl": "https://github.com/axios/axios",
+    "sourceVersion": "8d8e8440",
+    "license": "MIT",
+    "contentHash": "33eeb998efe695dfad1497dfb660dfe51ac0a6323f1068a94a621189964b7575",
+    "lastHarvestedAt": "2026-10-20T00:06:13.841Z",
+    "learningId": "learn-github-axios-axios"
+  },
+  "jasonjmcghee-rem": {
+    "repository": "jasonjmcghee/rem",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jasonjmcghee/rem",
+    "sourceVersion": "f4f68049",
+    "license": "MIT",
+    "contentHash": "835614dce0ec57b36e86552f13bcac6c48a222e818d68e9eda632041c083cdba",
+    "lastHarvestedAt": "2026-10-20T00:06:16.537Z",
+    "learningId": "learn-github-jasonjmcghee-rem"
   }
 }

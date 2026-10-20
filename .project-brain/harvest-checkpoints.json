@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T23:59:56.426Z",
+  "last_updated": "2026-10-20T00:06:16.544Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11434,14 +11434,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
-      "verified_at": "2026-10-19T09:54:23.132Z",
+      "content_hash": "6716a7f3a75b5d961debff3e7e5970e4fd24e8b58e95e93e02e206af79b82068",
+      "verified_at": "2026-10-20T00:06:12.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:54:23.132Z"
+      "last_updated": "2026-10-20T00:06:12.024Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -14427,6 +14427,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T23:59:56.426Z"
+    },
+    "axios/axios": {
+      "repository": "axios/axios",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-axios-axios",
+      "content_hash": "33eeb998efe695dfad1497dfb660dfe51ac0a6323f1068a94a621189964b7575",
+      "verified_at": "2026-10-20T00:06:13.848Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:06:13.848Z"
+    },
+    "jasonjmcghee/rem": {
+      "repository": "jasonjmcghee/rem",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jasonjmcghee-rem",
+      "content_hash": "835614dce0ec57b36e86552f13bcac6c48a222e818d68e9eda632041c083cdba",
+      "verified_at": "2026-10-20T00:06:16.544Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:06:16.544Z"
     }
   },
   "repos": {

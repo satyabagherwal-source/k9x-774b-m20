@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:59:56.390Z",
-  "total_verified_learnings": 974,
+  "last_updated": "2026-10-20T00:06:16.480Z",
+  "total_verified_learnings": 976,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1847,14 +1847,19 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "fb767a7c",
-      "content_hash": "7b87d39e048b0b7e10393dee0efbed59fe5159f4546912dba80fea773e002c5c",
+      "source_version": "61f24ce2",
+      "content_hash": "6716a7f3a75b5d961debff3e7e5970e4fd24e8b58e95e93e02e206af79b82068",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
         {
           "number": 2478,
           "title": "GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2907,
+          "title": "GH-52024: [Python] Fix the codec list in show_info() (#51753)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -1863,7 +1868,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:54:23.063Z",
+      "verified_at": "2026-10-20T00:06:11.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25899,22 +25904,35 @@
     "learn-github-jasonjmcghee-rem": {
       "learning_id": "learn-github-jasonjmcghee-rem",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jasonjmcghee-rem",
+      "source": "jasonjmcghee/rem",
+      "repository": "jasonjmcghee/rem",
       "slug": "jasonjmcghee-rem",
       "platform": "github",
       "source_url": "https://github.com/jasonjmcghee/rem",
-      "source_version": "HEAD",
-      "content_hash": "8a90b339c08da071e95478ce12ed601fc06cbd52e4acef50443d6efd2701fe44",
+      "source_version": "f4f68049",
+      "content_hash": "835614dce0ec57b36e86552f13bcac6c48a222e818d68e9eda632041c083cdba",
       "dossier_path": "07_PROJECT_LEARNING/jasonjmcghee-rem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jasonjmcghee-rem-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2909,
+          "title": "db.busyTimeout = 2000",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.655Z"
+      "verified_at": "2026-10-20T00:06:16.468Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jaywcjlove-devhub": {
       "learning_id": "learn-github-jaywcjlove-devhub",
@@ -57998,20 +58016,35 @@
     "learn-github-axios-axios": {
       "learning_id": "learn-github-axios-axios",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "axios/axios",
       "repository": "axios/axios",
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "main",
-      "content_hash": "101a3a822e1406063791ac3acee7c7c5933dee7e7d951457bbf06863416e9f00",
+      "source_version": "8d8e8440",
+      "content_hash": "33eeb998efe695dfad1497dfb660dfe51ac0a6323f1068a94a621189964b7575",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2908,
+          "title": "hr): avoid main-thread jank from cookie reads (#11166)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:06:13.784Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-psf-requests": {
       "learning_id": "learn-github-psf-requests",
@@ -94869,6 +94902,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:59:56.383Z"
+    },
+    "rule-2907": {
+      "learning_id": "rule-2907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2907,
+      "title": "GH-52024: [Python] Fix the codec list in show_info() (#51753)",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "61f24ce2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:06:11.959Z"
+    },
+    "rule-2908": {
+      "learning_id": "rule-2908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2908,
+      "title": "hr): avoid main-thread jank from cookie reads (#11166)",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "8d8e8440",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:06:13.784Z"
+    },
+    "rule-2909": {
+      "learning_id": "rule-2909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2909,
+      "title": "db.busyTimeout = 2000",
+      "source_url": "https://github.com/jasonjmcghee/rem",
+      "source_version": "f4f68049",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:06:16.468Z"
     }
   },
   "aliases": {

@@ -3581,3 +3581,6 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `d9f61c0d` | Multi-dimensional audit evidence | 2026-10-19T23:53:56.890Z |
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `9f06d6bc` | Multi-dimensional audit evidence | 2026-10-19T23:59:53.980Z |
 | `learn-github-jordansinger-swiftui-kit` | `https://github.com/jordansinger/SwiftUI-Kit` | `1211aa6b` | Multi-dimensional audit evidence | 2026-10-19T23:59:56.421Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `61f24ce2` | Multi-dimensional audit evidence | 2026-10-20T00:06:12.017Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `8d8e8440` | Multi-dimensional audit evidence | 2026-10-20T00:06:13.841Z |
+| `learn-github-jasonjmcghee-rem` | `https://github.com/jasonjmcghee/rem` | `f4f68049` | Multi-dimensional audit evidence | 2026-10-20T00:06:16.537Z |

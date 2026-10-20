@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `fb767a7c`  
+> **Source Version**: `61f24ce2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:54:22.834Z  
+> **Timestamp**: 2026-10-20T00:06:11.731Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:54:21.841Z  
+> **Harvest Timestamp**: 2026-10-20T00:06:10.780Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17213 stars
+- **Stars / Engagement**: 17215 stars
 
 ---
 
@@ -1377,17 +1377,14 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54572** (2026-10-19): **GH-54571: [GLib] Add support for returning string view array from C++**
-  *Symptoms*: ### Rationale for this change  `garrow_array_new_raw_valist()` misses string view array detection. If we miss it, we can't return a string view array from C++ to GLib.  ### What changes are included in this PR?  Add missing string view array detection.  ### Are these changes tested?  Yes.  ### Are there any user-facing changes?  Yes.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #54571
+- **Issue #54662** (2026-10-19): **GH-54651: [C++][Python] Use timestamp_parsers as a fallback for CSV time columns**
+  *Symptoms*: ### Rationale for this change  CSV columns typed as `time32` or `time64` are parsed only from the ISO-8601 format, and `ConvertOptions::timestamp_parsers` applies only to timestamp columns, so other time formats need reading as a timestamp and a cast.  ### What changes are included in this PR?  - Time columns try `timestamp_parsers` after the ISO-8601 parser fails, and take the time of day of the parsed timestamp, as a cast from timestamp to time does. This also works for dates outside the range of the time unit's timestamps (e.g. year 9999 with nanoseconds). - With the ISO-8601 parser in `timestamp_parsers`, fractional seconds are kept, and the value is rejected if the time unit cannot represent them. - `strptime` parsers without a time directive are skipped, and ISO-8601 values without a time of day are rejected, so that a date does not become midnight. - Type inference of time columns is unchanged and uses ISO-8601 only.  This PR is the time part of #50146. It builds on #54661 (date columns) and its dependencies #54656, #54657 and #54659, which must land first. Only the last commit is new here.  ### Are these changes tested?  Yes, `Time32Conversion.UserDefinedParsers` and `Time64Conversion.UserDefinedParsers` in C++, and `test_times_with_timestamp_parsers` in Python.  ### Are there any user-facing changes?  Yes, `timestamp_parsers` now also applies to `time32`/`time64` columns given in `column_types`. This is documented in the C++ CSV docs and the `ConvertOptions` docstrin
   **Post-Mortem & Fix Analysis**:
-  > :warning: GitHub issue #54571 **has been automatically assigned in GitHub** to PR creator.
-  > +1  Confirmed: https://github.com/apache/arrow/issues/54571#issuecomment-6261048628
+  > :warning: GitHub issue #54651 **has been automatically assigned in GitHub** to PR creator.
+  > <!--   Licensed to the Apache Software Foundation (ASF) under one   or more contributor license agreements.  See the NOTICE file   distributed with this work for additional information   regarding copyright ownership.  The ASF licenses this file   to you under the Apache License, Version 2.0 (the   "License"); you may not use this file except in compliance   with the License.  You may obtain a copy of the License at      http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,   software distributed under the License is distributed on an   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY   KIND, either express or implied.  See the License for the   specific language governing permissions and limitations   under the License. -->  Thanks for opening a pull request!  **This pull request has been automatically closed because you currently have 4 open pull requests, which is more than the limit of 3.**  Due to the increase in pull reques
 
-- **Issue #54571** (2026-10-19): **[Ruby] Casting to string_view aborts the process**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  Casting an array to string_view aborts the process. The error cannot be rescued.  ``` require "arrow"  Arrow::StringArray.new(["a", "b", "c"]).cast(Arrow::StringViewDataType.new) # GLib-GObject-ERROR **: cannot create instance of abstract (non-instantiatable) type 'GArrowArray' # (process exits with status 133) ```  Casting to binary_view works:  ``` Arrow::BinaryArray.new(["a", "b", "c"]).cast(Arrow::BinaryViewDataType.new).class # => Arrow::BinaryViewArray ```  garrow_array_new_raw_valist() in c_glib/arrow-glib/basic-array.cpp seems to have a case for BINARY_VIEW but not for STRING_VIEW.  Environment: red-arrow 25.0.1, apache-arrow-glib 25.0.1 (Homebrew), Ruby 3.4.1, macOS 15 (arm64)   ### Component(s)  Ruby
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your report. Could you try #54572?
-  > I tried [apache/arrow#54572](https://github.com/apache/arrow/pull/54572) on top of 25.0.1, and it fixes the problem: ``` irb> Arrow::StringArray.new(["a", "b", "c"]).cast(Arrow::StringViewDataType.new) => #<Arrow::StringViewArray:0x0000000107c061f8 ptr=0x0000600002981360 [   "a",   "b",   "c" ]> ``` Thanks!
+- **Issue #54661** (2026-10-19): **GH-54650: [C++][Python] Use timestamp_parsers as a fallback for CSV date columns**
+  *Symptoms*: ### Rationale for this change  CSV columns typed as `date32` or `date64` are parsed only from the ISO-8601 format, and `ConvertOptions::timestamp_parsers` applies only to timestamp columns, so other date formats need reading as a timestamp and a cast.  ### What changes are included in this PR?  - Date columns try `timestamp_parsers` after the ISO-8601 parser fails, and floor the parsed timestamp to the day boundary, as a cast from timestamp to date does. Values outside the range of `date32`/`date64` are rejected. - `strptime` parsers without a date directive are skipped, so that e.g. `"%H:%M:%S"` does not turn a time into 1900-01-01. - With the ISO-8601 parser in `timestamp_parsers`, fractional seconds are accepted and discarded. - Type inference of date columns is unchanged and uses ISO-8601 only, so a value with a time of day is not inferred as a date.  This PR is the date part of #50146. It builds on #54656, #54657 and #54659, whose fixes its tests cover for date columns, and those must land first. Only the last commit is new here.  ### Are these changes tested?  Yes, `Date32Conversion.UserDefinedParsers` and `Date64Conversion.UserDefinedParsers` in C++, and `test_dates_with_timestamp_parsers` in Python.  ### Are there any user-facing changes?  Yes, `timestamp_parsers` now also applies to `date32`/`date64` columns given in `column_types`. This is documented in the C++ CSV docs and the `ConvertOptions` docstring.  ### AI usage disclosure  Developed with AI assistance (Claud
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1404,558 +1401,105 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4a0850e` (2026-10-13)
-**Commit Message**: GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)
+### Incident Patch 1: `61f24ce2` (2026-10-19)
+**Commit Message**: GH-52024: [Python] Fix the codec list in show_info() (#51753)
 
 ### Rationale for this change
 
-`pyarrow.compute.indices_nonzero()` segfaults (SIGSEGV) on a `ChunkedArray` with zero chunks. A zero-length `Array` and a `ChunkedArray` holding one empty chunk both work; only the chunkless case crashes.
+`pa.show_info()` prints its Compression Codecs section from a hardcoded list:
 
-### Are these changes tested?
-
-Yes, by new test case.
-
-### Are there any user-facing changes?
-
-Only a bugfix.
-
-* GitHub Issue: #51018
-
-Authored-by: waterWang <[REDACTED_EMAIL]>
-Signed-off-by: Rok Mihevc <[REDACTED_EMAIL]>
-
-**File**: `cpp/src/arrow/compute/kernels/vector_selection.cc` (modified, +4/-2)
-```diff
-@@ -264,8 +264,10 @@ Status DoNonZero(const std::vector<ArraySpan>& arrays, int64_t total_length,
-   UInt64Builder builder;
-   RETURN_NOT_OK(builder.Reserve(total_length));
- 
--  NonZeroVisitor visitor(&builder, arrays);
--  RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
-+  if (!arrays.empty()) {
-+    NonZeroVisitor visitor(&builder, arrays);
-+    RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
-+  }
-   return builder.FinishInternal(out);
- }
- 
+```python
+codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4", "snappy", "zstd"]
 ```
 
-**File**: `cpp/src/arrow/compute/kernels/vector_selection_test.cc` (modified, +8/-0)
-```diff
-@@ -2920,6 +2920,14 @@ TEST(TestIndicesNonZero, IndicesNonZero) {
-         actual, CallFunction("indices_nonzero", {static_cast<Datum>(chunked_arr_empty)}));
-     AssertArraysEqual(*ArrayFromJSON(uint64(), "[0, 2, 3, 5]"), *actual.make_array(),
-                       /*verbose*/ true);
-+
-+    // chunked with zero chunks (GH-51018)
-+    ChunkedArray chunked_arr_no_chunks({}, type);
-+    ASSERT_OK_AND_ASSIGN(
-+        actual,
-+        CallFunction("indices_nonzero", {static_cast<Datum>(chunked_arr_no_chunks)}));
-+    AssertArraysEqual(*ArrayFromJSON(uint64(), "[]"), *actual.make_array(),
-+                      /*verbose*/ true);
-   }
- }
- 
+That list has drifted from `_ensure_compression()` in `io.pxi`, which is what
+actually decides which codec names work. Two problems follow:
+
+- `lz4` and `lz4_frame` both map to `CCompressionType_LZ4_FRAME`, so the same
+  codec is reported twice under two names.
+- `lz4_raw` maps to `CCompressionType_LZ4` and is a separate codec, but it is
+  not listed at all, even though `pa.Codec.is_available('lz4_raw')` is True.
+
+So seven lines are printed for six codecs, and the codec that is missing is a
+real one.
+
+Before:
+
+```
+Compression Codecs:
+  brotli              : Enabled
+  bz2                 : Enabled
+  gzip                : Enabled
+  lz4_frame           : Enabled
+  lz4                 : Enabled
+  snappy              : Enabled
+  zstd                : Enabled
 ```
 
----
+After:
 
-### Incident Patch 2: `402a71cb` (2026-10-16)
-**Commit Message**: GH-51341: [C++][FlightRPC][ODBC] Fix statement descriptor and cursor lifecycle (#51342)
+```
+Compression Codecs:
+  brotli              : Enabled
+  bz2                 : Enabled
+  gzip                : Enabled
+  lz4                 : Enabled
+  lz4_raw 
 
-### Rationale for this change
-
-The Flight SQL ODBC statement implementation had a cluster of related descriptor and cursor lifecycle defects:
-
-- the implicit application row descriptor (ARD) was initialized from the application parameter descriptor (APD), aliasing two descriptor roles;
-- `SQL_NULL_HANDLE` did not restore built-in application descriptors;
-- freeing a statement left dangling registrations in explicit descriptors;
-- `SQLFetch` and `SQLGetData` without an open cursor could dereference a null result or report the wrong diagnostic; and
-- `SQLMoreResults` did not close the current cursor when returning `SQL_NO_DATA`.
-
-### What changes are included in this PR?
-
-- Initialize the active ARD from `built_in_ard_`.
-- Map null APD/ARD assignments to the corresponding built-in descriptor and detach the outgoing explicit descriptor.
-- Detach explicit descriptors before releasing a statement.
-- Return SQLSTATE `24000` from `SQLFetch` and `SQLGetData` when no cursor is open.
-- Close the current cursor when `SQLMoreResults` returns `SQL_NO_DATA`.
-
-### Are there any user-facing changes?
-
-Yes. Spec
-
-**File**: `cpp/src/arrow/flight/sql/odbc/odbc_impl/odbc_statement.cc` (modified, +24/-5)
+**File**: `python/pyarrow/__init__.py` (modified, +4/-1)
 ```diff
-@@ -241,7 +241,7 @@ ODBCStatement::ODBCStatement(ODBCConnection& connection,
-       ird_(std::make_shared<ODBCDescriptor>(spi_statement_->GetDiagnostics(), nullptr,
-                                             this, false, false,
-                                             connection.IsOdbc2Connection())),
--      current_ard_(built_in_apd_.get()),
-+      current_ard_(built_in_ard_.get()),
-       current_apd_(built_in_apd_.get()),
-       row_number_(0),
-       max_rows_(0),
-@@ -323,6 +323,10 @@ void ODBCStatement::ExecuteDirect(const std::string& query) {
+@@ -156,7 +156,10 @@ def print_entry(label, value):
+         print(f"  {fs: <20}: {status: <8}")
  
- bool ODBCStatement::Fetch(size_t rows, SQLULEN* row_count_ptr,
-                           SQLUSMALLINT* row_status_array) {
-+  if (!current_result_) {
-+    throw DriverException("Invalid cursor state", "24000");
-+  }
-+
-   if (has_reached_end_of_result_) {
-     ird_->SetRowsProcessed(0);
-     return false;
-@@ -558,8 +562,9 @@ void ODBCStatement::SetStmtAttr(SQLINTEGER statement_attribute, SQLPOINTER value
- 
-   switch (statement_attribute) {
-     case SQL_ATTR_APP_PARAM_DESC: {
--      ODBCDescriptor* desc = static_cast<ODBCDescriptor*>(value);
--      if (desc && current_apd_ != desc) {
-+      ODBCDescriptor* desc =
-+          value ? static_cast<ODBCDescriptor*>(value) : built_in_apd_.get();
-+      if (current_apd_ != desc) {
-         if (current_apd_ != built_in_apd_.get()) {
-           current_apd_->DetachFromStatement(this, true);
-         }
-@@ -571,12 +576,14 @@ void ODBCStatement::SetStmtAttr(SQLINTEGER statement_attribute, SQLPOINTER value
-       return;
-     }
-     case SQL_ATTR_APP_ROW_DESC: {
--      ODBCDescriptor* desc = static_cast<ODBCDescriptor*>(value);
--      if (desc && current_ard_ != desc) {
-+      ODBCDescriptor* desc =
-+          value ? static_cast<ODBCDescriptor*>(value) : built_in_ard_.get();
-+      if (current_ard_ != desc) {
-         if (current_ard_ != built_in_ard_.get()) {
-           current_ard_->DetachFromStatement(this, false);
-         }
-         current_ard_ = desc;
-+        current_ard_->NotifyBindingsHaveChanged();
-         if (current_ard_ != built_in_ard_.get()) {
-           desc->RegisterToStatement(this, false);
-         }
-@@ -718,6 +725,7 @@ void ODBCStatement::RevertAppDescriptor(bool isApd) {
-     current_apd_ = built_in_apd_.get();
-   } else {
-     current_ard_ = built_in_ard_.get();
-+    current_ard_->NotifyBindingsHaveChanged();
-   }
- }
- 
-@@ -740,6 +748,10 @@ void ODBCStatement::CloseCursor(bool suppress_errors) {
- SQLRETURN ODBCStatement::GetData(SQLSMALLINT record_number, SQLSMALLINT c_type,
-                                  SQLPOINTER data_ptr, SQLLEN buffer_length,
-                                  SQLLEN* indicator_ptr) {
-+  if (!current_result_) {
-+    throw DriverException("Invalid cursor state", "24000");
-+  }
-+
-   if (record_number == 0) {
-     throw DriverException("Bookmarks are not supported", "07009");
-   } else if (static_cast<size_t>(record_number) > ird_->GetRecords().size()) {
-@@ -785,6 +797,7 @@ SQLRETURN ODBCStatement::GetData(SQLSMALLINT record_number, SQLSMALLINT c_type,
- 
- SQLRETURN ODBCStatement::GetMoreResults() {
-   // Multiple result sets are not supported by Arrow protocol.
-+  CloseCursor(/*suppress_errors=*/true);
-   return SQL_NO_DATA;
- }
- 
-@@ -811,6 +824,12 @@ void ODBCStatement::GetRowCount(SQLLEN* row_count_ptr) {
- 
- void ODBCStatement::ReleaseStatement() {
-   CloseCursor(true);
-+  if (current_apd_ != built_in_apd_.get()) {
-+    current_apd_->DetachFromStatement(this, true);
-+  }
-+  if (current_ard_ != built_in_ard_.get()) {
-+    current_ard_->DetachFromStatement(this, false);
-+  }
-   connection_.DropStatement(this);
- }
- 
+     print("\nCompression Codecs:")
+-    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4", "snappy", "zstd"]
++    # "lz4" is an alias for "lz4_frame", so the list used to name the same
++    # codec twice and leave out lz4_raw. See _ensure_compression().
++    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4_raw", "snappy",
++              "zstd"]
+     for codec in codecs:
+         status = "Enabled" if Codec.is_available(codec) else "-"
+         print(f"  {codec: <20}: {status: <8}")
 ```
 
-**File**: `cpp/src/arrow/flight/sql/odbc/tests/CMakeLists.txt` (modified, +1/-0)
+**File**: `python/pyarrow/tests/test_misc.py` (modified, +20/-0)
 ```diff
-@@ -35,6 +35,7 @@ set(ARROW_FLIGHT_SQL_ODBC_TEST_SRCS
-     errors_test.cc
-     get_functions_test.cc
-     statement_attr_test.cc
-+    statement_driver_api_test.cc
-     statement_test.cc
-     tables_test.cc
-     type_info_test.cc
-```
-
-**File**: `cpp/src/arrow/flight/sql/odbc/tests/connection_test.cc` (modified, +40/-3)
-```diff
-@@ -528,6 +528,7 @@ TYPED_TEST(ConnectionTest, TestSQLSetStmtAttrDescriptor) {
+@@ -123,6 +123,26 @@ def test_runtime_info():
+         subprocess.check_call([sys.executable, "-c", code], env=env)
  
-   EXPECT_EQ(SQL_SUCCESS, SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, &internal_ard,
-                                         sizeof(internal_ard), 0));
-+  EXPECT_NE(internal_apd, internal_ard);
  
-   // Set APD descriptor to explicitly allocated handle
-   EXPECT_EQ(SQL_SUCCESS, SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC,
-@@ -549,12 +550,31 @@ TYPED_TEST(ConnectionTest, TestSQLSetStmtAttrDescriptor) {
- 
-   EXPECT_EQ(ard_descriptor, value);
- 
--  // Free explicitly allocated APD and ARD descriptor handles
--  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, apd_descriptor));
-+  // Assign replacement descriptors. Freeing the old descriptors must not revert these
-+  // replacements, which proves switching descriptors detached the old handles. Null
-+  // descriptor restoration is covered through the direct driver API because some driver
-+  // managers intercept it.
-+  SQLHDESC replacement_apd, replacement_ard;
-+  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &replacement_apd));
-+  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &replacement_ard));
-+  ASSERT_EQ(SQL_SUCCESS,
-+            SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC, replacement_apd, 0));
-+  ASSERT_EQ(SQL_SUCCESS,
-+            SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, replacement_ard, 0));
- 
-+  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, apd_descriptor));
-   ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, ard_descriptor));
-+  EXPECT_EQ(SQL_SUCCESS, SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC, &value,
-+                                        sizeof(value), 0));
-+  EXPECT_EQ(replacement_apd, value);
-+  EXPECT_EQ(SQL_SUCCESS,
-+            SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, &value, sizeof(value), 0));
-+  EXPECT_EQ(replacement_ard, value);
- 
--  // Verify APD and ARD descriptors has been reverted to implicit descriptors
-+  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, replacement_apd));
-+  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, replacement_ard));
++def test_show_info(capsys):
++    pa.show_info()
++    out = capsys.readouterr().out
 +
-+  // Freeing the active explicit descriptors restores the implicit descriptors.
-   value = nullptr;
- 
-   EXPECT_EQ(SQL_SUCCESS, SQLGetStmtAttr(this->stmt, SQL_ATTR_APP_PARAM_DESC, &value,
-@@ -568,4 +588,21 @@ TYPED_TEST(ConnectionTest, TestSQLSetStmtAttrDescriptor) {
-   EXPECT_EQ(internal_ard, value);
- }
- 
-+TYPED_TEST(ConnectionTest, TestExplicitDescriptorsOutliveStatement) {
-+  SQLHSTMT statement;
-+  SQLHDESC apd_descriptor, ard_descriptor;
-+  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_STMT, this->conn, &statement));
-+  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &apd_descriptor));
-+  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &ard_descriptor));
++    # Which codecs and modules are enabled depends on how PyArrow was built,
++    # so only the labels are checked, not their status.
++    assert "Compression Codecs:" in out
++    codecs = [line.split(":")[0].strip()
++              for line in out.split("Compression Codecs:")[1].splitlines()
++              if ":" in line]
++    # "lz4" is an alias for "lz4_frame", so naming both listed one codec
++    # twice and left out lz4_raw.
++    assert codecs == ["brotli", "bz2", "gzip", "lz4_frame", "lz4_raw",
++                      "snappy", "zstd"]
 +
-+  ASSERT_EQ(SQL_SUCCESS,
-+            SQLSetStmtAttr(statement, SQL_ATTR_APP_PARAM_DESC, apd_descriptor, 0));
-+  ASSERT_EQ(SQL_SUCCESS,
-+            SQLSetStmtAttr(statement, SQL_ATTR_APP_ROW_DESC, ard_descriptor, 0));
++    for section in ("Platform:", "Memory:", "Optional modules:",
++                    "Filesystems:"):
++        assert section in out
 +
-+  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_STMT, statement));
-+  EXPECT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, apd_descriptor));
-+  EXPECT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, ard_descriptor));
-+}
 +
- }  // namespace arrow::flight::sql::odbc
-```
-
-**File**: `cpp/src/arrow/flight/sql/odbc/tests/statement_driver_api_test.cc` (added, +167/-0)
-```diff
-@@ -0,0 +1,167 @@
-+// Licensed to the Apache Software Foundation (ASF) under one
-+// or more contributor license agreements.  See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership.  The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License.  You may obtain a copy of the License at
-+//
-+//   http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing,
-+// software distributed under the License is distributed on an
-+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+// KIND, either express or implied.  See the License for the
-+// specific language governing permissions and limitations
-+// under the License.
-+#include "arrow/flight/sql/odbc/tests/odbc_test_suite.h"
-+
-+#include "arrow/flight/sql/odbc/odbc_api_internal.h"
-+#include "arrow/flight/sql/odbc/odbc_impl/odbc_statement.h"
-+
-+#include <cstdint>
-+#include <string_view>
-+#include <vector>
-+
-+#include <gtest/gtest.h>
-+
-+namespace arrow::flight::sql::odbc {
-+
-+class StatementDriverApiTest : public FlightSQLODBCMockTestBase {
-+ protected:
-+  void SetUp() override {
-+    FlightSQLODBCMockTestBase::SetUp();
-+
-+    ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLAllocHandle(
-+                               SQL_HANDLE_ENV, SQL_NULL_HANDLE, &driver_env_));
-+    ASSERT_EQ(SQL_SUCCESS,
-+              arrow::flight::sql::odbc::SQLSetEnvAttr(
-+                  driver_env_, SQL_ATTR_ODBC_VERSION,
-+                  reinterpret_cast<SQLPOINTER>(static_cast<intptr_t>(SQL_OV_ODBC3)), 0));
-+    ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLAllocHandle(
-+                               SQL_HANDLE_DBC, driver_env_, &driver_conn_));
-+
-+    const std::string connect_string = GetConnectionString();
-+    std::vector<SQLWCHAR> wide_connect_string(connect_string.begin(),
-+                                              connect_string.end());
-+    SQLWCHAR output[kOdbcBufferSize];
-+    SQLSMALLINT output_length;
-+    ASSERT_EQ(SQL_SUCCESS,
-+              arrow::flight::sql::odbc::SQLDriverConnect(
-+                  driver_conn_, nullptr, wide_connect_string.data(),
-+                  static_cast<SQLSMALLINT>(wide_connect_string.size()), output,
-+                  kOdbcBufferSize, &output_length, SQL_DRIVER_NOPROMPT));
-+    driver_connected_ = true;
-+
-+    ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLAllocHandle(
-+                               SQL_HANDLE_STMT, driver_conn_, &driver_stmt_));
-+  }
-+
-+  void TearDown() override {
-+    if (driver_stmt_ != SQL_NULL_HSTMT) {
-+      EXPECT_EQ(SQL_SUCCESS,
-+                arrow::flight::sql::odbc::SQLFreeHandle(SQL_HANDLE_STMT, driver_stmt_));
-+    }
-+    if (driver_connected_) {
-+      EXPECT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLDisconnect(driver_conn_));
-+    }
-+    if (driver_conn_ != SQL_NULL_HDBC) {
-+      EXPECT_EQ(SQL_SUCCESS,
-+                arrow::flight::sql::odbc::SQLFreeHandle(SQL_HANDLE_DBC, driver_conn_));
-+    }
-+    if (driver_env_ != SQL_NULL_HENV) {
-+      EXPECT_EQ(SQL_SUCCESS,
-+                arrow::flight::sql::odbc::SQLFreeHandle(SQL_HANDLE_ENV, driver_env_));
-+    }
-+    FlightSQLODBCMockTestBase::TearDown();
-+  }
-+
-+  void VerifyDriverErrorState(std::string_view expected_state) {
-+    ODBC::ODBCStatement* statement = ODBC::ODBCStatement::Of(driver_stmt_);
-+    ASSERT_TRUE(statement->GetDiagnostics().HasRecord(0));
-+    EXPECT_EQ(expected_state, statement->GetDiagnostics().GetSQLState(0));
-+  }
-+
-+  SQLHENV driver_env_ = SQL_NULL_HENV;
-+  SQLHDBC driver_conn_ = SQL_NULL_HDBC;
-+  SQLHSTMT driver_stmt_ = SQL_NULL_HSTMT;
-+  bool driver_connected_ = false;
-+};
-+
-+TEST_F(StatementDriverApiTest, TestSQLFetchWithoutCursor) {
-+  ASSERT_EQ(SQL_ERROR, arrow::flight::sql::odbc::SQLFetch(driver_stmt_));
-+  VerifyDriverErrorState(kErrorState24000);
-+}
-+
-+TEST_F(StatementDriverApiTest, TestSQLGetDataWithoutCursor) {
-+  SQLINTEGER value;
-+  SQLLEN indicator;
-+  ASSERT_EQ(SQL_ERROR,
-+            arrow::flight::sql::odbc::SQLGetData(driver_stmt_, 1, SQL_C_LONG, &value,
-+                                                 sizeof(value), &indicator));
-+  VerifyDriverErrorState(kErrorState24000);
-+}
-+
-+TEST_F(StatementDriverApiTest, TestChangingAppRowDescriptorRebindsColumns) {
-+  SQLINTEGER implicit_value = -1;
-+  SQLLEN implicit_indicator;
-+  ASSERT_EQ(SQL_SUCCESS, arrow::flight::sql::odbc::SQLBindCol(
-+                             driver_stmt_, 1, SQL_C_LONG, &implicit_value,
-+                             sizeof(implicit_value), &implicit_indicator));
-+
-+  ASSIGN_SQLWCHAR_ARR_AND_LEN(wsql,
-+                              LR"(
-+   SELECT 1 AS value
-+   UNION ALL SELECT 2
-+   UNION ALL SELECT 3
-+   UNION ALL SELECT 4
-+   UNION ALL SELECT 5;
-+ )");
-+  ASSERT_EQ(SQL_SUCCESS,
-+            arrow::flight::sql::odbc::SQLExecDirect(driver_stmt_, wsql, wsql_len));
-+
-+  ASSERT_EQ(SQL_SUCCESS, arrow::fli
-```
-
-**File**: `cpp/src/arrow/flight/sql/odbc/tests/statement_test.cc` (modified, +60/-0)
-```diff
-@@ -1781,6 +1781,41 @@ TYPED_TEST(StatementTest, TestSQLBindColRowFetching) {
-   ASSERT_EQ(SQL_NO_DATA, SQLFetch(this->stmt));
- }
- 
-+TYPED_TEST(StatementTest, TestChangingAppRowDescriptorRebindsColumns) {
-+  SQLINTEGER implicit_value = -1;
-+  SQLLEN implicit_indicator;
-+  ASSERT_EQ(SQL_SUCCESS, SQLBindCol(this->stmt, 1, SQL_C_LONG, &implicit_value,
-+                                    sizeof(implicit_value), &implicit_indicator));
-+
-+  ASSIGN_SQLWCHAR_ARR_AND_LEN(wsql,
-+                              LR"(
-+   SELECT 1 AS value
-+   UNION ALL SELECT 2
-+   UNION ALL SELECT 3;
-+ )");
-+  ASSERT_EQ(SQL_SUCCESS, SQLExecDirect(this->stmt, wsql, wsql_len));
-+
-+  ASSERT_EQ(SQL_SUCCESS, SQLFetch(this->stmt));
-+  EXPECT_EQ(1, implicit_value);
-+
-+  SQLHDESC explicit_ard;
-+  ASSERT_EQ(SQL_SUCCESS, SQLAllocHandle(SQL_HANDLE_DESC, this->conn, &explicit_ard));
-+  ASSERT_EQ(SQL_SUCCESS,
-+            SQLSetStmtAttr(this->stmt, SQL_ATTR_APP_ROW_DESC, explicit_ard, 0));
-+  SQLINTEGER explicit_value = -1;
-+  SQLLEN explicit_indicator;
-+  ASSERT_EQ(SQL_SUCCESS, SQLBindCol(this->stmt, 1, SQL_C_LONG, &explicit_value,
-+                                    sizeof(explicit_value), &explicit_indicator));
-+  ASSERT_EQ(SQL_SUCCESS, SQLFetch(this->stmt));
-+  EXPECT_EQ(2, explicit_value);
-+
-+  // Releasing an active explicit ARD restores and rebinds the implicit ARD.
-+  ASSERT_EQ(SQL_SUCCESS, SQLFreeHandle(SQL_HANDLE_DESC, explicit_ard));
-+  ASSERT_EQ(SQL_SUCCESS, SQLFetch(this->stmt));
-+  EXPECT_EQ(3, implicit_value);
-+  EXPECT_EQ(2, explicit_value);
-+}
-+
- TYPED_TEST(StatementTest, TestSQLBindColRowArraySize) {
-   // Set SQL_ATTR_ROW_ARRAY_SIZE to fetch 3 rows at once
- 
-@@ -1981,12 +2016,37 @@ TYPED_TEST(StatementTest, TestSQLMoreResultsNoData) {
-   ASSERT_EQ(SQL_SUCCESS, SQLExecDirect(this->stmt, wsql, wsql_len));
- 
-   ASSERT_EQ(SQL_NO_DATA, SQLMoreResults(this->stmt));
-+
-+  // SQLMoreResults closes the current cursor when there is no next result.
-+  ASSERT_EQ(SQL_ERROR, SQLCloseCursor(this->stmt));
-+  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorState24000);
- }
- 
- TYPED_TEST(StatementTest, TestSQLMoreResultsWithoutQuery) {
-   ASSERT_EQ(SQL_NO_DATA, SQLMoreResults(this->stmt));
- }
- 
-+TYPED_TEST(StatementTest, TestDriverManagerSQLFetchWithoutCursor) {
-+  ASSERT_EQ(SQL_ERROR, SQLFetch(this->stmt));
-+#ifdef __APPLE__
-+  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateS1010);
-+#else
-+  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateHY010);
-+#endif
-+}
-+
-+TYPED_TEST(StatementTest, TestDriverManagerSQLGetDataWithoutCursor) {
-+  SQLINTEGER value;
-+  SQLLEN indicator;
-+  ASSERT_EQ(SQL_ERROR,
-+            SQLGetData(this->stmt, 1, SQL_C_LONG, &value, sizeof(value), &indicator));
-+#ifdef __APPLE__
-+  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateS1010);
-+#else
-+  VerifyOdbcErrorState(SQL_HANDLE_STMT, this->stmt, kErrorStateHY010);
-+#endif
-+}
-+
- TYPED_TEST(StatementTest, TestSQLNativeSqlReturnsInputString) {
-   SQLWCHAR buf[1024];
-   SQLINTEGER buf_char_len = sizeof(buf) / GetSqlWCharSize();
-```
-
----
-
-### Incident Patch 3: `d26582ee` (2026-10-16)
-**Commit Message**: GH-50544: [C++][Gandiva] Fix out-of-bounds read in round with most negative precision (#50545)
-
-### Rationale for this change
-
-`round_int32_int32` and `round_int64_int32` negate the caller-supplied precision into `abs_precision` before range-checking it, so the check `abs_precision > 9` (and `> 18` for the int64 overload) never fires for `precision == INT32_MIN`, where the negation leaves the value negative. That value reaches `get_power_of_10`, which indexes a 19-element static table behind `DCHECK_GE`/`DCHECK_LE` only. The DCHECKs compile out in release builds, so `round(int_col, -2147483648)` reads far outside the table and either faults or returns arbitrary memory as the rounding multiplier. Both overloads are registered in `function_registry_arithmetic.cc`, so the precision comes straight from user SQL.
-
-`truncate_int64_int32` in the same file already compares the signed scale directly (`out_scale < -38`) and is unaffected; the two `round` overloads are the only sites that negate first.
-
-### What changes are included in this PR?
-
-Check the bound against the signed `precision` before negating, at both sites. Every precision that was in range before still takes the same path, an
-
-**File**: `cpp/src/gandiva/precompiled/extended_math_ops.cc` (modified, +8/-6)
-```diff
-@@ -324,12 +324,13 @@ gdv_int32 round_int32_int32(gdv_int32 number, gdv_int32 precision) {
-   if (precision >= 0) {
-     return number;
-   }
--  gdv_int32 abs_precision = -precision;
-   // This is to ensure that there is no overflow while calculating 10^precision, 9 is
--  // the smallest N for which 10^N does not fit into 32 bits, so we can safely return 0
--  if (abs_precision > 9) {
-+  // the smallest N for which 10^N does not fit into 32 bits, so we can safely return 0.
-+  // The bound is checked before negating because -INT32_MIN is still negative.
-+  if (precision < -9) {
-     return 0;
-   }
-+  gdv_int32 abs_precision = -precision;
-   gdv_int32 num_sign = (number > 0) ? 1 : -1;
-   gdv_int32 abs_number = number * num_sign;
-   gdv_int32 power_of_10 = static_cast<gdv_int32>(get_power_of_10(abs_precision));
-@@ -349,12 +350,13 @@ gdv_int64 round_int64_int32(gdv_int64 number, gdv_int32 precision) {
-   if (precision >= 0) {
-     return number;
-   }
--  gdv_int32 abs_precision = -precision;
-   // This is to ensure that there is no overflow while calculating 10^precision, 19 is
--  // the smallest N for which 10^N does not fit into 64 bits, so we can safely return 0
--  if (abs_precision > 18) {
-+  // the smallest N for which 10^N does not fit into 64 bits, so we can safely return 0.
-+  // The bound is checked before negating because -INT32_MIN is still negative.
-+  if (precision < -18) {
-     return 0;
-   }
-+  gdv_int32 abs_precision = -precision;
-   gdv_int32 num_sign = (number > 0) ? 1 : -1;
-   gdv_int64 abs_number = number * num_sign;
-   gdv_int64 power_of_10 = get_power_of_10(abs_precision);
-```
-
-**File**: `cpp/src/gandiva/precompiled/extended_math_ops_test.cc` (modified, +12/-0)
-```diff
-@@ -203,6 +203,18 @@ TEST(TestExtendedMathOps, TestRound) {
-   EXPECT_EQ(round_int64_int32(-23453462343, -4), -23453460000);
-   EXPECT_EQ(round_int64_int32(-23453462343, -5), -23453500000);
-   EXPECT_EQ(round_int64_int32(345353425343, -12), 0);
-+
-+  // The last in-range precision still rounds; one past it returns 0. These guard
-+  // against an off-by-one in the range check at both overloads' boundary.
-+  EXPECT_EQ(round_int32_int32(1234567890, -9), 1000000000);
-+  EXPECT_EQ(round_int32_int32(1234567890, -10), 0);
-+  EXPECT_EQ(round_int64_int32(1234567890123456789, -18), 1000000000000000000);
-+  EXPECT_EQ(round_int64_int32(1234567890123456789, -19), 0);
-+
-+  // The most negative precision must be rejected by the range check rather than
-+  // negated into an out-of-range table index.
-+  EXPECT_EQ(round_int32_int32(1234, std::numeric_limits<int32_t>::min()), 0);
-+  EXPECT_EQ(round_int64_int32(345353425343, std::numeric_limits<int32_t>::min()), 0);
- }
- 
- TEST(TestExtendedMathOps, TestTruncate) {
+ @pytest.mark.processes
+ def test_import_at_shutdown():
+     # GH-38626: importing PyArrow at interpreter shutdown would crash
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54572** (2026-10-19): GH-54571: [GLib] Add support for returning string view array from C++ (@kou)
-- **PR #54510** (closed): MINOR: [C++][Compute] Avoid signed overflow in slice kernel output sizing (@Nayana-Naik73)
-- **PR #54490** (2026-10-19): GH-54489: [CI][Integration] Install jpype1 from conda-forge in conda-integration image (@CurtHagenlocher)
-- **PR #54376** (closed): MINOR: [C++][Compute] Reject non-UTF-8 padding in utf8 pad kernels (@Nayana-Naik73)
-- **PR #54024** (2026-10-19): GH-51008: [C++] Remove vendored whereami (@Reranko05)
-- **PR #53974** (closed): GH-53500: Guard Parquet metadata equality against None (@1932819331hy-debug)
+- **PR #54662** (closed): GH-54651: [C++][Python] Use timestamp_parsers as a fallback for CSV time columns (@pearu)
+- **PR #54661** (closed): GH-54650: [C++][Python] Use timestamp_parsers as a fallback for CSV date columns (@pearu)
+- **PR #54659** (closed): GH-54647: [C++] Reject leap seconds in the strptime timestamp parser (@pearu)
+- **PR #54658** (closed): GH-54646: [C++] Reject years out of range in the strptime timestamp parser (@pearu)
+- **PR #54657** (closed): GH-54643: [C++] Reject impossible dates and a zero day in the strptime timestamp parser (@pearu)
+- **PR #54640** (closed): [C++][Compute] Ignore null view sizes when casting binary_view to binary (@Nayana-Naik73)
 
 ---
 
@@ -1975,32 +1519,31 @@ Check the bound against the signed `precision` before negating, at both sites. E
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)
+## X. GH-52024: [Python] Fix the codec list in show_info() (#51753)
 
 **RULE**:
-When implementing operations in `cpp/src/arrow/compute/kernels/vector_selection.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/pyarrow/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4a0850e`: GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61f24ce2`: GH-52024: [Python] Fix the codec list in show_info() (#51753). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/compute/kernels/vector_selection.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/__init__.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  if (!arrays.empty()) {
-    NonZeroVisitor visitor(&builder, arrays);
-    RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
-  }
+    # "lz4" is an alias for "lz4_frame", so the list used to name the same
+    # codec twice and leave out lz4_raw. See _ensure_compression().
+    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4_raw", "snappy",
+              "zstd"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  NonZeroVisitor visitor(&builder, arrays);
-  RETURN_NOT_OK(VisitTypeInline(*arrays[0].type, &visitor));
+    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4", "snappy", "zstd"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4a0850e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61f24ce2` are properly handled with clean fallback behavior.
