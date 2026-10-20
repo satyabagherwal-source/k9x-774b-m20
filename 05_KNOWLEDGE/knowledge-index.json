@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:42:29.313Z",
+  "last_updated": "2026-10-20T06:49:38.142Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10798,8 +10798,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "ecc37b37",
-      "content_hash": "2a7320f2c212d49f5ead4fd0993ccbe94df90ac4fe27965035ed53f9e5e9917e",
+      "source_version": "6b34d5fe",
+      "content_hash": "eb03ab94cee7702ca0ff0c159d3c2e9a71625a6a2bccb032b9531663aa45fe85",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -10812,6 +10812,11 @@
           "number": 2721,
           "title": "go): add pluggable trace instrumentation and decouple it from OpenTelemetry (#63",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3102,
+          "title": "go/ai): keep the request out of a model action's output (#6832)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10819,7 +10824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:56:37.803Z",
+      "verified_at": "2026-10-20T06:49:32.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31891,8 +31896,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "696d4e28",
-      "content_hash": "f7545df4e809c980c1c504abeec3594be9812b095c468d5d963cb2756c0150ea",
+      "source_version": "f9c59ef5",
+      "content_hash": "2658090d054e14bb3f1620297691ec826f253ded169fa3fe2f4a191c1eedbf10",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -31905,6 +31910,11 @@
           "number": 2567,
           "title": "Web: fix and improve the flow details splitter (#8492)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3103,
+          "title": "typos in option help, docstrings and docs (#8494)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31912,7 +31922,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:07:52.868Z",
+      "verified_at": "2026-10-20T06:49:38.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41748,14 +41758,19 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "87a058e3",
-      "content_hash": "5da4fba3fc8f52c7866299fc957e5cb2585a9955e07d8fe7dd820936708f680f",
+      "source_version": "4c395a6d",
+      "content_hash": "cbf2313cb297c169cd19cabd722d0c94a90744cb8351cef95ea7e902335d5863",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
         {
           "number": 1767,
           "title": "core: fix token refresh race between TokenManager instances (#10540)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3101,
+          "title": "core: fix orphan search highlight closing tags in saved notes (#10516)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41764,7 +41779,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:16:25.843Z",
+      "verified_at": "2026-10-20T06:49:32.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99273,6 +99288,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:35:27.036Z"
+    },
+    "rule-3101": {
+      "learning_id": "rule-3101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3101,
+      "title": "core: fix orphan search highlight closing tags in saved notes (#10516)",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "4c395a6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:49:32.117Z"
+    },
+    "rule-3102": {
+      "learning_id": "rule-3102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3102,
+      "title": "go/ai): keep the request out of a model action's output (#6832)",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "6b34d5fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:49:32.724Z"
+    },
+    "rule-3103": {
+      "learning_id": "rule-3103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3103,
+      "title": "typos in option help, docstrings and docs (#8494)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "f9c59ef5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:49:38.129Z"
     }
   },
   "aliases": {

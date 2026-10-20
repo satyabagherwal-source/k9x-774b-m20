@@ -3763,3 +3763,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-20T06:35:27.105Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T06:42:19.959Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `7a6734be` | Multi-dimensional audit evidence | 2026-10-20T06:42:29.382Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `4c395a6d` | Multi-dimensional audit evidence | 2026-10-20T06:49:32.188Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6b34d5fe` | Multi-dimensional audit evidence | 2026-10-20T06:49:32.794Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `f9c59ef5` | Multi-dimensional audit evidence | 2026-10-20T06:49:38.196Z |

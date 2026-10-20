@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:42:29.388Z",
-  "total_cycles_completed": 3733,
-  "total_learnings_persisted": 3733,
-  "total_rules_promoted": 2907,
+  "last_updated": "2026-10-20T06:49:38.200Z",
+  "total_cycles_completed": 3736,
+  "total_learnings_persisted": 3736,
+  "total_rules_promoted": 2910,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:22:08.019Z",
-      "repository": "rehypejs/rehype",
-      "learningId": "learn-github-rehypejs-rehype",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:28:17.488Z",
-      "repository": "syntax-tree/hast-util-from-html",
-      "learningId": "learn-github-syntax-tree-hast-util-from-html",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:28:22.541Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:28:25.587Z",
       "repository": "Blackjacx/WWDC",
@@ -1403,6 +1382,27 @@
       "repository": "pubkey/rxdb",
       "learningId": "learn-github-pubkey-rxdb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:49:32.192Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:49:32.799Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:49:38.200Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

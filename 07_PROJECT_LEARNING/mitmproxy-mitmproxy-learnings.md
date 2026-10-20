@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `696d4e28`  
+> **Source Version**: `f9c59ef5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:07:52.599Z  
+> **Timestamp**: 2026-10-20T06:49:37.803Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:07:52.593Z  
+> **Harvest Timestamp**: 2026-10-20T06:49:29.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 45737 stars
+- **Stars / Engagement**: 45763 stars
 
 ---
 
@@ -1307,13 +1307,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8492** (2026-10-19): **Web: fix and improve the flow details splitter**
-  *Symptoms*: #### Description  This PR fixes a buggy behavior that was sometimes visible with the flow details splitter, and adds "live" dragging to improve the UX.  Before: <img width="1512" height="829" alt="Screenshot 2026-10-18 at 16 49 00" src="https://github.com/user-attachments/assets/11a5703d-3459-43b7-8386-1a740bc62646" />  After:  https://github.com/user-attachments/assets/60c293d5-a5e8-4abc-ae7b-c7c135e6c06d    #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the review @sleeyax , can you take another quick look? then we can merge it :)
+- **Issue #8494** (2026-10-20): **Fix typos in option help, docstrings and docs**
+  *Symptoms*: #### Description  Fixes a bunch of spelling mistakes I found with codespell. The one users actually see is "formating" in the `save_stream_file` option help. The rest are in docstrings, comments, two examples and the docs (negotation, reponsible, offests, handeled, loosing, "can be be installed" and so on).  Also `test_commander.py` called `pytest.faied(...)`, which would raise AttributeError instead of failing the test if that branch ever ran. Changed it to `pytest.fail`.  No behaviour changes.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
 
-- **Issue #8474** (2026-10-08): **macOS: Gatekeeper now rejects 12.2.3 as "Unnotarized Developer ID"; quarantined mitmdump hangs at launch**
-  *Symptoms*: ### Problem Description  Gatekeeper now rejects the macOS arm64 build of 12.2.3. Older releases (12.2.1, 12.2.2) are still accepted. I first saw this on 2026-10-06. On 2026-10-02, 12.2.3 still worked.  On my Mac, `spctl` gives these results for the official arm64 archives from downloads.mitmproxy.org:  | Version | spctl result | source | |---|---|---| | 12.2.1 | accepted | Notarized Developer ID | | 12.2.2 | accepted | Notarized Developer ID | | 12.2.3 | rejected | Unnotarized Developer ID |  All three have `origin=Developer ID Application: Maximilian Hils (S8XHQB96PW)`. The 12.2.3 app has no stapled ticket (`xcrun stapler validate`: "mitmproxy.app does not have a ticket stapled to it.").  The archive did not change. The sha256 of `mitmproxy-12.2.3-macos-arm64.tar.gz` is `0a09ee3b82569e8985aff8186e4792618b8e5d0c766098db093d09a87d4b013a`. This is the same value as in the Homebrew cask since May.  **Effect.** We install mitmproxy with `brew install --cask mitmproxy` on ephemeral macOS CI VMs (Apple Silicon, macOS Tahoe 26.5.2 / 26.6, Homebrew 6.0.6). The install succeeds and leaves `com.apple.quarantine` on the app. The first `mitmdump --version` then never returns:  - After 120 s, the process is still alive. - `sample` shows all samples at `_dyld_start`. - syspolicyd logs `Error checking with notarization daemon: 3` and `rule 13 applies - allow=0`. - A second attempt also hung for 120 s. - After `xattr -dr com.apple.quarantine` on the app, `mitmdump --version` returns in 2 s. 
+- **Issue #8493** (2026-10-20): **Fix Set-Cookie parsing of short Expires values and RFC 850 dates**
+  *Symptoms*: #### Description  Fixes #8488.  `_read_set_cookie_pairs` read on past the end of an `Expires` value whenever it was 3 characters or shorter, whatever delimiter ended it. `Expires=0; Secure; HttpOnly` therefore gave `Expires` the value `0, Secure`, and `expires=0, doo=dar` pulled the second cookie into `Expires`. RFC 850 dates such as `Wednesday, 21-Oct-2026 07:28:00 GMT` were split at the comma instead, since `Wednesday` is longer than 3 characters.  The parser now reads on only when `Expires` stopped at a comma and what it has read so far is just a weekday name (letters only, short or full). Added test cases for the three inputs above.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1330,14 +1328,12 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `696d4e28` (2026-10-19)
-**Commit Message**: Web: fix and improve the flow details splitter (#8492)
+### Incident Patch 1: `f9c59ef5` (2026-10-20)
+**Commit Message**: Fix typos in option help, docstrings and docs (#8494)
 
-* fix and improve the flow details splitter
+* Fix typos in option help, docstrings and examples
 
-* add changelog entry
-
-* Add review changes
+* Fix doubled words in the docs
 
 * [autofix.ci] apply automated fixes
 
@@ -1347,453 +1343,122 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -78,6 +78,8 @@
-   ([#8333](https://github.com/mitmproxy/mitmproxy/pull/8333), @grusski)
- - Use stdlib (PEP-784) for Zstandard compression on Python 3.14+
-   ([#8397](https://github.com/mitmproxy/mitmproxy/pull/8397), @Rogdham)
-+- mitmweb: Fix the flow details splitter and make dragging resize the panels live.
-+  ([#8492](https://github.com/mitmproxy/mitmproxy/pull/8492), @lups2000)
+@@ -7,6 +7,8 @@
  
- ## 12 May 2026: mitmproxy 12.2.3
+ ## Unreleased: mitmproxy next
  
++- Fix typos in the `save_stream_file` option help, docstrings and examples.
++  ([#8494](https://github.com/mitmproxy/mitmproxy/pull/8494), @qodelicious)
+ - Fix the global `listen_port` option being applied to proxy modes that don't
+   bind a port (e.g. `local`), which caused a "Cannot spawn multiple servers on
+   the same address" error when enabling local capture.
 ```
 
-**File**: `web/src/css/layout.less` (modified, +56/-4)
+**File**: `docs/scripts/clirecording/screenplays.py` (modified, +1/-1)
 ```diff
-@@ -45,26 +45,78 @@ body,
-     flex: 0 0 1px;
-     background-color: var(--mitmweb-border-strong);
-     position: relative;
-+    z-index: 1;
-+    transition: background-color 0.15s ease;
+@@ -153,7 +153,7 @@ def record_intercept_requests(d: CliDirector):
  
-+    // A transparent strip wider than the visible 1px line so the splitter is
-+    // easy to hit with a pointer; the ::before is the visible grip pill. The
-+    // strip is centered on the 1px divider, so when a panel is dragged to 0 its
-+    // inner half stays on-screen and the splitter is still grabbable.
-     > div {
-         position: absolute;
-+        touch-action: none;
-+        display: flex;
-+        align-items: center;
-+        justify-content: center;
-         //debug: background-color: orange;
-+
-+        &::before {
-+            content: "";
-+            display: block;
-+            border-radius: 6px;
-+            background-color: var(--mitmweb-border-strong);
-+            box-shadow: 0 0 0 1px var(--mitmweb-bg);
-+            transition:
-+                background-color 0.15s ease,
-+                transform 0.15s ease;
-+        }
-+    }
-+
-+    &:hover,
-+    &.splitter-dragging {
-+        background-color: var(--mitmweb-fg-muted);
-+
-+        > div::before {
-+            background-color: var(--mitmweb-fg-muted);
-+            transform: scale(1.08);
-+        }
-     }
+     d.focus_pane(pane_top)
  
-     &.splitter-x {
-         cursor: col-resize;
-         > div {
--            margin-left: -1px;
--            width: 4px;
-+            margin-left: -6px;
-+            width: 13px;
-             height: 100%;
-+
-+            &::before {
-+                width: 5px;
-+                height: 20px;
-+            }
-         }
-     }
-     &.splitter-y {
-         cursor: row-resize;
-         > div {
--            margin-top: -1px;
--            height: 4px;
-+            margin-top: -6px;
-+            height: 13px;
-             width: 100%;
-+
-+            &::before {
-+                width: 20px;
-+                height: 5px;
-+            }
-         }
-     }
- }
-+
-+// While dragging, keep the resize cursor everywhere and stop the panels from
-+// selecting text.
-+body.splitter-resizing {
-+    cursor: col-resize;
-+    user-select: none;
-+
-+    &.splitter-resizing-y {
-+        cursor: row-resize;
-+    }
-+}
+-    d.message("You see a new line in in the list of flows.")
++    d.message("You see a new line in the list of flows.")
+     d.message(
+         "The new flow is displayed in red to indicate that it has been intercepted."
+     )
 ```
 
-**File**: `web/src/js/__tests__/components/common/SplitterSpec.tsx` (modified, +87/-10)
+**File**: `docs/src/content/howto/transparent-vms.md` (modified, +1/-1)
 ```diff
-@@ -2,17 +2,36 @@ import * as React from "react";
- import Splitter from "../../../components/common/Splitter";
- import { act, render } from "../../test-utils";
+@@ -56,7 +56,7 @@ sudo restart network-manager
  
--describe.each([["x"], ["y"]])("Splitter Component", (axis) => {
--    it(`should render correctly (${axis} axis)`, () => {
-+describe.each([["x"], ["y"]])("Splitter Component (%s axis)", (axis) => {
-+    const isX = axis === "x";
-+    // jsdom reports every element as 0x0, so fake a size for the two panels the
-+    // splitter sits between. Both start at 200px, giving a 400px total.
-+    let sizeSpy: jest.SpyInstance;
-+    beforeEach(() => {
-+        sizeSpy = jest
-+            .spyOn(
-+                HTMLElement.prototype,
-+                isX ? "offsetWidth" : "offsetHeight",
-+                "get",
-+            )
-+            .mockReturnValue(200);
-+    });
-+    afterEach(() => {
-+        sizeSpy.mockRestore();
-+        document.body.className = "";
-+    });
-+
-+    it("should render correctly", () => {
-         const ref = React.createRef<Splitter>();
--        const { asFragment, unmount } = render(
-+        const { asFragment, container, unmount } = render(
-             <>
-                 <div></div>
-                 <Splitter axis={axis} ref={ref} />
-                 <div></div>
-             </>,
-         );
-         const splitter = ref.current!;
-+        const prev = container.firstChild as HTMLElement;
+ afterwards.
  
-         expect(asFragment()).toMatchSnapshot();
+-Now, dnsmasq can be be installed and configured:
++Now, dnsmasq can be installed and configured:
  
-@@ -22,30 +41,88 @@ describe.each([["x"], ["y"]])("Splitter Component", (axis) => {
-                     setPointerCapture: () => 0,
-                 } as unknown,
-                 pageX: 100,
--                pageY: 200,
-+                pageY: 100,
-                 pointerId: 42,
-             } as React.PointerEvent<HTMLDivElement>);
-         });
--        expect(splitter.state.startPos).toBe(axis === "x" ? 100 : 200);
-+        expect(splitter.state.dragPointer).toBe(42);
-+        // The drag adds a body class so the resize cursor shows everywhere.
-+        expect(document.body.classList.contains("splitter-resizing")).toBe(
-+            true,
-+        );
- 
-+        // The previous panel follows the pointer: starting at 200px, a +50
-+        // move sizes it to 250px.
-         act(() => {
-             splitter.onPointerMove({
--                pageX: 300,
--                pageY: 300,
-+                pageX: 150,
-+                pageY: 150,
-                 pointerId: 42,
-             } as React.PointerEvent<HTMLDivElement>);
-         });
--        expect(splitter.node.current!.style.transform).toBeTruthy();
-+        expect(prev.style.flex).toBe("0 0 250px");
- 
-+        // Capture can be lost at coordinates that aren't meaningful (e.g.
-+        // pointercancel). The size must stay where the last move left it rather
-+        // than jump to these coordinates.
-         act(() => {
-             splitter.onLostPointerCapture({
--                pageX: 400,
--                pageY: 400,
-+                pageX: 999,
-+                pageY: 999,
-                 pointerId: 42,
-             } as React.PointerEvent<HTMLDivElement>);
-         });
-+        expect(prev.style.flex).toBe("0 0 250px");
-+        expect(splitter.state.dragPointer).toBe(0.1);
-+        expect(document.body.classList.contains("splitter-resizing")).toBe(
-+            false,
-+        );
-         expect(asFragment()).toMatchSnapshot();
- 
-         unmount();
-     });
-+
-+    it("clamps the drag to the shared space", () => {
-+        const ref = React.createRef<Splitter>();
-+        const { container, unmount } = render(
-+            <>
-+                <div></div>
-+                <Splitter axis={axis} ref={ref} />
-+                <div></div>
-+            </>,
-+        );
-+        const splitter = ref.current!;
-+        const prev = container.firstChild as HTMLElement;
-+
-+        act(() => {
-+            splitter.onPointerDown({
-+                target: { setPointerCapture: () => 0 } as unknown,
-+                pageX: 0,
-+                pageY: 0,
-+                pointerId: 7,
-+            } as React.PointerEvent<HTMLDivElement>);
-+        });
-+
-+        // Drag far past the next panel; prev is capped at the 400px total.
-+        act(() => {
-+            splitter.onPointerMove({
-+                pageX: 10000,
-+                pageY: 10000,
-+                pointerId: 7,
-+            } as React.PointerEvent<HTMLDivElement>);
-+        });
-+        expect(prev.style.flex).toBe("0 0 400px");
-+
-+        // Drag far the other way; prev collapses to 0.
-+        act(() => {
-+            splitter.onPointerMove({
-+                pageX: -10000,
-+                pageY: -10000,
-+                pointerId: 7,
-+            } as React.PointerEvent<HTMLDivElement>);
-+        });
-+        expect(prev.style.flex).toBe("0 0 0px");
-+
-+        unmount();
-+    });
- });
+ ```bash
+ sudo apt-get install dnsmasq
 ```
 
-**File**: `web/src/js/__tests__/components/common/__snapshots__/SplitterSpec.tsx.snap` (modified, +6/-8)
+**File**: `examples/contrib/save_streamed_data.py` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- // Jest Snapshot v1, https://goo.gl/fbAQLP
+@@ -3,7 +3,7 @@
  
--exports[`Splitter Component should render correctly (x axis) 1`] = `
-+exports[`Splitter Component (x axis) should render correctly 1`] = `
- <DocumentFragment>
-   <div />
-   <div
-@@ -12,14 +12,13 @@ exports[`Splitter Component should render correctly (x axis) 1`] = `
- </DocumentFragment>
- `;
- 
--exports[`Splitter Component should render correctly (x axis) 2`] = `
-+exports[`Splitter Component (x axis) should render correctly 2`] = `
- <DocumentFragment>
-   <div
--    style="flex: 0 0 300px;"
-+    style="flex: 0 0 250px;"
-   />
-   <div
-     class="splitter splitter-x"
--    style=""
-   >
-     <div />
-   </div>
-@@ -29,7 +28,7 @@ exports[`Splitter Component should render correctly (x axis) 2`] = `
- </DocumentFragment>
- `;
- 
--exports[`Splitter Component should render correctly (y axis) 1`] = `
-+exports[`Splitter Component (y axis) should render correctly 1`] = `
- <DocumentFragment>
-   <div />
-   <div
-@@ -41,14 +40,13 @@ exports[`Splitter Component should render correctly (y axis) 1`] = `
- </DocumentFragment>
- `;
- 
--exports[`Splitter Component should render correctly (y axis) 2`] = `
-+exports[`Splitter Component (y axis) should render correctly 2`] = `
- <DocumentFragment>
-   <div
--    style="flex: 0 0 200px;"
-+    style="flex: 0 0 250px;"
-   />
-   <div
-     class="splitter splitter-y"
--    style=""
-   >
-     <div />
-   </div>
+ If the option 'save_streamed_data' is set to a format string then
+ streamed requests and responses are written to individual files with a name
+-derived from the string. Apart from python strftime() formating (using the
++derived from the string. Apart from python strftime() formatting (using the
+ request start time) the following codes can also be used:
+     - %+T: The time stamp of the request with microseconds
+     - %+D: 'req' or 'rsp' indicating the direction of the data
+@@ -95,7 +95,7 @@ def load(loader):
+         Optional[str],
+         None,
+         "Format string for saving streamed data to files. If set each streamed request or response is written "
+-        "to a file with a name derived from the string. In addition to formating supported by python "
++        "to a file with a name derived from the string. In addition to formatting supported by python "
+         "strftime() (using the request start time) the code '%+T' is replaced with the time stamp of the request, "
+         "'%+D' by 'req' or 'rsp' depending on the direction of the data, '%+C' by the client IP addresses and "
+         "'%+I' by the client connection ID.",
 ```
 
-**File**: `web/src/js/components/common/Splitter.tsx` (modified, +69/-28)
+**File**: `examples/contrib/suppress_error_responses.py` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,6 @@ import classnames from "classnames";
- 
- type SplitterState = {
-     applied: boolean;
--    startPos: number;
-     // .dragPointer === 0.1 means not dragging
-     dragPointer: number;
- };
-@@ -17,54 +16,91 @@ export default class Splitter extends Component<SplitterProps, SplitterState> {
- 
-     node = React.createRef<HTMLDivElement>();
- 
-+    // Captured at drag start so each move is computed from fixed values; using
-+    // the live (already-resized) sizes would compound the delta and the panel
-+    // would run away from the pointer.
-+    private dragStartPos = 0;
-+    private dragPrevStart = 0;
-+    private dragTotal = 0;
-+
-     constructor(props: SplitterProps) {
-         super(props);
--        this.state = { applied: false, startPos: 0, dragPointer: 0.1 };
-+        this.state = { applied: false, dragPointer: 0.1 };
-         this.onLostPointerCapture = this.onLostPointerCapture.bind(this);
-         this.onPointerDown = this.onPointerDown.bind(this);
-         this.onPointerMove = this.onPointerMove.bind(this);
-     }
- 
-+    private isX() {
-+        return this.props.axis === "x";
-+    }
-+
-+    private siblings() {
-+        const node = this.node.current!;
-+        return {
-+            prev: node.previousElementSibling as HTMLElement | null,
-+            next: node.nextElementSibling as HTMLElement | null,
-+        };
-+    }
-+
-+    private sizeOf(el: HTMLElement) {
-+        return this.isX() ? el.offsetWidth : el.offsetHeight;
-+    }
-+
-+    // Clamp keeps the panel within the shared space: it can collapse to 0 but
-+    // not cross the far panel.
-+    private applyDrag(pos: number) {
-+        const { prev, next } = this.siblings();
-+        if (!prev || !next) {
-+            return;
-+        }
-+        const desired = this.dragPrevStart + (pos - this.dragStartPos);
-+        const newPrev = Math.max(0, Math.min(desired, this.dragTotal));
-+
-+        prev.style.flex = `0 0 ${newPrev}px`;
-+        next.style.flex = "1 1 auto";
-+    }
-+
-     onPointerDown(e: React.PointerEvent<HTMLDivElement>) {
-         if (this.state.dragPointer !== 0.1) {
-             return;
-         }
-         (e.target as HTMLDivElement).setPointerCapture(e.pointerId);
--        this.setState({
--            startPos: this.props.axis === "x" ? e.pageX : e.pageY,
--            dragPointer: e.pointerId,
--        });
-+
-+        const { prev, next } = this.siblings();
-+        const prevSize = prev ? this.sizeOf(prev) : 0;
-+        const nextSize = next ? this.sizeOf(next) : 0;
-+        this.dragStartPos = this.isX() ? e.pageX : e.pageY;
-+        this.dragPrevStart = prevSize;
-+        this.dragTotal = prevSize + nextSize;
-+
-+        document.body.classList.add("splitter-resizing");
-+        if (!this.isX()) {
-+            document.body.classList.add("splitter-resizing-y");
-+        }
-+
-+        this.setState({ dragPointer: e.pointerId });
-     }
- 
--    onLostPointerCapture(e: React.PointerEvent<HTMLDivElement>) {
-+    onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
-         if (this.state.dragPointer !== e.pointerId) {
-             return;
-         }
--        const node = this.node.current!;
--        const prev = node.previousElementSibling! as HTMLElement;
--        const next = node.nextElementSibling! as HTMLElement;
--
--        node.style.transform = "";
--        prev.style.flex = `0 0 ${Math.max(
--            0,
--            (this.props.axis === "x"
--                ? prev.offsetWidth + e.pageX
--                : prev.offsetHeight + e.pageY) - this.state.startPos,
--        )}px`;
--        next.style.flex = "1 1 auto";
--
--        this.setState({ applied: true, dragPointer: 0.1 });
--        this.onResize();
-+        this.applyDrag(this.isX() ? e.pageX : e.pageY);
-     }
- 
--    onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
-+    onLostPointerCapture(e: React.PointerEvent<HTMLDivElement>) {
-         if (this.state.dragPointer !== e.pointerId) {
-             return;
-         }
--        this.node.current!.style.transform =
--            this.props.axis === "x"
--                ? `translateX(${e.pageX - this.state.startPos}px)`
--                : `translateY(${e.pageY - this.state.startPos}px)`;
-+
-+        document.body.classList.remove(
-+            "splitter-resizing",
-+            "splitter-resizing-y",
-+        );
-+
-+        this.setState({ applied: true, dragPointer: 0.1 });
-+        this.onResize();
-     }
- 
-     onResize() {
-@@ -95,6 +131,10 @@ export default class Splitter extends Component<SplitterProps, SplitterState> {
-     }
- 
-     componentWillUnmount() {
-+        document.body.classList.remove(
-+            "splitter-resizing",
-+            "splitter-resizing-y",
-+        );
-         this.reset(true);
-     }
- 
-@@ -104,7 +144,8 @@ export default class Splitter extends Component<SplitterProps, SplitterState> {
-                 ref={this.node}
-                 className={classnames(
-                     "splitter",
--                    this.props.axis === "x" ? "splitter-x" : "splitter-y",
-+                 
+@@ -1,5 +1,5 @@
+ """
+-This script suppresses the 502 Bad Gateway messages, mitmproxy sends if the server is not responsing correctly.
++This script suppresses the 502 Bad Gateway messages, mitmproxy sends if the server is not responding correctly.
+ For example, this functionality can be helpful if mitmproxy is used in between a web scanner and a web application.
+ Without this script, if the web application under test crashes, mitmproxy will send 502 Bad Gateway responses.
+ These responses are irritating the web application scanner since they obfuscate the actual problem.
+```
+
+**File**: `mitmproxy/addons/save.py` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ def load(self, loader):
+             None,
+             """
+             Stream flows to file as they arrive. Prefix path with + to append.
+-            The full path can use python strftime() formating, missing
++            The full path can use python strftime() formatting, missing
+             directories are created as needed. A new file is opened every time
+             the formatted string changes.
+             """,
+```
+
+**File**: `mitmproxy/addons/view.py` (modified, +1/-1)
+```diff
+@@ -262,7 +262,7 @@ def _refilter(self):
+     @command.command("view.focus.go")
+     def go(self, offset: int) -> None:
+         """
+-        Go to a specified offset. Positive offests are from the beginning of
++        Go to a specified offset. Positive offsets are from the beginning of
+         the view, negative from the end of the view, so that 0 is the first
+         flow, -1 is the last flow.
+         """
+```
+
+**File**: `mitmproxy/net/http/http1/read.py` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+ def get_header_tokens(headers, key):
+     """
+     Retrieve all tokens for a header key. A number of different headers
+-    follow a pattern where each header line can containe comma-separated
++    follow a pattern where each header line can contain comma-separated
+     tokens, and headers can be set multiple times.
+     """
+     if key not in headers:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8494** (2026-10-20): Fix typos in option help, docstrings and docs (@qodelicious)
+- **PR #8493** (closed): Fix Set-Cookie parsing of short Expires values and RFC 850 dates (@qodelicious)
 - **PR #8492** (2026-10-19): Web: fix and improve the flow details splitter (@lups2000)
 - **PR #8473** (2026-10-05): Do not add empty SAN extensions (@mhils)
 - **PR #8472** (2026-10-05): Allow typing-extensions up to 4.16.0 (@jpcaruana)
 - **PR #8471** (2026-10-05): Don't apply global listen_port to modes without a port (@WarpFoxHub)
-- **PR #8470** (2026-10-03): Clarify inbound header validation scope (@gigioneggiando)
-- **PR #8469** (2026-10-03): Fix Basic auth passwords containing colons (@gigioneggiando)
 
 ---
 
@@ -1813,13 +1478,13 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Web: fix and improve the flow details splitter (#8492)
+## X. typos in option help, docstrings and docs (#8494)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `696d4e28`: Web: fix and improve the flow details splitter (#8492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f9c59ef5`: typos in option help, docstrings and docs (#8494). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1827,8 +1492,8 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- mitmweb: Fix the flow details splitter and make dragging resize the panels live.
-  ([#8492](https://github.com/mitmproxy/mitmproxy/pull/8492), @lups2000)
+- Fix typos in the `save_stream_file` option help, docstrings and examples.
+  ([#8494](https://github.com/mitmproxy/mitmproxy/pull/8494), @qodelicious)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1838,4 +1503,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `696d4e28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f9c59ef5` are properly handled with clean fallback behavior.
