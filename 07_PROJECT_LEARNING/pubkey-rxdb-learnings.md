@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source**: github ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
-> **Source Version**: `30824176`  
+> **Source Version**: `7a6734be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:10:14.392Z  
+> **Timestamp**: 2026-10-20T06:42:29.193Z  
 > **Learning ID**: `learn-github-pubkey-rxdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:10:14.102Z  
+> **Harvest Timestamp**: 2026-10-20T06:42:29.184Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The local-first database that runs on every JS runtime and replicates with your existing backend - no vendor, no lock-in - https://rxdb.info/
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 23411 stars
+- **Stars / Engagement**: 23409 stars
 
 ---
 
@@ -856,11 +856,11 @@ export function getRxStorageIpcRenderer(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9274** (2026-10-18): **Update dependency eslint-plugin-jsdoc to v65.3.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-jsdoc](https://redirect.github.com/gajus/eslint-plugin-jsdoc) | [`65.2.4` → `65.3.0`](https://renovatebot.com/diffs/npm/eslint-plugin-jsdoc/65.2.4/65.3.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-jsdoc/65.3.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-jsdoc/65.2.4/65.3.0?slim=true) |  ---  ### Release Notes  <details> <summary>gajus/eslint-plugin-jsdoc (eslint-plugin-jsdoc)</summary>  ### [`v65.3.0`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.3.0)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v65.2.6...v65.3.0)  ##### Features  - **`no-unnecessary-type-assertion`:** add `fixTypeChangingCasts` option ([29e5d16](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/29e5d1675ce01dbd90e621365ecf5f6b1a44f6ea))  ### [`v65.2.6`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.2.6)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v65.2.5...v65.2.6)  ##### Bug Fixes  - **`tag-lines`:** keep description text when `maxBlockLines` removes excess blank lines ([7785ca9](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/7785ca9bbdee1d4daece4277259c11312916e2d6))  ##
+- **Issue #9292** (2026-10-19): **Add a realistic bundle-size check to CI**
+  *Symptoms*: ## This PR contains: - IMPROVED TESTS  ## Describe the problem you have without this PR  The `build:size` step in `test-builds` only bundles an empty memory database (`config/bundle-size.js`) and prints a number without any limit, so bundle-size regressions go unnoticed. Two examples: - The migration-schema plugin adds 41 KB minified. - Importing `validate-ajv` adds 125 KB minified.  The fixture also called `db.destroy()`, which no longer exists. It is only ever bundled, never run, so nobody noticed.  This PR adds: - `config/bundle-size/` with three fixtures:   - `memory-minimal`: createRxDatabase with the memory storage.   - `todo-dexie`: the Dexie.js storage, a todo collection, insert, a sorted `find().$` subscription, `patch` and `remove`.   - `todo-dexie-plugins`: the todo app plus the leader-election, migration-schema, update and query-builder plugins. - `scripts/check-bundle-size.mjs`: bundles each fixture with esbuild (minified, browser, ESM) and fails when the minified or gzip size exceeds `config/bundle-size/limits.json`. `--update` writes the measured sizes plus 2% headroom. - npm scripts `test:bundle-size` and `bundle-size:update`, and a `check bundle size limits` step in `test-builds` after `npm run build`. - `esbuild` pinned as a devDependency. It was only installed transitively through `tsx`. - A fix for `db.destroy()` → `db.close()` in `config/bundle-size.js`. - A CLAUDE.md line on how to run and update the check.  Current sizes:  | fixture | minified | gzip | 
 
-- **Issue #9272** (2026-10-18): **Update dependency firebase-tools to v15.33.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [firebase-tools](https://redirect.github.com/firebase/firebase-tools) | [`15.32.1` → `15.33.0`](https://renovatebot.com/diffs/npm/firebase-tools/15.32.1/15.33.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/firebase-tools/15.33.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/firebase-tools/15.32.1/15.33.0?slim=true) |  ---  ### Release Notes  <details> <summary>firebase/firebase-tools (firebase-tools)</summary>  ### [`v15.33.0`](https://redirect.github.com/firebase/firebase-tools/releases/tag/v15.33.0)  [Compare Source](https://redirect.github.com/firebase/firebase-tools/compare/v15.32.1...v15.33.0)  - Updated Firebase Hosting API requests to be project-scoped, eliminating site-scoped requests and the use of `-` as a project identifier. - Added check for a default Hosting site and offer to create one during `firebase apps:create web`. - Added a check for a default Hosting site and offer to create one during `auth` initialization. - Started reporting the GCFv2-to-GCFv1 downgrade error during validation instead of a misleading CPU error ([#&#8203;5461](https://redirect.github.com/firebase/firebase-tools/issues/5461)). - Fixed `functions:delete` recreating an already-deleted Cloud Tasks queue for task queue functions. ([#&#8203;9305](
+- **Issue #9291** (2026-10-19): **Use the ES2015 build of RxJS in the examples and document it**
+  *Symptoms*: ## This PR contains: - IMPROVED DOCS - SOMETHING ELSE (example configs)  ## Describe the problem you have without this PR  RxJS 7 has an ES5 build (`default` export condition) and an ES2015 build (`es2015` condition). Vite, webpack, Rollup and esbuild do not set `es2015` by default, so RxDB apps bundle the ES5 build plus `tslib`.  Measured: - Todo app, Vite 8.3.4: 366.7 KB → 360.1 KB minified (113.7 → 112.1 KB gzipped). All 72 RxJS modules switch from `rxjs/dist/esm5` to `rxjs/dist/esm`. - `examples/vite-vanilla-ts` with the new config (built against the local RxDB build): 426.6 KB → 419.9 KB minified. - webpack 5: default resolves `esm5` + `tslib`. `conditionNames: ['es2015', '...']` resolves `rxjs/dist/esm`. - esbuild: `conditions: ['es2015', 'module']` drops RxJS from 22.3 KB to 17.2 KB and `tslib` from 3.9 KB to 1.9 KB. - The Angular CLI (`@angular/build` 22.2.2) already sets `es2015` in its esbuild conditions, so the Angular and Ionic examples need no change.  Changes: - `docs-src/docs/install.md`: a new section with configs for Vite, webpack, Rollup and esbuild. - Examples: `vite-vanilla-ts`, `tauri` (Vite), `graphql` (webpack), `vue` (Vue CLI / webpack), `svelte` (Rollup). - Not changed:   - `react` uses `react-scripts`, which cannot change resolve conditions without ejecting.   - `react-native` uses Metro.   - `flutter/javascript` bundles for a non-browser JS engine that I could not test here.  The code-block line-length, em-dash and codespell checks pass. No changelo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -877,292 +877,273 @@ export function getRxStorageIpcRenderer(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a0ab8ba` (2026-10-13)
-**Commit Message**: FIX incrementalModify() writing the unchanged document when the modifier throws (#9237)
+### Incident Patch 1: `663489ef` (2026-10-19)
+**Commit Message**: Use the ES2015 build of RxJS in the examples and document it (#9291)
 
-* FIX incrementalModify() writing the unchanged document when the modifier throws
+* Use the ES2015 build of RxJS in the examples and document it
 
-When every queued modifier for a document threw, the incremental write
-queue still wrote the unchanged document, creating a new revision and
-change event. Rejected items are now dropped from the batch so they are
-neither written nor retried on conflicts.
+RxJS 7 resolves its ES2015 build only under the 'es2015' export
+condition. Vite, webpack, Rollup and esbuild do not set it by default
+and bundle the ES5 build plus tslib instead. In an RxDB app built with
+Vite 8 this costs 6.6 KB minified (1.6 KB gzipped).
 
-Fixes #9234
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01YT8WfBMgsSK5ZCoT1iNuUt
-
-* Reproduce #9234 in the test through the public API only
-
-The test no longer calls the internal incremental write queue or storage
-instance. It reproduces the issue's conditional-write case: the modifier
-passes on a stale state, the write conflicts and the modifier throws on
-the retry. Key compression is used so that the conflict state is not
-frozen by dev-mode. The modifiers also partially mutate the document
-before throwing.
+Set the condition in the Vite, webpack and Rollup based examples and
+document the config for each bundler in install.md. The Angular CLI
+already sets the condition, so the Angular and Ionic examples need no
+change.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01YT8WfBMgsSK5ZCoT1iNuUt
+Claude-Session: https://claude.ai/code/session_01JDvYN6dTo9JA4w7ZhxDvsm
 
-* Remove the fixed wait from the #9234 test
-
-Instead of waiting 50ms for a pos
-
-**File**: `orga/changelog/fix-incremental-modify-throwing-modifier-write.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+- FIX `incrementalModify()` wrote a new revision of the unchanged document after the modifier threw [#9234](https://github.com/pubkey/rxdb/issues/9234)
-```
-
-**File**: `src/incremental-write.ts` (modified, +16/-5)
-```diff
-@@ -97,12 +97,13 @@ export class IncrementalWriteQueue<RxDocType> {
-         try {
-             await Promise.all(
-                 Array.from(itemsById.entries())
--                    .map(async ([_docId, items]) => {
-+                    .map(async ([docId, allItems]) => {
-                         const oldData = findNewestOfDocumentStates(
--                            items.map(i => i.lastKnownDocumentState)
-+                            allItems.map(i => i.lastKnownDocumentState)
-                         );
-                         let newData = oldData;
--                        for (const item of items) {
-+                        const items: IncrementalWriteQueueItem<RxDocType>[] = [];
-+                        for (const item of allItems) {
-                             try {
-                                 newData = await item.modifier(
-                                     /**
-@@ -112,13 +113,23 @@ export class IncrementalWriteQueue<RxDocType> {
-                                      */
-                                     clone(newData)
-                                 ) as any;
-+                                items.push(item);
-                             } catch (err: any) {
-                                 item.reject(err);
--                                item.reject = () => { };
--                                item.resolve = () => { };
-                             }
-                         }
- 
-+                        /**
-+                         * Items whose modifier threw are already rejected
-+                         * and must not be retried on conflicts.
-+                         * If all modifiers threw, the document must not be written at all.
-+                         */
-+                        if (items.length === 0) {
-+                            itemsById.delete(docId);
-+                            return;
-+                        }
-+                        itemsById.set(docId, items);
-+
-                         try {
-                             await this.preWrite(newData, oldData);
-                         } catch (err: any) {
-```
-
-**File**: `test/unit/rx-document.test.ts` (modified, +88/-2)
-```diff
-@@ -9,8 +9,10 @@ import {
-     humansCollection,
-     isFastMode,
-     isNode,
--    HumanDocumentType
-+    HumanDocumentType,
-+    enableKeyCompression
- } from '../../plugins/test-utils/index.mjs';
-+import { wrappedKeyCompressionStorage } from '../../plugins/key-compression/index.mjs';
- 
- import {
-     createRxDatabase,
-@@ -25,7 +27,8 @@ import {
-     defaultHashSha256,
-     RxJsonSchema,
-     BulkWriteRow,
--    getWrittenDocumentsFromBulkWriteResponse
-+    getWrittenDocumentsFromBulkWriteResponse,
-+    getHeightOfRevision
- } from '../../plugins/core/index.mjs';
- 
- 
-@@ -956,6 +959,89 @@ describe('rx-document.test.js', () => {
- 
-             c.database.close();
-         });
-+        /**
-+         * @link https://github.com/pubkey/rxdb/issues/9234
-+         */
-+        it('should not write the document when the modifier throws after a conflict', async () => {
-+            /**
-+             * Key compression returns fresh, non-frozen document states on conflicts.
-+             * With the plain memory storage in dev-mode, the frozen state would hide the bug.
-+             */
-+            const db = await createRxDatabase<{ human: RxCollection<HumanDocumentType>; }>({
-+                name: randomToken(10),
-+                storage: wrappedKeyCompressionStorage({
-+                    storage: config.storage.getStorage()
-+                })
-+            });
-+            await db.addCollections({
-+                human: {
-+                    schema: enableKeyCompression(schemas.human)
-+                }
-+            });
-+            const c = db.human;
-+            await c.insert(schemaObjects.humanData());
-+            const staleDoc = await c.findOne().exec(true);
-+
-+            // another write makes the state of staleDoc outdated
-+            const currentDoc = await staleDoc.incrementalPatch({ firstName: 'changed' });
-+            const revBefore = currentDoc.revision;
-+
-+            const emitted: any[] = [];
-+            const sub = c.$.subscribe(ev => emitted.push(ev));
-+
-+            /**
-+             * The modifier only allows the write while the document is unchanged.
-+             * On the stale state it passes, the write conflicts and
-+             * the modifier is run again on the current state where it throws.
-+             */
-+            let modifierCalls = 0;
-+            await AsyncTestUtil.assertThrows(
-+                () => staleDoc.incrementalModify((docData) => {
-+                    modifierCalls++;
-+                    // partially modify the document before throwing
-+                    docData.lastName = 'partial';
-+                    if (docData.firstName === 'changed') {
-+                        throw new Error('refuse');
-+                    }
-+                    docData.lastName = 'foobar';
-+                    return docData;
-+                }),
-+                'Error',
-+                'refuse'
-+            );
-+            assert.strictEqual(modifierCalls, 2);
-+
-+            /**
-+             * The incremental write queue processes one batch after another,
-+             * so when the next write has finished, a wrongly written
-+             * revision of the refused write would already be stored.
-+             * The batch also contains a failing modifier which must not affect the successful one.
-+             */
-+            const results = await Promise.allSettled([
-+                currentDoc.incrementalModify((docData) => {
-+                    docData.lastName = 'partial';
-+                    throw new Error('refuse');
-+                }),
-+                currentDoc.incrementalModify((docData) => {
-+                    docData.age = 42;
-+                    return docData;
-+                })
-+            ]);
-+            assert.strictEqual(results[0].status, 'rejected');
-+            assert.strictEqual(results[1].status, 'fulfilled');
-+
-+            const after = await c.findOne(staleDoc.primary).exec(true);
-+            assert.strictEqual(
-+                getHeightOfRevision(after.revision),
-+                getHeightOfRevision(revBefore) + 1
-+            );
-+            assert.strictEqual(after.age, 42);
-+            assert.strictEqual(after.lastName, currentDoc.lastName);
-+            assert.strictEqual(emitted.length, 1);
-+
-+            sub.unsubscribe();
-+            db.close();
-+        });
-     });
-     describe('Proxy', () => {
-         describe('get', () => {
-```
-
----
-
-### Incident Patch 2: `ba3e3697` (2026-10-15)
-**Commit Message**: docs: Venice slider entry fixes and logo in the case study (#9253)
-
-* docs: reviews slider shows the case study link as Read more after the quote
+* Use the Tabs component for the RxJS ES2015 bundler configs
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01GpLN5sd3S3y1wTVfR4juvM
-
-* docs: Venice logo in white for the dark slider background
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01GpLN5sd3S3y1wTVfR4juvM
-
-* docs: show the Venice logo in the case study
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01GpLN5sd3S3y1wTVfR4juvM
+Claude-Session: https://claude.ai/code/session_01JDvYN6dTo9JA4w7ZhxDvsm
 
 ---------
 
 Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `docs-src/docs/articles/case-studies/venice-ai.md` (modified, +4/-0)
+**File**: `docs-src/docs/install.md` (modified, +62/-0)
 ```diff
-@@ -4,10 +4,14 @@ slug: venice-ai.html
- description: Venice.ai keeps every conversation on the user's device instead of on its servers. See how Venice uses RxDB as one shared, reactive data layer for its React web app and React Native mobile app, and how it streams AI responses directly into the database.
+@@ -6,6 +6,7 @@ image: /headers/install.jpg
  ---
  
-+import {CenteredImage} from '@site/src/components/centered-image';
+ import {InstallTabs} from '@site/src/components/install-tabs';
++import {Tabs} from '@site/src/components/tabs';
+ 
+ # Install RxDB
+ 
+@@ -21,6 +22,67 @@ You also need to install the peer-dependency `rxjs` if you have not installed it
+ 
+ <InstallTabs packageName="rxjs" />
+ 
++## Use the ES2015 build of RxJS
 +
- # How Venice.ai Uses RxDB for Private, Local-First AI Chat
- 
- [Venice.ai](https://venice.ai/) is a private and uncensored AI platform for text chat, image generation, video, audio, characters and an [OpenAI-compatible API](https://docs.venice.ai/). It was founded in 2024 by Erik Voorhees and Jesse Proudman. In July 2026 Venice raised a **$65M Series A at a $1B valuation**, led by Dragonfly, and reported more than **3 million active users** and an annualized run-rate above **$70M** ([TechCrunch, July 1, 2026](https://techcrunch.com/2026/07/01/venice-ai-becomes-a-unicorn-with-65m-series-a-as-its-privacy-first-ai-platform-takes-off/)).
- 
-+<CenteredImage src="/files/companies/venice.svg" alt="Venice.ai logo" width={120} />
++RxJS 7 ships an ES5 build and an ES2015 build. The ES2015 build is only resolved when your bundler sets the `es2015` export condition. Vite, webpack, Rollup and esbuild do not set it by default, so they bundle the ES5 build together with the `tslib` helpers. In an RxDB app built with Vite, adding the condition reduces the bundle by about `6.6 KB` minified (`1.6 KB` gzipped). The Angular CLI already sets the condition, so Angular projects need no change.
 +
- The interesting part for developers is where the data lives. Venice states that "your conversation history stays on your device" and that it never stores it on its servers ([venice.ai/privacy](https://venice.ai/privacy)). A product with millions of users and no server-side chat history needs a client-side database that can carry the whole app. Venice uses **RxDB** for that.
++<Tabs>
++
++### Vite
++
++Vite 6 or newer:
++
++```ts
++// vite.config.ts
++import { defineConfig, defaultClientConditions } from 'vite';
++
++export default defineConfig({
++    resolve: {
++        conditions: ['es2015', ...defaultClientConditions]
++    }
++});
++```
++
++### webpack
++
++webpack 5 or newer, `'...'` keeps the default conditions:
++
++```js
++// webpack.config.js
++module.exports = {
++    resolve: {
++        conditionNames: ['es2015', '...']
++    }
++};
++```
++
++### Rollup
++
++With `@rollup/plugin-node-resolve`:
++
++```js
++// rollup.config.mjs
++import { nodeResolve } from '@rollup/plugin-node-resolve';
++
++export default {
++    plugins: [
++        nodeResolve({ browser: true, exportConditions: ['es2015'] })
++    ]
++};
++```
++
++### esbuild
++
++Setting `conditions` replaces the default `module` condition, so add it again:
++
++```js
++await esbuild.build({
++    conditions: ['es2015', 'module']
++});
++```
++
++</Tabs>
++
+ ## polyfills
  
- ## The Requirement: No Conversations on the Server
+ RxDB is coded with ES8 and transpiled to ES5. This means you have to install [polyfills](https://developer.mozilla.org/en-US/docs/Glossary/Polyfill) to support older browsers. For example you can use [core-js](https://github.com/zloirock/core-js) with:
 ```
 
-**File**: `docs-src/src/components/review-block.tsx` (modified, +4/-7)
+**File**: `examples/graphql/webpack.config.js` (modified, +4/-0)
 ```diff
-@@ -157,7 +157,10 @@ export function ReviewsBlock() {
-                             fontWeight: 500,
-                             lineHeight: '21px',
-                             marginBottom: 0
--                        }}>{item.description}</p>
-+                        }}>
-+                            {item.description}
-+                            {item.caseStudyHref ? <> <a href={item.caseStudyHref}>Read more</a></> : <></>}
-+                        </p>
-                         <IconQuoteEnd />
-                         <div className="slider-profile">
-                             {item.logo ? <img
-@@ -168,12 +171,6 @@ export function ReviewsBlock() {
-                             /> : <></>}
-                             <div className="slider-info">
-                                 <span className="developer"><b>{item.label}</b> ({item.location})</span>
--                                {item.caseStudyHref ? <a
--                                    href={item.caseStudyHref}
--                                    className="company-link"
--                                >
--                                    Read the case study
--                                </a> : <></>}
-                                 {/* <span className="company-link"                                >
-                     {new URL(item.href).hostname}
-                 </span> */}
+@@ -17,6 +17,10 @@ export default {
+     experiments: {
+         outputModule: true,
+     },
++    resolve: {
++        // use the ES2015 build of RxJS instead of the bigger ES5 build
++        conditionNames: ['es2015', '...']
++    },
+     plugins: [
+         new webpack.ProvidePlugin({
+             process: 'process/browser',
 ```
 
-**File**: `docs-src/static/files/companies/venice.svg` (modified, +1/-1)
+**File**: `examples/svelte/rollup.config.mjs` (modified, +3/-1)
 ```diff
-@@ -1 +1 @@
--<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 79 89"><path fill="#000" fill-rule="evenodd" d="M25.56 59.61a16.03 16.03 0 1 0 3.33 3.32l3.57-3.57 2.6 2.6h1.48l1.78-1.78V58.7l-2.6-2.6 3.78-3.78 3.78 3.78-2.6 2.6v1.48l1.78 1.78h1.48l2.6-2.6 3.57 3.57a16.03 16.03 0 1 0 3.33-3.32l-3.5-3.51 2.6-2.6v-1.48l-1.86-1.85h-1.47l-2.6 2.6L42.82 49l19.8-19.82 8.03 8.02v-8.34H79l-8.02-8.02L79 12.82v-1.48L77.15 9.5h-1.48L39.5 45.67 3.33 9.5H1.85L0 11.34v1.48l8.02 8.02L0 28.86h8.34v8.34l8.02-8.02L36.17 49l-3.77 3.77-2.6-2.6h-1.48l-1.85 1.85v1.48l2.6 2.6zm32.15 18.35c-.82 1.67-.65 4 .4 5.53.97 1.6 3.01 2.7 4.87 2.65a5.8 5.8 0 0 0 4.87-2.65 5.8 5.8 0 0 0 .4-5.53l.2-.22c1.68.82 4 .66 5.54-.4 1.6-.96 2.71-3 2.66-4.86a5.8 5.8 0 0 0-2.66-4.87 5.8 5.8 0 0 0-5.54-.4l-.2-.22c.82-1.67.65-3.99-.4-5.53-.97-1.59-3-2.7-4.87-2.65a5.8 5.8 0 0 0-4.87 2.65 5.8 5.8 0 0 0-.4 5.53l-.2.22c-1.68-.82-4-.65-5.54.4-1.6.96-2.7 3-2.66 4.87a5.8 5.8 0 0 0 2.66 4.87 5.8 5.8 0 0 0 5.54.4zM20.89 83.5a5.8 5.8 0 0 0 .4-5.53l.2-.22c1.68.82 4 .66 5.54-.4 1.6-.96 2.7-3 2.66-4.86a5.8 5.8 0 0 0-2.66-4.87 5.8 5.8 0 0 0-5.54-.4l-.2-.22c.82-1.67.65-3.99-.4-5.53-.97-1.59-3.01-2.7-4.87-2.65a5.8 5.8 0 0 0-4.87 2.65 5.8 5.8 0 0 0-.4 5.53l-.2.22c-1.68-.82-4-.65-5.54.4-1.6.96-2.71 3-2.66 4.87a5.8 5.8 0 0 0 2.66 4.87 5.8 5.8 0 0 0 5.53.4l.2.21c-.8 1.67-.64 4 .41 5.53.97 1.6 3 2.7 4.87 2.65a5.8 5.8 0 0 0 4.87-2.65" clip-rule="evenodd"/><path fill="#000" fill-rule="evenodd" d="m39.47 9.5 9.5-9.5 4.7 4.7v15.85L40.65 33.58H38.3L25.28 20.55V4.7l4.7-4.7zm-9.5-6.17 8.33 8.32v15.28l-8.32-8.32zm10.68 8.32 8.32-8.32V18.6l-8.32 8.32z" clip-rule="evenodd"/></svg>
-+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 79 89"><path fill="#fff" fill-rule="evenodd" d="M25.56 59.61a16.03 16.03 0 1 0 3.33 3.32l3.57-3.57 2.6 2.6h1.48l1.78-1.78V58.7l-2.6-2.6 3.78-3.78 3.78 3.78-2.6 2.6v1.48l1.78 1.78h1.48l2.6-2.6 3.57 3.57a16.03 16.03 0 1 0 3.33-3.32l-3.5-3.51 2.6-2.6v-1.48l-1.86-1.85h-1.47l-2.6 2.6L42.82 49l19.8-19.82 8.03 8.02v-8.34H79l-8.02-8.02L79 12.82v-1.48L77.15 9.5h-1.48L39.5 45.67 3.33 9.5H1.85L0 11.34v1.48l8.02 8.02L0 28.86h8.34v8.34l8.02-8.02L36.17 49l-3.77 3.77-2.6-2.6h-1.48l-1.85 1.85v1.48l2.6 2.6zm32.15 18.35c-.82 1.67-.65 4 .4 5.53.97 1.6 3.01 2.7 4.87 2.65a5.8 5.8 0 0 0 4.87-2.65 5.8 5.8 0 0 0 .4-5.53l.2-.22c1.68.82 4 .66 5.54-.4 1.6-.96 2.71-3 2.66-4.86a5.8 5.8 0 0 0-2.66-4.87 5.8 5.8 0 0 0-5.54-.4l-.2-.22c.82-1.67.65-3.99-.4-5.53-.97-1.59-3-2.7-4.87-2.65a5.8 5.8 0 0 0-4.87 2.65 5.8 5.8 0 0 0-.4 5.53l-.2.22c-1.68-.82-4-.65-5.54.4-1.6.96-2.7 3-2.66 4.87a5.8 5.8 0 0 0 2.66 4.87 5.8 5.8 0 0 0 5.54.4zM20.89 83.5a5.8 5.8 0 0 0 .4-5.53l.2-.22c1.68.82 4 .66 5.54-.4 1.6-.96 2.7-3 2.66-4.86a5.8 5.8 0 0 0-2.66-4.87 5.8 5.8 0 0 0-5.54-.4l-.2-.22c.82-1.67.65-3.99-.4-5.53-.97-1.59-3.01-2.7-4.87-2.65a5.8 5.8 0 0 0-4.87 2.65 5.8 5.8 0 0 0-.4 5.53l-.2.22c-1.68-.82-4-.65-5.54.4-1.6.96-2.71 3-2.66 4.87a5.8 5.8 0 0 0 2.66 4.87 5.8 5.8 0 0 0 5.53.4l.2.21c-.8 1.67-.64 4 .41 5.53.97 1.6 3 2.7 4.87 2.65a5.8 5.8 0 0 0 4.87-2.65" clip-rule="evenodd"/><path fill="#fff" fill-rule="evenodd" d="m39.47 9.5 9.5-9.5 4.7 4.7v15.85L40.65 33.58H38.3L25.28 20.55V4.7l4.7-4.7zm-9.5-6.17 8.33 8.32v15.28l-8.32-8.32zm10.68 8.32 8.32-8.32V18.6l-8.32 8.32z" clip-rule="evenodd"/></svg>
+@@ -59,7 +59,9 @@ export default {
+ 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
+ 		resolve({
+ 			browser: true,
+-			dedupe: ['svelte']
++			dedupe: ['svelte'],
++			// use the ES2015 build of RxJS instead of the bigger ES5 build
++			exportConditions: ['es2015']
+ 		}),
+ 		commonjs(),
+ 
+```
+
+**File**: `examples/tauri/vite.config.js` (modified, +5/-1)
+```diff
+@@ -1,9 +1,13 @@
+-import { defineConfig } from "vite";
++import { defineConfig, defaultClientConditions } from "vite";
+ 
+ const host = process.env.TAURI_DEV_HOST;
+ 
+ // https://vitejs.dev/config/
+ export default defineConfig(async () => ({
++  // use the ES2015 build of RxJS instead of the bigger ES5 build
++  resolve: {
++    conditions: ["es2015", ...defaultClientConditions],
++  },
+   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
+   //
+   // 1. prevent vite from obscuring rust errors
+```
+
+**File**: `examples/vite-vanilla-ts/vite.config.ts` (modified, +10/-2)
+```diff
+@@ -1,3 +1,11 @@
+-import { defineConfig } from 'vite';
++import { defineConfig, defaultClientConditions } from 'vite';
+ 
+-export default defineConfig({});
++export default defineConfig({
++    resolve: {
++        /**
++         * Without the 'es2015' condition, Vite resolves
++         * the ES5 build of RxJS which is bigger.
++         */
++        conditions: ['es2015', ...defaultClientConditions]
++    }
++});
+```
+
+**File**: `examples/vue/vue.config.js` (modified, +4/-0)
+```diff
+@@ -5,6 +5,10 @@ module.exports = {
+   publicPath: './',
+   configureWebpack: {
+     devtool: 'source-map',
++    resolve: {
++      // use the ES2015 build of RxJS instead of the bigger ES5 build
++      conditionNames: ['es2015', '...'],
++    },
+     plugins: [
+       new CopyPlugin({
+         patterns: [
+```
+
+---
+
+### Incident Patch 2: `b081d1c7` (2026-10-19)
+**Commit Message**: DOCS: prefix the database name with the staging id (#9286)
+
+* DOCS: explain prefixing the database name with the staging id
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01XqUuEcNDuZCCihe6gresy6
+
+* DOCS: put staging name hint into a note box
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01XqUuEcNDuZCCihe6gresy6
+
+---------
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `docs-src/docs/rx-database.md` (modified, +14/-0)
+```diff
+@@ -34,6 +34,20 @@ const db = await createRxDatabase({
+ The database name is a string which uniquely identifies the database. When two RxDatabases have the same name and use the same `RxStorage`, their data can be assumed as equal and they will share events between each other.
+ Depending on the storage or adapter this can also be used to define the filesystem folder of your data.
+ 
++:::note Prefix the name on staging deployments
++When you deploy your app to a staging area, prefix the database name with the staging id. Browser storages like IndexedDB, OPFS, and localStorage are scoped to the origin and not to the URL path. Let's say your app lives on `example.com` and you have a feature preview at `example.com/commit-42/`. Both deployments run on the same origin, so with the same database name the preview reads and writes the stored data of the production app. This can corrupt data when the preview uses a different [schema version](./migration-schema.md) or stores test documents. To fix this, use `commit-42-mydatabasename` as name for the preview.
++
++```ts
++// your own deploy config, for example 'commit-42' on a feature preview and '' on production
++const stagingId = import.meta.env.VITE_STAGING_ID;
++
++const db = await createRxDatabase({
++  name: stagingId ? stagingId + '-mydatabasename' : 'mydatabasename',
++  storage: getRxStorageLocalstorage()
++});
++```
++:::
++
+ 
+ ### storage
+ 
+```
+
+**File**: `src/types/rx-database.d.ts` (modified, +16/-0)
+```diff
+@@ -69,6 +69,22 @@ export interface RxDatabaseCreator<Internals = any, InstanceCreationOptions = an
+      */
+     storage: RxStorage<Internals, InstanceCreationOptions>;
+     instanceCreationOptions?: InstanceCreationOptions;
++    /**
++     * The name of the database. It uniquely identifies the stored data,
++     * so two databases with the same name and the same RxStorage share their data.
++     *
++     * When you deploy your app to a staging area or feature preview
++     * that runs on the same origin as other deployments,
++     * prefix the name with the staging id. Otherwise all deployments
++     * read and write the same stored database state.
++     * @example
++     * ```ts
++     * // production on example.com
++     * name: 'mydatabasename'
++     * // feature preview on example.com/commit-42/
++     * name: 'commit-42-mydatabasename'
++     * ```
++     */
+     name: string;
+     /**
+      * Typed as `any` because different encryption plugins
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9274** (2026-10-18): Update dependency eslint-plugin-jsdoc to v65.3.0 (@renovate[bot])
-- **PR #9272** (2026-10-18): Update dependency firebase-tools to v15.33.0 (@renovate[bot])
-- **PR #9270** (2026-10-18): Update dependency eslint-plugin-jsdoc to v65.2.4 (@renovate[bot])
-- **PR #9269** (2026-10-17): Update dependency electron to v44.7.0 (@renovate[bot])
-- **PR #9268** (2026-10-18): Update dependency rollup to v4.64.5 (@renovate[bot])
-- **PR #9267** (2026-10-17): Update dependency bun to v1.4.3 (@renovate[bot])
+- **PR #9292** (2026-10-19): Add a realistic bundle-size check to CI (@pubkey)
+- **PR #9291** (2026-10-19): Use the ES2015 build of RxJS in the examples and document it (@pubkey)
+- **PR #9290** (2026-10-19): Convert validate-ajv-standalone changelog entries to JSON (@pubkey)
+- **PR #9289** (2026-10-19): Update event-reduce-js to 7.0.1 (@pubkey)
+- **PR #9288** (2026-10-19): Fix too long code block line in rx-database.md (@pubkey)
+- **PR #9287** (2026-10-19): Migrate changelog entries to JSON files validated by a schema (@pubkey)
 
 ---
 
@@ -1182,21 +1163,66 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. incrementalModify() writing the unchanged document when the modifier throws (#92
+## X. Use the ES2015 build of RxJS in the examples and document it (#9291)
 
 **RULE**:
-When implementing operations in `orga/changelog/fix-incremental-modify-throwing-modifier-write.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs-src/docs/install.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a0ab8ba`: incrementalModify() writing the unchanged document when the modifier throws (#9237). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `663489ef`: Use the ES2015 build of RxJS in the examples and document it (#9291). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orga/changelog/fix-incremental-modify-throwing-modifier-write.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docs/install.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- FIX `incrementalModify()` wrote a new revision of the unchanged document after the modifier threw [#9234](https://github.com/pubkey/rxdb/issues/9234)
+import {Tabs} from '@site/src/components/tabs';
+## Use the ES2015 build of RxJS
+
+RxJS 7 ships an ES5 build and an ES2015 build. The ES2015 build is only resolved when your bundler sets the `es2015` export condition. Vite, webpack, Rollup and esbuild do not set it by default, so they bundle the ES5 build together with the `tslib` helpers. In an RxDB app built with Vite, adding the condition reduces the bundle by about `6.6 KB` minified (`1.6 KB` gzipped). The Angular CLI already sets the condition, so Angular projects need no change.
+
+<Tabs>
+
+### Vite
+
+Vite 6 or newer:
+
+```ts
+// vite.config.ts
+import { defineConfig, defaultClientConditions } from 'vite';
+
+export default defineConfig({
+    resolve: {
+        conditions: ['es2015', ...defaultClientConditions]
+    }
+});
+```
+
+### webpack
+
+webpack 5 or newer, `'...'` keeps the default conditions:
+
+```js
+// webpack.config.js
+module.exports = {
+    resolve: {
+        conditionNames: ['es2015', '...']
+    }
+};
+```
+
+### Rollup
+
+With `@rollup/plugin-node-resolve`:
+
+```js
+// rollup.config.mjs
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+
+export default {
+    plugins: [
+        nodeResolve({ browser: true, exportConditions: ['es20
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1206,4 +1232,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a0ab8ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `663489ef` are properly handled with clean fallback behavior.

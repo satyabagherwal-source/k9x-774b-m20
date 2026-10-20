@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:35:27.112Z",
-  "total_cycles_completed": 3731,
-  "total_learnings_persisted": 3731,
+  "last_updated": "2026-10-20T06:42:29.388Z",
+  "total_cycles_completed": 3733,
+  "total_learnings_persisted": 3733,
   "total_rules_promoted": 2907,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:15:45.593Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:21:59.239Z",
-      "repository": "nalexn/ViewInspector",
-      "learningId": "learn-github-nalexn-viewinspector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:22:08.019Z",
       "repository": "rehypejs/rehype",
@@ -1403,6 +1389,20 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:42:19.964Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:42:29.388Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

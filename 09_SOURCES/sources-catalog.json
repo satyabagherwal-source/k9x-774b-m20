@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
-    "lastHarvestedAt": "2026-10-18T14:29:58.338Z",
+    "contentHash": "2f85e887ec7cba900e14f975a596c680189dfa213fba853c9fead9ccee9fd980",
+    "lastHarvestedAt": "2026-10-20T06:42:19.959Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "30824176",
+    "sourceVersion": "7a6734be",
     "license": "Apache-2.0",
-    "contentHash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
-    "lastHarvestedAt": "2026-10-18T22:10:14.516Z",
+    "contentHash": "3fd2d9d243d8862f452efc0a5b29585da0a844a1ec6daded7204793680b73025",
+    "lastHarvestedAt": "2026-10-20T06:42:29.382Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {

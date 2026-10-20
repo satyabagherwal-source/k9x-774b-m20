@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:35:27.051Z",
+  "last_updated": "2026-10-20T06:42:29.313Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36928,8 +36928,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "30824176",
-      "content_hash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
+      "source_version": "7a6734be",
+      "content_hash": "3fd2d9d243d8862f452efc0a5b29585da0a844a1ec6daded7204793680b73025",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -36944,7 +36944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:10:14.489Z",
+      "verified_at": "2026-10-20T06:42:29.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78874,7 +78874,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+      "content_hash": "2f85e887ec7cba900e14f975a596c680189dfa213fba853c9fead9ccee9fd980",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -78894,7 +78894,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T14:29:58.303Z",
+      "verified_at": "2026-10-20T06:42:19.889Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

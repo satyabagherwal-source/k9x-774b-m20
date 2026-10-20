@@ -3761,3 +3761,5 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `f6d172c0` | Multi-dimensional audit evidence | 2026-10-20T06:25:53.901Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `5f2a3da1` | Multi-dimensional audit evidence | 2026-10-20T06:33:13.353Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-20T06:35:27.105Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T06:42:19.959Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `7a6734be` | Multi-dimensional audit evidence | 2026-10-20T06:42:29.382Z |

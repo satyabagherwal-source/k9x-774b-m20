@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-946G",
-    "timestamp": "2026-10-19T13:21:16.648Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "ab84324d762c4894d541bbaf55c1ea87eb9284bba9a4f5da05ae7722672125a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-96NP",
-    "timestamp": "2026-10-19T13:21:19.861Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-H1SP",
     "timestamp": "2026-10-19T13:27:26.809Z",
     "repository": "openai/clip-vit-base-patch32",
@@ -7492,6 +7462,36 @@
     "contentHash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-FX6C",
+    "timestamp": "2026-10-20T06:42:19.956Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "2f85e887ec7cba900e14f975a596c680189dfa213fba853c9fead9ccee9fd980",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G4G3",
+    "timestamp": "2026-10-20T06:42:29.379Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "3fd2d9d243d8862f452efc0a5b29585da0a844a1ec6daded7204793680b73025",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

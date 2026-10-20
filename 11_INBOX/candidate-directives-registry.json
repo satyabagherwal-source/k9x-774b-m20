@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:35:27.110Z",
+  "last_updated": "2026-10-20T06:42:29.387Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2180,6 +2180,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-autogluon-chronos-2"
+    },
+    {
+      "id": "CD-G4GB",
+      "directive_title": "Use the ES2015 build of RxJS in the examples and document it (#9291)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pubkey/rxdb",
+      "source_commit": "7a6734be",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-pubkey-rxdb"
     }
   ]
 }

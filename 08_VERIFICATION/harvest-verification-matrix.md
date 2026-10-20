@@ -3754,3 +3754,5 @@
 | `CYCLE-20261020-USBV` | `2026-10-20T06:25:53.899Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3097` | Yes (`d56bc5df...`) |
 | `CYCLE-20261020-47EU` | `2026-10-20T06:33:13.350Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3098` | Yes (`074e7075...`) |
 | `CYCLE-20261020-72M6` | `2026-10-20T06:35:27.102Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3099, Rule 3100` | Yes (`dadd076d...`) |
+| `CYCLE-20261020-FX6C` | `2026-10-20T06:42:19.956Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`2f85e887...`) |
+| `CYCLE-20261020-G4G3` | `2026-10-20T06:42:29.379Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md` | Yes (`3fd2d9d2...`) |
