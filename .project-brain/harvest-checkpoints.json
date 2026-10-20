@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:38:53.563Z",
+  "last_updated": "2026-10-20T17:49:31.426Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "12b8a47994a9a84d8ea63051e22c7adce249c1c1ac409f694ea1ab029cfc4764",
-      "verified_at": "2026-10-20T13:53:45.496Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "2ac4056aa3026f38d8111ffa73dbcc78f44d9ce897dfe158816bf2e193f0c851",
+      "verified_at": "2026-10-20T17:49:23.375Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:53:45.496Z"
+      "last_updated": "2026-10-20T17:49:23.375Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
-      "verified_at": "2026-10-19T13:00:30.028Z",
+      "content_hash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
+      "verified_at": "2026-10-20T17:49:31.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:00:30.028Z"
+      "last_updated": "2026-10-20T17:49:31.425Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -9171,14 +9171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-taiga-family-taiga-ui",
-      "content_hash": "730fb601087dcfb3c519111c56ea8b404eeb4b50bc401a4e45f8fea27a3dc38e",
-      "verified_at": "2026-10-20T02:55:43.011Z",
+      "content_hash": "68e3b3362e07c3868a3c93af0375172b3efc005a176219f34e2dabb51279a481",
+      "verified_at": "2026-10-20T17:49:17.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:55:43.011Z"
+      "last_updated": "2026-10-20T17:49:17.142Z"
     },
     "u-root/u-root": {
       "repository": "u-root/u-root",
@@ -9576,14 +9576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-ani-animeko",
-      "content_hash": "0bd3c8bfede4dcaa7d2ba81b6344801fdcd4c554469001daadec6b8847bb26e6",
-      "verified_at": "2026-10-19T05:39:10.843Z",
+      "content_hash": "1ad9298d7933845741295111bba0d43dcbcde73ccdc3083aa42dcc38e03669aa",
+      "verified_at": "2026-10-20T17:49:22.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:39:10.843Z"
+      "last_updated": "2026-10-20T17:49:22.247Z"
     },
     "k3s-io/k3s": {
       "repository": "k3s-io/k3s",
@@ -11151,14 +11151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-killercup-cargo-edit",
-      "content_hash": "7151778c49b0ec2fd4d94fb36d1f6995126e964527099dbac6629e6cd51b8c35",
-      "verified_at": "2026-10-19T08:50:22.150Z",
+      "content_hash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
+      "verified_at": "2026-10-20T17:49:15.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:50:22.150Z"
+      "last_updated": "2026-10-20T17:49:15.668Z"
     },
     "bahdotsh/wrkflw": {
       "repository": "bahdotsh/wrkflw",

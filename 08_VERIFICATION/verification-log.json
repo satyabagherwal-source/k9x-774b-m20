@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-PLVQ",
-    "timestamp": "2026-10-19T19:10:01.478Z",
-    "repository": "badoo/Reaktive",
-    "learningId": "learn-github-badoo-reaktive",
-    "contentHash": "237eae6d9b7ce7848ab98521d42feb6aa8468fcae2550098b4e4f4d6dbab114b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XDVD",
-    "timestamp": "2026-10-19T19:16:04.345Z",
-    "repository": "SEAbdulbasit/MusicApp-KMP",
-    "learningId": "learn-github-seabdulbasit-musicapp-kmp",
-    "contentHash": "d3057e67cd5310c5a98b5fb55f1000e362ce98eb79b2709a819782adfb21718b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XFGJ",
-    "timestamp": "2026-10-19T19:16:06.403Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "0a83c9b8a5af395eb7f724fc23e357244a9f50ff12c74ef7b971ba39077fab16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XHOZ",
-    "timestamp": "2026-10-19T19:16:09.299Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "0c7329c6bccdc62f877faf3a976099612d85f39abc5501d04b3de97bcfd62db8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5F0C",
-    "timestamp": "2026-10-19T19:22:19.068Z",
-    "repository": "cosscom/coss",
-    "learningId": "learn-github-cosscom-coss",
-    "contentHash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-5FNB",
     "timestamp": "2026-10-19T19:22:19.895Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7492,6 +7417,81 @@
     "contentHash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-9LHN",
+    "timestamp": "2026-10-20T17:49:15.659Z",
+    "repository": "killercup/cargo-edit",
+    "learningId": "learn-github-killercup-cargo-edit",
+    "contentHash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-9MMB",
+    "timestamp": "2026-10-20T17:49:17.123Z",
+    "repository": "taiga-family/taiga-ui",
+    "learningId": "learn-github-taiga-family-taiga-ui",
+    "contentHash": "68e3b3362e07c3868a3c93af0375172b3efc005a176219f34e2dabb51279a481",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-9QK7",
+    "timestamp": "2026-10-20T17:49:22.231Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "1ad9298d7933845741295111bba0d43dcbcde73ccdc3083aa42dcc38e03669aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-9RFJ",
+    "timestamp": "2026-10-20T17:49:23.359Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "2ac4056aa3026f38d8111ffa73dbcc78f44d9ce897dfe158816bf2e193f0c851",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-9XN7",
+    "timestamp": "2026-10-20T17:49:31.411Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

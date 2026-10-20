@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `a6100edc`  
+> **Source Version**: `1853d733`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:00:29.745Z  
+> **Timestamp**: 2026-10-20T17:49:30.989Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:00:29.737Z  
+> **Harvest Timestamp**: 2026-10-20T17:49:30.832Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9378 stars
+- **Stars / Engagement**: 9379 stars
 
 ---
 
@@ -1077,778 +1077,604 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6100edc` (2026-10-19)
-**Commit Message**: feat(connector): support native Pulsar JSON schemas (#27454)
+### Incident Patch 1: `1853d733` (2026-10-20)
+**Commit Message**: fix(mysql-cdc): monitor binlogs for multi-database sources (#27565)
 
-**File**: `e2e_test/source_inline/pulsar/schema_registry.slt` (modified, +95/-1)
+**File**: `e2e_test/source_legacy/cdc/cdc.share_stream.slt` (modified, +6/-0)
 ```diff
-@@ -18,6 +18,18 @@ drop source if exists pulsar_avro_schema_mismatch;
- statement ok
- drop source if exists pulsar_avro_schema_upsert;
+@@ -140,6 +140,12 @@ create source mysql_source with (
+  server.id = '5602'
+ );
  
-+statement ok
-+drop materialized view if exists pulsar_json_schema_mv;
-+
-+statement ok
-+drop source if exists pulsar_json_schema;
-+
-+statement ok
-+drop source if exists pulsar_json_schema_mismatch;
-+
-+statement ok
-+drop source if exists pulsar_json_schema_upsert;
-+
- system ok
- python3 e2e_test/commands/pulsar_util.py drop-topic -t 'persistent://public/default/rw-schema-avro' --force
- 
-@@ -41,7 +53,7 @@ EOF
- 
- system ok
- python3 e2e_test/source_inline/pulsar/produce_schema_test_records.py --schema-type json --topic 'persistent://public/default/rw-schema-json' <<EOF
--{"id":3,"name":"Carol"}
-+{"id":1,"name":"Alice"}
- EOF
- 
- statement error expected Pulsar AVRO schema, got JSON
-@@ -92,6 +104,88 @@ select id, name, category from pulsar_avro_schema_mv;
- 3 Carol unknown
- 
- 
-+statement error expected Pulsar JSON schema, got AVRO
-+create source pulsar_json_schema_mismatch
-+with (
-+  connector = 'pulsar',
-+  service.url = '${PULSAR_BROKER_URL}',
-+  topic = 'persistent://public/default/rw-schema-avro',
-+  scan.startup.mode = 'earliest'
-+)
-+format plain encode json (
-+  schema.pulsar.url = '${PULSAR_HTTP_URL}'
-+);
-+
-+statement error Pulsar schema requires connector = 'pulsar' with FORMAT PLAIN ENCODE AVRO or JSON
-+create source pulsar_json_schema_upsert
-+with (
-+  connector = 'pulsar',
-+  service.url = '${PULSAR_BROKER_URL}',
-+  topic = 'persistent://public/default/rw-schema-json',
-+  scan.startup.mode = 'earliest'
-+)
-+format upsert encode json (
-+  schema.pulsar.url = '${PULSAR_HTTP_URL}'
-+);
-+
-+statement ok
-+create source pulsar_json_schema
-+with (
-+  connector = 'pulsar',
-+  service.url = '${PULSAR_BROKER_URL}',
-+  topic = 'persistent://public/default/rw-schema-json',
-+  scan.startup.mode = 'earliest'
-+)
-+format plain encode json (
-+  schema.pulsar.url = '${PULSAR_HTTP_URL}'
-+);
-+
-+query T
-+select substring(definition, 1, position(' WITH' in definition) - 1) from rw_sources where name = 'pulsar_json_schema';
-+----
-+CREATE SOURCE pulsar_json_schema (id INT, name CHARACTER VARYING)
-+
-+statement error alter source with schema registry
-+alter source pulsar_json_schema add column category varchar;
-+
++# Wait for successful monitoring of the multi-database source, including upstream binlog metrics.
 +system ok
-+python3 e2e_test/source_inline/pulsar/produce_schema_test_records.py --schema-type json --schema-version 1 --topic 'persistent://public/default/rw-schema-json' <<EOF
-+{"id":2,"name":"Bob","category":"premium"}
-+EOF
-+
-+system ok
-+python3 e2e_test/source_inline/pulsar/produce_schema_test_records.py --schema-type json --topic 'persistent://public/default/rw-schema-json' <<EOF
-+{"id":3,"name":"Carol"}
-+EOF
-+
-+statement ok
-+alter source pulsar_json_schema refresh schema;
-+
-+query T
-+select substring(definition, 1, position(' WITH' in definition) - 1) from rw_sources where name = 'pulsar_json_schema';
-+----
-+CREATE SOURCE pulsar_json_schema (id INT, name CHARACTER VARYING, category CHARACTER VARYING)
-+
-+statement ok
-+create materialized view pulsar_json_schema_mv as
-+select id, name, category from pulsar_json_schema;
-+
-+# JSON payloads are decoded as-is, so fields missing from older messages are NULL rather than
-+# the schema default.
-+query ITT rowsort retry 10 backoff 1s
-+select id, name, category from pulsar_json_schema_mv;
-+----
-+1 Alice NULL
-+2 Bob premium
-+3 Carol NULL
-+
-+
-+statement ok
-+drop materialized view pulsar_json_schema_mv;
-+
-+statement ok
-+drop source pulsar_json_schema;
-+
- statement ok
- drop materialized view pulsar_avro_schema_mv;
++source_id=$(psql -h "$SLT_HOST" -p "$SLT_PORT" -d "$__DATABASE__" -U root -At -v ON_ERROR_STOP=1 -c "SELECT id FROM rw_sources WHERE name = 'mysql_source'")
++python3 e2e_test/source_legacy/cdc/wait_mysql_binlog_metrics.py \
++    --source-id "$source_id" \
++    --metrics-url "${RW_META_METRICS_URL:-http://127.0.0.1:1250/metrics}"
  
+ statement ok
+ CREATE TABLE IF NOT EXISTS mysql_all_types(
 ```
 
-**File**: `src/connector/src/parser/avro/pulsar_resolver.rs` (modified, +13/-15)
+**File**: `e2e_test/source_legacy/cdc/wait_mysql_binlog_metrics.py` (added, +57/-0)
 ```diff
-@@ -14,14 +14,15 @@
+@@ -0,0 +1,57 @@
++#!/usr/bin/env python3
++
++import argparse
++import re
++import time
++import urllib.error
++import urllib.request
++
++
++def read_metric(metrics: str, metric_name: str, source_id: str) -> float | None:
++    pattern = re.compile(rf"^{re.escape(metric_name)}\{{([^}}]*)\}}\s+(\S+)$")
++    for line in metrics.splitlines():
++        match = pattern.match(line)
++        if match and ("source_id", source_id) in re.findall(
++            r'(\w+)="([^"]*)"', match.group(1)
++        ):
++            return float(match.group(2))
++    return None
++
++
++def main() -> None:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--source-id", required=True)
++    parser.add_argument("--metrics-url", required=True)
++    parser.add_argument("--timeout-secs", type=float, default=60)
++    args = parser.parse_args()
++    if not args.source_id.isdecimal():
++        parser.error("--source-id must be a single numeric source ID")
++
++    deadline = time.monotonic() + args.timeout_secs
++    last = None
++    while time.monotonic() < deadline:
++        try:
++            with urllib.request.urlopen(args.metrics_url, timeout=5) as response:
++                metrics = response.read().decode()
++            up, oldest, newest = (
++                read_metric(metrics, name, args.source_id)
++                for name in (
++                    "source_status_is_up",
++                    "mysql_cdc_binlog_file_seq_min",
++                    "mysql_cdc_binlog_file_seq_max",
++                )
++            )
++            last = f"source_status_is_up={up}, binlog_min={oldest}, binlog_max={newest}"
++            if up == 1 and oldest is not None and newest is not None and 0 < oldest <= newest:
++                return
++        except (urllib.error.URLError, TimeoutError) as error:
++            last = str(error)
++        time.sleep(1)
++
++    raise SystemExit(
++        f"timed out waiting for MySQL binlog monitoring for source {args.source_id}: {last}"
++    )
++
++
++if __name__ == "__main__":
++    main()
+```
+
+**File**: `src/connector/src/source/cdc/enumerator/mod.rs` (modified, +3/-8)
+```diff
+@@ -510,21 +510,16 @@ impl DebeziumSplitEnumerator<Mysql> {
+             .properties
+             .get("password")
+             .ok_or_else(|| anyhow::anyhow!("missing `password` in CDC properties"))?;
+-        let database = self
+-            .properties
+-            .get("database.name")
+-            .ok_or_else(|| anyhow::anyhow!("missing `database.name` in CDC properties"))?;
+-
+         // Get SSL mode configuration (default to Disabled if not specified)
+         let ssl_mode = self
+             .properties
+             .get("ssl.mode")
+             .and_then(|s| s.parse().ok())
+             .unwrap_or(SslMode::Preferred);
  
- use std::sync::Arc;
- 
--use anyhow::Context;
- use apache_avro::Schema;
- use moka::future::Cache;
- use risingwave_common::bail;
- 
- use crate::error::ConnectorResult;
--use crate::schema::pulsar_schema::{Client, PulsarSchemaInfo};
--use crate::source::pulsar::topic::{Topic, parse_topic};
-+use crate::schema::pulsar_schema::{
-+    Client, PulsarSchema, PulsarSchemaInfo, parse_partitioned_topic,
-+};
-+use crate::source::pulsar::topic::Topic;
- 
- /// Fetch schemas of a single Pulsar topic and cache writer schemas by version.
- /// Each parser configuration owns a resolver and shares it with its clones through `Arc`.
-@@ -35,30 +36,27 @@ pub struct PulsarSchemaCache {
- 
- impl PulsarSchemaCache {
-     pub fn new(pulsar_client: Client, topic: &str) -> ConnectorResult<Self> {
--        let mut topic = parse_topic(topic)?;
--        topic.topic = topic.topic_str_without_partition()?;
--        topic.partition_index = None;
-         Ok(Self {
--            topic,
-+            topic: parse_partitioned_topic(topic)?,
-             writer_schemas: Cache::new(u64::MAX),
-             pulsar_client,
-         })
-     }
- 
--    fn parse_schema(raw_schema: PulsarSchemaInfo) -> ConnectorResult<Arc<Schema>> {
--        if !raw_schema.r#type.eq_ignore_ascii_case("AVRO") {
--            bail!("expected Pulsar AVRO schema, got {}", raw_schema.r#type);
-+    /// Only `AVRO` schemas can be used, as payloads are decoded as Avro binary. A `JSON` schema
-+    /// carries the same Avro definition, but its payloads are JSON text.
-+    fn parse_avro_schema(raw_schema: PulsarSchemaInfo) -> ConnectorResult<Arc<Schema>> {
-+        match raw_schema.parse()? {
-+            PulsarSchema::Avro(schema) => Ok(Arc::new(schema)),
-+            PulsarSchema::Json(_) => bail!("expected Pulsar AVRO schema, got JSON"),
-         }
--        let schema =
--            Schema::parse_str(&raw_schema.data).context("failed to parse Pulsar Avro schema")?;
--        Ok(Arc::new(schema))
-     }
- 
-     /// Fetches the current latest schema for a parser's reader schema and caches its version.
-     pub async fn get_latest(&self) -> ConnectorResult<Arc<Schema>> {
-         let raw_schema = self.pulsar_client.get_schema(&self.topic, None).await?;
-         let version = raw_schema.version;
--        let schema = Self::parse_schema(raw_schema)?;
-+        let schema = Self::parse_avro_schema(raw_schema)?;
-         self.writer_schemas
-             .insert(version, Arc::clone(&schema))
-             .await;
-@@ -80,7 +78,7 @@ impl PulsarSchemaCache {
-                         raw_schema.version
-                     );
-                 }
--                Self::parse_schema(raw_schema)
-+                Self::parse_avro_schema(raw_schema)
-             })
+-        // Build MySQL connection pool with proper SSL configuration
+-        let pool =
+-            build_mysql_connection_pool(hostname, port, username, password, database, ssl_mode);
++        // SHOW BINARY LOGS is server-wide. Do not select a default database: database.name
++        // can be a comma-separated list for a shared source.
++        let pool = build_mysql_connection_pool(hostname, port, username, password, None, ssl_mode);
+         let mut conn = pool
+             .get_conn()
              .await
-             .map_err(Into::into)
 ```
 
-**File**: `src/connector/src/parser/json_parser.rs` (modified, +22/-1)
+**File**: `src/connector/src/source/cdc/external/mysql.rs` (modified, +5/-5)
 ```diff
-@@ -24,15 +24,20 @@
- use std::collections::BTreeMap;
+@@ -61,7 +61,7 @@ use crate::source::cdc::external::{
+ /// * `port` - MySQL server port
+ /// * `username` - MySQL username
+ /// * `password` - MySQL password
+-/// * `database` - Database name
++/// * `database` - Optional default database; omit for server-wide queries
+ /// * `ssl_mode` - SSL mode configuration (disabled, preferred, required, verify-ca, verify-full)
+ ///
+ /// # Returns
+@@ -71,15 +71,15 @@ pub fn build_mysql_connection_pool(
+     port: u16,
+     username: &str,
+     password: &str,
+-    database: &str,
++    database: Option<&str>,
+     ssl_mode: SslMode,
+ ) -> mysql_async::Pool {
+     let mut opts_builder = mysql_async::OptsBuilder::default()
+         .user(Some(username))
+         .pass(Some(password))
+         .ip_or_hostname(host)
+         .tcp_port(port)
+-        .db_name(Some(database));
++        .db_name(database);
  
- use anyhow::Context as _;
-+use risingwave_common::bail;
- use risingwave_common::catalog::Field;
- use risingwave_connector_codec::JsonSchema;
-+use risingwave_connector_codec::decoder::avro::avro_schema_to_fields;
+     opts_builder = match ssl_mode {
+         SslMode::Disabled | SslMode::Preferred => opts_builder.ssl_opts(None),
+@@ -253,7 +253,7 @@ impl MySqlExternalTable {
+             config.port.parse::<u16>().unwrap(),
+             &config.username,
+             &config.password,
+-            &config.database,
++            Some(&config.database),
+             config.ssl_mode.clone(),
+         );
+         let pk_infos = MySqlExternalTableReader::query_upstream_pk_infos(
+@@ -652,7 +652,7 @@ impl MySqlExternalTableReader {
+             config.port.parse::<u16>().unwrap(),
+             &config.username,
+             &config.password,
+-            &config.database,
++            Some(&config.database),
+             config.ssl_mode,
+         );
  
--use super::utils::{bytes_from_url, get_kafka_topic};
-+use super::utils::{bytes_from_url, get_kafka_topic, get_pulsar_topic};
- use super::{JsonProperties, SchemaRegistryConfig};
- use crate::error::ConnectorResult;
- use crate::parser::AccessBuilder;
- use crate::parser::unified::AccessImpl;
- use crate::parser::unified::json::{JsonAccess, JsonParseOptions};
-+use crate::schema::pulsar_schema::{
-+    self, PulsarSchema, PulsarSchemaConfig, parse_partitioned_topic,
-+};
- use crate::schema::schema_registry::{Client, handle_sr_list};
- 
- #[derive(Debug)]
-@@ -121,6 +126,22 @@ pub async fn fetch_json_schema_and_map_to_columns(
-         .map_err(Into::into)
- }
- 
-+/// Fetches the latest Pulsar `JSON` schema of the source topic and maps it to columns.
-+///
-+/// Pulsar stores `JSON` schemas as Avro record definitions, while payloads are plain JSON without
-+/// a schema-registry header. JSON is self-describing, so only the latest schema is needed.
-+pub async fn fetch_pulsar_json_schema_and_map_to_columns(
-+    config: &PulsarSchemaConfig,
-+    props: &BTreeMap<String, String>,
-+) -> ConnectorResult<Vec<Field>> {
-+    let client = pulsar_schema::Client::new(config)?;
-+    let topic = parse_partitioned_topic(get_pulsar_topic(props)?)?;
-+    match client.get_schema(&topic, None).await?.parse()? {
-+        PulsarSchema::Json(schema) => Ok(avro_schema_to_fields(&schema, None)?),
-+        PulsarSchema::Avro(_) => bail!("expected Pulsar JSON schema, got AVRO"),
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-     use std::vec;
-```
-
-**File**: `src/connector/src/schema/pulsar_schema/mod.rs` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@ mod client;
- mod schema;
- 
- pub use client::{Client, PULSAR_SCHEMA_AUTH_TOKEN_KEY, PULSAR_SCHEMA_URL_KEY, PulsarSchemaConfig};
--pub use schema::{PulsarSchemaInfo, PulsarSchemaVersion};
-+pub use schema::{PulsarSchema, PulsarSchemaInfo, PulsarSchemaVersion, parse_partitioned_topic};
-```
-
-**File**: `src/connector/src/schema/pulsar_schema/schema.rs` (modified, +60/-0)
-```diff
-@@ -13,15 +13,51 @@
- // limitations under the License.
- 
- use anyhow::Context;
-+use apache_avro::Schema;
-+use risingwave_common::bail;
- use serde::Deserialize;
- 
-+use crate::error::ConnectorResult;
-+use crate::source::pulsar::topic::{Topic, parse_topic};
-+
- #[derive(Debug, Deserialize)]
- pub struct PulsarSchemaInfo {
-     pub version: i64,
-     pub r#type: String,
-     pub data: String,
- }
- 
-+/// A Pulsar schema by type. Pulsar stores both `AVRO` and `JSON` schemas as Avro record
-+/// definitions, but their payloads are Avro binary and plain JSON respectively.
-+#[derive(Debug)]
-+pub enum PulsarSchema {
-+    Avro(Schema),
-+    Json(Schema),
-+}
-+
-+impl PulsarSchemaInfo {
-+    /// Parses the schema definition according to its type.
-+    pub fn parse(&self) -> ConnectorResult<PulsarSchema> {
-+        let wrap = match self.r#type.to_ascii_uppercase().as_str() {
-+            "AVRO" => PulsarSchema::Avro,
-+            "JSON" => PulsarSchema::Json,
-+            _ => bail!("unsupported Pulsar schema type {}", self.r#type),
-+        };
-+        let schema = Schema::parse_str(&self.data)
-+            .with_context(|| format!("failed to parse Pulsar {} schema", self.r#type))?;
-+        Ok(wrap(schema))
-+    }
-+}
-+
-+/// Returns the partitioned topic, i.e. the topic without partition suffix, as schemas are shared
-+/// by all partitions.
-+pub fn parse_partitioned_topic(topic: &str) -> ConnectorResult<Topic> {
-+    let mut topic = parse_topic(topic)?;
-+    topic.topic = topic.topic_str_without_partition()?;
-+    topic.partition_index = None;
-+    Ok(topic)
-+}
-+
- #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
- pub struct PulsarSchemaVersion(pub i64);
- 
-@@ -50,6 +86,30 @@ mod tests {
-         assert_eq!(schema.r#type, "AVRO");
-     }
- 
-+    #[test]
-+    fn json_schema_definition_is_parsed_as_avro() {
-+        let schema: PulsarSchemaInfo = serde_json::from_value(serde_json::json!({
-+            "version": 0,
-+            "type": "JSON",
-+            "data": r#"{"type":"record","name":"Event","fields":[{"name":"id","type":"int"}]}"#,
-+        }))
-+        .unwrap();
-+        assert!(matches!(
-+            schema.parse().unwrap(),
-+            PulsarSchema::Json(Schema::Record(_))
-+        ));
-+    }
-+
-+    #[test]
-+    fn unsupported_schema_type_is_rejected() {
-+        let schema: PulsarSchemaInfo =
-+            serde_json::from_str(r#"{"version":0,"type":"PROTOBUF","data":"{}"}"#).unwrap();
-+        assert_eq!(
-+            schema.parse().unwrap_err().to_string(),
-+            "unsupported Pulsar schema type PROTOBUF"
-+        );
-+    }
-+
-     #[test]
-     fn pulsar_schema_version_is_signed_big_endian() {
-         assert_eq!(
-```
-
-**File**: `src/frontend/src/handler/alter_source_column.rs` (modified, +10/-2)
-```diff
-@@ -17,7 +17,9 @@ use risingwave_common::catalog::max_column_id;
- use risingwave_connector::source::{SourceEncode, SourceStruct, extract_source_struct};
- use risingwave_sqlparser::ast::{AlterSourceOperation, ObjectName};
- 
--use super::create_source::{generate_stream_graph_for_source, reject_variant_columns};
-+use super::create_source::{
-+    generate_stream_graph_for_source, reject_variant_columns, uses_pulsar_schema,
-+};
- use super::create_table::bind_sql_columns;
- use super::{HandlerArgs, RwPgResponse};
- use crate::Binder;
-@@ -77,7 +79,13 @@ pub async fn handle_alter_source_column(
-             )
-             .into());
-         }
--        SourceEncode::Json if catalog.info.use_schema_registry => {
-+        SourceEncode::Json
-+            if catalog.info.use_schema_registry
-+                || uses_pulsar_schema(
-+                    &catalog.info.format_encode_options,
-+                    &catalog.info.format_encode_secret_refs,
-+                ) =>
-+        {
-             return Err(ErrorCode::NotSupported(
-                 "alter source with schema registry".to_owned(),
-                 "try `ALTER SOURCE .. FORMAT .. ENCODE .. (...)` instead".to_owned(),
-```
-
-**File**: `src/frontend/src/handler/create_source.rs` (modified, +11/-2)
-```diff
-@@ -42,11 +42,11 @@ use risingwave_connector::parser::additional_columns::{
- use risingwave_connector::parser::{
-     AvroParserConfig, DEBEZIUM_IGNORE_KEY, DebeziumAvroParserConfig, ProtobufParserConfig,
-     SchemaLocation, SpecificParserConfig, TimestamptzHandling,
--    fetch_json_schema_and_map_to_columns,
-+    fetch_json_schema_and_map_to_columns, fetch_pulsar_json_schema_and_map_to_columns,
- };
- use risingwave_connector::schema::AWS_GLUE_SCHEMA_ARN_KEY;
- use risingwave_connector::schema::pulsar_schema::{
--    PULSAR_SCHEMA_AUTH_TOKEN_KEY, PULSAR_SCHEMA_URL_KEY,
-+    PULSAR_SCHEMA_AUTH_TOKEN_KEY, PULSAR_SCHEMA_URL_KEY, PulsarSchemaConfig,
- };
- use risingwave_connector::schema::schema_registry::{
-     SCHEMA_REGISTRY_BACKOFF_DURATION_KEY, SCHEMA_REGISTRY_BACKOFF_FACTOR_KEY,
-@@ -167,6 +167,15 @@ fn try_consume_schema_registry_config_from_options(
-     });
- }
- 
-+/// Returns whether the Pulsar schema is used, with `schema.pulsar.url` set directly or as a secret.
-+pub(crate) fn uses_pulsar_schema<V>(
-+    format_encode_options: &BTreeMap<String, String>,
-+    format_encode_secret_refs: &BTreeMap<String, V>,
-+) -> bool {
-+    format_encode_options.contains_key(PULSAR_SCHEMA_URL_KEY)
-+        || format_encode_secret_refs.contains_key(PULSAR_SCHEMA_URL_KEY)
-+}
-+
- fn try_consume_pulsar_schema_config_from_options(
-     format_encode_options: &mut BTreeMap<String, String>,
- ) {
-```
-
-**File**: `src/frontend/src/handler/create_source/external_schema.rs` (modified, +25/-10)
-```diff
-@@ -308,16 +308,30 @@ async fn bind_columns_from_source_for_non_cdc(
-                 );
-             }
- 
--            let schema_config = get_json_schema_location(&mut format_encode_options_to_consume)?;
--            stream_source_info.use_schema_registry =
--                json_schema_infer_use_schema_registry(&schema_config);
-+            if let Some(config) =
-+                PulsarSchemaConfig::from_options(&format_encode_options_to_consume)?
-+            {
-+                Some(
-+                    extract_pulsar_json_table_schema(
-+                        &config,
-+                        &options_with_secret,
-+                        &mut format_encode_options_to_consume,
-+                    )
-+                    .await?,
-+                )
-+            } else {
-+                let schema_config =
-+                    get_json_schema_location(&mut format_encode_options_to_consume)?;
-+                stream_source_info.use_schema_registry =
-+                    json_schema_infer_use_schema_registry(&schema_config);
- 
--            extract_json_table_schema(
--                &schema_config,
--                &options_with_secret,
--                &mut format_encode_options_to_consume,
--            )
--            .await?
-+                extract_json_table_schema(
-+                    &schema_config,
-+                    &options_with_secret,
-+                    &mut format_encode_options_to_consume,
-+                )
-+                .await?
-+            }
-         }
-         (Format::None, Encode::None) => {
-             if options_with_secret.is_iceberg_connector() {
-@@ -472,7 +486,8 @@ pub fn schema_has_schema_registry(schema: &FormatEncodeOptions) -> bool {
-         Encode::Avro | Encode::Protobuf => true,
-         Encode::Json => {
-             let mut options = WithOptions::try_from(schema.row_options()).unwrap();
--            matches!(get_json_schema_location(options.inner_mut()), Ok(Some(_)))
-+            uses_pulsar_schema(&options, options.secret_ref())
-+                || matches!(get_json_schema_location(options.inner_mut()), Ok(Some(_)))
-         }
-         _ => false,
-     }
 ```
 
 ---
 
-### Incident Patch 2: `c3013864` (2026-10-19)
-**Commit Message**: feat(iceberg): support GCS vended credentials with native Google authentication (#27528)
+### Incident Patch 2: `f0965ff5` (2026-10-20)
+**Commit Message**: fix: make SQL option redaction allowlist configurable (#27560)
 
-Signed-off-by: Mingzhuo Yin <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +7/-6)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -7811,7 +7811,7 @@ dependencies = [
- [[package]]
- name = "iceberg"
- version = "0.10.0"
--source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
-+source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
- dependencies = [
-  "aes-gcm",
-  "anyhow",
-@@ -7870,7 +7870,7 @@ dependencies = [
- [[package]]
- name = "iceberg-catalog-glue"
- version = "0.10.0"
--source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
-+source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -7885,7 +7885,7 @@ dependencies = [
- [[package]]
- name = "iceberg-catalog-rest"
- version = "0.10.0"
--source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
-+source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
- dependencies = [
-  "async-trait",
-  "base64 0.22.1",
-@@ -7907,7 +7907,7 @@ dependencies = [
- [[package]]
- name = "iceberg-compaction-core"
- version = "0.1.0"
--source = "git+https://github.com/nimtable/iceberg-compaction.git?rev=d29d6fac6639cf236168e1017af605ddc0d87f0d#d29d6fac6639cf236168e1017af605ddc0d87f0d"
-+source = "git+https://github.com/nimtable/iceberg-compaction.git?rev=708a4d9c233cc8e615c189d4b1d2bb113736e387#708a4d9c233cc8e615c189d4b1d2bb113736e387"
- dependencies = [
-  "async-stream",
-  "async-trait",
-@@ -7936,7 +7936,7 @@ dependencies = [
- [[package]]
- name = "iceberg-datafusion"
- version = "0.10.0"
--source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
-+source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -7952,7 +7952,7 @@ dependencies = [
- [[package]]
- name = "iceberg-storage-opendal"
- version = "0.10.0"
--source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
-+source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -7967,6 +7967,7 @@ dependencies = [
-  "reqsign-aws-v4",
-  "reqsign-azure-storage",
-  "reqsign-core",
-+ "reqsign-google",
-  "serde",
-  "tokio",
-  "typetag",
+@@ -15423,6 +15423,7 @@ dependencies = [
+  "risingwave_meta_service",
+  "risingwave_pb",
+  "risingwave_rpc_client",
++ "risingwave_sqlparser",
+  "sea-orm",
+  "serde_json",
+  "thiserror-ext",
 ```
 
-**File**: `Cargo.toml` (modified, +4/-4)
+**File**: `src/common/src/config/batch.rs` (modified, +13/-2)
 ```diff
-@@ -176,10 +176,10 @@ hashbrown0_16 = { package = "hashbrown", version = "0.16.1", features = [
- ] }
- hytra = "0.1"
- # branch dev_rebase_main_20260807
--iceberg = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61" }
--iceberg-catalog-glue = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61" }
--iceberg-catalog-rest = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61" }
--iceberg-storage-opendal = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61", features = [
-+iceberg = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557" }
-+iceberg-catalog-glue = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557" }
-+iceberg-catalog-rest = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557" }
-+iceberg-storage-opendal = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557", features = [
-     "opendal-azblob",
-     "opendal-azdls",
-     "opendal-fs",
-```
-
-**File**: `src/connector/src/connector_common/iceberg/mod.rs` (modified, +133/-4)
-```diff
-@@ -189,8 +189,11 @@ pub struct IcebergCommon {
+@@ -56,11 +56,18 @@ pub struct BatchConfig {
+     #[serde(default = "default::batch::mask_worker_temporary_secs")]
+     pub mask_worker_temporary_secs: usize,
  
-     /// Security type for REST catalog authentication.
-     /// Supported values: `none`, `oauth2`, `google`.
--    /// When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
--    /// for authentication using Google Application Default Credentials (ADC).
-+    /// When set to `google`, native REST catalogs authenticate using
-+    /// `gcs.credential` or Google Application Default Credentials (ADC).
-+    /// JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
-+    /// `gcs.credential` only configures Rust `FileIO` storage credentials.
-+    /// Vended credentials use the native Rust REST catalog.
-     #[serde(rename = "catalog.security")]
-     pub catalog_security: Option<String>,
+-    /// Keywords on which SQL option redaction is based in the query log.
+-    /// A SQL option with a name containing any of these keywords will be redacted.
++    /// Keywords on which SQL option redaction is based in query logs and diagnostic reports.
++    /// Matching is case-insensitive. A SQL option with a name containing any of these keywords
++    /// will be redacted unless its full name is in `redact_sql_option_allowlist`.
+     #[serde(default = "default::batch::redact_sql_option_keywords")]
+     pub redact_sql_option_keywords: Vec<String>,
  
-@@ -207,8 +210,8 @@ pub struct IcebergCommon {
-     /// - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
-     /// - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
-     /// - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
--    /// Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
--    /// `org.apache.iceberg.gcp.gcs.GCSFileIO`.
-+    /// Applies only to JNI catalogs. Native REST catalogs route storage by URI
-+    /// and support GCS vended credentials without a Java `FileIO` class.
-     #[serde(rename = "catalog.io_impl")]
-     pub catalog_io_impl: Option<String>,
++    /// SQL option names exempt from keyword-based redaction in query logs and diagnostic reports.
++    /// Matching is exact and case-insensitive. This list takes precedence over
++    /// `redact_sql_option_keywords`. Set to an empty list to disable exemptions.
++    #[serde(default = "default::batch::redact_sql_option_allowlist")]
++    pub redact_sql_option_allowlist: Vec<String>,
++
+     /// Enable the spill out to disk feature for batch queries.
+     #[serde(default = "default::batch::enable_spill")]
+     pub enable_spill: bool,
+@@ -141,5 +148,9 @@ pub mod default {
+             .map(str::to_owned)
+             .collect()
+         }
++
++        pub fn redact_sql_option_allowlist() -> Vec<String> {
++            vec!["primary_key".to_owned()]
++        }
+     }
  }
-@@ -653,10 +656,43 @@ impl IcebergCommon {
-         Ok(CatalogBuildPlan::Storage(config))
+```
+
+**File**: `src/common/src/config/mod.rs` (modified, +13/-0)
+```diff
+@@ -542,6 +542,19 @@ pub mod tests {
+         actual.assert_eq(&expected);
      }
  
-+    fn validate_native_rest_catalog_auth(
-+        &self,
-+        disable_default_credential: bool,
-+    ) -> ConnectorResult<()> {
-+        if disable_default_credential
-+            && self
-+                .catalog_security
-+                .as_deref()
-+                .is_some_and(|security| security.eq_ignore_ascii_case("google"))
-+            && self.gcs_credential.is_none()
-+        {
-+            // Google token refresh uses ADC without a GCS credential, even when
-+            // a catalog token or OAuth credential was explicitly provided.
-+            bail!(
-+                "`catalog.security=google` requires `gcs.credential` when `DISABLE_DEFAULT_CREDENTIAL=true`"
++    #[test]
++    fn test_sql_option_redaction_allowlist_config() {
++        let config: RwConfig = toml::from_str("").unwrap();
++        assert_eq!(config.batch.redact_sql_option_allowlist, ["primary_key"]);
++
++        let config: RwConfig = toml::from_str("[batch]\nredact_sql_option_allowlist = []").unwrap();
++        assert!(config.batch.redact_sql_option_allowlist.is_empty());
++
++        let config: RwConfig =
++            toml::from_str("[batch]\nredact_sql_option_allowlist = ['partition_key']").unwrap();
++        assert_eq!(config.batch.redact_sql_option_allowlist, ["partition_key"]);
++    }
++
+     #[test]
+     fn test_session_init_entries_distinguishes_omitted_from_default() {
+         let config: RwConfig = toml::from_str(
+```
+
+**File**: `src/config/docs.md` (modified, +2/-1)
+```diff
+@@ -12,7 +12,8 @@ This page is automatically generated by `./risedev generate-example-config`
+ | frontend_compute_runtime_worker_threads | frontend compute runtime worker threads | "" |
+ | mask_worker_temporary_secs | This is the secs used to mask a worker unavailable temporarily. | 30 |
+ | max_batch_queries_per_frontend_node | This is the max number of batch queries per frontend node. | "" |
+-| redact_sql_option_keywords | Keywords on which SQL option redaction is based in the query log. A SQL option with a name containing any of these keywords will be redacted. | ["credential", "key", "password", "private", "secret", "token"] |
++| redact_sql_option_allowlist | SQL option names exempt from keyword-based redaction in query logs and diagnostic reports. Matching is exact and case-insensitive. This list takes precedence over `redact_sql_option_keywords`. Set to an empty list to disable exemptions. | ["primary_key"] |
++| redact_sql_option_keywords | Keywords on which SQL option redaction is based in query logs and diagnostic reports. Matching is case-insensitive. A SQL option with a name containing any of these keywords will be redacted unless its full name is in `redact_sql_option_allowlist`. | ["credential", "key", "password", "private", "secret", "token"] |
+ | statement_timeout_in_sec | Timeout for a batch query in seconds. | 3600 |
+ | worker_threads_num | The thread number of the batch task runtime in the compute node. The default value is decided by `tokio`. | "" |
+ 
+```
+
+**File**: `src/config/example.toml` (modified, +1/-0)
+```diff
+@@ -168,6 +168,7 @@ statement_timeout_in_sec = 3600
+ frontend_compute_runtime_worker_threads = ""
+ mask_worker_temporary_secs = 30
+ redact_sql_option_keywords = ["credential", "key", "password", "private", "secret", "token"]
++redact_sql_option_allowlist = ["primary_key"]
+ enable_spill = true
+ 
+ [batch.developer]
+```
+
+**File**: `src/frontend/src/handler/util.rs` (modified, +2/-1)
+```diff
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ 
+ use core::str::FromStr;
++use std::collections::HashSet;
+ use std::pin::Pin;
+ use std::sync::Arc;
+ use std::task::{Context, Poll};
+@@ -53,7 +54,7 @@ use crate::catalog::root_catalog::SchemaPath;
+ use crate::error::ErrorCode::ProtocolError;
+ use crate::error::{ErrorCode, Result as RwResult, RwError};
+ use crate::session::SessionImpl;
+-use crate::{Binder, HashSet, TableCatalog};
++use crate::{Binder, TableCatalog};
+ 
+ pub fn ensure_local_fs_connector_allowed(session: &SessionImpl, connector: &str) -> RwResult<()> {
+     let is_local_fs_connector = is_local_fs_connector(connector);
+```
+
+**File**: `src/frontend/src/lib.rs` (modified, +7/-11)
+```diff
+@@ -36,7 +36,6 @@ risingwave_batch_executors::enable!();
+ #[macro_use]
+ mod catalog;
+ 
+-use std::collections::HashSet;
+ use std::time::Duration;
+ 
+ pub use catalog::TableCatalog;
+@@ -58,6 +57,7 @@ use risingwave_common::config::{MetricLevel, OverrideConfig};
+ use risingwave_common::util::meta_addr::MetaAddressStrategy;
+ use risingwave_common::util::resource_util::memory::system_memory_available_bytes;
+ use risingwave_common::util::tokio_util::sync::CancellationToken;
++use risingwave_sqlparser::ast::SqlOptionRedaction;
+ pub use stream_fragmenter::build_graph;
+ mod utils;
+ pub use utils::data_type::DataTypeToAst;
+@@ -237,15 +237,11 @@ pub fn start(
+ 
+         let session_mgr = Arc::new(SessionManagerImpl::new(opts).await.unwrap());
+         SESSION_MANAGER.get_or_init(|| session_mgr.clone());
+-        let redact_sql_option_keywords = Arc::new(
+-            session_mgr
+-                .env()
+-                .batch_config()
+-                .redact_sql_option_keywords
+-                .iter()
+-                .map(|s| s.to_lowercase())
+-                .collect::<HashSet<_>>(),
+-        );
++        let batch_config = session_mgr.env().batch_config();
++        let sql_option_redaction = Arc::new(SqlOptionRedaction::new(
++            batch_config.redact_sql_option_keywords.clone(),
++            batch_config.redact_sql_option_allowlist.clone(),
++        ));
+         let frontend_config = &session_mgr.env().frontend_config();
+         let message_memory_manager = Arc::new(MessageMemoryManager::new(
+             frontend_config.max_total_query_size_bytes,
+@@ -262,7 +258,7 @@ pub fn start(
+             session_mgr.clone(),
+             ConnectionContext {
+                 tls_config,
+-                redact_sql_option_keywords: Some(redact_sql_option_keywords),
++                sql_option_redaction: Some(sql_option_redaction),
+                 message_memory_manager,
+                 stream_flush_threshold_bytes: frontend_config.stream_flush_threshold_bytes,
+             },
+```
+
+**File**: `src/meta/node/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@ risingwave_meta = { workspace = true }
+ risingwave_meta_service = { workspace = true }
+ risingwave_pb = { workspace = true }
+ risingwave_rpc_client = { workspace = true }
++risingwave_sqlparser = { workspace = true }
+ sea-orm = { workspace = true }
+ serde_json = "1"
+ thiserror-ext = { workspace = true }
+```
+
+---
+
+### Incident Patch 3: `68d291bc` (2026-10-20)
+**Commit Message**: fix(storage): retain L0 refill candidates across table truncation (#27554)
+
+**File**: `src/storage/hummock_sdk/src/compaction_group/hummock_version_ext.rs` (modified, +92/-5)
+```diff
+@@ -405,11 +405,13 @@ impl HummockVersionCommon<SstableInfo> {
+             let mut removed_l0_ssts: BTreeSet<HummockSstableId> = BTreeSet::new();
+             let mut removed_ssts: BTreeMap<u32, BTreeSet<HummockSstableId>> = BTreeMap::new();
+ 
+-            // Build only if all deltas are intra level deltas.
++            // Group rewrites cannot be represented by an SST refill summary.
+             if !group_deltas.group_deltas.iter().all(|delta| {
+                 matches!(
+                     delta,
+-                    GroupDelta::IntraLevel(_) | GroupDelta::NewL0SubLevel(_)
++                    GroupDelta::IntraLevel(_)
++                        | GroupDelta::NewL0SubLevel(_)
++                        | GroupDelta::PruneTableIdsFromSsts(_)
+                 )
+             }) {
+                 continue;
+@@ -446,10 +448,21 @@ impl HummockVersionCommon<SstableInfo> {
+                             }
+                         }
+                     }
++                    GroupDeltaCommon::PruneTableIdsFromSsts(table_ids) => {
++                        // Follow delta order, as version application does: a commit can append
++                        // SSTs and then truncate a refresh staging table in the same group.
++                        info.insert_sst_infos.retain_mut(|sst| {
++                            if sst.table_ids.iter().any(|id| table_ids.contains(id)) {
++                                let mut inner = sst.get_inner();
++                                inner.table_ids.retain(|id| !table_ids.contains(id));
++                                sst.set_inner(inner);
++                            }
++                            !sst.table_ids.is_empty()
++                        });
++                    }
+                     GroupDeltaCommon::GroupConstruct(_)
+                     | GroupDeltaCommon::GroupDestroy(_)
+-                    | GroupDeltaCommon::GroupMerge(_)
+-                    | GroupDeltaCommon::PruneTableIdsFromSsts(_) => {}
++                    | GroupDeltaCommon::GroupMerge(_) => {}
+                 }
+             }
+ 
+@@ -490,7 +503,9 @@ impl HummockVersionCommon<SstableInfo> {
+             debug_assert!(removed_l0_ssts.is_empty());
+             debug_assert!(removed_ssts.is_empty());
+ 
+-            infos.push(info);
++            if !info.insert_sst_infos.is_empty() || !info.delete_sst_object_ids.is_empty() {
++                infos.push(info);
++            }
+         }
+ 
+         infos
+@@ -2992,6 +3007,74 @@ mod tests {
+         assert_eq!(levels.compaction_group_version_id, 1);
+     }
+ 
++    #[test]
++    fn test_refill_summary_keeps_live_inserts_when_committing_a_table_truncation() {
++        let group = 1.into();
++        let mut version = HummockVersion::default();
++        version.levels.insert(
++            group,
++            Levels {
++                group_id: group,
++                ..Default::default()
++            },
++        );
++        version.state_table_info = HummockVersionStateTableInfo::from_protobuf_owned(
++            [100, 200]
++                .map(TableId::new)
++                .map(|table_id| {
++                    (
++                        table_id,
++                        StateTableInfo {
++                            compaction_group_id: group,
++                            ..Default::default()
++                        },
++                    )
++                })
++                .into(),
++        );
++        let mut delta = version.version_delta_after();
++        for table_id in [100, 200].map(TableId::new) {
++            delta.state_table_info_delta.insert(
++                table_id,
++                risingwave_pb::hummock::StateTableInfoDelta {
++                    committed_epoch: test_epoch(1),
++                    compaction_group_id: group,
++                },
 +            );
 +        }
-+        Ok(())
-+    }
-+
-     fn build_native_rest_catalog_props(&self) -> ConnectorResult<CatalogBuildPlan> {
-+        self.validate_native_rest_catalog_auth(env_var_is_true(DISABLE_DEFAULT_CREDENTIAL))?;
-+
-         let mut iceberg_configs = HashMap::new();
-         iceberg_configs.extend(self.adls_file_io_props()?);
++        // Meta appends committed L0 SSTs before pruning the refresh staging table.
++        delta.group_deltas.insert(
++            group,
++            GroupDeltas {
++                group_deltas: vec![
++                    GroupDelta::NewL0SubLevel(vec![
++                        make_sst(1, vec![200], 10),
++                        make_sst(2, vec![100], 20),
++                        make_sst(3, vec![100, 200], 30),
++                    ]),
++                    GroupDelta::PruneTableIdsFromSsts([TableId::new(100)].into()),
++                ],
++            },
++        );
++        let infos = version.build_sst_delta_infos(&delta);
++        version.apply_version_delta(&delta);
++        let live = &version.levels[&group].l0.sub_levels[0].table_infos;
++        assert_eq!(
++            live.iter()
++                .map(|sst| sst.sst_id.as_raw_id())
++                .collect::<Vec<_>>(),
++            vec![1, 3]
++        );
++        assert!(
++            live.iter()
++                .all(|sst| sst.table_ids == vec![TableId::new(200)])
++        );
++        assert_eq!(infos.len(), 1);
++        assert_eq!(infos[0].insert_sst_level, 0);
++        assert_eq!(&infos[0].insert_sst_infos, live
+```
+
+**File**: `src/storage/src/hummock/event_handler/refiller.rs` (modified, +88/-10)
+```diff
+@@ -1310,14 +1310,6 @@ mod tests {
+             self.normal_delta(0, self.deleted_sst_object_id)
+         }
  
-+        if self
-+            .catalog_security
-+            .as_deref()
-+            .is_some_and(|security| security.eq_ignore_ascii_case("google"))
-+        {
-+            iceberg_configs.insert("rest.auth.type".to_owned(), "google".to_owned());
-+        }
-+        if let Some(scopes) = &self.gcp_auth_scopes {
-+            iceberg_configs.insert("gcp.auth.scopes".to_owned(), scopes.clone());
-+        }
-+
-         // check gcs credential or s3 access key and secret key
-         if let Some(gcs_credential) = &self.gcs_credential {
-             iceberg_configs.insert(GCS_CREDENTIALS_JSON.to_owned(), gcs_credential.clone());
-@@ -1306,6 +1342,99 @@ mod tests {
-         );
+-        fn l0_insert_only_delta(&self) -> SstDeltaInfo {
+-            SstDeltaInfo {
+-                insert_sst_infos: vec![self.sst_info.clone()],
+-                delete_sst_object_ids: vec![],
+-                insert_sst_level: 0,
+-            }
+-        }
+-
+         async fn generate(
+             &self,
+             context: &CacheRefillContext,
+@@ -1954,9 +1946,95 @@ mod tests {
      }
  
-+    #[test]
-+    fn test_gcs_vended_rest_catalog_passes_google_authentication() {
-+        let common = IcebergCommon {
-+            catalog_uri: Some("https://catalog.example".to_owned()),
-+            warehouse_path: Some("gs://bucket/warehouse".to_owned()),
-+            catalog_security: Some("google".to_owned()),
-+            gcp_auth_scopes: Some("scope-a,scope-b".to_owned()),
-+            gcs_credential: Some("service-account-json".to_owned()),
-+            catalog_header: Some("x-goog-user-project=billing-project".to_owned()),
-+            vended_credentials: Some(true),
-+            ..test_common("rest")
+     #[tokio::test]
+-    async fn test_l0_insert_only_refill_policy_uses_serving_ownership() {
++    async fn test_l0_refill_after_truncation_uses_serving_ownership() {
++        use risingwave_hummock_sdk::level::Levels;
++        use risingwave_hummock_sdk::version::{
++            GroupDelta, GroupDeltas, HummockVersionStateTableInfo,
 +        };
-+        assert_eq!(
-+            common.resolve_catalog_kind().unwrap(),
-+            IcebergCatalogKind::Rest(IcebergCatalogRuntime::NativeRust)
-+        );
-+        let CatalogBuildPlan::NativeRest(props) = common.build_native_rest_catalog_props().unwrap()
-+        else {
-+            panic!("expected native REST catalog");
-+        };
-+        assert_eq!(props["rest.auth.type"], "google");
-+        assert_eq!(props["gcp.auth.scopes"], "scope-a,scope-b");
-+        assert_eq!(props[GCS_CREDENTIALS_JSON], "service-account-json");
-+        assert_eq!(props["warehouse"], "gs://bucket/warehouse");
-+        assert_eq!(
-+            props["header.X-Iceberg-Access-Delegation"],
-+            "vended-credentials"
-+        );
-+        assert_eq!(props["header.x-goog-user-project"], "billing-project");
-+        assert!(!props.contains_key("io-impl"));
-+    }
++        use risingwave_pb::hummock::{StateTableInfo, StateTableInfoDelta};
 +
-+    #[test]
-+    fn test_native_google_catalog_supports_adc_without_storage_credentials() {
-+        let common = IcebergCommon {
-+            catalog_uri: Some("https://catalog.example".to_owned()),
-+            catalog_security: Some("google".t
-```
-
-**File**: `src/connector/with_options_connection.yaml` (modified, +7/-4)
-```diff
-@@ -174,8 +174,11 @@ IcebergConnection:
-     comments: |-
-       Security type for REST catalog authentication.
-       Supported values: `none`, `oauth2`, `google`.
--      When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
--      for authentication using Google Application Default Credentials (ADC).
-+      When set to `google`, native REST catalogs authenticate using
-+      `gcs.credential` or Google Application Default Credentials (ADC).
-+      JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
-+      `gcs.credential` only configures Rust `FileIO` storage credentials.
-+      Vended credentials use the native Rust REST catalog.
-     required: false
-   - name: gcp.auth.scopes
-     field_type: String
-@@ -194,8 +197,8 @@ IcebergConnection:
-       - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
-       - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
-       - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
--      Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
--      `org.apache.iceberg.gcp.gcs.GCSFileIO`.
-+      Applies only to JNI catalogs. Native REST catalogs route storage by URI
-+      and support GCS vended credentials without a Java `FileIO` class.
-     required: false
-   - name: catalog.jdbc.user
-     field_type: String
-```
-
-**File**: `src/connector/with_options_sink.yaml` (modified, +7/-4)
-```diff
-@@ -644,8 +644,11 @@ IcebergConfig:
-     comments: |-
-       Security type for REST catalog authentication.
-       Supported values: `none`, `oauth2`, `google`.
--      When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
--      for authentication using Google Application Default Credentials (ADC).
-+      When set to `google`, native REST catalogs authenticate using
-+      `gcs.credential` or Google Application Default Credentials (ADC).
-+      JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
-+      `gcs.credential` only configures Rust `FileIO` storage credentials.
-+      Vended credentials use the native Rust REST catalog.
-     required: false
-   - name: gcp.auth.scopes
-     field_type: String
-@@ -664,8 +667,8 @@ IcebergConfig:
-       - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
-       - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
-       - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
--      Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
--      `org.apache.iceberg.gcp.gcs.GCSFileIO`.
-+      Applies only to JNI catalogs. Native REST catalogs route storage by URI
-+      and support GCS vended credentials without a Java `FileIO` class.
-     required: false
-   - name: database.name
-     field_type: String
-```
-
-**File**: `src/connector/with_options_source.yaml` (modified, +7/-4)
-```diff
-@@ -345,8 +345,11 @@ IcebergProperties:
-     comments: |-
-       Security type for REST catalog authentication.
-       Supported values: `none`, `oauth2`, `google`.
--      When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
--      for authentication using Google Application Default Credentials (ADC).
-+      When set to `google`, native REST catalogs authenticate using
-+      `gcs.credential` or Google Application Default Credentials (ADC).
-+      JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
-+      `gcs.credential` only configures Rust `FileIO` storage credentials.
-+      Vended credentials use the native Rust REST catalog.
-     required: false
-   - name: gcp.auth.scopes
-     field_type: String
-@@ -365,8 +368,8 @@ IcebergProperties:
-       - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
-       - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
-       - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
--      Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
--      `org.apache.iceberg.gcp.gcs.GCSFileIO`.
-+      Applies only to JNI catalogs. Native REST catalogs route storage by URI
-+      and support GCS vended credentials without a Java `FileIO` class.
-     required: false
-   - name: database.name
-     field_type: String
-```
-
-**File**: `src/storage/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ futures = { version = "0.3", default-features = false, features = ["alloc"] }
- futures-async-stream = { workspace = true }
- hex = "0.4"
- iceberg = { workspace = true }
--iceberg-compaction-core = { git = "https://github.com/nimtable/iceberg-compaction.git", rev = "d29d6fac6639cf236168e1017af605ddc0d87f0d" }
-+iceberg-compaction-core = { git = "https://github.com/nimtable/iceberg-compaction.git", rev = "708a4d9c233cc8e615c189d4b1d2bb113736e387" }
- itertools = { workspace = true }
- libc = "0.2"
- lz4 = "1.28.0"
+         let fixture = DataRefillGeneratorTestFixture::new(None).await;
+-        let delta = fixture.l0_insert_only_delta();
++        let group = 1.into();
++        let staging_table = TableId::new(234);
++        let mut version = HummockVersion::default();
++        version.levels.insert(
++            group,
++            Levels {
++                group_id: group,
++                ..Default::default()
++            },
++        );
++        version.state_table_info = HummockVersionStateTableInfo::from_protobuf_owned(
++            [fixture.table_id, staging_table]
++                .map(|table_id| {
++                    (
++                        table_id,
++                        StateTableInfo {
++                            compaction_group_id: group,
++                            ..Default::default()
++                        },
++                    )
++                })
++                .into(),
++        );
++        let mut raw = version.version_delta_after();
++        for table_id in [fixture.table_id, staging_table] {
++            raw.state_table_info_delta.insert(
++                table_id,
++                StateTableInfoDelta {
++                    committed_epoch: test_epoch(233),
++                    compaction_group_id: group,
++                },
++            );
++        }
++        raw.group_deltas.insert(
++            group,
++            GroupDeltas {
++                group_deltas: vec![
++                    GroupDelta::NewL0SubLevel(vec![fixture.sst_info.clone()]),
++                    GroupDelta::PruneTableIdsFromSsts([staging_table].into()),
++                ],
++            },
++        );
++        let infos = version.build_sst_delta_infos(&raw);
++        let before = PinnedVersion::new(version.clone(), unbounded_channel().0);
++        version.apply_version_delta(&raw);
++        let after = before.new_with_local_version(version).unwrap();
++        let mut config = test_refill_config(CacheRefillPolicy::Serving);
++        config.data_refill_levels.insert(0);
++        let mut refiller = CacheRefiller::new(
++            Role::Serving,
++            config,
++            fixture.sstable_store.clone(),
++            CacheRefiller::default_spawn_refill_task(),
++        );
++        refiller.replace_serving_table_vnode_mapping(HashMap::from([(
++            fixture.table_id,
++            Bitmap::ones(VirtualNode::COUNT_FOR_TEST),
++        )]));
++        fixture.sstable_store.clear_block_cache().await.unwrap();
++        refiller.start_cache_refill(infos.clone(), before, after);
++        let events = tokio::time::timeout(Duration::from_secs(5), refiller.next_events())
++            .await
++            .unwrap();
++        assert_eq!(events.len(), 1);
++        for block_idx in 0..fixture.sst.block_count() {
++            let key = super::SstableBlockIndex {
++                sst_id: fixture.sst.id,
++                block_idx: block_idx as u64,
++            };
++            assert!(
++                fixture
++                    .sstable_store
++                    .block_cache()
++                    .get(&key)
++                    .await
++                    .unwrap()
++                    .is_some(),
++                "a staging-table truncation must not hide another table's L0 refill"
++            );
++        }
++        let delta = infos.into_iter().next().unwrap();
+         let cases = [
+             (
+                 "Enabled + serving overlap",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27565** (2026-10-20): fix(mysql-cdc): monitor binlogs for multi-database sources (@zwang28)
+- **PR #27560** (2026-10-20): fix: make SQL option redaction allowlist configurable (@zwang28)
+- **PR #27554** (2026-10-20): fix(storage): retain L0 refill candidates across table truncation (@Li0k)
 - **PR #27536** (2026-10-16): feat(storage): support bounded PK-index compaction planning (@silver-ymz)
+- **PR #27533** (2026-10-20): test(source): tolerate at-least-once duplicates in Kafka TPC-H (@wenym1)
 - **PR #27532** (2026-10-16): fix(stream): forward buffered upstream rows when arrangement backfill finishes on a barrier (@chenzl25)
-- **PR #27530** (2026-10-16): fix(iceberg): ignore commit epoch markers on replace snapshots (@chenzl25)
-- **PR #27528** (2026-10-19): feat(iceberg): support GCS vended credentials with native Google authentication (@silver-ymz)
-- **PR #27527** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
-- **PR #27526** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
 
 ---
 
@@ -1868,73 +1694,33 @@ Signed-off-by: Mingzhuo Yin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. connector): support native Pulsar JSON schemas (#27454)
+## X. mysql-cdc): monitor binlogs for multi-database sources (#27565)
 
 **RULE**:
-When implementing operations in `e2e_test/source_inline/pulsar/schema_registry.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/source_legacy/cdc/cdc.share_stream.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6100edc`: connector): support native Pulsar JSON schemas (#27454). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1853d733`: mysql-cdc): monitor binlogs for multi-database sources (#27565). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_inline/pulsar/schema_registry.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_legacy/cdc/cdc.share_stream.slt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-statement ok
-drop materialized view if exists pulsar_json_schema_mv;
-
-statement ok
-drop source if exists pulsar_json_schema;
-
-statement ok
-drop source if exists pulsar_json_schema_mismatch;
-
-statement ok
-drop source if exists pulsar_json_schema_upsert;
-
-{"id":1,"name":"Alice"}
-statement error expected Pulsar JSON schema, got AVRO
-create source pulsar_json_schema_mismatch
-with (
-  connector = 'pulsar',
-  service.url = '${PULSAR_BROKER_URL}',
-  topic = 'persistent://public/default/rw-schema-avro',
-  scan.startup.mode = 'earliest'
-)
-format plain encode json (
-  schema.pulsar.url = '${PULSAR_HTTP_URL}'
-);
-
-statement error Pulsar schema requires connector = 'pulsar' with FORMAT PLAIN ENCODE AVRO or JSON
-create source pulsar_json_schema_upsert
-with (
-  connector = 'pulsar',
-  service.url = '${PULSAR_BROKER_URL}',
-  topic = 'persistent://public/default/rw-schema-json',
-  scan.startup.mode = 'earliest'
-)
-format upsert encode json (
-  schema.pulsar.url = '${PULSAR_HTTP_URL}'
-);
-
-statement ok
-create source pulsar_json_schema
-with (
-  connector = 'pulsar',
-  service.url = '${PULSAR_BROKER_URL}',
-  topic = 'persistent://public/default/rw-schema-json',
-  scan.startup.mode = 'earliest'
-)
-format 
+# Wait for successful monitoring of the multi-database source, including upstream binlog metrics.
+system ok
+source_id=$(psql -h "$SLT_HOST" -p "$SLT_PORT" -d "$__DATABASE__" -U root -At -v ON_ERROR_STOP=1 -c "SELECT id FROM rw_sources WHERE name = 'mysql_source'")
+python3 e2e_test/source_legacy/cdc/wait_mysql_binlog_metrics.py \
+    --source-id "$source_id" \
+    --metrics-url "${RW_META_METRICS_URL:-http://127.0.0.1:1250/metrics}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-{"id":3,"name":"Carol"}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6100edc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1853d733` are properly handled with clean fallback behavior.

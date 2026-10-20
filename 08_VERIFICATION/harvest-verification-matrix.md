@@ -3936,3 +3936,8 @@
 | `CYCLE-20261020-SD81` | `2026-10-20T17:35:51.793Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3293` | Yes (`51036626...`) |
 | `CYCLE-20261020-SEZF` | `2026-10-20T17:35:54.075Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3294` | Yes (`0b1877f5...`) |
 | `CYCLE-20261020-W9GU` | `2026-10-20T17:38:53.550Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`be3cc6c2...`) |
+| `CYCLE-20261020-9LHN` | `2026-10-20T17:49:15.659Z` | `killercup/cargo-edit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3295` | Yes (`0633a2c8...`) |
+| `CYCLE-20261020-9MMB` | `2026-10-20T17:49:17.123Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3296` | Yes (`68e3b336...`) |
+| `CYCLE-20261020-9QK7` | `2026-10-20T17:49:22.231Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3297` | Yes (`1ad9298d...`) |
+| `CYCLE-20261020-9RFJ` | `2026-10-20T17:49:23.359Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1905, Rule 3298` | Yes (`2ac4056a...`) |
+| `CYCLE-20261020-9XN7` | `2026-10-20T17:49:31.411Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3299` | Yes (`19e759fc...`) |

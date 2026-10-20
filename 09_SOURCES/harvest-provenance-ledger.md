@@ -3943,3 +3943,8 @@ Every entry in this ledger must capture:
 | `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `fe6736fb` | Multi-dimensional audit evidence | 2026-10-20T17:35:51.804Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `4e1c620e` | Multi-dimensional audit evidence | 2026-10-20T17:35:54.084Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-20T17:38:53.554Z |
+| `learn-github-killercup-cargo-edit` | `https://github.com/killercup/cargo-edit` | `91302f86` | Multi-dimensional audit evidence | 2026-10-20T17:49:15.661Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `bc0a59a7` | Multi-dimensional audit evidence | 2026-10-20T17:49:17.133Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `94e358e6` | Multi-dimensional audit evidence | 2026-10-20T17:49:22.240Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-20T17:49:23.366Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `1853d733` | Multi-dimensional audit evidence | 2026-10-20T17:49:31.418Z |

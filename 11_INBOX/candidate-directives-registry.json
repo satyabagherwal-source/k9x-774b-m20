@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:29:22.609Z",
+  "last_updated": "2026-10-20T17:49:23.371Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2268,6 +2268,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-zenbu-labs-terminal-browser"
+    },
+    {
+      "id": "CD-9RFV",
+      "directive_title": "Memory Footprint vs. Quality Threshold Enforcement",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_commit": "hf-abenzerps",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
     }
   ]
 }

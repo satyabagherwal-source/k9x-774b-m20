@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "c80ae6055ce84f3871b3342fd8c628313f0d1d2b98b299a54e38b3c6a9d0eb6b",
-    "lastHarvestedAt": "2026-10-19T04:13:11.067Z",
+    "contentHash": "2ac4056aa3026f38d8111ffa73dbcc78f44d9ce897dfe158816bf2e193f0c851",
+    "lastHarvestedAt": "2026-10-20T17:49:23.366Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "a6100edc",
+    "sourceVersion": "1853d733",
     "license": "Apache-2.0",
-    "contentHash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
-    "lastHarvestedAt": "2026-10-19T13:00:30.021Z",
+    "contentHash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
+    "lastHarvestedAt": "2026-10-20T17:49:31.418Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -6033,10 +6033,10 @@
     "repository": "taiga-family/taiga-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/taiga-family/taiga-ui",
-    "sourceVersion": "c107bc82",
+    "sourceVersion": "bc0a59a7",
     "license": "Apache-2.0",
-    "contentHash": "730fb601087dcfb3c519111c56ea8b404eeb4b50bc401a4e45f8fea27a3dc38e",
-    "lastHarvestedAt": "2026-10-20T02:55:43.004Z",
+    "contentHash": "68e3b3362e07c3868a3c93af0375172b3efc005a176219f34e2dabb51279a481",
+    "lastHarvestedAt": "2026-10-20T17:49:17.133Z",
     "learningId": "learn-github-taiga-family-taiga-ui"
   },
   "u-root-u-root": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "712b9c97",
+    "sourceVersion": "94e358e6",
     "license": "AGPL-3.0",
-    "contentHash": "0bd3c8bfede4dcaa7d2ba81b6344801fdcd4c554469001daadec6b8847bb26e6",
-    "lastHarvestedAt": "2026-10-19T05:39:10.838Z",
+    "contentHash": "1ad9298d7933845741295111bba0d43dcbcde73ccdc3083aa42dcc38e03669aa",
+    "lastHarvestedAt": "2026-10-20T17:49:22.240Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -7403,10 +7403,10 @@
     "repository": "killercup/cargo-edit",
     "platform": "github",
     "sourceUrl": "https://github.com/killercup/cargo-edit",
-    "sourceVersion": "138d4e29",
-    "license": "MIT",
-    "contentHash": "7151778c49b0ec2fd4d94fb36d1f6995126e964527099dbac6629e6cd51b8c35",
-    "lastHarvestedAt": "2026-10-19T08:50:22.146Z",
+    "sourceVersion": "91302f86",
+    "license": "Apache-2.0",
+    "contentHash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
+    "lastHarvestedAt": "2026-10-20T17:49:15.661Z",
     "learningId": "learn-github-killercup-cargo-edit"
   },
   "bahdotsh-wrkflw": {
