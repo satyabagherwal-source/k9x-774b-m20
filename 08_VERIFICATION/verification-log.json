@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-5FNB",
-    "timestamp": "2026-10-19T19:22:19.895Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5GU3",
-    "timestamp": "2026-10-19T19:22:21.435Z",
-    "repository": "berkaycubuk/kitsune",
-    "learningId": "learn-github-berkaycubuk-kitsune",
-    "contentHash": "a6cf6290b3095535df9a5ebe02e5c93f8a17a80f4f07dda8301d5988fad8d869",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5J2G",
-    "timestamp": "2026-10-19T19:22:24.328Z",
-    "repository": "touchlab/DroidconKotlin",
-    "learningId": "learn-github-touchlab-droidconkotlin",
-    "contentHash": "5373cafddf8d705d290b4f4b955dd00eff26bc20614e226633bc92c515639f1a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-F2AN",
     "timestamp": "2026-10-19T19:29:49.151Z",
     "repository": "manojahi/serpiq",
@@ -7492,6 +7447,51 @@
     "contentHash": "19e759fc6f422f6cf89fc53ddc9dbd46cb5490e302f2467ef81021a5dc5a4258",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HTPY",
+    "timestamp": "2026-10-20T17:55:39.574Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HVMN",
+    "timestamp": "2026-10-20T17:55:42.047Z",
+    "repository": "komi-store/komi-store",
+    "learningId": "learn-github-komi-store-komi-store",
+    "contentHash": "7ed7192f57f03c16dca4f65f714f900f6a5da04accdab1fcc07517064d7865b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-HY3U",
+    "timestamp": "2026-10-20T17:55:45.258Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

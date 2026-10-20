@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:49:31.355Z",
+  "last_updated": "2026-10-20T17:55:45.216Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3352,8 +3352,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "8f48c902",
-      "content_hash": "8fe98d6e724f5d6dc53c2359278882694b0021abaaad7cacecddd9768f6bc90d",
+      "source_version": "ec693779",
+      "content_hash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -3378,7 +3378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:15:40.689Z",
+      "verified_at": "2026-10-20T17:55:45.200Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14027,7 +14027,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "64e030ceefe8c05ba1d7e0df14f12fb2d387dabffb5b00af2289c1105869ae99",
+      "content_hash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -14196,6 +14196,21 @@
           "number": 2118,
           "title": "Disable Cache for Long‑Context VLMs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3300,
+          "title": "**Special Token ID Integrity Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3301,
+          "title": "**Attention Pattern Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3302,
+          "title": "**Position ID Alignment Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14216,7 +14231,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-19T04:19:32.713Z",
+      "verified_at": "2026-10-20T17:55:39.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28317,14 +28332,19 @@
       "slug": "komi-store-komi-store",
       "platform": "github",
       "source_url": "https://github.com/komi-store/komi-store",
-      "source_version": "95935997",
-      "content_hash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
+      "source_version": "9b8f899f",
+      "content_hash": "7ed7192f57f03c16dca4f65f714f900f6a5da04accdab1fcc07517064d7865b4",
       "dossier_path": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "promoted_rules": [
         {
           "number": 2202,
           "title": "db): bind the installed record to the release it came from (#998)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3303,
+          "title": "ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-sty",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28333,7 +28353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:45:30.075Z",
+      "verified_at": "2026-10-20T17:55:42.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103258,6 +103278,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:49:31.338Z"
+    },
+    "rule-3300": {
+      "learning_id": "rule-3300",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3300,
+      "title": "**Special Token ID Integrity Rule**",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:55:39.526Z"
+    },
+    "rule-3301": {
+      "learning_id": "rule-3301",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3301,
+      "title": "**Attention Pattern Consistency Rule**",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:55:39.526Z"
+    },
+    "rule-3302": {
+      "learning_id": "rule-3302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3302,
+      "title": "**Position ID Alignment Rule**",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:55:39.526Z"
+    },
+    "rule-3303": {
+      "learning_id": "rule-3303",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3303,
+      "title": "ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-sty",
+      "source_url": "https://github.com/komi-store/komi-store",
+      "source_version": "9b8f899f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:55:42.000Z"
     }
   },
   "aliases": {

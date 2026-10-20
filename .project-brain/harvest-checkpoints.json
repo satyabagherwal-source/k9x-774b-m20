@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:49:31.426Z",
+  "last_updated": "2026-10-20T17:55:45.270Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "64e030ceefe8c05ba1d7e0df14f12fb2d387dabffb5b00af2289c1105869ae99",
-      "verified_at": "2026-10-19T04:19:32.770Z",
+      "content_hash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
+      "verified_at": "2026-10-20T17:55:39.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:19:32.770Z"
+      "last_updated": "2026-10-20T17:55:39.586Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "8fe98d6e724f5d6dc53c2359278882694b0021abaaad7cacecddd9768f6bc90d",
-      "verified_at": "2026-10-20T02:15:40.754Z",
+      "content_hash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
+      "verified_at": "2026-10-20T17:55:45.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:15:40.754Z"
+      "last_updated": "2026-10-20T17:55:45.269Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -9621,14 +9621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-komi-store-komi-store",
-      "content_hash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
-      "verified_at": "2026-10-19T05:45:30.141Z",
+      "content_hash": "7ed7192f57f03c16dca4f65f714f900f6a5da04accdab1fcc07517064d7865b4",
+      "verified_at": "2026-10-20T17:55:42.061Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:45:30.141Z"
+      "last_updated": "2026-10-20T17:55:42.061Z"
     },
     "opentofu/opentofu": {
       "repository": "opentofu/opentofu",

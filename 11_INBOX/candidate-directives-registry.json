@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:49:23.371Z",
+  "last_updated": "2026-10-20T17:55:45.265Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2279,6 +2279,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
+    },
+    {
+      "id": "CD-HY41",
+      "directive_title": "merge-back): 2.274.0 (#39400)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "aws/aws-cdk",
+      "source_commit": "ec693779",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-aws-aws-cdk"
     }
   ]
 }

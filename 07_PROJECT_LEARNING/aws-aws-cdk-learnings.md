@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `8f48c902`  
+> **Source Version**: `ec693779`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:15:40.493Z  
+> **Timestamp**: 2026-10-20T17:55:45.133Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:15:40.247Z  
+> **Harvest Timestamp**: 2026-10-20T17:55:45.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12943 stars
+- **Stars / Engagement**: 12945 stars
 
 ---
 
@@ -1200,565 +1200,432 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f48c902` (2026-10-19)
-**Commit Message**: fix(ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)
+### Incident Patch 1: `ec693779` (2026-10-20)
+**Commit Message**: chore(merge-back): 2.274.0 (#39400)
 
-### Issue # (if applicable)
+See [CHANGELOG](https://github.com/aws/aws-cdk/blob/merge-back/2.274.0/CHANGELOG.md)
 
-Closes #36111.
-
-### Reason for this change
-
-`VpcV2` rejects secondary IPv4 blocks that AWS permits. `validateIpv4address` only accepted a secondary from the exact same RFC 1918 range as the primary (and for 172.16.0.0/12 only matched `172.16.x`), so a `10.x` primary with a `198.18.0.0/26` or `100.64.0.0/16` secondary failed at synth time with `CIDR block should be in the same RFC 1918 range in the VPC`.
-
-### Description of changes
-
-`validateIpv4address` now follows the [IPv4 CIDR block association restrictions](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions) table:
-
-- An RFC 1918 primary accepts blocks from its own RFC 1918 range, publicly routable blocks and `100.64.0.0/10`, but not blocks from the other RFC 1918 ranges.
-- A non-RFC 1918 primary (publicly routable or `100.64.0.0/10`) rejects RFC 1918 blocks.
-- `198.19.0.0/16` is always rejected.
-
-Every combination accepted before is still accepted; `172.17.0.0`–`172.31.255.255` are now recognised as part of `172.16.0.0/12`. The finer-grained 10.0.0.0/15 and 172.31.0.0/16 rules
-
-**File**: `packages/@aws-cdk/aws-ec2-alpha/lib/vpc-v2.ts` (modified, +35/-7)
+**File**: `CHANGELOG.v2.alpha.md` (modified, +13/-0)
 ```diff
-@@ -558,7 +558,7 @@ export class VpcV2 extends VpcV2Base {
-         if (secondaryVpcOptions.ipv4CidrBlock!) {
-           const ret = validateIpv4address(secondaryVpcOptions.ipv4CidrBlock, this.resource.cidrBlock);
-           if (ret === false) {
--            throw new Error('CIDR block should be in the same RFC 1918 range in the VPC');
-+            throw new Error(`CIDR block ${secondaryVpcOptions.ipv4CidrBlock} cannot be added as a secondary block to a VPC whose primary CIDR block is ${this.resource.cidrBlock}. See the IPv4 CIDR block association restrictions in the Amazon VPC User Guide: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions`);
-           }
-         }
-         if (secondaryVpcOptions.ipv4IpamProvisionedCidrs!) {
-@@ -886,13 +886,34 @@ interface IPaddressConfig {
- }
+@@ -2,6 +2,19 @@
  
- /**
-- * Validates whether a secondary IPv4 address is within the same private IP address range as the primary IPv4 address.
-+ * Returns the RFC 1918 range (10.0.0.0/8, 172.16.0.0/12 or 192.168.0.0/16) an address belongs to, if any.
-+ */
-+function rfc1918Range(ip: IPaddressConfig): string | undefined {
-+  if (ip.octet1 === 10) {
-+    return '10.0.0.0/8';
-+  }
-+  if (ip.octet1 === 172 && ip.octet2 >= 16 && ip.octet2 <= 31) {
-+    return '172.16.0.0/12';
-+  }
-+  if (ip.octet1 === 192 && ip.octet2 === 168) {
-+    return '192.168.0.0/16';
-+  }
-+  return undefined;
-+}
-+
-+/**
-+ * Validates whether a secondary IPv4 CIDR block can be associated with a VPC that has the given primary IPv4 CIDR block.
-  *
-  * @param cidr1 The secondary IPv4 CIDR block to be validated.
-  * @param cidr2 The primary IPv4 CIDR block to validate against.
-- * @returns True if the secondary IPv4 CIDR block is within the same private IP address range as the primary IPv4 CIDR block, false otherwise.
-+ * @returns True if the association is permitted, false otherwise.
-  * @internal
-- * The private IP address ranges are defined by RFC 1918 as 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.
-+ * Follows the IPv4 CIDR block association restrictions in the Amazon VPC User Guide:
-+ * https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions
-+ * - An RFC 1918 primary permits blocks from the same RFC 1918 range, publicly routable blocks and 100.64.0.0/10,
-+ *   but not blocks from the other RFC 1918 ranges.
-+ * - A non-RFC 1918 primary (publicly routable or 100.64.0.0/10) does not permit RFC 1918 blocks.
-+ * - 198.19.0.0/16 is never permitted as a secondary block.
-  */
- function validateIpv4address(cidr1?: string, cidr2?: string): boolean {
-   if (!cidr1 || !cidr2) {
-@@ -916,7 +937,14 @@ function validateIpv4address(cidr1?: string, cidr2?: string): boolean {
-     octet2: octetsCidr2[1],
-   };
+ All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
  
--  return (ip1.octet1 === 10 && ip2.octet1 === 10) ||
--    (ip1.octet1 === 192 && ip1.octet2 === 168 && ip2.octet1 === 192 && ip2.octet2 === 168) ||
--    (ip1.octet1 === 172 && ip1.octet2 === 16 && ip2.octet1 === 172 && ip2.octet2 === 16); // CIDR ranges belong to same private IP address ranges
-+  if (ip1.octet1 === 198 && ip1.octet2 === 19) {
-+    return false;
-+  }
++## [2.274.0-alpha.0](https://github.com/aws/aws-cdk/compare/v2.273.0-alpha.0...v2.274.0-alpha.0) (2026-10-20)
 +
-+  const secondaryRange = rfc1918Range(ip1);
-+  const primaryRange = rfc1918Range(ip2);
-+  if (primaryRange === undefined) {
-+    return secondaryRange === undefined;
-+  }
-+  return secondaryRange === undefined || secondaryRange === primaryRange;
- }
++
++### Features
++
++* **bedrock-alpha:** add VectorKnowledgeBase L2 construct for bedrock knowledge bases ([#38883](https://github.com/aws/aws-cdk/issues/38883)) ([5041639](https://github.com/aws/aws-cdk/commit/5041639479aaa5204ff2ff1068f1bae40b32164d)), closes [aws/aws-cdk-rfcs#686](https://github.com/aws/aws-cdk-rfcs/issues/686)
++
++
++### Bug Fixes
++
++* **ec2-alpha:** allow valid secondary CIDR blocks outside RFC 1918 ([#36873](https://github.com/aws/aws-cdk/issues/36873)) ([8f48c90](https://github.com/aws/aws-cdk/commit/8f48c9024329100068d8376a8f309912e7fb2b13)), closes [#36111](https://github.com/aws/aws-cdk/issues/36111)
++* **redshift-alpha:** backslashes in user passwords and comments are not preserved ([#39306](https://github.com/aws/aws-cdk/issues/39306)) ([1f752b6](https://github.com/aws/aws-cdk/commit/1f752b67bfdd52181273e9ffb17ae9005c16b9f9))
++
+ ## [2.273.0-alpha.0](https://github.com/aws/aws-cdk/compare/v2.272.0-alpha.0...v2.273.0-alpha.0) (2026-10-08)
+ 
+ 
 ```
 
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/aws-cdk-vpcv2-secondary-cidr-blocks.assets.json` (modified, +4/-4)
+**File**: `CHANGELOG.v2.md` (modified, +33/-0)
 ```diff
-@@ -1,16 +1,16 @@
- {
--  "version": "48.0.0",
-+  "version": "55.0.0",
-   "files": {
--    "e4869857caf2d93060e34450b780f3be01cf151fbae3a596461258aac577acaf": {
-+    "aa3bdf992ac34a1707718d78160e7c5d2ae4656390cc011dc7e872258651e01b": {
-       "displayName": "aws-cdk-vpcv2-secondary-cidr-blocks Template",
-       "source": {
-         "path": "aws-cdk-vpcv2-secondary-cidr-blocks.template.json",
-         "packaging": "file"
-       },
-       "destinations": {
--        "current_account-current_region-b3059d96": {
-+        "current_account-current_region-e8c8f879": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "e4869857caf2d93060e34450b780f3be01cf151fbae3a596461258aac577acaf.json",
-+          "objectKey": "aa3bdf992ac34a1707718d78160e7c5d2ae4656390cc011dc7e872258651e01b.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+@@ -2,6 +2,39 @@
+ 
+ All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+ 
++## [2.274.0](https://github.com/aws/aws-cdk/compare/v2.273.0...v2.274.0) (2026-10-20)
++
++
++### ⚠ BREAKING CHANGES
++
++* ** L1 resources are automatically generated from public CloudFormation Resource Schemas. They are built to closely reflect the real state of CloudFormation. Sometimes these updates can contain changes that are incompatible with previous types, but more accurately reflect reality. In this release we have changed:
++
++aws-cloudwatch: AWS::CloudWatch::AnomalyDetector: Id attribute removed.  
++aws-glue: AWS::Glue::Table: Id attribute removed.  
++aws-glue: AWS::Glue::Table: IcebergInput.MetadataOperation type narrowed from json to string.  
++aws-glue: AWS::Glue::Table: IcebergTableInput.Properties type narrowed from json to Map<string, string>.  
++aws-iot: AWS::IoT::PolicyPrincipalAttachment: Id attribute removed.  
++aws-quicksight: AWS::QuickSight::Analysis: SheetLayoutGroupMember.Type type narrowed from json to string enum (ELEMENT|GROUP).  
++aws-quicksight: AWS::QuickSight::Dashboard: SheetLayoutGroupMember.Type type narrowed from json to string enum (ELEMENT|GROUP).  
++aws-quicksight: AWS::QuickSight::Template: SheetLayoutGroupMember.Type type narrowed from json to string enum (ELEMENT|GROUP).
++
++### Features
++
++* update L1 CloudFormation resource definitions ([#39139](https://github.com/aws/aws-cdk/issues/39139)) ([8a10135](https://github.com/aws/aws-cdk/commit/8a101356261fc0b8da85e369d983ff7b5e9dc1a3))
++* **cloudfront:** add always-amz-auth signing behavior for origin access control ([#39196](https://github.com/aws/aws-cdk/issues/39196)) ([7cf79a1](https://github.com/aws/aws-cdk/commit/7cf79a17d70c7874e1f4e0029fcede323be06a49)), closes [#39195](https://github.com/aws/aws-cdk/issues/39195) [#38629](https://github.com/aws/aws-cdk/issues/38629)
++* **cloudfront:** add sigv4a signing protocol for origin access control ([#38629](https://github.com/aws/aws-cdk/issues/38629)) ([805bfbe](https://github.com/aws/aws-cdk/commit/805bfbe57b00a6fa6ad3a5a07ccd96d2d892f420)), closes [#38627](https://github.com/aws/aws-cdk/issues/38627) [#38627](https://github.com/aws/aws-cdk/issues/38627)
++* **codebuild:** add STANDARD_8_0, AMAZON_LINUX_2023_6 and AMAZON_LINUX_2023_STANDARD_4_0 images ([#37588](https://github.com/aws/aws-cdk/issues/37588)) ([3beecb3](https://github.com/aws/aws-cdk/commit/3beecb31a38da1b86ba0c6a52a4a9e3ed4f4282f)), closes [#37586](https://github.com/aws/aws-cdk/issues/37586)
++
++
++### Bug Fixes
++
++* **apigateway:** log group destination ARN causes permanent Stage drift ([#38816](https://github.com/aws/aws-cdk/issues/38816)) ([65c6aa0](https://github.com/aws/aws-cdk/commit/65c6aa07c4e389fc818ebafa91b1229acba06bd7)), closes [#38796](https://github.com/aws/aws-cdk/issues/38796)
++* **bedrockagentcore:** `Runtime` annotations cannot be acknowledged ([#38770](https://github.com/aws/aws-cdk/issues/38770)) ([165bf8b](https://github.com/aws/aws-cdk/commit/165bf8b49633251d9b25745a5f150a8db8b5ff39)), closes [#38741](https://github.com/aws/aws-cdk/issues/38741)
++* **core:** can't trace construct to template for nested stacks ([#39141](https://github.com/aws/aws-cdk/issues/39141)) ([173a2ff](https://github.com/aws/aws-cdk/commit/173a2ff9551d7c92c050bd33f775c1e4a1eb9ad8))
++* **core:** preserve unresolved Tags property tokens ([#37759](https://github.com/aws/aws-cdk/issues/37759)) ([644489c](https://github.com/aws/aws-cdk/commit/644489c24c8339a1af5e640237ff44f10f5bf207)), closes [#37734](https://github.com/aws/aws-cdk/issues/37734)
++* **core:** validations with different messages are confusingly combined ([#39132](https://github.com/aws/aws-cdk/issues/39132)) ([54fb0ea](https://github.com/aws/aws-cdk/commit/54fb0eabbf26e53a4861be664256b987d4dc96e9)), closes [#38982](https://github.com/aws/aws-cdk/issues/38982)
++* **stepfunctions:** default `StateMachine` IAM role  missing confused deputy protection best practices ([#37688](https://github.com/aws/aws-cdk/issues/37688)) ([638a681](https://github.com/aws/aws-cdk/commit/638a6819aca172d1df572ea587861cf2f6295cfa)), closes [#37567](https://github.com/aws/aws-cdk/issues/37567) [#37567](https://github.com/aws/aws-cdk/issues/37567) [#37567](https://github.com/aws/aws-cdk/issues/37567)
++
+ ## [2.273.0](https://github.com/aws/aws-cdk/compare/v2.272.0...v2.273.0) (2026-10-08)
+ 
+ 
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/classes.ts` (modified, +7/-0)
+```diff
+@@ -25996,6 +25996,13 @@ export const AWS_CDK_CONSTRUCTOR_PROPS: { [key: string]: any } = {
          }
-       }
+       ]
+     },
++    'KnowledgeBase': {
++      'type': '*',
++      'knowledgeBaseName': '*',
++      'description': '*',
++      'role': '*',
++      'tags': '*'
++    },
+     'Prompt': {
+       'promptName': '*',
+       'description': '*',
 ```
 
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/aws-cdk-vpcv2-secondary-cidr-blocks.metadata.json` (added, +314/-0)
+**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/enums.ts` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,314 @@
-+{
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithPublicSecondary": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithCarrierGradeNat": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc192WithPublicSecondary": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary192": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc172WithPublicSecondary": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary172": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/BootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "BootstrapVersion"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/CheckBootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "CheckBootstrapVersion"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithPublicSecondary/Resource": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "VpcWithPublicSecondaryBF5A0D37"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithPublicSecondary/PublicSecondary": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1/Subnet": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInPrimary1Subnet5C380FE6"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1/RouteTable": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary1/RouteTableAssociation": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInPrimary1RouteTableAssociation224C6485"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1/Subnet": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInSecondary1Subnet62C43D82"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1/RouteTable": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInSecondary1/RouteTableAssociation": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInSecondary1RouteTableAssociation37CAF808"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithCarrierGradeNat/Resource": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "VpcWithCarrierGradeNat25F9C610"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/VpcWithCarrierGradeNat/CarrierGradeNat": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2/Subnet": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInPrimary2SubnetEEEF7613"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2/RouteTable": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInPrimary2/RouteTableAssociation": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInPrimary2RouteTableAssociation7CC84555"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat/Subnet": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInCarrierGradeNatSubnet2F832324"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat/RouteTable": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/SubnetInCarrierGradeNat/RouteTableAssociation": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SubnetInCarrierGradeNatRouteTableAssociation37723610"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc192WithPublicSecondary/Resource": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "Vpc192WithPublicSecondary78CAABEE"
-+    }
-+  ],
-+  "/aws-cdk-vpcv2-secondary-cidr-blocks/Vpc192WithPublicSecondary/PublicSeconda
+@@ -4025,11 +4025,13 @@ export const AWS_CDK_ENUMS: { [key: string]: any } = {
+   ],
+   "SigningBehavior": [
+     "always",
++    "always-amz-auth",
+     "never",
+     "no-override"
+   ],
+   "SigningProtocol": [
+-    "sigv4"
++    "sigv4",
++    "sigv4a"
+   ],
+   "SizeRoundingBehavior": [
+     0,
 ```
 
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/aws-cdk-vpcv2-secondary-cidr-blocks.template.json` (modified, +46/-0)
+**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/enums/module-enumlikes.json` (modified, +19/-2)
 ```diff
-@@ -463,6 +463,52 @@
-    ]
-   }
-  },
-+ "Outputs": {
-+  "ExportsOutputFnGetAttVpcWithPublicSecondaryBF5A0D37VpcIdDA1568F4": {
-+   "Value": {
-+    "Fn::GetAtt": [
-+     "VpcWithPublicSecondaryBF5A0D37",
-+     "VpcId"
-+    ]
-+   },
-+   "Export": {
-+    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpcWithPublicSecondaryBF5A0D37VpcIdDA1568F4"
-+   }
-+  },
-+  "ExportsOutputFnGetAttVpcWithCarrierGradeNat25F9C610VpcId3C32B2F4": {
-+   "Value": {
-+    "Fn::GetAtt": [
-+     "VpcWithCarrierGradeNat25F9C610",
-+     "VpcId"
-+    ]
-+   },
-+   "Export": {
-+    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpcWithCarrierGradeNat25F9C610VpcId3C32B2F4"
-+   }
-+  },
-+  "ExportsOutputFnGetAttVpc192WithPublicSecondary78CAABEEVpcIdA460859A": {
-+   "Value": {
-+    "Fn::GetAtt": [
-+     "Vpc192WithPublicSecondary78CAABEE",
-+     "VpcId"
-+    ]
-+   },
-+   "Export": {
-+    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpc192WithPublicSecondary78CAABEEVpcIdA460859A"
-+   }
-+  },
-+  "ExportsOutputFnGetAttVpc172WithPublicSecondary2C1AA5BAVpcId11A59E59": {
-+   "Value": {
-+    "Fn::GetAtt": [
-+     "Vpc172WithPublicSecondary2C1AA5BA",
-+     "VpcId"
-+    ]
-+   },
-+   "Export": {
-+    "Name": "aws-cdk-vpcv2-secondary-cidr-blocks:ExportsOutputFnGetAttVpc172WithPublicSecondary2C1AA5BAVpcId11A59E59"
-+   }
-+  }
-+ },
-  "Parameters": {
-   "BootstrapVersion": {
-    "Type": "AWS::SSM::Parameter::Value<String>",
-```
-
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/cdk.out` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"version":"48.0.0"}
-\ No newline at end of file
-+{"version":"55.0.0"}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/integ.json` (modified, +3/-2)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "version": "48.0.0",
-+  "version": "55.0.0",
-   "testCases": {
-     "integtest-secondary-cidr-blocks/DefaultTest": {
-       "stacks": [
-@@ -9,5 +9,6 @@
-       "assertionStackName": "integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A"
-     }
+@@ -212,6 +212,7 @@
+       "ANTHROPIC_CLAUDE_OPUS_4_8",
+       "ANTHROPIC_CLAUDE_OPUS_5_5",
+       "ANTHROPIC_CLAUDE_SONNET_5_5",
++      "ANTHROPIC_CLAUDE_HAIKU_5_5",
+       "ANTHROPIC_CLAUDE_FABLE_5_1",
+       "ANTHROPIC_CLAUDE_SONNET_4_6",
+       "ANTHROPIC_CLAUDE_SONNET_5",
+@@ -248,6 +249,10 @@
+       "MISTRAL_LARGE_2402_V1",
+       "MISTRAL_LARGE_2407_V1",
+       "MISTRAL_PIXTRAL_LARGE_2502_V1",
++      "OPENAI_GPT_6_1_SOL",
++      "OPENAI_GPT_6_ASTRA",
++      "OPENAI_GPT_6_SOL",
++      "OPENAI_GPT_6_LUNA",
+       "OPENAI_GPT_5_6_SOL",
+       "OPENAI_GPT_5_6_TERRA",
+       "OPENAI_GPT_5_6_LUNA",
+@@ -2226,6 +2231,7 @@
+       "ANTHROPIC_CLAUDE_MYTHOS_5",
+       "ANTHROPIC_CLAUDE_FABLE_5",
+       "ANTHROPIC_CLAUDE_SONNET_5_5",
++      "ANTHROPIC_CLAUDE_HAIKU_5_5",
+       "ANTHROPIC_CLAUDE_FABLE_5_1",
+       "ANTHROPIC_CLAUDE_INSTANT_V1",
+       "ANTHROPIC_CLAUDE_INSTANT_V1_2_100K",
+@@ -2254,6 +2260,10 @@
+       "OPENAI_GPT_5_6_LUNA",
+       "OPENAI_GPT_5_6_CYBER",
+       "OPENAI_GPT_DAYBREAK_BLUE_5_6_SOL",
++      "OPENAI_GPT_6_ASTRA",
++      "OPENAI_GPT_6_SOL",
++      "OPENAI_GPT_6_LUNA",
++      "OPENAI_GPT_6_1_SOL",
+       "LUMA_RAY_V2_0",
+       "META_LLAMA_2_13B_V1",
+       "META_LLAMA_2_13B_V1_0_4K",
+@@ -2492,7 +2502,9 @@
+   "aws-cdk/packages/aws-cdk-lib/aws-cloudfront/lib/origin-access-control.ts": {
+     "Signing": [
+       "SIGV4_ALWAYS",
++      "SIGV4_ALWAYS_AMZ_AUTH",
+       "SIGV4_NO_OVERRIDE",
++      "SIGV4A_ALWAYS",
+       "NEVER"
+     ]
    },
--  "minimumCliVersion": "2.1027.0"
-+  "enableLookups": true,
-+  "minimumCliVersion": "2.1145.0"
- }
-\ No newline at end of file
+@@ -2534,7 +2546,8 @@
+       "AMAZON_LINUX_2_STANDARD_2_0",
+       "AMAZON_LINUX_2_STANDARD_3_0",
+       "AMAZON_LINUX_2023_STANDARD_2_0",
+-      "AMAZON_LINUX_2023_STANDARD_3_0"
++      "AMAZON_LINUX_2023_STANDARD_3_0",
++      "AMAZON_LINUX_2023_STANDARD_4_0"
+     ]
+   },
+   "aws-cdk/packages/aws-cdk-lib/aws-codebuild/lib/linux-arm-lambda-build-image.ts": {
+@@ -2607,13 +2620,15 @@
+       "STANDARD_5_0",
+       "STANDARD_6_0",
+       "STANDARD_7_0",
++      "STANDARD_8_0",
+       "AMAZON_LINUX_2",
+       "AMAZON_LINUX_2_2",
+       "AMAZON_LINUX_2_3",
+       "AMAZON_LINUX_2_4",
+       "AMAZON_LINUX_2_5",
+       "AMAZON_LINUX_2023_4",
+       "AMAZON_LINUX_2023_5",
++      "AMAZON_LINUX_2023_6",
+       "AMAZON_LINUX_2_CORETTO_8",
+       "AMAZON_LINUX_2_CORETTO_11",
+       "AMAZON_LINUX_2023_CORETTO_8",
+@@ -4649,7 +4664,9 @@
+       "VER_17_6",
+       "VER_17_7",
+       "VER_17_9",
+-      "VER_18_4"
++      "VER_18_3",
++      "VER_18_4",
++      "VER_18_6"
+     ],
+     "DatabaseClusterEngine": [
+       "AURORA",
 ```
 
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A.assets.json` (modified, +17/-4)
+**File**: `packages/aws-cdk-lib/core/lib/analytics-data-source/enums/module-enums.json` (modified, +3/-1)
 ```diff
-@@ -1,16 +1,29 @@
- {
--  "version": "48.0.0",
-+  "version": "55.0.0",
-   "files": {
--    "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
-+    "13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc": {
-+      "source": {
-+        "path": "asset.13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc.bundle",
-+        "packaging": "zip"
-+      },
-+      "destinations": {
-+        "current_account-current_region-9d0eb085": {
-+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-+          "objectKey": "13c53d1af041ac32db1c99c5bae43b3bd7d29a12d9113921a925efd959ba10dc.zip",
-+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-+        }
-+      }
-+    },
-+    "2d5c4727334c4245e0d2516c8b42f96f251d21da84bf24ec7ef081da89dffaba": {
-       "displayName": "integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A Template",
-       "source": {
-         "path": "integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A.template.json",
-         "packaging": "file"
-       },
-       "destinations": {
--        "current_account-current_region-d8d86b35": {
-+        "current_account-current_region-ce2dd1a5": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json",
-+          "objectKey": "2d5c4727334c4245e0d2516c8b42f96f251d21da84bf24ec7ef081da89dffaba.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
+@@ -2525,11 +2525,13 @@
+     ],
+     "SigningBehavior": [
+       "always",
++      "always-amz-auth",
+       "never",
+       "no-override"
+     ],
+     "SigningProtocol": [
+-      "sigv4"
++      "sigv4",
++      "sigv4a"
+     ]
+   },
+   "aws-cdk/packages/aws-cdk-lib/aws-cloudfront/lib/origin.ts": {
 ```
 
-**File**: `packages/@aws-cdk/aws-ec2-alpha/test/integ.vpc-v2-secondary-cidr-blocks.js.snapshot/integtestsecondarycidrblocksDefaultTestDeployAssert2FDA9A3A.metadata.json` (added, +136/-0)
+**File**: `packages/aws-cdk-lib/cx-api/FEATURE_FLAGS.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,136 @@
-+{
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert": [
-+    {
-+      "type": "aws:cdk:warning",
-+      "data": "No cross-stack-reference strength configured, defaulting to \"strong\". We recommend you set feature flag \"@aws-cdk/core:defaultCrossStackReferences\" to \"both\", then deploy everywhere, then set it to \"weak\". Alternatively, set it to \"strong\" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) [ack: @aws-cdk/core:crossStackReferencesDefaultStrong]"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/BootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "BootstrapVersion"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/CheckBootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "CheckBootstrapVersion"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627/Default": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627/AssertionResults": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Role": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Handler": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19/Default": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19/AssertionResults": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff/Default": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff/AssertionResults": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand488abd6f933202784f67cd9a58ca8d98/Default": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand488abd6f933202784f67cd9a58ca8d98/AssertionResults": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AssertionResultsAwsApiCallec2DescribeVpcsCommand488abd6f933202784f67cd9a58ca8d98"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627/Default/Default": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AwsApiCallec2DescribeVpcsCommand993ff20e24bc7d111f7c2b2c0c572627"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19/Default/Default": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AwsApiCallec2DescribeVpcsCommand3acfde997faf7c86170db02bc7464a19"
-+    }
-+  ],
-+  "/integtest-secondary-cidr-blocks/DefaultTest/DeployAssert/AwsApiCallec2DescribeVpcsCommand04ccead6faf3b15c91641f46013580ff/Default/Default": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AwsAp
+@@ -120,7 +120,7 @@ Flags come in three types:
+ | [@aws-cdk/core:validateAgainstDefaultRules](#aws-cdkcorevalidateagainstdefaultrules) | Treat CloudFormation Validate findings as errors | 2.262.0 | config |
+ | [@aws-cdk/aws-ecs:removeEmptyLoadBalancers](#aws-cdkaws-ecsremoveemptyloadbalancers) | Render an empty `LoadBalancers` array on an ECS service that has no target groups | 2.269.0 | fix |
+ | [@aws-cdk/aws-cloudfront:defaultViewerProtocolPolicyRedirectToHttps](#aws-cdkaws-cloudfrontdefaultviewerprotocolpolicyredirecttohttps) | Default Distribution cache behaviors to redirect HTTP viewer requests to HTTPS | 2.273.0 | new default |
+-| [@aws-cdk/aws-apigateway:logGroupDestinationArnWithoutWildcard](#aws-cdkaws-apigatewayloggroupdestinationarnwithoutwildcard) | Render the API Gateway access log destination ARN without the trailing `:*` | V2NEXT | fix |
++| [@aws-cdk/aws-apigateway:logGroupDestinationArnWithoutWildcard](#aws-cdkaws-apigatewayloggroupdestinationarnwithoutwildcard) | Render the API Gateway access log destination ARN without the trailing `:*` | 2.274.0 | fix |
+ 
+ <!-- END table -->
+ 
+@@ -2634,7 +2634,7 @@ When disabled, the destination ARN keeps using the log group `Arn` attribute.
+ | Since | Unset behaves like | Recommended value |
+ | ----- | ----- | ----- |
+ | (not in v1) |  |  |
+-| V2NEXT | `false` | `true` |
++| 2.274.0 | `false` | `true` |
+ 
+ **Compatibility with old behavior:** Disable this flag to keep using the log group `Arn` attribute as the destination ARN.
+ 
+```
+
+**File**: `packages/aws-cdk-lib/cx-api/lib/features.ts` (modified, +1/-1)
+```diff
+@@ -1996,7 +1996,7 @@ export const FLAGS: Record<string, FlagInfo> = {
+ 
+       When disabled, the destination ARN keeps using the log group \`Arn\` attribute.
+     `,
+-    introducedIn: { v2: 'V2NEXT' },
++    introducedIn: { v2: '2.274.0' },
+     recommendedValue: true,
+     unconfiguredBehavesLike: { v2: false },
+     compatibilityWithOldBehaviorMd: 'Disable this flag to keep using the log group `Arn` attribute as the destination ARN.',
+```
+
+---
+
+### Incident Patch 2: `8e69113b` (2026-10-20)
+**Commit Message**: Merge branch 'main' into merge-back/2.274.0
+
+**File**: `package.json` (modified, +3/-3)
+```diff
+@@ -28,9 +28,9 @@
+     "fs-extra": "^9.1.0",
+     "graceful-fs": "^4.2.11",
+     "jest-junit": "^13.2.0",
+-    "jsii-diff": "1.141.0",
+-    "jsii-pacmak": "1.141.0",
+-    "jsii-reflect": "1.141.0",
++    "jsii-diff": "1.142.0",
++    "jsii-pacmak": "1.142.0",
++    "jsii-reflect": "1.142.0",
+     "jsii-rosetta": "~5.9.71",
+     "lerna": "^8.2.4",
+     "nx": "^23",
+```
+
+**File**: `packages/awslint/package.json` (modified, +2/-2)
+```diff
+@@ -18,10 +18,10 @@
+     "awslint": "bin/awslint"
+   },
+   "dependencies": {
+-    "@jsii/spec": "1.141.0",
++    "@jsii/spec": "1.142.0",
+     "chalk": "^4",
+     "fs-extra": "^9.1.0",
+-    "jsii-reflect": "1.141.0",
++    "jsii-reflect": "1.142.0",
+     "change-case": "^4.1.2",
+     "yargs": "^16.2.2"
+   },
+```
+
+**File**: `tools/@aws-cdk/cdk-build-tools/package.json` (modified, +2/-2)
+```diff
+@@ -55,8 +55,8 @@
+     "jest-junit": "^13.2.0",
+     "jsii": "~5.9.56",
+     "jsii-rosetta": "~5.9.71",
+-    "jsii-pacmak": "1.141.0",
+-    "jsii-reflect": "1.141.0",
++    "jsii-pacmak": "1.142.0",
++    "jsii-reflect": "1.142.0",
+     "markdownlint-cli": "^0.49.1",
+     "nyc": "^15.1.0",
+     "semver": "^7.8.5",
+```
+
+**File**: `yarn.lock` (modified, +50/-20)
+```diff
+@@ -3513,11 +3513,24 @@
+     chalk "^4.1.2"
+     semver "^7.8.5"
+ 
++"@jsii/check-node@1.142.0":
++  version "1.142.0"
++  resolved "https://registry.npmjs.org/@jsii/check-node/-/check-node-1.142.0.tgz#29b507b9e9d806799ba9a12b0d4cb179aa855d17"
++  integrity sha512-viMnVpg4vfa22vYawtQqjkuOsLa5eYRpKfs1aTxBE7/WsXLCfvqCX0XNgi27NmIHUtUzXUpzzS+gmY1731h1tQ==
++  dependencies:
++    chalk "^4.1.2"
++    semver "^7.8.5"
++
+ "@jsii/spec@1.141.0", "@jsii/spec@^1.141.0":
+   version "1.141.0"
+   resolved "https://registry.npmjs.org/@jsii/spec/-/spec-1.141.0.tgz#77b18c711f17c741a215a9b9bee8ca36ac148cfb"
+   integrity sha512-NL/2TJnpfs332uuEWUV8Rx2wrV/gLoxdw7pmv457BoUwpOL6ZqOYgM6W54Niqn4RCjdxGddVL2l4CJBRMW0NgQ==
+ 
++"@jsii/spec@1.142.0":
++  version "1.142.0"
++  resolved "https://registry.npmjs.org/@jsii/spec/-/spec-1.142.0.tgz#ef802291a26229d34855de1d404681cfb709e9f4"
++  integrity sha512-6AX6EpAMn7YNWwKr0c19LShxFnSXokhMaOZedkHxAEkoY12Rs1XkZLFgHoag7HdFQ3k8EPsQ4b2iyX24LEXtZg==
++
+ "@lerna/create@8.2.4":
+   version "8.2.4"
+   resolved "https://registry.npmjs.org/@lerna/create/-/create-8.2.4.tgz#59a050f58681e9236db38cc5bcc6986ae79d1389"
+@@ -6379,10 +6392,10 @@ code-block-writer@^13.0.3:
+   resolved "https://registry.npmjs.org/code-block-writer/-/code-block-writer-13.0.3.tgz#90f8a84763a5012da7af61319dd638655ae90b5b"
+   integrity sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg==
+ 
+-codemaker@^1.141.0:
+-  version "1.141.0"
+-  resolved "https://registry.npmjs.org/codemaker/-/codemaker-1.141.0.tgz#cbbc4902de5d7404ee22ec61e6b688afa8b0d6af"
+-  integrity sha512-OpueAw6U+vDjYOOZ0RLexINaMaybJUus64+CoJa6u9d3oWaI43sSQFMAuJT2jT6zyGlFkeRlbk/vT2E5396fcg==
++codemaker@^1.142.0:
++  version "1.142.0"
++  resolved "https://registry.npmjs.org/codemaker/-/codemaker-1.142.0.tgz#40f9ec15fb56b86df4d393d107ef7ad808a1e4b9"
++  integrity sha512-mip7+WZ1bqt0SA6k1u0vjp7PzsifHRLmrwWqnz+ZHCFMDT8+ctbdMOUkjMtF2G4RASEExJrrjfM8cC7cl2bd6Q==
+   dependencies:
+     camelcase "^6.3.0"
+     decamelize "^5.0.1"
+@@ -9904,37 +9917,49 @@ jsesc@^3.0.2:
+   resolved "https://registry.npmjs.org/jsesc/-/jsesc-3.1.0.tgz#74d335a234f67ed19907fdadfac7ccf9d409825d"
+   integrity sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==
+ 
+-jsii-diff@1.141.0:
+-  version "1.141.0"
+-  resolved "https://registry.npmjs.org/jsii-diff/-/jsii-diff-1.141.0.tgz#8cd87e0555a0830c8df095142df68dd2c5369767"
+-  integrity sha512-JJmXP5K4G0KOqA5kwymMDPJV9jdrsF2ZZnz7Xbv7IpXvTjz73p8VPV3GLi+yHPITgFG81FOFxB8P27H0KW2U7Q==
++jsii-diff@1.142.0:
++  version "1.142.0"
++  resolved "https://registry.npmjs.org/jsii-diff/-/jsii-diff-1.142.0.tgz#3de81f4a75d695da26bb14354951a5934440a3de"
++  integrity sha512-Z64EsAUy1WqoF0FVSQ0uY5pFNZvLyueIU6fQ/85Nm2lhpjSNHFw5d+ZgZczgdvqkjlOIHqMroDwRY+HJuHsixQ==
+   dependencies:
+-    "@jsii/check-node" "1.141.0"
+-    "@jsii/spec" "1.141.0"
++    "@jsii/check-node" "1.142.0"
++    "@jsii/spec" "1.142.0"
+     fs-extra "^10.1.0"
+-    jsii-reflect "^1.141.0"
++    jsii-reflect "^1.142.0"
+     log4js "^6.9.1"
+     yargs "^17.7.3"
+ 
+-jsii-pacmak@1.141.0:
+-  version "1.141.0"
+-  resolved "https://registry.npmjs.org/jsii-pacmak/-/jsii-pacmak-1.141.0.tgz#bda1af93232522b8394530d402b4736ee79dde44"
+-  integrity sha512-Ky6g3RLeTwU4xP/KKXHjsHsILYd7QaOHzI/qNrySwoWhPQmRrRB6fPQYtqCHkC+kjMUGJKTopS7hT+XBqWFaQA==
++jsii-pacmak@1.142.0:
++  version "1.142.0"
++  resolved "https://registry.npmjs.org/jsii-pacmak/-/jsii-pacmak-1.142.0.tgz#fa547f001cdcbd3dff68c374facfbbae0f628fcf"
++  integrity sha512-uj03timc4bD/cXT/+FYHkTH3ZvusWE1MtDnKuf14q1AMr4qtIHpynb0jayR+mig/hroxBiHR3STBJ7eZmamV1w==
+   dependencies:
+-    "@jsii/check-node" "1.141.0"
+-    "@jsii/spec" "1.141.0"
++    "@jsii/check-node" "1.142.0"
++    "@jsii/spec" "1.142.0"
+     clone "^2.1.2"
+-    codemaker "^1.141.0"
++    codemaker "^1.142.0"
+     commonmark "^0.31.2"
+     escape-string-regexp "^4.0.0"
+     fs-extra "^10.1.0"
+-    jsii-reflect "^1.141.0"
++    jsii-reflect "^1.142.0"
+     semver "^7.8.5"
+     spdx-license-list "^6.12.0"
+     xmlbuilder "^15.1.1"
+     yargs "^17.7.3"
+ 
+-jsii-reflect@1.141.0, jsii-reflect@^1.141.0:
++jsii-reflect@1.142.0, jsii-reflect@^1.142.0:
++  version "1.142.0"
++  resolved "https://registry.npmjs.org/jsii-reflect/-/jsii-reflect-1.142.0.tgz#d4baddeec51f55c277670a8987d8cceca47bc298"
++  integrity sha512-bMC1hT6mlkiJEheFF8Yt9KT2N9ZmP1+t8XwluAvOBUgvwrGvVei8GkgenwEsuMr7rf9X69xWTJbxiocrWNqvLg==
++  dependencies:
++    "@jsii/check-node" "1.142.0"
++    "@jsii/spec" "1.142.0"
++    chalk "^4"
++    fs-extra "^10.1.0"
++    oo-ascii-tree "^1.142.0"
++    yargs "^17.7.3"
++
++jsii-reflect@^1.141.0:
+   version "1.141.0"
+   resolved "https://registry.npmjs.org/jsii-reflect/-/jsii-reflect-1.141.0.tgz#14344f6ac61651c75c3eeab6e3eb5d3b80b8cbb1"
+   integrity sha512-M51GkGF3PX4iBFm2HLemzxgEdqEoEjvzLYQAvsO0yGY351F2ZlRm2afn9Sx6XcrNCH4IXddDBfxktt46kh5nNA==
+@@ -11721,6 +11746,11 @@ oo-ascii-tree@^1.141.0:
+   resolved "https://registry.npmjs.org/oo-ascii-tree/-/oo-ascii-tree-1.141.0.tgz#62
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39400** (2026-10-20): chore(merge-back): 2.274.0 (@aws-cdk-automation)
+- **PR #39399** (2026-10-20): chore: upgrade jsii toolchain (@mrgrain)
+- **PR #39398** (2026-10-20): chore(release): 2.274.0 (@aws-cdk-automation)
+- **PR #39397** (closed): chore(release): 2.274.0 (@aws-cdk-automation)
 - **PR #39349** (2026-10-16): chore(deps): upgrade @aws-cdk/cloud-assembly-api to ^2.5.0 (@kumsmrit)
 - **PR #39314** (2026-10-16): chore(deps): upgrade @aws-cdk/cloud-assembly-schema to ^55.0.0 (@kumsmrit)
-- **PR #39306** (2026-10-16): fix(redshift-alpha): backslashes in user passwords and comments are not preserved (@ozelalisen)
-- **PR #39196** (2026-10-13): feat(cloudfront): add always-amz-auth signing behavior for origin access control (@piotrekwitkowski)
-- **PR #39193** (2026-10-13): chore(deps): bump mikepenz/action-junit-report from 6.5.0 to 6.6.1 (@dependabot[bot])
-- **PR #39156** (2026-10-13): chore(rds): add Aurora PostgreSQL engine versions 18.3 and 18.6 (@ozelalisen)
 
 ---
 
@@ -1778,55 +1645,40 @@ Every combination accepted before is still accepted; `172.17.0.0`–`172.31.255.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873)
+## X. merge-back): 2.274.0 (#39400)
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk/aws-ec2-alpha/lib/vpc-v2.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.v2.alpha.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f48c902`: ec2-alpha): allow valid secondary CIDR blocks outside RFC 1918 (#36873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec693779`: merge-back): 2.274.0 (#39400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-ec2-alpha/lib/vpc-v2.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.v2.alpha.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            throw new Error(`CIDR block ${secondaryVpcOptions.ipv4CidrBlock} cannot be added as a secondary block to a VPC whose primary CIDR block is ${this.resource.cidrBlock}. See the IPv4 CIDR block association restrictions in the Amazon VPC User Guide: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions`);
- * Returns the RFC 1918 range (10.0.0.0/8, 172.16.0.0/12 or 192.168.0.0/16) an address belongs to, if any.
- */
-function rfc1918Range(ip: IPaddressConfig): string | undefined {
-  if (ip.octet1 === 10) {
-    return '10.0.0.0/8';
-  }
-  if (ip.octet1 === 172 && ip.octet2 >= 16 && ip.octet2 <= 31) {
-    return '172.16.0.0/12';
-  }
-  if (ip.octet1 === 192 && ip.octet2 === 168) {
-    return '192.168.0.0/16';
-  }
-  return undefined;
-}
+## [2.274.0-alpha.0](https://github.com/aws/aws-cdk/compare/v2.273.0-alpha.0...v2.274.0-alpha.0) (2026-10-20)
 
-/**
- * Validates whether a secondary IPv4 CIDR block can be associated with a VPC that has the given primary IPv4 CIDR block.
- * @returns True if the association is permitted, false otherwise.
- * Follows the IPv4 CIDR block association restrictions in the Amazon VPC User Guide:
- * https://docs.aws.amazon.com/vpc/latest/userguide/vpc-cidr-blocks.html#add-cidr-block-restrictions
- * - An RFC 1918 primary perm
+
+### Features
+
+* **bedrock-alpha:** add VectorKnowledgeBase L2 construct for bedrock knowledge bases ([#38883](https://github.com/aws/aws-cdk/issues/38883)) ([5041639](https://github.com/aws/aws-cdk/commit/5041639479aaa5204ff2ff1068f1bae40b32164d)), closes [aws/aws-cdk-rfcs#686](https://github.com/aws/aws-cdk-rfcs/issues/686)
+
+
+### Bug Fixes
+
+* **ec2-alpha:** allow valid secondary CIDR blocks outside RFC 1918 ([#36873](https://github.com/aws/aws-cdk/issues/36873)) ([8f48c90](https://github.com/aws/aws-cdk/commit/8f48c9024329100068d8376a8f309912e7fb2b13)), closes [#36111](https://github.com/aws/aws-cdk/issues/36111)
+* **redshift-alpha:** backslashes in user passwords and comments are not preserved ([#39306](https://github.com/aws/aws-cdk/issues/39306)) ([1f752b6](https://github.com/aws/aws-cdk/commit/1f752b67bfdd52181273e9ffb17ae9005c16b9f9))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-            throw new Error('CIDR block should be in the same RFC 1918 range in the VPC');
- * Validates whether a secondary IPv4 address is within the same private IP address range as the primary IPv4 address.
- * @returns True if the secondary IPv4 CIDR block is within the same private IP address range as the primary IPv4 CIDR block, false otherwise.
- * The private IP address ranges are defined by RFC 1918 as 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.
-  return (ip1.octet1 === 10 && ip2.octet1 === 10) ||
-    (ip1.octet1 === 192 && ip1.octet2 === 168 && ip2.octet1 === 192 && ip2.octet2 === 168) ||
-    (ip1.octet1 === 172 && ip1.octet2 === 16 && ip2.octet1 === 172 && ip2.octet2 === 16); // CIDR ranges belong to same private IP address ranges
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f48c902` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec693779` are properly handled with clean fallback behavior.

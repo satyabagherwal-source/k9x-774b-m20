@@ -3948,3 +3948,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `94e358e6` | Multi-dimensional audit evidence | 2026-10-20T17:49:22.240Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-20T17:49:23.366Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `1853d733` | Multi-dimensional audit evidence | 2026-10-20T17:49:31.418Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-20T17:55:39.580Z |
+| `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `9b8f899f` | Multi-dimensional audit evidence | 2026-10-20T17:55:42.054Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ec693779` | Multi-dimensional audit evidence | 2026-10-20T17:55:45.261Z |

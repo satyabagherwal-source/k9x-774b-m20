@@ -3941,3 +3941,6 @@
 | `CYCLE-20261020-9QK7` | `2026-10-20T17:49:22.231Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3297` | Yes (`1ad9298d...`) |
 | `CYCLE-20261020-9RFJ` | `2026-10-20T17:49:23.359Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1905, Rule 3298` | Yes (`2ac4056a...`) |
 | `CYCLE-20261020-9XN7` | `2026-10-20T17:49:31.411Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3299` | Yes (`19e759fc...`) |
+| `CYCLE-20261020-HTPY` | `2026-10-20T17:55:39.574Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3300, Rule 3301, Rule 3302` | Yes (`a0003d78...`) |
+| `CYCLE-20261020-HVMN` | `2026-10-20T17:55:42.047Z` | `komi-store/komi-store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3303` | Yes (`7ed7192f...`) |
+| `CYCLE-20261020-HY3U` | `2026-10-20T17:55:45.258Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md` | Yes (`252e144e...`) |

@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "64e030ceefe8c05ba1d7e0df14f12fb2d387dabffb5b00af2289c1105869ae99",
-    "lastHarvestedAt": "2026-10-19T04:19:32.765Z",
+    "contentHash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
+    "lastHarvestedAt": "2026-10-20T17:55:39.580Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "8f48c902",
+    "sourceVersion": "ec693779",
     "license": "Apache-2.0",
-    "contentHash": "8fe98d6e724f5d6dc53c2359278882694b0021abaaad7cacecddd9768f6bc90d",
-    "lastHarvestedAt": "2026-10-20T02:15:40.748Z",
+    "contentHash": "252e144ed78562ab54168d21ca02ebdbf40e242d1cfa97c45573df43b2941d02",
+    "lastHarvestedAt": "2026-10-20T17:55:45.261Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -6353,10 +6353,10 @@
     "repository": "komi-store/komi-store",
     "platform": "github",
     "sourceUrl": "https://github.com/komi-store/komi-store",
-    "sourceVersion": "95935997",
+    "sourceVersion": "9b8f899f",
     "license": "Apache-2.0",
-    "contentHash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
-    "lastHarvestedAt": "2026-10-19T05:45:30.134Z",
+    "contentHash": "7ed7192f57f03c16dca4f65f714f900f6a5da04accdab1fcc07517064d7865b4",
+    "lastHarvestedAt": "2026-10-20T17:55:42.054Z",
     "learningId": "learn-github-komi-store-komi-store"
   },
   "opentofu-opentofu": {
