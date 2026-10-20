@@ -3877,3 +3877,5 @@
 | `CYCLE-20261020-01TZ` | `2026-10-20T15:49:51.815Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`16351634...`) |
 | `CYCLE-20261020-057M` | `2026-10-20T15:49:56.194Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`b91713bd...`) |
 | `CYCLE-20261020-0HKG` | `2026-10-20T15:50:12.208Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3247` | Yes (`eef8c0ca...`) |
+| `CYCLE-20261020-8HQQ` | `2026-10-20T15:56:25.682Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`c6c639bb...`) |
+| `CYCLE-20261020-8LC1` | `2026-10-20T15:56:30.337Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3248` | Yes (`6d08ce96...`) |

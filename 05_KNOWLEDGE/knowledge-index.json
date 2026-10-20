@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T15:50:12.141Z",
+  "last_updated": "2026-10-20T15:56:30.284Z",
   "total_verified_learnings": 1055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38122,14 +38122,19 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "2641b08f",
-      "content_hash": "19f9b912478544f7a0eba43956f34bfb4b23a87e9cb6e93af87b17a3d05334e0",
+      "source_version": "e1dfb482",
+      "content_hash": "6d08ce967ce9bd8b075304f2d2b83a697ee5861db354cc6487882464c9adc9d5",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
         {
           "number": 2091,
           "title": "metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#200",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3248,
+          "title": "Resolver: Resolve the package of a directory once for all extension candidates (",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -38138,7 +38143,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:53:46.898Z",
+      "verified_at": "2026-10-20T15:56:30.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56607,7 +56612,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
+      "content_hash": "c6c639bbf463088642e32c31976390c10b99c803a112ffa7aea85c393d4866bb",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [
@@ -56647,7 +56652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:19:23.626Z",
+      "verified_at": "2026-10-20T15:56:25.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102252,6 +102257,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:50:12.130Z"
+    },
+    "rule-3248": {
+      "learning_id": "rule-3248",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3248,
+      "title": "Resolver: Resolve the package of a directory once for all extension candidates (",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "e1dfb482",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:56:30.272Z"
     }
   },
   "aliases": {

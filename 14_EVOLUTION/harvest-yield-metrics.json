@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T15:50:12.219Z",
-  "total_cycles_completed": 3854,
-  "total_learnings_persisted": 3854,
-  "total_rules_promoted": 3064,
+  "last_updated": "2026-10-20T15:56:30.368Z",
+  "total_cycles_completed": 3856,
+  "total_learnings_persisted": 3856,
+  "total_rules_promoted": 3065,
   "history": [
-    {
-      "timestamp": "2026-10-20T03:13:11.857Z",
-      "repository": "DevExpress/testcafe",
-      "learningId": "learn-github-devexpress-testcafe",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:13:13.846Z",
-      "repository": "Planetable/Planet",
-      "learningId": "learn-github-planetable-planet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T03:13:18.451Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T15:50:12.219Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:56:25.690Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:56:30.368Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

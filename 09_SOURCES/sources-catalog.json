@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
-    "lastHarvestedAt": "2026-10-19T02:19:23.660Z",
+    "contentHash": "c6c639bbf463088642e32c31976390c10b99c803a112ffa7aea85c393d4866bb",
+    "lastHarvestedAt": "2026-10-20T15:56:25.685Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "2641b08f",
+    "sourceVersion": "e1dfb482",
     "license": "MIT",
-    "contentHash": "19f9b912478544f7a0eba43956f34bfb4b23a87e9cb6e93af87b17a3d05334e0",
-    "lastHarvestedAt": "2026-10-19T03:53:46.950Z",
+    "contentHash": "6d08ce967ce9bd8b075304f2d2b83a697ee5861db354cc6487882464c9adc9d5",
+    "lastHarvestedAt": "2026-10-20T15:56:30.345Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {

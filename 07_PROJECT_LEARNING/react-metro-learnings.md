@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `2641b08f`  
+> **Source Version**: `e1dfb482`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:53:46.696Z  
+> **Timestamp**: 2026-10-20T15:56:29.948Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:53:46.688Z  
+> **Harvest Timestamp**: 2026-10-20T15:56:29.941Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1462,826 +1462,613 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a33cc669` (2026-10-06)
-**Commit Message**: metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#2009)
+### Incident Patch 1: `e1dfb482` (2026-10-20)
+**Commit Message**: Resolver: Resolve the package of a directory once for all extension candidates (#1945)
 
-## Bugs in `getDifference`
+## Summary
+`resolveFile` tries each candidate extension in turn, and for each one `resolveSourceFileForExt` calls `redirectModulePath`, which asks `context.getPackageForModule` for the package scope of the candidate path. Every candidate in a directory belongs to the same package, so that's the same question asked once per extension - and because Metro's `PackageCache` memoises by module path, each distinct candidate string misses the first time it's seen, mostly for files that don't exist.
 
-`getDifference` is used in two places, at startup and on a mid-session `'recrawl'`, to reconcile new state with old. This affects `'recrawl'` only. Watchers emit `'recrawl'` events when a directory is moved or hard-linked into the project, and the watcher alone can't determine the contents.
+This asks once, up front, for the package of the files in the directory, and shares it with every candidate via the source file context, applying each candidate's `mainFields` redirections with `redirectPackageSubpath`.
 
- The bug occurs when a fresh directory appears where the previous state holds a file (or symlink) of the same name.
+The package of the files in a directory isn't always the package of the directory itself - a `node_modules` directory belongs to whatever contains it while the files in it belong to none, and a symlink can change which directory along the way is named `node_modules`. So `getCandidatePackageScope` asks about the directory's `package.json`, which every lookup for a file there checks, so it get
 
-https://github.com/react/metro/blob/818594effd02842bb56569c639a24171b53bd209/packages/metro-file-map/src/lib/TreeFS.js#L180-L186
-
-There are actually two bugs here:
-1. We're using `followLeaf` incorrectly - we shouldn't be following here:
-    - A working symlink pointing to a directory in the file map will result in the symlink's target being compared with the new crawl result, which is totally wrong and will report incorrectly that all of the symlink's target's contents have been deleted.
-    - A broken symlink or a link to outside the watched roots will return a `exists: false` when looked up with `followLeaf`, and so will never be removed when replaced by a directory 
-
-**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +8/-2)
+**File**: `packages/metro-resolver/src/__tests__/package-scope-test.js` (added, +222/-0)
 ```diff
-@@ -178,12 +178,18 @@ export default class TreeFS implements MutableFileSystem {
-     let prefix: string = '';
-     if (subpath != null && subpath !== '') {
-       const lookupResult = this.#lookupByNormalPath(subpath, {
--        followLeaf: true,
-+        followLeaf: false,
-       });
--      if (!lookupResult.exists || !isDirectory(lookupResult.node)) {
-+      if (!lookupResult.exists) {
-         // Directory doesn't exist, nothing to compare - all files are new
-         return {changedFiles, removedFiles};
-       }
-+      if (!isDirectory(lookupResult.node)) {
-+        // A file or symlink has been replaced by this directory, so it is
-+        // removed and everything under the directory is new.
-+        removedFiles.add(lookupResult.canonicalPath);
-+        return {changedFiles, removedFiles};
-+      }
-       rootNode = lookupResult.node;
-       prefix = lookupResult.canonicalPath;
-     }
-```
-
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +17/-0)
-```diff
-@@ -447,6 +447,23 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-       });
-     });
- 
-+    test.each([
-+      ['regular file', p('bar.js'), p('bar.js/file.js')],
-+      ['symlink', p('link-to-foo'), p('link-to-foo/file.js')],
-+    ])(
-+      'with subpath of a %s replaced by a directory removes it, and returns all as new',
-+      (_, subpath, filePath) => {
-+        const newFiles: FileData = new Map<CanonicalPath, FileMetadata>([
-+          [filePath, [123, 0, 0, null, 0, null]],
-+        ]);
+@@ -0,0 +1,222 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @flow strict-local
++ * @format
++ * @oncall react_native
++ */
 +
-+        expect(tfs.getDifference(newFiles, {subpath})).toEqual({
-+          changedFiles: newFiles,
-+          removedFiles: new Set([subpath]),
-+        });
-+      },
++import type {PackageForModule, ResolutionContext} from '../types';
++
++import * as Resolver from '../index';
++import {
++  createPackageAccessors,
++  createResolutionContext,
++  posixToSystemPath as p,
++} from './utils';
++
++// These pin the paths the resolver passes to `getPackageForModule` for each
++// kind of specifier, so that a change in lookups per resolution is deliberate.
++describe('package scope lookups', () => {
++  // The path the resolver asks about for the files in a directory
++  const filesIn = (dirPath: string) => p(dirPath + '/package.json');
++
++  const fileMap = {
++    [p('/root/package.json')]: JSON.stringify({name: 'root'}),
++    [p('/root/src/main.js')]: '',
++    [p('/root/src/foo.js')]: '',
++    [p('/root/src/lib/index.js')]: '',
++    [p('/root/node_modules/pkg/package.json')]: JSON.stringify({
++      name: 'pkg',
++      main: 'lib/index',
++      browser: {'./lib/redirected.js': './lib/other.js'},
++    }),
++    [p('/root/node_modules/pkg/lib/index.js')]: '',
++    [p('/root/node_modules/pkg/lib/sub.js')]: '',
++    [p('/root/node_modules/pkg/lib/other.js')]: '',
++    [p('/root/node_modules/nopkg/index.js')]: '',
++  };
++
++  let getPackageForModule: JestMockFn<[string], ?PackageForModule>;
++  let context: ResolutionContext;
++
++  function useFileMap(files: typeof fileMap) {
++    const accessors = createPackageAccessors(files);
++    getPackageForModule = jest.fn(accessors.getPackageForModule);
++    context = {
++      ...createResolutionContext(files),
++      ...accessors,
++      getPackageForModule,
++      originModulePath: p('/root/src/main.js'),
++    };
++  }
++
++  beforeEach(() => {
++    useFileMap(fileMap);
++  });
++
++  const lookedUpPaths = () =>
++    getPackageForModule.mock.calls.map(([modulePath]) => modulePath);
++
++  test('relative file, found after trying several extensions', () => {
++    expect(Resolver.resolve(context, './foo', 'ios')).toEqual({
++      type: 'sourceFile',
++      filePath: p('/root/src/foo.js'),
++    });
++    expect(lookedUpPaths()).toEqual([p('/root/src/foo'), filesIn('/root/src')]);
++  });
++
++  test('relative file, when its package.json is a package root', () => {
++    useFileMap({
++      ...fileMap,
++      // A package whose "browser" field must not apply to the files beside it
++      [p('/root/src/package.json/package.json')]: JSON.stringify({
++        name: 'stand-in',
++        browser: {'./foo.js': false},
++      }),
++    });
++    expect(Resolver.resolve(context, './foo', 'ios')).toEqual({
++      type: 'sourceFile',
++      filePath: p('/root/src/foo.js'),
++    });
++    // The stand-in is retried with another name
++    expect(lookedUpPaths()).toEqual([
++      p('/root/src/foo'),
++      filesIn('/root/src'),
++      filesIn('/root/src') + '_',
++    ]);
++  });
++
++  test('throws if the scope is never that of the stand-in file', () => {
++    getPackageForModule = jest.fn(() => ({
++      rootPath: p('/root'),
++      packageJson: {name: 'root'},
++      packageRelativePath: '',
++    }));
++    context = {...context, getPackageForModule};
++    expect(() => Resolver.resolve(context, './foo', 'ios')).toThrow(
++      `getPackageForModule(${JSON.stringify(filesIn('/root/src') + '__')}) ` +
++        'returned packageRelativePath "", which should end in ' +
++        '"package.json__".',
 +    );
++    expect(lookedUpPaths()).toEqual([
++      p('/root/src/foo'),
++      filesIn('/root/src'),
++      filesIn('/root/src') + '_',
++      filesIn('/root/src') + '__',
++    ]);
++  });
 +
-     test('with empty subpath behaves like no subdirectory specified', () => {
-       const newFiles: FileData = new Map<CanonicalPath, FileMetadata>([
-         [p('foo/another.js'), [123, 0, 0, null, 0, null]],
++  test('relative file in the file system root', () => {
++    useFileMap({[p('/main.js')]: '', [p('/foo.js')]: ''});
++    context = {...context, originModulePath: p('/main.js')};
++    expect(Resolver.resolve(context, './foo', 'ios')).toEqual({
++      type: 'sourceFile',
++      filePath: p('/foo.js'),
++    });
++    expect(lookedUpPaths()).toEqual([p('/foo'), filesIn('')]);
++  });
++
++  test('relative file with an explicit extension', () => {
++    expect(Resolver.resolve(context, './foo.js', 'ios')).toEqual({
++      type: 'sourceFile',
++      filePath: p('/root/src/foo.js'),
++    });
++    expect(lookedUpPaths()).toEqual([
++      p('/root/src/foo.js'),
++      filesIn('/root/src'),
++    ]);
++  });
++
++  test('relative directory, resolved to its index', () => {
++    expect(Resolver.resolve(context, './lib', 'ios')).toEqual({
++      type: 'sourceFile',
++      filePath: p('/root/src/lib/index.js'),
++    });
++    expect(lookedUpPaths()).toEqual([
++      p('/root/src/lib'),
++      filesIn('/root/src'),
++      filesIn('/root/src/lib'),
++    ]);
++  });
++
++  test('package entry point', () => {
++    expect(Resolver.resolve(context, 'pkg', 'ios')).toEqual({
++      type: 'sourceFile',
++      filePath: p('/root/node_modules/pkg/lib/index.js'),
++    });
+
 ```
 
----
-
-### Incident Patch 2: `ded095db` (2026-10-14)
-**Commit Message**: Graph: Carry require.context inputs as a VirtualSource (#2041)
-
-`Graph` threads a `RequireContext` per module from `buildSubgraph` through commit, snapshots and release, so that the transformer can render a context module's template. It's the one place Metro carries a transform's input on a dependency edge rather than reading it from disk.
-
-This generalises that slot to `VirtualSource`, a tagged union whose only arm for now is a `require.context`'s parameters, so that a virtual module's source can travel the same way (https://github.com/react/metro/pull/2036) rather than through a second mechanism beside it. `ModuleData.resolvedContexts` becomes `virtualSources`, and `markModifiedContextModules` only considers context entries.
-
-Changelog: Internal
-
-**File**: `packages/metro/src/DeltaBundler/Graph.js` (modified, +24/-22)
+**File**: `packages/metro-resolver/src/resolve.js` (modified, +73/-2)
 ```diff
-@@ -29,7 +29,6 @@
-  *    nodes and entries in the importBundleNodes set.
-  */
- 
--import type {RequireContext} from '../lib/contextModule';
- import type {RequireContextParams} from '../ModuleGraph/worker/collectDependencies';
+@@ -12,6 +12,7 @@
  import type {
-   Dependencies,
-@@ -41,6 +40,7 @@ import type {
-   Options,
-   ResolvedDependency,
-   TransformInputOptions,
-+  VirtualSource,
- } from './types';
+   FileAndDirCandidates,
+   FileCandidates,
++  PackageForModule,
+   Resolution,
+   ResolutionContext,
+   Result,
+@@ -31,6 +32,7 @@ import {
+   getPackageEntryPoint,
+   matchSubpathFromMainFields,
+   redirectModulePath,
++  redirectPackageSubpath,
+ } from './PackageResolve';
+ import resolveAsset from './resolveAsset';
+ import isAssetFile from './utils/isAssetFile';
+@@ -743,7 +745,12 @@ function resolveFile(
  
- import {fileMatchesContext} from '../lib/contextModule';
-@@ -149,8 +149,11 @@ export class Graph<T = MixedOutput> {
-     possibleCycleRoots: new Set(),
-   };
- 
--  /** Resolved context parameters from `require.context`. */
--  #resolvedContexts: Map<string, RequireContext> = new Map();
-+  /**
-+   * Sources of the modules in the graph that have no file, keyed by module
-+   * path.
-+   */
-+  #virtualSources: Map<string, VirtualSource> = new Map();
- 
-   constructor(options: GraphInputOptions) {
-     this.entryPoints = options.entryPoints;
-@@ -348,17 +351,17 @@ export class Graph<T = MixedOutput> {
-     options: InternalOptions<T>,
-     moduleFilter?: (path: string) => boolean,
-   ): Promise<Delta<T>> {
--    const subGraph = await buildSubgraph(pathsToVisit, this.#resolvedContexts, {
-+    const subGraph = await buildSubgraph(pathsToVisit, this.#virtualSources, {
-       resolve: options.resolve,
-       shouldTraverse: (dependency: ResolvedDependency) => {
-         if (options.shallow || isWeakOrLazy(dependency, options)) {
-           return false;
-         }
-         return moduleFilter == null || moduleFilter(dependency.absolutePath);
-       },
--      transform: async (absolutePath, requireContext) => {
-+      transform: async (absolutePath, virtualSource) => {
-         options.onDependencyAdd();
--        const result = await options.transform(absolutePath, requireContext);
-+        const result = await options.transform(absolutePath, virtualSource);
-         options.onDependencyAdded();
-         return result;
-       },
-@@ -394,7 +397,7 @@ export class Graph<T = MixedOutput> {
-     const previousDependencies = previousModule?.dependencies ?? new Map();
-     const {
-       dependencies: currentDependencies,
--      resolvedContexts,
-+      virtualSources,
-       ...transformResult
-     } = currentModule;
- 
-@@ -449,7 +452,7 @@ export class Graph<T = MixedOutput> {
-             nextModule,
-             key,
-             curDependency,
--            resolvedContexts.get(key),
-+            virtualSources.get(key),
-             delta,
-             options,
-           );
-@@ -507,7 +510,7 @@ export class Graph<T = MixedOutput> {
-     parentModule: Module<T>,
-     key: string,
-     dependency: Dependency,
--    requireContext: ?RequireContext,
-+    virtualSource: ?VirtualSource,
-     delta: Delta<T>,
-     options: InternalOptions<T>,
-   ): void {
-@@ -555,12 +558,12 @@ export class Graph<T = MixedOutput> {
- 
-     if (isResolvedDependency(dependency)) {
-       const path = dependency.absolutePath;
--      if (requireContext) {
--        this.#resolvedContexts.set(path, requireContext);
-+      if (virtualSource) {
-+        this.#virtualSources.set(path, virtualSource);
-       } else {
-         // This dependency may have existed previously as a require.context -
-         // clean it up.
--        this.#resolvedContexts.delete(path);
-+        this.#virtualSources.delete(path);
-       }
-     }
- 
-@@ -623,10 +626,11 @@ export class Graph<T = MixedOutput> {
-     filePath: string,
-     modifiedPaths: Set<string> | CountingSet<string>,
-   ) {
--    for (const [absolutePath, context] of this.#resolvedContexts) {
-+    for (const [absolutePath, virtualSource] of this.#virtualSources) {
-       if (
-+        virtualSource.type === 'requireContext' &&
-         !modifiedPaths.has(absolutePath) &&
--        fileMatchesContext(filePath, context)
-+        fileMatchesContext(filePath, virtualSource.requireContext)
-       ) {
-         modifiedPaths.add(absolutePath);
-       }
-@@ -761,23 +765,21 @@ export class Graph<T = MixedOutput> {
-     const {dependencies, getSource, output, unstable_transformResultKey} =
-       module;
- 
--    const resolvedContexts: Map<string, RequireContext> = new Map();
-+    const virtualSources: Map<string, VirtualSource> = new Map();
-     for (const [key, dependency] of dependencies) {
-       if (!isResolvedDependency(dependency)) {
-         continue;
-       }
--      const resolvedContext = this.#resolvedContexts.get(
--        dependency.absolutePath,
--      );
--      if (resolvedContext != null) {
--        resolvedContexts.set(key, resolvedContext);
-+      const virtualSource = this.#virtualSources.get(dependency.absolutePath);
-+      if (virtualSource != null) {
-+        virtualSources.set(key, virtualSource);
-       }
-     }
-     return {
-       dependencies: new Map(dependencies),
-       getSource,
-       output,
--      resolvedContexts,
-+      virtualSources,
-       unstable_transformResultKey,
-     };
-   }
-@@ -828,7 +830,7 @@ export class Graph<T = MixedOutput> {
-     this.dependencies.delete(module.path);
-     this.#gc.possibleCycleRo
-```
-
-**File**: `packages/metro/src/DeltaBundler/__tests__/Graph-test.js` (modified, +20/-14)
-```diff
-@@ -32,7 +32,6 @@
-  *   boxes/lines as needed).
-  */
- 
--import type {RequireContext} from '../../lib/contextModule';
- import type {RequireContextParams} from '../../ModuleGraph/worker/collectDependencies';
- import type {Result} from '../Graph';
- import type {
-@@ -46,6 +45,7 @@ import type {
-   TransformFn,
-   TransformResultDependency,
-   TransformResultWithSource,
-+  VirtualSource,
- } from '../types';
- 
- import {deriveAbsolutePathFromContext} from '../../lib/contextModule';
-@@ -357,10 +357,10 @@ beforeEach(async () => {
- 
-   mockTransform = jest
-     .fn<
--      [string, ?RequireContext],
-+      [string, ?VirtualSource],
-       Promise<TransformResultWithSource<MixedOutput>>,
-     >()
--    .mockImplementation(async (path: string, context: ?RequireContext) => {
-+    .mockImplementation(async (path: string, context: ?VirtualSource) => {
-       const override = transformOverrides.get(path);
-       if (override != null) {
-         return override(path, context);
-@@ -556,7 +556,7 @@ test('should retry traversing dependencies after a transform error', async () =>
- 
-   const localOptions = {
-     ...options,
--    transform(path: string, context: ?RequireContext) {
-+    transform(path: string, context: ?VirtualSource) {
-       if (path === '/bad') {
-         throw new BadError();
-       }
-@@ -2351,7 +2351,7 @@ describe('edge cases', () => {
-       let fastResolved = false;
- 
-       localMockTransform.mockImplementation(
--        async (path: string, context: ?RequireContext) => {
-+        async (path: string, context: ?VirtualSource) => {
-           const result = await mockTransform(path, context);
- 
-           if (path === slowPath && !fastResolved) {
-@@ -2967,10 +2967,13 @@ describe('require.context', () => {
-   };
- 
-   const ctxResolved = {
--    recursive: true,
--    mode: 'sync',
--    filter: /.*/,
--    from: p('/ctx'),
-+    type: 'requireContext',
-+    requireContext: {
-+      recursive: true,
-+      mode: 'sync',
-+      filter: /.*/,
-+      from: p('/ctx'),
-+    },
-   };
- 
-   const ctxPath = deriveAbsolutePathFromContext(p('/ctx'), ctxParams);
-@@ -3301,10 +3304,13 @@ describe('require.context', () => {
-     };
- 
-     const narrowCtxResolved = {
--      recursive: true,
--      mode: 'sync',
--      filter: /\.\/narrow\/.*/,
--      from: p('/ctx'),
-+      type: 'requireContext',
-+      requireContext: {
-+        recursive: true,
-+        mode: 'sync',
-+        filter: /\.\/narrow\/.*/,
-+        from: p('/ctx'),
-+      },
-     };
- 
-     const narrowCtxPath = deriveAbsolutePathFromContext(
-@@ -3592,7 +3598,7 @@ describe('optional dependencies', () => {
-   const createMockTransform = (notOptional?: string[]) => {
-     /* $FlowFixMe[missing-this-annot] The 'this' type annotation(s) required by
-      * Flow's LTI update could not be added via codemod */
--    return async function (path: string, context: ?RequireContext) {
-+    return async function (path: string, context: ?VirtualSource) {
-       const result = await mockTransform.call(this, path, context);
-       return {
-         ...result,
-```
-
-**File**: `packages/metro/src/DeltaBundler/__tests__/buildSubgraph-test.js` (modified, +12/-6)
-```diff
-@@ -117,7 +117,7 @@ describe('GraphTraversal', () => {
-       ]),
-       getSource: expect.any(Function),
-       output: [],
--      resolvedContexts: new Map(),
-+      virtualSources: new Map(),
-     });
-   });
- 
-@@ -139,7 +139,7 @@ describe('GraphTraversal', () => {
-     };
-     expect(params.transform).toHaveBeenCalledWith(
-       p('/virtual?ctx=af3bf59b8564d441084c02bdf04c4d662d74d3bd'),
--      expectedResolvedContext,
-+      {type: 'requireContext', requireContext: expectedResolvedContext},
-     );
-     expect(params.transform).toHaveBeenCalledWith(
-       p('/contextMatch'),
-@@ -167,8 +167,14 @@ describe('GraphTraversal', () => {
-                 },
-               ],
-             ]),
--            resolvedContexts: new Map([
--              ['key-virtual', expectedResolvedContext],
-+            virtualSources: new Map([
-+              [
-+                'key-virtual',
-+                {
-+                  type: 'requireContext',
-+                  requireContext: expectedResolvedContext,
-+                },
-+              ],
-             ]),
-             output: [],
-             getSource: expect.any(Function),
-@@ -178,7 +184,7 @@ describe('GraphTraversal', () => {
-           p('/contextMatch'),
-           {
-             dependencies: new Map(),
--            resolvedContexts: new Map(),
-+            virtualSources: new Map(),
-             output: [],
-             getSource: expect.any(Function),
-           },
-@@ -201,7 +207,7 @@ describe('GraphTraversal', () => {
-                 },
-               ],
-             ]),
--            resolvedContexts: new Map(),
-+            virtualSources: new Map(),
-             output: [],
-             getSource: expect.any(Function),
-           },
-```
-
-**File**: `packages/metro/src/DeltaBundler/buildSubgraph.js` (modified, +13/-9)
-```diff
-@@ -16,6 +16,7 @@ import type {
-   ResolveFn,
-   TransformFn,
-   TransformResultDependency,
-+  VirtualSource,
- } from './types';
- 
- import {deriveAbsolutePathFromContext} from '../lib/contextModule';
-@@ -34,10 +35,10 @@ function resolveDependencies(
-   resolve: ResolveFn,
- ): {
-   dependencies: Map<string, Dependency>,
--  resolvedContexts: Map<string, RequireContext>,
-+  virtualSources: Map<string, VirtualSource>,
- } {
-   const maybeResolvedDeps = new Map<string, Dependency>();
--  const resolvedContexts = new Map<string, RequireContext>();
-+  const virtualSources = new Map<string, VirtualSource>();
- 
-   for (const dep of dependencies) {
-     let maybeResolvedDep: Dependency;
-@@ -61,7 +62,10 @@ function resolveDependencies(
-         recursive: contextParams.recursive,
-       };
- 
--      resolvedContexts.set(key, resolvedContext);
-+      virtualSources.set(key, {
-+        type: 'requireContext',
-+        requireContext: resolvedContext,
-+      });
- 
-       maybeResolvedDep = {
-         absolutePath,
-@@ -95,13 +99,13 @@ function resolveDependencies(
- 
-   return {
-     dependencies: maybeResolvedDeps,
--    resolvedContexts,
-+    virtualSources,
-   };
- }
- 
- export async function buildSubgraph<T>(
-   entryPaths: ReadonlySet<string>,
--  resolvedContexts: ReadonlyMap<string, ?RequireContext>,
-+  virtualSources: ReadonlyMap<string, ?VirtualSource>,
-   {resolve, transform, shouldTraverse}: Parameters<T>,
- ): Promise<{
-   moduleData: Map<string, ModuleData<T>>,
-@@ -113,13 +117,13 @@ export async function buildSubgraph<T>(
- 
-   async function visit(
-     absolutePath: string,
--    requireContext: ?RequireContext,
-+    virtualSource: ?VirtualSource,
-   ): Promise<void> {
-     if (visitedPaths.has(absolutePath)) {
-       return;
-     }
-     visitedPaths.add(absolutePath);
--    const transformResult = await transform(absolutePath, requireContext);
-+    const transformResult = await transform(absolutePath, virtualSource);
- 
-     // Get the absolute path of all sub-dependencies (some of them could have been
-     // moved but maintain the same relative path).
-@@ -143,15 +147,15 @@ export async function buildSubgraph<T>(
-         .map(dependency =>
-           visit(
-             dependency.absolutePath,
--            resolutionResult.resolvedContexts.get(dependency.data.data.key),
-+            resolutionResult.virtualSources.get(dependency.data.data.key),
-           ).catch(error => errors.set(dependency.absolutePath, error)),
-         ),
-     );
-   }
- 
-   await Promise.all(
-     [...entryPaths].map(absolutePath =>
--      visit(absolutePath, resolvedContexts.get(absolutePath)).catch(error =>
-+      visit(absolutePath, virtualSources.get(absolutePath)).catch(error =>
-         errors.set(absolutePath, error),
-       ),
-     ),
-```
-
-**File**: `packages/metro/src/DeltaBundler/types.js` (modified, +13/-2)
-```diff
-@@ -90,9 +90,20 @@ export type Module<T = MixedOutput> = Readonly<{
-   unstable_transformResultKey?: ?string,
+   const candidateExts: Array<string> = [];
+   const filePathPrefix = path.join(dirPath, fileName);
+-  const sfContext = {...context, candidateExts, filePathPrefix};
++  const sfContext = {
++    ...context,
++    candidateExts,
++    filePathPrefix,
++    candidatePackageScope: getCandidatePackageScope(context, dirPath, fileName),
++  };
+   const sourceFileResolution = resolveSourceFile(sfContext, platform);
+   if (sourceFileResolution != null) {
+     if (typeof sourceFileResolution === 'string') {
+@@ -758,6 +765,9 @@ type SourceFileContext = Readonly<{
+   ...ResolutionContext,
+   candidateExts: Array<string>,
+   filePathPrefix: string,
++  // The package scope of all candidates, with `packageRelativePath` that of
++  // `filePathPrefix`, or null if they have none.
++  candidatePackageScope: ?PackageForModule,
  }>;
  
-+/**
-+ * How the transform obtains the source of a module that has no file, as
-+ * supplied by the resolution that produced it. A `require.context` module
-+ * arrives as the parameters the transform expands by enumerating the file map.
-+ */
-+export type VirtualSource = Readonly<{
-+  type: 'requireContext',
-+  requireContext: RequireContext,
-+}>;
+ // Either a full path, or a restricted subset of Resolution.
+@@ -829,9 +839,17 @@ function resolveSourceFileForExt(
+   extension: string,
+ ): SourceFileResolution {
+   const filePath = `${context.filePathPrefix}${extension}`;
++  const {candidatePackageScope} = context;
+   const redirectedPath =
+     // Any redirections for the bare path have already happened
+-    extension !== '' ? redirectModulePath(context, filePath) : filePath;
++    extension !== '' && candidatePackageScope != null
++      ? redirectPackageSubpath(
++          context,
++          filePath,
++          candidatePackageScope,
++          candidatePackageScope.packageRelativePath + extension,
++        )
++      : filePath;
+   if (redirectedPath === false) {
+     return {type: 'empty'};
+   }
+@@ -843,6 +861,59 @@ function resolveSourceFileForExt(
+   return null;
+ }
+ 
++// Stands in for every file in a directory when looking up their package scope.
++// Edge case: if `package.json` is itself a directory that is a package root,
++// we append `_` and try again, up to MAX_ANY_FILE_NAME_ATTEMPTS names.
++const ANY_FILE_NAME = 'package.json';
++const MAX_ANY_FILE_NAME_ATTEMPTS = 3;
 +
- export type ModuleData<T = MixedOutput> = Readonly<{
-   dependencies: ReadonlyMap<string, Dependency>,
--  resolvedContexts: ReadonlyMap<string, RequireContext>,
-+  /** Keyed by dependency key, for the dependencies that resolved to a module with no file. */
-+  virtualSources: ReadonlyMap<string, VirtualSource>,
-   output: ReadonlyArray<T>,
-   getSource: () => Buffer,
-   unstable_transformResultKey?: ?string,
-@@ -137,7 +148,7 @@ export type TransformResultWithSource<T = MixedOutput> = Readonly<{
- 
- export type TransformFn<T = MixedOutput> = (
-   string,
--  ?RequireContext,
-+  ?VirtualSource,
- ) => Promise<TransformResultWithSource<T>>;
- 
- export type ResolveFn = (
++/**
++ * The package scope shared by the candidates `fileName` + extension in
++ * `dirPath`, with `packageRelativePath` that of `fileName`.
++ *
++ * Note that this can differ from the scope of `dirPath` itself, or of a
++ * directory named `fileName` - a package root is its own scope, and files
++ * directly in `node_modules` have none.
++ */
++function getCandidatePackageScope(
++  context: ResolutionContext,
++  dirPath: string,
++  fileName: string,
++): ?PackageForModule {
++  const dirPrefix = dirPath.endsWith(path.sep) ? dirPath : dirPath + path.sep;
++  let name = ANY_FILE_NAME;
++  for (let attempt = 1; ; attempt++) {
++    const modulePath = dirPrefix + name;
++    const pkg = context.getPackageForModule(modulePath);
++    if (pkg == null) {
++      return null;
++    }
++    const {packageRelativePath} = pkg;
++    const dirRelativeLength = packageRelativePath.length - name.length;
++    if (
++      packageRelativePath.endsWith(name) &&
++      (dirRelativeLength === 0 ||
++        packageRelativePath[dirRelativeLength - 1] === path.sep)
++    ) {
++      return {
++        ...pkg,
++        packageRelativePath:
++          packageRelativePath.slice(0, dirRelativeLength) + fileName,
++      };
++    }
++    // Otherwise this is the scope of something other than the files here,
++    // usually a package root named `name`.
++    if (attempt === MAX_ANY_FILE_NAME_ATTEMPTS) {
++      throw new Error(
++        `getPackageForModule(${JSON.stringify(modulePath)}) returned ` +
++          `packageRelativePath ${JSON.stringify(packageRelativePath)}, ` +
++          `which should end in ${JSON.stringify(name)}.`,
++      );
++    }
++    name += '_';
++  }
++}
++
+ function isRelativeImport(filePath: string) {
+   return /^[.][.]?(?:[/]|$)/.test(filePath);
+ }
 ```
 
-**File**: `packages/metro/src/lib/transformHelpers.js` (modified, +7/-6)
+**File**: `packages/metro-resolver/src/types.js` (modified, +12/-0)
 ```diff
-@@ -15,10 +15,10 @@ import type {
-   BundlerResolution,
-   TransformInputOptions,
-   TransformResultDependency,
-+  VirtualSource,
- } from '../DeltaBundler/types';
- import type {TransformOptions} from '../DeltaBundler/Worker';
- import type {ResolverInputOptions} from '../shared/types';
--import type {RequireContext} from './contextModule';
- import type {ConfigT} from 'metro-config';
- import type {Type} from 'metro-transform-worker';
+@@ -167,6 +167,18 @@ export type ResolutionContext = Readonly<{
+    * for a given absolute candidate path (which need not exist), or null if
+    * there is no package.json closer than the nearest node_modules directory.
+    *
++   * A path through a symlinked directory checks the link's target, then
++   * continues up from the link's parent. A symlinked file is scoped by where
++   * the link is.
++   *
++   * A missing path takes the scope of its deepest existing ancestor, or null
++   * if the first missing segment is `node_modules`.
++   *
++   * For the scope of every file in a directory, the resolver asks about its
++   * `package.json` (which needn't exist).
++   *
++   * The resolver calls this a few times per resolution, so it should be cheap.
++   *
+    * @deprecated See https://github.com/react/metro/commit/29c77bff31e2475a086bc3f04073f485da8f9ff0
+    */
+   getPackageForModule: (absoluteModulePath: string) => ?PackageForModule,
+```
+
+**File**: `packages/metro/src/DeltaBundler/__tests__/resolver-test.js` (modified, +110/-0)
+```diff
+@@ -1377,6 +1377,116 @@ function dep(name: string): TransformResultDependency {
+           filePath: p('/root/node_modules/aPackage/main-custom.js'),
+         });
+       });
++
++      // These pin which package's "browser" field applies to files reached
++      // through a symlink. A symlinked directory's target is checked before
++      // continuing up from the link's parent, and a symlinked file is scoped
++      // by where the link is. This behavior isn't covered by any spec.
++      //
++      // The tests map `.ios.js` files because a "browser" key for a `.js` or
++      // `.json` file also matches the extensionless path, which is redirected
++      // separately. Platform-specific keys are only matched per candidate
++      // extension.
++      describe('package scope of files reached through a symlink', () => {
++        test('a node_modules symlink to a package root', async () => {
++          setMockFileSystem({
++            'index.js': '',
++            store: {
++              deps: {
++                'package.json': JSON.stringify({
++                  name: 'deps',
++                  browser: {'./foo.ios.js': './foo-browser.js'},
++                }),
++                'foo.ios.js': '',
++                'foo-browser.js': '',
++              },
++            },
++          });
++          fs.symlinkSync(p('/root/store/deps'), p('/root/node_modules'));
++
++          resolver = await createResolver({}, 'ios');
++          expect(resolver.resolve(p('/root/index.js'), dep('foo'))).toEqual({
++            type: 'sourceFile',
++            filePath: p('/root/store/deps/foo-browser.js'),
++          });
++        });
++
++        test('a symlink to a node_modules directory', async () => {
++          setMockFileSystem({
++            'package.json': JSON.stringify({
++              name: 'app',
++              browser: {'./vendor/bar.ios.js': false},
++            }),
++            'index.js': '',
++            other: {node_modules: {'bar.ios.js': ''}},
++          });
++          fs.symlinkSync(p('/root/other/node_modules'), p('/root/vendor'));
++
++          resolver = await createResolver({}, 'ios');
++          expect(
++            resolver.resolve(p('/root/index.js'), dep('./vendor/bar')),
++          ).toEqual({
++            type: 'sourceFile',
++            filePath: p('/root/other/node_modules/bar.ios.js'),
++          });
++        });
++
++        test('a file symlink into another package, mapped by its target package', async () => {
++          setMockFileSystem({
++            'package.json': JSON.stringify({name: 'app'}),
++            'index.js': '',
++            other: {
++              pkg: {
++                'package.json': JSON.stringify({
++                  name: 'pkg',
++                  browser: {'./lib/foo.ios.js': './lib/foo-browser.js'},
++                }),
++                lib: {'foo.ios.js': '', 'foo-browser.js': ''},
++              },
++            },
++          });
++          fs.symlinkSync(
++            p('/root/other/pkg/lib/foo.ios.js'),
++            p('/root/foo.ios.js'),
++          );
++
++          resolver = await createResolver({}, 'ios');
++          expect(resolver.resolve(p('/root/index.js'), dep('./foo'))).toEqual({
++            type: 'sourceFile',
++            filePath: p('/root/other/pkg/lib/foo.ios.js'),
++          });
++        });
++
++        test('a file symlink into another package, mapped by the package of the link', async () => {
++          setMockFileSystem({
++            'package.json': JSON.stringify({
++              name: 'app',
++              browser: {'./foo.ios.js': false},
++            }),
++            'index.js': '',
++            'empty.js': '',
++            other: {
++              pkg: {
++                'package.json': JSON.stringify({name: 'pkg'}),
++                lib: {'foo.ios.js': ''},
++              },
++            },
++          });
++          fs.symlinkSync(
++            p('/root/other/pkg/lib/foo.ios.js'),
++            p('/root/foo.ios.js'),
++          );
++
++          resolver = await createResolver(
++            {resolver: {emptyModulePath: p('/root/empty.js')}},
++            'ios',
++          );
++          expect(resolver.resolve(p('/root/index.js'), dep('./foo'))).toEqual({
++            type: 'sourceFile',
++            filePath: p('/root/empty.js'),
++          });
++        });
++      });
+     });
  
-@@ -152,10 +152,11 @@ export async function getTransformFn(
-   );
-   const assetExts = new Set(config.resolver.assetExts);
- 
--  return async (modulePath: string, requireContext: ?RequireContext) => {
--    let templateBuffer: Buffer;
-+  return async (modulePath: string, virtualSource: ?VirtualSource) => {
-+    let fileBuffer: ?Buffer;
- 
--    if (requireContext) {
-+    if (virtualSource?.type === 'requireContext') {
-+      const {requireContext} = virtualSource;
-       const graph = await bundler.getDependencyGraph();
- 
-       // TODO: Check delta changes to avoid having to look over all files each time
-@@ -175,7 +176,7 @@ export async function getTransformFn(
-         files,
-       );
- 
--      templateBuffer = Buffer.from(template);
-+      fileBuffer = Buffer.from(template);
-     }
- 
-     return await bundler.transformFile(
-@@ -188,7 +189,7 @@ export async function getTransformFn(
-         ),
-         type: getType(transformOptions.type, modulePath, assetExts),
-       },
--      templateBuffer,
-+      fileBuffer ?? undefined,
-     );
-   };
- }
+     describe('platforms', () => {
 ```
 
 ---
 
-### Incident Patch 3: `60903e64` (2026-10-07)
-**Commit Message**: DeltaCalculator: Apply changes made during a (failed or successful) build on top (#2007)
+### Incident Patch 2: `52b20bb0` (2026-10-20)
+**Commit Message**: Tooling 0.336.0 (#2075)
 
-* DeltaCalculator: Apply changes made during a failed build on top
+Summary:
+X-link: https://github.com/react/react-native/pull/59164
 
-When a delta build fails, getDelta put back the change sets it took as a
-plain union with the changes that arrived during the build. A file deleted
-before the build and recreated during it then sat in both the added and the
-deleted set and was skipped by the next delta, so the client kept the old
-module; a file modified before the build and deleted during it was
-traversed after its deletion.
 
-The taken sets are now restored as the base, and the later changes are
-replayed on top through the transitions the change handler uses.
+Upgrade `flow-parser`, `flow-estree`, `flow-eslint`, `flow-transform`, and `flow-api-translator` across the xplat and AR/VR JavaScript tooling consumers. Refresh dependency locks, installed runtime payloads, and shared offline archives while preserving the independently pinned Fox toolchains and locally maintained type shims.
 
-* DeltaCalculator: Revisit a file recreated while a build was in flight
+Build on D125751591's `flow-remove-types` upgrade. Keep Gauntlet in its own child because it has an independent release boundary.
 
-A file deleted before a build and recreated before its importer re-resolves it leaves the build green with the graph still holding the old module. The recreated file then only ever sits in the added set, which nothing traverses, so the client keeps stale code until the file changes again.
+Support reviewed, exact-root Yarn installation options in the upgrade policy. Recharts' forced macOS `fsevents` resolution needs platform checking disabled and optional packages omitted on Linux; no other installation roots or dependency-verification checks are exempted.
 
-An added file that already has a module in the graph can only be one the graph never saw deleted, so it is now treated as modified and revisited 
+The installation-policy correction is an intentional prerequisite for executing the supplied playbook on Linux, not a separate feature rollout. The unchanged 0.335 Recharts dependency installation reproduced the forced macOS fsevents failure, including with --ignore-optional alone; the exact-root --ignore-platform/--ignore-optional combination passes without changing the 
 
-**File**: `packages/metro/src/DeltaBundler/DeltaCalculator.js` (modified, +52/-26)
+**File**: `package.json` (modified, +3/-3)
 ```diff
-@@ -147,9 +147,17 @@ export default class DeltaCalculator<T> extends EventEmitter {
-       // processed (since we haven't actually created any delta). If we do not
-       // do so, asking for a delta after an error will produce an empty Delta,
-       // which is not correct.
--      modifiedFiles.forEach((file: string) => this._modifiedFiles.add(file));
--      deletedFiles.forEach((file: string) => this._deletedFiles.add(file));
--      addedFiles.forEach((file: string) => this._addedFiles.add(file));
-+      // Changes that arrived while this delta was being built happened after
-+      // the ones it took, so they are applied on top of them.
-+      const laterAddedFiles = this._addedFiles;
-+      const laterModifiedFiles = this._modifiedFiles;
-+      const laterDeletedFiles = this._deletedFiles;
-+      this._addedFiles = addedFiles;
-+      this._modifiedFiles = modifiedFiles;
-+      this._deletedFiles = deletedFiles;
-+      laterAddedFiles.forEach((file: string) => this.#markAdded(file));
-+      laterModifiedFiles.forEach((file: string) => this.#markModified(file));
-+      laterDeletedFiles.forEach((file: string) => this.#markDeleted(file));
- 
-       throw error;
-     } finally {
-@@ -199,51 +207,60 @@ export default class DeltaCalculator<T> extends EventEmitter {
-     return false;
-   }
- 
-+  // Deleted+added = modified, otherwise added.
-+  #markAdded(absolutePath: string): void {
-+    if (this._deletedFiles.has(absolutePath)) {
-+      this._deletedFiles.delete(absolutePath);
-+      this._modifiedFiles.add(absolutePath);
-+    } else {
-+      this._addedFiles.add(absolutePath);
-+      this._modifiedFiles.delete(absolutePath);
-+    }
-+  }
-+
-+  // Added+modified stays added, otherwise modified.
-+  #markModified(absolutePath: string): void {
-+    if (!this._addedFiles.has(absolutePath)) {
-+      this._modifiedFiles.add(absolutePath);
-+    }
-+    this._deletedFiles.delete(absolutePath);
-+  }
-+
-+  // Added+deleted = no change, otherwise deleted.
-+  #markDeleted(absolutePath: string): void {
-+    if (this._addedFiles.has(absolutePath)) {
-+      this._addedFiles.delete(absolutePath);
-+    } else {
-+      this._deletedFiles.add(absolutePath);
-+      this._modifiedFiles.delete(absolutePath);
-+    }
-+  }
-+
-   _handleMultipleFileChanges = (changeEvent: ChangeEvent) => {
-     const {changes, logger, rootDir} = changeEvent;
- 
--    // Process added files: deleted+added = modified, otherwise added
-     for (const [canonicalPath, metadata] of changes.addedFiles) {
-       debug('Handling add: %s', canonicalPath);
-       if (this.#shouldReset(canonicalPath, metadata)) {
-         this._requiresReset = true;
-       }
--      const absolutePath = path.join(rootDir, canonicalPath);
--      if (this._deletedFiles.has(absolutePath)) {
--        this._deletedFiles.delete(absolutePath);
--        this._modifiedFiles.add(absolutePath);
--      } else {
--        this._addedFiles.add(absolutePath);
--        this._modifiedFiles.delete(absolutePath);
--      }
-+      this.#markAdded(path.join(rootDir, canonicalPath));
-     }
- 
--    // Process modified files: added+modified stays added, otherwise modified
-     for (const [canonicalPath, metadata] of changes.modifiedFiles) {
-       debug('Handling change: %s', canonicalPath);
-       if (this.#shouldReset(canonicalPath, metadata)) {
-         this._requiresReset = true;
-       }
--      const absolutePath = path.join(rootDir, canonicalPath);
--      if (!this._addedFiles.has(absolutePath)) {
--        this._modifiedFiles.add(absolutePath);
--      }
--      this._deletedFiles.delete(absolutePath);
-+      this.#markModified(path.join(rootDir, canonicalPath));
-     }
- 
--    // Process removed files: added+deleted = no change, otherwise deleted
-     for (const [canonicalPath, metadata] of changes.removedFiles) {
-       debug('Handling delete: %s', canonicalPath);
-       if (this.#shouldReset(canonicalPath, metadata)) {
-         this._requiresReset = true;
-       }
--      const absolutePath = path.resolve(rootDir, canonicalPath);
--      if (this._addedFiles.has(absolutePath)) {
--        this._addedFiles.delete(absolutePath);
--      } else {
--        this._deletedFiles.add(absolutePath);
--        this._modifiedFiles.delete(absolutePath);
--      }
-+      this.#markDeleted(path.resolve(rootDir, canonicalPath));
-     }
- 
-     let changeId = changeEventIds.get(changeEvent);
-@@ -287,6 +304,15 @@ export default class DeltaCalculator<T> extends EventEmitter {
-       }
-     });
- 
-+    // An added file that already has a module in the graph was deleted and
-+    // recreated while a build was in flight. The graph never saw the deletion,
-+    // so the module it holds is stale and needs revisiting.
-+    addedFiles.forEach((filePath: string) => {
-+      if (this._graph.dependencies.has(filePath)) {
-+        modifiedFiles.add(filePath);
-+      }
-+    });
-+
-     // NOTE(EvanBacon): This check adds extra complexity so we feature gate it
-     // to enable users to opt out.
-     if (this._options.unstable_allowRequireContext) {
+@@ -29,10 +29,10 @@
+     "eslint-plugin-lint": "^1.0.0",
+     "eslint-plugin-react": "^7.37.5",
+     "eslint-plugin-relay": "^1.8.3",
+-    "flow-api-translator": "0.335.0",
++    "flow-api-translator": "0.336.0",
+     "flow-bin": "^0.336.0",
+-    "flow-eslint": "0.335.0",
+-    "flow-parser": "0.335.0",
++    "flow-eslint": "0.336.0",
++    "flow-parser": "0.336.0",
+     "invariant": "^2.2.4",
+     "istanbul-lib-coverage": "3.0.0",
+     "istanbul-lib-report": "3.0.0",
 ```
 
-**File**: `packages/metro/src/DeltaBundler/__tests__/DeltaCalculator-test.js` (modified, +98/-1)
+**File**: `packages/metro-babel-register/package.json` (modified, +1/-1)
 ```diff
-@@ -304,7 +304,7 @@ describe.each(['posix', 'win32'])('DeltaCalculator (%s)', osPlatform => {
-   test('should calculate a delta after a file addition', async () => {
-     await deltaCalculator.getDelta({reset: false, shallow: false});
+@@ -21,7 +21,7 @@
+     "@babel/preset-typescript": "^7.24.7",
+     "@babel/register": "^7.24.6",
+     "babel-plugin-replace-ts-export-assignment": "^0.0.2",
+-    "flow-parser": "0.335.0",
++    "flow-parser": "0.336.0",
+     "babel-plugin-transform-flow-enums": "^0.0.2",
+     "escape-string-regexp": "^1.0.5",
+     "flow-enums-runtime": "^0.0.6"
+```
+
+**File**: `packages/metro-babel-transformer/package.json` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@
+   "dependencies": {
+     "@babel/core": "^7.25.2",
+     "flow-enums-runtime": "^0.0.6",
+-    "flow-parser": "0.335.0",
++    "flow-parser": "0.336.0",
+     "metro-cache-key": "0.87.1",
+     "nullthrows": "^1.1.1"
+   },
+```
+
+**File**: `packages/metro/package.json` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@
+     "debug": "^4.4.0",
+     "error-stack-parser": "^2.0.6",
+     "flow-enums-runtime": "^0.0.6",
+-    "flow-parser": "0.335.0",
++    "flow-parser": "0.336.0",
+     "invariant": "^2.2.4",
+     "jest-worker": "^29.7.0",
+     "jsc-safe-url": "^0.2.2",
+```
+
+**File**: `yarn.lock` (modified, +30/-30)
+```diff
+@@ -3292,19 +3292,19 @@ flatted@^3.1.0:
+   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.7.tgz#609f39207cb614b89d0765b477cb2d437fbf9787"
+   integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
  
--    emitChange({addedFiles: ['foo']});
-+    emitChange({addedFiles: ['unrelated']});
+-flow-api-translator@0.335.0:
+-  version "0.335.0"
+-  resolved "https://registry.yarnpkg.com/flow-api-translator/-/flow-api-translator-0.335.0.tgz#62bd5c7d3494c67226f41022febb820e59437486"
+-  integrity sha512-APzyBFsT9x22NlBEYHi/ru++y4Yglx1pwwII9vLXg816ggoVxF5bSmcUxy1B+3Axj+pU5hYGWtJ7z24c5U9cLg==
++flow-api-translator@0.336.0:
++  version "0.336.0"
++  resolved "https://registry.yarnpkg.com/flow-api-translator/-/flow-api-translator-0.336.0.tgz#588c4672c6a32f7fcb00064314b7ad1551e728a5"
++  integrity sha512-0odorqlErVwnXLuFpQdpRwlUNaqklR2H2tN8uRmlV/Usb82k0S++ReH3afKL7BhUevi4xMsBa02vd38Lf8RznQ==
+   dependencies:
+     "@babel/code-frame" "^7.16.0"
+     "@typescript-eslint/parser" "8.38.0"
+     "@typescript-eslint/visitor-keys" "8.38.0"
+     flow-enums-runtime "^0.0.6"
+-    flow-eslint "0.335.0"
+-    flow-estree "0.335.0"
+-    flow-parser "0.335.0"
+-    flow-transform "0.335.0"
++    flow-eslint "0.336.0"
++    flow-estree "0.336.0"
++    flow-parser "0.336.0"
++    flow-transform "0.336.0"
+     typescript "5.3.2"
  
-     traverseDependencies.mockResolvedValueOnce({
-       added: new Map([[p('/foo'), fooModule]]),
-@@ -566,6 +566,103 @@ describe.each(['posix', 'win32'])('DeltaCalculator (%s)', osPlatform => {
-     expect(traverseDependencies.mock.calls[0][0]).toEqual([p('/foo')]);
-   });
+ flow-bin@^0.336.0:
+@@ -3317,38 +3317,38 @@ flow-enums-runtime@^0.0.6:
+   resolved "https://registry.yarnpkg.com/flow-enums-runtime/-/flow-enums-runtime-0.0.6.tgz#5bb0cd1b0a3e471330f4d109039b7eba5cb3e787"
+   integrity sha512-3PYnM29RFXwvAN6Pc/scUfkI7RwhQ/xqyLUyPNlXUp9S40zI8nup9tUSrTLSVnWGBN38FNiGWbwZOB6uR4OGdw==
  
-+  test('should traverse a file re-added while a failed delta was being built', async () => {
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    emitChange({removedFiles: ['foo']});
-+
-+    let rejectTraversal: (error: Error) => void = () => {};
-+    traverseDependencies.mockReturnValueOnce(
-+      new Promise((resolve, reject) => {
-+        rejectTraversal = reject;
-+      }),
-+    );
-+    const failedDelta = deltaCalculator.getDelta({
-+      reset: false,
-+      shallow: false,
-+    });
-+
-+    // The file is recreated while the delta that saw it deleted is still being built.
-+    emitChange({addedFiles: ['foo']});
-+    rejectTraversal(new Error('Unable to resolve module'));
-+    await expect(failedDelta).rejects.toBeInstanceOf(Error);
-+
-+    traverseDependencies.mockResolvedValueOnce({
-+      added: new Map(),
-+      modified: new Map([[p('/foo'), fooModule]]),
-+      deleted: new Set(),
-+    });
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    expect(traverseDependencies).toHaveBeenCalledTimes(2);
-+    expect(traverseDependencies.mock.calls[1][0]).toContain(p('/foo'));
-+  });
-+
-+  test('should not traverse a file deleted while a failed delta was being built', async () => {
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    emitChange({modifiedFiles: ['foo']});
-+
-+    let rejectTraversal: (error: Error) => void = () => {};
-+    traverseDependencies.mockReturnValueOnce(
-+      new Promise((resolve, reject) => {
-+        rejectTraversal = reject;
-+      }),
-+    );
-+    const failedDelta = deltaCalculator.getDelta({
-+      reset: false,
-+      shallow: false,
-+    });
-+
-+    emitChange({removedFiles: ['foo']});
-+    rejectTraversal(new Error('Unable to resolve module'));
-+    await expect(failedDelta).rejects.toBeInstanceOf(Error);
-+
-+    traverseDependencies.mockResolvedValueOnce({
-+      added: new Map(),
-+      modified: new Map([[p('/bundle'), entryModule]]),
-+      deleted: new Set([p('/foo')]),
-+    });
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    expect(traverseDependencies).toHaveBeenCalledTimes(2);
-+    expect(traverseDependencies.mock.calls[1][0]).toEqual([p('/bundle')]);
-+  });
-+
-+  test('should traverse a file re-added while a successful delta was being built', async () => {
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    emitChange({removedFiles: ['foo']});
-+
-+    let resolveTraversal: (result: Result<$FlowFixMe>) => void = () => {};
-+    traverseDependencies.mockReturnValueOnce(
-+      new Promise(resolve => {
-+        resolveTraversal = resolve;
-+      }),
-+    );
-+    const delta = deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    // The file is recreated before its importer re-resolves it, so the build
-+    // succeeds without revisiting the module the graph already holds.
-+    emitChange({addedFiles: ['foo']});
-+    resolveTraversal({
-+      added: new Map(),
-+      modified: new Map([[p('/bundle'), entryModule]]),
-+      deleted: new Set(),
-+    });
-+    await delta;
-+
-+    traverseDependencies.mockResolvedValueOnce({
-+      added: new Map(),
-+      modified: new Map([[p('/foo'), fooModule]]),
-+      deleted: new Set(),
-+    });
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    expect(traverseDependencies).toHaveBeenCalledTimes(2);
-+    expect(traverseDependencies.mock.calls[1][0]).toEqual([p('/foo')]);
-+  });
-+
-   test.each(['add', 'delete'])(
-     "should re-traverse everything after a symlink '%s'",
-     async eventType => {
+-flow-eslint@0.335.0:
+-  version "0.335.0"
+-  resolved "https://registry.yarnpkg.com/flow-eslint/-/flow-eslint-0.335.0.tgz#a8383914568f16475ef5cd62c157843b62e52910"
+-  integrity sha512-G/6qz7O1Otv3/fhZBvVyBQFvDihHZnRIXhJAwQ2HjWhurszVDHSrO4ZOEdCdZTMRtLmCltfPOBTMJRDaKERNCA==
++flow-eslint@0.336.0:
++  version "0.336.0"
++  resolved "https://registry.yarnpkg.com/flow-eslint/-/flow-eslint-0.336.0.tgz#2a9e807c85f41f8ba2329e787fd84bc67c411f6d"
++  integrity sha512-HWsiMD2mC3HbVwPKX74BxyX+ZjgiJi3BYDOG/FofbpLce/Eg1wftSuGEyvWprYpgKOnTEe/7o32IdLdTv25LaQ==
+   dependencies:
+     esrecurse "^4.3.0"
+-    flow-estree "0.335.0"
+-    flow-parser "0.335.0"
++    flow-estree "0.336.0"
++    flow-parser "0.336.0"
+ 
+-flow-estree@0.335.0:
+-  version "0.335.0"
+-  resolved "https://registry.yarnpkg.com/flow-estree/-/flow-estree-0.335.0.tgz#6867e678070b0edb13ff37636d8aaf4b444516bb"
+-  integrity sha512-sfJYlOSnrbBI4ruZ7UG5OJLz16E1hs+Kkt/De8F7vm6UafLfvZIWjkoBmZtKoN6EIOa3zgGkVczt0xpmmQixGA==
++flow-estree@0.336.0:
++  version "0.336.0"
++  resolved "https://registry.yarnpkg.com/flow-estree/-/flow-estree-0.336.0.tgz#e9e90c68ac69b078b2d167588e47a11e5d240d86"
++  integrity sha512-0VaGWHJourzh88otU5bVJ4Z/oIsD+R6yaeR0Q8t8dezsKQI/RLi5m3fNzkiLYLhJ+YwM3JRSKlOqGplOI5Yo3w==
+ 
+-flow-parser@0.*, flow-parser@0.335.0:
+-  version "0.335.0"
+-  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.335.0.tgz#27c879530fd7fe9521129b15e6d9cedd9860c645"
+-  integrity sha512-TpG7cWiAAh5EoOjaGuzggks8HOM6DJhey1RmMmnzGUd+AYmsl77S5EXvb6gxAEGX40FyfkXEwsvQcuI6Knkm7g==
++flow-parser@0.*, flow-parser@0.336.0:
++  version "0.336.0"
++  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.336.0.tgz#5c34f8a97edfa241d3e71c7a1dcd99a56b1cc2bc"
++  integrity sha512-O8QvQf/B3rBF+eagcc9/WMAjfJoaKckdgSd8PT/qvMIIe4ZjVKrSqV5SDnRFAKY0VrE8r5C4ADYgvYhmwkWADA==
+   dependencies:
+-    flow-estree "0.335.0"
++    flow-estree "0.336.0"
+ 
+-flow-transform@0.335.0:
+-  version "0.335.0"
+-  resolved "https://registry.yarnpkg.com/flow-transform/-/flow-transform-0.335.0.tgz#ec49dedfd5507da0228f715ad20315c6ebf6ae75"
+-  integrity sha512-TUBmPSufhaWaD0Amw/wR8v6+F+CLbnY8aHoUyb3hykEp6kDiPrCvem96uhN/uJ8CnjO2OODxxsisa0ikYaBt5w==
++flow-transform@0.336.0:
++  version "0.336.0"
++  resolved "https://registry.yarnpkg.com/flow-transform/-/flow-transform-0.336.0.tgz#61fd6c761b63c412b67c707dcd81333d24e5fa8d"
++  integrity sha512-KQEt9y581jhxaUOM80sPbssa/t6bEnwGz0x/xfwmxXv8a69bs6wW83/1Roq1h9qoJfwvSTncWk3IlrpdBVBXXQ==
+   dependencies:
+     "@babel/code-frame" "^7.16.0"
+     esquery "^1.4.0"
+     flow-enums-runtime "^0.0.6"
+-    flow-eslint "0.335.0"
+-    flow-estree "0.335.0"
+-    flow-parser "0.335.0"
++    flow-eslint "0.336.0"
++    flow-estree "0.336.0"
++    flow-parser "0.336.0"
+     string-width "4.2.3"
+ 
+ for-each@^0.3.3, for-each@^0.3.5:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2079** (2026-10-19): Avoid duplicate `Buffer.byteLength` call on bundle string (@kitten)
+- **PR #2075** (2026-10-20): Tooling 0.336.0 (#2075) (@gkz)
 - **PR #2074** (2026-10-17): Resolver: Fall through unmatched nested conditions (@maximilliangrand)
 - **PR #2073** (2026-10-16): Deploy 0.336.0 to xplat (#2073) (@gkz)
 - **PR #2071** (2026-10-15): metro-file-map: Let plugin filters decide on node_modules files (@robhogan)
 - **PR #2069** (2026-10-14): Use `any` for untyped `Object`/`Function` in flow-typed and debugger-shell (@SamChou19815)
-- **PR #2068** (2026-10-14): Use `any` where Flow `Object`/`Function` meant `any` (#2068) (@SamChou19815)
-- **PR #2067** (2026-10-14): `Function` and `Object` -> `any` in node.js libdefs (@SamChou19815)
 
 ---
 
@@ -2301,36 +2088,64 @@ An added file that already has a module in the graph can only be one the graph n
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#200
+## X. Resolver: Resolve the package of a directory once for all extension candidates (
 
 **RULE**:
-When implementing operations in `packages/metro-file-map/src/lib/TreeFS.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-resolver/src/__tests__/package-scope-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a33cc669`: metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#2009). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1dfb482`: Resolver: Resolve the package of a directory once for all extension candidates (#1945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/TreeFS.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-resolver/src/__tests__/package-scope-test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        followLeaf: false,
-      if (!lookupResult.exists) {
-      if (!isDirectory(lookupResult.node)) {
-        // A file or symlink has been replaced by this directory, so it is
-        // removed and everything under the directory is new.
-        removedFiles.add(lookupResult.canonicalPath);
-        return {changedFiles, removedFiles};
-      }
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow strict-local
+ * @format
+ * @oncall react_native
+ */
+
+import type {PackageForModule, ResolutionContext} from '../types';
+
+import * as Resolver from '../index';
+import {
+  createPackageAccessors,
+  createResolutionContext,
+  posixToSystemPath as p,
+} from './utils';
+
+// These pin the paths the resolver passes to `getPackageForModule` for each
+// kind of specifier, so that a change in lookups per resolution is deliberate.
+describe('package scope lookups', () => {
+  // The path the resolver asks about for the files in a directory
+  const filesIn = (dirPath: string) => p(dirPath + '/package.json');
+
+  const fileMap = {
+    [p('/root/package.json')]: JSON.stringify({name: 'root'}),
+    [p('/root/src/main.js')]: '',
+    [p('/root/src/foo.js')]: '',
+    [p('/root/src/lib/index.js')]: '',
+    [p('/root/node_modules/pkg/package.json')]: JSON.stringify({
+      name: 'pkg',
+      main: 'lib/index',
+      browser: {'./lib/redirected.js': './lib/other.js'},
+    }),
+    [p('/root/node_modules/pkg/lib/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-        followLeaf: true,
-      if (!lookupResult.exists || !isDirectory(lookupResult.node)) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a33cc669` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1dfb482` are properly handled with clean fallback behavior.

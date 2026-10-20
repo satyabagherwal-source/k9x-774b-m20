@@ -3884,3 +3884,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-20T15:49:51.818Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-20T15:49:56.197Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `fed7415c` | Multi-dimensional audit evidence | 2026-10-20T15:50:12.215Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-20T15:56:25.685Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `e1dfb482` | Multi-dimensional audit evidence | 2026-10-20T15:56:30.345Z |
