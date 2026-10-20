@@ -3863,3 +3863,5 @@
 | `CYCLE-20261020-51BZ` | `2026-10-20T14:57:45.215Z` | `elastic/eui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3235` | Yes (`181381d0...`) |
 | `CYCLE-20261020-D35M` | `2026-10-20T15:04:00.826Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3237` | Yes (`76b46d34...`) |
 | `CYCLE-20261020-D39A` | `2026-10-20T15:04:00.958Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3236, Rule 3237, Rule 3238` | Yes (`29a69396...`) |
+| `CYCLE-20261020-L83O` | `2026-10-20T15:10:20.484Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`32dbef54...`) |
+| `CYCLE-20261020-LEBT` | `2026-10-20T15:10:28.553Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3239` | Yes (`f4faac43...`) |

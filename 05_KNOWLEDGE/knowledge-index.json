@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T15:04:00.927Z",
+  "last_updated": "2026-10-20T15:10:28.503Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18596,7 +18596,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "16f62570fdfcfa903545e88357d2a381cff668505c04ff70635f61d5edfffbbf",
+      "content_hash": "32dbef542dea7951e071f1de459ea78e838e556043a948d3fe11b7be36618bab",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -18639,7 +18639,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-19T01:28:32.335Z",
+      "verified_at": "2026-10-20T15:10:20.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36469,8 +36469,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "c8af0940",
-      "content_hash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
+      "source_version": "08cdfb0a",
+      "content_hash": "f4faac43586dba8a06a5a142b2d9ba2a0bf697f4f5cd858798e46a7b0e84a636",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -36483,6 +36483,11 @@
           "number": 2890,
           "title": "(patch): CI fix timeout on failed dep startup (#4935)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3239,
+          "title": "mongo): measure destination lag from change stream read time (#4947)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36490,7 +36495,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:28:22.472Z",
+      "verified_at": "2026-10-20T15:10:28.492Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102053,6 +102058,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:04:00.919Z"
+    },
+    "rule-3239": {
+      "learning_id": "rule-3239",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3239,
+      "title": "mongo): measure destination lag from change stream read time (#4947)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "08cdfb0a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:10:28.492Z"
     }
   },
   "aliases": {

@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "16f62570fdfcfa903545e88357d2a381cff668505c04ff70635f61d5edfffbbf",
-    "lastHarvestedAt": "2026-10-19T01:28:32.379Z",
+    "contentHash": "32dbef542dea7951e071f1de459ea78e838e556043a948d3fe11b7be36618bab",
+    "lastHarvestedAt": "2026-10-20T15:10:20.487Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "c8af0940",
+    "sourceVersion": "08cdfb0a",
     "license": "AGPL-3.0",
-    "contentHash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
-    "lastHarvestedAt": "2026-10-19T23:28:22.536Z",
+    "contentHash": "f4faac43586dba8a06a5a142b2d9ba2a0bf697f4f5cd858798e46a7b0e84a636",
+    "lastHarvestedAt": "2026-10-20T15:10:28.556Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {

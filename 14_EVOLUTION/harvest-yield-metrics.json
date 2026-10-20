@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T15:04:00.968Z",
-  "total_cycles_completed": 3840,
-  "total_learnings_persisted": 3840,
-  "total_rules_promoted": 3055,
+  "last_updated": "2026-10-20T15:10:28.561Z",
+  "total_cycles_completed": 3842,
+  "total_learnings_persisted": 3842,
+  "total_rules_promoted": 3056,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:43:02.321Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:43:03.936Z",
-      "repository": "apple/sample-food-truck",
-      "learningId": "learn-github-apple-sample-food-truck",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:43:06.812Z",
       "repository": "meshery/meshery",
@@ -1403,6 +1389,20 @@
       "repository": "black-forest-labs/FLUX.1-dev",
       "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:10:20.493Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:10:28.561Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -3870,3 +3870,5 @@ Every entry in this ledger must capture:
 | `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `42254b6c` | Multi-dimensional audit evidence | 2026-10-20T14:57:45.222Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `4baf23f5` | Multi-dimensional audit evidence | 2026-10-20T15:04:00.834Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-20T15:04:00.964Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-20T15:10:20.487Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `08cdfb0a` | Multi-dimensional audit evidence | 2026-10-20T15:10:28.556Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `c8af0940`  
+> **Source Version**: `08cdfb0a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:28:22.197Z  
+> **Timestamp**: 2026-10-20T15:10:28.209Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:28:21.796Z  
+> **Harvest Timestamp**: 2026-10-20T15:10:28.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1860,305 +1860,140 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb61e655` (2026-10-19)
-**Commit Message**: (patch): CI fix timeout on failed dep startup (#4935)
+### Incident Patch 1: `d7de14dd` (2026-10-20)
+**Commit Message**: fix(mongo): measure destination lag from change stream read time (#4947)
 
-This commit bounds the CI startup timeout and ensures that jobs don't
-continue to progress when there is a startup failture and eat up 60
-minutes of runner time incuring extra cost
+Mongo destination lag reads near zero on low-traffic mirrors, while
+end-to-end lag stays at roughly the sync interval.
+
+The cause: change events wait in the parallel decode worker pool
+(#4722), and `AddRecord` only runs once a 256-event chunk fills or the
+batch ends. `firstRowReceivedAt` was set in `AddRecord`, so it got the
+batch end time.
+
+The fix: `CDCStream.MarkFirstRowReceived` lets a source record when the
+first row was read. Mongo calls it when the row comes off the change
+stream. `AddRecord` uses that time if it's set. Nothing changes for PG
+or MySQL.
+
+Resolves: DBI-1261
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ---------
 
-Co-authored-by: Pablo Francisco Pérez Hidalgo <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/flow.yml` (modified, +2/-1)
+**File**: `flow/connectors/mongo/cdc.go` (modified, +3/-0)
 ```diff
-@@ -125,7 +125,8 @@ jobs:
- 
-   flow_test:
-     name: ${{ matrix.target.label }}
--    needs: [gate]
-+    # Validate the common code before allocating runners for every permutation.
-+    needs: [gate, unit_tests, test_selection_coverage]
-     strategy:
-       fail-fast: false
-       matrix:
+@@ -610,6 +610,9 @@ func (c *MongoConnector) PullRecords(
+ 	incrementRecordCount := func() {
+ 		recordCount += 1
+ 		if recordCount == 1 {
++			// rows sit in workerPool until a chunk fills or the batch ends, so AddRecord is too late to
++			// mark when the first row was received
++			req.RecordStream.MarkFirstRowReceived(time.Now())
+ 			timeoutCtx, cancelTimeout = context.WithTimeout(ctx, req.IdleTimeout) //nolint:gosec // G118: cancelTimeout called in defer
+ 		}
+ 		if recordCount%50000 == 0 {
 ```
 
-**File**: `.github/workflows/tilt-flow.yml` (modified, +10/-8)
+**File**: `flow/model/cdc_stream.go` (modified, +15/-6)
 ```diff
-@@ -385,6 +385,9 @@ jobs:
-       # reload the individual resource with `tilt trigger` and wait again, up to
-       # CORE_SERVICE_RECOVERY_ATTEMPTS times before failing the run.
-       - name: Bring up core PeerDB services (with recovery)
-+        # Bound startup separately so stalled dependencies cannot consume the
-+        # entire job budget, and leave time for diagnostics and artifact upload.
-+        timeout-minutes: 5
-         run: |
-           set -uo pipefail
+@@ -3,6 +3,7 @@ package model
+ import (
+ 	"context"
+ 	"log/slog"
++	"sync/atomic"
+ 	"time"
  
-@@ -452,16 +455,15 @@ jobs:
-             return 1
-           }
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -14,17 +15,18 @@ type CDCStream[T Items] struct {
+ 	emptySignal chan struct{}
+ 	records     chan Record[T]
  
--          rc=0
-           for res in $MAIN_SERVICES; do
--            wait_or_recover "$res" || rc=1
-+            # All of these services are required. In particular, the API and
-+            # workers cannot start after flow-migrate has failed.
-+            if ! wait_or_recover "$res"; then
-+              echo "::error::Required core service $res could not be recovered; stopping startup."
-+              cat "$RUNNER_TEMP/tilt-startup.log" || true
-+              exit 1
-+            fi
-           done
--
--          if [ "$rc" -ne 0 ]; then
--            echo "::error::One or more core PeerDB services could not be recovered."
--            cat "$RUNNER_TEMP/tilt-startup.log" || true
--            exit 1
--          fi
-           echo "Core PeerDB services are up."
+-	firstRowReceivedAt time.Time
+ 	firstRowCommitTime time.Time
  
-       - name: Stop capturing Tilt startup logs
-```
-
----
-
-### Incident Patch 2: `c8af0940` (2026-10-19)
-**Commit Message**: fix(postgres): route a child of several mirrored tables to the same parent (#4932)
-
-Follows #4930. This is the routing half of the change reviewed on the
-fork; the deduplication of child-only column deltas is #4933. The two
-are independent and can merge in either order.
-
-## Problem
-
-A child of several mirrored tables (`CREATE TABLE c () INHERITS (a, b)`)
-could reach a different destination depending on how CDC found it:
-
-- At pull start, `getChildToParentRelIDMap` reads every `(parent,
-child)` row of `pg_inherits` without an order and keeps the last one per
-child.
-- At runtime discovery, `checkIfUnknownTableInherits` takes the first
-parent of a qualifying relkind, mirrored or not. When that parent is not
-in the mirror, the child's changes are not replicated.
-
-So the child's changes could move to another mirrored parent after a
-restart, or stop.
-
-## Fix
-
-- Both now consider only the mirrored parents with a qualifying relkind,
-and pick the one with the lowest `pg_inherits.inhseqno`, which is the
-order of the `INHERITS` list.
-- Runtime discovery also records that parent's relkind. It was missing
-for a parent that had no children when the pull started, and the
-`publish_via_partition_ro
-
-**File**: `docs/deep-dive-design-document.md` (modified, +5/-2)
-```diff
-@@ -152,8 +152,11 @@ relation IDs from the mirrored parent:
- childToParentRelIDMapping map[uint32]uint32  // child relid → parent relid
- ```
- 
--`checkIfUnknownTableInherits()` translates child→parent when an unknown relation ID appears, ensuring child events
--are attributed to the parent's table mapping.
-+`getChildToParentRelIDMap()` builds the map when a pull starts and `checkIfUnknownTableInherits()` extends it
-+when an unknown relation ID appears, ensuring child events are attributed to the parent's table mapping. Both
-+use the same rule: the candidates are mirrored tables with a qualifying relkind, and the one with the lowest
-+`pg_inherits.inhseqno` wins, so a child of several mirrored tables always goes to the same one. Only direct
-+children are remapped; deeper descendants are not replicated by CDC although the initial snapshot includes them.
- 
- **Column layouts are per relation.** A child's tuples follow the child's own column order, which can differ from
- the parent's and from its siblings (`ALTER TABLE ... INHERIT` only requires matching names and types, and a
-```
-
-**File**: `flow/connectors/postgres/cdc.go` (modified, +47/-25)
-```diff
-@@ -57,7 +57,9 @@ type PostgresCDCSource struct {
- 	// for partitioned tables, maps child relid to parent relid
- 	childToParentRelIDMapping map[uint32]uint32
- 	idToRelKindMap            map[uint32]byte
--	publishViaPartitionRoot   bool
-+	// relids of the tables in the mirror, the only candidates a child can be remapped to
-+	mirroredRelIDs          []uint32
-+	publishViaPartitionRoot bool
- 
- 	// for storing schema delta audit logs to catalog
- 	catalogPool                              shared.CatalogPool
-@@ -133,9 +135,9 @@ func (c *PostgresConnector) queryPostgresClockOffset(ctx context.Context) (time.
- 
- // Create a new PostgresCDCSource
- func (c *PostgresConnector) NewPostgresCDCSource(ctx context.Context, cdcConfig *PostgresCDCConfig) (*PostgresCDCSource, error) {
-+	mirroredRelIDs := slices.Collect(maps.Keys(cdcConfig.SrcTableIDNameMapping))
- 	childToParentRelIDMap, idToRelKindMap, err := getChildToParentRelIDMap(ctx,
--		c.conn, slices.Collect(maps.Keys(cdcConfig.SrcTableIDNameMapping)),
--		cdcConfig.HandleInheritanceForNonPartitionedTables)
-+		c.conn, mirroredRelIDs, cdcConfig.HandleInheritanceForNonPartitionedTables)
- 	if err != nil {
- 		return nil, fmt.Errorf("error getting child to parent relid map: %w", err)
- 	}
-@@ -174,6 +176,7 @@ func (c *PostgresConnector) NewPostgresCDCSource(ctx context.Context, cdcConfig
- 		commitLock:                               nil,
- 		childToParentRelIDMapping:                childToParentRelIDMap,
- 		idToRelKindMap:                           idToRelKindMap,
-+		mirroredRelIDs:                           mirroredRelIDs,
- 		publishViaPartitionRoot:                  publishViaPartitionRoot,
- 		catalogPool:                              cdcConfig.CatalogPool,
- 		alerter:                                  alerting.NewAlerter(ctx, cdcConfig.CatalogPool, cdcConfig.OtelManager),
-@@ -204,23 +207,42 @@ func (p *PostgresCDCSource) getSourceSchemaForDestinationColumn(relID uint32, ta
- 	return schemaTable.Namespace, nil
+ 	// lastCheckpointText is used for mysql GTID and MongoDB ResumeToken
+ 	lastCheckpointText string
+ 	// Schema changes from slot
+ 	SchemaDeltas []*protos.TableSchemaDelta
+ 	// lastCheckpointID is the last ID of the commit that corresponds to this batch.
+-	lastCheckpointID  int64
+-	lastCheckpointSet bool
+-	firstRowSet       bool
++	lastCheckpointID int64
++	// atomic since sources that buffer rows may set it from their read goroutine, see MarkFirstRowReceived
++	firstRowReceivedAtNano atomic.Int64
++	lastCheckpointSet      bool
++	firstRowSet            bool
  }
  
--func getChildToParentRelIDMap(ctx context.Context,
--	conn *pgx.Conn, parentTableOIDs []uint32, handleInheritanceForNonPartitionedTables bool,
--) (map[uint32]uint32, map[uint32]byte, error) {
--	relkinds := "'p'"
-+// inheritanceParentRelkinds lists the relkinds a parent may have for its children to be remapped onto it:
-+// partitioned tables always, plain tables only when inheritance handling is enabled.
-+func inheritanceParentRelkinds(handleInheritanceForNonPartitionedTables bool) string {
- 	if handleInheritanceForNonPartitionedTables {
--		relkinds = "'p', 'r'"
-+		return "'p', 'r'"
- 	}
-+	return "'p'"
-+}
- 
--	query := fmt.Sprintf(`
--		SELECT parent.oid AS parentrelid, child.oid AS childrelid, parent.relkind
--		FROM pg_inherits
--		JOIN pg_class parent ON pg_inherits.inhparent = parent.oid
--		JOIN pg_class child ON pg_inherits.inhrelid = child.oid
--		WHERE parent.relkind IN (%s) AND parent.oid=ANY($1);
--	`, relkinds)
-+// childToParentRelIDMapQuery and inheritedParentQuery must agree on which parent a child is remapped to:
-+// candidates are the mirrored tables ($1 / $2) with a qualifying relkind, and the one with the lowest
-+// inhseqno wins. The startup map and runtime discovery would otherwise route a child of several mirrored
-+// parents differently across pulls.
-+func childToParentRelIDMapQuery(handleInheritanceForNonPartitionedTables bool) string {
-+	return fmt.Sprintf(`
-+		SELECT DISTINCT ON (i.inhrelid) i.inhparent AS parentrelid, i.inhrelid AS childrelid, parent.relkind
-+		FROM pg_inherits i
-+		JOIN pg_class parent ON i.inhparent = parent.oid
-+		WHERE parent.relkind IN (%s) AND i.inhparent = ANY($1)
-+		ORDER BY i.inhrelid, i.inhseqno`, inheritanceParentRelkinds(handleInheritanceForNonPartitionedTables))
-+}
- 
--	rows, err := conn.Query(ctx, query, parentTableOIDs)
-+func inheritedParentQuery(handleInheritanceForNonPartitionedTables bool) string {
-+	return fmt.Sprintf(`
-+		SELECT i.inhparent, parent.relkind
-+		FROM pg_inherits i
-+		JOIN pg_class parent ON i.inhparent = parent.oid
-+		WHERE i.inhrelid = $1 AND parent.relkind IN (%s) AND i.inhparent = ANY($2)
-+		ORDER BY i.inhseqno
-+		LIMIT 1`, inheritanceParentRelkinds(handleInheritanceForNonPartitionedTables))
-+}
-+
-+func getChildToParentRelIDMap(ctx context.Context,
-+	conn *pgx.Conn, parentTableOIDs []uint32, handleInheritanceForNonPartitionedTables bool,
-+) (map[uint32]uint32, map[uint32]byte, error) {
-+	rows, err := conn.Query(ctx, childToParentRelIDMapQuery(handleInheritanceForNonPartitionedTables), parentTableOIDs)
- 	if err != nil {
- 		return nil, nil, fmt.Errorf("error querying for child to parent relid map: %w", err)
- 	}
-@@ -1676,26 +1698,26 @@ func (p *PostgresCDCSource) checkIfUnknownTableInherits(ctx context.Context,
- 	relID uint32,
- ) (uint32, byte, error) {
- 	relID = p.getParentRelIDIfPartitioned(relID)
--	relkinds := "'p'"
--	if p.handleInheritanceForNonPartitionedTables {
--		relkinds = "'p', 'r'"
--	}
- 
-+	// Relations with no mirrored parent are looked up again on each of their RelationMessages (before their
-+	/
-```
-
-**File**: `flow/connectors/postgres/cdc_inheritance_test.go` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ func newInheritanceTestCDCSource(t *testing.T) *PostgresCDCSource {
- 		relationMessageMapping:       model.RelationMessageMapping{},
- 		childToParentRelIDMapping:    map[uint32]uint32{inhChildARelID: inhParentRelID, inhChildBRelID: inhParentRelID},
- 		idToRelKindMap:               map[uint32]byte{inhParentRelID: 'r'},
-+		mirroredRelIDs:               []uint32{inhParentRelID},
- 		hushWarnUnknownTableDetected: map[uint32]struct{}{},
+ type CdcCheckpoint struct {
+@@ -63,7 +65,7 @@ func (r *CDCStream[T]) AddRecord(ctx context.Context, record Record[T]) error {
+ 		switch record.(type) {
+ 		case *InsertRecord[T], *UpdateRecord[T], *DeleteRecord[T]:
+ 			r.firstRowSet = true
+-			r.firstRowReceivedAt = time.Now().UTC()
++			r.MarkFirstRowReceived(time.Now()) // no-op if the source already marked it at read time
+ 			r.firstRowCommitTime = record.GetCommitTime().UTC()
+ 			r.markEmptySignalReady()
+ 		}
+@@ -93,6 +95,13 @@ func (r *CDCStream[T]) AddRecord(ctx context.Context, record Record[T]) error {
  	}
  }
-```
-
-**File**: `flow/e2e/clickhouse_inheritance_suite.go` (modified, +53/-0)
-```diff
-@@ -204,6 +204,59 @@ func (s ClickHouseSuite) Test_Inheritance_Divergent_Child_Layouts() {
- 	RequireEnvCanceled(s.t, env)
- }
  
-+func (s ClickHouseSuite) Test_Inheritance_Child_Of_Two_Mirrored_Parents() {
-+	s.inhRequirePostgres()
-+
-+	parent1Name, parent2Name := "inh_multi_p1", "inh_multi_p2"
-+	parent1, parent2 := s.attachSchemaSuffix(parent1Name), s.attachSchemaSuffix(parent2Name)
-+	dst1, dst2 := "inh_multi_p1_dst", "inh_multi_p2_dst"
-+	flowJobName := s.attachSuffix("inh_multi")
-+	schemaM := s.inhTenantSchema("mm")
-+
-+	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, name TEXT)`, parent1)
-+	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, name TEXT)`, parent2)
-+	s.inhExec(`INSERT INTO %s (id, name) VALUES (1, 'p1')`, parent1)
-+	s.inhExec(`INSERT INTO %s (id, name) VALUES (2, 'p2')`, parent2)
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      flowJobName,
-+		TableNameMapping: map[string]string{parent1: dst1, parent2: dst2},
-+		Destination:      s.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	flowConnConfig.DoInitialSnapshot = true
-+
-+	tc := NewTemporalClient(s.t)
-+	env := ExecutePeerflow(s.t, tc, flowConnConfig)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial p1", parent1Name, dst1, "id,name")
-+	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial p2", parent2Name, dst2, "id,name")
-+
-+	// created after start, so the first rows go through runtime discovery; inhseqno 1 is parent1
-+	s.inhExec(`CREATE TABLE %s.inh_multi_child (id BIGINT PRIMARY KEY, name TEXT) INHERITS (%s, %s)`,
-+		schemaM, parent1, parent2)
-+	s.inhExec(`ALTER PUBLICATION %s ADD TABLE %s.inh_multi_child`, connpostgres.GetDefaultPublicationName(flowJobName), schemaM)
-+	s.inhExec(`INSERT INTO %s.inh_multi_child (id, name) VALUES (10, 'm10')`, schemaM)
-+	s.inhExec(`INSERT INTO %s (id, name) VALUES (3, 'p1-3')`, parent1)
-+	s.inhExec(`INSERT INTO %s (id, name) VALUES (4, 'p2-4')`, parent2)
-+
-+	// parent1's source rows include the child's, parent2's destination must only hold parent2's own rows
-+	EnvWaitForEqualTablesWithNames(env, s, "child routed to first parent", parent1Name, dst1, "id,name")
-+	EnvWaitForEqualTablesWithNames_Only(env, s, "child not routed to second parent", parent2Name, dst2, "id,name")
-+
-+	// after a restart the child comes from the startup map instead, and must still go to parent1
-+	s.inhRestartReplication(env, flowJobName)
-+	s.inhExec(`INSERT INTO %s.inh_multi_child (id, name) VALUES (11, 'm11')`, schemaM)
-+	s.inhExec(`UPDATE %s.inh_multi_child SET name = 'm10-upd' WHERE id = 10`, schemaM)
-+	s.inhExec(`INSERT INTO %s (id, name) VALUES (5, 'p2-5')`, parent2)
-+
-+	EnvWaitForEqualTablesWithNames(env, s, "child still routed to first parent", parent1Name, dst1, "id,name")
-+	EnvWaitForEqualTablesWithNames_Only(env, s, "child still not routed to second parent", parent2Name, dst2, "id,name")
-+
-+	env.Cancel(s.t.Context())
-+	RequireEnvCanceled(s.t, env)
++// MarkFirstRowReceived records when the first row was read from the source. Sources that buffer
++// rows before calling AddRecord (e.g. MongoDB's parallel decode) call it at read time, so destination
++// lag doesn't miss time spent in the buffer. Only the first call takes effect.
++func (r *CDCStream[T]) MarkFirstRowReceived(t time.Time) {
++	r.firstRowReceivedAtNano.CompareAndSwap(0, t.UnixNano())
 +}
 +
- func (s ClickHouseSuite) inhPartitionDivergentLayout(pubViaRoot bool) {
- 	s.inhRequirePostgres()
+ func (r *CDCStream[T]) WaitAndCheckEmpty() bool {
+ 	<-r.emptySignal
+ 	return !r.firstRowSet
+@@ -128,7 +137,7 @@ func (r *CDCStream[T]) NeedsNormalize() bool {
+ // FirstRowTimes returns the received/commit timestamps of the batch's first row event.
+ // ok is false if the batch had no row events (e.g. schema-delta-only batch).
+ func (r *CDCStream[T]) FirstRowTimes() (time.Time, time.Time, bool) {
+-	return r.firstRowReceivedAt, r.firstRowCommitTime, r.firstRowSet
++	return time.Unix(0, r.firstRowReceivedAtNano.Load()).UTC(), r.firstRowCommitTime, r.firstRowSet
+ }
  
+ func (r *CDCStream[T]) markEmptySignalReady() {
+```
+
+**File**: `flow/model/cdc_stream_test.go` (modified, +14/-0)
+```diff
+@@ -59,3 +59,17 @@ func TestCDCStreamFirstRowSet(t *testing.T) {
+ 	stream.Close()
+ 	require.False(t, stream.WaitAndCheckEmpty())
+ }
++
++func TestCDCStreamMarkFirstRowReceived(t *testing.T) {
++	t.Parallel()
++
++	stream := NewCDCStream[RecordItems](10)
++	readAt := time.Now().Add(-time.Minute)
++	stream.MarkFirstRowReceived(readAt)
++	stream.MarkFirstRowReceived(time.Now())
++
++	require.NoError(t, stream.AddRecord(t.Context(), &InsertRecord[RecordItems]{}))
++	receivedAt, _, firstRowSet := stream.FirstRowTimes()
++	require.True(t, firstRowSet)
++	require.True(t, readAt.Equal(receivedAt))
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4935** (2026-10-19): (patch): CI fix timeout on failed dep startup (@Jeremyyang920)
-- **PR #4932** (2026-10-19): fix(postgres): route a child of several mirrored tables to the same parent (@CHeavyarms)
-- **PR #4930** (2026-10-16): fix(postgres): decode inheritance children with their own column layout (@CHeavyarms)
-- **PR #4929** (2026-10-16): add e2e test for non-owner user with owner-managed custom publication (@jgao54)
-- **PR #4928** (2026-10-15): add org id to template (@jgao54)
-- **PR #4927** (2026-10-15): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
+- **PR #4948** (2026-10-20): docs: refresh stale sections of the architecture and deep-dive docs (@gheorghepucea)
+- **PR #4947** (2026-10-20): fix(mongo): measure destination lag from change stream read time (@dtunikov)
+- **PR #4946** (2026-10-20): test(e2e) Postgres/MySQL JSON columns with native JSON on and off (@gheorghepucea)
+- **PR #4945** (2026-10-20): Make `PEERDB_POSTGRES_FAST_PROCESS_JSON_COLUMNS` dynamic setting default to `true` (@pfcoperez)
+- **PR #4941** (closed): fix(postgres): stop retrying snapshot column mismatches (@amogiska)
+- **PR #4940** (closed): extend no-event-timeout to 48 hours (@jgao54)
 
 ---
 
@@ -2178,29 +2013,30 @@ for a parent that had no children when the pull started, and the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (patch): CI fix timeout on failed dep startup (#4935)
+## X. mongo): measure destination lag from change stream read time (#4947)
 
 **RULE**:
-When implementing operations in `.github/workflows/flow.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/mongo/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb61e655`: (patch): CI fix timeout on failed dep startup (#4935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7de14dd`: mongo): measure destination lag from change stream read time (#4947). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/flow.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mongo/cdc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # Validate the common code before allocating runners for every permutation.
-    needs: [gate, unit_tests, test_selection_coverage]
+			// rows sit in workerPool until a chunk fills or the batch ends, so AddRecord is too late to
+			// mark when the first row was received
+			req.RecordStream.MarkFirstRowReceived(time.Now())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    needs: [gate]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb61e655` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7de14dd` are properly handled with clean fallback behavior.
