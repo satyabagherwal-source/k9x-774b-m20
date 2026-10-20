@@ -3632,3 +3632,6 @@
 | `CYCLE-20261020-NBEJ` | `2026-10-20T01:40:09.211Z` | `mozilla/readability` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2968` | Yes (`a62ee251...`) |
 | `CYCLE-20261020-ND7C` | `2026-10-20T01:40:11.544Z` | `dodo-reach/hermes-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2969` | Yes (`433c2f3e...`) |
 | `CYCLE-20261020-NIHD` | `2026-10-20T01:40:18.385Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2970` | Yes (`ee667523...`) |
+| `CYCLE-20261020-V0LT` | `2026-10-20T01:46:08.465Z` | `miso-belica/jusText` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2971` | Yes (`5b8638d0...`) |
+| `CYCLE-20261020-V2OU` | `2026-10-20T01:46:11.166Z` | `heckj/swiftui-notes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2972` | Yes (`81b94720...`) |
+| `CYCLE-20261020-V9QN` | `2026-10-20T01:46:20.303Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2973` | Yes (`d70e6d9a...`) |

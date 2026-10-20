@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-MZFJ",
-    "timestamp": "2026-10-19T09:48:06.751Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "0ca5836e9232b6dafc2b1738e44099c64a5d25e48bcd1a7ae9551ae8b74a9983",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-N1I3",
-    "timestamp": "2026-10-19T09:48:09.435Z",
-    "repository": "LouisCAD/Splitties",
-    "learningId": "learn-github-louiscad-splitties",
-    "contentHash": "b214ed3d00f30ac0147c03fc817c275eb5be05f4bb1382eec20400cf1c8414e8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-N66U",
-    "timestamp": "2026-10-19T09:48:15.510Z",
-    "repository": "volcengine/MineContext",
-    "learningId": "learn-github-volcengine-minecontext",
-    "contentHash": "c4c1487336bfad495520b8c6f31a68a6d9c1b6491266ed69628731906c7ebb65",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-V1UC",
     "timestamp": "2026-10-19T09:54:23.124Z",
     "repository": "apache/arrow",
@@ -7490,6 +7445,51 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-V0LT",
+    "timestamp": "2026-10-20T01:46:08.465Z",
+    "repository": "miso-belica/jusText",
+    "learningId": "learn-github-miso-belica-justext",
+    "contentHash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-V2OU",
+    "timestamp": "2026-10-20T01:46:11.166Z",
+    "repository": "heckj/swiftui-notes",
+    "learningId": "learn-github-heckj-swiftui-notes",
+    "contentHash": "81b9472031ce4ff6a85a90827ec847a3cedef21789f6d665c525e33aeb5cd366",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-V9QN",
+    "timestamp": "2026-10-20T01:46:20.303Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

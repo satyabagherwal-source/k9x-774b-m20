@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:40:18.396Z",
+  "last_updated": "2026-10-20T01:46:20.311Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3679,14 +3679,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
-      "verified_at": "2026-10-20T00:25:37.863Z",
+      "content_hash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
+      "verified_at": "2026-10-20T01:46:20.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:25:37.863Z"
+      "last_updated": "2026-10-20T01:46:20.310Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -14877,6 +14877,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:40:11.555Z"
+    },
+    "miso-belica/jusText": {
+      "repository": "miso-belica/jusText",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-miso-belica-justext",
+      "content_hash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
+      "verified_at": "2026-10-20T01:46:08.472Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:46:08.472Z"
+    },
+    "heckj/swiftui-notes": {
+      "repository": "heckj/swiftui-notes",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-heckj-swiftui-notes",
+      "content_hash": "81b9472031ce4ff6a85a90827ec847a3cedef21789f6d665c525e33aeb5cd366",
+      "verified_at": "2026-10-20T01:46:11.174Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:46:11.174Z"
     }
   },
   "repos": {

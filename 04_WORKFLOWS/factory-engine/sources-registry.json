@@ -627,12 +627,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
-    "name": "lapce/lapce",
+    "name": "lapce",
     "officialUrl": "https://github.com/lapce/lapce",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T11:35:08.469Z",
-    "lastVerified": "2026-10-19T11:35:08.469Z",
+    "lastChecked": "2026-10-20T01:46:00.615Z",
+    "lastVerified": "2026-10-20T01:46:00.615Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lapce-lapce",
@@ -641,7 +641,8 @@
     "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f66ffaa9"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1748,8 +1749,8 @@
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T22:49:32.085Z",
-    "lastVerified": "2026-10-19T22:49:32.085Z",
+    "lastChecked": "2026-10-20T01:46:10.584Z",
+    "lastVerified": "2026-10-20T01:46:10.584Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chrispybacon-dev-dockflare",
@@ -7382,8 +7383,8 @@
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T13:27:35.505Z",
-    "lastVerified": "2026-10-19T13:27:35.505Z",
+    "lastChecked": "2026-10-20T01:46:13.093Z",
+    "lastVerified": "2026-10-20T01:46:13.093Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
@@ -8225,12 +8226,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "shadcn-ui-lint": {
-    "name": "shadcn-ui/lint",
+    "name": "lint",
     "officialUrl": "https://github.com/shadcn-ui/lint",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T14:58:58.223Z",
-    "lastVerified": "2026-10-19T14:58:58.223Z",
+    "lastChecked": "2026-10-20T01:45:58.055Z",
+    "lastVerified": "2026-10-20T01:45:58.055Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shadcn-ui-lint",
@@ -8239,7 +8240,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bceee0fe"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -8900,12 +8902,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "hashicorp-terraform": {
-    "name": "hashicorp/terraform",
+    "name": "terraform",
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T14:08:42.252Z",
-    "lastVerified": "2026-10-19T14:08:42.252Z",
+    "lastChecked": "2026-10-20T01:46:08.172Z",
+    "lastVerified": "2026-10-20T01:46:08.172Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
@@ -8914,7 +8916,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8a97fe6c"
   },
   "aquasecurity-trivy": {
     "name": "aquasecurity/trivy",
@@ -18370,22 +18373,21 @@
     "revisionIdentifier": "f2eb34aa"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T01:21:18.693Z",
-    "lastVerified": "2026-10-20T01:21:18.693Z",
+    "lastChecked": "2026-10-20T01:46:19.798Z",
+    "lastVerified": "2026-10-20T01:46:19.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
+    "contentHash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0c4a56da"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -20642,14 +20644,15 @@
     "officialUrl": "https://github.com/heckj/swiftui-notes",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-04T20:50:17.764Z",
-    "lastVerified": "2026-10-04T20:50:17.764Z",
+    "lastChecked": "2026-10-20T01:46:10.664Z",
+    "lastVerified": "2026-10-20T01:46:10.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 16,
+    "learningId": "learn-github-heckj-swiftui-notes",
+    "contentHash": "81b9472031ce4ff6a85a90827ec847a3cedef21789f6d665c525e33aeb5cd366",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -26610,13 +26613,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "miso-belica-justext": {
-    "name": "justext",
+    "name": "miso-belica/jusText",
     "officialUrl": "https://github.com/miso-belica/justext",
-    "lastChecked": "2026-10-18T06:55:35.697040Z",
-    "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T06:55:35.697040Z",
-    "harvestStatus": "VERIFIED",
-    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-20T01:46:07.403Z",
+    "lastVerified": "2026-10-20T01:46:07.403Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-miso-belica-justext",
+    "contentHash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "scrapinghub-dateparser": {
     "name": "dateparser",
@@ -27016,8 +27027,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-20T01:40:20.938Z",
-    "lastVerified": "2026-10-20T01:40:20.938Z",
+    "lastChecked": "2026-10-20T01:46:22.846Z",
+    "lastVerified": "2026-10-20T01:46:22.846Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

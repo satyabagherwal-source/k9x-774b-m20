@@ -3639,3 +3639,6 @@ Every entry in this ledger must capture:
 | `learn-github-mozilla-readability` | `https://github.com/mozilla/readability` | `ab4027a8` | Multi-dimensional audit evidence | 2026-10-20T01:40:09.214Z |
 | `learn-github-dodo-reach-hermes-desktop` | `https://github.com/dodo-reach/hermes-desktop` | `3b772afa` | Multi-dimensional audit evidence | 2026-10-20T01:40:11.547Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `f1c68e2e` | Multi-dimensional audit evidence | 2026-10-20T01:40:18.388Z |
+| `learn-github-miso-belica-justext` | `https://github.com/miso-belica/justext` | `5fadda90` | Multi-dimensional audit evidence | 2026-10-20T01:46:08.467Z |
+| `learn-github-heckj-swiftui-notes` | `https://github.com/heckj/swiftui-notes` | `e7884cce` | Multi-dimensional audit evidence | 2026-10-20T01:46:11.168Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c9fd9a5e` | Multi-dimensional audit evidence | 2026-10-20T01:46:20.305Z |

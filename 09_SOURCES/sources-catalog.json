@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "0c4a56da",
+    "sourceVersion": "c9fd9a5e",
     "license": "NOASSERTION",
-    "contentHash": "bdbbfa6f11d5805b98230551229d74147e5d31c9c09c897f7bfd7afc29a8e457",
-    "lastHarvestedAt": "2026-10-20T00:25:37.856Z",
+    "contentHash": "d70e6d9a7dd27ddf87be3ea6e6cc5dc9d416bf4e85ef527fc2df97ff9a1d687e",
+    "lastHarvestedAt": "2026-10-20T01:46:20.305Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -9888,5 +9888,25 @@
     "contentHash": "433c2f3e270aefd1271050264ff20721704bb93f34c01e349e5e8e62b1111935",
     "lastHarvestedAt": "2026-10-20T01:40:11.547Z",
     "learningId": "learn-github-dodo-reach-hermes-desktop"
+  },
+  "miso-belica-justext": {
+    "repository": "miso-belica/jusText",
+    "platform": "github",
+    "sourceUrl": "https://github.com/miso-belica/justext",
+    "sourceVersion": "5fadda90",
+    "license": "BSD-2-Clause",
+    "contentHash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
+    "lastHarvestedAt": "2026-10-20T01:46:08.467Z",
+    "learningId": "learn-github-miso-belica-justext"
+  },
+  "heckj-swiftui-notes": {
+    "repository": "heckj/swiftui-notes",
+    "platform": "github",
+    "sourceUrl": "https://github.com/heckj/swiftui-notes",
+    "sourceVersion": "e7884cce",
+    "license": "MIT",
+    "contentHash": "81b9472031ce4ff6a85a90827ec847a3cedef21789f6d665c525e33aeb5cd366",
+    "lastHarvestedAt": "2026-10-20T01:46:11.168Z",
+    "learningId": "learn-github-heckj-swiftui-notes"
   }
 }
