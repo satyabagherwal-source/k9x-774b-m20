@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
-> **Source Version**: `7a6782e3`  
+> **Source Version**: `dfeb34b2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:01:29.446Z  
+> **Timestamp**: 2026-10-20T18:43:24.943Z  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:01:29.439Z  
+> **Harvest Timestamp**: 2026-10-20T18:43:24.935Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9076 stars
+- **Stars / Engagement**: 9087 stars
 
 ---
 
@@ -955,494 +955,214 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5f995a6` (2026-10-06)
-**Commit Message**: fix(terraform): avoid tmp_path in git loader tests (#7726)
+### Incident Patch 1: `dfeb34b2` (2026-10-20)
+**Commit Message**: fix(secrets): load platform-provided detectors in spawn-mode secrets … (#7757)
 
-* test(terraform): avoid tmp_path in git loader tests to fix py3.9/3.10 hang
+* fix(secrets): load platform-provided detectors in spawn-mode secrets workers
 
-* fix(general): make _is_within lexical to avoid py3.9/3.10 realpath segfault
+With CHECKOV_SECRETS_PARALLEL_MODE=spawn, worker processes start with blank memory and did not receive the platform secrets policies that CustomRegexDetector loads from bc_integration. Workers scanned without those regex detectors, so spawn mode reported fewer findings than thread mode.
 
----------
+Pass the secrets policies to the spawn pool initializer and restore them in each worker before the detectors are built. Add tests that compare spawn and thread findings when platform policies are present.
 
-Co-authored-by: Yuval Michaeli <[REDACTED_EMAIL]>
+* fix(secrets): satisfy mypy for worker policy restore
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.3.25'
-+version = '3.3.26'
+-version = '3.3.29'
++version = '3.3.30'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.3.25
-+checkov==3.3.26
+-checkov==3.3.29
++checkov==3.3.30
 ```
 
 ---
 
-### Incident Patch 2: `1af12e0d` (2026-10-06)
-**Commit Message**: fix(terraform): avoid tmp_path in git loader tests (#7726)
+### Incident Patch 2: `359a05bc` (2026-10-20)
+**Commit Message**: fix(secrets): load platform-provided detectors in spawn-mode secrets … (#7757)
 
-* test(terraform): avoid tmp_path in git loader tests to fix py3.9/3.10 hang
+* fix(secrets): load platform-provided detectors in spawn-mode secrets workers
 
-* fix(general): make _is_within lexical to avoid py3.9/3.10 realpath segfault
+With CHECKOV_SECRETS_PARALLEL_MODE=spawn, worker processes start with blank memory and did not receive the platform secrets policies that CustomRegexDetector loads from bc_integration. Workers scanned without those regex detectors, so spawn mode reported fewer findings than thread mode.
 
----------
+Pass the secrets policies to the spawn pool initializer and restore them in each worker before the detectors are built. Add tests that compare spawn and thread findings when platform policies are present.
 
-Co-authored-by: Yuval Michaeli <[REDACTED_EMAIL]>
+* fix(secrets): satisfy mypy for worker policy restore
 
-**File**: `checkov/common/util/file_utils.py` (modified, +8/-4)
+**File**: `checkov/secrets/runner.py` (modified, +27/-2)
 ```diff
-@@ -46,11 +46,15 @@ def safe_relpath(file_path: str, root_folder: str | Path | None) -> str:
+@@ -113,13 +113,38 @@
+ ]
  
  
- def _is_within(base: str, target: str) -> bool:
--    """Return True iff target resolves inside base (both realpath'd)."""
--    base_real = os.path.realpath(base)
--    target_real = os.path.realpath(target)
-+    """Return True iff target is inside base, after normalizing both paths ('..', '.', duplicate separators).
+-def _init_secrets_worker(config: Dict[str, Any], disabled_filters: List[str]) -> None:
++def _get_platform_secrets_policies() -> Optional[List[Dict[str, Any]]]:
++    """Return the platform secrets policies downloaded by the parent process, if any.
 +
-+    The check is lexical only (os.path.abspath), without accessing the file system. os.path.realpath segfaults
-+    on Python 3.9/3.10 in some environments, which hangs scans running in a subprocess.
++    These policies are turned into regex detectors by load_detectors(), which reads
++    them from bc_integration. Spawned workers do not inherit bc_integration state,
++    so the parent has to pass them explicitly.
 +    """
-+    base_abs = os.path.abspath(base)
-+    target_abs = os.path.abspath(target)
-     try:
--        return os.path.commonpath([base_real, target_real]) == base_real
-+        return os.path.commonpath([base_abs, target_abs]) == base_abs
-     except ValueError:
-         return False
++    run_config = bc_integration.customer_run_config_response
++    if not run_config:
++        return None
++    policies: Optional[List[Dict[str, Any]]] = run_config.get('secretsPolicies')
++    return policies
++
++
++def _init_secrets_worker(
++        config: Dict[str, Any],
++        disabled_filters: List[str],
++        secrets_policies: Optional[List[Dict[str, Any]]] = None,
++) -> None:
+     """Pool initializer for SPAWN workers. Runs once per worker process.
  
+     Rebuilds detect-secrets settings from the parent-provided config and disables
+     the same filters the parent disabled, so a spawned worker produces
+     byte-identical findings to the thread/in-process path.
++
++    secrets_policies carries the platform secrets policies. They must be in place
++    before get_plugins() instantiates CustomRegexDetector, which loads its
++    detectors from bc_integration at construction time.
+     """
++    if secrets_policies and not bc_integration.customer_run_config_response:
++        bc_integration.customer_run_config_response = {'secretsPolicies': secrets_policies}  # type:ignore[assignment]
++
+     settings = get_settings()
+     settings.clear()
+     configure_settings_from_baseline(config)
+@@ -593,7 +618,7 @@ def _scan_files(files_to_scan: list[str], secrets: SecretsCollection, pbar: Prog
+                 func=Runner._safe_scan,
+                 items=items,
+                 pool_initializer=_init_secrets_worker,
+-                pool_initargs=(worker_config, _SECRETS_DISABLED_FILTERS),
++                pool_initargs=(worker_config, _SECRETS_DISABLED_FILTERS, _get_platform_secrets_policies()),
+             )
+         else:
+             results = parallel_runner.run_function(func=Runner._safe_scan, items=items)
 ```
 
-**File**: `tests/common/utils/test_file_utils.py` (modified, +39/-1)
+**File**: `tests/secrets/test_spawn_mode_parity.py` (added, +105/-0)
 ```diff
-@@ -7,7 +7,8 @@
- 
- import pytest
- 
--from checkov.common.util.file_utils import read_file_safe, get_file_size_safe, extract_tar_archive, safe_relpath
-+from checkov.common.util.file_utils import read_file_safe, get_file_size_safe, extract_tar_archive, safe_relpath, \
-+    _is_within
- 
- def test_sanity_read_file():
-     file_to_check = f"{os.path.dirname(os.path.realpath(__file__))}/resources/existing_file"
-@@ -119,3 +120,40 @@ def test_safe_relpath_cross_drive_fallback(caplog: pytest.LogCaptureFixture) ->
- 
-     assert result == os.path.basename(file_path)
-     assert any("falling back" in record.message for record in caplog.records)
+@@ -0,0 +1,105 @@
++"""Spawn-mode secrets scanning must produce the same findings as thread mode.
++
++Spawned workers start with blank memory, so any state the parent builds up
++(detect-secrets settings, platform secrets policies) has to be handed to them
++explicitly. These tests compare both modes on the same input to catch any
++state that is not forwarded.
++"""
++import os
++import sys
++import unittest
++from typing import Any, Dict, List, Set, Tuple
++from unittest import mock
++
++from checkov.common.bridgecrew.platform_integration import bc_integration
++from checkov.common.output.report import Report
++from checkov.runner_filter import RunnerFilter
++from checkov.secrets import runner as secrets_runner
++from checkov.secrets.runner import Runner, _init_secrets_worker
++
++CUSTOM_REGEX_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "custom_regex_detector")
 +
 +
-+@pytest.mark.parametrize(
-+    "target, expected",
-+    [
-+        ("base", True),
-+        ("base/a.yaml", True),
-+        ("base/sub/dir/a.yaml", True),
-+        ("base/./a.yaml", True),
-+        ("base//a.yaml", True),
-+        ("base/sub/../a.yaml", True),
-+        ("base/my..file.yaml", True),
-+        ("base/..", False),
-+        ("base/../outside/a.yaml", False),
-+        ("base/sub/../../outside", False),
-+        ("base_sibling/a.yaml", False),
-+        ("outside/a.yaml", False),
-+        ("/etc/passwd", False),
-+    ],
-+)
-+def test_is_within(target: str, expected: bool) -> None:
-+    root = os.path.abspath("checkov_is_within_test_root")
-+    target_path = target if os.path.isabs(target) else os.path.join(root, target)
-+
-+    assert _is_within(os.path.join(root, "base"), target_path) is expected
-+
-+
-+def test_is_within_does_not_access_the_file_system() -> None:
-+    # os.path.realpath segfaults on python 3.9/3.10 in some environments, the check must stay lexical
-+    with patch("os.path.realpath", side_effect=AssertionError("realpath must not be called")):
-+        assert _is_within("/base", "/base/a.yaml")
-+        assert not _is_within("/base", "/base/../a.yaml")
-+
-+
-+def test_is_within_different_drives_returns_false() -> None:
-+    with patch("os.path.commonpath", side_effect=ValueError("Paths don't have the same drive")):
-+        assert not _is_within("C:\\base", "D:\\base\\a.yaml")
-```
-
-**File**: `tests/terraform/module_loading/loaders/test_git_loader.py` (modified, +25/-18)
-```diff
-@@ -46,6 +46,13 @@ def test__parse_module_source(source: str, expected_root_module: str, expected_i
-     assert module_source.inner_module == expected_inner_module
- 
- 
-+@pytest.fixture
-+def root_dir() -> Path:
-+    # these tests only compute paths and never write to disk, so a fixed (non existing) folder is enough.
-+    # avoids pytest's tmp_path, which crashes the xdist worker on python 3.9/3.10 (see verification/conftest.py)
-+    return Path(os.path.abspath("checkov_git_loader_test_root"))
-+
-+
- def _module_params(root_dir: Path, source: str) -> ModuleParams:
-     return ModuleParams(
-         root_dir=str(root_dir),
-@@ -58,7 +65,7 @@ def _module_params(root_dir: Path, source: str) -> ModuleParams:
- 
- 
- def _is_inside(base: Path, path: str) -> bool:
--    return os.path.commonpath([os.path.realpath(base), os.path.realpath(path)]) == os.path.realpath(base)
-+    return os.path.commonpath([os.path.abspath(base), os.path.abspath(path)]) == os.path.abspath(base)
- 
- 
- @pytest.mark.parametrize(
-@@ -126,13 +133,13 @@ def _is_inside(base: Path, path: str) -> bool:
-     ],
- )
- def test_valid_sources_stay_in_external_modules_dir(
--    tmp_path: Path, source: str, expected_dest_dir: str, expected_module_path: str
-+    root_dir: Path, source: str, expected_dest_dir: str, expected_module_path: str
- ) -> None:
--    external_modules_dir = tmp_path / EXTERNAL_MODULES_FOLDER_NAME
-+    external_modules_dir = root_dir / EXTERNAL_MODULES_FOLDER_NAME
-     loader = GenericGitLoader()
- 
--    module_path = loader._find_module_path(_module_params(tmp_path, source))
--    module_params = _module_params(tmp_path, source)
-+    module_path = loader._find_module_path(_module_params(root_dir, source))
-+    module_params = _module_params(root_dir, source)
-     loader._process_generic_git_repo(module_params)
- 
-     assert module_params.dest_dir == str(external_modules_dir / expected_dest_dir)
-@@ -168,31 +175,31 @@ def test_valid_sources_stay_in_external_modules_dir(
-         "local_file_repo_traversal",
-     ],
- )
--def test_path_traversal_in_source_is_rejected(tmp_path: Path, source: str) -> None:
-+def test_path_traversal_in_source_is_rejected(root_dir: Path, source: str) -> None:
-     loader = GenericGitLoader()
- 
-     with pytest.raises(ValueError):
--        loader._process_generic_git_repo(_module_params(tmp_path, source))
-+        loader._process_generic_git_repo(_module_params(root_dir, source))
-     with pytest.raises(ValueError):
--        loader._find_module_path(_module_params(tmp_path, source))
-+        loader._find_module_path(_module_params(root_dir, source))
- 
- 
--def test_traversal_in_inner_module_param_is_rejected(tmp_path: Path) -> None:
--    module_params = _module_params(tmp_path, "git::https://github.com/org/repo.git?ref=v1")
-+def test_traversal_in_inner_module_param_is_rejected(root_dir: Path) -> None:
-+    module_params = _module_params(root_dir, "git::https://github.com/org/repo.git?ref=v1")
-     module_params.inner_module = "../../../../../tmp"
- 
-     with pytest.raises(ValueError):
-         GenericGitLoader()._find_module_path(module_params)
- 
- 
--def test_dest_dir_outside_external_modules_dir_is_rejected(tmp_path: Path) -> None:
-+def test_dest_dir_outside_external_modules_dir_is_rejected(root_dir: Path) -> None:
-     # defense in depth - even if parsing returns an unexpected value, never use a folder outside the modules folder
-     loader = GenericGitLoader()
--    with mock.patch.object(GenericGitLoader, "_get_module_dir", return_value=tmp_path / "outside"):
-+    with mock.patch.object(GenericGitLoader, "_get_module_dir", return_value=root_dir / "outside"):
-         with pytest.raises(ValueError):
--            loader._process_generic_git_repo(_module_params(tmp_path, "git::https://github.com/org/repo.git"))
-+            loader._process_generic_git_repo(_module_params(root_dir, "git::https://github.com/org/repo.git"))
-         with pytest.raises(ValueError):
--            loader._find_module_path(_module_params(tmp_path, "git::https://github.com/org/repo.git"))
-+            loader._find_module_path(_module_params(root_dir, "git::https://github.com/org/repo.git"))
- 
- 
- TRAVERSAL_REF = "?ref=../../../../../../../../tmp/target"
-@@ -225,21 +232,21 @@ def test_dest_dir_outside_external_modules_dir_is_rejected(tmp_path: Path) -> No
- )
- @mock.patch("checkov.terraform.module_loading.loaders.git_loader.GitGetter", autospec=True)
- def test_git_based_loaders_do_not_clone_outside_external_modules_dir(
--    git_getter, tmp_path: Path, loader_class, source: str, env: dict
-+    git_getter, root_dir: Path, loader_class, source: str, env: dict
- ) -> None:
-     with mock.patch.dict(os.environ, env):
-         loader = loader_class()
--        module_params = _module_params(tmp_path, source)
-+        module_params = _module_params(root_dir, source)
-         loader.discover(module_params)
-         assert loader._is_matching_loader(module_params)
- 
-         with pytest.raises(ValueError):
--            loader.load(_module_params(tmp_path, source
-```
-
----
-
-### Incident Patch 3: `e8c8decf` (2026-09-30)
-**Commit Message**: fix(terraform_json): handle HCL JSON array and single-dict block formats in parser (#7707)
-
-initial impl
-
-Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
-
-**File**: `checkov/terraform_json/parser.py` (modified, +25/-2)
-```diff
-@@ -53,6 +53,8 @@ def parse(file_path: Path) -> tuple[dict[str, Any], list[tuple[int, str]]] | tup
-                 logger.error(f"Tried to parse {file_path} as JSON", exc_info=True)
-     except YAMLError:
-         pass
-+    except Exception:
-+        logger.error(f"Failed to parse template: {file_path}", exc_info=True)
- 
-     if template is None or template_lines is None:
-         return None, None
-@@ -91,9 +93,28 @@ def prepare_definition(definition: dict[str, Any]) -> dict[str, Any]:
-     return definition_new
- 
- 
--def handle_block_type(block_type: str, blocks: dict[str, Any]) -> list[dict[str, Any]]:
-+def handle_block_type(block_type: str, blocks: dict[str, Any] | list[dict[str, Any]]) -> list[dict[str, Any]]:
-     result: list[dict[str, Any]] = []
- 
-+    # HCL JSON spec allows block types as an array of single-key objects
-+    if isinstance(blocks, list):
-+        normalized: dict[str, Any] = {}
-+        for block_obj in blocks:
-+            if isinstance(block_obj, dict):
-+                for key, value in block_obj.items():
-+                    if key in normalized:
-+                        # Multiple blocks with same name — merge into list
-+                        existing = normalized[key]
-+                        if isinstance(existing, list):
-+                            existing.append(value)
-+                        else:
-+                            normalized[key] = [existing, value]
-+                    else:
-+                        normalized[key] = value
-+            else:
-+                logger.debug(f"Skipping non-dict element in '{block_type}' blocks array: {type(block_obj).__name__}")
-+        blocks = normalized
-+
-     for block_name, config in blocks.items():
-         if block_name == COMMENT_FIELD_NAME or block_name in LINE_FIELD_NAMES:
-             continue
-@@ -105,7 +126,9 @@ def handle_block_type(block_type: str, blocks: dict[str, Any]) -> list[dict[str,
-                     continue
-                 result.append({block_name: {resource_name: hclify(obj=resource_config)}})
-         elif block_type == BlockType.PROVIDER:
--            # provider are stored as a list, which we need to move one level higher to add the name
-+            # provider can be a list of configs or a single dict; normalize to list
-+            if isinstance(config, dict):
-+                config = [config]
-             for provider_config in config:
-                 result.append({block_name: hclify(obj=provider_config)})
-         elif block_type == BlockType.LOCALS:
-```
-
-**File**: `tests/terraform_json/examples/provider_array_with_null.tf.json` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+{
-+  "provider": [
-+    {
-+      "aws": {
-+        "region": "us-west-2",
-+        "profile": null
-+      }
-+    }
-+  ],
-+  "resource": {
-+    "aws_instance": {
-+      "example": {
-+        "ami": "abc-123",
-+        "instance_type": "t2.micro"
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tests/terraform_json/examples/provider_single_dict.tf.json` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+{
-+  "provider": {
-+    "artifactory": {
-+      "url": "https://example.com",
-+      "access_token": "token123"
-+    }
-+  },
-+  "resource": {
-+    "aws_instance": {
-+      "example": {
-+        "ami": "abc-123",
-+        "instance_type": "t2.micro"
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tests/terraform_json/examples/provider_top_level_array.tf.json` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+{
-+  "provider": [
-+    {"aws": {"region": "us-east-1"}},
-+    {"aws": {"alias": "west", "region": "us-west-2"}}
-+  ],
-+  "resource": {
-+    "aws_instance": {
-+      "example": {
-+        "ami": "abc-123",
-+        "instance_type": "t2.micro"
-+      }
-+    }
-+  }
-+}
-```
-
-**File**: `tests/terraform_json/test_parser.py` (modified, +143/-1)
-```diff
-@@ -1,4 +1,8 @@
--from checkov.terraform_json.parser import hclify, prepare_definition
-+from pathlib import Path
-+
-+from checkov.terraform_json.parser import handle_block_type, hclify, parse, prepare_definition
-+
-+EXAMPLES_DIR = Path(__file__).parent / "examples"
- 
- 
- def test_hclify():
-@@ -60,3 +64,141 @@ def test_prepare_definition_locals():
-             }
-         ]
-     }
-+
-+
-+def test_handle_block_type_provider_single_dict_config():
-+    """Provider config as a single dict (not wrapped in a list) should be handled without crashing.
-+
-+    When a provider has a single configuration in .tf.json, the HCL JSON spec allows it
-+    as a plain dict. The parser must normalize it to a list before iterating, otherwise
-+    iterating a dict yields its keys (strings) and hclify() crashes with
-+    'Exception: this method receives only dicts'.
-+    """
-+    # given — provider name maps to a dict (not a list)
-+    blocks = {"artifactory": {"url": "https://example.com", "access_token": "token123"}}
-+
-+    # when / then — should NOT crash, should return valid parsed result
-+    result = handle_block_type(block_type="provider", blocks=blocks)
-+
-+    assert isinstance(result, list)
-+    assert len(result) == 1
-+    assert "artifactory" in result[0]
-+    # The inner dict should be hclified (values wrapped in lists)
-+    assert result[0]["artifactory"] == {
-+        "url": ["https://example.com"],
-+        "access_token": ["token123"],
++def _platform_policy(incident_id: str, regex: str, checkov_check_id: Any = None, is_custom: bool = True) -> Dict[str, Any]:
++    return {
++        "incidentId": incident_id,
++        "category": "Secrets",
++        "severity": "MEDIUM",
++        "incidentType": "Violation",
++        "title": incident_id,
++        "guideline": "test",
++        "checkovCheckId": checkov_check_id,
++        "conditionQuery": {"value": [regex], "cond_type": "secrets"},
++        "isCustom": is_custom,
++        "code": None,
 +    }
 +
 +
-+def test_handle_block_type_provider_list_config():
-+    """Provider config as a list of dicts (the existing working case).
-+
-+    This should continue to work — it's the format the current code already handles.
-+    """
-+    # given — provider name maps to a list of dicts
-+    blocks = {"aws": [{"region": "us-east-1"}, {"alias": "west", "region": "us-west-2"}]}
-+
-+    # when
-+    result = handle_block_type(block_type="provider", blocks=blocks)
-+
-+    # then
-+    assert isinstance(result, list)
-+    assert len(result) == 2
-+    assert result[0] == {"aws": {"region": ["us-east-1"]}}
-+    assert result[1] == {"aws": {"alias": ["west"], "region": ["us-west-2"]}}
++PLATFORM_POLICIES: List[Dict[str, Any]] = [
++    # organisation-defined policies
++    _platform_policy("org_policy_1", r"(?:^|\W)HANA(?:$|\W)"),
++    _platform_policy("org_policy_2", r"(?:^|\W)LIR(?:$|\W)"),
++    # platform-managed policy that maps to a checkov check id
++    _platform_policy("BC_GIT_TEST", r"5FP0NmFYz81U32XdjNb42762", checkov_check_id="CKV_SECRET_TEST", is_custom=False),
++]
 +
 +
-+def test_parse_provider_single_dict_config_file():
-+    """End-to-end parse of a .tf.json file where a provider config is a plain dict.
-+
-+    This exercises the full parse → loads → prepare_definition → handle_block_type pipeline
-+    with the single-dict provider crash scenario.
-+    """
-+    # given
-+    fixture = EXAMPLES_DIR / "provider_single_dict.tf.json"
-+
-+    # when
-+    template, file_lines = parse(file_path=fixture)
-+
-+    # then — should not crash and should return a valid template
-+    assert template is not None
-+    assert file_lines is not None
-+
-+    # Provider block should be parsed correctly
-+    assert "provider" in template
-+    provider_blocks = template["provider"]
-+    assert isinstance(provider_blocks, list)
-+    assert len(provider_blocks) == 1
-+    assert "artifactory" in provider_blocks[0]
-+    assert provider_blocks[0]["artifactory"]["url"] == ["https://example.com"]
-+    assert provider_blocks[0]["artifactory"]["access_token"] == ["token123"]
-+
-+    # Resource block should also be parsed correctly
-+    assert "resource" in template
-+    resource_blocks = template["resource"]
-+    assert isinstance(resource_blocks, list)
-+    assert len(resource_blocks) == 1
-+    assert "aws_instance" in resource_blocks[0]
++def _findings(report: Report) -> Set[Tuple[str, str, Tuple[int, ...]]]:
++    return {
++        (record.check_id, record.file_path, tuple(record.file_line_range))
++        for record in report.failed_checks
++    }
 +
 +
-+def test_parse_provider_array_of_objects_file():
-+    """End-to-end parse of a .tf.json file where provider is a top-level array of objects.
++class TestSecretsSpawnModeParity(unittest.TestCase):
++    def setUp(self) -> None:
++        self._original_run_config = bc_integration.customer_run_config_response
++        bc_integration.customer_run_config_response = {"secretsPolicies": PLATFORM_POLICIES}
 +
-+    The HCL JSON spec also allows:
-+      "provider": [{"aws": {"region": "us-east-1"}}, {"aws": {...}}]
-+    This is a different format from the dict-of-lists format and exercises another code path.
-+    """
-+    # given
-+    fixture = EXAMPLES_DIR / "provider_top_level_array.tf.json"
++    def tearDown(self) -> None:
++        bc_integration.customer_run_config_response = self._original_run_config
 +
-+    # when
-+    template, file_lines = parse(file_path=fixture)
++    def _run(self, mode: str) -> Report:
++        with mock.patch.object(secrets_runner, "SECRETS_PARALLEL_MODE", mode):
++            return Runner().run(
++                root_folder=CUSTOM_REGEX_DIR,
++                runner_filter=RunnerFilter(framework=["secrets"], enable_secret_scan_all_files=True),
++            )
 +
-+    # then — should not crash and should return a valid template
-+    assert template is not None
-+    assert file_lines is not None
++    @unittest.skipIf(getattr(sys, "frozen", False), "spawn mode is disabled in frozen builds")
++    def test_spawn_and_thread_report_the_same_findings(self) -> None:
++        thread_findings = _findings(self._run("thread"))
++        spawn_findings = _findings(self._run("spawn"))
 +
-+    # Provider block should be parsed correctly
-+    assert "provider" in template
-+    provider_blocks = template["provider"]
-+    assert isinstance(provider_blocks, list)
-+    assert len(provider_blocks) == 2
-+    assert "aws" in provider_blocks[0]
-+    assert provider_blocks[0]["aws"]["region"] == ["us-east-1"]
-+    assert "aws" in provider_blocks[1]
-+    assert provider_blocks[1]["aws"]["region"] == ["us-west-2"]
-+    assert provider_blocks[1]["aws"]["alias"] == ["west"]
++        platform_check_ids = {"org_policy_1", "org_policy_2", "CKV_SECRET_TEST"}
++        # sanity: the fixture must exercise the platform policies, otherwise the comparison proves nothing
++        self.assertTrue(platform_check_ids & {check_id for check_id, _, _ in thread_findings})
++        self.assertEqual(thread_findings, spawn_findings)
 +
 +
-+def test_parse_provider_array_with_null_values():
-+    """End-to-end parse of a .tf.json file where provider is a top-level array with null values.
++class TestInitSecretsWorker(unittest.TestCase):
++    """Simulates a freshly spawned worker: no platform run config in memory."""
 +
-+    The HCL JSON spec allows null values in provider configurations:
-+      "provider": [{"aws": {"region": "us-west-2", "profile": null}}]
-+    The parser must preserve null as [None] after hclification.
-+    """
-+    # given
-+    fixture = EXAMPLES_DIR / "provider_array_with_null.tf.json"
++    def setUp(self) -> None:
++        self._original_run_config = bc_integration.customer_run_config_response
++        bc_integration.customer_run_config_response = None
 +
-+    # when
-+    template, file_lines = pars
++    def tearDown(self) -> None:
++        bc_integration.customer_run_config_response = self._original_run_config
++
++    def test_worker_receives_platform_policies(self) -> None:
++        from checkov.secrets.plugins.custom_regex_detector import CustomRegexDetector
++
++        _init_secrets_worker({"plugins_used": [{"name": "AWSKeyDetector"}]}, [], PLATFORM_POLICIES)
++
++        self.assertEqual(bc_integration.customer_run_config_response, {"secretsPolicies": PLATFORM_POLICIES})
++        self.assertEqual(len(CustomRegexDetector().regex_to_metadata), len(PLATFORM_POLICIES))
++
++    def test_worker_without_platform_policies(self) -> None:
++        _init_secrets_worker({"plugins_used": [{"name": "AWSKeyDetector"}]}, [], None)
++
++        self.assertIsNone(bc_integration.customer_run_config_response)
++
++
++if __name__ == "__main__":
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
+- **PR #7757** (2026-10-20): fix(secrets): load platform-provided detectors in spawn-mode secrets … (@Saarett)
 - **PR #7739** (closed): fix(terraform): Handle dynamic DNSSEC key specs (@botaoshi1)
 - **PR #7738** (closed): fix(terraform): Handle Athena managed encryption (@botaoshi1)
 - **PR #7737** (2026-10-13): fix(terraform): extend MySQL public access check to cover flexible server resources (@talazuri)
 - **PR #7736** (2026-10-12): fix(terraform): resolve graph edges for count/for_each indexed resource references (@talazuri)
-- **PR #7734** (2026-10-11): fix(secrets): detect paired AWS secret in bare CSV/delimited format (@MaryArmaly)
-- **PR #7726** (2026-10-06): fix(terraform): avoid tmp_path in git loader tests (@yuvalmich)
 
 ---
 
@@ -1462,38 +1182,55 @@ Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. terraform): avoid tmp_path in git loader tests (#7726)
+## X. secrets): load platform-provided detectors in spawn-mode secrets … (#7757)
 
 **RULE**:
-When implementing operations in `checkov/common/util/file_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `checkov/secrets/runner.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1af12e0d`: terraform): avoid tmp_path in git loader tests (#7726). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `359a05bc`: secrets): load platform-provided detectors in spawn-mode secrets … (#7757). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/util/file_utils.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/secrets/runner.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    """Return True iff target is inside base, after normalizing both paths ('..', '.', duplicate separators).
+def _get_platform_secrets_policies() -> Optional[List[Dict[str, Any]]]:
+    """Return the platform secrets policies downloaded by the parent process, if any.
 
-    The check is lexical only (os.path.abspath), without accessing the file system. os.path.realpath segfaults
-    on Python 3.9/3.10 in some environments, which hangs scans running in a subprocess.
+    These policies are turned into regex detectors by load_detectors(), which reads
+    them from bc_integration. Spawned workers do not inherit bc_integration state,
+    so the parent has to pass them explicitly.
     """
-    base_abs = os.path.abspath(base)
-    target_abs = os.path.abspath(target)
-        return os.path.commonpath([base_abs, target_abs]) == base_abs
+    run_config = bc_integration.customer_run_config_response
+    if not run_config:
+        return None
+    policies: Optional[List[Dict[str, Any]]] = run_config.get('secretsPolicies')
+    return policies
+
+
+def _init_secrets_worker(
+        config: Dict[str, Any],
+        disabled_filters: List[str],
+        secrets_policies: Optional[List[Dict[str, Any]]] = None,
+) -> None:
+
+    secrets_policies carries the platform secrets policies. They must be in place
+    before get_plugins() instantiates CustomRegexDetector, which loads its
+    detectors from bc_integration at construction time.
+    if secrets_policies and not bc_integration.customer_run_config_response:
+        bc_integration.customer_run_config_response = {'secretsPolicies': secrets_policies}  # type:ignore[assignment]
+
+                pool_initargs=
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    """Return True iff target resolves inside base (both realpath'd)."""
-    base_real = os.path.realpath(base)
-    target_real = os.path.realpath(target)
-        return os.path.commonpath([base_real, target_real]) == base_real
+def _init_secrets_worker(config: Dict[str, Any], disabled_filters: List[str]) -> None:
+                pool_initargs=(worker_config, _SECRETS_DISABLED_FILTERS),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1af12e0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `359a05bc` are properly handled with clean fallback behavior.

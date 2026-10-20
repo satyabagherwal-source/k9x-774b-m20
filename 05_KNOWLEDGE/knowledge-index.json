@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:35:16.302Z",
+  "last_updated": "2026-10-20T18:43:25.305Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1935,8 +1935,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "61f24ce2",
-      "content_hash": "6716a7f3a75b5d961debff3e7e5970e4fd24e8b58e95e93e02e206af79b82068",
+      "source_version": "a907fbc6",
+      "content_hash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -1949,6 +1949,11 @@
           "number": 2907,
           "title": "GH-52024: [Python] Fix the codec list in show_info() (#51753)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3324,
+          "title": "GH-54595: [Packaging][CI] Fix regex on update_deb_package_names to cover the 3 o",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1956,7 +1961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:06:11.959Z",
+      "verified_at": "2026-10-20T18:43:18.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4143,14 +4148,19 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "7a6782e3",
-      "content_hash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
+      "source_version": "dfeb34b2",
+      "content_hash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
         {
           "number": 2050,
           "title": "terraform): avoid tmp_path in git loader tests (#7726)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3325,
+          "title": "secrets): load platform-provided detectors in spawn-mode secrets … (#7757)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4159,7 +4169,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:01:29.653Z",
+      "verified_at": "2026-10-20T18:43:25.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22228,7 +22238,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
+      "content_hash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -22293,7 +22303,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-19T04:59:12.558Z",
+      "verified_at": "2026-10-20T18:43:15.185Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103714,6 +103724,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:35:16.293Z"
+    },
+    "rule-3324": {
+      "learning_id": "rule-3324",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3324,
+      "title": "GH-54595: [Packaging][CI] Fix regex on update_deb_package_names to cover the 3 o",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "a907fbc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:43:18.074Z"
+    },
+    "rule-3325": {
+      "learning_id": "rule-3325",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3325,
+      "title": "secrets): load platform-provided detectors in spawn-mode secrets … (#7757)",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "dfeb34b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:43:25.287Z"
     }
   },
   "aliases": {

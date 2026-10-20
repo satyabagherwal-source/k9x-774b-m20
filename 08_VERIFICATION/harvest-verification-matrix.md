@@ -3958,3 +3958,6 @@
 | `CYCLE-20261020-MUOB` | `2026-10-20T18:27:33.707Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3318` | Yes (`1f188b09...`) |
 | `CYCLE-20261020-UNH4` | `2026-10-20T18:33:37.624Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1183, Rule 3319, Rule 3320` | Yes (`88d67da8...`) |
 | `CYCLE-20261020-WRNQ` | `2026-10-20T18:35:16.358Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3321, Rule 3322, Rule 3323` | Yes (`adbe8f36...`) |
+| `CYCLE-20261020-716O` | `2026-10-20T18:43:15.264Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`366adf8a...`) |
+| `CYCLE-20261020-73EV` | `2026-10-20T18:43:18.151Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3324` | Yes (`919eb769...`) |
+| `CYCLE-20261020-78Z5` | `2026-10-20T18:43:25.361Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3325` | Yes (`823788f4...`) |

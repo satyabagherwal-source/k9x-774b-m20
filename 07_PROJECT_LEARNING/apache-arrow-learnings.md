@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `61f24ce2`  
+> **Source Version**: `a907fbc6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:06:11.731Z  
+> **Timestamp**: 2026-10-20T18:43:17.715Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:06:10.780Z  
+> **Harvest Timestamp**: 2026-10-20T18:43:17.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17215 stars
+- **Stars / Engagement**: 17216 stars
 
 ---
 
@@ -1377,14 +1377,14 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #54686** (2026-10-20): **GH-44827: [C++] Skip null slots when transposing dictionary indices**
+  *Symptoms*: ### Rationale for this change  `TransposeDictIndices` (behind `DictionaryArray::Transpose`, `DictionaryArray::Compact`, `DictionaryUnifier::UnifyChunkedArray`/`UnifyTable`, and the hash kernels when chunks have different dictionaries) passes every index to `TransposeInts`, null slots included, and `TransposeInts` reads `transpose_map[index]`. Index values under null slots are unspecified, and `ValidateFull()` deliberately does not bounds-check them. So a dictionary array with a large or negative index under a null slot validates fine and then reads far outside `transpose_map`. This is the crash described in GH-44827.  You can hit it from untrusted input: write an IPC stream with two batches whose `dictionary<int32, utf8>` column has different dictionaries and `1 << 30` stored under a null index. Read it back with `RecordBatchStreamReader`. Both batches pass `ValidateFull()`, and then `DictionaryUnifier::UnifyChunkedArray` dies under ASan with a BUS/READ fault in `TransposeInts` (`int_util.cc:427`, called from `array_dict.cc:206`). `ConcatenateDictionaryIndices` already skips null runs for this reason. The transpose path never got the same treatment.  ### What changes are included in this PR?  `TransposeDictIndices` zeroes the output indices when the input may have nulls and transposes only the valid runs with `VisitSetBitRuns`. Valid indices are transposed exactly as before.  ### Are these changes tested?  Yes. `TestDictionary.TransposeNullsWithOutOfBoundsIndex` builds a dict
+
 - **Issue #54662** (2026-10-19): **GH-54651: [C++][Python] Use timestamp_parsers as a fallback for CSV time columns**
-  *Symptoms*: ### Rationale for this change  CSV columns typed as `time32` or `time64` are parsed only from the ISO-8601 format, and `ConvertOptions::timestamp_parsers` applies only to timestamp columns, so other time formats need reading as a timestamp and a cast.  ### What changes are included in this PR?  - Time columns try `timestamp_parsers` after the ISO-8601 parser fails, and take the time of day of the parsed timestamp, as a cast from timestamp to time does. This also works for dates outside the range of the time unit's timestamps (e.g. year 9999 with nanoseconds). - With the ISO-8601 parser in `timestamp_parsers`, fractional seconds are kept, and the value is rejected if the time unit cannot represent them. - `strptime` parsers without a time directive are skipped, and ISO-8601 values without a time of day are rejected, so that a date does not become midnight. - Type inference of time columns is unchanged and uses ISO-8601 only.  This PR is the time part of #50146. It builds on #54661 (date columns) and its dependencies #54656, #54657 and #54659, which must land first. Only the last commit is new here.  ### Are these changes tested?  Yes, `Time32Conversion.UserDefinedParsers` and `Time64Conversion.UserDefinedParsers` in C++, and `test_times_with_timestamp_parsers` in Python.  ### Are there any user-facing changes?  Yes, `timestamp_parsers` now also applies to `time32`/`time64` columns given in `column_types`. This is documented in the C++ CSV docs and the `ConvertOptions` docstrin
+  *Symptoms*: ### Rationale for this change  CSV columns typed as `time32` or `time64` are parsed only from the ISO-8601 format, and `ConvertOptions::timestamp_parsers` applies only to timestamp columns, so other time formats need reading as a timestamp and a cast.  ### What changes are included in this PR?  - Time columns try `timestamp_parsers` after the ISO-8601 parser fails, and take the time of day of the parsed timestamp, as a cast from timestamp to time does. This also works for dates outside the range of the time unit's timestamps (e.g. year 9999 with nanoseconds). - With the ISO-8601 parser in `timestamp_parsers`, fractional seconds are kept, and the value is rejected if the time unit cannot represent them. - `strptime` parsers without a time directive are skipped, and ISO-8601 values without a time of day are rejected, so that a date does not become midnight. - Type inference of time columns is unchanged and uses ISO-8601 only.  This PR is the time part of #50146. It builds on #54661 (date columns) and its dependencies #54656, #54657 and #54659, which must land first.  ### Are these changes tested?  Yes, `Time32Conversion.UserDefinedParsers` and `Time64Conversion.UserDefinedParsers` in C++, and `test_times_with_timestamp_parsers` in Python.  ### Are there any user-facing changes?  Yes, `timestamp_parsers` now also applies to `time32`/`time64` columns given in `column_types`. This is documented in the C++ CSV docs and the `ConvertOptions` docstring.  ### AI usage disclosure  Devel
   **Post-Mortem & Fix Analysis**:
   > :warning: GitHub issue #54651 **has been automatically assigned in GitHub** to PR creator.
   > <!--   Licensed to the Apache Software Foundation (ASF) under one   or more contributor license agreements.  See the NOTICE file   distributed with this work for additional information   regarding copyright ownership.  The ASF licenses this file   to you under the Apache License, Version 2.0 (the   "License"); you may not use this file except in compliance   with the License.  You may obtain a copy of the License at      http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,   software distributed under the License is distributed on an   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY   KIND, either express or implied.  See the License for the   specific language governing permissions and limitations   under the License. -->  Thanks for opening a pull request!  **This pull request has been automatically closed because you currently have 4 open pull requests, which is more than the limit of 3.**  Due to the increase in pull reques
-
-- **Issue #54661** (2026-10-19): **GH-54650: [C++][Python] Use timestamp_parsers as a fallback for CSV date columns**
-  *Symptoms*: ### Rationale for this change  CSV columns typed as `date32` or `date64` are parsed only from the ISO-8601 format, and `ConvertOptions::timestamp_parsers` applies only to timestamp columns, so other date formats need reading as a timestamp and a cast.  ### What changes are included in this PR?  - Date columns try `timestamp_parsers` after the ISO-8601 parser fails, and floor the parsed timestamp to the day boundary, as a cast from timestamp to date does. Values outside the range of `date32`/`date64` are rejected. - `strptime` parsers without a date directive are skipped, so that e.g. `"%H:%M:%S"` does not turn a time into 1900-01-01. - With the ISO-8601 parser in `timestamp_parsers`, fractional seconds are accepted and discarded. - Type inference of date columns is unchanged and uses ISO-8601 only, so a value with a time of day is not inferred as a date.  This PR is the date part of #50146. It builds on #54656, #54657 and #54659, whose fixes its tests cover for date columns, and those must land first. Only the last commit is new here.  ### Are these changes tested?  Yes, `Date32Conversion.UserDefinedParsers` and `Date64Conversion.UserDefinedParsers` in C++, and `test_dates_with_timestamp_parsers` in Python.  ### Are there any user-facing changes?  Yes, `timestamp_parsers` now also applies to `date32`/`date64` columns given in `column_types`. This is documented in the C++ CSV docs and the `ConvertOptions` docstring.  ### AI usage disclosure  Developed with AI assistance (Claud
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1401,105 +1401,98 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61f24ce2` (2026-10-19)
-**Commit Message**: GH-52024: [Python] Fix the codec list in show_info() (#51753)
+### Incident Patch 1: `ee382216` (2026-10-20)
+**Commit Message**: GH-54595: [Packaging][CI] Fix regex on update_deb_package_names to cover the 3 on libarrow_s3 (#54608)
 
 ### Rationale for this change
 
-`pa.show_info()` prints its Compression Codecs section from a hardcoded list:
+Linux packaging jobs for Deb packages are currently failing due to wrong libarrow_s32600 still being referred to.
 
-```python
-codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4", "snappy", "zstd"]
+### What changes are included in this PR?
+
+Update regex to cover numbers on libarrowxxx package names.
+Update the wrong entries at control.in.
+
+### Are these changes tested?
+
+I have tested the regex locally with:
 ```
-
-That list has drifted from `_ensure_compression()` in `io.pxi`, which is what
-actually decides which codec names work. Two problems follow:
-
-- `lz4` and `lz4_frame` both map to `CCompressionType_LZ4_FRAME`, so the same
-  codec is reported twice under two names.
-- `lz4_raw` maps to `CCompressionType_LZ4` and is a separate codec, but it is
-  not listed at all, even though `pa.Codec.is_available('lz4_raw')` is True.
-
-So seven lines are printed for six codecs, and the codec that is missing is a
-real one.
-
-Before:
-
+ $ sed -i.bak -E -e  "s/(lib(arrow|gandiva|parquet)[-a-z0-9]*)2700/\\12800/g" dev/tasks/linux-packages/apache-arrow/debian/control.in
 ```
-Compression Codecs:
-  brotli              : Enabled
-  bz2                 : Enabled
-  gzip                : Enabled
-  lz4_frame           : Enabled
-  lz4                 : Enabled
-  snappy              : Enabled
-  zstd                : Enabled
-```
-
-After:
-
-```
-Compression Codecs:
-  brotli              : Enabled
-  bz2                 : Enabled
-  gzip                : Enabled
-  lz4                 : Enabled
-  lz4_raw 
-
-**File**: `python/pyarrow/__init__.py` (modified, +4/-1)
+And validated the diff contains libarrow s3 updated:
 ```diff
-@@ -156,7 +156,10 @@ def print_entry(label, value):
-         print(f"  {fs: <20}: {status: <8}")
+@@ -122,13 +122,13 @@ Pre-Depends: ${misc:Pre-Depends}
+ Depends:
+   ${misc:Depends},
+   ${shlibs:Depends},
+-  libarrow-acero2700 (= ${binary:Version}),
+-  libparquet2700 (= ${binary:Version})
++  libarrow-acero2800 (= ${binary:Version}),
++  libparquet2800 (= ${binary:Version})
+ Description: Apache Arrow is a data processing library for analysis
+  .
+  This package provides C++ library files for Dataset module.
  
-     print("\nCompression Codecs:")
--    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4", "snappy", "zstd"]
-+    # "lz4" is an alias for "lz4_frame", so the list used to name the same
-+    # codec twice and leave out lz4_raw. See _ensure_compression().
-+    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4_raw", "snappy",
-+              "zstd"]
-     for codec in codecs:
-         status = "Enabled" if Codec.is_available(codec) else "-"
-         print(f"  {codec: <20}: {status: <8}")
+-Package: libarrow-s3-2700
++Package: libarrow-s3-2800
+ Section: libs
+ Architecture: any
+ Multi-Arch: same
 ```
 
-**File**: `python/pyarrow/tests/test_misc.py` (modified, +20/-0)
+### Are t
+
+**File**: `dev/release/utils-prepare.sh` (modified, +2/-2)
 ```diff
-@@ -123,6 +123,26 @@ def test_runtime_info():
-         subprocess.check_call([sys.executable, "-c", code], env=env)
+@@ -216,7 +216,7 @@ update_deb_package_names() {
+         ${target} \
+         $(echo ${target} | sed -e "s/${deb_lib_suffix}/${next_deb_lib_suffix}/")
+     done
+-    local deb_lib_suffix_substitute_pattern="s/(lib(arrow|gandiva|parquet)[-a-z]*)${deb_lib_suffix}/\\1${next_deb_lib_suffix}/g"
++    local deb_lib_suffix_substitute_pattern="s/(lib(arrow|gandiva|parquet)[-a-z0-9]*)${deb_lib_suffix}/\\1${next_deb_lib_suffix}/g"
+     sed -i.bak -E -e "${deb_lib_suffix_substitute_pattern}" debian*/control*
+     rm -f debian*/control*.bak
+     git add debian*/control*
+@@ -233,7 +233,7 @@ update_deb_package_names() {
+         ${target} \
+         $(echo ${target} | sed -e "s/${deb_gir_suffix}/${next_deb_gir_suffix}/")
+     done
+-    local deb_gir_suffix_substitute_pattern="s/(gir1\\.2-(arrow|gandiva|parquet)[-a-z]*)${deb_gir_suffix}/\\1${next_deb_gir_suffix}/g"
++    local deb_gir_suffix_substitute_pattern="s/(gir1\\.2-(arrow|gandiva|parquet)[-a-z0-9]*)${deb_gir_suffix}/\\1${next_deb_gir_suffix}/g"
+     sed -i.bak -E -e "${deb_gir_suffix_substitute_pattern}" debian*/control*
+     rm -f debian*/control*.bak
+     git add debian*/control*
+```
+
+**File**: `dev/tasks/linux-packages/apache-arrow/debian/control.in` (modified, +2/-2)
+```diff
+@@ -128,7 +128,7 @@ Description: Apache Arrow is a data processing library for analysis
+  .
+  This package provides C++ library files for Dataset module.
  
- 
-+def test_show_info(capsys):
-+    pa.show_info()
-+    out = capsys.readouterr().out
-+
-+    # Which codecs and modules are enabled depends on how PyArrow was built,
-+    # so only the labels are checked, not their status.
-+    assert "Compression Codecs:" in out
-+    codecs = [line.split(":")[0].strip()
-+              for line in out.split("Compression Codecs:")[1].splitlines()
-+              if ":" in line]
-+    # "lz4" is an alias for "lz4_frame", so naming both listed one codec
-+    # twice and left out lz4_raw.
-+    assert codecs == ["brotli", "bz2", "gzip", "lz4_frame", "lz4_raw",
-+                      "snappy", "zstd"]
-+
-+    for section in ("Platform:", "Memory:", "Optional modules:",
-+                    "Filesystems:"):
-+        assert section in out
-+
-+
- @pytest.mark.processes
- def test_import_at_shutdown():
-     # GH-38626: importing PyArrow at interpreter shutdown would crash
+-Package: libarrow-s3-2600
++Package: libarrow-s3-2700
+ Section: libs
+ Architecture: any
+ Multi-Arch: same
+@@ -257,7 +257,7 @@ Architecture: any
+ Multi-Arch: same
+ Depends:
+   ${misc:Depends},
+-  libarrow-s3-2600 (= ${binary:Version}),
++  libarrow-s3-2700 (= ${binary:Version}),
+   libarrow-dev (= ${binary:Version})
+ Description: Apache Arrow is a data processing library for analysis
+  .
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #54686** (closed): GH-44827: [C++] Skip null slots when transposing dictionary indices (@Nayana-Naik73)
 - **PR #54662** (closed): GH-54651: [C++][Python] Use timestamp_parsers as a fallback for CSV time columns (@pearu)
 - **PR #54661** (closed): GH-54650: [C++][Python] Use timestamp_parsers as a fallback for CSV date columns (@pearu)
 - **PR #54659** (closed): GH-54647: [C++] Reject leap seconds in the strptime timestamp parser (@pearu)
 - **PR #54658** (closed): GH-54646: [C++] Reject years out of range in the strptime timestamp parser (@pearu)
-- **PR #54657** (closed): GH-54643: [C++] Reject impossible dates and a zero day in the strptime timestamp parser (@pearu)
-- **PR #54640** (closed): [C++][Compute] Ignore null view sizes when casting binary_view to binary (@Nayana-Naik73)
+- **PR #54656** (2026-10-20): GH-54641: [C++] Support locale directives in the vendored strptime on Windows (@pearu)
 
 ---
 
@@ -1519,31 +1512,30 @@ Compression Codecs:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-52024: [Python] Fix the codec list in show_info() (#51753)
+## X. GH-54595: [Packaging][CI] Fix regex on update_deb_package_names to cover the 3 o
 
 **RULE**:
-When implementing operations in `python/pyarrow/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/release/utils-prepare.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61f24ce2`: GH-52024: [Python] Fix the codec list in show_info() (#51753). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee382216`: GH-54595: [Packaging][CI] Fix regex on update_deb_package_names to cover the 3 on libarrow_s3 (#54608). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/__init__.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/release/utils-prepare.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    # "lz4" is an alias for "lz4_frame", so the list used to name the same
-    # codec twice and leave out lz4_raw. See _ensure_compression().
-    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4_raw", "snappy",
-              "zstd"]
+    local deb_lib_suffix_substitute_pattern="s/(lib(arrow|gandiva|parquet)[-a-z0-9]*)${deb_lib_suffix}/\\1${next_deb_lib_suffix}/g"
+    local deb_gir_suffix_substitute_pattern="s/(gir1\\.2-(arrow|gandiva|parquet)[-a-z0-9]*)${deb_gir_suffix}/\\1${next_deb_gir_suffix}/g"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    codecs = ["brotli", "bz2", "gzip", "lz4_frame", "lz4", "snappy", "zstd"]
+    local deb_lib_suffix_substitute_pattern="s/(lib(arrow|gandiva|parquet)[-a-z]*)${deb_lib_suffix}/\\1${next_deb_lib_suffix}/g"
+    local deb_gir_suffix_substitute_pattern="s/(gir1\\.2-(arrow|gandiva|parquet)[-a-z]*)${deb_gir_suffix}/\\1${next_deb_gir_suffix}/g"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61f24ce2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee382216` are properly handled with clean fallback behavior.

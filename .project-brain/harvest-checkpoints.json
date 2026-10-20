@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:35:16.371Z",
+  "last_updated": "2026-10-20T18:43:25.377Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1835,14 +1835,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
-      "verified_at": "2026-10-19T04:59:12.624Z",
+      "content_hash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
+      "verified_at": "2026-10-20T18:43:15.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:59:12.624Z"
+      "last_updated": "2026-10-20T18:43:15.275Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
-      "verified_at": "2026-10-19T03:01:29.721Z",
+      "content_hash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
+      "verified_at": "2026-10-20T18:43:25.377Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:01:29.721Z"
+      "last_updated": "2026-10-20T18:43:25.377Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "6716a7f3a75b5d961debff3e7e5970e4fd24e8b58e95e93e02e206af79b82068",
-      "verified_at": "2026-10-20T00:06:12.024Z",
+      "content_hash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
+      "verified_at": "2026-10-20T18:43:18.167Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:06:12.024Z"
+      "last_updated": "2026-10-20T18:43:18.167Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

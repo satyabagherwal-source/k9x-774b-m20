@@ -3965,3 +3965,6 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `82fccd26` | Multi-dimensional audit evidence | 2026-10-20T18:27:33.714Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-20T18:33:37.631Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `f6ce798f` | Multi-dimensional audit evidence | 2026-10-20T18:35:16.365Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-20T18:43:15.267Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `a907fbc6` | Multi-dimensional audit evidence | 2026-10-20T18:43:18.159Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `dfeb34b2` | Multi-dimensional audit evidence | 2026-10-20T18:43:25.369Z |

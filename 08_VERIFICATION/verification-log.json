@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-NAIZ",
-    "timestamp": "2026-10-19T20:04:12.683Z",
-    "repository": "nometria/sitemap-generator",
-    "learningId": "learn-github-nometria-sitemap-generator",
-    "contentHash": "c9134cdfea6d58604c13e1aab9616f1cc2bcffb540bb6e1cf99e0a6b34c311c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NE5S",
-    "timestamp": "2026-10-19T20:04:17.392Z",
-    "repository": "chrisbanes/skills",
-    "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "16c271e9cad6661a81c4bfc5f568bea4f6be9461fe260d1eb988f32a1be725d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NFUW",
-    "timestamp": "2026-10-19T20:04:19.592Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-VEC9",
     "timestamp": "2026-10-19T20:10:30.873Z",
     "repository": "joreilly/Confetti",
@@ -7492,6 +7447,51 @@
     "contentHash": "adbe8f365eaabd637ed6150f49ce66ec3aa063e848114ce4ad37ca8a8ec8ffa1",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-716O",
+    "timestamp": "2026-10-20T18:43:15.264Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-73EV",
+    "timestamp": "2026-10-20T18:43:18.151Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-78Z5",
+    "timestamp": "2026-10-20T18:43:25.361Z",
+    "repository": "bridgecrewio/checkov",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:35:16.368Z",
-  "total_cycles_completed": 3935,
-  "total_learnings_persisted": 3935,
-  "total_rules_promoted": 3149,
+  "last_updated": "2026-10-20T18:43:25.374Z",
+  "total_cycles_completed": 3938,
+  "total_learnings_persisted": 3938,
+  "total_rules_promoted": 3151,
   "history": [
-    {
-      "timestamp": "2026-10-20T06:49:38.200Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T08:05:10.204Z",
-      "repository": "homarr-labs/dashboard-icons",
-      "learningId": "learn-github-homarr-labs-dashboard-icons",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T08:20:57.725Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T08:21:56.771Z",
       "repository": "crawlseo/crawlseo",
@@ -1403,6 +1382,27 @@
       "repository": "fastapi/fastapi",
       "learningId": "learn-github-fastapi-fastapi",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:43:15.271Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:43:18.164Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:43:25.374Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

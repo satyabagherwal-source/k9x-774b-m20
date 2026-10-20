@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
-    "lastHarvestedAt": "2026-10-19T04:59:12.618Z",
+    "contentHash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
+    "lastHarvestedAt": "2026-10-20T18:43:15.267Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "7a6782e3",
+    "sourceVersion": "dfeb34b2",
     "license": "Apache-2.0",
-    "contentHash": "169d4d43ea39e5488c798f5c1131858bbeb6afc0f7fbd7567077d9cce0206c10",
-    "lastHarvestedAt": "2026-10-19T03:01:29.715Z",
+    "contentHash": "823788f4a42168c4f74ff401da250b9d5811a99f5900c7127b135082b739c6fa",
+    "lastHarvestedAt": "2026-10-20T18:43:25.369Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "61f24ce2",
+    "sourceVersion": "a907fbc6",
     "license": "Apache-2.0",
-    "contentHash": "6716a7f3a75b5d961debff3e7e5970e4fd24e8b58e95e93e02e206af79b82068",
-    "lastHarvestedAt": "2026-10-20T00:06:12.017Z",
+    "contentHash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
+    "lastHarvestedAt": "2026-10-20T18:43:18.159Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
