@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `8a97fe6c`  
+> **Source Version**: `79307e8a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:08:42.261Z  
+> **Timestamp**: 2026-10-20T17:23:03.053Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:08:42.252Z  
+> **Harvest Timestamp**: 2026-10-20T17:23:03.043Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 49984 stars
+- **Stars / Engagement**: 49985 stars
 
 ---
 
@@ -2260,11 +2260,11 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #39408** (2026-10-19): **Kill managed provider plugin processes before exiting from the panic handler 🤖🤖🤖**
+  *Symptoms*: When a worker goroutine panics, `logging.PanicHandler` prints the crash report and ends with `os.Exit(11)`. `os.Exit` skips deferred calls, including the `defer plugin.CleanupClients()` in `realMain` (`main.go`) that normally terminates managed provider plugin processes, so every provider plugin still running at the moment of the panic keeps running after Terraform exits, reparented to the init or subreaper process.  This change calls `plugin.CleanupClients()` from `github.com/hashicorp/go-plugin` (already a direct dependency) in `PanicHandler` immediately before the crash exit, with a comment explaining that `os.Exit` skips the deferred cleanup in `main`. The exit status stays 11 and the crash report is unchanged. The call is a no-op when no managed clients exist, such as under `terraform rpcapi`.  Fixes #39399  ## Target Release  1.18.x  ## Rollback Plan  - [x] If a change needs to be reverted, we will roll out an update to the code within 7 days.  ## Changes to Security Controls  No changes to security controls. The change only terminates Terraform's own already-managed child plugin processes during crash exit; it adds no new access, encryption, or logging behavior.  ## CHANGELOG entry  - [x] This change is user-facing and I added a changelog entry. - [ ] This change is not user-facing.  ## Generative AI / LLM assisted development?  An LLM coding agent assisted this change under human supervision: it located the exit path, drafted the cleanup call and comment, built unpatc
+
 - **Issue #39406** (2026-10-19): **command/test: Avoid panic when testing schema w/ deprecated values**
   *Symptoms*: Fixes #39365  This is a more minimal version of the initially proposed fix in https://github.com/hashicorp/terraform/pull/39366  This fix focuses specifically on the deprecation marks, leaving it _intentionally_ open to panic if some other marks were to be introduced in the future and not handled here (and in other places). Such behaviour (panic on unhandled marks) is _by design_ since each mark may need to be handled differently in different contexts and simply ignoring them would introduce unknown risks.  For example, if this was not about deprecation mark but ephemeral or sensitive mark, we'd potentially end up persisting or exposing data without knowing it. Panic is more preferable outcome in such a case.  Perhaps at some point we may surface deprecations as part of `test` command but I think that should be a feature investigated in its own PR, considering all aspects of UX, how this makes sense in the context of other commands like `validate` etc.  Re ea6f9930f5053d80cad391c31559da77921d9178 - I understand the formatting function was introduced just to format diagnostics in the context of `terraform test`. I suspect that ignoring deprecated values in a general-purpose diagnostic formatter may not be necessarily right but it took me a while to realise this isn't a general purpose formatter, so the refactoring took place to make that clearer.  ## Target Release  <!--  In normal circumstances we only target changes at the upcoming minor release, or as a pat
-
-- **Issue #39384** (2026-10-16): **terraform test -help does not list -run-parallelism**
-  *Symptoms*: ### Terraform Version  ``` Terraform v1.16.5 ```  The flag is also present in the source of 1.13.3 and 1.16.0.  ### Terraform Configuration Files  _Any configuration works. The option list does not depend on the configuration._  ### Debug Output  _N/A. The gap is visible in `terraform test -help` with no configuration or plugins involved._  ### Expected Behavior  `terraform test -help` lists every public option the command accepts. It lists `-parallelism`, so it should also list `-run-parallelism`.  ### Actual Behavior  `terraform test -help` lists `-parallelism` but not `-run-parallelism`, even though the command accepts the flag.  The option is registered in `internal/command/arguments/test.go`:  ```go cmdFlags.IntVar(&test.OperationParallelism, "parallelism", DefaultParallelism, "parallelism") cmdFlags.IntVar(&test.RunParallelism, "run-parallelism", DefaultParallelism, "run-parallelism") ```  It was added in 1.13.0 by #37292. It sets how many `run` blocks execute in parallel within a single test file and defaults to 10, the same default as `-parallelism`. `-parallelism` limits resource operations inside one run, so the two options control different levels of concurrency.  ### Steps to Reproduce  1. Run `terraform test -help`. 2. Look for `-run-parallelism`. It is missing. 3. Run `terraform test -run-parallelism=1`. Terraform accepts the flag.  ### Additional Context  The CLI reference page on developer.hashicorp.com has the same gap, tracked in hashicorp/web-unified-docs#3
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2281,444 +2281,262 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a20043d8` (2026-10-19)
-**Commit Message**: command/test: Avoid panic when testing schema w/ deprecated values (#39406)
+### Incident Patch 1: `79307e8a` (2026-10-20)
+**Commit Message**: modules: Add diagnostics to `modules` command's JSON output, make errors be displayed in JSON format when `-json` present, enable displaying warning diagnostics (#39396)
 
-* tfdiags: Clarify purpose of helper functions (test only)
+The `modules` command will now print any warning diagnostics encountered during the command
 
-Ensure that these methods don't end up accidentally used in other (not test) contexts where it may not be appropriate to just ignore deprecation (or other) marks.
+Also, JSON output from the `modules` command now includes a top-level `diagnostics` field, resulting in `format_version` being bumped to 1.1. Adding this allows warning diagnostics to be displayed when the command completes successfully with the `-json` flag.
 
-* command/test: Add test w/ deprecated attr to reproduce panic
+Make error diagnostics be presented in JSON format when the `modules` command returns early. The error are now printed to stderr.
 
-* command/test: Remove deprecation marks in diagnostics
-
-* add changelog entry
-
-**File**: `.changes/v1.16/BUG FIXES-20261016-180644.yaml` (added, +5/-0)
+**File**: `.changes/v1.18/NOTES-20261015-152814.yaml` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
-+kind: BUG FIXES
-+body: 'command/test: Avoid panic when testing schema w/ deprecated values'
-+time: 2026-10-16T18:06:44.56834+01:00
++kind: NOTES
++body: 'modules: The `modules` command now shows diagnostics in its JSON format output'
++time: 2026-10-15T15:28:14.804+01:00
 +custom:
-+    Issue: "39406"
++    Issue: "39396"
 ```
 
-**File**: `internal/command/test_test.go` (modified, +58/-0)
+**File**: `internal/command/modules.go` (modified, +1/-1)
 ```diff
-@@ -5023,6 +5023,63 @@ permission denied..
+@@ -114,7 +114,7 @@ func (c *ModulesCommand) Run(rawArgs []string) int {
+ 	manifestWithRef := resolver.Resolve(config)
+ 
+ 	// Render the new manifest with references
+-	return view.Display(*manifestWithRef)
++	return view.Display(*manifestWithRef, diags)
+ }
+ 
+ // internalManifest will use the configuration loader to refresh and load the
+```
+
+**File**: `internal/command/modules_test.go` (modified, +2/-2)
+```diff
+@@ -180,7 +180,7 @@ func TestModules_uninstalledModules(t *testing.T) {
+ 		t.Fatalf("expected to see a `not installed` error message: %s\n", output)
+ 	}
+ 
+-	if !strings.Contains(output, `Run "terraform init"`) {
++	if !strings.Contains(output, `Run \"terraform init\"`) {
+ 		t.Fatalf("expected error message to ask user to run terraform init: %s\n", output)
+ 	}
+ }
+@@ -335,4 +335,4 @@ func compareJSONOutput(t *testing.T, got string, want string) {
  	}
  }
  
-+func TestTest_DeprecatedValueInFailedAssertion(t *testing.T) {
-+	td := t.TempDir()
-+	testCopyDir(t, testFixturePath(path.Join("test", "deprecated_value_in_assertion")), td)
-+	t.Chdir(td)
-+
-+	provider := testing_command.NewProvider(nil)
-+
-+	streams, done := terminal.StreamsForTesting(t)
-+
-+	meta := Meta{
-+		testingOverrides: metaOverridesForProvider(provider.Provider),
-+		Ui:               testUiWrapped(t),
-+		View:             views.NewView(streams),
-+		Streams:          streams,
-+		ProviderSource:   newMockProviderSource(t, map[string][]string{"test": {"1.0.0"}}),
-+	}
-+
-+	init := &InitCommand{
-+		Meta: meta,
-+	}
-+	output := done(t)
-+	if code := init.Run([]string{}); code != 0 {
-+		t.Fatalf("expected status code 0 but got %d: %s", code, output.All())
-+	}
-+
-+	// Reset the streams for the next command.
-+	streams, done = terminal.StreamsForTesting(t)
-+	meta.Streams = streams
-+	meta.View = views.NewView(streams)
-+
-+	command := &TestCommand{
-+		Meta: meta,
-+	}
-+
-+	code := command.Run([]string{"-no-color"})
-+	output = done(t)
-+
-+	if code != 1 {
-+		t.Errorf("expected status code 1 but got %d: %s", code, output.All())
-+	}
-+
-+	expectedOut := `main.tftest.hcl... in progress
-+  run "failing_assertion_on_deprecated_value"... fail
-+main.tftest.hcl... tearing down
-+main.tftest.hcl... fail
-+
-+Failure! 0 passed, 1 failed.
-+`
-+	if diff := cmp.Diff(output.Stdout(), expectedOut); len(diff) > 0 {
-+		t.Errorf("\nexpected: \n%s\ngot: %s\ndiff: %s", expectedOut, output.All(), diff)
-+	}
-+
-+	if !strings.Contains(output.Stderr(), "Test assertion failed") {
-+		t.Errorf("expected stderr to report a failed assertion, got:\n%s", output.Stderr())
-+	}
-+}
-+
- // TestTest_ValidateBackendConfiguration tests validation of how backends are declared in test files:
- // * it's not valid to re-use the same backend config (i.e the same state file)
- // * it's not valid to use a deprecated backend type
-@@ -5276,6 +5333,7 @@ test_resource_id = %s`, resourceId, resourceId)
- 				"apply_fail":           cty.False,
- 				"destroy_wait_seconds": cty.NullVal(cty.Number),
- 				"defer":                cty.NullVal(cty.Bool),
-+				"deprecated":           cty.NullVal(cty.String),
- 			})},
- 	}
- 	provider := testing_command.NewProvider(resourceStore)
+-var expectedOutputJSON = `{"format_version":"1.0","modules":[{"key":"test","source":"./mods/test","version":""},{"key":"test2","source":"./test2","version":""},{"key":"test3","source":"./test3","version":""},{"key":"other","source":"./mods/other","version":""}]}`
++var expectedOutputJSON = `{"format_version":"1.1","modules":[{"key":"test","source":"./mods/test","version":""},{"key":"test2","source":"./test2","version":""},{"key":"test3","source":"./test3","version":""},{"key":"other","source":"./mods/other","version":""}]}`
 ```
 
-**File**: `internal/command/testdata/test/deprecated_value_in_assertion/main.tf` (added, +3/-0)
+**File**: `internal/command/views/modules.go` (modified, +32/-20)
 ```diff
-@@ -0,0 +1,3 @@
-+resource "test_resource" "foo" {
-+  deprecated = "bar"
-+}
-```
-
-**File**: `internal/command/testdata/test/deprecated_value_in_assertion/main.tftest.hcl` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+run "failing_assertion_on_deprecated_value" {
-+  assert {
-+    condition     = test_resource.foo.deprecated == "new-value"
-+    error_message = "expected to fail"
-+  }
-+}
-```
-
-**File**: `internal/command/testing/test_provider.go` (modified, +2/-0)
-```diff
-@@ -42,6 +42,7 @@ var (
- 						"destroy_wait_seconds": {Type: cty.Number, Optional: true},
- 						"write_only":           {Type: cty.String, Optional: true, WriteOnly: true},
- 						"defer":                {Type: cty.Bool, Optional: true},
-+						"deprecated":           {Type: cty.String, Optional: true, Computed: true, Deprecated: true},
- 					},
- 				},
- 			},
-@@ -65,6 +66,7 @@ var (
- 						"create_wait_seconds":  {Type: cty.Number, Computed: true},
- 						"destroy_wait_seconds": {Type: cty.Number, Computed: true},
- 						"defer":                {Type: cty.Bool, Computed: true},
-+						"deprecated":           {Type: cty.String, Computed: true, Deprecated: true},
- 					},
- 				},
- 			},
-```
-
-**File**: `internal/command/views/json/diagnostic.go` (modified, +6/-6)
-```diff
-@@ -273,7 +273,7 @@ func NewDiagnostic(diag tfdiags.Diagnostic, sources map[string][]byte) *Diagnost
- 						// the values in a more human-readable way than the general case.
- 						// If the value is unknown, we'll leave it to the general case to handle.
- 						if testDiag != nil && val.IsKnown() {
--							valBuf, err := tfdiags.FormatValueStr(val)
-+							valBuf, err := tfdiags.FormatValueStrUnderTest(val)
- 							if err != nil {
- 								panic(err)
- 							}
-@@ -317,7 +317,7 @@ func NewDiagnostic(diag tfdiags.Diagnostic, sources map[string][]byte) *Diagnost
- 				if testDiag != nil {
- 					// If the test assertion is a binary expression, we'll include the human-readable
- 					// formatted LHS and RHS values in the diagnostic snippet.
--					diagnostic.Snippet.TestAssertionExpr = formatRunBinaryDiag(ctx, fromExpr.Expression)
-+					diagnostic.Snippet.TestAssertionExpr = formatTestRunBinaryDiag(ctx, fromExpr.Expression)
- 					if diagnostic.Snippet.TestAssertionExpr != nil {
- 						diagnostic.Snippet.TestAssertionExpr.ShowVerbose = testDiag.IsTestVerboseMode()
- 					}
-@@ -494,10 +494,10 @@ func statementStr(val cty.Value, includeUnknown, includeSensitive, includeEpheme
+@@ -8,14 +8,15 @@ import (
+ 	"sort"
+ 
+ 	"github.com/hashicorp/terraform/internal/command/arguments"
++	viewsjson "github.com/hashicorp/terraform/internal/command/views/json"
+ 	"github.com/hashicorp/terraform/internal/moduleref"
+ 	"github.com/hashicorp/terraform/internal/tfdiags"
+ 	"github.com/xlab/treeprint"
+ )
+ 
+ type Modules interface {
+ 	// Display renders the list of module entries.
+-	Display(manifest moduleref.Manifest) int
++	Display(manifest moduleref.Manifest, diags tfdiags.Diagnostics) int
+ 
+ 	// Diagnostics renders early diagnostics, resulting from argument parsing.
+ 	Diagnostics(diags tfdiags.Diagnostics)
+@@ -38,7 +39,9 @@ type ModulesHuman struct {
+ 
+ var _ Modules = (*ModulesHuman)(nil)
+ 
+-func (v *ModulesHuman) Display(manifest moduleref.Manifest) int {
++func (v *ModulesHuman) Display(manifest moduleref.Manifest, diags tfdiags.Diagnostics) int {
++	v.view.Diagnostics(diags) // Print any warnings
++
+ 	if len(manifest.Records) == 0 {
+ 		v.view.streams.Println("No modules found in configuration.")
+ 		return 0
+@@ -78,32 +81,25 @@ func (v *ModulesHuman) Diagnostics(diags tfdiags.Diagnostics) {
+ type ModulesJSON struct {
+ 	view *JSONStaticView[ModulesOutput]
+ 
+-	// Legacy view for logging warnings in human-readable format
+-	// The `modules` command's JSON output was implemented in a way that still produces
+-	// human-readable output when diagnostics are logged. This is preserved, as updating
+-	// it is a breaking change, but this should be amended in a future major version.
+-	legacyView *View
+-
+ 	formatVersion string
+ }
+ 
+ func NewModulesJSON(view *View) *ModulesJSON {
+ 	// FormatVersion represents the version of the json format and will be
+ 	// incremented for any change to this format that requires changes to a
+ 	// consuming parser.
+-	const formatVersion = "1.0"
++	const formatVersion = "1.1"
+ 
+ 	return &ModulesJSON{
+ 		view:          NewJSONStaticView[ModulesOutput](view),
+-		legacyView:    view,
+ 		formatVersion: formatVersion,
  	}
  }
  
--// formatRunBinaryDiag formats the binary expression that caused the failed run diagnostic.
-+// formatTestRunBinaryDiag formats the binary expression that caused the failed run diagnostic.
- // The LHS and RHS values are formatted in a more human-readable way, redacting
- // sensitive and ephemeral values only for the exact values that hold the mark(s).
--func formatRunBinaryDiag(ctx *hcl.EvalContext, expr hcl.Expression) *DiagnosticTestBinaryExpr {
-+func formatTestRunBinaryDiag(ctx *hcl.EvalContext, expr hcl.Expression) *DiagnosticTestBinaryExpr {
- 	bExpr, ok := expr.(*hclsyntax.BinaryOpExpr)
- 	if !ok {
- 		return nil
-@@ -506,11 +506,11 @@ func formatRunBinaryDiag(ctx *hcl.EvalContext, expr hcl.Expression) *DiagnosticT
- 	lhs, _ := bExpr.LHS.Value(ctx)
- 	rhs, _ := bExpr.RHS.Value(ctx)
- 
--	lhsStr, err := tfdiags.FormatValueStr(lhs)
-+	lhsStr, err := tfdiags.FormatValueStrUnderTest(lhs)
- 	if err != nil {
- 		panic(err)
- 	}
--	rhsStr, err := tfdiags.FormatValueStr(rhs)
-+	rhsStr, err := tfdiags.FormatValueStrUnderTest(rhs)
- 	if err != nil {
- 		panic(err)
- 	}
-```
-
-**File**: `internal/tfdiags/format.go` (modified, +7/-3)
-```diff
-@@ -138,16 +138,20 @@ func TraversalStr(traversal hcl.Traversal) string {
- 	return buf.String()
+ type ModulesOutput struct {
+-	FormatVersion string         `json:"format_version"`
+-	Modules       []ModuleOutput `json:"modules"`
+-	// TODO: Add Diagnostics field
++	FormatVersion string                  `json:"format_version"`
++	Modules       []ModuleOutput          `json:"modules"`
++	Diagnostics   []*viewsjson.Diagnostic `json:"diagnostics"`
  }
  
--// FormatValueStr produces a JSON-compatible, human-readable representation of a
--// cty.Value that is suitable for display in the UI.
-+// FormatValueStrUnderTest produces a JSON-compatible, human-readable representation of a
-+// cty.Value that is suitable for display in the UI in the context of a test run.
- //
- // The full representation of the value is produced, but with some redaction to
- // nodes within the value sensitive and ephemeral marks.
- // e.g {"a": "10", "b": "password"} => {"a": "10", "b": "(sensitive value)"}
--func FormatValueStr(val cty.Value) (string, error) {
-+func FormatValueStrUnderTest(val cty.Value) (string, error) {
- 	var buf bytes.Buffer
+ type ModuleOutput struct {
+@@ -114,16 +110,16 @@ type ModuleOutput struct {
  
- 	val, err := cty.Transform(val, func(path cty.Path, val cty.Value) (cty.Value, error) {
-+		// Remove any deprecation marks as we consider them
-+		// not relevant in the context of test outputs
-+		val, _ = marks.GetDeprecationMarks(val)
+ var _ Modules = (*ModulesJSON)(nil)
+ 
+-func (v *ModulesJSON) Display(manifest moduleref.Manifest) int {
+-	flattenedManifest := flattenManifest(manifest, v.formatVersion)
++func (v *ModulesJSON) Display(manifest moduleref.Manifest, diags tfdiags.Diagnostics) int {
++	flattenedManifest := flattenManifest(manifest, v.formatVersion, v.view.prepareDiagnostics(diags))
+ 	v.view.Print(flattenedManifest)
+ 	return 0
+ }
+ 
+ // FlattenManifest returns the nested contents of a moduleref.Manifest as
+ // a ModulesOutput with the VersionConstraints and Children attributes
+ // ommited for the purposes of the json format of the modules command
+-func flattenManifest(m moduleref.Manifest, formatVersion string) ModulesOutput {
++func flattenManifest(m moduleref.Manifest, formatVersion string, diags []*viewsjson.Diagnostic) ModulesOutput {
+ 	var flatten func(records []*moduleref.Record)
+ 	recordList := make([]ModuleOutput, 0) // Ensure non-nil slice for JSON output
+ 	flatten = func(records []*moduleref.Record) {
+@@ -152,13 +148,29 @@ func flattenManifest(m moduleref.Manifest, formatVersion string) ModulesOutput {
+ 	ret := ModulesOutput{
+ 		FormatVersion: formatVersion,
+ 		Modules:       recordList,
++		Diagnostics:   diags,
+ 	}
+ 	return ret
+ }
+ 
+-// Diagnostics produces human-readable output, despite the -json flag being used.
+-// This was a bug in the original implementation of JSON output and should be updated in future.
+-// TODO: Make diagnostics be rendered using the `ModuleOutput` struct, instead of human-readable format.
++// Diagnostics prints a JSON output that contains only the format and diagnostics information.
+ func (v *ModulesJSON) Diagnostics(diags tfdiags.Diagnostics) {
+-	v.legacyView.Diagnostics(diags)
++	if len(diags) == 0 {
++		return
++	}
 +
- 		// If a value is sensitive or ephemeral or unknown, we redact it, otherwise
- 		// we return the value as is.
- 		if marks.Has(val, marks.Sensitive) || marks.Has(val, marks.Ephemeral) || !val.IsKnown() {
++	output := ModulesOutput{
++		FormatVersion: v.formatVersion,
++		Modules:       []ModuleOutput{}, // Ensure non-nil slice for JSON output
++		Diagnostics:   v.view.prepareDiagnostics(diags),
++	}
++
++	switch {
++	case diags.HasErrors():
++		v.view.Eprint(output)
++	default:
++		// No errors, which indicates the command is
++		// using this method incorrectly.
++		v.view.Print(output)
++	}
+ }
 ```
 
----
-
-### Incident Patch 2: `8a97fe6c` (2026-10-19)
-**Commit Message**: test: Fix flakey test `TestTest_DoubleInterrupt` (#39404)
-
-This change makes `(TestHuman) FatalInterruptSummary` build a summary string and write it once to stderr. This prevents the possibility of tests seeing stdout content interleaved with lines of the summary output. Also, we update tests to stop using `done(t).All()` in `TestTest_DoubleInterrupt` as the assertions are only about stderr output.
-
-**File**: `internal/command/test_test.go` (modified, +14/-19)
+**File**: `internal/command/views/modules_test.go` (added, +70/-0)
 ```diff
-@@ -370,9 +370,11 @@ func TestTest_Runs(t *testing.T) {
- 		},
- 		"ephemeral_input_with_error": {
- 			expectedOut: []string{"Error message refers to ephemeral values", "1 passed, 1 failed."},
--			expectedErr: []string{"Test assertion failed",
-+			expectedErr: []string{
-+				"Test assertion failed",
- 				`│ - "(ephemeral value)"
--    │ + "bar"`},
-+    │ + "bar"`,
+@@ -0,0 +1,70 @@
++// Copyright IBM Corp. 2014, 2026
++// SPDX-License-Identifier: BUSL-1.1
++
++package views
++
++import (
++	"testing"
++
++	"github.com/google/go-cmp/cmp"
++	"github.com/hashicorp/terraform/internal/command/arguments"
++	"github.com/hashicorp/terraform/internal/terminal"
++	"github.com/hashicorp/terraform/internal/tfdiags"
++)
++
++func TestModulesJSON_Diagnostics(t *testing.T) {
++	testCases := map[string]struct {
++		diags tfdiags.Diagnostics
++
++		wantOutput string
++	}{
++		"errors are rendered alongside format_version and zero-values": {
++			diags: tfdiags.Diagnostics{
++				tfdiags.Sourceless(
++					tfdiags.Error,
++					"Error!",
++					"Fix your error!",
++				),
 +			},
- 			code: 1,
- 		},
- 		"ephemeral_resource": {
-@@ -1783,7 +1785,8 @@ func TestTest_ParallelTeardown(t *testing.T) {
- 						addrs.NewDefaultProvider("test"): func() (providers.Interface, error) {
- 							return pInst(), nil
- 						},
--					}},
-+					},
-+				},
- 				Ui:             ui,
- 				View:           view,
- 				Streams:        initStreams,
-@@ -1908,10 +1911,11 @@ func TestTest_DoubleInterrupt(t *testing.T) {
- 
- 		c.Run(nil)
- 	})
--	output := done(t).All()
- 
--	if !strings.Contains(output, "Two interrupts received") {
--		t.Errorf("output didn't produce the right output:\n\n%s", output)
-+	output := done(t)
-+
-+	if !strings.Contains(output.Stderr(), "Two interrupts received") {
-+		t.Errorf("output didn't produce the right output:\n\nstdout:\n%s\nstderr:\n%s", output.Stdout(), output.Stderr())
- 	}
- 
- 	cleanupMessage := `Terraform was interrupted while executing main.tftest.hcl, and may not have
-@@ -1925,8 +1929,8 @@ test:
- 
- 	// It's really important that the above message is printed, so we're testing
- 	// for it specifically and making sure it contains all the resources.
--	if !strings.Contains(output, cleanupMessage) {
--		t.Errorf("output didn't produce the right output:\n\n%s", output)
-+	if !strings.Contains(output.Stderr(), cleanupMessage) {
-+		t.Errorf("output didn't produce the right output:\n\nstdout:\n%s\nstderr:\n%s", output.Stdout(), output.Stderr())
- 	}
- 
- 	// This time the test command shouldn't have cleaned up the resource because
-@@ -3087,7 +3091,6 @@ can remove the provider configuration again.
- 
- 	for file, tc := range tcs {
- 		t.Run(file, func(t *testing.T) {
--
- 			td := t.TempDir()
- 			testCopyDir(t, testFixturePath(path.Join("test", file)), td)
- 			t.Chdir(td)
-@@ -3395,7 +3398,6 @@ func TestTest_SkipCleanup(t *testing.T) {
- 	}
- 
- 	t.Run("skipped resources should not be deleted", func(t *testing.T) {
--
- 		expected := `
- Warning: Duplicate "skip_cleanup" block
- 
-@@ -3499,7 +3501,6 @@ func TestTest_SkipCleanupWithRunDependencies(t *testing.T) {
- 	}
- 
- 	t.Run("skipped resources should not be deleted", func(t *testing.T) {
--
- 		expected := `main.tftest.hcl... in progress
-   run "test"... pass
-   run "test_two"... pass
-@@ -3673,7 +3674,6 @@ func TestTest_SkipCleanup_JSON(t *testing.T) {
- 	}
- 
- 	t.Run("skipped resources should not be deleted", func(t *testing.T) {
--
- 		expected := []string{
- 			`{"@level":"warn","@message":"Warning: Duplicate \"skip_cleanup\" block","@module":"terraform.ui","diagnostic":{"detail":"The run \"test_three\" has a skip_cleanup attribute set, but shares state with an earlier run \"test_two\" that also has skip_cleanup set. The later run takes precedence, and this attribute is ignored for the earlier run.","range":{"end":{"byte":163,"column":15,"line":15},"filename":"main.tftest.hcl","start":{"byte":151,"column":3,"line":15}},"severity":"warning","snippet":{"code":"  skip_cleanup = true","context":"run \"test_three\"","highlight_end_offset":14,"highlight_start_offset":2,"start_line":15,"values":[]},"summary":"Duplicate \"skip_cleanup\" block"},"type":"diagnostic"}`,
- 			`{"@level":"info","@message":"Found 1 file and 5 run blocks","@module":"terraform.ui","test_abstract":{"main.tftest.hcl":["test","test_two","test_three","test_four","test_five"]},"type":"test_abstract"}`,
-@@ -3763,7 +3763,6 @@ func TestTest_SkipCleanup_FileLevelFlag(t *testing.T) {
- 	}
- 
- 	t.Run("skipped resources should not be deleted", func(t *testing.T) {
--
- 		expected := `main.tftest.hcl... in progress
-   run "test"... pass
-   run "test_two"... pass
-@@ -4400,7 +4399,6 @@ not.
- }
- 
- func TestTest_UnknownAndNulls(t *testing.T) {
--
- 	tcs := map[string]struct {
- 		code   int
- 		stdout string
-@@ -4562,7 +4560,6 @@ operation, and the specified output value is only known after apply.
- 			}
- 		})
- 	}
--
- }
- 
- func TestTest_SensitiveInputValues(t *testing.T) {
-@@ -5334,7 +5331,8 @@ test_resource_id = %s`, resourceId, resourceId)
- 				"destroy_wait_seconds": cty.NullVal(cty.Number),
- 				"defer":                cty.NullVal(cty.Bool),
- 				"deprecated":           cty.NullVal(cty.String),
--			})},
-+			}),
++			wantOutput: `{
++  "format_version": "1.1",
++  "modules": [],
++  "diagnostics": [
++    {
++      "severity": "error",
++      "summary": "Error!",
++      "detail": "Fix your error!"
++    }
++  ]
++}
++`,
 +		},
- 	}
- 	provider := testing_command.NewProvider(resourceStore)
- 
-@@ -5431,7 +5429,6 @@ func TestTest_UseOfBackends_whenStateArtifactsAreMade(t *testing.T) {
- 
- 	for tn, tc := range cases {
- 		t.Run(tn, func(t *testing.T) {
--
- 			// SETUP
- 			td := t.TempDir()
- 			testCopyDir(t, testFixturePath(path.Join("test", "valid-use-local-backend/no-prior-state")), td)
-@@ -5596,7 +5593,6 @@ func TestTest_UseOfBackends_validatesUseOfSkipCleanup(t *testing.T) {
- 			if provider.ResourceCount() > 0 {
- 				t.Fatalf("should have deleted all resources on completion 
-```
-
-**File**: `internal/command/views/test.go` (modified, +17/-10)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"bytes"
- 	"fmt"
- 	"net/http"
-+	"strings"
- 	"time"
- 
- 	"github.com/hashicorp/go-tfe"
-@@ -323,18 +324,20 @@ func (t *TestHuman) FatalInterrupt() {
- }
- 
- func (t *TestHuman) FatalInterruptSummary(run *moduletest.Run, file *moduletest.File, existingStates map[string]*states.State, created []*plans.ResourceInstanceChangeSrc) {
--	t.view.streams.Eprint(t.view.wrapToStderr(fmt.Sprintf("\nTerraform was interrupted while executing %s, and may not have performed the expected cleanup operations.\n", file.Name)))
-+	// We build the summary and then write it to stderr all at once.
-+	str := &strings.Builder{}
-+	str.WriteString(fmt.Sprintf("\nTerraform was interrupted while executing %s, and may not have performed the expected cleanup operations.\n", file.Name))
- 
- 	// Print out the main state first, this is the state that isn't associated
- 	// with a run block.
- 	if state, exists := existingStates[configs.TestMainStateIdentifier]; exists && !state.Empty() {
--		t.view.streams.Eprint(t.view.wrapToStderr("\nTerraform has already created the following resources from the module under test:\n"))
-+		str.WriteString("\nTerraform has already created the following resources from the module under test:\n")
- 		for _, resource := range addrs.SetSortedNatural(state.AllManagedResourceInstanceObjectAddrs()) {
- 			if resource.DeposedKey != states.NotDeposed {
--				t.view.streams.Eprintf("  - %s (%s)\n", resource.ResourceInstance, resource.DeposedKey)
-+				str.WriteString(fmt.Sprintf("  - %s (%s)\n", resource.ResourceInstance, resource.DeposedKey))
- 				continue
- 			}
--			t.view.streams.Eprintf("  - %s\n", resource.ResourceInstance)
-+			str.WriteString(fmt.Sprintf("  - %s\n", resource.ResourceInstance))
- 		}
- 	}
- 
-@@ -343,18 +346,19 @@ func (t *TestHuman) FatalInterruptSummary(run *moduletest.Run, file *moduletest.
- 			continue
- 		}
- 
--		t.view.streams.Eprint(t.view.wrapToStderr(fmt.Sprintf("\nTerraform has already created the following resources for %q:\n", key)))
-+		str.WriteString(fmt.Sprintf("\nTerraform has already created the following resources for %q:\n", key))
- 		for _, resource := range addrs.SetSortedNatural(state.AllManagedResourceInstanceObjectAddrs()) {
- 			if resource.DeposedKey != states.NotDeposed {
--				t.view.streams.Eprintf("  - %s (%s)\n", resource.ResourceInstance, resource.DeposedKey)
-+				str.WriteString(fmt.Sprintf("  - %s (%s)\n", resource.ResourceInstance, resource.DeposedKey))
- 				continue
- 			}
--			t.view.streams.Eprintf("  - %s\n", resource.ResourceInstance)
-+			str.WriteString(fmt.Sprintf("  - %s\n", resource.ResourceInstance))
- 		}
- 	}
- 
- 	if len(created) == 0 {
--		// No planned changes, so we won't print anything.
-+		// No planned changes, so we print and return early.
-+		t.view.streams.Eprint(t.view.wrapToStderr(str.String()))
- 		return
- 	}
- 
-@@ -369,11 +373,14 @@ func (t *TestHuman) FatalInterruptSummary(run *moduletest.Run, file *moduletest.
- 			module = fmt.Sprintf("%q", run.Config.Module.Source.String())
- 		}
- 
--		t.view.streams.Eprint(t.view.wrapToStderr(fmt.Sprintf("\nTerraform was in the process of creating the following resources for %q from %s, and they may not have been destroyed:\n", run.Name, module)))
-+		str.WriteString(fmt.Sprintf("\nTerraform was in the process of creating the following resources for %q from %s, and they may not have been destroyed:\n", run.Name, module))
- 		for _, resource := range resources {
--			t.view.streams.Eprintf("  - %s\n", resource)
-+			str.WriteString(fmt.Sprintf("  - %s\n", resource))
- 		}
- 	}
++		"skip if no diags": {
++			diags:      tfdiags.Diagnostics{},
++			wantOutput: ``,
++		},
++	}
++	for name, tc := range testCases {
++		t.Run(name, func(t *testing.T) {
++			streams, done := terminal.StreamsForTesting(t)
++			view := NewView(streams)
++			view.Configure(&arguments.View{NoColor: true})
++			v := NewModulesJSON(view)
 +
-+	// Print to stderr.
-+	t.view.streams.Eprint(t.view.wrapToStderr(str.String()))
- }
- 
- func (t *TestHuman) TFCStatusUpdate(status tfe.TestRunStatus, elapsed time.Duration) {
++			v.Diagnostics(
++				tc.diags,
++			)
++
++			output := done(t)
++			gotErr := output.Stderr()
++			if diff := cmp.Diff(tc.wantOutput, gotErr); diff != "" {
++				t.Errorf("unexpected output diff:\n%s", diff)
++			}
++
++			got := output.Stdout()
++			if got != "" {
++				t.Errorf("unexpected stdout output:\n%s", got)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #39410** (2026-10-19): Backport of command/test: Avoid panic when testing schema w/ deprecated values into v1.16 (@github-actions[bot])
+- **PR #39408** (closed): Kill managed provider plugin processes before exiting from the panic handler 🤖🤖🤖 (@andrewesweet)
 - **PR #39407** (2026-10-19): command/console: Avoid removing unknown marks (@radeksimko)
 - **PR #39406** (2026-10-19): command/test: Avoid panic when testing schema w/ deprecated values (@radeksimko)
 - **PR #39404** (2026-10-19): test: Fix flakey test `TestTest_DoubleInterrupt` (@SarahFrench)
 - **PR #39402** (2026-10-16): test: Clarify behaviour of ENV for overriding input mode (@SarahFrench)
-- **PR #39401** (2026-10-16): command: list -run-parallelism in terraform test -help (@rhrabun)
 
 ---
 
@@ -2738,25 +2556,25 @@ This change makes `(TestHuman) FatalInterruptSummary` build a summary string and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. command/test: Avoid panic when testing schema w/ deprecated values (#39406)
+## X. modules: Add diagnostics to `modules` command's JSON output, make errors be disp
 
 **RULE**:
-When implementing operations in `.changes/v1.16/BUG FIXES-20261016-180644.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/v1.18/NOTES-20261015-152814.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a20043d8`: command/test: Avoid panic when testing schema w/ deprecated values (#39406). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79307e8a`: modules: Add diagnostics to `modules` command's JSON output, make errors be displayed in JSON format when `-json` present, enable displaying warning diagnostics (#39396). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.16/BUG FIXES-20261016-180644.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.18/NOTES-20261015-152814.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-kind: BUG FIXES
-body: 'command/test: Avoid panic when testing schema w/ deprecated values'
-time: 2026-10-16T18:06:44.56834+01:00
+kind: NOTES
+body: 'modules: The `modules` command now shows diagnostics in its JSON format output'
+time: 2026-10-15T15:28:14.804+01:00
 custom:
-    Issue: "39406"
+    Issue: "39396"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2766,4 +2584,4 @@ custom:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a20043d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79307e8a` are properly handled with clean fallback behavior.

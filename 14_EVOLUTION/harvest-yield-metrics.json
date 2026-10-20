@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T17:16:59.399Z",
-  "total_cycles_completed": 3904,
-  "total_learnings_persisted": 3904,
-  "total_rules_promoted": 3111,
+  "last_updated": "2026-10-20T17:23:06.886Z",
+  "total_cycles_completed": 3907,
+  "total_learnings_persisted": 3907,
+  "total_rules_promoted": 3113,
   "history": [
-    {
-      "timestamp": "2026-10-20T05:19:18.339Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T05:21:55.901Z",
-      "repository": "angular/angular",
-      "learningId": "learn-github-angular-angular",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T05:22:53.374Z",
-      "repository": "scrapinghub/scrapy-poet",
-      "learningId": "learn-github-scrapinghub-scrapy-poet",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T05:23:04.241Z",
       "repository": "1jehuang/jcode",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T17:16:59.399Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:22:54.810Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:23:03.357Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T17:23:06.886Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

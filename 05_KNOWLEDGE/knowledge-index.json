@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:16:59.338Z",
+  "last_updated": "2026-10-20T17:23:06.847Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12862,8 +12862,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "8a97fe6c",
-      "content_hash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
+      "source_version": "79307e8a",
+      "content_hash": "79c4d2da25ba5425d3c5e285681239cfc8809ea2a558fa941e89f5e787c1cf09",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -12876,6 +12876,11 @@
           "number": 2619,
           "title": "command/test: Avoid panic when testing schema w/ deprecated values (#39406)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3290,
+          "title": "modules: Add diagnostics to `modules` command's JSON output, make errors be disp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12883,7 +12888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:08:42.474Z",
+      "verified_at": "2026-10-20T17:23:03.303Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25058,7 +25063,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
+      "content_hash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
@@ -25096,7 +25101,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-19T03:53:49.737Z",
+      "verified_at": "2026-10-20T17:22:54.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41546,8 +41551,8 @@
       "slug": "smallstep-cli",
       "platform": "github",
       "source_url": "https://github.com/smallstep/cli",
-      "source_version": "7f0a75d1",
-      "content_hash": "5f8d5a221a5c3d4e9f499b3550b4f959606202fbc18948bbab82c9fd6ed43f15",
+      "source_version": "bbf69d37",
+      "content_hash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
       "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "promoted_rules": [
@@ -41560,6 +41565,11 @@
           "number": 3219,
           "title": "Merge pull request #1719 from smallstep/dependabot/go_modules/github.com/fxamack",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3291,
+          "title": "Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microso",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41567,7 +41577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:25:32.162Z",
+      "verified_at": "2026-10-20T17:23:06.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103063,6 +103073,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:16:59.327Z"
+    },
+    "rule-3290": {
+      "learning_id": "rule-3290",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3290,
+      "title": "modules: Add diagnostics to `modules` command's JSON output, make errors be disp",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "79307e8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:23:03.303Z"
+    },
+    "rule-3291": {
+      "learning_id": "rule-3291",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3291,
+      "title": "Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microso",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "bbf69d37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:23:06.839Z"
     }
   },
   "aliases": {

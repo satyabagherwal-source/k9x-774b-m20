@@ -3927,3 +3927,6 @@
 | `CYCLE-20261020-3WV1` | `2026-10-20T17:16:50.845Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3285` | Yes (`402f3dfc...`) |
 | `CYCLE-20261020-40XF` | `2026-10-20T17:16:56.115Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3286, Rule 3287, Rule 3288` | Yes (`414003ad...`) |
 | `CYCLE-20261020-43GB` | `2026-10-20T17:16:59.387Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3289` | Yes (`40973f89...`) |
+| `CYCLE-20261020-BPP0` | `2026-10-20T17:22:54.804Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`4fc3c525...`) |
+| `CYCLE-20261020-BWAA` | `2026-10-20T17:23:03.346Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3290` | Yes (`79c4d2da...`) |
+| `CYCLE-20261020-BZ0G` | `2026-10-20T17:23:06.880Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3291` | Yes (`3c8ea0b8...`) |

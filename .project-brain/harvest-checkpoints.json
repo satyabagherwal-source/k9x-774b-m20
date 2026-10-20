@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:16:59.403Z",
+  "last_updated": "2026-10-20T17:23:06.889Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
-      "verified_at": "2026-10-19T03:53:49.797Z",
+      "content_hash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
+      "verified_at": "2026-10-20T17:22:54.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:53:49.797Z"
+      "last_updated": "2026-10-20T17:22:54.812Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "5f8d5a221a5c3d4e9f499b3550b4f959606202fbc18948bbab82c9fd6ed43f15",
-      "verified_at": "2026-10-20T14:25:32.246Z",
+      "content_hash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
+      "verified_at": "2026-10-20T17:23:06.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:25:32.246Z"
+      "last_updated": "2026-10-20T17:23:06.888Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
-      "verified_at": "2026-10-19T14:08:42.538Z",
+      "content_hash": "79c4d2da25ba5425d3c5e285681239cfc8809ea2a558fa941e89f5e787c1cf09",
+      "verified_at": "2026-10-20T17:23:03.359Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:08:42.538Z"
+      "last_updated": "2026-10-20T17:23:03.360Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",

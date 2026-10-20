@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
-    "lastHarvestedAt": "2026-10-19T03:53:49.791Z",
+    "contentHash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
+    "lastHarvestedAt": "2026-10-20T17:22:54.806Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "7f0a75d1",
+    "sourceVersion": "bbf69d37",
     "license": "Apache-2.0",
-    "contentHash": "5f8d5a221a5c3d4e9f499b3550b4f959606202fbc18948bbab82c9fd6ed43f15",
-    "lastHarvestedAt": "2026-10-20T14:25:32.238Z",
+    "contentHash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
+    "lastHarvestedAt": "2026-10-20T17:23:06.883Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "8a97fe6c",
+    "sourceVersion": "79307e8a",
     "license": "NOASSERTION",
-    "contentHash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
-    "lastHarvestedAt": "2026-10-19T14:08:42.532Z",
+    "contentHash": "79c4d2da25ba5425d3c5e285681239cfc8809ea2a558fa941e89f5e787c1cf09",
+    "lastHarvestedAt": "2026-10-20T17:23:03.354Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {

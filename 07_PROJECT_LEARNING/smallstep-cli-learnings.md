@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/smallstep-cli-learnings.md`  
 > **Source**: github ([https://github.com/smallstep/cli](https://github.com/smallstep/cli))  
-> **Source Version**: `7f0a75d1`  
+> **Source Version**: `bbf69d37`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:25:31.836Z  
+> **Timestamp**: 2026-10-20T17:23:06.617Z  
 > **Learning ID**: `learn-github-smallstep-cli`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/smallstep-cli-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/smallstep/cli](https://github.com/smallstep/cli))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:25:31.664Z  
+> **Harvest Timestamp**: 2026-10-20T17:23:06.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1932,93 +1932,133 @@ func (a *Agent) AddCertificate(subject string, cert *ssh.Certificate, priv any) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f0a75d1` (2026-10-20)
-**Commit Message**: Merge pull request #1719 from smallstep/dependabot/go_modules/github.com/fxamacker/cbor/v2-2.9.6
+### Incident Patch 1: `bbf69d37` (2026-10-20)
+**Commit Message**: Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microsoft/go-winio-0.6.3
 
-Bump github.com/fxamacker/cbor/v2 from 2.9.4 to 2.9.6
+Bump github.com/Microsoft/go-winio from 0.6.2 to 0.6.4
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -5,7 +5,7 @@ go 1.26.0
+@@ -3,7 +3,7 @@ module github.com/smallstep/cli
+ go 1.26.0
+ 
  require (
- 	github.com/Microsoft/go-winio v0.6.2
+-	github.com/Microsoft/go-winio v0.6.2
++	github.com/Microsoft/go-winio v0.6.4
  	github.com/ccoveille/go-safecast/v2 v2.0.1
--	github.com/fxamacker/cbor/v2 v2.9.4
-+	github.com/fxamacker/cbor/v2 v2.9.6
+ 	github.com/fxamacker/cbor/v2 v2.9.6
  	github.com/go-jose/go-jose/v3 v3.0.5
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/go-tpm v0.9.8
+@@ -112,7 +112,7 @@ require (
+ 	github.com/schollz/jsonstore v1.1.0 // indirect
+ 	github.com/shopspring/decimal v1.4.0 // indirect
+ 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
+-	github.com/sirupsen/logrus v1.10.1 // indirect
++	github.com/sirupsen/logrus v1.10.2 // indirect
+ 	github.com/smallstep/nosql v0.8.0 // indirect
+ 	github.com/smallstep/pkcs7 v0.2.1 // indirect
+ 	github.com/smallstep/scep v0.0.0-20250318231241-a25cabb69492 // indirect
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -144,8 +144,8 @@ github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9
- github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
- github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
- github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
--github.com/fxamacker/cbor/v2 v2.9.4 h1:xwjVlxEMR3S605oUlgBjKLTTeGFciYPGYCtF/35LKGo=
--github.com/fxamacker/cbor/v2 v2.9.4/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
-+github.com/fxamacker/cbor/v2 v2.9.6 h1:NHZPxuUjJXQjX9itA785y/5NKSlI4HQ+S7noZsmI7hs=
-+github.com/fxamacker/cbor/v2 v2.9.6/go.mod h1:4EaZp6ClVunETjQ4GHmGNzysDK91Lr+r6Yz6tJqzVCw=
- github.com/go-chi/chi/v5 v5.2.5 h1:Eg4myHZBjyvJmAFjFvWgrqDTXFyOzjj7YIm3L3mu6Ug=
- github.com/go-chi/chi/v5 v5.2.5/go.mod h1:X7Gx4mteadT3eDOMTsXzmI4/rwUpOwBHLpAfupzFJP0=
- github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
+@@ -48,8 +48,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
+ github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+ github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe3tPhs=
+ github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
+-github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
+-github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
++github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
++github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
+ github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
+ github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
+ github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
+@@ -287,8 +287,8 @@ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp
+ github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
+-github.com/sirupsen/logrus v1.10.1 h1:xi4336Zh11WpU14fXR6I67V3yaTPQYwRx2WEtHbRg4Q=
+-github.com/sirupsen/logrus v1.10.1/go.mod h1:vsQHnG7xzNsxk3NrwboUiWPnIC3dmbjcGPykD7+tiHk=
++github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBBo=
++github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
+ github.com/slackhq/nebula v1.11.2 h1:eP61cSfUuoEVGViD50gZBsAbBLPUAhoNOYewPmEwPG4=
+ github.com/slackhq/nebula v1.11.2/go.mod h1:xz3SEyYeEhXY8MDlVu8S3Qt+SjncsSJ8bl4RXUgxtXQ=
+ github.com/smallstep/assert v0.0.0-20200723003110-82e2b9b3b262 h1:unQFBIznI+VYD1/1fApl1A+9VcBk+9dcqGfnePY87LY=
 ```
 
 ---
 
-### Incident Patch 2: `d9539932` (2026-10-20)
-**Commit Message**: Bump github.com/fxamacker/cbor/v2 from 2.9.4 to 2.9.6
+### Incident Patch 2: `93729dfa` (2026-10-20)
+**Commit Message**: Bump github.com/Microsoft/go-winio from 0.6.2 to 0.6.4
 
-Bumps [github.com/fxamacker/cbor/v2](https://github.com/fxamacker/cbor) from 2.9.4 to 2.9.6.
-- [Release notes](https://github.com/fxamacker/cbor/releases)
-- [Commits](https://github.com/fxamacker/cbor/compare/v2.9.4...v2.9.6)
+Bumps [github.com/Microsoft/go-winio](https://github.com/Microsoft/go-winio) from 0.6.2 to 0.6.4.
+- [Release notes](https://github.com/Microsoft/go-winio/releases)
+- [Commits](https://github.com/Microsoft/go-winio/compare/v0.6.2...v0.6.4)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/fxamacker/cbor/v2
-  dependency-version: 2.9.6
+- dependency-name: github.com/Microsoft/go-winio
+  dependency-version: 0.6.3
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -5,7 +5,7 @@ go 1.26.0
+@@ -3,7 +3,7 @@ module github.com/smallstep/cli
+ go 1.26.0
+ 
  require (
- 	github.com/Microsoft/go-winio v0.6.2
+-	github.com/Microsoft/go-winio v0.6.2
++	github.com/Microsoft/go-winio v0.6.4
  	github.com/ccoveille/go-safecast/v2 v2.0.1
--	github.com/fxamacker/cbor/v2 v2.9.4
-+	github.com/fxamacker/cbor/v2 v2.9.6
+ 	github.com/fxamacker/cbor/v2 v2.9.6
  	github.com/go-jose/go-jose/v3 v3.0.5
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/go-tpm v0.9.8
+@@ -112,7 +112,7 @@ require (
+ 	github.com/schollz/jsonstore v1.1.0 // indirect
+ 	github.com/shopspring/decimal v1.4.0 // indirect
+ 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
+-	github.com/sirupsen/logrus v1.10.1 // indirect
++	github.com/sirupsen/logrus v1.10.2 // indirect
+ 	github.com/smallstep/nosql v0.8.0 // indirect
+ 	github.com/smallstep/pkcs7 v0.2.1 // indirect
+ 	github.com/smallstep/scep v0.0.0-20250318231241-a25cabb69492 // indirect
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -144,8 +144,8 @@ github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9
- github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
- github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
- github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
--github.com/fxamacker/cbor/v2 v2.9.4 h1:xwjVlxEMR3S605oUlgBjKLTTeGFciYPGYCtF/35LKGo=
--github.com/fxamacker/cbor/v2 v2.9.4/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
-+github.com/fxamacker/cbor/v2 v2.9.6 h1:NHZPxuUjJXQjX9itA785y/5NKSlI4HQ+S7noZsmI7hs=
-+github.com/fxamacker/cbor/v2 v2.9.6/go.mod h1:4EaZp6ClVunETjQ4GHmGNzysDK91Lr+r6Yz6tJqzVCw=
- github.com/go-chi/chi/v5 v5.2.5 h1:Eg4myHZBjyvJmAFjFvWgrqDTXFyOzjj7YIm3L3mu6Ug=
- github.com/go-chi/chi/v5 v5.2.5/go.mod h1:X7Gx4mteadT3eDOMTsXzmI4/rwUpOwBHLpAfupzFJP0=
- github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
+@@ -48,8 +48,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
+ github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+ github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe3tPhs=
+ github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
+-github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
+-github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
++github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
++github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
+ github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
+ github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
+ github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
+@@ -287,8 +287,8 @@ github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp
+ github.com/shopspring/decimal v1.4.0/go.mod h1:gawqmDU56v4yIKSwfBSFip1HdCCXN8/+DMd9qYNcwME=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
+ github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
+-github.com/sirupsen/logrus v1.10.1 h1:xi4336Zh11WpU14fXR6I67V3yaTPQYwRx2WEtHbRg4Q=
+-github.com/sirupsen/logrus v1.10.1/go.mod h1:vsQHnG7xzNsxk3NrwboUiWPnIC3dmbjcGPykD7+tiHk=
++github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBBo=
++github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
+ github.com/slackhq/nebula v1.11.2 h1:eP61cSfUuoEVGViD50gZBsAbBLPUAhoNOYewPmEwPG4=
+ github.com/slackhq/nebula v1.11.2/go.mod h1:xz3SEyYeEhXY8MDlVu8S3Qt+SjncsSJ8bl4RXUgxtXQ=
+ github.com/smallstep/assert v0.0.0-20200723003110-82e2b9b3b262 h1:unQFBIznI+VYD1/1fApl1A+9VcBk+9dcqGfnePY87LY=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1720** (2026-10-20): Bump github.com/Microsoft/go-winio from 0.6.2 to 0.6.4 (@dependabot[bot])
 - **PR #1719** (2026-10-20): Bump github.com/fxamacker/cbor/v2 from 2.9.4 to 2.9.6 (@dependabot[bot])
 - **PR #1718** (closed): Bump golang.org/x/term from 0.46.0 to 0.47.0 (@dependabot[bot])
 - **PR #1717** (2026-10-20): Bump golang.org/x/crypto from 0.57.0 to 0.58.0 (@dependabot[bot])
 - **PR #1716** (closed): Bump golang.org/x/sys from 0.48.0 to 0.49.0 (@dependabot[bot])
 - **PR #1714** (2026-10-05): Bump github.com/slackhq/nebula from 1.11.1 to 1.11.2 (@dependabot[bot])
-- **PR #1712** (2026-09-25): Release v0.31.0 (@maraino)
 
 ---
 
@@ -2038,13 +2078,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1719 from smallstep/dependabot/go_modules/github.com/fxamack
+## X. Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microso
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in smallstep/cli. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f0a75d1`: Merge pull request #1719 from smallstep/dependabot/go_modules/github.com/fxamacker/cbor/v2-2.9.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbf69d37`: Merge pull request #1720 from smallstep/dependabot/go_modules/github.com/Microsoft/go-winio-0.6.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -2052,14 +2092,16 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/fxamacker/cbor/v2 v2.9.6
+	github.com/Microsoft/go-winio v0.6.4
+	github.com/sirupsen/logrus v1.10.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/fxamacker/cbor/v2 v2.9.4
+	github.com/Microsoft/go-winio v0.6.2
+	github.com/sirupsen/logrus v1.10.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f0a75d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbf69d37` are properly handled with clean fallback behavior.

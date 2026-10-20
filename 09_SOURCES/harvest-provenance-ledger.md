@@ -3934,3 +3934,6 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `f217bd67` | Multi-dimensional audit evidence | 2026-10-20T17:16:50.852Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T17:16:56.122Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e5174995` | Multi-dimensional audit evidence | 2026-10-20T17:16:59.394Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-20T17:22:54.806Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `79307e8a` | Multi-dimensional audit evidence | 2026-10-20T17:23:03.354Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `bbf69d37` | Multi-dimensional audit evidence | 2026-10-20T17:23:06.883Z |

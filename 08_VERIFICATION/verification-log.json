@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-6H2C",
-    "timestamp": "2026-10-19T18:55:08.772Z",
-    "repository": "michaelbull/kotlin-result",
-    "learningId": "learn-github-michaelbull-kotlin-result",
-    "contentHash": "75f2ee147c5a14c4445ecda1ad6c05e462f5875132803f55505380d9dcb22a9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6LJH",
-    "timestamp": "2026-10-19T18:55:14.573Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "f3af69b03e8b5a5c30fd07b25c852b1c5b7714bd094e586d1a5efe0acec794b0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9OLM",
-    "timestamp": "2026-10-19T18:57:38.506Z",
-    "repository": "mitrovicsinisaa/schemaorg-rs",
-    "learningId": "learn-github-mitrovicsinisaa-schemaorg-rs",
-    "contentHash": "e372a57ce3e6f884b8c518ef8e945ee1e61d229a032918f81fdee618593e44b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-H6HG",
     "timestamp": "2026-10-19T19:03:28.276Z",
     "repository": "adobe/react-spectrum",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-BPP0",
+    "timestamp": "2026-10-20T17:22:54.804Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-BWAA",
+    "timestamp": "2026-10-20T17:23:03.346Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "79c4d2da25ba5425d3c5e285681239cfc8809ea2a558fa941e89f5e787c1cf09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-BZ0G",
+    "timestamp": "2026-10-20T17:23:06.880Z",
+    "repository": "smallstep/cli",
+    "learningId": "learn-github-smallstep-cli",
+    "contentHash": "3c8ea0b87cc09f66f63c93468b4eaed52a8f4adf12bf3686feaad668c3030d80",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
