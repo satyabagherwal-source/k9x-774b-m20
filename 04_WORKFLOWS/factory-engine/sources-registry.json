@@ -1509,12 +1509,12 @@
     "revisionIdentifier": "2d1fc1de"
   },
   "projectcontour-contour": {
-    "name": "projectcontour/contour",
+    "name": "contour",
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-19T19:03:37.502Z",
-    "lastVerified": "2026-10-19T19:03:37.502Z",
+    "lastChecked": "2026-10-20T08:45:36.160Z",
+    "lastVerified": "2026-10-20T08:45:36.160Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
@@ -1523,7 +1523,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "16f633ee"
   },
   "kube-rs-kube": {
     "name": "kube",
@@ -2001,8 +2002,8 @@
     "officialUrl": "https://github.com/hunvreus/basecoat",
     "sourceType": "github",
     "technology": "MDX",
-    "lastChecked": "2026-10-19T20:10:16.710Z",
-    "lastVerified": "2026-10-19T20:10:16.710Z",
+    "lastChecked": "2026-10-20T08:45:26.149Z",
+    "lastVerified": "2026-10-20T08:45:26.149Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hunvreus-basecoat",
@@ -4084,12 +4085,12 @@
     "revisionIdentifier": "ce72155b"
   },
   "faridsafi-react-native-gifted-chat": {
-    "name": "FaridSafi/react-native-gifted-chat",
+    "name": "react-native-gifted-chat",
     "officialUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-18T22:41:51.492Z",
-    "lastVerified": "2026-10-18T22:41:51.492Z",
+    "lastChecked": "2026-10-20T08:45:33.638Z",
+    "lastVerified": "2026-10-20T08:45:33.638Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-faridsafi-react-native-gifted-chat",
@@ -4098,7 +4099,8 @@
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4ff184b1"
   },
   "danilowoz-react-content-loader": {
     "name": "danilowoz/react-content-loader",
@@ -6390,8 +6392,8 @@
     "officialUrl": "https://github.com/pemistahl/grex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T16:31:00.586Z",
-    "lastVerified": "2026-10-19T16:31:00.586Z",
+    "lastChecked": "2026-10-20T08:45:28.643Z",
+    "lastVerified": "2026-10-20T08:45:28.643Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pemistahl-grex",
@@ -18407,8 +18409,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T06:49:31.487Z",
-    "lastVerified": "2026-10-20T06:49:31.487Z",
+    "lastChecked": "2026-10-20T08:45:43.651Z",
+    "lastVerified": "2026-10-20T08:45:43.651Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -21435,14 +21437,14 @@
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-19T18:23:26.372Z",
-    "lastVerified": "2026-10-19T18:23:26.372Z",
+    "lastChecked": "2026-10-20T08:45:45.287Z",
+    "lastVerified": "2026-10-20T08:45:45.287Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
+    "contentHash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -22158,22 +22160,21 @@
     "revisionIdentifier": "ca4d588f"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T03:53:29.788Z",
-    "lastVerified": "2026-10-20T03:53:29.788Z",
+    "lastChecked": "2026-10-20T08:45:41.716Z",
+    "lastVerified": "2026-10-20T08:45:41.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
+    "contentHash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e63326d6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -27241,8 +27242,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-20T08:36:39.502Z",
-    "lastVerified": "2026-10-20T08:36:39.502Z",
+    "lastChecked": "2026-10-20T08:50:50.739Z",
+    "lastVerified": "2026-10-20T08:50:50.739Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -27457,9 +27458,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-10-18T21:20:06.084Z",
+    "lastChecked": "2026-10-20T08:45:31.162Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-10-18T21:20:06.084Z"
+    "lastVerified": "2026-10-20T08:45:31.162Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",

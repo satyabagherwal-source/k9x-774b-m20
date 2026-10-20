@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T08:36:36.972Z",
+  "last_updated": "2026-10-20T08:50:48.207Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
-      "verified_at": "2026-10-19T18:36:01.189Z",
+      "content_hash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
+      "verified_at": "2026-10-20T08:50:48.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:36:01.190Z"
+      "last_updated": "2026-10-20T08:50:48.206Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
-      "verified_at": "2026-10-19T18:23:26.670Z",
+      "content_hash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
+      "verified_at": "2026-10-20T08:45:51.905Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:23:26.670Z"
+      "last_updated": "2026-10-20T08:45:51.905Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",

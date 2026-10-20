@@ -3772,3 +3772,5 @@ Every entry in this ledger must capture:
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `5742a7c2` | Multi-dimensional audit evidence | 2026-10-20T08:22:19.888Z |
 | `learn-github-heygen-com-hyperframes` | `https://github.com/heygen-com/hyperframes` | `d898ad89` | Multi-dimensional audit evidence | 2026-10-20T08:36:22.778Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `5cbc36e1` | Multi-dimensional audit evidence | 2026-10-20T08:36:36.965Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `fb456eb3` | Multi-dimensional audit evidence | 2026-10-20T08:45:51.896Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `3ffc6fa1` | Multi-dimensional audit evidence | 2026-10-20T08:50:48.198Z |

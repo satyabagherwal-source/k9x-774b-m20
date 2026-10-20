@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `e63326d6`  
+> **Source Version**: `3ffc6fa1`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:36:01.001Z  
+> **Timestamp**: 2026-10-20T08:50:47.875Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:36:00.996Z  
+> **Harvest Timestamp**: 2026-10-20T08:45:41.716Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28592 stars
+- **Stars / Engagement**: 28599 stars
 
 ---
 
@@ -1140,489 +1140,314 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e63326d6` (2026-10-19)
-**Commit Message**: github: name the missing permission when a comment listing is refused (#5438)
+### Incident Patch 1: `3ffc6fa1` (2026-10-20)
+**Commit Message**: Add per-source debug option and hide sensitive data in debug logs (#5446)
 
-* Name the missing permission when a GitHub comment walk is refused
+* Add per-source debug option for config file sources
 
-When a GitHub App or fine-grained personal access token lacks a permission
-an issue or pull request listing needs, GitHub answers 403 and names what
-the endpoint accepts in the X-Accepted-GitHub-Permissions header. The scan
-surfaced only "Resource not accessible by integration", leaving the user to
-work out which permission was missing.
+Add a debug field to LocalSource; ScanConfig gives that source
+a debug context for both Init and the scan. Warn that --trace
+will be replaced by --debug, which moves to level 5. Add semgrep
+warnings for stored loggers and new contexts in pkg/sources
 
-fetchWithRetry now turns such a 403 into a permissionError that names the
-required permission(s), says whether the credential is an app or a token and
-how to fix it, and keeps the original error for errors.Is/As. It is never
-retried. Other errors, including a 403 without the header, pass through
-unchanged.
+* Hide sensitive data in existing debug logs
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Per-source debug makes V(4)/V(5) lines easy to turn on, so fix
+the ones that leak data: syslog no longer logs raw messages,
+Postman no longer logs response headers, and the round tripper
+and Jenkins log redacted URLs. Add tests for the URL and syslog
+cases.
 
-* Report each failed GitHub comment phase as its own chunk error
-
-The REST comment scan runs its phases independently and joins their
-failures, and scanRepo reported that join as a single chunk error. A repo
-missing several permissions showed one multi-line error in which only the
-first line carried the "error scanning comments" context.
-
-scanRepo now splits
-
-**File**: `pkg/sources/github/comments_test.go` (modified, +57/-2)
+**File**: `.github/workflows/lint.yml` (modified, +2/-0)
 ```diff
-@@ -3,6 +3,7 @@ package github
- import (
- 	"bytes"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"net/http"
- 	"net/http/httptest"
-@@ -54,10 +55,12 @@ func newFakeGitHub(t *testing.T) *fakeGitHub {
- 
- var testRepo = repoInfo{owner: "o", name: "r", fullName: "o/r"}
- 
--// collectingReporter records the link of every chunk the scan emits.
-+// collectingReporter records the link of every chunk the scan emits, and every
-+// chunk error it reports.
- type collectingReporter struct {
- 	mu    sync.Mutex
- 	links []string
-+	errs  []error
- }
- 
- func (r *collectingReporter) ChunkOk(_ context.Context, chunk sources.Chunk) error {
-@@ -67,7 +70,12 @@ func (r *collectingReporter) ChunkOk(_ context.Context, chunk sources.Chunk) err
- 	return nil
- }
- 
--func (r *collectingReporter) ChunkErr(context.Context, error) error { return nil }
-+func (r *collectingReporter) ChunkErr(_ context.Context, err error) error {
-+	r.mu.Lock()
-+	defer r.mu.Unlock()
-+	r.errs = append(r.errs, err)
-+	return nil
-+}
- 
- func issueRecord(number int, updated time.Time) fakeRecord {
- 	return fakeRecord{updated: updated, body: map[string]any{
-@@ -311,6 +319,53 @@ func TestCommentScan_FailedPhaseDoesNotStopTheOthers(t *testing.T) {
- 	}, reporter.links)
- }
- 
-+// deniedWith returns a fail func that refuses every request the way GitHub
-+// refuses a GitHub App that lacks a permission, naming accepted as what the
-+// endpoint requires.
-+func deniedWith(accepted string) func(int, http.ResponseWriter, *http.Request) bool {
-+	return func(_ int, w http.ResponseWriter, _ *http.Request) bool {
-+		w.Header().Set(acceptedPermissionsHeader, accepted)
-+		writeJSON(w, http.StatusForbidden, map[string]string{"message": appDeniedMessage})
-+		return true
-+	}
-+}
-+
-+func TestCommentScan_EachFailedPhaseIsReportedAsItsOwnChunkError(t *testing.T) {
-+	gh := newFakeGitHub(t)
-+	seedRepo(gh)
-+	gh.issues.fail = deniedWith("issues=read")
-+	gh.issueComments.fail = deniedWith("issues=read; pull_requests=read")
-+	gh.prComments.fail = deniedWith("pull_requests=read")
-+	s := &Source{includeIssueComments: true, includePRComments: true}
-+
-+	reporter, err := scanComments(t, s, gh, nil)
-+	require.Error(t, err)
-+	require.NoError(t, reportCommentErrors(context.Background(), reporter, err))
-+
-+	require.Len(t, reporter.errs, 3)
-+	wantPrefixes := []string{
-+		"error scanning comments: issues and pull requests: walk incomplete after 0 items: missing GitHub App permission: the request needs Issues (read);",
-+		"error scanning comments: issue comments: walk incomplete after 0 items: missing GitHub App permission: the request needs Issues (read) or Pull requests (read);",
-+		"error scanning comments: pull request comments: walk incomplete after 0 items: missing GitHub App permission: the request needs Pull requests (read);",
-+	}
-+	for i, reported := range reporter.errs {
-+		assert.True(t, strings.HasPrefix(reported.Error(), wantPrefixes[i]), "got %q", reported.Error())
-+		assert.NotContains(t, reported.Error(), "\n", "each chunk error covers one phase")
-+		var permErr *permissionError
-+		assert.ErrorAs(t, reported, &permErr)
-+	}
-+	assert.Empty(t, reporter.links)
-+}
-+
-+func TestReportCommentErrors_UnjoinedErrorIsReportedOnce(t *testing.T) {
-+	reporter := &collectingReporter{}
-+
-+	require.NoError(t, reportCommentErrors(context.Background(), reporter, errors.New("could not get API client")))
-+
-+	require.Len(t, reporter.errs, 1)
-+	assert.EqualError(t, reporter.errs[0], "error scanning comments: could not get API client")
-+}
-+
- func TestCommentScan_RetryLogNamesTheListing(t *testing.T) {
- 	gh := newFakeGitHub(t)
- 	seedRepo(gh)
+@@ -50,6 +50,8 @@ jobs:
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+       - run: semgrep --config=hack/semgrep-rules/detectors.yaml pkg/detectors/
++      # Source logging rules. Findings are warnings only and don't fail the build.
++      - run: semgrep --config=hack/semgrep-rules/sources.yaml pkg/sources/
+   checksecretparts:
+     # Reports detector packages that construct detectors.Result without
+     # populating SecretParts. See hack/checksecretparts/README.md.
 ```
 
-**File**: `pkg/sources/github/github.go` (modified, +23/-4)
+**File**: `README.md` (modified, +18/-0)
 ```diff
-@@ -1396,8 +1396,7 @@ func (s *Source) scanRepo(ctx context.Context, repoURL string, reporter sources.
- 		err := s.scanComments(ctx, repoURL, repoInfo, reporter)
- 		commentsDuration = time.Since(commentsStart)
- 		if err != nil {
--			err := fmt.Errorf("error scanning comments: %w", err)
--			if err := reporter.ChunkErr(ctx, err); err != nil {
-+			if err := reportCommentErrors(ctx, reporter, err); err != nil {
- 				return err
- 			}
- 		}
-@@ -1782,6 +1781,25 @@ func (s *Source) setProgressCompleteWithRepo(index int, offset int, repoURL stri
- 	s.SetProgressComplete(index+offset, len(s.repos)+offset, fmt.Sprintf("Repo: %s", repoURL), encodedResumeInfo)
- }
+@@ -618,6 +618,24 @@ sources:
+ You may define multiple connections under the `sources` key (see above), and
+ TruffleHog will scan all of the sources concurrently.
  
-+// reportCommentErrors reports a failed comment scan as chunk errors, one per
-+// failed phase. processIssueandPRsWithCommentsREST joins one error per phase
-+// that failed, and each phase is a separate listing that failed for its own
-+// reason, often a different missing permission. Reporting them separately
-+// gives each its own entry and its own "error scanning comments" context,
-+// instead of one entry whose later lines have neither.
-+func reportCommentErrors(ctx context.Context, reporter sources.ChunkReporter, err error) error {
-+	phaseErrs := []error{err}
-+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
-+		phaseErrs = joined.Unwrap()
-+	}
-+	for _, phaseErr := range phaseErrs {
-+		if err := reporter.ChunkErr(ctx, fmt.Errorf("error scanning comments: %w", phaseErr)); err != nil {
-+			return err
-+		}
-+	}
-+	return nil
-+}
++To see debug logs for just one source, add `debug: true` to it. That source
++writes all of its debug logs, and every other source keeps the normal log level.
++This is useful when one source out of many is misbehaving:
 +
- func (s *Source) scanComments(ctx context.Context, repoPath string, repoInfo repoInfo, reporter sources.ChunkReporter) error {
- 	urlString, urlParts, err := getRepoURLParts(repoPath)
- 	if err != nil {
-@@ -2015,8 +2033,9 @@ type commentPhase struct {
- //
- // The phases are independent: a failure in one is collected and the rest
- // still run, so one capped or forbidden endpoint can't hide the others. All
--// failures come back joined into one error, which scanRepo reports as a
--// single ChunkErr for the repo. Chunks emitted before a failure are kept.
-+// failures come back joined into one error, which scanRepo splits back apart
-+// so each failed phase is its own ChunkErr (see reportCommentErrors). Chunks
-+// emitted before a failure are kept.
- //
- // The "Scanning issues" and "Scanning pull requests" V(2) lines are the only
- // log signal for scans on the unit path, whose comment errors go to the scan
++```yaml
++sources:
++- connection:
++    '@type': type.googleapis.com/sources.GitHub
++    repositories:
++    - https://github.com/trufflesecurity/test_keys.git
++    unauthenticated: {}
++  name: example config scan
++  type: SOURCE_TYPE_GITHUB
++  debug: true
++```
++
++To turn on debug logs for every source, use `--log-level=5` instead.
++
+ ## S3
+ 
+ The S3 source supports assuming IAM roles for scanning in addition to IAM users. This makes it easier for users to scan multiple AWS accounts without needing to rely on hardcoded credentials for each account.
 ```
 
-**File**: `pkg/sources/github/pagination.go` (modified, +5/-1)
+**File**: `docs/source_logging.md` (modified, +6/-0)
 ```diff
-@@ -286,6 +286,10 @@ func transientBackoff(retry int) time.Duration {
- // "giving up after N attempt(s)". Each attempt here is bounded by the
- // client's 60 second timeout, so a page that keeps failing is reported after
- // several minutes rather than retried indefinitely.
-+//
-+// Every page of every walk returns through here, so this is also where a 403
-+// for a missing permission becomes a permissionError naming that permission.
-+// It is never retried: the credential's permissions won't change mid-walk.
- func fetchWithRetry[T any](ctx context.Context, p pager, fetch func() ([]T, *github.Response, error)) ([]T, *github.Response, error) {
- 	transientRetries := 0
- 	for {
-@@ -294,7 +298,7 @@ func fetchWithRetry[T any](ctx context.Context, p pager, fetch func() ([]T, *git
- 			continue
- 		}
- 		if err == nil || p.wait == nil || !isTransient(ctx, err) {
--			return items, resp, err
-+			return items, resp, asPermissionError(err)
- 		}
- 		if transientRetries == maxTransientRetries {
- 			return items, resp, fmt.Errorf("giving up after %d attempts: %w", transientRetries+1, err)
+@@ -43,6 +43,12 @@ through the context: `context.WithLogLevel(ctx, log.DebugLevel)` returns a conte
+ to `V(5)`. Any code that logs through `ctx.Logger()` gets this for free, which is one more reason not to store
+ loggers.
+ 
++Users turn it on with `debug: true` on a source in the config file, see the
++[configuration docs](../README.md#configuration). The engine then passes a debug context to both `Init` and the scan.
++
++The rules about stored loggers and new contexts are checked by semgrep (`hack/semgrep-rules/sources.yaml`). For now
++the findings are warnings. If a source really needs a new context, add a `// nosemgrep` comment that says why.
++
+ ## Testing
+ 
+ Use `logtest.DebugContext()` to run a source with debug turned on and look at what it logged:
 ```
 
-**File**: `pkg/sources/github/permission_error.go` (added, +176/-0)
+**File**: `hack/semgrep-rules/sources.yaml` (added, +30/-0)
 ```diff
-@@ -0,0 +1,176 @@
-+package github
+@@ -0,0 +1,30 @@
++rules:
++  - id: no-stored-logger-in-sources
++    pattern: |
++      type $T struct {
++        ...
++        $FIELD logr.Logger
++        ...
++      }
++    message: >-
++      Don't store a logr.Logger in a struct. Log with ctx.Logger() from the
++      current call, so the log picks up the context's fields and log level,
++      including per-source debug. See docs/source_logging.md.
++    languages: [go]
++    severity: WARNING
++
++  - id: no-background-context-in-sources
++    patterns:
++      - pattern-either:
++          - pattern: context.Background()
++          - pattern: context.TODO()
++    paths:
++      exclude:
++        - "*_test.go"
++    message: >-
++      Don't create a new context inside a source. Pass on the context you were
++      given, so its fields, cancellation and log level are kept. If a new
++      context is really needed, add a nosemgrep comment that says why. See
++      docs/source_logging.md.
++    languages: [go]
++    severity: WARNING
+```
+
+**File**: `main.go` (modified, +9/-0)
+```diff
+@@ -464,6 +464,15 @@ func run(state overseer.State, logSync func() error) {
+ 	logger := ctx.Logger()
+ 	logFatal := logFatalFunc(logger, logSync)
+ 
++	// --debug and --trace still work the same, but in a future release --debug
++	// takes over --trace's level 5 and --trace goes away. Warn users now.
++	if *trace {
++		logger.Info("--trace is deprecated and will be replaced by --debug in a future release. Use --log-level=5 instead.")
++	}
++	if *debug {
++		logger.Info("--debug will switch from log level 2 to 5 (what --trace does today) in a future release. Use --log-level=2 to keep the current output.")
++	}
++
+ 	killSignal := make(chan os.Signal, 1)
+ 	signal.Notify(killSignal, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+ 	go func() {
+```
+
+**File**: `pkg/config/config_test.go` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++package config
 +
 +import (
-+	"errors"
-+	"fmt"
-+	"net/http"
-+	"strings"
-+
-+	"github.com/google/go-github/v67/github"
-+)
-+
-+// acceptedPermissionsHeader is the response header in which GitHub names what
-+// an endpoint requires. GitHub refuses a request the credential isn't
-+// permitted to make with a 403 ("Resource not accessible by integration" for
-+// GitHub App tokens, "...by personal access token" for fine-grained tokens)
-+// that carries this header. The raw error doesn't say which permission is
-+// missing, so comment walks rewrite these 403s into a permissionError that
-+// does. The header's value is a comma-separated list of permissions that are
-+// all required; a semicolon separates alternative lists, any one of which is
-+// enough. See
-+// https://docs.github.com/en/rest/using-the-rest-api/troubleshooting-the-rest-api#resource-not-accessible
-+const acceptedPermissionsHeader = "X-Accepted-GitHub-Permissions"
-+
-+// permission is one entry of the header, such as issues=read.
-+type permission struct {
-+	name   string
-+	access string
-+}
-+
-+// String renders the permission the way GitHub's settings pages label it, for
-+// example "Pull requests (read)".
-+func (p permission) String() string {
-+	label := strings.ReplaceAll(p.name, "_", " ")
-+	return fmt.Sprintf("%s%s (%s)", strings.ToUpper(label[:1]), label[1:], p.access)
-+}
-+
-+// credentialKind is the kind of credential GitHub says it refused, read from
-+// the 403's message. The fix differs: an app's permissions are changed by its
-+// owner and then accepted on each installation, while a fine-grained token's
-+// are changed on the token.
-+type credentialKind int
-+
-+const (
-+	credentialUnknown credentialKind = iota
-+	credentialApp
-+	credentialFineGrainedToken
-+)
-+
-+// permissionError reports a request GitHub refused because the credential
-+// lacks a permission. accepted holds the permission sets that would satisfy
-+// the endpoint: any one set is enough, and a set needs every permission in it.
-+// method and path identify the request, and message is GitHub's own error
-+// text, kept so the error still reads like the 403 it replaces.
-+type permissionError struct {
-+	accepted   [][]permission
-+	credential credentialKind
-+	method     string
-+	path       string
-+	message    string
-+	err        error
-+}
-+
-+func (e *permissionError) Error() string {
-+	var subject, fix string
-+	switch e.credential {
-+	case credentialApp:
-+		subject = "missing GitHub App permission"
-+		fix = "update the app's permissions and accept the change on the installation"
-+	case credentialFineGrainedToken:
-+		subject = "missing personal access token permission"
-+		fix = "update the token's permissions"
-+	default:
-+		subject = "missing GitHub permission"
-+		fix = "update the credential's permissions"
-+	}
-+
-+	request := "request"
-+	if e.path != "" {
-+		request = e.method + " " + e.path
-+	}
-+	return fmt.Sprintf("%s: the request needs %s; %s (%s returned 403 %s)",
-+		subject, describeAccepted(e.accepted), fix, request, e.message)
-+}
-+
-+func (e *permissionError) Unwrap() error { return e.err }
-+
-+// asPermissionError returns err as a *permissionError when it is a 403 that
-+// names the permissions it wanted, and returns err unchanged otherwise. 403s
-+// without the header pass through as they are: rate limits arrive as their own
-+// error types, and SAML enforcement, IP allow lists, and GitHub Enterprise
-+// Server versions that don't send the header leave nothing to name.
-+func asPermissionError(err error) error {
-+	var errResp *github.ErrorResponse
-+	if !errors.As(err, &errResp) || errResp.Response == nil || errResp.Response.StatusCode != http.StatusForbidden {
-+		return err
-+	}
-+	accepted := parseAcceptedPermissions(errResp.Response.Header.Get(acceptedPermissionsHeader))
-+	if len(accepted) == 0 {
-+		return err
-+	}
-+
-+	permErr := &permissionError{
-+		accepted:   accepted,
-+		credential: credentialFromMessage(errResp.Message),
-+		message:    errResp.Message,
-+		err:        err,
-+	}
-+	if req := errResp.Response.Request; req != nil && req.URL != nil {
-+		permErr.method = req.Method
-+		permErr.path = req.URL.Path
-+	}
-+	return permErr
-+}
-+
-+// parseAcceptedPermissions parses an acceptedPermissionsHeader value into its
-+// alternative permission sets. A value that doesn't parse cleanly returns
-+// nil, so a format change on GitHub's side leaves the original 403 intact
-+// rather than producing a message that names the wrong permissions.
-+func parseAcceptedPermissions(header string) [][]permission {
-+	if strings.TrimSpace(header) == "" {
-+		return nil
-+	}
-+	var sets [][]permission
-+	for _, rawSet := range strings.Split(header, ";") {
-+		var set []permission
-+		for _, entry := range strings.Split(rawSet, ",") {
-+			name, access, ok := strings.Cut(entry, "=")
-+			name, access = strings.TrimSpace(name), strings.TrimSpace(access)
-+			if !ok || name == "" || access == "" {
-+				return nil
-+			}
-+			set = append(set, permission{name: name, access: access})
-+		}
-+		sets = append(sets
-```
-
-**File**: `pkg/sources/github/permission_error_test.go` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+package github
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"net/http"
-+	"net/url"
 +	"testing"
 +
-+	"github.com/google/go-github/v67/github"
 +	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
++)
++
++func TestNewYAML_SourceDebug(t *testing.T) {
++	// The second source has no debug field, like every config written before
++	// the field existed, so it must stay off.
++	input := []byte(`
++sources:
++- name: with debug
++  type: SOURCE_TYPE_FILESYSTEM
++  debug: true
++  connection:
++    '@type': type.googleapis.com/sources.Filesystem
++    paths: [.]
++- name: without debug
++  type: SOURCE_TYPE_FILESYSTEM
++  connection:
++    '@type': type.googleapis.com/sources.Filesystem
++    paths: [.]
++`)
++
++	conf, err := NewYAML(input)
++	require.NoError(t, err)
++	require.Len(t, conf.Sources, 2)
++
++	assert.Equal(t, "with debug", conf.Sources[0].Name)
++	assert.True(t, conf.Sources[0].Debug)
++	assert.Equal(t, "without debug", conf.Sources[1].Name)
++	assert.False(t, conf.Sources[1].Debug)
++}
+```
+
+**File**: `pkg/engine/scan.go` (modified, +11/-2)
+```diff
+@@ -2,6 +2,7 @@ package engine
+ 
+ import (
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources/postman"
+ )
+@@ -15,7 +16,15 @@ func (e *Engine) ScanConfig(ctx context.Context, configuredSources ...sources.Co
+ 	for _, configuredSource := range configuredSources {
+ 		sourceID, jobID, _ := e.sourceManager.GetIDs(ctx, configuredSource.Name, configuredSource.SourceType())
+ 
+-		source, err := configuredSource.Init(ctx, sourceID, jobID)
++		// A source with debug on gets a context that writes all of its debug
++		// logs. Both Init and the scan use it, so every log from this source is
++		// covered. Other sources keep the global log level.
++		sourceCtx := ctx
++		if configuredSource.Debug {
++			sourceCtx = context.WithLogLevel(ctx, log.DebugLevel)
++		}
++
++		source, err := configuredSource.Init(sourceCtx, sourceID, jobID)
+ 		if err != nil {
+ 			return refs, err
+ 		}
+@@ -26,7 +35,7 @@ func (e *Engine) ScanConfig(ctx context.Context, configuredSources ...sources.Co
+ 		}
+ 
+ 		// Start the scan.
+-		ref, err := e.sourceManager.EnumerateAndScan(ctx, configuredSource.Name, source)
++		ref, err := e.sourceManager.EnumerateAndScan(sourceCtx, configuredSource.Name, source)
+ 		if err != nil {
+ 			return refs, err
+ 		}
+```
+
+**File**: `pkg/engine/scan_test.go` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++package engine
++
++import (
++	"testing"
++	"time"
++
++	"github.com/go-logr/zapr"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zapcore"
++	"go.uber.org/zap/zaptest/observer"
++	"google.golang.org/protobuf/types/known/anypb"
 +
 +	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/decoders"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
 +)
 +
-+const (
-+	appDeniedMessage   = "Resource not accessible by integration"
-+	tokenDeniedMessage = "Resource not accessible by personal access token"
-+)
-+
-+// forbidden builds the error go-github returns for a 403 to GET path, with the
-+// given message and acceptedPermissionsHeader value. An empty accepted omits
-+// the header.
-+func forbidden(path, message, accepted string) *github.ErrorResponse {
-+	header := http.Header{}
-+	if accepted != "" {
-+		header.Set(acceptedPermissionsHeader, accepted)
-+	}
-+	return &github.ErrorResponse{
-+		Response: &http.Response{
-+			StatusCode: http.StatusForbidden,
-+			Header:     header,
-+			Request:    &http.Request{Method: http.MethodGet, URL: &url.URL{Scheme: "https", Host: "api.github.com", Path: path, RawQuery: "per_page=100"}},
-+		},
-+		Message: message,
-+	}
++// loggingSource is a fake source that writes one info line and one debug line
++// from Init and from Chunks, so a test can see which lines were written.
++type loggingSource struct {
++	name string
++	sources.Progress
 +}
 +
-+func TestParseAcceptedPermissions(t *testing.T) {
-+	tests := []struct {
-+		name   string
-+		header string
-+		want   [][]permission
-+	}{
-+		{
-+			name:   "single permission",
-+			header: "issues=read",
-+			want:   [][]permission{{{name: "issues", access: "read"}}},
-+		},
-+		{
-+			name:   "several permissions all required",
-+			header: "pull_requests=write,contents=read",
-+			want:   [][]permission{{{name: "pull_requests", access: "write"}, {name: "contents", access: "read"}}},
-+		},
-+		{
-+			name:   "alternative sets",
-+			header: "pull_requests=read,contents=read; issues=read,contents=read",
-+			want: [][]permission{
-+				{{name: "pull_requests", access: "read"}, {name: "contents", access: "read"}},
-+				{{name: "issues", access: "read"}, {name: "contents", access: "read"}},
-+			},
-+		},
-+		{
-+			name:   "whitespace around entries",
-+			header: " issues = read ;pull_requests=read ",
-+			want:   [][]permission{{{name: "issues", access: "read"}}, {{name: "pull_requests", access: "read"}}},
-+		},
-+		{name: "empty", header: ""},
-+		{name: "blank", header: "   "},
-+		{name: "entry without access level", header: "issues"},
-+		{name: "empty entry", header: "issues=read,,contents=read"},
-+		{name: "empty alternative", header: "issues=read;"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, parseAcceptedPermissions(tt.header))
-+		})
-+	}
++func (s *loggingSource) Type() sourcespb.SourceType { return sourcespb.SourceType_SOURCE_TYPE_FILESYSTEM }
++func (s *loggingSource) SourceID() sources.SourceID { return 0 }
++func (s *loggingSource) JobID() sources.JobID       { return 0 }
++
++func (s *loggingSource) Init(ctx context.Context, name string, _ sources.JobID, _ sources.SourceID, _ bool, _ *anypb.Any, _ int) error {
++	s.name = name
++	ctx.Logger().Info("init info", "source", s.name)
++	ctx.Logger().V(5).Info("init debug", "source", s.name)
++	return nil
 +}
 +
-+func TestPermissionErrorMessage(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		err      error
-+		wantText string
-+	}{
-+		{
-+			name:     "GitHub App missing one permission",
-+			err:      forbidden("/repos/o/r/issues", appDeniedMessage, "issues=read"),
-+			wantText: "missing GitHub App permission: the request needs Issues (read); update the app's permissions and accept the change on the installation (GET /repos/o/r/issues returned 403 Resource not accessible by integration)",
-+		},
-+		{
-+			name:     "fine-grained token",
-+			err:      forbidden("/repos/o/r/pulls/comments", tokenDeniedMessage, "pull_requests=read"),
-+			wantText: "missing personal access token permission: the request needs Pull requests (read); update the token's permissions (GET /repos/o/r/pulls/comments returned 403 Resource not accessible by personal access token)",
-+		},
-+		{
-+			name:     "unrecognized credential gets a generic fix",
-+			err:      forbidden("/repos/o/r/issues", "Forbidden", "issues=read"),
-+			wantText: "missing GitHub permission: the request needs Issues (read); update the credential's permissions (GET /repos/o/r/issues returned 403 Forbidden)",
-+		},
-+		{
-+			name:     "single-permission alternatives",
-+			err:      forbidden("/repos/o/r/issues/comments", appDeniedMessage, "issues=read; pull_requests=read"),
-+			wantText: "the request needs Issues (read) or Pull requests (read);",
-+		},
-+		{
-+			name:     "several permissions required together",
-+			err:      forbidden("/repos/o/r/pulls", appDeniedMessage, "pull_requests=write,contents=read"),
-+			wantText: "the request needs Pull requests (write) and Contents (read);",
-+		},
-+		{
-+			name:     "alternatives needing several permissions each",
-+			err:      forbidden("/repos/o/r/issues/comments", appDeniedMessage, "pull_requests=read,contents=read; issues=read,contents=read"),
-+			wantText: "the request needs either Pull requests (read) and Contents (read), or Issues (read) and Contents (read);",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			got := asPermissionError(tt.err)
-+			var permErr *permissionError
-+			require.ErrorAs(t, got, &permErr)
-+			assert.Contains(t, got.Error(), tt.wantText)
-+			assert.ErrorIs(t, got, tt.err, "the original 403 stays reachable through Unwrap")
-+		})
-+	}
++func (s *loggingSource) Chunks(ctx context.Context, _ chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
++	ctx.Logger().Info("chunks info", "source", s.name)
++	ctx.Logger().V(5).Info("chunks debug", "source", s.name)
++	return nil
 +}
 +
-+func TestPermissionErrorWithoutRequestStillReads(t *testing.T) {
-+	err := forbidden("/repos/o/r/issues", appDeniedMessage, "issues=read")
-+	err.Response.Request = nil
++func TestScanConfig_DebugOnlyForOneSource(t *testing.T) {
++	// Capture logs at the normal level (V(0)), like a default trufflehog run.
++	core, logs := observer.New(zapcore.InfoLevel)
++	ctx := context.WithLogger(context.Background(), zapr.NewLogger(zap.New(core)))
++	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
++	defer cancel()
 +
-
++	e, err := NewEngine(ctx, &Config{
++		Concurrency:   1,
++		Decoders:      decoders.DefaultDecoders(),
++		SourceManager: sources.NewManager(),
++		Dispatcher:    NewPrinterDispatcher(new(discardPrinter)),
++	})
++	require.NoError(t, err)
++	e.Start(ctx)
++
++	// One source as in an old config, and one with debug: true.
++	normal := sources.NewConfiguredSource(new(loggingSource), &sourcespb.LocalSource{Name: "normal"})
++	debug := sources.NewConfiguredSource(new(loggingSource), &sourcespb.LocalSource{Name: "debug", Debug: true})
++
++	_, err = e.ScanConfig(ctx, normal, debug)
++	require.NoError(t, err)
++	require.NoError(t, e.Finish(ctx))
++
++	// countLines returns how many lines with this message the given source wrote.
++	countLines := func(message, source string) int {
++		return logs.FilterMessage(message).FilterField(zap.String("source", source)).Len()
++	}
++
++	// Both sources write their info lines.
++	for _, source := range []string{"normal", "debug"} {
++		assert.Equal(t, 1, countLines("init info", source), source)
++		assert.Equal(t, 1, countLines("chunks info", source), source)
++	}
++
++	// Only the debug source writes debug lines, from both Init and the scan.
++	assert.Equal(t, 1, countLines("init debug", "debug"))
++	assert.Equal(t, 1, countLines("chunks debug", "debug"))
++	assert.Zero(t, countLines("init debug", "normal"))
++	assert.Zero(t, countLines("chunks debug", "normal"))
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5446** (2026-10-20): Add per-source debug option and hide sensitive data in debug logs (@kashifkhan0771)
 - **PR #5438** (2026-10-19): github: name the missing permission when a comment listing is refused (@unsmith)
 - **PR #5432** (2026-10-16): Add per-logger debug level override for source logging (@kashifkhan0771)
 - **PR #5431** (2026-10-17): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@renovate[bot])
 - **PR #5428** (2026-10-14): Replace deprecated google.CredentialsFromJSON with CredentialsFromJSONWithType (@bryanbeverly)
 - **PR #5427** (2026-10-14): fix(github): use a single "app client registry"  (@mariduv)
-- **PR #5426** (2026-10-14): Update module google.golang.org/grpc to v1.83.1 [SECURITY] (@renovate[bot])
 
 ---
 
@@ -1642,60 +1467,29 @@ scanRepo now splits
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. github: name the missing permission when a comment listing is refused (#5438)
+## X. Add per-source debug option and hide sensitive data in debug logs (#5446)
 
 **RULE**:
-When implementing operations in `pkg/sources/github/comments_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e63326d6`: github: name the missing permission when a comment listing is refused (#5438). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ffc6fa1`: Add per-source debug option and hide sensitive data in debug logs (#5446). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/github/comments_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-// collectingReporter records the link of every chunk the scan emits, and every
-// chunk error it reports.
-	errs  []error
-func (r *collectingReporter) ChunkErr(_ context.Context, err error) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.errs = append(r.errs, err)
-	return nil
-}
-// deniedWith returns a fail func that refuses every request the way GitHub
-// refuses a GitHub App that lacks a permission, naming accepted as what the
-// endpoint requires.
-func deniedWith(accepted string) func(int, http.ResponseWriter, *http.Request) bool {
-	return func(_ int, w http.ResponseWriter, _ *http.Request) bool {
-		w.Header().Set(acceptedPermissionsHeader, accepted)
-		writeJSON(w, http.StatusForbidden, map[string]string{"message": appDeniedMessage})
-		return true
-	}
-}
-
-func TestCommentScan_EachFailedPhaseIsReportedAsItsOwnChunkError(t *testing.T) {
-	gh := newFakeGitHub(t)
-	seedRepo(gh)
-	gh.issues.fail = deniedWith("issues=read")
-	gh.issueComments.fail = deniedWith("issues=read; pull_requests=read")
-	gh.prComments.fail = deniedWith("pull_requests=read")
-	s := &Source{includeIssueComments: true, includePRComments: true}
-
-	reporter, err := scanComments(t, s, gh, nil)
-	require.Error(t, err)
-	
+      # Source logging rules. Findings are warnings only and don't fail the build.
+      - run: semgrep --config=hack/semgrep-rules/sources.yaml pkg/sources/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// collectingReporter records the link of every chunk the scan emits.
-func (r *collectingReporter) ChunkErr(context.Context, error) error { return nil }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e63326d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ffc6fa1` are properly handled with clean fallback behavior.

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T08:36:36.969Z",
-  "total_cycles_completed": 3742,
-  "total_learnings_persisted": 3742,
-  "total_rules_promoted": 2928,
+  "last_updated": "2026-10-20T08:50:48.203Z",
+  "total_cycles_completed": 3744,
+  "total_learnings_persisted": 3744,
+  "total_rules_promoted": 2930,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:40:53.408Z",
-      "repository": "remarkjs/remark",
-      "learningId": "learn-github-remarkjs-remark",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:40:55.449Z",
-      "repository": "ming1016/SwiftPamphletApp",
-      "learningId": "learn-github-ming1016-swiftpamphletapp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:47:13.379Z",
       "repository": "superhighfives/pika",
@@ -1403,6 +1389,20 @@
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T08:45:51.902Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T08:50:48.203Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

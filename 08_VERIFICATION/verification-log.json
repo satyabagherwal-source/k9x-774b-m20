@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-1JNE",
-    "timestamp": "2026-10-19T13:43:23.066Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "1f6b0ef778225ee4d04e5ec69bfe4b3c1f987fa3405a0a4e71025ff2bf2ad5bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9FRL",
-    "timestamp": "2026-10-19T13:49:31.281Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "710b37fc0398f9d691d22fdeb325e56f1c93ad77960b66f3f56c2935b93cbd7d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-9LWB",
     "timestamp": "2026-10-19T13:49:39.227Z",
     "repository": "react-native-maps/react-native-maps",
@@ -7492,6 +7462,36 @@
     "contentHash": "6630189912cd63df690bcdafa30ea05b24155eeb6b78343129511697bd9d98a3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-US9H",
+    "timestamp": "2026-10-20T08:45:51.893Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-14W3",
+    "timestamp": "2026-10-20T08:50:48.195Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

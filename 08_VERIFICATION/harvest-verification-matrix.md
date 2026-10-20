@@ -3765,3 +3765,5 @@
 | `CYCLE-20261020-0IR1` | `2026-10-20T08:22:19.885Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3113, Rule 3114, Rule 3115` | Yes (`832b9108...`) |
 | `CYCLE-20261020-IL4N` | `2026-10-20T08:36:22.775Z` | `heygen-com/hyperframes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3116, Rule 3117, Rule 3118` | Yes (`e334aa97...`) |
 | `CYCLE-20261020-IW2Q` | `2026-10-20T08:36:36.962Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3119, Rule 3120, Rule 3121` | Yes (`66301899...`) |
+| `CYCLE-20261020-US9H` | `2026-10-20T08:45:51.893Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3122` | Yes (`b0469027...`) |
+| `CYCLE-20261020-14W3` | `2026-10-20T08:50:48.195Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3123` | Yes (`5e998300...`) |

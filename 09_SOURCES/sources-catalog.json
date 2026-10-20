@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "e63326d6",
+    "sourceVersion": "3ffc6fa1",
     "license": "AGPL-3.0",
-    "contentHash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
-    "lastHarvestedAt": "2026-10-19T18:36:01.184Z",
+    "contentHash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
+    "lastHarvestedAt": "2026-10-20T08:50:48.198Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "c9698a3f",
+    "sourceVersion": "fb456eb3",
     "license": "MIT",
-    "contentHash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
-    "lastHarvestedAt": "2026-10-19T18:23:26.664Z",
+    "contentHash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
+    "lastHarvestedAt": "2026-10-20T08:45:51.896Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {

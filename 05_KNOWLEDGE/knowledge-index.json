@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T08:36:36.909Z",
+  "last_updated": "2026-10-20T08:50:48.143Z",
   "total_verified_learnings": 1050,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8111,8 +8111,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "c9698a3f",
-      "content_hash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
+      "source_version": "fb456eb3",
+      "content_hash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -8125,6 +8125,11 @@
           "number": 2741,
           "title": "Batch the Ready To Merge fixes on top of #27371 (#27390)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3122,
+          "title": "Test: replace deprecated ${iterator} loop syntax with {iterator} (#27495)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8132,7 +8137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:23:26.591Z",
+      "verified_at": "2026-10-20T08:45:51.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44337,8 +44342,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "e63326d6",
-      "content_hash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
+      "source_version": "3ffc6fa1",
+      "content_hash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -44351,6 +44356,11 @@
           "number": 2748,
           "title": "github: name the missing permission when a comment listing is refused (#5438)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3123,
+          "title": "Add per-source debug option and hide sensitive data in debug logs (#5446)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44358,7 +44368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:36:01.149Z",
+      "verified_at": "2026-10-20T08:50:48.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99728,6 +99738,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T08:36:36.900Z"
+    },
+    "rule-3122": {
+      "learning_id": "rule-3122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3122,
+      "title": "Test: replace deprecated ${iterator} loop syntax with {iterator} (#27495)",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "fb456eb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:45:51.839Z"
+    },
+    "rule-3123": {
+      "learning_id": "rule-3123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3123,
+      "title": "Add per-source debug option and hide sensitive data in debug logs (#5446)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "3ffc6fa1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T08:50:48.132Z"
     }
   },
   "aliases": {
