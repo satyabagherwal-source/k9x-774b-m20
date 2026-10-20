@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-38SW",
-    "timestamp": "2026-10-19T10:28:45.008Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "e30f0df9f5670e4b5dbbbbc67379c5ba395c94815fbcdea301e752d4835be381",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3AMP",
-    "timestamp": "2026-10-19T10:28:47.377Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "64ffd42ad0d294c3a53c7ff971a0272281f08c92e82e9fca8e834912aeb1c598",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3DRQ",
-    "timestamp": "2026-10-19T10:28:51.446Z",
-    "repository": "CodeEditApp/CodeEdit",
-    "learningId": "learn-github-codeeditapp-codeedit",
-    "contentHash": "fef2cfe8b6daf43bb6991dee7c8cdd0d25997673b53c815476c061c7a61fc84c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-3G5I",
     "timestamp": "2026-10-19T10:28:54.534Z",
     "repository": "karmada-io/karmada",
@@ -7490,6 +7445,51 @@
     "repository": "malisper/pgrust",
     "learningId": "learn-github-malisper-pgrust",
     "contentHash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CTBX",
+    "timestamp": "2026-10-20T02:27:58.461Z",
+    "repository": "evanw/esbuild",
+    "learningId": "learn-github-evanw-esbuild",
+    "contentHash": "056d8432d9ce7763f6280ad11430d30b41720b2e1d2fc8d44ab6677a63824e7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CV0K",
+    "timestamp": "2026-10-20T02:28:00.644Z",
+    "repository": "rafsoh/dimeApp",
+    "learningId": "learn-github-rafsoh-dimeapp",
+    "contentHash": "6b42f8de5a32f2c61655772c2b2406fdd91ea2c679d156225d20919568d468d5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-CWVA",
+    "timestamp": "2026-10-20T02:28:03.046Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

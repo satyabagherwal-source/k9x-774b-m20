@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:21:55.327Z",
+  "last_updated": "2026-10-20T02:28:00.649Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2081,6 +2081,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-keyboardkit-keyboardkit"
+    },
+    {
+      "id": "CD-CV0P",
+      "directive_title": "Empirical Invariant Guard in NumberPad.swift",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "rafsoh/dimeApp",
+      "source_commit": "0463cb8c",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-rafsoh-dimeapp"
     }
   ]
 }

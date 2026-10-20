@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T02:22:04.209Z",
+  "last_updated": "2026-10-20T02:28:03.054Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7474,14 +7474,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
-      "verified_at": "2026-10-19T14:46:58.715Z",
+      "content_hash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
+      "verified_at": "2026-10-20T02:28:03.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:46:58.715Z"
+      "last_updated": "2026-10-20T02:28:03.053Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",
@@ -15057,6 +15057,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T02:21:55.332Z"
+    },
+    "evanw/esbuild": {
+      "repository": "evanw/esbuild",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-evanw-esbuild",
+      "content_hash": "056d8432d9ce7763f6280ad11430d30b41720b2e1d2fc8d44ab6677a63824e7d",
+      "verified_at": "2026-10-20T02:27:58.472Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:27:58.472Z"
+    },
+    "rafsoh/dimeApp": {
+      "repository": "rafsoh/dimeApp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rafsoh-dimeapp",
+      "content_hash": "6b42f8de5a32f2c61655772c2b2406fdd91ea2c679d156225d20919568d468d5",
+      "verified_at": "2026-10-20T02:28:00.653Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:28:00.653Z"
     }
   },
   "repos": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `477fb14b`  
+> **Source Version**: `94eae2cc`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:46:58.484Z  
+> **Timestamp**: 2026-10-20T02:28:02.856Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:46:58.478Z  
+> **Harvest Timestamp**: 2026-10-20T02:28:02.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12468 stars
+- **Stars / Engagement**: 12469 stars
 
 ---
 
@@ -1768,58 +1768,521 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `477fb14b` (2026-10-19)
-**Commit Message**: cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614)
+### Incident Patch 1: `94eae2cc` (2026-10-19)
+**Commit Message**: metascrub: include cookie fields
 
-The `encore run` startup banner printed the MCP SSE URL as
-`/sse?appID=<id>`, but the MCP server reads the app ID from the `app`
-query parameter (`addAppToContext` in `cli/daemon/mcp/mcp.go`), which is
-also what `encore mcp start` and `encore mcp run` use.
-
-MCP clients configured with the URL from the banner connect and
-initialize fine, but every tool call fails with:
-
-```
-failed to get app: app not found in context
-```
-
-This changes the banner to print `/sse?app=<id>`.
-
-Verified against a running v1.58.6 daemon: calling `call_endpoint` over
-SSE with `?appID=` fails with the error above, and with `?app=` it
-succeeds.
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2614?autoLogin=true&ref=codesmith_pr_footer"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith
-
-**File**: `cli/daemon/run.go` (modified, +1/-1)
+**File**: `pkg/metascrub/metascrub.go` (modified, +33/-3)
 ```diff
-@@ -208,7 +208,7 @@ func (s *Server) Run(req *daemonpb.RunRequest, stream daemonpb.Daemon_RunServer)
- 	_, _ = fmt.Fprintf(stderr, "  Development Dashboard URL:  %s\n", aurora.Cyan(fmt.Sprintf(
- 		"%s/%s", s.mgr.DashBaseURL, app.PlatformOrLocalID())))
- 	_, _ = fmt.Fprintf(stderr, "  MCP SSE URL:                %s\n", aurora.Cyan(fmt.Sprintf(
--		"%s/sse?appID=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
-+		"%s/sse?app=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
+@@ -34,7 +34,13 @@ type Computer struct {
  
- 	if ns := runInstance.NS; !ns.Active || ns.Name != "default" {
- 		_, _ = fmt.Fprintf(stderr, "  Namespace:                  %s\n", aurora.Cyan(ns.Name))
+ type Desc struct {
+ 	Payload []scrub.Path
++
++	// Headers are the names of headers whose values should be redacted entirely.
+ 	Headers []string
++
++	// Cookies are the names of cookies whose values should be redacted.
++	// Use scrub.Cookie to redact them in a Cookie header.
++	Cookies []string
+ }
+ 
+ type ParseMode int
+@@ -68,6 +74,7 @@ func (c *Computer) Compute(typ *schema.Type, mode ParseMode) Desc {
+ 	return Desc{
+ 		Payload: res.scrub,
+ 		Headers: res.headers,
++		Cookies: res.cookies,
+ 	}
+ }
+ 
+@@ -109,6 +116,7 @@ type declResult struct {
+ 	scrub      []scrub.Path
+ 	typeParams []typeParamPath
+ 	headers    []string
++	cookies    []string
+ }
+ 
+ func (p *typeParser) typ(typ *schema.Type) declResult {
+@@ -127,9 +135,10 @@ func (p *typeParser) typ(typ *schema.Type) declResult {
+ 			// Clone the paths since we're modifying them.
+ 			scrub: slices.Clone(decl.scrub),
+ 
+-			// Copy the headers directly since they never get modified,
+-			// since we only care about the top-level type's headers.
++			// Copy the headers and cookies directly since they never get modified,
++			// since we only care about the top-level type's headers and cookies.
+ 			headers: decl.headers,
++			cookies: decl.cookies,
+ 		}
+ 
+ 		for i, arg := range t.Named.TypeArguments {
+@@ -171,23 +180,26 @@ func (p *typeParser) typ(typ *schema.Type) declResult {
+ 
+ 	case *schema.Type_Union:
+ 		var results []declResult
+-		var numScrub, numTypeParams, numHeaders int
++		var numScrub, numTypeParams, numHeaders, numCookies int
+ 		for _, typ := range t.Union.Types {
+ 			res := p.typ(typ)
+ 			results = append(results, res)
+ 			numScrub += len(res.scrub)
+ 			numTypeParams += len(res.typeParams)
+ 			numHeaders += len(res.headers)
++			numCookies += len(res.cookies)
+ 		}
+ 		combined := declResult{
+ 			scrub:      make([]scrub.Path, 0, numScrub),
+ 			typeParams: make([]typeParamPath, 0, numTypeParams),
+ 			headers:    make([]string, 0, numHeaders),
++			cookies:    make([]string, 0, numCookies),
+ 		}
+ 		for _, res := range results {
+ 			combined.scrub = append(combined.scrub, res.scrub...)
+ 			combined.typeParams = append(combined.typeParams, res.typeParams...)
+ 			combined.headers = append(combined.headers, res.headers...)
++			combined.cookies = append(combined.cookies, res.cookies...)
+ 		}
+ 		return combined
+ 
+@@ -233,6 +245,11 @@ func (p *typeParser) typ(typ *schema.Type) declResult {
+ 				if headerName, ok := isHeader(f); ok {
+ 					out.headers = append(out.headers, headerName)
+ 				}
++
++				// If this is a cookie field, add it to the cookies to scrub.
++				if cookieName, ok := isCookie(f); ok {
++					out.cookies = append(out.cookies, cookieName)
++				}
+ 			} else {
+ 				// Otherwise check the type and see if there's anything to scrub within it.
+ 				fieldRes := p.typ(f.Typ)
+@@ -293,6 +310,19 @@ func isHeader(f *schema.Field) (headerName string, ok bool) {
+ 	return "", false
+ }
+ 
++func isCookie(f *schema.Field) (cookieName string, ok bool) {
++	for _, t := range f.Tags {
++		if t.Key == "cookie" {
++			name := t.Name
++			if name == "" {
++				name = f.Name
++			}
++			return name, true
++		}
++	}
++	return "", false
++}
++
+ type typeParamPath struct {
+ 	p        scrub.Path
+ 	paramIdx uint32
+```
+
+**File**: `pkg/metascrub/metascrub_test.go` (modified, +7/-0)
+```diff
+@@ -59,6 +59,8 @@ type Params struct {
+ 
+ 	JsonKey string `+"`"+`json:"json_key" encore:"sensitive"`+"`"+`
+ 	Header string `+"`"+`header:"X-Header" encore:"sensitive"`+"`"+`
++	Cookie string `+"`"+`cookie:"session" encore:"sensitive"`+"`"+`
++	PlainCookie string `+"`"+`cookie:"theme"`+"`"+`
+ }
+ 
+ type Generic[T any] struct {
+@@ -127,9 +129,11 @@ func Foo(ctx context.Context, p *Params) error { return nil }
+ 		{f("MapTwo"), f("Foo"), mapVal, f("Two"), f("Scrub")},
+ 		{fCase("json_key")},
+ 		{f("Header")},
++		{f("Cookie")},
+ 	})
+ 
+ 	c.Assert(res.Headers, qt.DeepEquals, []string{"X-Header"})
++	c.Assert(res.Cookies, qt.DeepEquals, []string{"session"})
+ }
+ 
+ func TestScrubAuthHandler(t *testing.T) {
+@@ -142,6 +146,7 @@ import "context"
+ type Params struct {
+ 	Header string `+"`"+`header:"Foo"`+"`"+`
+ 	Query string `+"`"+`query:"query"`+"`"+`
++	Cookie string `+"`"+`cookie:"session"`+"`"+`
+ 	Other string
+ }
+ 
+@@ -160,10 +165,12 @@ func Foo(ctx context.Context, p *Params) error { return nil }
+ 	c.Assert(res.Payload, qt.DeepEquals, []scrub.Path{
+ 		{f("Header")},
+ 		{f("Query")},
++		{f("Cookie")},
+ 		{f("Other")},
+ 	})
+ 
+ 	c.Assert(res.Headers, qt.DeepEquals, []string{"Foo"})
++	c.Assert(res.Cookies, qt.DeepEquals, []string{"session"})
+ }
+ 
+ func testParse(c *qt.C, code string) *meta.Data {
+```
+
+**File**: `runtimes/go/appruntime/apisdk/api/handler.go` (modified, +2/-0)
+```diff
+@@ -113,6 +113,7 @@ type Desc[Req, Resp any] struct {
+ 
+ 	ScrubRequestPaths    []scrub.Path
+ 	ScrubRequestHeaders  map[string]bool
++	ScrubRequestCookies  []string
+ 	ScrubResponsePaths   []scrub.Path
+ 	ScrubResponseHeaders map[string]bool
+ 
+@@ -921,6 +922,7 @@ func (d *Desc[Req, Resp]) rpcDesc() *model.RPCDesc {
+ 			ScrubRequestPaths:    d.ScrubRequestPaths,
+ 			ScrubResponsePaths:   d.ScrubResponsePaths,
+ 			ScrubRequestHeaders:  d.ScrubRequestHeaders,
++			ScrubRequestCookies:  d.ScrubRequestCookies,
+ 			ScrubResponseHeaders: d.ScrubResponseHeaders,
+ 		}
+ 
+```
+
+**File**: `runtimes/go/appruntime/exported/model/request.go` (modified, +1/-0)
+```diff
+@@ -38,6 +38,7 @@ type RPCDesc struct {
+ 
+ 	ScrubRequestPaths    []scrub.Path
+ 	ScrubRequestHeaders  map[string]bool
++	ScrubRequestCookies  []string // cookie names to redact in the Cookie header
+ 	ScrubResponsePaths   []scrub.Path
+ 	ScrubResponseHeaders map[string]bool
+ }
+```
+
+**File**: `runtimes/go/appruntime/exported/scrub/cookie.go` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++package scrub
++
++import (
++	"slices"
++	"strings"
++)
++
++// Cookie redacts the values of the named cookies in a Cookie request header
++// value (e.g. "session=abc; theme=dark"), leaving the other cookies and the
++// original formatting intact.
++//
++// Cookie names are matched case-sensitively, as RFC 6265 defines them.
++// Every occurrence of a matching name is redacted. A part that cannot be
++// parsed as a name=value pair is redacted as well, so that a malformed
++// header can't hide a sensitive value.
++func Cookie(header string, names []string, replaceWith string) string {
++	if len(names) == 0 || header == "" {
++		return header
++	}
++
++	var b strings.Builder
++	b.Grow(len(header))
++	for i, part := range strings.Split(header, ";") {
++		if i > 0 {
++			b.WriteByte(';')
++		}
++
++		name, _, hasEq := strings.Cut(part, "=")
++		trimmedName := strings.TrimSpace(name)
++		switch {
++		case hasEq && slices.Contains(names, trimmedName):
++			b.WriteString(name)
++			b.WriteByte('=')
++			b.WriteString(replaceWith)
++		case !hasEq && strings.TrimSpace(part) != "":
++			// Keep the leading whitespace so the result stays readable.
++			b.WriteString(part[:len(part)-len(strings.TrimLeft(part, " \t"))])
++			b.WriteString(replaceWith)
++		default:
++			b.WriteString(part)
++		}
++	}
++	return b.String()
++}
+```
+
+**File**: `runtimes/go/appruntime/exported/scrub/cookie_test.go` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++package scrub
++
++import "testing"
++
++func TestCookie(t *testing.T) {
++	const r = "[REDACTED]"
++	tests := []struct {
++		name   string
++		header string
++		names  []string
++		want   string
++	}{
++		{"no_names", "session=abc; theme=dark", nil, "session=abc; theme=dark"},
++		{"empty_header", "", []string{"session"}, ""},
++		{"single", "session=abc", []string{"session"}, "session=" + r},
++		{"first_of_many", "session=abc; theme=dark", []string{"session"}, "session=" + r + "; theme=dark"},
++		{"last_of_many", "theme=dark; session=abc", []string{"session"}, "theme=dark; session=" + r},
++		{"multiple_names", "a=1; b=2; c=3", []string{"a", "c"}, "a=" + r + "; b=2; c=" + r},
++		{"repeated_name", "session=abc; session=def", []string{"session"}, "session=" + r + "; session=" + r},
++		{"no_match", "theme=dark", []string{"session"}, "theme=dark"},
++		{"case_sensitive", "Session=abc", []string{"session"}, "Session=abc"},
++		{"quoted_value", `session="abc"; theme=dark`, []string{"session"}, "session=" + r + "; theme=dark"},
++		{"value_contains_eq", "session=a=b; theme=dark", []string{"session"}, "session=" + r + "; theme=dark"},
++		{"empty_value", "session=; theme=dark", []string{"session"}, "session=" + r + "; theme=dark"},
++		{"no_space_after_semicolon", "theme=dark;session=abc", []string{"session"}, "theme=dark;session=" + r},
++		{"trailing_semicolon", "session=abc;", []string{"session"}, "session=" + r + ";"},
++		{"malformed_part", "theme=dark; abc", []string{"session"}, "theme=dark; " + r},
++		{"prefix_is_not_match", "session_id=abc", []string{"session"}, "session_id=abc"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			if got := Cookie(tt.header, tt.names, r); got != tt.want {
++				t.Errorf("Cookie(%q, %q) = %q, want %q", tt.header, tt.names, got, tt.want)
++			}
++		})
++	}
++}
+```
+
+**File**: `runtimes/go/appruntime/exported/trace/events.go` (modified, +6/-3)
+```diff
+@@ -125,7 +125,7 @@ func (l *Log) BeginRequest(req *model.Request, goid uint32) {
+ 		tb.String(req.ExtCorrelationID)
+ 
+ 		if desc.Raw {
+-			l.logHeaders(&tb, data.RequestHeaders, desc.ScrubRequestHeaders)
++			l.logHeaders(&tb, data.RequestHeaders, desc.ScrubRequestHeaders, desc.ScrubRequestCookies)
+ 		} else {
+ 			// Scrub the payload according to the RPC description.
+ 			scrubbed := scrub.JSON(data.NonRawPayload, desc.ScrubRequestPaths, []byte(`"[REDACTED]"`))
+@@ -179,7 +179,7 @@ func (l *Log) FinishRequest(req *model.Request, resp *model.Response) {
+ 		isRaw := req.RPCData.Desc.Raw
+ 		tb.Bool(isRaw)
+ 		if isRaw {
+-			l.logHeaders(&tb, resp.RawResponseHeaders, req.RPCData.Desc.ScrubResponseHeaders)
++			l.logHeaders(&tb, resp.RawResponseHeaders, req.RPCData.Desc.ScrubResponseHeaders, nil)
+ 		} else {
+ 			scrubbed := scrub.JSON(resp.Payload, req.RPCData.Desc.ScrubResponsePaths, []byte(`"[REDACTED]"`))
+ 			tb.ByteString(scrubbed)
+@@ -529,7 +529,7 @@ func (l *Log) BodyStream(p BodyStreamParams) {
+ 	l.Add(BodyStream, tb.Buf())
+ }
+ 
+-func (l *Log) logHeaders(tb *Buffer, headers http.Header, scrubHeaders map[string]bool) {
++func (l *Log) logHeaders(tb *Buffer, headers http.Header, scrubHeaders map[string]bool, scrubCookies []string) {
+ 	tb.UVarint(uint64(len(headers)))
+ 	for k, v := range headers {
+ 		tb.String(k)
+@@ -539,6 +539,9 @@ func (l *Log) logHeaders(tb *Buffer, headers http.Header, scrubHeaders map[strin
+ 			firstVal = "[REDACTED]"
+ 		} else if len(v) > 0 {
+ 			firstVal = v[0]
++			if k == "Cookie" {
++				firstVal = scrub.Cookie(firstVal, scrubCookies, "[REDACTED]")
++			}
+ 		}
+ 
+ 		tb.String(firstVal)
+```
+
+**File**: `runtimes/go/appruntime/exported/trace2/events.go` (modified, +6/-3)
+```diff
+@@ -219,7 +219,7 @@ func (l *Log) RequestSpanStart(req *model.Request, goid uint32) {
+ 		tb.String(pp.Value)
+ 	}
+ 
+-	l.logHeaders(&tb, data.RequestHeaders, desc.ScrubRequestHeaders)
++	l.logHeaders(&tb, data.RequestHeaders, desc.ScrubRequestHeaders, desc.ScrubRequestCookies)
+ 
+ 	scrubbedRequest := scrub.JSON(data.NonRawPayload, desc.ScrubRequestPaths, []byte(`"[REDACTED]"`))
+ 	tb.ByteString(scrubbedRequest)
+@@ -260,7 +260,7 @@ func (l *Log) RequestSpanEnd(p RequestSpanEndParams) {
+ 	tb.String(desc.Endpoint)
+ 
+ 	tb.UVarint(uint64(p.Resp.HTTPStatus))
+-	l.logHeaders(&tb, p.Resp.RawResponseHeaders, desc.ScrubResponseHeaders)
++	l.logHeaders(&tb, p.Resp.RawResponseHeaders, desc.ScrubResponseHeaders, nil)
+ 	tb.ByteString(scrubbedResponse)
+ 	tb.UVarint(uint64(p.CallerEventID))
+ 	tb.String(uid)
+@@ -1049,14 +1049,17 @@ func (l *Log) BucketDeleteObjectsEnd(p BucketDeleteObjectsEndParams) {
+ 	})
+ }
+ 
+-func (l *Log) logHeaders(tb *EventBuffer, headers http.Header, scrubHeaders map[string]bool) {
++func (l *Log) logHeaders(tb *EventBuffer, headers http.Header, scrubHeaders map[string]bool, scrubCookies []string) {
+ 	tb.UVarint(uint64(len(headers)))
+ 	for k, v := range headers {
+ 		firstVal := ""
+ 		if scrubHeaders[k] {
+ 			firstVal = "[REDACTED]"
+ 		} else if len(v) > 0 {
+ 			firstVal = v[0]
++			if k == "Cookie" {
++				firstVal = scrub.Cookie(firstVal, scrubCookies, "[REDACTED]")
++			}
+ 		}
+ 		tb.String(k)
+ 		tb.String(firstVal)
+```
+
+---
+
+### Incident Patch 2: `b981539f` (2026-10-19)
+**Commit Message**: Add a deploy section to the TS and Go LLM instructions (#2615)
+
+## Why
+
+The CLI downloads `ts_llm_instructions.txt` / `go_llm_instructions.txt`
+from `main` (`cli/cmd/encore/llm_rules/tool.go:298-300`) whenever a user
+runs `encore app create --llm-rules=...` or `encore llm-rules init`. So
+these files are what coding agents read about Encore.
+
+Neither file explains how to deploy. An agent asked to deploy, or to
+deploy again, has no correct path. This matters for activation, which is
+deploying the same app twice in week 1. 91% of CLI creators run their
+app locally, but only 26% ever deploy.
+
+## Changes
+
+Both files get a compact **"Deploying to Encore Cloud"** section next to
+the existing workflow sections, written in each file's style.
+
+**Which repo deploys**
+- **Encore-managed git (the default):** push to the `encore` remote.
+- **App linked to GitHub** (Settings > GitHub): push to that repo
+instead, since GitHub pushes trigger deploys.
+- **Unsure:** check `git remote -v`, and ask the user if it's still
+unclear.
+
+**Which environment deploys**
+- **Branch triggers:** each environment deploys from its own branch
+(Branch Push setting) or only manually. New apps have one environment,
+`stag
+
+**File**: `go_llm_instructions.txt` (modified, +27/-3)
+```diff
+@@ -70,6 +70,30 @@ Rules embedded curl DSL:
+ - For "most-recent first" by publish order, DO NOT sort by `created_at = NOW()` or subscription-side row id — both subscription-insert order, at-least-once can flip. Sort by column monotonic with publish (entity id from event payload, or publish-time sequence in event).
+ - Handler-only checks, skip infra: `et.Topic(T).PublishedMessages()`.
+ 
++## Deploying to Encore Cloud
++
++Deploy = commit + push to the git repo the app deploys from:
++- Default: Encore-managed git, so push to the `encore` remote.
++- App linked to a GitHub repository (Cloud Dashboard > Settings > GitHub): push to that repository (usually `origin`); GitHub pushes trigger deploys.
++- Check `git remote -v`. If you can't tell which one the app deploys from, ask the user.
++
++Which environment deploys: each environment deploys from its own branch (environment Settings > Branch Push) or only manually. New apps have one environment, `staging` (type `development`), deploying the app's main branch. One push can deploy several environments. If a production environment deploys from the branch you push, the push deploys to production, so check before pushing.
++
++```bash
++git add -A && git commit -m "describe change"
++git push encore              # Encore-managed git
++git push origin <branch>     # GitHub-linked app
++```
++
++- `encore` remote: success prints one line per environment, `remote: <branch>: triggered deploy https://app.encore.dev/<app-id>/envs/<env>/deploys/<id>`. No such line = nothing deployed (nothing new committed, or no environment deploys from the pushed branch).
++- GitHub: git prints nothing from Encore. Check Deployments in the Cloud Dashboard, or the Cloud MCP (above; lists environments, deploys, builds and their logs).
++- Push returns once the deploy starts; no CLI wait. Environment API: `https://<env>-<app-id>.encr.app` (unless a custom domain is set). Logs: `encore logs --env=<env>`.
++- The deploy runs the app's tests; failing tests block the deploy, so run `encore test ./...` first.
++- Every declared secret needs a value in the target environment, else the deploy fails with `secret key(s) not defined`. Set per environment type: `printf '%s' "$VAL" | encore secret set --type <types> <Name>` (`dev` = development environments including `staging`, `prod` = production, `pr` = preview, `local`), or for one environment: `--env <env-name>`.
++- Redeploy without a code change (e.g. after setting a secret): `git commit --allow-empty -m "Redeploy"` and push to the deploy branch, or Cloud Dashboard > Deployments > New Deploy > Branch.
++- No `encore` remote and no GitHub link = app created logged out or with `--platform=false`. Log in (`encore auth login`; without a browser, set `ENCORE_AUTH_KEY`, which the CLI picks up automatically. Never pass a real key via `--auth-key`: it leaks into shell history and process listings), `rm encore.app` (copy settings other than `id`/`lang` first, re-add after), `encore app init <name> --lang go` (registers the app and adds the `encore` remote), commit, push. App created in the Cloud Dashboard: `encore app clone <app-id>` (GitHub-linked: `git clone` the GitHub repository).
++- Failed deploys: https://encore.dev/docs/platform/deploy/troubleshooting. All commands: https://encore.dev/docs/quick-reference
++
+ ## Encore Go domain knowledge
+ 
+ ### Application structure
+@@ -770,7 +794,7 @@ App management:
+ - encore app clone [app-id] [directory] - Clone app
+ - encore app create [name] [--example=name] [-l go] - Create new app
+ - encore app init [name] - Create from existing repo
+-- encore app link [app-id] [-f] - Link app with server
++- encore app link [app-id] [-f] - Link to an existing Encore Cloud app (adds the `encore` remote only if the repo has no remotes)
+ 
+ Authentication:
+ - encore auth login/logout/signup/whoami
+@@ -826,8 +850,8 @@ Random data (utility):
+ - encore rand bytes N [-f format] - Generate N random bytes
+ - encore rand words [--sep=SEP] NUM - Generate memorable passphrase
+ 
+-Deploy (alpha):
+-- encore alpha deploy --env=<name> (--commit=<sha> | --branch=<name>) - Deploy app to a cloud env
++Deploy:
++- git push encore (or push to the linked GitHub repository) - Deploy (see Deploying to Encore Cloud)
+ 
+ Version:
+ - encore version - Report version
+```
+
+**File**: `ts_llm_instructions.txt` (modified, +28/-4)
+```diff
+@@ -77,6 +77,30 @@ Rules for embedded curl DSL:
+ - For "most-recent first" by publish order, do NOT sort by `created_at = NOW()` nor subscription-side row id — both = subscription-insert order, at-least-once can flip. Sort by column monotonic w/ publish (entity id from event payload, or publish-time seq in event).
+ - For handler-only checks, skip infra: `et.Topic(T).PublishedMessages()`.
+ 
++## Deploying to Encore Cloud
++
++Deploy = commit + push to the git repo the app deploys from:
++- Default: Encore-managed git → push to `encore` remote.
++- App linked to GitHub repo (Cloud Dashboard > Settings > GitHub) → push to that repo (usually `origin`); GitHub pushes trigger deploys.
++- Check `git remote -v`. Can't tell which one the app deploys from → ask user.
++
++Which env deploys: each env deploys from its own branch (env Settings > Branch Push) or only manually. New apps have one env, `staging` (type `development`), deploying app's main branch. One push can deploy several envs. If a production env deploys from the branch you push, the push deploys to production → check before pushing.
++
++```bash
++git add -A && git commit -m "describe change"
++git push encore              # Encore-managed git
++git push origin <branch>     # GitHub-linked app
++```
++
++- `encore` remote: success prints one line per env, `remote: <branch>: triggered deploy https://app.encore.dev/<app-id>/envs/<env>/deploys/<id>`. No such line = nothing deployed (nothing new committed, or no env deploys from pushed branch).
++- GitHub: git prints nothing from Encore. Check Deployments in Cloud Dashboard, or Cloud MCP (above; lists envs, deploys, builds + logs).
++- Push returns once deploy starts; no CLI wait. Env API: `https://<env>-<app-id>.encr.app` (unless custom domain). Logs: `encore logs --env=<env>`.
++- Deploy runs tests; failing tests block deploy. Run `CI=true encore test` first (no TTY → vitest watch mode never exits).
++- Every declared secret needs value in target env, else deploy fails `secret key(s) not defined`. Set per env type: `printf '%s' "$VAL" | encore secret set --type <types> <Name>` (`dev` = development envs incl. `staging`, `prod` = production, `pr` = preview, `local`), or one env: `--env <env-name>`.
++- Redeploy w/o code change (e.g. after setting secret): `git commit --allow-empty -m "Redeploy"` + push to deploy branch, or Cloud Dashboard > Deployments > New Deploy > Branch.
++- No `encore` remote and no GitHub link = app created logged out / `--platform=false`. Log in (`encore auth login`; no browser: set `ENCORE_AUTH_KEY`, which CLI picks up automatically. Never pass a real key via `--auth-key`: leaks into shell history + process list), `rm encore.app` (copy non-`id`/`lang` settings first, re-add after), `encore app init <name> --lang ts` (registers app + adds `encore` remote), commit, push. App created in Cloud Dashboard: `encore app clone <app-id>` (GitHub-linked: `git clone` the GitHub repo).
++- Failed deploys: https://encore.dev/docs/platform/deploy/troubleshooting. All commands: https://encore.dev/docs/quick-reference
++
+ ## Encore.ts domain knowledge
+ 
+ ### API definition
+@@ -1063,14 +1087,14 @@ Execution:
+ - encore help [command]: lists cmds (or shows usage for specific cmd). Use when unsure of subcommand/flag.
+ - encore run [--debug] [--watch=true] [-p port] [flags]: runs app. Before starting yourself, check if already running by polling `http://localhost:<port>/__encore/healthz` (default `4000`) — `200` = healthy, hit endpoints directly w/o re-running.
+ - encore check ['curl ...'; 'curl ...'] | encore check < commands.txt: compile + boot app, verify services healthy, optionally run curls. See section above.
+-- encore test [flags]: provisions isolated test infra (DBs, Pub/Sub, etc.) then runs `test` script from `package.json` (Vitest recommended). Test DBs skip fsync + use in-memory FS for speed. Use instead of `npm test` / `vitest` direct when code touches Encore infra.
++- encore test [flags]: provisions isolated test infra (DBs, Pub/Sub, etc.) then runs `test` script from `package.json` (Vitest recommended). Test DBs skip fsync + use in-memory FS for speed. Use instead of `npm test` / `vitest` direct when code touches Encore infra. No TTY: `CI=true encore test` (vitest watch mode never exits).
+ - encore exec path/to/script [args...]: run executable script against local app.
+ 
+ App mgmt:
+ - encore app clone [app-id] [directory]: clone Encore app
+ - encore app create [name] [--example=name] [-l ts]: create new Encore app
+ - encore app init [name]: create new app from existing repo
+-- encore app link [app-id] [-f]: link app w/ server
++- encore app link [app-id] [-f]: link to existing Encore Cloud app (adds `encore` remote only if repo has no remotes)
+ 
+ Auth:
+ - encore auth login [-k auth-key]: log in
+@@ -1128,8 +1152,8 @@ Random data (utility):
+ - encore rand bytes N [-f format]: gen N random bytes
+ - encore rand words [--sep=SEP] NUM: gen memorable passphrase
+ 
+-Deploy (alpha):
+-- encore alpha deploy --env=<name> (--co
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2616** (2026-10-19): metascrub: include cookie fields (@eandre)
+- **PR #2615** (2026-10-19): Add a deploy section to the TS and Go LLM instructions (@marcuskohlberg)
 - **PR #2614** (2026-10-19): cli/daemon: fix MCP SSE URL printed by 'encore run' (@marcuskohlberg)
 - **PR #2606** (2026-10-12): Update README.md (@marcuskohlberg)
 - **PR #2604** (closed): tsparser: report database usage outside services (@marcuskohlberg)
 - **PR #2603** (2026-10-12): cli: report pending database changes on reload (@marcuskohlberg)
-- **PR #2602** (closed): deno support (@prayanshchh)
-- **PR #2601** (2026-10-09): all: bump dependencies (@eandre)
 
 ---
 
@@ -1839,28 +2302,62 @@ src="https://pr-comments-assets.blacksmith.sh/codesmith
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614)
+## X. metascrub: include cookie fields
 
 **RULE**:
-When implementing operations in `cli/daemon/run.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/metascrub/metascrub.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `477fb14b`: cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94eae2cc`: metascrub: include cookie fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/daemon/run.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/metascrub/metascrub.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		"%s/sse?app=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
+
+	// Headers are the names of headers whose values should be redacted entirely.
+
+	// Cookies are the names of cookies whose values should be redacted.
+	// Use scrub.Cookie to redact them in a Cookie header.
+	Cookies []string
+		Cookies: res.cookies,
+	cookies    []string
+			// Copy the headers and cookies directly since they never get modified,
+			// since we only care about the top-level type's headers and cookies.
+			cookies: decl.cookies,
+		var numScrub, numTypeParams, numHeaders, numCookies int
+			numCookies += len(res.cookies)
+			cookies:    make([]string, 0, numCookies),
+			combined.cookies = append(combined.cookies, res.cookies...)
+
+				// If this is a cookie field, add it to the cookies to scrub.
+				if cookieName, ok := isCookie(f); ok {
+					out.cookies = append(out.cookies, cookieName)
+				}
+func isCookie(f *schema.Field) (cookieName string, ok bool) {
+	for _, t := range f.Tags {
+		if t.Key == "cookie" {
+			name := t.Name
+			if name == "" {
+				name = f.Name
+			}
+			return name, true
+		}
+	}
+	return "", false
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		"%s/sse?appID=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
+			// Copy the headers directly since they never get modified,
+			// since we only care about the top-level type's headers.
+		var numScrub, numTypeParams, numHeaders int
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `477fb14b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94eae2cc` are properly handled with clean fallback behavior.

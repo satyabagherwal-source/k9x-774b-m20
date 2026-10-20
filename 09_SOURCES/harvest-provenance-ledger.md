@@ -3662,3 +3662,6 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `467f7ac3` | Multi-dimensional audit evidence | 2026-10-20T02:21:53.647Z |
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `4ea60852` | Multi-dimensional audit evidence | 2026-10-20T02:21:55.322Z |
 | `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `1bc8065f` | Multi-dimensional audit evidence | 2026-10-20T02:22:04.200Z |
+| `learn-github-evanw-esbuild` | `https://github.com/evanw/esbuild` | `f6058f83` | Multi-dimensional audit evidence | 2026-10-20T02:27:58.468Z |
+| `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `0463cb8c` | Multi-dimensional audit evidence | 2026-10-20T02:28:00.646Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `94eae2cc` | Multi-dimensional audit evidence | 2026-10-20T02:28:03.048Z |

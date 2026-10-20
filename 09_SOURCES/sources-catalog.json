@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "477fb14b",
+    "sourceVersion": "94eae2cc",
     "license": "MPL-2.0",
-    "contentHash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
-    "lastHarvestedAt": "2026-10-19T14:46:58.709Z",
+    "contentHash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
+    "lastHarvestedAt": "2026-10-20T02:28:03.048Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -10008,5 +10008,25 @@
     "contentHash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
     "lastHarvestedAt": "2026-10-20T02:21:55.322Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
+  },
+  "evanw-esbuild": {
+    "repository": "evanw/esbuild",
+    "platform": "github",
+    "sourceUrl": "https://github.com/evanw/esbuild",
+    "sourceVersion": "f6058f83",
+    "license": "MIT",
+    "contentHash": "056d8432d9ce7763f6280ad11430d30b41720b2e1d2fc8d44ab6677a63824e7d",
+    "lastHarvestedAt": "2026-10-20T02:27:58.468Z",
+    "learningId": "learn-github-evanw-esbuild"
+  },
+  "rafsoh-dimeapp": {
+    "repository": "rafsoh/dimeApp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rafsoh/dimeApp",
+    "sourceVersion": "0463cb8c",
+    "license": "GPL-3.0",
+    "contentHash": "6b42f8de5a32f2c61655772c2b2406fdd91ea2c679d156225d20919568d468d5",
+    "lastHarvestedAt": "2026-10-20T02:28:00.646Z",
+    "learningId": "learn-github-rafsoh-dimeapp"
   }
 }

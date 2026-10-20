@@ -3655,3 +3655,6 @@
 | `CYCLE-20261020-4ZU4` | `2026-10-20T02:21:53.644Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2994` | Yes (`92b0da01...`) |
 | `CYCLE-20261020-514N` | `2026-10-20T02:21:55.319Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md` | Yes (`849c3a77...`) |
 | `CYCLE-20261020-57ZA` | `2026-10-20T02:22:04.198Z` | `malisper/pgrust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2995` | Yes (`952474d2...`) |
+| `CYCLE-20261020-CTBX` | `2026-10-20T02:27:58.461Z` | `evanw/esbuild` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2996` | Yes (`056d8432...`) |
+| `CYCLE-20261020-CV0K` | `2026-10-20T02:28:00.644Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md` | Yes (`6b42f8de...`) |
+| `CYCLE-20261020-CWVA` | `2026-10-20T02:28:03.046Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2997` | Yes (`da75eb27...`) |

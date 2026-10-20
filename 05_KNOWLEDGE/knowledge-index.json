@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:22:04.143Z",
-  "total_verified_learnings": 1016,
+  "last_updated": "2026-10-20T02:28:03.016Z",
+  "total_verified_learnings": 1018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8654,8 +8654,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "477fb14b",
-      "content_hash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
+      "source_version": "94eae2cc",
+      "content_hash": "da75eb2725e079dca44402e6581b86b0e33af47e09738782fc85d1022e88f56f",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -8668,6 +8668,11 @@
           "number": 2634,
           "title": "cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2997,
+          "title": "metascrub: include cookie fields",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8675,7 +8680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:46:58.662Z",
+      "verified_at": "2026-10-20T02:28:03.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36935,22 +36940,29 @@
     "learn-github-rafsoh-dimeapp": {
       "learning_id": "learn-github-rafsoh-dimeapp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rafsoh-dimeapp",
+      "source": "rafsoh/dimeApp",
+      "repository": "rafsoh/dimeApp",
       "slug": "rafsoh-dimeapp",
       "platform": "github",
       "source_url": "https://github.com/rafsoh/dimeApp",
-      "source_version": "HEAD",
-      "content_hash": "3c7a798d71c0a628038b762e0333e3f217378cc78a4ca63ede8731ad3690dfd8",
+      "source_version": "0463cb8c",
+      "content_hash": "6b42f8de5a32f2c61655772c2b2406fdd91ea2c679d156225d20919568d468d5",
       "dossier_path": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.176Z"
+      "verified_at": "2026-10-20T02:28:00.606Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-railwayapp-nixpacks": {
       "learning_id": "learn-github-railwayapp-nixpacks",
@@ -59288,20 +59300,35 @@
     "learn-github-evanw-esbuild": {
       "learning_id": "learn-github-evanw-esbuild",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "evanw/esbuild",
       "repository": "evanw/esbuild",
       "slug": "evanw-esbuild",
       "platform": "github",
       "source_url": "https://github.com/evanw/esbuild",
-      "source_version": "main",
-      "content_hash": "46a24e094c685a322305fdd457688f0440f6e87d39e0cb49501ad830b17c0424",
+      "source_version": "f6058f83",
+      "content_hash": "056d8432d9ce7763f6280ad11430d30b41720b2e1d2fc8d44ab6677a63824e7d",
       "dossier_path": "07_PROJECT_LEARNING/evanw-esbuild-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/evanw-esbuild-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2996,
+          "title": "service deadlock after failed build setup (#4506)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:27:58.420Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-parcel-bundler-parcel": {
       "learning_id": "learn-github-parcel-bundler-parcel",
@@ -96986,6 +97013,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:22:04.127Z"
+    },
+    "rule-2996": {
+      "learning_id": "rule-2996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2996,
+      "title": "service deadlock after failed build setup (#4506)",
+      "source_url": "https://github.com/evanw/esbuild",
+      "source_version": "f6058f83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:27:58.420Z"
+    },
+    "rule-2997": {
+      "learning_id": "rule-2997",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2997,
+      "title": "metascrub: include cookie fields",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "94eae2cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:28:03.008Z"
     }
   },
   "aliases": {
