@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-1X2O",
-    "timestamp": "2026-10-19T21:11:34.320Z",
-    "repository": "Lessica/TrollFools",
-    "learningId": "learn-github-lessica-trollfools",
-    "contentHash": "dd74b76d8a8bcffe199c5c7189fb5e2b5f3c5ebfb8d4e44c014311fbceb1e6ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-21ZX",
-    "timestamp": "2026-10-19T21:11:40.701Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9XZF",
-    "timestamp": "2026-10-19T21:17:48.747Z",
-    "repository": "scrapy/scrapy",
-    "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "58a30a83326bb5bc55ae8c7676218f6ed53a972aeb59995076d87ef32218d205",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9ZH8",
-    "timestamp": "2026-10-19T21:17:50.684Z",
-    "repository": "krzysztofzablocki/Inject",
-    "learningId": "learn-github-krzysztofzablocki-inject",
-    "contentHash": "61735949d38fffb72cd1f96791a16c169dc27d8237a4d4466159e0e2b3dc80f9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-A1BJ",
-    "timestamp": "2026-10-19T21:17:53.071Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "ddec7ee69eb5470a87596b58ee436cc5a5b38592dbf8866c4f90f47d0197df20",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-A3K3",
     "timestamp": "2026-10-19T21:17:55.971Z",
     "repository": "langchain4j/langchain4j",
@@ -7492,6 +7417,81 @@
     "contentHash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-VZ7Q",
+    "timestamp": "2026-10-20T19:58:38.342Z",
+    "repository": "angular/angular",
+    "learningId": "learn-github-angular-angular",
+    "contentHash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-W03L",
+    "timestamp": "2026-10-20T19:58:39.489Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "51572215e561c9589e8eb25bffca64a02a473abe8f57a8aa458b8b7952660f1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-W3B8",
+    "timestamp": "2026-10-20T19:58:43.652Z",
+    "repository": "JetBrains/kotlinconf-app",
+    "learningId": "learn-github-jetbrains-kotlinconf-app",
+    "contentHash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-W97P",
+    "timestamp": "2026-10-20T19:58:51.301Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-YRAF",
+    "timestamp": "2026-10-20T20:00:48.039Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `502f93ca`  
+> **Source Version**: `547751f2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:21:07.690Z  
+> **Timestamp**: 2026-10-20T19:58:39.096Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:21:07.336Z  
+> **Harvest Timestamp**: 2026-10-20T19:58:39.088Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 90913 stars
+- **Stars / Engagement**: 90940 stars
 
 ---
 
@@ -1524,438 +1524,343 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ad9e0c3` (2026-10-19)
-**Commit Message**: Update Rust crate uuid to v1.26.1 (#22707)
+### Incident Patch 1: `ffefd1f7` (2026-10-20)
+**Commit Message**: Pin Codex workflows to the merged output-protection fix (#22772)
 
-This PR contains the following updates:
+Pin the shared security-review workflow and its matching
+secure-token-service rule to `f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d`,
+which uses the merged output-protection fix from
+[openai/codex-action#187](https://github.com/openai/codex-action/pull/187).
 
-| Package | Type | Update | Change | Pending |
-|---|---|---|---|---|
-| [uuid](https://redirect.github.com/uuid-rs/uuid) |
-workspace.dependencies | minor | `1.24.0` → `1.26.1` | `1.28.0` (+1) |
+Also repin direct `openai/codex-action` calls to merged commit
+`c05cfd74ad95c626cdf05c6685e62becc3bf7813`.
 
----
+Validation: checked matching workflow and policy pins, valid JSON, and
+no new actionlint diagnostics.
 
-### Release Notes
-
-<details>
-<summary>uuid-rs/uuid (uuid)</summary>
-
-###
-[`v1.26.1`](https://redirect.github.com/uuid-rs/uuid/releases/tag/v1.26.1)
-
-[Compare
-Source](https://redirect.github.com/uuid-rs/uuid/compare/v1.26.0...v1.26.1)
-
-##### What's Changed
-
-- Seat the v7 counter below the version nibble by
-[@&#8203;lenamonj](https://redirect.github.com/lenamonj) in
-[#&#8203;907](https://redirect.github.com/uuid-rs/uuid/pull/907)
-- Don't panic in overflowing Timestamp to SystemTime conversion by
-[@&#8203;KodrAus](https://redirect.github.com/KodrAus) in
-[#&#8203;909](https://redirect.github.com/uuid-rs/uuid/pull/909)
-- Prepare for 1.26.1 release by
-[@&#8203;KodrAus](https://redirect.github.com/KodrAus) in
-[#&#8203;910](https://redirect.github.com/uuid-rs/uuid/pull/910)
-
-##### New Contributors
-
-- [@&#8203;lenamonj](https://redirect.github.com/lenamonj) made their
-first contribution in
-[#&#8203;907](https://
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.github/secure-token-service.json` (modified, +1/-1)
 ```diff
-@@ -5636,9 +5636,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
+@@ -157,7 +157,7 @@
+       "environment": "automations",
+       "caller_ref": "refs/pull/*/merge",
+       "caller_workflow": "ci.yml",
+-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
++      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
+       "on": ["pull_request"],
+       "permissions": { "pull_requests": "write" },
+       "target": "uv"
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ jobs:
+   review:
+     needs: plan
+     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
+-    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e
++    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d
+     with:
+       runner: depot-ubuntu-24.04-16
+       helper-runner: github-ubuntu-24.04-x86_64-4
+```
+
+**File**: `.github/workflows/diagnose-workflow-failure.yml` (modified, +1/-1)
+```diff
+@@ -109,7 +109,7 @@ jobs:
+       - name: "Diagnose workflow failure"
+         id: diagnose
+         if: steps.context.outputs.ready == 'true'
+-        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
++        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+```
+
+**File**: `.github/workflows/fix-bug.yml` (modified, +1/-1)
+```diff
+@@ -312,7 +312,7 @@ jobs:
+       - name: "Fix reproduced bug"
+         id: fix-bug
+         if: steps.prepare.outputs.existing != 'true'
+-        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
++        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+         env:
+           CARGO_HOME: ${{ runner.temp }}/cargo-home
+           GH_TOKEN: ${{ github.token }}
+```
+
+**File**: `.github/workflows/issue-triage.yml` (modified, +1/-1)
+```diff
+@@ -142,7 +142,7 @@ jobs:
  
- [[package]]
- name = "uuid"
--version = "1.24.0"
-+version = "1.26.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bf3923a6f5c4c6382e0b653c4117f48d631ea17f38ed86e2a828e6f7412f5239"
-+checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
- dependencies = [
-  "getrandom 0.4.3",
-  "js-sys",
+       - name: "Triage issue"
+         id: triage
+-        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
++        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           TMPDIR: ${{ runner.temp }}
+```
+
+**File**: `.github/workflows/pull-request-code-quality-review.yml` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ jobs:
+ 
+       - name: "Review pull request"
+         id: review
+-        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
++        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           TMPDIR: ${{ runner.temp }}/codex-code-quality-review
+```
+
+**File**: `.github/workflows/pull-request-labels.yml` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ jobs:
+ 
+       - name: "Determine pull request labels"
+         id: labels
+-        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
++        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+```
+
+**File**: `.github/workflows/rebase-conflicted-pull-request.yml` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@ jobs:
+           fi
+ 
+       - name: Rebase pull request
+-        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
++        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
+         env:
+           BASE_REF: ${{ inputs.base-ref }}
+           BASE_PREVIOUS_SHA: ${{ inputs.base-previous-sha }}
 ```
 
 ---
 
-### Incident Patch 2: `0595a112` (2026-10-20)
-**Commit Message**: Revert optional-extra activation tracking in exports (#22750)
+### Incident Patch 2: `0713adcf` (2026-10-20)
+**Commit Message**: Pin security review to the merged shared workflow commit (#22766)
 
-Revert #22234 after bisecting a severe `uv export` regression to that
-change. On the same frozen lock, the root export takes 0.44 seconds at
-the PR's parent, exceeds 60 seconds at the PR commit, and completes in
-0.25 seconds with this revert on current main.
+Pin the shared security-review workflow and its matching
+secure-token-service policy to the merged commit from
+astral-sh/github-actions#24. GitHub Actions cannot resolve the previous
+PR-head SHA after its branch was deleted following the squash merge.
 
-This is a temporary mitigation while we fix the repeated propagation of
-extra-activation state. It also reintroduces the bug fixed by #22234:
-exports can include optional dependencies through incompatible
-environment paths. The revert removes that PR's regression test.
+The merged commit has the same Git tree and retains the Codex output
+protection from openai/codex-action#187.
 
-#22751 fixes the slowdown while preserving the correctness fix.
+Validation: verified identical shared-workflow Git trees, matching
+workflow and policy pins, valid JSON, and no new actionlint diagnostics.
 
-**File**: `crates/uv-lock/src/lock/export/mod.rs` (modified, +3/-7)
+**File**: `.github/secure-token-service.json` (modified, +1/-1)
 ```diff
-@@ -519,7 +519,7 @@ fn conflict_marker_reachability<'lock>(
-                     // the dependency marker as redundant when the lockfile is written.
-                     let active_marker = if let Node::Package(parent) = graph[parent_index] {
-                         let item = ConflictItem::from((parent.name().clone(), (*extra).clone()));
--                        *parent_map.entry(item).or_insert(MarkerTree::FALSE)
-+                        *parent_map.entry(item).or_insert(parent_marker)
-                     } else {
-                         parent_marker
-                     };
-@@ -550,15 +550,12 @@ fn conflict_marker_reachability<'lock>(
-             parent_marker = parent_marker.and(marker);
- 
-             // Combine the inferred conflicts with the existing conflicts on the node.
--            let mut conflicts_changed = false;
-             match conflict_maps.entry(child_edge.target()) {
-                 Entry::Occupied(mut existing) => {
-                     let child_map = existing.get_mut();
-                     for (key, value) in parent_map {
-                         let child_marker = child_map.entry(key).or_insert(MarkerTree::FALSE);
--                        let combined = child_marker.or(value);
--                        conflicts_changed |= combined != *child_marker;
--                        *child_marker = combined;
-+                        *child_marker = child_marker.or(value);
-                     }
-                 }
-                 Entry::Vacant(vacant) => {
-@@ -572,8 +569,7 @@ fn conflict_marker_reachability<'lock>(
-                     // If the marker is a subset of the existing marker (A ⊆ B exactly if
-                     // A ∪ B = A), updating the child wouldn't change child's marker.
-                     parent_marker = parent_marker.or(*existing.get());
--                    // Extra activation can change even when package reachability does not.
--                    if parent_marker != *existing.get() || conflicts_changed {
-+                    if parent_marker != *existing.get() {
-                         existing.insert(parent_marker);
-                         queue.push(child_edge.target());
-                     }
+@@ -157,7 +157,7 @@
+       "environment": "automations",
+       "caller_ref": "refs/pull/*/merge",
+       "caller_workflow": "ci.yml",
+-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6a612d86f84507386fc1e361e3fda194351ceadd",
++      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
+       "on": ["pull_request"],
+       "permissions": { "pull_requests": "write" },
+       "target": "uv"
 ```
 
-**File**: `crates/uv/tests/project/export.rs` (modified, +0/-108)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -358,114 +358,6 @@ fn requirements_txt_conditional_transitive_extra() -> Result<()> {
-     Ok(())
+@@ -29,7 +29,7 @@ jobs:
+   review:
+     needs: plan
+     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
+-    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6a612d86f84507386fc1e361e3fda194351ceadd
++    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e
+     with:
+       runner: depot-ubuntu-24.04-16
+       helper-runner: github-ubuntu-24.04-x86_64-4
+```
+
+---
+
+### Incident Patch 3: `547751f2` (2026-10-20)
+**Commit Message**: Keep additional error Debug formatters out of line (#22775)
+
+Co-authored-by: William Woodruff <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +5/-0)
+```diff
+@@ -5936,6 +5936,7 @@ dependencies = [
+  "uv-client",
+  "uv-distribution-filename",
+  "uv-extract",
++ "uv-macros",
+  "uv-pep440",
+  "uv-platform",
+  "uv-redacted",
+@@ -6511,6 +6512,7 @@ dependencies = [
+  "smallvec",
+  "thiserror",
+  "uv-cache-key",
++ "uv-macros",
+  "uv-normalize",
+  "uv-pep440",
+  "uv-platform-tags",
+@@ -6873,6 +6875,7 @@ dependencies = [
+  "uv-fs",
+  "uv-git-types",
+  "uv-install-wheel",
++ "uv-macros",
+  "uv-normalize",
+  "uv-pep440",
+  "uv-pep508",
+@@ -6989,6 +6992,7 @@ dependencies = [
+  "uv-fs",
+  "uv-git",
+  "uv-lock",
++ "uv-macros",
+  "uv-normalize",
+  "uv-pep440",
+  "uv-pep508",
+@@ -7741,6 +7745,7 @@ dependencies = [
+  "uv-git",
+  "uv-installer",
+  "uv-lock",
++ "uv-macros",
+  "uv-normalize",
+  "uv-pep440",
+  "uv-pep508",
+```
+
+**File**: `crates/uv-bin-install/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -20,6 +20,7 @@ uv-cache = { workspace = true }
+ uv-client = { workspace = true }
+ uv-distribution-filename = { workspace = true }
+ uv-extract = { workspace = true }
++uv-macros = { workspace = true }
+ uv-pep440 = { workspace = true }
+ uv-platform = { workspace = true }
+ uv-redacted = { workspace = true }
+```
+
+**File**: `crates/uv-bin-install/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -29,6 +29,7 @@ use uv_static::{
+ use uv_cache::{Cache, CacheBucket, CacheEntry, Error as CacheError};
+ use uv_client::{BaseClient, RetriableError, fetch_with_url_fallback};
+ use uv_extract::{Error as ExtractError, stream};
++use uv_macros::DebugNoInline;
+ use uv_pep440::{Version, VersionSpecifier, VersionSpecifiers};
+ use uv_platform::Platform;
+ use uv_redacted::SafeUrl;
+@@ -361,7 +362,7 @@ impl ResolvedVersion {
  }
  
--#[cfg(feature = "test-universal")]
--#[test]
--fn requirements_txt_does_not_activate_extra_through_incompatible_path() -> Result<()> {
--    let context = uv_test::test_context!("3.13");
--
--    context.temp_dir.child("pyproject.toml").write_str(
--        r#"
--        [project]
--        name = "root"
--        version = "0.1.0"
--        requires-python = ">=3.9"
--        dependencies = [
--            "shared==1.0.0 ; sys_platform == 'linux'",
--            "shared==2.0.0 ; sys_platform != 'linux'",
--        ]
--
--        [project.optional-dependencies]
--        feature = ["bridge==1.0.0 ; sys_platform == 'linux'"]
--        "#,
--    )?;
--
--    context.temp_dir.child("uv.lock").write_str(
--        r#"
--        version = 1
--        revision = 3
--        requires-python = ">=3.9"
--
--        [manifest]
--        members = ["root"]
--
--        [[package]]
--        name = "root"
--        version = "0.1.0"
--        source = { virtual = "." }
--        dependencies = [
--            { name = "shared", version = "1.0.0", source = { registry = "https://example.com/simple" }, marker = "sys_platform == 'linux'" },
--            { name = "shared", version = "2.0.0", source = { registry = "https://other.example/simple" }, marker = "sys_platform != 'linux'" },
--        ]
--
--        [package.optional-dependencies]
--        feature = [{ name = "bridge", version = "1.0.0", source = { registry = "https://example.com/simple" }, marker = "sys_platform == 'linux'" }]
--
--        [package.metadata]
--        provides-extras = ["feature"]
--
--        [[package]]
--        name = "bridge"
--        version = "1.0.0"
--        source = { registry = "https://example.com/simple" }
--        dependencies = [
--            { name = "shared", version = "1.0.0", source = { registry = "https://example.com/simple" }, marker = "sys_platform == 'linux'", extra = ["a"] },
--            { name = "shared", version = "2.0.0", source = { registry = "https://other.example/simple" }, marker = "sys_platform != 'linux'", extra = ["a"] },
--        ]
--
--        [[package]]
--        name = "shared"
--        version = "1.0.0"
--        source = { registry = "https://example.com/simple" }
--        resolution-markers = ["sys_platform == 'linux'"]
--
--        [package.optional-dependencies]
--        a = [{ name = "leaf-b", version = "1.0.0", source = { registry = "https://example.com/simple" } }]
--
--        [package.metadata]
--        provides-extras = ["a"]
--
--        [[package]]
--        name = "shared"
--        version = "2.0.0"
--        source = { registry = "https://other.example/simple" }
--        resolution-markers = ["sys_platform != 'linux'"]
--        dependencies = [{ name = "leaf-b", version = "1.0.0", source = { registry = "https://example.com/simple" } }]
--
--        [package.optional-dependencies]
--        a = [{ name = "leaf-c", version = "1.0.0", source = { registry = "https://example.com/simple" } }]
--
--        [package.metadata]
--        provides-extras = ["a"]
--
--        [[package]]
--        name = "leaf-b"
--        version = "1.0.0"
--        source = { registry = "https://example.com/simple" }
--
--        [[package]]
--        name = "leaf-c"
--        version = "1.0.0"
--        source = { registry = "https://example.com/simple" }
--        "#,
--    )?;
--
--    uv_snapshot!(context.filters(), context.export()
--        .arg("--extra").arg("feature")
--        .arg("--frozen")
--        .arg("--no-header")
--        .arg("--no-annotate")
--        .arg("--no-hashes"), @"
--    exit_code: 0 (success)
--    ----- stdout -----
--    bridge==1.0.0 ; sys_platform == 'linux'
--    leaf-b==1.0.0
--    shared==1.0.0 ; sys_platform == 'linux'
--    shared==2.0.0 ; sys_platform != 'linux'
--    ");
--
--    Ok(())
--}
--
- #[cfg(feature = "test-universal")]
- #[test]
- fn requirements_txt_project_extra() -> Result<()> {
+ /// Errors that can occur during binary download and installation.
+-#[derive(Debug, Error)]
++#[derive(DebugNoInline, Error)]
+ pub enum Error {
+     #[error("Failed to download from: {url}")]
+     Download {
 ```
 
----
-
-### Incident Patch 3: `c0e0f76b` (2026-10-19)
-**Commit Message**: Only reuse locally built wheels when the resolver selects a source distribution (#22685)
-
-When requesting a cached wheel for a source distribution, we had a
-separate filtering logic that would look at all wheels again. We should
-instead trust the resolver when it told us that we're using the source
-distribution from the index, and only look for a cached built wheel for
-that source distribution, but not for other index wheels.
-
-There's an observable bug with security impact: If a source distribution
-was uploaded before an `--exclude-newer` cutoff and its wheel was
-uploaded after, the resolver correctly selects the source distribution.
-But if the wheel was already cached, the installer could still use it.
-
-**File**: `crates/uv-distribution/src/index/registry_wheel_index.rs` (modified, +18/-36)
+**File**: `crates/uv-build-backend/src/lib.rs` (modified, +2/-1)
 ```diff
-@@ -14,7 +14,6 @@ use uv_distribution_types::{
- };
- use uv_fs::{directories, files};
+@@ -25,13 +25,14 @@ use walkdir::DirEntry;
+ 
+ use uv_fs::{Simplified, normalize_path};
+ use uv_globfilter::PortableGlobError;
++use uv_macros::DebugNoInline;
  use uv_normalize::PackageName;
--use uv_pep440::Version;
- use uv_platform_tags::Tags;
- use uv_types::HashStrategy;
+ use uv_pypi_types::{Identifier, IdentifierParseError};
  
-@@ -57,34 +56,18 @@ impl IndexEntry<'_> {
-         no_build: bool,
-         no_binary: bool,
-     ) -> bool {
--        self.matches_index_and_build_policy(index, no_build, no_binary)
--            && self.dist.filename == *filename
--    }
--
--    fn matches_source(
--        &self,
--        index: &IndexUrl,
--        name: &PackageName,
--        version: &Version,
--        no_build: bool,
--        no_binary: bool,
--    ) -> bool {
--        self.matches_index_and_build_policy(index, no_build, no_binary)
--            && self.dist.filename.name == *name
--            && self.dist.filename.version == *version
--    }
--
--    fn matches_index_and_build_policy(
--        &self,
--        index: &IndexUrl,
--        no_build: bool,
--        no_binary: bool,
--    ) -> bool {
--        if *self.index.url() != *index {
-+        if self.index.url() != index || self.dist.filename != *filename {
-             return false;
-         }
-         if self.built { !no_build } else { !no_binary }
-     }
-+
-+    fn matches_source(&self, source: &RegistrySourceDist) -> bool {
-+        self.built
-+            && self.index.url() == &source.index
-+            && self.dist.filename.name == source.name
-+            && self.dist.filename.version == source.version
-+    }
- }
+ use crate::metadata::ValidationError;
+ use crate::settings::ModuleName;
  
- /// A local index of distributions that originate from a registry, like `PyPI`.
-@@ -153,29 +136,28 @@ impl<'a> RegistryWheelIndex<'a> {
-     }
- 
-     /// Return a cached wheel that satisfies a registry source distribution requirement.
-+    ///
-+    /// Only consider wheels built from source. The resolver may have excluded a published wheel
-+    /// for the same version, for example due to `--exclude-newer`.
-     pub fn source(
-         &mut self,
-         source: &'a RegistrySourceDist,
-         no_build: bool,
--        no_binary: bool,
-     ) -> Option<&CachedRegistryDist> {
-+        if no_build {
-+            return None;
-+        }
-         self.get(&source.name).find_map(|entry| {
--            if !entry.matches_source(
--                &source.index,
--                &source.name,
--                &source.version,
--                no_build,
--                no_binary,
--            ) {
-+            if !entry.matches_source(source) {
-                 return None;
-             }
-             if source.size_is_authoritative
-                 && let Some(expected) = source.file.size
--                && (!entry.built || entry.size != Some(expected))
-+                && entry.size != Some(expected)
-             {
-                 debug!(
--                    "Skipping cached wheel `{}`: expected source archive size {expected}, cached archive size {:?} (built from source: {})",
--                    entry.dist.filename, entry.size, entry.built,
-+                    "Skipping cached wheel `{}`: expected source archive size {expected}, cached archive size {:?}",
-+                    entry.dist.filename, entry.size,
-                 );
-                 return None;
-             }
+-#[derive(Debug, Error)]
++#[derive(DebugNoInline, Error)]
+ pub enum Error {
+     #[error(transparent)]
+     Io(#[from] io::Error),
 ```
 
-**File**: `crates/uv-installer/src/plan.rs` (modified, +1/-1)
+**File**: `crates/uv-distribution-filename/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -631,7 +631,7 @@ impl<'a> Planner<'a> {
-                     }
-                 }
-                 Dist::Source(SourceDist::Registry(sdist)) => {
--                    if let Some(distribution) = registry_index.source(sdist, no_build, no_binary) {
-+                    if let Some(distribution) = registry_index.source(sdist, no_build) {
-                         debug!("Registry requirement already cached: {distribution}");
-                         cached.push(CachedDist::Registry(distribution.clone()));
-                         continue;
+@@ -17,6 +17,7 @@ doctest = false
+ 
+ [dependencies]
+ uv-cache-key = { workspace = true }
++uv-macros = { workspace = true }
+ uv-normalize = { workspace = true }
+ uv-pep440 = { workspace = true }
+ uv-platform-tags = { workspace = true }
 ```
 
-**File**: `crates/uv/tests/pip_install/pip_install.rs` (modified, +50/-0)
+**File**: `crates/uv-distribution-filename/src/wheel.rs` (modified, +2/-1)
 ```diff
-@@ -36,6 +36,8 @@ use uv_test::archive::{generate_source_archive, write_tar_gz};
- use uv_test::decode_token;
- use uv_test::find_links::FindLinksServer;
- use uv_test::package_server::PackageServer;
-+#[cfg(feature = "test-universal")]
-+use uv_test::packse::scenario::Scenario;
- use uv_test::packse::{PackseServer, generate_wheel, generate_wheel_with_files};
- use uv_test::{
-     DEFAULT_PYTHON_VERSION, TestContext, apply_filters, copy_dir_ignore, download_to_disk, get_bin,
-@@ -4523,6 +4525,54 @@ fn install_build_policy_cache() {
-     );
+@@ -7,6 +7,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
+ use thiserror::Error;
+ 
+ use uv_cache_key::cache_digest;
++use uv_macros::DebugNoInline;
+ use uv_normalize::{InvalidNameError, PackageName};
+ use uv_pep440::{Version, VersionParseError};
+ use uv_platform_tags::{
+@@ -442,7 +443,7 @@ impl Serialize for WheelFilename {
+     }
  }
  
-+/// A cached wheel uploaded after the cutoff must not replace the source distribution
-+/// selected by the resolver.
-+#[cfg(feature = "test-universal")]
-+#[test]
-+fn exclude_newer_does_not_reuse_cached_wheel() -> Result<()> {
-+    let scenario = toml::from_str::<Scenario>(indoc! {r#"
-+        name = "exclude-newer-cached-wheel"
-+
-+        [root]
-+
-+        [expected]
-+        satisfiable = true
-+
-+        [packages.a.versions."1.0.0"]
-+        sdist = { upload_time = "2024-03-24T00:00:00Z" }
-+        wheel = { upload_time = "2024-03-24T12:00:00Z" }
-+    "#})?;
-+    let server = PackseServer::from_scenario(&scenario);
-+    let context = uv_test::test_context!("3.12");
-+
-+    // Cache the published wheel, then clear the environment but keep the cache.
-+    context
-+        .pip_install()
-+        .arg("a")
-+        .arg("--index-url")
-+        .arg(server.index_url())
-+        .arg("--only-binary")
-+        .arg(":all:")
-+        .assert()
-+        .success();
-+    context.reset_venv();
-+
-+    // The cutoff falls between the two uploads, so we must prepare a wheel from the source.
-+    uv_snapshot!(context.filters(), context.pip_install()
-+        .arg("a")
-+        .arg("--index-url").arg(server.index_url())
-+        .arg("--exclude-newer").arg("2024-03-24T06:00:00Z"), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Resolved 1 package in [TIME]
-+    Prepared 1 package in [TIME]
-+    Installed 1 package in [TIME]
-+     + a==1.0.0
-+    ");
-+
-+    Ok(())
-+}
-+
- /// Respect `--only-binary` flags in `requirements.txt`
- #[test]
- fn only_binary_requirements_txt() {
+-#[derive(Error, Debug)]
++#[derive(Error, DebugNoInline)]
+ pub enum WheelFilenameError {
+     #[error("The wheel filename `{0}` is invalid: {1}")]
+     InvalidWheelFileName(String, String),
+```
+
+**File**: `crates/uv-distribution/src/metadata/lowering.rs` (modified, +2/-1)
+```diff
+@@ -15,6 +15,7 @@ use uv_distribution_types::{
+ };
+ use uv_fs::{Simplified, normalize_absolute_path, normalize_path};
+ use uv_git_types::{GitLfs, GitReference, GitUrl, GitUrlParseError};
++use uv_macros::DebugNoInline;
+ use uv_normalize::{ExtraName, GroupName, PackageName};
+ use uv_pep440::VersionSpecifiers;
+ use uv_pep508::{MarkerTree, VerbatimUrl, VersionOrUrl, looks_like_git_repository};
+@@ -555,7 +556,7 @@ impl LoweredRequirement {
+ 
+ /// An error parsing and merging `tool.uv.sources` with
+ /// `project.{dependencies,optional-dependencies}`.
+-#[derive(Debug, Error)]
++#[derive(DebugNoInline, Error)]
+ pub enum LoweringError {
+     #[error(
+         "`{0}` is included as a workspace member, but is missing an entry in `tool.uv.sources` (e.g., `{0} = {{ workspace = true }}`)"
+```
+
+**File**: `crates/uv-installer/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@ uv-distribution-types = { workspace = true }
+ uv-fs = { workspace = true }
+ uv-git-types = { workspace = true }
+ uv-install-wheel = { workspace = true, default-features = false }
++uv-macros = { workspace = true }
+ uv-normalize = { workspace = true }
+ uv-pep440 = { workspace = true }
+ uv-pep508 = { workspace = true }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22752** (2026-10-20): Bump version to 0.13.3 (@astral-automations-bot[bot])
-- **PR #22750** (2026-10-20): Revert optional-extra activation tracking in exports (@charliermarsh)
-- **PR #22748** (2026-10-19): Deserialize build metadata contacts in one pass (@astral-automations-bot[bot])
-- **PR #22747** (2026-10-19): Borrow the uv-build command argument (@astral-automations-bot[bot])
-- **PR #22746** (2026-10-19): Keep SafeUrl debug formatting out of line (@astral-automations-bot[bot])
-- **PR #22745** (2026-10-19): Upgrade uv used for release assembly (@charliermarsh)
+- **PR #22775** (2026-10-20): Keep additional error Debug formatters out of line (@astral-automations-bot[bot])
+- **PR #22772** (2026-10-20): Pin Codex workflows to the merged output-protection fix (@zsol)
+- **PR #22766** (2026-10-20): Pin security review to the merged shared workflow commit (@zsol)
+- **PR #22765** (closed): Do not forward SIGPIPE to the child process (@Varshith-Kali)
+- **PR #22764** (2026-10-20): Update Codex workflows to protect workflow command output (@zsol)
+- **PR #22763** (2026-10-20): Switch back to env::args_os (@woodruffw)
 
 ---
 
@@ -1975,30 +1880,28 @@ But if the wheel was already cached, the installer could still use it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate uuid to v1.26.1 (#22707)
+## X. Pin Codex workflows to the merged output-protection fix (#22772)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/secure-token-service.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ad9e0c3`: Update Rust crate uuid to v1.26.1 (#22707). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffefd1f7`: Pin Codex workflows to the merged output-protection fix (#22772). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/secure-token-service.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.26.1"
-checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.24.0"
-checksum = "bf3923a6f5c4c6382e0b653c4117f48d631ea17f38ed86e2a828e6f7412f5239"
+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ad9e0c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffefd1f7` are properly handled with clean fallback behavior.

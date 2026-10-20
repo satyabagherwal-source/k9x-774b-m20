@@ -575,8 +575,8 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
-    "lastHarvestedAt": "2026-10-19T06:12:47.863Z",
+    "contentHash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
+    "lastHarvestedAt": "2026-10-20T20:00:48.047Z",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "d584197e",
+    "sourceVersion": "8df425b1",
     "license": "MIT",
-    "contentHash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
-    "lastHarvestedAt": "2026-10-20T03:28:26.667Z",
+    "contentHash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
+    "lastHarvestedAt": "2026-10-20T19:58:51.309Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "fdb84e2e",
+    "sourceVersion": "ea43e6c3",
     "license": "MIT",
-    "contentHash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
-    "lastHarvestedAt": "2026-10-20T05:21:55.896Z",
+    "contentHash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
+    "lastHarvestedAt": "2026-10-20T19:58:38.350Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {
@@ -7143,10 +7143,10 @@
     "repository": "JetBrains/kotlinconf-app",
     "platform": "github",
     "sourceUrl": "https://github.com/JetBrains/kotlinconf-app",
-    "sourceVersion": "21891558",
+    "sourceVersion": "907ce238",
     "license": "Apache-2.0",
-    "contentHash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
-    "lastHarvestedAt": "2026-10-19T07:59:19.790Z",
+    "contentHash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
+    "lastHarvestedAt": "2026-10-20T19:58:43.660Z",
     "learningId": "learn-github-jetbrains-kotlinconf-app"
   },
   "zeromicro-go-zero": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "502f93ca",
+    "sourceVersion": "547751f2",
     "license": "Apache-2.0",
-    "contentHash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
-    "lastHarvestedAt": "2026-10-20T01:21:07.934Z",
+    "contentHash": "51572215e561c9589e8eb25bffca64a02a473abe8f57a8aa458b8b7952660f1e",
+    "lastHarvestedAt": "2026-10-20T19:58:39.497Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

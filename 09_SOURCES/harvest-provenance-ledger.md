@@ -4000,3 +4000,8 @@ Every entry in this ledger must capture:
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `ad047791` | Multi-dimensional audit evidence | 2026-10-20T19:50:42.326Z |
 | `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `c29c276f` | Multi-dimensional audit evidence | 2026-10-20T19:50:45.310Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `0e48502c` | Multi-dimensional audit evidence | 2026-10-20T19:50:47.543Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `ea43e6c3` | Multi-dimensional audit evidence | 2026-10-20T19:58:38.350Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `547751f2` | Multi-dimensional audit evidence | 2026-10-20T19:58:39.497Z |
+| `learn-github-jetbrains-kotlinconf-app` | `https://github.com/JetBrains/kotlinconf-app` | `907ce238` | Multi-dimensional audit evidence | 2026-10-20T19:58:43.660Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `8df425b1` | Multi-dimensional audit evidence | 2026-10-20T19:58:51.309Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-20T20:00:48.047Z |

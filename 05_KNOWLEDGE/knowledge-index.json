@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:50:47.479Z",
+  "last_updated": "2026-10-20T20:00:47.984Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1713,8 +1713,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "fdb84e2e",
-      "content_hash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
+      "source_version": "ea43e6c3",
+      "content_hash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1752,6 +1752,11 @@
           "number": 3072,
           "title": "Non-Default Attribute Emission Invariant for Normalized Markdown Renderers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3354,
+          "title": "core): guard against integer overflow in i18n",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1759,7 +1764,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:21:55.826Z",
+      "verified_at": "2026-10-20T19:58:38.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3029,8 +3034,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "502f93ca",
-      "content_hash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
+      "source_version": "547751f2",
+      "content_hash": "51572215e561c9589e8eb25bffca64a02a473abe8f57a8aa458b8b7952660f1e",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3053,6 +3058,11 @@
           "number": 2957,
           "title": "Update Rust crate uuid to v1.26.1 (#22707)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3355,
+          "title": "Pin Codex workflows to the merged output-protection fix (#22772)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3060,7 +3070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:21:07.884Z",
+      "verified_at": "2026-10-20T19:58:39.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24465,7 +24475,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
+      "content_hash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -24528,6 +24538,16 @@
           "number": 2230,
           "title": "Rate-Constrained Quantization (GSQ-RCO) Divergence Budgeting Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3358,
+          "title": "Strict GGUF Tensor Byte-Alignment and KV Metadata Canonicalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3359,
+          "title": "Bounded Kullback-Leibler Divergence (KLD) Calibration Gate for Quantized Checkpoints",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24548,7 +24568,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-19T06:12:47.813Z",
+      "verified_at": "2026-10-20T20:00:47.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27161,8 +27181,8 @@
       "slug": "jetbrains-kotlinconf-app",
       "platform": "github",
       "source_url": "https://github.com/JetBrains/kotlinconf-app",
-      "source_version": "21891558",
-      "content_hash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
+      "source_version": "907ce238",
+      "content_hash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
       "dossier_path": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
       "promoted_rules": [
@@ -27180,6 +27200,11 @@
           "number": 2354,
           "title": "Isolated State-Snapshot Backstack Routing for Multi-Tab Navigation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3356,
+          "title": "Update Kotlin to 2.4.21, Coil to 3.6.3, Ktor to 3.6.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27187,7 +27212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:59:19.731Z",
+      "verified_at": "2026-10-20T19:58:43.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40631,8 +40656,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "d584197e",
-      "content_hash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
+      "source_version": "8df425b1",
+      "content_hash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -40650,6 +40675,11 @@
           "number": 3022,
           "title": "Merge pull request #999 from tschm/rhiza_fix_977_20261008",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3357,
+          "title": "Merge pull request #1025 from tschm/coverage-more-suites",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40657,7 +40687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:28:26.607Z",
+      "verified_at": "2026-10-20T19:58:51.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104284,6 +104314,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:50:47.465Z"
+    },
+    "rule-3354": {
+      "learning_id": "rule-3354",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3354,
+      "title": "core): guard against integer overflow in i18n",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "ea43e6c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:58:38.276Z"
+    },
+    "rule-3355": {
+      "learning_id": "rule-3355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3355,
+      "title": "Pin Codex workflows to the merged output-protection fix (#22772)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "547751f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:58:39.420Z"
+    },
+    "rule-3356": {
+      "learning_id": "rule-3356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3356,
+      "title": "Update Kotlin to 2.4.21, Coil to 3.6.3, Ktor to 3.6.0",
+      "source_url": "https://github.com/JetBrains/kotlinconf-app",
+      "source_version": "907ce238",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:58:43.584Z"
+    },
+    "rule-3357": {
+      "learning_id": "rule-3357",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3357,
+      "title": "Merge pull request #1025 from tschm/coverage-more-suites",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "8df425b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:58:51.233Z"
+    },
+    "rule-3358": {
+      "learning_id": "rule-3358",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3358,
+      "title": "Strict GGUF Tensor Byte-Alignment and KV Metadata Canonicalization",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:00:47.971Z"
+    },
+    "rule-3359": {
+      "learning_id": "rule-3359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3359,
+      "title": "Bounded Kullback-Leibler Divergence (KLD) Calibration Gate for Quantized Checkpoints",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:00:47.971Z"
     }
   },
   "aliases": {

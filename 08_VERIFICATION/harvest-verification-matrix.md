@@ -3993,3 +3993,8 @@
 | `CYCLE-20261020-LRWZ` | `2026-10-20T19:50:42.323Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | Yes (`e421dee7...`) |
 | `CYCLE-20261020-LU7P` | `2026-10-20T19:50:45.301Z` | `lucide-icons/lucide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3352` | Yes (`b8372596...`) |
 | `CYCLE-20261020-LVXR` | `2026-10-20T19:50:47.535Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3353` | Yes (`1d607326...`) |
+| `CYCLE-20261020-VZ7Q` | `2026-10-20T19:58:38.342Z` | `angular/angular` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3354` | Yes (`9c0d24ba...`) |
+| `CYCLE-20261020-W03L` | `2026-10-20T19:58:39.489Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3355` | Yes (`51572215...`) |
+| `CYCLE-20261020-W3B8` | `2026-10-20T19:58:43.652Z` | `JetBrains/kotlinconf-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3356` | Yes (`cc9f1177...`) |
+| `CYCLE-20261020-W97P` | `2026-10-20T19:58:51.301Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3357` | Yes (`e5b11c2a...`) |
+| `CYCLE-20261020-YRAF` | `2026-10-20T20:00:48.039Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3358, Rule 3359` | Yes (`5e3ba15f...`) |

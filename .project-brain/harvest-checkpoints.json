@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T19:50:47.552Z",
+  "last_updated": "2026-10-20T20:00:48.055Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -725,14 +725,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
-      "verified_at": "2026-10-19T06:12:47.869Z",
+      "content_hash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
+      "verified_at": "2026-10-20T20:00:48.055Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:12:47.869Z"
+      "last_updated": "2026-10-20T20:00:48.055Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "00537a608a1191dbf6d2d7668bf8e3e8f324c47dfb2215ec1501928a189fc26d",
-      "verified_at": "2026-10-20T03:28:26.674Z",
+      "content_hash": "e5b11c2aa0c7ba42d1fa8d256a4c9abb61609c206330fdc1e0580b35bced9246",
+      "verified_at": "2026-10-20T19:58:51.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:28:26.674Z"
+      "last_updated": "2026-10-20T19:58:51.317Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -10476,14 +10476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-angular-angular",
-      "content_hash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
-      "verified_at": "2026-10-20T05:21:55.904Z",
+      "content_hash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
+      "verified_at": "2026-10-20T19:58:38.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:21:55.904Z"
+      "last_updated": "2026-10-20T19:58:38.358Z"
     },
     "devspace-sh/devspace": {
       "repository": "devspace-sh/devspace",
@@ -10761,14 +10761,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jetbrains-kotlinconf-app",
-      "content_hash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
-      "verified_at": "2026-10-19T07:59:19.796Z",
+      "content_hash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
+      "verified_at": "2026-10-20T19:58:43.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:59:19.796Z"
+      "last_updated": "2026-10-20T19:58:43.668Z"
     },
     "zeromicro/go-zero": {
       "repository": "zeromicro/go-zero",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
-      "verified_at": "2026-10-20T01:21:07.940Z",
+      "content_hash": "51572215e561c9589e8eb25bffca64a02a473abe8f57a8aa458b8b7952660f1e",
+      "verified_at": "2026-10-20T19:58:39.505Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:21:07.940Z"
+      "last_updated": "2026-10-20T19:58:39.505Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
