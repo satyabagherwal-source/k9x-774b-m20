@@ -3924,3 +3924,6 @@
 | `CYCLE-20261020-VJ50` | `2026-10-20T17:10:19.812Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`a1d2bc34...`) |
 | `CYCLE-20261020-VO0E` | `2026-10-20T17:10:26.126Z` | `shoutem/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2160` | Yes (`d71b11a1...`) |
 | `CYCLE-20261020-VRXA` | `2026-10-20T17:10:31.198Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3284` | Yes (`381e66ee...`) |
+| `CYCLE-20261020-3WV1` | `2026-10-20T17:16:50.845Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3285` | Yes (`402f3dfc...`) |
+| `CYCLE-20261020-40XF` | `2026-10-20T17:16:56.115Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3286, Rule 3287, Rule 3288` | Yes (`414003ad...`) |
+| `CYCLE-20261020-43GB` | `2026-10-20T17:16:59.387Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3289` | Yes (`40973f89...`) |

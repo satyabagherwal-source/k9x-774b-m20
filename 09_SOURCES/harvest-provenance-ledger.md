@@ -3931,3 +3931,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-20T17:10:19.815Z |
 | `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `92e3f530` | Multi-dimensional audit evidence | 2026-10-20T17:10:26.135Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3c162e7f` | Multi-dimensional audit evidence | 2026-10-20T17:10:31.206Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `f217bd67` | Multi-dimensional audit evidence | 2026-10-20T17:16:50.852Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T17:16:56.122Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e5174995` | Multi-dimensional audit evidence | 2026-10-20T17:16:59.394Z |

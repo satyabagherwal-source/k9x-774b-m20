@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-Q6HZ",
-    "timestamp": "2026-10-19T18:42:28.583Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "989efc7e2a5d4b6c88d2f13cdf48cdf88f62acf4d96418ee2a9bb73cc11e71c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Y9MJ",
-    "timestamp": "2026-10-19T18:48:45.883Z",
-    "repository": "a4csi/schema-org-validate",
-    "learningId": "learn-github-a4csi-schema-org-validate",
-    "contentHash": "1cf5e3cfcb58de2a909c85dea4478a76ac9a387f1056da95010911d1b76bf8b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YBUT",
-    "timestamp": "2026-10-19T18:48:48.773Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-6H2C",
     "timestamp": "2026-10-19T18:55:08.772Z",
     "repository": "michaelbull/kotlin-result",
@@ -7490,6 +7445,51 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-3WV1",
+    "timestamp": "2026-10-20T17:16:50.845Z",
+    "repository": "callstack/agent-device",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-40XF",
+    "timestamp": "2026-10-20T17:16:56.115Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-43GB",
+    "timestamp": "2026-10-20T17:16:59.387Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

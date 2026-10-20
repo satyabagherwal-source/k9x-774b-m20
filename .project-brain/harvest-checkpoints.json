@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T17:10:31.215Z",
+  "last_updated": "2026-10-20T17:16:59.403Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
-      "verified_at": "2026-10-19T03:47:23.030Z",
+      "content_hash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
+      "verified_at": "2026-10-20T17:16:56.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:47:23.030Z"
+      "last_updated": "2026-10-20T17:16:56.130Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f1a5d23739047155656c3c2f28bfb83ae08b5f4e8e3ed08d840e8ddb09ec06ac",
-      "verified_at": "2026-10-18T21:07:53.424Z",
+      "content_hash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
+      "verified_at": "2026-10-20T17:16:59.402Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:07:53.424Z"
+      "last_updated": "2026-10-20T17:16:59.402Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "c8f6a2630c9aed61b41e1107e8eb6857644bf165f6ba430b128e4d8b814ac89c",
-      "verified_at": "2026-10-19T05:12:49.520Z",
+      "content_hash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
+      "verified_at": "2026-10-20T17:16:50.860Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:12:49.520Z"
+      "last_updated": "2026-10-20T17:16:50.860Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",

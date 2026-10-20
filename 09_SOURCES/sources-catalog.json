@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
-    "lastHarvestedAt": "2026-10-19T03:47:23.025Z",
+    "contentHash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
+    "lastHarvestedAt": "2026-10-20T17:16:56.122Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "927ee1ac",
+    "sourceVersion": "e5174995",
     "license": "Apache-2.0",
-    "contentHash": "f1a5d23739047155656c3c2f28bfb83ae08b5f4e8e3ed08d840e8ddb09ec06ac",
-    "lastHarvestedAt": "2026-10-18T21:07:53.416Z",
+    "contentHash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
+    "lastHarvestedAt": "2026-10-20T17:16:59.394Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "3d919010",
+    "sourceVersion": "f217bd67",
     "license": "MIT",
-    "contentHash": "c8f6a2630c9aed61b41e1107e8eb6857644bf165f6ba430b128e4d8b814ac89c",
-    "lastHarvestedAt": "2026-10-19T05:12:49.515Z",
+    "contentHash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
+    "lastHarvestedAt": "2026-10-20T17:16:50.852Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {

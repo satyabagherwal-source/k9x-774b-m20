@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T17:10:31.148Z",
+  "last_updated": "2026-10-20T17:16:59.338Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4534,14 +4534,19 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "3d919010",
-      "content_hash": "c8f6a2630c9aed61b41e1107e8eb6857644bf165f6ba430b128e4d8b814ac89c",
+      "source_version": "f217bd67",
+      "content_hash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
         {
           "number": 2167,
           "title": "daemon): replace fixed 15s startup kill with progress-aware startup budget (#379",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3285,
+          "title": "daemon): preserve recorded ownership through stop and cleanup (#3806)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4550,7 +4555,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:12:49.461Z",
+      "verified_at": "2026-10-20T17:16:50.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22412,7 +22417,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
+      "content_hash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -22465,6 +22470,21 @@
           "number": 1017,
           "title": "KV Caching Context Reuse Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3286,
+          "title": "Decoupling Inference Schedule from Model Weights via Config-Driven Sigmas",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3287,
+          "title": "Mandatory BFloat16 Precision for 7B+ Parameter Diffusion Models on CUDA",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3288,
+          "title": "Prefix KV Caching Invariant for Multi-Step Diffusion with Static Context",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22483,7 +22503,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl"
       ],
-      "verified_at": "2026-10-19T03:47:22.970Z",
+      "verified_at": "2026-10-20T17:16:56.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34543,17 +34563,23 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "927ee1ac",
-      "content_hash": "f1a5d23739047155656c3c2f28bfb83ae08b5f4e8e3ed08d840e8ddb09ec06ac",
+      "source_version": "e5174995",
+      "content_hash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3289,
+          "title": "Add Matrix.locate and offset-based pad for ARC",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:53.364Z",
+      "verified_at": "2026-10-20T17:16:59.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102967,6 +102993,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T17:10:31.137Z"
+    },
+    "rule-3285": {
+      "learning_id": "rule-3285",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3285,
+      "title": "daemon): preserve recorded ownership through stop and cleanup (#3806)",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "f217bd67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:16:50.785Z"
+    },
+    "rule-3286": {
+      "learning_id": "rule-3286",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3286,
+      "title": "Decoupling Inference Schedule from Model Weights via Config-Driven Sigmas",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:16:56.055Z"
+    },
+    "rule-3287": {
+      "learning_id": "rule-3287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3287,
+      "title": "Mandatory BFloat16 Precision for 7B+ Parameter Diffusion Models on CUDA",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:16:56.055Z"
+    },
+    "rule-3288": {
+      "learning_id": "rule-3288",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3288,
+      "title": "Prefix KV Caching Invariant for Multi-Step Diffusion with Static Context",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:16:56.055Z"
+    },
+    "rule-3289": {
+      "learning_id": "rule-3289",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3289,
+      "title": "Add Matrix.locate and offset-based pad for ARC",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "e5174995",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T17:16:59.327Z"
     }
   },
   "aliases": {

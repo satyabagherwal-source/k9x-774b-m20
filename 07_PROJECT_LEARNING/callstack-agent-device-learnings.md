@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source**: github ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
-> **Source Version**: `3d919010`  
+> **Source Version**: `f217bd67`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:12:49.283Z  
+> **Timestamp**: 2026-10-20T17:16:50.525Z  
 > **Learning ID**: `learn-github-callstack-agent-device`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:12:49.274Z  
+> **Harvest Timestamp**: 2026-10-20T17:16:50.292Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mobile app automation and verification for AI coding agents. CLI, MCP server, and typed Node.js API for iOS, Android, HarmonyOS, TV, web, macOS, and Linux.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5072 stars
+- **Stars / Engagement**: 5080 stars
 
 ---
 
@@ -270,8 +270,11 @@ const SWIPE_NUMERIC_FLAG_MAP = new Map<string, 'count' | 'pauseMs'>([
   ['--count', 'count'],
   ['--pause-ms', 'pauseMs'],
 ]);
-const GESTURE_NUMERIC_FLAG_MAP = new Map<string, 'pointerCount'>([
+const GESTURE_NUMERIC_FLAG_MAP = new Map<string, 'pointerCount' | 'holdMs' | 'count' | 'pauseMs'>([
   ['--pointer-count', 'pointerCount'],
+  ['--hold-ms', 'holdMs'],
+  ['--count', 'count'],
+  ['--pause-ms', 'pauseMs'],
 ]);
 
 const TYPING_NUMERIC_FLAG_MAP = new Map<string, 'delayMs'>([['--delay-ms', 'delayMs']]);
@@ -288,6 +291,7 @@ const TYPING_NUMERIC_FLAG_MAP = new Map<string, 'delayMs'>([['--delay-ms', 'dela
  */
 const SCROLL_SCRIPT_FLAG_MAP = new Map<string, ScriptFlagEntry>([
   ['--until', { key: 'until', kind: 'string' }],
+  ['--max-passes', { key: 'maxPasses', kind: 'int' }],
 ]);
 
 /**
@@ -309,7 +313,7 @@ const WAIT_SCRIPT_FLAG_MAP = new Map<string, ScriptFlagEntry>([
 
 /** How one script flag token carries its value. */
 type ScriptFlagEntry = {
-  key: 'until' | 'snapshotRaw' | 'snapshotDepth' | 'snapshotScope';
+  key: 'until' | 'maxPasses' | 'snapshotRaw' | 'snapshotDepth' | 'snapshotScope';
   kind: 'boolean' | 'int' | 'string';
 };
 
@@ -459,12 +463,7 @@ export function formatDivergenceActionLabel(action: DivergenceActionLabelInput):
 
 /**
  * The identifying (non-text) positional tokens of a typing action:
- * `@ref`, a two-token point (`x y`), or a single selector. Everything after
- * is the typed value and is excluded.
- */
-function divergenceTypingTargetTokens(action: DivergenceActionLabelInput): string[] {
-  if (action.command === 'type') return [];
-  
+ * `@ref`, a two-token point (`x y`), or a single selector. Everything
 ```
 
 ### Core Architecture Module: `packages/capture-kit/src/capture-admission/session-state-slice.ts`
@@ -1687,11 +1686,11 @@ function remapPresentedIndexes(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3792** (2026-10-19): **CLI: an empty numeric flag value is read as 0**
-  *Symptoms*: ## What happens  An `int` or `number` flag given an empty or blank value is accepted as `0`. For flags with a minimum of `0`, the command runs with no error:  ```bash agent-device test ./suite --retries=          # runs with retries 0 agent-device test ./suite --retries ""        # same RETRIES= ; agent-device test ./suite --retries="$RETRIES" ```  The same applies to `--hold-ms`, `--delay-ms`, `--pause-ms`, `--interval-ms`, `--duration-ms`, `--jitter-px`, and `--settle-quiet`. For flags with a minimum of `1` or more, such as `--count=`, the error is `Invalid count: ` with an empty value, which does not name the cause.  ## Expected  The parser refuses the flag with `Flag --retries requires a value.`, as it already does for a missing value and for an empty `booleanOrString` inline value.  ## Cause  `parseFlagValue` in `src/cli/parser/args.ts` converts the value with `Number(value)` and checks only `Number.isFinite`. `Number('')` and `Number(' ')` are `0`.  ## Environment  main at `6e8c2a0`, Node 22.22.0, Linux. 
+- **Issue #3831** (2026-10-20): **Android smoke: first fixture capture stalls before any readable snapshot**
+  *Symptoms*: Android smoke intermittently fails before its first readable capture after opening the fixture. Diagnose and fix the capture/setup boundary without increasing the wait deadline or adding retry-only recovery.  Observed command: ```sh agent-device wait text "Automation lab" 10000 --platform android --serial emulator-5554 --session <session> --daemon-server-mode dual --json ```  Evidence: - PR #3824, `14f32fb218ac9e5608012bf6a5805652dc61f7fc`: [run 39287002936](https://github.com/callstack/agent-device/actions/runs/39287002936/job/118176526423). `smoke-android-emulator.test.ts:7:1`, scenario `smoke:automation-system`, `COMMAND_FAILED`, reason `wait_capture_stalled`, one capture, zero readable captures, deadline after 10439ms. - Earlier main, `a61556b8fd3268dd0b8032409ad0f0d06107019b`: [run 39025922562](https://github.com/callstack/agent-device/actions/runs/39025922562). Same command, scenario, assertion and reason; one capture, zero readable captures, 10232ms poll. - Both runs retain `android-artifacts`. Current failure screenshot shows Automation lab; the subsequent diagnostic snapshot succeeds with healthy android-helper capture (619ms helper / 1914ms snapshot). No crash appears in its crash buffer. - PR #3824 leaves Android runtime, integration scenarios, Android workflow/setup, package manifest and lockfile unchanged from its base `a661e43d83735fc74a02118b5698e5d45e03ee21`. That exact base's [Android run](https://github.com/callstack/agent-device/actions/runs/39280682477) pa
 
-- **Issue #3782** (2026-10-18): **Daemon startup: wait for a live daemon instead of a fixed 15 s deadline on slow or overloaded hosts**
-  *Symptoms*: ## Purpose  On a slow or overloaded host, the CLI kills a healthy daemon that is still starting. The result is `daemon_startup_failed`, and the run fails before any work starts. This happens on any CI that can clog: shared macOS runners, small Linux containers, Windows runners, and nested virtualization. It also happens on a developer machine under load. A slow host must make startup slower, not fail it.  #3342 records this failure class (more than 12 instances on unrelated diffs since 2026-10-08; re-runs at the same head pass). This issue is the fix contract for that class.  ## Current behavior (origin/main)  `startLocalDaemon` in `src/daemon-client/daemon-client-lifecycle.ts`:  - It sets one wall-clock deadline: `DAEMON_STARTUP_TIMEOUT_MS = 15_000` (line 83, used at line 480). - `waitForDaemonStartup` (line 818) polls until the daemon publishes a reachable `daemon.json`, or until the process exits, or until the deadline. - At the deadline, the client retires the daemon, even when the process is alive. A `timeout` result never retries (`retry` is true only for `early_exit`), so `DAEMON_STARTUP_ATTEMPTS = 2` does not help. Every report shows `startupAttempts: 1`. - No setting can change the 15 s budget.  Evidence from run [39019020372](https://github.com/callstack/agent-device/actions/runs/39019020372) (PR #3760, 2026-10-17):  - The step `pnpm clean:daemon` took 70 s on that runner, which shows that the host was overloaded. - The CLI spawned daemon pid 6849 at 09:30:03. The c
+- **Issue #3800** (2026-10-19): **iOS runner: isolate collapsed-tab occupancy test from prerequisite timeouts**
+  *Symptoms*: ## Purpose  Make the collapsed-tab occupancy test exercise its intended exhausted tree tier on slow CI hosts.  `testPlanMovesPastATreeTierWhoseCollapsedTabQueryCannotStart` expects reason `budget`. It sometimes receives `capture-failed` at `RunnerTests+SnapshotCapturePlanOccupancyTests.swift:529`.  ## Evidence  The raw job logs show the same assertion on three unrelated heads:  - #3791, `0295ee5f`: [job 117698966135](https://github.com/callstack/agent-device/actions/runs/39135463874/job/117698966135). - #3798, `7c105337`: [job 117668259465](https://github.com/callstack/agent-device/actions/runs/39125040019/job/117668259465). - #3785, `449b4d48`: [job 117419145731](https://github.com/callstack/agent-device/actions/runs/39040590033/job/117419145731).  The test file is identical across these heads. #3791 changes no Swift file. Its new daemon timing step runs after the XCTest suite.  The #3791 log records a one-second `snapshot_viewport` timeout before private AX recovery. The other failures record a tree-processing timeout. These paths produce `capture-failed` before the intended budget assertion. Host timing is a suspected trigger; it is not a proven complete cause.  A focused local loop passed 3/3 times on a separate iOS 26.2 simulator. No local red reproduction or fix is proven.  ## Required behavior  - Isolate prerequisite viewport, orientation, keyboard, and processing work from the deliberately delayed tree operation. - Preserve the assertion that the delayed operation was
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1708,1216 +1707,1481 @@ function remapPresentedIndexes(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72e79651` (2026-10-18)
-**Commit Message**: fix(daemon): replace fixed 15s startup kill with progress-aware startup budget (#3791)
+### Incident Patch 1: `4645ddd7` (2026-10-19)
+**Commit Message**: fix(daemon): preserve recorded ownership through stop and cleanup (#3806)
 
-* fix(daemon): wait for a slow daemon startup and fail with typed reasons
+* fix(daemon): keep stop and retirement within the observed ownership
 
-A client killed a healthy daemon that was still starting: the local
-startup used one 15 s wall-clock deadline, and a timeout never retried.
-On an overloaded host that is a failed run before any work starts
-(#3782, failure class #3342).
+* chore(gates): typecheck the daemon cleanup script
 
-- startLocalDaemon now waits while the spawned daemon stays alive, up to
-  a 120 s ceiling; AGENT_DEVICE_DAEMON_STARTUP_TIMEOUT_MS overrides it
-  for the CLI, MCP, and Node client alike.
-- The daemon records startup phase markers (modules-loaded,
-  lock-acquired, listening, registered) with timestamps in
-  daemon-startup-phases.jsonl beside its registration. A live daemon
-  that publishes no marker for 60 s is retired as stalled; one that
-  keeps progressing is waited for to the ceiling.
-- Failure details carry reason (startup-exited, startup-stalled,
-  startup-ceiling), the observed phase timings, and the effective
-  startupTimeoutMs. Each reason has its own hint.
-- help commands documents the variable and the three reasons.
+* fix(daemon): judge takeover ownership once inside the retirement
 
-* fix(daemon): give each startup its own marker file and retire
+readReusableLocalDaemon rejected an embedded or unknown owner before the
+central retirement could look at it, so a record whose owner had already
+exited wedged every managed command instead of recovering. Delete the two
+client guards and the resolveTimeoutRecovery ownership guard: ownership is
+judged inside stopAndRetireDaemon on every takeover route
+(readReusableLocalDaemon, replaceUnreachable, quiesceOrRetireUnresponsive,
+awaitDrainedDaemon and forceRetireDaemon alike). Map a retained owner
+reason to the existing typed errors once, in daemonRetirementError for the
+stop route and daemonTakeoverRetirementError for a takeover, and prove the
+managed route recovers a crashed embedded or unrecognized owner without
+signaling it.
 
-**File**: `.github/workflows/ios.yml` (modified, +8/-0)
+https://github.com/callstack/agent-device/pull/3806#issuecomment-6262194144
+
+* docs(daemon): name the reason a --clean stop refuses an unreadable record
+
+daemon stop --clean checks the record's owne
+
+**File**: `packages/daemon-contracts/src/daemon-process.ts` (modified, +16/-1)
 ```diff
-@@ -169,6 +169,14 @@ jobs:
-       - name: Preflight iOS runner through public CLI
-         run: |
-           pnpm clean:daemon
-+          # The public-SDK record is the cold-startup evidence; the CLI timer only wraps attach.
-+          node --input-type=module -e '
-+            const { performance } = await import("node:perf_hooks");
-+            const { ensureDaemon } = await import("./dist/src/index.js");
-+            const t0 = performance.now();
-+            const c = await ensureDaemon({ stateDir: process.env.AGENT_DEVICE_STATE_DIR });
-+            console.log(JSON.stringify({ phase: "daemon_cold_startup", started: c.started, pid: c.daemon.pid, durationMs: Math.round(performance.now() - t0) }));
-+          '
-           node bin/agent-device.mjs prepare ios-runner --platform ios --udid "${{ steps.ios-simulator.outputs.simulator-udid }}" --timeout "$AGENT_DEVICE_IOS_PREPARE_TIMEOUT_MS" --json
+@@ -103,7 +103,22 @@ export type DaemonTerminationResult =
+     }>
+   | Readonly<{
+       status: 'retained';
+-      reason: 'missing-start-time' | 'identity-unverified' | 'signal-failed' | 'exit-timeout';
++      reason:
++        | 'missing-start-time'
++        | 'identity-unverified'
++        /**
++         * A host owns this runtime and ends it. Callers that judge a registration answer this instead of
++         * calling {@link stopDaemonProcess} at all (`stopAndRetireDaemon`); this function signals
++         * whatever verified identity it is handed and never decides ownership itself.
++         */
++        | 'embedded-owner'
++        /**
++         * The record states an owner this build cannot read, so nothing proves this pid is a daemon of
++         * its own, and signalling it is refused. The other half of the same rule as `embedded-owner`.
++         */
++        | 'owner-unproven'
++        | 'signal-failed'
++        | 'exit-timeout';
+       signal?: NodeJS.Signals;
+     }>;
  
-       # The replay reuses the prepared runner in the same daemon. --debug keeps every step's request
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `packages/daemon-contracts/src/daemon-registration-owner.ts` (modified, +69/-17)
 ```diff
-@@ -4,6 +4,7 @@
+@@ -29,6 +29,8 @@ import type { DaemonCodeOrigin } from '@agent-device/host-kit/code-signature';
+ import {
+   resolveDaemonPaths,
+   type DaemonCapability,
++  type DaemonOwnership,
++  type ObservedDaemonIdentity,
+   type DaemonPaths,
+   type DaemonServerMode,
+ } from './daemon-resolution.ts';
+@@ -59,6 +61,7 @@ export type DaemonRegistrationFields = Readonly<{
+   capabilities?: readonly DaemonCapability[];
+   /** The provider plugin inventory, so a client can read what this daemon registered. */
+   plugins?: readonly PluginInventoryEntry[];
++  ownership?: DaemonOwnership;
+ }>;
+ type DaemonRegistrationRemoval =
+   | Readonly<{ state: 'removed' }>
+@@ -333,7 +336,13 @@ function requirePrivateReplayState(
  
- - The PNG worker no longer calls `process.emitWarning` when it is unavailable, and it starts with an empty environment (`env: {}`). The daemon registers a sink when it pre-warms the worker, so every transition to unavailable (spawn failure, missing entry, load error, exit) leaves exactly one `png_worker_unavailable` event, with a typed `reason` (`entry-not-found`, `spawn-failed`, `worker-error`, `worker-exited`) and its `detail`, in `daemon.log`, with or without `--debug`. Requests then continue on the in-process fallback without repeating the event.
- - Behavior change: `resolveHubAppReference`, shipped through `agent-device/plugins/webdriver`, now needs `cwd` to resolve a relative app path. Without it the call fails with `INVALID_ARGS` and `details.reason: provider_app_cwd_missing`; it used to resolve against the process's working directory. Absolute paths, URLs and provider references are unaffected. The daemon fills it from the client's working directory (or its host's) for every provider lease request, so `connect` and `lease_allocate` are unchanged.
-+- A client starting a local daemon now waits while the daemon process stays alive and keeps publishing startup progress, so an overloaded host makes startup slower instead of failing it. The wait stops at a ceiling of 120 s by default; set `AGENT_DEVICE_DAEMON_STARTUP_TIMEOUT_MS` to a positive integer number of milliseconds to override it for the CLI, MCP, and Node clients alike. The variable is read only when the client must start a daemon; a value that is not a positive integer fails with `INVALID_ARGS` before the daemon spawns, and a client that only attaches to or reuses a running daemon never reads it. A failed startup names the outcome in `error.details.reason`, and you should branch on it, never on the message: `startup-exited` (the process ended before registering), `startup-stalled` (alive but no startup progress for a fixed 60 s window, which the ceiling variable does not change; the daemon is stopped), or `startup-ceiling` (a startup was still live — this client's daemon or another client's — when the ceiling passed; the client stops its own launch and never signals another client's live daemon). `details.phases` carries the startup phase timings the client observed and `details.startupTimeoutMs` the effective ceiling.
- - The `daemon-not-running` hint now always names `--state-dir <dir>`, and a daemon force-retired for outlasting its drain is reported as `Replaced unreachable daemon` instead of `Replaced idle daemon`. `daemon-drain-timeout` and the post-drain force retire are documented in the client API and `help`.
- - Fix `ensureDaemon()`, the CLI and MCP killing a daemon they had just asked to leave. After the daemon answers the quiesce request with `draining`, the client now waits up to 60 s for it to exit by itself and clean up its registration, so plugin disposal and lease finalization finish (on Windows a signal ends the process outright, and on POSIX a drain longer than 3 s was killed). A daemon still running at the deadline that fails its liveness probes is force-retired; one that still answers is left running and the call fails with `details.reason: 'daemon-drain-timeout'`, with a hint naming `agent-device daemon stop --state-dir <path>`.
- - `@agent-device/testmu` is now a version 2 provider plugin. `import testmu from '@agent-device/testmu'` gives a factory, `testmu({ credentials: { username, accessKey } })`, that reads those credentials instead of `LT_USERNAME` and `LT_ACCESS_KEY`; without options it reads the variables as before. The package still declares the version 1 plugin entry, so `agent-device plugins add @agent-device/testmu` keeps working on hosts that predate the version 2 contract.
-```
-
-**File**: `packages/daemon-contracts/package.json` (modified, +4/-0)
-```diff
-@@ -44,6 +44,10 @@
-       "types": "./src/daemon-shutdown-report.ts",
-       "default": "./src/daemon-shutdown-report.ts"
-     },
-+    "./daemon-startup-phases": {
-+      "types": "./src/daemon-startup-phases.ts",
-+      "default": "./src/daemon-startup-phases.ts"
-+    },
-     "./daemon-stop": {
-       "types": "./src/daemon-stop.ts",
-       "default": "./src/daemon-stop.ts"
-```
-
-**File**: `packages/daemon-contracts/src/daemon-registration-owner.ts` (modified, +2/-0)
-```diff
-@@ -44,6 +44,7 @@ import {
-   resolveDaemonShutdownReportPath,
-   type DaemonShutdownOutcome,
- } from './daemon-shutdown-report.ts';
-+import { sweepDeadDaemonStartupPhasesFiles } from './daemon-startup-phases.ts';
- 
- export const DAEMON_STARTUP_EXIT_CODES = Object.freeze({ busy: 75, unproven: 78 });
- export type DaemonRegistrationFields = Readonly<{
-@@ -85,6 +86,7 @@ export async function tryAcquireDaemonRegistration(
-   try {
-     acquisition.assertHeld();
-     fs.rmSync(resolveDaemonShutdownReportPath(boundPaths.baseDir), { force: true });
-+    sweepDeadDaemonStartupPhasesFiles(boundPaths.baseDir);
-   } catch (error) {
-     await releaseRegistrationAfterFailure(acquisition, error, boundPaths.logPath);
+ export type DaemonRetirementInput = Readonly<{
+   paths: DaemonPaths;
+-  observed: OwnerIdentity | null;
++  /**
++   * The lifetime a caller proved the daemon is, with the owner that record stated at the read. A caller
++   * that launched the process itself states `detached`, which is what it knows; a caller that read
++   * `daemon.json` passes what that record stated. Signalling on a guessed owner is the one thing this
++   * module must not do, so no caller may leave this out.
++   */
++  observed: ObservedDaemonIdentity | null;
+   termTimeoutMs?: number;
+   killTimeoutMs?: number;
+   lockTimeoutMs?: number;
+@@ -363,6 +372,13 @@ export type DaemonRetirementResult =
+         | 'lock-busy'
+         | 'registration-replaced'
+         | 'metadata-unreadable'
++        /** A host owns the observed runtime; only that host, or its shutdown request, ends it. */
++        | 'embedded-owner'
++        /**
++         * The record states an owner this build cannot read, so nothing proves the pid it names is a
++         * daemon of its own, and signalling it is refused.
++         */
++        | 'owner-unproven'
+         | 'retirement-unconfirmed';
+       error?: NormalizedError;
+       repairCommitFailure?: RepairCommitFailure;
+@@ -395,14 +411,24 @@ export async function stopAndRetireDaemon(
+       error: normalizeError(error),
+     };
    }
++  // Signalling needs a proven owner, and the observation carries the one its record stated: a record
++  // naming a host describes a runtime that host ends, and a record stating an owner this build cannot
++  // read says nothing about what is safe to end. Only a proven detached daemon is signaled.
++  const owner = observed?.ownership;
+   const retirement = retireObservedDaemon(
+     { ...input, observed },
+-    (identity) =>
+-      stopDaemonProcess(identity, {
+-        mode: input.mode,
+-        termTimeoutMs: input.termTimeoutMs ?? 3_000,
+-        killTimeoutMs: input.killTimeoutMs ?? 1_000,
+-      }),
++    observed && owner !== 'detached'
++      ? (identity) =>
++          proveExitWithoutSignaling(
++            identity,
++            owner === 'embedded' ? 'embedded-owner' : 'owner-unproven',
++          )
++      : (identity) =>
++          stopDaemonProcess(identity, {
++            mode: input.mode,
++            termTimeoutMs: input.termTimeoutMs ?? 3_000,
++            killTimeoutMs: input.killTimeoutMs ?? 1_000,
++          }),
+     owned,
+     input.startupJoinTimeoutMs ?? 1_000,
+   );
+@@ -415,16 +441,16 @@ export async function stopAndRetireDaemon(
+ 
+ function confirmOwnedStartupIdentity(
+   owned: PrivateReplayState,
+-  observed: OwnerIdentity | null,
+-): OwnerIdentity | null {
++  observed: ObservedDaemonIdentity | null,
++): ObservedDaemonIdentity | null {
+   if (!observed) {
+     if (owned.startups.length === 0) return null;
+     throw unownedStartupError();
+   }
+   const startup = owned.startups.find(({ launch }) => launch.pid === observed.pid);
+   if (!startup) throw unownedStartupError();
+   const { launch } = startup;
+-  const identity = observed.startTime ? observed : launch.readIdentity();
++  const identity = observed.startTime ? observed : { ...observed, ...launch.readIdentity() };
+   if (launch.startTime && launch.startTime === identity.startTime) return identity;
+   throw unownedStartupError();
+ }
+@@ -439,13 +465,33 @@ function unownedStartupError(): AppError {
+ export async function recoverAbandonedDaemonRegistration(
+   input: DaemonRetirementInput,
+ ): Promise<DaemonRetirementResult> {
+-  return await retireObservedDaemon(input, async (identity) => {
+-    if (!identity.startTime?.trim()) return { status: 'retained', reason: 'missing-start-time' };
+-    const confirmed = { pid: identity.pid, startTime: identity.startTime };
+-    return (await waitForDaemonExit(confirmed, { timeoutMs: 0 })).exited
+-      ? { status: 'exited', identity: confirmed, mode: 'already-exited' }
+-      : { status: 'retained', reason: 'identity-unverified' };
+-  });
++  return await retireObservedDaemon(input, (identity) => proveExitWithoutSignaling(identity));
++}
++
++/**
++ * Termination refusals that name an owner's rule rather than a lifetime this caller could not prove:
++ * both mean "nobody may signal this process", and both travel to the caller at the top level.
++ */
++function isOwnerRefusal(
++  
 ```
 
-**File**: `packages/daemon-contracts/src/daemon-startup-phases.test.ts` (added, +144/-0)
+**File**: `packages/daemon-contracts/src/daemon-registration-status.test.ts` (modified, +37/-0)
 ```diff
-@@ -0,0 +1,144 @@
-+import { appendFile, readFile, writeFile } from 'node:fs/promises';
-+import { spawnSync } from 'node:child_process';
-+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-+import path from 'node:path';
-+import { expect, test } from 'vitest';
-+import { tryAcquireDaemonRegistration } from '@agent-device/daemon-contracts/daemon-registration-owner';
-+import {
-+  readDaemonStartupPhaseMarkers,
-+  recordDaemonStartupMarker,
-+  removeDaemonStartupPhasesFile,
-+  resolveDaemonStartupPhasesPath,
-+} from '@agent-device/daemon-contracts/daemon-startup-phases';
-+import { resolveDaemonPaths } from '@agent-device/daemon-contracts/daemon-resolution';
-+import { mkdtempForTest } from '@agent-device/test-kit';
-+
-+test('per-launch marker files: a fresh launch never reads an older launch phases', async () => {
-+  const stateDir = await mkdtempForTest('agent-device-markers-');
-+  const first = resolveDaemonStartupPhasesPath(stateDir, 1111);
-+  const second = resolveDaemonStartupPhasesPath(stateDir, 2222);
-+  recordDaemonStartupMarker(first, 'lock-acquired');
-+  expect(second).not.toBe(first);
-+  expect(existsSync(second)).toBe(false);
-+  recordDaemonStartupMarker(second, 'modules-loaded');
-+  const firstPhases = readDaemonStartupPhaseMarkers(readFileSync(first, 'utf8'));
-+  const secondPhases = readDaemonStartupPhaseMarkers(readFileSync(second, 'utf8'));
-+  expect(Object.keys(firstPhases)).toEqual(['lock-acquired']);
-+  expect(Object.keys(secondPhases)).toEqual(['modules-loaded']);
-+});
-+
-+test('marker reading keeps the earliest record when a phase replays after a later one', () => {
-+  const text = [
-+    '{"data":{"startupPhase":"listening","timestampMs":500}}',
-+    '{"data":{"startupPhase":"lock-acquired","timestampMs":20}}',
-+    '{"data":{"startupPhase":"lock-acquired","timestampMs":35}}',
-+  ].join('\n');
-+  const phases = readDaemonStartupPhaseMarkers(text);
-+  expect(phases['lock-acquired']).toBe(20);
-+  expect(phases.listening).toBe(500);
-+});
-+
-+test('marker reading ignores unknown phases and unparsable lines', () => {
-+  const text = [
-+    '{"data":{"startupPhase":"heartbeat","timestampMs":10}}',
-+    '{"data":{"startupPhase":"registered","timestampMs":"7"}}',
-+    'not json',
-+    '{"data":{"startupPhase":"listening","timestampMs":30}}',
-+  ].join('\n');
-+  expect(readDaemonStartupPhaseMarkers(text)).toEqual({ listening: 30 });
-+});
-+
-+test('the producer lifetime claim empties a same-pid leftover', async () => {
-+  // Pid reuse after both the old client and daemon died before either cleanup: the entry removes
-+  // its record before its first marker; this child repeats that producer sequence itself.
-+  const stateDir = await mkdtempForTest('agent-device-markers-');
-+  writeFileSync(path.join(stateDir, 'package.json'), '{"type":"module"}');
-+  const entry = path.join(stateDir, 'claim-producer.js');
-+  const registrationUrl = new URL('./daemon-startup-phases.ts', import.meta.url).href;
-+  writeFileSync(
-+    entry,
-+    `import { removeDaemonStartupPhasesFile, recordDaemonStartupMarker, resolveDaemonStartupPhasesPath } from ${JSON.stringify(registrationUrl)};
-+const file = resolveDaemonStartupPhasesPath(${JSON.stringify(stateDir)}, process.pid);
-+recordDaemonStartupMarker(file, 'listening');
-+recordDaemonStartupMarker(file, 'registered');
-+removeDaemonStartupPhasesFile(file);
-+recordDaemonStartupMarker(file, 'modules-loaded');
-+`,
-+  );
-+  const child = spawnSync(process.execPath, ['--experimental-strip-types', entry], {
-+    encoding: 'utf8',
+@@ -66,12 +66,49 @@ test('a live registered daemon reports its identity and the plugin inventory it
+     state: 'running',
+     stateDir,
+     pid: owner.pid,
++    // A record that predates ownership is a detached daemon, which is what a reader must be able to
++    // rely on before it decides a stop may signal this pid.
++    ownership: 'detached',
+     version: '0.21.30',
+     transport: 'http',
+     plugins: [ACTIVE, FAILED, { state: 'unknown' }],
+   });
+ });
+ 
++test('a record published by a host reports the ownership that limits what a stop may do', () => {
++  const stateDir = mkdtempForTestSync('agent-device-daemon-status-');
++  const owner = readCurrentOwnerIdentity();
++  publish(stateDir, {
++    token: 't',
++    port: 1,
++    pid: owner.pid,
++    processStartTime: owner.startTime,
++    ownership: 'embedded',
 +  });
-+  if (child.status !== 0) throw new Error(child.stderr);
-+  const phases = readDaemonStartupPhaseMarkers(
-+    readFileSync(resolveDaemonStartupPhasesPath(stateDir, child.pid!), 'utf8'),
-+  );
-+  expect(phases).toEqual({ 'modules-loaded': expect.any(Number) });
++
++  expect(readDaemonStatus(resolveDaemonPaths(stateDir))).toMatchObject({
++    state: 'running',
++    pid: owner.pid,
++    ownership: 'embedded',
++  });
 +});
 +
-+test.each([
-+  ['remove', (p: string, cb: (e: unknown) => void) => removeDaemonStartupPhasesFile(p, cb)],
-+  [
-+    'record',
-+    (p: string, cb: (e: unknown) => void) => recordDaemonStartupMarker(p, 'modules-loaded', cb),
-+  ],
-+] as const)('a refused %s reports through the callback instead of throwing', async (_name, run) => {
-+  const stateDir = await mkdtempForTest('agent-device-markers-');
-+  const markerPath = resolveDaemonStartupPhasesPath(stateDir, 777);
-+  mkdirSync(markerPath, { recursive: true });
-+  const reported: unknown[] = [];
-+  expect(() =>
-+    run(markerPath, (error) => {
-+      reported.push(error);
-+    }),
-+  ).not.toThrow();
-+  expect(reported).toHaveLength(1);
-+  expect(reported[0]).toHaveProperty('message');
++test('a record that claims an ownership nobody knows reads as an unrecognized one', () => {
++  const stateDir = mkdtempForTestSync('agent-device-daemon-status-');
++  const owner = readCurrentOwnerIdentity();
++  publish(stateDir, {
++    token: 't',
++    port: 1,
++    pid: owner.pid,
++    processStartTime: owner.startTime,
++    ownership: 'sideways',
++  });
++
++  // An ownership value outside the vocabulary says nothing about who owns the process, and `detached`
++  // is the one reading a caller may act on by signalling it. Status says it cannot recognize the owner.
++  expect(readDaemonStatus(resolveDaemonPaths(stateDir)).ownership).toBe('unknown');
 +});
 +
-+test('acquiring the registration retires files of dead or unowned pids only', async () => {
-+  const paths = resolveDaemonPaths(await mkdtempForTest('agent-device-markers-'));
-+  const dead = resolveDaemonStartupPhasesPath(paths.baseDir, spawnDeadPid());
-+  const own = resolveDaemonStartupPhasesPath(paths.baseDir, process.pid);
-+  const unparseable = path.join(paths.baseDir, 'daemon-startup-phases-.jsonl');
-+  const legacy 
+ test('a record whose process is gone or was replaced is not a running daemon', () => {
+   const stateDir = mkdtempForTestSync('agent-device-daemon-status-');
+   const owner = readCurrentOwnerIdentity();
 ```
 
-**File**: `packages/daemon-contracts/src/daemon-startup-phases.ts` (added, +137/-0)
+**File**: `packages/daemon-contracts/src/daemon-registration.ts` (modified, +99/-32)
 ```diff
-@@ -0,0 +1,137 @@
+@@ -8,11 +8,14 @@ import {
+   type OwnerIdentity,
+ } from '@agent-device/host-kit/process';
+ import {
++  readDaemonOwnership,
+   readDaemonRecord,
+   readRecordedDaemonTransport,
+   resolveDaemonPaths,
++  type DaemonOwnership,
+   type DaemonPaths,
+   type DaemonServerMode,
++  type ObservedDaemonIdentity,
+ } from './daemon-resolution.ts';
+ 
+ /**
+@@ -22,8 +25,8 @@ import {
+  * however alive it is.
+  */
+ export function readRegisteredDaemonIdentity(infoPath: string): OwnerIdentity | null {
+-  const record = readRegistration(infoPath);
+-  return record.status === 'registered' ? record.identity : null;
++  const reading = readDaemonRegistration(infoPath);
++  return reading.status === 'present' ? reading.identity : null;
+ }
+ 
+ export function processLockHoldsDaemonIdentity(
+@@ -44,26 +47,29 @@ type ParsedRegistration = { pid: number | null; startTime: string | null };
+ type DaemonRecord = Readonly<Record<string, unknown>>;
+ 
+ /**
+- * Whether `daemon.json` registers a daemon: a projection of the one record reader that adds the
+- * identity, so a record that names no owner is `ownerless` however it came to.
++ * The one read of `daemon.json` behind every projection of that record in this module. `identity` is
++ * null for a record that names no process, and `ownership` is what the record states, read the way a
++ * reader must read it before anything is signaled.
+  */
+-function readRegistration(
+-  infoPath: string,
+-):
+-  | Readonly<{ status: 'registered'; identity: OwnerIdentity; record: DaemonRecord }>
+-  | Readonly<{ status: 'absent' | 'unreadable' | 'ownerless' }> {
++type DaemonRegistrationReading =
++  | Readonly<{
++      status: 'present';
++      record: DaemonRecord;
++      identity: OwnerIdentity | null;
++      ownership: DaemonOwnership;
++    }>
++  | Readonly<{ status: 'absent' | 'unreadable' | 'invalid' }>;
++
++function readDaemonRegistration(infoPath: string): DaemonRegistrationReading {
+   const read = readDaemonRecord(infoPath);
+-  if (read.status !== 'present') {
+-    return { status: read.status === 'invalid' ? 'ownerless' : read.status };
+-  }
++  if (read.status !== 'present') return { status: read.status };
+   const parsed = parseRegistration(read.record);
+-  return parsed.pid === null
+-    ? { status: 'ownerless' }
+-    : {
+-        status: 'registered',
+-        identity: { pid: parsed.pid, startTime: parsed.startTime },
+-        record: read.record,
+-      };
++  return {
++    status: 'present',
++    record: read.record,
++    identity: parsed.pid === null ? null : { pid: parsed.pid, startTime: parsed.startTime },
++    ownership: readDaemonOwnership(read.record.ownership),
++  };
+ }
+ 
+ function parseRegistration(parsed: {
+@@ -100,15 +106,18 @@ export function readRegisteredDaemonOwnership(
+   infoPath: string,
+   owner: OwnerIdentity | null,
+ ): RegisteredDaemonOwnership {
+-  const record = readRegistration(infoPath);
+-  if (record.status !== 'registered') return { state: record.status };
++  const reading = readDaemonRegistration(infoPath);
++  if (reading.status !== 'present')
++    return { state: reading.status === 'invalid' ? 'ownerless' : reading.status };
++  // A record that names no process describes nothing a caller can own, however it came to that.
++  if (!reading.identity) return { state: 'ownerless' };
+   if (!owner) return { state: 'unproven' };
+-  if (ownerIdentityDiffers(record.identity, owner)) {
+-    return { state: 'replaced', identity: record.identity };
++  if (ownerIdentityDiffers(reading.identity, owner)) {
++    return { state: 'replaced', identity: reading.identity };
+   }
+   // Two missing start times agree, and agreeing on nothing is not ownership: this is the pid-only
+   // fallback the fence exists to refuse, so it falls to `unproven` rather than to `match`.
+-  if (ownerIdentityMatches(record.identity, owner) && record.identity.startTime !== null) {
++  if (ownerIdentityMatches(reading.identity, owner) && reading.identity.startTime !== null) {
+     return { state: 'match' };
+   }
+   return { state: 'unproven' };
+@@ -125,6 +134,11 @@ export type DaemonStatus = Readonly<{
+   pid?: number;
+   version?: string;
+   transport?: DaemonServerMode;
++  /**
++   * Who owns the process this record names, and so who may end it. Only a running record can say: a
++   * stopped one names no live process to own.
++   */
++  ownership?: DaemonOwnership;
+   /**
+    * The provider plugin inventory the running daemon published, as recorded; `readPluginInventory`
+    * validates it where it is shown, so this module stays out of the inventory vocabulary's closure.
+@@ -145,16 +159,15 @@ export function isUnusableRecord(status: Pick<DaemonStatus, 'state'>): boolean {
+  */
+ export function readDaemonStatus(paths: DaemonPaths): DaemonStatus {
+   const base = { stateDir: paths.baseDir } as const;
+-  const read = readDaemonRecord(paths.infoPath);
+-  if (read.status !== 'present') {
+-    return read.status === 'absent'
++  const reading = readDaemonRegistration(paths.infoPath);
++  if (reading.status !== 'present') 
+```
+
+**File**: `packages/daemon-contracts/src/daemon-resolution-quiesce.test.ts` (modified, +54/-14)
+```diff
+@@ -1,6 +1,13 @@
+ import assert from 'node:assert/strict';
+ import { test } from 'vitest';
+-import { readDaemonQuiesceCensus, readDaemonQuiesceFence } from './daemon-resolution.ts';
++import {
++  buildDaemonLifecycleRequest,
++  DAEMON_LIFECYCLE_COMMANDS,
++  readDaemonLifecycleCensus,
++  readDaemonLifecycleFence,
++  readDaemonLifecycleMode,
++  readDaemonOwnership,
++} from './daemon-resolution.ts';
+ 
+ test('a census is read only when every count is a non-negative integer', () => {
+   const census = {
+@@ -10,30 +17,63 @@ test('a census is read only when every count is a non-negative integer', () => {
+     repairSessions: 2,
+     leases: 3,
+   };
+-  assert.deepEqual(readDaemonQuiesceCensus({ reason: 'daemon-busy', ...census }), census);
++  assert.deepEqual(readDaemonLifecycleCensus({ reason: 'daemon-busy', ...census }), census);
+ 
+-  for (const malformed of [-1, 1.5, '1', Number.NaN, Number.POSITIVE_INFINITY, null]) {
+-    assert.equal(readDaemonQuiesceCensus({ ...census, leases: malformed }), undefined);
++  // 2 ** 53 is an integer `Number.isInteger` accepts and arithmetic on it gets wrong, so the census
++  // reader has to be the one that refuses it.
++  for (const malformed of [-1, 1.5, '1', Number.NaN, Number.POSITIVE_INFINITY, 2 ** 53, null]) {
++    assert.equal(readDaemonLifecycleCensus({ ...census, leases: malformed }), undefined);
+   }
+-  assert.equal(readDaemonQuiesceCensus({ sessions: 1 }), undefined);
++  assert.equal(readDaemonLifecycleCensus({ sessions: 1 }), undefined);
+   // Only a daemon that is starting up says so; an older one omits the field.
+-  assert.equal(readDaemonQuiesceCensus({ ...census, startingUp: true })?.startingUp, true);
++  assert.equal(readDaemonLifecycleCensus({ ...census, startingUp: true })?.startingUp, true);
+   const { startingUp: _omitted, ...withoutStartingUp } = census;
+-  assert.equal(readDaemonQuiesceCensus(withoutStartingUp)?.startingUp, false);
+-  assert.equal(readDaemonQuiesceCensus({ ...census, startingUp: 'yes' }), undefined);
+-  assert.equal(readDaemonQuiesceCensus(undefined), undefined);
++  assert.equal(readDaemonLifecycleCensus(withoutStartingUp)?.startingUp, false);
++  assert.equal(readDaemonLifecycleCensus({ ...census, startingUp: 'yes' }), undefined);
++  assert.equal(readDaemonLifecycleCensus(undefined), undefined);
+ });
+ 
+ test('a fence names an integer pid and a start time or null, nothing else', () => {
+-  assert.deepEqual(readDaemonQuiesceFence({ pid: 7, processStartTime: 'Fri' }), {
++  assert.deepEqual(readDaemonLifecycleFence({ pid: 7, processStartTime: 'Fri' }), {
+     pid: 7,
+     processStartTime: 'Fri',
+   });
+-  assert.deepEqual(readDaemonQuiesceFence({ pid: 7, processStartTime: null }), {
++  assert.deepEqual(readDaemonLifecycleFence({ pid: 7, processStartTime: null }), {
+     pid: 7,
+     processStartTime: null,
+   });
+-  assert.equal(readDaemonQuiesceFence({ pid: 7 }), undefined);
+-  assert.equal(readDaemonQuiesceFence({ pid: 7.5, processStartTime: null }), undefined);
+-  assert.equal(readDaemonQuiesceFence('7'), undefined);
++  assert.equal(readDaemonLifecycleFence({ pid: 7 }), undefined);
++  assert.equal(readDaemonLifecycleFence({ pid: 7.5, processStartTime: null }), undefined);
++  assert.equal(readDaemonLifecycleFence('7'), undefined);
++});
++
++test('a quiesce carries the original instance fence', () => {
++  const fence = { pid: 7, processStartTime: 'Fri Oct 17 09:00:00 2026' };
++  for (const mode of ['quiesce'] as const) {
++    const request = buildDaemonLifecycleRequest({ mode, token: 't0ken', fence, requestId: 'r-1' });
++    assert.equal(request.command, DAEMON_LIFECYCLE_COMMANDS[mode]);
++    assert.deepEqual(request.input, fence);
++    assert.equal(request.meta?.requestId, 'r-1');
++    assert.equal(readDaemonLifecycleMode(request.command), mode);
++  }
++  // A request that is not one of the two is dispatched like any other command, including a name the
++  // lookup would answer for through the object prototype.
++  assert.equal(readDaemonLifecycleMode('open'), undefined);
++  assert.equal(readDaemonLifecycleMode('toString'), undefined);
++  assert.equal(readDaemonLifecycleMode('__proto__'), undefined);
++});
++
++test('ownership names who may end the process, and an older record is detached', () => {
++  assert.equal(readDaemonOwnership('embedded'), 'embedded');
++  assert.equal(readDaemonOwnership('detached'), 'detached');
++  // An absent field is every record written before this field existed, and those are daemons that are
++  // their own process.
++  for (const absent of [undefined]) {
++    assert.equal(readDaemonOwnership(absent), 'detached');
++  }
++  // Anything else is its own state: a caller that means to signal a pid reads `unknown` as a thing it
++  // must not do, not as permission to treat the record like a detached daemon's.
++  for (const unrecognized of [null, 'owned', 7, '', 'EMBEDDED', 2 ** 53]) {
++    assert.equal(readDaemonOwnership(unrecognized), 'unknown', String(unrecognized));
++  }
+ });
+```
+
+**File**: `packages/daemon-contracts/src/daemon-resolution.ts` (modified, +95/-16)
+```diff
+@@ -7,6 +7,7 @@ import { AppError } from '@agent-device/kernel/errors';
+ import { type EnvMap } from '@agent-device/kernel/source-value';
+ 
+ import type { DaemonWireRequest } from '@agent-device/contracts/command';
++import type { OwnerIdentity } from '@agent-device/host-kit/process';
+ import type { DaemonServerMode, DaemonTransportPreference } from '@agent-device/kernel/contracts';
+ export type { DaemonServerMode, DaemonTransportPreference };
+ 
+@@ -146,35 +147,108 @@ export function resolveDaemonTransportPreference(
+   return 'auto';
+ }
+ 
+-// The quiesce request is how a client asks an idle daemon to leave so a compatible one can take
+-// its state directory. The client and the daemon share this vocabulary, so neither owns it.
+-
+ /** What a daemon can do beyond the base RPC contract, published in its `daemon.json`. */
+ export const DAEMON_CAPABILITIES = ['quiesce'] as const;
+ export type DaemonCapability = (typeof DAEMON_CAPABILITIES)[number];
+ 
+-export const DAEMON_QUIESCE_COMMAND = 'daemon_quiesce';
++/**
++ * Who owns the process a registration names, and so who may end it.
++ *
++ * - `detached`: the daemon is its own process, which a stop may signal. This is what a record that
++ *   predates the field names.
++ * - `embedded`: the host that started the runtime owns the process. Nothing in the central
++ *   lifecycle signals that PID, not even hung recovery or a forced stop: the host closes the
++ *   runtime through its own close, and an external stop refuses it.
++ * - `unknown`: the record states an owner this build does not recognize, so no process may be
++ *   signaled on its strength. Signalling on a guess could end a host process, and a value this
++ *   build cannot read is exactly the case where the safe answer is to do nothing.
++ */
++const DAEMON_OWNERSHIPS = ['detached', 'embedded', 'unknown'] as const;
++export type DaemonOwnership = (typeof DAEMON_OWNERSHIPS)[number];
++
++/**
++ * The ownership a process can state about *itself*: `unknown` is what a reader answers for a record it
++ * cannot place, never what a runtime knows about its own process. So a runtime starts as detached or
++ * embedded, and the refusal for a record this build cannot read belongs to the code that reads the
++ * record — see {@link readDaemonOwnership}.
++ */
++export type DaemonRuntimeOwnership = Exclude<DaemonOwnership, 'unknown'>;
++
++/**
++ * The lifetime a lifecycle path has proved the daemon on a state directory is, together with the owner
++ * its record stated at that read. Ownership travels inside the observation because a pid only says what
++ * is safe to end once its owner is known, and two reads of `daemon.json` can name different pairs.
++ */
++export type ObservedDaemonIdentity = OwnerIdentity & {
++  ownership: DaemonOwnership;
++};
++
++/**
++ * The ownership a `daemon.json` field records. An absent field is the pre-existing detached daemon —
++ * every record written before #3757 states no owner and describes a daemon that is its own process.
++ * A field that states something else is `unknown`, and is never folded into `detached`: the two read
++ * the same way to a caller that is about to signal a pid, and only one of them is safe to act on.
++ */
++export function readDaemonOwnership(value: unknown): DaemonOwnership {
++  return DAEMON_OWNERSHIPS.includes(value as DaemonOwnership)
++    ? (value as DaemonOwnership)
++    : value === undefined
++      ? 'detached'
++      : 'unknown';
++}
++
++/** The command carrying the fenced lifecycle request. */
++export const DAEMON_LIFECYCLE_COMMANDS = {
++  /** Stop if idle: refuses while the daemon holds a request, a session, or a lease. */
++  quiesce: 'daemon_quiesce',
++} as const;
++export type DaemonLifecycleMode = keyof typeof DAEMON_LIFECYCLE_COMMANDS;
++
++/**
++ * The lifecycle mode `command` names, or `undefined` for every request that is not one. Compared
++ * explicitly, because a lookup in an object would answer for a command like `toString` too.
++ */
++export function readDaemonLifecycleMode(command: string): DaemonLifecycleMode | undefined {
++  switch (command) {
++    case DAEMON_LIFECYCLE_COMMANDS.quiesce:
++      return 'quiesce';
++    default:
++      return undefined;
++  }
++}
+ 
+ /** The reason a daemon gives every request it refuses once it has begun to leave. */
+ export const DAEMON_SHUTTING_DOWN_REASON = 'daemon_shutting_down';
+ 
+-export const DAEMON_QUIESCE_REASONS = {
++/** Why a daemon refuses a lifecycle request: one entry per rule the admission seam enforces. */
++export const DAEMON_LIFECYCLE_REASONS = {
++  /** A quiesce found the daemon holding work, so nothing was accepted. */
+   busy: 'daemon-busy',
++  /** The request names a different daemon instance than the one answering it. */
+   instanceMismatch: 'daemon-instance-mismatch',
++  /** A quiesce was refused because a host owns this runtime and ends it through its own close. */
++  ownerEmbedded: 'daemon-owner-embedded',
+ } as const;
+ 
+-/** The daemon instance a quiesce request is addressed to; any other instance refuses it. */
+-
+```
+
+**File**: `packages/daemon-contracts/src/daemon-stop.test.ts` (modified, +38/-21)
+```diff
+@@ -7,7 +7,7 @@ vi.mock('./daemon-registration-owner.ts', () => ({
+   stopAndRetireDaemon: mocks.stopAndRetireDaemon,
+ }));
+ 
+-import { resolveDaemonPaths } from './daemon-resolution.ts';
++import { resolveDaemonPaths, type ObservedDaemonIdentity } from './daemon-resolution.ts';
+ import { stopDaemon } from './daemon-stop.ts';
+ 
+ afterEach(() => {
+@@ -18,35 +18,45 @@ function createDaemonPaths(): ReturnType<typeof resolveDaemonPaths> {
+   const stateDir = mkdtempForTestSync('agent-device-daemon-stop-');
+   const paths = resolveDaemonPaths(stateDir);
+   fs.mkdirSync(paths.baseDir, { recursive: true });
++  // The record's contents are the caller's business: a stop hands over the lifetime and owner its own
++  // read proved, so this fixture only has to put a record on disk for a retirement to act on.
+   fs.writeFileSync(paths.infoPath, JSON.stringify({ pid: 123, processStartTime: 'start-time' }));
+   return paths;
+ }
+ 
++/** The lifetime the record above names, which is what a caller hands to the retirement it routes. */
++const observed: ObservedDaemonIdentity = {
++  pid: 123,
++  startTime: 'start-time',
++  ownership: 'detached',
++};
++
+ function removeDaemonPaths(paths: ReturnType<typeof resolveDaemonPaths>): void {
+   fs.rmSync(paths.baseDir, { recursive: true, force: true });
+ }
+ 
+-test('reports not-running when daemon metadata is absent', async () => {
++test('a caller that read no lifetime reports not-running without retiring', async () => {
+   const paths = resolveDaemonPaths(mkdtempForTestSync('agent-device-daemon-stop-'));
+ 
+   try {
+-    const result = await stopDaemon({ paths });
++    const result = await stopDaemon({ paths, observed: null });
+     expect(result).toMatchObject({ stopped: false, mode: 'not-running' });
+   } finally {
+     removeDaemonPaths(paths);
+   }
++  expect(mocks.stopAndRetireDaemon).not.toHaveBeenCalled();
+ });
+ 
+ test('retained identity verification is reported as failure without known cleanup', async () => {
+   const paths = createDaemonPaths();
+   mocks.stopAndRetireDaemon.mockResolvedValue(retainedExit('identity-unverified'));
+-  await expect(stopDaemon({ paths })).rejects.toMatchObject({
++  await expect(stopDaemon({ paths, observed })).rejects.toMatchObject({
+     code: 'COMMAND_FAILED',
+     details: { reason: 'daemon_exit_unconfirmed', terminationReason: 'identity-unverified' },
+   });
+   expect(mocks.stopAndRetireDaemon).toHaveBeenCalledWith({
+     paths,
+-    observed: { pid: 123, startTime: 'start-time' },
++    observed,
+     mode: 'graceful',
+     termTimeoutMs: 10_000,
+     killTimeoutMs: 2_000,
+@@ -55,34 +65,39 @@ test('retained identity verification is reported as failure without known cleanu
+ 
+ test('missing start-time identity is passed to the owning termination operation', async () => {
+   const paths = createDaemonPaths();
+-  fs.writeFileSync(paths.infoPath, JSON.stringify({ pid: 123, processStartTime: ' ' }));
+   mocks.stopAndRetireDaemon.mockResolvedValue(retainedExit('missing-start-time'));
+-  await expect(stopDaemon({ paths })).rejects.toMatchObject({
++  await expect(
++    stopDaemon({ paths, observed: { pid: 123, startTime: null, ownership: 'detached' } }),
++  ).rejects.toMatchObject({
+     details: { terminationReason: 'missing-start-time' },
+   });
+   expect(mocks.stopAndRetireDaemon).toHaveBeenCalledWith(
+-    expect.objectContaining({ paths, observed: { pid: 123, startTime: null } }),
++    expect.objectContaining({
++      paths,
++      observed: { pid: 123, startTime: null, ownership: 'detached' },
++    }),
+   );
+ });
+ 
+ test('a previously exited verified lifetime is reported as not-running', async () => {
+   mocks.stopAndRetireDaemon.mockResolvedValue(retired('already-exited'));
+-  expect(await stopDaemon({ paths: createDaemonPaths() })).toMatchObject({
++  expect(await stopDaemon({ paths: createDaemonPaths(), observed })).toMatchObject({
+     stopped: false,
+     mode: 'not-running',
+   });
+ });
+ 
+ test('an already released pid without start time remains not-running without cleanup proof', async () => {
+   const paths = createDaemonPaths();
+-  fs.writeFileSync(paths.infoPath, JSON.stringify({ pid: 123 }));
+   mocks.stopAndRetireDaemon.mockResolvedValue({
+     status: 'retained',
+     reason: 'exit-unconfirmed',
+     removedInfo: false,
+     termination: { status: 'not-running' },
+   });
+-  expect(await stopDaemon({ paths })).toMatchObject({
++  expect(
++    await stopDaemon({ paths, observed: { pid: 123, startTime: null, ownership: 'detached' } }),
++  ).toMatchObject({
+     stopped: false,
+     mode: 'not-running',
+   });
+@@ -91,15 +106,17 @@ test('an already released pid without start time remains not-running without cle
+ test('confirmed TERM exit preserves graceful report behavior and configured budgets', async () => {
+   const paths = createDaemonPaths();
+   mocks.stopAndRetireDaemon.mockResolvedValue(retired('graceful'));
+-  expect(await stopDaemon({ paths, graceTimeoutMs: 11, killTimeoutMs: 7 })).toMatchObject({
+-    stopped: true,
+-    mode: 'graceful
+```
+
+**File**: `packages/daemon-contracts/src/daemon-stop.ts` (modified, +148/-30)
+```diff
+@@ -1,10 +1,18 @@
+ import { AppError } from '@agent-device/kernel/errors';
+ import type { DaemonRetirementResult } from './daemon-registration-owner.ts';
+-import type { OwnerIdentity } from '@agent-device/host-kit/process';
+ 
+-import type { DaemonPaths } from './daemon-resolution.ts';
+-import { readRegisteredDaemonIdentity } from './daemon-registration.ts';
+-import type { DeviceClaimRecord, ProviderReleaseRecord } from './daemon-shutdown-report.ts';
++import {
++  DAEMON_LIFECYCLE_REASONS,
++  DAEMON_RECORD_OWNER_UNRECOGNIZED_REASON,
++  type DaemonPaths,
++  type ObservedDaemonIdentity,
++} from './daemon-resolution.ts';
++import type { OwnerIdentity } from '@agent-device/host-kit/process';
++import type {
++  DaemonShutdownReport,
++  DeviceClaimRecord,
++  ProviderReleaseRecord,
++} from './daemon-shutdown-report.ts';
+ 
+ const DAEMON_STOP_GRACE_TIMEOUT_MS = 10_000;
+ const DAEMON_STOP_KILL_TIMEOUT_MS = 2_000;
+@@ -36,25 +44,34 @@ export type DaemonStopResult = {
+   warnings: string[];
+ };
+ 
++/**
++ * Retires the daemon whose lifetime the caller read, and shapes that retirement as a stop result.
++ *
++ * The caller hands over the lifetime and the owner its own read proved, so routing and retirement judge
++ * one record. Ownership is judged here and nowhere else: an embedded runtime belongs to its host, and a
++ * record this build cannot place proves nothing about what is safe to signal, so both come back as the
++ * refusal that names their owner, with nothing signaled.
++ */
+ export async function stopDaemon(params: {
+   paths: DaemonPaths;
++  observed: ObservedDaemonIdentity | null;
+   graceTimeoutMs?: number;
+   killTimeoutMs?: number;
+ }): Promise<DaemonStopResult> {
+-  const info = readRegisteredDaemonIdentity(params.paths.infoPath);
+-  if (!info) return notRunningResult();
++  const observed = params.observed;
++  if (!observed) return daemonNotRunningStopResult();
+   const { stopAndRetireDaemon } = await import('./daemon-registration-owner.ts');
+   const retirement = await stopAndRetireDaemon({
+     paths: params.paths,
+-    observed: info,
++    observed,
+     mode: 'graceful',
+     termTimeoutMs: params.graceTimeoutMs ?? DAEMON_STOP_GRACE_TIMEOUT_MS,
+     killTimeoutMs: params.killTimeoutMs ?? DAEMON_STOP_KILL_TIMEOUT_MS,
+   });
+   if (retirement.status === 'retained' && retirement.termination?.status === 'not-running')
+-    return notRunningResult();
+-  if (retirement.status !== 'retired') throw daemonRetirementError(info, retirement);
+-  if (retirement.termination.mode === 'already-exited') return notRunningResult();
++    return daemonNotRunningStopResult();
++  if (retirement.status !== 'retired') throw daemonRetirementError(observed, retirement);
++  if (retirement.termination.mode === 'already-exited') return daemonNotRunningStopResult();
+   if (retirement.termination.mode === 'graceful') {
+     return {
+       stopped: true,
+@@ -84,6 +101,25 @@ export async function stopDaemon(params: {
+   };
+ }
+ 
++/**
++ * What a retirement that refused because of the record's owner answers with. This is the one place
++ * those two retained reasons become a stop's own reason: a caller that may not signal this process
++ * hears the owner's rule, not a retirement that could not be confirmed.
++ */
++function ownerRefusal(
++  reason: 'embedded-owner' | 'owner-unproven',
++): Readonly<{ reason: string; hint: string }> {
++  return reason === 'embedded-owner'
++    ? {
++        reason: DAEMON_LIFECYCLE_REASONS.ownerEmbedded,
++        hint: 'Nothing was signaled. Close the host that started this runtime, or repair its record after the process has exited.',
++      }
++    : {
++        reason: DAEMON_RECORD_OWNER_UNRECOGNIZED_REASON,
++        hint: 'Nothing was signaled. Check what owns that process, then repair the record: stop it by its own means and remove its daemon.json so a daemon can register again.',
++      };
++}
++
+ function daemonRetirementError(
+   info: OwnerIdentity,
+   retirement: Exclude<DaemonRetirementResult, { status: 'retired' }>,
+@@ -92,28 +128,32 @@ function daemonRetirementError(
+   const failure = termination?.status === 'retained' ? termination : undefined;
+   const error = retirement.status === 'retained' ? retirement.error : undefined;
+   const { hint, diagnosticId, logPath } = error ?? {};
+-  return new AppError('COMMAND_FAILED', 'Daemon retirement could not be confirmed.', {
+-    pid: info.pid,
+-    processStartTime: info.startTime,
+-    reason: failure ? 'daemon_exit_unconfirmed' : 'daemon_retirement_unconfirmed',
+-    terminationReason: failure?.reason,
+-    signal: failure?.signal,
+-    retirement,
+-    hint,
+-    diagnosticId,
+-    logPath,
+-  });
++  const refusal =
++    retirement.status === 'retained' &&
++    (retirement.reason === 'embedded-owner' || retirement.reason === 'owner-unproven')
++      ? ownerRefusal(retirement.reason)
++      : undefined;
++  return new AppError(
++    'COMMAND_FAILED',
++    refusal
++      ? 'The daemon was not stopped, because its owner ends it.'
++      : 'Daemon retirement could not
+```
+
+---
+
+### Incident Patch 2: `620228b8` (2026-10-20)
+**Commit Message**: fix(apple): key the toolchain fingerprint memo on the resolved xcode-select dir (#3726)
+
+* fix(apple): key the toolchain fingerprint memo on the resolved xcode-select dir
+
+`toolchainFingerprintCacheKey` keyed the memo on `DEVELOPER_DIR` alone, so every default
+`xcode-select` selection shared one entry. A daemon that answered a cache decision before
+someone ran `sudo xcode-select -s` kept answering with the Xcode the host had left, and
+because every hit re-set the entry, a busy daemon served it indefinitely rather than for one
+TTL (#3300).
+
+- Resolve the default selection per read and key on it, keeping a client's `DEVELOPER_DIR`
+  choice as before.
+- Run that resolution under the probe clock and cancellation, capped below the probes it
+  precedes. A read that cannot resolve its selection skips the memo: a key shared by every
+  unresolved selection would let one host selection answer for the next.
+- Measure the TTL from the read that stored an entry; a hit no longer extends it.
+- Keep the report path probe-free by looking entries up under the dir the read that stored
+  one resolved.
+
+Related: #3449, whose Xcode-too-old reports should name the toolchain a decision actually read.
+
+* f
+
+**File**: `packages/platform-apple/src/runner/__tests__/apple-toolchain-fixtures.ts` (modified, +95/-5)
+```diff
+@@ -1,6 +1,9 @@
+ import { beforeEach, vi } from 'vitest';
++import fs from 'node:fs';
++import { AppError } from '@agent-device/kernel/errors';
+ import { appleRunnerTestHost } from '../test-host.ts';
+-import type { ExecResult } from '@agent-device/host-kit/command';
++import { XCODE_SELECT_LINK_PATH } from '../apple-runner-platform.ts';
++import type { ExecOptions, ExecResult } from '@agent-device/host-kit/command';
+ 
+ export const STUBBED_APPLE_TOOLCHAIN = {
+   xcodeVersion: '26.2',
+@@ -9,7 +12,16 @@ export const STUBBED_APPLE_TOOLCHAIN = {
+   sdkBuildVersion: '23C53',
+ } as const;
+ 
++const STUBBED_SELECTED_DEVELOPER_DIR = '/Applications/Xcode-Stub.app/Contents/Developer';
++
++export function selectedDeveloperDirResult(developerDir: string): ExecResult {
++  return { exitCode: 0, stdout: `${developerDir}\n`, stderr: '' };
++}
++
+ export function appleToolchainProbeResult(command: string, args: readonly string[]): ExecResult {
++  if (command === 'xcode-select' && args[0] === '-p') {
++    return selectedDeveloperDirResult(STUBBED_SELECTED_DEVELOPER_DIR);
++  }
+   if (command === 'xcodebuild' && args[0] === '-version') {
+     return {
+       exitCode: 0,
+@@ -27,15 +39,93 @@ export function appleToolchainProbeResult(command: string, args: readonly string
+ }
+ 
+ /**
+- * Answers the runner cache's toolchain probes from a fixed toolchain, so cases
+- * that key the cache neither read the host's Xcode nor depend on one existing.
+- * Returns the mock so a case can make a probe fail.
++ * Answers the runner cache's toolchain probes from a fixed toolchain, so cases that key the cache
++ * neither read the host's Xcode nor depend on one existing. No client chooses a `DEVELOPER_DIR`, so
++ * the selection a key probe resolves is the one the case scripts. Returns the mock so a case can
++ * make a probe fail.
+  */
+ export function stubAppleToolchainProbes(): ReturnType<typeof vi.fn> {
++  stubAppleSelectionLink();
+   const runCmdSync = vi.fn(appleToolchainProbeResult);
+   beforeEach(() => {
+     runCmdSync.mockImplementation(appleToolchainProbeResult);
+-    appleRunnerTestHost.update({ runCmdSync });
++    appleRunnerTestHost.update({
++      runCmdSync,
++      commandDeveloperDir: () => undefined,
++    });
+   });
+   return runCmdSync;
+ }
++
++/**
++ * The host's default selection link as the Apple toolchain probes see it. Undefined keeps the link
++ * unreadable, which sends every read down the `xcode-select -p` fallback a case already scripts; a
++ * case that owns a link points it at a path it created.
++ */
++export const appleSelectionLink: { target: string | undefined } = { target: undefined };
++
++/**
++ * Hides the selection link of the machine running the suite, so a case decides the host's selection
++ * rather than inheriting it. The real host has one, and where it points is not this suite's business.
++ */
++export function stubAppleSelectionLink(): void {
++  const realRealpathSync = fs.realpathSync;
++  beforeEach(() => {
++    appleSelectionLink.target = undefined;
++    vi.spyOn(fs, 'realpathSync').mockImplementation((target: fs.PathLike) => {
++      if (String(target) !== XCODE_SELECT_LINK_PATH) return realRealpathSync(target);
++      if (appleSelectionLink.target === undefined) {
++        throw Object.assign(new Error('ENOENT: no such file or directory'), { code: 'ENOENT' });
++      }
++      return realRealpathSync(appleSelectionLink.target);
++    });
++  });
++}
++
++/**
++ * The fingerprint budget's clock, advanced only by an exec that blocks for the whole timeout it was
++ * handed. Without it a mock that throws immediately proves nothing about a deadline: no time passes,
++ * so every budget looks untouched however many attempts run.
++ */
++export function installToolchainProbeClock(): { nowMs: number } {
++  const clock = { nowMs: 0 };
++  appleRunnerTestHost.update({
++    deadlineFromTimeoutMs: (timeoutMs: number) => {
++      const startedAtMs = clock.nowMs;
++      const expiresAtMs = startedAtMs + Math.max(0, timeoutMs);
++      return {
++        remainingMs: () => Math.max(0, expiresAtMs - clock.nowMs),
++        elapsedMs: () => Math.max(0, clock.nowMs - startedAtMs),
++        isExpired: () => expiresAtMs - clock.nowMs <= 0,
++      };
++    },
++  });
++  return clock;
++}
++
++/** An exec that blocked for its whole timeout and was then killed, as the exec layer reports it. */
++export function blockForWholeTimeout(
++  clock: { nowMs: number },
++  command: string,
++  args: readonly string[],
++  options: ExecOptions,
++): AppError {
++  const timeoutMs = options.timeoutMs ?? 0;
++  clock.nowMs += timeoutMs;
++  return new AppError('COMMAND_FAILED', `${command} timed out after ${timeoutMs}ms`, {
++    cmd: command,
++    args,
++    timeoutMs,
++  });
++}
++
++/**
++ * The execs that read the toolchain itself, as opposed to the `xcode-select -p` a read runs to
++ * decide which fingerprint entry it belongs to. A case that says a cache hit must not re-read the
++ * toolchain says nothing about that one exec, so it asserts through this.
++ */
++export function valu
+```
+
+**File**: `packages/platform-apple/src/runner/__tests__/runner-cache-metadata.test.ts` (modified, +58/-60)
+```diff
+@@ -23,8 +23,12 @@ import { memoizedRunnerXcodeVersion } from '../runner-toolchain-probe.ts';
+ import { COLD_TOOLCHAIN_PROBE_TIMEOUT_MS } from '../apple-runner-platform.ts';
+ import {
+   appleToolchainProbeResult,
++  blockForWholeTimeout,
++  installToolchainProbeClock,
++  selectedDeveloperDirResult,
+   STUBBED_APPLE_TOOLCHAIN,
+   stubAppleToolchainProbes,
++  valueProbeCommands,
+ } from './apple-toolchain-fixtures.ts';
+ import { mkdtempForTestSync } from './tmp-dir.ts';
+ import { xcodebuildLogWithBuildArguments } from './runner-build-log.fixtures.ts';
+@@ -272,7 +276,7 @@ describe('toolchain probe budget', () => {
+   beforeEach(resetAllProcessMemosForTests);
+ 
+   test('a cold-start probe recovers on retry, and the stall it survived is charged to the budget', () => {
+-    const clock = installFakeToolchainClock();
++    const clock = installToolchainProbeClock();
+     const xcodebuildTimeouts: number[] = [];
+     runCmdSync.mockImplementation((command: string, args: string[], options: ExecOptions) => {
+       if (command !== 'xcodebuild') return appleToolchainProbeResult(command, args);
+@@ -292,9 +296,10 @@ describe('toolchain probe budget', () => {
+   });
+ 
+   test('an owning phase with 4 s left gets one 4 s attempt and no retry', () => {
+-    const clock = installFakeToolchainClock();
++    const clock = installToolchainProbeClock();
+     const phaseBudget = createRunnerPhaseBudget(4_000, undefined);
+     runCmdSync.mockImplementation((command: string, args: string[], options: ExecOptions) => {
++      if (command === 'xcode-select') return appleToolchainProbeResult(command, args);
+       throw blockForWholeTimeout(clock, command, args, options);
+     });
+     runCmdSync.mockClear();
+@@ -303,14 +308,14 @@ describe('toolchain probe budget', () => {
+       () => resolveExpectedRunnerCacheMetadata(IOS_SIMULATOR, undefined, phaseBudget),
+       (error: unknown) => expectRunnerPhaseBudgetExhausted(error),
+     );
+-    assert.equal(runCmdSync.mock.calls.length, 1);
++    assert.equal(valueProbeCommands(runCmdSync.mock.calls).length, 1);
+     // The one attempt was capped by the phase, not by the 30 s per-call ceiling.
+-    assert.equal(runCmdSync.mock.calls[0]?.[2]?.timeoutMs, 4_000);
++    assert.equal(runCmdSync.mock.calls.at(-1)?.[2]?.timeoutMs, 4_000);
+     assert.equal(clock.nowMs, 4_000);
+   });
+ 
+   test('a probe that failed on its own and merely says "timed out" in its message is not retried', () => {
+-    installFakeToolchainClock();
++    installToolchainProbeClock();
+     runCmdSync.mockImplementation((command: string, args: string[]) => {
+       if (command !== 'xcodebuild') return appleToolchainProbeResult(command, args);
+       // No `timeoutMs` detail: this is the tool reporting its own failure, not
+@@ -439,7 +444,7 @@ describe('toolchain probe budget', () => {
+   ];
+ 
+   test.each(CANCELLATION_CASES)('cancellation matrix: $label', (testCase) => {
+-    const clock = installFakeToolchainClock();
++    const clock = installToolchainProbeClock();
+     const request = new AbortController();
+     if (testCase.fingerprintCache === 'warm') {
+       runCmdSync.mockImplementation(appleToolchainProbeResult);
+@@ -449,6 +454,9 @@ describe('toolchain probe budget', () => {
+ 
+     let execs = 0;
+     runCmdSync.mockImplementation((command: string, args: string[], options: ExecOptions) => {
++      // The cache-key resolution picks which entry the read belongs to; it is never one of the
++      // three probes this matrix interrupts.
++      if (command === 'xcode-select') return appleToolchainProbeResult(command, args);
+       execs += 1;
+       if (!failsOnExec(testCase, execs)) return appleToolchainProbeResult(command, args);
+       if (testCase.aborts === 'while-it-blocks') request.abort();
+@@ -513,44 +521,6 @@ function expectRunnerPhaseBudgetExhausted(error: unknown): boolean {
+   return true;
+ }
+ 
+-/**
+- * A clock the probes' own budget reads, advanced only by
+- * {@link blockForWholeTimeout}. Without it a mock that throws immediately
+- * proves nothing about a deadline: no time passes, so every budget looks
+- * untouched however many attempts run.
+- */
+-function installFakeToolchainClock(): { nowMs: number } {
+-  const clock = { nowMs: 0 };
+-  appleRunnerTestHost.update({
+-    deadlineFromTimeoutMs: (timeoutMs: number) => {
+-      const startedAtMs = clock.nowMs;
+-      const expiresAtMs = startedAtMs + Math.max(0, timeoutMs);
+-      return {
+-        remainingMs: () => Math.max(0, expiresAtMs - clock.nowMs),
+-        elapsedMs: () => Math.max(0, clock.nowMs - startedAtMs),
+-        isExpired: () => expiresAtMs - clock.nowMs <= 0,
+-      };
+-    },
+-  });
+-  return clock;
+-}
+-
+-/** A probe that blocked for its whole timeout and was then killed, as the exec layer reports it. */
+-function blockForWholeTimeout(
+-  clock: { nowMs: number },
+-  command: string,
+-  args: string[],
+-  options: ExecOptions,
+-): AppError {
+-  const timeoutMs = options.timeoutMs ?? 0;
+-  clock.nowMs += timeoutMs;
+-  return new AppError('COMMAN
+```
+
+**File**: `packages/platform-apple/src/runner/__tests__/runner-toolchain-probe.test.ts` (added, +612/-0)
+```diff
+@@ -0,0 +1,612 @@
++import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
++import assert from 'node:assert/strict';
 +import fs from 'node:fs';
 +import path from 'node:path';
-+import { normalizeError, type NormalizedError } from '@agent-device/kernel/errors';
-+import { isProcessAlive } from '@agent-device/host-kit/process';
-+
-+/**
-+ * Startup phase markers: a per-launch record, named for the writing pid, of how far that startup
-+ * got, so a waiting client tells "slow but progressing" from "stuck" without a heartbeat. The
-+ * writer removes it on completion, the client after a joined exit, and each new registration
-+ * owner sweeps the files of provably dead pids.
-+ */
-+const DAEMON_STARTUP_PHASES = Object.freeze([
-+  'modules-loaded',
-+  'composition-loaded',
-+  'lock-acquired',
-+  'recovery-finished',
-+  'listening',
-+  'registered',
-+] as const);
-+
-+export type DaemonStartupPhase = (typeof DAEMON_STARTUP_PHASES)[number];
-+
-+const DAEMON_STARTUP_PHASE_SET: ReadonlySet<string> = new Set<string>(DAEMON_STARTUP_PHASES);
-+
-+const DAEMON_STARTUP_PHASES_ENTRY = /^daemon-startup-phases-(\d*)\.jsonl$/;
-+
-+/** The marker file the daemon process `pid` writes in `stateDir`; an absent file is no evidence. */
-+export function resolveDaemonStartupPhasesPath(stateDir: string, pid: number): string {
-+  return path.join(stateDir, `daemon-startup-phases-${pid}.jsonl`);
-+}
-+
-+/** Appends one phase marker; a refused append goes to `reportFailure`, never fatal to a startup. */
-+export function recordDaemonStartupMarker(
-+  startupPhasesPath: string,
-+  phase: DaemonStartupPhase,
-+  reportFailure?: (error: NormalizedError) => void,
-+): void {
-+  try {
-+    const timestampMs = Date.now();
-+    fs.mkdirSync(path.dirname(startupPhasesPath), { recursive: true });
-+    // A crash mid-append can leave no trailing newline; glue two appends and both are lost.
-+    const separator = endsWithoutNewline(startupPhasesPath) ? '\n' : '';
-+    fs.appendFileSync(
-+      startupPhasesPath,
-+      `${separator}${JSON.stringify({ data: { startupPhase: phase, timestampMs } })}\n`,
-+    );
-+  } catch (error) {
-+    reportFailure?.(normalizeError(error));
-+  }
-+}
-+
-+function endsWithoutNewline(file: string): boolean {
-+  let fd: number | undefined;
-+  try {
-+    const stats = fs.statSync(file);
-+    if (stats.size === 0) return false;
-+    const buffer = Buffer.alloc(1);
-+    fd = fs.openSync(file, 'r');
-+    if (fs.readSync(fd, buffer, 0, 1, stats.size - 1) !== 1) return false;
-+    return buffer[0] !== 0x0a;
-+  } catch {
-+    return false;
-+  } finally {
-+    if (fd !== undefined) fs.closeSync(fd);
-+  }
-+}
-+
-+/**
-+ * Removes this launch's record: before its first marker (a per-pid name identifies a writer, not
-+ * a lifetime, so the entry claims its file first), and after a finished startup or joined exit.
-+ * A refused removal only reports through `reportFailure`; it never stops a startup.
-+ */
-+export function removeDaemonStartupPhasesFile(
-+  startupPhasesPath: string,
-+  reportFailure?: (error: NormalizedError) => void,
-+): void {
-+  try {
-+    fs.rmSync(startupPhasesPath, { force: true });
-+  } catch (error) {
-+    reportFailure?.(normalizeError(error));
-+  }
-+}
-+
-+/** Sweeps marker files of provably dead (or unnameable) pids; a live pid's file is kept. */
-+export function sweepDeadDaemonStartupPhasesFiles(stateDir: string): void {
-+  let entries: string[];
-+  try {
-+    entries = fs.readdirSync(stateDir);
-+  } catch {
-+    return;
-+  }
-+  for (const entry of entries) {
-+    const match = DAEMON_STARTUP_PHASES_ENTRY.exec(entry);
-+    if (match === null) continue;
-+    const deadPid = Number(match[1]);
-+    if (deadPid === process.pid) continue;
-+    if (!Number.isSafeInteger(deadPid) || deadPid <= 0 || !isProcessAlive(deadPid)) {
-+      removeDaemonStartupPhasesFile(path.join(stateDir, entry));
-+    }
-+  }
-+}
-+
-+/**
-+ * The phases observed in a marker tail, keeping each phase's earliest occurrence. Unknown and
-+ * unparsable lines are ignored: a client never fails a startup over a line it does not know.
-+ */
-+export function readDaemonStartupPhaseMarkers(
-+  markerTail: string,
-+): Partial<Record<DaemonStartupPhase, number>> {
-+  const phases: Partial<Record<DaemonStartupPhase, number>> = {};
-+  for (const line of markerTail.split('\n')) {
-+    if (!line.includes('"startupPhase"')) continue;
-+    let record: DaemonStartupMarkerRecord;
-+    try {
-+      record = JSON.parse(line) as DaemonStartupMarkerRecord;
-+    } catch {
-+      continue;
-+    }
-+    const phase = record.data?.startupPhase;
-+    const timestampMs = record.data?.timestampMs;
-+    if (
-+      typeof phase !== 'string' ||
-+      !DAEMON_STARTUP_PHASE_SET.has(phase) ||
-+      typeof timestampMs !== 'number' ||
-+      !Number.isFinite(timestampMs)
-+    ) {
-+      continue;
-+    }
-+    const seen = phases[phase as DaemonStartupPhase];
-+    if (seen === undefined || timestampMs < seen) phases[phase as DaemonStartupPhase] = timestampMs;
-+  }
-+  return phases;
-+}
-+
-+type DaemonStartupMarkerRecord = {
-+  data?: { startupPhase?: unknown; timestampMs?: unknown };
-+};
-```
-
-**File**: `packages/daemon/src/server/__tests__/daemon-runtime-app-log.test.ts` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ import type { ResourceDiagnostic } from '@agent-device/host-kit/diagnostics';
- import { createDurableResourceEnvelope } from '@agent-device/capture-kit';
- import { createTestAppLogLiveHandle, mkdtempForTestSync } from '@agent-device/test-kit';
- import { makeSessionStore } from '../../__tests__/support/store-factory.ts';
--import { flushDaemonStartupDiagnostics } from '../http/daemon-runtime.ts';
-+import { flushDaemonStartupDiagnostics } from '../http/daemon-startup-diagnostics.ts';
- import type { SessionState } from '../../core/session-state.ts';
- import { unavailableDeviceRuntimeGateway } from '../../__tests__/support/unavailable-device-runtime-gateway.ts';
- 
-```
-
-**File**: `packages/daemon/src/server/http/daemon-runtime.ts` (modified, +24/-81)
-```diff
-@@ -6,7 +6,7 @@ import {
-   type ClaimRecoveryGatewayFactory,
- } from '@agent-device/daemon-contracts/device-claim-recovery';
- import crypto from 'node:crypto';
--import { asAppError, AppError, normalizeError } from '@agent-device/kernel/errors';
-+import { asAppError, AppError } from '@agent-device/kernel/errors';
- import { SessionStore } from '../../core/session-store.ts';
- import {
-   DAEMON_CAPABILITIES,
-@@ -76,7 +76,6 @@ import {
-   readCurrentOwnerIdentity,
-   reapOwnedProcessRecordsAtStartup,
-   type OwnedProcessRecordStore,
--  type OwnerIdentity,
- } from '@agent-device/host-kit/process';
- import { isEnvTruthy, sleep } from '@agent-device/host-kit/retry';
- import {
-@@ -88,9 +87,12 @@ import {
- import {
-   tryAcquireDaemonRegistration,
-   DAEMON_STARTUP_EXIT_CODES,
--  type DaemonRegistrationOwner,
- } from '@agent-device/daemon-contracts/daemon-registration-owner';
--import { watchDaemonMetadataLoss } from './daemon-metadata-loss.ts';
++import { isRequestCanceledError } from '@agent-device/kernel/errors';
++import { resetAllProcessMemosForTests } from '@agent-device/kernel/ttl-memo';
++import type { ExecOptions, ExecResult } from '@agent-device/host-kit/command';
++import { IOS_SIMULATOR } from './device-fixtures.ts';
++import { appleRunnerTestHost } from '../test-host.ts';
 +import {
-+  recordDaemonStartupMarker,
-+  removeDaemonStartupPhasesFile,
-+  resolveDaemonStartupPhasesPath,
-+} from '@agent-device/daemon-contracts/daemon-startup-phases';
- import { retainPngWorker } from '@agent-device/capture-kit/png-worker-client';
- import { openWebSessionNames } from '../../sessions/web-session-names.ts';
- import { createAppLogAdmissionLedger } from '../../resources/app-log-admission-ledger.ts';
-@@ -242,83 +244,6 @@ export function daemonStartupExitCode(error: unknown): number {
-   return typeof exitCode === 'number' ? exitCode : 1;
- }
- 
--export async function flushDaemonStartupDiagnostics(
--  logPath: string,
--  diagnostics: readonly ResourceDiagnostic[],
--): Promise<void> {
--  if (diagnostics.length === 0) return;
--  await withDaemonDiagnosticsScope({ logPath, command: 'daemon-startup', debug: false }, () => {
--    for (const diagnostic of diagnostics) {
--      emitDiagnostic({
--        level: 'warn',
--        phase: diagnostic.phase,
--        data: { resourcePath: diagnostic.resourcePath, ...diagnostic.data },
--      });
--    }
--  });
--}
--
--/**
-- * Records one daemon-level event. These run outside any request, so there is no request scope and no
-- * resolved debug level to inherit; debug is forced on for the same reason the #2681 handoff forces it —
-- * the event is the point of the record and must not be dropped by a level that was never set for it.
-- */
--async function emitDaemonDiagnostic(
--  logPath: string,
--  phase: string,
--  data: Record<string, unknown>,
--): Promise<void> {
--  await withDaemonDiagnosticsScope({ logPath }, () => {
--    emitDiagnostic({ level: 'warn', phase, data });
--  });
--}
--
--async function finishDaemonRegistration(params: {
--  registration: DaemonRegistrationOwner;
--  infoPath: string;
--  logPath: string;
--  outcome?: Parameters<DaemonRegistrationOwner['finish']>[0];
--}): Promise<void> {
--  try {
--    const removal = await params.registration.finish(params.outcome);
--    if (removal.state !== 'removed' && removal.state !== 'absent') {
--      await emitDaemonDiagnostic(params.logPath, 'daemon_info_removal_declined', {
--        infoPath: params.infoPath,
--        removed: false,
--        reason: removal.state,
--        ...(removal.state === 'replaced' ? { registeredPid: removal.identity.pid } : {}),
--      });
--    }
--  } catch (error) {
--    await emitDaemonDiagnostic(params.logPath, 'daemon_registration_finish_failed', {
--      error: normalizeError(error),
--    });
--  }
--}
--
--/**
-- * Starts the watch that reports this daemon's registration being taken over, and returns the handle
-- * that stops it. It is armed only once this process has published its own record: before publication
-- * the file legitimately describes a predecessor, and losing that is not this daemon's event.
-- */
--function armDaemonMetadataLossWatch(
--  stateDir: string,
--  infoPath: string,
--  logPath: string,
--  owner: OwnerIdentity,
--): () => void {
--  return watchDaemonMetadataLoss({
--    infoPath,
--    stateDir,
--    owner,
--    onLoss: (loss) =>
--      void emitDaemonDiagnostic(logPath, 'daemon_metadata_lost', {
--        infoPath,
--        ...loss,
--      }).catch(() => {}),
--  });
--}
--
- export async function startDaemonRuntime(
-   options: DaemonRuntimeOptions,
- ): Promise<DaemonRuntimeController> {
-@@ -347,6 +272,13 @@ async function startDaemonRuntimeOnHost(
-   const { env } = host;
-   const stdout = options.stdout ?? process.stdout;
-   const stderr = options.stderr ?? process.stderr;
-+  // Function-scoped import: these helpers stay out of the daemon entry's eager closure (ADR 0019).
-+  const {
-+    armDaemonMetadataLossWatch,
-+    emitDaemonDiagnostic,
-+    finishDaemonRegistration,
-+    flushDaemonStartupDiagnostics,
-+  } = await import('./daemon-startup-diagnostics.ts');
-   const daemonPaths = resolveDaemonPaths(env.AGENT_DEVICE_STATE_DIR, { env, cwd: host.cwd });
-   const { baseDir, infoPath, logPath, sessionsDir } = daemonPaths;
-   const daemonServerMode = resolveDaemonServerMode(env.AGENT_DEVICE_DAEMON_SERVER_MODE);
-@@ -660,6 +592,13 @@ asy
-```
-
----
-
-### Incident Patch 2: `63a14fd8` (2026-10-17)
-**Commit Message**: fix(daemon): retain cleanup locks and preserve healed snapshots (#3760)
-
-* fix(daemon): retain execution locks through binding cleanup
-
-ADR 0019 requires request bindings to dispose before device/session lock release. Await the shared cleanup outcome under initial and retained execution locks, then let response finalization preserve primary failures and report cleanup failures.
-
-At base 4c1c786968, six blocked-cleanup regressions fail: queued same-session or same-device requests enter on success, throw, and cancellation. With the fix all six pass; the scope and open-wait suites pass (42 tests). No request-binding disposal bound exists; no timeout was added. Device dispatch is unchanged.
-
-* fix(replay): preserve authored and explicitly recorded snapshots
-
-ADR 0012 requires authored observations and explicit --record corrections to survive healed-script publication. Carry their typed publication intent from recording into the writer instead of stripping every snapshot. Retain ordinary diagnostic-snapshot optimization.
-
-Isolated regression at base 4c1c786968: authored and explicit-record persisted snapshots and the correction-count/resume publication scenario all fail (3 regressions);
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -13,6 +13,8 @@
- - Behavior change: the CLI and MCP now call `ensureDaemon()` explicitly once their config is resolved, then attach to the daemon it leaves. A command that finds a daemon from another version or build replaces it only if the daemon reports no request, session, repair session or live lease. A resumable upload still streaming and a host human-control hold that names no lease are not counted, so a replacement can end them. A daemon that answers nothing on any transport is retired after repeated failed liveness probes, which cannot show it idle. A busy one fails the command with `details.reason: 'daemon-busy'` instead of being replaced with its sessions, and a daemon from a release that predates quiescing fails it with `'daemon-incompatible'`; stop either with `agent-device daemon stop --state-dir <path>`. The takeover notice moves from `Replacing daemon … : <reason>` to `Replaced idle daemon …` (an incompatible daemon) or `Replaced unreachable daemon …` (one that answered nothing). A request that times out no longer retires an unresponsive daemon from the CLI or MCP; the error names `agent-device daemon stop --state-dir <path>`. A one-shot `replay` or `test` with an explicit `--state-dir` leaves the daemon it started running until its idle reap instead of stopping it. Remote `--daemon-base-url` connections and replay on its private ephemeral daemon are unchanged. Node.js clients keep `daemonLifecycle: 'managed'` until 0.22.
- - Add `ensureDaemon({ stateDir })` and the client config `daemonLifecycle: 'attach' | 'managed'`. An `attach` client connects to the daemon registered in the state directory and never starts, replaces or kills one, including after a request times out. It fails with `details.reason: 'daemon-not-running'` (the hint points at `ensureDaemon()`) or `'daemon-incompatible'` (both identities in `details`, the hint names `agent-device daemon stop`). `ensureDaemon()` starts a missing daemon and replaces an incompatible one that answers only through an authenticated quiesce request the daemon answers itself (a resumable upload still streaming and a human-control hold that names no lease are not counted, so a replacement can end them): it refuses with `daemon-busy` while any request is in flight or any session, repair session or live lease exists, and a daemon from a release before this one is never replaced. A registered daemon that answers nothing is retired, as is one that times out on the quiesce request and then fails repeated liveness probes; neither can be asked. A remote `daemonBaseUrl` connection never starts or retires a local daemon in either mode. `managed` stays the default and behaves as before until 0.22.
- - `lease_allocate` (and `client.leases.allocate()`) with a `leaseProvider` that no registered runtime claims now refuses before recording a lease, with `UNSUPPORTED_OPERATION`, `error.details.reason: provider-not-registered`, `details.provider`, `details.registeredProviders`, and `details.failedPlugins` naming a plugin that failed to register. Previously a plugin provider that the daemon never loaded passed admission and recorded a lease with no device behind it. Leases with no provider (a `leaseBackend` alone included), `proxy` and `cloud` need no runtime and still allocate. Restart the daemon with the provider configured, then retry.
-+- Healed scripts retain authored snapshot steps and snapshots explicitly included with `--record` during repair. Diagnostic snapshots remain excluded. Behavior change: the config key `record` and `AGENT_DEVICE_RECORD` are retired — `--record` is per-invocation only, and a config file or environment naming the key fails with migration guidance naming `--record` and the SDK/MCP `record: true` call option.
-+- Requests that share a session or device now queue until the preceding request finishes disposing its runtime binding and releasing its device claim, including after failure or cancellation.
- - Add `uninstall <app>` and `client.apps.uninstall({ app })` to remove an installed app on adb-backed Android targets, iOS simulators, and CoreDevice iOS devices. Both report `wasInstalled`. A package name or bundle id that is not installed succeeds with `wasInstalled: false`. Other targets, Appium and Limrun sessions included, refuse it before anything runs.
- - Add `settings mobile-data on|off` for adb-backed Android targets. It switches mobile data through `svc data` and reports the `mobileData` state stored in the global `mobile_data` row; multi-SIM read-back is not covered yet. Every other target refuses it before anything runs, and `--app` is refused because the switch is device-wide.
- - On iOS, a `fill` that runs under a degraded XCTest snapshot channel now aims at a point, including ref, selector and replay fills. When the runner identifies no text input under that point, it refuses with `NO_TEXT_INPUT_AT_POINT` (`error.details.reason: no_text_input_at_point`, `dispatched: no`) before dispatching its focus tap, and no field changes; when 
-```
-
-**File**: `packages/command-registry/src/flag-definitions-action.ts` (modified, +2/-2)
-```diff
-@@ -432,8 +432,8 @@ export const ACTION_FLAG_DEFINITIONS: readonly FlagDefinition[] = [
-     // the synopsis stays the invocation they are choosing between (#1271 stage 2).
-     usageHidden: true,
-     usageDescription:
--      'Force-record this action even though its command is observation-only and would otherwise be excluded from a repair-armed heal by default (mutually exclusive with --no-record)',
--    projectConfig: true,
-+      'Force-record this action into a repair-armed heal; per-invocation only, the retired config key "record" no longer opts in (mutually exclusive with --no-record)',
-+    projectConfig: false,
-     recorded: true,
-   },
- ];
-```
-
-**File**: `packages/contracts/src/session-action.ts` (modified, +2/-0)
-```diff
-@@ -28,6 +28,8 @@ export type SessionAction = {
-     noRecord?: boolean;
-   };
-   result?: Record<string, unknown>;
-+  /** Retain authored plan observations or explicitly recorded repair observations. */
-+  publicationIntent?: 'authored' | 'explicit-record';
-   /**
-    * ADR 0012 decision 3: parsed or record-time-computed `target-v1`
-    * evidence, written as a comment immediately before this action's line.
-```
-
-**File**: `packages/daemon/src/core/__tests__/request-runtime-binding-router.test.ts` (modified, +83/-2)
-```diff
-@@ -1,5 +1,11 @@
- import fs from 'node:fs';
- import { expect, test, vi } from 'vitest';
++  appleToolchainProbeResult,
++  appleSelectionLink,
++  blockForWholeTimeout,
++  installToolchainProbeClock,
++  selectedDeveloperDirResult,
++  STUBBED_APPLE_TOOLCHAIN,
++  stubAppleSelectionLink,
++  valueProbeCommands,
++} from './apple-toolchain-fixtures.ts';
 +import {
-+  clearRequestCanceled,
-+  markRequestCanceled,
-+  throwIfRequestCanceled,
-+} from '@agent-device/host-kit/request';
-+import { AppError } from '@agent-device/kernel/errors';
- import { applicationLifecycleOperationFacts } from '@agent-device/contracts/application-lifecycle-runtime';
- import {
-   type DeviceBinding,
-@@ -17,6 +23,7 @@ import { makeSessionStore } from '../../__tests__/support/store-factory.ts';
- import { LeaseRegistry } from '../../resources/lease-registry.ts';
- import { createRequestHandler } from '../../__tests__/support/test-device-runtime-gateway.ts';
- import { fakeCreateCommandSurface } from '../../__tests__/support/command-surface-fake.ts';
-+import { getLeaseRegistryExecutionLocks } from '../../server/request-execution-scope.ts';
- 
- test('request binding disposes once after response while adopted app-log handle survives', async () => {
-   const runtime = makeGateway();
-@@ -51,8 +58,81 @@ test('primary request failure survives a rejecting binding disposal', async () =
-   expect(phases).toContain('request_binding_cleanup_failed');
- });
- 
-+for (const outcome of ['success', 'throw', 'cancellation'] as const) {
-+  for (const key of ['session', 'device'] as const) {
-+    test(`binding cleanup holds the ${key} execution lock after ${outcome}`, async () => {
-+      const runtime = makeGateway();
-+      const { handler, sessionStore, leaseRegistry } = makeHandler(runtime.gateway);
-+      const current = sessionStore.get('session')!;
-+      sessionStore.publish('other-session', { ...current, name: 'other-session', actions: [] });
-+      const requestId = `cleanup-${key}-${outcome}`;
-+      let markCleanupStarted: () => void = () => {};
-+      let finishCleanup: () => void = () => {};
-+      const cleanupStarted = new Promise<void>((resolve) => {
-+        markCleanupStarted = resolve;
-+      });
-+      const cleanupFinished = new Promise<void>((resolve) => {
-+        finishCleanup = resolve;
-+      });
-+      runtime.bindingDispose.mockImplementationOnce(async () => {
-+        markCleanupStarted();
-+        await cleanupFinished;
-+      });
-+      let doctorCalls = 0;
-+      vi.spyOn(runtime.operations, 'appLogDoctor').mockImplementation(async () => {
-+        if (doctorCalls++ > 0) return { backend: 'android', checks: {}, notes: [] };
-+        if (outcome === 'throw') throw new AppError('COMMAND_FAILED', 'doctor failed');
-+        if (outcome === 'cancellation') {
-+          markRequestCanceled(requestId);
-+          throwIfRequestCanceled(requestId);
-+        }
-+        return { backend: 'android', checks: {}, notes: [] };
-+      });
-+      const first = handler({ ...request(['doctor']), meta: { requestId } });
-+      await cleanupStarted;
-+      const locks = getLeaseRegistryExecutionLocks(leaseRegistry);
-+      const sharedKey = key === 'session' ? 'session:session' : 'device:emulator-5554';
-+      let markQueued: (entry: { previous: Promise<unknown> | undefined }) => void = () => {};
-+      const queued = new Promise<{ previous: Promise<unknown> | undefined }>((resolve) => {
-+        markQueued = resolve;
-+      });
-+      const setLock = locks.set.bind(locks);
-+      const queueSpy = vi.spyOn(locks, 'set').mockImplementation((lockKey, completion) => {
-+        if (lockKey === sharedKey) markQueued({ previous: locks.get(lockKey) });
-+        return setLock(lockKey, completion);
-+      });
-+      const second = handler({
-+        ...request(['doctor']),
-+        session: key === 'session' ? 'session' : 'other-session',
-+        meta: { requestId: `${requestId}-queued` },
-+      });
-+      try {
-+        expect((await queued).previous).toBeDefined();
-+        expect(runtime.bind).toHaveBeenCalledTimes(1);
-+      } finally {
-+        queueSpy.mockRestore();
-+        finishCleanup();
-+        clearRequestCanceled(requestId);
-+        await Promise.all([first, second]);
-+      }
-+      const [firstResponse, secondResponse] = await Promise.all([first, second]);
-+      expect(firstResponse.ok).toBe(outcome === 'success');
-+      if (outcome === 'cancellation') {
-+        expect(firstResponse).toMatchObject({
-+          ok: false,
-+          error: { code: 'COMMAND_FAILED', details: { reason: 'request_canceled' } },
-+        });
-+      }
-+      expect(secondResponse.ok).toBe(true);
-+      expect(runtime.bind).toHaveBeenCalledTimes(2);
-+      expect(runtime.bindingDispose).toHaveBeenCalledTimes(2);
-+    });
-+  }
-+}
++  memoizedRunnerXcodeVersion,
++  requireRunnerToolchainFingerprint,
++} from '../runner-toolchain-probe.ts';
++import { createRunnerPhaseBudget, type RunnerPhaseBudget } from '../runner-phase-budget.ts';
++import { mkdtempForTestSync } from './tmp-dir.ts';
++import { COLD_TOOLCHAIN_PROBE_TIMEOUT_MS } from '../apple-runner-platform.ts';
 +
- function makeHandler(gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>) {
-   const sessionStore = makeSessionStore('request-runtime-binding-router-');
-+  const leaseRegistry = new LeaseRegistry();
-   sessionStore.publish('session', {
-     name: 'session',
-     device: { platform: 'android', id: 'emulator-5554', name: 'Pixel', kind: 'emulator' },
-@@ -62,12 +142,13 @@ function makeHandler(gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>) {
-   });
-   return {
-     sessionStore,
-+ 
-```
-
-**File**: `packages/daemon/src/core/__tests__/session-action-recorder.test.ts` (modified, +36/-2)
-```diff
-@@ -7,10 +7,42 @@ import { isSessionRecording } from '../session-script-publication-capability.ts'
-  * (`selector-recording.test.ts` covers which commands set `interactiveObservation`).
-  */
- import { test, expect } from 'vitest';
--import { recordActionEntry, type RecordActionEntry } from '../session-action-recorder.ts';
-+import {
-+  isInteractiveObservation,
-+  recordActionEntry,
-+  type RecordActionEntry,
-+} from '../session-action-recorder.ts';
- import { authoringPublication, makeIosSession } from '../../__tests__/support/session-factories.ts';
- 
--test('an observation-only action is excluded while repair-armed and no --record is given', () => {
-+test.each([
-+  { command: 'wait', replayPlanStep: false, intent: undefined },
-+  { command: 'diff', replayPlanStep: false, intent: undefined },
-+  { command: 'snapshot', replayPlanStep: false, intent: undefined },
-+  { command: 'snapshot', replayPlanStep: true, intent: 'authored' },
-+])(
-+  'publication intent for $command with replayPlanStep=$replayPlanStep',
-+  ({ command, replayPlanStep, intent }) => {
-+    const session = makeIosSession('default');
-+    const req = {
-+      token: 't',
-+      session: 'default',
-+      command,
-+      positionals: [],
-+      internal: { replayPlanStep },
-+    };
-+    const action = recordActionEntry(session, {
-+      command,
-+      positionals: [],
-+      flags: {},
-+      interactiveObservation: isInteractiveObservation(req),
-+    });
++// The fingerprint memo is process-wide and the selection it keys on is host state, so these cases
++// script both: `xcode-select -p` answers `selectedDeveloperDir`, and `xcodebuild` names the Xcode
++// belonging to that selection.
++const XCODE_A = '/Applications/Xcode-A.app/Contents/Developer';
++const XCODE_B = '/Applications/Xcode-B.app/Contents/Developer';
++const IPHONESIMULATOR_SDK = 'iphonesimulator';
++const XCODE_B_BUILD_VERSION = '18A100';
++const FINGERPRINT_TTL_MS = 10 * 60_000;
++/** The ceiling one `xcode-select -p` attempt gets, below the 30 s a value probe gets. */
++const XCODE_SELECT_TIMEOUT_MS = 2_000;
 +
-+    expect(action).toBeDefined();
-+    expect(action?.publicationIntent).toBe(intent);
-+  },
-+);
++const runCmdSync = vi.fn();
++let selectedDeveloperDir = XCODE_A;
++let nowMs = 1_700_000_000_000;
 +
-+test('an observation without --record is excluded while repair-armed', () => {
-   const session = makeIosSession('default', {
-     scriptPublication: {
-       kind: 'repair',
-@@ -47,6 +79,8 @@ test('--record forces an observation-only action through while repair-armed', ()
-     interactiveObservation: true,
-   });
-   expect(action).toBeDefined();
-+  expect(action?.flags.record).toBe(true);
-+  expect(action?.publicationIntent).toBe('explicit-record');
-   expect(session.actions.map((a) => a.command)).toEqual(['get']);
- });
- 
-```
-
-**File**: `packages/daemon/src/core/__tests__/session-script-writer.test.ts` (modified, +63/-1)
-```diff
-@@ -3,7 +3,7 @@ import { test, expect, vi } from 'vitest';
- import fs from 'node:fs';
- import path from 'node:path';
- import { HEAL_COMPLETE_SENTINEL, SessionScriptWriter } from '../session-script-writer.ts';
--import { recordActionEntry } from '../session-action-recorder.ts';
-+import { isInteractiveObservation, recordActionEntry } from '../session-action-recorder.ts';
- import {
-   makeAuthoringSession,
-   makeRepairArmedSession,
-@@ -119,6 +119,38 @@ test('write() carries a recorded wait --raw through to the script and back', ()
-   expect(parsed.actions[0]?.flags.snapshotRaw).toBe(true);
- });
- 
-+test.each(['authored', 'explicit-record'] as const)(
-+  'healed output preserves a snapshot with %s publication intent',
-+  (intent) => {
-+    const root = mkdtempForTestSync('agent-device-script-writer-retained-snapshot-');
-+    const writer = new SessionScriptWriter(path.join(root, 'sessions'));
-+    const session = makeRepairCompleteSession('default');
-+    const req = {
-+      token: 't',
-+      session: 'default',
-+      command: 'snapshot',
-+      positionals: [],
-+      flags:
-+        intent === 'explicit-record'
-+          ? {
-+              record: true,
-+              snapshotInteractiveOnly: true,
-+            }
-+          : { snapshotInteractiveOnly: true },
-+      ...(intent === 'authored' ? { internal: { replayPlanStep: true } } : {}),
-+    };
-+    recordActionEntry(session, {
-+      command: req.command,
-+      positionals: req.positionals,
-+      flags: req.flags,
-+      interactiveObservation: isInteractiveObservation(req),
-+    });
-+    const { parsed } = writeAndParse(writer, session);
-+    expect(parsed.actions.map((entry) => entry.command)).toEqual(['snapshot']);
-+    expect(parsed.actions[0]?.flags.snapshotInteractiveOnly).toBe(true);
-+  },
-+);
++stubAppleSelectionLink();
 +
- test('a boundary-sliced script still strips diagnostic snapshot actions', () => {
-   const root = mkdtempForTestSync('agent-device-script-writer-snapshot-strip-');
-   const writer = new SessionScriptWriter(path.join(root, 'sessions'));
-@@ -127,6 +159,7 @@ test('a boundary-sliced script still strips diagnostic snapshot actions', () =>
-     actions: [
-       action({ command: 'open', positionals: ['Demo'] }),
-       action({ command: 'snapshot', positionals: [] }),
-+      action({ command: 'snapshot', positionals: [], flags: { record: true } }),
-       action({ command: 'click', positionals: ['label="Save"'] }),
-     ],
-   });
-@@ -834,3 +867,32 @@ test('#1533: an ARMED authoring recording is untouched by the abort gate', () =>
-   const { parsed } = writeAndParse(writer, session);
-   expect(parsed.actions.map((a) => a.command)).toEqual(['click']);
- });
++/** A scratch root the case's fake developer dirs and selection links live under. */
++let tempRoot: string;
 +
-+test.each([
-+  { record: undefined, replayPlanStep: false },
-+  { record: true, replayPlanStep: false },
-+  { record: true, replayPlanStep: true },
-+])(
-+  'ordinary authoring retains only authored snapshots with record=$record and replayPlanStep=$replayPlanStep',
-+  ({ record, replayPlanStep }) => {
-+    const root = mkdtempForTestSync('agent-device-script-writer-authoring-snapshot-');
-+    const writer = new SessionScriptWriter(path.join(root, 'sessions'));
-+    const session = makeAuthoringSession('default', {
-+      actions: [action({ command: 'open', positionals: ['Demo'] })],
-+    });
-+    recordActionEntry(session, {
-+      command: 'snapshot',
-+      positionals: [],
-+      flags: {
-+        record,
-+        snapshotInteractiveOnly: true,
-+      },
-+      interactiveObservation: !replayPlanStep,
-+    });
-+
-+    const { parsed } = writeAndParse(writer, session);
-+    expect(parsed.actions.map((entry) => entry.command)).toEqual(
-+      replayPlanStep ? ['open', 'snapshot'] : ['open'],
-+    );
-+  },
-+);
-```
-
-**File**: `packages/daemon/src/core/session-action-recorder.ts` (modified, +8/-1)
-```diff
-@@ -86,6 +86,13 @@ export function recordActionEntry(
-     runtime: recordedEntry.runtime,
-     flags: sanitizeFlags(recordedEntry.flags),
-     result: recordedEntry.result,
-+    ...(OBSERVATION_ONLY_COMMANDS.has(recordedEntry.command)
-+      ? recordedEntry.interactiveObservation === false
-+        ? { publicationIntent: 'authored' as const }
-+        : recordedEntry.flags.record === true
-+          ? { publicationIntent: 'explicit-record' as const }
-+          : {}
-+      : {}),
-     ...(recordedEntry.targetEvidence ? { targetEvidence: recordedEntry.targetEvidence } : {}),
-     ...(recordedEntry.targetEvidences ? { targetEvidences: recordedEntry.targetEvidences } : {}),
-   };
-@@ -360,7 +367,7 @@ function isExcludedRepairSegmentObservation(
- ): boolean {
-   if (!entry.interactiveObservation) return false;
-   if (repairSessionBoundary(session) === undefined) return false;
--  return entry.flags?.record !== true;
-+  return entry.flags.record !== true;
- }
- 
- // The keys a recorded action carries derive from each flag declaration's `recorded`
-```
-
-**File**: `packages/daemon/src/core/session-script-writer.ts` (modified, +7/-1)
-```diff
-@@ -312,7 +312,13 @@ function buildOptimizedActions(
-   const relevantActions = session.actions.slice(boundary ?? 0);
-   const optimized: SessionAction[] = [];
-   for (const action of relevantActions) {
--    if (action.command === 'snapshot') continue;
-+    if (
-+      action.command === 'snapshot' &&
-+      action.publicationIntent !== 'authored' &&
-+      !(repairArmed && action.publicationIntent === 'explicit-record')
-+    ) {
-+      continue;
-+    }
-     const optimizedAction = optimizeSelectorChainAction(action);
-     if (optimizedAction) {
-       optimized.push(optimizedAction);
-```
-
----
-
-### Incident Patch 3: `6e8c2a04` (2026-10-17)
-**Commit Message**: build(package): stop shipping Swift test sources (#3785)
-
-* build(package): stop shipping Swift test sources
-
-The npm files list ships apple/macos-helper whole, so its Tests/ entered
-the tarball even though the install never compiles them. Excluding the
-directory through files alone breaks the shipped build: SwiftPM refuses
-any command once a declared test target's sources are missing, and a
-manifest that probes FileManager for the directory depends on the
-install working directory and manifest sandbox.
-
-Move the test targets to apple/macos-helper-tests, a development-only
-package whose Sources symlink compiles the shipped helper sources with
-@testable reach. The shipped manifest keeps only the products the
-install builds, so a packed tree builds unchanged and the tests keep
-running through pnpm test:macos-helper in CI's macos-helper gate. A
-repo guard holds the two manifests in parity.
-
-* chore(gates): keep macOS helper test sources out of npm packs
-
-The publish asset guard already rejects shipped benchmark scripts; add
-the sibling invariant for the helper's Tests/ directory so a future
-files-list edit cannot re-ship sources the install never compiles.
-
-* fix(gates): skip non-blob
-
-**File**: `.fallowrc.json` (modified, +5/-1)
-```diff
-@@ -64,7 +64,11 @@
-     "scripts/maestro-conformance/corpus/**",
-     "apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests.xctestplan",
-     "scripts/help-conformance-sample-outputs.d.mts",
--    "scripts/help-conformance-runner-output.d.mts"
-+    "scripts/help-conformance-runner-output.d.mts",
-+    // A hand-written type surface for a plain-Node .mjs the typechecked program (and Fallow's
-+    // graph) cannot import; its only consumer is the .mjs's real importers, resolved by tsc, not
-+    // by an import edge. Same shape as the help-conformance declaration files above.
-+    "scripts/size-report-package.d.mts"
-   ],
-   "dynamicallyLoaded": ["packages/daemon/src/execution/interaction/index.ts"],
-   "ignoreDependencies": [
-```
-
-**File**: `apple/macos-helper/Package.swift` (modified, +4/-0)
-```diff
-@@ -1,6 +1,10 @@
- // swift-tools-version: 5.9
- import PackageDescription
- 
-+// The npm package ships this directory and builds it on the user's machine. The tests under
-+// Tests/ stay out of the tarball through `files`, except one PackStub.swift per test target:
-+// SwiftPM refuses any load of a package whose declared test target has no sources, so the
-+// shipped tree needs a source per test target for the install-time `swift build` to succeed.
- let package = Package(
-   name: "agent-device-macos-helper",
-   platforms: [.macOS(.v13)],
-```
-
-**File**: `apple/macos-helper/Tests/AgentDeviceMacOSHelperTests/PackStub.swift` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+// The npm package ships this one file and nothing else under the test targets (see `files` in
-+// package.json). SwiftPM refuses to load a package whose declared test target has no sources, so
-+// the install-time `swift build` of the packed tree needs a source here; the real tests for this
-+// target live beside it and are excluded from the pack.
-+import XCTest
-+
-+final class AgentDeviceMacOSHelperPackStubTests: XCTestCase {}
-```
-
-**File**: `apple/macos-helper/Tests/AgentDeviceMacOSInputTests/PackStub.swift` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+// The npm package ships this one file and nothing else under the test targets (see `files` in
-+// package.json). SwiftPM refuses to load a package whose declared test target has no sources, so
-+// the install-time `swift build` of the packed tree needs a source here; the real tests for this
-+// target live beside it and are excluded from the pack.
-+import XCTest
-+
-+final class AgentDeviceMacOSInputPackStubTests: XCTestCase {}
-```
-
-**File**: `package.json` (modified, +3/-0)
-```diff
-@@ -222,6 +222,9 @@
-     "dist",
-     "apple/macos-helper",
-     "!apple/macos-helper/**/.build",
-+    "!apple/macos-helper/Tests/**",
-+    "apple/macos-helper/Tests/AgentDeviceMacOSHelperTests/PackStub.swift",
-+    "apple/macos-helper/Tests/AgentDeviceMacOSInputTests/PackStub.swift",
-     "apple/snapshot-bridge",
-     "apple/fold-helper",
-     "android/snapshot-helper/dist",
-```
-
-**File**: `scripts/__tests__/fixtures/size-report-npm-pack.json` (modified, +79/-17)
-```diff
-@@ -1,21 +1,83 @@
- {
-   "unpackedSize": 2319,
-   "files": [
--    { "path": "dist/src/index.js", "size": 401 },
--    { "path": "dist/src/index.d.ts", "size": 102 },
--    { "path": "dist/apple/runner/RunnerTests.swift", "size": 503 },
--    { "path": "dist/apple/snapshot-presentation/Package.swift", "size": 113 },
--    { "path": "apple/snapshot-bridge/SnapshotBridge.m", "size": 0 },
--    { "path": "apple/snapshot-bridge/SnapshotBridgeRuntime.m", "size": 0 },
--    { "path": "apple/snapshot-bridge/SnapshotBridgeRuntime.h", "size": 0 },
--    { "path": "apple/snapshot-bridge/SnapshotBridgeCapture.h", "size": 0 },
--    { "path": "apple/snapshot-bridge/SnapshotBridgeCapture.m", "size": 0 },
--    { "path": "apple/macos-helper/Sources/main.swift", "size": 211 },
--    { "path": "android/snapshot-helper/dist/helper.apk", "size": 307 },
--    { "path": "android/snapshot-helper/dist/helper.manifest.json", "size": 99 },
--    { "path": "android/ime-helper/dist/helper.apk", "size": 307 },
--    { "path": "android/ime-helper/dist/helper.manifest.json", "size": 99 },
--    { "path": "package.json", "size": 99 },
--    { "path": "vendor/unknown.bin", "size": 78 }
--  ]
-+    {
-+      "path": "dist/src/index.js",
-+      "size": 401
-+    },
-+    {
-+      "path": "dist/src/index.d.ts",
-+      "size": 102
-+    },
-+    {
-+      "path": "dist/apple/runner/RunnerTests.swift",
-+      "size": 503
-+    },
-+    {
-+      "path": "dist/apple/snapshot-presentation/Package.swift",
-+      "size": 113
-+    },
-+    {
-+      "path": "apple/snapshot-bridge/SnapshotBridge.m",
-+      "size": 0
-+    },
-+    {
-+      "path": "apple/snapshot-bridge/SnapshotBridgeRuntime.m",
-+      "size": 0
-+    },
-+    {
-+      "path": "apple/snapshot-bridge/SnapshotBridgeRuntime.h",
-+      "size": 0
-+    },
-+    {
-+      "path": "apple/snapshot-bridge/SnapshotBridgeCapture.h",
-+      "size": 0
-+    },
-+    {
-+      "path": "apple/snapshot-bridge/SnapshotBridgeCapture.m",
-+      "size": 0
-+    },
-+    {
-+      "path": "apple/macos-helper/Package.swift",
-+      "size": 1057
-+    },
-+    {
-+      "path": "apple/macos-helper/Sources/main.swift",
-+      "size": 211
-+    },
-+    {
-+      "path": "android/snapshot-helper/dist/helper.apk",
-+      "size": 307
-+    },
-+    {
-+      "path": "android/snapshot-helper/dist/helper.manifest.json",
-+      "size": 99
-+    },
-+    {
-+      "path": "android/ime-helper/dist/helper.apk",
-+      "size": 307
-+    },
-+    {
-+      "path": "android/ime-helper/dist/helper.manifest.json",
-+      "size": 99
-+    },
-+    {
-+      "path": "package.json",
-+      "size": 99
-+    },
-+    {
-+      "path": "vendor/unknown.bin",
-+      "size": 78
-+    },
-+    {
-+      "path": "apple/macos-helper/Tests/AgentDeviceMacOSHelperTests/PackStub.swift",
-+      "size": 426
-+    },
-+    {
-+      "path": "apple/macos-helper/Tests/AgentDeviceMacOSInputTests/PackStub.swift",
-+      "size": 426
-+    }
-+  ],
-+  "entryCount": 19,
-+  "size": 3376
- }
-```
-
-**File**: `scripts/__tests__/size-report-package.test.ts` (modified, +60/-5)
-```diff
-@@ -9,12 +9,31 @@ const fixturePack = JSON.parse(
-   await readFile(join(import.meta.dirname, 'fixtures', 'size-report-npm-pack.json'), 'utf8'),
- );
- 
-+// The fixture pack ships the macOS helper (manifest, sources, and per-target PackStub.swift),
-+// so every assertion here names the manifest source the guard would read from the packed tree;
-+// without it the guard falls back to this checkout's manifest via repoRoot.
-+const helperManifestSource = [
-+  '.target(',
-+  '  name: "AgentDeviceMacOSInput",',
-+  '.executableTarget(',
-+  '  name: "AgentDeviceMacOSHelper",',
-+  '.testTarget(',
-+  '  name: "AgentDeviceMacOSHelperTests",',
-+  '.testTarget(',
-+  '  name: "AgentDeviceMacOSInputTests",',
-+].join('\n');
-+
- test('publish package requires both Android helpers and excludes benchmark scripts', () => {
--  assert.doesNotThrow(() => assertPublishPackageContents(fixturePack.files));
-+  assert.doesNotThrow(() =>
-+    assertPublishPackageContents(fixturePack.files, {
-+      macosHelperManifestSource: helperManifestSource,
-+    }),
-+  );
-   assert.throws(
-     () =>
-       assertPublishPackageContents(
-         fixturePack.files.filter((entry) => !entry.path.startsWith('android/ime-helper/')),
-+        { macosHelperManifestSource: helperManifestSource },
-       ),
-     /android\/ime-helper/,
-   );
-@@ -31,16 +50,52 @@ test('publish package requires both Android helpers and excludes benchmark scrip
-   assert.doesNotThrow(() =>
-     assertPublishPackageContents(
-       fixturePack.files.filter((entry) => !entry.path.startsWith('apple/snapshot-bridge/')),
-+      { macosHelperManifestSource: helperManifestSource },
-     ),
-   );
-   assert.throws(
-     () =>
--      assertPublishPackageContents([
--        ...fixturePack.files,
--        { path: 'scripts/ios-snapshot-benchmark/run.ts', size: 1 },
--      ]),
-+      assertPublishPackageContents(
-+        [...fixturePack.files, { path: 'scripts/ios-snapshot-benchmark/run.ts', size: 1 }],
-+        { macosHelperManifestSource: helperManifestSource },
-+      ),
-     /benchmark or build scripts/,
-   );
-+  // Each declared test target needs its PackStub.swift or the install-time `swift build` of the
-+  // packed tree dies; a missing one must name the missing path.
-+  assert.throws(
-+    () =>
-+      assertPublishPackageContents(
-+        fixturePack.files.filter(
-+          (entry) =>
-+            entry.path !== 'apple/macos-helper/Tests/AgentDeviceMacOSInputTests/PackStub.swift',
-+        ),
-+        { macosHelperManifestSource: helperManifestSource },
-+      ),
-+    /pack stubs: apple\/macos-helper\/Tests\/AgentDeviceMacOSInputTests\/PackStub\.swift/,
-+  );
-+  assert.throws(
-+    () =>
-+      assertPublishPackageContents(
-+        [
-+          ...fixturePack.files,
-+          {
-+            path: 'apple/macos-helper/Tests/AgentDeviceMacOSInputTests/ScheduleTests.swift',
-+            size: 1,
-+          },
-+        ],
-+        { macosHelperManifestSource: helperManifestSource },
-+      ),
-+    /macOS helper test sources/,
-+  );
-+  // Sources without the manifest are not a buildable Swift package; the pack must say so.
-+  assert.throws(
-+    () =>
-+      assertPublishPackageContents(
-+        fixturePack.files.filter((entry) => entry.path !== 'apple/macos-helper/Package.swift'),
-+      ),
-+    /sources without its Package\.swift/,
-+  );
- });
- 
- test('Markdown emphasizes total install size and startup without duplicate breakdowns', () => {
-```
-
-**File**: `scripts/coverage-changed/model.test.ts` (modified, +31/-1)
-```diff
-@@ -86,7 +86,12 @@ const coverage = parseLcov(
- );
- 
- function diff(path: string, added: number[], deleted = false): ChangedFileDiff {
--  return { path, added, deleted };
-+  return { path, added, deleted, regularFile: true };
-+}
-+
-+/** A changed path whose new side is not a blob (symlink or gitlink); `run.ts` never reads its bytes. */
-+function nonBlobDiff(path: string, added: number[]): ChangedFileDiff {
-+  return { path, added, deleted: false, regularFile: false };
- }
- 
- test('gate fails when changed-line coverage is below threshold and lists offenders', () => {
-@@ -158,6 +163,31 @@ test('waiver forces a pass but still reports the numbers', () => {
-   assert.equal(result.pct, 66.67);
- });
- 
-+test('an includable path whose new side is a symlink or gitlink is skipped, not read', () => {
-+  // A committed symlink like `tools/helper-tests/Sources -> ../helper/Sources` shows in the
-+  // diff as added text (its target), so it reaches this loop by path shape. Its working-tree
-+  // entry resolves to a directory, so a content read dies on EISDIR; reading the
-+  // object mode is what keeps the file out of both the scored and the excluded tally.
-+  const readPaths: string[] = [];
-+  const result = computeChangedCoverage({
-+    diffs: [
-+      nonBlobDiff('src/helper-tests/index.ts', [1]),
-+      nonBlobDiff('vendor/lib', [1]),
-+      diff('src/covered.ts', [1, 2, 3]),
-+    ],
-+    coverage,
-+    fileLines: (path) => {
-+      readPaths.push(path);
-+      return null;
-+    },
++beforeEach(() => {
++  resetAllProcessMemosForTests();
++  selectedDeveloperDir = XCODE_A;
++  tempRoot = mkdtempForTestSync('runner-selection-');
++  runCmdSync.mockReset().mockImplementation(appleToolchainProbeResult);
++  appleRunnerTestHost.update({
++    runCmdSync,
++    commandDeveloperDir: () => undefined,
 +  });
-+  assert.deepEqual(readPaths, ['src/covered.ts']);
-+  // 2/3 = 66.67% < 70: the skip leaves the verdict exactly what the scored file alone earns.
-+  assert.equal(result.totalLines, 3);
-+  assert.equal(result.passed, false);
-+  assert.deepEqual(result.excluded.files, []);
++  vi.spyOn(Date, 'now').mockImplementation(() => nowMs);
 +});
 +
- test('includable source absent from lcov counts as excluded-path code lines', () => {
-   const result = computeChangedCoverage({
-     diffs: [diff('src/sdk/thing.ts', [1, 2, 3])],
++afterEach(() => {
++  vi.restoreAllMocks();
++});
++
++/**
++ * A developer dir the host can resolve, standing in for an installed Xcode at `dir`. Cases below
++ * compare keys through the memo, and a dir that does not exist cannot be resolved to its real path,
++ * so its key would fall back to the name rather than the resolved dir the case means.
++ */
++function realSelectionDir(dir: string): string {
++  const created = path.join(tempRoot, dir);
++  fs.mkdirSync(created, { recursive: true });
++  fs.writeFileSync(path.join(created, '..', 'version.plist'), '<plist>build 1</plist>\n');
++  return created;
++}
++
++/** Two Xcodes and the `sudo xcode-select -s` that moves the host's default selection between them. */
++function scriptSelectableXcodes(): void {
++  runCmdSync.mockImplementation((command: string, args: readonly string[]) =>
++    command === 'xcode-select'
++      ? selectedDeveloperDirResult(selectedDeveloperDir)
++      : command === 'xcodebuild' && selectedDeveloperDir === XCODE_B
++        ? {
++            exitCode: 0,
++            stdout: `Xcode 27.0\nBuild version ${XCODE_B_BUILD_VERSION}\n`,
++            stderr: '',
++          }
++        : appleToolchainProbeResult(command, args),
++  );
++}
++
++function readFingerprint(
++  budget?: RunnerPhaseBudget,
++): ReturnType<typeof requireRunnerToolchainFingerprint> {
++  return requireRunnerToolchainFingerprint(IPHONESIMULATOR_SDK, budget);
++}
++
++function attemptedTimeoutMs(command: string): number | undefined {
++  const call = runCmdSync.mock.calls.find(([executed]) => executed === command);
++  return (call?.[2] as ExecOptions | undefined)?.timeoutMs;
++}
++
++function blockResolutionForWholeTimeout(clock: { nowMs: number }): void {
++  runCmdSync.mockImplementation((command: string, args: string[], options: ExecOptions) => {
++    if (command !== 'xcode-select') return appleToolchainProbeResult(command, args);
++    throw blockForWholeTimeout(clock, command, args, options);
++  });
++}
++
++describe('the developer dir a toolchain fingerprint answers for', () => {
++  test('a default selection that moved re-reads instead of answering the Xcode it replaced', () => {
++    scriptSelectableXcodes();
++    expect(readFingerprint().xcodeBuildVersion).toBe(STUBBED_APPLE_TOOLCHAIN.xcodeBuildVersion);
++
++    selectedDeveloperDir = XCODE_B;
++    runCmdSync.mockClear();
++    expect(readFingerprint().xcodeBuildVersion).toBe(XCODE_B_BUILD_VERSION);
++
++    // The switch costs one resolution and one full re-read. The entry keyed on the old dir cannot
++    // answer for the new one, which is what let a daemon serve the Xcode the host had lef
+```
+
+**File**: `packages/platform-apple/src/runner/apple-runner-platform.ts` (modified, +8/-0)
+```diff
+@@ -21,6 +21,14 @@ import { readHostCpuArchSync } from './host.ts';
+  */
+ export const COLD_TOOLCHAIN_PROBE_TIMEOUT_MS = 30_000;
+ 
++/**
++ * The symlink `xcode-select -s` writes and `xcode-select -p` reads back. Resolving it answers which
++ * developer dir the host selects, without a subprocess, so the toolchain memo can key on that answer
++ * on a hit as well as on a miss. Beside the probe ceiling above so the constant sits with the
++ * toolchain constants this package shares rather than inside the one module that reads it.
++ */
++export const XCODE_SELECT_LINK_PATH = '/var/db/xcode_select_link';
++
+ export type RunnerApplePlatformName = 'iOS' | 'tvOS' | 'macOS' | 'visionOS';
+ 
+ type RunnerPlatformDeviceKind = 'simulator' | 'device';
+```
+
+**File**: `packages/platform-apple/src/runner/runner-toolchain-probe.ts` (modified, +207/-19)
+```diff
+@@ -12,8 +12,11 @@ import {
+   isCommandTimeoutError,
+   runCmdSync,
+ } from './host.ts';
++import fs from 'node:fs';
++import path from 'node:path';
+ import {
+   COLD_TOOLCHAIN_PROBE_TIMEOUT_MS,
++  XCODE_SELECT_LINK_PATH,
+   resolveRunnerPlatformName,
+   resolveRunnerSdkName,
+ } from './apple-runner-platform.ts';
+@@ -24,11 +27,23 @@ import {
+ } from './runner-phase-budget.ts';
+ 
+ /**
+- * Ceiling on the wall clock the whole toolchain fingerprint may spend, across all three
+- * probes and their retries, when the owning phase carries no shorter budget: one stalled
+- * probe, its warm retry, and the two probes still to run (#2422).
++ * Ceiling on the wall clock the whole toolchain fingerprint may spend, across the cache-key probe,
++ * the three value probes, and their retries, when the owning phase carries no shorter budget: one
++ * stalled probe, its warm retry, and the two probes still to run (#2422). The cache-key probe takes
++ * at most {@link XCODE_SELECT_PROBE_TIMEOUT_MS} of it and half of what the phase has left, so a
++ * stalled `xcode-select` costs a value probe that headroom and nothing more.
+  */
+ const TOOLCHAIN_FINGERPRINT_BUDGET_MS = 45_000;
++
++/**
++ * Ceiling on one `xcode-select -p` attempt, which the cache key needs only when the host's selection
++ * link cannot be read. `xcode-select -p` answers in tens of milliseconds, so this is headroom rather
++ * than an expected cost, and it stays small enough that a stalled probe cannot take the cold-start
++ * ceiling away from the value probes whose entry it is deciding. A selection this process cannot
++ * resolve leaves the read with no dir to key on.
++ */
++const XCODE_SELECT_PROBE_TIMEOUT_MS = 2_000;
++
+ const TOOLCHAIN_PROBE_MAX_BUFFER = 128 * 1024;
+ const TOOLCHAIN_PROBE_DETAIL_MAX_LENGTH = 200;
+ const TOOLCHAIN_PROBE_HINT =
+@@ -55,15 +70,22 @@ type ProbeResult<Value> =
+ 
+ /**
+  * The remaining-time and cancellation view the probes consult: one per fingerprint read,
+- * so the three probes and their retries share a single budget. A phase with no deadline
+- * still gets {@link TOOLCHAIN_FINGERPRINT_BUDGET_MS} as the ceiling.
++ * so the cache-key probe, the three value probes, and their retries share a single budget.
++ * A phase with no deadline still gets {@link TOOLCHAIN_FINGERPRINT_BUDGET_MS} as the ceiling.
+  *
+  * `spawnSync` cannot be interrupted once it has started, so cancellation is observed
+  * between attempts; the per-attempt cap is what bounds how long that takes.
+  */
+ type ToolchainProbeClock = {
+   /** Milliseconds the next attempt may block for; 0 once the budget is spent. */
+   attemptTimeoutMs(): number;
++  /**
++   * Milliseconds the cache-key probe may block for. Deciding which entry to read is optional
++   * work that precedes the read which answers for it, so it may spend neither more than
++   * {@link XCODE_SELECT_PROBE_TIMEOUT_MS} nor more than half of what that read still needs.
++   * Zero once the budget is spent, which skips the optional probe entirely.
++   */
++  keyProbeTimeoutMs(): number;
+   /** Throws the owning request's cancellation error once it has aborted. */
+   throwIfCanceled(): void;
+ };
+@@ -79,6 +101,8 @@ function createToolchainProbeClock(budget: RunnerPhaseBudget | undefined): Toolc
+   return {
+     attemptTimeoutMs: () =>
+       Math.min(COLD_TOOLCHAIN_PROBE_TIMEOUT_MS, Math.floor(deadline.remainingMs())),
++    keyProbeTimeoutMs: () =>
++      Math.min(XCODE_SELECT_PROBE_TIMEOUT_MS, Math.floor(deadline.remainingMs() / 2)),
+     throwIfCanceled: () => {
+       if (budget?.signal?.aborted) {
+         throw createRequestCanceledError({ phase: 'apple_toolchain_probe' });
+@@ -90,11 +114,13 @@ function createToolchainProbeClock(budget: RunnerPhaseBudget | undefined): Toolc
+ // Lazy: createTtlMemo is a host capability, and module evaluation happens
+ // before the composition root binds the host. Only a complete, parsed
+ // fingerprint is ever memoized, so nothing unavailable can outlive the probe
+-// that could not answer. The key carries a client-chosen DEVELOPER_DIR, so an
+-// entry expires once no request has used it for TOOLCHAIN_FINGERPRINT_TTL_MS:
+-// a dir no client uses any more must not stay for the daemon's lifetime. A hit
+-// renews the entry, so a failure report can name the Xcode a decision read for
+-// at least TOOLCHAIN_FINGERPRINT_TTL_MS after that read (the default start budget).
++// that could not answer. The key carries the developer dir the read answers for
++// and the identity of the bundle standing in it, so an entry is stale only until
++// its own key stops describing the host's selection, which is what let a daemon
++// serve the Xcode a host had left (#3300). A hit therefore renews the entry, as
++// it did before: an idle entry still goes away after
++// TOOLCHAIN_FINGERPRINT_TTL_MS, which also bounds how long a failure report
++// can name a selection no request is using any more.
+ const TOOLCHAIN_FINGERPRINT_TTL_MS = 10 * 60_000;
+ let lazyToolchainFingerprintCache: TtlMemo<string, RunnerToolchai
+```
+
+---
+
+### Incident Patch 3: `f217bd67` (2026-10-20)
+**Commit Message**: fix(macos-helper): set audio probe frameLength before PCM copy (#3821)
+
+AVAudioPCMBuffer starts with frameLength 0, so mDataByteSize stays 0
+and CMSampleBufferCopyPCMDataIntoAudioBufferList returns -12731. Set
+frameLength first, then copy. Add a regression that feeds a real float
+PCM sample buffer through add(sampleBuffer:) and asserts a non-silent
+peak.
+
+Fixes #3771
+
+Co-authored-by: Michał Pierzchała <[REDACTED_EMAIL]>
+
+**File**: `apple/macos-helper/Sources/AgentDeviceMacOSHelper/AudioProbe.swift` (modified, +4/-2)
+```diff
+@@ -31,7 +31,7 @@ private struct AudioProbeBucket {
+   var peak: Double = 0
+ }
+ 
+-private final class AudioProbeStatusWriter {
++final class AudioProbeStatusWriter {
+   private let outPath: String
+   private let startedAt = Date()
+   private let durationMs: Int
+@@ -61,6 +61,9 @@ private final class AudioProbeStatusWriter {
+     else {
+       return
+     }
++    // AVAudioPCMBuffer starts with frameLength 0, so every mDataByteSize is 0 until
++    // frameLength is set. Copying first leaves the destination empty (-12731).
++    pcmBuffer.frameLength = frameCount
+     let status = CMSampleBufferCopyPCMDataIntoAudioBufferList(
+       sampleBuffer,
+       at: 0,
+@@ -70,7 +73,6 @@ private final class AudioProbeStatusWriter {
+     guard status == noErr else {
+       return
+     }
+-    pcmBuffer.frameLength = frameCount
+     add(audioBufferList: pcmBuffer.mutableAudioBufferList, format: format)
+   }
+ 
+```
+
+**File**: `apple/macos-helper/Tests/AgentDeviceMacOSHelperTests/AudioProbeTests.swift` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++import AVFoundation
++import CoreMedia
++import XCTest
++
++@testable import AgentDeviceMacOSHelper
++
++/// AudioProbe must set AVAudioPCMBuffer.frameLength before the PCM copy.
++final class AudioProbeTests: XCTestCase {
++  func testAddSampleBufferRecordsANonSilentPeakFromRealPCM() throws {
++    let dir = FileManager.default.temporaryDirectory.appendingPathComponent(
++      "audio-probe-\(UUID().uuidString)", isDirectory: true)
++    try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
++    defer { try? FileManager.default.removeItem(at: dir) }
++
++    let outPath = dir.appendingPathComponent("probe.json").path
++    let writer = AudioProbeStatusWriter(outPath: outPath, durationMs: 1_000, bucketMs: 100)
++    writer.add(sampleBuffer: try makeFloatPCMSampleBuffer(frames: 512, amplitude: 0.5))
++    try writer.finish(reason: "test")
++
++    let response = try JSONDecoder().decode(
++      AudioProbeResponse.self, from: Data(contentsOf: URL(fileURLWithPath: outPath)))
++    XCTAssertTrue(response.heard, "a 0.5 amplitude buffer must clear the silence floor")
++    XCTAssertFalse(response.peakDbfs.isEmpty)
++    XCTAssertGreaterThan(response.peakDbfs.max() ?? -90, -90)
++  }
++}
++
++private func makeFloatPCMSampleBuffer(frames: Int, amplitude: Float) throws -> CMSampleBuffer {
++  var asbd = AudioStreamBasicDescription(
++    mSampleRate: 48_000,
++    mFormatID: kAudioFormatLinearPCM,
++    mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked
++      | kAudioFormatFlagIsNonInterleaved,
++    mBytesPerPacket: UInt32(MemoryLayout<Float>.size),
++    mFramesPerPacket: 1,
++    mBytesPerFrame: UInt32(MemoryLayout<Float>.size),
++    mChannelsPerFrame: 1,
++    mBitsPerChannel: UInt32(MemoryLayout<Float>.size * 8),
++    mReserved: 0
++  )
++
++  var formatDescription: CMAudioFormatDescription?
++  let formatStatus = CMAudioFormatDescriptionCreate(
++    allocator: kCFAllocatorDefault,
++    asbd: &asbd,
++    layoutSize: 0,
++    layout: nil,
++    magicCookieSize: 0,
++    magicCookie: nil,
++    extensions: nil,
++    formatDescriptionOut: &formatDescription
++  )
++  guard formatStatus == noErr, let formatDescription else {
++    throw NSError(
++      domain: "AudioProbeTests", code: Int(formatStatus),
++      userInfo: [NSLocalizedDescriptionKey: "CMAudioFormatDescriptionCreate failed"])
++  }
++
++  let byteCount = frames * MemoryLayout<Float>.size
++  var blockBuffer: CMBlockBuffer?
++  let blockStatus = CMBlockBufferCreateWithMemoryBlock(
++    allocator: kCFAllocatorDefault,
++    memoryBlock: nil,
++    blockLength: byteCount,
++    blockAllocator: nil,
++    customBlockSource: nil,
++    offsetToData: 0,
++    dataLength: byteCount,
++    flags: 0,
++    blockBufferOut: &blockBuffer
++  )
++  guard blockStatus == noErr, let blockBuffer else {
++    throw NSError(
++      domain: "AudioProbeTests", code: Int(blockStatus),
++      userInfo: [NSLocalizedDescriptionKey: "CMBlockBufferCreateWithMemoryBlock failed"])
++  }
++  let assureStatus = CMBlockBufferAssureBlockMemory(blockBuffer)
++  guard assureStatus == noErr else {
++    throw NSError(
++      domain: "AudioProbeTests", code: Int(assureStatus),
++      userInfo: [NSLocalizedDescriptionKey: "CMBlockBufferAssureBlockMemory failed"])
++  }
++
++  var lengthAtOffset = 0
++  var totalLength = 0
++  var dataPointer: UnsafeMutablePointer<Int8>?
++  let pointerStatus = CMBlockBufferGetDataPointer(
++    blockBuffer,
++    atOffset: 0,
++    lengthAtOffsetOut: &lengthAtOffset,
++    totalLengthOut: &totalLength,
++    dataPointerOut: &dataPointer
++  )
++  guard pointerStatus == noErr, let dataPointer else {
++    throw NSError(
++      domain: "AudioProbeTests", code: Int(pointerStatus),
++      userInfo: [NSLocalizedDescriptionKey: "CMBlockBufferGetDataPointer failed"])
++  }
++  let floatPointer = UnsafeMutableRawPointer(dataPointer).bindMemory(to: Float.self, capacity: frames)
++  for index in 0..<frames {
++    floatPointer[index] = amplitude
++  }
++
++  var timing = CMSampleTimingInfo(
++    duration: CMTime(value: 1, timescale: 48_000),
++    presentationTimeStamp: .zero,
++    decodeTimeStamp: .invalid
++  )
++  var sampleBuffer: CMSampleBuffer?
++  let sampleStatus = CMSampleBufferCreateReady(
++    allocator: kCFAllocatorDefault,
++    dataBuffer: blockBuffer,
++    formatDescription: formatDescription,
++    sampleCount: frames,
++    sampleTimingEntryCount: 1,
++    sampleTimingArray: &timing,
++    sampleSizeEntryCount: 0,
++    sampleSizeArray: nil,
++    sampleBufferOut: &sampleBuffer
++  )
++  guard sampleStatus == noErr, let sampleBuffer else {
++    throw NSError(
++      domain: "AudioProbeTests", code: Int(sampleStatus),
++      userInfo: [NSLocalizedDescriptionKey: "CMSampleBufferCreateReady failed"])
++  }
++  return sampleBuffer
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3803** (2026-10-18): chore: remove CHANGELOG.md again and gitignore it (@thymikee)
-- **PR #3799** (2026-10-18): docs(adr): add the ADR format guide and the write route (@thymikee)
-- **PR #3796** (2026-10-18): docs(adr): correct stale facts in the ADR set (@thymikee)
-- **PR #3795** (2026-10-18): fix(daemon): close startup and shutdown ownership gaps (@thymikee)
-- **PR #3793** (2026-10-18): fix(cli): refuse an empty numeric flag value instead of reading it as 0 (@RaphaelFakhri)
-- **PR #3791** (2026-10-18): fix(daemon): replace fixed 15s startup kill with progress-aware startup budget (@thymikee)
+- **PR #3847** (2026-10-20): feat(gesture): add gesture tap with 2 to 5 simultaneous contacts (@camchis)
+- **PR #3846** (2026-10-20): chore(diagnostics): trace Apple prepare phases and subprocess lifecycle (@thymikee)
+- **PR #3845** (2026-10-20): docs(adr): drop the withdrawn host allocator design from ADR 0021 (@thymikee)
+- **PR #3843** (2026-10-20): feat(sdk): start an embedded runtime from the main entry (@thymikee)
+- **PR #3840** (2026-10-20): docs(ios): record SpringBoard sessions as verified on a physical iPhone (@camchis)
+- **PR #3839** (2026-10-20): feat(screenshot): support selector crops on CoreDevice iPhones (@camchis)
 
 ---
 
@@ -2937,35 +3201,43 @@ files-list edit cannot re-ship sources the install never compiles.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. daemon): replace fixed 15s startup kill with progress-aware startup budget (#379
+## X. daemon): preserve recorded ownership through stop and cleanup (#3806)
 
 **RULE**:
-When implementing operations in `.github/workflows/ios.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/daemon-contracts/src/daemon-process.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72e79651`: daemon): replace fixed 15s startup kill with progress-aware startup budget (#3791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4645ddd7`: daemon): preserve recorded ownership through stop and cleanup (#3806). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ios.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/daemon-contracts/src/daemon-process.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          # The public-SDK record is the cold-startup evidence; the CLI timer only wraps attach.
-          node --input-type=module -e '
-            const { performance } = await import("node:perf_hooks");
-            const { ensureDaemon } = await import("./dist/src/index.js");
-            const t0 = performance.now();
-            const c = await ensureDaemon({ stateDir: process.env.AGENT_DEVICE_STATE_DIR });
-            console.log(JSON.stringify({ phase: "daemon_cold_startup", started: c.started, pid: c.daemon.pid, durationMs: Math.round(performance.now() - t0) }));
-          '
+      reason:
+        | 'missing-start-time'
+        | 'identity-unverified'
+        /**
+         * A host owns this runtime and ends it. Callers that judge a registration answer this instead of
+         * calling {@link stopDaemonProcess} at all (`stopAndRetireDaemon`); this function signals
+         * whatever verified identity it is handed and never decides ownership itself.
+         */
+        | 'embedded-owner'
+        /**
+         * The record states an owner this build cannot read, so nothing proves this pid is a daemon of
+         * its own, and signalling it is refused. The other half of the same rule as `embedded-owner`.
+         */
+        | 'owner-unproven'
+        | 'signal-failed'
+        | 'exit-timeout';
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      reason: 'missing-start-time' | 'identity-unverified' | 'signal-failed' | 'exit-timeout';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72e79651` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4645ddd7` are properly handled with clean fallback behavior.
