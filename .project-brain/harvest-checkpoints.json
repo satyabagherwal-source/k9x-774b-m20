@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T19:43:27.924Z",
+  "last_updated": "2026-10-20T19:50:47.552Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "f91a9ba40f3bfc1d1547ffb7452dbc88b63d891e5c08efbcd9857137e02d1ec7",
-      "verified_at": "2026-10-19T06:04:39.700Z",
+      "content_hash": "47f039b49ee5d600f35d155d550cdf5895101f733073141f869f5b19acdaedc9",
+      "verified_at": "2026-10-20T19:50:37.524Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:04:39.700Z"
+      "last_updated": "2026-10-20T19:50:37.524Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
-      "verified_at": "2026-10-20T03:06:49.350Z",
+      "content_hash": "9553d8a4b1348cd723ab2fac532586850bd877730e92e6b03b17ec6c4081a31c",
+      "verified_at": "2026-10-20T19:50:38.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:06:49.350Z"
+      "last_updated": "2026-10-20T19:50:38.231Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "4532ac248dcb001a32e523e366c36ca88cb5a46631b283eba6e49e7f1781230a",
-      "verified_at": "2026-10-20T16:37:57.204Z",
+      "content_hash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
+      "verified_at": "2026-10-20T19:50:47.551Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:37:57.204Z"
+      "last_updated": "2026-10-20T19:50:47.551Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -10371,14 +10371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lucide-icons-lucide",
-      "content_hash": "cd9b63b8f8aede7a87d569ad985fdf1c378960981fa3ed898575af4179288bc9",
-      "verified_at": "2026-10-19T18:29:42.743Z",
+      "content_hash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
+      "verified_at": "2026-10-20T19:50:45.318Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:29:42.743Z"
+      "last_updated": "2026-10-20T19:50:45.318Z"
     },
     "iconoir-icons/iconoir": {
       "repository": "iconoir-icons/iconoir",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
-      "verified_at": "2026-10-19T07:51:42.735Z",
+      "content_hash": "e421dee75383bc1b2634018ba9de0571f624713f397e0c74dc456d01505511f4",
+      "verified_at": "2026-10-20T19:50:42.334Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:51:42.735Z"
+      "last_updated": "2026-10-20T19:50:42.334Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",

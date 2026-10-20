@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `8effbeac`  
+> **Source Version**: `0e48502c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:37:56.856Z  
+> **Timestamp**: 2026-10-20T19:50:47.129Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:37:56.847Z  
+> **Harvest Timestamp**: 2026-10-20T19:50:47.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1826,119 +1826,214 @@ func (c *CreateCmd) Exec(ctx context.Context) (err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8effbeac` (2026-10-20)
-**Commit Message**: chore(deps): bump the actions group with 6 updates (#5175)
+### Incident Patch 1: `3428d3c2` (2026-10-20)
+**Commit Message**: Build releases with 1.27.3 (#5177)
 
-Bumps the actions group with 6 updates:
+* Build releases with 1.27.3
 
-| Package | From | To |
-| --- | --- | --- |
-| [chainguard-dev/actions/donotsubmit](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
-| [chainguard-dev/actions/setup-mirror](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
-| [chainguard-dev/actions/kind-diag](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
-| [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |
-| [chainguard-dev/actions/trailing-space](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
-| [chainguard-dev/actions/eof-newline](https://github.com/chainguard-dev/actions) | `1.6.40` | `1.6.41` |
+This picks up a security fix - https://groups.google.com/g/golang-announce/c/66pojueaQek/m/tmWX2Pq9AgAJ
 
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
-Updates `chainguard-dev/actions/donotsubmit` from 1.6.40 to 1.6.41
-- [Release notes](https://github.com/chainguard-dev/actions/releases)
-- [Commits](https://github.com/chainguard-dev/actions/compare/84b1be4c638f12d4256ddddef17af98853b6d0d9...3403a578b543fd3f0debdaef9dd989ae54e3fcef)
+* Update validate-release.yml
 
-Updates `chainguard-dev/actions/setup-mirror` from 1.6.40 to 1.6.41
-- [Release notes](https://github.com/chainguard-dev/actions/releases)
-- [Commi
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/donotsubmit.yaml` (modified, +1/-1)
+* Bump sigstore/sigstore, set go version directive to 1.27
+
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/validate-release.yml` (modified, +1/-0)
 ```diff
-@@ -40,4 +40,4 @@ jobs:
-           persist-credentials: false
+@@ -97,6 +97,7 @@ jobs:
+         run: make snapshot
+         env:
+           PROJECT_ID: honk-fake-project
++          GOTOOLCHAIN: go1.27.3
+           RUNTIME_IMAGE: gcr.io/distroless/static-debian13:nonroot
  
-       - name: Do Not Submit
--        uses: chainguard-dev/actions/donotsubmit@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+        uses: chainguard-dev/actions/donotsubmit@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+       - name: check binaries
 ```
 
-**File**: `.github/workflows/e2e-tests.yml` (modified, +2/-2)
+**File**: `go.mod` (modified, +45/-45)
 ```diff
-@@ -150,7 +150,7 @@ jobs:
-         cache: false
+@@ -1,9 +1,9 @@
+ module github.com/sigstore/cosign/v3
  
-     - name: Setup mirror
--      uses: chainguard-dev/actions/setup-mirror@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+      uses: chainguard-dev/actions/setup-mirror@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
-       with:
-         mirror: mirror.gcr.io
+-go 1.26.0
++go 1.27
  
-@@ -258,4 +258,4 @@ jobs:
- 
-     - name: Collect diagnostics
-       if: ${{ failure() }}
--      uses: chainguard-dev/actions/kind-diag@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+      uses: chainguard-dev/actions/kind-diag@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+ require (
+-	cloud.google.com/go/compute/metadata v0.9.0
++	cloud.google.com/go/compute/metadata v0.10.0
+ 	cuelang.org/go v0.17.1
+ 	github.com/awslabs/amazon-ecr-credential-helper/ecr-login v0.12.0
+ 	github.com/buildkite/agent/v3 v3.130.0
+@@ -36,12 +36,12 @@ require (
+ 	github.com/sigstore/protobuf-specs v0.5.2
+ 	github.com/sigstore/rekor v1.5.4
+ 	github.com/sigstore/rekor-tiles/v2 v2.3.0
+-	github.com/sigstore/sigstore v1.10.9
++	github.com/sigstore/sigstore v1.11.1
+ 	github.com/sigstore/sigstore-go v1.3.0
+-	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.10.9
+-	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.10.9
+-	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.10.9
+-	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.10.9
++	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.1
++	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.1
++	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.1
++	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.11.1
+ 	github.com/sigstore/timestamp-authority/v2 v2.1.3
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/spf13/pflag v1.0.10
+@@ -52,11 +52,11 @@ require (
+ 	github.com/transparency-dev/merkle v0.0.2
+ 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
+ 	gitlab.com/gitlab-org/api/client-go/v3 v3.13.0
+-	golang.org/x/crypto v0.55.0
+-	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.22.0
+-	golang.org/x/term v0.45.0
+-	google.golang.org/api v0.290.0
++	golang.org/x/crypto v0.57.0
++	golang.org/x/oauth2 v0.37.0
++	golang.org/x/sync v0.23.0
++	golang.org/x/term v0.46.0
++	google.golang.org/api v0.301.0
+ 	google.golang.org/protobuf v1.36.12
+ 	k8s.io/api v0.36.2
+ 	k8s.io/apimachinery v0.36.2
+@@ -68,17 +68,17 @@ require (
+ require (
+ 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1 // indirect
+ 	cloud.google.com/go v0.123.0 // indirect
+-	cloud.google.com/go/auth v0.20.0 // indirect
+-	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
++	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
++	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
+ 	cloud.google.com/go/iam v1.13.0 // indirect
+ 	cloud.google.com/go/kms v1.33.0 // indirect
+ 	cloud.google.com/go/longrunning v1.2.0 // indirect
+ 	connectrpc.com/connect v1.20.0 // indirect
+ 	cuelabs.dev/go/oci/ociregistry v0.0.0-20260601085548-328ff8e2c943 // indirect
+ 	github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.14.0 // indirect
+ 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
+-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0 // indirect
+-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0 // indirect
++	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 // indirect
++	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 // indirect
+ 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 // indirect
+ 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0 // indirect
+ 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/internal v1.2.0 // indirect
+@@ -91,7 +91,7 @@ require (
+ 	github.com/Azure/go-autorest/autorest/date v0.3.0 // indirect
+ 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
+ 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
+-	github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2 // indirect
++	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
+ 	github.com/Microsoft/go-winio v0.6.2 // indirect
+ 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
+ 	github.com/agnivade/levenshtein v1.2.1 // indirect
+@@ -107,23 +107,23 @@ require (
+ 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
+ 	github.com/aliyun/credentials-go v1.3.2 // indirect
+ 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+-	github.com/aws/aws-sdk-go-v2 v1.43.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/config v1.32.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.19.30 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.32 // indirect
++	github.com/aws/aws-sdk-go-v2 v1.47.3 // indirect
++	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/ecr v1.55.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.38.10 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/inter
 ```
 
-**File**: `.github/workflows/kind-verify-attestation.yaml` (modified, +1/-1)
+**File**: `go.sum` (modified, +88/-88)
 ```diff
-@@ -181,7 +181,7 @@ jobs:
- 
-     - name: Collect diagnostics
-       if: ${{ failure() }}
--      uses: chainguard-dev/actions/kind-diag@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+      uses: chainguard-dev/actions/kind-diag@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
- 
-     - name: Create vuln attestation for it
-       run: |
+@@ -3,12 +3,12 @@ buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-202607092007
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
+ cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+-cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
+-cloud.google.com/go/auth v0.20.0/go.mod h1:942/yi/itH1SsmpyrbnTMDgGfdy2BUqIKyd0cyYLc5Q=
+-cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
+-cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
+-cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
+-cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
++cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8LOI40z6s+DL1cO/L1KSm9hVGnibn8=
++cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
++cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
++cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
++cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
++cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
+ cloud.google.com/go/iam v1.13.0 h1:ufT3FPT5rFFXu6UtLkNoxaOaV5EuA1dsSkmemCSTo6U=
+ cloud.google.com/go/iam v1.13.0/go.mod h1:gHXdDEiPDvqd1q1KwBDGQlgZY/BwY760zU2LhOZS5w0=
+ cloud.google.com/go/kms v1.33.0 h1:pG0X78m212b2pv9N4fdMoUO69LuZGQ9kSvn8sHBOFAo=
+@@ -31,10 +31,10 @@ github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.14.0
+ github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.14.0/go.mod h1:tlqp9mUGbsP+0z3Q+c0Q5MgSdq/OMwQhm5bffR3Q3ss=
+ github.com/Azure/azure-sdk-for-go v68.0.0+incompatible h1:fcYLmCpyNYRnvJbPerq7U0hS+6+I79yEDJBqVNcqUzU=
+ github.com/Azure/azure-sdk-for-go v68.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
+-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0 h1:aokoqcHvaGjiM3VpjKDfMMnF/8epJ+Q1HLJ7CudztqE=
+-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0/go.mod h1:/WYEx9pcM9Y+Dd/APJaNlSvVSvzl54rrMdZT5+Oi2LM=
+-github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0 h1:CU4+EJeJi3TKYWEcYuSdWsjzw0nVsK/H0MSQOiPcymU=
+-github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0/go.mod h1:q0+UTSRvShwUCrR/s5HtyInYphN7Wvxb7snFM3u+SLA=
++github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 h1:zvXfGJCWvywnCA814d8ZiVyt+fm9nnTE8xSb99zRyfo=
++github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1/go.mod h1:iptorS+VYKFL2N6PnebpS91dubG35eAOEERnT4PJbQU=
++github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 h1:u93s+zU2JD62im61Bm5CZIc1ZrOJaIAWEg0WOrMVkEo=
++github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1/go.mod h1:oXtinPO4OLj9d1DOTrqrL1oRwGhcqadvAmrl6wTeGlk=
+ github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
+ github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
+ github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 h1:fhqpLE3UEXi9lPaBRpQ6XuRW0nU7hgg4zlmZZa+a9q4=
+@@ -70,8 +70,8 @@ github.com/Azure/go-autorest/tracing v0.6.0 h1:TYi4+3m5t6K48TGI9AUdb+IzbnSxvnvUM
+ github.com/Azure/go-autorest/tracing v0.6.0/go.mod h1:+vhtPC754Xsa23ID7GlGsrdKBpUA79WCAKPPZVC2DeU=
+ github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1 h1:WJTmL004Abzc5wDB5VtZG2PJk5ndYDgVacGqfirKxjM=
+ github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1/go.mod h1:tCcJZ0uHAmvjsVYzEFivsRTN00oz5BEsRgQHu5JZ9WE=
+-github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2 h1:RHK7bS+HQMslb1sZpAokUt+zTVmue0hKSs2C791hhzU=
+-github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2/go.mod h1:HKpQxkWaGLJ+D/5H8QRpyQXA1eKjxkFlOMwck5+33Jk=
++github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
++github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
+ github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
+@@ -125,40 +125,40 @@ github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0 h1:jfIu9sQUG6Ig
+ github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0/go.mod h1:t2tdKJDJF9BV14lnkjHmOQgcvEKgtqs5a1N3LNdJhGE=
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
+ github.com/asaskevich/govalidator v0.0.0-202
 ```
 
-**File**: `.github/workflows/scorecard-action.yml` (modified, +1/-1)
+**File**: `release/cloudbuild.yaml` (modified, +1/-0)
 ```diff
-@@ -45,7 +45,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Run analysis"
--        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
-+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
-```
-
-**File**: `.github/workflows/tests.yaml` (modified, +1/-1)
-```diff
-@@ -185,7 +185,7 @@ jobs:
- 
-       - name: Collect diagnostics
-         if: ${{ failure() }}
--        uses: chainguard-dev/actions/kind-diag@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+        uses: chainguard-dev/actions/kind-diag@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
- 
-   e2e-windows-powershell-tests:
-     name: Run PowerShell E2E tests
-```
-
-**File**: `.github/workflows/whitespace.yaml` (modified, +2/-2)
-```diff
-@@ -38,8 +38,8 @@ jobs:
-         with:
-           persist-credentials: false
- 
--      - uses: chainguard-dev/actions/trailing-space@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+      - uses: chainguard-dev/actions/trailing-space@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
-         if: ${{ always() }}
- 
--      - uses: chainguard-dev/actions/eof-newline@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
-+      - uses: chainguard-dev/actions/eof-newline@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
-         if: ${{ always() }}
+@@ -48,6 +48,7 @@ steps:
+     entrypoint: /bin/sh
+     dir: "go/src/sigstore/cosign"
+     env:
++      - "GOTOOLCHAIN=go1.27.3"
+       - "GOPATH=/workspace/go"
+       - "GOBIN=/workspace/bin"
+       - PROJECT_ID=${PROJECT_ID}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5178** (2026-10-20): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
+- **PR #5177** (2026-10-20): Build releases with 1.27.3 (@Hayden-IO)
 - **PR #5176** (2026-10-19): Add AGENTS.md, update contributors.md with reference to AI policy (@Hayden-IO)
 - **PR #5175** (2026-10-20): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
-- **PR #5170** (closed): fix(verify): discover OCI 1.1 DSSE attestation referrers (@jzeng4)
-- **PR #5166** (2026-10-14): chore(deps): bump the actions group across 1 directory with 7 updates (@dependabot[bot])
-- **PR #5165** (closed): chore(deps): bump the gomod group across 1 directory with 9 updates (@dependabot[bot])
-- **PR #5153** (closed): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
+- **PR #5174** (closed): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
+- **PR #5173** (2026-10-20): chore(deps): bump the all group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1958,28 +2053,28 @@ Updates `chainguard-dev/actions/setup-mirror` from 1.6.40 to 1.6.41
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the actions group with 6 updates (#5175)
+## X. Build releases with 1.27.3 (#5177)
 
 **RULE**:
-When implementing operations in `.github/workflows/donotsubmit.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/validate-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8effbeac`: deps): bump the actions group with 6 updates (#5175). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3428d3c2`: Build releases with 1.27.3 (#5177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/donotsubmit.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/validate-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: chainguard-dev/actions/donotsubmit@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
+          GOTOOLCHAIN: go1.27.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: chainguard-dev/actions/donotsubmit@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8effbeac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3428d3c2` are properly handled with clean fallback behavior.

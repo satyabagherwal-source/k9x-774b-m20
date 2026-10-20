@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source**: github ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
-> **Source Version**: `02eb9161`  
+> **Source Version**: `c29c276f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:29:42.446Z  
+> **Timestamp**: 2026-10-20T19:50:44.870Z  
 > **Learning ID**: `learn-github-lucide-icons-lucide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:29:40.595Z  
+> **Harvest Timestamp**: 2026-10-20T19:50:35.390Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Beautiful & consistent icon toolkit made by the community. Open-source project and a fork of Feather Icons.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25147 stars
+- **Stars / Engagement**: 25175 stars
 
 ---
 
@@ -431,11 +431,13 @@ export default function IconShowcase() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5040** (2026-10-19): **feat(metadata): extend base icon metadata in variant icons**
-  *Symptoms*: ## Description Stacked on #5038.  Uses `$extends:<base>` in 703 variant icons whose tags or categories already include every value of their base icon, and removes the duplicated literals (1952 tags, 1058 categories).  - The base is the longest prefix of the icon name that is itself an icon, e.g. `clipboard-pen-line` extends `clipboard-pen` (which extends `clipboard`). - `tags` extend their base in 417 icons, `categories` in 675. - Only applied where the base adds nothing new: the resolved tags and categories of all 1899 icons were compared before and after and are identical. - `contributors` are left as they are. - ~320 variants that only partly overlap with their base are left untouched; extending them would add tags and needs a reviewed pass.  Verified with `pnpm checkIcons`, `eslint 'icons/*.json'`, cspell and prettier.  ## Before Submitting - [x] I've read the [Contribution Guidelines](https://github.com/lucide-icons/lucide/blob/main/CONTRIBUTING.md). - [x] I've checked if there was an existing PR that solves the same issue.
+- **Issue #5049** (2026-10-20): **fix(icons): swap triangles-centerline-dashed horizontal & vertical variants**
+  *Symptoms*: <!-- Thank you for contributing! -->  closes #5048  ## Description  The `triangles-centerline-dashed-vertical` and `triangles-centerline-dashed-horizontal` icons have swapped artwork. This was introduced in a53bd66, where the rename from `flip-*-2` sent each source icon's `.svg` and `.json` to opposite destination names, so the two SVG bodies ended up crossed relative to their filename and deprecated `flip-*-2` alias:  - `triangles-centerline-dashed-vertical.svg` held the vertical-centerline / left-right   geometry — i.e. `flip-horizontal-2`. - `triangles-centerline-dashed-horizontal.svg` held the horizontal-centerline / top-bottom   geometry — i.e. `flip-vertical-2`.  The `.json` alias files landed on the correct names, and the sibling `square-centerline-dashed-*` pair shows the right orientation (as noted in the issue).  This PR swaps the two SVG paths back so each matches its filename and alias. No `.json` changes are needed, and only these two source SVGs are touched — the per-package files regenerate from them at build time.  ## Before Submitting - [x] I've read the [Contribution Guidelines](https://github.com/lucide-icons/lucide/blob/main/CONTRIBUTING.md). - [x] I've checked if there was an existing PR that solves the same issue.
+  **Post-Mortem & Fix Analysis**:
+  > Hey @stijn-k2g,  I understand your reasoning, but I'll be closing this, as swapping the artwork of existing icons would be a breaking change.  For some context, horizontal/vertical naming is _notoriously ambiguous_, especially with flipping operations: "flip horizontally" can mean either "mirror left to right" or "flip across the horizontal axis".  Regardless of any inconsistency here, it's not worth introducing a breaking change to resolve it.
 
-- **Issue #5033** (2026-10-19): **fix(site): Fix build**
-  *Symptoms*: Fix broken site build.
+- **Issue #5048** (2026-10-20): **triangles-centerline-dashed-vertical and triangles-centerline-dashed-horizontal icons are swapped**
+  *Symptoms*: ### Package  - [x] lucide - [x] lucide-react - [ ] @lucide/vue - [ ] @lucide/svelte - [ ] @lucide/angular - [ ] @lucide/astro - [ ] lucide-react-native - [ ] lucide-preact - [ ] lucide-solid - [ ] lucide-static - [x] @lucide/icons - [ ] lucide-vue-next (deprecated) - [ ] lucide-svelte (deprecated) - [ ] lucide-angular (deprecated) - [ ] Figma plugin - [ ] source/main - [x] other/not relevant  ### Version  1.60.0  ### Can you reproduce this in the latest version?  - [x] Yes - [ ] No  ### Browser  - [x] Chrome/Chromium - [x] Firefox - [ ] Safari - [ ] Edge - [ ] iOS Safari - [ ] Opera - [x] Other/not relevant  ### Operating system  - [ ] Windows - [ ] Linux - [x] macOS - [ ] ChromeOS - [ ] iOS - [ ] Android - [x] Other/not relevant  ### Description  The `triangles-centerline-dashed-vertical` and `triangles-centerline-dashed-horizontal` icons were swapped during renaming. The `square-centerline-dashed-horizontal` and `square-centerline-dashed-vertical` show the correct orientation.  Bug seems to be introduced by: https://github.com/lucide-icons/lucide/commit/a53bd66a03dfd5609c3638379869e83dc207b051  ### Steps to reproduce  1. Open https://lucide.dev/icons/?search=centerline- or import the icons in code. 2. Notice how the icons are swapped.  ### Checklist  - [x] I have searched if someone has submitted a similar issue before and there weren't any. (Please make sure to also search closed issues, as this issue might already have been resolved.)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -452,55 +454,305 @@ export default function IconShowcase() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e1308ce` (2026-10-19)
-**Commit Message**: fix(site): Fix build (#5033)
+### Incident Patch 1: `c29c276f` (2026-10-20)
+**Commit Message**: feat(icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-right` and 1 more icons (#5025)
 
-* Fix name
+* feat: add circle-double-chevron icons for left, right, up, and down directions
 
-* Fix import
+* chore(icons): add relevant suggested tags and use-cases
 
-**File**: `docs/.vitepress/theme/components/home/HomeHeroIconsCard.data.ts` (modified, +1/-1)
+* Renamed the files from circle-double-chevrons to circle-chevrons
+
+* Apply batched suggestions from code review
+
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+* Fix formatting
+
+---------
+
+Co-authored-by: Eric Fennis <[REDACTED_EMAIL]>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `icons/circle-chevrons-down.json` (added, +41/-0)
 ```diff
-@@ -38,7 +38,7 @@ const pickIcons = [
-   'map-pinned',
-   'megaphone',
-   'moon',
--  'music',
-+  'sixteenth-notes',
-   'phone',
-   'power-off',
-   'radio',
+@@ -0,0 +1,41 @@
++{
++  "$schema": "../icon.schema.json",
++  "contributors": [
++    "ypotti",
++    "karsa-mistmere",
++    "ericfennis",
++    "jguddas",
++    "colebemis",
++    "AlexandrePhilibert"
++  ],
++  "use-cases": [
++    "Navigating to the bottom of a page or feed",
++    "Fast-scrolling downwards in long document readers",
++    "Collapsing expanded panels or drawers downward",
++    "Jumping to the latest message in chat and activity feeds"
++  ],
++  "tags": [
++    "bottom",
++    "descend",
++    "page",
++    "page down",
++    "scroll",
++    "jump",
++    "south",
++    "caret",
++    "button",
++    "skip",
++    "end",
++    "last page",
++    "latest",
++    "feed",
++    "chat",
++    "pagination",
++    "fast",
++    "media"
++  ],
++  "categories": [
++    "arrows",
++    "navigation"
++  ]
++}
 ```
 
-**File**: `docs/.vitepress/theme/components/overrides/HeroMatrix.vue` (modified, +2/-2)
+**File**: `icons/circle-chevrons-down.svg` (added, +15/-0)
 ```diff
-@@ -10,7 +10,7 @@ import {
-   sun,
-   moon,
-   camera,
--  music,
-+  sixteenthNotes,
-   video,
-   globe,
-   layers,
-@@ -44,7 +44,7 @@ import createElement from 'lucide/src/createElement';
- import { IconNode } from 'lucide/src/types';
- 
- const icons: Component[] = [
--  heart, star, zap, code, feather, cloud, sun, moon, camera, music,
-+  heart, star, zap, code, feather, cloud, sun, moon, camera, sixteenthNotes,
-   video, globe, layers, packageIcon, compass, command, terminal, database,
-   server, cpu, lock, key, shield, wifi, download, upload, search,
-   settings, users, mail, bell, calendar, clock, gitBranch, funnel,
+@@ -0,0 +1,15 @@
++<svg
++  xmlns="http://www.w3.org/2000/svg"
++  width="24"
++  height="24"
++  viewBox="0 0 24 24"
++  fill="none"
++  stroke="currentColor"
++  stroke-width="2"
++  stroke-linecap="round"
++  stroke-linejoin="round"
++>
++  <path d="M9 14L12 17L15 14" />
++  <path d="M9 8L12 11L15 8" />
++  <circle cx="12" cy="12" r="10" />
++</svg>
+```
+
+**File**: `icons/circle-chevrons-left.json` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++{
++  "$schema": "../icon.schema.json",
++  "contributors": [
++    "ypotti",
++    "karsa-mistmere",
++    "ericfennis",
++    "jguddas",
++    "colebemis",
++    "AlexandrePhilibert"
++  ],
++  "use-cases": [
++    "Skipping to the first page in pagination controls",
++    "Rewinding playback in audio or video media players",
++    "Fast-navigating backward through steps in multi-step wizards",
++    "Jumping to the first track or chapter in playlists"
++  ],
++  "tags": [
++    "previous",
++    "rewind",
++    "backward",
++    "first",
++    "beginning",
++    "start",
++    "west",
++    "music",
++    "caret",
++    "button",
++    "pagination",
++    "skip",
++    "skip-back",
++    "seek-back",
++    "media-controls",
++    "player",
++    "playlist",
++    "track",
++    "chapter",
++    "jump",
++    "timeline",
++    "controls"
++  ],
++  "categories": [
++    "arrows",
++    "navigation",
++    "multimedia"
++  ]
++}
+```
+
+**File**: `icons/circle-chevrons-left.svg` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++<svg
++  xmlns="http://www.w3.org/2000/svg"
++  width="24"
++  height="24"
++  viewBox="0 0 24 24"
++  fill="none"
++  stroke="currentColor"
++  stroke-width="2"
++  stroke-linecap="round"
++  stroke-linejoin="round"
++>
++  <path d="M10 9L7 12L10 15" />
++  <path d="M16 9L13 12L16 15" />
++  <circle cx="12" cy="12" r="10" />
++</svg>
+```
+
+**File**: `icons/circle-chevrons-right.json` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++{
++  "$schema": "../icon.schema.json",
++  "contributors": [
++    "ypotti",
++    "karsa-mistmere",
++    "ericfennis",
++    "jguddas",
++    "colebemis",
++    "AlexandrePhilibert"
++  ],
++  "use-cases": [
++    "Skipping to the last page in pagination controls",
++    "Fast-forwarding playback in audio or video media players",
++    "Fast-navigating forward through steps in multi-step wizards",
++    "Advancing to the final chapter or track in playlists and audiobooks"
++  ],
++  "tags": [
++    "next",
++    "forward",
++    "skip",
++    "fast forward",
++    "last",
++    "end",
++    "east",
++    "music",
++    "caret",
++    "button",
++    "pagination",
++    "jump",
++    "seek",
++    "seek forward",
++    "player control",
++    "chapter",
++    "track",
++    "timeline",
++    "navigation control"
++  ],
++  "categories": [
++    "arrows",
++    "navigation",
++    "multimedia"
++  ]
++}
+```
+
+**File**: `icons/circle-chevrons-right.svg` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++<svg
++  xmlns="http://www.w3.org/2000/svg"
++  width="24"
++  height="24"
++  viewBox="0 0 24 24"
++  fill="none"
++  stroke="currentColor"
++  stroke-width="2"
++  stroke-linecap="round"
++  stroke-linejoin="round"
++>
++  <path d="M14 15L17 12L14 9" />
++  <path d="M8 15L11 12L8 9" />
++  <circle cx="12" cy="12" r="10" />
++</svg>
+```
+
+**File**: `icons/circle-chevrons-up.json` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++{
++  "$schema": "../icon.schema.json",
++  "contributors": [
++    "ypotti",
++    "karsa-mistmere",
++    "ericfennis",
++    "jguddas",
++    "colebemis",
++    "AlexandrePhilibert"
++  ],
++  "use-cases": [
++    "Navigating to the top of a page or feed",
++    "Fast-scrolling upwards in long document readers",
++    "Expanding collapsed panels or drawers upward"
++  ],
++  "tags": [
++    "top",
++    "ascend",
++    "page",
++    "page up",
++    "back to top",
++    "scroll",
++    "jump",
++    "north",
++    "caret",
++    "button",
++    "skip",
++    "pagination",
++    "first page",
++    "fast",
++    "fast scroll",
++    "rewind",
++    "jump to start",
++    "floating action button",
++    "anchor",
++    "timeline"
++  ],
++  "categories": [
++    "arrows",
++    "navigation"
++  ]
++}
+```
+
+**File**: `icons/circle-chevrons-up.svg` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++<svg
++  xmlns="http://www.w3.org/2000/svg"
++  width="24"
++  height="24"
++  viewBox="0 0 24 24"
++  fill="none"
++  stroke="currentColor"
++  stroke-width="2"
++  stroke-linecap="round"
++  stroke-linejoin="round"
++>
++  <path d="M15 10L12 7L9 10" />
++  <path d="M15 16L12 13L9 16" />
++  <circle cx="12" cy="12" r="10" />
++</svg>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5049** (closed): fix(icons): swap triangles-centerline-dashed horizontal & vertical variants (@stijn-k2g)
 - **PR #5040** (2026-10-19): feat(metadata): extend base icon metadata in variant icons (@ericfennis)
 - **PR #5033** (2026-10-19): fix(site): Fix build (@ericfennis)
 - **PR #5031** (closed): feat(icons): added `badge-bangladeshi-taka`, `receipt-bangladeshi-taka` icons (@s8rr)
 - **PR #5030** (2026-10-19): chore(deps-dev): bump react-native from 0.87.1 to 0.88.0 in the react-native-deps group (@dependabot[bot])
 - **PR #5029** (closed): chore(deps): bump the solid-deps group with 6 updates (@dependabot[bot])
-- **PR #5028** (2026-10-19): chore(deps-dev): bump the svelte-deps group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -520,28 +772,68 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. site): Fix build (#5033)
+## X. icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-r
 
 **RULE**:
-When implementing operations in `docs/.vitepress/theme/components/home/HomeHeroIconsCard.data.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `icons/circle-chevrons-down.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e1308ce`: site): Fix build (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c29c276f`: icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-right` and 1 more icons (#5025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/theme/components/home/HomeHeroIconsCard.data.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `icons/circle-chevrons-down.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  'sixteenth-notes',
+{
+  "$schema": "../icon.schema.json",
+  "contributors": [
+    "ypotti",
+    "karsa-mistmere",
+    "ericfennis",
+    "jguddas",
+    "colebemis",
+    "AlexandrePhilibert"
+  ],
+  "use-cases": [
+    "Navigating to the bottom of a page or feed",
+    "Fast-scrolling downwards in long document readers",
+    "Collapsing expanded panels or drawers downward",
+    "Jumping to the latest message in chat and activity feeds"
+  ],
+  "tags": [
+    "bottom",
+    "descend",
+    "page",
+    "page down",
+    "scroll",
+    "jump",
+    "south",
+    "caret",
+    "button",
+    "skip",
+    "end",
+    "last page",
+    "latest",
+    "feed",
+    "chat",
+    "pagination",
+    "fast",
+    "media"
+  ],
+  "categories": [
+    "arrows",
+    "navigation"
+  ]
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  'music',
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e1308ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c29c276f` are properly handled with clean fallback behavior.

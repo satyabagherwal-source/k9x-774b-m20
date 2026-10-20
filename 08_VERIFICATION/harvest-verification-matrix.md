@@ -3988,3 +3988,8 @@
 | `CYCLE-20261020-CAF2` | `2026-10-20T19:43:19.742Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3346` | Yes (`d7a14e80...`) |
 | `CYCLE-20261020-CFT9` | `2026-10-20T19:43:26.733Z` | `snyk/driftctl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3347` | Yes (`2f375baa...`) |
 | `CYCLE-20261020-CGQ2` | `2026-10-20T19:43:27.914Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3348, Rule 3349, Rule 3350` | Yes (`2c00e102...`) |
+| `CYCLE-20261020-LO7C` | `2026-10-20T19:50:37.512Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`47f039b4...`) |
+| `CYCLE-20261020-LOQU` | `2026-10-20T19:50:38.214Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3351` | Yes (`9553d8a4...`) |
+| `CYCLE-20261020-LRWZ` | `2026-10-20T19:50:42.323Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | Yes (`e421dee7...`) |
+| `CYCLE-20261020-LU7P` | `2026-10-20T19:50:45.301Z` | `lucide-icons/lucide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3352` | Yes (`b8372596...`) |
+| `CYCLE-20261020-LVXR` | `2026-10-20T19:50:47.535Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3353` | Yes (`1d607326...`) |

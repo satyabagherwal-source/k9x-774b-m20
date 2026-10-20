@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `cc4b96dc`  
+> **Source Version**: `da467bb5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:11:46.802Z  
+> **Timestamp**: 2026-10-20T19:50:37.805Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:11:45.509Z  
+> **Harvest Timestamp**: 2026-10-20T19:50:37.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source Rust agent engine and terminal client for Codewhale, with provider choice, tools, approvals and receipts.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41105 stars
+- **Stars / Engagement**: 41099 stars
 
 ---
 
@@ -1355,573 +1355,211 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac5b611f` (2026-10-19)
-**Commit Message**: fix: complete 0.10.2 terminal and release blockers
+### Incident Patch 1: `da467bb5` (2026-10-20)
+**Commit Message**: Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description
 
-Match undo snapshots conservatively for long, multiline and trimmed prompts;
-keep terminal outcomes attached to the unchanged conversation prefix through
-rewinds, replacement and branching. Document exec Full Access, reject misplaced
-flags, honor stricter sandboxes, and report actual enforcement. Save tool-enabled
-exec sessions in every format with terminal failures and separate retention.
-Restore local-runtime onboarding and update complete locale packs and docs.
+fix(tui): drop the hotbar setup rows' description stub beside the detail pane
 
-Serialize RC test-binary builds to avoid the reproduced linker OOM. Replace
-both Chocolatey NSIS consumers with a checksum-pinned official installer and
-verified compiler version. Put the release summary first, retain detailed notes
-and contributor credits, and set an explicit release title.
-
-Validation on frozen 849af501cf plus this diff: workspace check and CI-flag
-Clippy passed; formatting passed; focused TUI 683 passed, 0 failed, 1 ignored;
-CLI 541 passed, 0 failed; feature registry 2 passed; localization 54 passed.
-The registry ran with the empty default feature disabled; an earlier redundant
-build was intentionally interrupted before tests. Source hashes stayed fi
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-33)
+**File**: `crates/tui/src/tui/hotbar/setup.rs` (modified, +13/-7)
 ```diff
-@@ -828,39 +828,7 @@ jobs:
-       - name: Install NSIS for Windows installer regression
-         if: needs.changes.outputs.heavy == 'true' && matrix.os == 'windows-latest'
-         shell: pwsh
--        # Bounded retry, not a weaker check (#5403). Every observed failure here
--        # was Chocolatey's feed, not the code: a 504 from the V2 API, and
--        # "package was not found with the source(s) listed". A single attempt
--        # made `Test (windows-latest)` — a required check on every PR — report
--        # on community.chocolatey.org's availability instead of on the tree.
--        # NSIS must still install for the regression below to run; this only
--        # survives a transient outage.
--        #
--        # A feed failure also makes `choco install` exit 0 without installing
--        # anything ("Chocolatey installed 0/0 packages" after a V2 feed 504),
--        # so an attempt only counts when `makensis.exe` exists where the installer
--        # regression looks for it (Program Files; choco does not put it on PATH).
--        # Without that check the retry reported success on an unprovisioned
--        # runner and the regression below failed as an unattributable exit
--        # code instead of this step naming the outage (2026-09-24).
--        run: |
--          $ErrorActionPreference = 'Continue'
--          $delays = @(0, 20, 45)
--          for ($attempt = 0; $attempt -lt $delays.Count; $attempt++) {
--            if ($delays[$attempt] -gt 0) {
--              Write-Host "NSIS install attempt $($attempt + 1) after $($delays[$attempt])s backoff"
--              Start-Sleep -Seconds $delays[$attempt]
--            }
--            choco install nsis -y --no-progress
--            $makensis = @("${env:ProgramFiles(x86)}\NSIS\makensis.exe", "$env:ProgramFiles\NSIS\makensis.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
--            if ($LASTEXITCODE -eq 0 -and $makensis) {
--              Write-Host "NSIS installed on attempt $($attempt + 1)"
--              exit 0
--            }
--            Write-Host "::warning::NSIS is still unavailable after attempt $($attempt + 1) (choco exit $LASTEXITCODE)"
--          }
--          Write-Host "::error::NSIS could not be provisioned from Chocolatey after $($delays.Count) attempts"
--          exit 1
-+        run: ./scripts/installer/install-nsis.ps1
-       - name: Test Windows installer PATH regression
-         if: needs.changes.outputs.heavy == 'true' && matrix.os == 'windows-latest'
-         shell: pwsh
-```
-
-**File**: `.github/workflows/release-artifacts.yml` (modified, +1/-1)
-```diff
-@@ -439,7 +439,7 @@ jobs:
-           pattern: '*windows-x64*'
-       - name: Install NSIS
-         shell: pwsh
--        run: choco install nsis -y --no-progress
-+        run: ./scripts/installer/install-nsis.ps1
-       - name: Build NSIS installer
-         shell: pwsh
-         run: |
-```
-
-**File**: `.github/workflows/release-parity.yml` (modified, +1/-0)
-```diff
-@@ -115,6 +115,7 @@ jobs:
-           kill "$monitor" 2>/dev/null || true
-           exit "$status"
-         env:
-+          CARGO_BUILD_JOBS: '1'
-           # Match the CI test lane: test threads get the same stack the product
-           # gives itself (main.rs CODEWHALE_MAIN_STACK_BYTES). See the note in
-           # ci.yml's "Run tests" step. Without it this gate runs the deep
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-0)
-```diff
-@@ -428,6 +428,7 @@ jobs:
-       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
-         with:
-           tag_name: ${{ needs.resolve.outputs.tag }}
-+          name: Codewhale ${{ needs.resolve.outputs.tag }}
-           files: artifacts/*
-           draft: true
-           prerelease: false
-```
-
-**File**: `CHANGELOG.md` (modified, +40/-16)
-```diff
-@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -483,7 +483,7 @@ impl HotbarSetupView {
+         };
  
- ## [Unreleased]
+         for (idx, row) in self.actions_for_source(source).iter().enumerate() {
+-            lines.push(self.action_row_line(source, idx, row, 80));
++            lines.push(self.action_row_line(source, idx, row, 80, true));
+         }
  
-+## [0.10.2] - 2026-10-19
-+
-+Codewhale v0.10.2 adds an animated pet view (`/pet on`), a live Terminal work
-+dock and per-chat composer colors (`/color`). It closes three session
-+data-loss paths, a sandbox escape through the Runtime daemon socket and a
-+`codewhale web` session leak; holds a `curl` or `wget` that uploads a
-+credential; refuses shell commands containing invisible Unicode; keeps the
-+Linux sandbox working when a hidden credential directory is a symlink; and
-+uses much less CPU while the TUI waits on you. `/undo` takes back a whole
-+request, including long and multiline prompts. `exec --auto` explains its
-+Full Access default, honors an explicitly stricter sandbox, and saves
-+tool-enabled runs and their failure receipts. Local runtimes appear during
-+onboarding, `/diff` works outside a Git repository, DeepSeek's Responses route
-+no longer rejects replayed tool history, and contributor fixes improve token
-+accounting, relay model lists, localized replies and Windows launcher
-+guidance.
-+
-+### Latest fixes
-+
-+- `/undo` takes back the latest request and its file changes without requiring
-+  trust mode, while refusing ambiguous snapshot matches. Trailing whitespace
-+  in a prompt label no longer prevents a match, and an empty first line in
-+  another request no longer blocks the whole conversation.
-+- `exec --auto` help and documentation now state its default Full Access:
-+  automatic tool approvals, no Codewhale shell sandbox, and trust mode on.
-+  Selecting any sandbox other than `danger-full-access`, by flag or config,
-+  keeps trust mode off. This includes `external-sandbox`, which relies on
-+  host-managed isolation and no longer grants file tools trust-mode access.
-+  Stream metadata reports whether the requested sandbox is actually enforced.
-+- Exec flags go before the prompt. A known long flag or `--flag=value` after
-+  the prompt now produces an error instead of silently becoming prompt text;
-+  use `--` for literal flag text or a prompt starting with `-`.
-+- Exec runs that offer tools save sessions in every output format. Exec and
-+  interactive sessions each keep their own retention allowance, so CI runs
-+  cannot archive interactive conversations. Live and saved receipts include
-+  retained terminal failures, and conversation rewinds discard outcomes from
-+  removed turns so they cannot be attributed to later requests.
-+- Onboarding lists Ollama, LM Studio, and vLLM even before a local runtime is
-+  detected, so they can be selected and configured. The `L` filter is available
-+  during onboarding after local-runtime detection.
- - `/fork <id>` now shows the forked conversation. Before, the screen kept
-   the previous conversation while the model already had the fork's history.
- - With `/translate` on, each translated thinking block lands in its own
-@@ -96,22 +136,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   rebinding) and drive the Runtime API from your browser; such requests now
-   get `421 Misdirected Request`. Servers with auth are unchanged.
+         lines.push(Line::from(""));
+@@ -606,6 +606,7 @@ impl HotbarSetupView {
+         idx: usize,
+         row: &HotbarSetupActionRow,
+         max_width: u16,
++        show_description: bool,
+     ) -> Line<'static> {
+         let selected = idx == self.selected_action_idx(source);
+         let marker = crate::tui::glyphs::selection_marker(selected);
+@@ -634,9 +635,14 @@ impl HotbarSetupView {
+         } else {
+             String::new()
+         };
++        let (prefix, description) = if show_description {
++            (prefix.as_str(), row.metadata.description.as_str())
++        } else {
++            (prefix.trim_end(), "")
++        };
+         let text = crate::tui::ui_text::semantic_truncate_with_affixes(
+-            &prefix,
+-            &row.metadata.description,
++            prefix,
++            description,
+             &suffix,
+             usize::from(max_width),
+         );
+@@ -663,7 +669,7 @@ impl HotbarSetupView {
+             .render(area, buf);
+     }
  
--## [0.10.2] - 2026-10-18
--
--Codewhale v0.10.2 adds an animated pet view (`/pet on`), a live Terminal work
--dock and per-chat composer colors (`/color`). It closes three session
--data-loss paths, a sandbox escape through the Runtime daemon socket and a
--`codewhale web` session leak; holds a `curl` or `wget` that uploads a
--credential; refuses shell commands containing invisible Unicode; keeps the
--Linux sandbox working when a hidden credential directory is a symlink; and
--uses much less CPU while the TUI waits on you. `/undo` takes back a whole
--request, `/diff` works outside a Git repository, DeepSeek's Responses route no
--longer rejects replayed tool history, and contributor fixes improve token
--accounting, relay model lists, localized replies and Windows launcher
--guidance.
--
--### Latest fixes
--
- - Sandboxed commands can no longer reach Codewhale's Runtime daemon socket.
-   On Linux with bubblewrap, and on macOS with sandbox network access on, a
-   command the agent ran (a test script or a postinstall hook, say) could read
-```
-
-**File**: `README.ar.md` (modified, +14/-6)
-```diff
-@@ -1,4 +1,4 @@
--<!-- source: README.md sha256:eefdc9e645b6 -->
-+<!-- source: README.md sha256:30c9b9765b04 -->
- <div align="center">
+-    fn render_action_list(&self, area: Rect, buf: &mut Buffer) {
++    fn render_action_list(&self, area: Rect, buf: &mut Buffer, show_descriptions: bool) {
+         let Some(source) = self.selected_source() else {
+             EmptyState::new("No actions", "No hotbar action sources are available.")
+                 .render(area, buf);
+@@ -693,7 +699,7 @@ impl HotbarSetupView {
+         let visible_range =
+             action_list_visible_range(self.selected_action_idx(source), rows.len(), visible_rows);
+         for idx in visible_range {
+-            lines.push(self.action_row_line(source, idx, rows[idx], area.width));
++            lines.push(self.action_row_line(source, idx, rows[idx], area.width, show_descriptions));
+         }
+         Paragraph::new(lines)
+             .style(Style::default().fg(palette::TEXT_PRIMARY))
+@@ -972,7 +978,7 @@ impl ModalView for HotbarSetupView {
+             height: content.height.saturating_sub(header_height),
+         };
+         let layout = ListDetailLayout::split(body, 34);
+-        self.render_action_list(layout.list, buf);
++        self.render_action_list(layout.list, buf, layout.stacked);
+         self.render_action_detail(layout.detail, buf);
+     }
  
- <picture>
-@@ -80,12 +80,14 @@ Fix the failing tests and explain what changed.
- يرفضه. ويُلغي `/undo` آخر طلب لك وتغييرات الملفات الناتجة عنه (في 0.10.1، شغّل
- `/trust on` أولًا). ويسرد `/help` الأوامر واختصارات لوحة المفاتيح.
+@@ -1521,7 +1527,7 @@ mod tests {
+         };
  
--في السكربتات وCI، يشغّل `codewhale exec` مهمة واحدة دون الواجهة. ومع `--auto`
--يعدّل الملفات ويشغّل أوامر الصدفة دون أن يسأل، لذا شغّله داخل حاوية أو في نسخة
--checkout يمكن التخلص منها:
-+في السكربتات وCI، يشغّل `codewhale exec` مهمة واحدة دون الواجهة. افتراضيًا،
-+يستخدم `--auto` وضع Full Access: تعمل الأدوات دون سؤال، وتعمل أوامر الصدفة دون
-+صندوق حماية Codewhale، ويتيح وضع الثقة لأدوات الملفات الكتابة خارج مساحة العمل.
-+أضف `--sandbox workspace-write` للإبقاء على صندوق حماية الصدفة وقيود مساحة العمل
-+على أدوات الملفات، مع تعطيل وضع الثقة:
- 
- ```bash
--codewhale exec --auto "fix the failing tests and explain what changed"
-+codewhale exec --auto --sandbox workspace-write "fix the failing tests and explain what changed"
- ```
- 
- ## الأوضاع والأذونات
-@@ -146,6 +148,12 @@ OpenAI، وكذلك النماذج المحلية عبر Ollama أو vLLM أو S
- كلها إلى لقطة سابقة؛ ولأن ذلك يكتب فوق التعديلات اللاحقة، فإنه يتطلب `/trust on`
- أو Full Access. راجع [الإيصالات](docs/RECEIPTS.md).
- 
-+تُحفظ عمليات تشغيل exec التي تتيح أدوات بكل صيغ الإخراج، لذا يعمل
-+`codewhale receipts --last` بعد `exec --auto`، بما في ذلك مع `--json`.
-+أما عمليات التشغيل التي تقتصر على الإجابة بإخراج نصي أو `--json` فلا تُحفظ إلا
-+عند الاستئناف أو عند بدء ضغط المحادثة؛ استخدم `--output-format stream-json`
-+لحفظها دائمًا من أجل الإيصالات أو `exec --continue`.
-+
- ### الأعمال الأطول
- 
- يحدد `/goal` هدفًا يستمر عبر دورات المحادثة. ويستطيع Codewhale توزيع العمل على
-@@ -182,7 +190,7 @@ OpenAI، وكذلك النماذج المحلية عبر Ollama أو vLLM أو S
- | الأمر | ما يفعله |
- | --- | --- |
- | `codewhale` | تطبيق الطرفية التفاعلي |
--| `codewhale exec "…"` | مهمة واحدة دون الواجهة. دون خيارات إضافية يجيب دون استخدام الأدوات؛ ويسمح له `--auto` بتعديل الملفات وتشغيل الأوامر، ويبث `--output-format stream-json` الأحداث بصيغة JSON |
-+| `codewhale exec "…"` | مهمة واحدة دون الواجهة. دون خيارات إضافية يجيب دون استخدام الأدوات؛ ويفعّل `--auto` الأدوات مع Full Access افتراضيًا، ويقيّدها `--sandbox workspace-write`، ويبث `--output-format stream-json` الأحداث بصيغة JSON |
- | `codewhale web` | واجهة ويب محلية على `127.0.0.1` ([الدليل](docs/WEB.md)) |
- | `codewhale review --pr N` | مراجعة استشارية لطلب pull request على GitHub. لا ينشر شيئًا ما لم تضف `--post`؛ ويُجري [GitHub Action](docs/GITHUB_ACTION.md) المراجعة نفسها في CI |
- | `codewhale app-server --http` | واجهة [Runtime API](docs/RUNTIME_API.md)، وهي واجهة HTTP محلية للخيوط والأحداث والموافقات وتغييرات الملفات في كل دورة |
-```
-
-**File**: `README.ca.md` (modified, +15/-5)
-```diff
-@@ -1,4 +1,4 @@
--<!-- source: README.md sha256:eefdc9e645b6 -->
-+<!-- source: README.md sha256:30c9b9765b04 -->
- <div align="center">
- 
- <picture>
-@@ -88,11 +88,14 @@ teva última petició i els canvis que va fer als fitxers (a la 0.10.1, executa
- primer `/trust on`). `/help` llista les ordres i les tecles.
- 
- Per a scripts i CI, `codewhale exec` executa una sola tasca sense la interfície.
--Amb `--auto` edita fitxers i executa ordres de shell sense preguntar, així que
--fes-lo servir en un contenidor o en una còpia de treball d’un sol ús:
-+Per defecte, `--auto` fa servir Full Access: les eines s’executen sense preguntar,
-+les ordres de shell no tenen cap sandbox de Codewhale i el mode de confiança
-+permet que les eines de fitxers escriguin fora de l’espai de treball. Afegeix
-+`--sandbox workspace-write` per mantenir el sandbox de shell i les restriccions
-+de les eines de fitxers a l’espai de treball, amb el mode de confiança desactivat:
- 
- ```bash
--codewhale exec --auto "fix the failing tests and explain what changed"
-+codewhale exec --auto --sandbox workspace-write "fix the failing tests and explain what changed"
- ```
- 
- ## Modes i permisos
-@@ -160,6 +163,13 @@ crida d’eina cada vegada. `/restore` torna tot l’espai de treball a una
- instantània anterior; com que això sobreescriu les edicions posteriors,
- necessita `/trust on` o Full Access. Consulta [Rebuts](docs/RECEIPTS.md).
- 
-+Les execucions d’exec que ofereixen eines es desen en tots els formats de
-+sortida, de manera que `codewhale receipts --last` funciona després
-+d’`exec --auto`, també amb `--json`. Les execucions que només donen una resposta
-+en text o amb `--json` només es desen quan es reprèn una conversa o quan
-+comença la compactació de la conversa; fes servir `--output-format stream-json`
-+per desar-les sempre per als rebuts o per a `exec --continue`.
-+
- ### Feines més llargues
- 
- `/goal` defineix un objectiu que es manté entre torns. Codewhale pot repartir la
-@@ -199,7 +209,7 @@ l’accés i l’actives ([guia](crates/tui/plugins/computer-use/README.md)).
- | Ordre | Què fa |
- | --- | --- |
- | `codewhale` | L’aplicació interactiva de terminal |
--| `codewhale exec "…"` | Una tasca sense la interfície. Per si sol respon sense fer servir eines; `--auto` li permet editar fitxers i executar ordres, i `--output-format stream-json` emet els esdeveniments en streaming com a JSON |
-+| `codewhale exec "…"` | Una tasca sense la interfície. Per si sol respon sense fer servir eines; `--auto` activa les eines amb Full Access per defecte, `--sandbox workspace-write` les restringeix, i `--output-format stream-json` emet els esdeveniments en streaming com a JSON |
- | `codewhale web` | Una interfície web local a `127.0.0.1` ([guia](docs/WEB.md)) |
- | `codewhale review --pr N` | Una revisió orientativa d’un pull request de GitHub. No publica res tret que hi afegeixis `--post`; la [GitHub Action](docs/GITHUB_ACTION.md) executa la mateixa revisió a CI |
- | `codewhale app-server --http` | La [Runtime API](docs/RUNTIME_API.md), una API HTTP local per a fils, esdeveniments, aprovacions i els canvis de fitxers de cada torn |
-```
-
-**File**: `README.de.md` (modified, +17/-6)
-```diff
-@@ -1,4 +1,4 @@
--<!-- source: README.md sha256:eefdc9e645b6 -->
-+<!-- source: README.md sha256:30c9b9765b04 -->
- <div align="center">
- 
- <picture>
-@@ -89,12 +89,16 @@ Rest der Unterhaltung, `n` lehnt ab. `/undo` macht deine letzte Anfrage samt
- ihren Dateiänderungen rückgängig (in 0.10.1 führe vorher `/trust on` aus).
- `/help` listet Befehle und Tasten auf.
- 
--Für Skripte und CI führt `codewhale exec` eine Aufgabe ohne Oberfläche aus. Mit
--`--auto` bearbeitet es Dateien und führt Shell-Befehle aus, ohne zu fragen; gib
--ihm deshalb einen Container oder einen Wegwerf-Checkout:
-+Für Skripte und CI führt `codewhale exec` eine Aufgabe ohne Oberfläche aus.
-+Standardmäßig nutzt `--auto` Full Access: Tools laufen ohne Nachfrage,
-+Shell-Befehle haben keine Codewhale-Sandbox, und der Vertrauensmodus erlaubt
-+Datei-Tools, außerhalb des Arbeitsbereichs zu schreiben. Füge
-+`--sandbox workspace-write` hinzu, um die Shell-Sandbox und die Beschränkung
-+der Datei-Tools auf den Arbeitsbereich beizubehalten, bei ausgeschaltetem
-+Vertrauensmodus:
- 
- ```bash
--codewhale exec --auto "fix the failing tests and explain what changed"
-+codewhale exec --auto --sandbox workspace-write "fix the failing tests and explain what changed"
- ```
- 
- ## Modi und Berechtigungen
-@@ -164,6 +168,13 @@ Arbeitsbereich auf einen früheren Snapshot zurück; weil dabei spätere
- Änderungen überschrieben werden, braucht es `/trust on` oder Full Access. Siehe
- [Belege](docs/RECEIPTS.md).
- 
-+Exec-Läufe, die Tools anbieten, werden in jedem Ausgabeformat gespeichert,
-+sodass `codewhale receipts --last` nach `exec --auto` funktioniert, auch mit
-+`--json`. Läufe, die nur antworten, werden im Textformat und mit `--json` nur
-+beim Fortsetzen oder beim Beginn der Gesprächskompaktierung gespeichert;
-+verwende `--output-format stream-json`, um sie immer für Belege oder
-+`exec --continue` zu speichern.
-+
- ### Längere Arbeit
- 
- `/goal` setzt ein Ziel, das über mehrere Turns bestehen bleibt. Codewhale kann
-@@ -204,7 +215,7 @@ bis du seine Zugriffsrechte geprüft und es aktiviert hast
- | Befehl | Was er tut |
- | --- | --- |
- | `codewhale` | Die interaktive Terminal-App |
--| `codewhale exec "…"` | Eine Aufgabe ohne Oberfläche. Ohne weitere Optionen antwortet es, ohne Tools zu verwenden; `--auto` erlaubt ihm, Dateien zu bearbeiten und Befehle auszuführen, und `--output-format stream-json` streamt Ereignisse als JSON |
-+| `codewhale exec "…"` | Eine Aufgabe ohne Oberfläche. Ohne weitere Optionen antwortet es, ohne Tools zu verwenden; `--auto` aktiviert Tools standardmäßig mit Full Access, `--sandbox workspace-write` schränkt sie ein, und `--output-format stream-json` streamt Ereignisse als JSON |
- | `codewhale web` | Eine lokale Web-Oberfläche auf `127.0.0.1` ([Anleitung](docs/WEB.md)) |
- | `codewhale review --pr N` | Ein beratendes Review eines GitHub-Pull-Requests. Es veröffentlicht nichts, solange du nicht `--post` angibst; die [GitHub Action](docs/GITHUB_ACTION.md) führt dasselbe Review in der CI aus |
- | `codewhale app-server --http` | Die [Runtime API](docs/RUNTIME_API.md), eine lokale HTTP-API für Threads, Ereignisse, Freigaben und die Dateiänderungen jedes Turns |
+         let text = view
+-            .action_row_line(HotbarActionCategory::App, 0, &row, 58)
++            .action_row_line(HotbarActionCategory::App, 0, &row, 58, true)
+             .to_string();
+         assert!(crate::tui::ui_text::text_display_width(&text) <= 58);
+         assert!(text.contains("Open a detailed…"), "{text:?}");
 ```
 
 ---
 
-### Incident Patch 2: `cc4b96dc` (2026-10-19)
-**Commit Message**: ci: bound all-features test builds to one job
+### Incident Patch 2: `705bf08e` (2026-10-20)
+**Commit Message**: Merge pull request #7028 from Lstarsky0/ux/statusline-scroll-rail
 
-Main CI on ac5b611fe0 exhausted about 15.4 GiB RAM and 11.2 GiB swap
-while compiling test binaries, then the runner shut down with exit 143
-before any assertion ran. Match the RC parity limit in both Run tests
-and the alternate Shared-process workspace qualification step.
+fix(tui): show a scroll rail on the /statusline list when it doesn't fit
 
-Validation: git diff --check and actionlint -shellcheck= pass. Independent
-review caught the alternate consumer and it is included. No runtime,
-packaging or web source changes; reuse ac5b611fe0's local npm gate:
-wrapper 101, SDK 19, extension host 413 passed/7 skipped, web 772 and
-security 7, all zero failures. Exact macOS arm64 RC walkthrough at ac5
-passed 11 offline scenarios, zero failed; this does not replace the new
-candidate's exact-SHA hosted gates or prove paid provider compatibility.
-
-Co-Authored-By: Codex <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-0)
+**File**: `crates/tui/src/tui/views/status_picker.rs` (modified, +19/-4)
 ```diff
-@@ -993,6 +993,7 @@ jobs:
-           if [ -n "$monitor" ]; then kill "$monitor" 2>/dev/null || true; fi
-           exit "$status"
-         env:
-+          CARGO_BUILD_JOBS: '1'
-           QA_PTY_DIAGNOSTICS_DIR: ${{ runner.temp }}/pty-failures
-           CODEWHALE_EXT_HOST_TESTS: '1'
-           CODEWHALE_EXT_HOST_BUN_TESTS: '1'
-@@ -1030,6 +1031,7 @@ jobs:
-         if: github.event_name == 'workflow_dispatch' && inputs.workspace_test_mode == 'shared-process-twice' && matrix.os == 'ubuntu-latest'
-         shell: bash
-         env:
-+          CARGO_BUILD_JOBS: '1'
-           EXPECTED_SHA: ${{ inputs.expected_sha }}
-           CODEWHALE_EXT_HOST_TESTS: '1'
-           CODEWHALE_EXT_HOST_BUN_TESTS: '1'
+@@ -27,7 +27,7 @@ use crate::config::{ProviderKind, StatusItem};
+ use crate::tui::menu_style;
+ use crate::tui::views::{
+     ActionHint, ModalKind, ModalView, ViewAction, ViewEvent, action_footer_lines,
+-    centered_modal_area, render_modal_footer, render_modal_surface,
++    centered_modal_area, render_modal_footer, render_modal_surface, render_panel_scroll_rail,
+ };
+ use codewhale_localization::{Locale, MessageId, tr};
+ use codewhale_palette as palette;
+@@ -252,6 +252,9 @@ impl ModalView for StatusPickerView {
+         self.row_hitboxes.borrow_mut().clear();
+         let visible_rows = content.height.saturating_sub(2) as usize;
+         let row_start = visible_row_start(self.rows.len(), self.cursor, visible_rows);
++        let row_width = content
++            .width
++            .saturating_sub(u16::from(visible_rows < self.rows.len()));
+ 
+         let mut lines: Vec<Line> = Vec::with_capacity(visible_rows + 2);
+         lines.push(Line::from(Span::styled(
+@@ -272,7 +275,7 @@ impl ModalView for StatusPickerView {
+                 Rect::new(
+                     content.x,
+                     content.y + 2 + (idx - row_start) as u16,
+-                    content.width,
++                    row_width,
+                     1,
+                 ),
+             ));
+@@ -297,7 +300,7 @@ impl ModalView for StatusPickerView {
+             if is_cursor {
+                 let selected_style = menu_style::selected_row_style();
+                 let line =
+-                    status_row_text(pointer, mark, item, self.locale, content.width as usize);
++                    status_row_text(pointer, mark, item, self.locale, usize::from(row_width));
+                 lines.push(Line::from(Span::styled(line, selected_style)));
+             } else {
+                 let label = item.label();
+@@ -307,7 +310,7 @@ impl ModalView for StatusPickerView {
+                     &prefix,
+                     hint.as_ref(),
+                     ")",
+-                    usize::from(content.width),
++                    usize::from(row_width),
+                 );
+                 lines.push(Line::from(vec![
+                     Span::styled(format!(" {pointer} "), row_style),
+@@ -321,6 +324,18 @@ impl ModalView for StatusPickerView {
+         }
+ 
+         Paragraph::new(lines).render(content, buf);
++        render_panel_scroll_rail(
++            Rect {
++                y: content.y.saturating_add(2),
++                height: content.height.saturating_sub(2),
++                ..content
++            },
++            buf,
++            self.rows.len(),
++            row_start,
++            visible_rows,
++            true,
++        );
+     }
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `850f510b` (2026-10-19)
-**Commit Message**: fix(deepseek): replay each turn's reasoning before its text and tool calls
+### Incident Patch 3: `9af0fbba` (2026-10-20)
+**Commit Message**: Merge pull request #7027 from Lstarsky0/ux/feedback-description-ellipsis
 
-0.10.2 regression found by hands-on testing of the first release
-candidate (273ac2dbd8). On the default deepseek-flash Responses route, a
-real multi-step task ("fix the failing tests") failed in 2 of 4 runs:
+fix(tui): end a clipped /feedback description at a word, with an ellipsis
 
-  Responses API request failed: Invalid request (400): The
-  `reasoning_text` in the thinking mode must be passed back to the API.
-
-The same task, model and key passed 4 of 4 on released v0.10.1.
-
-Cause: 25966bca59 inserted the "(reasoning omitted)" placeholder just
-before an assistant turn's first function_call. When the model wrote text
-and then called tools without visible reasoning, the replay was
-message → reasoning → function_call. Live probes against
-api.deepseek.com/beta/responses on 2026-10-19:
-
-  text, reasoning, function_call      -> 400
-  reasoning, text, function_call      -> 200
-  text, function_call (no reasoning)  -> 400
-  function_call (no reasoning)        -> 400
-
-For DeepSeek, convert_messages_to_responses_input now emits all of an
-assistant turn's reasoning items first, then its text and tool calls. It
-adds the placeholder when the turn has a tool call and no reasoning, and
-also rep
-
-**File**: `CHANGELOG.md` (modified, +9/-5)
+**File**: `crates/tui/src/tui/feedback_picker.rs` (modified, +12/-2)
 ```diff
-@@ -549,11 +549,15 @@ guidance.
- - DeepSeek on the Responses route (the `deepseek-flash` default) no longer
-   fails with `400 reasoning_text must be passed back` when a session replays a
-   tool call that has no stored DeepSeek reasoning: a turn that was interrupted,
--  ran with thinking off, or came from another provider. Codewhale now sends the
--  same `(reasoning omitted)` placeholder the Chat route already uses, before
--  that turn's tool calls. A live probe on 2026-10-17 returned 400 without it and
--  200 with it. On Chat, DeepSeek enforces this only for tool-call turns, which
--  were already covered (Refs CW-7450).
-+  ran with thinking off, came from another provider, or where the model wrote
-+  text before its tool calls without visible reasoning. Codewhale now sends each
-+  assistant turn's reasoning first, ahead of its text and tool calls, using the
-+  same `(reasoning omitted)` placeholder the Chat route already uses when there
-+  is none. Live probes on 2026-10-19 returned 400 for text → reasoning → tool
-+  call and for no reasoning, and 200 for reasoning → text → tool call. The same
-+  multi-step task that failed in 2 of 4 runs on the first 0.10.2 candidate
-+  passed 6 of 6 with the fix. On Chat, DeepSeek enforces this only for
-+  tool-call turns, which were already covered (Refs CW-7450).
- - At reasoning effort `max`, the first-party DeepSeek route now asks for up to
-   131,072 output tokens, DeepSeek's documented default at that effort, instead
-   of 65,536. Every other provider and effort keeps 65,536, and explicit
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +9/-5)
-```diff
-@@ -549,11 +549,15 @@ guidance.
- - DeepSeek on the Responses route (the `deepseek-flash` default) no longer
-   fails with `400 reasoning_text must be passed back` when a session replays a
-   tool call that has no stored DeepSeek reasoning: a turn that was interrupted,
--  ran with thinking off, or came from another provider. Codewhale now sends the
--  same `(reasoning omitted)` placeholder the Chat route already uses, before
--  that turn's tool calls. A live probe on 2026-10-17 returned 400 without it and
--  200 with it. On Chat, DeepSeek enforces this only for tool-call turns, which
--  were already covered (Refs CW-7450).
-+  ran with thinking off, came from another provider, or where the model wrote
-+  text before its tool calls without visible reasoning. Codewhale now sends each
-+  assistant turn's reasoning first, ahead of its text and tool calls, using the
-+  same `(reasoning omitted)` placeholder the Chat route already uses when there
-+  is none. Live probes on 2026-10-19 returned 400 for text → reasoning → tool
-+  call and for no reasoning, and 200 for reasoning → text → tool call. The same
-+  multi-step task that failed in 2 of 4 runs on the first 0.10.2 candidate
-+  passed 6 of 6 with the fix. On Chat, DeepSeek enforces this only for
-+  tool-call turns, which were already covered (Refs CW-7450).
- - At reasoning effort `max`, the first-party DeepSeek route now asks for up to
-   131,072 output tokens, DeepSeek's documented default at that effort, instead
-   of 65,536. Every other provider and effort keeps 65,536, and explicit
-```
-
-**File**: `crates/tui/src/client/responses.rs` (modified, +64/-43)
-```diff
-@@ -883,7 +883,67 @@ pub(super) fn convert_messages_to_responses_input(
-                 }
-             }
-             RolePlacement::Assistant | RolePlacement::InterruptedAssistant => {
--                let mut reasoning_emitted = false;
-+                let reasoning_item = |block: &ContentBlock| -> Option<Value> {
-+                    let ContentBlock::Thinking {
-+                        thinking, state, ..
-+                    } = block
-+                    else {
-+                        return None;
-+                    };
-+                    if let Some(state) = state {
-+                        let matches = state.provider == provider.as_str()
-+                            && if provider == ProviderKind::OpenaiCodex {
-+                                reasoning_api.is_some_and(|api| state.api == api)
-+                            } else {
-+                                state.api == "openai-responses"
-+                            }
-+                            && state.model == request.model;
-+                        if !matches {
-+                            return None;
-+                        }
-+                        let mut item = json!({
-+                            "type": "reasoning",
-+                            "summary": [],
-+                            "encrypted_content": state.encrypted_content,
-+                        });
-+                        if let Some(id) = state.id.as_ref() {
-+                            item["id"] = json!(id);
-+                        }
-+                        return Some(item);
-+                    }
-+                    is_deepseek.then(|| {
-+                        let text = if thinking.trim().is_empty() {
-+                            REASONING_REPLAY_PLACEHOLDER
-+                        } else {
-+                            thinking.as_str()
-+                        };
-+                        json!({
-+                            "type": "reasoning",
-+                            "content": [{
-+                                "type": "reasoning_text",
-+                                "text": text,
-+                            }],
-+                        })
-+                    })
-+                };
-+                if is_deepseek {
-+                    let before = items.len();
-+                    items.extend(msg.content.iter().filter_map(&reasoning_item));
-+                    if items.len() == before
-+                        && msg
-+                            .content
-+                            .iter()
-+                            .any(|block| matches!(block, ContentBlock::ToolUse { .. }))
-+                    {
-+                        items.push(json!({
-+                            "type": "reasoning",
-+                            "content": [{
-+                                "type": "reasoning_text",
-+                                "text": REASONING_REPLAY_PLACEHOLDER,
-+                            }],
-+                        }));
-+                    }
-+                }
-                 for block in &msg.content {
-                     match block {
-                         ContentBlock::Text { text, .. } => {
-@@ -908,16 +968,6 @@ pub(super) fn convert_messages_to_responses_input(
-                         ContentBlock::ToolUse {
-                             id, name, input, ..
-                         } => {
--                            if is_deepseek && !reasoning_emitted {
--                                items.push(json!({
--                                    "type": "reasoning",
--                                    "content": [{
--                                        "type": "reasoning_text",
--                                        "text": REASONING_REPLAY_PLACEHOLDER,
--                                    }],
--                                }));
--                                reasoning_emitted = true;
--                            }
-                             let (call_id, _item_id) = parse_tool_use_id(id);
-                             let mut item = json!({
-                                 "type": "function_call",
-@@ -930,38 +980,9 @@ pub(super) fn convert_messages_to_responses_input(
-                             }
-                             items.push(item);
-                         }
--                        ContentBlock::Thinking {
--                            thinking, state, ..
--                        } => {
--                            if let Some(state) = state {
--                                if state.provider == provider.as_str()
--                                    && if provider == ProviderKind::OpenaiCodex {
--                                        reasoning_api.is_some_and(|api| state.api == api)
--                                    } else {
--                                        state.api == "openai-responses"
--                                    }
--                                    && state.model == request.model
--                                {
--                                    let mut item = json
+@@ -17,6 +17,7 @@ use crate::tui::views::{
+     centered_modal_area, render_modal_footer, render_modal_surface,
+ };
+ use codewhale_palette as palette;
++use unicode_width::UnicodeWidthStr;
+ 
+ #[derive(Debug, Clone, Copy)]
+ struct FeedbackOption {
+@@ -183,12 +184,21 @@ impl ModalView for FeedbackPickerView {
+                 Style::default().fg(palette::TEXT_MUTED)
+             };
+             let pointer = crate::tui::glyphs::selection_marker(is_selected);
++            let lead = format!("{pointer} {}. ", option.number);
++            let description_width = usize::from(content.width).saturating_sub(
++                UnicodeWidthStr::width(lead.as_str()) + UnicodeWidthStr::width(option.label) + 4,
++            );
++            let description = codewhale_ratatui::text::truncate_words(
++                option.description,
++                description_width,
++                crate::tui::color_compat::ascii_safe_enabled(),
++            );
+ 
+             lines.push(Line::from(vec![
+-                Span::styled(format!("{pointer} {}. ", option.number), row_style),
++                Span::styled(lead, row_style),
+                 Span::styled(option.label, row_style),
+                 Span::raw("    "),
+-                Span::styled(option.description, desc_style),
++                Span::styled(description, desc_style),
+             ]));
+         }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7029** (2026-10-20): fix(tui): drop the hotbar setup rows' description stub beside the detail pane (@Lstarsky0)
+- **PR #7028** (2026-10-20): fix(tui): show a scroll rail on the /statusline list when it doesn't fit (@Lstarsky0)
+- **PR #7027** (2026-10-20): fix(tui): end a clipped /feedback description at a word, with an ellipsis (@Lstarsky0)
 - **PR #7025** (2026-10-19): fix(tui): drop the /statusline picker's padding rows when the list doesn't fit (@Lstarsky0)
 - **PR #7024** (2026-10-18): fix(tui): show a scroll rail on a settings choice list that doesn't fit (@Lstarsky0)
 - **PR #7023** (2026-10-18): fix(tui): say "no matches" in the /mcp status line when a search finds nothing (@Lstarsky0)
-- **PR #7022** (2026-10-18): fix(tui): size the /statusline picker for its padding rows (@Lstarsky0)
-- **PR #7020** (2026-10-18): fix(route): honor a custom table's wire on runtime routes (@asto18089)
-- **PR #7019** (2026-10-18): fix(client): capture and replay Anthropic redacted thinking blocks (@asto18089)
 
 ---
 
@@ -1941,46 +1579,46 @@ also rep
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. complete 0.10.2 terminal and release blockers
+## X. Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/tui/src/tui/hotbar/setup.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac5b611f`: complete 0.10.2 terminal and release blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da467bb5`: Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/src/tui/hotbar/setup.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        run: ./scripts/installer/install-nsis.ps1
+            lines.push(self.action_row_line(source, idx, row, 80, true));
+        show_description: bool,
+        let (prefix, description) = if show_description {
+            (prefix.as_str(), row.metadata.description.as_str())
+        } else {
+            (prefix.trim_end(), "")
+        };
+            prefix,
+            description,
+    fn render_action_list(&self, area: Rect, buf: &mut Buffer, show_descriptions: bool) {
+            lines.push(self.action_row_line(source, idx, rows[idx], area.width, show_descriptions));
+        self.render_action_list(layout.list, buf, layout.stacked);
+            .action_row_line(HotbarActionCategory::App, 0, &row, 58, true)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        # Bounded retry, not a weaker check (#5403). Every observed failure here
-        # was Chocolatey's feed, not the code: a 504 from the V2 API, and
-        # "package was not found with the source(s) listed". A single attempt
-        # made `Test (windows-latest)` — a required check on every PR — report
-        # on community.chocolatey.org's availability instead of on the tree.
-        # NSIS must still install for the regression below to run; this only
-        # survives a transient outage.
-        #
-        # A feed failure also makes `choco install` exit 0 without installing
-        # anything ("Chocolatey installed 0/0 packages" after a V2 feed 504),
-        # so an attempt only counts when `makensis.exe` exists where the installer
-        # regression looks for it (Program Files; choco does not put it on PATH).
-        # Without that check the retry reported success on an unprovisioned
-        # runner and the regression below failed as an unattributable exit
-        # code instead of this step naming the outage (2026-09-24).
-        run: |
-          $ErrorActionPreference = 'Continue'
-          $delays = @(0, 20, 45)
-          for ($attempt = 0; $attempt -lt $delays.C
+            lines.push(self.action_row_line(source, idx, row, 80));
+            &prefix,
+            &row.metadata.description,
+    fn render_action_list(&self, area: Rect, buf: &mut Buffer) {
+            lines.push(self.action_row_line(source, idx, rows[idx], area.width));
+        self.render_action_list(layout.list, buf);
+            .action_row_line(HotbarActionCategory::App, 0, &row, 58)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac5b611f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da467bb5` are properly handled with clean fallback behavior.

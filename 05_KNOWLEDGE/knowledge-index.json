@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:43:27.866Z",
+  "last_updated": "2026-10-20T19:50:47.479Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5976,13 +5976,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "cc4b96dc",
-      "content_hash": "0e59fa6c2e09d4bab4a958db43ac0a3a59e11e4db7ac1d3463e286c1b7ab2899",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "da467bb5",
+      "content_hash": "9553d8a4b1348cd723ab2fac532586850bd877730e92e6b03b17ec6c4081a31c",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -5998,6 +5998,11 @@
           "number": 2955,
           "title": "complete 0.10.2 terminal and release blockers",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3351,
+          "title": "Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6005,7 +6010,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:06:49.291Z",
+      "verified_at": "2026-10-20T19:50:38.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13812,7 +13817,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "020b326aa33607761d3d4f8a953e4adec8d8ba1f061dcd808ed75b2b67a178ed",
+      "content_hash": "47f039b49ee5d600f35d155d550cdf5895101f733073141f869f5b19acdaedc9",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -13852,7 +13857,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-10-17T23:59:14.961Z",
+      "verified_at": "2026-10-20T19:50:37.436Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30556,8 +30561,8 @@
       "slug": "lucide-icons-lucide",
       "platform": "github",
       "source_url": "https://github.com/lucide-icons/lucide",
-      "source_version": "02eb9161",
-      "content_hash": "cd9b63b8f8aede7a87d569ad985fdf1c378960981fa3ed898575af4179288bc9",
+      "source_version": "c29c276f",
+      "content_hash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
       "dossier_path": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "promoted_rules": [
@@ -30570,6 +30575,11 @@
           "number": 2742,
           "title": "site): Fix build (#5033)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3352,
+          "title": "icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-r",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30577,7 +30587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:29:42.674Z",
+      "verified_at": "2026-10-20T19:50:45.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33940,8 +33950,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "e5534a13",
-      "content_hash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
+      "source_version": "ad047791",
+      "content_hash": "e421dee75383bc1b2634018ba9de0571f624713f397e0c74dc456d01505511f4",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -33966,7 +33976,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:51:42.683Z",
+      "verified_at": "2026-10-20T19:50:42.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41279,8 +41289,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "8effbeac",
-      "content_hash": "4532ac248dcb001a32e523e366c36ca88cb5a46631b283eba6e49e7f1781230a",
+      "source_version": "0e48502c",
+      "content_hash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -41298,6 +41308,11 @@
           "number": 3268,
           "title": "deps): bump the actions group with 6 updates (#5175)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3353,
+          "title": "Build releases with 1.27.3 (#5177)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41305,7 +41320,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:37:57.130Z",
+      "verified_at": "2026-10-20T19:50:47.465Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104227,6 +104242,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:43:27.848Z"
+    },
+    "rule-3351": {
+      "learning_id": "rule-3351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3351,
+      "title": "Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "da467bb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:50:38.143Z"
+    },
+    "rule-3352": {
+      "learning_id": "rule-3352",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3352,
+      "title": "icons): added `circle-chevrons-down`, `circle-chevrons-left`, `circle-chevrons-r",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "source_version": "c29c276f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:50:45.230Z"
+    },
+    "rule-3353": {
+      "learning_id": "rule-3353",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3353,
+      "title": "Build releases with 1.27.3 (#5177)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "0e48502c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:50:47.465Z"
     }
   },
   "aliases": {

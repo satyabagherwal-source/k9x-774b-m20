@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-EJ3W",
-    "timestamp": "2026-10-19T20:53:23.132Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FU9W",
-    "timestamp": "2026-10-19T20:54:24.260Z",
-    "repository": "graphprotocol/graph-node",
-    "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Q4G2",
-    "timestamp": "2026-10-19T21:02:24.002Z",
-    "repository": "Shubham0812/SwiftUI-Animations",
-    "learningId": "learn-github-shubham0812-swiftui-animations",
-    "contentHash": "9ef0571e4aaa5b60ac6a6b1df580c9d6552c874510a8ce2a4d68848a00158a5b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-QA6E",
-    "timestamp": "2026-10-19T21:02:31.430Z",
-    "repository": "agamm/pseo-next",
-    "learningId": "learn-github-agamm-pseo-next",
-    "contentHash": "a55aee970340d438aef56f0a6bb40a4aceb4f353fe7777aa2240f4b913ad9704",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-1VAK",
-    "timestamp": "2026-10-19T21:11:32.012Z",
-    "repository": "santifer/santifer-irepair",
-    "learningId": "learn-github-santifer-santifer-irepair",
-    "contentHash": "c01e6ad3c6f8426f1993498e21a76af68569a68e0205032f07b6b93749aea88a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-1X2O",
     "timestamp": "2026-10-19T21:11:34.320Z",
     "repository": "Lessica/TrollFools",
@@ -7492,6 +7417,81 @@
     "contentHash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LO7C",
+    "timestamp": "2026-10-20T19:50:37.512Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "47f039b49ee5d600f35d155d550cdf5895101f733073141f869f5b19acdaedc9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LOQU",
+    "timestamp": "2026-10-20T19:50:38.214Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "9553d8a4b1348cd723ab2fac532586850bd877730e92e6b03b17ec6c4081a31c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LRWZ",
+    "timestamp": "2026-10-20T19:50:42.323Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "e421dee75383bc1b2634018ba9de0571f624713f397e0c74dc456d01505511f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LU7P",
+    "timestamp": "2026-10-20T19:50:45.301Z",
+    "repository": "lucide-icons/lucide",
+    "learningId": "learn-github-lucide-icons-lucide",
+    "contentHash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LVXR",
+    "timestamp": "2026-10-20T19:50:47.535Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

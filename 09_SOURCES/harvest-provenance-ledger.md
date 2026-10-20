@@ -3995,3 +3995,8 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `1d8a29e1` | Multi-dimensional audit evidence | 2026-10-20T19:43:19.748Z |
 | `learn-github-snyk-driftctl` | `https://github.com/snyk/driftctl` | `724f896a` | Multi-dimensional audit evidence | 2026-10-20T19:43:26.740Z |
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-20T19:43:27.917Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-20T19:50:37.515Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `da467bb5` | Multi-dimensional audit evidence | 2026-10-20T19:50:38.223Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `ad047791` | Multi-dimensional audit evidence | 2026-10-20T19:50:42.326Z |
+| `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `c29c276f` | Multi-dimensional audit evidence | 2026-10-20T19:50:45.310Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `0e48502c` | Multi-dimensional audit evidence | 2026-10-20T19:50:47.543Z |
