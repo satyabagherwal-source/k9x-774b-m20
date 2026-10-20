@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
-    "lastHarvestedAt": "2026-10-18T23:57:51.180Z",
+    "contentHash": "71fc0470685bd50480430ff0a71e2b13b80c09b7bb5da41a0a74219b289a1d88",
+    "lastHarvestedAt": "2026-10-20T13:33:40.424Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "296ec338",
+    "sourceVersion": "3cfb131e",
     "license": "MIT",
-    "contentHash": "b37cb849500b3ff360920d55c195fbc3c4bf504f9764bdff4c99c4483265dd7c",
-    "lastHarvestedAt": "2026-10-19T22:56:06.153Z",
+    "contentHash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
+    "lastHarvestedAt": "2026-10-20T13:33:33.740Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "1a573058",
+    "sourceVersion": "8397071d",
     "license": "Apache-2.0",
-    "contentHash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
-    "lastHarvestedAt": "2026-10-19T21:11:40.704Z",
+    "contentHash": "e60c315a40b0cb958460158bb9ab14c23c9a0161dcab0a563c34b3d37ae12b0e",
+    "lastHarvestedAt": "2026-10-20T13:33:47.873Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

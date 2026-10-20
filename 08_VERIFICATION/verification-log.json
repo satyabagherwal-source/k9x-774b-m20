@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-EXOF",
-    "timestamp": "2026-10-19T15:17:46.623Z",
-    "repository": "buresdv/Cork",
-    "learningId": "learn-github-buresdv-cork",
-    "contentHash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F55K",
-    "timestamp": "2026-10-19T15:17:56.312Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "b2dcdc3c44902a159b57fc83233eb2190e878329b392e0eb9b2ee995b04c05e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NM0S",
-    "timestamp": "2026-10-19T15:24:31.420Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "5b7811ba6885ba8b04e3c5116f614d973770f98026a636c9ffc56454f81d95f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NM5G",
     "timestamp": "2026-10-19T15:24:31.588Z",
     "repository": "vikejs/vike",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "d0c2453d29c84c9860f65be2d04a66ec34e6c301738ddd2f68f501d2d9aa201d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4RL3",
+    "timestamp": "2026-10-20T13:33:33.735Z",
+    "repository": "rsuite/rsuite",
+    "learningId": "learn-github-rsuite-rsuite",
+    "contentHash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4WQQ",
+    "timestamp": "2026-10-20T13:33:40.418Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "71fc0470685bd50480430ff0a71e2b13b80c09b7bb5da41a0a74219b289a1d88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-52HM",
+    "timestamp": "2026-10-20T13:33:47.866Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "e60c315a40b0cb958460158bb9ab14c23c9a0161dcab0a563c34b3d37ae12b0e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

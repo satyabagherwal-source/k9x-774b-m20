@@ -3828,3 +3828,6 @@ Every entry in this ledger must capture:
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `594ed87e` | Multi-dimensional audit evidence | 2026-10-20T13:27:32.354Z |
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T13:27:36.664Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d6b56f86` | Multi-dimensional audit evidence | 2026-10-20T13:27:41.338Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `3cfb131e` | Multi-dimensional audit evidence | 2026-10-20T13:33:33.740Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T13:33:40.424Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `8397071d` | Multi-dimensional audit evidence | 2026-10-20T13:33:47.873Z |

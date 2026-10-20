@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:27:41.347Z",
+  "last_updated": "2026-10-20T13:33:47.879Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1790,14 +1790,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
-      "content_hash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
-      "verified_at": "2026-10-18T23:57:51.184Z",
+      "content_hash": "71fc0470685bd50480430ff0a71e2b13b80c09b7bb5da41a0a74219b289a1d88",
+      "verified_at": "2026-10-20T13:33:40.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:57:51.184Z"
+      "last_updated": "2026-10-20T13:33:40.429Z"
     },
     "ConwayResearch/Underdog-Saluki-27B-1.0": {
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -6471,14 +6471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "b37cb849500b3ff360920d55c195fbc3c4bf504f9764bdff4c99c4483265dd7c",
-      "verified_at": "2026-10-19T22:56:06.157Z",
+      "content_hash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
+      "verified_at": "2026-10-20T13:33:33.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:56:06.157Z"
+      "last_updated": "2026-10-20T13:33:33.745Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
-      "verified_at": "2026-10-19T21:11:40.711Z",
+      "content_hash": "e60c315a40b0cb958460158bb9ab14c23c9a0161dcab0a563c34b3d37ae12b0e",
+      "verified_at": "2026-10-20T13:33:47.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:11:40.711Z"
+      "last_updated": "2026-10-20T13:33:47.879Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

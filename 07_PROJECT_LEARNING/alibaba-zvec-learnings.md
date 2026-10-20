@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `1a573058`  
+> **Source Version**: `8397071d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:11:40.346Z  
+> **Timestamp**: 2026-10-20T13:33:47.663Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:11:40.000Z  
+> **Harvest Timestamp**: 2026-10-20T13:33:46.769Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16127 stars
+- **Stars / Engagement**: 16125 stars
 
 ---
 
@@ -1091,737 +1091,203 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a573058` (2026-10-19)
-**Commit Message**: refactor: migrate index storage reads to MemoryBlock (#812)
+### Incident Patch 1: `8397071d` (2026-10-20)
+**Commit Message**: fix(sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (#818)
 
-**File**: `src/core/algorithm/cluster/stratified_cluster_trainer.cc` (modified, +3/-3)
-```diff
-@@ -314,14 +314,14 @@ int StratifiedClusterTrainer::load(IndexStorage::Pointer cntr) {
-       return IndexError_InvalidArgument;
-     }
-     size_t data_size = seg->data_size();
--    const void *data = nullptr;
--    size_t actual_size = seg->read(0, &data, data_size);
-+    IndexStorage::MemoryBlock data;
-+    size_t actual_size = seg->read(0, data, data_size);
-     if (actual_size != data_size) {
-       LOG_ERROR("Read data failed expect %zu, actual %zu.", data_size,
-                 actual_size);
-       return IndexError_ReadData;
-     }
--    bundle->set(it.first, data, data_size);
-+    bundle->set(it.first, data.data(), data_size);
-   }
- 
-   int result = IndexHelper::DeserializeFromStorage(cntr.get(), &meta_);
-```
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/core/algorithm/diskann/diskann_reducer_entity.cc` (modified, +16/-18)
+**File**: `src/db/sqlengine/analyzer/query_info_helper.cc` (modified, +14/-2)
 ```diff
-@@ -65,21 +65,20 @@ int DiskAnnReducerEntity::load_segments(bool /*check_crc*/) {
- }
+@@ -13,6 +13,8 @@
+ // limitations under the License.
  
- int DiskAnnReducerEntity::load_header_segment() {
--  const void *data = nullptr;
-+  IndexStorage::MemoryBlock data;
-   meta_segment_ = container_->get(kDiskAnnMetaSegmentId);
-   if (!meta_segment_ ||
-       meta_segment_->data_size() < sizeof(DiskAnnMetaHeader)) {
-     LOG_ERROR("Miss or invalid segment %s", kDiskAnnMetaSegmentId.c_str());
-     return IndexError_InvalidFormat;
-   }
--  if (meta_segment_->read(0, reinterpret_cast<const void **>(&data),
--                          sizeof(DiskAnnMetaHeader)) !=
-+  if (meta_segment_->read(0, data, sizeof(DiskAnnMetaHeader)) !=
-       sizeof(DiskAnnMetaHeader)) {
-     LOG_ERROR("Read segment %s failed", kDiskAnnMetaSegmentId.c_str());
-     return IndexError_ReadData;
-   }
- 
--  ::memcpy(reinterpret_cast<uint8_t *>(&meta_header_), data,
-+  ::memcpy(reinterpret_cast<uint8_t *>(&meta_header_), data.data(),
-            sizeof(DiskAnnMetaHeader));
- 
-   return 0;
-@@ -109,35 +108,34 @@ int DiskAnnReducerEntity::load_key_segment() {
- 
-   // load key mapping
-   key_mapping_segment_ = container_->get(kDiskAnnKeyMappingSegmentId);
--  const void *data = nullptr;
--  if (key_mapping_segment_->read(0, reinterpret_cast<const void **>(&data),
--                                 key_data_len) != key_data_len) {
-+  IndexStorage::MemoryBlock data;
-+  if (key_mapping_segment_->read(0, data, key_data_len) != key_data_len) {
-     LOG_ERROR("Read segment %s failed", kDiskAnnKeyMappingSegmentId.c_str());
-     return IndexError_ReadData;
-   }
- 
-   key_buffer_.resize(key_data_len);
--  memcpy(&(key_buffer_[0]), data, key_data_len);
-+  memcpy(&(key_buffer_[0]), data.data(), key_data_len);
- 
-   return 0;
- }
- 
- bool DiskAnnReducerEntity::do_crc_check(
-     std::vector<SegmentPointer> &segments) const {
-   constexpr size_t blk_size = 4096;
--  const void *data;
-+  IndexStorage::MemoryBlock data;
- 
-   for (auto &segment : segments) {
-     size_t offset = 0;
-     size_t rd_size;
-     uint32_t crc = 0;
-     while (offset < segment->data_size()) {
-       size_t size = std::min(blk_size, segment->data_size() - offset);
--      if ((rd_size = segment->read(offset, &data, size)) <= 0) {
-+      if ((rd_size = segment->read(offset, data, size)) <= 0) {
-         break;
-       }
-       offset += rd_size;
--      crc = ailego::Crc32c::Hash(data, rd_size, crc);
-+      crc = ailego::Crc32c::Hash(data.data(), rd_size, crc);
-     }
-     if (crc != segment->data_crc()) {
-       return false;
-@@ -176,15 +174,15 @@ diskann_id_t DiskAnnReducerEntity::get_id(diskann_key_t key) const {
- }
- 
- diskann_key_t DiskAnnReducerEntity::get_key(diskann_id_t id) const {
--  const void *key;
--  if (ailego_unlikely(key_segment_->read(id * sizeof(diskann_key_t), &key,
-+  IndexStorage::MemoryBlock key;
-+  if (ailego_unlikely(key_segment_->read(id * sizeof(diskann_key_t), key,
-                                          sizeof(diskann_key_t)) !=
-                       sizeof(diskann_key_t))) {
-     LOG_ERROR("Read key from segment failed");
-     return kInvalidKey;
-   }
- 
--  return *(reinterpret_cast<const diskann_key_t *>(key));
-+  return *(reinterpret_cast<const diskann_key_t *>(key.data()));
- }
- 
- const void *DiskAnnReducerEntity::get_vector(diskann_id_t id) const {
-@@ -194,15 +192,15 @@ const void *DiskAnnReducerEntity::get_vector(diskann_id_t id) const {
-   size_t offset = sector_id * DiskAnnUtil::kSectorSize;
- 
-   if (sector_id != sector_id_) {
--    const void *sector_data;
--    if (ailego_unlikely(vector_segment_->read(offset, &sector_data,
--                                              read_size) != read_size)) {
-+    IndexStorage::MemoryBlock sector_data;
-+    if (ailego_unlikely(vector_segment_->read(offset, sector_data, read_size) !=
-+                        read_size)) {
-       LOG_ERROR("Read vector from segment failed");
-       return nullptr;
-     }
- 
-     sector_id_ = sector_id;
--    sector_buffer_.assign(reinterpret_cast<const char *>(sector_data),
-+    sector_buffer_.assign(reinterpret_cast<const char *>(sector_data.data()),
-                           read_size);
-   }
- 
-```
-
-**File**: `src/core/algorithm/diskann/diskann_searcher_entity.cc` (modified, +22/-25)
-```diff
-@@ -114,7 +114,7 @@ int DiskAnnSearcherEntity::load(const IndexMeta &meta,
- }
- 
- int DiskAnnSearcherEntity::load_pq_segment() {
--  const void *data = nullptr;
-+  IndexStorage::MemoryBlock data;
- 
-   // load pq meta
-   pq_meta_segment_ = storage_->get(DiskAnnEntity::kDiskAnnPqMetaSegmentId);
-@@ -128,7 +128,7 @@ int DiskAnnSearcherEntity::load_pq_segment() {
-   size_t offset = 0;
- 
-   // 1. read pq meta
--  read_size = pq_meta_segment_->read(offset, &data, sizeof(DiskAnnPqMeta));
-+  read_size = pq_meta_segment_->read(offset, data, sizeof(DiskAnnPqMeta));
-   if (read_size != sizeof(DiskAnnPqMeta)) {
-     LOG_ERROR("Read segment %s failed, expect: %zu, actual: %zu",
-               DiskAnnEntity::kDiskAnnPqMetaSegmentId.c_str(),
-@@ -137,7 +137,8 @@ int DiskAnnSearcherEntity::load_pq_segment() {
-     return IndexError_ReadData;
-   }
- 
--  memcpy(reinterpret_cast<uint8_t *>(&pq_meta_), data, sizeof(DiskAnnPqMeta));
-+  memcpy(reinterpret_cast<uint8_t *>(&pq_meta_), data.data(),
-+         sizeof(DiskAnnPqMeta));
-   offset += read_size;
- 
-   int ret =
-@@ -194,35 +195,34 @@ int DiskAnnSearcherEntity::read_pq_quantizer_meta_buffer(
- 
-   // The meta buffer is stored right after the DiskAnnPqMeta header in the
-   // segment.
--  const void *data = nullptr;
-+  IndexStorage::MemoryBlock data;
-   size_t read_size = pq_meta_segment_->read(
--      sizeof(DiskAnnPqMeta), &data, pq_meta_.quantizer_meta_buffer_size);
-+      sizeof(DiskAnnPqMeta), data, pq_meta_.quantizer_meta_buffer_size);
-   if (read_size != pq_meta_.quantizer_meta_buffer_size) {
-     LOG_ERROR("Read segment %s failed, expect: %zu, actual: %zu",
-               DiskAnnEntity::kDiskAnnPqMetaSegmentId.c_str(),
-               (size_t)(pq_meta_.quantizer_meta_buffer_size), (size_t)read_size);
-     return IndexError_ReadData;
-   }
- 
--  meta_buffer->assign(reinterpret_cast<const char *>(data), read_size);
-+  meta_buffer->assign(reinterpret_cast<const char *>(data.data()), read_size);
-   return 0;
- }
- 
- int DiskAnnSearcherEntity::load_header_segment() {
--  const void *data = nullptr;
-+  IndexStorage::MemoryBlock data;
-   meta_segment_ = storage_->get(kDiskAnnMetaSegmentId);
-   if (!meta_segment_ ||
-       meta_segment_->data_size() < sizeof(DiskAnnMetaHeader)) {
-     LOG_ERROR("Miss or invalid segment %s", kDiskAnnMetaSegmentId.c_str());
-     return IndexError_InvalidFormat;
-   }
--  if (meta_segment_->read(0, reinterpret_cast<const void **>(&data),
--                          sizeof(DiskAnnMetaHeader)) !=
-+  if (meta_segment_->read(0, data, sizeof(DiskAnnMetaHeader)) !=
-       sizeof(DiskAnnMetaHeader)) {
-     LOG_ERROR("Read segment %s failed", kDiskAnnMetaSegmentId.c_str());
-     return IndexError_ReadData;
-   }
--  memcpy(reinterpret_cast<uint8_t *>(&meta_header_), data,
-+  memcpy(reinterpret_cast<uint8_t *>(&meta_header_), data.data(),
-          sizeof(DiskAnnMetaHeader));
- 
-   return 0;
-@@ -250,16 +250,15 @@ int DiskAnnSearcherEntity::load_key_segment() {
- 
-   size_t key_data_len = doc_cnt() * sizeof(diskann_key_t);
- 
--  const void *data = nullptr;
--  if (key_segment_->read(0, reinterpret_cast<const void **>(&data),
--                         key_data_len) != key_data_len) {
-+  IndexStorage::MemoryBlock data;
-+  if (key_segment_->read(0, data, key_data_len) != key_data_len) {
-     LOG_ERROR("Read segment %s failed", kDiskAnnKeySegmentId.c_str());
-     return IndexError_ReadData;
-   }
- 
-   try {
-     auto key_buffer = std::make_shared<std::string>(key_data_len, '\0');
--    memcpy(&(*key_buffer)[0], data, key_data_len);
-+    memcpy(&(*key_buffer)[0], data.data(), key_data_len);
-     key_buffer_ = std::move(key_buffer);
-   } catch (const std::bad_alloc &) {
-     LOG_ERROR("Failed to allocate DiskAnn key buffer");
-@@ -277,29 +276,28 @@ int DiskAnnSearcherEntity::load_entrypoint_segment() {
-     return IndexError_InvalidFormat;
-   }
- 
--  const void *data = nullptr;
-+  IndexStorage::MemoryBlock data;
- 
--  if (entrypoint_segment_->read(0, reinterpret_cast<const void **>(&data),
--                                sizeof(uint32_t)) != sizeof(uint32_t)) {
-+  if (entrypoint_segment_->read(0, data, sizeof(uint32_t)) !=
-+      sizeof(uint32_t)) {
-     LOG_ERROR("Read segment %s failed", kDiskAnnEntryPointSegmentId.c_str());
-     return IndexError_ReadData;
-   }
- 
-   uint32_t entrypoint_cnt = 0;
--  memcpy(&entrypoint_cnt, data, sizeof(uint32_t));
-+  memcpy(&entrypoint_cnt, data.data(), sizeof(uint32_t));
- 
-   if (entrypoint_cnt != 0) {
-     size_t entrypoint_data_len = entrypoint_cnt * sizeof(diskann_id_t);
- 
--    if (entrypoint_segment_->read(sizeof(uint32_t),
--                                  reinterpret_cast<const void **>(&data),
-+    if (entrypoint_segment_->read(sizeof(uint32_t), data,
-                                   entrypoint_data_len) != entrypoint_data_len) {
-       LOG_ERROR("Read segment %s failed", kDiskAnnEntryPointSegmentId.c_str());
-       return IndexError_ReadData;
-     }
- 
-     entrypoints_.resize(entrypoint_cnt);
--    memcpy(&(entrypoints_[0]), data, entrypoint_
-```
-
-**File**: `src/core/algorithm/flat/flat_searcher.h` (modified, +19/-1)
-```diff
-@@ -17,6 +17,7 @@
- #include <turbo/quantizer/quantizer.h>
- #include <zvec/ailego/container/params.h>
- #include <zvec/core/framework/index_searcher.h>
-+#include "utility/legacy_read_buffer.h"
- #include "flat_distance_matrix.h"
- #include "flat_index_format.h"
- 
-@@ -182,8 +183,25 @@ class FlatSearcher : public IndexSearcher {
-   }
- 
-   const void *get_vector(key_t key) const override {
-+    // The provider below is temporary, so retain only independent bytes here.
-+    static thread_local LegacyReadBuffer buffer;
-+    IndexStorage::MemoryBlock block;
-+    return get_vector(key, block) == 0
-+               ? buffer.assign(block, meta_.element_size())
-+               : nullptr;
-+  }
-+
-+  int get_vector(key_t key, IndexStorage::MemoryBlock &block) const override {
-+    if (!container_) {
-+      block.reset();
-+      return IndexError_NoReady;
-+    }
-     auto provider = this->create_provider();
--    return provider->get_vector(key);
-+    if (!provider) {
-+      block.reset();
-+      return IndexError_NoReady;
-+    }
-+    return provider->get_vector(key, block);
-   }
- 
-  private:
-```
-
-**File**: `src/core/algorithm/flat/flat_searcher_context.h` (modified, +82/-64)
-```diff
-@@ -113,11 +113,16 @@ class FlatSearcherContext : public IndexSearcher::Context {
-     }
-   }
- 
--  void topk_to_group_result(uint32_t idx) {
-+  int topk_to_group_result(uint32_t idx) {
-     ailego_assert_with(idx < group_results_.size(), "invalid idx");
- 
-     group_results_[idx].clear();
- 
-+    auto provider = fetch_vector_ ? owner_->create_provider() : nullptr;
-+    if (fetch_vector_ && !provider) {
-+      return IndexError_NoReady;
-+    }
-+
-     std::vector<std::pair<std::string, TopkHeap>> group_topk_list;
-     std::vector<std::pair<std::string, float>> best_score_in_groups;
-     for (auto itr = group_topk_heaps_.begin(); itr != group_topk_heaps_.end();
-@@ -164,16 +169,22 @@ class FlatSearcherContext : public IndexSearcher::Context {
- 
-         node_id_t id = group_topk_list[i].second[j].first;
- 
--        auto provider = owner_->create_provider();
--
-+        const auto key = owner_->key(id);
-         if (fetch_vector_) {
--          group_results_[idx][i].mutable_docs()->emplace_back(
--              id, score, id, provider->get_vector(id));
-+          IndexStorage::MemoryBlock block;
-+          int ret = provider->get_vector(key, block);
-+          if (ret != 0) {
-+            group_results_[idx].clear();
-+            return ret;
-+          }
-+          group_results_[idx][i].mutable_docs()->emplace_back(key, score, id,
-+                                                              std::move(block));
-         } else {
--          group_results_[idx][i].mutable_docs()->emplace_back(id, score, id);
-+          group_results_[idx][i].mutable_docs()->emplace_back(key, score, id);
-         }
-       }
-     }
-+    return 0;
-   }
- 
-   //! Get if group by search
-@@ -493,8 +504,8 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_nofilter(
-   auto matrix = this->owner_->distance_matrix();
- 
-   while (left_size >= actual_read_size_) {
--    const void *data = nullptr;
--    if (features_segment_->read(read_offset, &data, actual_read_size_) !=
-+    IndexStorage::MemoryBlock data;
-+    if (features_segment_->read(read_offset, data, actual_read_size_) !=
-         actual_read_size_) {
-       LOG_ERROR("Failed to read data (%u bytes) from features segment",
-                 actual_read_size_);
-@@ -503,7 +514,8 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_nofilter(
- 
-     for (size_t offset = 0; offset < actual_read_size_; offset += block_size) {
-       matrix.template distance<BATCH_SIZE, 1>(
--          (const char *)data + offset, query, qmeta.dimension(), scores_);
-+          (const char *)data.data() + offset, query, qmeta.dimension(),
-+          scores_);
- 
-       for (size_t i = 0; i != BATCH_SIZE; ++i) {
-         heap->emplace(0, scores_[i], feature_index++);
-@@ -513,8 +525,8 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_nofilter(
-     left_size -= actual_read_size_;
-   }
- 
--  const void *data = nullptr;
--  if (features_segment_->read(read_offset, &data, left_size) != left_size) {
-+  IndexStorage::MemoryBlock data;
-+  if (features_segment_->read(read_offset, data, left_size) != left_size) {
-     LOG_ERROR("Failed to read data (%zu bytes) from features segment",
-               left_size);
-     return IndexError_ReadData;
-@@ -523,8 +535,8 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_nofilter(
-   // Process left block features
-   size_t left_size_aligned = left_size / block_size * block_size;
-   for (size_t offset = 0; offset != left_size_aligned; offset += block_size) {
--    matrix.template distance<BATCH_SIZE, 1>((const char *)data + offset, query,
--                                            qmeta.dimension(), scores_);
-+    matrix.template distance<BATCH_SIZE, 1>((const char *)data.data() + offset,
-+                                            query, qmeta.dimension(), scores_);
- 
-     for (size_t i = 0; i != BATCH_SIZE; ++i) {
-       heap->emplace(0, scores_[i], feature_index++);
-@@ -535,7 +547,7 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_nofilter(
-   for (size_t offset = left_size_aligned; offset < left_size;
-        offset += feature_size_) {
-     float score;
--    matrix.template distance<1>((const char *)data + offset, query,
-+    matrix.template distance<1>((const char *)data.data() + offset, query,
-                                 qmeta.dimension(), &score);
-     heap->emplace(0, score, feature_index++);
-   }
-@@ -562,8 +574,8 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_filter(
-   auto matrix = owner_->distance_matrix();
- 
-   while (left_size >= actual_read_size_) {
--    const void *data = nullptr;
--    if (features_segment_->read(read_offset, &data, actual_read_size_) !=
-+    IndexStorage::MemoryBlock data;
-+    if (features_segment_->read(read_offset, data, actual_read_size_) !=
-         actual_read_size_) {
-       LOG_ERROR("Failed to read data (%u bytes) from features segment",
-                 actual_read_size_);
-@@ -572,7 +584,8 @@ int FlatSearcherContext<BATCH_SIZE>::search_column_filter(
- 
-     for (size_t offset = 0; offset < actual_read_size_; offset +=
-```
-
-**File**: `src/core/algorithm/flat/flat_searcher_provider.h` (modified, +41/-21)
-```diff
-@@ -14,7 +14,9 @@
- 
- #pragma once
- 
-+#include <cstring>
+ #include "query_info_helper.h"
++#include <cstdio>
++#include <limits>
  #include <memory>
-+#include "utility/legacy_read_buffer.h"
- #include "flat_distance_matrix.h"
- #include "flat_searcher.h"
- // #include "flat_streamer.h"
-@@ -35,7 +37,6 @@ class FlatSearcherProvider : public IndexProvider {
-     total_vector_count_ =
-         features_segment_->data_size() / owner->meta().element_size();
-     owner_ = owner;
--    block_buffer_.resize(BATCH_SIZE * feature_size_);
+ #include <zvec/ailego/logger/logger.h>
+ #include <zvec/ailego/utility/string_helper.h>
+@@ -80,6 +82,16 @@ bool QueryInfoHelper::text_2_data_buf(const std::string &text,
+   return false;
+ }
+ 
++// StringHelper::ToString() keeps six decimals. Print enough significant
++// digits that the text reads back as the same value.
++template <typename T>
++static std::string exact_text(T val) {
++  char buf[32];
++  std::snprintf(buf, sizeof(buf), "%.*g", std::numeric_limits<T>::max_digits10,
++                static_cast<double>(val));
++  return buf;
++}
++
+ bool QueryInfoHelper::data_buf_2_text(const std::string &data_buf,
+                                       zvec::DataType data_type,
+                                       std::string *text) {
+@@ -104,12 +116,12 @@ bool QueryInfoHelper::data_buf_2_text(const std::string &data_buf,
    }
  
-   //! Create a new iterator
-@@ -66,7 +67,15 @@ class FlatSearcherProvider : public IndexProvider {
+   if (data_type == zvec::DataType::FLOAT) {
+-    *text = ailego::StringHelper::ToString(*(float *)data_buf.data());
++    *text = exact_text(*(float *)data_buf.data());
+     return true;
+   }
  
-   //! Retrieve a vector using a primary key
-   const void *get_vector(uint64_t key) const override {
--    return this->get_vector_by_index(owner_->get_id(key));
-+    IndexStorage::MemoryBlock block;
-+    return get_vector(key, block) == 0
-+               ? legacy_buffer_.assign(block, feature_size_)
-+               : nullptr;
+   if (data_type == zvec::DataType::DOUBLE) {
+-    *text = ailego::StringHelper::ToString(*(double *)data_buf.data());
++    *text = exact_text(*(double *)data_buf.data());
+     return true;
+   }
+ 
+```
+
+**File**: `tests/db/collection_float_range_filter_test.cc` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++// Copyright 2025-present the zvec project
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// A range filter on an indexed FLOAT or DOUBLE field must return the same
++// documents whether a segment runs it on the inverted index or, after the
++// optimizer moved it, as a forward filter. The first segment is sealed and
++// its range covers most of its values, so the optimizer moves the filter to a
++// forward scan there; the writing segment keeps the inverted index.
++
++#include <algorithm>
++#include <filesystem>
++#include <iostream>
++#include <memory>
++#include <string>
++#include <vector>
++#include <gtest/gtest.h>
++#include <zvec/ailego/buffer/block_eviction_queue.h>
++#include <zvec/db/collection.h>
++#include <zvec/db/index_params.h>
++
++using namespace zvec;
++
++namespace {
++
++size_t QueryCount(const Collection::Ptr &collection,
++                  const std::string &filter) {
++  SearchQuery query;
++  query.filter_ = filter;
++  query.topk_ = 2000;
++  auto result = collection->query(query);
++  EXPECT_TRUE(result.has_value()) << filter;
++  if (!result.has_value()) return 0;
++  std::cout << filter << " -> " << result.value().size() << " documents\n";
++  return result.value().size();
++}
++
++}  // namespace
++
++TEST(FloatRangeFilter, ForwardScanKeepsExactBound) {
++  ailego::MemoryLimitPool::get_instance().init(256 * 1024 * 1024);
++  const std::string path = "./collection_float_range_filter_dir";
++  std::filesystem::remove_all(path);
++
++  CollectionSchema schema("float_range_filter");
++  schema.set_max_doc_count_per_segment(1000);
++  ASSERT_TRUE(schema
++                  .add_field(std::make_shared<FieldSchema>(
++                      "price", DataType::FLOAT, false,
++                      std::make_shared<InvertIndexParams>()))
++                  .ok());
++  ASSERT_TRUE(schema
++                  .add_field(std::make_shared<FieldSchema>(
++                      "weight", DataType::DOUBLE, false,
++                      std::make_shared<InvertIndexParams>()))
++                  .ok());
++  auto opened = Collection::CreateAndOpen(path, schema, CollectionOptions{});
++  ASSERT_TRUE(opened.has_value()) << opened.error().message();
++  auto collection = std::move(opened.value());
++
++  // 50 documents sit exactly on the bounds used below, 951 above them. The
++  // 1001st document starts a new segment, so the first 1000 are sealed.
++  std::vector<Doc> docs;
++  for (int i = 0; i < 1001; ++i) {
++    Doc doc;
++    doc.set_pk(std::to_string(i));
++    doc.set<float>("price", i < 50 ? 1.0000001f : 2.0f);
++    doc.set<double>("weight", i < 50 ? 1.0000000001 : 2.0);
++    docs.push_back(std::move(doc));
++  }
++  for (size_t start = 0; start < docs.size(); start += 500) {
++    std::vector<Doc> batch(docs.begin() + start,
++                           docs.begin() + std::min(docs.size(), start + 500));
++    auto inserted = collection->insert(batch);
++    ASSERT_TRUE(inserted.has_value()) << inserted.error().message();
++    for (const auto &status : inserted.value()) {
++      ASSERT_TRUE(status.ok()) << status.message();
++    }
 +  }
 +
-+  int get_vector(uint64_t key,
-+                 IndexStorage::MemoryBlock &block) const override {
-+    return get_vector_by_index(owner_->get_id(key), block);
-   }
- 
-   //! Retrieve the owner class
-@@ -123,7 +132,6 @@ class FlatSearcherProvider : public IndexProvider {
-    protected:
-     //! Read a block of data
-     void next_block() {
--      const void *read_data = nullptr;
-       size_t read_size = 0;
- 
-       if (cursor_index_ >= total_vector_count_) {
-@@ -136,7 +144,7 @@ class FlatSearcherProvider : public IndexProvider {
-       } else {
-         read_size = (total_vector_count_ - cursor_index_) * feature_size_;
-       }
--      if (features_segment_->read(offset_, &read_data, read_size) !=
-+      if (features_segment_->read(offset_, read_block_, read_size) !=
-           read_size) {
-         LOG_ERROR("Failed to read data (%zu bytes) from features segment",
-                   read_size);
-@@ -150,18 +158,19 @@ class FlatSearcherProvider : public IndexProvider {
-           read_size == BATCH_SIZE * feature_size_) {
-         uint32_t align_size =
-             IndexMeta::AlignSizeof(owner_->meta().data_type());
--        ReverseTranspose<BATCH_SIZE>(align_size, read_data,
-+        ReverseTranspose<BATCH_SIZE>(align_size, read_block_.data(),
-                                      feature_size_ / align_size,
-                                      &block_buffer_[0]);
-         data_ = block_buffer_.data();
-       } else {
--        data_ = reinterpret_cast<const uint8_t *>(read_data);
-+        data_ = reinterpret_cast<const uint8_t *>(read_block_.data());
-       }
-     }
- 
-    private:
-     const FlatSearcher<BATCH_SIZE> *owner_{nullptr};
-     IndexStorage::Segment::Pointer features_segment_{};
-+    IndexStorage::MemoryBlock read_block_;
-     uint32_t total_vector_count_{0};
-     uint32_t feature_size_{0};
-     std::vector<uint8_t> block_buffer_{};
-@@ -172,48 +181,59 @@ class FlatSearcherProvider : public IndexProvider {
-   };
- 
-   //! Retrieve a vector via local index
--  const void *get_vector_by_index(uint32_t index) const {
--    const void *read_data = nullptr;
--    if (index == kInvalidNodeId) {
-+  int get_vector_by_index(uint32_t index,
-+                          IndexStorage::MemoryBlock &block) const {
-+    block.reset();
-+    if (index >= total_vector_count_) {
-       LOG_ERROR("Failed to get vector by Invalid Id.");
--      return nullptr;
-+      return IndexError_NoExist;
-     }
- 
-     if (owner_->column_major_order() &&
-         index < (total_vector_count_ - (total_vector_count_ % BATCH_SIZE))) {
-       uint32_t block_size = feature_size_ * BATCH_SIZE;
-       uint64_t offset = (index - (index % BATCH_SIZE)) * feature_size_;
- 
--      if (features_segment_->read(offset, &read_data, block_size) !=
-+      IndexStorage::MemoryBlock read_block;
-+      if (features_segment_->read(offset, read_block, block_size) !=
-           block_size) {
-         LOG_ERROR("Failed to read data (%u bytes) from features segment",
-                   block_size);
--        return nullptr;
-+        return IndexError_ReadData;
-       }
- 
--      uint32_t align_size = IndexMeta::AlignSizeof(owner_->meta().data_type());
--      ReverseTranspose<BATCH_SIZE>(
--          align_size, read_data, feature_size_ / align_size, &block_buffer_[0]);
--      read_data = block_buffer_.data() + ((index % BATCH_SIZE) * feature_size_);
-+      const size_t align_size =
-+          IndexMeta::AlignSizeof(owner_->meta().data_type());
-+      auto buffer = std::make_shared<std::vector<uint8_t>>(feature_size_);
-+      const auto *source = static_cast<const uint8_t *>(read_block.data()) +
-+                           (index % BATCH_SIZE) * align_size;
-+      // Extract only this row; retaining a full transposed batch per result
-+      // would multiply the result memory by BATCH_SIZE.
-+      for (size_t pos = 0; pos < feature_size_; pos += align_size) {
-+        std::memcpy(buffer->data() + pos, source + pos * BATCH_SIZE,
-+                    align_size);
-+      }
-+      block = IndexStorage::MemoryBlock::MakeSharedView(buffer->data(), buffer);
- 
-     } else {
--      if (featu
++  EXPECT_EQ(QueryCount(collection, "price > 1.0000001"), 951u);
++  EXPECT_EQ(QueryCount(collection, "weight > 1.0000000001"), 951u);
++
++  collection.reset();
++  std::filesystem::remove_all(path);
++}
 ```
 
-**File**: `src/core/algorithm/flat/flat_streamer_entity.cc` (modified, +7/-27)
-```diff
-@@ -15,6 +15,7 @@
- #include "flat_streamer_entity.h"
- #include <cstdint>
- #include <zvec/core/framework/index_error.h>
-+#include "utility/legacy_read_buffer.h"
- #include "flat_utility.h"
- 
- namespace zvec {
-@@ -796,33 +797,12 @@ const void *FlatContiguousStreamerEntity::get_vector_ptr(
- }
- 
- const void *FlatStreamerEntity::get_vector_by_key(uint64_t key) const {
--  VectorLocation loc{};
--  key_info_map_lock_->lock_shared();
--  if (use_key_info_map_) {
--    auto iterator = key_info_map_.find(key);
--    if (iterator == key_info_map_.end()) {
--      key_info_map_lock_->unlock_shared();
--      return nullptr;
--    }
--    loc = iterator->second;
--  } else {
--    if (key < withid_key_info_map_.size()) {
--      loc = withid_key_info_map_[key];
--    } else {
--      key_info_map_lock_->unlock_shared();
--      return nullptr;
--    }
--  }
--  key_info_map_lock_->unlock_shared();
--
--  auto segment = this->get_segment(loc.segment_id);
--  const void *data = nullptr;
--  if (segment->read(loc.offset, &data, index_meta_.element_size()) !=
--      index_meta_.element_size()) {
--    LOG_ERROR("Failed to read segment, size=%u", index_meta_.element_size());
--    return nullptr;
--  }
--  return data;
-+  // Keep the legacy pointer valid until the next call on this thread.
-+  static thread_local LegacyReadBuffer buffer;
-+  IndexStorage::MemoryBlock block;
-+  return get_vector_by_key(key, block) == 0
-+             ? buffer.assign(block, index_meta_.element_size())
-+             : nullptr;
- }
- 
- int FlatStreamerEntity::get_vector_by_key(
-```
+---
 
-**File**: `src/core/algorithm/flat_sparse/flat_sparse_searcher_entity.cc` (modified, +26/-23)
+### Incident Patch 2: `89ba9225` (2026-10-20)
+**Commit Message**: ci: strip debug symbols from Android prebuilt SDK libraries (#702)
+
+**File**: `.github/workflows/_build_prebuilt.yml` (modified, +23/-0)
 ```diff
-@@ -15,6 +15,7 @@
- #include "flat_sparse_searcher_entity.h"
- #include <zvec/ailego/logger/logger.h>
- #include <zvec/core/framework/index_helper.h>
-+#include "utility/legacy_read_buffer.h"
- #include "flat_sparse_utility.h"
+@@ -458,6 +458,29 @@ jobs:
+           # Ship shared libraries only (same policy as desktop platforms).
+           rm -f "$ZVEC_DIST_DIR"/lib/*.a
  
- namespace zvec {
-@@ -80,14 +81,13 @@ int FlatSparseSearcherEntity::load_container(
-               PARAM_FLAT_SPARSE_META_SEG_ID.c_str());
-     return IndexError_InvalidFormat;
-   }
--  const void *data;
--  if (ailego_unlikely(segment->read(0, &data, sizeof(meta_)) !=
--                      sizeof(meta_))) {
-+  IndexStorage::MemoryBlock data;
-+  if (ailego_unlikely(segment->read(0, data, sizeof(meta_)) != sizeof(meta_))) {
-     LOG_ERROR("Failed to read meta segment %s",
-               PARAM_FLAT_SPARSE_META_SEG_ID.c_str());
-     return IndexError_ReadData;
-   }
--  meta_ = *(reinterpret_cast<const decltype(meta_) *>(data));
-+  meta_ = *(reinterpret_cast<const decltype(meta_) *>(data.data()));
- 
-   // keys segment
-   keys_chunk_ = container->get(PARAM_FLAT_SPARSE_DUMP_KEYS_SEG_ID);
-@@ -144,18 +144,18 @@ int FlatSparseSearcherEntity::get_sparse_vector_ptr_by_id(
-     uint32_t *sparse_vector_len_ptr) const {
-   uint32_t offset_chunk_offset = id * offset_size_per_node();
- 
--  const void *offset_info = nullptr;
-+  IndexStorage::MemoryBlock offset_info;
-   if (ailego_unlikely(sparse_offset_chunk_->read(
--                          offset_chunk_offset, &offset_info,
-+                          offset_chunk_offset, offset_info,
-                           offset_size_per_node()) != offset_size_per_node())) {
-     LOG_ERROR("Read offset info failed, offset=%u", offset_chunk_offset);
-     return IndexError_ReadData;
-   };
- 
-   // sparse offset
--  uint64_t sparse_offset = *(uint64_t *)offset_info;
-+  uint64_t sparse_offset = *(uint64_t *)offset_info.data();
-   uint32_t sparse_vector_len =
--      *(uint32_t *)((uint8_t *)offset_info + sizeof(uint64_t));
-+      *(uint32_t *)((uint8_t *)offset_info.data() + sizeof(uint64_t));
- 
-   if (sparse_vector_len > 0) {
-     const void *sparse_data =
-@@ -175,16 +175,18 @@ int FlatSparseSearcherEntity::get_sparse_vector_ptr_by_id(
- 
- const void *FlatSparseSearcherEntity::get_sparse_vector_data(
-     uint64_t offset, uint32_t length) const {
--  const void *data;
--  auto size = sparse_data_chunk_->read(offset, &data, length);
-+  // Keep the legacy pointer valid until the next call on this thread.
-+  static thread_local LegacyReadBuffer buffer;
-+  IndexStorage::MemoryBlock data;
-+  auto size = sparse_data_chunk_->read(offset, data, length);
-   if (size != length) {
-     LOG_ERROR(
-         "read sparse vector data failed: offset=%zu, "
-         "length=%u, size=%zu",
-         (size_t)offset, length, size);
-     return nullptr;
-   }
--  return data;
-+  return buffer.assign(data, length);
- }
- 
- 
-@@ -197,27 +199,28 @@ node_id_t FlatSparseSearcherEntity::get_id(uint64_t key) const {
-   //! Do binary search
-   node_id_t start = 0UL;
-   node_id_t end = doc_cnt();
--  const void *data;
-+  IndexStorage::MemoryBlock data;
-   node_id_t idx = 0u;
-   while (start < end) {
-     idx = start + (end - start) / 2;
--    if (ailego_unlikely(mapping_chunk_->read(idx * sizeof(node_id_t), &data,
-+    if (ailego_unlikely(mapping_chunk_->read(idx * sizeof(node_id_t), data,
-                                              sizeof(node_id_t)) !=
-                         sizeof(node_id_t))) {
-       LOG_ERROR("Read key from segment failed");
-       return kInvalidNodeId;
-     }
--    const uint64_t *mkey;
--    node_id_t local_id = *reinterpret_cast<const node_id_t *>(data);
--    if (ailego_unlikely(keys_chunk_->read(
--                            local_id * sizeof(uint64_t), (const void **)(&mkey),
--                            sizeof(uint64_t)) != sizeof(uint64_t))) {
-+    IndexStorage::MemoryBlock key_block;
-+    node_id_t local_id = *reinterpret_cast<const node_id_t *>(data.data());
-+    if (ailego_unlikely(keys_chunk_->read(local_id * sizeof(uint64_t),
-+                                          key_block, sizeof(uint64_t)) !=
-+                        sizeof(uint64_t))) {
-       LOG_ERROR("Read key from segment failed");
-       return kInvalidNodeId;
-     }
--    if (*mkey < key) {
-+    const auto mkey = *static_cast<const uint64_t *>(key_block.data());
-+    if (mkey < key) {
-       start = idx + 1;
--    } else if (*mkey > key) {
-+    } else if (mkey > key) {
-       end = idx;
-     } else {
-       return local_id;
-@@ -227,14 +230,14 @@ node_id_t FlatSparseSearcherEntity::get_id(uint64_t key) const {
- }
- 
- uint64_t FlatSparseSearcherEntity::get_key(node_id_t id) const {
--  const void *key;
-+  IndexStorage::MemoryBlock key;
-   if (ailego_unlikely(
--          keys_chunk_->read(id * sizeof(uint64_t), &key, sizeof(uint64_t)) !=
-+          keys_chunk_->read(id * sizeof(uint64_t), key, sizeof(uint64_t)) !=
-           sizeof(uint64_t))) {
-     LOG_ERROR("Read key from segment failed");
-     return kInvalidKey;
-   }
--  return *(reinterpret_cast<const uint64_t *>(key));
-+  return *(reinterpret_cast<const uint64_t
++      - name: Strip debug symbols from shared libraries
++        shell: bash
++        run: |
++          # The NDK toolchain compiles with -g in all build types (AGP strips
++          # the .so files at APK packaging time, but we ship them directly).
++          # Without this step libzvec.so carries hundreds of MB of DWARF.
++          NDK="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_HOME}"
++          TOOLCHAIN_BIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
++          # NDK r28+ removed the target-prefixed strip aliases; llvm-strip is
++          # the canonical tool. Fall back to llvm-objcopy --strip-all (equivalent)
++          # in case llvm-strip is unavailable.
++          if [ -x "$TOOLCHAIN_BIN/llvm-strip" ]; then
++            STRIP_CMD=("$TOOLCHAIN_BIN/llvm-strip")
++          elif [ -x "$TOOLCHAIN_BIN/llvm-objcopy" ]; then
++            STRIP_CMD=("$TOOLCHAIN_BIN/llvm-objcopy" "--strip-all")
++          else
++            echo "No strip tool found under $NDK" >&2
++            find "$NDK" \( -name 'llvm-strip' -o -name 'llvm-objcopy' \) 2>/dev/null >&2 || true
++            exit 1
++          fi
++          find "$ZVEC_DIST_DIR/lib" -name '*.so' -type f -print -exec "${STRIP_CMD[@]}" {} +
++          ls -lh "$ZVEC_DIST_DIR"/lib/*.so
++
+       - name: Smoke-test staged SDK (link only)
+         shell: bash
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #825** (2026-10-20): perf(flat): isolate query metadata from segment cache locking (@egolearner)
 - **PR #824** (2026-10-19): ci: publish Windows ARM64 wheels and SDK (@JalinWang)
 - **PR #821** (2026-10-19): perf(search): output refined internal IDs directly (@luoxiaojian)
 - **PR #819** (2026-10-16): fix(build): disable unused Thrift OpenSSL support (@egolearner)
+- **PR #818** (2026-10-20): fix(sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (@jak-pan)
 - **PR #816** (2026-10-19): fix(ivf): support primary-key brute-force search for filtered queries (@iaojnh)
-- **PR #814** (2026-10-19): build(rabitq): upgrade to RaBitQ 0.7 modular targets (@gouyt13)
-- **PR #813** (2026-10-19): perf(flat): batch segment locking to fix HNSW RaBitQ build regression (@JalinWang)
 
 ---
 
@@ -1841,32 +1307,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. migrate index storage reads to MemoryBlock (#812)
+## X. sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (#818)
 
 **RULE**:
-When implementing operations in `src/core/algorithm/cluster/stratified_cluster_trainer.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/db/sqlengine/analyzer/query_info_helper.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a573058`: migrate index storage reads to MemoryBlock (#812). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8397071d`: sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (#818). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/algorithm/cluster/stratified_cluster_trainer.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/db/sqlengine/analyzer/query_info_helper.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    IndexStorage::MemoryBlock data;
-    size_t actual_size = seg->read(0, data, data_size);
-    bundle->set(it.first, data.data(), data_size);
+#include <cstdio>
+#include <limits>
+// StringHelper::ToString() keeps six decimals. Print enough significant
+// digits that the text reads back as the same value.
+template <typename T>
+static std::string exact_text(T val) {
+  char buf[32];
+  std::snprintf(buf, sizeof(buf), "%.*g", std::numeric_limits<T>::max_digits10,
+                static_cast<double>(val));
+  return buf;
+}
+
+    *text = exact_text(*(float *)data_buf.data());
+    *text = exact_text(*(double *)data_buf.data());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    const void *data = nullptr;
-    size_t actual_size = seg->read(0, &data, data_size);
-    bundle->set(it.first, data, data_size);
+    *text = ailego::StringHelper::ToString(*(float *)data_buf.data());
+    *text = ailego::StringHelper::ToString(*(double *)data_buf.data());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a573058` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8397071d` are properly handled with clean fallback behavior.

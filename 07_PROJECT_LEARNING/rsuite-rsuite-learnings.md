@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source**: github ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
-> **Source Version**: `296ec338`  
+> **Source Version**: `3cfb131e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:56:05.971Z  
+> **Timestamp**: 2026-10-20T13:33:33.545Z  
 > **Learning ID**: `learn-github-rsuite-rsuite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:56:04.759Z  
+> **Harvest Timestamp**: 2026-10-20T13:33:33.073Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -36,6 +36,151 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `benchmarks/cross-library-form/src/adapters/helper-engine.tsx`
+```
+import React, { useEffect, useState } from 'react';
+import { useController, useFieldArray, useForm, type Control } from 'react-hook-form';
+import { Actions, BillingToggle, FieldFrame } from '../components';
+import { emailValid, errors, initialValues, passwordValid } from '../domain';
+import { usernameAvailable } from '../api';
+import type { AdapterProps, Values } from '../types';
+
+type FieldName =
+  | 'profile.email'
+  | 'password'
+  | 'confirmation'
+  | 'username'
+  | 'company'
+  | `contacts.${number}.email`;
+export interface FieldViewProps {
+  name: string;
+  label: string;
+  type: string;
+  value: string;
+  error?: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  inputRef: (element: HTMLInputElement | null) => void;
+}
+type View = React.ComponentType<FieldViewProps>;
+function ControlledField({
+  name,
+  label,
+  control,
+  values,
+  View
+}: {
+  name: FieldName;
+  label: string;
+  control: Control<Values>;
+  values: () => Values;
+  View: View;
+}) {
+  const { field, fieldState } = useController({
+    name,
+    control,
+    shouldUnregister: name === 'company',
+    rules: {
+      validate: async value => {
+        if (name === 'profile.email') return emailValid(value) || errors.email;
+        if (name === 'password') return passwordValid(value) || errors.password;
+        if (name === 'confirmation')
+          return (!!value && value === values().password) || errors.confirmation;
+        if (name === 'company') return !!value || errors.company;
+        if (name === 'username')
+          return (!!value && (await usernameAvailable(value))) || errors.username;
+        return emailValid(value) || errors.contact;
+      }
+    }
+  });
+  return (
+    <FieldFrame name={name}>
+      <View
+        name={name}
+        label={label}
+        type={['password', 'confirmation'].includes(name) ? 'password' : 'text'}
+        value={field.value ?? ''}
+        error={fieldState.error?.message}
+        onChange={field.onChange}
+        onBlur={field.onBlur}
+        inputRef={field.ref}
+      />
+    </FieldFrame>
+  );
+}
+export function HelperForm({
+  attach,
+  onSubmit,
+  View,
+  FormView,
+  library
+}: AdapterProps & {
+  View: View;
+  FormView: React.ComponentType<{
+    children: React.ReactNode;
+    onSubmit: React.FormEventHandler<HTMLFormElement>;
+  }>;
+  library: string;
+}) {
+  const methods = useForm<Values>({
+    defaultValues: initialValues(),
+    mode: 'onBlur',
+    reValidateMode: 'onBlur'
+  });
+  const { fields, append, remove } = useFieldArray({ control: methods.control, name: 'contacts' });
+  const [billing, setBilling] = useState(false);
+  useEffect(
+    () =>
+      attach({
+        readValues: methods.getValues,
+        engine: 'React Hook Form composition',
+        stateOwnership:
+          'React Hook Form useForm/useFieldArray/Controller; application owns conditional visibility.',
+        validationOwnership: `React Hook Form Controller validation and async requests; ${library} supplies field/error UI, with shared application predicates/transport.`
+      }),
+    [attach, methods.getValues, library]
+  );
+  const field = (name: FieldName, label: string) => (
+    <ControlledField
+      key={name}
+      name={name}
+      label={label}
+      control={methods.control}
+      values={methods.getValues}
+      View={View}
+    />
+  );
+  return (
+    <FormView onSubmit={methods.handleSubmit(onSubmit)}>
+      {field('profile.email', 'Email')}
+      {field('password', 'Password')}
+      {field('confirmation', 'Confirm password')}
+      {field('username', 'Username')}
+      {fields.map((row, index) => (
+        <div data-contact-row key={row.id}>
+          {field(`contacts.${index}.email`, `Contact ${index + 1} email`)}
+          <button type="button" disabled={fields.length === 1} onClick={() => remove(index)}>
+            Remove contact {index + 1}
+          </button>
+        </div>
+      ))}
+      <button type="button" onClick={() => append({ email: '' })}>
+        Add contact
+      </button>
+      <BillingToggle checked={billing} onChange={setBilling} />
+      {billing && field('company', 'Company')}
+      <Actions
+        reset={() => {
+          methods.reset(initialValues());
+          setBilling(false);
+        }}
+      />
+    </FormView>
+  );
+}
+
+```
 
 ### Core Architecture Module: `examples/with-electron/src/renderer.js`
 ```
@@ -689,69 +834,20 @@ export const formatWithLeadingZero = (number: number) => {
 
 ```
 
-### Core Architecture Module: `src/Calendar/TimeDropdown/utils/getClockTime.ts`
-```
-import { getHours, getMinutes, getSeconds } from '@/internals/utils/date';
-
-export interface ClockTime {
-  hours?: number | null;
-  minutes?: number | null;
-  seconds?: number | null;
-  meridiem?: 'AM' | 'PM' | null;
-}
-
-/**
- * Convert the 24-hour clock to the 12-hour clock
- * @param hours
- */
-function getMeridiemHours(hours: number): number {
-  return hours >= 12 ? hours - 12 : hours;
-}
-
-export function getClockTime(props: { date?: Date; format?: string; showMeridiem: boolean }) {
-  const { format, date, showMeridiem } = props;
-  const clockTime: ClockTime = {
-    hours: null,
-    minutes: null,
-    seconds: null,
-    meridiem: null
-  };
-
-  if (!format) {
-    return clockTime;
-  }
-
-  // If date is provided, extract hours and meridiem
-  if (/(H|h)/.test(format) && date) {
-    const hours = getHours(date);
-
-    clockTime.hours = showMeridiem ? getMeridiemHours(hours) : hours;
-    clockTime.meridiem = hours >= 12 ? 'PM' : 'AM';
-  }
-  // Extract minutes if 'm' is present in format and date is provided
-  if (/m/.test(format) && date) {
-    clockTime.minutes = getMinutes(date);
-  }
-  // // Extract seconds if 's' is present in format and date is provided
-  if (/s/.test(format) && date) {
-    clockTime.seconds = getSeconds(date);
-  }
-  return clockTime;
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4954** (2026-10-19): **test(bench): add reproducible picker accessibility audit**
-  *Symptoms*: Make the cross-library picker accessibility baseline reproducible from the repository. `npm run audit:a11y` scans the same closed, open, keyboard-scrolled and empty-search states for RSuite, Ant Design, Chakra and HeroUI. It preserves raw axe results, manual-review items, ID-reference failures and partial failed cases, and returns nonzero for findings, runtime failures or missing states.  Pin axe-core 4.14.0 in the isolated benchmark project, record its version/hash, and reject changed engine/build/runner/SDK inputs. Verify a known accessible unlabelled-input fault in a separate document: a real HeroUI popup hides unrelated inserted nodes with `aria-hidden`, so an outside-popup control could otherwise misclassify the engine. Restrict Tailwind scanning to browser sources/HTML so audit prose cannot change the measured CSS.  Validation: - Clean isolated install, fixture types, ESLint, normal commit hooks and 10 Node regression tests pass. The fixture lockfile audit reports zero known affected packages. - Four fault controls reject runner, SDK, axe-source and built-JS mutations. A README utility-token control leaves HeroUI JS/CSS byte-identical. - The existing benchmark passes 16 Chromium/Firefox correctness configurations. All four production JS payloads are unchanged; only HeroUI CSS drops an unused 68-byte `.truncate` rule. - Independent engine controls pass in both browsers. HeroUI-only ordinary/virtualized commands complete 16 states and exit 0 while retaining manual-review 
+- **Issue #4966** (2026-10-20): **test(table): add reproducible selection and tree workflow prototypes**
+  *Symptoms*: Complex table regressions need reproducible user workflows across fixed library versions. This adds a standalone fixture for sorting/filtering/ID selection and a three-level tree with retained grandchild selection across collapse and root reorder.  The adapters state which behaviors belong to a native engine and which are application composition. Fresh Chromium/Firefox pointer and keyboard profiles use trusted browser input, independent ID/state oracles and actual row checkbox state. Tree reports separate functional completion from limited hierarchy/expansion/name gates. Incomplete matrices, malformed reports and stale source/configuration/dependency/artifact builds are rejected. Failed cases remain failures and produce nonzero command exits; the prototype does not claim accessibility conformance, performance or an overall ranking.  The cohort pins React 19.0.0, Ant Design 6.6.6, Chakra UI 3.37.0, HeroUI 3.2.6 and published rsuite-table 5.19.2. RSuite itself uses a source-built SDK snapshot. The existing standalone-fixture coverage exclusion and automatic JSX runtime configuration also cover this directory.  Validation:  - Standalone TypeScript, root type pre-commit check and ESLint pass. - A clean npm installation reproduces all 328 installed packages, the complete SDK snapshot and all four production asset sets. Both native browser matrices reproduce the same results. - Published-table baseline: selection 14/16; tree functional completion 14/16, with 8/16 also passing the l
 
-- **Issue #4953** (2026-10-19): **fix(picker): preserve accessible empty result lists**
-  *Symptoms*: When a SelectPicker or CheckPicker search has no matches, its expanded combobox references a missing listbox. Keep the listbox mounted during empty states and expose the localized message as a disabled, unselected informational option. The message has no value, active ID, focus stop, or selection handler. InputPicker and TagPicker use the same empty-state semantics.  When data arrives, preserve result-list initialization and scroll the selected option fully into view using its actual bounds. This also fixes ordinary CheckPicker selected-row scrolling.  Validation: - 20 new cases cover ordinary/virtualized empty data, unmatched searches, trusted keyboard/pointer recovery, and distant selected rows. Chromium and Firefox pass on actual React 18.2, 19.0, and 19.3 runtimes. - 39 related files / 873 tests pass per browser, plus 52 existing native async-result tests per browser. The local related run explicitly prebundles test imports; standard hosted CI remains required. - Types, lint, normal commit hooks, full package build, 19 build integration checks and 6 artifact checks pass. - Production builds pass eight correctness configurations up to 50,000 rows. Both empty-search accessibility scans retain a real controlled listbox and have no confirmed axe violations in that state. Manual review remains necessary; keyboard text contrast is tracked separately in #4951.  Original failing baseline logs and source qualification are retained locally. No timing-performance, screen-reader cert
+- **Issue #4964** (2026-10-20): **fix(ci): pin browser jobs to Ubuntu 24.04**
+  *Symptoms*: Browser jobs using ubuntu-latest reached Ubuntu 26.04 in the first #4963 workflow. Locked Playwright 1.56.1 then failed to download Chromium/Firefox with “does not support … on ubuntu26.04-x64”, before SDK tests started. The original failures are retained: [Chromium React19](https://github.com/rsuite/rsuite/actions/runs/39373591942/job/118466648038), [Firefox React18](https://github.com/rsuite/rsuite/actions/runs/39373591942/job/118466648091), [Chromium React19.3](https://github.com/rsuite/rsuite/actions/runs/39373591942/job/118466648094).  Pin the two reusable browser jobs and the public UMD consumer job to ubuntu-24.04, for which the locked package has browser download mappings. This follows the [runner-images guidance on avoiding rolling OS migrations](https://github.com/actions/runner-images/blob/main/README.md#latest-migration-process).  Validation: parsed YAML confirms the three runner labels are the only semantic changes; all matrices, commands and required gates match the base. Forty installer unit controls, scoped formatting and normal commit hooks pass. Hosted validation must confirm the selected runner OS and complete the original browser/public-consumer gates on this new commit. The failed #4963 head is not rerun.
+  **Post-Mortem & Fix Analysis**:
+  > #### Review or Edit in CodeSandbox  Open the branch in <a href="https://codesandbox.io/p/github/rsuite/rsuite/fix/ci-browser-runner-os?mode=review&utm_source=gh_app">Web Editor</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/ci-browser-runner-os&utm_source=gh_app">VS Code</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/ci-browser-runner-os&insiders=true&utm_source=gh_app">Insiders</a><br> Open <a href="https://codesandbox.io/p/devtool/preview/rsuite/rsuite/fix/ci-browser-runner-os?task=preview&port=51423&redirect=true&utm_source=gh_app">Preview</a>  <!-- open-in-codesandbox:complete --> 
+  > This pull request is automatically built and testable in [CodeSandbox](https://codesandbox.io).    To see build info of the built libraries, click [here](https://ci.codesandbox.io/status/rsuite/rsuite/pr/4964/builds/694965) or the icon next to each commit SHA.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -768,383 +864,89 @@ export function getClockTime(props: { date?: Date; format?: string; showMeridiem
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `702c416e` (2026-10-19)
-**Commit Message**: Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d
+### Incident Patch 1: `325d8236` (2026-10-20)
+**Commit Message**: Merge pull request #4957 from rsuite/fix/docs-colord-security
 
-fix(docs): upgrade Next.js to 16.4.1 for security fixes
+fix(docs): update locked colord security patch
 
-**File**: `docs/package-lock.json` (modified, +53/-41)
+**File**: `docs/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -37,7 +37,7 @@
-         "joi": "^18.2.9",
-         "lunar-typescript": "^1.7.6",
-         "lz-string": "^1.4.4",
--        "next": "^16.4.0",
-+        "next": "^16.4.1",
-         "nope-validator": "^1.1.1",
-         "nprogress": "^0.2.0",
-         "react": "^18.2.0",
-@@ -3221,15 +3221,15 @@
+@@ -5303,9 +5303,9 @@
        }
      },
-     "node_modules/@next/env": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
--      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.1.tgz",
-+      "integrity": "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g==",
-       "license": "MIT"
+     "node_modules/colord": {
+-      "version": "2.9.3",
+-      "resolved": "https://registry.npmjs.org/colord/-/colord-2.9.3.tgz",
+-      "integrity": "sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==",
++      "version": "2.9.4",
++      "resolved": "https://registry.npmjs.org/colord/-/colord-2.9.4.tgz",
++      "integrity": "sha512-z0nTt5300AIviCn9FTEL4G2DzPkfEDfghx6Do0ZfM3u0rOINBtfw2H8lD4VXyZF/o8HTzzyiCztaG2X/+IMeZA==",
+       "dev": true
      },
-     "node_modules/@next/swc-darwin-arm64": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
--      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.1.tgz",
-+      "integrity": "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -3243,9 +3243,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-x64": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
--      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.1.tgz",
-+      "integrity": "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ==",
-       "cpu": [
-         "x64"
-       ],
-@@ -3259,12 +3259,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-gnu": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
--      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.1.tgz",
-+      "integrity": "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw==",
-       "cpu": [
-         "arm64"
-       ],
-+      "libc": [
-+        "glibc"
-+      ],
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3275,12 +3278,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-musl": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
--      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6haaF4UiwBzytM96GRRRWZh9/WALIEO3npMamA==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.1.tgz",
-+      "integrity": "sha512-1SuJyDxW/PR9dHJat/ZRgcYLhuSZ+1psP4DlKb2tKIuXbjygqpLrJWRSq+onZQBv8LcmU67EIrmb6c3XTaJLjw==",
-       "cpu": [
-         "arm64"
-       ],
-+      "libc": [
-+        "musl"
-+      ],
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3291,12 +3297,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-gnu": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.0.tgz",
--      "integrity": "sha512-D5M5xLWQVd1CvR+L7BickM1weRfmM41x3L1NWcnKY/oyJJqr1qwaCgmu3dMAhLBOMdZwSuDCRV6DJRRpiUkbDQ==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.1.tgz",
-+      "integrity": "sha512-Istng1hMGp9TGO4lUqeKLd70MPN/OOkucVTP2Nmj+gLkwBgmPqUw8CJYBCC7nbl/B/23bBCcjCI5Hsh6hazC1A==",
-       "cpu": [
-         "x64"
-       ],
-+      "libc": [
-+        "glibc"
-+      ],
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3307,12 +3316,15 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-musl": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.0.tgz",
--      "integrity": "sha512-8d5WLS6a9YalqpOgXdlbvonFu+sIgjA+CO6tGzetrpPVcUL56foa7B7664h41rAlbLi5fJwK4vWji3zf4QDy+w==",
-+      "version": "16.4.1",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.1.tgz",
-+      "integrity": "sha512-aSC9wMNiZRRFVpPkPWBzRwLQxIGm/CiQcXyFF1XNcgodb+uMxdk7aSSGGpDXCbnvZdf4itjHxpOd5h7i7zaiYw==",
-       "cpu": [
-         "x64"
-       ],
-+      "libc": [
-+        "musl"
-+      ],
-       "license": "MIT",
-       "optional": true,
-
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@
-     "joi": "^18.2.9",
-     "lunar-typescript": "^1.7.6",
-     "lz-string": "^1.4.4",
--    "next": "^16.4.0",
-+    "next": "^16.4.1",
-     "nope-validator": "^1.1.1",
-     "nprogress": "^0.2.0",
-     "react": "^18.2.0",
+     "node_modules/commander": {
 ```
 
 ---
 
-### Incident Patch 2: `4785a10f` (2026-10-19)
-**Commit Message**: fix(docs): qualify Next.js 16.4.1 security update on main
+### Incident Patch 2: `05360bc7` (2026-10-20)
+**Commit Message**: fix(docs): update locked colord security patch
 
-**File**: `docs/package-lock.json` (modified, +21/-6)
+**File**: `docs/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -34,7 +34,7 @@
-         "formik": "^2.4.5",
-         "fp-ts": "^2.16.11",
-         "io-ts": "^2.2.22",
--        "joi": "^18.1.2",
-+        "joi": "^18.2.9",
-         "lunar-typescript": "^1.7.6",
-         "lz-string": "^1.4.4",
-         "next": "^16.4.1",
-@@ -3405,6 +3405,7 @@
-       "version": "2.6.0",
-       "resolved": "https://registry.npmjs.org/@parcel/watcher/-/watcher-2.6.0.tgz",
-       "integrity": "sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w==",
-+      "dev": true,
-       "hasInstallScript": true,
-       "license": "MIT",
-       "optional": true,
-@@ -3443,6 +3444,7 @@
-       "cpu": [
-         "arm64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3463,6 +3465,7 @@
-       "cpu": [
-         "arm64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3483,6 +3486,7 @@
-       "cpu": [
-         "x64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3503,6 +3507,7 @@
-       "cpu": [
-         "x64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3523,6 +3528,7 @@
-       "cpu": [
-         "arm"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3543,6 +3549,7 @@
-       "cpu": [
-         "arm"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3563,6 +3570,7 @@
-       "cpu": [
-         "arm64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3583,6 +3591,7 @@
-       "cpu": [
-         "arm64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3603,6 +3612,7 @@
-       "cpu": [
-         "x64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3623,6 +3633,7 @@
-       "cpu": [
-         "x64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3643,6 +3654,7 @@
-       "cpu": [
-         "arm64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3663,6 +3675,7 @@
-       "cpu": [
-         "x64"
-       ],
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "os": [
-@@ -3680,6 +3693,7 @@
-       "version": "4.0.7",
-       "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
-       "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==",
-+      "dev": true,
-       "license": "MIT",
-       "optional": true,
-       "engines": {
-@@ -7799,7 +7813,7 @@
-       "version": "2.1.1",
-       "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
-       "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
--      "devOptional": true,
-+      "dev": true,
-       "engines": {
-         "node": ">=0.10.0"
-       }
-@@ -7817,7 +7831,7 @@
-       "version": "4.0.3",
-       "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
-       "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
--      "devOptional": true,
-+      "dev": true,
-       "dependencies": {
-         "is-extglob": "^2.1.1"
-       },
-@@ -8143,9 +8157,9 @@
+@@ -5303,9 +5303,9 @@
        }
      },
-     "node_modules/joi": {
--      "version": "18.1.2",
--      "resolved": "https://registry.npmjs.org/joi/-/joi-18.1.2.tgz",
--      "integrity": "sha512-rF5MAmps5esSlhCA+N1b6IYHDw9j/btzGaqfgie522jS02Ju/HXBxamlXVlKEHAxoMKQL77HWI8jlqWsFuekZA==",
-+      "version": "18.2.9",
-+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
-+      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
-       "license": "BSD-3-Clause",
-       "dependencies": {
-         "@hapi/address": "^5.1.1",
-@@ -8931,6 +8945,7 @@
-       "version": "7.1.1",
-       "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-7.1.1.tgz",
-       "integrity": "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==",
-+      "dev": true,
-       "license": "MIT",
-       "optional": true
+     "node_modules/colord": {
+-      "version": "2.9.3",
+-      "resolved": "https://registry.npmjs.org/colord/-/colord-2.9.3.tgz",
+-      "integrity": "sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==",
++      "version": "2.9.4",
++      "resolved": "https://registry.npmjs.org/colord/-/colord-2.9.4.tgz",
++      "integrity": "sha512-z0nTt5300AIviCn9FTEL4G2DzPkfEDfghx6Do0ZfM3u0rOINBtfw2H8lD4VXyZF/o8HTzzyiCztaG2X/+IMeZA==",
+       "dev": true
      },
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@
-     "formik": "^2.4.5",
-     "fp-ts": "^2.16.11",
-     "io-ts": "^2.2.22",
--    "joi": "^18.1.2",
-+    "joi": "^18.2.9",
-     "lunar-typescript": "^1.7.6",
-     "lz-string": "^1.4.4",
-     "next": "^16.4.1",
+     "node_modules/commander": {
 ```
 
 ---
 
-### Incident Patch 3: `0ed14618` (2026-10-19)
-**Commit Message**: Merge pull request #4679 from rsuite/fix/docs-joi-security
+### Incident Patch 3: `cba206ec` (2026-10-19)
+**Commit Message**: Merge pull request #4955 from rsuite/fix/docs-lodash-security
 
-fix(docs): require patched Joi validation
+fix(docs): update locked Lodash security patches
 
-**File**: `docs/package-lock.json` (modified, +4/-4)
+**File**: `docs/package-lock.json` (modified, +6/-6)
 ```diff
-@@ -34,7 +34,7 @@
-         "formik": "^2.4.5",
-         "fp-ts": "^2.16.11",
-         "io-ts": "^2.2.22",
--        "joi": "^18.1.2",
-+        "joi": "^18.2.9",
-         "lunar-typescript": "^1.7.6",
-         "lz-string": "^1.4.4",
-         "next": "^16.4.0",
-@@ -8145,9 +8145,9 @@
+@@ -8309,14 +8309,14 @@
        }
      },
-     "node_modules/joi": {
--      "version": "18.1.2",
--      "resolved": "https://registry.npmjs.org/joi/-/joi-18.1.2.tgz",
--      "integrity": "sha512-rF5MAmps5esSlhCA+N1b6IYHDw9j/btzGaqfgie522jS02Ju/HXBxamlXVlKEHAxoMKQL77HWI8jlqWsFuekZA==",
-+      "version": "18.2.9",
-+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
-+      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
-       "license": "BSD-3-Clause",
-       "dependencies": {
-         "@hapi/address": "^5.1.1",
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@
-     "formik": "^2.4.5",
-     "fp-ts": "^2.16.11",
-     "io-ts": "^2.2.22",
--    "joi": "^18.1.2",
-+    "joi": "^18.2.9",
-     "lunar-typescript": "^1.7.6",
-     "lz-string": "^1.4.4",
-     "next": "^16.4.0",
+     "node_modules/lodash": {
+-      "version": "4.17.21",
+-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz",
+-      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
++      "version": "4.18.1",
++      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
++      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+     },
+     "node_modules/lodash-es": {
+-      "version": "4.17.21",
+-      "resolved": "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz",
+-      "integrity": "sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw=="
++      "version": "4.18.1",
++      "resolved": "https://registry.npmjs.org/lodash-es/-/lodash-es-4.18.1.tgz",
++      "integrity": "sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A=="
+     },
+     "node_modules/lodash.debounce": {
+       "version": "4.0.8",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4954** (2026-10-19): test(bench): add reproducible picker accessibility audit (@simonguo)
-- **PR #4953** (2026-10-19): fix(picker): preserve accessible empty result lists (@simonguo)
-- **PR #4952** (2026-10-19): fix(docs): upgrade Next.js to 16.4.1 for security fixes (@simonguo)
-- **PR #4951** (2026-10-19): fix(styles): improve listbox option contrast (@simonguo)
-- **PR #4950** (2026-10-19): fix(benchmarks): bound failure artifact collection (@simonguo)
-- **PR #4949** (2026-10-19): test(picker): trace transition state on Escape exit failure (@simonguo)
+- **PR #4966** (2026-10-20): test(table): add reproducible selection and tree workflow prototypes (@simonguo)
+- **PR #4964** (2026-10-20): fix(ci): pin browser jobs to Ubuntu 24.04 (@simonguo)
+- **PR #4963** (2026-10-20): fix(examples): update Vite source-map-js security patch (@simonguo)
+- **PR #4962** (2026-10-20): fix(form): register label and help IDs without changing refs (@simonguo)
+- **PR #4961** (2026-10-20): test(benchmarks): add cross-library form workflows (@simonguo)
+- **PR #4958** (2026-10-20): fix(types): unblock documentation source preview (@simonguo)
 
 ---
 
@@ -1164,13 +966,13 @@ fix(docs): require patched Joi validation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d
+## X. Merge pull request #4957 from rsuite/fix/docs-colord-security
 
 **RULE**:
 When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `702c416e`: Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `325d8236`: Merge pull request #4957 from rsuite/fix/docs-colord-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
@@ -1178,47 +980,18 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "next": "^16.4.1",
-      "version": "16.4.1",
-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.1.tgz",
-      "integrity": "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g==",
-      "version": "16.4.1",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.1.tgz",
-      "integrity": "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg==",
-      "version": "16.4.1",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.1.tgz",
-      "integrity": "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ==",
-      "version": "16.4.1",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.1.tgz",
-      "integrity": "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw==",
-      "libc": [
-        "glibc"
-      ],
-      "version": "16.4.1",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.1.tgz",
-      "integrity": "sha512-1SuJyDxW/
+      "version": "2.9.4",
+      "resolved": "https://registry.npmjs.org/colord/-/colord-2.9.4.tgz",
+      "integrity": "sha512-z0nTt5300AIviCn9FTEL4G2DzPkfEDfghx6Do0ZfM3u0rOINBtfw2H8lD4VXyZF/o8HTzzyiCztaG2X/+IMeZA==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        "next": "^16.4.0",
-      "version": "16.4.0",
-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
-      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
-      "version": "16.4.0",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
-      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
-      "version": "16.4.0",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
-      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
-      "version": "16.4.0",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
-      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
-      "version": "16.4.0",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
-      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6h
+      "version": "2.9.3",
+      "resolved": "https://registry.npmjs.org/colord/-/colord-2.9.3.tgz",
+      "integrity": "sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `702c416e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `325d8236` are properly handled with clean fallback behavior.

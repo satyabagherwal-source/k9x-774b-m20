@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:27:41.343Z",
-  "total_cycles_completed": 3798,
-  "total_learnings_persisted": 3798,
-  "total_rules_promoted": 3007,
+  "last_updated": "2026-10-20T13:33:47.877Z",
+  "total_cycles_completed": 3801,
+  "total_learnings_persisted": 3801,
+  "total_rules_promoted": 3011,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:21:13.159Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:27:25.405Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:27:26.751Z",
-      "repository": "AndyTheFactory/newspaper4k",
-      "learningId": "learn-github-andythefactory-newspaper4k",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:27:29.061Z",
       "repository": "alexdrone/Render",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T13:27:41.343Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:33:33.743Z",
+      "repository": "rsuite/rsuite",
+      "learningId": "learn-github-rsuite-rsuite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:33:40.427Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:33:47.877Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T13:27:41.283Z",
+  "last_updated": "2026-10-20T13:33:47.820Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1354,8 +1354,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "1a573058",
-      "content_hash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
+      "source_version": "8397071d",
+      "content_hash": "e60c315a40b0cb958460158bb9ab14c23c9a0161dcab0a563c34b3d37ae12b0e",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1378,6 +1378,11 @@
           "number": 2815,
           "title": "migrate index storage reads to MemoryBlock (#812)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3197,
+          "title": "sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (#818)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1385,7 +1390,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:11:40.628Z",
+      "verified_at": "2026-10-20T13:33:47.814Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14217,7 +14222,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
+      "content_hash": "71fc0470685bd50480430ff0a71e2b13b80c09b7bb5da41a0a74219b289a1d88",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -14234,6 +14239,16 @@
         {
           "number": 990,
           "title": "Adaptive Thinking Toggle for System 1 vs. System 2 Reasoning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3195,
+          "title": "Strict Schema-Driven Output for Decision Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3196,
+          "title": "Adaptive Cognitive Load Allocation (System 1 vs. System 2)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14254,7 +14269,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-18T23:57:51.117Z",
+      "verified_at": "2026-10-20T13:33:40.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38941,8 +38956,8 @@
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "296ec338",
-      "content_hash": "b37cb849500b3ff360920d55c195fbc3c4bf504f9764bdff4c99c4483265dd7c",
+      "source_version": "3cfb131e",
+      "content_hash": "837f38f33e00215a40e02970c9b6badf434ba90efb9942193ce0faa51c3b9a30",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "promoted_rules": [
@@ -38960,6 +38975,11 @@
           "number": 2871,
           "title": "Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3194,
+          "title": "Merge pull request #4957 from rsuite/fix/docs-colord-security",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38967,7 +38987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:56:06.113Z",
+      "verified_at": "2026-10-20T13:33:33.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101192,6 +101212,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T13:27:41.272Z"
+    },
+    "rule-3194": {
+      "learning_id": "rule-3194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3194,
+      "title": "Merge pull request #4957 from rsuite/fix/docs-colord-security",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "3cfb131e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:33:33.702Z"
+    },
+    "rule-3195": {
+      "learning_id": "rule-3195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3195,
+      "title": "Strict Schema-Driven Output for Decision Models",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:33:40.382Z"
+    },
+    "rule-3196": {
+      "learning_id": "rule-3196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3196,
+      "title": "Adaptive Cognitive Load Allocation (System 1 vs. System 2)",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:33:40.382Z"
+    },
+    "rule-3197": {
+      "learning_id": "rule-3197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3197,
+      "title": "sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (#818)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "8397071d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:33:47.814Z"
     }
   },
   "aliases": {

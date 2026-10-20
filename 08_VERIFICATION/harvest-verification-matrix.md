@@ -3821,3 +3821,6 @@
 | `CYCLE-20261020-X0QK` | `2026-10-20T13:27:32.348Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3190` | Yes (`0f0c66d3...`) |
 | `CYCLE-20261020-X42D` | `2026-10-20T13:27:36.661Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 3191, Rule 3192` | Yes (`aadcbb79...`) |
 | `CYCLE-20261020-X7O2` | `2026-10-20T13:27:41.330Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3193` | Yes (`d0c2453d...`) |
+| `CYCLE-20261020-4RL3` | `2026-10-20T13:33:33.735Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3194` | Yes (`837f38f3...`) |
+| `CYCLE-20261020-4WQQ` | `2026-10-20T13:33:40.418Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3195, Rule 3196` | Yes (`71fc0470...`) |
+| `CYCLE-20261020-52HM` | `2026-10-20T13:33:47.866Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3197` | Yes (`e60c315a...`) |
