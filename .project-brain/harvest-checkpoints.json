@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T15:23:38.776Z",
+  "last_updated": "2026-10-20T15:30:45.802Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "5472ee89cabd6082f45f710b677a17951c3bf2145d195e7381a71d3524ef37b0",
-      "verified_at": "2026-10-19T01:50:58.871Z",
+      "content_hash": "75f26e3b1a9ef3f240ee8c3c5d4736e1740426bd2eccc249c7d079657bf9943b",
+      "verified_at": "2026-10-20T15:30:45.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:50:58.871Z"
+      "last_updated": "2026-10-20T15:30:45.801Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "2f8c2f1c638b978448b1d8392352df456eabd1f8c65fee434cd98e0ce691092b",
-      "verified_at": "2026-10-19T03:26:45.975Z",
+      "content_hash": "e16e48404fca409b9a93b4c2a662c16b87be8459e402a0fcd39c750beb0b38d8",
+      "verified_at": "2026-10-20T15:30:09.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:26:45.975Z"
+      "last_updated": "2026-10-20T15:30:09.068Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",

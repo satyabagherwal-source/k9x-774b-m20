@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-5N1N",
-    "timestamp": "2026-10-19T17:02:31.403Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-7J6Z",
-    "timestamp": "2026-10-19T17:03:59.723Z",
-    "repository": "thebaselab/codeapp",
-    "learningId": "learn-github-thebaselab-codeapp",
-    "contentHash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-9KR9",
     "timestamp": "2026-10-19T17:05:35.061Z",
     "repository": "serpapi/google-search-results-ruby",
@@ -7490,6 +7460,36 @@
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
     "contentHash": "0be07b513a4e5444aaf4137b47ef495eca0921fbe95e104899f8ec18ec9d7778",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-AP7C",
+    "timestamp": "2026-10-20T15:30:09.048Z",
+    "repository": "czy0729/Bangumi",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "e16e48404fca409b9a93b4c2a662c16b87be8459e402a0fcd39c750beb0b38d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-BHJY",
+    "timestamp": "2026-10-20T15:30:45.790Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "75f26e3b1a9ef3f240ee8c3c5d4736e1740426bd2eccc249c7d079657bf9943b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

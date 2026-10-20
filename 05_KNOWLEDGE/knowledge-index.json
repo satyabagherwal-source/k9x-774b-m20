@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T15:23:38.720Z",
+  "last_updated": "2026-10-20T15:30:45.726Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6479,14 +6479,19 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "45860379",
-      "content_hash": "2f8c2f1c638b978448b1d8392352df456eabd1f8c65fee434cd98e0ce691092b",
+      "source_version": "2165878d",
+      "content_hash": "e16e48404fca409b9a93b4c2a662c16b87be8459e402a0fcd39c750beb0b38d8",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
         {
           "number": 2073,
           "title": "- [新番] 支持切换目录用户并记住所选, 顺手按规范整理了页面代码",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3242,
+          "title": "- [关联] 整理页面代码，修复关系图连线与焦点可能失效的问题",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6495,7 +6500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:26:45.912Z",
+      "verified_at": "2026-10-20T15:30:08.979Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22751,7 +22756,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "5472ee89cabd6082f45f710b677a17951c3bf2145d195e7381a71d3524ef37b0",
+      "content_hash": "75f26e3b1a9ef3f240ee8c3c5d4736e1740426bd2eccc249c7d079657bf9943b",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -22791,7 +22796,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-19T01:50:58.816Z",
+      "verified_at": "2026-10-20T15:30:45.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102110,6 +102115,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:17:24.055Z"
+    },
+    "rule-3242": {
+      "learning_id": "rule-3242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3242,
+      "title": "- [关联] 整理页面代码，修复关系图连线与焦点可能失效的问题",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "2165878d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:30:08.979Z"
     }
   },
   "aliases": {

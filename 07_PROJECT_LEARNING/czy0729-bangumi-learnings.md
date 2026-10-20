@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source**: github ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
-> **Source Version**: `45860379`  
+> **Source Version**: `2165878d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:26:45.706Z  
+> **Timestamp**: 2026-10-20T15:30:08.649Z  
 > **Learning ID**: `learn-github-czy0729-bangumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:26:45.697Z  
+> **Harvest Timestamp**: 2026-10-20T15:30:07.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6118 stars
+- **Stars / Engagement**: 6132 stars
 
 ---
 
@@ -1228,507 +1228,394 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45860379` (2026-10-16)
-**Commit Message**: - [新番] 支持切换目录用户并记住所选, 顺手按规范整理了页面代码
+### Incident Patch 1: `2165878d` (2026-10-20)
+**Commit Message**: - [关联] 整理页面代码，修复关系图连线与焦点可能失效的问题
 
-**File**: `src/constants/events/discovery.ts` (modified, +1/-0)
+**File**: `src/screens/home/link/component/ds.ts` (modified, +2/-0)
 ```diff
-@@ -199,6 +199,7 @@ export default {
- 
-   新番档期: 'Staff',
-   '新番档期.跳转': 'Staff.to',
-+  '新番档期.切换用户': 'Staff.switchUser',
-   '新番档期.右上角菜单': 'Staff.topRightMenu',
- 
-   Hentai: 'Hentai',
-```
-
-**File**: `src/screens/discovery/staff/component/ds.ts` (modified, +3/-1)
-```diff
-@@ -1,8 +1,10 @@
- /*
-  * @Author: czy0729
-  * @Date: 2024-04-05 13:04:38
-- * @Last Modified by:   czy0729
-+ * @Last Modified by: czy0729
-  * @Last Modified time: 2024-04-05 13:04:38
+@@ -3,6 +3,8 @@
+  * @Date: 2025-12-11 01:55:09
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2025-12-11 01:58:04
 + *
-+ * 页面子组件标识
++ * 页面组件标识
   */
  import { rc } from '@utils/dev'
  import { COMPONENT as PARENT } from '../ds'
 ```
 
-**File**: `src/screens/discovery/staff/component/list/ds.ts` (modified, +3/-4)
+**File**: `src/screens/home/link/component/options/index.tsx` (modified, +14/-34)
 ```diff
-@@ -3,15 +3,14 @@
-  * @Date: 2024-04-05 13:04:38
+@@ -3,10 +3,20 @@
+  * @Date: 2025-12-16 03:31:45
   * @Last Modified by: czy0729
-  * @Last Modified time: 2024-04-05 13:05:29
+  * @Last Modified time: 2026-07-23 07:25:46
 + *
-+ * 列表组件标识与埋点
++ * 关联图配置面板: 类型 / 平台 / 关系筛选与显示项开关
   */
- import { rc } from '@utils/dev'
- import { COMPONENT as PARENT } from '../ds'
- 
- export const COMPONENT = rc(PARENT, 'List')
- 
- export const EVENT = {
--  id: '新番档期.跳转',
--  data: {
--    userId: 'lilyurey'
--  }
-+  id: '新番档期.跳转'
- } as const
-```
-
-**File**: `src/screens/discovery/staff/component/list/index.tsx` (modified, +22/-5)
-```diff
-@@ -3,28 +3,45 @@
-  * @Date: 2019-10-01 15:44:42
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2025-12-23 01:43:14
-+ *
-+ * 新番档期目录列表
-  */
--import React from 'react'
-+import { useCallback } from 'react'
+ import { View } from 'react-native'
  import { observer } from 'mobx-react'
--import { ListView } from '@components'
-+import { ListView, Loading } from '@components'
-+import { ITEM_CATALOG_HEIGHT } from '@_'
- import { _, useStore } from '@stores'
- import { keyExtractor } from '@utils'
- import { renderItem } from './utils'
- import { COMPONENT } from './ds'
+-import { ActionSheet, Divider, Flex, Iconfont, SwitchPro, Text, Touchable } from '@components'
++import {
++  ActionSheet,
++  Divider,
++  Flex,
++  Iconfont,
++  SwitchPro,
++  Text,
++  Touchable
++} from '@components'
+ import { IconTouchable, ItemSetting, Notice } from '@_'
+ import { _, systemStore, useStore } from '@stores'
+ import { info, stl } from '@utils'
+@@ -23,36 +33,6 @@ function Options() {
  
-+import type { CatalogsItem } from '@stores/users/types'
-+import type { RenderItem } from '@types'
- import type { Ctx } from '../../types'
+   const { hideTypes, hidePlatforms, hideRelates, trend } = $.state
  
- function List() {
-   const { $ } = useStore<Ctx>(COMPONENT)
+-  // types (条目类型为数字)
+-  const typeCountMap = new Map<number, number>()
+-  $.map.node.forEach(item => {
+-    const type = item.type
+-    typeCountMap.set(type, (typeCountMap.get(type) || 0) + 1)
+-  })
+-  const types = Array.from(typeCountMap.entries())
+-    .map(([label, count]) => ({ label, count }))
+-    .sort((a, b) => b.count - a.count)
+-
+-  // platforms
+-  const platformCountMap = new Map<string, number>()
+-  $.map.node.forEach(item => {
+-    const platform = item.platform
+-    platformCountMap.set(platform, (platformCountMap.get(platform) || 0) + 1)
+-  })
+-  const platforms = Array.from(platformCountMap.entries())
+-    .map(([label, count]) => ({ label, count }))
+-    .sort((a, b) => b.count - a.count)
+-
+-  // relates
+-  const relateCountMap = new Map<string, number>()
+-  $.map.relate.forEach(item => {
+-    const type = item.relate
+-    relateCountMap.set(type, (relateCountMap.get(type) || 0) + 1)
+-  })
+-  const relates = Array.from(relateCountMap.entries())
+-    .map(([label, count]) => ({ label, count }))
+-    .sort((a, b) => b.count - a.count)
+-
+   const renderFilterSection = (
+     title: string,
+     tip: string,
+@@ -138,7 +118,7 @@ function Options() {
+       {renderFilterSection(
+         '类型',
+         '点击切换是否显示该类型的条目',
+-        types,
++        $.typeCounts,
+         hideTypes,
+         'hideTypes',
+         label => MODEL_SUBJECT_TYPE.getTitle(label)
+@@ -147,15 +127,15 @@ function Options() {
+       {renderFilterSection(
+         '平台',
+         '点击切换是否显示该平台的条目',
+-        platforms,
++        $.platformCounts,
+         hidePlatforms,
+         'hidePlatforms'
+       )}
  
--  if (!$.catalogs._loaded) return null
-+  const { userId, userName } = $
-+
-+  const handleRenderItem = useCallback(
-+    (arg: RenderItem<CatalogsItem>) => renderItem(arg, userId, userName),
-+    [userId, userName]
-+  )
-+
-+  const catalogs = $.catalogs
-+  if (!catalogs._loaded) return <Loading style={_.container.plain} />
- 
-   return (
-     <ListView
-+      ref={$.forwardRef}
-       keyExtractor={keyExtractor}
-       contentContainerStyle={_.container.bottom}
--      data={$.catalogs}
--      renderItem={renderItem}
-+      skipEnteringExitingAnimations={5}
-+      estimatedItemHeight={ITEM_CATALOG_HEIGHT}
-+      itemHeightKey={userId}
-+      data={catalogs}
-+      renderItem={handleRenderItem}
-       onScroll={$.onScroll}
-       onHeaderRefresh={$.onHeaderRefresh}
-       onFooterRefresh={$.fetchCatalogs}
+       {renderFilterSection(
+         '关联',
+         '点击切换是否显示该类型的关系（实验性选项，通常情况下不应该更改此项；当有禁用值时，仅会在一个条目与其他没任何关系时，才会被过滤掉）',
+-        relates,
++        $.relateCounts,
+         hideRelates,
+         'hideRelates'
+       )}
 ```
 
-**File**: `src/screens/discovery/staff/component/list/utils.tsx` (modified, +23/-4)
+**File**: `src/screens/home/link/component/relation-graph/index.tsx` (modified, +2/-2)
 ```diff
-@@ -3,14 +3,33 @@
-  * @Date: 2024-04-05 13:05:42
+@@ -6,8 +6,8 @@
+  *
+  * 关系图: 布局与渲染逻辑见 ./hooks
+  */
++import { memo } from 'react'
+ import { ScrollView, View } from 'react-native'
+-import { observer } from 'mobx-react'
+ import { r } from '@utils/dev'
+ import { SCROLL_VIEW_RESET_PROPS } from '@constants'
+ import { useRelationGraph } from './hooks'
+@@ -119,4 +119,4 @@ function RelationGraph(props: RelationGraphProps) {
+   )
+ }
+ 
+-export default observer(RelationGraph)
++export default memo(RelationGraph)
+```
+
+**File**: `src/screens/home/link/component/relation-graph/lines/index.tsx` (modified, +5/-3)
+```diff
+@@ -3,8 +3,10 @@
+  * @Date: 2025-12-14 17:39:24
   * @Last Modified by: czy0729
-  * @Last Modified time: 2026-03-23 19:15:11
+  * @Last Modified time: 2025-12-17 03:03:20
 + *
-+ * 列表 renderItem
++ * 关联线: 直角折线 + 关系文字标签
   */
 -import React from 'react'
- import { ItemCatalog } from '@_'
- import { EVENT } from './ds'
++import { Fragment } from 'react'
+ import { Pressable, View } from 'react-native'
+ import { observer } from 'mobx-react'
+ import { Text } from '@components'
+@@ -127,7 +129,7 @@ function Lines({ side, relations, layoutsRef, activeRelation, handleRelationPres
+         const bottomLabelTop = vTop + vHeight * 0.75 - labelHeight / 2
  
- import type { CatalogsItem } from '@stores/users/types'
--import type { RenderItem } from '@types'
-+import type { RenderItem, UserId } from '@types'
- 
--export function renderItem({ item, index }: RenderItem<CatalogsItem>) {
--  return <ItemCatalog {...item} index={index} name='优莉雅' anime={item.anime} event={EVENT} />
-+/** 渲染单个目录条目 */
-+export function renderItem(
-+  { item, index }: RenderItem<CatalogsItem>,
-+  userId: UserId,
-+  userName: string
-+) {
-+  return (
-+    <ItemCatalog
-+      {...item}
-+      index={index}
-+      name={userName}
-+      anime={item.anime}
-+      event={{
-+        ...EVENT,
-+        data: {
-+          userId
-+        }
-+      }}
-+    />
-+  )
- }
+         return (
+-          <React.Fragment key={`${side}-${r.src}-${r.dst}-${i}`}>
++          <Fragment key={`${side}-${r.src}-${r.dst}-${i}`}>
+             <View
+               style={stl(
+                 styles.horizontal,
+@@ -172,7 +174,7 @@ function Lines({ side, relations, layoutsRef, activeRelation, handleRelationPres
+             ) : (
+               renderLabel(r, hX, centerLabelTop, isActive, 'center')
+             )}
+-          </React.Fragment>
++          </Fragment>
+         )
+       })}
+     </>
 ```
 
-**File**: `src/screens/discovery/staff/component/tab/ds.ts` (added, +16/-0)
+**File**: `src/screens/home/link/ds.ts` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-10-16 00:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-16 00:00:00
+@@ -3,5 +3,7 @@
+  * @Date: 2025-12-10 22:39:09
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2025-12-10 22:41:03
 + *
-+ * 切换条组件标识与分段文案
-+ */
-+import { rc } from '@utils/dev'
-+import { DATA_USERS } from '../../ds'
-+import { COMPONENT as PARENT } from '../ds'
-+
-+export const COMPONENT = rc(PARENT, 'Tab')
-+
-+/** 分段文案, 顺序与 DATA_USERS 一致 */
-+export const VALUES = DATA_USERS.map(item => item.userName)
++ * 条目关联页面组件标识
+  */
+ export const COMPONENT = 'SubjectLink'
 ```
 
-**File**: `src/screens/discovery/staff/component/tab/index.tsx` (added, +39/-0)
+**File**: `src/screens/home/link/header/index.tsx` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,39 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-10-16 00:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-16 00:00:00
+@@ -3,6 +3,8 @@
+  * @Date: 2025-12-10 22:46:41
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2025-12-17 22:44:57
 + *
-+ * 目录编纂者切换条
-+ */
-+import { observer } from 'mobx-react'
-+import { SegmentedControl } from '@components'
-+import { useStore } from '@stores'
-+import { DATA_USERS } from '../../ds'
-+import { COMPONENT, VALUES } from './ds'
-+import { memoStyles } from './styles'
-+
-+import type { Ctx } from '../../types'
-+
-+function Tab() {
-+  const { $ } = useStore<Ctx>(COMPONENT)
-+
-+  const styles = memoStyles()
-+
-+  const { userId } = $
-+
-+  return (
-+    <SegmentedControl
-+      style={styles.segment}
-+      size={11}
-+      values={VALUES}
-+      selectedIndex={DATA_USERS.findIndex(item => item.userId === userId)}
-+      onValueChange={value => {
-+        const index = VALUES.indexOf(value)
-+        if (index !== -1) $.onUserSelect(DATA_USERS[index].userId)
-+      }}
-+    />
-+  )
-+}
-+
-+export default observer(Tab)
++ * 页面头部: 关联条目数 + 配置面板入口
+  */
+ import { useCallback } from 'react'
+ import { observer } from 'mobx-react'
 ```
 
-**File**: `src/screens/discovery/staff/component/tab/styles.ts` (added, +17/-0)
+**File**: `src/screens/home/link/hooks.ts` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,17 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-10-16 00:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-16 00:00:00
+@@ -3,6 +3,8 @@
+  * @Date: 2025-12-10 22:43:39
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2025-12-10 22:44:14
 + *
-+ * 切换条样式
-+ */
-+import { _ } from '@stores'
-+
-+export const memoStyles = _.memoStyles(() => ({
-+  segment: {
-+    width: _.r(120),
-+    height: _.r(24),
-+    marginRight: _.sm
-+  }
-+}))
++ * 条目关联页面逻辑
+  */
+ import { useInitStore } from '@stores'
+ import { usePageLifecycle } from '@utils/hooks'
+```
+
+**File**: `src/screens/home/link/index.tsx` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+  * @Date: 2025-12-10 22:31:39
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2025-12-25 05:19:10
++ *
++ * 条目关联页面: 关系图 + 配置面板
+  */
+ import { observer } from 'mobx-react'
+ import { Component, Empty, HeaderPlaceholder, Page } from '@components'
 ```
 
 ---
 
-### Incident Patch 2: `32f3d359` (2026-10-16)
-**Commit Message**: - [关联系列] 按规范整理页面与状态机代码，系列组子条目支持折叠展开，修复进度条不更新、空数据分页粘滞与二级关联请求地址错误
+### Incident Patch 2: `19b01329` (2026-10-20)
+**Commit Message**: - [重构] 整理首页条目相关子页面代码，修复筛选切换与页面返回时的状态问题
 
-**File**: `src/constants/events/discovery.ts` (modified, +7/-1)
+**File**: `src/screens/home/catalogs/component/extra/index.tsx` (modified, +2/-0)
 ```diff
-@@ -251,5 +251,11 @@ export default {
-   '词云.刷新': 'WordCloud.batch',
-   '词云.分词': 'WordCloud.cut',
-   '词云.点击': 'WordCloud.press',
--  '词云.跳转': 'WordCloud.to'
-+  '词云.跳转': 'WordCloud.to',
-+
-+  关联系列: 'Series',
-+  '关联系列.排序选择': 'Series.onSortSelect',
-+  '关联系列.类型选择': 'Series.onFilterSelect',
-+  '关联系列.年选择': 'Series.onAirtimeSelect',
-+  '关联系列.状态选择': 'Series.onStatusSelect'
- }
-```
-
-**File**: `src/screens/_/base/pagination-list/hooks.ts` (modified, +17/-3)
-```diff
-@@ -17,20 +17,25 @@ import type { ListState, UsePaginationOptions, UsePaginationResult } from './typ
-  *
-  * @param data 调用方的全量数据
-  * @param limit 一页渲染个数
-+ * @param resetKey 重置分页标识, 变化时回到第 1 页
-  * @param onPage 下一页回调
-  * @param onNextPage 下下一页回调 (用于提前加载)
-  * @param onFooterRefresh 调用方的网络分页回调, 本地翻页后接力执行
-  */
- export function usePagination<ItemT>({
-   data,
-   limit,
-+  resetKey,
-   onPage,
-   onNextPage,
-   onFooterRefresh
- }: UsePaginationOptions<ItemT>): UsePaginationResult<ItemT> {
-   // 用户记住列表看到多少页, 在触发更新后需要使用此值去重新划归数组当前页数
-   const lastPage = useRef(1)
- 
-+  // 上一轮的 resetKey, 用于识别需要回到第 1 页的整批重排
-+  const lastResetKey = useRef(resetKey)
-+
-   const [list, setList] = useState<ListState<ItemT>>({
-     list: [],
-     pagination: {
-@@ -48,11 +53,20 @@ export function usePagination<ItemT>({
-   const onFooterRefreshRef = useRef(onFooterRefresh)
-   onFooterRefreshRef.current = onFooterRefresh
- 
--  /** 数据变化后按 lastPage 重新划归切片, 保持用户所在页; 数据缩短时页码向下钳制 */
-+  /**
-+   * 数据变化后按 lastPage 重新划归切片, 保持用户所在页; 数据缩短时页码向下钳制
-+   * resetKey 变化视为整批重排, 直接回到第 1 页
-+   */
-   useEffect(() => {
-+    const reset = lastResetKey.current !== resetKey
-+    lastResetKey.current = resetKey
-+
-     const pageTotal = calcPageTotal(data.length, limit)
--    const page = clampPage(lastPage.current, pageTotal)
-+    // 空数据时 pageTotal 为 0, 钳制结果会落到 0, 兜回 1 避免列表粘在空切片
-+    const page = clampPage(reset ? 1 : lastPage.current, pageTotal) || 1
-     const next = getVisibleList(data, page, limit)
-+    lastPage.current = page
-+
-     setList({
-       list: next,
-       pagination: {
-@@ -69,7 +83,7 @@ export function usePagination<ItemT>({
-     if (onNextPageRef.current) {
-       onNextPageRef.current(getPageData(data, page + 1, limit))
-     }
--  }, [data, limit])
-+  }, [data, limit, resetKey])
- 
-   /** 上滑加载: 本地翻页 + 旁路预取, 再接力调用方的网络分页 */
-   const handleFooterRefresh = useCallback(async () => {
-```
-
-**File**: `src/screens/_/base/pagination-list/index.tsx` (modified, +3/-0)
-```diff
-@@ -23,6 +23,7 @@ function PaginationListComponent<ItemT = unknown>({
-   forwardRef,
-   data,
-   limit: _limit = 24,
-+  resetKey,
-   onPage,
-   onNextPage,
-   onFooterRefresh,
-@@ -36,6 +37,7 @@ function PaginationListComponent<ItemT = unknown>({
-   const { list, onFooterRefresh: handleFooterRefresh } = usePagination<ItemT>({
-     data,
-     limit,
-+    resetKey,
-     onPage,
-     onNextPage,
-     onFooterRefresh
-@@ -59,6 +61,7 @@ function PaginationListComponent<ItemT = unknown>({
-  *  - onPage / onNextPage 用于旁路预取下一页数据 (如条目详情、收藏状态), 挂载与数据更新时也会各触发一次
-  *  - 调用方传 onFooterRefresh 时为网络分页: footer 触发时先本地翻页, 再接力网络加载,
-  *    网络数据追加后 data 引用变化会重新划归 pageTotal, 本地页未耗尽前 footer 不会断流
-+ *  - resetKey 变化时回到第 1 页 (整批重排但不想重建列表的场景)
-  *
-  * 核心：利用类型断言，将 observer() 包装回支持泛型的组件类型 (同 @components/list-view)
-  */
-```
-
-**File**: `src/screens/_/base/pagination-list/types.ts` (modified, +4/-1)
-```diff
-@@ -22,6 +22,9 @@ export type Props<ItemT = unknown> = Override<
-     /** 一页渲染个数 (网页端因为页面滚动状态不能保存, 强制为 100) */
-     limit?: number
- 
-+    /** 重置分页标识, 变化时回到第 1 页 (整批重排但不想重建列表的场景) */
-+    resetKey?: string | number
-+
-     /** 下一页回调 (本地翻页后触发; 挂载与数据更新时也会以当前可见切片触发一次) */
-     onPage?: (nextPageData: ItemT[], nextPage: number) => void
- 
-@@ -48,7 +51,7 @@ export type ListState<ItemT> = {
- /** 本地分页 hook 参数 */
- export type UsePaginationOptions<ItemT> = Pick<
-   Props<ItemT>,
--  'data' | 'limit' | 'onPage' | 'onNextPage' | 'onFooterRefresh'
-+  'data' | 'limit' | 'resetKey' | 'onPage' | 'onNextPage' | 'onFooterRefresh'
- >
- 
- /** 本地分页 hook 返回值 */
-```
-
-**File**: `src/screens/discovery/series/component/ds.ts` (modified, +3/-1)
-```diff
-@@ -1,8 +1,10 @@
- /*
-  * @Author: czy0729
-  * @Date: 2024-04-02 17:04:37
-- * @Last Modified by:   czy0729
-+ * @Last Modified by: czy0729
-  * @Last Modified time: 2024-04-02 17:04:37
-+ *
-+ * 区块常量: 私有组件共享标识
-  */
- import { rc } from '@utils/dev'
- import { COMPONENT as PARENT } from '../ds'
-```
-
-**File**: `src/screens/discovery/series/component/item/ds.ts` (modified, +3/-0)
-```diff
-@@ -13,6 +13,9 @@ export const COMPONENT = rc(PARENT, 'Item')
- 
- export const COMPONENT_MAIN = rc(COMPONENT)
- 
-+/** 子条目折叠阈值 */
-+export const SUB_ITEM_MAX = 8
-+
- type $ = Ctx['$']
- 
- export const DEFAULT_PROPS = {
-```
-
-**File**: `src/screens/discovery/series/component/item/index.tsx` (modified, +4/-2)
-```diff
-@@ -3,16 +3,18 @@
-  * @Date: 2022-04-16 05:40:46
+@@ -3,6 +3,8 @@
+  * @Date: 2024-04-17 21:36:27
   * @Last Modified by: czy0729
-  * @Last Modified time: 2026-07-16 22:17:29
+  * @Last Modified time: 2026-09-26 19:09:17
 + *
-+ * 系列分组条目
++ * 底部热力图埋点
   */
--import React from 'react'
  import { observer } from 'mobx-react'
- import { useStore } from '@stores'
- import Item from './item'
- import { COMPONENT } from './ds'
- 
- import type { Ctx } from '../../types'
-+import type { Props } from './types'
- 
--export default observer(({ item, index }) => {
-+export default observer(({ item, index }: Props) => {
+ import { Heatmap } from '@components'
+```
+
+**File**: `src/screens/home/catalogs/component/item/index.tsx` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+  * @Date: 2022-03-15 00:51:47
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-26 19:09:17
++ *
++ * 目录列表条目
+  */
+ import { observer } from 'mobx-react'
+ import { ItemCatalog } from '@_'
+```
+
+**File**: `src/screens/home/catalogs/component/list/index.tsx` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+  * @Date: 2022-09-01 09:20:57
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-26 19:09:17
++ *
++ * 目录列表
+  */
+ import { observer } from 'mobx-react'
+ import { ListView } from '@components'
+```
+
+**File**: `src/screens/home/catalogs/ds.ts` (modified, +2/-0)
+```diff
+@@ -3,5 +3,7 @@
+  * @Date: 2023-12-17 10:12:07
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2024-11-09 10:14:17
++ *
++ * 条目目录页面组件标识
+  */
+ export const COMPONENT = 'Catalogs'
+```
+
+**File**: `src/screens/home/catalogs/header/index.tsx` (modified, +17/-15)
+```diff
+@@ -3,6 +3,8 @@
+  * @Date: 2022-03-15 00:48:16
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-09-27 05:11:45
++ *
++ * 页面头部: 右上角菜单
+  */
+ import { useCallback } from 'react'
+ import { observer } from 'mobx-react'
+@@ -18,24 +20,24 @@ import type { Ctx } from '../types'
+ function Header() {
    const { $ } = useStore<Ctx>(COMPONENT)
  
-   if ($.state.status === '有关联系列' && item.length <= 1) return null
+-  const handleHeaderRight = useCallback(
+-    () => (
+-      <HeaderV2Popover
+-        data={DATA}
+-        onSelect={title => {
+-          if (title === TEXT_MENU_BROWSER) {
+-            open($.url)
+-
+-            t('条目目录.右上角菜单', {
+-              key: title
+-            })
+-          }
+-        }}
+-      />
+-    ),
++  const handleSelect = useCallback(
++    (title: string) => {
++      if (title === TEXT_MENU_BROWSER) {
++        open($.url)
++
++        t('条目目录.右上角菜单', {
++          key: title
++        })
++      }
++    },
+     [$]
+   )
+ 
++  const handleHeaderRight = useCallback(
++    () => <HeaderV2Popover data={DATA} onSelect={handleSelect} />,
++    [handleSelect]
++  )
++
+   const title = $.params?.name ? `包含${$.params.name}的目录` : '条目目录'
+ 
+   return (
 ```
 
-**File**: `src/screens/discovery/series/component/item/item.tsx` (modified, +24/-24)
+**File**: `src/screens/home/catalogs/index.tsx` (modified, +2/-0)
 ```diff
-@@ -3,46 +3,46 @@
-  * @Date: 2022-08-28 00:26:48
+@@ -3,6 +3,8 @@
+  * @Date: 2020-05-02 15:54:30
   * @Last Modified by: czy0729
-  * @Last Modified time: 2026-07-16 22:17:36
+  * @Last Modified time: 2026-09-26 19:09:17
 + *
-+ * 系列分组: 主条目与子条目
++ * 条目目录页面: 目录列表 + 云快照兜底
   */
--import React from 'react'
-+import { useMemo } from 'react'
- import { View } from 'react-native'
- import { Divider } from '@components'
- import { asc } from '@utils'
- import { memo } from '@utils/decorators'
- import { FROZEN_ARRAY, FROZEN_OBJECT } from '@constants'
- import Subject from '../subject'
-+import SubList from './sub-list'
- import { COMPONENT_MAIN, DEFAULT_PROPS } from './ds'
--import { styles } from './styles'
-+
-+type Props = typeof DEFAULT_PROPS
+ import { observer } from 'mobx-react'
+ import { Component, HeaderPlaceholder, Page } from '@components'
+```
+
+**File**: `src/screens/home/catalogs/store/computed.ts` (modified, +4/-1)
+```diff
+@@ -3,11 +3,14 @@
+  * @Date: 2024-11-09 06:32:46
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-07-03 20:37:56
++ *
++ * 条目目录派生数据: 列表 + 云快照 + 目录详情
+  */
+ import { computed } from 'mobx'
+ import { discoveryStore, subjectStore } from '@stores'
+ import { computedFn } from '@utils/computed-fn'
+ import { HTML_SUBJECT_CATALOGS, LIST_EMPTY } from '@constants'
++import { OTA_PAGE_TOTAL } from '../../ds'
+ import State from './state'
  
- export default memo(
--  ({ data = FROZEN_ARRAY, index = 0, subjects = FROZEN_OBJECT }) => {
-+  ({
-+    data = FROZEN_ARRAY as unknown as Props['data'],
-+    index = 0,
-+    subjects = FROZEN_OBJECT
-+  }: Props) => {
-+    /** 以最小的 subjectId 作为 pid, 其余子项按放送日期排序 */
-+    const { id, sub } = useMemo(() => {
-+      if (!data.length) return { id: 0, sub: [] as Props['data'] }
-+
-+      const _id = Math.min(...(data as number[]))
-+      const _sub = data
-+        .filter(item => item !== _id)
-+        .sort((a, b) => asc(subjects[a]?.date || '9999-99-99', subjects[b]?.date || '9999-99-99'))
-+
-+      return { id: _id, sub: _sub }
-+    }, [data, subjects])
-+
-     if (!data.length) return null
+ import type { SubjectCatalogs } from '@stores/subject/types'
+@@ -36,7 +39,7 @@ export default class Computed extends State {
+               ...this.ota,
+               pagination: {
+                 page: 1,
+-                pageTotal: 10
++                pageTotal: OTA_PAGE_TOTAL
+               }
+             }
+           : LIST_EMPTY
+```
+
+**File**: `src/screens/home/catalogs/store/fetch.ts` (modified, +3/-3)
+```diff
+@@ -21,7 +21,7 @@ import type { ResultData } from '@utils/kv/type'
+ import type { SnapshotId } from '../types'
  
--    // 以最小的 subjectId 作为 pid
--    const id = Math.min(...(data as number[]))
--    const sub = data.filter(item => item !== id)
-     return (
-       <>
-         <View>
-           <Subject id={id} section={index} />
--          {!!sub.length && (
--            <View style={styles.sub}>
--              {sub
--                .sort((a, b) =>
--                  asc(subjects[a]?.date || '9999-99-99', subjects[b]?.date || '9999-99-99')
--                )
--                .map((item, idx) => (
--                  <Subject
--                    key={item}
--                    style={styles.subItem}
--                    id={item}
--                    small
--                    section={index}
--                    index={idx + 1}
--                  />
--                ))}
--            </View>
--          )}
-+          {!!sub.length && <SubList id={id} index={index} sub={sub} />}
-         </View>
-         <Divider />
-       </>
+ /** 若更新过则不会再主动更新 */
+-const THIRD_PARTY_UPDATED: SnapshotId[] = []
++const THIRD_PARTY_UPDATED = new Set<SnapshotId>()
+ 
+ export default class Fetch extends Computed {
+   /**
+@@ -110,13 +110,13 @@ export default class Fetch extends Computed {
+    * 同一次会话中每个目录只上传一次
+    */
+   updateThirdParty = async () => {
+-    if (THIRD_PARTY_UPDATED.includes(this.thirdPartyKey)) return
++    if (THIRD_PARTY_UPDATED.has(this.thirdPartyKey)) return
+ 
+     setTimeout(() => {
+       update(this.thirdPartyKey, {
+         list: this.list.list
+       })
+-      THIRD_PARTY_UPDATED.push(this.thirdPartyKey)
++      THIRD_PARTY_UPDATED.add(this.thirdPartyKey)
+     }, 0)
+   }
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1757,21 +1644,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. - [新番] 支持切换目录用户并记住所选, 顺手按规范整理了页面代码
+## X. - [关联] 整理页面代码，修复关系图连线与焦点可能失效的问题
 
 **RULE**:
-When implementing operations in `src/constants/events/discovery.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/screens/home/link/component/ds.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45860379`: - [新番] 支持切换目录用户并记住所选, 顺手按规范整理了页面代码. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2165878d`: - [关联] 整理页面代码，修复关系图连线与焦点可能失效的问题. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/constants/events/discovery.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/screens/home/link/component/ds.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  '新番档期.切换用户': 'Staff.switchUser',
+ *
+ * 页面组件标识
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1781,4 +1669,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45860379` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2165878d` are properly handled with clean fallback behavior.

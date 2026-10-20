@@ -3876,3 +3876,5 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c7c11377` | Multi-dimensional audit evidence | 2026-10-20T15:17:20.478Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `0a2578e7` | Multi-dimensional audit evidence | 2026-10-20T15:17:24.124Z |
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T15:23:38.767Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `2165878d` | Multi-dimensional audit evidence | 2026-10-20T15:30:09.059Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-20T15:30:45.793Z |

@@ -3869,3 +3869,5 @@
 | `CYCLE-20261020-U85Z` | `2026-10-20T15:17:20.471Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3240` | Yes (`b9f38f6e...`) |
 | `CYCLE-20261020-UAZ8` | `2026-10-20T15:17:24.116Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3241` | Yes (`40491143...`) |
 | `CYCLE-20261020-2C24` | `2026-10-20T15:23:38.764Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`0be07b51...`) |
+| `CYCLE-20261020-AP7C` | `2026-10-20T15:30:09.048Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3242` | Yes (`e16e4840...`) |
+| `CYCLE-20261020-BHJY` | `2026-10-20T15:30:45.790Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`75f26e3b...`) |
