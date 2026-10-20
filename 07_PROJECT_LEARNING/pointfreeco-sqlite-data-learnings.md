@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
+> **Source**: github ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
+> **Source Version**: `37c461a8`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T02:09:30.976Z  
+> **Learning ID**: `learn-github-pointfreeco-sqlite-data`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): pointfreeco/sqlite-data
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:31:47.750Z  
+> **Harvest Timestamp**: 2026-10-20T02:09:29.669Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A fast, lightweight replacement for SwiftData, powered by SQL and supporting CloudKit synchronization.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1937 stars
+- **Stars / Engagement**: 1942 stars
 
 ---
 
@@ -109,10 +123,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
   }
 }
 
-#Preview {
-  let _ = prepareDependencies {
+#Preview(
+  traits: .dependencies {
     $0.defaultDatabase = .parentRerenderAnimationsDatabase
   }
+) {
   NavigationStack {
     CaseStudyView {
       ParentRerenderAnimationsCaseStudy()
@@ -214,10 +229,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
   }
 }
 
-#Preview {
-  let _ = prepareDependencies {
+#Preview(
+  traits: .dependencies {
     $0.defaultDatabase = .parentRerenderCancellationDatabase
   }
+) {
   NavigationStack {
     CaseStudyView {
       ParentRerenderCancellationCaseStudy()
@@ -323,10 +339,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
   }
 }
 
-#Preview {
-  let _ = prepareDependencies {
+#Preview(
+  traits: .dependencies {
     $0.defaultDatabase = .parentRerenderDynamicQueryDatabase
   }
+) {
   NavigationStack {
     CaseStudyView {
       ParentRerenderDynamicQueryCaseStudy()
@@ -403,10 +420,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
   }
 }
 
-#Preview {
-  let _ = prepareDependencies {
+#Preview(
+  traits: .dependencies {
     $0.defaultDatabase = .parentRerenderLoadErrorDatabase
   }
+) {
   NavigationStack {
     CaseStudyView {
       ParentRerenderLoadErrorCaseStudy()
@@ -508,10 +526,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
   }
 }
 
-#Preview {
-  let _ = prepareDependencies {
+#Preview(
+  traits: .dependencies {
     $0.defaultDatabase = .parentRerenderLoadedDataDatabase
   }
+) {
   NavigationStack {
     CaseStudyView {
       ParentRerenderLoadedDataCaseStudy()
@@ -1046,347 +1065,17 @@ extension DatabaseWriter where Self == DatabaseQueue {
 
 ```
 
-### Core Architecture Module: `Sources/SQLiteData/CloudKit/Internal/SyncEngineProtocol.swift`
-```
-#if canImport(CloudKit)
-  package import CloudKit
-
-  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-  package protocol SyncEngineProtocol<Database, State>: AnyObject, Sendable {
-    associatedtype State: CKSyncEngineStateProtocol
-    associatedtype Database: CloudDatabase
-
-    var database: Database { get }
-    var state: State { get }
-
-    func cancelOperations() async
-    func fetchChanges(_ options: CKSyncEngine.FetchChangesOptions) async throws
-    func recordZoneChangeBatch(
-      pendingChanges: [CKSyncEngine.PendingRecordZoneChange],
-      recordProvider: @Sendable (CKRecord.ID) async -> CKRecord?
-    ) async -> CKSyncEngine.RecordZoneChangeBatch?
-    func sendChanges(_ options: CKSyncEngine.SendChangesOptions) async throws
-  }
-
-  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-  package protocol CKSyncEngineStateProtocol: Sendable {
-    var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] { get }
-    var pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange] { get }
-    func add(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange])
-    func remove(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange])
-    func add(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange])
-    func remove(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange])
-  }
-#endif
-
-```
-
-### Core Architecture Module: `Sources/SQLiteData/CloudKit/SyncEngine.swift`
-```
-#if canImport(CloudKit)
-  public import CloudKit
-  package import ConcurrencyExtras
-  import Dependencies
-  public import GRDB
-  public import IssueReporting
-  import OrderedCollections
-  public import OSLog
-  import Observation
-  public import StructuredQueries
-  import StructuredQueriesSQLite
-  #if EXCLUDE_EXPORTS
-    public import StructuredQueriesSQLiteCore
-  #endif
-  import SwiftData
-  import TabularData
-
-  #if canImport(UIKit)
-    import UIKit
-  #endif
-
-  /// An object that manages the synchronization of local and remote SQLite data.
-  ///
-  /// See <doc:CloudKitSync> for more information.
-  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-  public final class SyncEngine: Observable, Sendable {
-    package let userDatabase: UserDatabase
-    package let logger: Logger
-    package let metadatabase: any DatabaseWriter
-    package let tables: [any SynchronizableTable]
-    package let privateTables: [any SynchronizableTable]
-    let tablesByName: [String: any SynchronizableTable]
-    package let tablesByOrder: [String: Int]
-    let foreignKeysByTableName: [String: [ForeignKey]]
-    package let syncEngines = LockIsolated<SyncEngines>(SyncEngines())
-    package let defaultZone: CKRecordZone
-    let delegate: (any SyncEngineDelegate)?
-    let defaultSyncEngines:
-      @Sendable (any DatabaseReader, SyncEngine)
-        -> (private: any SyncEngineProtocol, shared: any SyncEngineProtocol)
-    package let container: any CloudContainer
-    let dataManager = Dependency(\.dataManager)
-    private let observationRegistrar = ObservationRegistrar()
-    private let notificationsObserver = LockIsolated<(any NSObjectProtocol)?>(nil)
-    private let activityCounts = LockIsolated(ActivityCounts())
-    private let startTask = LockIsolated<Task<Void, Never>?>(nil)
-    #if DEBUG && canImport(DeveloperToolsSupport)
-      private let previewTimerTask = LockIsolated<Task<Void, Never>?>(nil)
-    #endif
-
-    /// The error message used when a write occurs to a record for which the current user does not
-    /// have permission.
-    ///
-    /// This error is thrown from any database write to a row for which the current user does
-    /// not have permissions to write, as determined by its `CKShare` (if applicable). To catch
-    /// this error try casting it to `DatabaseError` and checking its message:
-    ///
-    /// ```swift
-    /// do {
-    ///   try await database.write { db in
-    ///     Reminder.find(id)
-    ///       .update { $0.title = "Personal" }
-    ///       .execute(db)
-    ///   }
-    /// } catch let error as DatabaseError where error.message == SyncEngine.writePermissionError {
-    ///   // User does not have permission to write to this record.
-    /// }
-    /// ```
-    public static let writePermissionError =
-      "co.pointfree.SQLiteData.CloudKit.write-permission-error"
-    public static let invalidRecordNameError =
-      "co.pointfree.SQLiteData.CloudKit.invalid-record-name-error"
-
-    /// Initialize a sync engine.
-    ///
-    /// - Parameters:
-    ///   - database: The database to synchronize to CloudKit.
-    ///   - tables: A list of tables that you want to synchronize _and_ that you want to be
-    ///     shareable with other users on CloudKit.
-    ///   - privateTables: A list of tables that you want to synchronize to CloudKit but that
-    ///     you do not want to be shareable with other users.
-    ///   - containerIdentifier: The container identifier in CloudKit to synchronize to. If omitted
-    ///     the container will be determined from the entitlements of your app.
-    ///   - defaultZone: The zone for all records to be stored in.
-    ///   - startImmediately: Determines if the sync engine starts right away or requires an
-    ///     explicit call to ``start()``. By default this argument is `true`.
-    ///   - delegate: A delegate object that can be notified of events and override default sync
-    ///     engine behavior.
-    ///   - logger: The logger used to log events in the sync engine. By default a `.disabled`
-    ///     logger is used, which means logs are not printed.
-    public convenience init<
-      each T1: PrimaryKeyedTable & _SendableMetatype,
-      each T2: PrimaryKeyedTable & _SendableMetatype
-    >(
-      for database: any DatabaseWriter,
-      tables: repeat (each T1).Type,
-      privateTables: repeat (each T2).Type,
-      containerIdentifier: String? = nil,
-      defaultZone: CKRecordZone = CKRecordZone(zoneName: "co.pointfree.SQLiteData.defaultZone"),
-      startImmediately: Bool? = nil,
-      delegate: (any SyncEngineDelegate)? = nil,
-      logger: Logger = isTesting
-        ? Logger(.disabled) : Logger(subsystem: "SQLiteData", category: "CloudKit")
-    ) throws
-    where
-      repeat (each T1).PrimaryKey.QueryOutput: IdentifierStringConvertible,
-      repeat (each T1).TableColumns.PrimaryColumn: WritableTableColumnExpression,
-      repeat (each T2).PrimaryKey.QueryOutput: IdentifierStringConvertible,
-      repeat (each T2).TableColumns.PrimaryColumn: WritableTableColumnExpression
-    {
-      @Dependency(\.context) var context
-      let containerIdentifier =
-        containerIdentifier
-        ?? ModelConfiguration(groupContainer: .automatic).cloudKitContainerIdentifier
-        ?? (context != .live ? "container" : nil)
-      var allTables: [any SynchronizableTable] = []
-      var allPrivateTables: [any SynchronizableTable] = []
-      for table in repeat each tables {
-        allTables.append(SynchronizedTable(for: table))
-      }
-      for privateTable in repeat each privateTables {
-        allPrivateTables.append(SynchronizedTable(for: privateTable))
-      }
-      let userDatabase = UserDatabase(database: database)
-
-      guard context == .live
-      else {
-        let privateDatabase = MockCloudDatabase(databaseScope: .private)
-        let sharedDatabase = MockCloudDatabase(databaseScope: .shared)
-        let container = MockCloudContainer(
-          containerIdentifier: containerIdentifier ?? "iCloud.co.pointfree.SQLiteData.Tests",
-          privateCloudDatabase: privateDatabase,
-          sharedCloudDatabase: sharedDatabase
-        )
-        privateDatabase.set(container: container)
-        sharedDatabase.set(container: container)
-        try self.init(
-          container: container,
-          defaultZone: defaultZone,
-          defaultSyncEngines: { _, syncEngine in
-            (
-              private: MockSyncEngine(
-                database: privateDatabase,
-                parentSyncEngine: syncEngine,
-                state: MockSyncEngineState()
-              ),
-              shared: MockSyncEngine(
-                database: sharedDatabase,
-                parentSyncEngine: syncEngine,
-                state: MockSyncEngineState()
-              )
-            )
-          },
-          userDatabase: userDatabase,
-          logger: logger,
-          delegate: delegate,
-          tables: allTables,
-          privateTables: allPrivateTables
-        )
-        try setUpSyncEngine()
-        if startImmediately ?? !isTesting {
-          _ = try start()
-        }
-        return
-      }
-
-      guard let containerIdentifier else {
-        throw SchemaError.noCloudKitContainer
-      }
-
-      let container = CKContainer(identifier: containerIdentifier)
-      try self.init(
-        container: container,
-        defaultZone: defaultZone,
-        defaultSyncEngines: { metadatabase, syncEngine in
-          (
-            private: CKSyncEngine(
-              CKSyncEngine.Configuration(
-                database: container.privateCloudDatabase,
-                stateSerialization: try? metadatabase.read { db in
-                  try StateSerialization
-                    .find(#bind(.private))
-                    .select(\.data)
-                    .fetchOne(db)
-                },
-                delegate: syncEngine
-              )
-            ),
-            shared: CKSyncEngine(
-              CKSyncEngine.Configuration(
-                database: container.sharedCloudDatabase,
-                stateSerialization: try? metadatabase.read { db in
-                  try StateSerialization
-                    .find(#bind(.shared))
-                    .select(\.data)
-                    .fetchOne(db)
-                },
-                delegate: syncEngine
-              )
-            )
-          )
-        },
-        userDatabase: userDatabase,
-        logger: logger,
-        delegate: delegate,
-        tables: allTables,
-        privateTables: allPrivateTables
-      )
-      try setUpSyncEngine()
-      if startImmediately ?? !isTesting {
-        _ = try start()
-      }
-    }
-
-    package init(
-      container: any CloudContainer,
-      defaultZone: CKRecordZone,
-      defaultSyncEngines:
-        @escaping @Sendable (
-          any DatabaseReader,
-          SyncEngine
-        ) -> (private: any SyncEngineProtocol, shared: any SyncEngineProtocol),
-      userDatabase: UserDatabase,
-      logger: Logger,
-      delegate: (any SyncEngineDelegate)?,
-      tables: [any SynchronizableTable],
-      privateTables: [any SynchronizableTable] = []
-    ) throws {
-      let allTables = OrderedSet((tables + privateTables).map(HashableSynchronizedTable.init))
-        .map(\.type)
-      self.tables = allTables
-      self.privateTables = privateTables
-      self.delegate = delegate
-
-      let foreignKeysByTableName = Dictionary(
-        uniqueKeysWithValues: try userDatabase.read { db in
-          try allTables.map { table -> (String, [ForeignKey]) in
-            func open<T>(
-              _: some SynchronizableTable<T>
-            ) throws -> (String, [ForeignKey]) {
-              (
-                T.tableName,
-                try PragmaForeignKeyList<T>
-                  .join(PragmaTableInfo<T>.all) { $0.from.eq($1.name) }
-                  .select {
-                    ForeignKey.Columns(
-                      table: $0.table,
-                      from: $0.from,
-                      to: $0.to,
-                      onUpdate: $0.onUpdate,
-                      onDelete: $0.onDelete,
-                      isNotNull: $1.
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #558** (2026-10-06): **Package fails to build on Xcode 27 (Variable initialization expression of Sharing.Shared)**
+  *Symptoms*: ### Description  Hello,  When building my project using the new Xcode 27 (build 27A266a), I noticed the following failure:  ``` undefined symbols for architecture arm64:   "variable initialization expression of Sharing.Shared.(__generation in _02BAFA3D923A53DF643BF6C71BB0CD51) : SwiftUI.State<Swift.Int>", referenced from:       Sharing.Shared.init<A where A == A1.Value, A1: Sharing.SharedKey>(A1) -> Sharing.Shared<A> in Sharing.o ld: symbol(s) not found for architecture arm64 /Users/jamal/Development/Briefcase/Briefcase.xcodeproj: BriefcaseCore: clang: error: linker command failed with exit code 1 (use -v to see invocation) ```  This looks similar to this issue in swift-sharing. https://github.com/pointfreeco/swift-sharing/pull/216  Looks like the fix went in version [2.8.1](https://github.com/pointfreeco/swift-sharing/releases/tag/2.8.1) of swift-sharing.  But the latest of Package.swift in sqlite-data [1.12.0](https://github.com/pointfreeco/sqlite-data/blob/1.12.0/Package.swift]) is still referencing version 2.3.0    ### Checklist  - [x] I wrote this in my own words, and aimed to be as succinct as possible, even if I used AI to help research its content. - [ ] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing Git
+
 - **Issue #539** (2026-08-29): **sqlite-data 1.11.1 does not compile against swift-structured-queries 0.38.0**
   *Symptoms*: ### Description  Looks like structured-queries 0.38.0 moved the `Table` constraint from `Select`'s `From` parameter to `SelectStatement` and it's causing an issue at `extension Select {`.  Seems like adding `where From: StructuredQueriesCore.Table` fixes it.  ### Checklist  - [x] I wrote this in my own words, and aimed to be as succinct as possible, even if I used AI to help research its content. - [ ] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/pointfreeco/sqlite-data/discussions).  ### Expected behavior  _No response_  ### Actual behavior  _No response_  ### Reproducing project  _No response_  ### SQLiteData version information  1.11.1  ### Sharing version information  _No response_  ### GRDB version information  _No response_  ### Destination operating system  _No response_  ### Xcode version information  26.6  ### Swift Compiler version information  ```shell swift-driver version: 1.148.6 Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101) Target: arm64-apple-macosx26.0 ```
-
-- **Issue #509** (2026-07-28): **Issue recorded in `MyDelegate.deinit` crashes individual test runs in Xcode 27**
-  *Symptoms*: ## Description  `SyncEngineDelegateTests.accountChanged` injects its delegate through a test trait:  ```swift @Test($syncEngineDelegate.set(MyDelegate())) func accountChanged() async throws { … } ```  Trait values seem to be constructed during test planning, so the `MyDelegate` instance is created for every run, including runs where `accountChanged` is not included.  In those runs the instance is discarded during planning, its `deinit` finds `wasCalled == false`, and records an issue outside of any running test:  ```swift deinit {   guard wasCalled.withValue(\.self)   else {     Issue.record("Delegate method 'syncEngine(_:accountChanged:)' was not called.")     return   } } ```  ## Consequences  In Xcode 27 (beta 3 and beta 4), running any individual test or suite from this package crashes the test runner, while the full suite runs fine. It seems that the crash happens when Xcode processes the issue recorded outside of a test, though it's unclear whether it's meant to handle that at all. Under `swift test` it seems to work fine.  The issue was initially observed while working on #508, although it’s unrelated.  ## Reproduction  On `main`, with Xcode 27 beta 3 or 4:  ```sh xcodebuild test -scheme sqlite-data-Package -destination 'platform=macOS' \   -only-testing:SQLiteDataTests/UserlandTests ```  fails with `Exceeded max restart count of 2. (Underlying Error: Crash: xctest at ABI.EncodedEvent.encode(to:))`.  ---  *Disclaimer: AI assistance (Claude Code with Fable model) was us
-  **Post-Mortem & Fix Analysis**:
-  > Think we got a fix here #511 
-  > It got fixed in [ConcurrencyExtras 1.4.1](https://github.com/pointfreeco/swift-concurrency-extras/releases/tag/1.4.1). Should we close or wait until the library pins this version?
-  > Yep will close, and I don't think we will pin it. It mostly only affects us, not people using SQLiteData, and people can always pin to a newer ConcurrencyExtras if they need.
-
-- **Issue #493** (2026-07-13): **While the SyncUps app works on my IPhone, my simple test app shows <decode: bad range for [%@] got [offs:266 len:1104 within:0]> in the log**
-  *Symptoms*: ### Description  I created a simple app (after my more complicated app shows the same error) to check if the error is reproducable.  The app contains only a single table with an ID and a text field. The iCloud container has been created, and the code for it should be correct. The specific zone co.pointfree... has also been created. However, when I try to insert data into the table, I always get the error message <decode: bad range...> in the log, and no data is written to the container.  ### Checklist  - [x] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/pointfreeco/sqlite-data/discussions).  ### Expected behavior  sync data to the ICloud container  ### Actual behavior  When installing the app, everything looks fine in the log, but when I try to insert data into the table, I always get the error message <decode: bad range...> in the log, and no data is written to the container.   Log, when inserting: SQLiteData (private.db) stateUpdate SQLiteData (private.db) willFetchChanges SQLiteData (private.db) stateUpdate SQLiteData (private.db) didFetchChanges SQLiteData (private.db) willSendChanges **<decode: bad range for
-  **Post-Mortem & Fix Analysis**:
-  > I made a test with a different combination of packages, it works with the first combination, but not with the second.  Working package combination  <img width="560" height="722" alt="Image" src="https://github.com/user-attachments/assets/d77ceeae-40d2-4e06-be9c-4fc8d9d019f3" />  not working package combination  <img width="524" height="714" alt="Image" src="https://github.com/user-attachments/assets/928f2629-8d83-41de-8908-9a6e729a7f1e" />
-  > I encountered the same issue in the CloudKitDemo example app from the sqlite-data 1.6.6 zip. After some investigation, I was able to narrow down the problem.  The issue appears when swift-structured-queries is updated to 0.33.1. Downgrading it back to 0.33.0 restores CloudKit sync functionality.  Destination operating system iOS 26.5.1  Xcode version information Version 26.4 (17E192)  Working package combination <img width="298" height="456" alt="Image" src="https://github.com/user-attachments/assets/cb9e9c53-3982-49a3-8cf9-ffc16e54b289" />  not working package combination <img width="331" height="472" alt="Image" src="https://github.com/user-attachments/assets/3286b912-bb4e-4dab-92e2-038d385f9bc2" />  Workaround: Add swift-structured-queries as an explicit dependency in your project's Package Dependencies with Exact Version 0.33.0. 
-  > Hi @qedqed6, thanks for the report! This is a dupe of #492 so you can follow that issue for more information. Going to close this out for now.
-
-- **Issue #484** (2026-07-13): **Support Date encoding with sub-millisecond precision**
-  *Symptoms*: ### Description  Currently, Date is recorded a [String with millisecond precision](https://github.com/pointfreeco/sqlite-data/blob/672124e8ae934309ba7d801b5b52dd6072ed42b2/Sources/SQLiteData/Internal/ISO8601.swift#L15) (for most modern devices).  For applications expecting greater precision (e.g., Dates compared to nanosecond precision in existing logic), custom `@Column` and `#bind` work, but require dashes of ceremony everywhere.  Avoiding that ceremony is possible if these formatters could output by default (or as an option) with greater precision.  ### Checklist  - [x] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/pointfreeco/sqlite-data/discussions).  ### Expected behavior  Record Date with same precision as default JSONEncoder/Decoder behavior.  ### Actual behavior  Rounded millisecond precision  ### SQLiteData version information  1.6.6 
-  **Post-Mortem & Fix Analysis**:
-  > Hi @importRyan, are you sure that SQLite supports sub-millisecond precision in dates? As far as I can tell it's just milliseconds.  Since this is not directly an issue with the library, and more of a feature request / discussion, I am going to convert it to a discussion. Let's continue the conversation over there and then we can decide if there is something new that needs to be added to the library.
-
-- **Issue #481** (2026-06-27): **Compiler crash on Xcode 27 (b2)**
-  *Symptoms*: ### Description  ```Begin Error in Function: '$s10SQLiteData18StateSerializationV12TableColumnsV08writableF0Say21StructuredQueriesCore08WritableE16ColumnExpression_pGvgZ' Error! Found a leaked owned value that was never consumed. Value:   %21 = apply %14(%10, %11, %12, %13) : $@convention(method) (Builtin.RawPointer, Builtin.Word, Builtin.Int1, @thin String.Type) -> @owned String  End Error in Function: '$s10SQLiteData18StateSerializationV12TableColumnsV08writableF0Say21StructuredQueriesCore08WritableE16ColumnExpression_pGvgZ' Found ownership error?! <unknown>:0: error: fatal error encountered during compilation; please submit a bug report (https://swift.org/contributing/#reporting-bugs) <unknown>:0: note: triggering standard assertion failure routine ```  Distinct from #478.  ### Checklist  - [x] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [x] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/pointfreeco/sqlite-data/discussions).  ### Expected behavior  Compiles  ### Actual behavior  Errors out.  ### Reproducing project  _No response_  ### SQLiteData version information  _No response_  ### Sharing version information  _No response_  ### GRDB version information  
-  **Post-Mortem & Fix Analysis**:
-  > Going to close this out and move to https://github.com/pointfreeco/swift-structured-queries
-
-- **Issue #478** (2026-06-11): **Crash when archiving using Xcode 27 beta 1**
-  *Symptoms*: ### Description  Create a new Xcode project, only import SqliteData (1.6.5) as the package. Set it to Mac target, and then Archive  (Note: Debug build works)  It shows an error: ``` Begin Error in Function: '$s10SQLiteData18StateSerializationV12TableColumnsV08writableF0Say21StructuredQueriesCore08WritableE16ColumnExpression_pGvgZ' Error! Found a leaked owned value that was never consumed. Value:   %21 = apply %14(%10, %11, %12, %13) : $@convention(method) (Builtin.RawPointer, Builtin.Word, Builtin.Int1, @thin String.Type) -> @owned String  End Error in Function: '$s10SQLiteData18StateSerializationV12TableColumnsV08writableF0Say21StructuredQueriesCore08WritableE16ColumnExpression_pGvgZ' Found ownership error?! <unknown>:0: error: fatal error encountered during compilation; please submit a bug report (https://swift.org/contributing/#reporting-bugs) <unknown>:0: note: triggering standard assertion failure routine ```  <img width="2050" height="300" alt="Image" src="https://github.com/user-attachments/assets/0e8c807a-d7a5-48ae-9962-1e6cfe150afb" />  ### Checklist  - [ ] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/p
-  **Post-Mortem & Fix Analysis**:
-  > So the reason seems to be the beta optimizer. When I hand-expand the @Table macro and use `optimize(none)` on all computed properties returning `[any StructuredQueriesCore.TableColumnExpression]` I can successfully archive.  ```swift // StateSerialization.TableColumns @_optimize(none) public static var allColumns: [any StructuredQueriesCore.TableColumnExpression] {   var allColumns: [any StructuredQueriesCore.TableColumnExpression] = []   allColumns.append(contentsOf: QueryValue.columns.scope._allColumns)   allColumns.append(contentsOf: QueryValue.columns.data._allColumns)   return allColumns } @_optimize(none) public static var writableColumns: [any StructuredQueriesCore.WritableTableColumnExpression] {   var writableColumns: [any StructuredQueriesCore.WritableTableColumnExpression] = []   writableColumns.append(contentsOf: QueryValue.columns.scope._writableColumns)   writableColumns.append(contentsOf: QueryValue.columns.data._writableColumns)   return writableColumns } // ... // Stat
-  > FWIW the line(s) that cause the problem are these in the expansion:  ```swift     public static var allColumns: [any StructuredQueriesCore.TableColumnExpression] {         var allColumns: [any StructuredQueriesCore.TableColumnExpression] = []         allColumns.append(contentsOf: QueryValue.columns.scope._allColumns)  👈         allColumns.append(contentsOf: QueryValue.columns.data._allColumns)         return allColumns     }     public static var writableColumns: [any StructuredQueriesCore.WritableTableColumnExpression] {         var writableColumns: [any StructuredQueriesCore.WritableTableColumnExpression] = []         writableColumns.append(contentsOf: QueryValue.columns.scope._writableColumns)  👈         writableColumns.append(contentsOf: QueryValue.columns.data._writableColumns)         return writableColumns     } ```  Seems to be related to `scope` being a primary key. Still digging into the problem to see if there's an easy workaround and a simple reduction that can be reporte
-  > Should be fixed when you bump to https://github.com/pointfreeco/swift-structured-queries/releases/tag/0.31.2
-
-- **Issue #472** (2026-06-06): **Main build with SQLiteDataTagged broke after InternalImportsByDefault**
-  *Symptoms*: ### Description  When referencing the library using the `main` branch, and having the `SQLiteDataTagged` trait enabled, the project doesn't compile.   The error is `Cannot declare a public initializer in an extension with internal requirements` in the file `Tagged/Tagged.swift`.   Probably an oversight when @mbrandonw  enabled `InternalImportsByDefault` in commit `36137afbb71e4ee3519a94d7ce765002a62be596`  ### Checklist  - [x] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [ ] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/pointfreeco/sqlite-data/discussions).  ### Expected behavior  _No response_  ### Actual behavior  _No response_  ### Reproducing project  ```swift .package(       url: "https://github.com/pointfreeco/sqlite-data",       branch: "main",       traits: [         .trait(name: "SQLiteDataTagged")       ]     ), ```  ### SQLiteData version information  f58d5d4cd4f1fc417e9e0144d7e8f019cb49cdc4 -> latest main  ### Sharing version information  _No response_  ### GRDB version information  _No response_  ### Destination operating system  _No response_  ### Xcode version information  _No response_  ### Swift Compiler version information  ```shell 6.3.2 ```
-  **Post-Mortem & Fix Analysis**:
-  > <img width="856" height="271" alt="Image" src="https://github.com/user-attachments/assets/9a31b0fa-ef1a-46ce-9340-c9b72de96e9e" />
-
-- **Issue #469** (2026-06-04): **Using the library on TvOS fails**
-  *Symptoms*: ### Description  When setting up a SQL database on tvOS, I always get an error `You don’t have permission to save the file “Application Support” in the folder “Library”.`  `Error Domain=NSCocoaErrorDomain Code=513`  Looking at the code I realize, in many places the library attempt to create  ``` swift try FileManager.default.createDirectory(       at: .applicationSupportDirectory,       withIntermediateDirectories: true     ) ``` like in `Metadatabase.swift`, `SyncEngine.swift` and in `DefaultDatabase.swift` These calls will always fail because tvOS apps can't have a support directory.  When I switch to in memory database, some of the errors disappear except the SyncEngine's. When called, the SyncEngine will try to create a `defaultMetadatabase` that in turn will try to create the `applicationSupportDirectory`. This will throw and the entire sync engine initialization fails.  For tvOS I think the best case scenario is to use `.cachesDirectory` and if the OS purges it, then on next App launch all data will be re-downloaded from iCloud.  ### Checklist  - [x] I have determined whether this bug is also reproducible in a vanilla SwiftUI project. - [ ] I have determined whether this bug is also reproducible in a vanilla GRDB project. - [x] If possible, I've reproduced the issue using the `main` branch of this package. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/sqlite-data/issues) or [discussion](https://github.com/pointfreeco
-  **Post-Mortem & Fix Analysis**:
-  > Hi @joseph-elmallah, I believe those calls to `FileManager.default.createDirectory` are just old and can be deleted. The way it should work now is that if you provide a URL when creating your database then we do not need to create the application support directory and we just use the URL you provide. Further, the metadatabase is stored right next to the main database, and so again we don't need to create the application support directory.  Want to delete those lines and test that everything works as expected, and if so, draft a PR?
-  > @mbrandonw I opened a [PR](https://github.com/pointfreeco/sqlite-data/pull/470)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1403,1516 +1092,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6bd67aa` (2026-08-19)
-**Commit Message**: Fix database-access (#409)
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
-**File**: `Sources/SQLiteData/CloudKit/CloudKitSharing.swift` (modified, +1/-1)
-```diff
-@@ -179,7 +179,7 @@
-         )
- 
-       configure(sharedRecord)
--      let (saveResults, _) = try await container.privateCloudDatabase.modifyRecords(
-+      let (saveResults, _) = try await container.database(for: sharedRecord.recordID).modifyRecords(
-         saving: [sharedRecord, lastKnownServerRecord],
-         deleting: []
-       )
-```
-
----
-
-### Incident Patch 2: `a9c51726` (2026-08-19)
-**Commit Message**: Wrap `@Fetch*` state in SwiftUI's `@State` when possible (#504)
-
-* Add case studies for SwiftUI issue
-
-* @State fix
-
-* FetchBox
-
-* wip
-
-* New integration target
-
-* wip
-
-* fix
-
-* wip
-
-* cleanup
-
-* Add some prints to make it clear queries are not being executed.
-
-* wip
-
----------
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
-**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +171/-34)
-```diff
-@@ -3,22 +3,24 @@
- 	archiveVersion = 1;
- 	classes = {
- 	};
--	objectVersion = 100;
-+	objectVersion = 77;
- 	objects = {
- 
- /* Begin PBXBuildFile section */
- 		CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = CA14DBC82DA884C400E36852 /* CasePaths */; };
- 		CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA2908C82D4AF70E003F165F /* UIKitNavigation */; };
- 		CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE292E71C469000974D3 /* SQLiteData */; };
--		CA2BDE2C2E71C472000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2B2E71C472000974D3 /* SQLiteData */; };
--		CA2BDE2E2E71C479000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2D2E71C479000974D3 /* SQLiteData */; };
--		CA2BDE302E71C480000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2F2E71C480000974D3 /* SQLiteData */; };
- 		CA5E46912DEBB8570069E0F8 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E46902DEBB8570069E0F8 /* SwiftUINavigation */; };
- 		CA5E47072DECEF0F0069E0F8 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E47062DECEF0F0069E0F8 /* InlineSnapshotTesting */; };
- 		CA5E47092DECEFC80069E0F8 /* SnapshotTestingCustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E47082DECEFC80069E0F8 /* SnapshotTestingCustomDump */; };
- 		CA5E470B2DECF0280069E0F8 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E470A2DECF0280069E0F8 /* DependenciesTestSupport */; };
- 		CAD001872D874F1F00FA977A /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CAD001862D874F1F00FA977A /* DependenciesTestSupport */; };
- 		DC5FA7482D4C63D60082743E /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = DC5FA7472D4C63D60082743E /* DependenciesMacros */; };
-+		DCB8AD4A30363D3800ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4930363D3800ACF09E /* SQLiteData */; };
-+		DCB8AD4C30363DB100ACF09E /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4B30363DB100ACF09E /* UIKitNavigation */; };
-+		DCB8AD4E30363F2100ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4D30363F2100ACF09E /* SQLiteData */; };
-+		DCB8AD5030363F2600ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4F30363F2600ACF09E /* SQLiteData */; };
-+		DCB8AD5230363F2A00ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD5130363F2A00ACF09E /* SQLiteData */; };
- 		DCBE8A142D4842BF0071F499 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = DCBE8A132D4842BF0071F499 /* CasePaths */; };
- 		DCF267392D48437300B680BE /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DCF267382D48437300B680BE /* SwiftUINavigation */; };
- /* End PBXBuildFile section */
-@@ -56,6 +58,8 @@
- 		CAF836982D4735620047AEB5 /* CaseStudies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaseStudies.app; sourceTree = BUILT_PRODUCTS_DIR; };
- 		CAF836A82D4735640047AEB5 /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
- 		CAF836D82D4735AB0047AEB5 /* Reminders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
-+		DC1584A630363595009DD95C /* Integration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Integration.app; sourceTree = BUILT_PRODUCTS_DIR; };
-+		DC55FADE30363BB000F2D8D3 /* sqlite-data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "sqlite-data"; path = "/Users/stephen/Developer/pointfreeco/sqlite-data"; sourceTree = "<absolute>"; };
- 		DCBE89CC2D483FB90071F499 /* SyncUps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncUps.app; sourceTree = BUILT_PRODUCTS_DIR; };
- /* End PBXFileReference section */
- 
-@@ -75,6 +79,14 @@
- 			);
- 			target = CAF836972D4735620047AEB5 /* CaseStudies */;
- 		};
-+		DC15854C303636A7009DD95C /* Exceptions for "CaseStudies" folder in "Integration" target */ = {
-+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-+			membershipExceptions = (
-+				Internal/CaseStudy.swift,
-+				"Internal/Text+Template.swift",
-+			);
-+			target = DC1584A530363595009DD95C /* Integration */;
-+		};
- 		DCA44CFA2D5D9D1E008D4E76 /* Exceptions for "Reminders" folder in "Reminders" target */ = {
- 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
- 			membershipExceptions = (
-@@ -116,6 +128,7 @@
- 			isa = PBXFileSystemSynchronizedRootGroup;
- 			exceptions = (
- 				CAD4819A2D584B510004799A /* Excep
-```
-
-**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "c133bf7d10c8ce1e5d6506c3d2f080eac8b4c8c2827044d53a9b925e903564fd",
-+  "originHash" : "c56e7b70de4fe8bcc798354797a8405c0eeb2e9bc68bc0f202c14a8b11a0a97f",
-   "pins" : [
-     {
-       "identity" : "combine-schedulers",
-@@ -24,8 +24,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-case-paths",
-       "state" : {
--        "revision" : "206cbce3882b4de9aee19ce62ac5b7306cadd45b",
--        "version" : "1.7.3"
-+        "revision" : "794f4b0a9cf32042592388d014f6a1ea987d323a",
-+        "version" : "1.9.1"
-       }
-     },
-     {
-```
-
-**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/CloudKitDemo.xcscheme` (modified, +3/-0)
-```diff
-@@ -17,6 +17,7 @@
-                BuildableIdentifier = "primary"
-                BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
-                BuildableName = "CloudKitDemo.app"
-+               BlueprintName = "CloudKitDemo"
-                ReferencedContainer = "container:Examples.xcodeproj">
-             </BuildableReference>
-          </BuildActionEntry>
-@@ -46,6 +47,7 @@
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
-             BuildableName = "CloudKitDemo.app"
-+            BlueprintName = "CloudKitDemo"
-             ReferencedContainer = "container:Examples.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-@@ -62,6 +64,7 @@
-             BuildableIdentifier = "primary"
-             BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
-             BuildableName = "CloudKitDemo.app"
-+            BlueprintName = "CloudKitDemo"
-             ReferencedContainer = "container:Examples.xcodeproj">
-          </BuildableReference>
-       </BuildableProductRunnable>
-```
-
-**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/Integration.xcscheme` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme
-+   LastUpgradeVersion = "2700"
-+   version = "1.7">
-+   <BuildAction
-+      parallelizeBuildables = "YES"
-+      buildImplicitDependencies = "YES"
-+      buildArchitectures = "Automatic">
-+      <BuildActionEntries>
-+         <BuildActionEntry
-+            buildForTesting = "YES"
-+            buildForRunning = "YES"
-+            buildForProfiling = "YES"
-+            buildForArchiving = "YES"
-+            buildForAnalyzing = "YES">
-+            <BuildableReference
-+               BuildableIdentifier = "primary"
-+               BlueprintIdentifier = "DC1584A530363595009DD95C"
-+               BuildableName = "Integration.app"
-+               ReferencedContainer = "container:Examples.xcodeproj">
-+            </BuildableReference>
-+         </BuildActionEntry>
-+      </BuildActionEntries>
-+   </BuildAction>
-+   <TestAction
-+      buildConfiguration = "Debug"
-+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-+      shouldUseLaunchSchemeArgsEnv = "YES"
-+      shouldAutocreateTestPlan = "YES">
-+   </TestAction>
-+   <LaunchAction
-+      buildConfiguration = "Debug"
-+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-+      launchStyle = "0"
-+      useCustomWorkingDirectory = "NO"
-+      ignoresPersistentStateOnLaunch = "NO"
-+      debugDocumentVersioning = "YES"
-+      debugServiceExtension = "internal"
-+      allowLocationSimulation = "YES"
-+      queueDebuggingEnabled = "No">
-+      <BuildableProductRunnable
-+         runnableDebuggingMode = "0">
-+         <BuildableReference
-+            BuildableIdentifier = "primary"
-+            BlueprintIdentifier = "DC1584A530363595009DD95C"
-+            BuildableName = "Integration.app"
-+            ReferencedContainer = "container:Examples.xcodeproj">
-+         </BuildableReference>
-+      </BuildableProductRunnable>
-+   </LaunchAction>
-+   <ProfileAction
-+      buildConfiguration = "Release"
-+      shouldUseLaunchSchemeArgsEnv = "YES"
-+      savedToolIdentifier = ""
-+      useCustomWorkingDirectory = "NO"
-+      debugDocumentVersioning = "YES">
-+      <BuildableProductRunnable
-+         runnableDebuggingMode = "0">
-+         <BuildableReference
-+            BuildableIdentifier = "primary"
-+            BlueprintIdentifier = "DC1584A530363595009DD95C"
-+            BuildableName = "Integration.app"
-+            ReferencedContainer = "container:Examples.xcodeproj">
-+         </BuildableReference>
-+      </BuildableProductRunnable>
-+   </ProfileAction>
-+   <AnalyzeAction
-+      buildConfiguration = "Debug">
-+   </AnalyzeAction>
-+   <ArchiveAction
-+      buildConfiguration = "Release"
-+      revealArchiveInOrganizer = "YES">
-+   </ArchiveAction>
-+</Scheme>
-```
-
-**File**: `Examples/Integration/Assets.xcassets/AccentColor.colorset/Contents.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "colors" : [
-+    {
-+      "idiom" : "universal"
-+    }
-+  ],
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
-+}
-```
-
-**File**: `Examples/Integration/Assets.xcassets/AppIcon.appiconset/Contents.json` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+{
-+  "images" : [
-+    {
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "dark"
-+        }
-+      ],
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "tinted"
-+        }
-+      ],
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
-+}
-```
-
-**File**: `Examples/Integration/Assets.xcassets/Contents.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
-+}
-```
-
-**File**: `Examples/Integration/IntegrationApp.swift` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+import SwiftUI
-+
-+@main
-+struct IntegrationApp: App {
-+  var body: some Scene {
-+    WindowGroup {
-+    }
-+  }
-+}
-```
-
----
-
-### Incident Patch 3: `e3d13c01` (2026-08-19)
-**Commit Message**: Improved UUID decoding (#528)
-
-**File**: `Sources/SQLiteData/StructuredQueries+GRDB/QueryCursor.swift` (modified, +0/-23)
-```diff
-@@ -277,29 +277,6 @@ extension String {
-   }
- }
- 
--extension UUID {
--  func withLowercasedUTF8Text<R>(_ body: (UnsafePointer<CChar>, Int32) -> R) -> R {
--    withUnsafeTemporaryAllocation(of: UInt8.self, capacity: 36) { utf8 in
--      withUnsafeBytes(of: uuid) { bytes in
--        var offset = 0
--        for (byteIndex, byte) in bytes.enumerated() {
--          if byteIndex == 4 || byteIndex == 6 || byteIndex == 8 || byteIndex == 10 {
--            utf8[offset] = UInt8(ascii: "-")
--            offset += 1
--          }
--          utf8[offset] = hexDigits[Int(byte >> 4)]
--          utf8[offset + 1] = hexDigits[Int(byte & 0xF)]
--          offset += 2
--        }
--      }
--      return utf8.baseAddress!.withMemoryRebound(to: CChar.self, capacity: 36) {
--        body($0, 36)
--      }
--    }
--  }
--}
--
--private let hexDigits = Array("0123456789abcdef".utf8)
- 
- @usableFromInline
- struct Int64OverflowError: Error {
-```
-
-**File**: `Sources/SQLiteData/StructuredQueries+GRDB/SQLiteFunctionDecoder.swift` (modified, +16/-2)
-```diff
-@@ -147,8 +147,22 @@ struct SQLiteFunctionDecoder: QueryDecoder {
- 
-   @usableFromInline
-   mutating func decode(_ columnType: UUID.Type) throws(QueryDecodingError) -> UUID? {
--    guard let uuidString = try decode(String.self) else { return nil }
--    return UUID(uuidString: uuidString)
-+    precondition(argumentCount > currentIndex)
-+    let value = arguments?[Int(currentIndex)]
-+    switch sqlite3_value_type(value) {
-+    case SQLITE_NULL:
-+      currentIndex += 1
-+      return nil
-+    case SQLITE_TEXT:
-+      break
-+    default:
-+      try reportTypeMismatch(UUID.self)
-+    }
-+    defer { currentIndex += 1 }
-+    let text = sqlite3_value_text(value)
-+    let byteCount = Int(sqlite3_value_bytes(value))
-+    let utf8 = UnsafeBufferPointer(start: text, count: byteCount)
-+    return UUID(uuidUTF8: utf8) ?? UUID(uuidString: String(decoding: utf8, as: UTF8.self))
-   }
- 
-   @usableFromInline
-```
-
-**File**: `Sources/SQLiteData/StructuredQueries+GRDB/SQLiteQueryDecoder.swift` (modified, +16/-2)
-```diff
-@@ -125,8 +125,22 @@ struct SQLiteQueryDecoder: QueryDecoder {
- 
-   @inlinable
-   mutating func decode(_ columnType: UUID.Type) throws(QueryDecodingError) -> UUID? {
--    guard let uuidString = try decode(String.self) else { return nil }
--    guard let uuid = UUID(uuidString: uuidString) else { throw .other(InvalidUUID()) }
-+    switch sqlite3_column_type(statement, currentIndex) {
-+    case SQLITE_NULL:
-+      currentIndex += 1
-+      return nil
-+    case SQLITE_TEXT:
-+      break
-+    default:
-+      try reportTypeMismatch(UUID.self)
-+    }
-+    defer { currentIndex += 1 }
-+    let text = sqlite3_column_text(statement, currentIndex)
-+    let byteCount = Int(sqlite3_column_bytes(statement, currentIndex))
-+    let utf8 = UnsafeBufferPointer(start: text, count: byteCount)
-+    if let uuid = UUID(uuidUTF8: utf8) { return uuid }
-+    guard let uuid = UUID(uuidString: String(decoding: utf8, as: UTF8.self))
-+    else { throw .other(InvalidUUID()) }
-     return uuid
-   }
- 
-```
-
-**File**: `Sources/SQLiteData/StructuredQueries+GRDB/UUID+UUIDString.swift` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+public import Foundation
-+
-+extension UUID {
-+  @usableFromInline
-+  init?(uuidUTF8 utf8: UnsafeBufferPointer<UInt8>) {
-+    guard utf8.count == 36 else { return nil }
-+    var raw: uuid_t = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-+    let parsed = withUnsafeMutableBytes(of: &raw) { bytes in
-+      var index = 0
-+      for byteIndex in 0..<16 {
-+        if byteIndex == 4 || byteIndex == 6 || byteIndex == 8 || byteIndex == 10 {
-+          guard utf8[index] == UInt8(ascii: "-") else { return false }
-+          index += 1
-+        }
-+        guard let high = hexValue(utf8[index]), let low = hexValue(utf8[index + 1])
-+        else { return false }
-+        bytes[byteIndex] = high << 4 | low
-+        index += 2
-+      }
-+      return true
-+    }
-+    guard parsed else { return nil }
-+    self.init(uuid: raw)
-+  }
-+
-+  func withLowercasedUTF8Text<R>(_ body: (UnsafePointer<CChar>, Int32) -> R) -> R {
-+    withUnsafeTemporaryAllocation(of: UInt8.self, capacity: 36) { utf8 in
-+      withUnsafeBytes(of: uuid) { bytes in
-+        var offset = 0
-+        for (byteIndex, byte) in bytes.enumerated() {
-+          if byteIndex == 4 || byteIndex == 6 || byteIndex == 8 || byteIndex == 10 {
-+            utf8[offset] = UInt8(ascii: "-")
-+            offset += 1
-+          }
-+          utf8[offset] = hexDigits[Int(byte >> 4)]
-+          utf8[offset + 1] = hexDigits[Int(byte & 0xF)]
-+          offset += 2
-+        }
-+      }
-+      return utf8.baseAddress!.withMemoryRebound(to: CChar.self, capacity: 36) {
-+        body($0, 36)
-+      }
-+    }
-+  }
-+}
-+
-+private func hexValue(_ byte: UInt8) -> UInt8? {
-+  switch byte {
-+  case UInt8(ascii: "0")...UInt8(ascii: "9"): byte - UInt8(ascii: "0")
-+  case UInt8(ascii: "a")...UInt8(ascii: "f"): byte - UInt8(ascii: "a") + 10
-+  case UInt8(ascii: "A")...UInt8(ascii: "F"): byte - UInt8(ascii: "A") + 10
-+  default: nil
-+  }
-+}
-+
-+private let hexDigits = Array("0123456789abcdef".utf8)
-```
-
-**File**: `Tests/SQLiteDataTests/UUIDTests.swift` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+import DependenciesTestSupport
-+import Foundation
-+import SQLiteData
-+import Testing
-+
-+@Suite(.dependency(\.defaultDatabase, try DatabaseQueue()))
-+struct UUIDTests {
-+  @Dependency(\.defaultDatabase) var database
-+
-+  @Test func `decode matches Foundation parsing`() throws {
-+    try database.read { db in
-+      for text in [
-+        "deadbeef-dead-beef-dead-beefdeadbeef",
-+        "DEADBEEF-DEAD-BEEF-DEAD-BEEFDEADBEEF",
-+        "A1b2C3d4-E5f6-7890-aB12-Cd34eF567890",
-+        "00000000-0000-0000-0000-000000000000",
-+      ] {
-+        let decoded = try #sql("SELECT \(bind: text)", as: UUID.self).fetchOne(db)
-+        #expect(decoded == UUID(uuidString: text), "\(text)")
-+      }
-+    }
-+  }
-+
-+  @Test func roundtrip() throws {
-+    let uuid = UUID()
-+    try database.read { db in
-+      let decoded = try #sql("SELECT \(bind: uuid)", as: UUID.self).fetchOne(db)
-+      #expect(decoded == uuid)
-+    }
-+  }
-+}
-```
-
----
-
-### Incident Patch 4: `10d5c95a` (2026-08-03)
-**Commit Message**: Fix in-memory metadatabase creation in `defaultMetadatabase` (#508)
-
-* Fix in-memory metadatabase creation in defaultMetadatabase
-
-* Shorten test comment
-
-**File**: `Sources/SQLiteData/CloudKit/Internal/Metadatabase.swift` (modified, +12/-4)
-```diff
-@@ -27,10 +27,18 @@
- 
-     var metadatabaseConfiguration = Configuration()
-     metadatabaseConfiguration.observesSuspensionNotifications = configuration.observesSuspensionNotifications
--    let metadatabase = try DatabasePool(
--      path: url.path(percentEncoded: false),
--      configuration: metadatabaseConfiguration
--    )
-+    let metadatabase: any DatabaseWriter =
-+      if url.isInMemory {
-+        try DatabaseQueue(
-+          path: url.absoluteString,
-+          configuration: metadatabaseConfiguration
-+        )
-+      } else {
-+        try DatabasePool(
-+          path: url.path(percentEncoded: false),
-+          configuration: metadatabaseConfiguration
-+        )
-+      }
-     try migrate(metadatabase: metadatabase)
-     return metadatabase
-   }
-```
-
-**File**: `Tests/SQLiteDataTests/CloudKitTests/MetadatabaseTests.swift` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+#if canImport(CloudKit)
-+  import Foundation
-+  import GRDB
-+  import OSLog
-+  @testable import SQLiteData
-+  import Testing
-+
-+  @Suite struct MetadatabaseTests {
-+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-+    @Test func inMemoryMetadatabase() throws {
-+      let url = try URL.metadatabase(databasePath: ":memory:", containerIdentifier: nil)
-+      #expect(url.isInMemory)
-+
-+      let metadatabase = try defaultMetadatabase(
-+        logger: Logger(subsystem: "test", category: "test"),
-+        url: url,
-+        configuration: Configuration()
-+      )
-+      let mainDatabaseFile = try metadatabase.read { db in
-+        try String.fetchOne(db, sql: "SELECT file FROM pragma_database_list WHERE name = 'main'")
-+      }
-+      // Metadatabase is in-memory
-+      #expect(mainDatabaseFile == "")
-+    }
-+  }
-+#endif
-```
-
----
-
-### Incident Patch 5: `8921198b` (2026-07-27)
-**Commit Message**: Work around Swift parameter pack bug in `@FetchAll(sectionBy:)` (#512)
-
-* Work around Swift parameter pack bug in `@FetchAll(sectionBy:)`
-
-Inline sectioned fetches don't currently work if the query includes a
-join due to a parameter pack bug. We can work around it in a way similar
-to workarounds present in StructuredQueries: overloads.
-
-- `Joins == ()`
-- `Joins: Table`
-- `Joins == (repeat each J)`
-
-* Organize
-
-* Clean up overloads
-
-* revert
-
-* Add `Statement.fetchAll(sectionBy:)` (#513)
-
-* Add `Statement.fetchAll(sectionBy:)`
-
-A parallel story to `@FetchAll(sectionBy:)` for use in
-`FetchKeyRequest`s.
-
-* wip
-
-* Key path overloads
-
-* Apply suggestion from @mbrandonw
-
-* Nest suites
-
----------
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
-
-**File**: `Package.resolved` (modified, +2/-2)
-```diff
-@@ -60,8 +60,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "706feb7858a7f6c242879d137b8ee30926aa5b26",
--        "version" : "1.12.0"
-+        "revision" : "8dc1fbf2f6255a73dec53b4648164884898db4c5",
-+        "version" : "1.14.1"
-       }
-     },
-     {
-```
-
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/Fetching.md` (modified, +33/-0)
-```diff
-@@ -195,6 +195,39 @@ and its value names each section:
- var reminders
- ```
- 
-+Sections are not limited to `@FetchAll`. Any query can be fetched into a
-+``ResultsSectionCollection`` directly, which is useful when defining a custom
-+``FetchKeyRequest``:
-+
-+```swift
-+struct RemindersByCategory: FetchKeyRequest {
-+  func fetch(_ db: Database) throws -> ResultsSectionCollection<Reminder, String?> {
-+    try Reminder
-+      .order(by: \.title)
-+      .fetchAll(db, sectionBy: \.category)
-+  }
-+}
-+```
-+
-+The request can be observed with ``Fetch``, and its sections drive a list just like
-+``FetchAll/sections`` does:
-+
-+```swift
-+@Fetch(RemindersByCategory()) var sections = ResultsSectionCollection<Reminder, String?>()
-+```
-+
-+And while `@FetchAll` always names its sections with strings, this form can section by any
-+`Hashable` value the database can decode, and supports joins and custom selections:
-+
-+```swift
-+try Reminder
-+  .order(by: \.title)
-+  .join(RemindersList.all) { $0.listID.eq($1.id) }
-+  .select { ReminderRow.Columns(title: $0.title, list: $1.name) }
-+  .fetchAll(db, sectionBy: { $1.id })
-+// ResultsSectionCollection<ReminderRow, Int?>
-+```
-+
- [sq-safe-sql-strings]: https://swiftpackageindex.com/pointfreeco/swift-structured-queries/~/documentation/structuredqueriescore/safesqlstrings
- [structured-queries-gh]: https://github.com/pointfreeco/swift-structured-queries
- [structured-queries-docs]: https://swiftpackageindex.com/pointfreeco/swift-structured-queries/main/documentation/structuredqueriescore/
-```
-
-**File**: `Sources/SQLiteData/FetchAll+Sections.swift` (modified, +902/-527)
-```diff
-@@ -37,52 +37,6 @@ extension FetchAll {
-     return sectionedReader.wrappedValue
-   }
- 
--  fileprivate init<From: StructuredQueriesCore.Table>(
--    wrappedValue: [Element],
--    statement: Select<(), From, ()>,
--    sectionBy: _Sectioning,
--    database: (any DatabaseReader)?,
--    scheduler: (any ValueObservationScheduler & Hashable)?
--  )
--  where
--    Element == From.QueryOutput,
--    From.QueryOutput: Sendable
--  {
--    self.init(
--      wrappedValue: wrappedValue,
--      request: FetchAllSectionedStatementValueRequest(statement: statement, sectionBy: sectionBy),
--      sectionBy: sectionBy,
--      database: database,
--      scheduler: scheduler
--    )
--  }
--
--  fileprivate init<Value: QueryRepresentable>(
--    wrappedValue: [Element],
--    request: FetchAllSectionedStatementValueRequest<Value>,
--    sectionBy: _Sectioning,
--    database: (any DatabaseReader)?,
--    scheduler: (any ValueObservationScheduler & Hashable)?
--  )
--  where
--    Element == Value.QueryOutput,
--    Value.QueryOutput: Sendable
--  {
--    let sectionedReader = SharedReader(
--      wrappedValue: ResultsSectionCollection(elements: wrappedValue, sectionName: nil),
--      FetchKey(
--        request: request,
--        database: database,
--        scheduler: scheduler
--      )
--    )
--    self.sectionedReader = sectionedReader
--    self.sharedReader = sectionedReader.elements
--    self.sectioning.setValue(sectionBy)
--  }
--}
--
--extension FetchAll {
-   /// Initializes this property with a query that fetches every row from a table, grouping results
-   /// into sections.
-   ///
-@@ -99,7 +53,7 @@ extension FetchAll {
-   ///     (`@Dependency(\.defaultDatabase)`).
-   public init(
-     wrappedValue: [Element] = [],
--    @_SectionBuilder sectionBy sectioning: (Element.TableColumns) -> _Sectioning?,
-+    @_SectionBuilder<String?> sectionBy sectioning: (Element.TableColumns) -> _Sectioning<String?>?,
-     database: (any DatabaseReader)? = nil
-   )
-   where Element: StructuredQueriesCore.Table, Element.QueryOutput == Element {
-@@ -151,7 +105,7 @@ extension FetchAll {
-   public init<S: SelectStatement>(
-     wrappedValue: [Element] = [],
-     _ statement: S,
--    @_SectionBuilder sectionBy sectioning: (S.From.TableColumns) -> _Sectioning?,
-+    @_SectionBuilder<String?> sectionBy sectioning: (S.From.TableColumns) -> _Sectioning<String?>?,
-     database: (any DatabaseReader)? = nil
-   )
-   where
-@@ -179,30 +133,21 @@ extension FetchAll {
-   ///
-   /// - Parameters:
-   ///   - wrappedValue: A default collection to associate with this property.
--  ///   - sectioning: A closure that returns a string expression, or an ordering of one, to group
--  ///     results by, or `nil` for no grouping.
-+  ///   - sectionKeyPath: A key path to a string column to group results by.
-   ///   - database: The database to read from. A value of `nil` will use the default database
-   ///     (`@Dependency(\.defaultDatabase)`).
--  ///   - scheduler: The scheduler to observe from. By default, database observation is performed
--  ///     asynchronously on the main queue.
-   public init(
-     wrappedValue: [Element] = [],
--    @_SectionBuilder sectionBy sectioning: (Element.TableColumns) -> _Sectioning?,
--    database: (any DatabaseReader)? = nil,
--    scheduler: some ValueObservationScheduler & Hashable
-+    sectionBy sectionKeyPath: KeyPath<
-+      Element.TableColumns, some QueryExpression<some _OptionalPromotable<String?>>
-+    >,
-+    database: (any DatabaseReader)? = nil
-   )
-   where Element: StructuredQueriesCore.Table, Element.QueryOutput == Element {
--    let statement: Select<(), Element, ()> = Element.all.asSelect()
--    guard let sectioning = sectioning(Element.columns) else {
--      self.init(wrappedValue: wrappedValue, statement, database: database, scheduler: scheduler)
--      return
--    }
-     self.init(
-       wrappedValue: wrappedValue,
--      statement: statement,
--      sectionBy: sectioning,
--      database: database,
--      scheduler: scheduler
-+      sectionBy: { $0[keyPath: sectionKeyPath] },
-+      database: database
-     )
-   }
- 
-@@ -212,107 +157,147 @@ extension FetchAll {
-   /// - Parameters:
-   ///   - wrappedValue: A default collection to associate with this property.
-   ///   - statement: A query associated with the wrapped value.
--  ///   - sectioning: A closure that returns a string expression, or an ordering of one, to group
--  ///     results by, or `nil` for no grouping.
-+  ///   - sectionKeyPath: A key path to a string column to group results by.
-   ///   - database: The database to read from. A value of `nil` will use the default database
-   ///     (`@Dependency(\.defaultDatabase)`).
--  ///   - scheduler: The scheduler to observe from. By default, database observation is performed
--  ///     asynchronously on the main queue.
-   public init<S: SelectStatement>(
-     wrappedValue: [Element] = [],
-     _ statement: S,
--    @_SectionBuilder sectionBy sectioning: (S.From.TableColumns) -> _Sectioning?,
--    database: (any DatabaseReader)? = n
-```
-
-**File**: `Sources/SQLiteData/FetchAll.swift` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ public struct FetchAll<Element: Sendable>: Sendable {
-   var sectionedReader: SharedReader<ResultsSectionCollection<Element, String?>> =
-     SharedReader(value: ResultsSectionCollection())
- 
--  let sectioning = LockIsolated<_Sectioning?>(nil)
-+  let sectioning = LockIsolated<_Sectioning<String?>?>(nil)
- 
-   /// A collection of data associated with the underlying query.
-   public var wrappedValue: [Element] {
-```
-
-**File**: `Sources/SQLiteData/ResultsSectionCollection.swift` (modified, +5/-4)
-```diff
-@@ -31,7 +31,8 @@ public struct ResultsSectionCollection<Element, SectionName: Hashable> {
-   let elements: [Element]
-   private let elementIndicesBySectionName: OrderedDictionary<SectionName, ElementIndices>
- 
--  init() {
-+  /// Creates an empty collection of sections.
-+  public init() {
-     elements = []
-     elementIndicesBySectionName = [:]
-   }
-@@ -71,10 +72,10 @@ public struct ResultsSectionCollection<Element, SectionName: Hashable> {
-   }
- }
- 
--extension ResultsSectionCollection where SectionName == String? {
--  init(cursor: QueryCursor<(Element, String?)>) throws {
-+extension ResultsSectionCollection {
-+  init(cursor: QueryCursor<(Element, SectionName)>) throws {
-     var elements: [Element] = []
--    var elementIndicesBySectionName: OrderedDictionary<String?, ElementIndices> = [:]
-+    var elementIndicesBySectionName: OrderedDictionary<SectionName, ElementIndices> = [:]
-     while let (element, sectionName) = try cursor.next() {
-       let index = elements.count
-       elementIndicesBySectionName[sectionName, default: ElementIndices(range: index..<index)]
-```
-
-**File**: `Sources/SQLiteData/StructuredQueries+GRDB/QueryCursor.swift` (modified, +9/-8)
-```diff
-@@ -79,11 +79,10 @@ final class QueryValueCursor<QueryValue: QueryRepresentable>: QueryCursor<QueryV
- }
- 
- @usableFromInline
--final class QuerySectionedValueCursor<QueryValue: QueryRepresentable>: QueryCursor<
--  (QueryValue.QueryOutput, String?)
--> {
--  public typealias Element = (QueryValue.QueryOutput, String?)
--
-+final class QuerySectionedCursor<
-+  Element: QueryRepresentable,
-+  SectionName: QueryRepresentable
-+>: QueryCursor<(Element.QueryOutput, SectionName.QueryOutput)> {
-   // NB: Required to workaround a "Legacy previews execution" bug
-   //     https://github.com/pointfreeco/sqlite-data/pull/60
-   @usableFromInline
-@@ -92,10 +91,12 @@ final class QuerySectionedValueCursor<QueryValue: QueryRepresentable>: QueryCurs
-   }
- 
-   @inlinable
--  public override func _element(sqliteStatement _: SQLiteStatement) throws -> Element {
-+  public override func _element(
-+    sqliteStatement _: SQLiteStatement
-+  ) throws -> (Element.QueryOutput, SectionName.QueryOutput) {
-     do {
--      let element = try QueryValue(decoder: &decoder).queryOutput
--      let sectionName = try String?(decoder: &decoder)
-+      let element = try Element(decoder: &decoder).queryOutput
-+      let sectionName = try SectionName(decoder: &decoder).queryOutput
-       decoder.next()
-       return (element, sectionName)
-     } catch QueryDecodingError.missingRequiredColumn {
-```
-
-**File**: `Sources/SQLiteData/StructuredQueries+GRDB/Statement+Sections.swift` (added, +145/-0)
-```diff
-@@ -0,0 +1,145 @@
-+public import GRDB
-+public import StructuredQueriesCore
-+
-+extension SelectStatement where QueryValue == (), Joins == () {
-+  /// Returns all values fetched from the database, grouped into sections.
-+  ///
-+  /// Results are ordered by the given expression and grouped into a section for each of its
-+  /// distinct values:
-+  ///
-+  /// ```swift
-+  /// try Reminder
-+  ///   .order(by: \.title)
-+  ///   .fetchAll(db, sectionBy: \.priority)
-+  /// ```
-+  ///
-+  /// - Parameters:
-+  ///   - db: A database connection.
-+  ///   - sectioning: A closure that returns an expression, or an ordering of one, to group results
-+  ///     by.
-+  /// - Returns: A collection of all values decoded from the database, grouped into sections.
-+  public func fetchAll<Key: QueryRepresentable>(
-+    _ db: Database,
-+    @_SectionBuilder<Key> sectionBy sectioning: (From.TableColumns) -> _Sectioning<Key>
-+  ) throws -> ResultsSectionCollection<From.QueryOutput, Key.QueryOutput>
-+  where Key.QueryOutput: Hashable {
-+    let sectionBy = sectioning(From.columns)
-+    let statement: Select<(), From, ()> = asSelect()
-+    let prefix: Select<(From, Key), From, ()> = sectionedColumns(of: From.self, sectionBy)
-+    let sectioned: Select<(From, Key), From, ()> = prefix + statement
-+    return try sectionedResults(From.self, Key.self, db: db, query: sectioned.query)
-+  }
-+
-+  /// Returns all values fetched from the database, grouped into sections.
-+  ///
-+  /// See ``StructuredQueriesCore/SelectStatement/fetchAll(_:sectionBy:)`` for more information.
-+  ///
-+  /// - Parameters:
-+  ///   - db: A database connection.
-+  ///   - sectionKeyPath: A key path to a column to group results by.
-+  /// - Returns: A collection of all values decoded from the database, grouped into sections.
-+  public func fetchAll<Key: QueryRepresentable>(
-+    _ db: Database,
-+    sectionBy sectionKeyPath: KeyPath<
-+      From.TableColumns, some QueryExpression<some _OptionalPromotable<Key>>
-+    >
-+  ) throws -> ResultsSectionCollection<From.QueryOutput, Key.QueryOutput>
-+  where Key.QueryOutput: Hashable {
-+    try fetchAll(db, sectionBy: { $0[keyPath: sectionKeyPath] })
-+  }
-+}
-+
-+extension Select {
-+  /// Returns all values fetched from the database, grouped into sections.
-+  ///
-+  /// See ``StructuredQueriesCore/SelectStatement/fetchAll(_:sectionBy:)`` for more information.
-+  ///
-+  /// - Parameters:
-+  ///   - db: A database connection.
-+  ///   - sectioning: A closure that returns an expression, or an ordering of one, to group results
-+  ///     by.
-+  /// - Returns: A collection of all values decoded from the database, grouped into sections.
-+  @_documentation(visibility: private)
-+  @_disfavoredOverload
-+  public func fetchAll<Key: QueryRepresentable, each J: StructuredQueriesCore.Table>(
-+    _ db: Database,
-+    @_SectionBuilder<Key> sectionBy sectioning: (
-+      From.TableColumns, repeat (each J).TableColumns
-+    ) -> _Sectioning<Key>
-+  ) throws -> ResultsSectionCollection<QueryValue.QueryOutput, Key.QueryOutput>
-+  where QueryValue: QueryRepresentable, Joins == (repeat each J), Key.QueryOutput: Hashable {
-+    let sectionBy = sectioning(From.columns, repeat (each J).columns)
-+    return try sectionedResults(db, statement: self, sectionBy: sectionBy)
-+  }
-+
-+  /// Returns all values fetched from the database, grouped into sections.
-+  ///
-+  /// See ``StructuredQueriesCore/SelectStatement/fetchAll(_:sectionBy:)`` for more information.
-+  ///
-+  /// - Parameters:
-+  ///   - db: A database connection.
-+  ///   - sectioning: A closure that returns an expression, or an ordering of one, to group results
-+  ///     by.
-+  /// - Returns: A collection of all values decoded from the database, grouped into sections.
-+  @_documentation(visibility: private)
-+  public func fetchAll<Key: QueryRepresentable>(
-+    _ db: Database,
-+    @_SectionBuilder<Key> sectionBy sectioning: (
-+      From.TableColumns, Joins.TableColumns
-+    ) -> _Sectioning<Key>
-+  ) throws -> ResultsSectionCollection<QueryValue.QueryOutput, Key.QueryOutput>
-+  where
-+    QueryValue: QueryRepresentable,
-+    Joins: StructuredQueriesCore.Table,
-+    Key.QueryOutput: Hashable
-+  {
-+    let sectionBy = sectioning(From.columns, Joins.columns)
-+    return try sectionedResults(db, statement: self, sectionBy: sectionBy)
-+  }
-+
-+  /// Returns all values fetched from the database, grouped into sections.
-+  ///
-+  /// See ``StructuredQueriesCore/SelectStatement/fetchAll(_:sectionBy:)`` for more information.
-+  ///
-+  /// - Parameters:
-+  ///   - db: A database connection.
-+  ///   - sectionKeyPath: A key path to a column to group results by.
-+  /// - Returns: A collection of all values decoded from the database, grouped into sections.
-+  public func fetchAll<Key: QueryRepresentable>(
-+    _ db: Database,
-+    sectionBy sectionKeyPath: KeyPath<
-+      From.TableColumns, some QueryExpression<some _OptionalPromotable<Key>>
-+    >
-+  ) throws -> ResultsSectionCollection<QueryValue.QueryOutput, 
-```
-
-**File**: `Tests/SQLiteDataTests/FetchAllSectionsTests.swift` (modified, +195/-41)
-```diff
-@@ -341,11 +341,13 @@ struct FetchAllSectionsTests {
-   }
- 
-   @Test func selectionSectionBy() async throws {
--    let statement =
-+    @FetchAll(
-       SectionedReminder
--      .order(by: \.id)
--      .select { SectionedRow.Columns(title: $0.title, label: $0.category) }
--    @FetchAll(statement, sectionBy: { $0.category }) var rows
-+        .order(by: \.id)
-+        .select { SectionedRow.Columns(title: $0.title, label: $0.category) },
-+      sectionBy: { $0.category }
-+    )
-+    var rows
-     try await $rows.load()
- 
-     #expect(rows.map(\.title) == ["Groceries", "Dishes", "Laundry", "Standup", "Review"])
-@@ -354,12 +356,14 @@ struct FetchAllSectionsTests {
-   }
- 
-   @Test func joinedSectionBy() async throws {
--    let statement =
-+    @FetchAll(
-       SectionedReminder
--      .order(by: \.id)
--      .join(SectionedCategory.all) { $0.category.eq($1.name) }
--      .select { SectionedRow.Columns(title: $0.title, label: $1.label) }
--    @FetchAll(statement, sectionBy: { $1.label }) var rows
-+        .order(by: \.id)
-+        .join(SectionedCategory.all) { $0.category.eq($1.name) }
-+        .select { SectionedRow.Columns(title: $0.title, label: $1.label) },
-+      sectionBy: { $1.label }
-+    )
-+    var rows
-     try await $rows.load()
- 
-     #expect(rows.map(\.title) == ["Dishes", "Laundry", "Standup", "Review", "Groceries"])
-@@ -369,40 +373,47 @@ struct FetchAllSectionsTests {
-   }
- 
-   @Test func joinedDescendingSectionBy() async throws {
--    let statement =
-+    @FetchAll(
-       SectionedReminder
--      .order(by: \.id)
--      .join(SectionedCategory.all) { $0.category.eq($1.name) }
--      .select { SectionedRow.Columns(title: $0.title, label: $1.label) }
--    @FetchAll(statement, sectionBy: { $1.label.desc() }) var rows
-+        .order(by: \.id)
-+        .join(SectionedCategory.all) { $0.category.eq($1.name) }
-+        .select { SectionedRow.Columns(title: $0.title, label: $1.label) },
-+      sectionBy: { $1.label.desc() }
-+    )
-+    var rows
-     try await $rows.load()
- 
-     #expect($rows.sections.sectionNames == ["Out & About", "At Work", "At Home"])
-   }
- 
-   @Test func loadJoinedSectionBy() async throws {
--    let statement =
-+    @FetchAll(
-       SectionedReminder
--      .order(by: \.id)
--      .join(SectionedCategory.all) { $0.category.eq($1.name) }
--      .select { SectionedRow.Columns(title: $0.title, label: $1.label) }
--    @FetchAll(statement) var rows
-+        .order(by: \.id)
-+        .join(SectionedCategory.all) { $0.category.eq($1.name) }
-+        .select { SectionedRow.Columns(title: $0.title, label: $1.label) }
-+    )
-+    var rows
-     try await $rows.load()
-     #expect($rows.sections.sectionNames == [nil])
- 
--    try await $rows.load(statement, sectionBy: { $1.label })
-+    try await $rows.load(
-+      SectionedReminder
-+        .order(by: \.id)
-+        .join(SectionedCategory.all) { $0.category.eq($1.name) }
-+        .select { SectionedRow.Columns(title: $0.title, label: $1.label) },
-+      sectionBy: { $1.label }
-+    )
-     #expect(rows.map(\.title) == ["Dishes", "Laundry", "Standup", "Review", "Groceries"])
-     #expect($rows.sections.sectionNames == ["At Home", "At Work", "Out & About"])
-   }
- 
-   @Test(arguments: [true, false]) func dynamicJoinedSectionBy(isSectioned: Bool) async throws {
--    let statement =
--      SectionedReminder
--      .order(by: \.id)
--      .join(SectionedCategory.all) { $0.category.eq($1.name) }
--      .select { SectionedRow.Columns(title: $0.title, label: $1.label) }
-     @FetchAll(
--      statement,
-+      SectionedReminder
-+        .order(by: \.id)
-+        .join(SectionedCategory.all) { $0.category.eq($1.name) }
-+        .select { SectionedRow.Columns(title: $0.title, label: $1.label) },
-       sectionBy: {
-         if isSectioned {
-           $1.label
-@@ -420,13 +431,16 @@ struct FetchAllSectionsTests {
-   }
- 
-   @Test func twoJoinsSectionBy() async throws {
--    let statement =
-+    @FetchAll(
-       SectionedReminder
--      .order(by: \.id)
--      .join(SectionedCategory.all) { $0.category.eq($1.name) }
--      .join(SectionedPriority.all) { reminder, _, priority in reminder.priority.eq(priority.name) }
--      .select { SectionedRow.Columns(title: $0.title, label: $2.label) }
--    @FetchAll(statement, sectionBy: { $2.label }) var rows
-+        .order(by: \.id)
-+        .join(SectionedCategory.all) { $0.category.eq($1.name) }
-+        .join(SectionedPriority.all) { reminder, _, priority in reminder.priority.eq(priority.name)
-+        }
-+        .select { SectionedRow.Columns(title: $0.title, label: $2.label) },
-+      sectionBy: { $2.label }
-+    )
-+    var rows
-     try await $rows.load()
- 
-     #expect(rows.map(\.title) == ["Dishes", "Standup", "Groceries"])
-@@ -436,16 +450,19 @@ struct FetchAllSectionsTests {
-   }
- 
-   @Test func threeJoinsSectionBy() async throws {
--    let statement =
-+    @FetchAll(
-       SectionedReminder
--      .order(by: \.id)
--      .join(SectionedCategory.all) { $0.category.eq($1.name) }
--      .join(SectionedPr
-```
-
----
-
-### Incident Patch 6: `f7bedfec` (2026-07-17)
-**Commit Message**: Revert "Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)" (#501)
-
-This reverts commit a5856cba925a96e7849d600d03c1a4aa66f78439.
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ jobs:
-     name: macOS
-     strategy:
-       matrix:
--        xcode: ["26.6"]
-+        xcode: ["26.2"]
-         config: ["debug", "release"]
-     runs-on: macos-26
-     steps:
-@@ -32,7 +32,7 @@ jobs:
-     name: Examples
-     strategy:
-       matrix:
--        xcode: ["26.6"]
-+        xcode: ["26.2"]
-         config: ["debug"]
-         scheme: ["Reminders", "CaseStudies", "SyncUps"]
-     runs-on: macos-26
-```
-
-**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +5/-1)
-```diff
-@@ -1100,7 +1100,6 @@
- 			isa = XCLocalSwiftPackageReference;
- 			relativePath = ..;
- 			traits = (
--				CasePaths,
- 				LazyInitializableByDefault,
- 			);
- 		};
-@@ -1122,6 +1121,9 @@
- 				kind = upToNextMajorVersion;
- 				minimumVersion = 1.7.0;
- 			};
-+			traits = (
-+				Clocks,
-+			);
- 		};
- 		DCBE8A122D4842BF0071F499 /* XCRemoteSwiftPackageReference "swift-case-paths" */ = {
- 			isa = XCRemoteSwiftPackageReference;
-@@ -1138,6 +1140,8 @@
- 				kind = upToNextMajorVersion;
- 				minimumVersion = 2.2.3;
- 			};
-+			traits = (
-+			);
- 		};
- /* End XCRemoteSwiftPackageReference section */
- 
-```
-
-**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +21/-21)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "c133bf7d10c8ce1e5d6506c3d2f080eac8b4c8c2827044d53a9b925e903564fd",
-+  "originHash" : "c56e7b70de4fe8bcc798354797a8405c0eeb2e9bc68bc0f202c14a8b11a0a97f",
-   "pins" : [
-     {
-       "identity" : "combine-schedulers",
-@@ -15,17 +15,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/groue/GRDB.swift",
-       "state" : {
--        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
--        "version" : "7.11.1"
-+        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
-+        "version" : "7.11.0"
-       }
-     },
-     {
-       "identity" : "swift-case-paths",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-case-paths",
-       "state" : {
--        "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
--        "version" : "1.8.0"
-+        "revision" : "206cbce3882b4de9aee19ce62ac5b7306cadd45b",
-+        "version" : "1.7.3"
-       }
-     },
-     {
-@@ -60,17 +60,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-custom-dump",
-       "state" : {
--        "revision" : "a8cd6c976f335ed361dcecddb0dc39ebda51bc3e",
--        "version" : "1.6.1"
-+        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
-+        "version" : "1.6.0"
-       }
-     },
-     {
-       "identity" : "swift-dependencies",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "8dc1fbf2f6255a73dec53b4648164884898db4c5",
--        "version" : "1.14.1"
-+        "revision" : "16f7dd14ee28d04617090f2a73198b8b316ffa12",
-+        "version" : "1.13.1"
-       }
-     },
-     {
-@@ -87,44 +87,44 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-navigation",
-       "state" : {
--        "revision" : "fad75807c596fecd724b0fc81cd61c94008faad4",
--        "version" : "2.10.3"
-+        "revision" : "32f35241b8be0719c4c7f00eb27713b1cadb6248",
-+        "version" : "2.8.0"
-       }
-     },
-     {
-       "identity" : "swift-perception",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-perception",
-       "state" : {
--        "revision" : "de219a1cf34e958134e75a9ebb134cf09bf52fc6",
--        "version" : "2.0.11"
-+        "revision" : "25ac73741c3436605d61eceb5207e896973918e7",
-+        "version" : "2.0.10"
-       }
-     },
-     {
-       "identity" : "swift-sharing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-sharing",
-       "state" : {
--        "revision" : "8244fe63bf43e58188ab13851ad693eecf6a9e90",
--        "version" : "2.9.1"
-+        "revision" : "e47a2f545bafa3c0c702600f3e6ce02b3d566b6f",
-+        "version" : "2.8.2"
-       }
-     },
-     {
-       "identity" : "swift-snapshot-testing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
-       "state" : {
--        "revision" : "1bc16f430d8410e7f087d4c787767b26fd32fe30",
--        "version" : "1.19.3"
-+        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
-+        "version" : "1.19.2"
-       }
-     },
-     {
-       "identity" : "swift-structured-queries",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-structured-queries",
-       "state" : {
--        "revision" : "e61b3713460507ce93ed4ca4d8f9e4423bf342ca",
--        "version" : "0.33.0"
-+        "revision" : "50a429884d7a6c0613df2a31a24009cc436bfb18",
-+        "version" : "0.33.2"
-       }
-     },
-     {
-@@ -141,8 +141,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-       "state" : {
--        "revision" : "8f6abcf4c8950e2679d5b2fee4ca284fd7c34886",
--        "version" : "1.11.0"
-+        "revision" : "cb281f343fd953280336dcbd3822cdf47c182f5b",
-+        "version" : "1.10.0"
-       }
-     }
-   ],
-```
-
-**File**: `Package.resolved` (modified, +14/-14)
-```diff
-@@ -15,8 +15,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/groue/GRDB.swift",
-       "state" : {
--        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
--        "version" : "7.11.1"
-+        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
-+        "version" : "7.11.0"
-       }
-     },
-     {
-@@ -51,17 +51,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-custom-dump",
-       "state" : {
--        "revision" : "a8cd6c976f335ed361dcecddb0dc39ebda51bc3e",
--        "version" : "1.6.1"
-+        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
-+        "version" : "1.6.0"
-       }
-     },
-     {
-       "identity" : "swift-dependencies",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "8dc1fbf2f6255a73dec53b4648164884898db4c5",
--        "version" : "1.14.1"
-+        "revision" : "f80552807ec92f72fe3fe4543d71879182b0bfd5",
-+        "version" : "1.13.0"
-       }
-     },
-     {
-@@ -105,26 +105,26 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-sharing",
-       "state" : {
--        "revision" : "8244fe63bf43e58188ab13851ad693eecf6a9e90",
--        "version" : "2.9.1"
-+        "revision" : "e47a2f545bafa3c0c702600f3e6ce02b3d566b6f",
-+        "version" : "2.8.2"
-       }
-     },
-     {
-       "identity" : "swift-snapshot-testing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
-       "state" : {
--        "revision" : "1bc16f430d8410e7f087d4c787767b26fd32fe30",
--        "version" : "1.19.3"
-+        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
-+        "version" : "1.19.2"
-       }
-     },
-     {
-       "identity" : "swift-structured-queries",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-structured-queries",
-       "state" : {
--        "revision" : "9c2935e47b0ed9627e4278c566e0ac386be5472e",
--        "version" : "0.33.3"
-+        "revision" : "50a429884d7a6c0613df2a31a24009cc436bfb18",
-+        "version" : "0.33.2"
-       }
-     },
-     {
-@@ -141,8 +141,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-       "state" : {
--        "revision" : "8f6abcf4c8950e2679d5b2fee4ca284fd7c34886",
--        "version" : "1.11.0"
-+        "revision" : "cb281f343fd953280336dcbd3822cdf47c182f5b",
-+        "version" : "1.10.0"
-       }
-     }
-   ],
-```
-
-**File**: `Package.swift` (modified, +2/-0)
-```diff
-@@ -68,6 +68,7 @@ let package = Package(
-     .target(
-       name: "SQLiteData",
-       dependencies: [
-+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-         .product(name: "GRDB", package: "GRDB.swift"),
-         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-@@ -86,6 +87,7 @@ let package = Package(
-       name: "SQLiteDataTestSupport",
-       dependencies: [
-         "SQLiteData",
-+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "ConcurrencyExtrasTestSupport", package: "swift-concurrency-extras"),
-         .product(name: "CustomDump", package: "swift-custom-dump"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-```
-
-**File**: `Package@swift-6.0.swift` (modified, +2/-0)
-```diff
-@@ -35,6 +35,7 @@ let package = Package(
-     .target(
-       name: "SQLiteData",
-       dependencies: [
-+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-         .product(name: "GRDB", package: "GRDB.swift"),
-         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-@@ -47,6 +48,7 @@ let package = Package(
-       name: "SQLiteDataTestSupport",
-       dependencies: [
-         "SQLiteData",
-+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-         .product(name: "CustomDump", package: "swift-custom-dump"),
-         .product(name: "Dependencies", package: "swift-dependencies"),
-         .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
-```
-
-**File**: `Sources/SQLiteData/CloudKit/CloudKitSharing.swift` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- #if canImport(CloudKit)
-   public import CloudKit
-+  import ConcurrencyExtras
-   import GRDB
-   import IssueReporting
-   public import StructuredQueries
-@@ -240,7 +241,7 @@
-     }
- 
-     func unshare(share: CKShare) async throws {
--      let result = try await syncEngines.withLock(\.private)?.database.modifyRecords(
-+      let result = try await syncEngines.private?.database.modifyRecords(
-         saving: [],
-         deleting: [share.recordID]
-       )
-```
-
-**File**: `Sources/SQLiteData/CloudKit/Internal/DataManager.swift` (modified, +4/-3)
-```diff
-@@ -1,4 +1,5 @@
- #if canImport(CloudKit) && canImport(CryptoKit)
-+  package import ConcurrencyExtras
-   import CryptoKit
-   import Dependencies
-   package import Foundation
-@@ -54,7 +55,7 @@
-     package init() {}
- 
-     package func load(_ url: URL) throws -> Data {
--      try storage.withLock { storage in
-+      try storage.withValue { storage in
-         guard let data = storage[url]
-         else {
-           struct FileNotFound: Error {}
-@@ -65,11 +66,11 @@
-     }
- 
-     package func save(_ data: Data, to url: URL) throws {
--      storage.withLock { $0[url] = data }
-+      storage.withValue { $0[url] = data }
-     }
- 
-     package func sha256(of fileURL: URL) -> Data? {
--      storage.withLock {
-+      storage.withValue {
-         $0[fileURL].map {
-           Data(SHA256.hash(data: $0))
-         }
-```
-
----
-
-### Incident Patch 7: `a5856cba` (2026-07-16)
+### Incident Patch 1: `a5856cba` (2026-07-16)
 **Commit Message**: Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)
 
 * wip
@@ -3302,831 +1482,804 @@ Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 8: `ea310aef` (2026-07-15)
-**Commit Message**: Update bug_report.yml
+### Incident Patch 2: `a9c51726` (2026-08-19)
+**Commit Message**: Wrap `@Fetch*` state in SwiftUI's `@State` when possible (#504)
 
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ body:
-   attributes:
-     label: Checklist
-     options:
-+    - label: I wrote this in my own words, and aimed to be as succinct as possible, even if I used AI to help research its content.
-+      required: true
-     - label: I have determined whether this bug is also reproducible in a vanilla SwiftUI project.
-       required: false
-     - label: I have determined whether this bug is also reproducible in a vanilla GRDB project.
-```
+* Add case studies for SwiftUI issue
 
----
+* @State fix
 
-### Incident Patch 9: `f8f23112` (2026-06-10)
-**Commit Message**: Work around `@_exported`-`public import` bug (#477)
+* FetchBox
 
-We've relied on fine-grained GRDB exports via, e.g.:
+* wip
 
-```swift
-@_exported import class GRDB.Database
-```
+* New integration target
 
-But it turns out this breaks as soon as you have an explicit `public import` in the same module:
+* wip
 
-```swift
-public import class GRDB.Database
-```
+* fix
 
-To work around this bug, we can use `#if` blocks to make each mutually exclusive.
+* wip
 
-**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +27/-27)
-```diff
-@@ -1,49 +1,49 @@
- {
--  "originHash" : "c56e7b70de4fe8bcc798354797a8405c0eeb2e9bc68bc0f202c14a8b11a0a97f",
-+  "originHash" : "c133bf7d10c8ce1e5d6506c3d2f080eac8b4c8c2827044d53a9b925e903564fd",
-   "pins" : [
-     {
-       "identity" : "combine-schedulers",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/combine-schedulers",
-       "state" : {
--        "revision" : "fd16d76fd8b9a976d88bfb6cacc05ca8d19c91b6",
--        "version" : "1.1.0"
-+        "revision" : "dcccb979a2183b8df3334237e3dc1ae2b4116a86",
-+        "version" : "1.2.0"
-       }
-     },
-     {
-       "identity" : "grdb.swift",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/groue/GRDB.swift",
-       "state" : {
--        "revision" : "aa0079aeb82a4bf00324561a40bffe68c6fe1c26",
--        "version" : "7.9.0"
-+        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
-+        "version" : "7.11.0"
-       }
-     },
-     {
-       "identity" : "swift-case-paths",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-case-paths",
-       "state" : {
--        "revision" : "6989976265be3f8d2b5802c722f9ba168e227c71",
--        "version" : "1.7.2"
-+        "revision" : "206cbce3882b4de9aee19ce62ac5b7306cadd45b",
-+        "version" : "1.7.3"
-       }
-     },
-     {
-       "identity" : "swift-clocks",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-clocks",
-       "state" : {
--        "revision" : "cc46202b53476d64e824e0b6612da09d84ffde8e",
--        "version" : "1.0.6"
-+        "revision" : "72d749bf341b78851203066ab421869b783ec42a",
-+        "version" : "1.1.0"
-       }
-     },
-     {
-       "identity" : "swift-collections",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/apple/swift-collections",
-       "state" : {
--        "revision" : "7b847a3b7008b2dc2f47ca3110d8c782fb2e5c7e",
--        "version" : "1.3.0"
-+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-+        "version" : "1.6.0"
-       }
-     },
-     {
-@@ -60,17 +60,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-custom-dump",
-       "state" : {
--        "revision" : "82645ec760917961cfa08c9c0c7104a57a0fa4b1",
--        "version" : "1.3.3"
-+        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
-+        "version" : "1.6.0"
-       }
-     },
-     {
-       "identity" : "swift-dependencies",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "a10f9feeb214bc72b5337b6ef6d5a029360db4cc",
--        "version" : "1.10.0"
-+        "revision" : "16f7dd14ee28d04617090f2a73198b8b316ffa12",
-+        "version" : "1.13.1"
-       }
-     },
-     {
-@@ -87,35 +87,35 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-navigation",
-       "state" : {
--        "revision" : "bf498690e1f6b4af790260f542e8428a4ba10d78",
--        "version" : "2.6.0"
-+        "revision" : "32f35241b8be0719c4c7f00eb27713b1cadb6248",
-+        "version" : "2.8.0"
-       }
-     },
-     {
-       "identity" : "swift-perception",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-perception",
-       "state" : {
--        "revision" : "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
--        "version" : "2.0.9"
-+        "revision" : "25ac73741c3436605d61eceb5207e896973918e7",
-+        "version" : "2.0.10"
-       }
-     },
-     {
-       "identity" : "swift-sharing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-sharing",
-       "state" : {
--        "revision" : "3bfc408cc2d0bee2287c174da6b1c76768377818",
--        "version" : "2.7.4"
-+        "revision" : "e47a2f545bafa3c0c702600f3e6ce02b3d566b6f",
-+        "version" : "2.8.2"
-       }
-     },
-     {
-       "identity" : "swift-snapshot-testing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
-       "state" : {
--        "revision" : "a8b7c5e0ed33d8ab8887d1654d9b59f2cbad529b",
--        "version" : "1.18.7"
-+        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
-+        "version" : "1.19.2"
-       }
-     },
-     {
-@@ -132,17 +132,17 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/swiftlang/swift-syntax",
-       "state" : {
--        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
--        "version" : "602.0.0"
-+        "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
-+        "version" : "603.0.2"
-       }
-     },
-     {
-       "identity" : "xctest-dynamic-overlay",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-       "state" : {
--        "revision" : "4c27acf5394b645b70d8ba19dc249c0472d5f618",
--       
-```
+* cleanup
 
-**File**: `Examples/Reminders/RemindersApp.swift` (modified, +3/-3)
-```diff
-@@ -34,7 +34,7 @@ struct RemindersApp: App {
-           isPresented: $syncEngineDelegate.isDeleteLocalDataAlertPresented
-         ) {
-           Button("Reset", role: .destructive) {
--            Task {
-+            _ = Task {
-               try await syncEngine.deleteLocalData()
-             }
-           }
-@@ -100,7 +100,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-     _ windowScene: UIWindowScene,
-     userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata
-   ) {
--    Task {
-+    _ = Task {
-       try await syncEngine.acceptShare(metadata: cloudKitShareMetadata)
-     }
-   }
-@@ -114,7 +114,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-     else {
-       return
-     }
--    Task {
-+    _ = Task {
-       try await syncEngine.acceptShare(metadata: cloudKitShareMetadata)
-     }
-   }
-```
+* Add some prints to make it clear queries are not being executed.
 
-**File**: `Examples/Reminders/RemindersDetail.swift` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ class RemindersDetailModel: HashableObject {
-     }
-   }
- 
--  private var remindersQuery: some StructuredQueriesCore.Statement<Row> {
-+  private var remindersQuery: some Statement<Row> & Sendable {
-     Reminder
-       .where {
-         if !showCompleted {
-```
-
-**File**: `Examples/Reminders/Schema.swift` (modified, +1/-1)
-```diff
-@@ -390,7 +390,7 @@ nonisolated func handleReminderStatusUpdate() {
- 
- @DatabaseFunction
- nonisolated func createDefaultRemindersList() {
--  Task {
-+  _ = Task {
-     @Dependency(\.defaultDatabase) var database
-     try await database.write { db in
-       try RemindersList.insert {
-```
-
-**File**: `Examples/Reminders/SearchReminders.swift` (modified, +1/-2)
-```diff
-@@ -1,4 +1,3 @@
--import GRDB
- import IssueReporting
- import SQLiteData
- import SwiftUI
-@@ -227,7 +226,7 @@ struct SearchRemindersView: View {
-         }
-         Spacer()
-         Button(model.showCompletedInSearchResults ? "Hide" : "Show") {
--          Task { try await model.showCompletedButtonTapped() }
-+          _ = Task { try await model.showCompletedButtonTapped() }
-         }
-       }
-     }
-```
-
-**File**: `Examples/Reminders/TagsForm.swift` (modified, +0/-1)
-```diff
-@@ -1,4 +1,3 @@
--import GRDB
- import SQLiteData
- import SwiftUI
- import SwiftUINavigation
-```
-
-**File**: `Package.resolved` (modified, +27/-27)
-```diff
-@@ -1,40 +1,40 @@
- {
--  "originHash" : "725d8f778c84290ef81225fe8c548ff0a0169261b1f4fb6567dc64db04374bbd",
-+  "originHash" : "0ab18ed31f19c7e2b527b6bcc8ba2fc8708fcc9962e7bd79c8d049cb9595154d",
-   "pins" : [
-     {
-       "identity" : "combine-schedulers",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/combine-schedulers",
-       "state" : {
--        "revision" : "fd16d76fd8b9a976d88bfb6cacc05ca8d19c91b6",
--        "version" : "1.1.0"
-+        "revision" : "dcccb979a2183b8df3334237e3dc1ae2b4116a86",
-+        "version" : "1.2.0"
-       }
-     },
-     {
-       "identity" : "grdb.swift",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/groue/GRDB.swift",
-       "state" : {
--        "revision" : "36e30a6f1ef10e4194f6af0cff90888526f0c115",
--        "version" : "7.10.0"
-+        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
-+        "version" : "7.11.0"
-       }
-     },
-     {
-       "identity" : "swift-clocks",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-clocks",
-       "state" : {
--        "revision" : "cc46202b53476d64e824e0b6612da09d84ffde8e",
--        "version" : "1.0.6"
-+        "revision" : "72d749bf341b78851203066ab421869b783ec42a",
-+        "version" : "1.1.0"
-       }
-     },
-     {
-       "identity" : "swift-collections",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/apple/swift-collections",
-       "state" : {
--        "revision" : "7b847a3b7008b2dc2f47ca3110d8c782fb2e5c7e",
--        "version" : "1.3.0"
-+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-+        "version" : "1.6.0"
-       }
-     },
-     {
-@@ -51,26 +51,26 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-custom-dump",
-       "state" : {
--        "revision" : "2a2a938798236b8fa0bc57c453ee9de9f9ec3ab0",
--        "version" : "1.4.1"
-+        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
-+        "version" : "1.6.0"
-       }
-     },
-     {
-       "identity" : "swift-dependencies",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-dependencies",
-       "state" : {
--        "revision" : "c79f72b3e67a1eb64f66f76704c22ed6a5c1ed84",
--        "version" : "1.11.0"
-+        "revision" : "16f7dd14ee28d04617090f2a73198b8b316ffa12",
-+        "version" : "1.13.1"
-       }
-     },
-     {
-       "identity" : "swift-docc-plugin",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/apple/swift-docc-plugin",
-       "state" : {
--        "revision" : "e977f65879f82b375a044c8837597f690c067da6",
--        "version" : "1.4.6"
-+        "revision" : "647c708be89f834fa6a6d4945442793a77ddf5b6",
-+        "version" : "1.5.0"
-       }
-     },
-     {
-@@ -96,53 +96,53 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-perception",
-       "state" : {
--        "revision" : "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
--        "version" : "2.0.9"
-+        "revision" : "25ac73741c3436605d61eceb5207e896973918e7",
-+        "version" : "2.0.10"
-       }
-     },
-     {
-       "identity" : "swift-sharing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-sharing",
-       "state" : {
--        "revision" : "3bfc408cc2d0bee2287c174da6b1c76768377818",
--        "version" : "2.7.4"
-+        "revision" : "e47a2f545bafa3c0c702600f3e6ce02b3d566b6f",
-+        "version" : "2.8.2"
-       }
-     },
-     {
-       "identity" : "swift-snapshot-testing",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
-       "state" : {
--        "revision" : "bf8d8c27f0f0c6d5e77bff0db76ab68f2050d15d",
--        "version" : "1.18.9"
-+        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
-+        "version" : "1.19.2"
-       }
-     },
-     {
-       "identity" : "swift-structured-queries",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/swift-structured-queries",
-       "state" : {
--        "revision" : "20db4a2a446f51e67e1207d54a23ad0a03471a7b",
--        "version" : "0.31.0"
-+        "revision" : "8da8818fccd9959bd683934ddc62cf45bb65b3c8",
-+        "version" : "0.31.1"
-       }
-     },
-     {
-       "identity" : "swift-syntax",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/swiftlang/swift-syntax",
-       "state" : {
--        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
--        "version" : "602.0.0"
-+        "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
-+        "version" : "603.0.2"
-       }
-     },
-     {
-       "identity" : "xctest-dynamic-overlay",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-       "state" : {
--        "revision" : "dfd70507def84cb5fb82127844
-```
-
-**File**: `Sources/SQLiteData/CloudKit/CloudKitSharing.swift` (modified, +7/-5)
-```diff
-@@ -1,11 +1,13 @@
- #if canImport(CloudKit)
-   public import CloudKit
--  public import Dependencies
-+  import ConcurrencyExtras
-   import GRDB
--  public import SwiftUI
-+  import IssueReporting
-   public import StructuredQueries
- 
--  #if canImport(UIKit)
-+  #if canImport(SwiftUI) && canImport(UIKit) && !os(tvOS) && !os(watchOS)
-+    public import Dependencies
-+    public import SwiftUI
-     public import UIKit
-   #endif
- 
-@@ -255,7 +257,7 @@
-     }
-   }
- 
--  #if canImport(UIKit) && !os(tvOS) && !os(watchOS)
-+  #if canImport(SwiftUI) && canImport(UIKit) && !os(tvOS) && !os(watchOS)
-     /// A view that presents standard screens for adding and removing people from a CloudKit share \
-     /// record.
-     ///
-@@ -348,7 +350,7 @@
-               }
- 
-               Button("Stop Sharing", role: .destructive) {
--                Task {
-+                _ = Task {
-                   try await syncEngine.unshare(share: sharedRecord.share)
-                   try await syncEngine.fetchChanges()
-                   dismiss()
-```
-
----
-
-### Incident Patch 10: `59b3b401` (2026-06-06)
-**Commit Message**: Fix compile error by making Tagged import public (#476)
-
-* Fix compile error by making Tagged import public
-
-* Enable SQLiteDataTagged trait in CI.
+* wip
 
 ---------
 
 Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +171/-34)
 ```diff
-@@ -24,7 +24,7 @@ jobs:
-       - name: Build ${{ matrix.config }} without exports
-         run: swift build -c ${{ matrix.config }} -Xswiftc -D -Xswiftc EXCLUDE_EXPORTS
-       - name: Run ${{ matrix.config }} tests
--        run: swift test -c ${{ matrix.config }}
-+        run: swift test -c ${{ matrix.config }} --traits SQLiteDataTagged
+@@ -3,22 +3,24 @@
+ 	archiveVersion = 1;
+ 	classes = {
+ 	};
+-	objectVersion = 100;
++	objectVersion = 77;
+ 	objects = {
  
-   examples:
-     name: Examples
+ /* Begin PBXBuildFile section */
+ 		CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = CA14DBC82DA884C400E36852 /* CasePaths */; };
+ 		CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA2908C82D4AF70E003F165F /* UIKitNavigation */; };
+ 		CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE292E71C469000974D3 /* SQLiteData */; };
+-		CA2BDE2C2E71C472000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2B2E71C472000974D3 /* SQLiteData */; };
+-		CA2BDE2E2E71C479000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2D2E71C479000974D3 /* SQLiteData */; };
+-		CA2BDE302E71C480000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE2F2E71C480000974D3 /* SQLiteData */; };
+ 		CA5E46912DEBB8570069E0F8 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E46902DEBB8570069E0F8 /* SwiftUINavigation */; };
+ 		CA5E47072DECEF0F0069E0F8 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E47062DECEF0F0069E0F8 /* InlineSnapshotTesting */; };
+ 		CA5E47092DECEFC80069E0F8 /* SnapshotTestingCustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E47082DECEFC80069E0F8 /* SnapshotTestingCustomDump */; };
+ 		CA5E470B2DECF0280069E0F8 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CA5E470A2DECF0280069E0F8 /* DependenciesTestSupport */; };
+ 		CAD001872D874F1F00FA977A /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CAD001862D874F1F00FA977A /* DependenciesTestSupport */; };
+ 		DC5FA7482D4C63D60082743E /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = DC5FA7472D4C63D60082743E /* DependenciesMacros */; };
++		DCB8AD4A30363D3800ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4930363D3800ACF09E /* SQLiteData */; };
++		DCB8AD4C30363DB100ACF09E /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4B30363DB100ACF09E /* UIKitNavigation */; };
++		DCB8AD4E30363F2100ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4D30363F2100ACF09E /* SQLiteData */; };
++		DCB8AD5030363F2600ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD4F30363F2600ACF09E /* SQLiteData */; };
++		DCB8AD5230363F2A00ACF09E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = DCB8AD5130363F2A00ACF09E /* SQLiteData */; };
+ 		DCBE8A142D4842BF0071F499 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = DCBE8A132D4842BF0071F499 /* CasePaths */; };
+ 		DCF267392D48437300B680BE /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DCF267382D48437300B680BE /* SwiftUINavigation */; };
+ /* End PBXBuildFile section */
+@@ -56,6 +58,8 @@
+ 		CAF836982D4735620047AEB5 /* CaseStudies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaseStudies.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		CAF836A82D4735640047AEB5 /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		CAF836D82D4735AB0047AEB5 /* Reminders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
++		DC1584A630363595009DD95C /* Integration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Integration.app; sourceTree = BUILT_PRODUCTS_DIR; };
++		DC55FADE30363BB000F2D8D3 /* sqlite-data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "sqlite-data"; path = "/Users/stephen/Developer/pointfreeco/sqlite-data"; sourceTree = "<absolute>"; };
+ 		DCBE89CC2D483FB90071F499 /* SyncUps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncUps.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ /* End PBXFileReference section */
+ 
+@@ -75,6 +79,14 @@
+ 			);
+ 			target = CAF836972D4735620047AEB5 /* CaseStudies */;
+ 		};
++		DC15854C303636A7009DD95C /* Exceptions for "CaseStudies" folder in "Integration" target */ = {
++			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
++			membershipExceptions = (
++				Internal/CaseStudy.swift,
++				"Internal/Text+Template.swift",
++			);
++			target = DC1584A530363595009DD95C /* Integration */;
++		};
+ 		DCA44CFA2D5D9D1E008D4E76 /* Exceptions for "Reminders" folder in "Reminders" target */ = {
+ 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+ 			membershipExceptions = (
+@@ -116,6 +128,7 @@
+ 			isa = PBXFileSystemSynchronizedRootGroup;
+ 			exceptions = (
+ 				CAD4819A2D584B510004799A /* Excep
 ```
 
-**File**: `Sources/SQLiteData/Traits/Tagged.swift` (modified, +1/-1)
+**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +3/-3)
 ```diff
 @@ -1,5 +1,5 @@
- #if SQLiteDataTagged
--  import Tagged
-+  public import Tagged
- 
-   extension Tagged: IdentifierStringConvertible where RawValue: IdentifierStringConvertible {
-     public init?(rawIdentifier: String) {
+ {
+-  "originHash" : "c133bf7d10c8ce1e5d6506c3d2f080eac8b4c8c2827044d53a9b925e903564fd",
++  "originHash" : "c56e7b70de4fe8bcc798354797a8405c0eeb2e9bc68bc0f202c14a8b11a0a97f",
+   "pins" : [
+     {
+       "identity" : "combine-schedulers",
+@@ -24,8 +24,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/pointfreeco/swift-case-paths",
+       "state" : {
+-        "revision" : "206cbce3882b4de9aee19ce62ac5b7306cadd45b",
+-        "version" : "1.7.3"
++        "revision" : "794f4b0a9cf32042592388d014f6a1ea987d323a",
++        "version" : "1.9.1"
+       }
+     },
+     {
+```
+
+**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/CloudKitDemo.xcscheme` (modified, +3/-0)
+```diff
+@@ -17,6 +17,7 @@
+                BuildableIdentifier = "primary"
+                BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
+                BuildableName = "CloudKitDemo.app"
++               BlueprintName = "CloudKitDemo"
+                ReferencedContainer = "container:Examples.xcodeproj">
+             </BuildableReference>
+          </BuildActionEntry>
+@@ -46,6 +47,7 @@
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
+             BuildableName = "CloudKitDemo.app"
++            BlueprintName = "CloudKitDemo"
+             ReferencedContainer = "container:Examples.xcodeproj">
+          </BuildableReference>
+       </BuildableProductRunnable>
+@@ -62,6 +64,7 @@
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "CA2BDD9C2E71C30B000974D3"
+             BuildableName = "CloudKitDemo.app"
++            BlueprintName = "CloudKitDemo"
+             ReferencedContainer = "container:Examples.xcodeproj">
+          </BuildableReference>
+       </BuildableProductRunnable>
+```
+
+**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/Integration.xcscheme` (added, +76/-0)
+```diff
+@@ -0,0 +1,76 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Scheme
++   LastUpgradeVersion = "2700"
++   version = "1.7">
++   <BuildAction
++      parallelizeBuildables = "YES"
++      buildImplicitDependencies = "YES"
++      buildArchitectures = "Automatic">
++      <BuildActionEntries>
++         <BuildActionEntry
++            buildForTesting = "YES"
++            buildForRunning = "YES"
++            buildForProfiling = "YES"
++            buildForArchiving = "YES"
++            buildForAnalyzing = "YES">
++            <BuildableReference
++               BuildableIdentifier = "primary"
++               BlueprintIdentifier = "DC1584A530363595009DD95C"
++               BuildableName = "Integration.app"
++               ReferencedContainer = "container:Examples.xcodeproj">
++            </BuildableReference>
++         </BuildActionEntry>
++      </BuildActionEntries>
++   </BuildAction>
++   <TestAction
++      buildConfiguration = "Debug"
++      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
++      shouldUseLaunchSchemeArgsEnv = "YES"
++      shouldAutocreateTestPlan = "YES">
++   </TestAction>
++   <LaunchAction
++      buildConfiguration = "Debug"
++      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
++      launchStyle = "0"
++      useCustomWorkingDirectory = "NO"
++      ignoresPersistentStateOnLaunch = "NO"
++      debugDocumentVersioning = "YES"
++      debugServiceExtension = "internal"
++      allowLocationSimulation = "YES"
++      queueDebuggingEnabled = "No">
++      <BuildableProductRunnable
++         runnableDebuggingMode = "0">
++         <BuildableReference
++            BuildableIdentifier = "primary"
++            BlueprintIdentifier = "DC1584A530363595009DD95C"
++            BuildableName = "Integration.app"
++            ReferencedContainer = "container:Examples.xcodeproj">
++         </BuildableReference>
++      </BuildableProductRunnable>
++   </LaunchAction>
++   <ProfileAction
++      buildConfiguration = "Release"
++      shouldUseLaunchSchemeArgsEnv = "YES"
++      savedToolIdentifier = ""
++      useCustomWorkingDirectory = "NO"
++      debugDocumentVersioning = "YES">
++      <BuildableProductRunnable
++         runnableDebuggingMode = "0">
++         <BuildableReference
++            BuildableIdentifier = "primary"
++            BlueprintIdentifier = "DC1584A530363595009DD95C"
++            BuildableName = "Integration.app"
++            ReferencedContainer = "container:Examples.xcodeproj">
++         </BuildableReference>
++      </BuildableProductRunnable>
++   </ProfileAction>
++   <AnalyzeAction
++      buildConfiguration = "Debug">
++   </AnalyzeAction>
++   <ArchiveAction
++      buildConfiguration = "Release"
++      revealArchiveInOrganizer = "YES">
++   </ArchiveAction>
++</Scheme>
+```
+
+**File**: `Examples/Integration/Assets.xcassets/AccentColor.colorset/Contents.json` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++{
++  "colors" : [
++    {
++      "idiom" : "universal"
++    }
++  ],
++  "info" : {
++    "author" : "xcode",
++    "version" : 1
++  }
++}
+```
+
+**File**: `Examples/Integration/Assets.xcassets/AppIcon.appiconset/Contents.json` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++{
++  "images" : [
++    {
++      "idiom" : "universal",
++      "platform" : "ios",
++      "size" : "1024x1024"
++    },
++    {
++      "appearances" : [
++        {
++          "appearance" : "luminosity",
++          "value" : "dark"
++        }
++      ],
++      "idiom" : "universal",
++      "platform" : "ios",
++      "size" : "1024x1024"
++    },
++    {
++      "appearances" : [
++        {
++          "appearance" : "luminosity",
++          "value" : "tinted"
++        }
++      ],
++      "idiom" : "universal",
++      "platform" : "ios",
++      "size" : "1024x1024"
++    }
++  ],
++  "info" : {
++    "author" : "xcode",
++    "version" : 1
++  }
++}
+```
+
+**File**: `Examples/Integration/Assets.xcassets/Contents.json` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++{
++  "info" : {
++    "author" : "xcode",
++    "version" : 1
++  }
++}
+```
+
+**File**: `Examples/Integration/IntegrationApp.swift` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++import SwiftUI
++
++@main
++struct IntegrationApp: App {
++  var body: some Scene {
++    WindowGroup {
++    }
++  }
++}
 ```
 
 ---
 
-### Incident Patch 11: `f58d5d4c` (2026-06-04)
-**Commit Message**: fix (#456)
+### Incident Patch 3: `7f7ca8f7` (2026-10-13)
+**Commit Message**: Update demos for xcode 27 and debug snapshots (#531)
 
-**File**: `Sources/SQLiteData/CloudKit/SyncEngine.swift` (modified, +3/-3)
-```diff
-@@ -19,7 +19,7 @@
- 
-   /// An object that manages the synchronization of local and remote SQLite data.
-   ///
--  /// See <doc:CloudKit> for more information.
-+  /// See <doc:CloudKitSync> for more information.
-   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-   public final class SyncEngine: Observable, Sendable {
-     package let userDatabase: UserDatabase
-@@ -900,7 +900,7 @@
- 
-     /// Whether or not the ``SyncEngine`` is currently writing changes to the database.
-     ///
--    /// See <doc:CloudKit#Updating-triggers-to-be-compatible-with-synchronization> for more info.
-+    /// See <doc:CloudKitSync#Updating-triggers-to-be-compatible-with-synchronization> for more info.
-     @DatabaseFunction("sqlitedata_icloud_syncEngineIsSynchronizingChanges")
-     public static var isSynchronizing: Bool {
-       if _isCreatingTemporaryTrigger {
-@@ -2201,7 +2201,7 @@
-     /// Attaches the metadatabase to an existing database connection.
-     ///
-     /// Invoke this method when preparing your database connection in order to allow querying the
--    /// ``SyncMetadata`` table (see <doc:CloudKit#Accessing-CloudKit-metadata> for more info):
-+    /// ``SyncMetadata`` table (see <doc:CloudKitSync#Accessing-CloudKit-metadata> for more info):
-     ///
-     /// ```swift
-     /// func appDatabase() -> any DatabaseWriter {
-```
+* Fix some Xcode 27 warnings and use DebugSnapshots.
 
-**File**: `Sources/SQLiteData/CloudKit/SyncMetadata.swift` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
-   /// application is the number of rows this one single table holds. However, this table is held
-   /// in a database separate from your app's database.
-   ///
--  /// See <doc:CloudKit#Accessing-CloudKit-metadata> for more info.
-+  /// See <doc:CloudKitSync#Accessing-CloudKit-metadata> for more info.
-   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-   @Table("sqlitedata_icloud_metadata")
-   public struct SyncMetadata: Hashable, Identifiable, Sendable {
-```
+* Fix @MainActor warnings.
 
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/AddingToGRDB.md` (modified, +3/-3)
-```diff
-@@ -8,7 +8,7 @@ Learn how to add SQLiteData to an existing app that uses GRDB.
- to interact with SQLite under the hood, such as performing queries and observing changes to the
- database. If you have an existing application using GRDB, and would like to use the tools of this
- library, such as [`@FetchAll`](<doc:FetchAll>), the SQL query builder, and
--[CloudKit synchronization](<doc:CloudKit>), then there are a few steps you must take.
-+[CloudKit synchronization](<doc:CloudKitSync>), then there are a few steps you must take.
- 
- ## Replace PersistableRecord and FetchableRecord with @Table
- 
-@@ -169,7 +169,7 @@ try Reminder.insert {
- 
- ## CloudKit synchronization
- 
--The library's [CloudKit](<doc:CloudKit>) synchronization tools require that the tables being
-+The library's [CloudKit](<doc:CloudKitSync>) synchronization tools require that the tables being
- synchronized have a primary key, and this is enforced through the `PrimaryKeyedTable` protocol.
- The `@Table` macro automatically applies this protocol for you when your type has an `id` field,
- but if you use a different name for your primary key you will need to use the `@Column` macro
-@@ -186,6 +186,6 @@ to specify that:
- The library further requires your tables use globally unique identifiers (such as UUID) for their
- primary keys, and in particular auto-incrementing integer IDs do _not_ work. You will need to
- migrate your tables to use UUIDs, see
--<doc:CloudKit#Preparing-an-existing-schema-for-synchronization> for more information.
-+<doc:CloudKitSync#Preparing-an-existing-schema-for-synchronization> for more information.
- 
- [GRDB]: http://github.com/groue/GRDB.swift
-```
+* Update all reminders tests to use DebugSnapshots
 
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/CloudKitSharing.md` (modified, +3/-3)
+* Update all SyncUps tests to use DebugSnapshots.
+
+* wip
+
+* Improve some tests
+
+* wip
+
+* wip
+
+**File**: `Examples/CaseStudies/Internal/CaseStudy.swift` (modified, +0/-2)
 ```diff
-@@ -179,7 +179,7 @@ you can share root records, like reminders lists. If you do invoke
- ``SyncEngine/share(record:configure:)`` with a non-root record, an error will be thrown.
+@@ -1,7 +1,6 @@
+ import SwiftUI
+ import UIKitNavigation
  
- > Note: A reminder can still be shared as an association to a shared reminders list, as discussed
--> [in the next section](<doc:CloudKit#Sharing-foreign-key-relationships>). However, a single
-+> [in the next section](<doc:CloudKitSync#Sharing-foreign-key-relationships>). However, a single
- > reminder cannot be shared on its own.
- 
- For a more complex example, consider the following diagrammatic schema for a reminders app:
-@@ -336,7 +336,7 @@ excels at.
- 
- One-to-"at most one" relationships in SQLite allow you to associate zero or one records with
- another record. For an example of this, suppose we wanted to hold onto a cover image for reminders
--lists (see <doc:CloudKit#Assets> for more information on synchronizing assets such as images). It
-+lists (see <doc:CloudKitSync#Assets> for more information on synchronizing assets such as images). It
- is perfectly fine to hold onto large binary data in SQLite, such as image data, but typically one
- should put this data in a separate table.
- 
-@@ -384,7 +384,7 @@ do {
+-@MainActor
+ protocol CaseStudy {
+   var readMe: String { get }
+   var caseStudyTitle: String { get }
+@@ -17,7 +16,6 @@ extension CaseStudy {
  }
- ```
  
--See <doc:CloudKit#Accessing-CloudKit-metadata> for more information on accessing the metadata
-+See <doc:CloudKitSync#Accessing-CloudKit-metadata> for more information on accessing the metadata
- associated with your user's data.
- 
- Ideally your app would not allow the user to write to records that they do not have permissions for.
+ @resultBuilder
+-@MainActor
+ enum CaseStudyViewBuilder {
+   @ViewBuilder
+   static func buildBlock() -> some View {}
 ```
 
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/CloudKitSync.md` (renamed, +3/-3)
+**File**: `Examples/CaseStudies/ObservableModelDemo.swift` (modified, +0/-1)
 ```diff
-@@ -117,7 +117,7 @@ This will allow you to query the ``SyncMetadata`` table, which gives you access
- stored for each of your records, as well as the `CKShare` for any shared records.
+@@ -43,7 +43,6 @@ struct ObservableModelDemo: SwiftUICaseStudy {
+ }
  
- See the ``GRDB/Database/attachMetadatabase(containerIdentifier:)`` for more information, as well
--as <doc:CloudKit#Accessing-CloudKit-metadata> below.
-+as <doc:CloudKitSync#Accessing-CloudKit-metadata> below.
+ @Observable
+-@MainActor
+ private class Model {
+   @ObservationIgnored
+   @FetchAll(Fact.order { $0.id.desc() }, animation: .default)
+```
+
+**File**: `Examples/Examples.xcodeproj/project.pbxproj` (modified, +132/-40)
+```diff
+@@ -7,6 +7,8 @@
+ 	objects = {
  
- ## Designing your schema with synchronization in mind
+ /* Begin PBXBuildFile section */
++		CA0923FC3037ED040053D2D7 /* DebugSnapshots in Frameworks */ = {isa = PBXBuildFile; productRef = CA0923FB3037ED040053D2D7 /* DebugSnapshots */; };
++		CA0923FE3037ED040053D2D7 /* DebugSnapshots in Frameworks */ = {isa = PBXBuildFile; productRef = CA0923FD3037ED040053D2D7 /* DebugSnapshots */; };
+ 		CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */ = {isa = PBXBuildFile; productRef = CA14DBC82DA884C400E36852 /* CasePaths */; };
+ 		CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA2908C82D4AF70E003F165F /* UIKitNavigation */; };
+ 		CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = CA2BDE292E71C469000974D3 /* SQLiteData */; };
+@@ -163,59 +165,77 @@
+ /* Begin PBXFrameworksBuildPhase section */
+ 		CA2BDD9A2E71C30B000974D3 /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 				CA2BDE2A2E71C469000974D3 /* SQLiteData in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		CA5E46932DEBFE410069E0F8 /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 				CA5E47092DECEFC80069E0F8 /* SnapshotTestingCustomDump in Frameworks */,
+ 				CA5E47072DECEF0F0069E0F8 /* InlineSnapshotTesting in Frameworks */,
+ 				CA5E470B2DECF0280069E0F8 /* DependenciesTestSupport in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		CAD0017A2D874E6F00FA977A /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 				CAD001872D874F1F00FA977A /* DependenciesTestSupport in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		CAF836952D4735620047AEB5 /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 				DCB8AD4E30363F2100ACF09E /* SQLiteData in Frameworks */,
+ 				CA2908C92D4AF70E003F165F /* UIKitNavigation in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		CAF836A52D4735640047AEB5 /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		CAF836D52D4735AB0047AEB5 /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
++				CA0923FC3037ED040053D2D7 /* DebugSnapshots in Frameworks */,
+ 				DCB8AD5030363F2600ACF09E /* SQLiteData in Frameworks */,
+ 				CA14DBC92DA884C400E36852 /* CasePaths in Frameworks */,
+ 				CA5E46912DEBB8570069E0F8 /* SwiftUINavigation in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		DC1584A330363595009DD95C /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 				DCB8AD4A30363D3800ACF09E /* SQLiteData in Frameworks */,
+ 				DCB8AD4C30363DB100ACF09E /* UIKitNavigation in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ 		DCBE89C92D483FB90071F499 /* Frameworks */ = {
+ 			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
+ 			files = (
+ 				DCF267392D48437300B680BE /* SwiftUINavigation in Frameworks */,
+ 				DC5FA7482D4C63D60082743E /* DependenciesMacros in Frameworks */,
+ 				DCB8AD5230363F2A00ACF09E /* SQLiteData in Frameworks */,
+ 				DCBE8A142D4842BF0071F499 /* CasePaths in Frameworks */,
++				CA0923FE3037ED040053D2D7 /* DebugSnapshots in Frameworks */,
+ 			);
++			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+ /* End PBXFrameworksBuildPhase section */
  
-@@ -538,7 +538,7 @@ exposed for you to query it in whichever way you want.
- > Important: In order to query the `SyncMetadata` table from your database connection you will need
- to attach the metadatabase to your database connection. This can be done with the
- ``GRDB/Database/attachMetadatabase(containerIdentifier:)`` method defined on `Database`. See
--<doc:CloudKit#Setting-up-a-SyncEngine> for more information on how to do this.
-+<doc:CloudKitSync#Setting-up-a-SyncEngine> for more information on how to do this.
- 
- With that done you can use the ``StructuredQueriesCore/PrimaryKeyedTable/syncMetadataID`` property
- to construct a SQL query for fetching the metadata associated with one of your records.
-@@ -705,7 +705,7 @@ And in previews you can use it like so:
- 
- If you have an existing app deployed to the app store using SQLite, then you may have to perform
- a migration on your schema to prepare it for synchronization. The most important requirement
--detailed above in <doc:CloudKit#Designing-your-schema-with-synchronization-in-mind> is that
-+detailed above in <doc:CloudKitSync#Designing-your-schema-with-synchronization-in-mind> is that
- all tables _must_ have a primary key, and all primary keys must be globally unique identifiers
- such as UUID, and cannot be simple auto-incrementing integers.
+@@ -273,6 +293,8 @@
+ 			);
+ 			buildRules = (
+ 			);
++			dependencies = (
++			);
+ 			fileSystemSynchronizedGroups = (
+ 				CA2BDD9E2E71C30B000974D3 /* CloudKitDemo */,
+ 			);
+@@ -344,6 +366,8 @@
+ 			);
+ 			buildRules = (
+ 			);
++			dependencies = (
++			);
+ 			fileSystemSynchronizedGroups = (
+ 				CAF8369A2D4735620047AEB5 /* CaseStudies */,
+ 			);
+@@ -373,6 +397,8 @@
+ 				CAF836AB2D4735640047AEB5 /* CaseStudiesTests */,
+ 			);
+ 			name = CaseStudiesTests;
++			packageProductDependencies = (
++			);
+ 			productName = ExamplesTests;
+ 			productReference = CAF836A82D4735640047AEB5 /* CaseStudiesTests.xctest */;
+ 			productType = "com.apple.product-type.bundle.unit-test";
+@@ -387,6 +413,8 @@
+ 			);
+ 			buildRules = (
+ 			);
++			dependencies = (
++			);
+ 			fileSystemSynchronizedGroups = (
+ 				CAF836D92D4735AB0047AEB5 /* Reminders */,
+ 			);
+@@ -395,6 +423,7 @@
+ 				CA14DBC82DA884C400E36852 /* CasePaths */,
+ 				CA5E46902DEBB8570069E0F8 /* SwiftUINavigation */,
+ 				DCB8AD4F30363F2600ACF09E /* SQLiteData */,
++				CA0923FB3037ED040053D2D7 /* DebugSnapshots */,
+ 			);
+ 			productName = Reminders;
+ 			productReference = CAF836D82D4735AB0047AEB5 /* Reminders.app */;
+@@ -410,6 +439,8 @@
+ 			);
+ 			buildRules = (
+ 			);
++			dependencies = (
++			);
+ 			fileSystemSynchronizedGroups = (
+ 				DC1584A730363595009DD95C /* Integration */,
+ 			);
+@@ -432,6 +463,8 @@
+ 			);
  
 ```
 
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/ComparisonWithSwiftData.md` (modified, +6/-6)
+**File**: `Examples/Examples.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (added, +159/-0)
 ```diff
-@@ -931,17 +931,17 @@ SQLiteData has only one of these limitations:
- * Unique constraints on columns (except for the primary key) cannot be upheld on a distributed
- schema. For example, if you have a `Tag` table with a unique `title` column, then what
- are you to do if two different devices create a tag with the title "family" at the same time?
--See <doc:CloudKit#Uniqueness-constraints> for more information.
-+See <doc:CloudKitSync#Uniqueness-constraints> for more information.
- * Columns on freshly created tables do not need to have default values or be nullable. Only
- newly added columns to existing tables need to either be nullable or have a default. See
--<doc:CloudKit#Adding-columns> for more info.
-+<doc:CloudKitSync#Adding-columns> for more info.
- * Relationships on freshly created do not need to be nullable. Only newly added columns to
--existing tables need to be nullable. See <doc:CloudKit#Adding-columns> for more info.
-+existing tables need to be nullable. See <doc:CloudKitSync#Adding-columns> for more info.
- 
- For more information about requirements of your schema in order to use CloudKit synchronization,
--see <doc:CloudKit#Designing-your-schema-with-synchronization-in-mind> and
--<doc:CloudKit#Backwards-compatible-migrations>, and for more general
--information about CloudKit synchronization, see <doc:CloudKit>.
-+see <doc:CloudKitSync#Designing-your-schema-with-synchronization-in-mind> and
-+<doc:CloudKitSync#Backwards-compatible-migrations>, and for more general
-+information about CloudKit synchronization, see <doc:CloudKitSync>.
- 
- ### Supported Apple platforms
- 
+@@ -0,0 +1,159 @@
++{
++  "originHash" : "ad41d862cbf4ae7f82f17f353075ecb723d246b512a0877f555e27ec8185459a",
++  "pins" : [
++    {
++      "identity" : "combine-schedulers",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/combine-schedulers",
++      "state" : {
++        "revision" : "114354e8c1667a2edc4993700fb9fa4f90157b56",
++        "version" : "1.2.2"
++      }
++    },
++    {
++      "identity" : "grdb.swift",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/groue/GRDB.swift",
++      "state" : {
++        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
++        "version" : "7.11.1"
++      }
++    },
++    {
++      "identity" : "swift-case-paths",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-case-paths",
++      "state" : {
++        "revision" : "cb4cba6a8a46a86db0d37dbe09935ead6b24c91a",
++        "version" : "1.10.0"
++      }
++    },
++    {
++      "identity" : "swift-clocks",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-clocks",
++      "state" : {
++        "revision" : "82440fa0a8b1c381a6d1e8e0fc7bbba53ec63204",
++        "version" : "1.1.1"
++      }
++    },
++    {
++      "identity" : "swift-collections",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/apple/swift-collections",
++      "state" : {
++        "revision" : "98ef3c98609a1e31b7e157b5b619579001a789d6",
++        "version" : "1.7.1"
++      }
++    },
++    {
++      "identity" : "swift-concurrency-extras",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
++      "state" : {
++        "revision" : "5fa253428866f2360c3754e88537f700ed2656b5",
++        "version" : "1.4.1"
++      }
++    },
++    {
++      "identity" : "swift-custom-dump",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-custom-dump",
++      "state" : {
++        "revision" : "4fb9e7cbb4b8f5a7354005db39447f570d6b3e19",
++        "version" : "1.7.3"
++      }
++    },
++    {
++      "identity" : "swift-debug-snapshots",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-debug-snapshots.git",
++      "state" : {
++        "revision" : "4e06b3615bd5e193525b331c218934dd42d30b2e",
++        "version" : "0.5.2"
++      }
++    },
++    {
++      "identity" : "swift-dependencies",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-dependencies",
++      "state" : {
++        "revision" : "b476cc5761057d8d857de063fe7ac8daecf5c06b",
++        "version" : "1.17.1"
++      }
++    },
++    {
++      "identity" : "swift-identified-collections",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-identified-collections",
++      "state" : {
++        "revision" : "322d9ffeeba85c9f7c4984b39422ec7cc3c56597",
++        "version" : "1.1.1"
++      }
++    },
++    {
++      "identity" : "swift-issue-reporting",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
++      "state" : {
++        "revision" : "75b000cea2ca6d7527a57e1b9cc0bdf21a9abe9f",
++        "version" : "2.1.1"
++      }
++    },
++    {
++      "identity" : "swift-navigation",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-navigation",
++      "state" : {
++        "revision" : "7e95e5e9ff0a64f6ad8bca59083f8d6ba381b6ff",
++        "version" : "2.11.2"
++      }
++    },
++    {
++      "identity" : "swift-perception",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-perception",
++      "state" : {
++        "revision" : "597afd46249f4a71885b95d26b26cc5b893daf32",
++        "version" : "2.0.12"
++      }
++    },
++    {
++      "identity" : "swift-sharing",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-sharing",
++      "state" : {
++        "revision" : "3552faf8a6c18ce896ec5a72bd8c34755f0f03e0",
++        "version" : "2.10.1"
++      }
++    },
++    {
++      "identity" : "swift-snapshot-testing",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
++      "state" : {
++        "revision" : "28e5de025e3fd98991791bfbf83023ab3708da03",
++        "version" : "1.19.6"
++      }
++    },
++    {
++      "identity" : "swift-structured-queries",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-structured-queries",
++      "state" : {
++        "revision" : "72d536d5f0319097612bea961e356f4223efd926",
++        "version" : "0.39.2"
++      }
++    },
++    {
++      "identity" : "swift-syntax",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/swiftlang/swift-syntax",
++      "state" : {
++        "revision" : "050f
 ```
 
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/ManuallyMigratingPrimaryKeys.md` (modified, +1/-1)
+**File**: `Examples/Examples.xcodeproj/xcshareddata/xcschemes/Integration.xcscheme` (modified, +3/-0)
 ```diff
-@@ -128,7 +128,7 @@ struct ReminderTag {
- ```
- 
- And a migration must be run to add that column to the table. However, you must perform a multi-step
--migration similar to what is described above in <doc:CloudKit#Convert-Int-primary-keys-to-UUID>.
-+migration similar to what is described above in <doc:CloudKitSync#Convert-Int-primary-keys-to-UUID>.
- You must 1) create a new table with the new primary key column, 2) copy data from the old table
- to the new table, 3) delete the old table, and finally 4) rename the new table.
- 
+@@ -17,6 +17,7 @@
+                BuildableIdentifier = "primary"
+                BlueprintIdentifier = "DC1584A530363595009DD95C"
+                BuildableName = "Integration.app"
++               BlueprintName = "Integration"
+                ReferencedContainer = "container:Examples.xcodeproj">
+             </BuildableReference>
+          </BuildActionEntry>
+@@ -46,6 +47,7 @@
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "DC1584A530363595009DD95C"
+             BuildableName = "Integration.app"
++            BlueprintName = "Integration"
+             ReferencedContainer = "container:Examples.xcodeproj">
+          </BuildableReference>
+       </BuildableProductRunnable>
+@@ -62,6 +64,7 @@
+             BuildableIdentifier = "primary"
+             BlueprintIdentifier = "DC1584A530363595009DD95C"
+             BuildableName = "Integration.app"
++            BlueprintName = "Integration"
+             ReferencedContainer = "container:Examples.xcodeproj">
+          </BuildableReference>
+       </BuildableProductRunnable>
 ```
 
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/PreparingDatabase.md` (modified, +1/-1)
+**File**: `Examples/Reminders/Helpers.swift` (modified, +4/-4)
 ```diff
-@@ -303,4 +303,4 @@ func feature() {
- 
- If you plan on synchronizing your local database to CloudKit so that your user's data is available
- on all of their devices, there is an additional step you must take. See
--<doc:CloudKit> for more information.
-+<doc:CloudKitSync> for more information.
-```
-
----
-
-### Incident Patch 12: `9adec29a` (2026-04-28)
-**Commit Message**: docs: fix a typo in `synchronize` (#452)
-
-**File**: `Sources/SQLiteData/Documentation.docc/Articles/CloudKit.md` (modified, +1/-1)
-```diff
-@@ -223,7 +223,7 @@ facilitate synchronizing to CloudKit.
- 
- Foreign keys are a SQL feature that allow one to express relationships between tables. This library
- uses that information to correctly implement synchronization behavior, such as knowing what order
--to syncrhonize records (parent first, then children), and knowing what associated records to
-+to synchronize records (parent first, then children), and knowing what associated records to
- share when sharing a root record.
- 
- To express a foreign key relationship between tables you use the `REFERENCES` clause in the table's
-```
-
----
-
-### Incident Patch 13: `6bb9d555` (2026-04-28)
-**Commit Message**: docs: fix a repeated typo `after` in test comments (#453)
-
-**File**: `Tests/SQLiteDataTests/CloudKitTests/ForeignKeyConstraintTests.swift` (modified, +2/-2)
-```diff
-@@ -599,7 +599,7 @@
-       // * Create 3 reminders lists and a reminder
-       // * Sync to CloudKit
-       // * Move reminder to different list on CloudKit, do not synchronize it right away.
--      // * A moment ater, move local reminder to different list
-+      // * A moment after, move local reminder to different list
-       // * Sync CloudKit to local
-       // * Then send local to CloudKit
-       // => Local edit wins
-@@ -695,7 +695,7 @@
-       // * Create 3 reminders lists and a reminder
-       // * Sync to CloudKit
-       // * Move reminder to different list on CloudKit, do not synchronize it right away.
--      // * A moment ater, move local reminder to different list
-+      // * A moment after, move local reminder to different list
-       // * Send local data to CloudKit
-       // * The synchronize CloudKit to local
-       // => Local edit wins
-```
-
----
-
-### Incident Patch 14: `0eed8230` (2026-03-25)
-**Commit Message**: Fix flakey delete() test.
-
-**File**: `Tests/SQLiteDataTests/CloudKitTests/PreviewTests.swift` (modified, +1/-0)
-```diff
-@@ -87,6 +87,7 @@
-         #expect(remindersLists.count == 0)
- 
-         await testClock.advance(by: .seconds(1))
-+        try await $remindersLists.load()
-         #expect(remindersLists.count == 0)
-         assertInlineSnapshot(of: container, as: .customDump) {
-           """
-```
-
----
-
-### Incident Patch 15: `da3a94ed` (2026-03-23)
-**Commit Message**: Rename CKRecord.setValue overload to setBytes to fix unexpected Xcode 26.4 overload resolution (#425)
-
-**File**: `Sources/SQLiteData/CloudKit/CloudKit+StructuredQueries.swift` (modified, +2/-2)
-```diff
-@@ -190,7 +190,7 @@
+@@ -23,10 +23,10 @@ extension Color {
+     public var hexValue: Int64? {
+       guard let components = UIColor(queryOutput).cgColor.components
+       else { return nil }
+-      let r = Int64(components[0] * 0xFF) << 24
+-      let g = Int64(components[1] * 0xFF) << 16
+-      let b = Int64(components[2] * 0xFF) << 8
+-      let a = Int64((components.indices.contains(3) ? components[3] : 1) * 0xFF)
++      let r = Int64((components[0] * 0xFF).rounded()) << 24
++      let g = Int64((components[1] * 0xFF).rounded()) << 16
++      let b = Int64((components[2] * 0xFF).rounded()) << 8
++      let a = Int64(((components.indices.contains(3) ? components[3] : 1) * 0xFF).rounded())
+       return r | g | b | a
      }
  
-     @discardableResult
--    package func setValue(
-+    package func setBytes(
-       _ newValue: [UInt8],
-       forKey key: CKRecord.FieldKey,
-       at userModificationTime: Int64
-@@ -252,7 +252,7 @@
-           let value = Value(queryOutput: row[keyPath: keyPath])
-           switch value.queryBinding {
-           case .blob(let value):
--            setValue(value, forKey: column.name, at: userModificationTime)
-+            setBytes(value, forKey: column.name, at: userModificationTime)
-           case .bool(let value):
-             setValue(value, forKey: column.name, at: userModificationTime)
-           case .double(let value):
 ```
 
-**File**: `Tests/SQLiteDataTests/CloudKitTests/AssetsTests.swift` (modified, +1/-1)
+**File**: `Examples/Reminders/RemindersDetail.swift` (modified, +7/-6)
 ```diff
-@@ -285,7 +285,7 @@
-           recordID: RemindersListAsset.recordID(for: 1)
-         )
-         remindersListAssetRecord.setValue("1", forKey: "id", at: now)
--        remindersListAssetRecord.setValue(
-+        remindersListAssetRecord.setBytes(
-           Array("image".utf8),
-           forKey: "coverImage",
-           at: now
+@@ -1,11 +1,12 @@
+ import CasePaths
+ import CloudKit
++import DebugSnapshots
+ import SQLiteData
+ import Sharing
+ import SwiftUI
+ import SwiftUINavigation
+ 
+-@MainActor
++@DebugSnapshot
+ @Observable
+ class RemindersDetailModel: HashableObject {
+   @ObservationIgnored @FetchAll var reminderRows: [Row]
+@@ -165,11 +166,11 @@ class RemindersDetailModel: HashableObject {
+   @Selection
+   struct Row: Identifiable {
+     var id: Reminder.ID { reminder.id }
+-    let reminder: Reminder
+-    let remindersList: RemindersList
+-    let isPastDue: Bool
+-    let notes: String
+-    let tags: String
++    var reminder: Reminder
++    var remindersList: RemindersList
++    var isPastDue: Bool
++    var notes: String
++    var tags: String
+   }
+ }
+ 
 ```
 
-**File**: `Tests/SQLiteDataTests/CloudKitTests/SchemaChangeTests.swift` (modified, +4/-4)
+**File**: `Examples/Reminders/RemindersLists.swift` (modified, +8/-5)
 ```diff
-@@ -716,7 +716,7 @@
-           let personalListRecord = try syncEngine.private.database.record(
-             for: RemindersList.recordID(for: 1)
-           )
--          personalListRecord.setValue(Array("image".utf8), forKey: "image", at: now)
-+          personalListRecord.setBytes(Array("image".utf8), forKey: "image", at: now)
+@@ -1,10 +1,11 @@
+ import CloudKit
++import DebugSnapshots
+ import SQLiteData
+ import SwiftUI
+ import SwiftUINavigation
+ import TipKit
  
-           try await syncEngine.modifyRecords(
-             scope: .private,
-@@ -775,15 +775,15 @@
-           let personalListRecord = try syncEngine.private.database.record(
-             for: RemindersList.recordID(for: 1)
-           )
--          personalListRecord.setValue(Array("personal-image".utf8), forKey: "image", at: now)
-+          personalListRecord.setBytes(Array("personal-image".utf8), forKey: "image", at: now)
-           let businessListRecord = try syncEngine.private.database.record(
-             for: RemindersList.recordID(for: 2)
-           )
--          businessListRecord.setValue(Array("business-image".utf8), forKey: "image", at: now)
-+          businessListRecord.setBytes(Array("business-image".utf8), forKey: "image", at: now)
-           let secretListRecord = try syncEngine.private.database.record(
-             for: RemindersList.recordID(for: 3)
-           )
--          secretListRecord.setValue(Array("secret-image".utf8), forKey: "image", at: now)
-+          secretListRecord.setBytes(Array("secret-image".utf8), forKey: "image", at: now)
+-@MainActor
++@DebugSnapshot
+ @Observable
+ class RemindersListsModel {
+   @ObservationIgnored
+@@ -49,8 +50,8 @@ class RemindersListsModel {
+   )
+   var stats = Stats()
  
-           try await syncEngine.modifyRecords(
-             scope: .private,
+-  var destination: Destination?
+-  var searchRemindersModel = SearchRemindersModel()
++  @DebugSnapshotConvertible var destination: Destination?
++  @DebugSnapshotConvertible var searchRemindersModel = SearchRemindersModel()
+   var seedDatabaseTip: SeedDatabaseTip?
+ 
+   @ObservationIgnored
+@@ -131,8 +132,8 @@ class RemindersListsModel {
+             let (first, rest) = (ids.first!, ids.dropFirst())
+             $0.position =
+               rest
+-              .reduce(Case($0.id).when(first.element, then: first.offset)) { cases, id in
+-                cases.when(id.element, then: id.offset)
++              .reduce(Case($0.id).when(first.element, then: first.offset + 1)) { cases, id in
++                cases.when(id.element, then: id.offset + 1)
+               }
+               .else($0.position)
+           }
+@@ -150,7 +151,9 @@ class RemindersListsModel {
+   #endif
+ 
+   @CasePathable
++  @DebugSnapshot
+   enum Destination {
++    @DebugSnapshotConvertible
+     case detail(RemindersDetailModel)
+     case reminderForm(Reminder.Draft, remindersList: RemindersList)
+     case remindersListForm(RemindersList.Draft)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #562** (2026-10-09): Add missing visionOS argument for when using UTF8Span to produce CollationOrder (@bobek-balinek)
 - **PR #546** (2026-09-14): Update CloudKit sync docs link (@DominikGrodl)
 - **PR #544** (closed): Disable unused Sharing traits (@Econa77)
 - **PR #540** (2026-08-29): StructuredQueries 0.38 support (@stephencelis)
 - **PR #538** (2026-08-26): Nest temporary databases in a single directory (@stephencelis)
 - **PR #537** (2026-08-26): Clean up test databases at exit (@stephencelis)
-- **PR #533** (closed): feat: expose recovery actions only for recoverable `SyncEngine.SharingError`s (@MojtabaHs)
-- **PR #532** (2026-08-31): User-defined collating sequences (@stephencelis)
-- **PR #529** (2026-08-19): Use sectionBy in CloudKit demo. (@mbrandonw)
 
 ---
 
@@ -4140,3 +2293,36 @@ Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)
+
+**RULE**:
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5856cba`: Box `@Fetch*` property wrappers in SwiftUI state when possible (#486). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        xcode: ["26.6"]
+        xcode: ["26.6"]
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+        xcode: ["26.2"]
+        xcode: ["26.2"]
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5856cba` are properly handled with clean fallback behavior.

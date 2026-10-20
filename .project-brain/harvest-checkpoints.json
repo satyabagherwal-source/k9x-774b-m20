@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T02:03:25.475Z",
+  "last_updated": "2026-10-20T02:09:31.636Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14967,6 +14967,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T02:03:20.255Z"
+    },
+    "pointfreeco/sqlite-data": {
+      "repository": "pointfreeco/sqlite-data",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pointfreeco-sqlite-data",
+      "content_hash": "63e5092d124ace11b6036f1b63b021d8b2f5af6ce4ac0c5735796bbe0cb5ba09",
+      "verified_at": "2026-10-20T02:09:31.327Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:09:31.327Z"
+    },
+    "sveltejs/svelte": {
+      "repository": "sveltejs/svelte",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sveltejs-svelte",
+      "content_hash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
+      "verified_at": "2026-10-20T02:09:31.635Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:09:31.635Z"
     }
   },
   "repos": {

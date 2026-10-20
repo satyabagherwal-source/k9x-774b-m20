@@ -3650,3 +3650,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `ff925ed5` | Multi-dimensional audit evidence | 2026-10-20T02:03:18.310Z |
 | `learn-github-shpigford-chops` | `https://github.com/Shpigford/chops` | `9d379d58` | Multi-dimensional audit evidence | 2026-10-20T02:03:20.249Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `6c60436a` | Multi-dimensional audit evidence | 2026-10-20T02:03:25.468Z |
+| `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `37c461a8` | Multi-dimensional audit evidence | 2026-10-20T02:09:31.320Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `40bb0848` | Multi-dimensional audit evidence | 2026-10-20T02:09:31.629Z |

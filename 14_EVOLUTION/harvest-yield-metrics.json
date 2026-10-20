@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:03:25.472Z",
-  "total_cycles_completed": 3620,
-  "total_learnings_persisted": 3620,
-  "total_rules_promoted": 2789,
+  "last_updated": "2026-10-20T02:09:31.633Z",
+  "total_cycles_completed": 3622,
+  "total_learnings_persisted": 3622,
+  "total_rules_promoted": 2791,
   "history": [
-    {
-      "timestamp": "2026-10-19T19:22:24.335Z",
-      "repository": "touchlab/DroidconKotlin",
-      "learningId": "learn-github-touchlab-droidconkotlin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T19:29:49.160Z",
-      "repository": "manojahi/serpiq",
-      "learningId": "learn-github-manojahi-serpiq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T19:29:51.915Z",
       "repository": "JuulLabs/kable",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T02:03:25.472Z",
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:09:31.324Z",
+      "repository": "pointfreeco/sqlite-data",
+      "learningId": "learn-github-pointfreeco-sqlite-data",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:09:31.633Z",
+      "repository": "sveltejs/svelte",
+      "learningId": "learn-github-sveltejs-svelte",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

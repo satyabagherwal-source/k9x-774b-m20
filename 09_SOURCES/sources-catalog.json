@@ -9948,5 +9948,25 @@
     "contentHash": "26e523d26e36fecca82f2c869197e980db7c032c23adf64a63a91eac56c12773",
     "lastHarvestedAt": "2026-10-20T02:03:20.249Z",
     "learningId": "learn-github-shpigford-chops"
+  },
+  "pointfreeco-sqlite-data": {
+    "repository": "pointfreeco/sqlite-data",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pointfreeco/sqlite-data",
+    "sourceVersion": "37c461a8",
+    "license": "MIT",
+    "contentHash": "63e5092d124ace11b6036f1b63b021d8b2f5af6ce4ac0c5735796bbe0cb5ba09",
+    "lastHarvestedAt": "2026-10-20T02:09:31.320Z",
+    "learningId": "learn-github-pointfreeco-sqlite-data"
+  },
+  "sveltejs-svelte": {
+    "repository": "sveltejs/svelte",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sveltejs/svelte",
+    "sourceVersion": "40bb0848",
+    "license": "MIT",
+    "contentHash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
+    "lastHarvestedAt": "2026-10-20T02:09:31.629Z",
+    "learningId": "learn-github-sveltejs-svelte"
   }
 }

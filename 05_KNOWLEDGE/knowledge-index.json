@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:03:25.421Z",
-  "total_verified_learnings": 1010,
+  "last_updated": "2026-10-20T02:09:31.571Z",
+  "total_verified_learnings": 1012,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -36088,22 +36088,35 @@
     "learn-github-pointfreeco-sqlite-data": {
       "learning_id": "learn-github-pointfreeco-sqlite-data",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pointfreeco-sqlite-data",
+      "source": "pointfreeco/sqlite-data",
+      "repository": "pointfreeco/sqlite-data",
       "slug": "pointfreeco-sqlite-data",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/sqlite-data",
-      "source_version": "HEAD",
-      "content_hash": "15d834b77021b801e0c8da48ded79d76f6f2b85abdbb6f20d9b74a58c5e6c232",
+      "source_version": "37c461a8",
+      "content_hash": "63e5092d124ace11b6036f1b63b021d8b2f5af6ce4ac0c5735796bbe0cb5ba09",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2986,
+          "title": "Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.073Z"
+      "verified_at": "2026-10-20T02:09:31.249Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pointfreeco-swift-composable-architecture": {
       "learning_id": "learn-github-pointfreeco-swift-composable-architecture",
@@ -59045,20 +59058,35 @@
     "learn-github-sveltejs-svelte": {
       "learning_id": "learn-github-sveltejs-svelte",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sveltejs/svelte",
       "repository": "sveltejs/svelte",
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "main",
-      "content_hash": "73ebafc74a8fa5cd27e9bdd0a5748a217f62871b8e2bed7375f83ca34216971a",
+      "source_version": "40bb0848",
+      "content_hash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2987,
+          "title": "prevent duplicate derived subscriptions on reconnect (#18899)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:09:31.558Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-solidjs-solid": {
       "learning_id": "learn-github-solidjs-solid",
@@ -96743,6 +96771,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:03:25.410Z"
+    },
+    "rule-2986": {
+      "learning_id": "rule-2986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2986,
+      "title": "Box `@Fetch*` property wrappers in SwiftUI state when possible (#486)",
+      "source_url": "https://github.com/pointfreeco/sqlite-data",
+      "source_version": "37c461a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:09:31.249Z"
+    },
+    "rule-2987": {
+      "learning_id": "rule-2987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2987,
+      "title": "prevent duplicate derived subscriptions on reconnect (#18899)",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "40bb0848",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:09:31.558Z"
     }
   },
   "aliases": {

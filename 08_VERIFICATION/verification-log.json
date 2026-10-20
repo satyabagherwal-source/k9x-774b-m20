@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-EYAC",
-    "timestamp": "2026-10-19T10:09:51.636Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "7b9b806dea0958146c7580f5d36d3389fc22ec0c2cc8f78e98fe4c1b8dc1c16c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F1E0",
-    "timestamp": "2026-10-19T10:09:55.656Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-F655",
     "timestamp": "2026-10-19T10:10:01.817Z",
     "repository": "msasikanth/twine",
@@ -7490,6 +7460,36 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "4a483f0cc33835457daa5a0ea6b246d64e7205caa6d6a8e82098a3022510c56b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-P31Y",
+    "timestamp": "2026-10-20T02:09:31.318Z",
+    "repository": "pointfreeco/sqlite-data",
+    "learningId": "learn-github-pointfreeco-sqlite-data",
+    "contentHash": "63e5092d124ace11b6036f1b63b021d8b2f5af6ce4ac0c5735796bbe0cb5ba09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-P3AA",
+    "timestamp": "2026-10-20T02:09:31.618Z",
+    "repository": "sveltejs/svelte",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

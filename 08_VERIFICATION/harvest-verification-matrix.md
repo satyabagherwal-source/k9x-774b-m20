@@ -3643,3 +3643,5 @@
 | `CYCLE-20261020-H38J` | `2026-10-20T02:03:18.307Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2983` | Yes (`7ab6aa29...`) |
 | `CYCLE-20261020-H4QF` | `2026-10-20T02:03:20.247Z` | `Shpigford/chops` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2984` | Yes (`26e523d2...`) |
 | `CYCLE-20261020-H8R8` | `2026-10-20T02:03:25.460Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2985` | Yes (`4a483f0c...`) |
+| `CYCLE-20261020-P31Y` | `2026-10-20T02:09:31.318Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2986` | Yes (`63e5092d...`) |
+| `CYCLE-20261020-P3AA` | `2026-10-20T02:09:31.618Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2987` | Yes (`8610cd34...`) |
