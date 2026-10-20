@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:40:51.926Z",
-  "total_cycles_completed": 3784,
-  "total_learnings_persisted": 3784,
-  "total_rules_promoted": 2980,
+  "last_updated": "2026-10-20T12:52:27.270Z",
+  "total_cycles_completed": 3787,
+  "total_learnings_persisted": 3787,
+  "total_rules_promoted": 2986,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:58:02.271Z",
-      "repository": "RDFLib/pySHACL",
-      "learningId": "learn-github-rdflib-pyshacl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:58:03.530Z",
-      "repository": "mikelikesdesign/SwiftUI-experiments",
-      "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:58:05.952Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:59:13.210Z",
       "repository": "tokio-rs/tokio",
@@ -1403,6 +1382,27 @@
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:50:08.089Z",
+      "repository": "microsoft/fluentui",
+      "learningId": "learn-github-microsoft-fluentui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:50:50.270Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:52:27.270Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

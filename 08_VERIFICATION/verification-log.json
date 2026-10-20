@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-QZPP",
-    "timestamp": "2026-10-19T14:59:09.517Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "9bf64e2d481efc4203e7d02560a400acfb84c232f9edcd60ca4b803e3c813fc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R28O",
-    "timestamp": "2026-10-19T14:59:12.792Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "cd2f1322c0209478c17e48b9c46c86755c72edb35bdcfc6c7acc3094057b9b8c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R31L",
-    "timestamp": "2026-10-19T14:59:13.833Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "1dec4a2149060c28e375b797444c5610f07701c3d4743159d84440d67d925bb2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-R4U4",
     "timestamp": "2026-10-19T14:59:16.156Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7447,51 @@
     "contentHash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-KX1Q",
+    "timestamp": "2026-10-20T12:50:08.078Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "cb7e7b5ecc99c97c513c8b8e668187dc9e329423bc082fba107100d3fece9987",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LTLF",
+    "timestamp": "2026-10-20T12:50:50.259Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NWFW",
+    "timestamp": "2026-10-20T12:52:27.260Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

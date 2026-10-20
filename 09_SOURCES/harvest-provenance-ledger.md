@@ -3814,3 +3814,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T12:40:45.648Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `e3001611` | Multi-dimensional audit evidence | 2026-10-20T12:40:47.941Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `ac888c8b` | Multi-dimensional audit evidence | 2026-10-20T12:40:51.922Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `e2642c72` | Multi-dimensional audit evidence | 2026-10-20T12:50:08.085Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-20T12:50:50.266Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `2a724583` | Multi-dimensional audit evidence | 2026-10-20T12:52:27.266Z |

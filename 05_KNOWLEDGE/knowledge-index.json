@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T12:40:51.863Z",
+  "last_updated": "2026-10-20T12:52:27.197Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12166,8 +12166,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "cfe80f9d",
-      "content_hash": "3257ee3fcee2f1fe4c92e7abd34647a91bfd5ade3866a464de7b311b48b5589d",
+      "source_version": "2a724583",
+      "content_hash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -12180,6 +12180,16 @@
           "number": 2746,
           "title": "grpc/protobuf: avoid unit Result Err; use impl AsView on all sends (#2927)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3173,
+          "title": "Source Preservation in Error Hierarchy Translation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3174,
+          "title": "Lock-Free Metric Snapshot-and-Reset Boundedness",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12187,7 +12197,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:35:51.461Z",
+      "verified_at": "2026-10-20T12:52:27.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24862,7 +24872,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
+      "content_hash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -24885,6 +24895,21 @@
           "number": 1850,
           "title": "Multi-Modal Token Boundary Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3170,
+          "title": "Multi-EOS Token Termination & Left-Padding Coherence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3171,
+          "title": "Low-Rank Latent Cache (MLA) Dimension & Memory Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3172,
+          "title": "Sparse Indexer Cadence & Layer Sharing Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24904,7 +24929,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-18T23:26:55.553Z",
+      "verified_at": "2026-10-20T12:50:50.184Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31476,8 +31501,8 @@
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "9c0797ae",
-      "content_hash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
+      "source_version": "e2642c72",
+      "content_hash": "cb7e7b5ecc99c97c513c8b8e668187dc9e329423bc082fba107100d3fece9987",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
@@ -31515,6 +31540,11 @@
           "number": 2854,
           "title": "Safe Multi-Dimensional Array Reshaping with Integer Arithmetic Limits",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3169,
+          "title": "react-compiler-analyzer): handle ambient `declare` ts syntax (#36934)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31522,7 +31552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:20:34.936Z",
+      "verified_at": "2026-10-20T12:50:08.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100717,6 +100747,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T12:40:51.848Z"
+    },
+    "rule-3169": {
+      "learning_id": "rule-3169",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3169,
+      "title": "react-compiler-analyzer): handle ambient `declare` ts syntax (#36934)",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "e2642c72",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:50:08.024Z"
+    },
+    "rule-3170": {
+      "learning_id": "rule-3170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3170,
+      "title": "Multi-EOS Token Termination & Left-Padding Coherence Invariant",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:50:50.184Z"
+    },
+    "rule-3171": {
+      "learning_id": "rule-3171",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3171,
+      "title": "Low-Rank Latent Cache (MLA) Dimension & Memory Alignment Invariant",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:50:50.184Z"
+    },
+    "rule-3172": {
+      "learning_id": "rule-3172",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3172,
+      "title": "Sparse Indexer Cadence & Layer Sharing Contract",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:50:50.184Z"
+    },
+    "rule-3173": {
+      "learning_id": "rule-3173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3173,
+      "title": "Source Preservation in Error Hierarchy Translation",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "2a724583",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:52:27.186Z"
+    },
+    "rule-3174": {
+      "learning_id": "rule-3174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3174,
+      "title": "Lock-Free Metric Snapshot-and-Reset Boundedness",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "2a724583",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:52:27.186Z"
     }
   },
   "aliases": {

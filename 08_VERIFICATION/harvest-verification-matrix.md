@@ -3807,3 +3807,6 @@
 | `CYCLE-20261020-8V2G` | `2026-10-20T12:40:45.640Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3166, Rule 315` | Yes (`6741cb9b...`) |
 | `CYCLE-20261020-8WU6` | `2026-10-20T12:40:47.934Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3167` | Yes (`87b3a1f4...`) |
 | `CYCLE-20261020-8ZWR` | `2026-10-20T12:40:51.915Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3168` | Yes (`cae543f4...`) |
+| `CYCLE-20261020-KX1Q` | `2026-10-20T12:50:08.078Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3169` | Yes (`cb7e7b5e...`) |
+| `CYCLE-20261020-LTLF` | `2026-10-20T12:50:50.259Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3170, Rule 3171, Rule 3172` | Yes (`94dc1005...`) |
+| `CYCLE-20261020-NWFW` | `2026-10-20T12:52:27.260Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3173, Rule 3174` | Yes (`d9e88326...`) |

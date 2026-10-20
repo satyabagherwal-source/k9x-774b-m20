@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
-    "lastHarvestedAt": "2026-10-18T23:26:55.598Z",
+    "contentHash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
+    "lastHarvestedAt": "2026-10-20T12:50:50.266Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "9c0797ae",
+    "sourceVersion": "e2642c72",
     "license": "NOASSERTION",
-    "contentHash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
-    "lastHarvestedAt": "2026-10-19T22:20:34.994Z",
+    "contentHash": "cb7e7b5ecc99c97c513c8b8e668187dc9e329423bc082fba107100d3fece9987",
+    "lastHarvestedAt": "2026-10-20T12:50:08.085Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "cfe80f9d",
+    "sourceVersion": "2a724583",
     "license": "MIT",
-    "contentHash": "3257ee3fcee2f1fe4c92e7abd34647a91bfd5ade3866a464de7b311b48b5589d",
-    "lastHarvestedAt": "2026-10-19T18:35:51.494Z",
+    "contentHash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
+    "lastHarvestedAt": "2026-10-20T12:52:27.266Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
