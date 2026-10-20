@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `8d48a333`  
+> **Source Version**: `9b3ae182`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:07:00.512Z  
+> **Timestamp**: 2026-10-20T20:20:30.023Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:07:00.506Z  
+> **Harvest Timestamp**: 2026-10-20T20:20:30.018Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,129 +1799,742 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d48a333` (2026-10-20)
-**Commit Message**: chore(deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator (#117)
+### Incident Patch 1: `9b3ae182` (2026-10-20)
+**Commit Message**: Add Compute buyer setup, isolated GPU operators and P2P pools (#271)
 
-* chore(deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator
+* Add Soapbox Compute with isolated Base Sepolia wallets and participant roles
 
-Bumps [rand](https://github.com/rust-random/rand) from 0.8.5 to 0.10.3.
-- [Release notes](https://github.com/rust-random/rand/releases)
-- [Changelog](https://github.com/rust-random/rand/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/rust-random/rand/compare/0.8.5...0.10.3)
+* Validate installed operator GPU execution and Base Sepolia payout
 
----
-updated-dependencies:
-- dependency-name: rand
-  dependency-version: 0.10.3
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+* feat(compute): add buyer and GPU operator onboarding in desktop
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+* fix(compute): clear setup errors after gateway reconnection
 
-* fix(orchestrator): port to rand 0.10 and take OsRng from rand_core 0.6
+* docs(compute): record buyer activation and scoped enrollment cleanup
 
-rand 0.10 drops thread_rng and rngs::OsRng, and its generators implement
-rand_core 0.10 traits that ed25519-dalek 2 and libp2p autonat do not
-accept. Generate the Ed25519 seed with rand::random and build the key
-from bytes, and hand autonat an OsRng from rand_core 0.6, which is
-already in the tree through libp2p.
+* feat(compute): prepare the bundled test runtime from the setup wizard
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+* docs(compute): describe the private wizard installer and bundled runtime
+
+* fix(compute): enforce participant registration and reviewed payment boundaries
+
+* chore(compute): pin hardened rc3 runtime for private test release
+
+* fix(compute): correct Sepolia escrow pin and package rc4
+
+* feat(compute): add P2P pools and one-click GPU operator setup
+
+* feat(compute): add SoapBox branding for rc6 preview
+
+* Pin Compute-capable sidecar and lock release builds
+
+* fix(compute): load bundled setup from the packaged runtime
+
+* build(compute): direct new releases through integrated app packaging
 
 ---------
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users
+Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
-**File**: `orchestrator/Cargo.lock` (modified, +2/-1)
+**File**: `.github/workflows/orchestrator-release.yml` (modified, +1/-1)
 ```diff
-@@ -475,7 +475,8 @@ dependencies = [
-  "image",
-  "libp2p",
-  "lru",
-- "rand 0.8.5",
-+ "rand 0.10.3",
-+ "rand_core 0.6.4",
-  "reqwest",
-  "serde",
-  "serde_json",
-```
-
-**File**: `orchestrator/Cargo.toml` (modified, +3/-1)
-```diff
-@@ -30,7 +30,9 @@ tracing = "0.1"
- tracing-subscriber = { version = "0.3", features = ["env-filter"] }
- sha2 = "0.11"
- base64 = "0.23"
--rand = "0.8"
-+rand = "0.10"
-+# ed25519-dalek 2 and libp2p autonat take rand_core 0.6 generators; rand 0.10 cannot supply them.
-+rand_core = { version = "0.6", features = ["getrandom"] }
- clap = { version = "4", features = ["derive", "env"] }
- axum = "0.8"
- tower-http = { version = "0.7", features = ["cors"] }
-```
-
-**File**: `orchestrator/src/crypto.rs` (modified, +2/-2)
-```diff
-@@ -44,8 +44,8 @@ pub fn load_or_generate_keypair(
-     }
+@@ -87,7 +87,7 @@ jobs:
+         working-directory: orchestrator
+         env:
+           RUSTFLAGS: "-C strip=symbols"
+-        run: cargo build --release --target ${{ matrix.rust-target }}
++        run: cargo build --locked --release --target ${{ matrix.rust-target }}
  
-     // Generate new keypair
--    let mut rng = rand::thread_rng();
--    let signing_key = SigningKey::generate(&mut rng);
-+    let seed: [u8; 32] = rand::random();
-+    let signing_key = SigningKey::from_bytes(&seed);
-     let verifying_key = signing_key.verifying_key();
- 
-     // Save as raw 32-byte seed (compact format)
+       - name: Stage binary
+         shell: bash
 ```
 
-**File**: `orchestrator/src/swarm/mod.rs` (modified, +6/-6)
+**File**: `.gitignore` (modified, +5/-0)
 ```diff
-@@ -3227,11 +3227,11 @@ pub async fn build_swarm(
-                         gossipsub: gossipsub_behaviour,
-                         kademlia: kademlia_behaviour,
-                         autonat: autonat::v2::client::Behaviour::new(
--                            rand::rngs::OsRng,
-+                            rand_core::OsRng,
-                             autonat::v2::client::Config::default(),
-                         ),
-                         autonat_server: autonat::v2::server::Behaviour::new(
--                            rand::rngs::OsRng,
-+                            rand_core::OsRng,
-                         ),
-                         identify: identify_behaviour,
-                         relay_client: Toggle::from(Some(relay_client_behaviour)),
-@@ -3261,11 +3261,11 @@ pub async fn build_swarm(
-                         gossipsub: gossipsub_behaviour,
-                         kademlia: kademlia_behaviour,
-                         autonat: autonat::v2::client::Behaviour::new(
--                            rand::rngs::OsRng,
-+                            rand_core::OsRng,
-                             autonat::v2::client::Config::default(),
-                         ),
-                         autonat_server: autonat::v2::server::Behaviour::new(
--                            rand::rngs::OsRng,
-+                            rand_core::OsRng,
-                         ),
-                         identify: identify_behaviour,
-                         relay_client: Toggle::from(None),
-@@ -3297,11 +3297,11 @@ pub async fn build_swarm(
-                         gossipsub: gossipsub_behaviour,
-                         kademlia: kademlia_behaviour,
-                         autonat: autonat::v2::client::Behaviour::new(
--                            rand::rngs::OsRng,
-+                            rand_core::OsRng,
-                             autonat::v2::client::Config::default(),
-                         ),
-                         autonat_server: autonat::v2::server::Behaviour::new(
--                            rand::rngs::OsRng,
-+                            rand_core::OsRng,
-                         ),
-                         identify: identify_behaviour,
-                         relay_client: Toggle::from(None),
+@@ -128,6 +128,9 @@ celerybeat.pid
+ 
+ # Environments
+ .env
++.env.*
++!.env.example
++!.env.*.example
+ .venv
+ # docker-compose.yml's default data folder: config, SQLite memory, P2P keys
+ # and the generated gateway token (PLAN-56 Phase 2). Never commit it.
+@@ -216,6 +219,8 @@ research/
+ 
+ # Wallet seed data (should never be in repo)
+ wallet-data.json
++# Local release/test profiles may contain credentials, logs and job data.
++reports/
+ benchmarks/longmemeval/data/longmemeval_s.json
+ benchmarks/longmemeval/data/
+ 
+```
+
+**File**: `desktop/renderer/src/components/compute/ArtifactPanel.tsx` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++import { useState } from "react";
++import { useGatewayStore } from "../../stores/gateway-store";
++
++export function ArtifactPanel() {
++  const request = useGatewayStore((s) => s.request);
++  const [content, setContent] = useState("");
++  const [id, setId] = useState("");
++  const [result, setResult] = useState<unknown>(null);
++  const [error, setError] = useState<string | null>(null);
++  const [busy, setBusy] = useState(false);
++  const run = async (save: boolean) => {
++    setBusy(true);
++    setError(null);
++    try {
++      if (save) {
++        const value = await request<{ id: string }>("soapbox.artifact.put", {
++          content,
++          ttl_seconds: 3600,
++        });
++        setId(value.id);
++        setResult(value);
++      } else {
++        setResult(await request("soapbox.artifact.get", { id }));
++      }
++    } catch (e) {
++      setError(String(e));
++    } finally {
++      setBusy(false);
++    }
++  };
++  return (
++    <section className="rounded-xl border border-border p-5 space-y-3">
++      <h2 className="font-medium">Temporary artifacts</h2>
++      <p className="text-sm text-muted-foreground">
++        Private to this account. Stored for one hour on the coordinator. This pilot storage is
++        unreplicated and is not a backup service.
++      </p>
++      <label className="block text-sm">
++        Text content
++        <textarea
++          className="block w-full rounded-lg border border-border bg-background p-2"
++          value={content}
++          onChange={(e) => setContent(e.target.value)}
++        />
++      </label>
++      <button
++        className="rounded-lg bg-muted px-3 py-2 text-sm"
++        disabled={busy || !content}
++        onClick={() => void run(true)}
++      >
++        Store for one hour
++      </button>
++      <label className="block text-sm">
++        Artifact ID
++        <input
++          className="block w-full rounded-lg border border-border bg-background p-2"
++          value={id}
++          onChange={(e) => setId(e.target.value)}
++        />
++      </label>
++      <button
++        className="rounded-lg bg-muted px-3 py-2 text-sm"
++        disabled={busy || !id}
++        onClick={() => void run(false)}
++      >
++        Retrieve artifact
++      </button>
++      {error && (
++        <p role="alert" className="text-sm text-danger">
++          {error}
++        </p>
++      )}
++      {result !== null && (
++        <pre className="max-h-40 overflow-auto text-xs whitespace-pre-wrap">
++          {JSON.stringify(result, null, 2)}
++        </pre>
++      )}
++    </section>
++  );
++}
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeSetup.test.tsx` (added, +128/-0)
+```diff
+@@ -0,0 +1,128 @@
++import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
++import { afterEach, beforeEach, expect, it, vi } from "vitest";
++import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
++import { ComputeSetup } from "./ComputeSetup";
++
++const fake = vi.hoisted(() => ({ request: vi.fn(), status: "connected" }));
++vi.mock("../../stores/gateway-store", () => ({
++  useGatewayStore: (selector: (s: typeof fake) => unknown) => selector(fake),
++}));
++let status: SoapboxSetupStatus;
++beforeEach(() => {
++  status = {
++    configured: false,
++    platformSupported: true,
++    hasWalletCredentials: false,
++    walletAddress: null,
++    release: {
++      url: "https://github.com/Bitterbot-AI/soapbox/releases/tag/v0.3.0-rc.1",
++      filename: "runtime.tar.gz",
++      bytes: 4,
++    },
++    progress: { state: "idle", message: "", percent: 0 },
++  };
++  fake.request.mockImplementation(async (method: string) => {
++    if (method === "soapbox.setup.wallet")
++      status = { ...status, walletAddress: `0x${"1".repeat(40)}` };
++    return status;
++  });
++});
++afterEach(() => {
++  cleanup();
++  vi.clearAllMocks();
++});
++it("enables a local operator in one action without enrollment or wallet calls", async () => {
++  status.bundledRuntimeAvailable = true;
++  render(<ComputeSetup onClose={() => {}} />);
++  fireEvent.click(await screen.findByLabelText("GPU operator · share this device"));
++  expect(screen.queryByLabelText("Enrollment file")).toBeNull();
++  fireEvent.click(screen.getByRole("button", { name: "Enable this GPU operator" }));
++  await waitFor(() => expect(fake.request).toHaveBeenCalledWith("soapbox.setup.operator.enable"));
++  expect(fake.request.mock.calls.some(([method]) => /wallet|payment|import/.test(method))).toBe(
++    false,
++  );
++});
++it("creates a separate buyer wallet and clears entered secrets", async () => {
++  render(<ComputeSetup onClose={() => {}} />);
++  fireEvent.change(await screen.findByLabelText("CDP API key ID"), { target: { value: "key" } });
++  fireEvent.change(screen.getByLabelText("CDP API key secret"), { target: { value: "secret" } });
++  fireEvent.change(screen.getByLabelText("CDP wallet secret"), {
++    target: { value: "wallet-secret" },
++  });
++  fireEvent.click(screen.getByRole("button", { name: "Create test wallet" }));
++  await screen.findByLabelText("Test wallet address");
++  expect(fake.request).toHaveBeenCalledWith(
++    "soapbox.setup.wallet",
++    { credentials: { apiKeyId: "key", apiKeySecret: "secret", walletSecret: "wallet-secret" } },
++    { timeoutMs: 120000 },
++  );
++  expect(screen.queryByDisplayValue("wallet-secret")).toBeNull();
++  expect(
++    fake.request.mock.calls.some(
++      ([method]) => method === "wallet.setConfig" || method === "soapbox.payment.fund",
++    ),
++  ).toBe(false);
++});
++it("requires verified runtime and explicit consent before activating an operator", async () => {
++  status = {
++    ...status,
++    enrollment: {
++      role: "operator",
++      id: "gpu-test",
++      url: "https://compute.example",
++      address: `0x${"2".repeat(40)}`,
++      chain_id: 84532,
++    },
++    progress: { state: "preparing", message: "Verifying GPU execution and isolation", percent: 85 },
++  };
++  const rendered = render(<ComputeSetup onClose={() => {}} />);
++  const activate = await screen.findByRole("button", { name: "Activate operator" });
++  expect((activate as HTMLButtonElement).disabled).toBe(true);
++  expect(screen.queryByRole("button", { name: "Create test wallet" })).toBeNull();
++  expect(screen.getByText("Verifying GPU execution and isolation")).toBeTruthy();
++  rendered.unmount();
++  status = {
++    ...status,
++    progress: { state: "ready", message: "GPU runtime verified", percent: 100 },
++  };
++  render(<ComputeSetup onClose={() => {}} />);
++  const ready = await screen.findByRole("button", { name: "Activate operator" });
++  expect((ready as HTMLButtonElement).disabled).toBe(true);
++  fireEvent.click(screen.getByRole("checkbox"));
++  fireEvent.click(ready);
++  await waitFor(() => expect(fake.request).toHaveBeenCalledWith("soapbox.setup.activate"));
++});
++it("keeps configured gateways read only and explains where the tester runs setup", async () => {
++  status.configured = true;
++  status.configuredRole = "pilot";
++  render(<ComputeSetup onClose={() => {}} />);
++  await screen.findByText(/Compute is configured on this gateway/);
++  expect(screen.queryByLabelText("Enrollment file")).toBeNull();
++  expect(screen.getByText(/tester’s own Bitterbot app/)).toBeTruthy();
++});
++
++it("clears a transient status error after the gateway reconnects", async () => {
++  fake.request.mockRejectedValueOnce(new Error("Gateway restarting"));
++  render(<ComputeSetup onClose={() => {}} />);
++  await screen.findByRole("alert");
++  await waitFor(() => expect(screen.queryByRole("alert")).toBeNull(), { timeout: 4000 });
++  expect(screen.getByRole("button", { name: "Create test wallet" })).toBeTruthy();
++});
++
++
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeSetup.tsx` (added, +495/-0)
+```diff
+@@ -0,0 +1,495 @@
++import { useCallback, useEffect, useState } from "react";
++import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
++import { useGatewayStore } from "../../stores/gateway-store";
++import { SoapboxLogo } from "./SoapboxLogo";
++
++const button = "rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40";
++const field = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
++const emptyCredentials = { apiKeyId: "", apiKeySecret: "", walletSecret: "" };
++
++export function ComputeSetup({ onClose }: { onClose: () => void }) {
++  const request = useGatewayStore((s) => s.request);
++  const connected = useGatewayStore((s) => s.status === "connected");
++  const [status, setStatus] = useState<SoapboxSetupStatus>();
++  const [role, setRole] = useState<"buyer" | "operator">("buyer");
++  const [credentials, setCredentials] = useState(emptyCredentials);
++  const [customCredentials, setCustomCredentials] = useState(false);
++  const [busy, setBusy] = useState(false);
++  const [error, setError] = useState("");
++  const [connectionError, setConnectionError] = useState("");
++  const [upload, setUpload] = useState<number>();
++  const [activating, setActivating] = useState(false);
++  const [acknowledged, setAcknowledged] = useState(false);
++  const [remoteOperator, setRemoteOperator] = useState(false);
++  const refresh = useCallback(async () => {
++    const next = await request<SoapboxSetupStatus>("soapbox.setup.status");
++    setStatus(next);
++    if (next.enrollment) {
++      setRole(next.enrollment.role);
++      setRemoteOperator(next.enrollment.role === "operator");
++    }
++  }, [request]);
++  useEffect(() => {
++    if (!connected) return;
++    let disposed = false;
++    let timer: ReturnType<typeof setTimeout>;
++    const poll = async () => {
++      try {
++        const next = await request<SoapboxSetupStatus>("soapbox.setup.status");
++        if (!disposed) {
++          setStatus(next);
++          setConnectionError("");
++          if (next.enrollment) {
++            setRole(next.enrollment.role);
++            setRemoteOperator(next.enrollment.role === "operator");
++          }
++        }
++      } catch (e) {
++        if (!disposed && !activating) setConnectionError(String(e));
++      } finally {
++        if (!disposed) timer = setTimeout(() => void poll(), 2000);
++      }
++    };
++    void poll();
++    return () => {
++      disposed = true;
++      clearTimeout(timer);
++    };
++  }, [request, connected, activating]);
++  const run = async (action: () => Promise<void>) => {
++    setBusy(true);
++    setError("");
++    try {
++      await action();
++      await refresh();
++    } catch (e) {
++      setError(String(e));
++    } finally {
++      setBusy(false);
++    }
++  };
++  const enrolled = status?.enrollment?.role === role;
++  const preparing =
++    status?.progress.state === "preparing" || status?.progress.state === "uploading";
++  const locked = busy || preparing || !connected || activating;
++
++  const importEnrollment = async (file: File) => {
++    if (file.size > 16384) throw new Error("Enrollment files must be smaller than 16 KB");
++    await request("soapbox.setup.import", { enrollment: JSON.parse(await file.text()), role });
++    setAcknowledged(false);
++  };
++  const importRuntime = async (file: File) => {
++    if (!status || file.size !== status.release.bytes)
++      throw new Error("Select the approved runtime archive from the linked release");
++    setUpload(0);
++    try {
++      const started = await request<{ id: string }>("soapbox.setup.runtime.begin");
++      for (let offset = 0; offset < file.size;) {
++        const bytes = new Uint8Array(await file.slice(offset, offset + 262144).arrayBuffer());
++        let binary = "";
++        for (let i = 0; i < bytes.length; i += 8192)
++          binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
++        const next = await request<{ offset: number }>("soapbox.setup.runtime.chunk", {
++          id: started.id,
++          offset,
++          data: btoa(binary),
++        });
++        offset = next.offset;
++        setUpload(Math.floor((offset / file.size) * 100));
++      }
++      await request("soapbox.setup.runtime.prepare", { id: started.id });
++    } finally {
++      setUpload(undefined);
++    }
++  };
++
++  return (
++    <section aria-label="Compute setup" className="rounded-xl border border-border p-5 space-y-4">
++      <div className="flex flex-wrap items-center justify-between gap-4">
++        <div className="flex flex-wrap items-center gap-3">
++          <SoapboxLogo compact />
++          <h2 className="font-semibold">Set up this device</h2>
++        </div>
++        <button className="text-sm underline" disabled={busy} onClick={onClose}>
++          Close setup
++        </button>
++      </div>
++      <p className="text-sm text-muted-foreground">
++        Base Sepolia test network. Compute uses a separate wallet and spending history. Your main
++        wallet stays on its current ne
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeView.test.tsx` (added, +238/-0)
+```diff
+@@ -0,0 +1,238 @@
++import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { ComputeView } from "./ComputeView";
++
++const fake = vi.hoisted(() => ({ request: vi.fn(), status: "connected" }));
++vi.mock("../../stores/gateway-store", () => ({
++  useGatewayStore: (selector: (s: typeof fake) => unknown) => selector(fake),
++}));
++afterEach(() => {
++  cleanup();
++  vi.clearAllMocks();
++});
++describe("Compute view", () => {
++  it("shows operator earnings and own pause control without a buyer wallet", async () => {
++    fake.request.mockResolvedValue({
++      enabled: true,
++      settlement: "usdc_escrow",
++      principal: { id: "test-worker", roles: ["worker"], pools: [], projects: [] },
++      payment_account: { chain_id: 84532, address: `0x${"3".repeat(40)}` },
++      nodes: [
++        {
++          id: "test-worker",
++          online: true,
++          offer: { modes: ["paid"], cpu_threads: 1, memory_mib: 2048, isolation: "docker_v1" },
++        },
++      ],
++      jobs: [
++        {
++          id: "own-job",
++          status: "succeeded",
++          attempts: 1,
++          spec: { workload: { kind: "embeddings" }, mode: { kind: "paid_usdc" } },
++          payment: { amount_microusdc: 2000 },
++        },
++      ],
++    });
++    render(<ComputeView />);
++    await screen.findByLabelText("Operator account");
++    expect(screen.getByText(/Confirmed earnings in recent jobs: 0.002000 test USDC/)).toBeTruthy();
++    expect(screen.queryByRole("button", { name: "Submit job" })).toBeNull();
++    expect(screen.queryByLabelText("Compute test wallet")).toBeNull();
++    expect(fake.request.mock.calls.some(([m]) => m === "soapbox.wallet")).toBe(false);
++    fireEvent.click(screen.getByText("Pause new work"));
++    await waitFor(() =>
++      expect(fake.request).toHaveBeenCalledWith("soapbox.worker.pause", {
++        id: "test-worker",
++        paused: true,
++      }),
++    );
++  });
++  it("shows an exact USDC quote and requires a separate funding action", async () => {
++    const job = {
++      id: "paid-job",
++      status: "awaiting_payment",
++      payment: {
++        amount_microusdc: 2000,
++        operator: `0x${"3".repeat(40)}`,
++        chain_id: 84532,
++      },
++    };
++    fake.request.mockImplementation(async (method: string) => {
++      if (method === "soapbox.submit") return job;
++      if (method === "soapbox.payment.fund") return { job: { ...job, status: "queued" } };
++      return {
++        enabled: true,
++        settlement: "usdc_escrow",
++        principal: { roles: [], pools: [], projects: [] },
++        jobs: [],
++        nodes: [
++          {
++            id: "worker",
++            online: true,
++            offer: { isolation: "docker_v1", modes: ["paid"], cpu_threads: 1, memory_mib: 2048 },
++          },
++        ],
++      };
++    });
++    render(<ComputeView />);
++    fireEvent.change(await screen.findByLabelText("Participation mode"), {
++      target: { value: "paid" },
++    });
++    expect((screen.getByRole("button", { name: "Submit job" }) as HTMLButtonElement).disabled).toBe(
++      false,
++    );
++    expect(
++      Array.from(
++        screen
++          .getByRole("button", { name: "Submit job" })
++          .closest("form")!
++          .querySelectorAll("input,select,textarea"),
++      )
++        .filter((element) => !(element as HTMLInputElement).checkValidity())
++        .map((element) => ({
++          html: element.outerHTML,
++          message: (element as HTMLInputElement).validationMessage,
++        })),
++    ).toEqual([]);
++    fireEvent.click(screen.getByRole("button", { name: "Submit job" }));
++    const fund = await screen.findByRole("button", { name: "Fund 0.002000 test USDC" });
++    expect(fake.request.mock.calls.some(([method]) => method === "soapbox.payment.fund")).toBe(
++      false,
++    );
++    expect(fake.request).toHaveBeenCalledWith(
++      "soapbox.submit",
++      expect.objectContaining({
++        mode: { kind: "paid_usdc", max_cost_microusdc: 10000, operator: "worker" },
++      }),
++    );
++    fireEvent.click(fund);
++    await waitFor(() =>
++      expect(fake.request).toHaveBeenCalledWith(
++        "soapbox.payment.fund",
++        {
++          id: "paid-job",
++          approval: expect.objectContaining({ chain_id: 84532, amount_microusdc: 2000 }),
++        },
++        { timeoutMs: 180000 },
++      ),
++    );
++  });
++  it("explains opt-in setup when the service is disabled", async () => {
++    fake.request.mockResolvedValue({ enabled: false });
++    render(<ComputeView />);
++    expect(await screen.findByText("Get started with Compute")).toBeTruthy();
++    expect(screen.queryByRole("button", { name: "Submit job" })).toBeNull();
++  });
++  it("submits a private job using an authorized pool and displays test-credit limits", async () => {
++    const snapshot = {
++      enabled: true,
++      principal: { id: "buyer", roles: ["submitter"], pools: ["circle-1"], projects: []
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeView.tsx` (added, +573/-0)
+```diff
+@@ -0,0 +1,573 @@
++import { useCallback, useEffect, useState } from "react";
++import type {
++  SoapboxJob,
++  SoapboxMode,
++  SoapboxStatus,
++} from "../../../../../src/infra/soapbox-client";
++import { useGatewayStore } from "../../stores/gateway-store";
++import { ArtifactPanel } from "./ArtifactPanel";
++import { ComputeSetup } from "./ComputeSetup";
++import { ComputeWalletPanel } from "./ComputeWalletPanel";
++import { MeshPanel } from "./MeshPanel";
++import { PaymentPanel } from "./PaymentPanel";
++import { SoapboxLogo } from "./SoapboxLogo";
++import { WorkerPanel } from "./WorkerPanel";
++
++const field = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
++const button = "rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40";
++function microUsdc(value: string): number | undefined {
++  if (!/^\d{1,3}(?:\.\d{1,6})?$/.test(value)) return undefined;
++  const [whole, fraction = ""] = value.split(".");
++  return Number(whole) * 1_000_000 + Number(fraction.padEnd(6, "0"));
++}
++
++export function ComputeView() {
++  const request = useGatewayStore((s) => s.request);
++  const connected = useGatewayStore((s) => s.status === "connected");
++  const [snapshot, setSnapshot] = useState<SoapboxStatus | null>(null);
++  const [error, setError] = useState<string | null>(null);
++  const [busy, setBusy] = useState(false);
++  const [setupOpen, setSetupOpen] = useState(false);
++  const [mode, setMode] = useState<SoapboxMode["kind"]>("private");
++  const [scope, setScope] = useState("");
++  const [workload, setWorkload] = useState<"sha256" | "embeddings">("sha256");
++  const [model, setModel] = useState("");
++  const [gpu, setGpu] = useState(true);
++  const [texts, setTexts] = useState(
++    "Hello from Bitterbot\nShared infrastructure, chosen by its owners",
++  );
++  const [budget, setBudget] = useState("0.01");
++  const budgetMicros = microUsdc(budget);
++  const [operator, setOperator] = useState("");
++  const usdc = snapshot?.settlement === "usdc_escrow";
++  const operatorOnly =
++    snapshot?.local_operator ||
++    (snapshot?.principal?.roles.includes("worker") &&
++      !snapshot.principal.roles.includes("submitter"));
++  const operators =
++    snapshot?.nodes?.filter(
++      (node) =>
++        node.online &&
++        !node.operator_paused &&
++        !node.offer.paused &&
++        node.offer.isolation === "docker_v1" &&
++        node.offer.modes.includes("paid"),
++    ) ?? [];
++  const selectedOperator = operator || operators[0]?.id || "";
++  const [selected, setSelected] = useState<SoapboxJob | null>(null);
++  // Keep the key after uncertain network errors; editing the request creates a new intent.
++  const [intent, setIntent] = useState(() => crypto.randomUUID());
++
++  const refresh = useCallback(async () => {
++    const next = await request<SoapboxStatus>("soapbox.status");
++    setSnapshot(next);
++    setError(null);
++  }, [request]);
++
++  useEffect(() => {
++    if (!connected) return;
++    let disposed = false;
++    let timer: ReturnType<typeof setTimeout>;
++    const poll = async () => {
++      try {
++        const next = await request<SoapboxStatus>("soapbox.status");
++        if (disposed) return;
++        setSnapshot(next);
++        setError(null);
++      } catch (e) {
++        if (!disposed) setError(String(e));
++      } finally {
++        if (!disposed) timer = setTimeout(() => void poll(), 5000);
++      }
++    };
++    void poll();
++    return () => {
++      disposed = true;
++      clearTimeout(timer);
++    };
++  }, [connected, request]);
++
++  useEffect(() => {
++    if (
++      !connected ||
++      !selected ||
++      ![
++        "queued",
++        "running",
++        "awaiting_payment",
++        "settlement_pending",
++        "refund_pending",
++        "payment_review",
++      ].includes(selected.status)
++    )
++      return;
++    let disposed = false;
++    const timer = setTimeout(() => {
++      void request<SoapboxJob>("soapbox.job", { id: selected.id }).then(
++        (job) => {
++          if (!disposed) setSelected(job);
++        },
++        (e) => {
++          if (!disposed) {
++            setError(String(e));
++            setSelected((current) => current && { ...current });
++          }
++        },
++      );
++    }, 2000);
++    return () => {
++      disposed = true;
++      clearTimeout(timer);
++    };
++  }, [connected, request, selected]);
++
++  useEffect(() => {
++    setIntent(crypto.randomUUID());
++  }, [mode, scope, workload, model, gpu, texts, budget, operator]);
++
++  const run = async (action: () => Promise<void>) => {
++    setBusy(true);
++    setError(null);
++    try {
++      await action();
++    } catch (e) {
++      setError(String(e));
++    } finally {
++      setBusy(false);
++    }
++  };
++  const scopes = mode === "private" ? snapshot?.principal?.pools : snapshot?.principal?.projects;
++  const selectedScope = scope || scopes?.[0] || "";
++  const runtimes =
++    snapshot?.nodes
++      ?.filter(
++        (node) =>
++          node.online &&
++          !node.operator_p
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeWalletPanel.tsx` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++import { useEffect, useState } from "react";
++import type { SoapboxWalletStatus } from "../../../../../src/infra/soapbox-client";
++import { useGatewayStore } from "../../stores/gateway-store";
++
++export function ComputeWalletPanel() {
++  const request = useGatewayStore((s) => s.request);
++  const [wallet, setWallet] = useState<SoapboxWalletStatus | null>(null);
++  const [error, setError] = useState(false);
++  useEffect(() => {
++    let disposed = false;
++    let timer: ReturnType<typeof setTimeout>;
++    const poll = async () => {
++      try {
++        const status = await request<SoapboxWalletStatus>("soapbox.wallet");
++        if (!disposed) {
++          setWallet(status);
++          setError(false);
++        }
++      } catch {
++        if (!disposed) setError(true);
++      } finally {
++        if (!disposed) timer = setTimeout(() => void poll(), 15000);
++      }
++    };
++    void poll();
++    return () => {
++      disposed = true;
++      clearTimeout(timer);
++    };
++  }, [request]);
++  return (
++    <section
++      aria-label="Compute test wallet"
++      className="rounded-xl border border-border bg-muted/20 p-4 space-y-2"
++    >
++      <h2 className="font-medium">Compute test wallet · Base Sepolia</h2>
++      <p className="text-sm">{wallet?.balance_usdc ?? "—"} test USDC</p>
++      {wallet?.address && <p className="font-mono text-xs break-all">{wallet.address}</p>}
++      <p className="text-xs text-muted-foreground">
++        Separate account and spending history. Your main Wallet stays on its current network.
++        Compute can spend up to 0.10 test USDC per job and 1 test USDC per day.
++      </p>
++      {(error || wallet?.error) && (
++        <p className="text-xs text-warning">Test wallet balance unavailable; retrying.</p>
++      )}
++    </section>
++  );
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1950,29 +2563,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator (#117)
+## X. Add Compute buyer setup, isolated GPU operators and P2P pools (#271)
 
 **RULE**:
-When implementing operations in `orchestrator/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/orchestrator-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d48a333`: deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator (#117). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b3ae182`: Add Compute buyer setup, isolated GPU operators and P2P pools (#271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orchestrator/Cargo.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/orchestrator-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
- "rand 0.10.3",
- "rand_core 0.6.4",
+        run: cargo build --locked --release --target ${{ matrix.rust-target }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
- "rand 0.8.5",
+        run: cargo build --release --target ${{ matrix.rust-target }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d48a333` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b3ae182` are properly handled with clean fallback behavior.

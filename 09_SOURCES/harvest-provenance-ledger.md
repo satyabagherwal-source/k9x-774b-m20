@@ -4010,3 +4010,5 @@ Every entry in this ledger must capture:
 | `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `7c45837d` | Multi-dimensional audit evidence | 2026-10-20T20:14:14.137Z |
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-20T20:14:21.094Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `323dce03` | Multi-dimensional audit evidence | 2026-10-20T20:14:21.754Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-20T20:20:13.729Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9b3ae182` | Multi-dimensional audit evidence | 2026-10-20T20:20:30.285Z |

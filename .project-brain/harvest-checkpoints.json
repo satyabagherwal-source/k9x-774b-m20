@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T20:14:21.760Z",
+  "last_updated": "2026-10-20T20:20:30.291Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "7109823f8898ac102514e5a36f40d28c5f99d5f9215896f45b8b1964b70ef41c",
-      "verified_at": "2026-10-19T06:32:30.618Z",
+      "content_hash": "e5b0adae2f6f3f82c2476c597358f7b4cf2708482cdf077a087764389bd5c993",
+      "verified_at": "2026-10-20T20:20:13.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:32:30.618Z"
+      "last_updated": "2026-10-20T20:20:13.734Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
-      "verified_at": "2026-10-20T03:07:00.760Z",
+      "content_hash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
+      "verified_at": "2026-10-20T20:20:30.291Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:07:00.760Z"
+      "last_updated": "2026-10-20T20:20:30.291Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",

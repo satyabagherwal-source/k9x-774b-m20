@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:14:21.716Z",
+  "last_updated": "2026-10-20T20:20:30.237Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3916,8 +3916,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "8d48a333",
-      "content_hash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
+      "source_version": "9b3ae182",
+      "content_hash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3955,6 +3955,11 @@
           "number": 3015,
           "title": "deps): bump rand from 0.8.5 to 0.10.3 in /orchestrator (#117)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3365,
+          "title": "Add Compute buyer setup, isolated GPU operators and P2P pools (#271)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3962,7 +3967,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:07:00.704Z",
+      "verified_at": "2026-10-20T20:20:30.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19757,7 +19762,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "7109823f8898ac102514e5a36f40d28c5f99d5f9215896f45b8b1964b70ef41c",
+      "content_hash": "e5b0adae2f6f3f82c2476c597358f7b4cf2708482cdf077a087764389bd5c993",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -19790,7 +19795,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-19T06:32:30.554Z",
+      "verified_at": "2026-10-20T20:20:13.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104474,6 +104479,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:14:21.708Z"
+    },
+    "rule-3365": {
+      "learning_id": "rule-3365",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3365,
+      "title": "Add Compute buyer setup, isolated GPU operators and P2P pools (#271)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "9b3ae182",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T20:20:30.229Z"
     }
   },
   "aliases": {

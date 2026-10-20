@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "7109823f8898ac102514e5a36f40d28c5f99d5f9215896f45b8b1964b70ef41c",
-    "lastHarvestedAt": "2026-10-19T06:32:30.610Z",
+    "contentHash": "e5b0adae2f6f3f82c2476c597358f7b4cf2708482cdf077a087764389bd5c993",
+    "lastHarvestedAt": "2026-10-20T20:20:13.729Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "8d48a333",
+    "sourceVersion": "9b3ae182",
     "license": "MIT",
-    "contentHash": "7f2fb01c549bf3313543381ce9c8c7d266fec7b25cf93e7de90f087e6bc7e81a",
-    "lastHarvestedAt": "2026-10-20T03:07:00.754Z",
+    "contentHash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
+    "lastHarvestedAt": "2026-10-20T20:20:30.285Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {

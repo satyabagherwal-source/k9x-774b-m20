@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:14:21.757Z",
-  "total_cycles_completed": 3980,
-  "total_learnings_persisted": 3980,
-  "total_rules_promoted": 3192,
+  "last_updated": "2026-10-20T20:20:30.289Z",
+  "total_cycles_completed": 3982,
+  "total_learnings_persisted": 3982,
+  "total_rules_promoted": 3193,
   "history": [
-    {
-      "timestamp": "2026-10-20T12:40:40.933Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T12:40:45.652Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T12:40:47.945Z",
       "repository": "kubeedge/kubeedge",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T20:14:21.757Z",
       "repository": "Tencent-TDS/KuiklyUI",
       "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:20:13.732Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T20:20:30.289Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
