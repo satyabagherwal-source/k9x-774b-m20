@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:33:53.941Z",
-  "total_verified_learnings": 1002,
+  "last_updated": "2026-10-20T01:40:18.334Z",
+  "total_verified_learnings": 1004,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4555,8 +4555,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "87db3ace",
-      "content_hash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
+      "source_version": "ff5e59bc",
+      "content_hash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -4579,6 +4579,11 @@
           "number": 2635,
           "title": "file-uploader-button): restore the current labelText on clear",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2967,
+          "title": "content-switcher): keep selection when an earlier switch is removed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4586,7 +4591,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:52:57.452Z",
+      "verified_at": "2026-10-20T01:40:04.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7548,22 +7553,35 @@
     "learn-github-dodo-reach-hermes-desktop": {
       "learning_id": "learn-github-dodo-reach-hermes-desktop",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dodo-reach-hermes-desktop",
+      "source": "dodo-reach/hermes-desktop",
+      "repository": "dodo-reach/hermes-desktop",
       "slug": "dodo-reach-hermes-desktop",
       "platform": "github",
       "source_url": "https://github.com/dodo-reach/hermes-desktop",
-      "source_version": "HEAD",
-      "content_hash": "e16acb9d275158606cdb9458ad47bbfa985bffd8cbb45eec3f1a8de7d1e849be",
+      "source_version": "3b772afa",
+      "content_hash": "433c2f3e270aefd1271050264ff20721704bb93f34c01e349e5e8e62b1111935",
       "dossier_path": "07_PROJECT_LEARNING/dodo-reach-hermes-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dodo-reach-hermes-desktop-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2969,
+          "title": "unreliable window title bar configurator",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.646Z"
+      "verified_at": "2026-10-20T01:40:11.476Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dohooo-helmor": {
       "learning_id": "learn-github-dohooo-helmor",
@@ -29884,8 +29902,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "8d9f30a8",
-      "content_hash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
+      "source_version": "f1c68e2e",
+      "content_hash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -29898,6 +29916,11 @@
           "number": 2606,
           "title": "build(deps): bump the simple2 group across 1 directory with 10 updates (#39951)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2970,
+          "title": "console: Fix second loading spinner on the cluster list (#39875)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29905,7 +29928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:21:19.818Z",
+      "verified_at": "2026-10-20T01:40:18.318Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58805,22 +58828,36 @@
     "learn-github-mozilla-readability": {
       "learning_id": "learn-github-mozilla-readability",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mozilla/readability",
       "repository": "mozilla/readability",
       "slug": "mozilla-readability",
       "platform": "github",
       "source_url": "https://github.com/mozilla/readability",
-      "source_version": "main",
-      "content_hash": "e42a2767bbabb3b5c3c61b8275923b3231f636fcec718c8ac4d1cb382804ee42",
+      "source_version": "ab4027a8",
+      "content_hash": "a62ee25140c4178e03dd1d564788d9072fdd2a1525d81db35b98cb3275602f0a",
       "dossier_path": "07_PROJECT_LEARNING/mozilla-readability-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mozilla-readability-learnings.md",
       "promoted_rules": [
-        "Rule 1631"
+        "Rule 1631",
+        {
+          "number": 2968,
+          "title": "DomException when simplifying nested elements caused by invalid attribute names",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:40:09.143Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-miso-belica-justext": {
       "learning_id": "learn-github-miso-belica-justext",
@@ -96311,6 +96348,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:33:53.928Z"
+    },
+    "rule-2967": {
+      "learning_id": "rule-2967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2967,
+      "title": "content-switcher): keep selection when an earlier switch is removed",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "ff5e59bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:40:04.195Z"
+    },
+    "rule-2968": {
+      "learning_id": "rule-2968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2968,
+      "title": "DomException when simplifying nested elements caused by invalid attribute names",
+      "source_url": "https://github.com/mozilla/readability",
+      "source_version": "ab4027a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:40:09.143Z"
+    },
+    "rule-2969": {
+      "learning_id": "rule-2969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2969,
+      "title": "unreliable window title bar configurator",
+      "source_url": "https://github.com/dodo-reach/hermes-desktop",
+      "source_version": "3b772afa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:40:11.476Z"
+    },
+    "rule-2970": {
+      "learning_id": "rule-2970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2970,
+      "title": "console: Fix second loading spinner on the cluster list (#39875)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "f1c68e2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:40:18.318Z"
     }
   },
   "aliases": {

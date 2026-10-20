@@ -3635,3 +3635,7 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `392233f8` | Multi-dimensional audit evidence | 2026-10-20T01:27:31.297Z |
 | `learn-github-goose3-goose3` | `https://github.com/goose3/goose3` | `87b6003d` | Multi-dimensional audit evidence | 2026-10-20T01:33:47.586Z |
 | `learn-github-jaywcjlove-devhub` | `https://github.com/jaywcjlove/DevHub` | `15d258ec` | Multi-dimensional audit evidence | 2026-10-20T01:33:53.990Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `ff5e59bc` | Multi-dimensional audit evidence | 2026-10-20T01:40:04.267Z |
+| `learn-github-mozilla-readability` | `https://github.com/mozilla/readability` | `ab4027a8` | Multi-dimensional audit evidence | 2026-10-20T01:40:09.214Z |
+| `learn-github-dodo-reach-hermes-desktop` | `https://github.com/dodo-reach/hermes-desktop` | `3b772afa` | Multi-dimensional audit evidence | 2026-10-20T01:40:11.547Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `f1c68e2e` | Multi-dimensional audit evidence | 2026-10-20T01:40:18.388Z |

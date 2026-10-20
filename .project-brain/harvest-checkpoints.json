@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:33:53.998Z",
+  "last_updated": "2026-10-20T01:40:18.396Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6004,14 +6004,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
-      "verified_at": "2026-10-19T13:21:19.869Z",
+      "content_hash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
+      "verified_at": "2026-10-20T01:40:18.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:21:19.869Z"
+      "last_updated": "2026-10-20T01:40:18.395Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -8404,14 +8404,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
-      "verified_at": "2026-10-19T14:52:57.498Z",
+      "content_hash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
+      "verified_at": "2026-10-20T01:40:04.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:52:57.498Z"
+      "last_updated": "2026-10-20T01:40:04.274Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
@@ -14847,6 +14847,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:33:53.997Z"
+    },
+    "mozilla/readability": {
+      "repository": "mozilla/readability",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mozilla-readability",
+      "content_hash": "a62ee25140c4178e03dd1d564788d9072fdd2a1525d81db35b98cb3275602f0a",
+      "verified_at": "2026-10-20T01:40:09.221Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:40:09.221Z"
+    },
+    "dodo-reach/hermes-desktop": {
+      "repository": "dodo-reach/hermes-desktop",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dodo-reach-hermes-desktop",
+      "content_hash": "433c2f3e270aefd1271050264ff20721704bb93f34c01e349e5e8e62b1111935",
+      "verified_at": "2026-10-20T01:40:11.555Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:40:11.555Z"
     }
   },
   "repos": {

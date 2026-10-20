@@ -3628,3 +3628,7 @@
 | `CYCLE-20261020-72LA` | `2026-10-20T01:27:31.294Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2963` | Yes (`d57d6102...`) |
 | `CYCLE-20261020-F4XR` | `2026-10-20T01:33:47.583Z` | `goose3/goose3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2964` | Yes (`a0042968...`) |
 | `CYCLE-20261020-F9VN` | `2026-10-20T01:33:53.987Z` | `jaywcjlove/DevHub` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2965, Rule 2966` | Yes (`7d3fae21...`) |
+| `CYCLE-20261020-N7L4` | `2026-10-20T01:40:04.264Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2967` | Yes (`dd493b77...`) |
+| `CYCLE-20261020-NBEJ` | `2026-10-20T01:40:09.211Z` | `mozilla/readability` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2968` | Yes (`a62ee251...`) |
+| `CYCLE-20261020-ND7C` | `2026-10-20T01:40:11.544Z` | `dodo-reach/hermes-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2969` | Yes (`433c2f3e...`) |
+| `CYCLE-20261020-NIHD` | `2026-10-20T01:40:18.385Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2970` | Yes (`ee667523...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `8d9f30a8`  
+> **Source Version**: `f1c68e2e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:21:19.647Z  
+> **Timestamp**: 2026-10-20T01:40:18.025Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:21:19.641Z  
+> **Harvest Timestamp**: 2026-10-20T01:40:18.018Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -964,616 +964,1008 @@ export default async function fetchStatementLoggingMaxSampleRate({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a74763a4` (2026-10-19)
-**Commit Message**: build(deps): bump the simple2 group across 1 directory with 10 updates (#39951)
+### Incident Patch 1: `60cb5f63` (2026-10-19)
+**Commit Message**: console: Fix second loading spinner on the cluster list (#39875)
 
-Bumps the simple2 group with 10 updates in the / directory:
+### Motivation
 
-| Package | From | To |
-| --- | --- | --- |
-| [opentelemetry](https://github.com/open-telemetry/opentelemetry-rust)
-| `0.33.0` | `0.33.1` |
-|
-[opentelemetry-otlp](https://github.com/open-telemetry/opentelemetry-rust)
-| `0.33.0` | `0.33.1` |
-|
-[opentelemetry_sdk](https://github.com/open-telemetry/opentelemetry-rust)
-| `0.33.0` | `0.33.1` |
-| [schemars](https://github.com/GREsau/schemars) | `1.2.2` | `1.2.3` |
-| [serde_json](https://github.com/serde-rs/json) | `1.0.151` | `1.0.154`
-|
-| [sha2](https://github.com/RustCrypto/hashes) | `0.11.0` | `0.11.1` |
-| [syn](https://github.com/dtolnay/syn) | `3.0.6` | `3.0.9` |
-| [tokio](https://github.com/tokio-rs/tokio) | `1.53.1` | `1.53.3` |
-| [tokio-util](https://github.com/tokio-rs/tokio) | `0.7.19` | `0.7.20`
-|
-| [zeroize](https://github.com/RustCrypto/utils) | `1.9.0` | `1.9.1` |
+Closes: [CNS-192](https://linear.app/materializeinc/issue/CNS-192)
 
+On a cold load the cluster list shows its loading spinner and renders
+the rows once the clusters SUBSCRIBE snapshot arrives. It then swaps
+them for a second spinner before the table finally shows. Both the
+classic table and the per-replica preview table are affected.
 
-Updates `opentelemetry` from 0.33.0 to 0.33.1
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/open-telemetry/opentelemetry-rust/commit/372ebbc74d4dba71bb9820732f57f7316b4e7a1e"><code>372ebbc</code
+Each row's overflow menu renders its items while the menu is closed. For
+clusters the user owns that are managed and not system clusters, that
+includes `AlterClusterMenuItem`, which read the cluster sizes through
+`useAvailableClusterSizes`, a `useSuspenseQuery`. On a cold cache the
+first render of the rows suspends, and React hides them behind the
+`ClustersListPage` Suspense fallback until the sizes return.
 
-**File**: `Cargo.lock` (modified, +74/-73)
+Before #38014 the list itself loaded through a suspending query, so both
+waits sat behind one fallback. Since the list moved to the subscribe-fed
+atom with its own loading state, they show up as two separate spinners.
+
+### Description
+
+- `useAvailableClusterSizesWithoutSuspense` reads the same query, with
+the same key and fetcher, without suspending. `AlterClusterMen
+
+**File**: `console/src/platform/clusters/AlterClusterMenuItem.tsx` (modified, +10/-2)
 ```diff
-@@ -663,7 +663,7 @@ dependencies = [
-  "rustc-hash",
-  "serde",
-  "serde_derive",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+@@ -8,22 +8,30 @@
+ // by the Apache License, Version 2.0.
  
- [[package]]
-@@ -795,7 +795,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+ import { MenuItem, useDisclosure } from "@chakra-ui/react";
++import { useQuery } from "@tanstack/react-query";
+ import React from "react";
  
- [[package]]
-@@ -1033,7 +1033,7 @@ dependencies = [
-  "lru",
-  "percent-encoding",
-  "regex-lite",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "tracing",
-  "url",
- ]
-@@ -1156,7 +1156,7 @@ dependencies = [
-  "hmac 0.13.0",
-  "http 1.5.0",
-  "percent-encoding",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "time",
-  "tracing",
- ]
-@@ -1189,7 +1189,7 @@ dependencies = [
-  "md-5",
-  "pin-project-lite",
-  "sha1 0.11.0",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "tracing",
- ]
+ import { Cluster } from "~/api/materialize/cluster/clusterList";
  
-@@ -2258,7 +2258,7 @@ dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+ import { AlterClusterModal } from "./AlterClusterModal";
+-import { useAvailableClusterSizes, useMaxReplicasPerCluster } from "./queries";
++import {
++  availableClusterSizesQuery,
++  useMaxReplicasPerCluster,
++} from "./queries";
  
- [[package]]
-@@ -2976,7 +2976,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+ const AlterClusterMenuItem = ({ cluster }: { cluster: Cluster }) => {
+-  const { data: clusterSizes } = useAvailableClusterSizes();
++  // NOTE: this mounts while its overflow menu is closed, in cluster list rows
++  // and the cluster detail header. Suspending would swap the page it renders
++  // in for that page's Suspense fallback.
++  const { data: clusterSizes } = useQuery(availableClusterSizesQuery());
+   const { data: maxReplicas } = useMaxReplicasPerCluster();
  
- [[package]]
-@@ -3020,7 +3020,7 @@ checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
- dependencies = [
-  "darling_core 0.24.1",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+   const { isOpen, onOpen, onClose } = useDisclosure();
  
- [[package]]
-@@ -3725,7 +3725,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "778e2ac28f6c47af28e4907f13ffd1e1ddbd400980a9abd7c8df189bf578a5ad"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
+   return (
+     <>
+       <MenuItem
++        isDisabled={!clusterSizes}
+         onClick={(e) => {
+           e.stopPropagation();
+           onOpen();
+```
+
+**File**: `console/src/platform/clusters/ClustersList.test.tsx` (modified, +66/-2)
+```diff
+@@ -14,18 +14,24 @@ import { useLocation } from "react-router-dom";
  
- [[package]]
-@@ -3908,7 +3908,7 @@ dependencies = [
-  "reqwest 0.13.5",
-  "serde",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "socket2",
-  "thiserror 2.0.21",
-  "tokio",
-@@ -4085,7 +4085,7 @@ checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+ import { Cluster, Replica } from "~/api/materialize/cluster/clusterList";
+ import { ReplicaUtilization } from "~/api/materialize/cluster/replicaUtilization";
++import { buildSqlQueryHandlerV2 } from "~/api/mocks/buildSqlQueryHandler";
++import server from "~/api/mocks/server";
+ import { uiPreviewOptInStorageKey } from "~/hooks/useUiPreview";
+ import { getStore } from "~/jotai";
+ import { allClusters } from "~/store/allClusters";
+ import { mockSubscribeState } from "~/test/mockSubscribe";
+-import { renderComponent, RenderWithPathname } from "~/test/utils";
++import {
++  MSW_HANDLER_LOADING_WAIT_TIME,
++  renderComponent,
++  RenderWithPathname,
++} from "~/test/utils";
+ import {
+   formatDate,
+   FRIENDLY_DATETIME_FORMAT_NO_SECONDS,
+ } from "~/utils/dateFormat";
  
- [[package]]
-@@ -5091,7 +5091,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
+ import ClustersListPage from "./ClustersList";
+-import { ReplicaHydrationCounts } from "./queries";
++import { clusterQueryKeys, ReplicaHydrationCounts } from "./queries";
  
- [[package]]
-@@ -5440,7 +5440,7 @@ checksum = "d9c6922f6afe80418dd6019818af5d0d34584c371780ff09b9752370c25b4abb"
- dependencies = [
-  "base64 0.22.1",
-  "jiff",
-- "schemars 1.2.2",
-+ "schemars 1.2.3",
-  "serde",
-  "serde_json",
- ]
-@@ -5515,7 +5515,7 @@ dependencies = [
-  "jiff",
-  "json-patch",
-  "k8s-openapi",
-- "schemars 1.2.2",
-+ "schemars 1.2.3",
-  "serde",
-  "serde-value",
-  "serde_json",
-@@ -6303,7 +6303,7 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "serde_plain",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "smallvec",
-  "static_assertions",
-  "thiserror 2.0.21",
-@@ -6625,7 +6625,7 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "serde_plain",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "static_assertions",
-  "thiserror 2.0.21",
-  "timely",
-@@ -6755,11 +6755,11 @@ dependencies = [
-  "mz-repr",
-  "mz-server-core",
-  "rand 0.10.3",
-- "schemars 1.2.2",
-+ "schemars 1.2.3",
-  "semver",
-  "serde",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "tracing",
-  "uuid",
- ]
-@@ -6998,7 +6998,7 @@ dependencies = [
-  "serde",
-  "serde-reflection",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "timely",
-  "tracing",
- ]
-@@ -7118,7 +7118,7 @@ dependencies = [
-  "rusqlite",
-  "serde",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "strsim",
-  "supports-color 3.0.2",
-  "tempfile",
-@@ -7419,7 +7419,7 @@ dependencies = [
-  "prettyplease 0.3.0",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+ // The per-replica table is a UI preview: its flag must be on AND the user
+ // opted in (seeded into localStorage below). The global useFlags mock in
+@@ -422,6 +428,64 @@ describe("ClustersList preview gating", () => {
+   });
+ });
  
- [[package]]
-@@ -7431,7 +7431,7 @@ dependencies = [
-  "mz-ore",
-  "mz-repr",
-  "proc-macro2",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
++describe("ClustersList cluster sizes for the alter menu", () => {
++  const holdClusterSizes = () =>
++    server.use(
++      buildSqlQueryHandlerV2(
++        { queryKey: clusterQueryKeys.availableClusterSizes(), results: [] },
++        { waitTimeMs: MSW_HANDLER_LOADING_WAIT_TIME },
++      ),
++    );
++
++  it("shows the per-replica rows while the sizes load", async () => {
++    holdClusterSizes();
++    await renderClustersList([buildCluster()]);
++
++    expect(rowOrder()).toEqual(["r1", "r2"]);
++  });
++
++  it("shows the classic table's rows while the sizes load", async () => {
++    holdClusterSizes();
++    localStorage.removeItem(
++      uiPreviewOptInStorageKey("clusterListUsageMetrics"),
++    );
++    await renderClustersList([buildCluster()]);
++
++    expect(
++      screen.getByRole("columnheader", { name: "Replicas" }),
++    ).toBeVisible();
++    expect(screen.getByText("compute")).toBeVisible();
++  });
++
++  it("disables Alter cluster while the sizes load", async () => {
++    holdClusterSizes();
++    const user = userEvent.setup();
++    await renderClustersList([buildCluster()]);
++
++    await user.click(
++      screen.getAllByRole("button", { name: "More actions" })[0],
++    );
++
++    expect(
++      await screen.findByRole("menuitem", { name: "Alter cluster" }),
++    ).toBeDisabled();
++  });
++
++  it("enables Alter cluster once the sizes load", async () => {
++    const user = userEvent.setup();
++    await renderClustersList([buildCluster()]);
++
++    await user.click(
++      screen.getAllByRole("button", { name: "More actions" })[0],
++    );
++
++    const alterCluster = await screen.findByRole("menuitem", {
++      name: "Alter cluster",
++    });
++    await waitFor(() => expect(alterCluster).toBeEnabled());
++  });
++});
++
+ describe("ClustersList replica rows", () => {
+   it("renders one row per replica, naming the cluster on each", async () => {
+     await renderClustersList([buildCluster()]);
+```
+
+**File**: `console/src/platform/clusters/NewClusterForm.tsx` (modified, +3/-2)
+```diff
+@@ -16,6 +16,7 @@ import {
+   useTheme,
+   VStack,
+ } from "@chakra-ui/react";
++import { useSuspenseQuery } from "@tanstack/react-query";
+ import { sql } from "kysely";
+ import React from "react";
+ import { useForm } from "react-hook-form";
+@@ -49,7 +50,7 @@ import { MaterializeTheme } from "~/theme";
+ import { assert, capitalizeSentence } from "~/util";
  
- [[package]]
-@@ -7668,7 +7668,7 @@ dependencies = [
-  "quote",
-  "serde",
-  "serde-saphyr",
-- "syn 3.0.6",
-+ "syn 3.0.9",
-  "walkdir",
- ]
+ import {
+-  useAvailableClusterSizes,
++  availableClusterSizesQuery,
+   useClusters,
+   useMaxReplicasPerCluster,
+ } from "./queries";
+@@ -72,7 +73,7 @@ const NewClusterForm = () => {
+   const { colors } = useTheme<MaterializeTheme>();
+   const { track } = useSegment();
  
-@@ -7718,7 +7718,7 @@ dependencies = [
-  "hex",
-  "hex-literal",
-  "reqwest 0.13.5",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "tar",
-  "walkdir",
- ]
-@@ -7774,7 +7774,7 @@ dependencies = [
-  "reqwest 0.13.5",
-  "serde",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "tokio",
-  "tracing",
- ]
-@@ -7865,7 +7865,7 @@ dependencies = [
-  "semver",
-  "serde",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "thiserror 2.0.21",
-  "tokio",
-  "tower-http 0.7.1",
-@@ -7955,7 +7955,7 @@ version = "0.1.0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
-  "tracing",
- ]
+-  const { data: clusterSizes } = useAvailableClusterSizes();
++  const { data: clusterSizes } = useSuspenseQuery(availableClusterSizesQuery());
+   const { data: maxReplicas } = useMaxReplicasPerCluster();
  
-@@ -8071,7 +8071,7 @@ version = "0.1.0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+   const { formState, handleSubmit, register, setError, setFocus } =
+```
+
+**File**: `console/src/platform/clusters/NewReplicaModal.tsx` (modified, +3/-2)
+```diff
+@@ -23,6 +23,7 @@ import {
+   useTheme,
+   VStack,
+ } from "@chakra-ui/react";
++import { useSuspenseQuery } from "@tanstack/react-query";
+ import React from "react";
+ import { useForm } from "react-hook-form";
  
- [[package]]
-@@ -8523,7 +8523,7 @@ dependencies = [
-  "mz-ore",
-  "openssl",
-  "proxy-header",
-- "schemars 1.2.2",
-+ "schemars 1.2.3",
-  "scopeguard",
-  "serde",
-  "serde_json",
-@@ -8883,7 +8883,7 @@ dependencies = [
-  "serde",
-  "serde_bytes",
-  "serde_json",
-- "sha2 0.11.0",
-+ "sha2 0.11.1",
-  "sqlparser",
-  "tempfile",
-  "thiserror 2.0.21",
-@@ -9322,7 +9322,7 @@ dependencies = [
-  "mz-ore",
-  "mz-ore-build",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
-  "tempfile",
- ]
+@@ -40,7 +41,7 @@ import { useToast } from "~/hooks/useToast";
+ import docUrls from "~/mz-doc-urls.json";
+ import { MaterializeTheme } from "~/theme";
  
-@@ -10061,9 +10061,9 @@ dependencies = [
+-import { useAvailableClusterSizes } from "./queries";
++import { availableClusterSizesQuery } from "./queries";
  
- [[package]]
- name = "opentelemetry"
--version = "0
+ type FormState = {
+   name: string;
+@@ -72,7 +73,7 @@ const NewReplicaForm = ({
+     mode: "onTouched",
+   });
+ 
+-  const { data: clusterSizes } = useAvailableClusterSizes();
++  const { data: clusterSizes } = useSuspenseQuery(availableClusterSizesQuery());
+   const { runSql: createReplica, loading: isCreationInFlight } = useSqlLazy({
+     queryBuilder: (values: FormState & { clusterName: string }) => {
+       const compiledStatement =
+```
+
+**File**: `console/src/platform/clusters/queries.ts` (modified, +11/-11)
+```diff
+@@ -9,6 +9,7 @@
+ 
+ import {
+   keepPreviousData,
++  QueryFunctionContext,
+   useMutation,
+   useQuery,
+   useQueryClient,
+@@ -552,17 +553,16 @@ export function useLargestMaintainedQueries(
+   });
+ }
+ 
+-export function useAvailableClusterSizes() {
+-  return useSuspenseQuery({
+-    queryKey: clusterQueryKeys.availableClusterSizes(),
+-    queryFn: ({ queryKey, signal }) => {
+-      return fetchAvailableClusterSizes({
+-        queryKey,
+-        requestOptions: { signal },
+-      });
+-    },
+-  });
+-}
++/** Query options for the replica sizes the environment offers. */
++export const availableClusterSizesQuery = () => ({
++  queryKey: clusterQueryKeys.availableClusterSizes(),
++  queryFn: ({ queryKey, signal }: QueryFunctionContext) => {
++    return fetchAvailableClusterSizes({
++      queryKey,
++      requestOptions: { signal },
++    });
++  },
++});
+ 
+ export function useMaxReplicasPerCluster() {
+   return useQuery({
 ```
 
 ---
 
-### Incident Patch 2: `7d8b1cae` (2026-10-19)
-**Commit Message**: build(deps): bump zip from 8.6.0 to 9.0.3 (#39953)
+### Incident Patch 2: `4e4ba3cf` (2026-10-19)
+**Commit Message**: SS-431 - PG source: implement a timeout for replication slot creation (#39605)
 
-Bumps [zip](https://github.com/zip-rs/zip2) from 8.6.0 to 9.0.3.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/zip-rs/zip2/releases">zip's
-releases</a>.</em></p>
-<blockquote>
-<h2>v9.0.3</h2>
-<h3><!-- raw HTML omitted -->🐛 Bug Fixes</h3>
-<ul>
-<li>Preserve directories' read-only status when extracting on non-Unix
-systems (<a
-href="https://redirect.github.com/zip-rs/zip2/pull/1054">#1054</a>)</li>
-</ul>
-<h2>v9.0.1</h2>
-<h3><!-- raw HTML omitted -->🐛 Bug Fixes</h3>
-<ul>
-<li>set_permissions was still following symlinks in non-streaming
-extraction (<a
-href="https://redirect.github.com/zip-rs/zip2/pull/1038">#1038</a>)</li>
-<li>two arithmetic overflows in the implode decoder (<a
-href="https://redirect.github.com/zip-rs/zip2/pull/1028">#1028</a>)</li>
-<li>reject an empty archive whose central directory offset is past the
-EOCD (<a
-href="https://redirect.github.com/zip-rs/zip2/pull/1025">#1025</a>)</li>
-<li>don't panic when two entries extract to the same path (<a
-href="https://redirect.github.com/zip-rs/zip2/pull/1023">#1023</a>)</li>
-<li>fail reads that exceed the declared uncompressed size (
+PostgreSQL slot creation isn't bound by a timeout, and can be blocked
+indefinitely. This has been observed for more than one user, generally
+caused by issues with the upstream DB or upstream clients. This uses
+PostgreSQL's `lock_timeout` as `statement_timeout` doesn't apply to
+creation of replication slots, and a client-side timeout would leave the
+`CREATE` command running on the upstream.
 
-**File**: `Cargo.lock` (modified, +4/-3)
+The timeout defaults to 1 minute, and is configurable via dyncfg
+`pg_source_replication_slot_creation_timeout`. For PG, 0 is disabled, so
+there was no need to wrap in Option. This clamps the timeout to
+`i32::MAX`, which is the PG's documented max value.
+
+Test coverage added to validate the error and resumption.
+
+Closes [SS-431](https://linear.app/materializeinc/issue/SS-431)
+
+**File**: `misc/python/materialize/mzcompose/__init__.py` (modified, +1/-0)
 ```diff
-@@ -7080,7 +7080,7 @@ dependencies = [
-  "tracing-subscriber",
-  "url",
-  "walkdir",
-- "zip 8.6.0",
-+ "zip 9.0.5",
- ]
- 
- [[package]]
-@@ -15400,14 +15400,15 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "8.6.0"
-+version = "9.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2d04a6b5381502aa6087c94c669499eb1602eb9c5e8198e534de571f7154809b"
-+checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
- dependencies = [
-  "crc32fast",
-  "flate2",
-  "indexmap 2.14.2",
-  "memchr",
-+ "nix 0.31.3",
-  "typed-path",
- ]
- 
+@@ -908,6 +908,7 @@ def get_default_system_parameters(
+     "mysql_source_snapshot_partition_probed_prefixes_per_billion_rows",
+     "postgres_fetch_slot_resume_lsn_interval",
+     "pg_schema_validation_interval",
++    "pg_source_replication_slot_creation_timeout",
+     "pg_source_validate_timeline",
+     "sql_server_source_validate_restore_history",
+     "storage_enforce_external_addresses",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `misc/python/materialize/parallel_workload/action.py` (modified, +1/-0)
 ```diff
-@@ -591,7 +591,7 @@ which = "8"
- x509-cert = { version = "0.3.0", default-features = false }
- yansi = "1.0.1"
- zeroize = { version = "1.8.2", features = ["derive", "serde"] }
--zip = { version = "8.6.0", default-features = false, features = ["deflate-flate2"] }
-+zip = { version = "9.0.3", default-features = false, features = ["deflate-flate2"] }
+@@ -3427,6 +3427,7 @@ def __init__(
+             "mysql_replication_heartbeat_interval",
+             "postgres_fetch_slot_resume_lsn_interval",
+             "pg_schema_validation_interval",
++            "pg_source_replication_slot_creation_timeout",
+             "storage_enforce_external_addresses",
+             "storage_upsert_prevent_snapshot_buffering",
+             "storage_rocksdb_use_merge_operator",
+```
+
+**File**: `src/storage-types/src/dyncfgs.rs` (modified, +13/-0)
+```diff
+@@ -301,6 +301,18 @@ pub const PG_FETCH_SLOT_RESUME_LSN_INTERVAL: Config<Duration> = Config::new(
+     ParameterScope::Replica,
+ );
  
- [profile.dev]
- split-debuginfo = "unpacked"
++/// Timeout for `CREATE_REPLICATION_SLOT` on the upstream server. Applied as the session's
++/// `lock_timeout`, which bounds the wait for in-progress upstream transactions to end. This has
++/// no effect when the upsteam is a physical standby.
++pub const PG_SOURCE_REPLICATION_SLOT_CREATION_TIMEOUT: Config<Duration> = Config::new(
++    "pg_source_replication_slot_creation_timeout",
++    Duration::from_secs(60),
++    "Timeout for creating a replication slot on the upstream PostgreSQL server. Applied as \
++     `lock_timeout`, which bounds the wait for in-progress upstream transactions to end. \
++     Has no effect with physical standbys.",
++    ParameterScope::Replica,
++);
++
+ /// Interval to re-validate the schemas of ingested tables.
+ pub const PG_SCHEMA_VALIDATION_INTERVAL: Config<Duration> = Config::new(
+     "pg_schema_validation_interval",
+@@ -610,6 +622,7 @@ pub fn all_dyncfgs(configs: ConfigSet) -> ConfigSet {
+         .add(&ORE_OVERFLOWING_BEHAVIOR)
+         .add(&PG_FETCH_SLOT_RESUME_LSN_INTERVAL)
+         .add(&PG_SCHEMA_VALIDATION_INTERVAL)
++        .add(&PG_SOURCE_REPLICATION_SLOT_CREATION_TIMEOUT)
+         .add(&PG_SOURCE_VALIDATE_TIMELINE)
+         .add(&REPLICA_METRICS_HISTORY_RETENTION_INTERVAL)
+         .add(&SINK_ENSURE_TOPIC_CONFIG)
+```
+
+**File**: `src/storage/src/source/postgres.rs` (modified, +75/-9)
+```diff
+@@ -93,7 +93,9 @@ use mz_expr::EvalError;
+ use mz_ore::error::ErrorExt;
+ use mz_postgres_util::desc::PostgresTableDesc;
+ use mz_postgres_util::schema_change::SchemaChangeError;
+-use mz_postgres_util::{Client, PostgresError, Sql, query_opt, simple_query_opt, sql};
++use mz_postgres_util::{
++    Client, PostgresError, Sql, query_opt, simple_query, simple_query_opt, sql,
++};
+ use mz_repr::{Datum, GlobalId, Row};
+ use mz_storage_types::errors::{DataflowError, SourceError, SourceErrorDetails};
+ use mz_storage_types::sources::casts::StorageScalarExpr;
+@@ -107,6 +109,7 @@ use timely::dataflow::operators::Concat;
+ use timely::dataflow::operators::vec::{Map, ToStream};
+ use timely::dataflow::{Scope, StreamVec};
+ use timely::progress::{Antichain, Timestamp};
++use tokio_postgres::SimpleQueryRow;
+ use tokio_postgres::error::SqlState;
+ use tokio_postgres::types::PgLsn;
+ 
+@@ -321,6 +324,11 @@ pub enum TransientError {
+     },
+     #[error("replication slot already exists")]
+     ReplicationSlotAlreadyExists,
++    #[error(
++        "creating replication slot {slot} timed out after {timeout:?}. Slot creation waits for \
++         in-progress upstream transactions to end"
++    )]
++    ReplicationSlotCreationTimeout { slot: String, timeout: Duration },
+     #[error("stream ended prematurely")]
+     ReplicationEOF,
+     #[error("unexpected replication message")]
+@@ -431,23 +439,81 @@ impl From<DefiniteError> for DataflowError {
+     }
+ }
+ 
+-async fn ensure_replication_slot(client: &Client, slot: &str) -> Result<(), TransientError> {
+-    let slot = Sql::ident(slot);
++async fn ensure_replication_slot(
++    client: &Client,
++    slot: &str,
++    timeout: Duration,
++) -> Result<(), TransientError> {
+     let query = sql!(
+         "CREATE_REPLICATION_SLOT {} LOGICAL \"pgoutput\" NOEXPORT_SNAPSHOT",
+-        slot.clone()
++        Sql::ident(slot)
+     );
+-    match simple_query_opt(client, query).await {
++    match create_replication_slot(client, slot, query, timeout).await {
+         Ok(_) => Ok(()),
+-        // If the slot already exists that's still ok
+-        Err(PostgresError::Postgres(err)) if err.code() == Some(&SqlState::DUPLICATE_OBJECT) => {
+-            tracing::trace!(slot = %slot, "replication slot already existed");
++        Err(TransientError::ReplicationSlotAlreadyExists) => {
++            tracing::trace!(%slot, "replication slot already existed");
+             Ok(())
+         }
+-        Err(err) => Err(TransientError::PostgresError(err)),
++        Err(err) => Err(err),
+     }
+ }
+ 
++/// Runs the `CREATE_REPLICATION_SLOT` command `query` for `slot`, failing with
++/// [`TransientError::ReplicationSlotCreationTimeout`] once the command has waited `timeout` for
++/// in-progress upstream transactions to end.
++///
++/// A failure inside a transaction leaves that transaction aborted.
++async fn create_replication_slot(
++    client: &Client,
++    slot: &str,
++    query: Sql,
++    timeout: Duration,
++) -> Result<Option<SimpleQueryRow>, TransientError> {
++    // Slot creation blocks on the transaction locks of in-progress transactions, which
++    // `lock_timeout` bounds. `statement_timeout` does not apply: the server arms it for SQL
++    // statements only, never for replication commands. Abandoning the command client-side does not
++    // help either: a walsender blocked on a transaction lock does not notice the closed connection
++    // and the `CREATE` command remains on the upstream.
++    //
++    // NOTE: `lock_timeout` only detects locks of concurrent sessions on the same server, not
++    // on upstream servers of physical replicas.
++    set_timeout(client, "lock_timeout", timeout).await?;
++    let result = simple_query_opt(client, query).await;
++    // Inside a transaction a failed command also fails the reset, and rolling the transaction back
++    // reverts the `SET`. The command's error is the one to report.
++    let reset = simple_query(client, sql!("RESET lock_timeout")).await;
++    let row = match result {
++        Ok(row) => row,
++        Err(PostgresError::Postgres(err)) if err.code() == Some(&SqlState::DUPLICATE_OBJECT) => {
++            return Err(TransientError::ReplicationSlotAlreadyExists);
++        }
++        Err(PostgresError::Postgres(err)) if err.code() == Some(&SqlState::LOCK_NOT_AVAILABLE) => {
++            return Err(TransientError::ReplicationSlotCreationTimeout {
++                slot: slot.to_owned(),
++                timeout,
++            });
++        }
++        Err(err) => return Err(err.into()),
++    };
++    reset?;
++    Ok(row)
++}
++
++/// Sets the session's timeout `parameter` (for example `statement_timeout`) to `timeout`.
++async fn set_timeout(
++    client: &Client,
++    parameter: &'static str,
++    timeout: Duration,
++) -> Result<(), TransientError> {
++    // A unitless value is interpreted as milliseconds, and the server rejects values above
++    // `i32::MAX` (about 24.8 days) rather than clamping them.
++    // https://www.postgresql.org/docs/current/runtime-config-client.html
++    let m
+```
+
+**File**: `src/storage/src/source/postgres/snapshot.rs` (modified, +14/-24)
+```diff
+@@ -177,7 +177,8 @@ use mz_postgres_util::{Client, Config, PostgresError, Sql, simple_query, simple_
+ use mz_repr::{Datum, DatumVec, Diff, Row};
+ use mz_storage_types::connections::ConnectionContext;
+ use mz_storage_types::dyncfgs::{
+-    PG_FETCH_SLOT_RESUME_LSN_INTERVAL, STORAGE_PERSIST_SINK_DESCRIPTION_LOOKAHEAD,
++    PG_FETCH_SLOT_RESUME_LSN_INTERVAL, PG_SOURCE_REPLICATION_SLOT_CREATION_TIMEOUT,
++    STORAGE_PERSIST_SINK_DESCRIPTION_LOOKAHEAD,
+ };
+ use mz_storage_types::errors::DataflowError;
+ use mz_storage_types::parameters::PgSourceSnapshotConfig;
+@@ -194,7 +195,6 @@ use timely::dataflow::operators::{
+ };
+ use timely::dataflow::{Scope, StreamVec};
+ use timely::progress::Timestamp;
+-use tokio_postgres::error::SqlState;
+ use tokio_postgres::types::{Oid, PgLsn};
+ use tracing::trace;
+ 
+@@ -460,6 +460,8 @@ pub(crate) fn render<'scope>(
+                 )
+                 .await?;
+ 
++            let slot_creation_timeout =
++                PG_SOURCE_REPLICATION_SLOT_CREATION_TIMEOUT.get(config.config.config_set());
+ 
+             // The snapshot operator is responsible for creating the replication slot(s).
+             // This first slot is the permanent slot that will be used for reading the replication
+@@ -477,7 +479,7 @@ pub(crate) fn render<'scope>(
+                 let main_slot = &connection.publication_details.slot;
+ 
+                 tracing::info!(%id, "ensuring replication slot {main_slot} exists");
+-                super::ensure_replication_slot(&client, main_slot).await?;
++                super::ensure_replication_slot(&client, main_slot, slot_creation_timeout).await?;
+                 Some(client)
+             } else {
+                 None
+@@ -552,7 +554,7 @@ pub(crate) fn render<'scope>(
+                         "timely-{worker_id} (leader) creating temporary replication slot {tmp_slot}"
+                     );
+                     let (snapshot_id, snapshot_lsn) =
+-                        export_snapshot(&client, &tmp_slot, true).await?;
++                        export_snapshot(&client, &tmp_slot, true, slot_creation_timeout).await?;
+                     tracing::info!(
+                         %id,
+                         "timely-{worker_id} (leader) exported snapshot {snapshot_id} \
+@@ -642,8 +644,9 @@ pub(crate) fn render<'scope>(
+             // Configure statement_timeout based on param. We want to be able to
+             // override the server value here in case it's set too low,
+             // respective to the size of the data we need to copy.
+-            set_statement_timeout(
++            super::set_timeout(
+                 &client,
++                "statement_timeout",
+                 config
+                     .config
+                     .parameters
+@@ -971,8 +974,9 @@ async fn export_snapshot(
+     client: &Client,
+     slot: &str,
+     temporary: bool,
++    timeout: Duration,
+ ) -> Result<(String, MzOffset), TransientError> {
+-    match export_snapshot_inner(client, slot, temporary).await {
++    match export_snapshot_inner(client, slot, temporary, timeout).await {
+         Ok(ok) => Ok(ok),
+         Err(err) => {
+             // We don't want to leave the client inside a failed tx
+@@ -986,6 +990,7 @@ async fn export_snapshot_inner(
+     client: &Client,
+     slot: &str,
+     temporary: bool,
++    timeout: Duration,
+ ) -> Result<(String, MzOffset), TransientError> {
+     simple_query(
+         client,
+@@ -1004,13 +1009,9 @@ async fn export_snapshot_inner(
+             Sql::ident(slot)
+         )
+     };
+-    let row = match simple_query_opt(client, query).await {
+-        Ok(row) => Ok(row.unwrap()),
+-        Err(PostgresError::Postgres(err)) if err.code() == Some(&SqlState::DUPLICATE_OBJECT) => {
+-            return Err(TransientError::ReplicationSlotAlreadyExists);
+-        }
+-        Err(err) => Err(err),
+-    }?;
++    let row = super::create_replication_slot(client, slot, query, timeout)
++        .await?
++        .expect("CREATE_REPLICATION_SLOT returns one row");
+ 
+     // When creating a replication slot postgres returns the LSN of its consistent point, which is
+     // the LSN that must be passed to `START_REPLICATION` to cleanly transition from the snapshot
+@@ -1043,17 +1044,6 @@ async fn use_snapshot(client: &Client, snapshot: &str) -> Result<(), TransientEr
+     Ok(())
+ }
+ 
+-async fn set_statement_timeout(client: &Client, timeout: Duration) -> Result<(), TransientError> {
+-    // Value is known to accept milliseconds w/o units.
+-    // https://www.postgresql.org/docs/current/runtime-config-client.html
+-    let query = sql!(
+-        "SET statement_timeout = {}",
+-        Sql::literal(&timeout.as_millis().to_string())
+-    );
+-    simple_query(client, query).await?;
+-    Ok(())
+-}
+-
+ /// Decodes a row of `col_len` columns obtained from a text encoded COPY query into `row`.
+ fn decode_copy_row(data: &[u8], col_len: usize, row: &mut Row) -> Result<(), DefiniteError> {
+     let mut packer = row.packer();
+```
+
+**File**: `test/pg-cdc/mzcompose.py` (modified, +43/-0)
+```diff
+@@ -162,6 +162,49 @@ def workflow_replication_slots(c: Composition, parser: WorkflowArgumentParser) -
+         c.run_testdrive_files("override/replication-slots.td")
+ 
+ 
++def workflow_slot_creation_timeout(
++    c: Composition, parser: WorkflowArgumentParser
++) -> None:
++    """
++    Test that replication slot creation times out while an upstream transaction is in
++    progress and succeeds once that transaction ends.
++    """
++    pg_version = get_targeted_pg_version(parser)
++    with c.override(create_postgres(pg_version=pg_version)):
++        c.up("materialized", "postgres")
++
++        pg_conn = psycopg.connect(
++            host="localhost",
++            user="postgres",
++            password="postgres",
++            port=c.default_port("postgres"),
++            autocommit=True,
++        )
++        pg_conn.execute("""
++            ALTER USER postgres WITH replication;
++            DROP SCHEMA IF EXISTS public CASCADE;
++            CREATE SCHEMA public;
++            DROP PUBLICATION IF EXISTS mz_source;
++            CREATE PUBLICATION mz_source FOR ALL TABLES;
++            CREATE TABLE t1 (pk INTEGER PRIMARY KEY, f2 TEXT);
++            ALTER TABLE t1 REPLICA IDENTITY FULL;
++            INSERT INTO t1 VALUES (1, 'one');
++            """)
++
++        # Logical slot creation waits for every transaction that holds a transaction ID.
++        pg_conn.autocommit = False
++        pg_conn.execute("INSERT INTO t1 VALUES (2, 'two')")
++
++        c.run_testdrive_files(
++            f"--var=default-replica-size=scale={Materialized.Size.DEFAULT_SIZE},workers={Materialized.Size.DEFAULT_SIZE}",
++            "override/slot-creation-timeout-part-1.td",
++        )
++
++        pg_conn.commit()
++
++        c.run_testdrive_files("--no-reset", "override/slot-creation-timeout-part-2.td")
++
++
+ def workflow_wal_level(c: Composition, parser: WorkflowArgumentParser) -> None:
+     pg_version = get_targeted_pg_version(parser)
+     for wal_level in ["replica", "minimal"]:
+```
+
+**File**: `test/pg-cdc/override/slot-creation-timeout-part-1.td` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++# Copyright Materialize, Inc. and contributors. All rights reserved.
++#
++# Use of this software is governed by the Business Source License
++# included in the LICENSE file at the root of this repository.
++#
++# As of the Change Date specified in that file, in accordance with
++# the Business Source License, use of this software will be governed
++# by the Apache License, Version 2.0.
++
++# An upstream transaction that has written a row is open while the source is created, so the
++# replication slot creation blocks on it until the configured timeout.
++
++$ postgres-execute connection=postgres://mz_system:materialize@${testdrive.materialize-internal-sql-addr}
++ALTER SYSTEM SET pg_source_replication_slot_creation_timeout = '2s'
++
++> CREATE SECRET pgpass AS 'postgres'
++
++> CREATE CONNECTION pg_conn TO POSTGRES (
++    HOST postgres,
++    DATABASE postgres,
++    USER postgres,
++    PASSWORD SECRET pgpass
++  )
++
++> CREATE CLUSTER slot_timeout_cluster SIZE '${arg.default-replica-size}'
++
++> BEGIN
++> CREATE SOURCE mz_source
++  IN CLUSTER slot_timeout_cluster
++  FROM POSTGRES CONNECTION pg_conn (PUBLICATION 'mz_source');
++
++> CREATE TABLE t1 FROM SOURCE mz_source (REFERENCE t1);
++> COMMIT
++
++# The source alternates between `stalled` and `starting` while the transaction is open, so check
++# the recorded stalls instead of the current status.
++> SELECT DISTINCT error ~~ 'postgres: creating replication slot % timed out after 2s. Slot creation waits for in-progress upstream transactions to end'
++  FROM mz_internal.mz_source_status_history
++  JOIN mz_sources ON id = source_id
++  WHERE name = 'mz_source' AND status = 'stalled'
++true
+```
+
+**File**: `test/pg-cdc/override/slot-creation-timeout-part-2.td` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++# Copyright Materialize, Inc. and contributors. All rights reserved.
++#
++# Use of this software is governed by the Business Source License
++# included in the LICENSE file at the root of this repository.
++#
++# As of the Change Date specified in that file, in accordance with
++# the Business Source License, use of this software will be governed
++# by the Apache License, Version 2.0.
++
++# The upstream transaction has ended, so the next slot creation attempt succeeds.
++
++> SELECT * FROM t1
++1 one
++2 two
++
++> SELECT status, error FROM mz_internal.mz_source_statuses WHERE name = 'mz_source'
++running <null>
 ```
 
 ---
 
-### Incident Patch 3: `21ee5097` (2026-10-19)
-**Commit Message**: build(deps): bump the simple group across 1 directory with 7 updates (#39945)
+### Incident Patch 3: `2204b584` (2026-10-19)
+**Commit Message**: SS-522 Fix schema building/checking for iceberg sinks with nested types (#39910)
 
-Bumps the simple group with 7 updates in the /misc/wasm directory:
+Chanegs the way schemas returned by an Iceberg catalog are checked for
+compatibility with schemas created by Materialize by removing the
+constraint that field IDs must match. This is done because the iceberg
+spec doesn't specify a method for generating the field IDs, and so it's
+possible that the implementation is different depending on the catalog,
+and we should not use it as a critical check in compatibility.
 
-| Package | From | To |
-| --- | --- | --- |
-| [aws-lc-rs](https://github.com/aws/aws-lc-rs) | `1.18.1` | `1.18.2` |
-| [cc](https://github.com/rust-lang/cc-rs) | `1.6.0` | `1.8.0` |
-| [opentelemetry](https://github.com/open-telemetry/opentelemetry-rust)
-| `0.33.0` | `0.33.1` |
-|
-[opentelemetry-otlp](https://github.com/open-telemetry/opentelemetry-rust)
-| `0.33.0` | `0.33.1` |
-|
-[opentelemetry_sdk](https://github.com/open-telemetry/opentelemetry-rust)
-| `0.33.0` | `0.33.1` |
-| [smallvec](https://github.com/servo/rust-smallvec) | `1.16.2` |
-`1.16.3` |
-| [syn](https://github.com/dtolnay/syn) | `3.0.6` | `3.0.9` |
+In addition, we change the way field IDs are assigned to nested types
+(going from a depth-first traversal to breadtch first) so that it
+matches up with the way most catalogs do it.
 
+Adds a testdrive test for the more complex nested type -> restart flow,
+as well as some unit testing for validation.
 
-Updates `aws-lc-rs` from 1.18.1 to 1.18.2
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/aws/aws-lc-rs/releases">aws-lc-rs's
-releases</a>.</em></p>
-<blockquote>
-<h2>aws-lc-rs v1.18.2</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Implement <code>Eq</code> and <code>PartialEq</code> for RSA and
-EdDSA parameters by <a
-href="https://github.com/dsykes16"><code>@​dsykes16</code></a> in <a
-href="https:
+---------
 
-**File**: `misc/wasm/Cargo.lock` (modified, +31/-31)
+Co-authored-by: Tony Du <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `src/storage/src/sink/iceberg.rs` (modified, +195/-11)
 ```diff
-@@ -72,19 +72,19 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
+@@ -98,7 +98,9 @@ use differential_dataflow::trace::implementations::{BatchContainer, Layout};
+ use differential_dataflow::{Hashable, VecCollection};
+ use futures::StreamExt;
+ use iceberg::ErrorKind;
+-use iceberg::arrow::{arrow_schema_to_schema, schema_to_arrow_schema};
++use iceberg::arrow::{
++    arrow_schema_to_schema, arrow_schema_to_schema_auto_assign_ids, schema_to_arrow_schema,
++};
+ use iceberg::spec::{
+     DataFile, FormatVersion, NestedField, PrimitiveType, Snapshot, StructType, Type,
+     read_data_files_from_avro, write_data_files_to_avro,
+@@ -971,7 +973,7 @@ async fn try_commit_batch(
+ /// Whether the sink can write into a table that already carries `current`,
+ /// where `expected` is the schema the sink would create today.
+ ///
+-/// Field ids, names and nullability have to match. Types have to match too,
++/// Names and nullability have to match. Types have to match too,
+ /// except that a column may be `fixed[16]` where `expected` has `string`. Uuid
+ /// columns were written as fixed binary before, and a table holding one stays
+ /// writable, because the writer builds its Arrow columns from the table's own
+@@ -981,11 +983,12 @@ async fn try_commit_batch(
+ /// `fixed[16]` column where the relation has `text`. Such a table fails on the
+ /// first row written instead of here. Only a table created outside Materialize
+ /// can be in that state, since the sink never creates one.
++///
++/// Field IDs are not checked as Materialize may generate them differently than
++/// the catalog (i.e., DFS vs BFS for nested types), which could result in
++/// failures on sink restart.
+ fn is_compatible(current: &Schema, expected: &Schema) -> bool {
+-    current
+-        .identifier_field_ids()
+-        .eq(expected.identifier_field_ids())
+-        && struct_is_compatible(current.as_struct(), expected.as_struct())
++    struct_is_compatible(current.as_struct(), expected.as_struct())
+ }
  
- [[package]]
- name = "aws-lc-rs"
--version = "1.18.1"
-+version = "1.18.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b281d307588d634de920874890732659e2e7672f72b5e10e81badc1a8a83621e"
-+checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
- dependencies = [
-  "aws-lc-sys",
-  "zeroize",
- ]
+ fn struct_is_compatible(current: &StructType, expected: &StructType) -> bool {
+@@ -995,8 +998,7 @@ fn struct_is_compatible(current: &StructType, expected: &StructType) -> bool {
+ }
  
- [[package]]
- name = "aws-lc-sys"
--version = "0.45.0"
-+version = "0.46.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9bff6c3b54fad79a2e60b8102caf565819711497c1f5f092f49508e2f5c31b27"
-+checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
- dependencies = [
-  "cc",
-  "cmake",
-@@ -189,9 +189,9 @@ checksum = "7354288c522e7e980fafd2075d63d1285794c3a6a16cdd492f189ea406e5f18b"
+ fn field_is_compatible(current: &NestedField, expected: &NestedField) -> bool {
+-    current.id == expected.id
+-        && current.name == expected.name
++    current.name == expected.name
+         && current.required == expected.required
+         && match (&*current.field_type, &*expected.field_type) {
+             // A uuid column written before uuids became strings.
+@@ -1142,7 +1144,7 @@ fn relation_desc_to_iceberg_schema(
  
- [[package]]
- name = "cc"
--version = "1.6.0"
-+version = "1.9.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f74872d07caf508b30a21f6836e7d7016a2eaf7d9ff4f48deaa58cd8a0407630"
-+checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -370,9 +370,9 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
+     let arrow_schema_with_ids = add_field_ids_to_arrow_schema(arrow_schema);
  
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.14"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
-+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+-    let iceberg_schema = arrow_schema_to_schema(&arrow_schema_with_ids)
++    let iceberg_schema = arrow_schema_to_schema_auto_assign_ids(&arrow_schema_with_ids)
+         .context("Failed to convert Arrow schema to Iceberg schema")?;
  
- [[package]]
- name = "findshlibs"
-@@ -474,7 +474,7 @@ checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+     Ok((arrow_schema_with_ids, Arc::new(iceberg_schema)))
+@@ -2075,7 +2077,7 @@ where
  
- [[package]]
-@@ -1149,7 +1149,7 @@ version = "0.1.0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
+ #[cfg(test)]
+ mod tests {
+-    use iceberg::spec::{ListType, PrimitiveType, Type};
++    use iceberg::spec::{ListType, MapType, PrimitiveType, Type};
+     use iceberg::writer::file_writer::location_generator::LocationGenerator;
+     use mz_repr::SqlScalarType;
+     use mz_storage_types::sinks::ICEBERG_UINT64_DECIMAL_PRECISION;
+@@ -2365,6 +2367,187 @@ mod tests {
+         assert!(is_compatible(&legacy, &expected));
+     }
  
- [[package]]
-@@ -1230,7 +1230,7 @@ dependencies = [
-  "itertools 0.15.0",
-  "mz-ore-build",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -1407,9 +1407,9 @@ dependencies = [
- 
- [[package]]
- name = "opentelemetry"
--version = "0.33.0"
-+version = "0.33.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6cdb0b1b267eb9db3331b434ed9ddab10d50e280a9adf9d13e5233e2002b61b5"
-+checksum = "8c1f1a6ac9c875a4941e4c7c085b61e8f4daa326de03b4701768c3491a6ad9ee"
- dependencies = [
-  "futures-core",
-  "futures-sink",
-@@ -1421,9 +1421,9 @@ dependencies = [
- 
- [[package]]
- name = "opentelemetry-http"
--version = "0.33.0"
-+version = "0.33.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ee2c3625b8aa04209f7e01e513bc8044da9687fa38a9eacf59628ca5f3b87300"
-+checksum = "302249bd8ee804789faaa7b5b2cbf79bc61cb864714079c644e3828af5b7e811"
- dependencies = [
-  "async-trait",
-  "bytes",
-@@ -1434,9 +1434,9 @@ dependencies = [
- 
- [[package]]
- name = "opentelemetry-otlp"
--version = "0.33.0"
-+version = "0.33.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "699a67345e21962a231955b9059a157e428b219fa5df8efe11f08346fb23a344"
-+checksum = "0756af24841e367128ef31c831999937b8b5c5197d47914590d8f4e2e88c2e1a"
- dependencies = [
-  "http",
-  "httpdate",
-@@ -1454,9 +1454,9 @@ dependencies = [
- 
- [[package]]
- name = "opentelemetry-proto"
--version = "0.33.0"
-+version = "0.33.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "25da1ac11a0aeccf38d7f77ee0348715adaf8340f65ad46c94a02c6b20e2f65d"
-+checksum = "d576f5dddc3299341bcd85a04be17b2564844c0c9563214f02d85f2524d1afae"
- dependencies = [
-  "opentelemetry",
-  "opentelemetry_sdk",
-@@ -1467,9 +1467,9 @@ dependencies = [
- 
- [[package]]
- name = "opentelemetry_sdk"
--version = "0.33.0"
-+version = "0.33.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb39533d9d1c912123efd7d41d7e0c29d16917b60ce15b4c8d87cb1af7f67520"
-+checksum = "372a912db2974d1990207006fd0e3aa0ef3fd4ad3be43c65cfaadf2206866061"
- dependencies = [
-  "futures-channel",
-  "futures-executor",
-@@ -1788,7 +1788,7 @@ dependencies = [
-  "once_cell",
-  "socket2 0.6.2",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2048,7 +2048,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2258,7 +2258,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.6",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -2326,9 +2326,9 @@ dependencies = [
- 
- [[package]]
- name = "smallvec"
--version = "1.16.2"
-+version = "1.16.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9395f0f0eee849a9b707b2f06bb92a6a422090e2123bb2ef8e87a0e61892a8e"
-+checksum = "5b3dc8af474f516a851ff4bd12db780f948b9250ad37211e4eec0bccea54e01b"
- 
- [[package]]
++    /// Rebuilds `schema` with the field ids a Java-based REST catalog (Polaris,
++    /// the Apache REST fixture) assigns when it creates the table: every direct
++    /// child of a struct is numbered before any nested field, then each child's
++    /// subtree is visited. The sink numbers depth-first, so for any nested type
++    /// the two differ while names, types and nullability stay the same.
++    #[allow(clippy::disallowed_methods)]
++    #[allow(clippy::match_wildcard_for_single_variants)]
++    fn with_catalog_field_ids(schema: &Schema) -> Schema {
++        fn renumber_fields(fields: &[Arc<NestedField>], next: &mut i32) -> Vec<Arc<NestedField>> {
++            let ids: Vec<i32> = fields
++                .iter()
++                .map(|_| {
++                    let id = *next;
++                    *next += 1;
++                    id
++                })
++                .collect();
++            fields
++                .iter()
++                .zip(ids)
++                .map(|(f, id)| {
++                    let mut field = (**f).clone();
++                    field.id = id;
++                    field.field_type = Box::new(renumber_type(&field.field_type, next));
++                    Arc::new(field)
++                })
++                .collect()
++        }
++        fn renumber_type(ty: &Type, next: &mut i32) -> Type {
++            match ty {
++                Type::Struct(s) => Type::Struct(StructType::new(renumber_fields(s.fields(), next))),
++                Type::List(l) => {
++                    let mut element = (*l.element_field).clone();
++                    element.id = *next;
++                    *next += 1;
+```
 
+**File**: `test/iceberg/mzcompose.py` (modified, +26/-0)
+```diff
+@@ -248,6 +248,32 @@ def workflow_finite_source(c: Composition) -> None:
+     )
+ 
+ 
++def workflow_restart_nested_column(c: Composition) -> None:
++    """A sink over a relation with an array column must survive a restart.
++    The REST catalog assigns its own field ids when it creates the table,
++    numbering a struct's direct children before any nested field, while the
++    sink numbers depth-first. On resume the two schemas differ only in ids
++    and the sink must still accept the table (SS-522). A flat relation is
++    sunk alongside as the control: its ids coincide under both schemes."""
++    key = _setup(c)
++
++    c.run_testdrive_files(
++        f"--var=s3-access-key={key}",
++        "--var=aws-endpoint=minio:9000",
++        "restart-nested-column.td",
++    )
++
++    c.kill("materialized")
++    c.up("materialized")
++
++    c.run_testdrive_files(
++        "--no-reset",
++        f"--var=s3-access-key={key}",
++        "--var=aws-endpoint=minio:9000",
++        "restart-nested-column-verify.td",
++    )
++
++
+ def workflow_alter_table_add_column(c: Composition) -> None:
+     """A sink pointed at an Iceberg table whose schema is narrower than the
+     sink's input relation must not panic the storage worker. The writer builds
+```
+
+**File**: `test/iceberg/restart-nested-column-verify.td` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++# Copyright Materialize, Inc. and contributors. All rights reserved.
++#
++# Use of this software is governed by the Business Source License
++# included in the LICENSE file at the root of this repository.
++#
++# As of the Change Date specified in that file, in accordance with
++# the Business Source License, use of this software will be governed
++# by the Apache License, Version 2.0.
++
++# Runs after a Materialize restart, following restart-nested-column.td. All
++# three sinks resume against tables the catalog created with its own field
++# ids. Before the fix for SS-522 the two sinks over the array-column relation
++# stalled here with "Iceberg table '...' schema does not match expected
++# schema" while the flat one resumed.
++
++> SELECT name, status, error IS NULL FROM mz_internal.mz_sink_statuses
++  WHERE name LIKE 'restart_%' ORDER BY name
++restart_flat_append running true
++restart_nested_append running true
++restart_nested_upsert running true
++
++# And they keep committing after the restart.
++> INSERT INTO restart_nested VALUES (3, '{3}', 30);
++
++> INSERT INTO restart_flat VALUES (2, 20);
++
++$ sleep-is-probably-flaky-i-have-justified-my-need-with-a-comment duration=5s
++
++$ duckdb-execute name=restart_iceberg_verify
++CREATE SECRET s3_secret_restart_verify (TYPE S3, KEY_ID 'tduser', SECRET '${arg.s3-access-key}', ENDPOINT '${arg.aws-endpoint}', URL_STYLE 'path', USE_SSL false, REGION 'minio');
++SET unsafe_enable_version_guessing = true;
++
++$ duckdb-query name=restart_iceberg_verify
++SELECT count(*) FROM iceberg_scan('s3://test-bucket/default_namespace/restart_nested_append')
++3
++
++$ duckdb-query name=restart_iceberg_verify
++SELECT count(*) FROM iceberg_scan('s3://test-bucket/default_namespace/restart_nested_upsert')
++3
++
++$ duckdb-query name=restart_iceberg_verify
++SELECT count(*) FROM iceberg_scan('s3://test-bucket/default_namespace/restart_flat_append')
++2
+```
+
+**File**: `test/iceberg/restart-nested-column.td` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++# Copyright Materialize, Inc. and contributors. All rights reserved.
++#
++# Use of this software is governed by the Business Source License
++# included in the LICENSE file at the root of this repository.
++#
++# As of the Change Date specified in that file, in accordance with
++# the Business Source License, use of this software will be governed
++# by the Apache License, Version 2.0.
++
++# Regression test for SS-522: an Iceberg sink over a relation with an array
++# column must survive a Materialize restart.
++#
++# The REST catalog assigns its own field ids when it creates the table,
++# numbering a struct's direct children before any nested field, while the sink
++# numbers depth-first. The tables it creates for `restart_nested` therefore
++# carry different ids than the schema the sink derives: for `a.items`,
++# `a.items.element` and `w`, and in the append table also `a.dimensions`,
++# because `_mz_diff` and `_mz_timestamp` follow the array. Writing works,
++# because the writer uses the table's own schema; on resume the sink compares
++# the two schemas and must not reject a table that differs only in ids. The
++# flat relation is the control: its ids coincide under both schemes.
++#
++# This file runs before the restart; restart-nested-column-verify.td after.
++
++> CREATE CONNECTION restart_polaris TO ICEBERG CATALOG (
++    CATALOG TYPE = 'REST',
++    URL = 'http://polaris:8181/api/catalog',
++    CREDENTIAL = 'root:root',
++    WAREHOUSE = 'default_catalog',
++    SCOPE = 'PRINCIPAL_ROLE:ALL'
++  );
++
++> CREATE TABLE restart_nested (id bigint, a bigint[], w bigint);
++
++> INSERT INTO restart_nested VALUES (1, '{1,2}', 10), (2, NULL, 20);
++
++> CREATE TABLE restart_flat (id bigint, w bigint);
++
++> INSERT INTO restart_flat VALUES (1, 10);
++
++> CREATE SINK restart_nested_append
++    FROM restart_nested
++    INTO ICEBERG CATALOG CONNECTION restart_polaris (
++        NAMESPACE 'default_namespace',
++        TABLE 'restart_nested_append'
++    )
++    MODE APPEND
++    WITH (COMMIT INTERVAL '1s');
++
++> CREATE SINK restart_nested_upsert
++    FROM restart_nested
++    INTO ICEBERG CATALOG CONNECTION restart_polaris (
++        NAMESPACE 'default_namespace',
++        TABLE 'restart_nested_upsert'
++    )
++    KEY (id) NOT ENFORCED
++    MODE UPSERT
++    WITH (COMMIT INTERVAL '1s');
++
++> CREATE SINK restart_flat_append
++    FROM restart_flat
++    INTO ICEBERG CATALOG CONNECTION restart_polaris (
++        NAMESPACE 'default_namespace',
++        TABLE 'restart_flat_append'
++    )
++    MODE APPEND
++    WITH (COMMIT INTERVAL '1s');
++
++> SELECT name, status FROM mz_internal.mz_sink_statuses
++  WHERE name LIKE 'restart_%' ORDER BY name
++restart_flat_append running
++restart_nested_append running
++restart_nested_upsert running
++
++# Iceberg sinks commit asynchronously; let the first commit interval pass.
++$ sleep-is-probably-flaky-i-have-justified-my-need-with-a-comment duration=5s
++
++$ duckdb-execute name=restart_iceberg
++CREATE SECRET s3_secret_restart (TYPE S3, KEY_ID 'tduser', SECRET '${arg.s3-access-key}', ENDPOINT '${arg.aws-endpoint}', URL_STYLE 'path', USE_SSL false, REGION 'minio');
++SET unsafe_enable_version_guessing = true;
++
++$ duckdb-query name=restart_iceberg
++SELECT count(*) FROM iceberg_scan('s3://test-bucket/default_namespace/restart_nested_append')
++2
++
++$ duckdb-query name=restart_iceberg
++SELECT count(*) FROM iceberg_scan('s3://test-bucket/default_namespace/restart_nested_upsert')
++2
++
++$ duckdb-query name=restart_iceberg
++SELECT count(*) FROM iceberg_scan('s3://test-bucket/default_namespace/restart_flat_append')
++1
 ```
 
 #### Recent Merged Pull Requests:
@@ -1602,89 +1994,38 @@ href="https:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the simple2 group across 1 directory with 10 updates (#39951)
+## X. console: Fix second loading spinner on the cluster list (#39875)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `console/src/platform/clusters/AlterClusterMenuItem.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a74763a4`: build(deps): bump the simple2 group across 1 directory with 10 updates (#39951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60cb5f63`: console: Fix second loading spinner on the cluster list (#39875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/src/platform/clusters/AlterClusterMenuItem.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "syn 3.0.9",
- "syn 3.0.9",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "syn 3.0.9",
- "syn 3.0.9",
- "syn 3.0.9",
- "windows-sys 0.59.0",
- "sha2 0.11.1",
- "syn 3.0.9",
- "windows-sys 0.59.0",
- "schemars 1.2.3",
- "schemars 1.2.3",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "schemars 1.2.3",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "syn 3.0.9",
- "syn 3.0.9",
- "syn 3.0.9",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "sha2 0.11.1",
- "syn 3.0.9",
- "syn 3.0.9",
- "schemars 1.2.3",
- "sha2 0.11.1",
- "syn 3.0.9",
+import { useQuery } from "@tanstack/react-query";
+import {
+  availableClusterSizesQuery,
+  useMaxReplicasPerCluster,
+} from "./queries";
+  // NOTE: this mounts while its overflow menu is closed, in cluster list rows
+  // and the cluster detail header. Suspending would swap the page it renders
+  // in for that page's Suspense fallback.
+  const { data: clusterSizes } = useQuery(availableClusterSizesQuery());
+        isDisabled={!clusterSizes}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "syn 3.0.6",
- "syn 3.0.6",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "syn 3.0.6",
- "syn 3.0.6",
- "syn 3.0.6",
- "windows-sys 0.52.0",
- "sha2 0.11.0",
- "syn 3.0.6",
- "windows-sys 0.52.0",
- "schemars 1.2.2",
- "schemars 1.2.2",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "schemars 1.2.2",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "syn 3.0.6",
- "syn 3.0.6",
- "syn 3.0.6",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "sha2 0.11.0",
- "syn 3.0.6",
- "syn 3.0.6",
- "schemars 1.2.2",
- "sha2 0.11.0",
- "syn 3.0.6",
-version = "0
+import { useAvailableClusterSizes, useMaxReplicasPerCluster } from "./queries";
+  const { data: clusterSizes } = useAvailableClusterSizes();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a74763a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60cb5f63` are properly handled with clean fallback behavior.

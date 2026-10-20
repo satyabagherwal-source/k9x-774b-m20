@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "8d9f30a8",
+    "sourceVersion": "f1c68e2e",
     "license": "NOASSERTION",
-    "contentHash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
-    "lastHarvestedAt": "2026-10-19T13:21:19.864Z",
+    "contentHash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
+    "lastHarvestedAt": "2026-10-20T01:40:18.388Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "87db3ace",
+    "sourceVersion": "ff5e59bc",
     "license": "Apache-2.0",
-    "contentHash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
-    "lastHarvestedAt": "2026-10-19T14:52:57.493Z",
+    "contentHash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
+    "lastHarvestedAt": "2026-10-20T01:40:04.267Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {
@@ -9868,5 +9868,25 @@
     "contentHash": "7d3fae2138183060cc5a3a8f7983dd93c5afc81b6561fcbbb12e703be8a37520",
     "lastHarvestedAt": "2026-10-20T01:33:53.990Z",
     "learningId": "learn-github-jaywcjlove-devhub"
+  },
+  "mozilla-readability": {
+    "repository": "mozilla/readability",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mozilla/readability",
+    "sourceVersion": "ab4027a8",
+    "license": "Apache-2.0",
+    "contentHash": "a62ee25140c4178e03dd1d564788d9072fdd2a1525d81db35b98cb3275602f0a",
+    "lastHarvestedAt": "2026-10-20T01:40:09.214Z",
+    "learningId": "learn-github-mozilla-readability"
+  },
+  "dodo-reach-hermes-desktop": {
+    "repository": "dodo-reach/hermes-desktop",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dodo-reach/hermes-desktop",
+    "sourceVersion": "3b772afa",
+    "license": "MIT",
+    "contentHash": "433c2f3e270aefd1271050264ff20721704bb93f34c01e349e5e8e62b1111935",
+    "lastHarvestedAt": "2026-10-20T01:40:11.547Z",
+    "learningId": "learn-github-dodo-reach-hermes-desktop"
   }
 }

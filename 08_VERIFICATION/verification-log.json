@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-B7OS",
-    "timestamp": "2026-10-19T09:38:57.580Z",
-    "repository": "imsnif/diskonaut",
-    "learningId": "learn-github-imsnif-diskonaut",
-    "contentHash": "608a96cdd961d640de6ea1915ad43e2eee906108ab2e9a98d2a181a9c848a9a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CVMK",
-    "timestamp": "2026-10-19T09:40:15.260Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-F1YB",
-    "timestamp": "2026-10-19T09:41:56.771Z",
-    "repository": "Megabit/Blazorise",
-    "learningId": "learn-github-megabit-blazorise",
-    "contentHash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-MWDP",
-    "timestamp": "2026-10-19T09:48:02.797Z",
-    "repository": "Veirt/weathr",
-    "learningId": "learn-github-veirt-weathr",
-    "contentHash": "1c863deabf5b2775e370d2d956f2ea24db5ce0a7430f75e44b914850d9216cb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-MZFJ",
     "timestamp": "2026-10-19T09:48:06.751Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7492,6 +7432,66 @@
     "contentHash": "7d3fae2138183060cc5a3a8f7983dd93c5afc81b6561fcbbb12e703be8a37520",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N7L4",
+    "timestamp": "2026-10-20T01:40:04.264Z",
+    "repository": "carbon-design-system/carbon-components-svelte",
+    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+    "contentHash": "dd493b77bc08b9daea3894f8c651394687384b52e84ae2e92ce2a52806b2a01a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NBEJ",
+    "timestamp": "2026-10-20T01:40:09.211Z",
+    "repository": "mozilla/readability",
+    "learningId": "learn-github-mozilla-readability",
+    "contentHash": "a62ee25140c4178e03dd1d564788d9072fdd2a1525d81db35b98cb3275602f0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ND7C",
+    "timestamp": "2026-10-20T01:40:11.544Z",
+    "repository": "dodo-reach/hermes-desktop",
+    "learningId": "learn-github-dodo-reach-hermes-desktop",
+    "contentHash": "433c2f3e270aefd1271050264ff20721704bb93f34c01e349e5e8e62b1111935",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-NIHD",
+    "timestamp": "2026-10-20T01:40:18.385Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "ee66752353a52aab2dcb923f7ee83b8eed18ba5581057140b30acd18a9e72b49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

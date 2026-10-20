@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source**: github ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
-> **Source Version**: `87db3ace`  
+> **Source Version**: `ff5e59bc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:52:57.279Z  
+> **Timestamp**: 2026-10-20T01:40:03.859Z  
 > **Learning ID**: `learn-github-carbon-design-system-carbon-components-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:52:56.721Z  
+> **Harvest Timestamp**: 2026-10-20T01:40:02.331Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1167,11 +1167,11 @@ export function revealItem(item, section) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4682** (2026-10-19): **fix(css): break words too long for their line in labels, titles and links**
-  *Symptoms*: A word longer than its line ran past its component and over whatever sat beside it: a compound word, a URL, an id. This hit form labels and helper text, Checkbox, RadioButton and Toggle labels, Accordion titles, an InlineNotification's title, a ToastNotification's caption, Tile content, Links and Buttons. An unbroken notification title also pushed the rest of the notification's text out with it.  They now break inside the word, and only when nothing else fits:  ```scss .bx--label, .bx--form__helper-text, .bx--checkbox-label-text, .bx--radio-button__label-text, .bx--toggle-input__label, .bx--accordion__title, .bx--inline-notification__title, .bx--toast-notification__caption, .bx--tile, .bx--link, .bx--btn {   word-break: break-word; } ```  `word-break: break-word` rather than `overflow-wrap: anywhere`, which needs Safari 15.4. Both shrink the box's minimum width, so a flex or grid column can narrow it. Text that truncates with an ellipsis (`white-space: nowrap`) is unaffected.  ## Screenshots  Before is without this change: a 12rem column (dashed).  **A long word or URL in each part**  | Before | After | |---|---| | ![before](https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/4682/column-before.png) | ![after](https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/4682/column-after.png) |  
+- **Issue #4739** (2026-10-19): **fix(content-switcher, tabs): follow a keyed reorder with the bound index**
+  *Symptoms*: After a keyed `{#each}` reorder of switches or tabs, the selected item moved but the bound `selectedIndex` (ContentSwitcher) or `selected` (Tabs, TabsVertical) kept its old value, and ContentSwitcher's arrow keys still followed the old order.  Both registries resynced to DOM order only on an insert or removal. A reorder re-registers nothing, and on Svelte 5 it doesn't run the parent's `afterUpdate` either. Add a shared `observeDomOrder` util that watches the tablist and reports when the elements leave registry order. On a reorder, ContentSwitcher and Tabs resync and keep the selected item selected at its new index; inserts and removals keep their behavior.   Stacked on #4738. 
 
-- **Issue #4681** (2026-10-19): **fix(breadcrumb): wrap an item too long for the trail**
-  *Symptoms*: Breadcrumb links never wrapped (`white-space: nowrap`). An item longer than the trail ran past its edge and over whatever sat beside it: a long page title, a URL-like name, a long compound word.  An item now wraps inside itself only when it can't fit a line of the trail on its own. Shorter items still move to the next line whole, as before. A wrapped item's separator ends its last line.  ```scss .bx--breadcrumb-item {   min-width: 0;   max-width: 100%;   align-items: flex-end;   word-break: break-word; } ```  ## Screenshots  Before is without this change: a 16rem trail (dashed).  **A long word and a long title in a narrow trail**  | Before | After | |---|---| | ![before](https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/4681/trail-before.png) | ![after](https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/4681/trail-after.png) | 
+- **Issue #4738** (2026-10-19): **fix(switch): render an icon set after mount**
+  *Symptoms*: `Switch` read `icon` once at init, so setting it on a mounted switch rendered no icon, no icon class and no `aria-label`, and the switcher never re-inferred its icon-only variant.  Track `icon` reactively and report the change to the switcher's registry, as `disabled` already does.   Stacked on #4737. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1188,314 +1188,288 @@ export function revealItem(item, section) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be830951` (2026-10-19)
-**Commit Message**: fix(file-uploader-button): restore the current labelText on clear
+### Incident Patch 1: `8585d645` (2026-10-19)
+**Commit Message**: fix(content-switcher): keep selection when an earlier switch is removed
 
-After `labelText` changed, for example on a locale switch, clearing
-the files put back the label the button was first rendered with. The
-button saved `labelText` once at mount and restored that copy.
+In index mode, removing a switch before the selected one moved the
+selection to the switch after it whenever the selected switch was not
+the last one. With [A, B, C, D] and C selected, removing A selected D.
 
-Remember the label a pick last wrote. Before writing or restoring a
-label, a `labelText` that differs from it came from the consumer, so
-it becomes the label to restore.
+The re-anchor in afterUpdate read the selected id from `currentId`, but
+by then the reactive commit block had already pointed it at
+`switches[committedIndex]`, which the removal had shifted. Remember the
+committed switch's id at the end of each update and re-anchor to that.
 
-**File**: `src/FileUploader/FileUploaderButton.svelte` (modified, +10/-2)
+**File**: `src/ContentSwitcher/ContentSwitcher.svelte` (modified, +8/-1)
 ```diff
-@@ -144,6 +144,9 @@
-   } = splitAriaNaming($$restProps));
+@@ -79,6 +79,12 @@
+   let prevIndex = -1;
  
-   let initialLabelText = labelText;
-+  // The label a pick last wrote. Any other `labelText` came from the
-+  // consumer (e.g. a locale change), so clearing restores that instead.
-+  let fileLabel = undefined;
- 
-   // Determine if this is icon-only (has icon but no label content)
-   $: hasIconOnly =
-@@ -156,7 +159,10 @@
-   };
- 
-   $: if (ref && files !== undefined) {
--    if (files.length === 0) labelText = initialLabelText;
-+    if (files.length === 0) {
-+      if (labelText !== fileLabel) initialLabelText = labelText;
-+      labelText = initialLabelText;
-+    }
-     syncInputFiles(ref, files);
-   }
-   /** @param {ReadonlyArray<File>} incoming */
-@@ -174,7 +180,9 @@
- 
-     // An icon-only button has no label to replace.
-     if (files.length > 0 && !disableLabelChanges && !hasIconOnly) {
--      labelText = files.length > 1 ? `${files.length} files` : files[0].name;
-+      if (labelText !== fileLabel) initialLabelText = labelText;
-+      labelText = fileLabel =
-+        files.length > 1 ? `${files.length} files` : files[0].name;
+   let committedIndex = -1;
++  /**
++   * Id of the switch rendered as selected, as of the last update. A removal
++   * shifts `switches[committedIndex]` before afterUpdate can re-anchor.
++   * @type {string | undefined}
++   */
++  let committedId = undefined;
+   let focusedIndex = -1;
+   /**
+    * @type {import("svelte/store").Writable<Array<{ id: string; text: string; selected: boolean; icon: boolean; disabled: boolean }>>}
+@@ -351,7 +357,7 @@
+       // past a removed switch.
+       const preservedId =
+         selectedIndex === committedIndex
+-          ? get(currentId)
++          ? committedId
+           : switches[selectedIndex]?.id;
+       let next = switches;
+       sharedSwitches.update((current) => {
+@@ -393,6 +399,7 @@
+       committedIndex = selectedIndex;
+       focusedIndex = -1;
      }
++    committedId = switches[committedIndex]?.id;
+   });
+ </script>
  
-     dispatch("change", files);
 ```
 
-**File**: `tests/FileUploader/FileUploaderButton.test.ts` (modified, +13/-0)
+**File**: `tests/ContentSwitcher/ContentSwitcher.dynamicBound.test.svelte` (modified, +4/-1)
 ```diff
-@@ -77,6 +77,19 @@ describe("FileUploaderButton", () => {
-     });
-   });
+@@ -2,6 +2,7 @@
+   import ContentSwitcher from "carbon-components-svelte/ContentSwitcher/ContentSwitcher.svelte";
+   import Switch from "carbon-components-svelte/ContentSwitcher/Switch.svelte";
  
-+  it("should restore a changed labelText when files are cleared", async () => {
-+    const { container, rerender } = render(FileUploaderButton, {
-+      props: { labelText: "Add file" },
++  export let showFirst = true;
+   export let show = true;
+   export let selectedIndex = 0;
+   export let selectLast = false;
+@@ -11,7 +12,9 @@
+   bind:selectedIndex
+   on:change={(e) => console.log("change", e.detail)}
+ >
+-  <Switch text="First" />
++  {#if showFirst}
++    <Switch text="First" />
++  {/if}
+   {#if show}
+     <Switch text="Middle" />
+   {/if}
+```
+
+**File**: `tests/ContentSwitcher/ContentSwitcher.test.ts` (modified, +17/-0)
+```diff
+@@ -775,6 +775,23 @@ describe("ContentSwitcher", () => {
+       expect(consoleLog).toHaveBeenCalledWith("change", 1);
+     });
+ 
++    it("keeps a middle switch selected when an earlier switch is removed", async () => {
++      const consoleLog = vi.spyOn(console, "log");
++      const { rerender } = await renderAndFlush(ContentSwitcherDynamicBound, {
++        props: { selectedIndex: 1 },
++      });
++
++      await rerender({ showFirst: false });
++      await tick();
++
++      expect(screen.getByTestId("selected-index")).toHaveTextContent("0");
++      expect(screen.getByRole("tab", { name: "Middle" })).toHaveAttribute(
++        "aria-selected",
++        "true",
++      );
++      expect(consoleLog).toHaveBeenCalledWith("change", 0);
 +    });
-+    await rerender({ labelText: "Ajouter" });
 +
-+    simulateFileSelection(getFileInput(container), [makeFile("test.txt")]);
-+    await tick();
-+    await rerender({ files: [] });
-+
-+    expect(screen.getByRole("button")).toHaveTextContent("Ajouter");
-+  });
-+
-   it("should not change label when disableLabelChanges is true", async () => {
-     const { container } = render(FileUploaderButton, {
-       props: { labelText: "Add file", disableLabelChanges: true },
+     it("does not dispatch change when clicking the re-anchored switch", async () => {
+       const consoleLog = vi.spyOn(console, "log");
+       const { rerender } = await renderAndFlush(ContentSwitcherDynamicBound, {
 ```
 
 ---
 
-### Incident Patch 2: `b50eeea8` (2026-10-19)
-**Commit Message**: fix(file-uploader-button): keep the icon-only style after a pick
+### Incident Patch 2: `bb6b0a21` (2026-10-19)
+**Commit Message**: fix(switch): render an icon set after mount
 
-An icon-only FileUploaderButton (`icon` with an empty `labelText`, as
-in the docs) turned into a text button showing the file name once a
-file was picked, losing its icon-only style and tooltip. The pick
-wrote the file name into `labelText`, which is what made the button
-icon-only.
+`Switch` read `icon` once at init, so setting it on a mounted switch
+rendered no icon, no icon class and no `aria-label`, and the switcher
+never re-inferred its icon-only variant.
 
-Skip the label change for an icon-only button.
+Track `icon` reactively and report the change to the switcher's
+registry, as `disabled` already does.
 
-**File**: `src/FileUploader/FileUploaderButton.svelte` (modified, +2/-1)
+**File**: `src/ContentSwitcher/ContentSwitcher.svelte` (modified, +14/-0)
 ```diff
-@@ -172,7 +172,8 @@
+@@ -238,6 +238,19 @@
+     });
+   }
  
-     files = multiple ? [...files, ...accepted] : accepted;
++  /**
++   * @type {(id: string, icon: boolean) => void}
++   */
++  function setIcon(id, icon) {
++    batchedSwitchesUpdate((current) => {
++      const index = current.findIndex((s) => s.id === id);
++      if (index === -1 || current[index].icon === icon) return current;
++      const next = [...current];
++      next[index] = { ...current[index], icon };
++      return next;
++    });
++  }
++
+   /**
+    * @type {(id: string) => void}
+    */
+@@ -333,6 +346,7 @@
+     remove,
+     update,
+     setDisabled,
++    setIcon,
+     tabStopId,
+     pairs,
+     addPanel,
+```
+
+**File**: `src/ContentSwitcher/Switch.svelte` (modified, +7/-1)
+```diff
+@@ -62,7 +62,7 @@
+   const tabStopId = ctx.tabStopId;
+   const pairs = ctx.pairs;
  
--    if (files.length > 0 && !disableLabelChanges) {
-+    // An icon-only button has no label to replace.
-+    if (files.length > 0 && !disableLabelChanges && !hasIconOnly) {
-       labelText = files.length > 1 ? `${files.length} files` : files[0].name;
-     }
+-  const hasIcon = icon !== undefined;
++  let hasIcon = icon !== undefined;
+ 
+   // Last `selected` value seen here, so the block below reacts to caller writes
+   // and not to the currentId echo.
+@@ -91,6 +91,12 @@
+     ctx.setDisabled(id, disabled);
+   }
+ 
++  // Same for `icon`, so the switcher re-infers its icon-only variant.
++  $: if ((icon !== undefined) !== hasIcon) {
++    hasIcon = icon !== undefined;
++    ctx.setIcon(id, hasIcon);
++  }
++
+   // Icon-only switches show `text` as a portalled tooltip on hover/focus.
+   // The portal keeps the tooltip from being clipped by overflow ancestors.
  
 ```
 
-**File**: `tests/FileUploader/FileUploaderButton.test.ts` (modified, +13/-0)
+**File**: `tests/ContentSwitcher/ContentSwitcher.iconOnly.test.ts` (modified, +18/-0)
 ```diff
-@@ -170,6 +170,19 @@ describe("FileUploaderButton", () => {
-     expect(iconButton.querySelector("svg")).toBeInTheDocument();
+@@ -1,5 +1,6 @@
+ import { fireEvent, render, screen } from "@testing-library/svelte";
+ import type SwitchComponent from "carbon-components-svelte/ContentSwitcher/Switch.svelte";
++import List from "carbon-icons-svelte/lib/List.svelte";
+ import { type ComponentProps, tick } from "svelte";
+ import { openTooltips } from "../utils/open-tooltips";
+ import IconOnly from "./ContentSwitcher.iconOnly.test.svelte";
+@@ -26,6 +27,23 @@ describe("ContentSwitcher (icon-only)", () => {
+     );
    });
  
-+  it("should keep an icon-only button icon-only after a pick", async () => {
-+    const { container } = render(FileUploaderButton, {
-+      props: { icon: Add, iconDescription: "Add file", labelText: "" },
-+    });
-+
-+    simulateFileSelection(getFileInput(container), [makeFile("test.txt")]);
++  it("renders an icon set after mount", async () => {
++    const { rerender } = render(IconOnlyMixed);
++    await tick();
 +    await tick();
 +
-+    expect(screen.getByRole("button", { name: "Add file" })).toHaveClass(
-+      "bx--btn--icon-only",
++    await rerender({ plainIcon: List });
++    await tick();
++
++    const plain = screen.getByRole("tab", { name: "Plain" });
++    expect(plain).toHaveAttribute("aria-label", "Plain");
++    expect(plain).toHaveClass("bx--content-switcher-btn--icon");
++    expect(plain.querySelector("svg")).toBeInTheDocument();
++    expect(screen.getByRole("tablist")).toHaveClass(
++      "bx--content-switcher--icon-only",
 +    );
 +  });
 +
-   it.each([
-     ["bottom", "center"],
-     ["right", "end"],
+   it("labels each icon switch with `text` and renders the icon, not a text label", async () => {
+     const { container } = render(IconOnly);
+     await tick();
+```
+
+**File**: `tests/ContentSwitcher/ContentSwitcher.iconOnlyMixed.test.svelte` (modified, +3/-1)
+```diff
+@@ -3,10 +3,12 @@
+   import Switch from "carbon-components-svelte/ContentSwitcher/Switch.svelte";
+   import Dashboard from "carbon-icons-svelte/lib/Dashboard.svelte";
+   import TableOfContents from "carbon-icons-svelte/lib/TableOfContents.svelte";
++
++  export let plainIcon: typeof Dashboard | undefined = undefined;
+ </script>
+ 
+ <ContentSwitcher>
+   <Switch icon={TableOfContents} text="Table of contents" />
+   <Switch icon={Dashboard} text="Dashboard" />
+-  <Switch text="Plain" />
++  <Switch icon={plainIcon} text="Plain" />
+ </ContentSwitcher>
 ```
 
 ---
 
-### Incident Patch 3: `6f19e825` (2026-10-17)
-**Commit Message**: fix(css): make text-placeholder the color placeholders draw in
+### Incident Patch 3: `66ba7539` (2026-10-19)
+**Commit Message**: fix(content-switcher): move arrow-key focus from the focused switch
 
-`--cds-text-placeholder` and `.bx--type-text-placeholder` resolved to
-`text-03`, the gray Carbon v10 replaced with `text-05` for contrast:
-2.3:1 on a white field. Components draw placeholders in `text-05`, so a
-consumer's placeholder styled with the token didn't match them. The
-token now follows `text-05` in every theme.
+In manual selection mode, arrow keys started from the last
+arrow-focused position, which only reset when the selection changed.
+After arrowing to a switch, clicking the already selected switch or
+tabbing out and back made the next arrow jump from the stale position
+instead of the focused switch.
 
-The catalog thumbnails used the token as a light gray bar fill; they now
-use `text-03`, which has the old values, so they look the same.
+Start from the switch that holds focus, then fall back to the
+manual-mode focus index and the selection, as Tabs does.
 
-**File**: `css/vendor/carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/themes/generated/_mixins.scss` (modified, +5/-5)
+**File**: `src/ContentSwitcher/ContentSwitcher.svelte` (modified, +6/-0)
 ```diff
-@@ -119,7 +119,7 @@
-   $border-interactive: map-get($theme, 'border-interactive') !global;
-   $text-primary: map-get($theme, 'text-primary') !global;
-   $text-secondary: map-get($theme, 'text-secondary') !global;
--  $text-placeholder: map-get($theme, 'text-placeholder') !global;
-+  $text-placeholder: map-get($theme, 'text-05') !global; // ccs: placeholders draw in text-05
-   $text-helper: map-get($theme, 'text-helper') !global;
-   $text-on-color: map-get($theme, 'text-on-color') !global;
-   $text-inverse: map-get($theme, 'text-inverse') !global;
-@@ -306,7 +306,7 @@
-     $border-interactive: $interactive-04 !global;
-     $text-primary: $text-01 !global;
-     $text-secondary: $text-02 !global;
--    $text-placeholder: $text-03 !global;
-+    $text-placeholder: $text-05 !global; // ccs: placeholders draw in text-05
-     $text-helper: $text-05 !global;
-     $text-on-color: $text-04 !global;
-     $text-inverse: $inverse-01 !global;
-@@ -450,7 +450,7 @@
-     $border-interactive: custom-property-var('border-interactive', map-get($theme, 'border-interactive')) !global;
-     $text-primary: custom-property-var('text-primary', map-get($theme, 'text-primary')) !global;
-     $text-secondary: custom-property-var('text-secondary', map-get($theme, 'text-secondary')) !global;
--    $text-placeholder: custom-property-var('text-placeholder', map-get($theme, 'text-placeholder')) !global;
-+    $text-placeholder: custom-property-var('text-placeholder', map-get($theme, 'text-05')) !global; // ccs: placeholders draw in text-05
-     $text-helper: custom-property-var('text-helper', map-get($theme, 'text-helper')) !global;
-     $text-on-color: custom-property-var('text-on-color', map-get($theme, 'text-on-color')) !global;
-     $text-inverse: custom-property-var('text-inverse', map-get($theme, 'text-inverse')) !global;
-@@ -1322,13 +1322,13 @@
-     @if should-emit(
-       $theme,
-       $parent-carbon-theme,
--      'text-placeholder',
-+      'text-05', // ccs: placeholders draw in text-05
-       $emit-difference
-     )
-     {
-       @include custom-property(
-         'text-placeholder',
--        map-get($theme, 'text-placeholder')
-+        map-get($theme, 'text-05') // ccs: placeholders draw in text-05
-       );
-     }
+@@ -415,6 +415,12 @@
+         .map((s) => document.getElementById(s.id))
+         .filter((node) => node instanceof HTMLElement),
+     getActiveIndex: () => {
++      // Move from the switch that holds focus. Fall back to the manual-mode
++      // focus index, then the selection, when focus is elsewhere.
++      const active = switches.findIndex(
++        (s) => s.id === document.activeElement?.id,
++      );
++      if (active >= 0) return active;
+       if (focusedIndex >= 0) return focusedIndex;
+       // Start from the fallback tab stop when the selected switch is disabled,
+       // so the first arrow press moves off it instead of re-selecting it.
+```
+
+**File**: `tests/ContentSwitcher/ContentSwitcher.test.ts` (modified, +13/-0)
+```diff
+@@ -600,6 +600,19 @@ describe("ContentSwitcher", () => {
+       expect(tabs[2]).not.toHaveClass("bx--content-switcher--selected");
+     });
+ 
++    it("moves from the focused switch after the selected switch is clicked", async () => {
++      await renderAndFlush(ContentSwitcherSelectionMode);
++      const tabs = screen.getAllByRole("tab");
++
++      await user.click(tabs[0]);
++      await user.keyboard("{ArrowRight}{ArrowRight}");
++      expect(document.activeElement).toBe(tabs[2]);
++
++      await user.click(tabs[0]);
++      await user.keyboard("{ArrowRight}");
++      expect(document.activeElement).toBe(tabs[1]);
++    });
++
+     it("arrow left moves focus without changing selection", async () => {
+       render(ContentSwitcherSelectionMode);
  
 ```
 
-**File**: `scripts/lib/thumbnails.ts` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ export const THUMBNAIL_TOKENS: Record<string, string> = {
-   "field-01": "#f4f4f4",
-   "border-subtle": "#e0e0e0",
-   "text-disabled": "#c6c6c6",
--  "text-placeholder": "#a8a8a8",
-+  "text-03": "#a8a8a8",
-   "border-strong": "#8d8d8d",
-   "text-secondary": "#525252",
-   "button-secondary": "#393939",
-```
-
-**File**: `tests/css/text-placeholder-token.test.ts` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+// @vitest-environment node
-+import { parseRules } from "crassus";
-+import { compileEntry } from "./compile";
-+
-+describe("text-placeholder token", () => {
-+  // Components draw placeholders in `text-05`; `text-placeholder` (and
-+  // `.bx--type-text-placeholder`) names the same color. It was `text-03`,
-+  // the gray v10 replaced for contrast: 2.3:1 on a white field.
-+  it.each([
-+    ":root",
-+    ":root[theme=g10]",
-+    ":root[theme=g80]",
-+    ":root[theme=g90]",
-+    ":root[theme=g100]",
-+  ])(
-+    "%s gives text-placeholder text-05's value",
-+    async (selector) => {
-+      const rules = parseRules(await compileEntry("all.scss"));
-+      // A theme block declares only what differs from `:root`.
-+      const token = (name: string) =>
-+        [selector, ":root"]
-+          .map((s) => rules.find((r) => r.selector === s && r.decls.has(name)))
-+          .find(Boolean)
-+          ?.decls.get(name);
-+      expect(token("--cds-text-placeholder")).toBe(token("--cds-text-05"));
-+    },
-+    30_000,
-+  );
-+});
-```
-
-**File**: `thumbnails/README.md` (modified, +1/-1)
-```diff
-@@ -202,7 +202,7 @@ GitHub and `rsvg-convert`. Reuse these pairs exactly:
- | `--cds-field-01` | `#f4f4f4` | Fields, tiles, unpressed buttons |
- | `--cds-border-subtle` | `#e0e0e0` | Rules, tracks, pressed or selected fills, media blocks |
- | `--cds-text-disabled` | `#c6c6c6` | Secondary text bars, dashed outlines |
--| `--cds-text-placeholder` | `#a8a8a8` | Primary text bars |
-+| `--cds-text-03` | `#a8a8a8` | Primary text bars |
- | `--cds-border-strong` | `#8d8d8d` | Strong borders, emphasized blocks |
- | `--cds-text-secondary` | `#525252` | Headings, terms, labels with weight |
- | `--cds-button-secondary` | `#393939` | Secondary buttons, dark selected segments |
-```
-
-**File**: `thumbnails/aspect-ratio.svg` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-         <rect id="object" fill="var(--cds-field-01, #f4f4f4)" x="82" y="58" width="156" height="64"></rect>
-         <path id="bracket-tl" d="M82 70L82 58L94 58" stroke="var(--cds-interactive-01, #0f62fe)" stroke-width="1.5" fill="none" stroke-linecap="square"></path>
-         <path id="bracket-br" d="M238 110L238 122L226 122" stroke="var(--cds-interactive-01, #0f62fe)" stroke-width="1.5" fill="none" stroke-linecap="square"></path>
--        <rect id="stub-1" fill="var(--cds-text-placeholder, #a8a8a8)" x="140" y="82" width="40" height="5"></rect>
-+        <rect id="stub-1" fill="var(--cds-text-03, #a8a8a8)" x="140" y="82" width="40" height="5"></rect>
-         <rect id="stub-2" fill="var(--cds-text-disabled, #c6c6c6)" x="148" y="94" width="24" height="4"></rect>
-     </g>
- </svg>
-```
-
-**File**: `thumbnails/big-number.svg` (modified, +2/-2)
-```diff
-@@ -3,8 +3,8 @@
-     <title>big-number</title>
-     <g id="big-number" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-         <rect id="surface" fill="var(--cds-field-01, #f4f4f4)" x="64" y="40" width="192" height="100"></rect>
--        <rect id="label" fill="var(--cds-text-placeholder, #a8a8a8)" x="88" y="66" width="56" height="8"></rect>
--        <rect id="value" fill="var(--cds-text-placeholder, #a8a8a8)" x="88" y="86" width="72" height="36"></rect>
-+        <rect id="label" fill="var(--cds-text-03, #a8a8a8)" x="88" y="66" width="56" height="8"></rect>
-+        <rect id="value" fill="var(--cds-text-03, #a8a8a8)" x="88" y="86" width="72" height="36"></rect>
-         <g id="trend-icon" transform="translate(176, 91) scale(0.8)" fill="var(--cds-support-success, #198038)">
-             <path d="M16 4L6 14 7.41 15.41 15 7.83 15 28 17 28 17 7.83 24.59 15.41 26 14 16 4z"></path>
-         </g>
-```
-
-**File**: `thumbnails/bleed.svg` (modified, +2/-2)
-```diff
-@@ -4,8 +4,8 @@
-     <g id="bleed" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-         <rect id="container" fill="var(--cds-ui-02, #ffffff)" stroke="var(--cds-border-subtle, #e0e0e0)" stroke-width="1" x="76.5" y="30.5" width="167" height="119"></rect>
-         <rect id="padding" fill="none" stroke="var(--cds-text-disabled, #c6c6c6)" stroke-width="1" stroke-dasharray="3 2" x="92.5" y="46.5" width="135" height="87"></rect>
--        <rect id="text-1" fill="var(--cds-text-placeholder, #a8a8a8)" x="104" y="58" width="80" height="6"></rect>
-+        <rect id="text-1" fill="var(--cds-text-03, #a8a8a8)" x="104" y="58" width="80" height="6"></rect>
-         <rect id="media" fill="var(--cds-border-subtle, #e0e0e0)" x="77" y="74" width="166" height="32"></rect>
--        <rect id="text-2" fill="var(--cds-text-placeholder, #a8a8a8)" x="104" y="116" width="96" height="6"></rect>
-+        <rect id="text-2" fill="var(--cds-text-03, #a8a8a8)" x="104" y="116" width="96" height="6"></rect>
-     </g>
- </svg>
-```
-
-**File**: `thumbnails/box.svg` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     <g id="box" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-         <rect id="margin" fill="none" stroke="var(--cds-text-disabled, #c6c6c6)" stroke-width="1" stroke-dasharray="3 2" x="64" y="40" width="192" height="100"></rect>
-         <rect id="surface" fill="var(--cds-field-01, #f4f4f4)" stroke="var(--cds-border-strong, #8d8d8d)" stroke-width="1" x="80" y="52" width="160" height="76"></rect>
--        <rect id="content-1" fill="var(--cds-text-placeholder, #a8a8a8)" x="96" y="72" width="100" height="6"></rect>
--        <rect id="content-2" fill="var(--cds-text-placeholder, #a8a8a8)" x="96" y="86" width="70" height="6"></rect>
-+        <rect id="content-1" fill="var(--cds-text-03, #a8a8a8)" x="96" y="72" width="100" height="6"></rect>
-+        <rect id="content-2" fill="var(--cds-text-03, #a8a8a8)" x="96" y="86" width="70" height="6"></rect>
-     </g>
- </svg>
-```
-
 #### Recent Merged Pull Requests:
-- **PR #4685** (2026-10-19): chore(utils): drop dead code and test-only exports (@metonym)
-- **PR #4684** (2026-10-19): test(utils): prune duplicate util tests (@metonym)
-- **PR #4683** (2026-10-19): test(utils): make util tests fail when their behavior breaks (@metonym)
-- **PR #4682** (2026-10-19): fix(css): break words too long for their line in labels, titles and links (@metonym)
-- **PR #4681** (2026-10-19): fix(breadcrumb): wrap an item too long for the trail (@metonym)
-- **PR #4680** (2026-10-19): test: cover Tabs overflow, hover tooltips and FileUploader skeleton (@metonym)
+- **PR #4744** (2026-10-19): test: cover switcher, tile, snippet and pagination gaps (@metonym)
+- **PR #4743** (2026-10-19): chore(tests): use callback props in switcher, tile and pagination tests (@metonym)
+- **PR #4742** (2026-10-19): test: prune duplicate switcher, tile, snippet and pagination tests (@metonym)
+- **PR #4741** (2026-10-19): test: make switcher, tile, snippet and pagination tests fail when broken (@metonym)
+- **PR #4740** (2026-10-19): docs(content-switcher, tabs): point to selectedId for the selected item (@metonym)
+- **PR #4739** (2026-10-19): fix(content-switcher, tabs): follow a keyed reorder with the bound index (@metonym)
 
 ---
 
@@ -1515,38 +1489,35 @@ use `text-03`, which has the old values, so they look the same.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. file-uploader-button): restore the current labelText on clear
+## X. content-switcher): keep selection when an earlier switch is removed
 
 **RULE**:
-When implementing operations in `src/FileUploader/FileUploaderButton.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ContentSwitcher/ContentSwitcher.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be830951`: file-uploader-button): restore the current labelText on clear. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8585d645`: content-switcher): keep selection when an earlier switch is removed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/FileUploader/FileUploaderButton.svelte`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ContentSwitcher/ContentSwitcher.svelte`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // The label a pick last wrote. Any other `labelText` came from the
-  // consumer (e.g. a locale change), so clearing restores that instead.
-  let fileLabel = undefined;
-    if (files.length === 0) {
-      if (labelText !== fileLabel) initialLabelText = labelText;
-      labelText = initialLabelText;
-    }
-      if (labelText !== fileLabel) initialLabelText = labelText;
-      labelText = fileLabel =
-        files.length > 1 ? `${files.length} files` : files[0].name;
+  /**
+   * Id of the switch rendered as selected, as of the last update. A removal
+   * shifts `switches[committedIndex]` before afterUpdate can re-anchor.
+   * @type {string | undefined}
+   */
+  let committedId = undefined;
+          ? committedId
+    committedId = switches[committedIndex]?.id;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    if (files.length === 0) labelText = initialLabelText;
-      labelText = files.length > 1 ? `${files.length} files` : files[0].name;
+          ? get(currentId)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be830951` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8585d645` are properly handled with clean fallback behavior.
