@@ -3669,3 +3669,6 @@
 | `CYCLE-20261020-WFDP` | `2026-10-20T02:43:13.501Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3006` | Yes (`ece3d9ae...`) |
 | `CYCLE-20261020-4DY2` | `2026-10-20T02:49:24.890Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3007` | Yes (`62767528...`) |
 | `CYCLE-20261020-4KB0` | `2026-10-20T02:49:33.132Z` | `alyssaxuu/later` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3008, Rule 3009` | Yes (`889f30fb...`) |
+| `CYCLE-20261020-CHOZ` | `2026-10-20T02:55:42.995Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3010` | Yes (`730fb601...`) |
+| `CYCLE-20261020-CHZB` | `2026-10-20T02:55:43.367Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3011` | Yes (`903042b6...`) |
+| `CYCLE-20261020-CICV` | `2026-10-20T02:55:43.855Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3012` | Yes (`fa563e7d...`) |

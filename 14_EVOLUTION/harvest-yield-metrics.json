@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:49:33.139Z",
-  "total_cycles_completed": 3646,
-  "total_learnings_persisted": 3646,
-  "total_rules_promoted": 2813,
+  "last_updated": "2026-10-20T02:55:43.862Z",
+  "total_cycles_completed": 3649,
+  "total_learnings_persisted": 3649,
+  "total_rules_promoted": 2816,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:22:51.465Z",
-      "repository": "KevinnZou/compose-webview-multiplatform",
-      "learningId": "learn-github-kevinnzou-compose-webview-multiplatform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:22:58.582Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:28:48.742Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:28:51.119Z",
       "repository": "jafforgehq/site-analytics-tool",
@@ -1403,6 +1382,27 @@
       "repository": "alyssaxuu/later",
       "learningId": "learn-github-alyssaxuu-later",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:55:43.009Z",
+      "repository": "taiga-family/taiga-ui",
+      "learningId": "learn-github-taiga-family-taiga-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:55:43.374Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:55:43.862Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

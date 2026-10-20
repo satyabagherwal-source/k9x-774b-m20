@@ -3676,3 +3676,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `87b65968` | Multi-dimensional audit evidence | 2026-10-20T02:43:13.503Z |
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `e736c2df` | Multi-dimensional audit evidence | 2026-10-20T02:49:24.893Z |
 | `learn-github-alyssaxuu-later` | `https://github.com/alyssaxuu/later` | `26e79369` | Multi-dimensional audit evidence | 2026-10-20T02:49:33.135Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `c107bc82` | Multi-dimensional audit evidence | 2026-10-20T02:55:43.004Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `9e2b0bac` | Multi-dimensional audit evidence | 2026-10-20T02:55:43.369Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `eed8ee2f` | Multi-dimensional audit evidence | 2026-10-20T02:55:43.858Z |

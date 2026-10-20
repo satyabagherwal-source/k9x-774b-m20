@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T02:49:33.142Z",
+  "last_updated": "2026-10-20T02:55:43.866Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9169,14 +9169,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-taiga-family-taiga-ui",
-      "content_hash": "190485c0f8028dd9dd16594b368f47ba759e019b9dd60dfd64b97284a57d4a57",
-      "verified_at": "2026-10-19T16:18:09.811Z",
+      "content_hash": "730fb601087dcfb3c519111c56ea8b404eeb4b50bc401a4e45f8fea27a3dc38e",
+      "verified_at": "2026-10-20T02:55:43.011Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:18:09.811Z"
+      "last_updated": "2026-10-20T02:55:43.011Z"
     },
     "u-root/u-root": {
       "repository": "u-root/u-root",
@@ -15177,6 +15177,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T02:49:33.141Z"
+    },
+    "QwikDev/qwik": {
+      "repository": "QwikDev/qwik",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-qwikdev-qwik",
+      "content_hash": "903042b6abfa13519a3ed81990817cd9e30d3f29e7c8cbdc3679d27ede79ca79",
+      "verified_at": "2026-10-20T02:55:43.377Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:55:43.377Z"
+    },
+    "TypeWhisper/typewhisper-mac": {
+      "repository": "TypeWhisper/typewhisper-mac",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-typewhisper-typewhisper-mac",
+      "content_hash": "fa563e7d81ce64f9201f5d3d97d27e48d46af4c42f86212d62a97d88079170dd",
+      "verified_at": "2026-10-20T02:55:43.865Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:55:43.865Z"
     }
   },
   "repos": {

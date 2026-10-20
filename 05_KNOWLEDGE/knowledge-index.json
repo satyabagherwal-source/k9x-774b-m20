@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:49:33.093Z",
-  "total_verified_learnings": 1024,
+  "last_updated": "2026-10-20T02:55:43.810Z",
+  "total_verified_learnings": 1026,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -42161,8 +42161,8 @@
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "65e3ce22",
-      "content_hash": "190485c0f8028dd9dd16594b368f47ba759e019b9dd60dfd64b97284a57d4a57",
+      "source_version": "c107bc82",
+      "content_hash": "730fb601087dcfb3c519111c56ea8b404eeb4b50bc401a4e45f8fea27a3dc38e",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "promoted_rules": [
@@ -42175,6 +42175,11 @@
           "number": 2670,
           "title": "addon-mobile): `DropdownSheet` no longer closes and reopens in a loop under a ho",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3010,
+          "title": "update dependency @taiga-ui/configs to v0.566.0 (#15259)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42182,7 +42187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:18:09.759Z",
+      "verified_at": "2026-10-20T02:55:42.932Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44264,22 +44269,35 @@
     "learn-github-typewhisper-typewhisper-mac": {
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "typewhisper-typewhisper-mac",
+      "source": "TypeWhisper/typewhisper-mac",
+      "repository": "TypeWhisper/typewhisper-mac",
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "HEAD",
-      "content_hash": "c66ea2709d1a3db4dfda00ab2bfff5bf392b64e46453337bbaa3cd367414246c",
+      "source_version": "eed8ee2f",
+      "content_hash": "fa563e7d81ce64f9201f5d3d97d27e48d46af4c42f86212d62a97d88079170dd",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3012,
+          "title": "Build CI and releases with Xcode 27.1 (#1636)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.139Z"
+      "verified_at": "2026-10-20T02:55:43.797Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-u-root-u-root": {
       "learning_id": "learn-github-u-root-u-root",
@@ -59518,20 +59536,35 @@
     "learn-github-qwikdev-qwik": {
       "learning_id": "learn-github-qwikdev-qwik",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "QwikDev/qwik",
       "repository": "QwikDev/qwik",
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "main",
-      "content_hash": "7f6ea637a6022037eeb896f6ce906f211a53836a3afb37c4e0722bbc852da9f8",
+      "source_version": "9e2b0bac",
+      "content_hash": "903042b6abfa13519a3ed81990817cd9e30d3f29e7c8cbdc3679d27ede79ca79",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3011,
+          "title": "Merge pull request #9217 from rapporian/fix/devtools-mcp-custom-hooks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:55:43.308Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vitest-dev-vitest": {
       "learning_id": "learn-github-vitest-dev-vitest",
@@ -97322,6 +97355,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:49:33.082Z"
+    },
+    "rule-3010": {
+      "learning_id": "rule-3010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3010,
+      "title": "update dependency @taiga-ui/configs to v0.566.0 (#15259)",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "c107bc82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:55:42.932Z"
+    },
+    "rule-3011": {
+      "learning_id": "rule-3011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3011,
+      "title": "Merge pull request #9217 from rapporian/fix/devtools-mcp-custom-hooks",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "9e2b0bac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:55:43.308Z"
+    },
+    "rule-3012": {
+      "learning_id": "rule-3012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3012,
+      "title": "Build CI and releases with Xcode 27.1 (#1636)",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "eed8ee2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:55:43.797Z"
     }
   },
   "aliases": {
