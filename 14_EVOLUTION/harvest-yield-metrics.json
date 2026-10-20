@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T22:58:14.547Z",
-  "total_cycles_completed": 4055,
-  "total_learnings_persisted": 4055,
-  "total_rules_promoted": 3256,
+  "last_updated": "2026-10-20T23:04:35.189Z",
+  "total_cycles_completed": 4058,
+  "total_learnings_persisted": 4058,
+  "total_rules_promoted": 3258,
   "history": [
-    {
-      "timestamp": "2026-10-20T15:56:30.368Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:02:28.216Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:08:31.361Z",
-      "repository": "React95/React95",
-      "learningId": "learn-github-react95-react95",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:08:42.699Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T22:58:14.547Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:04:18.376Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:04:30.106Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:04:35.189Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

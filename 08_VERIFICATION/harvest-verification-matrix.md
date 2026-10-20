@@ -4078,3 +4078,6 @@
 | `CYCLE-20261020-2WR4` | `2026-10-20T22:51:59.440Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3422, Rule 3423, Rule 3424` | Yes (`9dcf5063...`) |
 | `CYCLE-20261020-AMUU` | `2026-10-20T22:57:59.862Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`d0788052...`) |
 | `CYCLE-20261020-AY6H` | `2026-10-20T22:58:14.537Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3425` | Yes (`837cdfb3...`) |
+| `CYCLE-20261020-IQWX` | `2026-10-20T23:04:18.369Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`d34e504e...`) |
+| `CYCLE-20261020-IZYO` | `2026-10-20T23:04:30.096Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3426` | Yes (`648cd439...`) |
+| `CYCLE-20261020-J3VU` | `2026-10-20T23:04:35.178Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3427` | Yes (`e73e9a10...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:58:14.551Z",
+  "last_updated": "2026-10-20T23:04:35.192Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2631,14 +2631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
-      "verified_at": "2026-10-19T10:03:36.557Z",
+      "content_hash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
+      "verified_at": "2026-10-20T23:04:18.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:03:36.557Z"
+      "last_updated": "2026-10-20T23:04:18.395Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
-      "verified_at": "2026-10-20T16:50:37.078Z",
+      "content_hash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
+      "verified_at": "2026-10-20T23:04:30.109Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:50:37.078Z"
+      "last_updated": "2026-10-20T23:04:30.109Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "f8b6d4ceae73628a28df3abba2c9ef138d7cb9e5f47045616031686df2b03bd5",
-      "verified_at": "2026-10-20T08:20:57.728Z",
+      "content_hash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
+      "verified_at": "2026-10-20T23:04:35.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T08:20:57.728Z"
+      "last_updated": "2026-10-20T23:04:35.191Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",

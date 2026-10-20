@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:58:14.477Z",
+  "last_updated": "2026-10-20T23:04:35.128Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5662,8 +5662,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "d4297d7b",
-      "content_hash": "f8b6d4ceae73628a28df3abba2c9ef138d7cb9e5f47045616031686df2b03bd5",
+      "source_version": "acf33af3",
+      "content_hash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -5691,6 +5691,11 @@
           "number": 3109,
           "title": "Subquery Set Spill-to-Disk Execution Plan Preservation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3427,
+          "title": "Merge pull request #127029 from mpanichella/add-dbine",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5698,7 +5703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T08:20:57.657Z",
+      "verified_at": "2026-10-20T23:04:35.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45705,8 +45710,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "400d35c2",
-      "content_hash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
+      "source_version": "e7a8d17d",
+      "content_hash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -45734,6 +45739,11 @@
           "number": 3277,
           "title": "Clean up Git source logging for per-source debug (#5451)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3426,
+          "title": "Add Lambda Cloud API key detector (#5435)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45741,7 +45751,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:50:37.034Z",
+      "verified_at": "2026-10-20T23:04:30.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57445,7 +57455,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
+      "content_hash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "promoted_rules": [],
@@ -57454,7 +57464,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:03:36.498Z",
+      "verified_at": "2026-10-20T23:04:18.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105643,6 +105653,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:58:14.468Z"
+    },
+    "rule-3426": {
+      "learning_id": "rule-3426",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3426,
+      "title": "Add Lambda Cloud API key detector (#5435)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "e7a8d17d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:04:30.046Z"
+    },
+    "rule-3427": {
+      "learning_id": "rule-3427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3427,
+      "title": "Merge pull request #127029 from mpanichella/add-dbine",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "acf33af3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:04:35.120Z"
     }
   },
   "aliases": {

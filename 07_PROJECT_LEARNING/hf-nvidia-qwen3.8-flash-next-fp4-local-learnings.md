@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nvidia-qw`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:03:36.412Z  
+> **Timestamp**: 2026-10-20T23:04:18.239Z  
 > **Learning ID**: `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:03:35.515Z  
+> **Harvest Timestamp**: 2026-10-20T23:04:17.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6047 downloads | 224 likes
+- **Stars / Engagement**: 7345 downloads | 259 likes
 
 ---
 

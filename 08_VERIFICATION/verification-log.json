@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-IWUZ",
-    "timestamp": "2026-10-20T00:12:44.891Z",
-    "repository": "psf/requests",
-    "learningId": "learn-github-psf-requests",
-    "contentHash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-IX59",
-    "timestamp": "2026-10-20T00:12:45.261Z",
-    "repository": "WillieWangWei/SwiftUI-Tutorials",
-    "learningId": "learn-github-williewangwei-swiftui-tutorials",
-    "contentHash": "4db4806d03ee365035ec4099ce7bbf4bd3117cfa679772ce377024e6e70273d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-J33Z",
-    "timestamp": "2026-10-20T00:12:52.991Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-R1ZL",
     "timestamp": "2026-10-20T00:19:04.785Z",
     "repository": "biomejs/biome",
@@ -7490,6 +7445,51 @@
     "repository": "RediSearch/RediSearch",
     "learningId": "learn-github-redisearch-redisearch",
     "contentHash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IQWX",
+    "timestamp": "2026-10-20T23:04:18.369Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IZYO",
+    "timestamp": "2026-10-20T23:04:30.096Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-J3VU",
+    "timestamp": "2026-10-20T23:04:35.178Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

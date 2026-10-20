@@ -4085,3 +4085,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-20T22:51:59.446Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-20T22:57:59.865Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `d5ca4c76` | Multi-dimensional audit evidence | 2026-10-20T22:58:14.543Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-20T23:04:18.372Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `e7a8d17d` | Multi-dimensional audit evidence | 2026-10-20T23:04:30.102Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `acf33af3` | Multi-dimensional audit evidence | 2026-10-20T23:04:35.185Z |

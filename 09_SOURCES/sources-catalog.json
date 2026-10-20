@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
-    "lastHarvestedAt": "2026-10-19T10:03:36.551Z",
+    "contentHash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
+    "lastHarvestedAt": "2026-10-20T23:04:18.372Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "400d35c2",
+    "sourceVersion": "e7a8d17d",
     "license": "AGPL-3.0",
-    "contentHash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
-    "lastHarvestedAt": "2026-10-20T16:50:37.072Z",
+    "contentHash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
+    "lastHarvestedAt": "2026-10-20T23:04:30.102Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "d4297d7b",
+    "sourceVersion": "acf33af3",
     "license": "Apache-2.0",
-    "contentHash": "f8b6d4ceae73628a28df3abba2c9ef138d7cb9e5f47045616031686df2b03bd5",
-    "lastHarvestedAt": "2026-10-20T08:20:57.721Z",
+    "contentHash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
+    "lastHarvestedAt": "2026-10-20T23:04:35.185Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

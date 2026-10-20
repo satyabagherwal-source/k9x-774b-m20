@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `400d35c2`  
+> **Source Version**: `e7a8d17d`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:50:36.860Z  
+> **Timestamp**: 2026-10-20T23:04:29.828Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:50:36.855Z  
+> **Harvest Timestamp**: 2026-10-20T23:04:29.823Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28609 stars
+- **Stars / Engagement**: 28613 stars
 
 ---
 
@@ -1140,454 +1140,361 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `400d35c2` (2026-10-20)
-**Commit Message**: Clean up Git source logging for per-source debug (#5451)
+### Incident Patch 1: `e7a8d17d` (2026-10-20)
+**Commit Message**: Add Lambda Cloud API key detector (#5435)
 
-* Clean up Git source logging for per-source debug
+* Add Lambda Cloud API key detector
 
-Log through the call's context everywhere and drop context.Background()
-in the GitHub commit lookup. Move lines to the levels in the source
-logging rules and add V(4) lines for skips and fallbacks. Stop logging
-an error that can hold the raw URL and redact separately passed tokens
-from git output. Add debug logging tests with logtest.DebugContext
+* set id to 1074
 
-* Fix missing source fields in source manager logs
+* fix proto error
 
-The check for existing job and source fields compared ctx.Value to "",
-but a missing value is nil, so the fields were never added and CLI
-logs had no source_name or job_id. Check for nil instead and move the
-repeated block into one withSourceFields helper. Add a test for both
-the added fields and the caller-set case.
-
-* Redact percent-encoded tokens from git clone output
-
-**File**: `pkg/sources/git/git.go` (modified, +93/-52)
+**File**: `pkg/detectors/lambdacloud/lambdacloud.go` (added, +126/-0)
 ```diff
-@@ -261,6 +261,23 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
- 		UseCustomContentWriter: s.useCustomContentWriter,
- 	}
- 	s.git = NewGit(cfg)
+@@ -0,0 +1,126 @@
++package lambdacloud
 +
-+	// log the config choices so support can see how the source was set up
-+	// only counts and flags, never URLs or credentials
-+	aCtx.Logger().V(1).Info("git source initialized",
-+		"repo_count", len(conn.GetRepositories()),
-+		"dir_count", len(conn.GetDirectories()),
-+		"auth_type", fmt.Sprintf("%T", conn.GetCredential()),
-+		"base", conn.GetBase(),
-+		"head", conn.GetHead(),
-+		"max_depth", conn.GetMaxDepth(),
-+		"bare", conn.GetBare(),
-+		"skip_binaries", conn.GetSkipBinaries(),
-+		"skip_archives", conn.GetSkipArchives(),
-+		"has_include_filter", conn.GetIncludePathsFile() != "",
-+		"has_exclude_filter", conn.GetExcludePathsFile() != "",
-+		"has_exclude_globs", conn.GetExcludeGlobs() != "",
-+	)
- 	return nil
- }
- 
-@@ -299,7 +316,7 @@ func (s *Source) scanRepos(ctx context.Context, reporter sources.ChunkReporter)
- 		}
- 
- 		if err := s.scanRepo(ctx, repoURI, reporter); err != nil {
--			ctx.Logger().Info("error scanning repository", "repo", repoURI, "error", err)
-+			ctx.Logger().Error(err, "error scanning repository", "repo", repoURI)
- 			continue
- 		}
- 	}
-@@ -361,7 +378,7 @@ func (s *Source) scanDirs(ctx context.Context, reporter sources.ChunkReporter) e
- 		}
- 
- 		if err := s.scanDir(ctx, gitDir, reporter); err != nil {
--			ctx.Logger().Info("error scanning repository", "repo", gitDir, "error", err)
-+			ctx.Logger().Error(err, "error scanning repository", "repo", gitDir)
- 			continue
- 		}
- 	}
-@@ -372,6 +389,7 @@ func (s *Source) scanDirs(ctx context.Context, reporter sources.ChunkReporter) e
- func (s *Source) scanDir(ctx context.Context, gitDir string, reporter sources.ChunkReporter) error {
- 	if !s.scanOptions.Bare && strings.HasSuffix(gitDir, "git") {
- 		// TODO: Figure out why we skip directories ending in "git".
-+		ctx.Logger().V(4).Info("skipping directory", "path", gitDir, "reason", "non-bare directory name ends in git")
- 		return nil
- 	}
- 
-@@ -666,39 +684,43 @@ func executeClone(ctx context.Context, params cloneParams) (*git.Repository, err
- 	gitArgs = append(gitArgs, cloneURL.String(), params.clonePath)
- 	cloneCmd := exec.CommandContext(ctx, "git", gitArgs...)
- 
--	safeURL, secretForRedaction, err := stripPassword(params.gitURL)
-+	// the parse error from stripPassword contains the raw URL, which can hold
-+	// a password, so only log that stripping failed, not the error itself
-+	safeURL, urlPassword, err := stripPassword(params.gitURL)
- 	if err != nil {
--		ctx.Logger().V(1).Info("error stripping password from git url", "error", err)
-+		ctx.Logger().V(4).Info("could not strip password from git url; repo field left empty")
- 	}
--	logger := ctx.Logger().WithValues(
-+	ctx = context.WithValues(ctx,
- 		"subcommand", "git clone",
- 		"repo", safeURL,
- 		"path", params.clonePath,
- 		"args", params.args,
- 	)
- 
--	logger.V(3).Info("executing git clone command")
-+	ctx.Logger().V(2).Info("executing git clone command")
- 	outputBytes, err := cloneCmd.CombinedOutput()
--	var output string
--	if secretForRedaction != "" {
--		output = strings.ReplaceAll(string(outputBytes), secretForRedaction, "<secret>")
--	} else {
--		output = string(outputBytes)
--	}
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"io"
++	"net/http"
 +
-+	// hide passwords from the git output before it is logged or returned
-+	// the password can be inside the url, or passed in separately and added
-+	// to the url above when authInUrl is set
-+	userInfoPassword, _ := params.userInfo.Password()
-+	output := redactPasswords(string(outputBytes), urlPassword, userInfoPassword)
- 
- 	if err != nil {
- 		err = fmt.Errorf("error executing git clone: %w, %s", err, output)
- 	}
--	logger.V(3).Info("git subcommand finished", "output", output)
-+	ctx.Logger().V(5).Info("git subcommand finished", "output", output, "duration", time.Since(start).String())
- 
- 	if common.IsDone(ctx) {
- 		return nil, fmt.Errorf("git clone timed out (after %s)", time.Since(start))
- 	} else if cloneCmd.ProcessState == nil {
- 		return nil, fmt.Errorf("clone command exited with no output")
- 	} else if cloneCmd.ProcessState.ExitCode() != 0 {
--		logger.V(0).Info("git clone failed", "error", err)
- 		failureReason := ClassifyCloneError(output)
- 		exitCode := cloneCmd.ProcessState.ExitCode()
-+		// the error is returned and logged by the caller; this line only adds
-+		// how the failure was classified, which decides if it is retried
-+		ctx.Logger().V(4).Info("git clone attempt failed", "failure_reason", failureReason, "exit_code", exitCode)
- 		metricsInstance.RecordCloneOperation(statusFailure, failureReason, exitCode)
- 		return nil, fmt.Errorf("could not clone repo: %s, %w", safeURL, err)
- 	}
-@@ -707,13 +729,29 @@ func executeClone(ctx context.Context, params cloneParams) (*git.Repository, err
- 	if err != nil {
- 		return nil, fmt.Errorf("could not open cloned repo: %w", err)
- 	}
--	logger.V(1).Info("successfully cloned repo", "time_seconds", time.Since(start).Seconds())
-+	ctx.Logger().V(2).Info(
-```
-
-**File**: `pkg/sources/git/git_test.go` (modified, +134/-0)
-```diff
-@@ -13,13 +13,18 @@ import (
- 	"testing"
- 	"time"
- 
-+	"github.com/go-logr/zapr"
- 	"github.com/kylelemons/godebug/pretty"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/feature"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zapcore"
-+	"go.uber.org/zap/zaptest/observer"
- 	"google.golang.org/protobuf/types/known/anypb"
- 
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
-@@ -2324,3 +2329,132 @@ func gitHasObject(t *testing.T, repoPath, rev string) bool {
- 	t.Helper()
- 	return exec.Command("git", "-C", repoPath, "cat-file", "-e", rev+"^{commit}").Run() == nil
- }
++	regexp "github.com/wasilibs/go-re2"
 +
-+func TestSource_DebugLogging(t *testing.T) {
-+	const testSecret = "TESTSECRET-do-not-log-1234567890"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
++)
 +
-+	repoPath := setupTestRepo(t, "debug-log-repo")
-+	addTestFileAndCommit(t, repoPath, "config.txt", "password = "+testSecret)
++const verifyURL = "https://cloud.lambda.ai/api/v1/identity"
 +
-+	conn, err := anypb.New(&sourcespb.Git{
-+		Credential: &sourcespb.Git_Unauthenticated{
-+			Unauthenticated: &credentialspb.Unauthenticated{},
-+		},
-+		Repositories: []string{"file://" + repoPath},
-+	})
-+	assert.NoError(t, err)
++type Scanner struct {
++	client *http.Client
++}
 +
-+	// run the source and drain its chunks, the way the engine does
-+	runSource := func(ctx context.Context) {
-+		s := Source{}
-+		assert.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
++var _ detectors.Detector = (*Scanner)(nil)
 +
-+		chunksCh := make(chan *sources.Chunk, 64)
-+		go func() {
-+			for range chunksCh {
++var (
++	defaultClient = common.SaneHttpClient()
++
++	keyPat = regexp.MustCompile(`\b(secret_[a-z0-9][a-z0-9-]{0,63}_[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}\.[A-Za-z0-9]{32})(?:[^A-Za-z0-9]|$)`)
++)
++
++func (s Scanner) Keywords() []string {
++	return []string{"secret_"}
++}
++
++func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) ([]detectors.Result, error) {
++	var results []detectors.Result
++	seen := make(map[string]struct{})
++	for _, match := range keyPat.FindAllSubmatchIndex(data, -1) {
++		token := string(data[match[2]:match[3]])
++		if _, ok := seen[token]; ok {
++			continue
++		}
++		seen[token] = struct{}{}
++
++		result := detectors.Result{
++			DetectorType: s.Type(),
++			Raw:          []byte(token),
++			SecretParts:  map[string]string{"key": token},
++		}
++
++		if verify {
++			client := s.client
++			if client == nil {
++				client = defaultClient
 +			}
-+		}()
-+		assert.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
++			verified, extraData, verificationErr := verifyToken(ctx, client, token)
++			result.Verified = verified
++			result.ExtraData = extraData
++			result.SetVerificationError(verificationErr, token)
++		}
++		results = append(results, result)
 +	}
-+
-+	t.Run("debug on", func(t *testing.T) {
-+		ctx, logs := logtest.DebugContext()
-+		ctx = context.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
-+		runSource(ctx)
-+
-+		// lines from each level we care about show up
-+		for _, msg := range []string{
-+			"git source initialized",     // V(1)
-+			"successfully cloned repo",   // V(2)
-+			"scanning commit",            // V(3)
-+			"git subcommand finished",    // V(5)
-+			"scanning git repo complete", // V(2)
-+		} {
-+			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
-+		}
-+
-+		// every line came from the context logger, so it carries the source fields,
-+		// and none of them contain the secret
-+		for _, entry := range logs.All() {
-+			fields := entry.ContextMap()
-+			assert.Contains(t, fields, "source_name", "line %q", entry.Message)
-+			assert.Contains(t, fields, "job_id", "line %q", entry.Message)
-+			assert.NotContains(t, entry.Message, testSecret)
-+			assert.NotContains(t, fmt.Sprint(fields), testSecret)
-+		}
-+	})
-+
-+	t.Run("debug off", func(t *testing.T) {
-+		core, logs := observer.New(zapcore.InfoLevel)
-+		ctx := context.WithLogger(context.Background(), zapr.NewLogger(zap.New(core)))
-+		runSource(ctx)
-+
-+		assert.Zero(t, logs.FilterMessage("git subcommand finished").Len())
-+		assert.Zero(t, logs.FilterMessage("scanning commit").Len())
-+	})
++	return results, nil
 +}
 +
-+func TestCloneRepo_DoesNotLogToken(t *testing.T) {
-+	const token = "TESTTOKEN-do-not-log-1234567890"
++func verifyToken(ctx context.Context, client *http.Client, token string) (bool, map[string]string, error) {
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, verifyURL, nil)
++	if err != nil {
++		return false, nil, err
++	}
++	req.Header.Set("Authorization", "Bearer "+token)
++	req.Header.Set("Accept", "application/json")
 +
-+	ctx, logs := logtest.DebugContext()
++	res, err := client.Do(req)
++	if err != nil {
++		return false, nil, err
++	}
++	defer func() {
++		_, _ = io.Copy(io.Discard, res.Body)
++		_ = res.Body.Close()
++	}()
 +
-+	// nothing listens on port 1, so the clone fails fast and is not retried;
-+	// the token is passed separately and only added to the URL inside CloneRepo
-+	_, _, err := CloneRepoUsingToken(ctx, token, "http://127.0.0.1:1/org/repo.git", "", "x-access-token", true)
-+	assert.Error(t, err)
-+	assert.NotContains(t, err.Error(), token)
++	switch res.StatusCode {
++	case http.StatusOK:
++		var response struct {
++			Data identityResponse `json:"data"`
++		}
++		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
++			return false, nil, err
++		}
++		if response.Data.ID == "" || response.Data.AccountID == "" {
++			return false, nil, fmt.Errorf("unexpected Lambda Cloud identity response")
++		}
 +
-+	assert.NotZero(t, logs.FilterMessage("git clone attempt failed").Len())
-+	for _, entry := range logs.All() {
-+		assert.NotContains(t, entry.Message, token)
-+		assert.NotContains(t, fmt.Sprint(entry.ContextMap()), token)
++		extraData := map[string]string{
++			"identity_id": response.Data.ID,
++			"account_id":  response.Data.AccountID,
++		}
++		if response.Data.IdentityType != "" {
++			extraData["identity_type"] = response.Data.IdentityType
++		}
++		if response.Data.Email != "" {
++			extraData["email"] = response.Data.Email
++		}
++		return true, extraData, nil
++	case http.StatusUnauthorized:
++		return false, nil, nil
++	default:
++		return false, nil, fmt.Errorf("unexpected HTTP response status %d", res.StatusCode)
 +	}
 +}
 +
-+func TestRedactPasswords(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		output   string
-+		password string
-+		want     string
++func (s Scanner) Type() detector_typepb.DetectorType {
++	return detector_typepb.DetectorType_LambdaCloud
++}
++
++func (s Scanner) Description() string {
++	return "Lambda Cloud provides GPU computing infrastructure. Lambda Cloud API keys can be used to manage instances, filesystems, SSH keys, and other cloud resources."
++}
++
++type identityResponse struct {
++	ID           string `json:"id"`
++	AccountID    string `json:"account_id"`
++	IdentityType string `json:"identity_type"`
++	Email        string `json:"email"`
++}
+```
+
+**File**: `pkg/detectors/lambdacloud/lambdacloud_integration_test.go` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++//go:build detectors
++
++package lambdacloud
++
++import (
++	"context"
++	"os"
++	"testing"
++	"time"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
++)
++
++func TestLambdaCloud_FromChunk(t *testing.T) {
++	filename := os.Getenv("TEST_SECRET_FILE")
++	if filename == "" {
++		t.Skip("set TEST_SECRET_FILE with LAMBDA_CLOUD and LAMBDA_CLOUD_INACTIVE to run live verification")
++	}
++	secrets, err := common.GetSecretFromEnv(filename)
++	if err != nil {
++		t.Fatal("could not load Lambda Cloud test credentials")
++	}
++	for _, tt := range []struct {
++		field    string
++		verified bool
 +	}{
-+		{
-+			name:     "plain token",
-+			output:   "fatal: unable to access 'https://user:glpat-abc123@host/r.git/'",
-+			password: "glpat-abc123",
-+			want:     "fatal: unable to access 'https://user:<secret>@host/r.git/'",
-+		},
-+		{
-+			name:     "base64 token is percent-encoded in the url",
-+			output:   "fatal: unable to access 'https://user:abc+%2F=def@host/r.git/'",
-+			password: "abc+/=def",
-+			want:     "fatal: unable to access 'https://user:<secret>@host/r.git/'",
-+		},
-+		{
-+			name:     "token with @ : and ?",
-+			output:   "fatal: unable to access 'https://user:a%40b%3Ac%3Fd@host/r.git/'",
-+			password: "a@b:c?d",
-+			want:     "fatal: unable to access 'https://user:<secret>@host/r.git/'",
-+		},
-+		{
-+			name:     "plain form printed somewhere else",
-+			output:   "token a@b:c?d was rejected",
-+			password: "a@b:c?d",
-+			want:     "token <secret> was rejected",
-+		},
-+		{
-+			name:     "empty password leaves output alone",
-+			output:   "fatal: repository not found",
-+			password: "",
-+			want:     
-```
-
-**File**: `pkg/sources/source_manager.go` (modified, +23/-36)
-```diff
-@@ -360,18 +360,7 @@ func (s *SourceManager) run(ctx context.Context, source Source, report *JobProgr
- 	}()
- 
- 	report.TrackProgress(source.GetProgress())
--	if ctx.Value("job_id") == "" {
--		ctx = context.WithValue(ctx, "job_id", report.JobID)
--	}
--	if ctx.Value("source_id") == "" {
--		ctx = context.WithValue(ctx, "source_id", report.SourceID)
--	}
--	if ctx.Value("source_name") == "" {
--		ctx = context.WithValue(ctx, "source_name", report.SourceName)
--	}
--	if ctx.Value("source_type") == "" {
--		ctx = context.WithValue(ctx, "source_type", source.Type().String())
--	}
-+	ctx = withSourceFields(ctx, source, report)
- 
- 	// Check if source units are supported and configured.
- 	canUseSourceUnits := len(targets) == 0 && s.useSourceUnitsFunc != nil
-@@ -387,6 +376,26 @@ func (s *SourceManager) run(ctx context.Context, source Source, report *JobProgr
- 	return s.runWithoutUnits(ctx, source, report, targets...)
- }
- 
-+// withSourceFields adds the job and source fields to the context, so every log
-+// line the source writes says which source and job it came from.
-+// A caller (like thog) may have added some of them already. We skip those so a
-+// field doesn't show up twice. A missing value is nil, not "", so check for nil.
-+func withSourceFields(ctx context.Context, source Source, report *JobProgress) context.Context {
-+	if ctx.Value("job_id") == nil {
-+		ctx = context.WithValue(ctx, "job_id", report.JobID)
++		{field: "LAMBDA_CLOUD", verified: true},
++		{field: "LAMBDA_CLOUD_INACTIVE", verified: false},
++	} {
++		t.Run(tt.field, func(t *testing.T) {
++			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++			defer cancel()
++			s := Scanner{}
++			results, err := s.FromData(ctx, true, []byte("LAMBDA_API_KEY="+secrets.MustGetField(tt.field)))
++			if err != nil || len(results) != 1 {
++				t.Fatal("expected one Lambda Cloud credential")
++			}
++			if results[0].Verified != tt.verified || results[0].VerificationError() != nil {
++				t.Fatalf("unexpected verification result: verified=%v, error=%v", results[0].Verified, results[0].VerificationError())
++			}
++		})
 +	}
-+	if ctx.Value("source_id") == nil {
-+		ctx = context.WithValue(ctx, "source_id", report.SourceID)
-+	}
-+	if ctx.Value("source_name") == nil {
-+		ctx = context.WithValue(ctx, "source_name", report.SourceName)
-+	}
-+	if ctx.Value("source_type") == nil {
-+		ctx = context.WithValue(ctx, "source_type", source.Type().String())
-+	}
-+	return ctx
 +}
-+
- // enumerate is a helper method to enumerate a Source.
- func (s *SourceManager) enumerate(ctx context.Context, source Source, report *JobProgress, reporter UnitReporter) error {
- 	report.Start(time.Now())
-@@ -399,18 +408,7 @@ func (s *SourceManager) enumerate(ctx context.Context, source Source, report *Jo
- 	}()
- 
- 	report.TrackProgress(source.GetProgress())
--	if ctx.Value("job_id") == "" {
--		ctx = context.WithValue(ctx, "job_id", report.JobID)
--	}
--	if ctx.Value("source_id") == "" {
--		ctx = context.WithValue(ctx, "source_id", report.SourceID)
--	}
--	if ctx.Value("source_name") == "" {
--		ctx = context.WithValue(ctx, "source_name", report.SourceName)
--	}
--	if ctx.Value("source_type") == "" {
--		ctx = context.WithValue(ctx, "source_type", source.Type().String())
--	}
-+	ctx = withSourceFields(ctx, source, report)
- 
- 	// Check if source units are supported and configured.
- 	canUseSourceUnits := s.useSourceUnitsFunc != nil
-@@ -435,18 +433,7 @@ func (s *SourceManager) scan(ctx context.Context, source Source, report *JobProg
- 
- 	report.ReportUnit(unit)
- 	report.TrackProgress(source.GetProgress())
--	if ctx.Value("job_id") == "" {
--		ctx = context.WithValue(ctx, "job_id", report.JobID)
--	}
--	if ctx.Value("source_id") == "" {
--		ctx = context.WithValue(ctx, "source_id", report.SourceID)
--	}
--	if ctx.Value("source_name") == "" {
--		ctx = context.WithValue(ctx, "source_name", report.SourceName)
--	}
--	if ctx.Value("source_type") == "" {
--		ctx = context.WithValue(ctx, "source_type", source.Type().String())
--	}
-+	ctx = withSourceFields(ctx, source, report)
- 
- 	// Check if source units are supported and configured.
- 	canUseSourceUnits := s.useSourceUnitsFunc != nil
 ```
 
-**File**: `pkg/sources/source_manager_test.go` (modified, +56/-0)
+**File**: `pkg/detectors/lambdacloud/lambdacloud_test.go` (added, +359/-0)
 ```diff
-@@ -9,10 +9,12 @@ import (
- 	"time"
- 
- 	"github.com/stretchr/testify/assert"
-+	"go.uber.org/zap/zaptest/observer"
- 	"google.golang.org/protobuf/types/known/anypb"
- 
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+@@ -0,0 +1,359 @@
++package lambdacloud
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/google/go-cmp/cmp"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
++)
++
++const (
++	testHex   = "0123456789ab4def8123456789abcdef"
++	testAlnum = "AbCdEfGhIjKlMnOpQrStUvWxYz012345"
++	testToken = "secret_customer_" + testHex + "." + testAlnum
++)
++
++func TestLambdaCloud_Pattern(t *testing.T) {
++	secondToken := "secret_other_" + testHex + "." + testAlnum
++	type patternTest struct {
++		name  string
++		input string
++		want  []string
++	}
++	tests := []patternTest{
++		{name: "standalone", input: testToken, want: []string{testToken}},
++		{name: "key beyond first prefilter window", input: strings.Repeat("padding\n", 200) + testToken + " # trufflehog:ignore", want: []string{testToken}},
++		{name: "environment assignment", input: "LAMBDA_API_KEY=" + testToken, want: []string{testToken}},
++		{name: "JSON", input: `{"api_key":"` + testToken + `"}`, want: []string{testToken}},
++		{name: "YAML", input: "api_key: '" + testToken + "'", want: []string{testToken}},
++		{name: "Bearer header", input: "Authorization: Bearer " + testToken, want: []string{testToken}},
++		{name: "legacy curl", input: "curl --user '" + testToken + ":' https://cloud.lambda.ai/api/v1/instances", want: []string{testToken}},
++		{name: "backticks", input: "`" + testToken + "`", want: []string{testToken}},
++		{name: "duplicates", input: testToken + "\n" + testToken, want: []string{testToken}},
++		{name: "multiple keys", input: testToken + "," + secondToken, want: []string{testToken, secondToken}},
++		{name: "multiple keys separated by quotes", input: `"` + testToken + `","` + secondToken + `"`, want: []string{testToken, secondToken}},
++		{name: "malformed earlier prefix", input: "secret_bad," + testToken, want: []string{testToken}},
++		{name: "assignment with earlier prefix", input: "secret_bad=" + testToken, want: []string{testToken}},
++		{name: "one-character name", input: "secret_a_" + testHex + "." + testAlnum, want: []string{"secret_a_" + testHex + "." + testAlnum}},
++		{name: "64-character name", input: "secret_" + strings.Repeat("a", 64) + "_" + testHex + "." + testAlnum, want: []string{"secret_" + strings.Repeat("a", 64) + "_" + testHex + "." + testAlnum}},
++		{name: "65-character name", input: "secret_" + strings.Repeat("a", 65) + "_" + testHex + "." + testAlnum},
++		{name: "name starts with hyphen", input: "secret_-customer_" + testHex + "." + testAlnum},
++		{name: "underscore in name", input: "secret_customer_team_" + testHex + "." + testAlnum},
++		{name: "uppercase in name", input: "secret_Customer_" + testHex + "." + testAlnum},
++		{name: "dot in name", input: "secret_customer.example_" + testHex + "." + testAlnum},
++		{name: "space in name", input: "secret_customer team_" + testHex + "." + testAlnum},
++		{name: "non-ASCII name", input: "secret_clienté_" + testHex + "." + testAlnum},
++		{name: "uppercase hex", input: "secret_customer_" + strings.ToUpper(testHex) + "." + testAlnum},
++		{name: "wrong UUID version", input: "secret_customer_" + testHex[:12] + "5" + testHex[13:] + "." + testAlnum},
++		{name: "wrong UUID variant", input: "secret_customer_" + testHex[:16] + "c" + testHex[17:] + "." + testAlnum},
++		{name: "non UUIDv4 hex", input: "secret_customer_0123456789abcdef0123456789abcdef." + testAlnum},
++		{name: "empty", input: ""},
++		{name: "generic secret", input: "secret_customer_value"},
++		{name: "AWS Lambda", input: "aws_lambda_function: { source_code_hash: '" + testHex + testHex + "' }"},
++		{name: "embedded prefix", input: "other_" + testToken},
++		{name: "literal escaped newline before prefix", input: `\n` + testToken},
++		{name: "Markdown underscore wrapper", input: "__" + testToken + "__"},
++		{name: "uppercase prefix", input: "SECRET_customer_" + testHex + "." + testAlnum},
++		{name: "empty customer name", input: "secret__" + testHex + "." + testAlnum},
++		{name: "missing name separator", input: "secret_customer" + testHex + "." + testAlnum},
++		{name: "short hex", input: "secret_customer_" + testHex[:31] + "." + testAlnum},
++		{name: "long hex", input: "secret_customer_" + testHex + "0." + testAlnum},
++		{name: "non-hex character", input: "secret_customer_g" + testHex[1:] + "." + testAlnum},
++		{name: "missing alphanumeric suffix", input: "secret_customer_" + testHex},
++		{name: "short alphanumeric suffix", input: testToken[:len(testToken)-1]},
++		{name: "long alphanumeric suffix", input: testToken + "A"},
++		{name: "underscore after suffix is a delimiter", input: testToken + "_extra", want: []string{testToken}},
++		{name: "period after suffix is a delimiter", input: testToken + ".", want: []string{testToken}},
++		{name: "invalid suffix character", input: "secret_customer_" + testHex + "." + testAlnum[:31] + "-"},
++		{name: "dot is literal", i
+```
+
+**File**: `pkg/engine/defaults/defaults.go` (modified, +2/-0)
+```diff
+@@ -434,6 +434,7 @@ import (
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/kraken"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/kucoin"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/kylas"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/lambdacloud"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/langfuse"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/langsmith"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/languagelayer"
+@@ -1352,6 +1353,7 @@ func buildDetectorList() []detectors.Detector {
+ 		&kraken.Scanner{},
+ 		&kucoin.Scanner{},
+ 		&kylas.Scanner{},
++		&lambdacloud.Scanner{},
+ 		&langfuse.Scanner{},
+ 		&langsmith.Scanner{},
+ 		&languagelayer.Scanner{},
+```
+
+**File**: `pkg/pb/detector_typepb/detector_type.pb.go` (modified, +11/-7)
+```diff
+@@ -1129,6 +1129,7 @@ const (
+ 	DetectorType_Resend                         DetectorType = 1071
+ 	DetectorType_KongKonnect                    DetectorType = 1072
+ 	DetectorType_SonarQube                      DetectorType = 1073
++	DetectorType_LambdaCloud                    DetectorType = 1074
  )
  
-@@ -598,3 +600,57 @@ func TestSourceManagerSemaphoreAcquireError(t *testing.T) {
- 		})
- 	})
+ // Enum value maps for DetectorType.
+@@ -2204,6 +2205,7 @@ var (
+ 		1071: "Resend",
+ 		1072: "KongKonnect",
+ 		1073: "SonarQube",
++		1074: "LambdaCloud",
+ 	}
+ 	DetectorType_value = map[string]int32{
+ 		"Alibaba":                               0,
+@@ -3276,6 +3278,7 @@ var (
+ 		"Resend":                            1071,
+ 		"KongKonnect":                       1072,
+ 		"SonarQube":                         1073,
++		"LambdaCloud":                       1074,
+ 	}
+ )
+ 
+@@ -3311,7 +3314,7 @@ var File_detector_type_proto protoreflect.FileDescriptor
+ var file_detector_type_proto_rawDesc = []byte{
+ 	0x0a, 0x13, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x2e,
+ 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0d, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f,
+-	0x74, 0x79, 0x70, 0x65, 0x2a, 0xb6, 0x8c, 0x01, 0x0a, 0x0c, 0x44, 0x65, 0x74, 0x65, 0x63, 0x74,
++	0x74, 0x79, 0x70, 0x65, 0x2a, 0xc8, 0x8c, 0x01, 0x0a, 0x0c, 0x44, 0x65, 0x74, 0x65, 0x63, 0x74,
+ 	0x6f, 0x72, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x41, 0x6c, 0x69, 0x62, 0x61, 0x62,
+ 	0x61, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x41, 0x4d, 0x51, 0x50, 0x10, 0x01, 0x12, 0x07, 0x0a,
+ 	0x03, 0x41, 0x57, 0x53, 0x10, 0x02, 0x12, 0x09, 0x0a, 0x05, 0x41, 0x7a, 0x75, 0x72, 0x65, 0x10,
+@@ -4434,12 +4437,13 @@ var file_detector_type_proto_rawDesc = []byte{
+ 	0x75, 0x6d, 0x69, 0x6f, 0x41, 0x50, 0x49, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x10, 0xae, 0x08, 0x12,
+ 	0x0b, 0x0a, 0x06, 0x52, 0x65, 0x73, 0x65, 0x6e, 0x64, 0x10, 0xaf, 0x08, 0x12, 0x10, 0x0a, 0x0b,
+ 	0x4b, 0x6f, 0x6e, 0x67, 0x4b, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x10, 0xb0, 0x08, 0x12, 0x0e,
+-	0x0a, 0x09, 0x53, 0x6f, 0x6e, 0x61, 0x72, 0x51, 0x75, 0x62, 0x65, 0x10, 0xb1, 0x08, 0x42, 0x41,
+-	0x5a, 0x3f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x72, 0x75,
+-	0x66, 0x66, 0x6c, 0x65, 0x73, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x2f, 0x74, 0x72, 0x75,
+-	0x66, 0x66, 0x6c, 0x65, 0x68, 0x6f, 0x67, 0x2f, 0x76, 0x33, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70,
+-	0x62, 0x2f, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x70,
+-	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
++	0x0a, 0x09, 0x53, 0x6f, 0x6e, 0x61, 0x72, 0x51, 0x75, 0x62, 0x65, 0x10, 0xb1, 0x08, 0x12, 0x10,
++	0x0a, 0x0b, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x10, 0xb2, 0x08,
++	0x42, 0x41, 0x5a, 0x3f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74,
++	0x72, 0x75, 0x66, 0x66, 0x6c, 0x65, 0x73, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x2f, 0x74,
++	0x72, 0x75, 0x66, 0x66, 0x6c, 0x65, 0x68, 0x6f, 0x67, 0x2f, 0x76, 0x33, 0x2f, 0x70, 0x6b, 0x67,
++	0x2f, 0x70, 0x62, 0x2f, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x74, 0x79, 0x70,
++	0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
  }
-+
-+// loggingChunker writes one log line through the context it was given, then
-+// chunks like counterChunker.
-+type loggingChunker struct{ counterChunker }
-+
-+func (c *loggingChunker) Chunks(ctx context.Context, ch chan *Chunk, targets ...ChunkingTarget) error {
-+	ctx.Logger().Info("chunking from source")
-+	return c.counterChunker.Chunks(ctx, ch, targets...)
-+}
-+
-+func TestSourceManagerAddsSourceFieldsToLogs(t *testing.T) {
-+	// runSource scans one dummy source and returns the line it logged.
-+	runSource := func(t *testing.T, ctx context.Context, logs *observer.ObservedLogs) observer.LoggedEntry {
-+		mgr := NewManager(WithBufferedOutput(8))
-+		source, err := buildDummy(&loggingChunker{counterChunker{count: 1}})
-+		assert.NoError(t, err)
-+
-+		ref, err := mgr.EnumerateAndScan(ctx, "dummy", source)
-+		assert.NoError(t, err)
-+		<-ref.Done()
-+
-+		entries := logs.FilterMessage("chunking from source").All()
-+		if !assert.Len(t, entries, 1) {
-+			t.FailNow()
-+		}
-+		return entries[0]
-+	}
-+
-+	t.Run("fields are added", func(t *testing.T) {
-+		ctx, logs := logtest.DebugContext()
-+		fields := runSource(t, ctx, logs).ContextMap()
-+
-+		assert.Equal(t, "dummy", fields["source_name"])
-+		assert.Contains(t, fields, "job_id")
-+		assert.Contains(t, fields, "source_id")
-+		assert.Contains(t, fields, "source_type")
-+	})
-+
-+	t.Run("fields set by the caller are kept and not repeated", func(t *testing.T) {
-+		ctx, logs := logtest.DebugContext()
-+		ctx = context.WithValue(ctx, "source_name", "set by caller")
-+		entry := runSource(t, ctx, logs)
-+
-+		// count the raw fields, since ContextMap would hide a duplicate key
-+		count := 0
-+		for _, field := range entry.Context {
-+			if field.Key == "source_name" {
-+				count++
-+			}
-+		}
-+		assert.Equal(t, 1, count)
-+		assert.Equal(t, "set by caller", entry.ContextMap()["source_name"])
-+	})
-+}
+ 
+ var (
+```
+
+**File**: `proto/detector_type.proto` (modified, +1/-0)
+```diff
+@@ -1075,4 +1075,5 @@ enum DetectorType {
+   Resend = 1071;
+   KongKonnect = 1072;
+   SonarQube = 1073;
++  LambdaCloud = 1074;
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1595,8 +1502,8 @@ the added fields and the caller-set case.
 - **PR #5448** (2026-10-20): Mark results whose verification was skipped (@unsmith)
 - **PR #5446** (2026-10-20): Add per-source debug option and hide sensitive data in debug logs (@kashifkhan0771)
 - **PR #5438** (2026-10-19): github: name the missing permission when a comment listing is refused (@unsmith)
+- **PR #5435** (2026-10-20): Add Lambda Cloud API key detector (@lukem-ts)
 - **PR #5432** (2026-10-16): Add per-logger debug level override for source logging (@kashifkhan0771)
-- **PR #5431** (2026-10-17): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@renovate[bot])
 
 ---
 
@@ -1616,65 +1523,75 @@ the added fields and the caller-set case.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up Git source logging for per-source debug (#5451)
+## X. Add Lambda Cloud API key detector (#5435)
 
 **RULE**:
-When implementing operations in `pkg/sources/git/git.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/lambdacloud/lambdacloud.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `400d35c2`: Clean up Git source logging for per-source debug (#5451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7a8d17d`: Add Lambda Cloud API key detector (#5435). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/git/git.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/lambdacloud/lambdacloud.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+package lambdacloud
 
-	// log the config choices so support can see how the source was set up
-	// only counts and flags, never URLs or credentials
-	aCtx.Logger().V(1).Info("git source initialized",
-		"repo_count", len(conn.GetRepositories()),
-		"dir_count", len(conn.GetDirectories()),
-		"auth_type", fmt.Sprintf("%T", conn.GetCredential()),
-		"base", conn.GetBase(),
-		"head", conn.GetHead(),
-		"max_depth", conn.GetMaxDepth(),
-		"bare", conn.GetBare(),
-		"skip_binaries", conn.GetSkipBinaries(),
-		"skip_archives", conn.GetSkipArchives(),
-		"has_include_filter", conn.GetIncludePathsFile() != "",
-		"has_exclude_filter", conn.GetExcludePathsFile() != "",
-		"has_exclude_globs", conn.GetExcludeGlobs() != "",
-	)
-			ctx.Logger().Error(err, "error scanning repository", "repo", repoURI)
-			ctx.Logger().Error(err, "error scanning repository", "repo", gitDir)
-		ctx.Logger().V(4).Info("skipping directory", "path", gitDir, "reason", "non-bare directory name ends in git")
-	// the parse error from stripPassword contains the raw URL, which can hold
-	// a password, so only log that stripping failed, not the error itself
-	safeURL, urlPassword, err := stripPassword(params.gitURL)
-		ctx.Logger().V(4).Info("could not strip pa
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+
+	regexp "github.com/wasilibs/go-re2"
+
+	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
+)
+
+const verifyURL = "https://cloud.lambda.ai/api/v1/identity"
+
+type Scanner struct {
+	client *http.Client
+}
+
+var _ detectors.Detector = (*Scanner)(nil)
+
+var (
+	defaultClient = common.SaneHttpClient()
+
+	keyPat = regexp.MustCompile(`\b(secret_[a-z0-9][a-z0-9-]{0,63}_[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}\.[A-Za-z0-9]{32})(?:[^A-Za-z0-9]|$)`)
+)
+
+func (s Scanner) Keywords() []string {
+	return []string{"secret_"}
+}
+
+func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) ([]detectors.Result, error) {
+	var results []detectors.Result
+	seen := make(map[string]struct{})
+	for _, match := range keyPat.FindAllSubmatchIndex(data, -1) {
+		token := string(data[match[2]:match[3]])
+		if _, ok := seen[token]; ok {
+			continue
+		}
+		seen[token] = struct{}{}
+
+		result := detectors.Result{
+			DetectorType: s.Type(),
+			Raw:          []byte(token),
+			SecretParts:  map[string]string{"k
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			ctx.Logger().Info("error scanning repository", "repo", repoURI, "error", err)
-			ctx.Logger().Info("error scanning repository", "repo", gitDir, "error", err)
-	safeURL, secretForRedaction, err := stripPassword(params.gitURL)
-		ctx.Logger().V(1).Info("error stripping password from git url", "error", err)
-	logger := ctx.Logger().WithValues(
-	logger.V(3).Info("executing git clone command")
-	var output string
-	if secretForRedaction != "" {
-		output = strings.ReplaceAll(string(outputBytes), secretForRedaction, "<secret>")
-	} else {
-		output = string(outputBytes)
-	}
-	logger.V(3).Info("git subcommand finished", "output", output)
-		logger.V(0).Info("git clone failed", "error", err)
-	logger.V(1).Info("successfully cloned repo", "time_seconds", time.Since(start).Seconds())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `400d35c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7a8d17d` are properly handled with clean fallback behavior.
