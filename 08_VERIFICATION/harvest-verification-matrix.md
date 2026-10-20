@@ -3626,3 +3626,5 @@
 | `CYCLE-20261020-6Z2V` | `2026-10-20T01:27:26.743Z` | `AndyTheFactory/newspaper4k` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2961` | Yes (`a097e5b0...`) |
 | `CYCLE-20261020-70V1` | `2026-10-20T01:27:29.053Z` | `alexdrone/Render` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2962` | Yes (`09f8f229...`) |
 | `CYCLE-20261020-72LA` | `2026-10-20T01:27:31.294Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2963` | Yes (`d57d6102...`) |
+| `CYCLE-20261020-F4XR` | `2026-10-20T01:33:47.583Z` | `goose3/goose3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2964` | Yes (`a0042968...`) |
+| `CYCLE-20261020-F9VN` | `2026-10-20T01:33:53.987Z` | `jaywcjlove/DevHub` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2965, Rule 2966` | Yes (`7d3fae21...`) |

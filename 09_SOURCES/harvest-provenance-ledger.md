@@ -3633,3 +3633,5 @@ Every entry in this ledger must capture:
 | `learn-github-andythefactory-newspaper4k` | `https://github.com/AndyTheFactory/newspaper4k` | `b53a81fc` | Multi-dimensional audit evidence | 2026-10-20T01:27:26.746Z |
 | `learn-github-alexdrone-render` | `https://github.com/alexdrone/Render` | `0955baef` | Multi-dimensional audit evidence | 2026-10-20T01:27:29.056Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `392233f8` | Multi-dimensional audit evidence | 2026-10-20T01:27:31.297Z |
+| `learn-github-goose3-goose3` | `https://github.com/goose3/goose3` | `87b6003d` | Multi-dimensional audit evidence | 2026-10-20T01:33:47.586Z |
+| `learn-github-jaywcjlove-devhub` | `https://github.com/jaywcjlove/DevHub` | `15d258ec` | Multi-dimensional audit evidence | 2026-10-20T01:33:53.990Z |

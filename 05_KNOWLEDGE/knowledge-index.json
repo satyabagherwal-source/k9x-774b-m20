@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:27:31.234Z",
-  "total_verified_learnings": 1000,
+  "last_updated": "2026-10-20T01:33:53.941Z",
+  "total_verified_learnings": 1002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26052,22 +26052,40 @@
     "learn-github-jaywcjlove-devhub": {
       "learning_id": "learn-github-jaywcjlove-devhub",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jaywcjlove-devhub",
+      "source": "jaywcjlove/DevHub",
+      "repository": "jaywcjlove/DevHub",
       "slug": "jaywcjlove-devhub",
       "platform": "github",
       "source_url": "https://github.com/jaywcjlove/DevHub",
-      "source_version": "HEAD",
-      "content_hash": "559d89d07fa8b40836b3b66737ab4225ed82bac2d7d97dda8ea06d3b10e19c70",
+      "source_version": "15d258ec",
+      "content_hash": "7d3fae2138183060cc5a3a8f7983dd93c5afc81b6561fcbbb12e703be8a37520",
       "dossier_path": "07_PROJECT_LEARNING/jaywcjlove-devhub-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jaywcjlove-devhub-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2965,
+          "title": "The Local-First Determinism Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2966,
+          "title": "The URL Scheme Parameter Sanitization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.657Z"
+      "verified_at": "2026-10-20T01:33:53.928Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jcodesmore-ai-website-cloner-template": {
       "learning_id": "learn-github-jcodesmore-ai-website-cloner-template",
@@ -58754,20 +58772,35 @@
     "learn-github-goose3-goose3": {
       "learning_id": "learn-github-goose3-goose3",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "goose3/goose3",
       "repository": "goose3/goose3",
       "slug": "goose3-goose3",
       "platform": "github",
       "source_url": "https://github.com/goose3/goose3",
-      "source_version": "main",
-      "content_hash": "513ec68cb8b36ae6658c0ac8b8d51c07377f4f685c9c29878e7002e3b1e8661d",
+      "source_version": "87b6003d",
+      "content_hash": "a0042968f60d3e6108a210e717f4974540cd6dae6b83ac6fe3a2e6547cf8bd1b",
       "dossier_path": "07_PROJECT_LEARNING/goose3-goose3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goose3-goose3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2964,
+          "title": "Merge pull request #228 from goose3/bug-fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:33:47.527Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mozilla-readability": {
       "learning_id": "learn-github-mozilla-readability",
@@ -96236,6 +96269,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:27:31.222Z"
+    },
+    "rule-2964": {
+      "learning_id": "rule-2964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2964,
+      "title": "Merge pull request #228 from goose3/bug-fixes",
+      "source_url": "https://github.com/goose3/goose3",
+      "source_version": "87b6003d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:33:47.527Z"
+    },
+    "rule-2965": {
+      "learning_id": "rule-2965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2965,
+      "title": "The Local-First Determinism Invariant",
+      "source_url": "https://github.com/jaywcjlove/DevHub",
+      "source_version": "15d258ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:33:53.928Z"
+    },
+    "rule-2966": {
+      "learning_id": "rule-2966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2966,
+      "title": "The URL Scheme Parameter Sanitization Invariant",
+      "source_url": "https://github.com/jaywcjlove/DevHub",
+      "source_version": "15d258ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:33:53.928Z"
     }
   },
   "aliases": {

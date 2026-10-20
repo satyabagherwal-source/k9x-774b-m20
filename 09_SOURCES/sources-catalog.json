@@ -9848,5 +9848,25 @@
     "contentHash": "09f8f2299bdbba2d68c31bce690d9451726cda85851b70796a8557c3726a4ee2",
     "lastHarvestedAt": "2026-10-20T01:27:29.056Z",
     "learningId": "learn-github-alexdrone-render"
+  },
+  "goose3-goose3": {
+    "repository": "goose3/goose3",
+    "platform": "github",
+    "sourceUrl": "https://github.com/goose3/goose3",
+    "sourceVersion": "87b6003d",
+    "license": "Apache-2.0",
+    "contentHash": "a0042968f60d3e6108a210e717f4974540cd6dae6b83ac6fe3a2e6547cf8bd1b",
+    "lastHarvestedAt": "2026-10-20T01:33:47.586Z",
+    "learningId": "learn-github-goose3-goose3"
+  },
+  "jaywcjlove-devhub": {
+    "repository": "jaywcjlove/DevHub",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jaywcjlove/DevHub",
+    "sourceVersion": "15d258ec",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "7d3fae2138183060cc5a3a8f7983dd93c5afc81b6561fcbbb12e703be8a37520",
+    "lastHarvestedAt": "2026-10-20T01:33:53.990Z",
+    "learningId": "learn-github-jaywcjlove-devhub"
   }
 }

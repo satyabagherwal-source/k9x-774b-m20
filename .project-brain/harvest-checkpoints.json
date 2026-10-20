@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:27:31.305Z",
+  "last_updated": "2026-10-20T01:33:53.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14817,6 +14817,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:27:29.063Z"
+    },
+    "goose3/goose3": {
+      "repository": "goose3/goose3",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-goose3-goose3",
+      "content_hash": "a0042968f60d3e6108a210e717f4974540cd6dae6b83ac6fe3a2e6547cf8bd1b",
+      "verified_at": "2026-10-20T01:33:47.594Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:33:47.594Z"
+    },
+    "jaywcjlove/DevHub": {
+      "repository": "jaywcjlove/DevHub",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jaywcjlove-devhub",
+      "content_hash": "7d3fae2138183060cc5a3a8f7983dd93c5afc81b6561fcbbb12e703be8a37520",
+      "verified_at": "2026-10-20T01:33:53.997Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:33:53.997Z"
     }
   },
   "repos": {
