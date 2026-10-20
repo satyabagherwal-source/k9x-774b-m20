@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:06:54.196Z",
+  "last_updated": "2026-10-20T22:13:58.002Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9925,8 +9925,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "6bd99337",
-      "content_hash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
+      "source_version": "b6567cb9",
+      "content_hash": "9b165c807f96431f9903f682866a5818d3e3c68d71ee29da0fab102812a223b6",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -9944,6 +9944,11 @@
           "number": 3026,
           "title": "ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3405,
+          "title": "UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9951,7 +9956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:46:43.029Z",
+      "verified_at": "2026-10-20T22:13:07.656Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19366,7 +19371,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "f265bae85e0b1475d54cf863b67e3a956b56d99b9403124a0019073c219968f1",
+      "content_hash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -19389,6 +19394,16 @@
           "number": 2443,
           "title": "Relative Position Logarithmic Bucketing Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3408,
+          "title": "Zero-ID Dual Semantics Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3409,
+          "title": "Strict Logarithmic Bucketing Boundary Proof for Relative Attention",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19409,7 +19424,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-19T08:49:48.430Z",
+      "verified_at": "2026-10-20T22:13:57.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34537,14 +34552,19 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "4a85f985",
-      "content_hash": "b832f0cac0991dd078fe20a9858fee4a186182873581b210a33293292d393bb9",
+      "source_version": "3d58f2c3",
+      "content_hash": "1c93e115e58942f812052142b90feefe5e0133c13a62c436de1ee35648f61b66",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
         {
           "number": 2241,
           "title": "e2e test stability fixes (#10850)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3406,
+          "title": "Allow tests to use a custom LoadBalancer IP (#10987)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34553,7 +34573,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:42:26.064Z",
+      "verified_at": "2026-10-20T22:13:13.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42766,14 +42786,19 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "7fcb3b54",
-      "content_hash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
+      "source_version": "bcd8ac3d",
+      "content_hash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
         {
           "number": 2113,
           "title": "ci): clear the ty diagnostics blocking every open PR (#425)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3407,
+          "title": "lazy-load the public API so importing leann.mcp stays lightweight (#437)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42782,7 +42807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:13:25.230Z",
+      "verified_at": "2026-10-20T22:13:18.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105244,6 +105269,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:06:54.185Z"
+    },
+    "rule-3405": {
+      "learning_id": "rule-3405",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3405,
+      "title": "UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "b6567cb9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:13:07.656Z"
+    },
+    "rule-3406": {
+      "learning_id": "rule-3406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3406,
+      "title": "Allow tests to use a custom LoadBalancer IP (#10987)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "3d58f2c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:13:13.996Z"
+    },
+    "rule-3407": {
+      "learning_id": "rule-3407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3407,
+      "title": "lazy-load the public API so importing leann.mcp stays lightweight (#437)",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "bcd8ac3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:13:18.589Z"
+    },
+    "rule-3408": {
+      "learning_id": "rule-3408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3408,
+      "title": "Zero-ID Dual Semantics Isolation Invariant",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:13:57.992Z"
+    },
+    "rule-3409": {
+      "learning_id": "rule-3409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3409,
+      "title": "Strict Logarithmic Bucketing Boundary Proof for Relative Attention",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:13:57.992Z"
     }
   },
   "aliases": {

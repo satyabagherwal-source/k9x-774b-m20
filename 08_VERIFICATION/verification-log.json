@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-PMTB",
-    "timestamp": "2026-10-19T23:21:59.231Z",
-    "repository": "nalexn/ViewInspector",
-    "learningId": "learn-github-nalexn-viewinspector",
-    "contentHash": "d8a3d3bd05dd206cc7d1fdf4be7f727930b35074e53d0787090e8ee02ca7b095",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-PTL7",
-    "timestamp": "2026-10-19T23:22:08.011Z",
-    "repository": "rehypejs/rehype",
-    "learningId": "learn-github-rehypejs-rehype",
-    "contentHash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XQOA",
-    "timestamp": "2026-10-19T23:28:17.482Z",
-    "repository": "syntax-tree/hast-util-from-html",
-    "learningId": "learn-github-syntax-tree-hast-util-from-html",
-    "contentHash": "2990cfc6a5ea9337b01d3badad58bc33072845b89d2e99cedd5eabceff9f1d48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XUKM",
-    "timestamp": "2026-10-19T23:28:22.534Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-XWX9",
     "timestamp": "2026-10-19T23:28:25.581Z",
     "repository": "Blackjacx/WWDC",
@@ -7492,6 +7432,66 @@
     "contentHash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-OXKZ",
+    "timestamp": "2026-10-20T22:13:07.715Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "9b165c807f96431f9903f682866a5818d3e3c68d71ee29da0fab102812a223b6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-P2H2",
+    "timestamp": "2026-10-20T22:13:14.054Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "1c93e115e58942f812052142b90feefe5e0133c13a62c436de1ee35648f61b66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-P60M",
+    "timestamp": "2026-10-20T22:13:18.646Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-Q0F6",
+    "timestamp": "2026-10-20T22:13:58.050Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

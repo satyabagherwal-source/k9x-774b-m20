@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:06:54.262Z",
+  "last_updated": "2026-10-20T22:13:58.066Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "f265bae85e0b1475d54cf863b67e3a956b56d99b9403124a0019073c219968f1",
-      "verified_at": "2026-10-19T08:49:48.466Z",
+      "content_hash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
+      "verified_at": "2026-10-20T22:13:58.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:49:48.466Z"
+      "last_updated": "2026-10-20T22:13:58.065Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
-      "verified_at": "2026-10-20T03:46:43.068Z",
+      "content_hash": "9b165c807f96431f9903f682866a5818d3e3c68d71ee29da0fab102812a223b6",
+      "verified_at": "2026-10-20T22:13:07.729Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:46:43.068Z"
+      "last_updated": "2026-10-20T22:13:07.729Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -8631,14 +8631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-startrail-org-leann",
-      "content_hash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
-      "verified_at": "2026-10-19T04:13:25.265Z",
+      "content_hash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
+      "verified_at": "2026-10-20T22:13:18.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:13:25.265Z"
+      "last_updated": "2026-10-20T22:13:18.661Z"
     },
     "adonisjs/core": {
       "repository": "adonisjs/core",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "b832f0cac0991dd078fe20a9858fee4a186182873581b210a33293292d393bb9",
-      "verified_at": "2026-10-19T18:42:26.145Z",
+      "content_hash": "1c93e115e58942f812052142b90feefe5e0133c13a62c436de1ee35648f61b66",
+      "verified_at": "2026-10-20T22:13:14.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:42:26.145Z"
+      "last_updated": "2026-10-20T22:13:14.069Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",

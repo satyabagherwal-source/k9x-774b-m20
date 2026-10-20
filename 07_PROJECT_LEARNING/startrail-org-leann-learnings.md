@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `7fcb3b54`  
+> **Source Version**: `bcd8ac3d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:13:25.106Z  
+> **Timestamp**: 2026-10-20T22:13:18.335Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:13:25.101Z  
+> **Harvest Timestamp**: 2026-10-20T22:13:18.326Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13034 stars
+- **Stars / Engagement**: 13038 stars
 
 ---
 
@@ -381,11 +381,26 @@ elif system == "Linux":
     os.environ.setdefault("FAISS_NUM_THREADS", "1")
     os.environ.setdefault("OMP_WAIT_POLICY", "PASSIVE")
 
-from .api import LeannBuilder, LeannChat, LeannSearcher
-from .react_agent import ReActAgent, create_react_agent
-from .registry import BACKEND_REGISTRY, autodiscover_backends
+from typing import TYPE_CHECKING, Any
 
-autodiscover_backends()
+if TYPE_CHECKING:
+    from .api import LeannBuilder, LeannChat, LeannSearcher
+    from .react_agent import ReActAgent, create_react_agent
+    from .registry import BACKEND_REGISTRY
+
+# The public API is resolved lazily (PEP 562). Importing a lightweight
+# submodule such as ``leann.mcp`` or ``leann.settings`` must not pull in the
+# whole stack (api -> chat -> embedding server -> faiss backends), which costs
+# gigabytes of resident memory for processes that only need a few helpers.
+# Backend auto-discovery runs when ``leann.api`` is first imported.
+_LAZY_ATTRS = {
+    "LeannBuilder": ".api",
+    "LeannChat": ".api",
+    "LeannSearcher": ".api",
+    "ReActAgent": ".react_agent",
+    "create_react_agent": ".react_agent",
+    "BACKEND_REGISTRY": ".registry",
+}
 
 __all__ = [
     "BACKEND_REGISTRY",
@@ -395,6 +410,24 @@ __all__ = [
     "ReActAgent",
     "create_react_agent",
 ]
+
+
+def __getattr__(name: str) -> Any:
+    module_name = _LAZY_ATTRS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    import importlib
+
+    if name == "BACKEND_REGISTRY":
+        # Make sure backends are discovered before handing out the registry.
+        importlib.import_module(".api", __name__)
+    value = getattr(importlib.import_module(module_name, __name__), name)
+    globals()[name] = value  # cache so __getattr__ is only hit once per name
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(__all__))
 
 ```
 
@@ -435,7 +468,7 @@ from .chat import get_llm
 from .embedding_server_manager import EmbeddingServerManager
 from .interface import LeannBackendFactoryInterface
 from .metadata_filter import MetadataFilterEngine
-from .registry import BACKEND_REGISTRY
+from .registry import BACKEND_REGISTRY, autodiscover_backends
 
 logger = logging.getLogger(__name__)
 
@@ -661,7 +694,7 @@ class PassageManager:
         for passage_file, offset_map in self.offset_maps.items():
             try:
                 offset = offset_map[passage_id]
-                with open(passage_file, encod
+                with o
 ```
 
 ### Core Architecture Module: `packages/leann-core/src/leann/chat.py`
@@ -2148,267 +2181,209 @@ __all__ = ["LeannHybridRetriever", "LeannRetriever"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cae99bf2` (2026-09-26)
-**Commit Message**: fix(ci): clear the ty diagnostics blocking every open PR (#425)
+### Incident Patch 1: `bcd8ac3d` (2026-10-20)
+**Commit Message**: perf: lazy-load the public API so importing leann.mcp stays lightweight (#437)
 
-`Type Check with ty` fails on main itself, so every PR opened against it
-inherits a red check for code it never touched. #420, #421 and #422 are each
-blocked this way, on files none of them modify.
+* perf: lazy-load the public API so importing leann.mcp stays lightweight
 
-Reproduced with CI's exact invocation (`ty check packages/leann-core/src apps
-tests`, ty pinned to 0.0.17) against a pristine checkout: 5 diagnostics, the
-same 5 CI reports.
+* test: cover lazy package import and backend discovery
 
-- Three `# type: ignore[...]` comments use mypy codes ty does not recognise, so
-  it treats them as blanket suppressions, finds nothing suppressed, and reports
-  them unused. Removed, which is ty's own suggested fix.
-- `tests/test_chrome_history_reader.py` assigns attributes onto bare
-  `types.ModuleType` stubs when llama_index is absent. Those are genuine
-  `unresolved-attribute` errors. The stubs now come from a helper returning
-  `Any`. A suppression comment would not do: CI type-checks with no project
-  dependencies installed while a developer machine has llama_index, so an
-  ignore would be needed in one environment and flagged unused in the other.
-  Annotating the variables as `Any` is also insufficient -- the assignment
-  narrows the type strai
-
-**File**: `packages/leann-core/src/leann/embedding_server_manager.py` (modified, +2/-2)
+**File**: `packages/leann-core/src/leann/__init__.py` (modified, +37/-4)
 ```diff
-@@ -29,7 +29,7 @@
- _REGISTRY_LOCKS: dict[str, threading.Lock] = {}
+@@ -24,11 +24,26 @@
+     os.environ.setdefault("FAISS_NUM_THREADS", "1")
+     os.environ.setdefault("OMP_WAIT_POLICY", "PASSIVE")
  
+-from .api import LeannBuilder, LeannChat, LeannSearcher
+-from .react_agent import ReActAgent, create_react_agent
+-from .registry import BACKEND_REGISTRY, autodiscover_backends
++from typing import TYPE_CHECKING, Any
  
--def _flock_acquire(lock_file) -> None:  # type: ignore[type-arg]
-+def _flock_acquire(lock_file) -> None:
-     """Acquire an exclusive file lock for cross-process synchronisation.
+-autodiscover_backends()
++if TYPE_CHECKING:
++    from .api import LeannBuilder, LeannChat, LeannSearcher
++    from .react_agent import ReActAgent, create_react_agent
++    from .registry import BACKEND_REGISTRY
++
++# The public API is resolved lazily (PEP 562). Importing a lightweight
++# submodule such as ``leann.mcp`` or ``leann.settings`` must not pull in the
++# whole stack (api -> chat -> embedding server -> faiss backends), which costs
++# gigabytes of resident memory for processes that only need a few helpers.
++# Backend auto-discovery runs when ``leann.api`` is first imported.
++_LAZY_ATTRS = {
++    "LeannBuilder": ".api",
++    "LeannChat": ".api",
++    "LeannSearcher": ".api",
++    "ReActAgent": ".react_agent",
++    "create_react_agent": ".react_agent",
++    "BACKEND_REGISTRY": ".registry",
++}
  
-     Uses ``fcntl.flock`` on POSIX and ``msvcrt.locking`` on Windows.  Both are
-@@ -70,7 +70,7 @@ def _flock_acquire(lock_file) -> None:  # type: ignore[type-arg]
-     )
- 
- 
--def _flock_release(lock_file) -> None:  # type: ignore[type-arg]
-+def _flock_release(lock_file) -> None:
-     """Release the file lock acquired by :func:`_flock_acquire`."""
-     try:
-         import fcntl
+ __all__ = [
+     "BACKEND_REGISTRY",
+@@ -38,3 +53,21 @@
+     "ReActAgent",
+     "create_react_agent",
+ ]
++
++
++def __getattr__(name: str) -> Any:
++    module_name = _LAZY_ATTRS.get(name)
++    if module_name is None:
++        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
++    import importlib
++
++    if name == "BACKEND_REGISTRY":
++        # Make sure backends are discovered before handing out the registry.
++        importlib.import_module(".api", __name__)
++    value = getattr(importlib.import_module(module_name, __name__), name)
++    globals()[name] = value  # cache so __getattr__ is only hit once per name
++    return value
++
++
++def __dir__() -> list[str]:
++    return sorted(set(globals()) | set(__all__))
 ```
 
-**File**: `tests/test_chrome_history_reader.py` (modified, +11/-4)
+**File**: `packages/leann-core/src/leann/api.py` (modified, +7/-1)
 ```diff
-@@ -4,14 +4,21 @@
- import sys
- import types
- from pathlib import Path
-+from typing import Any
-+
-+
-+def _stub_module(name: str) -> Any:
-+    """A stand-in module object whose attributes are set dynamically below."""
-+    return types.ModuleType(name)
-+
+@@ -25,7 +25,7 @@
+ from .embedding_server_manager import EmbeddingServerManager
+ from .interface import LeannBackendFactoryInterface
+ from .metadata_filter import MetadataFilterEngine
+-from .registry import BACKEND_REGISTRY
++from .registry import BACKEND_REGISTRY, autodiscover_backends
  
- try:
-     from llama_index.core import Document as _Document
- except ModuleNotFoundError:
--    llama_index = types.ModuleType("llama_index")
--    llama_index_core = types.ModuleType("llama_index.core")
--    llama_index_readers = types.ModuleType("llama_index.core.readers")
--    llama_index_base = types.ModuleType("llama_index.core.readers.base")
-+    llama_index = _stub_module("llama_index")
-+    llama_index_core = _stub_module("llama_index.core")
-+    llama_index_readers = _stub_module("llama_index.core.readers")
-+    llama_index_base = _stub_module("llama_index.core.readers.base")
+ logger = logging.getLogger(__name__)
  
-     class _Document:
-         def __init__(self, text, metadata):
+@@ -1869,3 +1869,9 @@ def __del__(self):
+             self.cleanup()
+         except Exception:
+             pass
++
++
++# Register installed ``leann-backend-*`` packages. This used to live in
++# ``leann/__init__.py``; it runs here so that anything importing ``leann.api``
++# (directly or through the lazy package attributes) still sees every backend.
++autodiscover_backends()
 ```
 
-**File**: `tests/test_embedding_server_manager.py` (modified, +1/-1)
+**File**: `tests/test_lazy_package_import.py` (added, +104/-0)
 ```diff
-@@ -405,7 +405,7 @@ def fail_terminate():
-         called["terminate"] += 1
-         raise AssertionError("terminate should not be called in daemon detach path")
- 
--    manager.server_process.terminate = fail_terminate  # type: ignore[method-assign]
-+    manager.server_process.terminate = fail_terminate
- 
-     manager.stop_server()
-     assert called["terminate"] == 0
-```
-
----
-
-### Incident Patch 2: `f4a30319` (2026-09-05)
-**Commit Message**: docs: add SECURITY.md with a private reporting path (#413)
-
-Closes #407. The reporter of #404 looked for a confidential channel before
-filing a network-exposure finding, found none — no SECURITY.md, private
-vulnerability reporting disabled — and filed publicly because the severity
-happened to be low. The next finding may not be.
-
-Points at GitHub's private advisory flow, which needs no infrastructure on
-either side, and states scope concretely rather than generically: the
-unauthenticated ZMQ embedding servers, the MCP stdio transport, the document
-readers that handle untrusted input by design, on-disk index metadata, and
-third-party credentials.
-
-Note: the advisory link only works once **Settings → Security → Private
-vulnerability reporting** is enabled. That toggle is a repository setting, not
-something a PR can change.
-
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `SECURITY.md` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+# Security Policy
+@@ -0,0 +1,104 @@
++"""Importing light submodules must not pull in the whole LEANN stack.
 +
-+## Reporting a vulnerability
++Regression tests for eager package initialisation: ``import leann.mcp`` used to
++execute ``leann/__init__.py``, which imported ``leann.api`` and auto-discovered
++every backend (faiss included), costing gigabytes for processes that never run
++a search.
++"""
 +
-+**Please do not open a public issue for a security problem.**
++import os
++import subprocess
++import sys
++import textwrap
++from pathlib import Path
 +
-+Report it privately through GitHub:
-+[**Report a vulnerability**](https://github.com/StarTrail-org/LEANN/security/advisories/new)
-+(repository → **Security** → **Advisories** → *Report a vulnerability*).
 +
-+That opens a private advisory visible only to you and the maintainers. It needs
-+no infrastructure on either side, and it gives us a place to discuss a fix and
-+issue a CVE if one is warranted.
++def _run(code: str, extra_path: Path | None = None) -> subprocess.CompletedProcess:
++    env = None
++    if extra_path is not None:
++        paths = [str(extra_path), *filter(None, [os.environ.get("PYTHONPATH")])]
++        env = {**os.environ, "PYTHONPATH": os.pathsep.join(paths)}
++    return subprocess.run(
++        [sys.executable, "-c", textwrap.dedent(code)],
++        capture_output=True,
++        text=True,
++        timeout=120,
++        env=env,
++    )
 +
-+If the advisory form is unavailable to you, open a public issue containing only
-+that you have a security report and how to reach you — no details — and a
-+maintainer will arrange a private channel.
 +
-+## What to include
++def test_importing_mcp_does_not_load_heavy_modules():
++    result = _run(
++        """
++        import sys
++        import leann.mcp
++        heavy = [m for m in ("leann.api", "leann.chat", "leann.embedding_server_manager",
++                             "leann.react_agent", "faiss") if m in sys.modules]
++        print(",".join(heavy))
++        """
++    )
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == ""
 +
-+The more of this you can provide, the faster a fix lands:
 +
-+- what an attacker can achieve, and what access they need to start
-+- affected versions, and the platform and Python version you saw it on
-+- a reproduction — a script, or the commands you ran
-+- anything you already know about the cause or a possible fix
++def test_public_api_is_still_importable_from_package():
++    result = _run(
++        """
++        import leann
++        from leann import LeannBuilder, LeannChat, LeannSearcher, ReActAgent
++        from leann import create_react_agent, BACKEND_REGISTRY
++        import leann.api
++        assert LeannBuilder is leann.api.LeannBuilder
++        assert LeannSearcher is leann.api.LeannSearcher
++        assert LeannChat is leann.api.LeannChat
++        assert BACKEND_REGISTRY is leann.api.BACKEND_REGISTRY
++        assert set(leann.__all__) <= set(dir(leann))
++        print("ok")
++        """
++    )
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == "ok"
 +
-+## Scope
 +
-+LEANN runs locally and is usually pointed at a user's own data, so the
-+interesting boundaries are the ones where it stops being local:
++def test_unknown_attribute_raises_attribute_error():
++    result = _run(
++        """
++        import leann
++        try:
++            leann.does_not_exist
++        except AttributeError as e:
++            print("AttributeError", "does_not_exist" in str(e))
++        """
++    )
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == "AttributeError True"
 +
-+- the backend embedding servers, which speak an **unauthenticated ZMQ REP
-+  protocol** — they bind `127.0.0.1` by default, and anything that can reach
-+  the port can request embeddings (see
-+  [Embedding Server Bind Address](docs/configuration-guide.md))
-+- the MCP server and its stdio transport
-+- document readers and parsers, which handle untrusted input by design
-+- index and metadata files written to disk, and anything that reads a path out
-+  of them
-+- credentials for third-party providers — API keys, endpoints, tokens
 +
-+Out of scope: findings against a deployment you have deliberately exposed to a
-+network (for example `LEANN_EMBEDDING_SERVER_HOST=0.0.0.0` reachable from the
-+internet), and vulnerabilities in third-party dependencies that are already
-+public — please report those upstream, though we do want to know if LEANN
-+pins an affected version.
-+
-+## Supported versions
-+
-+Fixes land on `main` and ship in the next release. If you are on an older
-+release, please confirm the issue reproduces on current `main` where you can.
-+
-+## Disclosure
-+
-+We will confirm receipt, keep you updated as we investigate, and credit you in
-+the advisory unless you would rather stay anonymous. Please give us a
-+reasonable window to ship a fix before disclosing publicly.
-```
-
----
-
-### Incident Patch 3: `cd9b9d49` (2026-08-21)
-**Commit Message**: fix(sync): include .pdf in default sync extension allowlist (#394)
-
-* fix(sync): include .pdf in default sync extension allowlist
-
-PDFs are indexed by 'leann build' by default (should_process_pdfs in
-cli.py), but DEFAULT_INDEX_EXTENSIONS in sync.py — used by change
-detection for incremental build and 'leann watch' — does not include
-'.pdf'. As a result, PDF-only directories hash to an empty set:
-detect_changes() reports no new files and the first build exits early
-with 'Index up to date.', leaving an empty index directory behind.
-PDF additions/modifications/removals are likewise invisible to
-incremental builds and watch.
-
-The allowlist's own comment says to keep it in sync with build's
-default extension set, so add the missing '.pdf'. Add regression
-tests covering hashing and first-build change detection for PDFs.
-
-* ci: install patchelf>=0.14.5 for auditwheel repair on Linux
-
-auditwheel (installed unpinned from PyPI) now requires patchelf >= 0.14.5,
-while ubuntu-22.04 apt ships 0.14.3, failing every Linux build with:
-
-  ValueError: patchelf 0.14.3 found. auditwheel repair requires patchelf >= 0.14.5.
-
-Install a newer patchelf wheel from PyPI into the build venv; its bin dir
-is pre
-
-**File**: `packages/leann-core/src/leann/sync.py` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@
-     ".md",
-     ".docx",
-     ".pptx",
-+    ".pdf",
-     ".py",
-     ".js",
-     ".ts",
-```
-
-**File**: `tests/test_sync.py` (modified, +28/-0)
-```diff
-@@ -78,6 +78,34 @@ def test_generate_file_hashes_skips_binary_extensions(self):
-             assert len(result) == 1
-             assert str((root / "code.py").resolve()) in result
- 
-+    def test_generate_file_hashes_includes_pdf_by_default(self):
-+        # Regression test: PDFs are indexed by `leann build` by default, so they
-+        # must also be covered by the default sync allowlist. Without this, a
-+        # PDF-only directory yields zero hashes, detect_changes() reports no new
-+        # files, and the first build exits early with "Index up to date."
-+        with tempfile.TemporaryDirectory() as temp_dir:
-+            root = Path(temp_dir)
-+            pdf = root / "doc.pdf"
-+            pdf.write_bytes(b"%PDF-1.4 fake")
-+            fs = FileSynchronizer(root_dir=temp_dir, auto_load=False)
-+            result = fs.generate_file_hashes()
-+            assert str(pdf.resolve()) in result
-+
-+    def test_detect_changes_reports_pdf_as_added_on_first_build(self):
-+        with tempfile.TemporaryDirectory() as temp_dir:
-+            root = Path(temp_dir)
-+            snapshot = root / "sync.pickle"
-+            docs = root / "docs"
-+            docs.mkdir()
-+            pdf = docs / "manual.pdf"
-+            pdf.write_bytes(b"%PDF-1.4 fake")
-+
-+            fs = FileSynchronizer(root_dir=str(docs), snapshot_path=str(snapshot))
-+            added, removed, modified = fs.detect_changes()
-+            assert [str(pdf.resolve())] == added
-+            assert removed == []
-+            assert modified == []
-+
-     def test_generate_file_hashes_explicit_files_only(self):
-         with tempfile.TemporaryDirectory() as temp_dir:
-             root = Path(temp_dir)
++def test_backends_are_discovered_when_api_is_imported(tmp_path):
++    """Backend auto-discovery must still run for ``from leann.api import ...``."""
++    dist = tmp_path / "leann_backend_lazyprobe-0.0.0.dist-info"
++    dist.mkdir()
++    (dist / "METADATA").write_text(
++        "Metadata-Version: 2.1\nName: leann-backend-lazyprobe\nVersion: 0.0.0\n"
++    )
++    (tmp_path / "leann_backend_lazyprobe.py").write_text(
++        "from leann.registry import register_backend\n\n\n"
++        "@register_backend('lazyprobe')\n"
++        "class Probe:\n"
++        "    pass\n"
++    )
++    for statement in (
++        "from leann.api import LeannSearcher",
++        "from leann import LeannSearcher",
++        "from leann import BACKEND_REGISTRY",
++    ):
++        result = _run(
++            f"""
++            {statement}
++            from leann.registry import BACKEND_REGISTRY
++            print("lazyprobe" in BACKEND_REGISTRY)
++            """,
++            extra_path=tmp_path,
++        )
++        assert result.returncode == 0, f"{statement}: {result.stderr}"
++        assert result.stdout.strip() == "True", statement
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #437** (2026-10-20): perf: lazy-load the public API so importing leann.mcp stays lightweight (@Samuelpedroso-dev)
+- **PR #435** (closed): [diagnostic] #226 without the Linux native-backend stubs (@ASuresh0524)
 - **PR #434** (2026-10-12): fix(core): fit chunk sizes to the embedding model's sequence limit (@yichuan-w)
 - **PR #433** (2026-10-12): feat: add an opt-in Parallel MCP web document reader (@georgeatparallel)
 - **PR #431** (closed): feat: add Cheaper Inference LLM provider (@aiapienthusiast)
 - **PR #430** (2026-10-09): fix(core): keep index metadata when MCP status counts passages (@Lesereingrape)
-- **PR #428** (2026-10-09): fix(core): let update_index choose passage IDs for unclaimed chunks (@Lesereingrape)
-- **PR #427** (2026-09-29): fix(core): honour an explicit passage ID of 0 and key the offset map by string (@Lesereingrape)
 
 ---
 
@@ -2428,30 +2403,61 @@ is pre
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): clear the ty diagnostics blocking every open PR (#425)
+## X. lazy-load the public API so importing leann.mcp stays lightweight (#437)
 
 **RULE**:
-When implementing operations in `packages/leann-core/src/leann/embedding_server_manager.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/leann-core/src/leann/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cae99bf2`: ci): clear the ty diagnostics blocking every open PR (#425). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcd8ac3d`: lazy-load the public API so importing leann.mcp stays lightweight (#437). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/src/leann/embedding_server_manager.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/src/leann/__init__.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-def _flock_acquire(lock_file) -> None:
-def _flock_release(lock_file) -> None:
+from typing import TYPE_CHECKING, Any
+if TYPE_CHECKING:
+    from .api import LeannBuilder, LeannChat, LeannSearcher
+    from .react_agent import ReActAgent, create_react_agent
+    from .registry import BACKEND_REGISTRY
+
+# The public API is resolved lazily (PEP 562). Importing a lightweight
+# submodule such as ``leann.mcp`` or ``leann.settings`` must not pull in the
+# whole stack (api -> chat -> embedding server -> faiss backends), which costs
+# gigabytes of resident memory for processes that only need a few helpers.
+# Backend auto-discovery runs when ``leann.api`` is first imported.
+_LAZY_ATTRS = {
+    "LeannBuilder": ".api",
+    "LeannChat": ".api",
+    "LeannSearcher": ".api",
+    "ReActAgent": ".react_agent",
+    "create_react_agent": ".react_agent",
+    "BACKEND_REGISTRY": ".registry",
+}
+
+
+def __getattr__(name: str) -> Any:
+    module_name = _LAZY_ATTRS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    import importlib
+
+    if name == "BACKEND_REGISTRY":
+        # Make sure backends are discovered before handing out the registry.
+        importlib.import_module(".api", __name__)
+    value = getattr(importlib
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-def _flock_acquire(lock_file) -> None:  # type: ignore[type-arg]
-def _flock_release(lock_file) -> None:  # type: ignore[type-arg]
+from .api import LeannBuilder, LeannChat, LeannSearcher
+from .react_agent import ReActAgent, create_react_agent
+from .registry import BACKEND_REGISTRY, autodiscover_backends
+autodiscover_backends()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cae99bf2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcd8ac3d` are properly handled with clean fallback behavior.

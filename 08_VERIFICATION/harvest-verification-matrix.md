@@ -4055,3 +4055,7 @@
 | `CYCLE-20261020-GKRE` | `2026-10-20T22:06:37.850Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`fe6ba869...`) |
 | `CYCLE-20261020-GR2E` | `2026-10-20T22:06:46.022Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3403` | Yes (`a5439a60...`) |
 | `CYCLE-20261020-GXET` | `2026-10-20T22:06:54.245Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3404` | Yes (`75a16fe9...`) |
+| `CYCLE-20261020-OXKZ` | `2026-10-20T22:13:07.715Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3405` | Yes (`9b165c80...`) |
+| `CYCLE-20261020-P2H2` | `2026-10-20T22:13:14.054Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3406` | Yes (`1c93e115...`) |
+| `CYCLE-20261020-P60M` | `2026-10-20T22:13:18.646Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3407` | Yes (`babeb332...`) |
+| `CYCLE-20261020-Q0F6` | `2026-10-20T22:13:58.050Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3408, Rule 3409` | Yes (`23fcef22...`) |

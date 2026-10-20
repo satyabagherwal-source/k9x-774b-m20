@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `6bd99337`  
+> **Source Version**: `b6567cb9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:46:42.875Z  
+> **Timestamp**: 2026-10-20T22:13:07.381Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:46:42.422Z  
+> **Harvest Timestamp**: 2026-10-20T22:13:06.163Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10499 stars
+- **Stars / Engagement**: 10502 stars
 
 ---
 
@@ -2326,629 +2326,413 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bd99337` (2026-10-19)
-**Commit Message**: ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)
+### Incident Patch 1: `e63165cb` (2026-10-20)
+**Commit Message**: fix: UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899)
 
-* build(libomp): build through openmp/ again below LLVM 23
+* fix: UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator
 
-The rhel9 and amazonlinux2023 artifact images build libomp with their
-distro clang (21.1.8 and 19.1.7). Since #3163 libomp.sh builds every
-version through runtimes/, which fails at configure before LLVM 22:
-openmp chooses its header path by OPENMP_STANDALONE_BUILD, so under
-runtimes/ it calls get_clang_resource_dir, which reads the
-PACKAGE_VERSION only a full LLVM build sets:
+RangeIter stepped past the last element with an unchecked `+= step`; next
+to i64::MAX/MIN that wrapped and the iterator never terminated (release)
+or panicked (debug). Drive it by the exact element count eval_iter_expr
+already computes and advance with wrapping_add.
 
-  CMake Error at cmake/Modules/GetClangResourceDir.cmake:16 (string):
-    string sub-command REGEX, mode MATCH needs at least 5 arguments
+Closes #2894
 
-v6.0.2 shipped without both .so files because of it.
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-Choose by major: runtimes/ from 23 (standalone mode is gone there),
-openmp/ standalone below it, with the sparse checkout each needs. Both
-are the commands that already built: openmp/ produced v6.0.1's rhel9
-and amazonlinux2023 assets, runtimes/ builds the LLVM 23 toolchain.
+* review: RangeIter advances only while another element is due
 
-Refs #3193
+Instead of a wrapping add past the last element, the iterator now steps
+only when another element remains. That element is inside the range, so
+the add cannot overflow, and nothing wraps at all; a debug build would
+panic if that ever stopped holding.
 
-* ci(release): make release-tag.yml the only release pipeline
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Publishing a release drafted in the UI creates its tag, so one release
-fired three pipelines: release-tag.yml on the tag push, and
-release-a
+---------
 
-**File**: `.github/workflows/_build-artifacts.yml` (modified, +159/-30)
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `graph/src/runtime/eval.rs` (modified, +54/-14)
 ```diff
-@@ -1,33 +1,34 @@
--# Reusable workflow: build the falkordb shared library (.so) for one or more
--# architectures and upload each as a workflow artifact. BUILD ONLY — it never
--# uploads to a GitHub Release. Callers (build-artifacts.yml for PR verification,
--# release-artifacts.yml for the release upload) describe the build cells via the
--# `cells` input as a JSON array of {arch, platform, runner, suffix} objects:
-+# Reusable workflow: build the falkordb shared library (.so) for every release
-+# platform and upload each as a workflow artifact. BUILD ONLY — it never uploads
-+# to a GitHub Release. Callers: release-tag.yml (the release, which then
-+# publishes what this built) and build-artifacts.yml (pre-release verification).
- #
--#   [
--#     {"suffix":"x64",     "arch":"x64",     "platform":"linux/amd64","runner":"ubuntu-latest"},
--#     {"suffix":"arm64v8", "arch":"arm64v8", "platform":"linux/arm64","runner":"ubuntu-24.04-arm"}
--#   ]
-+# The platform list below is the ONLY one: callers pick from it by suffix and
-+# never carry their own copy. New platforms (see #608) are added here.
- #
--# Each cell extracts the .so from the `artifact` target of build/runtime/Dockerfile
--# (the exact .so the runtime image ships) and uploads it as `falkordb-<suffix>.so`
--# together with its `.sha256`. Cells are independent (fail-fast: false) and run on
--# native runners (no QEMU) for maximum parallelism.
-+# Each cell extracts the .so from the `artifact` target of its Dockerfile (for
-+# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
-+# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
-+# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
-+#
-+# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
-+# `server` target, the falkordb-server image for that OS, and start it to check
-+# that the module loads and answers a query. With `export_images` the image is
-+# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
-+# x64/arm64v8 have no such step: the merge queue builds the Debian images.
+@@ -95,31 +95,41 @@ fn classify_join_keys(values: Vec<Value>) -> (Column, NullBitmap) {
  
- name: Build artifacts (reusable)
+ /// Lazy integer range iterator backing `UNWIND range(a, b, step)`: yields
+ /// `Value::Int`s on the fly without materialising an intermediate
+-/// `Value::List`. `step` is stored as a positive magnitude and `up` selects the
+-/// direction (ascending when the original step was positive). Boxed into a
+-/// [`RowIter::many`] by [`ExprEval::eval_iter_expr`].
++/// `Value::List`. Boxed into a [`RowIter::many`] by
++/// [`ExprEval::eval_iter_expr`].
++///
++/// Termination is driven by the element count `remaining` (computed exactly by
++/// the caller), not by comparing `current` against the end: a range whose last
++/// element lies within one `step` of `i64::MAX`/`i64::MIN` would otherwise
++/// overflow when stepping past it.
+ struct RangeIter {
+     current: i64,
+-    end: i64,
+     step: i64,
+-    up: bool,
++    remaining: u64,
+ }
  
- on:
-   workflow_call:
-     inputs:
--      cells:
-+      platforms:
-         description: >-
--          JSON array of build cells. Each:
--          {suffix, arch, platform, runner, dockerfile, build_image, cxx}.
--          `dockerfile` provides the `artifact` target; `build_image` is the
--          chef/builder base (Debian toolchain image) or "" for self-contained
--          per-OS Dockerfiles; `cxx` is the C++ compiler passed to the builder.
--        required: true
-+          Comma-separated platform suffixes to build (e.g. 'x64,arm64v8'), or
-+          'all'. A suffix that is not in the platform list is an error.
-+        required: false
-         type: string
-+        default: all
-       revision:
-         description: "Git revision (commit SHA) to check out and build"
-         required: true
-@@ -42,17 +43,81 @@ on:
-         required: false
-         type: boolean
-         default: false
-+      export_images:
-+        description: >-
-+          Upload the per-OS server images as workflow artifacts (the release
-+          pushes them). Without it they are built and tested, then dropped.
-+        required: false
-+        type: boolean
-+        default: false
-+    outputs:
-+      suffixes:
-+        description: >-
-+          JSON array of the suffixes this run built. The release's publish step
-+          requires an artifact for every one of them.
-+        value: ${{ jobs.cells.outputs.suffixes }}
-+      image_suffixes:
-+        description: >-
-+          JSON array of the suffixes this run built a server image for. The
-+          release's image push requires every one of them.
-+        value: ${{ jobs.cells.outputs.image_suffixes }}
+ impl Iterator for RangeIter {
+     type Item = Value;
  
- jobs:
-+  cells:
-+    runs-on: ubuntu-latest
-+    permissions: {}
-+    outputs:
-+      cells: ${{ steps.select.outputs.cells }}
-+      suffixes: ${{ steps.select.outputs.suffixes }}
-+      image_suffixes: ${{ steps.select.outputs.image_suffixes }}
-+    steps:
-+      - name: Select platforms
-+        id: select
-+        env:
-+          PLATFORMS: ${{ inputs.platforms }}
-+        run: |
-+          set -euo pipefail
-+          # {suffix, arch, platform, runner, dockerfile, build_image, cxx, image}.
-+          # `dockerfile` provides the `artifact` target; `build_image` is the
-+          # chef/builder base (Debian toolchain image) or "" for self-contained
-+          # per-OS Dockerfiles; `cxx` is the C++ compiler passed to the builder;
-+          # `image` says the Dockerfile's `server` target is built here too.
-+          ALL='[
-+            {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23","image":false},
-+            {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":
-```
-
-**File**: `.github/workflows/_ci-pipeline.yml` (modified, +2/-2)
-```diff
-@@ -49,7 +49,7 @@ on:
-           Gate the image vehicle. True in the merge queue, where the published
-           image is the thing being gated on. False on a pull request, where the
-           artifact vehicle has already run the same suites and publishing an
--          image only exists so release-image.yml can retag one.
-+          image only exists so release-tag.yml can retag one.
-         required: false
-         type: boolean
-         default: false
-@@ -209,7 +209,7 @@ jobs:
-   # Image vehicle only, like everything else that needs the RC image. Every
-   # merge still passes through it: a fork pull request skips it, but its
-   # merge-queue entry builds the image and scans it. And it scans what ships:
--  # `:edge` (rust-push.yml) and releases (release-image.yml) retag the queue's
-+  # `:edge` (rust-push.yml) and releases (release-tag.yml) retag the queue's
-   # rc-mg-<sha> image rather than rebuilding it.
-   #
-   # `full` is FROM `server` plus the bundled browser, so scanning `full` covers
-```
-
-**File**: `.github/workflows/build-artifacts.yml` (modified, +58/-50)
-```diff
-@@ -1,19 +1,20 @@
--# Manually-triggerable build of the shared-library (.so) artifacts for every
--# wired architecture, so a maintainer can verify all platforms build correctly
--# BEFORE a release. Uploads workflow artifacts only (no Release upload).
-+# Build the shared-library (.so) artifacts for every release platform, and the
-+# rhel9/amazonlinux2023 server images, WITHOUT releasing anything, so a broken
-+# platform shows up on the pull request that broke it instead of at release
-+# time. The images are started and queried, never pushed; only the .so files
-+# are uploaded, as workflow artifacts.
- #
- # Triggers:
--#   - workflow_dispatch  → the long-term manual trigger (works once this file is
--#     on the default branch; also usable against any branch/tag thereafter).
--#   - pull_request (labeled/synchronize/reopened), gated by the `verify-artifacts`
--#     label → the path that makes this usable on a PR BEFORE it is merged.
--#     workflow_dispatch cannot reach a workflow that exists only on a feature
--#     branch, so to verify a PR that *introduces* this workflow, add the
--#     `verify-artifacts` label: the build runs at the PR head and re-runs on each
--#     push while the label is present. Remove + re-add the label to force a re-run.
-+#   - pull_request → runs when the PR changes something the artifact builds
-+#     depend on (PATTERN below), or carries the `verify-artifacts` label. The
-+#     per-OS cells (rhel9, amazonlinux2023) build their own toolchain from
-+#     source and nothing else in PR CI exercises them, so without this a change
-+#     that breaks them (as #3163 did) surfaces only at release time.
-+#     Re-runs on each push while either holds.
-+#   - workflow_dispatch → a maintainer's check against any branch or tag, with an
-+#     optional subset of platforms.
- #
--# Additional Linux platforms (alpine/musl, rhel8, rhel9, amazonlinux2023) land in
--# the cell list below as their per-OS toolchain images are added — see issue #608.
-+# The platform list lives in _build-artifacts.yml.
- 
- name: Build artifacts (verify)
- 
-@@ -25,70 +26,77 @@ on:
-         required: false
-         default: "all"
-   pull_request:
--    types: [labeled, synchronize, reopened]
-+    types: [opened, labeled, synchronize, reopened]
- 
- permissions:
-   contents: read
--  packages: read
- 
- concurrency:
-   group: build-artifacts-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
- 
- jobs:
--  prepare:
--    # Run on manual dispatch, OR on a PR carrying the `verify-artifacts` label.
--    if: >-
--      github.event_name == 'workflow_dispatch' ||
--      contains(github.event.pull_request.labels.*.name, 'verify-artifacts')
-+  decide:
-     runs-on: ubuntu-latest
-+    permissions:
-+      contents: read
-+      pull-requests: read
-     outputs:
--      cells: ${{ steps.derive.outputs.cells }}
--      commit_sha: ${{ steps.derive.outputs.commit_sha }}
-+      run: ${{ steps.decide.outputs.run }}
-+      commit_sha: ${{ steps.decide.outputs.commit_sha }}
-     steps:
--      - name: Derive cells + commit SHA
--        id: derive
-+      - name: Decide whether to build
-+        id: decide
-         env:
-           EVENT: ${{ github.event_name }}
--          ARCHS: ${{ github.event.inputs.archs }}
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          REPO: ${{ github.repository }}
-+          PR_NUMBER: ${{ github.event.pull_request.number }}
-           PR_SHA: ${{ github.event.pull_request.head.sha }}
-+          HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'verify-artifacts') }}
-           GH_SHA: ${{ github.sha }}
-         run: |
-           set -euo pipefail
--          # Master list of cells. Keep in sync with release-artifacts.yml.
--          ALL='[
--            {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
--            {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
--            {"suffix":"rhel9-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.rhel9","build_image":"","cxx":"clang++"},
--            {"suffix":"amazonlinux2023-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.amazonlinux2023","build_image":"","cxx":"clang++-19"}
--          ]'
--          if [ "$EVENT" = "workflow_dispatch" ] && [ -n "${ARCHS:-}" ] && [ "$ARCHS" != "all" ]; then
--            FILTER=$(printf '%s' "$ARCHS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' | jq -R . | jq -s -c .)
--            CELLS=$(printf '%s' "$ALL" | jq -c --argjson f "$FILTER" '[ .[] | select(.suffix as $s | $f | index($s)) ]')
--          else
--            CELLS=$(printf '%s' "$ALL" | jq -c .)
-+          if
-```
-
-**File**: `.github/workflows/cleanup-rc-images.yml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ name: Cleanup PR images
- #
- #   - falkordb / falkordb-server : `rc-pr-*` runtime images. They live past
- #     PR close because they may be retagged into a release tag by
--#     release-image.yml. 30 days is long enough to cut a release for a PR's
-+#     release-tag.yml. 30 days is long enough to cut a release for a PR's
- #     content but short enough that orphans from un-released PRs don't
- #     accumulate indefinitely.
- #
-```
-
-**File**: `.github/workflows/release-artifacts.yml` (removed, +0/-172)
-```diff
-@@ -1,172 +0,0 @@
--# Publish the shared-library (.so) artifacts to a GitHub Release.
--#
--# BUILD (fan-out) and PUBLISH (fan-in) are separated so a partial matrix failure
--# never leaves a half-populated public Release: the per-arch build cells only
--# produce workflow artifacts, and a single publish job downloads them, asserts
--# the FULL expected set is present, generates SHA256SUMS, then uploads.
--#
--# Triggers:
--#   - workflow_call        → the tag-push release pipeline (release-tag.yml), which
--#     is the primary path for >= 6.0.0. Driven by the tag, so it does not depend on
--#     the `release:` event (which only fires from the DEFAULT branch).
--#   - release: published   → build at the release commit, upload to that release.
--#   - workflow_dispatch    → repair/escape hatch: rebuild + (re)upload assets for
--#     an existing tag at a given commit (uses --clobber so re-runs are idempotent).
--#
--# Keep the cell list in sync with build-artifacts.yml. New platforms (see #608)
--# are added in both places.
--
--name: Release artifacts
--
--on:
--  # `release:` is REF-scoped, not default-branch-scoped — GitHub reads the
--  # workflow from the tagged ref's own tree (verified: the v4.20.1 release run's
--  # head_sha is identical to branch 4.20, diverged from master). A C release tag
--  # therefore carries only C's workflows and can never reach this file, so this
--  # trigger stays safe after the Rust tree becomes the default branch.
--  release:
--    types: [published]
--  workflow_dispatch:
--    inputs:
--      tag:
--        description: "Existing release tag to build + upload assets for (e.g. v0.4.0)"
--        required: true
--      commit_sha:
--        description: "Commit SHA to build"
--        required: true
--  workflow_call:
--    inputs:
--      tag:
--        description: "Release tag to build + upload assets for (e.g. v6.0.0)"
--        required: true
--        type: string
--      commit_sha:
--        description: "Commit SHA to build"
--        required: true
--        type: string
--
--permissions:
--  contents: read
--
--concurrency:
--  group: release-artifacts-${{ github.event.release.tag_name || inputs.tag }}
--  cancel-in-progress: false
--
--jobs:
--  prepare:
--    runs-on: ubuntu-latest
--    outputs:
--      cells: ${{ steps.derive.outputs.cells }}
--      commit_sha: ${{ steps.derive.outputs.commit_sha }}
--      tag: ${{ steps.derive.outputs.tag }}
--      suffixes: ${{ steps.derive.outputs.suffixes }}
--    steps:
--      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--        with:
--          # Check out the requested commit (dispatch / workflow_call) or the
--          # RELEASE TAG (release event). The resolved commit is then read back via
--          # `git rev-parse` below — `github.sha` is NOT guaranteed to be the tagged
--          # commit for a release event, so we never rely on it.
--          # `inputs.*` covers workflow_dispatch AND workflow_call; it is empty on a
--          # release event, so the `||` falls through to the release tag.
--          ref: ${{ inputs.commit_sha || github.event.release.tag_name }}
--          persist-credentials: false
--
--      - name: Derive tag, commit SHA, cells; validate Cargo.toml version
--        id: derive
--        env:
--          RELEASE_TAG: ${{ github.event.release.tag_name }}
--          INPUT_TAG: ${{ inputs.tag }}
--        run: |
--          set -euo pipefail
--          # Presence-based, not event-based: inputs.tag is set for both
--          # workflow_dispatch and workflow_call, empty on a release event.
--          if [ -n "$INPUT_TAG" ]; then
--            TAG="$INPUT_TAG"
--          else
--            TAG="$RELEASE_TAG"
--          fi
--          # Resolve the actual commit from the checked-out ref (the tag/commit
--          # above), never from github.sha.
--          SHA="$(git rev-parse HEAD)"
--          # Validate Cargo.toml version matches the (v-stripped) tag — fail loudly
--          # so a mis-tagged release never ships mismatched binaries.
--          SEMVER="${TAG#v}"
--          CARGO_VERSION=$(cargo metadata --no-deps --format-version=1 \
--            | jq -r '.packages[] | select(.name=="falkordb-rs") | .version')
--          if [ "$CARGO_VERSION" != "$SEMVER" ]; then
--            echo "::error::Cargo.toml version ($CARGO_VERSION) does not match tag ($TAG)"; exit 1
--          fi
--          ALL='[
--            {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
--            {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
--            {"suffix":"rhel9-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.rhel9","build_image":"","cxx":"clang++"},
--            {"suffix":"amazonlinux2023-x64","ar
-```
-
-**File**: `.github/workflows/release-image.yml` (modified, +24/-215)
-```diff
-@@ -1,18 +1,12 @@
- name: Release image
- 
-+# Manual escape hatch: build the runtime images FROM SOURCE at a given commit and
-+# publish them under a given tag. Releases do not come through here — the
-+# release pipeline (release-tag.yml) retags the rc-mg-<sha> image the merge queue
-+# already validated. Use this when that image is gone (swept by
-+# cleanup-rc-images.yml), when the commit never went through the queue, or to
-+# publish an ad-hoc tag.
- on:
--  # `release:` is REF-scoped, not default-branch-scoped: GitHub reads the
--  # workflow from the tagged ref's own tree. Verified on this repo — the
--  # release-event run for v4.20.1 has head_sha identical to branch 4.20 and
--  # diverged from master. So a C release tag carries only C's workflows and can
--  # never reach this file, and this trigger is safe to keep even after the Rust
--  # tree becomes the default branch.
--  #
--  # The primary Rust entry point is still release-tag.yml (push: tags v[6-9].*),
--  # which calls this workflow via workflow_call. This trigger covers a release
--  # created by hand for an existing tag; workflow_dispatch is the manual re-run.
--  release:
--    types: [published]
-   workflow_dispatch:
-     inputs:
-       tag:
-@@ -25,62 +19,26 @@ on:
-         description: "Also tag :latest (moves the latest pointer — use with care)"
-         type: boolean
-         default: false
--  workflow_call:
--    inputs:
--      tag:
--        description: "Image tag (v prefix optional), e.g. 6.0.0"
--        required: true
--        type: string
--      commit_sha:
--        description: "Tagged commit SHA"
--        required: true
--        type: string
--      mode:
--        description: "retag (reuse the validated rc-pr-<N> manifest) or rebuild (build from source)"
--        required: false
--        type: string
--        default: retag
- 
- permissions:
-   contents: read
- 
- concurrency:
--  group: release-image-${{ github.event_name }}-${{ github.ref }}
-+  group: release-image-${{ inputs.tag }}
-   cancel-in-progress: false
- 
--# Two modes:
--#   - RETAG the validated rc-pr-<N> images to semver + maybe :latest. No source
--#     rebuild — the artifact that PR CI tested is exactly what ships. Requires
--#     the rc-pr-<N> tag to still exist on GHCR (lives for the TTL window set by
--#     cleanup-rc-images.yml). Used by the release event and by workflow_call
--#     from release-tag.yml (the tag-push pipeline, primary path for >= 6.0.0 —
--#     tag-driven, so it does not depend on the DEFAULT-branch-only `release:`
--#     event).
--#   - REBUILD from source at the supplied commit (workflow_dispatch). Escape
--#     hatch when the RC was swept, when the commit never had a PR, or when an
--#     operator just wants to rebuild a specific SHA.
- jobs:
-   prepare:
-     runs-on: ubuntu-latest
-     permissions:
-       contents: read
--      pull-requests: read
-     outputs:
--      mode:              ${{ steps.derive.outputs.mode }}
--      tag:               ${{ steps.derive.outputs.tag }}
--      is_latest:         ${{ steps.derive.outputs.is_latest }}
--      browser_tag:       ${{ steps.derive.outputs.browser_tag }}
--      commit_sha:        ${{ steps.derive.outputs.commit_sha }}
--      push_to_dockerhub: ${{ steps.derive.outputs.push_to_dockerhub }}
-+      tag: ${{ steps.derive.outputs.tag }}
-     steps:
--      # Refuse workflow_dispatch from anywhere except main or a version branch
--      # (X.Y). Release
--      # events and workflow_call (from release-tag.yml) are unaffected — those
--      # are driven by a tag, which in practice only points at a trunk / version
--      # branch anyway. This guards against a dispatch from a feature branch
--      # pushing user-facing tags (latest, semver) built from un-merged code.
-+      # Refuse a dispatch from anywhere except main or a version branch (X.Y).
-+      # This guards against a dispatch from a feature branch pushing user-facing
-+      # tags (latest, semver) built from un-merged code.
-       - name: Reject dispatch from non-release-bearing ref
--        if: github.event_name == 'workflow_dispatch'
-         env:
-           REF_NAME: ${{ github.ref_name }}
-         run: |
-@@ -91,192 +49,43 @@ jobs:
- 
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          # inputs.commit_sha covers workflow_dispatch AND workflow_call; on a
--          # release event it is empty and github.sha is the release commit.
--          ref: ${{ inputs.commit_sha || github.sha }}
-+          ref: ${{ inputs.commit_sha }}
-           persist-credentials: false
- 
--      - name: Derive mode, tag, latest flag, commit SHA, RC PR number
-+      # Validate Cargo.toml only against a semver-shaped tag, so operators can
-+      # still dispatch ad-hoc tags like 'edge-test' without enforcement.
-+      - name: Validate tag against Cargo.toml
-         id: derive
-         env:
--          EVENT_NAME:     ${{ github.event_name }}
--          GH_SHA:         ${{ github.sha }}
--          REPO:           ${{ github.repository }}
--  
-```
-
-**File**: `.github/workflows/release-tag.yml` (modified, +208/-45)
-```diff
-@@ -1,11 +1,19 @@
--# Release the Rust engine (>= 6.0.0) by pushing a tag.
-+# Release the Rust engine (>= 6.0.0). This is the ONLY release pipeline: it
-+# creates the GitHub Release, builds and uploads the per-platform .so assets,
-+# retags the runtime images, and pushes the per-OS server images. No other
-+# workflow listens for a release.
- #
--# WHY TAG-PUSH: a tag push runs the workflow files from the TAGGED COMMIT'S OWN
--# TREE, so this pipeline is immune to which branch is the repository default.
--# `release:` and `workflow_run` are default-branch-only events — after the Rust
--# tree becomes the default branch of FalkorDB/FalkorDB (with the C engine still
--# on `master`), a `release:`-driven publish would fire the WRONG tree's workflows
--# (or none at all). Routing on the tag makes engine selection automatic:
-+# WHY ONE TRIGGER, AND WHY THE TAG
-+# Publishing a release drafted in the UI also creates its tag, so a `release:`
-+# listener and a tag-push listener BOTH fire for the same release. When the
-+# image and artifact workflows listened for `release:` while also being called
-+# from here, every release ran them twice side by side, and the two artifact
-+# builds raced for the same build cache. The tag push is the one event every
-+# release produces, whether it is cut with `git push` or from the UI, so it is
-+# the only trigger.
-+#
-+# A tag push runs the workflow files from the TAGGED COMMIT'S OWN TREE, which
-+# makes engine selection automatic:
- #
- #   git push origin v5.2.0   → C tree's workflows   (master lineage, no this file)
- #   git push origin v6.0.0   → this pipeline        (Rust lineage)
-@@ -15,16 +23,21 @@
- # a mis-tagged Rust release fails loudly instead of publishing as C.
- #
- # WHAT IT DOES
--#   1. guard          — validate tag shape, major >= 6, Cargo.toml version match
--#   2. create-release — create the GitHub Release for the tag (idempotent)
--#   3. artifacts      — build + upload the per-platform .so assets
--#   4. image          — retag the validated rc-pr-<N> manifest to semver
-+#   1. guard             — validate tag shape, major >= 6, Cargo.toml version match
-+#   2. create-release    — create the GitHub Release (idempotent)
-+#   3. build-artifacts   — build the per-platform .so files, and the rhel9 and
-+#                          amazonlinux2023 server images (_build-artifacts.yml)
-+#   4. publish-artifacts — require the full set, checksum, upload to the release
-+#   5. image             — retag the validated rc-mg-<sha> manifest to semver,
-+#                          and to :latest if this is the highest release
-+#   6. publish-images    — push the per-OS server images as <semver>-<os>-<arch>
-+#   7. browser-tests     — exercise the published image
- #
--# Steps 3 and 4 reuse release-artifacts.yml / release-image.yml via workflow_call
--# — the same code paths the `release:` event uses, so there is one publish
--# implementation, not two. create-release runs BEFORE image because the
--# latest-pointer decision in release-image.yml compares against the list of
--# published releases.
-+# workflow_dispatch re-runs all of it for an existing tag; every step is
-+# idempotent (existing release reused, assets uploaded with --clobber, retag
-+# overwrites). To rebuild the images from source instead of retagging — the
-+# rc-mg-<sha> image was swept, or the commit never went through the merge
-+# queue — use release-image.yml.
- 
- name: Release (tag)
- 
-@@ -109,8 +122,10 @@ jobs:
-           } >> "$GITHUB_OUTPUT"
-           echo "Releasing $TAG (semver=$SEMVER prerelease=$PRERELEASE) at $(git rev-parse HEAD)"
- 
--  # Create the Release up front: release-artifacts.yml uploads assets to it, and
--  # release-image.yml's :latest decision reads the published-release list.
+     fn next(&mut self) -> Option<Self::Item> {
+-        if self.up {
+-            if self.current > self.end {
+-                return None;
+-            }
+-        } else if self.current < self.end {
++        if self.remaining == 0 {
+             return None;
+         }
++        self.remaining -= 1;
+         let val = self.current;
+-        self.current += if self.up { self.step } else { -self.step };
++        // Advance only while another element is due. That element lies inside
++        // the range, so this add cannot overflow; stepping past the last one
++        // (the only add that could) never happens.
++        if self.remaining > 0 {
++            self.current += self.step;
++        }
+         Some(Value::Int(val))
+     }
 +
-+  # Create the Release up front: publish-artifacts uploads assets to it, and the
-+  # image job's :latest decision reads the published-release list, which must
-+  # include this one.
-   create-release:
-     needs: guard
-     runs-on: ubuntu-latest
-@@ -134,43 +149,191 @@ jobs:
-           gh release create "$TAG" "${FLAGS[@]}"
-           echo "Created release $TAG"
++    fn size_hint(&self) -> (usize, Option<usize>) {
++        let n = usize::try_from(self.remaining).unwrap_or(usize::MAX);
++        (n, Some(n))
++    }
+ }
  
--  # Per-platform .so assets → uploaded to the release.
--  artifacts:
--    needs: [guard, create-release]
--    uses: ./.github/workflows/release-artifacts.yml
-+  # Per-platform .so assets. BUILD (fan-out) and PUBLISH (fan-in) are separate so
-+  # a partial matrix failure never leaves a half-populated release: the build
-+  # cells only produce workflow artifacts, and publish-artifacts downloads them,
-+  # requires the FULL set, generates SHA256SUMS, then uploads.
-+  build-artifacts:
-+    needs: guard
-+    uses: ./.github/workflows/_build-artifacts.yml
-     permissions:
--      contents: write
-+      contents: read
-       packages: read
-     with:
--      tag: ${{ needs.guard.outputs.tag }}
--      commit_sha: ${{ needs.guard.outputs.commit_sha }}
-+      revision: ${{ needs.guard.outputs.commit_sha }}
-+      # Release builds run on a tag that is already in this repository —
-+      
+ // ---------------------------------------------------------------------------
+@@ -1225,9 +1235,9 @@ impl<'a> ExprEval<'a> {
+                 }
+                 let iter = RangeIter {
+                     current: start,
+-                    end,
+-                    step: step.unsigned_abs() as i64,
+-                    up: step > 0,
++                    step,
++                    // Bounded by `u32::MAX` above.
++                    remaining: length as u64,
+                 };
+                 Ok(Some(RowIter::many(Box::new(iter))))
+             }
+@@ -1805,3 +1815,33 @@ pub fn evaluate_param(expr: &DynNode<ExprIR<Arc<String>>>) -> Result<Value, Stri
+         _ => Err(String::from("Invalid parameter expression.")),
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn collect_range(
++        current: i64,
++        step: i64,
++        remaining: u64,
++    ) -> Vec<i64> {
++        RangeIter {
++            current,
++            step,
++            remaining,
++        }
++        .map(|v| match v {
++            Value::Int(i) => i,
++            v => panic!("expected Int, got {v:?}"),
++        })
++        .collect()
++    }
++
++    #[test]
++    fn range_iter_stops_at_i64_bounds() {
++        assert_eq!(collect_range(i64::MAX - 1, 1, 2), [i64::MAX - 1, i64::MAX]);
++        assert_eq!(collect_range(i64::MIN + 1, -1, 2), [i64::MIN + 1, i64::MIN]);
++        assert_eq!(collect_range(0, i64::MIN, 1), [0]);
++        assert_eq!(collect_range(-1, i64::MAX, 2), [-1, i64::MAX - 1]);
++    }
++}
 ```
 
-**File**: `.github/workflows/rust-push.yml` (modified, +2/-2)
+**File**: `tests/test_overflow_crashes.py` (modified, +24/-0)
 ```diff
-@@ -103,7 +103,7 @@ jobs:
-   # The C engine's rolling images moved to the `edge-c` family on `master`, and
-   # C never published to GHCR, so there is no contention on either registry.
-   # `:edge-rs` stays as a deprecated alias. Bare `:latest` is untouched — that
--  # pointer only moves at 6.0 GA, via release-image.yml. See issue #2290.
-+  # pointer moves only on a release, via release-tag.yml. See issue #2290.
-   promote-edge:
-     if: ${{ github.ref == 'refs/heads/main' }}
-     runs-on: ubuntu-latest
-@@ -138,7 +138,7 @@ jobs:
-           set -euo pipefail
-           # One imagetools call fans the SAME multi-arch manifest out to both
-           # registries — still a retag, never a rebuild, so the bytes PR CI
--          # validated are the bytes that ship. Same pattern release-image.yml
-+          # validated are the bytes that ship. Same pattern release-tag.yml
-           # uses for semver tags.
-           # `:edge` is the primary rolling channel now that this tree is the
-           # default branch. `:edge-rs` is kept as an alias so anything already
+@@ -110,6 +110,30 @@ def test_unwind_range_normal_values_still_work():
+     assert res.result_set == [[[10, 8, 6, 4, 2]]]
+ 
+ 
++
++# The lazy UNWIND iterator used to step past the last element with an
++# unchecked add: next to i64::MAX/MIN it wrapped around and never terminated
++# (release) or panicked (debug). Results must match the eager range().
++@pytest.mark.parametrize("args, expected", [
++    ("9223372036854775806, 9223372036854775807",
++     [9223372036854775806, 9223372036854775807]),
++    ("9223372036854775800, 9223372036854775807, 3",
++     [9223372036854775800, 9223372036854775803, 9223372036854775806]),
++    ("-9223372036854775807, -9223372036854775807 - 1, -1",
++     [-9223372036854775807, -9223372036854775808]),
++    ("-9223372036854775801, -9223372036854775807 - 1, -4",
++     [-9223372036854775801, -9223372036854775805]),
++    ("0, -10, -9223372036854775807 - 1", [0]),
++    ("-1, 9223372036854775807, 9223372036854775807",
++     [-1, 9223372036854775806]),
++])
++def test_unwind_range_near_i64_bounds(args, expected):
++    res = common.g.query(f"UNWIND range({args}) AS x RETURN collect(x)")
++    assert res.result_set == [[expected]]
++    res = common.g.query(f"RETURN range({args})")
++    assert res.result_set == [[expected]]
++
++
+ # --- Duration overflow tests --------------------------------------------------
+ # `construct_duration_secs` previously used unchecked i64 arithmetic on the
+ # user-supplied duration components, panicking (and crashing the server) on
+```
+
+---
+
+### Incident Patch 2: `9d3869aa` (2026-10-20)
+**Commit Message**: fix: duration() string form reports week/day overflow instead of wrapping (#2935) (#2987)
+
+parse_duration_string used unchecked n * 7 and +=, so
+duration('P2635249153387078803W') wrapped to P5D in release (and
+panicked in debug). Use checked arithmetic and return the same
+overflow error the map form returns.
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `graph/src/runtime/functions/temporal.rs` (modified, +11/-2)
+```diff
+@@ -388,8 +388,17 @@ fn parse_duration_string(s: &str) -> Result<(i64, i64, i64, i64, i64, i64, i64),
+             match ch {
+                 'Y' => years = n,
+                 'M' => months = n,
+-                'W' => days += n * 7,
+-                'D' => days += n,
++                'W' => {
++                    days = n
++                        .checked_mul(7)
++                        .and_then(|w| days.checked_add(w))
++                        .ok_or_else(|| format!("Duration overflow: weeks={n}"))?;
++                }
++                'D' => {
++                    days = days
++                        .checked_add(n)
++                        .ok_or_else(|| format!("Duration overflow: days={n}"))?;
++                }
+                 _ => return Err(format!("Unknown duration component: {ch}")),
+             }
+         }
+```
+
+**File**: `tests/flow/test_temporal.py` (modified, +9/-0)
+```diff
+@@ -450,6 +450,15 @@ def test_duration_from_string(self):
+         result = self.graph.query("RETURN toString(duration('P1M')) AS s")
+         self.env.assertEqual(result.result_set[0], ["P1M"])
+ 
++        # huge week/day counts are an overflow error, not a silently wrapped
++        # duration (2635249153387078803 * 7 wraps to 5 in i64)
++        for s in ['P2635249153387078803W', 'P1W9223372036854775807D']:
++            try:
++                self.graph.query(f"RETURN duration('{s}')")
++                self.env.assertFalse(True)
++            except ResponseError as e:
++                self.env.assertIn("overflow", str(e))
++
+     def test_month_end_duration_arithmetic(self):
+         result = self.graph.query(
+             """
+```
+
+---
+
+### Incident Patch 3: `737dfb5d` (2026-10-20)
+**Commit Message**: fix: temporal constructors never panic on out-of-range components (#2930) (#2950)
+
+Range-check week (1-53), quarter (1-4) and dayOfQuarter (1-92) with C's
+error message before any chrono arithmetic, convert year/month/day with
+try_from instead of truncating casts, add the week offset with
+checked_add_signed, and split the week string with split_at_checked so a
+multi-byte character errors instead of panicking.
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `graph/src/runtime/functions/temporal.rs` (modified, +158/-14)
+```diff
+@@ -58,7 +58,27 @@ fn get_int_field(
+     })
+ }
+ 
++/// Validate an optional date component against its inclusive range, with the
++/// same message as the C implementation.
++fn check_range(
++    name: &str,
++    value: Option<i64>,
++    min: i64,
++    max: i64,
++) -> Result<(), String> {
++    match value {
++        Some(v) if !(min..=max).contains(&v) => Err(format!(
++            "Invalid value for {name} (valid values {min} - {max})"
++        )),
++        _ => Ok(()),
++    }
++}
++
+ /// Build a NaiveDate from optional components. Supports ymd, week, and quarter modes.
++///
++/// Every component is range-checked before it reaches chrono: chrono's
++/// `NaiveDate + TimeDelta` and `TimeDelta::days` panic on overflow, and a
++/// panic here takes the whole server down.
+ fn date_from_components(
+     year: Option<i64>,
+     month: Option<i64>,
+@@ -68,9 +88,11 @@ fn date_from_components(
+     quarter: Option<i64>,
+     day_of_quarter: Option<i64>,
+ ) -> Result<NaiveDate, String> {
+-    let year = year.unwrap_or(1970) as i32;
++    let year = year.unwrap_or(1970);
++    let year = i32::try_from(year).map_err(|_| format!("Invalid year: {year}"))?;
+ 
+     if let Some(week) = week {
++        check_range("week", Some(week), 1, 53)?;
+         let dow_raw = day_of_week.unwrap_or(1);
+         if !(0..=6).contains(&dow_raw) {
+             return Err(format!("Invalid dayOfWeek: {dow_raw}, expected 0..6"));
+@@ -79,14 +101,17 @@ fn date_from_components(
+         let jan4 =
+             NaiveDate::from_ymd_opt(year, 1, 4).ok_or_else(|| format!("Invalid year: {year}"))?;
+         let weekday_of_jan4 = jan4.weekday().num_days_from_monday();
+-        let iso_week1_monday = jan4 - chrono::Duration::days(i64::from(weekday_of_jan4));
+-        let target_monday = iso_week1_monday + chrono::Duration::days((week - 1) * 7);
+         let day_offset = if dow == 0 { 6 } else { i64::from(dow) - 1 };
+-        let result = target_monday + chrono::Duration::days(day_offset);
+-        return Ok(result);
++        // week is in 1..=53, so the offset is at most 370 days
++        let days = (week - 1) * 7 + day_offset - i64::from(weekday_of_jan4);
++        return jan4
++            .checked_add_signed(chrono::Duration::days(days))
++            .ok_or_else(|| format!("Invalid date: year={year}, week={week}"));
+     }
+ 
+     if let Some(quarter) = quarter {
++        check_range("quarter", Some(quarter), 1, 4)?;
++        check_range("dayOfQuarter", day_of_quarter, 1, 92)?;
+         let doq = day_of_quarter.unwrap_or(1);
+         let quarter_start_month = ((quarter - 1) * 3 + 1) as u32;
+         let base = NaiveDate::from_ymd_opt(year, quarter_start_month, 1)
+@@ -96,9 +121,12 @@ fn date_from_components(
+             .ok_or_else(|| format!("Invalid dayOfQuarter: {doq}"));
+     }
+ 
+-    let month = month.unwrap_or(1) as u32;
+-    let day = day.unwrap_or(1) as u32;
+-    NaiveDate::from_ymd_opt(year, month, day)
++    let month = month.unwrap_or(1);
++    let day = day.unwrap_or(1);
++    u32::try_from(month)
++        .ok()
++        .zip(u32::try_from(day).ok())
++        .and_then(|(m, d)| NaiveDate::from_ymd_opt(year, m, d))
+         .ok_or_else(|| format!("Invalid date: year={year}, month={month}, day={day}"))
+ }
+ 
+@@ -255,12 +283,13 @@ fn parse_week_date(s: &str) -> Result<NaiveDate, String> {
+         let week: u32 = rest.parse().map_err(|_| format!("Invalid week: {s}"))?;
+         (week, chrono::Weekday::Mon)
+     } else {
+-        let week: u32 = rest[..2]
+-            .parse()
+-            .map_err(|_| format!("Invalid week: {s}"))?;
+-        let d: u32 = rest[2..]
+-            .parse()
+-            .map_err(|_| format!("Invalid day of week: {s}"))?;
++        // `split_at_checked` rather than `rest[..2]`: byte 2 may fall inside a
++        // multi-byte character, and slicing there panics.
++        let (week, d) = rest
++            .split_at_checked(2)
++            .ok_or_else(|| format!("Invalid week: {s}"))?;
++        let week: u32 = week.parse().map_err(|_| format!("Invalid week: {s}"))?;
++        let d: u32 = d.parse().map_err(|_| format!("Invalid day of week: {s}"))?;
+         let weekday = match d {
+             1 => chrono::Weekday::Mon,
+             2 => chrono::Weekday::Tue,
+@@ -846,6 +875,121 @@ pub fn register(funcs: &mut Functions) {
+     funcs.set_struct_fn("duration", duration_struct_pure, DURATION_SLOTS);
+ }
+ 
++#[cfg(test)]
++mod tests {
++    use super::{date_pure, date_struct_pure, localdatetime_pure};
++    use crate::runtime::{ordermap::OrderMap, value::Value};
++    use std::sync::Arc;
++
++    fn map(entries: &[(&str, i64)]) -> Value {
++        Value::Map(Arc::new(OrderMap::from_vec(
++            entries
++                .iter()
++                .map(|(k, v)| (Arc::new((*k).to_string()), Value::Int(*v)))
++                .collect(),
++        )))
++    }
++
++    fn date_slots(
++        year: i64,
++        week: Option<i64>,
++        quarter: Option<i64>,
++        day_of_quarter: Option<i64>,
++    ) -> Vec<Value> {
++        let slot = |v: Option<i6
+```
+
+**File**: `tests/flow/test_temporal.py` (modified, +25/-0)
+```diff
+@@ -182,6 +182,31 @@ def test_date_to_from_string(self):
+             self.env.assertTrue(b)
+             self.env.assertEqual(ts, expected)
+ 
++    # out-of-range components and malformed week strings used to panic inside
++    # chrono and crash the server; they must be rejected with an error
++    def test_date_out_of_range_components(self):
++        queries = [
++            ("RETURN date({year: 2020, week: 10000000000})", "week"),
++            ("RETURN date({year: 2020, week: 0})", "week"),
++            ("RETURN localdatetime({year: 2020, week: -9223372036854775807})", "week"),
++            ("RETURN date({year: 2020, quarter: 2, dayOfQuarter: 9223372036854775807})", "dayOfQuarter"),
++            ("RETURN date({year: 2021, quarter: 1, dayOfQuarter: 200})", "dayOfQuarter"),
++            ("RETURN date({year: 2020, quarter: 4294967297})", "quarter"),
++            ("RETURN date('2020W1é')", "week"),
++        ]
++        for q, msg in queries:
++            try:
++                self.graph.query(q)
++                self.env.assertFalse(True)
++            except ResponseError as e:
++                self.env.assertIn(msg, str(e))
++
++        # the server is still up and in-range components still work
++        q = """RETURN toString(date({year: 1984, week: 53})),
++                      toString(date({year: 1984, quarter: 4, dayOfQuarter: 92}))"""
++        res = self.graph.query(q)
++        self.env.assertEqual(res.result_set[0], ['1984-12-31', '1984-12-31'])
++
+     def test_date_compare(self):
+         q = """WITH date({year: 1980, month: 12, day: 24}) AS x,
+                     date({year: 1984, month: 10, day: 11}) AS d
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3419** (2026-10-20): fix: accept any non-negative VKEY_MAX_ENTITY_COUNT, as C does (@AviAvni)
+- **PR #3418** (closed): fix: derive the schema version from the schema names; restore C's mismatch wording (@Anchel123)
 - **PR #3409** (2026-10-19): 4.22.2 (@swilly22)
 - **PR #3406** (2026-10-19): fix(reduce): avoid OOB record index when iterator shadows a bound ali… (@swilly22)
 - **PR #3390** (closed): fix: a superseded index population job yields, not whichever checks first (#3389) (@gkorland)
 - **PR #3346** (2026-10-15): accept index trimmed values (@swilly22)
-- **PR #3342** (2026-10-14): 4.22.1 (@swilly22)
-- **PR #3339** (2026-10-14): fix: bound value nesting on RDB/RESTORE decode, property writes and bulk insert (@AviAvni)
 
 ---
 
@@ -2968,63 +2752,76 @@ release-a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)
+## X. UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899)
 
 **RULE**:
-When implementing operations in `.github/workflows/_build-artifacts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/runtime/eval.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bd99337`: ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e63165cb`: UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_build-artifacts.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/runtime/eval.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Reusable workflow: build the falkordb shared library (.so) for every release
-# platform and upload each as a workflow artifact. BUILD ONLY — it never uploads
-# to a GitHub Release. Callers: release-tag.yml (the release, which then
-# publishes what this built) and build-artifacts.yml (pre-release verification).
-# The platform list below is the ONLY one: callers pick from it by suffix and
-# never carry their own copy. New platforms (see #608) are added here.
-# Each cell extracts the .so from the `artifact` target of its Dockerfile (for
-# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
-# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
-# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
-#
-# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
-# `server` target, the falkordb-server image for that OS, and start it to check
-# that the module loads and answers a query. With `export_images` the image is
-# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
-# x64/arm64v8 have no such step: the merge queue builds the Debian images.
-      platforms:
-          Comma-sep
+/// `Value::List`. Boxed into a [`RowIter::many`] by
+/// [`ExprEval::eval_iter_expr`].
+///
+/// Termination is driven by the element count `remaining` (computed exactly by
+/// the caller), not by comparing `current` against the end: a range whose last
+/// element lies within one `step` of `i64::MAX`/`i64::MIN` would otherwise
+/// overflow when stepping past it.
+    remaining: u64,
+        if self.remaining == 0 {
+        self.remaining -= 1;
+        // Advance only while another element is due. That element lies inside
+        // the range, so this add cannot overflow; stepping past the last one
+        // (the only add that could) never happens.
+        if self.remaining > 0 {
+            self.current += self.step;
+        }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let n = usize::try_from(self.remaining).unwrap_or(usize::MAX);
+        (n, Some(n))
+    }
+                    step,
+                    // Bounded by `u32::MAX` above.
+                    remaining: length as u64,
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn collect_range(
+        current: i64,
+        step: i64,
+        remaining: u64,
+    ) -> Vec<i64> {
+        RangeIter {
+            curren
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Reusable workflow: build the falkordb shared library (.so) for one or more
-# architectures and upload each as a workflow artifact. BUILD ONLY — it never
-# uploads to a GitHub Release. Callers (build-artifacts.yml for PR verification,
-# release-artifacts.yml for the release upload) describe the build cells via the
-# `cells` input as a JSON array of {arch, platform, runner, suffix} objects:
-#   [
-#     {"suffix":"x64",     "arch":"x64",     "platform":"linux/amd64","runner":"ubuntu-latest"},
-#     {"suffix":"arm64v8", "arch":"arm64v8", "platform":"linux/arm64","runner":"ubuntu-24.04-arm"}
-#   ]
-# Each cell extracts the .so from the `artifact` target of build/runtime/Dockerfile
-# (the exact .so the runtime image ships) and uploads it as `falkordb-<suffix>.so`
-# together with its `.sha256`. Cells are independent (fail-fast: false) and run on
-# native runners (no QEMU) for maximum parallelism.
-      cells:
-          JSON array of build cells. Each:
-          {suffix, arch, platform, runner, dockerfile, build_image, cxx}.
-          `dockerfile` provides the `artifact` target; `build_image` is the
-          chef/builder base (Debian toolchain image) or "" for self-contained
-          pe
+/// `Value::List`. `step` is stored as a positive magnitude and `up` selects the
+/// direction (ascending when the original step was positive). Boxed into a
+/// [`RowIter::many`] by [`ExprEval::eval_iter_expr`].
+    end: i64,
+    up: bool,
+        if self.up {
+            if self.current > self.end {
+                return None;
+            }
+        } else if self.current < self.end {
+        self.current += if self.up { self.step } else { -self.step };
+                    end,
+                    step: step.unsigned_abs() as i64,
+                    up: step > 0,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bd99337` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e63165cb` are properly handled with clean fallback behavior.

@@ -4062,3 +4062,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T22:06:37.853Z |
 | `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `6f9df34c` | Multi-dimensional audit evidence | 2026-10-20T22:06:46.025Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `f93736aa` | Multi-dimensional audit evidence | 2026-10-20T22:06:54.253Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `b6567cb9` | Multi-dimensional audit evidence | 2026-10-20T22:13:07.721Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `3d58f2c3` | Multi-dimensional audit evidence | 2026-10-20T22:13:14.061Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `bcd8ac3d` | Multi-dimensional audit evidence | 2026-10-20T22:13:18.653Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T22:13:58.057Z |

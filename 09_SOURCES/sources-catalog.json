@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "f265bae85e0b1475d54cf863b67e3a956b56d99b9403124a0019073c219968f1",
-    "lastHarvestedAt": "2026-10-19T08:49:48.462Z",
+    "contentHash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
+    "lastHarvestedAt": "2026-10-20T22:13:58.057Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "6bd99337",
+    "sourceVersion": "b6567cb9",
     "license": "NOASSERTION",
-    "contentHash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
-    "lastHarvestedAt": "2026-10-20T03:46:43.063Z",
+    "contentHash": "9b165c807f96431f9903f682866a5818d3e3c68d71ee29da0fab102812a223b6",
+    "lastHarvestedAt": "2026-10-20T22:13:07.721Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -5673,10 +5673,10 @@
     "repository": "StarTrail-org/LEANN",
     "platform": "github",
     "sourceUrl": "https://github.com/StarTrail-org/LEANN",
-    "sourceVersion": "7fcb3b54",
+    "sourceVersion": "bcd8ac3d",
     "license": "MIT",
-    "contentHash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
-    "lastHarvestedAt": "2026-10-19T04:13:25.261Z",
+    "contentHash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
+    "lastHarvestedAt": "2026-10-20T22:13:18.653Z",
     "learningId": "learn-github-startrail-org-leann"
   },
   "adonisjs-core": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "4a85f985",
+    "sourceVersion": "3d58f2c3",
     "license": "Apache-2.0",
-    "contentHash": "b832f0cac0991dd078fe20a9858fee4a186182873581b210a33293292d393bb9",
-    "lastHarvestedAt": "2026-10-19T18:42:26.139Z",
+    "contentHash": "1c93e115e58942f812052142b90feefe5e0133c13a62c436de1ee35648f61b66",
+    "lastHarvestedAt": "2026-10-20T22:13:14.061Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
