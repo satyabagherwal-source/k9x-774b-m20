@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:53:51.513Z",
+  "last_updated": "2026-10-20T14:00:37.926Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "5de55e398ba165dd5a4158cac649952351b78db61bb29b152be88704eac24085",
-      "verified_at": "2026-10-19T00:22:52.946Z",
+      "content_hash": "21fa75ed214b200b670d7fd96bf851c8e1751fa257ad57f4c438222c462e96e2",
+      "verified_at": "2026-10-20T14:00:37.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:22:52.946Z"
+      "last_updated": "2026-10-20T14:00:37.255Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "4bcee21d27a4bbd7a098dcc5747fddb73ba0abc4d346735f80ebeceb24449036",
-      "verified_at": "2026-10-19T22:19:27.829Z",
+      "content_hash": "c499f285740816db2545862159588d3df4534fcb6f0c4451eb007a6f565594b1",
+      "verified_at": "2026-10-20T14:00:37.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:19:27.829Z"
+      "last_updated": "2026-10-20T14:00:37.925Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -7101,14 +7101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-mmkv",
-      "content_hash": "b84579b170cdc9599775de51b23c0ef0128f7ce2075ffff9c530ed11c395ce02",
-      "verified_at": "2026-10-19T01:49:18.352Z",
+      "content_hash": "6889ce25a7021cff22adfb10b1f8406b80a0ac17c260f66d2f729877fc27e980",
+      "verified_at": "2026-10-20T14:00:33.866Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:49:18.352Z"
+      "last_updated": "2026-10-20T14:00:33.866Z"
     },
     "aquasecurity/trivy": {
       "repository": "aquasecurity/trivy",

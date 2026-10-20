@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-OY0F",
-    "timestamp": "2026-10-19T15:53:33.231Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "ffc25779538a444bd0e6c021228aca63979e4b9fc0f9d3d72a9b08810fee03c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-WOBF",
-    "timestamp": "2026-10-19T15:59:33.915Z",
-    "repository": "ISTIFANO/seo-auditor",
-    "learningId": "learn-github-istifano-seo-auditor",
-    "contentHash": "1381771a39eec6c318d9d35b53cffc5010324ee2498d5ed03deda0d00a98e8f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-WPTS",
-    "timestamp": "2026-10-19T15:59:35.872Z",
-    "repository": "SwiftWebUI/SwiftWebUI",
-    "learningId": "learn-github-swiftwebui-swiftwebui",
-    "contentHash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-WVHD",
     "timestamp": "2026-10-19T15:59:43.201Z",
     "repository": "trinodb/trino",
@@ -7490,6 +7445,51 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "2e20f9afae87a08aee8e5126acbee81a4a98336a84131ec9c93bdd20d7cb8c1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-3HOA",
+    "timestamp": "2026-10-20T14:00:33.850Z",
+    "repository": "margelo/react-native-mmkv",
+    "learningId": "learn-github-margelo-react-native-mmkv",
+    "contentHash": "6889ce25a7021cff22adfb10b1f8406b80a0ac17c260f66d2f729877fc27e980",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-3KAF",
+    "timestamp": "2026-10-20T14:00:37.239Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "21fa75ed214b200b670d7fd96bf851c8e1751fa257ad57f4c438222c462e96e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-3KT6",
+    "timestamp": "2026-10-20T14:00:37.914Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "c499f285740816db2545862159588d3df4534fcb6f0c4451eb007a6f565594b1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

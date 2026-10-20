@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T13:53:51.444Z",
+  "last_updated": "2026-10-20T14:00:37.826Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3504,8 +3504,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "58406d7b",
-      "content_hash": "4bcee21d27a4bbd7a098dcc5747fddb73ba0abc4d346735f80ebeceb24449036",
+      "source_version": "555b5f3b",
+      "content_hash": "c499f285740816db2545862159588d3df4534fcb6f0c4451eb007a6f565594b1",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -3533,6 +3533,11 @@
           "number": 2851,
           "title": "daemon): recognize NFSv4 mounts (#4265)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3209,
+          "title": "docs: streamline CLI onboarding and related guides (#4273)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3540,7 +3545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:19:27.753Z",
+      "verified_at": "2026-10-20T14:00:37.812Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22704,7 +22709,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "5de55e398ba165dd5a4158cac649952351b78db61bb29b152be88704eac24085",
+      "content_hash": "21fa75ed214b200b670d7fd96bf851c8e1751fa257ad57f4c438222c462e96e2",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -22740,6 +22745,11 @@
         {
           "number": 1912,
           "title": "Masked Aggregation Invariant for Variable-Length Sequences",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3208,
+          "title": "Masked Mean Pooling Invariant for Sentence Embeddings",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -23082,7 +23092,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-19T00:22:52.890Z",
+      "verified_at": "2026-10-20T14:00:37.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30349,14 +30359,14 @@
       "platform": "github",
       "source_url": "https://github.com/margelo/react-native-mmkv",
       "source_version": "ca5acf0c",
-      "content_hash": "b84579b170cdc9599775de51b23c0ef0128f7ce2075ffff9c530ed11c395ce02",
+      "content_hash": "6889ce25a7021cff22adfb10b1f8406b80a0ac17c260f66d2f729877fc27e980",
       "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
       "promoted_rules": [
         {
           "number": 1987,
           "title": "deps): bump com.android.tools.build:gradle (#1080)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30364,7 +30374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:49:18.289Z",
+      "verified_at": "2026-10-20T14:00:33.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83797,7 +83807,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T01:49:18.289Z"
+      "verified_at": "2026-10-20T14:00:33.779Z"
     },
     "rule-1988": {
       "learning_id": "rule-1988",
@@ -101458,6 +101468,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T13:53:51.427Z"
+    },
+    "rule-3208": {
+      "learning_id": "rule-3208",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3208,
+      "title": "Masked Mean Pooling Invariant for Sentence Embeddings",
+      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:00:37.171Z"
+    },
+    "rule-3209": {
+      "learning_id": "rule-3209",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3209,
+      "title": "docs: streamline CLI onboarding and related guides (#4273)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "555b5f3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:00:37.812Z"
     }
   },
   "aliases": {

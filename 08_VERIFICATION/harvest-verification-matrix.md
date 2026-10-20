@@ -3836,3 +3836,6 @@
 | `CYCLE-20261020-UQKO` | `2026-10-20T13:53:45.480Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3205` | Yes (`12b8a479...`) |
 | `CYCLE-20261020-URMH` | `2026-10-20T13:53:46.841Z` | `litmuschaos/litmus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3206` | Yes (`852bf05a...`) |
 | `CYCLE-20261020-UV7U` | `2026-10-20T13:53:51.498Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3207` | Yes (`2e20f9af...`) |
+| `CYCLE-20261020-3HOA` | `2026-10-20T14:00:33.850Z` | `margelo/react-native-mmkv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1987` | Yes (`6889ce25...`) |
+| `CYCLE-20261020-3KAF` | `2026-10-20T14:00:37.239Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3208, Rule EXISTING` | Yes (`21fa75ed...`) |
+| `CYCLE-20261020-3KT6` | `2026-10-20T14:00:37.914Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3209` | Yes (`c499f285...`) |
