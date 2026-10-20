@@ -3875,3 +3875,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-20T15:17:09.641Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c7c11377` | Multi-dimensional audit evidence | 2026-10-20T15:17:20.478Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `0a2578e7` | Multi-dimensional audit evidence | 2026-10-20T15:17:24.124Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T15:23:38.767Z |

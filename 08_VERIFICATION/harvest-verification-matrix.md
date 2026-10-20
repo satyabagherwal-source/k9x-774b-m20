@@ -3868,3 +3868,4 @@
 | `CYCLE-20261020-TZT2` | `2026-10-20T15:17:09.638Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`a611eaee...`) |
 | `CYCLE-20261020-U85Z` | `2026-10-20T15:17:20.471Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3240` | Yes (`b9f38f6e...`) |
 | `CYCLE-20261020-UAZ8` | `2026-10-20T15:17:24.116Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3241` | Yes (`40491143...`) |
+| `CYCLE-20261020-2C24` | `2026-10-20T15:23:38.764Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`0be07b51...`) |
