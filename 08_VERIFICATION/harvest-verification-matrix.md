@@ -3874,3 +3874,6 @@
 | `CYCLE-20261020-JN4J` | `2026-10-20T15:37:06.259Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`3a1086e5...`) |
 | `CYCLE-20261020-JP3G` | `2026-10-20T15:37:08.812Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3243` | Yes (`d93e0081...`) |
 | `CYCLE-20261020-S9XO` | `2026-10-20T15:43:49.068Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3244, Rule 3245, Rule 3246` | Yes (`28d84ab5...`) |
+| `CYCLE-20261020-01TZ` | `2026-10-20T15:49:51.815Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`16351634...`) |
+| `CYCLE-20261020-057M` | `2026-10-20T15:49:56.194Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`b91713bd...`) |
+| `CYCLE-20261020-0HKG` | `2026-10-20T15:50:12.208Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3247` | Yes (`eef8c0ca...`) |

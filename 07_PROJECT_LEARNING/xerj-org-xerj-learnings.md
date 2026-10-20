@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `11479fb9`  
+> **Source Version**: `fed7415c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:28:26.647Z  
+> **Timestamp**: 2026-10-20T15:50:11.856Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:28:26.069Z  
+> **Harvest Timestamp**: 2026-10-20T15:50:11.849Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `xerj-org/xerj`
-- **Description**: XERJ is the new way for AI to search data. Its autoindex capability activates agents to know your data without the token waste of grep (1974 tool). One command indexes code, docs, logs and PDFs for search, RAG, security audits and agent memory, using 40x fewer tokens than grep. It’s durable and can replace ElasticSearch saving you x10 infra costs.
+- **Description**: Local-first search engine and MCP server for AI agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10492 stars
+- **Stars / Engagement**: 11815 stars
 
 ---
 
@@ -1603,8 +1603,10 @@ impl EmbeddingProxy {
 //!     service ([`crate::embed::EmbeddingProxy`]). Bring any model/provider.
 //!   * [`Embedder::Neural`] — the built-in BERT sentence encoder
 //!     ([`crate::neural`]), running in-process via `candle`. Compiled only
-//!     under the `neural` cargo feature; the model is loaded lazily on first
-//!     use (download-on-first-run) so startup stays instant.
+//!     under the `neural` cargo feature. The server loads it at startup
+//!     (`Embedder::preload_neural`); a blocked download refuses the process
+//!     rather than failing every ingest. The handle still shares one
+//!     process-wide model.
 //!   * [`Embedder::Onnx`] — the experimental in-process ONNX Runtime backend.
 //!     It is compiled only under `onnx-experimental`, requires explicit model
 //!     and tokenizer paths, and loads the model lazily on first use.
@@ -1806,7 +1808,8 @@ pub enum Embedder {
     Lexical,
     /// External OpenAI-compatible embedding service.
     Proxy(EmbeddingProxy),
-    /// Built-in neural BERT embedder (candle). Lazily loaded on first use.
+    /// Built-in neural BERT embedder (candle). The server preloads it at
+    /// startup; a handle built without that preload still loads on first embed.
     #[cfg(feature = "neural")]
     Neural(NeuralHandle),
     /// Experimental local ONNX Runtime sentence encoder.
@@ -1825,19 +1828,11 @@ impl Embedder {
         Embedder::Proxy(proxy)
     }
 
-    /// A lazily-loaded built-in neural embedder.
+    /// A built-in neural embedder. Call [`preload_neural`] first when a
+    /// failed download must surface before the first embed.
     #[cfg(feature = "neural")]
     pub fn neural(cfg: crate::neural::NeuralConfig) -> Self {
-        Embedder::Neural(NeuralHandle::new(cfg))
-    }
-
-    #[cfg(feature = "onnx-experimental")]
-    pub fn onnx(cfg: OnnxConfig) -> Self {
-        Embedder::Onnx(OnnxHandle::new(cfg))
-    }
-
-    /// `true` when a Candle neural, experimental ONNX, or external proxy
-    /// embedder is config
+        Embedder::Neur
 ```
 
 ### Core Architecture Module: `engine/crates/xerj-ai/src/lib.rs`
@@ -1898,11 +1893,11 @@ pub use xerj_common::Result;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1648** (2026-10-17): **[bug]: HELLO IM HAVE ERROR ON MY CODE**
-  *Symptoms*: ### XERJ version  HELLO IM HAVE ERROR ON MY CODE  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  HELLO IM HAVE ERROR ON MY CODE  ### Steps to reproduce  ```shell HELLO IM HAVE ERROR ON MY CODE ```  ### Expected behavior  HELLO IM HAVE ERROR ON MY CODE  ### Actual behavior  HELLO IM HAVE ERROR ON MY CODE  ### Is this an Elasticsearch wire-compatibility divergence?  Unknown / not sure  ### Elasticsearch reference (if a compat divergence)  HELLO IM HAVE ERROR ON MY CODE  ### Relevant logs  ```shell HELLO IM HAVE ERROR ON MY CODE ```  ### Confirmations  - [x] I searched existing issues and did not find a duplicate. - [ ] I can reproduce this with a minimal example on a clean data directory.
+- **Issue #1904** (2026-10-20): **xerj ask: "hub catalogue unavailable" exits 1, the same code as "no corpus matches"**
+  *Symptoms*: Found in a fresh-user e2e on 2026-10-19 (xerj v1.0.0-rc.97). While hub.xerj.org served its HTML page at /api/v1/catalogue.json, every `xerj ask` / `xerj "<question>"` printed  ``` cannot load the hub catalogue: … returned 272501 bytes starting "<!doctype html>…" (text/html; charset=utf-8), not a signed catalogue; no catalogue is served at this address ```  and exited **1**. `xerj ask --help` documents exit 1 as "no match or nothing to answer from". An agent scripting on exit codes reads that as "the hub has no answer for this question" and falls back to memory, when the real problem is that the hub is down. The same happens for an unreachable hub and for `--offline` with no cached catalogue.  ### Expected A distinct exit code for "the hub catalogue could not be loaded" (a hub problem, worth a retry), documented in `xerj ask --help`, and a message that says it is not an answer about any corpus.
 
-- **Issue #1365** (2026-10-16): **[bug]: xerj search prints whole-file hits without a line number, then asks to "Cite ax_path:line"**
-  *Symptoms*: ### XERJ version  xerj v1.0.0-rc.95  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Pop!_OS 22.04 LTS x86_64  ### Steps to reproduce  ```shell git clone https://github.com/sebollin/lupa.git mkdir lupa-a705445 && git -C lupa archive a705445 | tar -x -C lupa-a705445 xerj --insecure --data-dir ./data & xerj autoindex ./lupa-a705445 xerj search "mensaje de error del motor conditionMessage se limpia de literales antes de publicarse" ```  ### Expected behavior  ``` Every passage header should carry the line, or line range, of the passage it prints. The command ends with "Cite ax_path:line for anything you rely on", and without a line the reader has to open the whole file to find the passage. ```  ### Actual behavior  ```` Whole-file hits print the bare path, followed by a passage from the middle of the file (excerpt):  ```text ─── tests/testthat/test-O68-el-universo-de-los-estadisticos.R  (score 83.77)       # 2. Ahora las dos dicen 2, y las dos declaran la exclusion: antes ninguna lo       ... 5 passage(s) from 'ax-*'. Cite ax_path:line for anything you rely on. ```  Across the 8 xerj search / xerj def runs in our test, 21 of 34 passage headers had no line.  Verified in the source at v1.0.0-rc.95: search.rs:196-202 falls back to the bare path when `_source` has neither `line` nor `start_line`. The comment at search.rs:151-152 calls whole-file bodies "the token flood (measured ~9x the size of the matching passage)", and opening th
+- **Issue #1903** (2026-10-20): **xerj corpus index prints the field-report invitation even with XERJ_DISABLE_FEEDBACK=true or --disable-feedback**
+  *Symptoms*: Found in a fresh-user Swift e2e on 2026-10-19 (xerj v1.0.0-rc.97, Linux x86_64, isolated HOME).  `xerj --help` says the opt-out is "Honoured in any position" and also via `XERJ_DISABLE_FEEDBACK=true`. `xerj corpus index` ignores both: it still prints the auto-send line ("After using xerj, send the field report automatically with …").  ``` $ XERJ_DISABLE_FEEDBACK=true xerj corpus index 18f-content-guide 2>&1 | grep -c 'send the field report' 1 $ xerj corpus index 18f-content-guide --disable-feedback 2>&1 | grep -c 'send the field report' 1 $ XERJ_DISABLE_FEEDBACK=true xerj autoindex --help 2>&1 | grep -c 'send the field report' 0 ```  The line seems to come from the autoindex run that `corpus index` drives, which does not get the opt-out.  ### Expected `corpus index` (and anything else that wraps autoindex) honours the same opt-out as every other surface.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1919,405 +1914,980 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e9a4fd5` (2026-10-19)
-**Commit Message**: fix(deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#1869)
+### Incident Patch 1: `ed98fefc` (2026-10-20)
+**Commit Message**: fix: macOS indexing stalls under a memory cap, and shutdown hangs (#1677)
 
-cargo-audit is red on every PR and on main: zip 7.2.0 and 8.6.0 carry
-RUSTSEC-2026-0367/0368/0369 (fixed in zip 9.0.0).
+* fix: the memory drain's allocator purge actually runs
 
-- xerj-autoindex: zip 8 -> 9; calamine =0.36.1 -> =0.37.0 (zip ^9);
-  office_oxide 0.1.8 -> 0.1.15 in the lockfile (zip ^9, via pdf_oxide).
-  zip 8.6.0 leaves the tree.
-- Adapt the four call sites to zip 9's fallible entry names
-  (file_names() / ZipFile::name() now return Result): a name that cannot
-  be decoded is skipped, never a panic.
-- zip 7.2.0 remains only through candle-core 0.9.2 (optional neural /
-  decide-local features). No candle-core release uses zip >= 9 (0.11.0
-  still requires ^8.6). candle only reads .npz/.pth members into memory and
-  never calls extract(), where all three advisories live, and xerj loads
-  only safetensors through candle. engine/.cargo/audit.toml ignores the
-  three IDs with that justification and the removal condition.
+The memory-pressure drain (#948, #950) ends with a jemalloc purge so the
+pages it frees go back to the OS. The purge was a no-op on every platform.
 
-**File**: `engine/.cargo/audit.toml` (added, +31/-0)
+Root cause: `arena.<i>.purge` is a void mallctl. jemalloc guards it with
+NEITHER_READ_NOR_WRITE, which returns EPERM whenever newp != NULL or
+newlen != 0 (tikv-jemalloc-sys 0.6.1, jemalloc/src/ctl.c:1797-1803, used
+at :2601). `tikv_jemalloc_ctl::raw::write(b"arena.4096.purge\0", 0u64)`
+passes a pointer to the 0 and newlen = 8 (tikv-jemalloc-ctl 0.6.1
+src/raw.rs:137-147), so every call failed, and `let _ =` dropped the
+error. On Linux `background_thread:true` decays dirty pages anyway and
+hid the bug. On macOS there is no background thread (main.rs malloc_conf),
+dirty pages decay only on allocator ticks, and a breaker that rejects
+writes stops the ticks: the node kept refusing writes over pages it was
+not using.
+
+Fix: call `tikv_jemalloc_sys::mallctl` with all four pointer/length
+arguments null/0, in a small function that returns the status. The hook
+stays best-effort, but a failing purge now logs one warni
+
+**File**: `engine/Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+# cargo-audit configuration (read by `cargo audit` run from engine/, as CI does).
-+#
-+# Policy: every RUSTSEC *vulnerability* fails CI unless it is listed here with
-+# a justification that says why it cannot reach us AND what removes the entry.
-+# Keep this list as short as possible; delete an entry as soon as it is fixable.
-+
-+[advisories]
-+ignore = [
-+    # zip < 9.0.0 — RUSTSEC-2026-0367 (SUID/SGID bits preserved on extract),
-+    # RUSTSEC-2026-0368 (extract creates symlinks pointing outside the dest dir),
-+    # RUSTSEC-2026-0369 (extract applies Unix permissions through symlinks).
-+    #
-+    # Every zip we depend on directly or through autoindex (calamine 0.37,
-+    # office_oxide 0.1.15, xerj-autoindex itself) is on the fixed zip 9.x line.
-+    # The only remaining vulnerable copy is zip 7.2.0, pulled in by
-+    # candle-core 0.9.2 (optional `neural` / `decide-local` features of
-+    # xerj-ai). No candle-core release depends on zip >= 9 (latest 0.11.0 still
-+    # requires zip ^8.6), so it cannot be upgraded yet.
-+    #
-+    # Not reachable: all three advisories are in `ZipArchive::extract` /
-+    # `ZipStreamReader::extract` (writing archive entries to disk). candle-core
-+    # only opens .npz/.pth files with `ZipArchive::new` and reads named entries
-+    # into memory (src/npy.rs, src/pickle.rs); it never calls `extract`. XERJ
-+    # itself only loads `model.safetensors` through candle (xerj-ai
-+    # neural.rs), so even those zip readers are not on any code path we use.
-+    #
-+    # Remove these three entries when candle-core ships with zip >= 9.0.0.
-+    "RUSTSEC-2026-0367",
-+    "RUSTSEC-2026-0368",
-+    "RUSTSEC-2026-0369",
-+]
-```
-
-**File**: `engine/Cargo.lock` (modified, +39/-17)
-```diff
-@@ -956,9 +956,9 @@ dependencies = [
- 
- [[package]]
- name = "calamine"
--version = "0.36.1"
-+version = "0.37.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5fa68281b1a76b54a62156474adb06bb380a67e07dd60656e3217152b42183f3"
-+checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
- dependencies = [
-  "atoi_simd",
-  "byteorder",
-@@ -967,9 +967,9 @@ dependencies = [
-  "encoding_rs",
-  "fast-float2",
-  "log",
-- "quick-xml",
-+ "quick-xml 0.42.0",
-  "serde",
-- "zip 8.6.0",
-+ "zip 9.0.5",
- ]
- 
- [[package]]
-@@ -3169,9 +3169,9 @@ checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
- 
- [[package]]
- name = "libc"
--version = "0.2.185"
-+version = "0.2.191"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "52ff2c0fe9bc6cb6b14a0592c2ff4fa9ceb83eea9db979b0487cd054946a2b8f"
-+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
- 
- [[package]]
- name = "libm"
-@@ -3532,6 +3532,18 @@ dependencies = [
-  "libc",
- ]
- 
-+[[package]]
-+name = "nix"
-+version = "0.31.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
-+dependencies = [
-+ "bitflags 2.11.1",
-+ "cfg-if",
-+ "cfg_aliases",
-+ "libc",
-+]
-+
- [[package]]
- name = "nom"
- version = "7.1.3"
-@@ -3694,20 +3706,20 @@ dependencies = [
- 
- [[package]]
- name = "office_oxide"
--version = "0.1.8"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "317c254cebe5b87c74a0fbd84e889d51ec0c4db885fa5aca98700ad85fd9ec5f"
-+checksum = "7993e747e60a6b06c8c0b7060f0bd7f7e8e03921f18a4b42b23738ff276a4715"
- dependencies = [
-  "atoi_simd",
-  "encoding_rs",
-  "fast-float2",
-- "libc",
-+ "flate2",
-  "log",
-- "quick-xml",
-+ "quick-xml 0.42.0",
-  "serde",
+@@ -7755,6 +7755,7 @@ dependencies = [
   "serde_json",
-  "thiserror 2.0.18",
-- "zip 8.6.0",
-+ "zip 9.0.5",
- ]
- 
- [[package]]
-@@ -3909,7 +3921,7 @@ dependencies = [
-  "nom 8.0.0",
-  "office_oxide",
-  "phf 0.14.0",
-- "quick-xml",
-+ "quick-xml 0.41.0",
-  "regex",
-  "serde",
-  "serde_json",
-@@ -4174,7 +4186,7 @@ dependencies = [
-  "findshlibs",
-  "libc",
-  "log",
-- "nix",
-+ "nix 0.26.4",
-  "once_cell",
-  "prost 0.12.6",
-  "prost-build 0.12.6",
-@@ -4451,6 +4463,15 @@ name = "quick-xml"
- version = "0.41.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
-+dependencies = [
-+ "memchr",
-+]
+  "tempfile",
+  "tikv-jemalloc-ctl",
++ "tikv-jemalloc-sys",
+  "tikv-jemallocator",
+  "tokio",
+  "tokio-stream",
+```
+
+**File**: `engine/crates/xerj-common/src/fsio.rs` (modified, +191/-3)
+```diff
+@@ -9,7 +9,8 @@
+ //! acked-data loss.
+ //!
+ //! Every side-car / manifest write on the publish chain must go through
+-//! [`write_file_durable`] or [`replace_file_durable`]. Unix makes the rename
++//! [`write_file_durable`] or [`replace_file_durable`], or, for many files in
++//! one directory, [`stage_file`] plus one [`publish_staged`]. Unix makes the rename
+ //! durable with parent-directory fsync; Windows uses a same-directory Win32
+ //! write-through replacement because it has no equivalent directory-fsync
+ //! contract.
+@@ -27,7 +28,151 @@ use std::os::windows::ffi::OsStrExt as _;
+ #[cfg(not(windows))]
+ pub fn fsync_dir(dir: &Path) -> std::io::Result<()> {
+     let d = std::fs::File::open(dir)?;
+-    d.sync_all()
++    sync_file_full(&d)
++}
 +
-+[[package]]
-+name = "quick-xml"
-+version = "0.42.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
- dependencies = [
-  "encoding_rs",
-  "memchr",
-@@ -7386,7 +7407,7 @@ dependencies = [
-  "memchr",
-  "notify",
-  "pdf_oxide",
-- "quick-xml",
-+ "quick-xml 0.41.0",
-  "rayon",
-  "regex",
-  "reqwest",
-@@ -7440,7 +7461,7 @@ dependencies = [
-  "walkdir",
-  "xerj-common",
-  "xxhash-rust",
-- "zip 8.6.0",
-+ "zip 9.0.5",
- ]
++/// How many full flushes ([`sync_file_full`]) this process has issued.
++static FULL_FLUSHES: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
++
++/// Number of full flushes this process has issued through this module.
++///
++/// A full flush is `File::sync_all`, which on Apple targets is
++/// `fcntl(F_FULLFSYNC)`: it drains the whole device write cache and costs
++/// milliseconds each. Exposed so tests can bound how many a publish costs.
++#[doc(hidden)]
++pub fn full_flush_count() -> u64 {
++    FULL_FLUSHES.load(std::sync::atomic::Ordering::Relaxed)
++}
++
++/// `file.sync_all()`, counted (see [`full_flush_count`]).
++pub fn sync_file_full(file: &std::fs::File) -> std::io::Result<()> {
++    FULL_FLUSHES.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++    file.sync_all()
++}
++
++/// Sync a staged file's bytes ahead of a later device flush.
++///
++/// On Apple targets this is plain `fsync(2)`: it hands the data to the
++/// device but leaves it in the device's write cache, which the one
++/// `F_FULLFSYNC` in [`publish_staged`] then drains for every staged file at
++/// once. Everywhere else it is the same full `sync_all` a durable write
++/// always used, because there `fsync` is already the per-file barrier and
++/// there is no cheaper device-wide one.
++fn sync_file_for_batch(file: &std::fs::File) -> std::io::Result<()> {
++    #[cfg(target_vendor = "apple")]
++    {
++        use std::os::fd::AsRawFd as _;
++        // SAFETY: `fsync` on a descriptor this `File` owns for the call.
++        if unsafe { libc::fsync(file.as_raw_fd()) } == 0 {
++            Ok(())
++        } else {
++            Err(std::io::Error::last_os_error())
++        }
++    }
++    #[cfg(not(target_vendor = "apple"))]
++    {
++        sync_file_full(file)
++    }
++}
++
++/// A file written to a same-directory temp name and synced, waiting for
++/// [`publish_staged`] to move it into place. Dropping it unpublished removes
++/// the temp file.
++#[derive(Debug)]
++pub struct StagedFile {
++    tmp: std::path::PathBuf,
++    dest: std::path::PathBuf,
++    published: bool,
++}
++
++impl Drop for StagedFile {
++    fn drop(&mut self) {
++        if !self.published {
++            let _ = std::fs::remove_file(&self.tmp);
++        }
++    }
++}
++
++fn temp_sibling(path: &Path) -> std::path::PathBuf {
++    let nonce = format!("{:x}-{:?}", std::process::id(), std::thread::current().id());
++    let file_name = path
++        .file_name()
++        .map(|n| n.to_string_lossy().into_owned())
++        .unwrap_or_else(|| "file".to_string());
++    path.with_file_name(format!("{file_name}.tmp.{nonce}"))
++}
++
++/// Write `bytes` to a temp file beside `path` and sync it, for a later
++/// [`publish_staged`]. Nothing is visible at `path` until then.
++pub fn stage_file(path: &Path, bytes: &[u8]) -> std::io::Result<StagedFile> {
++    let tmp = temp_sibling(path);
++    require_same_directory(&tmp, path)?;
++    let staged = StagedFile {
++        tmp,
++        dest: path.to_path_buf(),
++        published: false,
++    };
++    let mut f = std::fs::File::create(&staged.tmp)?;
++    f.write_all(bytes)?;
++    sync_file_for_batch(&f)?;
++    Ok(staged)
++}
++
++/// Stage a temp file the caller wrote itself (streamed output). `file` is the
++/// open handle to `tmp`, fully written and flushed by the caller; this syncs
++/// it like [`stage_file`] does.
++pub fn stage_written_file(
++    tmp: &Path,
++    dest: &Path,
++    file: &std::fs::File,
++) -> std::io::Result<StagedFile> {
++    let staged = StagedFile {
++        tmp: tmp.to_path_buf(),
++        dest: dest.to_path_buf(),
++        published: false,
++    };
++    require_same_directory(&staged.tmp, &staged.dest)?;
++    sync_file_for_batch(file)?;
++    Ok(staged)
++}
++
++/// Move every staged file in `dir` into place, durably, with the same
++/// guarantee as one [`write_file_durable`] per file:
++///
++/// 1. every staged file's bytes reach stable storage before any rename (on
++///    Apple targets, one `F_FULLFSYNC`, which drains the device cache for
++///    every earlier `fsync`; elsewhere each file was already fully synced
++///    when it was staged);
++/// 2. each file replaces its target (rename on Unix, write-through
++///    `MoveFileExW` on Windows);
++/// 3. one parent-directory fsync makes every re
+```
+
+**File**: `engine/crates/xerj-common/src/resource.rs` (modified, +25/-15)
+```diff
+@@ -402,8 +402,9 @@ pub fn available_memory_bytes() -> Option<u64> {
+     probe_available_memory()
+ }
  
- [[package]]
-@@ -7965,14 +7986,15 @@ dependencies = [
+-/// Resident set size of this process, or `None` where this platform has no
+-/// probe. `None` must disable an RSS-driven decision, never read as zero.
++/// Resident set size of this process (on macOS its physical footprint, see
++/// the macOS `probe_rss`), or `None` where this platform has no probe.
++/// `None` must disable an RSS-driven decision, never read as zero.
+ pub fn current_rss_bytes() -> Option<u64> {
+     probe_rss()
+ }
+@@ -549,26 +550,35 @@ fn probe_rss() -> Option<u64> {
+     Some(pages.saturating_mul(page))
+ }
  
- [[package]]
- name = "zip"
--version = "8.6.0"
-+version = "9.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2d04a6b5381502aa6087c94c669499eb1602eb9c5e8198e534de571f7154809b"
-+checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
- dependencies = [
-  "crc32fast",
-  "flate2",
-  "indexmap 2.14.0",
-  "memchr",
-+ "nix 0.31.3",
-  "typed-path",
-  "zopfli",
- ]
-```
-
-**File**: `engine/crates/xerj-autoindex/Cargo.toml` (modified, +6/-5)
-```diff
-@@ -132,16 +132,17 @@ flate2 = "1"                                     # gzip streaming (rust backend)
- pdf_oxide = { version = "=0.3.75", default-features = false, features = ["legacy-crypto"] }
- csv = "1"                                        # streaming CSV with sniffed dialect
- quick-xml = "0.41"                               # XML pull parser + DOCX internals
--zip = { version = "8", default-features = false, features = ["deflate"] }  # DOCX container
-+zip = { version = "9", default-features = false, features = ["deflate"] }  # DOCX container
- # --- Legacy Microsoft Office binary formats (OLE2 / Compound File Binary) ---
- # calamine reads the legacy BIFF `.xls` worksheet stream (it ships its own CFB
--# reader internally); pinned to 0.36.1, which depends on `zip ^8.6` and
--# `quick-xml ^0.41` so it shares this crate's `zip 8` and `quick-xml 0.41`
--# majors without retaining `quick-xml 0.31.0` (RUSTSEC-2026-0194 / 0195).
-+# reader internally); pinned to 0.37.0, which depends on `zip ^9` (the
-+# zip 8.x line carries RUSTSEC-2026-0367/0368/0369, fixed in 9.0.0) so it
-+# shares this crate's `zip 9` major, and never retains `quick-xml 0.31.0`
-+# (RUSTSEC-2026-0194 / 0195); it brings `quick-xml 0.42` alongside our 0.41.
- # Licence: MIT. Its transitive adds are codepage (MIT, for the legacy 8-bit
- # cell codepage) and log (MIT/Apache-2.0); byteorder and encoding_rs are
- # already here.
--calamine = { version = "=0.36.1", features = ["dates"] }
-+calamine = { version = "=0.37.0", features = ["dates"] }
- # `cfb` reads the OLE2/Compound File Binary container directly: used by the
- # content sniffer to route a `.doc`/`.xls`/other OLE2 file by its stream names,
- # and by the `.doc` extractor to pull the WordDocument + Table streams and the
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/pptx.rs` (modified, +2/-0)
-```diff
-@@ -187,6 +187,8 @@ fn slide_order<R: Read + Seek>(z: &mut zip::ZipArchive<R>, budget: &mut Budget)
-     let mut numbered: Vec<(u32, String)> = z
-         .file_names()
-         .filter_map(|n| {
-+            // zip 9: entry names are fallible (non-UTF-8 names); skip those.
-+            let n = n.ok()?;
-             let num = n.strip_prefix("ppt/slides/slide")?.strip_suffix(".xml")?;
-             Some((num.parse().ok()?, n.to_string()))
-         })
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/xlsx.rs` (modified, +2/-0)
-```diff
-@@ -223,6 +223,8 @@ fn sheet_parts<R: Read + Seek>(
-     let mut numbered: Vec<(u32, String)> = z
-         .file_names()
-         .filter_map(|n| {
-+            // zip 9: entry names are fallible (non-UTF-8 names); skip those.
-+            let n = n.ok()?;
-             let num = n
-                 .strip_prefix("xl/worksheets/sheet")?
-                 .strip_suffix(".xml")?;
-```
-
-**File**: `engine/crates/xerj-autoindex/src/harvest/source.rs` (modified, +5/-1)
-```diff
-@@ -195,7 +195,11 @@ pub fn extract_zip(zip: &Path, dest: &Path) -> Result<usize> {
-             skipped += 1;
-             continue;
-         }
--        let raw = entry.name().to_string();
-+        // zip 9: an entry name that cannot be decoded is skipped like an unsafe one.
-+        let Ok(raw) = entry.name().map(|n| n.to_string()) else {
-+            skipped += 1;
-+            continue;
-+        };
-         let Some(safe) = sanitize_entry_path(&raw) else {
-             skipped += 1;
-             continue;
-```
-
-**File**: `engine/crates/xerj-autoindex/src/sniff.rs` (modified, +1/-1)
-```diff
-@@ -1245,7 +1245,7 @@ fn zip_container_kind<R: Read + std::io::Seek>(z: &mut zip::ZipArchive<R>) -> &'
-         }
++/// macOS: the process's physical footprint (`ri_phys_footprint`), not its
++/// resident size.
++///
++/// Resident size leaves out the pages the compressor has taken and the pages
++/// swapped out, which are still this process's memory, and it counts clean
++/// file-backed pages (mmapped segments) the kernel can drop at will. Under a
++/// 1 GiB cap a node read 0.8 GB resident while vmmap showed a 2.2 GB
++/// footprint, 1.3 GB of it compressed, so the breaker kept admitting writes;
++/// and its "released" edges followed the compressor, not a drain. The
++/// footprint is what `/usr/bin/time -l` reports as "peak memory footprint"
++/// and what the kernel's memory-pressure kills act on.
+ #[cfg(target_os = "macos")]
+ fn probe_rss() -> Option<u64> {
+-    let mut info = std::mem::MaybeUninit::<libc::proc_taskinfo>::zeroed();
+-    let size = std::mem::size_of::<libc::proc_taskinfo>() as libc::c_int;
+-    // SAFETY: `proc_pidinfo` writes at most `size` bytes into `info` and
+-    // reports how many it wrote; anything short is treated as a failure.
+-    let written = unsafe {
+-        libc::proc_pidinfo(
++    let mut info = std::mem::MaybeUninit::<libc::rusage_info_v2>::zeroed();
++    // SAFETY: with flavor RUSAGE_INFO_V2, `proc_pid_rusage` writes one
++    // `rusage_info_v2` into the buffer it is given and returns 0, or returns
++    // -1 and writes nothing usable.
++    let rc = unsafe {
++        libc::proc_pid_rusage(
+             std::process::id() as libc::c_int,
+-            libc::PROC_PIDTASKINFO,
+-            0,
+-            info.as_mut_ptr() as *mut libc::c_void,
+-            size,
++            libc::RUSAGE_INFO_V2,
++            info.as_mut_ptr() as *mut libc::rusage_info_t,
+         )
+     };
+-    if written != size {
++    if rc != 0 {
+         return None;
      }
-     // numpy.savez: a zip of `.npy` members.
--    if !z.is_empty() && z.file_names().all(|n| n.ends_with(".npy")) {
-+    if !z.is_empty() && z.file_names().all(|n| n.is_ok_and(|n| n.ends_with(".npy"))) {
-         return "npz";
+-    // SAFETY: proc_pidinfo filled the whole struct (checked above).
+-    Some(unsafe { info.assume_init() }.pti_resident_size)
++    // SAFETY: proc_pid_rusage returned 0, so it filled the struct.
++    Some(unsafe { info.assume_init() }.ri_phys_footprint)
+ }
+ 
+ #[cfg(target_os = "windows")]
+```
+
+**File**: `engine/crates/xerj-common/tests/macos_memory_probe.rs` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++//! On macOS the memory breaker must see the process's physical footprint, not
++//! its resident set.
++//!
++//! The two diverge in both directions, and both hurt the breaker:
++//!
++//! * Pages the compressor has taken (or the pager swapped) leave the resident
++//!   set but are still this process's memory. Under a 1 GiB cap a node read
++//!   0.8 GB resident while it held 2.2 GB, so the breaker let it keep growing.
++//! * Clean file-backed pages (mmapped segment files) count as resident but
++//!   the kernel can drop them at any time, so they are not memory the process
++//!   can be asked to give back.
++//!
++//! The first case cannot be forced from a test. The second can, and it tells
++//! the two probes apart: map a file, read every page, and the resident set
++//! grows by the file's size while the footprint does not move.
++//!
++//! One test binary of its own, so no other test allocates while it measures.
++
++#![cfg(target_os = "macos")]
++
++use std::io::Write as _;
++use std::os::fd::AsRawFd as _;
++
++use xerj_common::resource::current_rss_bytes;
++
++const MIB: u64 = 1024 * 1024;
++const SIZE: usize = 128 * 1024 * 1024;
++
++fn probe() -> u64 {
++    current_rss_bytes().expect("the macOS memory probe must work")
++}
++
++#[test]
++fn the_memory_probe_counts_owned_memory_not_mapped_file_pages() {
++    // Mapped, read, clean file pages.
++    let dir = tempfile::tempdir().expect("tempdir");
++    let path = dir.path().join("mapped.bin");
++    {
++        let mut f = std::fs::File::create(&path).expect("create");
++        let chunk = vec![0x5au8; 1024 * 1024];
++        for _ in 0..(SIZE / chunk.len()) {
++            f.write_all(&chunk).expect("write");
++        }
++        f.sync_all().expect("sync");
++    }
++    let file = std::fs::File::open(&path).expect("open");
++    let before_map = probe();
++    // SAFETY: read-only shared mapping of a file we own, unmapped below.
++    let addr = unsafe {
++        libc::mmap(
++            std::ptr::null_mut(),
++            SIZE,
++            libc::PROT_READ,
++            libc::MAP_SHARED,
++            file.as_raw_fd(),
++            0,
++        )
++    };
++    assert_ne!(addr, libc::MAP_FAILED, "mmap failed");
++    let bytes = addr as *const u8;
++    let mut sum = 0u64;
++    for off in (0..SIZE).step_by(4096) {
++        // SAFETY: `off < SIZE`, inside the mapping.
++        sum += u64::from(unsafe { std::ptr::read_volatile(bytes.add(off)) });
++    }
++    std::hint::black_box(sum);
++
++    // The premise: the pages really are resident, or this test proves nothing.
++    let page = 16 * 1024usize;
++    let mut vec = vec![0 as libc::c_char; SIZE / page];
++    // SAFETY: `vec` holds one byte per page of the mapping.
++    let rc = unsafe { libc::mincore(addr, SIZE, vec.as_mut_ptr()) };
++    assert_eq!(rc, 0, "mincore failed");
++    let resident = vec.iter().filter(|&&b| b & 1 != 0).count();
++    assert!(
++        resident * 10 >= vec.len() * 9,
++        "only {resident} of {} mapped pages are resident",
++        vec.len()
++    );
++
++    let mapped_growth = probe().saturating_sub(before_map);
++    // SAFETY: the mapping created above, with its length.
++    unsafe { libc::munmap(addr, SIZE) };
++    assert!(
++        mapped_growth < 32 * MIB,
++        "probe grew {} MiB for 128 MiB of clean mapped file pages",
++        mapped_growth / MIB
++    );
++
++    // Positive control: memory the process owns does move the probe.
++    let before_heap = probe();
++    let heap: Vec<u8> = (0..SIZE).map(|i| (i % 251) as u8).collect();
++    std::hint::black_box(&heap);
++    let heap_growth = probe().saturating_sub(before_heap);
++    assert!(
++        heap_growth >= 96 * MIB,
++        "probe grew only {} MiB for 128 MiB of touched heap",
++        heap_growth / MIB
++    );
++}
+```
+
+**File**: `engine/crates/xerj-engine/src/governor.rs` (modified, +1/-1)
+```diff
+@@ -1004,7 +1004,7 @@ fn build(config: &Config) -> ResourceGovernor {
+ 
+ /// Current resident set size of this process, in bytes, via
+ /// [`xerj_common::resource::current_rss_bytes`] (`/proc/self/statm` on Linux,
+-/// `proc_pidinfo(PROC_PIDTASKINFO)` on macOS). Returns 0 where the platform
++/// the physical footprint from `proc_pid_rusage` on macOS). Returns 0 where the platform
+ /// exposes no probe — the RSS watermark then never trips, which is safe but
+ /// means no admission control, so [`build`] says so out loud at startup.
+ ///
+```
+
+**File**: `engine/crates/xerj-fts/src/index.rs` (modified, +46/-29)
+```diff
+@@ -1420,6 +1420,11 @@ impl FtsIndexWriter {
+             .map(|(name, _stats, fd)| (name.as_str(), fd.config.analyzer.as_str()))
+             .filter(|(_name, analyzer)| *analyzer != "standard")
+             .collect();
++        // Every side-car of this segment is staged (temp file written and
++        // synced) and published together at the end: see `publish_staged`
++        // for why that is as durable as one durable write per file, and for
++        // the cost it removes (two device flushes per file on Apple targets).
++        let mut staged: Vec<xerj_common::fsio::StagedFile> = Vec::new();
+         if !recorded.is_empty() {
+             #[derive(serde::Serialize)]
+             struct Marker<'a> {
+@@ -1428,34 +1433,40 @@ impl FtsIndexWriter {
+             let bytes = serde_json::to_vec(&Marker { fields: recorded })
+                 .with_context(|| "encoding FTS analyzer marker")?;
+             let path = segment_analyzer_marker_path(&segment_dir, &segment_id);
+-            xerj_common::fsio::write_file_durable(&path, &bytes)
+-                .with_context(|| format!("writing FTS analyzer marker {:?}", path))?;
++            staged.push(
++                xerj_common::fsio::stage_file(&path, &bytes)
++                    .with_context(|| format!("writing FTS analyzer marker {:?}", path))?,
++            );
+         }
+ 
+         // Parallel field writes.  `write_field_static` is a pure function
+         // of its inputs and touches only files named after the field, so
+         // there's no cross-thread contention.
+-        let results: Vec<Result<(String, FieldStats)>> = fields
++        let results: Vec<Result<(String, FieldStats, Vec<xerj_common::fsio::StagedFile>)>> = fields
+             .into_par_iter()
+             .map(|(field_name, stats, field_data)| {
+-                Self::write_field_static(
++                let files = Self::write_field_static(
+                     &segment_dir,
+                     &segment_id,
+                     &field_name,
+                     field_data,
+                     zstd_level,
+                 )
+                 .with_context(|| format!("writing field '{}'", field_name))?;
+-                Ok((field_name, stats))
++                Ok((field_name, stats, files))
+             })
+             .collect();
+ 
+-        // Surface any error; otherwise build the stats map.
++        // Surface any error (dropping `staged` removes every temp file);
++        // otherwise build the stats map and publish the side-cars.
+         let mut all_stats = HashMap::new();
+         for r in results {
+-            let (name, stats) = r?;
++            let (name, stats, files) = r?;
++            staged.extend(files);
+             all_stats.insert(name, stats);
+         }
++        xerj_common::fsio::publish_staged(&segment_dir, staged)
++            .with_context(|| format!("publishing FTS side-cars in {:?}", segment_dir))?;
+ 
+         Ok(all_stats)
      }
-     let mut mime = Vec::with_capacity(64);
+@@ -1466,7 +1477,8 @@ impl FtsIndexWriter {
+         field_name: &str,
+         field_data: FieldData,
+         zstd_level: i32,
+-    ) -> Result<()> {
++    ) -> Result<Vec<xerj_common::fsio::StagedFile>> {
++        let mut staged = Vec::with_capacity(4);
+         // NOTE: `PathBuf::with_extension` replaces the final `.ext` in the path,
+         // so using `segment_dir.join("segment_id.field_name")` followed by
+         // `with_extension("fst")` would strip `.field_name` and collapse every
+@@ -1546,16 +1558,19 @@ impl FtsIndexWriter {
+             out.extend_from_slice(&compressed);
+             out
+         };
+-        // RC4 W1 #10 — every FTS side-car write below goes through durable
+-        // temporary-file sync plus platform-appropriate publication: rename
+-        // and parent-directory fsync on Unix, write-through replacement on
+-        // Windows. These files are part of the segment publish chain: the WAL
+-        // entries they cover are pruned ~1 s after the flush, so side-cars
+-        // sitting only in the volatile page cache meant a power loss could
+-        // leave a registered segment with missing/torn FTS data (silently
+-        // wrong query results or unreadable fields) with no WAL to recover from.
+-        xerj_common::fsio::write_file_durable(&post_path, &post_bytes_wrapped)
+-            .with_context(|| format!("writing postings to {:?}", post_path))?;
++        // RC4 W1 #10 — every FTS side-car below is staged (synced temp file)
++        // and published durably by `finish` through `fsio::publish_staged`:
++        // rename and parent-directory fsync on Unix, write-through
++        // replacement on Windows. These files are part of the segment publish
++        // chain: the WAL entries they cover are pruned ~1 s after the flush,
++        // so side-cars sitting only in the volatile page cache meant a power
++        // loss could leave a registered segment with missing/torn FTS data
++        // (silently wrong query results or unreadable fields) with no WAL to
++        // recover from.
++        staged.push(
+```
+
+**File**: `engine/crates/xerj-fts/tests/finish_full_flushes.rs` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++//! A segment's FTS side-cars must not cost a full device flush per file.
++//!
++//! `File::sync_all` is `fcntl(F_FULLFSYNC)` on Apple targets, which drains the
++//! whole device write cache and costs milliseconds per call. Writing each of a
++//! segment's side-cars as its own durable write (sync the temp file, rename,
++//! sync the directory) paid two of those per file: about 250 for a 31-field
++//! segment, and on a Mac those flushes were most of the indexing time.
++//!
++//! One device flush after the temp files are written, and one after they are
++//! renamed into place (Apple targets; elsewhere `fsync` stays per file, and
++//! only the per-file directory sync goes), give the segment the same guarantee at the moment
++//! `finish` returns: every side-car's bytes are on stable storage before its
++//! name points at them, and every name is on stable storage before the caller
++//! publishes the segment.
++//!
++//! This file holds one test on purpose: the flush counter is process-wide, and
++//! a test binary of its own is the only way no other test writes alongside it.
++
++use std::collections::HashMap;
++use std::sync::Arc;
++
++use xerj_fts::analyzer::AnalyzerRegistry;
++use xerj_fts::index::{FieldValues, FtsIndexReader, FtsIndexWriter};
++
++const FIELDS: usize = 31;
++const DOCS: u32 = 50;
++
++fn field(i: usize) -> String {
++    format!("field_{i:02}")
++}
++
++#[test]
++fn finishing_a_wide_segment_costs_a_bounded_number_of_full_flushes() {
++    let dir = tempfile::tempdir().expect("tempdir");
++    let mut writer =
++        FtsIndexWriter::new(dir.path(), "seg_1", Arc::new(AnalyzerRegistry::default()));
++    for doc in 0..DOCS {
++        let fields: HashMap<String, FieldValues> = (0..FIELDS)
++            .map(|i| {
++                (
++                    field(i),
++                    FieldValues::One(format!("alpha beta value{} doc{doc}", i % 5)),
++                )
++            })
++            .collect();
++        writer.add_document(doc, &fields);
++    }
++    writer
++        .publish_encoded_filename_layout()
++        .expect("layout marker");
++
++    let before = xerj_common::fsio::full_flush_count();
++    let stats = writer.finish().expect("finish");
++    let flushes = xerj_common::fsio::full_flush_count() - before;
++    assert_eq!(stats.len(), FIELDS);
++
++    // The old per-file shape issued 2 per side-car (temp file, then the
++    // directory after its rename): 8 per field, 248 here.
++    //
++    // Apple targets: one device flush before the renames and one after.
++    // Elsewhere `fsync` is the per-file barrier and stays per file, so the
++    // saving is the per-file directory sync: one per side-car plus one.
++    let side_cars = (FIELDS * 4) as u64;
++    let bound = if cfg!(target_vendor = "apple") {
++        2
++    } else {
++        side_cars + 1
++    };
++    assert!(
++        flushes <= bound,
++        "finish issued {flushes} full flushes for {FIELDS} fields; expected at most {bound}"
++    );
++
++    // Same segment, still readable: every field opens and answers.
++    let names: Vec<String> = (0..FIELDS).map(field).collect();
++    let refs: Vec<&str> = names.iter().map(String::as_str).collect();
++    let reader = FtsIndexReader::open(dir.path(), "seg_1", &refs).expect("open");
++    for name in &names {
++        assert!(reader.field_stats(name).is_some(), "{name} has no stats");
++        assert_eq!(reader.term_doc_freq(name, "alpha"), Some(DOCS), "{name}");
++    }
++
++    // No temp file survives a successful finish.
++    let leftovers: Vec<String> = std::fs::read_dir(dir.path())
++        .expect("read_dir")
++        .map(|e| e.expect("entry").file_name().to_string_lossy().into_owned())
++        .filter(|n| n.contains(".tmp"))
++        .collect();
++    assert!(leftovers.is_empty(), "temp files left: {leftovers:?}");
++}
+```
+
+**File**: `engine/crates/xerj-server/Cargo.toml` (modified, +5/-0)
+```diff
+@@ -95,6 +95,11 @@ debug-profiling = [
+ [target.'cfg(not(target_env = "msvc"))'.dependencies]
+ tikv-jemallocator = "0.6"
+ tikv-jemalloc-ctl = { version = "0.6", features = ["stats"] }
++# `mallctl` itself, for the void `arena.<i>.purge` control that the ctl
++# crate's typed read/write helpers cannot call (see
++# `purge_all_jemalloc_arenas`). Already in the graph under
++# tikv-jemallocator and tikv-jemalloc-ctl, so this adds an edge, not a crate.
++tikv-jemalloc-sys = "0.6"
+ libc = "0.2"
+ 
+ [target.'cfg(all(target_os = "linux", not(target_env = "msvc")))'.dependencies]
 ```
 
 ---
 
-### Incident Patch 2: `d23bb7e5` (2026-10-19)
-**Commit Message**: fix(installer): resolve latest release without api.github.com (#1852)
+### Incident Patch 2: `1e682dcc` (2026-10-20)
+**Commit Message**: fix(autoindex): heartbeat while an extract slot is full (#1657)
 
-Squash-merged by Xerj Merger at 54a04d04dbfb6e8c7b8b3dd4ebfe8e05ded00f4e after Build + Test passed.
+PDF worker admission, the mbox parse gate, and the mbox byte budget
+parked on Condvar::wait with no timeout. A permit that is never
+dropped leaves every later file futex-waiting and prints nothing,
+the same shape as the bulk-slot stall.
 
-**File**: `landing/get` (modified, +13/-3)
+The wait is sliced. Every 15s a full slot prints which gate, the
+in-use count, the limit, and how long this waiter has been blocked.
+The wait is not failed: a legal parse may hold the slot for a long
+time, and a short timeout would turn that into an error.
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: xerj-org <[REDACTED_EMAIL]>
+
+**File**: `engine/crates/xerj-autoindex/src/extract/mbox.rs` (modified, +18/-8)
 ```diff
-@@ -88,9 +88,19 @@ target="${cpu}-${plat}"
- # --- resolve version --------------------------------------------------------
- if [ "${XERJ_VERSION:-}" = "" ]; then
-   info "resolving latest release of ${REPO}…"
--  # Follow the /releases/latest redirect to read the tag without jq.
--  tag=$(DLS "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null \
--        | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n1)
-+  # Prefer github.com /releases/latest redirect (no api.github.com rate limit).
-+  # curl -w '%{url_effective}' follows redirects and prints the final .../tag/vX.Y.Z URL.
-+  tag=""
-+  if command -v curl >/dev/null 2>&1; then
-+    tag=$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
-+      "https://github.com/${REPO}/releases/latest" 2>/dev/null \
-+      | sed -n 's|.*/tag/\([^/]*\)$|\1|p' | head -n1)
-+  fi
-+  # Fall back to the REST endpoint when the redirect path yields nothing.
-+  if [ -z "$tag" ]; then
-+    tag=$(DLS "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null \
-+          | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n1)
-+  fi
-   [ -n "$tag" ] || die "could not resolve latest release — set XERJ_VERSION=vX.Y.Z (see https://github.com/${REPO}/releases)"
- else
-   tag="$XERJ_VERSION"
+@@ -525,10 +525,15 @@ impl Gate {
+     }
+ 
+     fn acquire(&self) -> GatePermit<'_> {
+-        let mut state = self.state.lock().expect("mbox gate poisoned");
+-        while state.0 >= state.1 {
+-            state = self.ready.wait(state).expect("mbox gate poisoned");
+-        }
++        let mut state = super::wait_until_slot(
++            "mbox parse",
++            &self.state,
++            &self.ready,
++            super::SLOT_HEARTBEAT,
++            |state| state.0 >= state.1,
++            |state| (state.0, state.1),
++            |line| eprintln!("{line}"),
++        );
+         state.0 += 1;
+         GatePermit(self)
+     }
+@@ -564,10 +569,15 @@ impl Budget {
+     }
+ 
+     fn acquire(&self, bytes: usize) {
+-        let mut used = self.used.lock().expect("mbox budget poisoned");
+-        while *used > 0 && used.saturating_add(bytes) > self.cap {
+-            used = self.freed.wait(used).expect("mbox budget poisoned");
+-        }
++        let mut used = super::wait_until_slot(
++            "mbox byte budget",
++            &self.used,
++            &self.freed,
++            super::SLOT_HEARTBEAT,
++            |used| *used > 0 && used.saturating_add(bytes) > self.cap,
++            |used| (*used, self.cap),
++            |line| eprintln!("{line}"),
++        );
+         *used = used.saturating_add(bytes);
+     }
+ 
 ```
 
-**File**: `landing/get.ps1` (modified, +16/-3)
+**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +115/-0)
 ```diff
-@@ -59,11 +59,24 @@
-     if ($tag -notmatch '^v') { $tag = "v$tag" }  # release tags are v-prefixed
-   } else {
-     Write-Step "resolving latest release of $Repo..."
-+    # Prefer github.com /releases/latest redirect (no api.github.com rate limit).
-     try {
--      $rel = Invoke-RestMethod -UseBasicParsing -Uri "https://api.github.com/repos/$Repo/releases/latest"
--      $tag = $rel.tag_name
-+      $resp = Invoke-WebRequest -UseBasicParsing -MaximumRedirection 0 -Uri "https://github.com/$Repo/releases/latest" -ErrorAction SilentlyContinue
-     } catch {
--      Fail "could not resolve the latest release ($($_.Exception.Message)) - set `$env:XERJ_VERSION='vX.Y.Z' (see https://github.com/$Repo/releases)"
-+      # 302 is expected; PowerShell surfaces it as an error when MaxRedirection=0.
-+      $resp = $_.Exception.Response
+@@ -34,6 +34,8 @@ use serde::{Deserialize, Serialize};
+ use serde_json::{Map, Value};
+ use std::io::{BufRead, BufReader, Read};
+ use std::path::Path;
++use std::sync::{Condvar, Mutex};
++use std::time::{Duration, Instant};
+ 
+ /// Where a record's FIELD NAMES came from — the input to dataset clustering.
+ ///
+@@ -814,6 +816,57 @@ pub(crate) fn emit_document_with_fields(
+     true
+ }
+ 
++/// How often a full extract slot says it is still waiting. The wait is not
++/// failed: a legal PDF or mailbox parse can hold its slot for a long time.
++/// The line exists so a leaked permit is not a silent futex.
++pub(crate) const SLOT_HEARTBEAT: Duration = Duration::from_secs(15);
++
++pub(crate) fn slot_wait_line(kind: &str, in_use: usize, limit: usize, waited: Duration) -> String {
++    format!(
++        "autoindex: still waiting for a {kind} slot (in_use={in_use} limit={limit}) after {}s",
++        waited.as_secs()
++    )
++}
++
++/// Block until `full` is false. Each wait is sliced so a notify is rechecked
++/// and a stuck slot prints [`slot_wait_line`] on `heartbeat` cadence. The
++/// caller adds the permit after this returns; this function does not.
++pub(crate) fn wait_until_slot<'a, T>(
++    kind: &str,
++    lock: &'a Mutex<T>,
++    ready: &Condvar,
++    heartbeat: Duration,
++    full: impl Fn(&T) -> bool,
++    counts: impl Fn(&T) -> (usize, usize),
++    mut note: impl FnMut(&str),
++) -> std::sync::MutexGuard<'a, T> {
++    let heartbeat = heartbeat.max(Duration::from_millis(1));
++    let mut guard = lock.lock().expect("extract slot lock poisoned");
++    let started = Instant::now();
++    let mut next_note = started + heartbeat;
++    while full(&guard) {
++        let now = Instant::now();
++        if now >= next_note {
++            let (in_use, limit) = counts(&guard);
++            note(&slot_wait_line(
++                kind,
++                in_use,
++                limit,
++                now.duration_since(started),
++            ));
++            next_note = now + heartbeat;
++        }
++        let slice = next_note
++            .saturating_duration_since(Instant::now())
++            .min(Duration::from_secs(5));
++        let (next, _) = ready
++            .wait_timeout(guard, slice)
++            .expect("extract slot lock poisoned");
++        guard = next;
 +    }
-+    if ($resp -and $resp.Headers -and $resp.Headers.Location) {
-+      $loc = [string]$resp.Headers.Location
-+      if ($loc -match '/tag/([^/\s]+)$') { $tag = $Matches[1] }
-+    }
-+    if (-not $tag) {
-+      try {
-+        $rel = Invoke-RestMethod -UseBasicParsing -Uri "https://api.github.com/repos/$Repo/releases/latest"
-+        $tag = $rel.tag_name
-+      } catch {
-+        Fail "could not resolve the latest release ($($_.Exception.Message)) - set `$env:XERJ_VERSION='vX.Y.Z' (see https://github.com/$Repo/releases)"
-+      }
++    guard
++}
++
+ #[cfg(test)]
+ mod section_tests {
+     use super::*;
+@@ -1234,3 +1287,65 @@ mod section_tests {
+         assert!(stats2.truncated, "N>cap must set truncated");
      }
-     if (-not $tag) { Fail "could not resolve the latest release - set `$env:XERJ_VERSION='vX.Y.Z'" }
-   }
+ }
++
++#[cfg(test)]
++mod slot_tests {
++    use super::*;
++    use std::sync::Arc;
++    use std::thread;
++    use std::time::Duration;
++
++    #[test]
++    fn slot_wait_line_names_the_slot_and_how_long() {
++        let line = slot_wait_line("pdf worker", 4, 4, Duration::from_secs(45));
++        assert_eq!(
++            line,
++            "autoindex: still waiting for a pdf worker slot (in_use=4 limit=4) after 45s"
++        );
++    }
++
++    /// A full slot used to park on `Condvar::wait` with no timeout and no
++    /// line. The waiter must say so, then proceed when the holder releases.
++    #[test]
++    fn a_full_extract_slot_heartbeats_and_then_proceeds() {
++        let lock = Arc::new(Mutex::new((1usize, 1usize)));
++        let ready = Arc::new(Condvar::new());
++        let notes = Arc::new(Mutex::new(Vec::new()));
++        let lock2 = Arc::clone(&lock);
++        let ready2 = Arc::clone(&ready);
++        let notes2 = Arc::clone(&notes);
++        let waiter = thread::spawn(move || {
++            let guard = wait_until_slot(
++                "pdf worker",
++                &lock2,
++                &ready2,
++                Duration::from_millis(20),
++                |state| state.0 >= state.1,
++                |state| (state.0, state.1),
++                |line| notes2.lock().expect("notes").push(line.to_string()),
++            );
++            guard.0
++        });
++        let deadline = Instant::now() + Duration::from_secs(2);
++        while notes.lock().expect("notes").is_empty() {
++            assert!(
++                Instant::now() < deadline,
++                "a full slot must heartbeat before the holder releases it"
++            );
++            thread::sleep(Duration::from_millis(10));
++        }
++        {
++            let mut guard = lock.lock().expect("lock");
++            guard.0 = 0;
++            ready.notify_all();
++        }
++        assert_eq!(waiter.join().expect("waiter"), 0);
++        let lines = notes.lock().expect("notes");
++        assert!(
++            lines[0].contains("pdf worker")
++                && lines[0].contains("in_use=1")
++                && lines[0].contains("limit=1"),
++            "{lines:?}"
++        );
++    }
++}
+```
+
+**File**: `engine/crates/xerj-autoindex/src/extract/pdf.rs` (modified, +9/-4)
+```diff
+@@ -1404,10 +1404,15 @@ impl WorkerGate {
+     }
+ 
+     fn acquire(&self) -> WorkerPermit<'_> {
+-        let mut state = self.state.lock().expect("PDF worker gate poisoned");
+-        while state.0 >= state.1 {
+-            state = self.ready.wait(state).expect("PDF worker gate poisoned");
+-        }
++        let mut state = super::wait_until_slot(
++            "pdf worker",
++            &self.state,
++            &self.ready,
++            super::SLOT_HEARTBEAT,
++            |state| state.0 >= state.1,
++            |state| (state.0, state.1),
++            |line| eprintln!("{line}"),
++        );
+         state.0 += 1;
+         WorkerPermit(self)
+     }
 ```
 
 ---
 
-### Incident Patch 3: `9db3dbfb` (2026-10-19)
-**Commit Message**: fix(cli): xerj --help feedback blurb names --submit (#1849)
+### Incident Patch 3: `27b2f6ff` (2026-10-20)
+**Commit Message**: fix(api): enforce ES's per-index search request limits with ES's messages (#1859)
 
-Squash-merged by Xerj Merger at c5dab27534f03d31457cc719bd784225de741553 after Build + Test passed.
+* fix(api): enforce ES's per-index search request limits with ES's messages
 
-**File**: `engine/crates/xerj-server/src/main.rs` (modified, +4/-4)
+Motivation:
+All eight `search/30_limits.yml` cases in `catch-lenient.txt` (#1583)
+expect a 400 that XERJ did not return, or returned with a different
+message: a negative `from` (URL or body), `from + size` over
+`index.max_result_window`, a scroll batch over it, a rescore window over
+`index.max_rescore_window`, more `docvalue_fields` than
+`index.max_docvalue_fields_search`, and a `regexp` / `prefix` /
+`/regex/` query_string longer than `index.max_regex_length`.
+
+Root cause:
+- `?from=-1` failed the `usize` parse and got the generic "Failed to
+  parse int parameter"; `{"from": -1}` failed serde with a type error.
+- The result window was only checked inside the engine, with its own
+  message; a scroll request had its size rewritten to the snapshot cap
+  first, so it was never checked at all.
+- Rescore window, docvalue_fields count and regex/prefix length were
+  never checked (HTTP 200).
+
+Fix (es_compat.rs):
+- `?from` that parses as a negative integer -> ES's
+  `illegal_argument_exception` `[from] parameter cannot be negative but
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +232/-4)
 ```diff
-@@ -297,8 +297,8 @@ fn help_text(feedback: bool) -> String {
-          \x20\x20\x20\x20xerj share <index|folder>           give someone read-only search over one\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20index: link + passcode + expiry (see xerj\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20share --help)\n\
--         \x20\x20\x20\x20xerj feedback [OPTIONS]             draft the agent field report (and open its\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20PR) — see xerj feedback --help\n\
-+         \x20\x20\x20\x20xerj feedback [OPTIONS]             draft or --submit the agent field report —\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20see xerj feedback --help\n\
-          \n\
-          OPTIONS (for `xerj [OPTIONS]`, the bare server start):\n\
-          \x20\x20\x20\x20--config,   -c <PATH>  Path to TOML config file. CORS is off by default (no\n\
-@@ -414,8 +414,8 @@ fn help_text(feedback: bool) -> String {
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Proxies to a node you already started — set XERJ_URL or\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--url (see xerj mcp --help)\n\
-          \x20\x20\x20\x20xerj feedback   [opts]          draft the agent field report XERJ asks every agent to\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20file, auto-filling version/OS/what-was-indexed; --open-pr\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20files it, --dry-run just prints (see xerj feedback --help)\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20file; --submit sends it (GitHub PR first, API fallback),\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--dry-run just prints (see xerj feedback --help)\n\
-          \n\
-          SEARCHING A CODEBASE:\n\
-          \x20\x20\x20\x20A search hit returns the whole indexed document, which for source code is the\n\
+@@ -3843,7 +3843,7 @@ pub struct EsSearchBody {
+     /// `null` / absent → default 10.  `0` means return aggregations only.
+     #[serde(default = "default_size")]
+     pub size: usize,
+-    #[serde(default)]
++    #[serde(default, deserialize_with = "deserialize_non_negative_from")]
+     pub from: usize,
+     #[serde(default)]
+     pub sort: Option<Value>,
+@@ -6324,6 +6324,52 @@ fn strip_internal_tracking(v: &mut Value) {
+     }
+ }
+ 
++/// `from` in a search body: ES refuses a negative value with
++/// `[from] parameter cannot be negative but was [-1]` (30_limits.yml) instead
++/// of a generic JSON type error.
++fn deserialize_non_negative_from<'de, D>(deserializer: D) -> Result<usize, D::Error>
++where
++    D: serde::Deserializer<'de>,
++{
++    struct FromVisitor;
++    impl serde::de::Visitor<'_> for FromVisitor {
++        type Value = usize;
++        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
++            f.write_str("a non-negative integer")
++        }
++        fn visit_i64<E: serde::de::Error>(self, n: i64) -> Result<usize, E> {
++            usize::try_from(n).map_err(|_| E::custom(negative_from_reason(n)))
++        }
++        // A huge positive `from` (e.g. u64::MAX) must reach the result-window
++        // check rather than fail as a JSON type error.
++        fn visit_u64<E: serde::de::Error>(self, n: u64) -> Result<usize, E> {
++            Ok(usize::try_from(n).unwrap_or(usize::MAX))
++        }
++    }
++    deserializer.deserialize_any(FromVisitor)
++}
++
++fn negative_from_reason(n: i64) -> String {
++    format!("[from] parameter cannot be negative but was [{n}]")
++}
++
++/// ES's `illegal_argument_exception` for `?from=-1`.
++fn negative_from_error(n: i64) -> Response {
++    let reason = negative_from_reason(n);
++    (
++        StatusCode::BAD_REQUEST,
++        Json(json!({
++            "error": {
++                "root_cause": [{ "type": "illegal_argument_exception", "reason": reason }],
++                "type": "illegal_argument_exception",
++                "reason": reason,
++            },
++            "status": 400,
++        })),
++    )
++        .into_response()
++}
++
+ fn default_size() -> usize {
+     10
+ }
+@@ -11692,7 +11738,10 @@ async fn search_impl(
+     if let Some(ref from_s) = params.from {
+         match from_s.parse::<usize>() {
+             Ok(n) => body.from = n,
+-            Err(_) => return int_param_parse_error("from", from_s),
++            Err(_) => match from_s.parse::<i64>() {
++                Ok(n) if n < 0 => return negative_from_error(n),
++                _ => return int_param_parse_error("from", from_s),
++            },
+         }
+     }
+     // URL-level `seq_no_primary_term=true` / `version=true` promote the
+@@ -11726,6 +11775,9 @@ async fn search_impl(
+     // this size after building the response.
+     let is_scroll_request = params.scroll.is_some();
+     let scroll_page_size = body.size;
++    // The caller's `from`, before the scroll snapshot below rewrites it; the
++    // per-index window checks (`find_index_request_limit_violation`) need it.
++    let requested_from = body.from;
+     if is_scroll_request {
+         // RC4 blocker 11: enforce the open-scroll cap BEFORE running the
+         // search — each context pins a fully-hydrated Vec<Hit>, so an
+@@ -13619,6 +13671,22 @@ async fn search_impl(
+         }
+     }
+ 
++    // Per-index request limits ES enforces before executing a search
++    // (`search/30_limits.yml`): result window / scroll batch size, rescore
++    // window, docvalue_fields count, regex and prefix length.
++    for ix in &participating_indices {
++        if let Some(reason) = find_index_request_limit_violation(
++            &state,
++            ix,
++            &body,
++            requested_from,
++            scroll_page_size,
++            is_scroll_request,
++        ) {
++            return ApiError::new(xerj_common::XerjError::invalid_query(reason)).into_response();
++        }
++    }
++
+     // Request-cache tracking: ES's shard request cache is on by
+     // default for cache-eligible searches (size:0 + aggs), so we
+     // record hit/miss counters per participating index unless the
+@@ -24089,12 +24157,172 @@ pub async fn delete_index_template(
+ // DELETE /_search/scroll            — clear scroll
+ // ─────────────────────────────────────────────────────────────────────────────
+ 
++/// An integer `index.<key>` setting in any of the three spellings a settings
++/// document can carry it (see [`index_max_result_window`]).
++fn index_int_setting(state: &AppState, ix: &str, key: &str) -> Option<u64> {
++    let s = state.engine.index_settings.get(ix).map(|v| v.clone())?;
++    let as_int = |v: &Value| {
++        v.as_u64()
++            .or_else(|| v.as_str().and_then(|s| s.parse().ok()))
++    };
++    let dotted = format!("index.{key}");
++    s.pointer(&format!("/index/{key}"))
++        .and_then(as_int)
++        .or_else(|| s.get("index").and_then(|i| i.get(&dotted)).and_then(as_int))
++        .or_else(|| s.get(&dotted).and_then(as_int))
++}
++
+
+```
+
+**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-8)
+```diff
+@@ -70,14 +70,6 @@ search/170_terms_query.yml · Terms Query with No.of terms exceeding index.max_t
+ search/220_total_hits_object.yml · hits.total as an object
+ search/260_parameter_validation.yml · test negative size throws IAE
+ search/260_parameter_validation.yml · test negative terminate_after throws IAE
+-search/30_limits.yml · Docvalues_fields size limit
+-search/30_limits.yml · Prefix length limit
+-search/30_limits.yml · Regexp length limit
+-search/30_limits.yml · Request window limits without scroll
+-search/30_limits.yml · Request window limits with scroll
+-search/30_limits.yml · Request with negative from value in body
+-search/30_limits.yml · Request with negative from value url parameter
+-search/30_limits.yml · Rescore window limits
+ search/320_disallow_queries.yml · Test disallow expensive queries
+ search/330_fetch_fields.yml · error for flattened includes whole path
+ search/330_fetch_fields.yml · error includes field name
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1902** (2026-10-19): hub contributors: say the corpus is the whole repo at the pin (#1894) (@xerj-org)
-- **PR #1901** (2026-10-19): hub contributors: say a corpus in licence review is not installable yet (#1890) (@xerj-org)
-- **PR #1900** (2026-10-19): hub llms.txt: busy-port case in step 2, and which port --url takes (#1891) (@xerj-org)
-- **PR #1899** (2026-10-19): hub site: real 404 for unknown paths, JSON 404 under /api (#1895) (@xerj-org)
-- **PR #1898** (2026-10-19): hub: add swift-book and swift-evolution corpora (@xerj-org)
-- **PR #1887** (2026-10-19): hub site: Agent score panel on corpus pages (separate from hub stars) + sort by agent score (@xerj-org)
+- **PR #1965** (2026-10-20): hub: make hub.xerj.org discoverable to search and AI crawlers (@xerj-org)
+- **PR #1964** (2026-10-20): answers: five agent-intent pages with light covers (@xerj-org)
+- **PR #1963** (2026-10-20): seo: put the answer before the index on small screens (@xerj-org)
+- **PR #1962** (2026-10-20): Add GA4 analytics tag (G-Z77ETCDJYL) (@xerj-org)
+- **PR #1960** (2026-10-20): style(query): rustfmt parser.rs after #1804 (@xerj-org)
+- **PR #1956** (2026-10-20): hub: /contributors/ v2: 800-tile treemap, People | Repos + Treemap | Table switches, sortable table (@xerj-org)
 
 ---
 
@@ -2337,42 +2907,21 @@ Squash-merged by Xerj Merger at c5dab27534f03d31457cc719bd784225de741553 after B
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#186
+## X. macOS indexing stalls under a memory cap, and shutdown hangs (#1677)
 
 **RULE**:
-When implementing operations in `engine/.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e9a4fd5`: deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#1869). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed98fefc`: macOS indexing stalls under a memory cap, and shutdown hangs (#1677). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/.cargo/audit.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# cargo-audit configuration (read by `cargo audit` run from engine/, as CI does).
-#
-# Policy: every RUSTSEC *vulnerability* fails CI unless it is listed here with
-# a justification that says why it cannot reach us AND what removes the entry.
-# Keep this list as short as possible; delete an entry as soon as it is fixable.
-
-[advisories]
-ignore = [
-    # zip < 9.0.0 — RUSTSEC-2026-0367 (SUID/SGID bits preserved on extract),
-    # RUSTSEC-2026-0368 (extract creates symlinks pointing outside the dest dir),
-    # RUSTSEC-2026-0369 (extract applies Unix permissions through symlinks).
-    #
-    # Every zip we depend on directly or through autoindex (calamine 0.37,
-    # office_oxide 0.1.15, xerj-autoindex itself) is on the fixed zip 9.x line.
-    # The only remaining vulnerable copy is zip 7.2.0, pulled in by
-    # candle-core 0.9.2 (optional `neural` / `decide-local` features of
-    # xerj-ai). No candle-core release depends on zip >= 9 (latest 0.11.0 still
-    # requires zip ^8.6), so it cannot be upgraded yet.
-    #
-    # Not reachable: all three advisories are in `ZipArchive::extract` /
-    # `ZipStreamReader::extract` (writing archive entries to disk). candle-core
-    # only opens .np
+ "tikv-jemalloc-sys",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2382,4 +2931,4 @@ ignore = [
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e9a4fd5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed98fefc` are properly handled with clean fallback behavior.

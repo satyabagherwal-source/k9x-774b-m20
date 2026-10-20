@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T15:43:49.080Z",
-  "total_cycles_completed": 3851,
-  "total_learnings_persisted": 3851,
-  "total_rules_promoted": 3063,
+  "last_updated": "2026-10-20T15:50:12.219Z",
+  "total_cycles_completed": 3854,
+  "total_learnings_persisted": 3854,
+  "total_rules_promoted": 3064,
   "history": [
-    {
-      "timestamp": "2026-10-20T03:06:49.633Z",
-      "repository": "vitest-dev/vitest",
-      "learningId": "learn-github-vitest-dev-vitest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:06:51.395Z",
-      "repository": "Mijick/Popups",
-      "learningId": "learn-github-mijick-popups",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T03:07:00.757Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T03:13:11.857Z",
       "repository": "DevExpress/testcafe",
@@ -1403,6 +1382,27 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:49:51.822Z",
+      "repository": "lodestones/Kromoss",
+      "learningId": "learn-huggingface-lodestones-kromoss",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:49:56.201Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:50:12.219Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

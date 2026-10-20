@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T15:43:49.014Z",
-  "total_verified_learnings": 1054,
+  "last_updated": "2026-10-20T15:50:12.141Z",
+  "total_verified_learnings": 1055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -46919,8 +46919,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "11479fb9",
-      "content_hash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
+      "source_version": "fed7415c",
+      "content_hash": "eef8c0ca7fefb5b7f517552760a8ee70a8da02dd879cc3f3345063e8fa18d77f",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -46938,6 +46938,11 @@
           "number": 2894,
           "title": "deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#186",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3247,
+          "title": "macOS indexing stalls under a memory cap, and shutdown hangs (#1677)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46945,7 +46950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:28:26.908Z",
+      "verified_at": "2026-10-20T15:50:12.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55567,7 +55572,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
+      "content_hash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -55682,7 +55687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T22:04:58.995Z",
+      "verified_at": "2026-10-20T15:49:56.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -102206,6 +102211,47 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T15:43:48.998Z"
+    },
+    "learn-huggingface-lodestones-kromoss": {
+      "learning_id": "learn-huggingface-lodestones-kromoss",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lodestones/Kromoss",
+      "repository": "lodestones/Kromoss",
+      "slug": "hf-lodestones-kromoss",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "content_hash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T15:49:51.748Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3247": {
+      "learning_id": "rule-3247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3247,
+      "title": "macOS indexing stalls under a memory cap, and shutdown hangs (#1677)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "fed7415c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:50:12.130Z"
     }
   },
   "aliases": {

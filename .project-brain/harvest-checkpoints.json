@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T15:43:49.084Z",
+  "last_updated": "2026-10-20T15:50:12.223Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "1496750b1b1e69f0806a8d94f0a5c392581415f2bed10f2cbed25afc914cf643",
-      "verified_at": "2026-10-19T02:09:52.292Z",
+      "content_hash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
+      "verified_at": "2026-10-20T15:49:56.203Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:09:52.292Z"
+      "last_updated": "2026-10-20T15:49:56.203Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
-      "verified_at": "2026-10-19T23:28:26.978Z",
+      "content_hash": "eef8c0ca7fefb5b7f517552760a8ee70a8da02dd879cc3f3345063e8fa18d77f",
+      "verified_at": "2026-10-20T15:50:12.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:28:26.978Z"
+      "last_updated": "2026-10-20T15:50:12.222Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -15614,6 +15614,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T12:03:34.211Z"
+    },
+    "lodestones/Kromoss": {
+      "repository": "lodestones/Kromoss",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-lodestones-kromoss",
+      "content_hash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
+      "verified_at": "2026-10-20T15:49:51.825Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T15:49:51.825Z"
     }
   },
   "repos": {

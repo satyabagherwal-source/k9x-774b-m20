@@ -4344,3 +4344,7 @@ https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8
 # --- Automatically Discovered by AI Scout Engine [2026-10-20T12:03:24.381Z] ---
 # [AI-AGENTS] AhmadHassan-BTed/AutoSwarm-Shadow-Adapter (1260 score) - Zero-modification Human-in-the-Loop adapter for OpenOPC's agentic DAG runtime.
 https://github.com/AhmadHassan-BTed/AutoSwarm-Shadow-Adapter
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-20T15:49:47.889Z] ---
+# [HUGGINGFACE-AI-MODELS] lodestones/Kromoss (3500 score) - Verified Hugging Face Model: lodestones/Kromoss (150 likes, 5365 downloads)
+https://huggingface.co/lodestones/Kromoss

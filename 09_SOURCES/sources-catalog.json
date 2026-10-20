@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "1496750b1b1e69f0806a8d94f0a5c392581415f2bed10f2cbed25afc914cf643",
-    "lastHarvestedAt": "2026-10-19T02:09:52.288Z",
+    "contentHash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
+    "lastHarvestedAt": "2026-10-20T15:49:56.197Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "11479fb9",
+    "sourceVersion": "fed7415c",
     "license": "Apache-2.0",
-    "contentHash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
-    "lastHarvestedAt": "2026-10-19T23:28:26.972Z",
+    "contentHash": "eef8c0ca7fefb5b7f517552760a8ee70a8da02dd879cc3f3345063e8fa18d77f",
+    "lastHarvestedAt": "2026-10-20T15:50:12.215Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -10398,5 +10398,15 @@
     "contentHash": "afeb70141143ea7d8374f5ace639e54515962e8212413fde0193db54bf9b7f5a",
     "lastHarvestedAt": "2026-10-20T12:03:34.203Z",
     "learningId": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter"
+  },
+  "hf-lodestones-kromoss": {
+    "repository": "lodestones/Kromoss",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
+    "sourceVersion": "hf-lodestones-kromoss",
+    "license": "Open-Source",
+    "contentHash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
+    "lastHarvestedAt": "2026-10-20T15:49:51.818Z",
+    "learningId": "learn-huggingface-lodestones-kromoss"
   }
 }

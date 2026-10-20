@@ -18244,5 +18244,17 @@
     "qualityScore": 1260,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-20T12:00:08.180Z"
+  },
+  {
+    "name": "lodestones/Kromoss",
+    "fullName": "lodestones/Kromoss",
+    "url": "https://huggingface.co/lodestones/Kromoss",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: lodestones/Kromoss (150 likes, 5365 downloads)",
+    "likes": 150,
+    "downloads": 5365,
+    "qualityScore": 3500,
+    "discoveredAt": "2026-10-20T15:47:39.314Z"
   }
 ]
