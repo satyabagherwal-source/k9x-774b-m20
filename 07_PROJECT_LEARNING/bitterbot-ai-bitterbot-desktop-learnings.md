@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `f2eb34aa`  
+> **Source Version**: `2b3c5e26`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:19:16.639Z  
+> **Timestamp**: 2026-10-20T02:34:27.587Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:19:16.631Z  
+> **Harvest Timestamp**: 2026-10-20T02:34:27.579Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,301 +1799,412 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f2eb34aa` (2026-10-20)
-**Commit Message**: chore(deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)
+### Incident Patch 1: `2b3c5e26` (2026-10-20)
+**Commit Message**: chore(deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator (#119)
 
-Bumps the cargo-minor-patch group with 7 updates in the /desktop/src-tauri directory:
+* chore(deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator
 
-| Package | From | To |
-| --- | --- | --- |
-| [tauri](https://github.com/tauri-apps/tauri) | `2.12.1` | `2.12.2` |
-| [tauri-plugin-shell](https://github.com/tauri-apps/plugins-workspace) | `2.4.0` | `2.5.0` |
-| [tauri-plugin-updater](https://github.com/tauri-apps/plugins-workspace) | `2.13.1` | `2.14.0` |
-| [serde_json](https://github.com/serde-rs/json) | `1.0.151` | `1.0.154` |
-| [tauri-plugin-deep-link](https://github.com/tauri-apps/plugins-workspace) | `2.6.1` | `2.6.2` |
-| [tauri-plugin-single-instance](https://github.com/tauri-apps/plugins-workspace) | `2.5.2` | `2.5.4` |
-| [tauri-build](https://github.com/tauri-apps/tauri) | `2.7.1` | `2.7.2` |
-
-
-
-Updates `tauri` from 2.12.1 to 2.12.2
-- [Release notes](https://github.com/tauri-apps/tauri/releases)
-- [Commits](https://github.com/tauri-apps/tauri/compare/tauri-v2.12.1...tauri-v2.12.2)
-
-Updates `tauri-plugin-shell` from 2.4.0 to 2.5.0
-- [Release notes](https://github.com/tauri-apps/plugins-workspace/releases)
-- [Commits](https://github.com/tauri-apps/plugin
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +19/-38)
-```diff
-@@ -2250,9 +2250,9 @@ checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
- 
- [[package]]
- name = "minisign-verify"
--version = "0.2.5"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "22f9645cb765ea72b8111f36c522475d2daa0d22c957a9826437e97534bc4e9e"
-+checksum = "871285dc19d8d0ebe0eef3d0e99a205f2a71363b122632cbbfa4a6c370a960ce"
- 
- [[package]]
- name = "miniz_oxide"
-@@ -3449,9 +3449,9 @@ dependencies = [
- 
- [[package]]
- name = "serde_json"
--version = "1.0.151"
-+version = "1.0.154"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
-+checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
- dependencies = [
-  "itoa",
-  "memchr",
-@@ -3569,7 +3569,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1e362d9935bc50f019969e2f9ecd66786612daae13e8f277be7bfb66e8bed3f7"
- dependencies = [
-  "libc",
-- "sigchld",
-  "windows-sys 0.60.2",
- ]
- 
-@@ -3579,27 +3578,6 @@ version = "1.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
- 
--[[package]]
--name = "sigchld"
--version = "0.2.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "47106eded3c154e70176fc83df9737335c94ce22f821c32d17ed1db1f83badb1"
--dependencies = [
-- "libc",
-- "os_pipe",
-- "signal-hook",
--]
--
--[[package]]
--name = "signal-hook"
--version = "0.3.18"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d881a16cf4426aa584979d30bd82cb33429027e42122b169753d6ef1085ed6e2"
--dependencies = [
-- "libc",
-- "signal-hook-registry",
--]
--
- [[package]]
- name = "signal-hook-registry"
- version = "1.4.8"
-@@ -3917,9 +3895,9 @@ checksum = "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1"
- 
- [[package]]
- name = "tauri"
--version = "2.12.1"
-+version = "2.12.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ed99ee9694a2deb776d91cae48ac7411ddfc89ecae2f9b5041111d8c88f2ace9"
-+checksum = "d061d042ccd2df9c9f1508c1e63d835278c0a4c8801eb41764080e51f2eaaf34"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -3969,9 +3947,9 @@ dependencies = [
- 
- [[package]]
- name = "tauri-build"
--version = "2.7.1"
-+version = "2.7.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "59563ca5b331fd97f27ee9672ec8d36d33bb3c9e2c9f6710a1a5687256052e45"
-+checksum = "2eea0b6302f82c574b21af6fc6ae6e86183b9280853c22621d0abf0936911ffc"
- dependencies = [
-  "anyhow",
-  "cargo_toml",
-@@ -4047,9 +4025,9 @@ dependencies = [
- 
- [[package]]
- name = "tauri-plugin-deep-link"
--version = "2.6.1"
-+version = "2.6.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4ac7a92a46ab5c88f44532ca50906d6e448a948d4ddf8c5376ab125e3260f736"
-+checksum = "1b3c64e24ebcbc63aaa2d88a9c51e2507084b46620baf39ecb0baa0738a08bb4"
- dependencies = [
-  "dunce",
-  "plist",
-@@ -4078,11 +4056,12 @@ dependencies = [
- 
- [[package]]
- name = "tauri-plugin-shell"
--version = "2.4.0"
-+version = "2.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "094bdbc47e5efe36544ba21b3a53ab5c724150236cf55e6c9be46191deb6eab6"
-+checksum = "8567d42b2c7264355daa1df415ec77f52aa42e885924c86a969be2e920e05521"
- dependencies = [
-  "encoding_rs",
-+ "libc",
-  "log",
-  "open",
-  "os_pipe",
-@@ -4095,13 +4074,14 @@ dependencies = [
-  "tauri-plugin",
-  "thiserror 2.0.18",
-  "tokio",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
- name = "tauri-plugin-single-instance"
--version = "2.5.2"
-+version = "2.5.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ee2c8fe2d6b75caed0153f91eda30ea1dea3bfb6710d5adb80456d2c035a569d"
-+checksum = "561cd99484561bc39c954768e7b41a66cebbe1ac3d9d081c34361f740c489e2c"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -4116,16 +4096,17 @@ dependencies = [
- 
- [[package]]
- name = "tauri-plugin-updater"
--version = "2.13.1"
-+version = "2.14.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3cb0b2ea3e85ca287990d3859a29cc5cb18024240fd78f62e027fb7963670f18"
-+checksum = "7259989d4fe11b2bf51f7d671642249b1837c4ae2da1430dc713ae38f98ceeec"
- dependencies = [
-  "base64 0.22.1",
-  "dirs",
-  "flate2",
-  "futures-util",
-  "http",
-  "infer",
-+ "libc",
-  "log",
-  "minisign-verify",
-  "osakit",
-```
-
----
-
-### Incident Patch 2: `43d1c6dd` (2026-10-20)
-**Commit Message**: chore(deps): bump tower-http from 0.6.8 to 0.7.1 in /orchestrator (#118)
-
-Bumps [tower-http](https://github.com/tower-rs/tower-http) from 0.6.8 to 0.7.1.
-- [Release notes](https://github.com/tower-rs/tower-http/releases)
-- [Commits](https://github.com/tower-rs/tower-http/compare/tower-http-0.6.8...tower-http-0.7.1)
+Bumps [libp2p](https://github.com/libp2p/rust-libp2p) from 0.54.1 to 0.56.0.
+- [Release notes](https://github.com/libp2p/rust-libp2p/releases)
+- [Changelog](https://github.com/libp2p/rust-libp2p/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/libp2p/rust-libp2p/compare/v0.54.1...libp2p-v0.56.0)
 
 ---
 updated-dependencies:
-- dependency-name: tower-http
-  dependency-version: 0.7.1
+- dependency-name: libp2p
+  dependency-version: 0.56.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `orchestrator/Cargo.lock` (modified, +20/-15)
+* fix(orchestrator): adapt swarm event patterns to libp2p 0.56
+
+request_response::Event::Message gained connection_id and
+relay::Event::CircuitReqDenied gained status, so match them with rest
+patterns. gossipsub::Behaviour::unsubscribe now returns a plain bool.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: VGIL77 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.1 <[
+
+**File**: `orchestrator/Cargo.lock` (modified, +263/-332)
 ```diff
-@@ -482,7 +482,7 @@ dependencies = [
-  "tempfile",
-  "tokio",
-  "tokio-stream",
-- "tower-http",
-+ "tower-http 0.7.1",
-  "tracing",
-  "tracing-subscriber",
-  "xcap",
-@@ -2105,16 +2105,6 @@ version = "2.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "469fb0b9cefa57e3ef31275ee7cacb78f2fdca44e4765491884a2b119d4eb130"
+@@ -43,6 +43,18 @@ dependencies = [
+  "subtle",
+ ]
  
--[[package]]
--name = "iri-string"
--version = "0.7.11"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d8e7418f59cc01c88316161279a7f665217ae316b388e58a0d10e29f54f1e5eb"
--dependencies = [
-- "memchr",
-- "serde",
--]
--
- [[package]]
- name = "is_terminal_polyfill"
- version = "1.70.2"
-@@ -3945,7 +3935,7 @@ dependencies = [
-  "tokio",
-  "tokio-rustls",
-  "tower",
-- "tower-http",
-+ "tower-http 0.6.11",
-  "tower-service",
-  "url",
-  "wasm-bindgen",
-@@ -4711,20 +4701,35 @@ dependencies = [
- 
- [[package]]
- name = "tower-http"
--version = "0.6.8"
-+version = "0.6.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d4e6559d53cc268e5031cd8429d05415bc4cb4aefc4aa5d6cc35fbf5b924a1f8"
-+checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
- dependencies = [
-  "bitflags 2.11.0",
-  "bytes",
-  "futures-util",
-  "http 1.5.0",
-  "http-body 1.0.1",
-- "iri-string",
-  "pin-project-lite",
-  "tower",
-  "tower-layer",
-  "tower-service",
-+ "url",
++[[package]]
++name = "ahash"
++version = "0.8.12"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
++dependencies = [
++ "cfg-if",
++ "once_cell",
++ "version_check",
++ "zerocopy",
 +]
 +
-+[[package]]
-+name = "tower-http"
-+version = "0.7.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "08a05a66a4fdd61cbbe0a1d755ffe0ca6aba159dd4820936a0ff8a8278245b9c"
-+dependencies = [
-+ "bitflags 2.11.0",
-+ "bytes",
-+ "http 1.5.0",
-+ "percent-encoding",
-+ "pin-project-lite",
-+ "tower-layer",
-+ "tower-service",
+ [[package]]
+ name = "aho-corasick"
+ version = "1.1.4"
+@@ -52,12 +64,6 @@ dependencies = [
+  "memchr",
+ ]
+ 
+-[[package]]
+-name = "allocator-api2"
+-version = "0.2.21"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+-
+ [[package]]
+ name = "annotate-snippets"
+ version = "0.11.5"
+@@ -130,33 +136,27 @@ version = "0.3.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
+ 
+-[[package]]
+-name = "arrayvec"
+-version = "0.7.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
+-
+ [[package]]
+ name = "asn1-rs"
+-version = "0.6.2"
++version = "0.7.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5493c3bedbacf7fd7382c6346bbd66687d12bbaad3a89a2d2c303ee6cf20b048"
++checksum = "b7f43a50ac4fdca5df8e885c21b835997f0a1cdee65494a6847694a98652d9d8"
+ dependencies = [
+  "asn1-rs-derive",
+  "asn1-rs-impl",
+  "displaydoc",
+  "nom 7.1.3",
+  "num-traits",
+  "rusticata-macros",
+- "thiserror 1.0.69",
++ "thiserror 2.0.18",
+  "time",
  ]
  
  [[package]]
+ name = "asn1-rs-derive"
+-version = "0.5.1"
++version = "0.6.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "965c2d33e53cb6b267e148a4cb0760bc01f4904c1cd4bb4002a085bb016d1490"
++checksum = "3109e49b1e4909e9db6515a30c633684d68cdeaa252f215214cb4fa1a5bfee2c"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -327,11 +327,12 @@ checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
+ 
+ [[package]]
+ name = "attohttpc"
+-version = "0.24.1"
++version = "0.30.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8d9a9bf8b79a749ee0b911b91b671cc2b6c670bdbc7e3dfd537576ddc94bb2a2"
++checksum = "16e2cdb6d5ed835199484bb92bb8b3edd526effe995c61732580439c1a67e2e9"
+ dependencies = [
+- "http 0.2.12",
++ "base64 0.22.1",
++ "http",
+  "log",
+  "url",
+ ]
+@@ -352,10 +353,10 @@ dependencies = [
+  "bytes",
+  "form_urlencoded",
+  "futures-util",
+- "http 1.5.0",
+- "http-body 1.0.1",
++ "http",
++ "http-body",
+  "http-body-util",
+- "hyper 1.8.1",
++ "hyper",
+  "hyper-util",
+  "itoa",
+  "matchit",
+@@ -383,8 +384,8 @@ checksum = "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1"
+ dependencies = [
+  "bytes",
+  "futures-core",
+- "http 1.5.0",
+- "http-body 1.0.1",
++ "http",
++ "http-body",
+  "http-body-util",
+  "mime",
+  "pin-project-lite",
+@@ -470,10 +471,10 @@ dependencies = [
+  "enigo",
+  "futures",
+  "hex",
+- "http 1.5.0",
++ "http",
+  "image",
+  "libp2p",
+- "lru 0.18.5",
++ "lru",
+  "rand 0.8.5",
+  "reqwest",
+  "serde",
+@@ -862,6 +863,30 @@ dependencies = [
+  "cfg-if",
+ ]
+ 
++[[package]]
++name = "critical-section"
++version = "1.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
++
++[[package]]
++name = "crossbeam-channel"
++version = "0.5.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "98b0cc327b5bc766e7fda9c9260cc0fa81b43a8e240440422dff70788e3f9ef1"
++dependencies = [
++ "crossbeam-utils",
++]
++
++[[package]]
++name = "crossbeam-epoch"
++version = "0.9.21"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "dc74980687109a3b14c72fd458107bf0baa1da1a1a805e178d15501ba9b86d9d"
++dependencies = [
++ "crossbeam-utils",
++]
++
+ [[package]]
+ name = "crossbeam-utils"
+ version = "0.8.21"
+@@ -969,9 +994,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "der-parser"
+-version = "9.0.0"
++version = "10.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5cd0a5c643689626bec213c4d8bd4d96acc8ffdb4ad4bb6bc16abf27d5f4b553"
++checksum = "07da5016415d5a3c4dd39b11ed26f915f52fc4e0dc197d87908bc916e51bc1a6"
+ dependencies = [
+  "asn1-rs",
+  "displaydoc",
+@@ -1238,6 +1263,18 @@ dependencies = [
+  "pin-project-lite",
+ ]
+ 
++[[package]]
++name = "fastbloom"
++version = "0.14.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4e7f34442dbe69c60fe8eaf58a8cafff81a1f278816d8ab4db255b3bef4ac3c4"
++dependencies = [
++ "getrandom 0.3.4",
++ "libm",
++ "rand 0.9.2",
++ "siphasher",
++]
++
+ [[package]]
+ name = "fastrand"
+ version = "2.3.0"
+@@ -1434,17 +1471,6 @@ version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
+ 
+-[[package]]
+-name = "futures-ticker"
+-version = "0.0.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checks
 ```
 
 **File**: `orchestrator/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -33,7 +33,7 @@ base64 = "0.23"
- rand = "0.8"
- clap = { version = "4", features = ["derive", "env"] }
- axum = "0.8"
--tower-http = { version = "0.6", features = ["cors"] }
-+tower-http = { version = "0.7", features = ["cors"] }
- http = "1"
- tokio-stream = "0.1"
- hex = "0.4"
+@@ -5,7 +5,7 @@ edition = "2021"
+ description = "P2P orchestrator daemon for Bitterbot skill propagation network"
+ 
+ [dependencies]
+-libp2p = { version = "0.54", features = [
++libp2p = { version = "0.56", features = [
+   "gossipsub",
+   "kad",
+   "autonat",
+```
+
+**File**: `orchestrator/src/swarm/mod.rs` (modified, +3/-2)
+```diff
+@@ -1463,6 +1463,7 @@ impl SwarmHandle {
+             BitterbotBehaviourEvent::CircleRpc(request_response::Event::Message {
+                 peer,
+                 message,
++                ..
+             }) => match message {
+                 request_response::Message::Request { request, channel, .. } => {
+                     // Per-peer rate limit + a hard cap on outstanding held
+@@ -1812,7 +1813,7 @@ impl SwarmHandle {
+                     relay::Event::ReservationTimedOut { src_peer_id } => {
+                         debug!("Relay server: reservation timed out for {}", src_peer_id);
+                     }
+-                    relay::Event::CircuitReqDenied { src_peer_id, dst_peer_id } => {
++                    relay::Event::CircuitReqDenied { src_peer_id, dst_peer_id, .. } => {
+                         debug!("Relay server: circuit denied from {} to {}", src_peer_id, dst_peer_id);
+                     }
+                     _ => {}
+@@ -2354,7 +2355,7 @@ impl SwarmHandle {
+                     }));
+                 } else {
+                     let t = gossipsub::IdentTopic::new(topic.clone());
+-                    let ok = self.swarm.behaviour_mut().gossipsub.unsubscribe(&t).unwrap_or(false);
++                    let ok = self.swarm.behaviour_mut().gossipsub.unsubscribe(&t);
+                     let _ = respond.send(serde_json::json!({
+                         "type": "response", "id": id,
+                         "payload": { "ok": ok, "topic": topic }
+```
+
+---
+
+### Incident Patch 2: `f6fe2957` (2026-10-20)
+**Commit Message**: chore(deps): bump the npm-minor-patch group across 1 directory with 42 updates (#281)
+
+* chore(deps): bump the npm-minor-patch group across 1 directory with 42 updates
+
+Bumps the npm-minor-patch group with 42 updates in the / directory:
+
+| Package | From | To |
+| --- | --- | --- |
+| [@aws-sdk/client-bedrock](https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock) | `3.1146.0` | `3.1152.0` |
+| [@buape/carbon](https://github.com/buape/carbon) | `0.16.0` | `0.17.0` |
+| [@coinbase/cdp-sdk](https://github.com/coinbase/cdp-sdk) | `1.57.1` | `1.59.0` |
+| [@larksuiteoapi/node-sdk](https://github.com/larksuite/node-sdk) | `1.74.0` | `1.76.0` |
+| [@opentelemetry/exporter-trace-otlp-http](https://github.com/open-telemetry/opentelemetry-js) | `0.222.0` | `0.223.0` |
+| [@opentelemetry/resources](https://github.com/open-telemetry/opentelemetry-js) | `2.11.0` | `2.12.0` |
+| [@opentelemetry/sdk-node](https://github.com/open-telemetry/opentelemetry-js) | `0.222.0` | `0.223.0` |
+| [express](https://github.com/expressjs/express) | `5.2.1` | `5.3.0` |
+| [file-type](https://github.com/sindresorhus/file-type) | `22.1.1` | `22.2.0` |
+| [imapflow](https://github.com/postalsys/imapflow) | `2
+
+**File**: `package.json` (modified, +3/-3)
+```diff
+@@ -157,7 +157,7 @@
+     "@anthropic-ai/claude-agent-sdk": "^0.3.296",
+     "@anthropic-ai/sdk": "^0.133.0",
+     "@aws-sdk/client-bedrock": "^3.1146.0",
+-    "@buape/carbon": "0.16.0",
++    "@buape/carbon": "0.17.0",
+     "@clack/prompts": "^1.8.1",
+     "@coinbase/agentkit": "^0.10.4",
+     "@coinbase/cdp-sdk": "^1.57.1",
+@@ -170,9 +170,9 @@
+     "@modelcontextprotocol/sdk": "^1.32.1",
+     "@mozilla/readability": "^0.6.0",
+     "@opentelemetry/api": "^1.9.1",
+-    "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
++    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
+     "@opentelemetry/resources": "^2.11.0",
+-    "@opentelemetry/sdk-node": "^0.222.0",
++    "@opentelemetry/sdk-node": "^0.223.0",
+     "@opentelemetry/semantic-conventions": "^1.43.0",
+     "@sinclair/typebox": "0.34.52",
+     "@slack/bolt": "^4.6.0",
+```
+
+**File**: `src/discord/monitor/listeners.ts` (modified, +2/-1)
+```diff
+@@ -209,7 +209,8 @@ async function handleDiscordReactionEvent(params: {
+       channelType === ChannelType.PublicThread ||
+       channelType === ChannelType.PrivateThread ||
+       channelType === ChannelType.AnnouncementThread;
+-    let parentId = "parentId" in channel ? (channel.parentId ?? undefined) : undefined;
++    let parentId: string | undefined =
++      "parentId" in channel ? (channel.parentId ?? undefined) : undefined;
+     let parentName: string | undefined;
+     let parentSlug = "";
+     if (isThreadChannel) {
+```
+
+**File**: `src/discord/monitor/message-utils.ts` (modified, +15/-5)
+```diff
+@@ -1,5 +1,4 @@
+ import type { ChannelType, Client, Message } from "@buape/carbon";
+-import type { APIAttachment } from "discord-api-types/v10";
+ import { logVerbose } from "../../globals.js";
+ import { fetchRemoteMedia } from "../../media/fetch.js";
+ import { saveMediaBuffer } from "../../media/store.js";
+@@ -31,10 +30,21 @@ type DiscordSnapshotAuthor = {
+   name?: string | null;
+ };
+ 
++/**
++ * The attachment fields this module reads. Carbon 0.17 brands its attachment IDs and
++ * pins its own discord-api-types, so a structural type keeps us independent of both.
++ */
++type DiscordAttachmentLike = {
++  id?: string;
++  url: string;
++  filename?: string;
++  content_type?: string | null;
++};
++
+ type DiscordSnapshotMessage = {
+   content?: string | null;
+   embeds?: Array<{ description?: string | null; title?: string | null }> | null;
+-  attachments?: APIAttachment[] | null;
++  attachments?: DiscordAttachmentLike[] | null;
+   author?: DiscordSnapshotAuthor | null;
+ };
+ 
+@@ -156,7 +166,7 @@ export async function resolveMediaList(
+   return out;
+ }
+ 
+-function inferPlaceholder(attachment: APIAttachment): string {
++function inferPlaceholder(attachment: DiscordAttachmentLike): string {
+   const mime = attachment.content_type ?? "";
+   if (mime.startsWith("image/")) {
+     return "<media:image>";
+@@ -170,7 +180,7 @@ function inferPlaceholder(attachment: APIAttachment): string {
+   return "<media:document>";
+ }
+ 
+-function isImageAttachment(attachment: APIAttachment): boolean {
++function isImageAttachment(attachment: DiscordAttachmentLike): boolean {
+   const mime = attachment.content_type ?? "";
+   if (mime.startsWith("image/")) {
+     return true;
+@@ -182,7 +192,7 @@ function isImageAttachment(attachment: APIAttachment): boolean {
+   return /\.(avif|bmp|gif|heic|heif|jpe?g|png|tiff?|webp)$/.test(name);
+ }
+ 
+-function buildDiscordAttachmentPlaceholder(attachments?: APIAttachment[]): string {
++function buildDiscordAttachmentPlaceholder(attachments?: readonly DiscordAttachmentLike[]): string {
+   if (!attachments || attachments.length === 0) {
+     return "";
+   }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #281** (2026-10-20): chore(deps): bump the npm-minor-patch group across 1 directory with 42 updates (@dependabot[bot])
 - **PR #278** (2026-10-20): chore(deps): bump the cargo-minor-patch group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #276** (2026-10-19): feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (@VGIL77)
 - **PR #275** (2026-10-19): feat(compute): PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI (@VGIL77)
 - **PR #274** (2026-10-19): feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (@VGIL77)
 - **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
-- **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
 
 ---
 
@@ -2113,82 +2224,107 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)
+## X. deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator (#119)
 
 **RULE**:
-When implementing operations in `desktop/src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `orchestrator/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f2eb34aa`: deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b3c5e26`: deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator (#119). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktop/src-tauri/Cargo.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orchestrator/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-version = "0.3.0"
-checksum = "871285dc19d8d0ebe0eef3d0e99a205f2a71363b122632cbbfa4a6c370a960ce"
-version = "1.0.154"
-checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
-version = "2.12.2"
-checksum = "d061d042ccd2df9c9f1508c1e63d835278c0a4c8801eb41764080e51f2eaaf34"
-version = "2.7.2"
-checksum = "2eea0b6302f82c574b21af6fc6ae6e86183b9280853c22621d0abf0936911ffc"
-version = "2.6.2"
-checksum = "1b3c64e24ebcbc63aaa2d88a9c51e2507084b46620baf39ecb0baa0738a08bb4"
-version = "2.5.0"
-checksum = "8567d42b2c7264355daa1df415ec77f52aa42e885924c86a969be2e920e05521"
- "libc",
- "windows-sys 0.60.2",
-version = "2.5.4"
-checksum = "561cd99484561bc39c954768e7b41a66cebbe1ac3d9d081c34361f740c489e2c"
-version = "2.14.0"
-checksum = "7259989d4fe11b2bf51f7d671642249b1837c4ae2da1430dc713ae38f98ceeec"
- "libc",
+[[package]]
+name = "ahash"
+version = "0.8.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+dependencies = [
+ "cfg-if",
+ "once_cell",
+ "version_check",
+ "zerocopy",
+]
+
+version = "0.7.2"
+checksum = "b7f43a50ac4fdca5df8e885c21b835997f0a1cdee65494a6847694a98652d9d8"
+ "thiserror 2.0.18",
+version = "0.6.0"
+checksum = "3109e49b1e4909e9db6515a30c633684d68cdeaa252f215214cb4fa1a5bfee2c"
+version = "0.30.1"
+checksum = "16e2cdb6d5ed835199484bb92bb8b3edd526effe995c61732580439c1a67e2e9"
+ "base64 0.22.1",
+ "http",
+ "http",
+ "http-body",
+ "hyper",
+ "http",
+ "http-body",
+ "http",
+ "lru",
+[[package]]
+name = "critical-section"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
+
+[[package]]
+name = "crossbeam-channel"
+version = "0.5.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "98b0cc327b5bc766e7fda9c9260cc0fa81b43a8e240440422dff70788e3f9ef1"
+dependencies = [
+ "crossbeam-utils",
+]
+
+[[package]]
+name = "crossbeam-epoch"
+version = "0.9.21"
+source = "registry+https://g
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.2.5"
-checksum = "22f9645cb765ea72b8111f36c522475d2daa0d22c957a9826437e97534bc4e9e"
-version = "1.0.151"
-checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
- "sigchld",
 [[package]]
-name = "sigchld"
-version = "0.2.4"
+name = "allocator-api2"
+version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47106eded3c154e70176fc83df9737335c94ce22f821c32d17ed1db1f83badb1"
-dependencies = [
- "libc",
- "os_pipe",
- "signal-hook",
-]
+checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
 
 [[package]]
-name = "signal-hook"
-version = "0.3.18"
+name = "arrayvec"
+version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d881a16cf4426aa584979d30bd82cb33429027e42122b169753d6ef1085ed6e2"
-dependencies = [
- "libc",
- "signal-hook-registry",
-]
+checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
-version = "2.12.1"
-checksum = "ed99ee9694a2deb776d91cae48ac7411ddfc89ecae2f9b5041111d8c88f2ace9"
-version = "2.7.1"
-checksum = "59563ca5b331fd97f27ee9672ec8d36d33bb3c9e2c9f6710a1a5687256052e45"
-version = "2.6.1"
-checksum = "4ac7a92a46ab5c88f44532ca50906d6e448a948d4ddf8c5376ab125e3260f736"
-version = "2.4.0"
-checksum = "094bdbc47e5efe36544ba21b3a53ab5c724150236cf55e6c9be46191deb6eab6"
-version = "2.5.2"
-checksum = "ee2c8fe2d6b75caed0153f91eda30ea1dea3bfb6710d5adb80456d2c035a569d"
-version = "2.13.1
+version = "0.6.2"
+checksum = "5493c3bedbacf7fd7382c6346bbd66687d12bbaad3a89a2d2c303ee6cf20b048"
+ "thiserror 1.0.69",
+version = "0.5.1"
+checksum = "965c2d33e53cb6b267e148a4cb0760bc01f4904c1cd4bb4002a085bb016d1490"
+version = "0.24.1"
+checksum = "8d9a9bf8b79a749ee0b911b91b671cc2b6c670bdbc7e3dfd537576ddc94bb2a2"
+ "http 0.2.12",
+ "http 1.5.0",
+ "http-body 1.0.1",
+ "hyper 1.8.1",
+ "http 1.5.0",
+ "http-body 1.0.1",
+ "http 1.5.0",
+ "lru 0.18.5",
+version = "9.0.0"
+checksum = "5cd0a5c643689626bec213c4d8bd4d96acc8ffdb4ad4bb6bc16abf27d5f4b553"
+[[package]]
+name = "futures-ticker"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checks
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f2eb34aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b3c5e26` are properly handled with clean fallback behavior.

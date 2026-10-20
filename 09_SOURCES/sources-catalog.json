@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "f2eb34aa",
+    "sourceVersion": "2b3c5e26",
     "license": "MIT",
-    "contentHash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
-    "lastHarvestedAt": "2026-10-20T00:19:16.921Z",
+    "contentHash": "8999e78db6b4bb906a8eaad62a2754a288226fd2b9134ed0749b23d993bc566a",
+    "lastHarvestedAt": "2026-10-20T02:34:27.969Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "5da9d2b9",
+    "sourceVersion": "4d27c487",
     "license": "MPL-2.0",
-    "contentHash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
-    "lastHarvestedAt": "2026-10-19T01:01:08.182Z",
+    "contentHash": "3ac9204cc024122256ac6fef2cd4f15f914f4414a340e77900e261c1efe7b662",
+    "lastHarvestedAt": "2026-10-20T02:34:25.864Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "6601fc76",
+    "sourceVersion": "61172690",
     "license": "Apache-2.0",
-    "contentHash": "a4e3b280489f98ec0372fb79bca683013e3a5f1f123d95c515535fb5dffc33c9",
-    "lastHarvestedAt": "2026-10-19T02:37:11.473Z",
+    "contentHash": "61a2cc6695634227c8c42636bfe4e3e12c970a5f6db63e7118413a116947f61f",
+    "lastHarvestedAt": "2026-10-20T02:34:20.289Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -10028,5 +10028,25 @@
     "contentHash": "6b42f8de5a32f2c61655772c2b2406fdd91ea2c679d156225d20919568d468d5",
     "lastHarvestedAt": "2026-10-20T02:28:00.646Z",
     "learningId": "learn-github-rafsoh-dimeapp"
+  },
+  "exyte-chat": {
+    "repository": "exyte/Chat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/exyte/Chat",
+    "sourceVersion": "49bf1f37",
+    "license": "MIT",
+    "contentHash": "58e086348081da44ac690e6f72211524b5bfbb6458f3f7b532638e701ea4b109",
+    "lastHarvestedAt": "2026-10-20T02:34:19.026Z",
+    "learningId": "learn-github-exyte-chat"
+  },
+  "parcel-bundler-parcel": {
+    "repository": "parcel-bundler/parcel",
+    "platform": "github",
+    "sourceUrl": "https://github.com/parcel-bundler/parcel",
+    "sourceVersion": "59484858",
+    "license": "MIT",
+    "contentHash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
+    "lastHarvestedAt": "2026-10-20T02:37:02.825Z",
+    "learningId": "learn-github-parcel-bundler-parcel"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:28:03.016Z",
-  "total_verified_learnings": 1018,
+  "last_updated": "2026-10-20T02:37:02.732Z",
+  "total_verified_learnings": 1020,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3775,8 +3775,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "f2eb34aa",
-      "content_hash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
+      "source_version": "2b3c5e26",
+      "content_hash": "8999e78db6b4bb906a8eaad62a2754a288226fd2b9134ed0749b23d993bc566a",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3804,6 +3804,11 @@
           "number": 2915,
           "title": "deps): bump the cargo-minor-patch group across 1 directory with 7 updates (#278)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3000,
+          "title": "deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator (#119)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3811,7 +3816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:19:16.861Z",
+      "verified_at": "2026-10-20T02:34:27.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6196,14 +6201,19 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "6601fc76",
-      "content_hash": "a4e3b280489f98ec0372fb79bca683013e3a5f1f123d95c515535fb5dffc33c9",
+      "source_version": "61172690",
+      "content_hash": "61a2cc6695634227c8c42636bfe4e3e12c970a5f6db63e7118413a116947f61f",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
         {
           "number": 2030,
           "title": "deps): update vulnerable dependencies [security]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2998,
+          "title": "Merge pull request #6935 from adamwg/awg/update-controlled-rollout-design",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6212,7 +6222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:37:11.421Z",
+      "verified_at": "2026-10-20T02:34:20.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9330,22 +9340,29 @@
     "learn-github-exyte-chat": {
       "learning_id": "learn-github-exyte-chat",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "exyte-chat",
+      "source": "exyte/Chat",
+      "repository": "exyte/Chat",
       "slug": "exyte-chat",
       "platform": "github",
       "source_url": "https://github.com/exyte/Chat",
-      "source_version": "HEAD",
-      "content_hash": "db2ebfc7e77c62c7e1052165b88d8282557e26fa3ca97fe94826905d7ad87ce6",
+      "source_version": "49bf1f37",
+      "content_hash": "58e086348081da44ac690e6f72211524b5bfbb6458f3f7b532638e701ea4b109",
       "dossier_path": "07_PROJECT_LEARNING/exyte-chat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/exyte-chat-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.848Z"
+      "verified_at": "2026-10-20T02:34:18.934Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-exyte-popupview": {
       "learning_id": "learn-github-exyte-popupview",
@@ -44145,14 +44162,19 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "5da9d2b9",
-      "content_hash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
+      "source_version": "4d27c487",
+      "content_hash": "3ac9204cc024122256ac6fef2cd4f15f914f4414a340e77900e261c1efe7b662",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
         {
           "number": 1949,
           "title": "Add regression test for recursive functions crashing with \"WouldBlock\" (#8016)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2999,
+          "title": "database importer to be channel-based (#7991)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44161,7 +44183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:01:08.132Z",
+      "verified_at": "2026-10-20T02:34:25.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59333,20 +59355,45 @@
     "learn-github-parcel-bundler-parcel": {
       "learning_id": "learn-github-parcel-bundler-parcel",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "parcel-bundler/parcel",
       "repository": "parcel-bundler/parcel",
       "slug": "parcel-bundler-parcel",
       "platform": "github",
       "source_url": "https://github.com/parcel-bundler/parcel",
-      "source_version": "main",
-      "content_hash": "9d214989b56f880cdc7fcf90f7744ba51c31470b1ceab5c09771aa01be69c098",
+      "source_version": "59484858",
+      "content_hash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
       "dossier_path": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3001,
+          "title": "Two-Tier WeakMap Hierarchy for Composite Context Query Caching",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3002,
+          "title": "Multi-Context Specifier Partitioning in Static Edge Execution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3003,
+          "title": "Non-Destructive Source Normalization at Boundary Throw Sites",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:37:02.711Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tanstack-router": {
       "learning_id": "learn-github-tanstack-router",
@@ -97041,6 +97088,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:28:03.008Z"
+    },
+    "rule-2998": {
+      "learning_id": "rule-2998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2998,
+      "title": "Merge pull request #6935 from adamwg/awg/update-controlled-rollout-design",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "61172690",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:34:20.209Z"
+    },
+    "rule-2999": {
+      "learning_id": "rule-2999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2999,
+      "title": "database importer to be channel-based (#7991)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "4d27c487",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:34:25.781Z"
+    },
+    "rule-3000": {
+      "learning_id": "rule-3000",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3000,
+      "title": "deps): bump libp2p from 0.54.1 to 0.56.0 in /orchestrator (#119)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "2b3c5e26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:34:27.890Z"
+    },
+    "rule-3001": {
+      "learning_id": "rule-3001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3001,
+      "title": "Two-Tier WeakMap Hierarchy for Composite Context Query Caching",
+      "source_url": "https://github.com/parcel-bundler/parcel",
+      "source_version": "59484858",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:37:02.711Z"
+    },
+    "rule-3002": {
+      "learning_id": "rule-3002",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3002,
+      "title": "Multi-Context Specifier Partitioning in Static Edge Execution",
+      "source_url": "https://github.com/parcel-bundler/parcel",
+      "source_version": "59484858",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:37:02.711Z"
+    },
+    "rule-3003": {
+      "learning_id": "rule-3003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3003,
+      "title": "Non-Destructive Source Normalization at Boundary Throw Sites",
+      "source_url": "https://github.com/parcel-bundler/parcel",
+      "source_version": "59484858",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:37:02.711Z"
     }
   },
   "aliases": {

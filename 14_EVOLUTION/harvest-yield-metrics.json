@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:28:03.051Z",
-  "total_cycles_completed": 3635,
-  "total_learnings_persisted": 3635,
-  "total_rules_promoted": 2801,
+  "last_updated": "2026-10-20T02:37:02.830Z",
+  "total_cycles_completed": 3640,
+  "total_learnings_persisted": 3640,
+  "total_rules_promoted": 2807,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:04:12.688Z",
-      "repository": "nometria/sitemap-generator",
-      "learningId": "learn-github-nometria-sitemap-generator",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:04:17.397Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:04:19.597Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:10:30.879Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:10:31.018Z",
-      "repository": "m0ntydad0n/pseo-engine-oss",
-      "learningId": "learn-github-m0ntydad0n-pseo-engine-oss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:10:37.679Z",
       "repository": "freenet/freenet-core",
@@ -1403,6 +1368,41 @@
       "repository": "encoredev/encore",
       "learningId": "learn-github-encoredev-encore",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:34:19.031Z",
+      "repository": "exyte/Chat",
+      "learningId": "learn-github-exyte-chat",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:34:20.294Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:34:25.869Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:34:27.973Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:37:02.830Z",
+      "repository": "parcel-bundler/parcel",
+      "learningId": "learn-github-parcel-bundler-parcel",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

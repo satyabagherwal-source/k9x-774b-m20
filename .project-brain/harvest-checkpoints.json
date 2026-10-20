@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T02:28:03.054Z",
+  "last_updated": "2026-10-20T02:37:02.834Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3589,14 +3589,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "f35ed4ded384cf2105c41e85ae66ca1709f34ad56b89e422bbeba6679ed7f21f",
-      "verified_at": "2026-10-20T00:19:16.928Z",
+      "content_hash": "8999e78db6b4bb906a8eaad62a2754a288226fd2b9134ed0749b23d993bc566a",
+      "verified_at": "2026-10-20T02:34:27.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:19:16.928Z"
+      "last_updated": "2026-10-20T02:34:27.977Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6604,14 +6604,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
-      "verified_at": "2026-10-19T01:01:08.187Z",
+      "content_hash": "3ac9204cc024122256ac6fef2cd4f15f914f4414a340e77900e261c1efe7b662",
+      "verified_at": "2026-10-20T02:34:25.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:01:08.187Z"
+      "last_updated": "2026-10-20T02:34:25.872Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -7564,14 +7564,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "a4e3b280489f98ec0372fb79bca683013e3a5f1f123d95c515535fb5dffc33c9",
-      "verified_at": "2026-10-19T02:37:11.478Z",
+      "content_hash": "61a2cc6695634227c8c42636bfe4e3e12c970a5f6db63e7118413a116947f61f",
+      "verified_at": "2026-10-20T02:34:20.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:37:11.478Z"
+      "last_updated": "2026-10-20T02:34:20.297Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -15087,6 +15087,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T02:28:00.653Z"
+    },
+    "exyte/Chat": {
+      "repository": "exyte/Chat",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-exyte-chat",
+      "content_hash": "58e086348081da44ac690e6f72211524b5bfbb6458f3f7b532638e701ea4b109",
+      "verified_at": "2026-10-20T02:34:19.034Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:34:19.034Z"
+    },
+    "parcel-bundler/parcel": {
+      "repository": "parcel-bundler/parcel",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-parcel-bundler-parcel",
+      "content_hash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
+      "verified_at": "2026-10-20T02:37:02.833Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T02:37:02.833Z"
     }
   },
   "repos": {

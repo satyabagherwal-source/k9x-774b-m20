@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `5da9d2b9`  
+> **Source Version**: `4d27c487`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:01:07.966Z  
+> **Timestamp**: 2026-10-20T02:34:25.468Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:01:07.956Z  
+> **Harvest Timestamp**: 2026-10-20T02:34:25.461Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -391,6 +391,14 @@ impl TokioTaskSpawner {
         self.tracker.spawn(task)
     }
 
+    pub fn spawn_blocking<F, T>(&self, task: F) -> JoinHandle<T>
+    where
+        F: FnOnce() -> T + Send + 'static,
+        T: Send + 'static,
+    {
+        self.tracker.spawn_blocking(task)
+    }
+
     /// Spawn a periodic task that runs `action()` every `interval` until a shutdown signal is received.
     /// The return handle can be used to await this single task's completion (only on shutdown), but also can be ignored.
     pub fn spawn_interval<F>(
@@ -583,13 +591,7 @@ mod tests {
 
         let _h = spawner.spawn_interval(
             move || {
-                let count = count_clone.clone();
-                async move {
-                    count.fetch_add(1, Ordering::SeqCst);
-                }
-            },
-            IntervalTaskParameters::new_with_delay(
-                Durat
+                let count = count_clone.cl
 ```
 
 ### Core Architecture Module: `diagnostics/metrics/core_metrics.rs`
@@ -867,10 +869,11 @@ use database::{
     database::DatabaseCreateError,
     database_manager::DatabaseManager,
     migration::{
-        database_import_handler::{
-            DatabaseImportHandler, ImportHandlerError, open_import_schema_transaction, open_import_write_transaction,
+        MigrationOperationError,
+        database_importer::{DatabaseImporter, DatabaseImporterHandle},
+        importing_database_handle::{
+            ImportingDatabaseHandle, open_import_schema_transaction, open_import_write_transaction,
         },
-        database_importer::DatabaseImporter,
     },
     transaction::{
         CommitIntent, DataCommitIntent, SchemaCommitIntent, TransactionError, TransactionRead, TransactionSchema,
@@ -878,7 +881,6 @@ use database::{
     },
 };
 use durability::DurabilitySequenceNumber;
-use executor::ExecutionInterrupt;
 use futures::future::join_all;
 use resource::{constants::server::MAX_CONCURRENT_IMPORTS, profile::CommitProfile};
 use storage::{
@@ -894,6 +896,8 @@ use crate::{
     error::{ArcServerStateError, LocalServerStateError, arc_server_state_err},
     service::grpc::migration::import_service::DatabaseImportService,
 };
+
+const IMPORT_MESSAGE_BUFFER_SIZE: usize = 16;
 
 #[async_trait]
 pub trait DatabaseOperator: Debug + Send + Sync {
@@ -916,8 +920,7 @@ pub trait DatabaseOperator: Debug + Send + Sync {
         &self,
         name: &str,
         close_sender: Sender<()>,
-        interrupt: ExecutionInterrupt,
-    ) -> Result<DatabaseImporter, ArcServerStateError>;
+    ) -> Result<DatabaseImporterHandle, ArcServerStateError>;
 
     async fn import_discard(&self, name: &str) -> Result<(), ArcServerStateError>;
 
@@ -955,7 +958,7 @@ pub(crate) struct ImportInfo {
 }
 
 #[derive(Debug)]
-struct LocalDatabaseImportHandler {
+struct ImportingLocalDatabaseHandle {
     database_manager: Arc<DatabaseManager>,
     staged_database: Arc<Database<WALClient>>,
 }
@@ -963,12 +966,12 @@ struct LocalDatabaseImportHandler {
 fn import_commit<I: CommitIntent>(
     intent: I,
     map_err: impl FnOnce(I::Error) -> LocalServerStateError,
-) -> Result<(), ImportHandlerError> {
+) -> Result<(), MigrationOperationError> {
     let mut commit_profile = CommitProfile::disabled();
     intent.commit(&mut commit_profile).map_err(|typedb_source| Arc::new(map_err(typedb_source)) as _)
 }
 
-impl DatabaseImportHandler for LocalDatabaseImportHandler {
+impl ImportingDatabaseHandle for ImportingLocalDatabaseHandle {
     fn database_name(&self) -> &str {
         self.staged_database.name()
     }
@@ -981,15 +984,15 @@ impl DatabaseImportHandler for LocalDatabaseImportHandler {
         open_import_write_transaction(&self.staged_database)
     }
 
-    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), ImportHandlerError> {
+    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
         import_commit(intent, |typedb_source| LocalServerStateError::DatabaseSchemaCommitFailed { typedb_source })
     }
 
-    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), ImportHandlerError> {
+    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
         import_commit(intent, |typedb_source| LocalServerStateError::DatabaseDataCommitFailed { typedb_source })
     }
 
-    fn finalise(self: Box<Self>) -> Result<(), ImportHandlerError> {
+    fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError> {
         let Self { database_manager, staged_database } = *self;
         let name = staged_database.name().to_owned();
         drop(staged_database);
@@ -1050,12 +1053,14 @@ impl LocalDatabaseOperator {
         .await;
     }
 
-    pub fn new_importer(
-        &self,
-        handler: Box<dyn DatabaseImportHandler>,
-        interrupt: ExecutionInterrupt,
-    ) -> DatabaseImporter {
-        DatabaseImporter::new(handler, self.database_manager.import_directory().to_owned(), interrupt)
+    fn start_importer(&self, importing_database: Box<dyn ImportingDatabaseHandle>) -> DatabaseImporterHandle {
+        let scratch_directory = self.database_manager.import_directory().to_owned();
+        DatabaseImporter::start(
+            importing_database,
+            scratch_directory,
+            IMPORT_MESSAGE_BUFFER_SIZE,
+            &self.background_task_spawner,
+        )
     }
 
     pub fn prepare_imported_database(&self, name: String) -> Result<Arc<Database<WALClient>>, ArcServerStateError> {
@@ -1112,13 +1117,7 @@ impl DatabaseOperator for LocalDatabaseOperator {
 
     async fn contains(&self, name: &str) -> Result<bool, ArcServerStateError> {
         Ok(self.database_manager.database(name).is_some())
-    }
-
-    async fn get(&self, name: &str) -> Result<Option<Arc<Database<WALClient>>>, ArcServerStateError> {
-        Ok(self.database_manager.database(name))
-    }
-
-    async fn
+   
 ```
 
 ### Core Architecture Module: `server/state/mod.rs`
@@ -1858,965 +1857,447 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6226626f` (2026-10-09)
-**Commit Message**: Add regression test for recursive functions crashing with "WouldBlock" (#8016)
+### Incident Patch 1: `4d27c487` (2026-10-19)
+**Commit Message**: Refactor database importer to be channel-based (#7991)
 
 ## Product change and motivation
-Adds a regression test for recursive functions crashing with "WouldBlock"
 
-**File**: `executor/tests/execute_function.rs` (modified, +30/-0)
+Database import now streams items from the gRPC import service to a
+dedicated importer task through a bounded queue, instead of running each
+request as a blocking step inside the service. This prepares the
+importer for parallel writers, and fixes several problems with how
+imports stop, fail and are reported:
+  
+- **Shutdown and close no longer wait on an import.** Server shutdown,
+import close and client disconnect are noticed while the service is
+waiting on the importer (a full queue or a long finalisation), and the
+import is aborted.
+- **Shutdown is clean.** The importer runs as a task tracked by the
+server's background task tracker, so shutdown waits for it to stop and
+release the staged database, even if its handle was dropped without
+being aborted.
+- **Importer failures are reported immediately**, with the importer's
+actual error, instead of against the client's next request.
+- **Staged databases are cleaned up on every failure and stop path**,
+including a failed finalisation. An import that completes while being
+stopped is kept and reported as done.
+- **A client that stops sending mid-im
+
+**File**: `common/concurrency/tokio_task.rs` (modified, +8/-0)
 ```diff
-@@ -750,3 +750,33 @@ fn return_check() {
-         assert_eq!(rows[0].get(*positions.get("checked").unwrap()), &VariableValue::Value(Value::Boolean(false)));
+@@ -91,6 +91,14 @@ impl TokioTaskSpawner {
+         self.tracker.spawn(task)
      }
- }
+ 
++    pub fn spawn_blocking<F, T>(&self, task: F) -> JoinHandle<T>
++    where
++        F: FnOnce() -> T + Send + 'static,
++        T: Send + 'static,
++    {
++        self.tracker.spawn_blocking(task)
++    }
 +
-+#[test]
-+fn recursive_function_calls_recursive_function() {
-+    // Regression against #7707
-+    // A recursive function has to call another recursive function (which doesn't call it back)
-+    let custom_schema = r#"define entity person;"#;
-+    let context = setup_common(custom_schema);
-+    let query = r#"
-+with fun nat() -> { integer }:
-+match
-+  {let $x = 0;} or
-+  { let $y in nat(); let $x = $y + 1; };
-+return { $x };
-+
-+with fun sum_stuff() -> { integer }:
-+match
-+    { let $sum = 0; } or {
-+        let $prev_sum = sum_stuff();
-+        let $n in nat();
-+        let $sum = $prev_sum + $n;
-+    };
-+return { $sum };
-+
-+match let $x in sum_stuff();
-+limit 20;
-+"#;
-+
-+    let (rows, _positions) = run_read_query(&context, query).unwrap();
-+    assert_eq!(rows.len(), 20);
-+}
+     /// Spawn a periodic task that runs `action()` every `interval` until a shutdown signal is received.
+     /// The return handle can be used to await this single task's completion (only on shutdown), but also can be ignored.
+     pub fn spawn_interval<F>(
 ```
 
----
-
-### Incident Patch 2: `626245aa` (2026-10-13)
-**Commit Message**: Use RocksDB's HyperClockCache and build Linux releases on glibc 2.28 (#8008)
-
-## Product change and motivation
-
-Update to the latest RocksDB (11.8) and switch to a new type of block
-cache (HyperClockCache) instead of the LRU cache. We also enable the
-newly available Ribbon filter API, which replaces the bloom filter with
-equivalent performance for approximately 30% less memory.
-
-For reference, a typical database would be about 1% index blocks and
-7-9% bloom filter blocks. This change drops to 1% index blocks and 4-6%
-filter blocks. Optimal machine sizing is still recommended at around 10%
-of data size on disk to be available as RAM.
-
-RocksDB 11.8 requires C++20 - Linux releases are therefore now built on
-AlmaLinux 8, compatible with glibc 2.28 and newer. Systems with an older
-glibc, such as Amazon Linux 2 and Ubuntu 18.04, should use the Docker
-image.
-
-## Implementation
-
-- Update to RocksDB 11.8
-- Switch LRUCache to Hyper Clock Cache
-- Switch to C++ 20 via the bazel configuration which is required for
-RockDB 11.8 to build
-- The Linux CircleCI jobs run on `almalinux:8.10` (pinned). This is
-minimal image so we install required dependencies manually in the linux
-jobs.
-- Enable ribbon 
-
-**File**: `.bazelrc` (modified, +9/-0)
+**File**: `database/BUILD` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,15 @@ build --macos_minimum_os=11.0
- 
- try-import ./.bazel-remote-cache.rc
- 
-+# Default all C++ compilation to C++20 (RocksDB >= 10.7 requires it). This sets the auto-configured C++ toolchain's
-+# default rather than using --cxxopt, so it also applies to Cargo build scripts. BAZEL_CXXOPTS is split on ':', so the
-+# colon in the MSVC flag is escaped as '%:'.
-+common --enable_platform_specific_config
-+common:linux --repo_env=BAZEL_CXXOPTS=-std=c++20
-+common:macos --repo_env=BAZEL_CXXOPTS=-std=c++20
-+common:windows --repo_env=BAZEL_CXXOPTS=/std%:c++20
-+build:windows --features=-default_cpp_std --host_features=-default_cpp_std
-+
- # Allow empty globs (many checkstyle_test patterns may not match)
- common --@rules_rust//:rustfmt.toml=//:rustfmt_config --noincompatible_disallow_empty_glob --experimental_repository_downloader_retries=5 --http_timeout_scaling=2.0
- 
-```
-
-**File**: `.circleci/config.yml` (modified, +80/-61)
-```diff
-@@ -9,16 +9,16 @@ orbs:
-   macos: circleci/macos@2.4.0
- 
- executors:
--  linux-arm64-amazonlinux-2:
-+  # AlmaLinux 8 (glibc 2.28) with gcc-toolset-14
-+  linux-arm64-almalinux-8:
-     docker:
--      - image: typedb/amazonlinux2-ci:3.13.0-arm64
-+      - image: almalinux:8.10-20261002@sha256:8b469a3a78515e8a18ea8fc727e6a3679e1d0c5ba6f58d5b30be3d0d9b86cffe
-     resource_class: arm.large
-     working_directory: ~/typedb
- 
--  # All builds go on amazon-linux.
--  linux-x86_64-amazonlinux-2:
-+  linux-x86_64-almalinux-8:
-     docker:
--      - image: typedb/amazonlinux2-ci:3.13.0-amd64
-+      - image: almalinux:8.10-20261002@sha256:8b469a3a78515e8a18ea8fc727e6a3679e1d0c5ba6f58d5b30be3d0d9b86cffe
-     resource_class: large
-     working_directory: ~/typedb
- 
-@@ -47,17 +47,35 @@ commands:
-   # common setup steps #
-   ######################
- 
--  install-deps-yum:
-+  install-git-dnf:
-+    steps:
-+      - run: dnf install -y --setopt=install_weak_deps=False git-core openssh-clients
-+
-+  install-deps-dnf:
-     parameters:
-       bazel-arch:
-         type: string
-     steps:
-+      - install-git-dnf
-       - run: |
--          amazon-linux-extras install docker -y 
-+          dnf install -y --setopt=install_weak_deps=False gcc-toolset-14-gcc-c++ clang lld python3.11
-+          ln -sf /usr/bin/python3.11 /usr/local/bin/python3
-+          if [ "<<parameters.bazel-arch>>" = "amd64" ]; then BAZELISK_SHA256=61699e22abb2a26304edfa1376f65ad24191f94a4ffed68a58d42b6fee01e124; else BAZELISK_SHA256=a836972b8a7c34970fb9ecc44768ece172f184c5f7e2972c80033fcdcf8c1870; fi
-+          curl -fsSL -o /usr/local/bin/bazel "https://github.com/bazelbuild/bazelisk/releases/download/v1.17.0/bazelisk-linux-<<parameters.bazel-arch>>"
-+          echo "$BAZELISK_SHA256  /usr/local/bin/bazel" | sha256sum -c -
-+          chmod a+x /usr/local/bin/bazel
-+          echo "export CC=/opt/rh/gcc-toolset-14/root/usr/bin/gcc" >> $BASH_ENV
-           export PLATFORM_IDENTIFIER=$(echo "$(uname -s)_<<parameters.bazel-arch>>" | sed 's/Darwin/MAC/;s/Linux/LINUX/;s/amd64/X86_64/;s/aarch64/ARM64/;s/arm64/ARM64/')
-           echo "export CARGO_BAZEL_GENERATOR_URL=\"\$CARGO_BAZEL_GENERATOR_URL_$PLATFORM_IDENTIFIER\"" >> $BASH_ENV
-           echo "export CARGO_BAZEL_GENERATOR_SHA256=\"\$CARGO_BAZEL_GENERATOR_SHA_$PLATFORM_IDENTIFIER\"" >> $BASH_ENV
- 
-+  install-docker-cli:
-+    steps:
-+      - run: |
-+          dnf install -y dnf-plugins-core
-+          dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-+          dnf install -y docker-ce-cli
-+
-   install-deps-brew:
-     parameters:
-       bazel-arch:
-@@ -248,21 +266,21 @@ commands:
- jobs:
-   # per platform snapshot deployment
-   test-deploy-snapshot-linux-x86_64:
--    executor: linux-x86_64-amazonlinux-2
-+    executor: linux-x86_64-almalinux-8
-     steps:
--      - checkout
--      - install-deps-yum:
-+      - install-deps-dnf:
-           bazel-arch: amd64
-+      - checkout
-       - test-assembly-unix
-       - test-admin-unix
-       - deploy-snapshot-unix
- 
-   test-deploy-snapshot-linux-arm64:
--    executor: linux-arm64-amazonlinux-2
-+    executor: linux-arm64-almalinux-8
-     steps:
--      - checkout
--      - install-deps-yum:
-+      - install-deps-dnf:
-           bazel-arch: arm64
-+      - checkout
-       - test-assembly-unix
-       - test-admin-unix
-       - deploy-snapshot-unix
-@@ -312,43 +330,44 @@ jobs:
-       - run: .circleci\windows\deploy_snapshot.bat
- 
-   deploy-docker-snapshot-x86_64:
--    executor: linux-x86_64-amazonlinux-2
-+    executor: linux-x86_64-almalinux-8
-     steps:
-       - setup_remote_docker
--      - checkout
--      - install-deps-yum:
-+      - install-deps-dnf:
-           bazel-arch: amd64
-+      - install-docker-cli
-+      - checkout
-       - deploy-docker-snapshot-for-arch:
-           image-arch: x86_64
- 
-   deploy-docker-snapshot-arm64:
--    executor: linux-arm64-amazonlinux-2
-+    executor: linux-arm64-almalinux-8
-     steps:
-       - setup_remote_docker
--      - checkout
--      - install-deps-yum:
-+      - install-deps-dnf:
-           bazel-arch: arm64
-+      - install-docker-cli
-+      - checkout
-       - deploy-docker-snapshot-for-arch:
-           image-arch: arm64
- 
-   deploy-docker-snapshot-multiarch:
--    executor: linux-x86_64-amazonlinux-2
-+    executor: linux-x86_64-almalinux-8
-     steps:
-       - setup_remote_docker
-+      - install-git-dnf
-+      - install-docker-cli
-       - checkout
--      - install-deps-yum:
--          bazel-arch: amd64
-       - deploy-docker-snapshot-multiarch
- 
-   deploy-snapshot-brew:
--    executor: linux-x86_64-amazonlinux-2
-+    executor: linux-x86_64-almalinux-8
-     steps:
--      - run: yum install -y tar gzip
-       - attach_workspace:
-           at: ~/dist
--      - checkout
--      - install-deps-yum:
-+      - install-deps-dnf:
-           bazel-arch: amd64
-+      - checkout
-       - run: |
-           export DEPLOY_BREW_TOKEN=$REPO_GITHUB_TOKEN DEPLOY_BREW_USERNAME=$REPO_GITHUB_USERNAME DEPLOY_BREW_EMAIL=$REPO_GITHUB_EMAIL
-    
-```
-
-**File**: `Cargo.lock` (modified, +11/-4)
-```diff
-@@ -2835,16 +2835,17 @@ dependencies = [
- 
- [[package]]
- name = "librocksdb-sys"
--version = "0.17.3+10.4.2"
-+version = "0.19.0+11.8.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cef2a00ee60fe526157c9023edab23943fae1ce2ab6f4abb2a807c1746835de9"
-+checksum = "4f45e86edad8e88efe97dbf384b4e48e1ff0f111eabf154c7b09d7a1e5fb573c"
- dependencies = [
-  "bindgen",
-  "bzip2-sys",
-  "cc",
-  "libc",
-  "libz-sys",
-  "lz4-sys",
-+ "rustflags",
- ]
- 
- [[package]]
-@@ -4289,9 +4290,9 @@ dependencies = [
- 
- [[package]]
- name = "rocksdb"
--version = "0.23.0"
-+version = "0.25.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26ec73b20525cb235bad420f911473b69f9fe27cc856c5461bccd7e4af037f43"
-+checksum = "d8d90add70d1d420ee487bce4a1449880a8d147451c6051b2ee5f8354553dcbf"
- dependencies = [
-  "libc",
-  "librocksdb-sys",
-@@ -4339,6 +4340,12 @@ dependencies = [
-  "semver",
- ]
- 
-+[[package]]
-+name = "rustflags"
-+version = "0.1.7"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a39e0e9135d7a7208ee80aa4e3e4b88f0f5ad7be92153ed70686c38a03db2e63"
-+
- [[package]]
- name = "rustix"
- version = "0.37.28"
-```
-
-**File**: `Cargo.toml` (modified, +46/-46)
-```diff
-@@ -94,28 +94,20 @@ features = {}
- 	name = "test_fail_points"
- 
- [[test]]
--	path = "tests/benchmarks/concurrent_ops/bench_concurrency.rs"
--	name = "bench_concurrency"
--
--[[test]]
--	path = "tests/benchmarks/iam/bench_iam.rs"
--	name = "bench_iam"
--
--[[test]]
--	path = "tests/behaviour/connection/main.rs"
--	name = "test_connection"
-+	path = "tests/behaviour/query/main.rs"
-+	name = "test_query"
- 
- [[test]]
- 	path = "tests/behaviour/concept/main.rs"
- 	name = "test_concept"
- 
- [[test]]
--	path = "tests/behaviour/service/http/connection/database.rs"
--	name = "test_http_database"
-+	path = "tests/behaviour/service/http/debug/debug.rs"
-+	name = "test_http_debug"
- 
- [[test]]
--	path = "tests/behaviour/service/http/connection/transaction.rs"
--	name = "test_http_transaction"
-+	path = "tests/behaviour/service/http/driver/query.rs"
-+	name = "test_http_driver_query"
- 
- [[test]]
- 	path = "tests/behaviour/service/http/driver/concept.rs"
-@@ -126,37 +118,45 @@ features = {}
- 	name = "test_http_driver_http"
- 
- [[test]]
--	path = "tests/behaviour/service/http/driver/query.rs"
--	name = "test_http_driver_query"
-+	path = "tests/behaviour/service/http/driver/connection.rs"
-+	name = "test_http_driver_connection"
- 
- [[test]]
- 	path = "tests/behaviour/service/http/driver/user.rs"
- 	name = "test_http_driver_user"
- 
- [[test]]
--	path = "tests/behaviour/service/http/driver/connection.rs"
--	name = "test_http_driver_connection"
--
--[[test]]
--	path = "tests/behaviour/service/http/debug/debug.rs"
--	name = "test_http_debug"
-+	path = "tests/behaviour/service/http/connection/transaction.rs"
-+	name = "test_http_transaction"
- 
- [[test]]
--	path = "tests/behaviour/query/main.rs"
--	name = "test_query"
-+	path = "tests/behaviour/service/http/connection/database.rs"
-+	name = "test_http_database"
- 
- [[test]]
- 	path = "tests/behaviour/debug/debug.rs"
- 	name = "test_debug"
- 
-+[[test]]
-+	path = "tests/behaviour/connection/main.rs"
-+	name = "test_connection"
-+
-+[[test]]
-+	path = "tests/benchmarks/concurrent_ops/bench_concurrency.rs"
-+	name = "bench_concurrency"
-+
-+[[test]]
-+	path = "tests/benchmarks/iam/bench_iam.rs"
-+	name = "bench_iam"
-+
- [[bin]]
- 	path = "main.rs"
- 	name = "typedb_server_bin"
- 
- 
- [workspace]
- 	resolver = "2"
--	members = ["database/tools", "database", "answer", "util/test", "util/project", "durability/tests/crash/streamer", "durability/tests/crash/recoverer", "durability/tests/common", "durability", "ir", "tests/behaviour/steps", "tests/behaviour/steps/params", "tests/behaviour/service/http/http_steps", "admin", "admin/client", "encoding/tests", "encoding", "server", "server/service/admin/proto", "user", "function", "storage/tests", "storage", "system", "common/options", "common/structural_equality", "common/logger", "common/cache", "common/bytes", "common/lending_iterator", "common/primitive", "common/fail_point", "common/concurrency", "common/iterator", "common/error", "concept/tests", "concept", "diagnostics", "executor", "resource", "query", "compiler"]
-+	members = ["ir", "query", "user", "answer", "util/project", "util/test", "concept/tests", "concept", "server", "server/service/admin/proto", "encoding/tests", "encoding", "system", "resource", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps/params", "tests/behaviour/steps", "diagnostics", "durability/tests/crash/streamer", "durability/tests/crash/recoverer", "durability/tests/common", "durability", "common/lending_iterator", "common/bytes", "common/error", "common/options", "common/concurrency", "common/cache", "common/iterator", "common/structural_equality", "common/primitive", "common/logger", "common/fail_point", "compiler", "database", "database/tools", "storage", "storage/tests", "function", "admin", "admin/client", "executor"]
- 
- 	[workspace.dependencies]
- 
-@@ -195,16 +195,16 @@ features = {}
- 			features = []
- 			default-features = false
- 
--		[workspace.dependencies.rustyline]
--			features = ["custom-bindings", "fd-lock", "radix_trie", "with-file-history"]
--			version = "15.0.0"
--			default-features = false
--
- 		[workspace.dependencies.tokio-rustls]
- 			features = ["logging", "ring", "tls12"]
- 			version = "0.26.6"
- 			default-features = false
- 
-+		[workspace.dependencies.rustyline]
-+			features = ["custom-bindings", "fd-lock", "radix_trie", "with-file-history"]
-+			version = "15.0.0"
-+			default-features = false
-+
- 		[workspace.dependencies.executor]
- 			path = "executor"
- 			features = []
-@@ -226,16 +226,16 @@ features = {}
- 			tag = "3.13.4"
- 			default-features = false
- 
--		[workspace.dependencies.cache]
--			path = "common/cache"
--			features = []
--			default-features = false
--
- 		[workspace.dependencies.axum]
- 			features = ["default", "form", "http1", "json", "matched-path", "original-uri", "query", "tokio", "tower-log", "tracing", "ws"]
- 			version = "0.7.9"
- 			default-features = false
- 
-+		[workspace.dependencies.cache]
-+			path = "common/cache"
-+			features = []
-+			default-features = false
-+
- 		[workspace.dependencies.ir]
- 			path = "ir"
- 			features = [
-```
-
-**File**: `MODULE.bazel` (modified, +1/-1)
-```diff
-@@ -172,7 +172,7 @@ bazel_dep(name = "typedb_dependencies", version = "0.0.0")
- git_override(
-     module_name = "typedb_dependencies",
-     remote = "https://github.com/typedb/dependencies",
--    commit = "98504aae4d9c30e04e754fb1b52c013c486ef9a6",
-+    commit = "5c254c4bb2f911813d9622037e70ba2c554748f3",
+@@ -45,6 +45,7 @@ rust_library(
+         "@crates//:rocksdb",
+         "@crates//:serde",
+         "@crates//:tracing",
++        "@crates//:tokio",
+     ],
+     visibility = ["//visibility:public"],
  )
- 
- bazel_dep(name = "typeql", version = "0.0.0")
 ```
 
-**File**: `compiler/Cargo.toml` (modified, +2/-2)
+**File**: `database/Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -18,10 +18,10 @@ features = {}
+@@ -18,9 +18,6 @@ features = {}
  	[dev-dependencies.test_utils]
  		workspace = true
  
--	[dev-dependencies.diagnostics]
-+	[dev-dependencies.test_utils_encoding]
- 		workspace = true
- 
--	[dev-dependencies.test_utils_encoding]
-+	[dev-dependencies.diagnostics]
- 		workspace = true
- 
+-	[dev-dependencies.tokio]
+-		workspace = true
+-
  	[dev-dependencies.test_utils_storage]
+ 		workspace = true
+ 
+@@ -29,6 +26,9 @@ features = {}
+ 
+ [dependencies]
+ 
++	[dependencies.tokio]
++		workspace = true
++
+ 	[dependencies.tracing]
+ 		workspace = true
+ 
 ```
 
-**File**: `concept/Cargo.toml` (modified, +4/-4)
+**File**: `database/migration/database_importer.rs` (modified, +182/-36)
 ```diff
-@@ -105,6 +105,10 @@ features = {}
- 	name = "bench_thing_write"
- 	harness = false
+@@ -6,6 +6,7 @@
  
-+[[test]]
-+	path = "tests/test_statistics.rs"
-+	name = "test_statistics"
-+
- [[test]]
- 	path = "tests/test_type.rs"
- 	name = "test_type"
-@@ -113,7 +117,3 @@ features = {}
- 	path = "tests/test_thing.rs"
- 	name = "test_thing"
- 
--[[test]]
--	path = "tests/test_statistics.rs"
--	name = "test_statistics"
--
-```
-
-**File**: `database/Cargo.toml` (modified, +12/-12)
-```diff
-@@ -102,26 +102,18 @@ features = {}
- 	path = "tests/database.rs"
- 	name = "test_database"
- 
--[[test]]
--	path = "tests/test_transaction_isolation.rs"
--	name = "test_transaction_isolation"
--
--[[test]]
--	path = "tests/transaction.rs"
--	name = "test_transaction"
--
- [[test]]
- 	path = "tests/cleanup_records.rs"
- 	name = "test_cleanup_records"
- 
--[[test]]
--	path = "tests/migration.rs"
--	name = "test_migration"
--
- [[test]]
- 	path = "tests/statistics_synchronization.rs"
- 	name = "test_statistics_synchronization"
- 
-+[[test]]
-+	path = "tests/migration.rs"
-+	name = "test_migration"
-+
- [[test]]
- 	path = "tests/diagnostics_posthog_pii.rs"
- 	name = "test_diagnostics_posthog_pii"
-@@ -130,3 +122,11 @@ features = {}
- 	path = "tests/import.rs"
- 	name = "test_import"
- 
-+[[test]]
-+	path = "tests/test_transaction_isolation.rs"
-+	name = "test_transaction_isolation"
-+
-+[[test]]
-+	path = "tests/transaction.rs"
-+	name = "test_transaction"
-+
-```
-
----
-
-### Incident Patch 3: `f48fc4ca` (2026-10-03)
-**Commit Message**: Fix attribute equality regression (#8001)
-
-## Product change and motivation
-
-Equality lookups on long strings, such as `match $n isa name; $n ==
-"fixed_prefix_with_unique_tail_1234"` were tweaked to do scan rather
-than point lookup in #7869. Strings longer than 16 bytes are stored
-under a hash rather than inline, scanning the entire bucket even when
-looking for a specific value rather than a range. Equality now uses the
-value's exact key again, while range comparisons keep using the
-order-preserving prefix-based search.
-
-While fixing this, value comparisons on attribute variables were
-reworked so that all comparisons on a variable are combined before the
-storage lookup, which fixed several related bugs:
-
-- **Missed answers when seeking with a bound of another value type.**
-When several `has` constraints were joined on an owner, the seek used
-the comparison bound in its own value type. A bound of a different type,
-such as a double against an integer attribute, could skip valid answers:
-`$p has age $a; $p has name $n; $a > 10.5;` could drop `age 11`. The
-same seek could skip long strings that sort after a bound, and
-datetime-tz values at the same instant in another time zone.
-- **Dou
-
-**File**: `MODULE.bazel` (modified, +1/-1)
-```diff
-@@ -193,7 +193,7 @@ bazel_dep(name = "typedb_behaviour", version = "0.0.0")
- git_override(
-     module_name = "typedb_behaviour",
-     remote = "https://github.com/typedb/typedb-behaviour",
--    commit = "5af278ec4585f1efc73d2dddf01aed3dadbdea12",
-+    commit = "9dc71dcee4183b21caad2b78ecabd4eb702cc0c1",
- )
- 
- http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
-```
-
-**File**: `compiler/annotation/inference/type_seeder.rs` (modified, +3/-3)
-```diff
-@@ -16,7 +16,7 @@ use concept::{
-     error::ConceptReadError,
-     type_::{OwnerAPI, PlayerAPI, TypeAPI, object_type::ObjectType, type_manager::TypeManager},
+ use std::{
+     collections::{HashMap, HashSet},
++    iter,
+     marker::PhantomData,
+     path::PathBuf,
+     sync::Arc,
+@@ -37,6 +38,7 @@ use concept::{
+         type_manager::TypeManager,
+     },
  };
--use encoding::value::value_type::{ValueType, ValueTypeCategory};
-+use encoding::value::value_type::ValueType;
- use ir::{
-     pattern::{
-         Pattern, Vertex,
-@@ -1336,7 +1336,7 @@ impl BinaryConstraint for Comparison<Variable> {
-                 _ => None,
-             };
-             if let Some(value_type) = left_value_type {
--                let comparable_types = ValueTypeCategory::comparable_categories(value_type.category());
-+                let comparable_types = self.comparator().comparable_categories(value_type.category());
-                 for subattr in allowed_right_types {
-                     if let Some(subvaluetype) = subattr
-                         .as_attribute_type()
-@@ -1376,7 +1376,7 @@ impl BinaryConstraint for Comparison<Variable> {
-                 _ => None,
-             };
-             if let Some(value_type) = right_value_type {
--                let comparable_types = ValueTypeCategory::comparable_categories(value_type.category());
-+                let comparable_types = self.comparator().comparable_categories(value_type.category());
-                 for subattr in allowed_left_types {
-                     if let Some(subvaluetype) = subattr
-                         .as_attribute_type()
-```
-
-**File**: `compiler/annotation/mod.rs` (modified, +7/-0)
-```diff
-@@ -136,6 +136,13 @@ typedb_error!(
-             actual: ExpressionValueType,
-             source_span: Option<Span>,
-         ),
-+        UnorderedValueTypeForSortVariable(
-+            20,
-+            "The sort variable '{variable}' uses values of value-type '{value_type}', which have no ordering.",
-+            variable: String,
-+            value_type: ValueTypeCategory,
-+            source_span: Option<Span>,
-+        ),
-         Internal(100, "Internal error: {message}", message: String),
-     }
- );
-```
-
-**File**: `compiler/annotation/pipeline.rs` (modified, +25/-6)
-```diff
-@@ -46,9 +46,8 @@ use crate::{
-         },
-         fetch::{AnnotatedFetch, annotate_fetch},
-         function::{
--            AnnotatedFunctionSignatures, AnnotatedFunctionSignaturesImpl, AnnotatedPreambleFunctions,
--            AnnotatedSchemaFunctions, FunctionParameterAnnotation, annotate_preamble_functions,
--            get_annotations_from_labels_vec,
-+            AnnotatedFunctionSignaturesImpl, AnnotatedPreambleFunctions, AnnotatedSchemaFunctions,
-+            FunctionParameterAnnotation, annotate_preamble_functions, get_annotations_from_labels_vec,
-         },
-         inference::match_inference::infer_types_for_block,
-         type_annotations::{BlockAnnotations, ConstraintTypeAnnotations, TypeAnnotations},
-@@ -435,8 +434,16 @@ pub fn validate_sort_variables_comparable(
-     input_annotations: &RunningVariableAnnotations,
- ) -> Result<(), AnnotationError> {
-     for sort_var in &sort.variables {
--        if input_annotations.values.contains_key(&sort_var.variable()) {
--            continue; // Expressions always return the same type.
-+        if let Some(expression_value_type) = input_annotations.values.get(&sort_var.variable()) {
-+            let category = expression_value_type.value_type().category();
-+            if !category.is_order_comparable() {
-+                let variable_name = ctx.name_for_error(sort_var.variable());
-+                return Err(AnnotationError::UnorderedValueTypeForSortVariable {
-+                    variable: variable_name,
-+                    value_type: category,
-+                    source_span: sort.source_span(),
-+                });
-+            }
-         } else if let Some(types) = input_annotations.concepts.get(&sort_var.variable()) {
-             let value_types = resolve_value_types(&(**types), ctx.snapshot, ctx.type_manager)
-                 .map_err(|typedb_source| AnnotationError::TypeInference { typedb_source })?;
-@@ -447,8 +454,20 @@ pub fn validate_sort_variables_comparable(
-                     source_span: sort.source_span(),
-                 });
-             }
-+            if let Some(unordered) = value_types
-+                .iter()
-+                .map(|value_type| value_type.category())
-+                .find(|category| !category.is_order_comparable())
-+            {
-+                let variable_name = ctx.name_for_error(sort_var.variable());
-+                return Err(AnnotationError::UnorderedValueTypeForSortVariable {
-+                    variable: variable_name,
-+                    value_type: unordered,
-+                    source_span: sort.source_span(),
-+                });
-+            }
-             let first_category = value_types.iter().next().unwrap().category();
--            let allowed_categories = ValueTypeCategory::comparable_categories(first_category);
-+            let allowed_categories = first_category.order_comparable_categories();
-             for other_type in value_types.iter().map(|v| v.category()) {
-                 // Don't need to do pairwise if comparable is transitive
-                 if !allowed_categories.contains(&other_type) {
-```
-
-**File**: `concept/tests/test_thing.rs` (modified, +14/-8)
-```diff
-@@ -32,7 +32,7 @@ use encoding::{
-     graph::definition::definition_key::DefinitionKey,
-     value::{
-         label::Label,
--        value::Value,
-+        value::{Value, ValueRestriction},
-         value_struct::StructValue,
-         value_type::{ValueType, ValueTypeCategory},
++use concurrency::TokioTaskSpawner;
+ use encoding::{
+     graph::{
+         Typed,
+@@ -45,23 +47,25 @@ use encoding::{
      },
-@@ -401,7 +401,7 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Included(Value::Integer(age_value_10)), Bound::Unbounded),
-+                &ValueRestriction::new_range(Bound::Included(Value::Integer(age_value_10)), Bound::Unbounded),
-                 &(Bound::Included(ObjectType::Entity(person_type)), Bound::Unbounded),
-                 StorageCounters::DISABLED,
-             )
-@@ -412,7 +412,7 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Excluded(Value::Integer(age_value_10)), Bound::Unbounded),
-+                &ValueRestriction::new_range(Bound::Excluded(Value::Integer(age_value_10)), Bound::Unbounded),
-                 &(Bound::Included(ObjectType::Entity(person_type)), Bound::Unbounded),
-                 StorageCounters::DISABLED,
-             )
-@@ -423,7 +423,10 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Included(Value::Integer(age_value_10)), Bound::Excluded(Value::Integer(age_value_11))),
-+                &ValueRestriction::new_range(
-+                    Bound::Included(Value::Integer(age_value_10)),
-+                    Bound::Excluded(Value::Integer(age_value_11)),
-+                ),
-                 &(Bound::Included(ObjectType::Entity(person_type)), Bound::Unbounded),
-                 StorageCounters::DISABLED,
-             )
-@@ -434,7 +437,10 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Excluded(Value::Integer(age_value_10)), Bound::Excluded(Value::Integer(age_value_11))),
-+                &ValueRestriction::new_range(
-+                    Bound::Excluded(Value::Integer(age_value_10)),
-+                    Bound::Excluded(Value::Integer(age_value_11)),
-+                ),
-                 &(Bound::Included(ObjectType::Entity(person_type)), Bound::Unbounded),
-                 StorageCounters::DISABLED,
-             )
-@@ -445,7 +451,7 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Included(Value::Integer(age_value_10)), Bound::Unbounded),
-+                &ValueRestriction::new_range(Bound::Included(Value::Integer(age_value_10)), Bound::Unbounded),
-                 &(Bound::Excluded(ObjectType::Entity(person_type)), Bound::Unbounded),
-                 StorageCounters::DISABLED,
-             )
-@@ -457,7 +463,7 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Excluded(Value::Integer(age_value_10)), Bound::Unbounded),
-+                &ValueRestriction::new_range(Bound::Excluded(Value::Integer(age_value_10)), Bound::Unbounded),
-                 &(Bound::Excluded(ObjectType::Entity(person_type)), Bound::Unbounded),
-                 StorageCounters::DISABLED,
-             )
-@@ -469,7 +475,7 @@ fn get_has_reverse_in_range() {
-             .get_has_reverse_in_range(
-                 &snapshot,
-                 age_type,
--                &(Bound::Unbounded, Bound::Included(Value::Integer(age_value_11))),
-+                &ValueRestriction::new_range(Bound::Unbounded, Bound::Included(Value::Integer(age_value_11))),
-                 &(Bound::Excluded(ObjectType::Entity(person_type)), Bound::Excluded(ObjectType::Entity(company_type))),
-                 StorageCounters::DISABLED,
-             )
-```
-
-**File**: `concept/thing/object.rs` (modified, +11/-7)
-```diff
-@@ -19,7 +19,11 @@ use encoding::{
-         vertex_object::ObjectVertex,
-     },
-     layout::prefix::Prefix,
--    value::{decode_value_u64, value::Value, value_type::ValueTypeCategory},
-+    value::{
-+        decode_value_u64,
-+        value::{Value, ValueRestriction},
-+        value_type::ValueTypeCategory,
-+    },
+     value::{label::Label, value::Value},
  };
- use lending_iterator::higher_order::Hkt;
- use resource::{
-@@ -184,12 +188,12 @@ pub trait ObjectAPI: ThingAPI<Vertex = ObjectVertex> + Copy + fmt::Debug {
-         self.get_has_types_range_unordered(snapshot, thing_manager, storage_counters)
-     }
+-use error::typedb_error;
+-use executor::ExecutionInterrupt;
++use error::{TypeDBError, typedb_error};
++use executor::{ExecutionInterrupt, InterruptType};
+ use query::error::QueryError;
+ use resource::{constants::snapshot::BUFFER_KEY_INLINE, profile::StorageCounters};
+ use serde::{Serialize, de::DeserializeOwned};
+ use storage::{
+     durability_client::WALClient,
+     snapshot::{ReadableSnapshot, WritableSnapshot},
+ };
++use tokio::{
++    sync::{broadcast, mpsc},
++    task::JoinHandle,
++};
+ use tracing::{Level, event};
+ use typeql::{parse_query, query::SchemaQuery};
  
--    fn get_has_type_unordered<'a>(
-+    fn get_has_type_unordered(
-         self,
-         snapshot: &impl ReadableSnapshot,
-         thing_manager: &ThingManager,
-         attribute_type: AttributeType,
--        value_range: &'a impl RangeBounds<Value<'a>>,
-+        value_restriction: &ValueRestriction<'_>,
-         storage_counters: StorageCounters,
-     ) -> Result<
-         Map<
-@@ -202,7 +206,7 @@ pub trait ObjectAPI: ThingAPI<Vertex = ObjectVertex> + Copy + fmt::Debug {
-             snapshot,
-             self,
-             attribute_type,
--            value_range,
-+            value_restriction,
-             storage_counters,
-         )
-     }
-@@ -226,21 +230,21 @@ pub trait ObjectAPI: ThingAPI<Vertex = ObjectVertex> + Copy + fmt::Debug {
-         thing_manager.owner_get_has_unordered_all(snapshot, self, storage_counters)
-     }
- 
--    fn get_has_types_range_unordered_in_value_types<'a>(
-+    fn get_has_types_range_unordered_in_value_types(
-         self,
-         snapshot: &impl ReadableSnapshot,
-         thing_manager: &ThingManager,
-         attribute_type_range: &impl RangeBounds<AttributeType>,
-         ordered_value_categories: &[ValueTypeCategory],
--        value_range: &'a impl RangeBounds<Value<'a>>,
-+        value_restriction: &ValueRestriction<'_>,
-         storage_counters: StorageCounters,
-     ) -> Result<HasIterator, Box<ConceptReadError>> {
-         thing_manager.owner_get_has_unordered_in_value_type(
-             snapshot,
-             self,
-             attribute_type_range,
-             ordered_value_categories,
--            value_range,
-+            value_restriction,
-             storage_counters,
-         )
-     }
-```
-
-**File**: `concept/thing/thing_manager.rs` (modified, +382/-274)
-```diff
-@@ -48,7 +48,7 @@ use encoding::{
-         primitive_encoding::{decode_u64, encode_u64},
-         string_bytes::StringBytes,
-         struct_bytes::StructBytes,
--        value::Value,
-+        value::{Value, ValueRestriction},
-         value_struct::{StructIndexEntry, StructValue},
-         value_type::{ValueType, ValueTypeCategory},
+ use crate::{
+     migration::{
+-        Checksums,
+-        database_import_handler::{DatabaseImportHandler, ImportHandlerError},
+-        item::MigrationItem,
++        Checksums, MigrationOperationError, importing_database_handle::ImportingDatabaseHandle, item::MigrationItem,
      },
-@@ -524,48 +524,78 @@ impl ThingManager {
-         Ok(Some(attribute))
+     query::execute_schema_query,
+     transaction::{TransactionError, TransactionSchema, TransactionWrite},
+@@ -331,8 +335,108 @@ impl AttributesInfo {
      }
+ }
  
--    pub fn get_attributes_in_range<'a>(
-+    pub fn get_attributes_in_range(
-         &self,
-         snapshot: &impl ReadableSnapshot,
-         attribute_type: AttributeType,
--        value_range: &'a impl RangeBounds<Value<'a>>,
-+        value_restriction: &ValueRestriction<'_>,
-         storage_counters: StorageCounters,
-     ) -> Result<AttributeIterator<InstanceIterator<Attribute>>, Box<ConceptReadError>> {
--        if matches!(value_range.start_bound(), Bound::Unbounded) && matches!(value_range.end_bound(), Bound::Unbounded)
--        {
--            return self.get_attributes_in(snapshot, attribute_type, storage_counters);
--        }
-         let Some(attribute_value_type) = attribute_type.get_value_type_without_source(snapshot, self.type_manager())?
-         else {
-             return Ok(AttributeIterator::new_empty());
-         };
-+        let value_type_category = attribute_value_type.category();
-+        match AttributeValueLookup::new(value_restriction, &[value_type_category]) {
-+            AttributeValueLookup::All => self.get_attributes_in(snapshot, attribute_type, storage_counters),
-+            AttributeValueLookup::Exact(value) => {
-+                let attribute_key = self
-+                    .get_attribute_vertex_prefix_for_equality(attribute_type.vertex().type_id_(), value.as_reference());
-+                let has_reverse_prefix = ThingEdgeHasReverse::prefix_from_attribute_vertex_prefix(
-+                    value_type_category,
-+                    attribute_key.bytes(),
-+                );
-+                let attributes_iterator = InstanceIterator::new(
-+                    snapshot.iterate_range(&KeyRange::new_within(attribute_key, false), storage_counters.clone()),
-+                );
-+                let has_reverse_range = KeyRange::new_within(has_reverse_prefix, false);
-+                let has_reverse_iterator =
-+                    HasReverseIterator::new(snapshot.iterate_range(&has_reverse_range, storage_counters));
-+                Ok(AttributeIterator::new(
-+                    attributes_iterator,
-+                    has_reverse_iterator,
-+                    self.type_manager().get_independent_attribute_types(snapshot)?,
-+                ))
-+            }
-+            AttributeValueLookup::Range(lower, upper) => self.get_attributes_in_value_range(
-+                snapshot,
-+                attribute_type,
-+                value_type_category,
-+                &(lower, upper),
-+                storage_counters,
-+            ),
-+            AttributeValueLookup::Empty => Ok(AttributeIterator::new_empty()),
++type ImportItems = Box<dyn Iterator<Item = Result<MigrationItem, MigrationOperationError>> + Send>;
++
++enum ImportMessage {
++    Items(ImportItems),
++    Finalize,
++}
++
++type ImportResult = Result<u64, DatabaseImportError>;
++
++pub struct DatabaseImporterHandle {
++    message_sender: Option<mpsc::Sender<ImportMessage>>,
++    interrupt: broadcast::Sender<InterruptType>,
++    interrupted: bool,
++    join_handle: Option<JoinHandle<ImportResult>>,
++}
++
++impl DatabaseImporterHandle {
++    pub async fn send(&mut self, item: MigrationItem) -> Result<(), DatabaseImportError> {
++        self.send_message(ImportMessage::Items(Box::new(iter::once(Ok(item))))).await
++    }
++
++    pub async fn send_batch<E>(
++        &mut self,
++        items: impl IntoIterator<Item = Result<MigrationItem, E>, IntoIter: Send + 'static>,
++    ) -> Result<(), DatabaseImportError>
++    where
++        E: TypeDBError + Send + Sync + 'static,
++    {
++        let items = items.into_iter().map(|item| item.map_err(|error| Arc::new(error) as MigrationOperationError));
++        self.send_message(ImportMessage::Items(Box::new(items))).await
++    }
++
++    async fn send_message(&mut self, message: ImportMessage) -> Result<(), DatabaseImportError> {
++        let sent = match &self.message_sender {
++            Some(sender) => sender.send(message).await.is_ok(),
++            None => false,
++        };
++        if sent { Ok(()) } else { Err(Self::stop_reason(self.join().await)) }
++    }
++
++    pub async fn finalize(&mut self) -> ImportResult {
++        if let Some(sender) = self.message_sender.take() {
++            // If this fails, the importer has already stopped and its result carries the reason.
++            let _ = sender.send(ImportMessage::Finalize).await;
++        }
++        self.join().await
++    }
++
++    pub async fn abort(mut self) -> ImportResult {
++        self.interrupt();
++        self.join().await
++    }
++
++    fn interrupt(&mut self) {
++        if !self.interrupted {
++            let _ = self.interrupt.send(InterruptType::DatabaseImportAborted);
++            self.interrupted = true;
++        }
++        // dropping sender closes channel to wake up receiver if required
++        self.message_sender = None;
++    }
++
++    /// Waits for the importer task to finish, e.g. after failing. Only the first completed wait gets its result:
++    /// later ones return `ImporterStopped`.
++    pub async fn join(&mut self) -> ImportResult {
++        // The join handle is only cleared once the task ends, so a cancelled (dropped) wait can be retried.
++        let Some(join_handle) = self.join_handle.as_mut() else {
++            return Err(DatabaseImportError::ImporterStopped {});
++        };
++        let result = join_handle.await.unwrap_or_else(|err| {
++            event!(Level::ERROR, "The importer task failed: {err}");
++            Err(DatabaseImportError::ImporterStopped {})
++        });
++        self.join_handle = None;
++        result
++    }
++
++    fn stop_reason(result: ImportResult) -> DatabaseImportError {
++        match result {
++            Ok(_) => DatabaseImportError::ImporterStopped {},
++            Err(err) => err,
 +        }
 +    }
- 
--        let Some((value_lower_bound, value_upper_bound)) =
--            Self::get_value_range(attribute_value_type.category(), value_range)
--        else {
-+    fn get_attributes_in_value_range<'a>(
-+        &self,
-+        snapshot: &impl ReadableSnapshot,
-+        attribute_type: AttributeType,
-+        value_type_category: ValueTypeCategory,
-+        value_range: &'a impl RangeBounds<Value<'a>>,
-+        storage_counters: StorageCounters,
-+    ) -> Result<AttributeIterator<InstanceIterator<Attribute>>, Box<ConceptReadError>> {
-+        let Some((lower, upper)) = Self::get_value_range(value_type_category, value_range) else {
-             return Ok(AttributeIterator::new_empty());
-         };
++}
 +
-         let start_attribute_vertex_bound = self.get_attribute_vertex_prefix_lower_bound(
-             attribute_type.vertex().type_id_(),
--            attribute_value_type.category(),
--            value_lower_bound,
-+            value_type_category,
-+            lower,
-         );
-         let end_attribute_vertex_bound = self.get_attribute_vertex_prefix_upper_bound(
-             attribute_type.vertex().type_id_(),
--            attribute_value_type.category(),
--            value_upper_bound,
-+            value_type_category,
-+            upper,
-         );
- 
--        let has_reverse_start_prefix = start_attribute_vertex_bound.map(|start| {
--            ThingEdgeHasReverse::prefix_from_attribute_vertex_prefix(attribute_value_type.category(), start.bytes())
--        });
-+        let has_reverse_start_prefix = start_attribute_vertex_bound
-+            .map(|start| ThingEdgeHasReverse::prefix_from_attribute_vertex_prefix(value_type_category, start.bytes()));
-         let has_reverse_end_prefix = end_attribute_vertex_bound.map(|end| {
--            ThingEdgeHasReverse::prefix_from_attribute_vertex_prefix(
--                attribute_value_type.category(),
--                end.as_reference().bytes(),
--            )
-+            ThingEdgeHasReverse::
++impl Drop for DatabaseImporterHandle {
++    fn drop(&mut self) {
++        if self.join_handle.is_some() {
++            event!(Level::WARN, "An import was dropped before it was finalised or aborted. Aborting the import.");
++            self.interrupt();
++        }
++    }
++}
++
++impl std::fmt::Debug for DatabaseImporterHandle {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.debug_s
 ```
 
-**File**: `concept/type_/type_manager/validation/operation_time_validation.rs` (modified, +2/-2)
+**File**: `database/migration/importing_database_handle.rs` (renamed, +5/-7)
 ```diff
-@@ -11,7 +11,7 @@ use encoding::{
-         definition::definition_key::DefinitionKey,
-         type_::{CapabilityKind, Kind},
-     },
--    value::{label::Label, value_type::ValueType},
-+    value::{label::Label, value::ValueRestriction, value_type::ValueType},
- };
- use itertools::Itertools;
- use primitive::maybe_owns::MaybeOwns;
-@@ -2790,7 +2790,7 @@ impl OperationTimeValidation {
-                 snapshot,
-                 thing_manager,
-                 attribute_type,
--                &..,
-+                &ValueRestriction::None,
-                 storage_counters.clone(),
-             )?;
+@@ -6,32 +6,30 @@
  
+ use std::{sync::Arc, time::Duration};
+ 
+-use error::TypeDBError;
+ use options::TransactionOptions;
+ use resource::constants::common::SECONDS_IN_DAY;
+ use storage::durability_client::WALClient;
+ 
+ use crate::{
+     Database,
++    migration::MigrationOperationError,
+     transaction::{DataCommitIntent, SchemaCommitIntent, TransactionError, TransactionSchema, TransactionWrite},
+ };
+ 
+-pub trait DatabaseImportHandler: Send + Sync {
++pub trait ImportingDatabaseHandle: Send + Sync {
+     fn database_name(&self) -> &str;
+ 
+     fn open_schema(&self) -> Result<TransactionSchema<WALClient>, TransactionError>;
+ 
+     fn open_write(&self) -> Result<TransactionWrite<WALClient>, TransactionError>;
+ 
+-    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), ImportHandlerError>;
++    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), MigrationOperationError>;
+ 
+-    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), ImportHandlerError>;
++    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), MigrationOperationError>;
+ 
+-    fn finalise(self: Box<Self>) -> Result<(), ImportHandlerError>;
++    fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError>;
+ }
+ 
+-pub type ImportHandlerError = Arc<dyn TypeDBError + Send + Sync>;
+-
+ const OPTIONS_PARALLEL: bool = true;
+ const OPTIONS_SCHEMA_LOCK_ACQUIRE_TIMEOUT_MILLIS: u64 = Duration::from_secs(10).as_millis() as u64;
+ const OPTIONS_TRANSACTION_TIMEOUT_MILLIS: u64 = Duration::from_secs(1 * SECONDS_IN_DAY).as_millis() as u64;
+```
+
+**File**: `database/migration/mod.rs` (modified, +6/-2)
+```diff
+@@ -4,13 +4,17 @@
+  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+  */
+ 
+-use std::{fmt, fmt::Formatter};
++use std::{fmt, fmt::Formatter, sync::Arc};
++
++use error::TypeDBError;
+ 
+ pub mod database_exporter;
+-pub mod database_import_handler;
+ pub mod database_importer;
++pub mod importing_database_handle;
+ pub mod item;
+ 
++pub type MigrationOperationError = Arc<dyn TypeDBError + Send + Sync>;
++
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub struct Checksums {
+     pub entity_count: i64,
+```
+
+**File**: `database/tests/BUILD` (modified, +3/-1)
+```diff
+@@ -49,14 +49,16 @@ rust_test(
+         "migration.rs",
+     ]),
+     deps = [
++        "//common/concurrency",
+         "//common/options",
+         "//database",
+         "//diagnostics",
+         "//encoding",
+-        "//executor",
+         "//resource",
+         "//storage",
+         "//util/test:test_utils",
++
++        "@crates//:tokio",
+     ]
+ )
+ 
+```
+
+**File**: `database/tests/migration.rs` (modified, +142/-59)
+```diff
+@@ -6,16 +6,17 @@
+ 
+ use std::sync::Arc;
+ 
++use concurrency::{TokioTaskSpawner, TokioTaskTracker};
+ use database::{
+     Database,
+     database_manager::{DatabaseManager, ImportOwnership},
+     migration::{
+-        Checksums,
++        Checksums, MigrationOperationError,
+         database_exporter::DatabaseExporter,
+-        database_import_handler::{
+-            DatabaseImportHandler, ImportHandlerError, open_import_schema_transaction, open_import_write_transaction,
++        database_importer::{DatabaseImportError, DatabaseImporter, DatabaseImporterHandle},
++        importing_database_handle::{
++            ImportingDatabaseHandle, open_import_schema_transaction, open_import_write_transaction,
+         },
+-        database_importer::{DatabaseImportError, DatabaseImporter},
+         item::MigrationItem,
+     },
+     transaction::{
+@@ -25,11 +26,11 @@ use database::{
+ };
+ use diagnostics::diagnostics_manager::DiagnosticsManager;
+ use encoding::value::{label::Label, value::Value};
+-use executor::ExecutionInterrupt;
+ use options::{MvccCleanupStrategy, TransactionOptions, byte_size::ByteSize};
+ use resource::profile::CommitProfile;
+ use storage::durability_client::WALClient;
+ use test_utils::{TempDir, create_tmp_dir, init_logging};
++use tokio::sync::watch;
+ 
+ const SCHEMA: &str = r#"define
+   attribute name, value string;
+@@ -38,12 +39,12 @@ const SCHEMA: &str = r#"define
+ "#;
+ 
+ #[derive(Debug)]
+-struct TestImportHandler {
++struct TestImportingDatabaseHandle {
+     database_manager: Arc<DatabaseManager>,
+     staged_database: Arc<Database<WALClient>>,
+ }
+ 
+-impl DatabaseImportHandler for TestImportHandler {
++impl ImportingDatabaseHandle for TestImportingDatabaseHandle {
+     fn database_name(&self) -> &str {
+         self.staged_database.name()
+     }
+@@ -56,15 +57,15 @@ impl DatabaseImportHandler for TestImportHandler {
+         open_import_write_transaction(&self.staged_database)
+     }
+ 
+-    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), ImportHandlerError> {
++    fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
+         intent.commit(&mut CommitProfile::disabled()).map_err(|error| Arc::new(error) as _)
+     }
+ 
+-    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), ImportHandlerError> {
++    fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
+         intent.commit(&mut CommitProfile::disabled()).map_err(|error| Arc::new(error) as _)
+     }
+ 
+-    fn finalise(self: Box<Self>) -> Result<(), ImportHandlerError> {
++    fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError> {
+         let Self { database_manager, staged_database } = *self;
+         let name = staged_database.name().to_owned();
+         drop(staged_database);
+@@ -85,14 +86,31 @@ fn manager(data_dir: &TempDir) -> Arc<DatabaseManager> {
+     .expect("DatabaseManager::new")
+ }
+ 
+-fn importer(database_manager: &Arc<DatabaseManager>, name: &str) -> DatabaseImporter {
++const BUFFER_SIZE: usize = 10;
++
++fn importing_database(database_manager: &Arc<DatabaseManager>, name: &str) -> Box<dyn ImportingDatabaseHandle> {
+     let staged_database = database_manager.prepare_imported_database(name.to_owned()).expect("prepare");
+-    let handler = TestImportHandler { database_manager: database_manager.clone(), staged_database };
+-    DatabaseImporter::new(
+-        Box::new(handler),
+-        database_manager.import_directory().to_owned(),
+-        ExecutionInterrupt::new_uninterruptible(),
+-    )
++    Box::new(TestImportingDatabaseHandle { database_manager: database_manager.clone(), staged_database })
++}
++
++// Tests that don't exercise shutdown use an untracked spawner: without a shutdown sender the tracker is closed, but
++// it still runs the tasks spawned through it.
++fn task_spawner() -> TokioTaskSpawner {
++    let (_, shutdown_receiver) = watch::channel(());
++    TokioTaskTracker::new(shutdown_receiver).get_spawner()
++}
++
++fn importer(database_manager: &Arc<DatabaseManager>, name: &str) -> DatabaseImporterHandle {
++    importer_with_spawner(database_manager, name, &task_spawner())
++}
++
++fn importer_with_spawner(
++    database_manager: &Arc<DatabaseManager>,
++    name: &str,
++    task_spawner: &TokioTaskSpawner,
++) -> DatabaseImporterHandle {
++    let scratch_directory = database_manager.import_directory().to_owned();
++    DatabaseImporter::start(importing_database(database_manager, name), scratch_directory, BUFFER_SIZE, task_spawner)
+ }
+ 
+ fn read_transaction(database_manager: &Arc<DatabaseManager>, name: &str) -> TransactionRead<WALClient> {
+@@ -153,19 +171,18 @@ fn empty_checksums() -> MigrationItem {
+     MigrationItem::Checksums(Checksums::new())
+ }
+ 
+-fn import_all(mut importer: DatabaseImporter, items: Vec<MigrationItem>) {
+-    for item in items {
+-        importer.apply(item).expect("apply");
+-    }
+-    importer.import_done().expect("import done");
++async fn import_all(mut import
 ```
 
 #### Recent Merged Pull Requests:
@@ -2845,50 +2326,28 @@ datetime-tz values at the same instant in another time zone.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add regression test for recursive functions crashing with "WouldBlock" (#8016)
+## X. database importer to be channel-based (#7991)
 
 **RULE**:
-When implementing operations in `executor/tests/execute_function.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/concurrency/tokio_task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6226626f`: Add regression test for recursive functions crashing with "WouldBlock" (#8016). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d27c487`: database importer to be channel-based (#7991). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `executor/tests/execute_function.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/concurrency/tokio_task.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+    pub fn spawn_blocking<F, T>(&self, task: F) -> JoinHandle<T>
+    where
+        F: FnOnce() -> T + Send + 'static,
+        T: Send + 'static,
+    {
+        self.tracker.spawn_blocking(task)
+    }
 
-#[test]
-fn recursive_function_calls_recursive_function() {
-    // Regression against #7707
-    // A recursive function has to call another recursive function (which doesn't call it back)
-    let custom_schema = r#"define entity person;"#;
-    let context = setup_common(custom_schema);
-    let query = r#"
-with fun nat() -> { integer }:
-match
-  {let $x = 0;} or
-  { let $y in nat(); let $x = $y + 1; };
-return { $x };
-
-with fun sum_stuff() -> { integer }:
-match
-    { let $sum = 0; } or {
-        let $prev_sum = sum_stuff();
-        let $n in nat();
-        let $sum = $prev_sum + $n;
-    };
-return { $sum };
-
-match let $x in sum_stuff();
-limit 20;
-"#;
-
-    let (rows, _positions) = run_read_query(&context, query).unwrap();
-    assert_eq!(rows.len(), 20);
-}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2898,4 +2357,4 @@ limit 20;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6226626f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d27c487` are properly handled with clean fallback behavior.

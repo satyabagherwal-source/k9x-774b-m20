@@ -3658,3 +3658,8 @@
 | `CYCLE-20261020-CTBX` | `2026-10-20T02:27:58.461Z` | `evanw/esbuild` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2996` | Yes (`056d8432...`) |
 | `CYCLE-20261020-CV0K` | `2026-10-20T02:28:00.644Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md` | Yes (`6b42f8de...`) |
 | `CYCLE-20261020-CWVA` | `2026-10-20T02:28:03.046Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2997` | Yes (`da75eb27...`) |
+| `CYCLE-20261020-KYZ3` | `2026-10-20T02:34:19.023Z` | `exyte/Chat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/exyte-chat-learnings.md` | Yes (`58e08634...`) |
+| `CYCLE-20261020-KZY6` | `2026-10-20T02:34:20.286Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2998` | Yes (`61a2cc66...`) |
+| `CYCLE-20261020-L491` | `2026-10-20T02:34:25.861Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2999` | Yes (`3ac9204c...`) |
+| `CYCLE-20261020-L5VI` | `2026-10-20T02:34:27.966Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3000` | Yes (`8999e78d...`) |
+| `CYCLE-20261020-OHD2` | `2026-10-20T02:37:02.822Z` | `parcel-bundler/parcel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3001, Rule 3002, Rule 3003` | Yes (`a5c95162...`) |

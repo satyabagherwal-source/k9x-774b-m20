@@ -3665,3 +3665,8 @@ Every entry in this ledger must capture:
 | `learn-github-evanw-esbuild` | `https://github.com/evanw/esbuild` | `f6058f83` | Multi-dimensional audit evidence | 2026-10-20T02:27:58.468Z |
 | `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `0463cb8c` | Multi-dimensional audit evidence | 2026-10-20T02:28:00.646Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `94eae2cc` | Multi-dimensional audit evidence | 2026-10-20T02:28:03.048Z |
+| `learn-github-exyte-chat` | `https://github.com/exyte/Chat` | `49bf1f37` | Multi-dimensional audit evidence | 2026-10-20T02:34:19.026Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `61172690` | Multi-dimensional audit evidence | 2026-10-20T02:34:20.289Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `4d27c487` | Multi-dimensional audit evidence | 2026-10-20T02:34:25.864Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2b3c5e26` | Multi-dimensional audit evidence | 2026-10-20T02:34:27.969Z |
+| `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `59484858` | Multi-dimensional audit evidence | 2026-10-20T02:37:02.825Z |
