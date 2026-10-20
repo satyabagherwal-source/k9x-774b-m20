@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T02:43:13.506Z",
-  "total_cycles_completed": 3644,
-  "total_learnings_persisted": 3644,
-  "total_rules_promoted": 2810,
+  "last_updated": "2026-10-20T02:49:33.139Z",
+  "total_cycles_completed": 3646,
+  "total_learnings_persisted": 3646,
+  "total_rules_promoted": 2813,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:16:52.946Z",
-      "repository": "touchlab/Kermit",
-      "learningId": "learn-github-touchlab-kermit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:22:50.465Z",
-      "repository": "GateNLP/ultimate-sitemap-parser",
-      "learningId": "learn-github-gatenlp-ultimate-sitemap-parser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T20:22:51.465Z",
       "repository": "KevinnZou/compose-webview-multiplatform",
@@ -1403,6 +1389,20 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:49:24.897Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T02:49:33.139Z",
+      "repository": "alyssaxuu/later",
+      "learningId": "learn-github-alyssaxuu-later",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

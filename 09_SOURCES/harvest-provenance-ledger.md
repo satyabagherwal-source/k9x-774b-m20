@@ -3674,3 +3674,5 @@ Every entry in this ledger must capture:
 | `learn-github-apple-sample-food-truck` | `https://github.com/apple/sample-food-truck` | `3954a769` | Multi-dimensional audit evidence | 2026-10-20T02:43:03.933Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `aa4c3221` | Multi-dimensional audit evidence | 2026-10-20T02:43:06.808Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `87b65968` | Multi-dimensional audit evidence | 2026-10-20T02:43:13.503Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `e736c2df` | Multi-dimensional audit evidence | 2026-10-20T02:49:24.893Z |
+| `learn-github-alyssaxuu-later` | `https://github.com/alyssaxuu/later` | `26e79369` | Multi-dimensional audit evidence | 2026-10-20T02:49:33.135Z |

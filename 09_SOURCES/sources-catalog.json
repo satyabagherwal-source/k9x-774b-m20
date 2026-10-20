@@ -10068,5 +10068,25 @@
     "contentHash": "ba2be8e7e0afa0fc401304b05a2c39ce401216385354ec6c54c062cd76ea7671",
     "lastHarvestedAt": "2026-10-20T02:43:03.933Z",
     "learningId": "learn-github-apple-sample-food-truck"
+  },
+  "preactjs-preact": {
+    "repository": "preactjs/preact",
+    "platform": "github",
+    "sourceUrl": "https://github.com/preactjs/preact",
+    "sourceVersion": "e736c2df",
+    "license": "MIT",
+    "contentHash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
+    "lastHarvestedAt": "2026-10-20T02:49:24.893Z",
+    "learningId": "learn-github-preactjs-preact"
+  },
+  "alyssaxuu-later": {
+    "repository": "alyssaxuu/later",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alyssaxuu/later",
+    "sourceVersion": "26e79369",
+    "license": "MIT",
+    "contentHash": "889f30fb5609c1847c79646202c79f2fe1e539fce5be633ef835924e42e827b3",
+    "lastHarvestedAt": "2026-10-20T02:49:33.135Z",
+    "learningId": "learn-github-alyssaxuu-later"
   }
 }

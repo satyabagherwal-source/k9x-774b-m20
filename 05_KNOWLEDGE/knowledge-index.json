@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T02:43:13.463Z",
-  "total_verified_learnings": 1022,
+  "last_updated": "2026-10-20T02:49:33.093Z",
+  "total_verified_learnings": 1024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1468,22 +1468,40 @@
     "learn-github-alyssaxuu-later": {
       "learning_id": "learn-github-alyssaxuu-later",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alyssaxuu-later",
+      "source": "alyssaxuu/later",
+      "repository": "alyssaxuu/later",
       "slug": "alyssaxuu-later",
       "platform": "github",
       "source_url": "https://github.com/alyssaxuu/later",
-      "source_version": "HEAD",
-      "content_hash": "e8e400be6de8047059f80392311a11348b6e58f6557e76ba784072cf0ac77213",
+      "source_version": "26e79369",
+      "content_hash": "889f30fb5609c1847c79646202c79f2fe1e539fce5be633ef835924e42e827b3",
       "dossier_path": "07_PROJECT_LEARNING/alyssaxuu-later-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alyssaxuu-later-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3008,
+          "title": "Global Event Monitor Lifecycle Encapsulation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3009,
+          "title": "Application State Snapshotting via Bundle Identifier Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.760Z"
+      "verified_at": "2026-10-20T02:49:33.081Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-amir1376-ab-download-manager": {
       "learning_id": "learn-github-amir1376-ab-download-manager",
@@ -59467,20 +59485,35 @@
     "learn-github-preactjs-preact": {
       "learning_id": "learn-github-preactjs-preact",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "preactjs/preact",
       "repository": "preactjs/preact",
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "main",
-      "content_hash": "5372866ebd514affe35c26c7348dabb4df8b0ac994cf6bdd41f804686ec255b6",
+      "source_version": "e736c2df",
+      "content_hash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3007,
+          "title": "Merge pull request #5265 from preactjs/JoviDeCroock/rerender-queue-throw",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T02:49:24.841Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-qwikdev-qwik": {
       "learning_id": "learn-github-qwikdev-qwik",
@@ -97247,6 +97280,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T02:43:13.454Z"
+    },
+    "rule-3007": {
+      "learning_id": "rule-3007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3007,
+      "title": "Merge pull request #5265 from preactjs/JoviDeCroock/rerender-queue-throw",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "e736c2df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:49:24.841Z"
+    },
+    "rule-3008": {
+      "learning_id": "rule-3008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3008,
+      "title": "Global Event Monitor Lifecycle Encapsulation",
+      "source_url": "https://github.com/alyssaxuu/later",
+      "source_version": "26e79369",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:49:33.082Z"
+    },
+    "rule-3009": {
+      "learning_id": "rule-3009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3009,
+      "title": "Application State Snapshotting via Bundle Identifier Invariants",
+      "source_url": "https://github.com/alyssaxuu/later",
+      "source_version": "26e79369",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T02:49:33.082Z"
     }
   },
   "aliases": {

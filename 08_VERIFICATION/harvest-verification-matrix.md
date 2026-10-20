@@ -3667,3 +3667,5 @@
 | `CYCLE-20261020-W7ZU` | `2026-10-20T02:43:03.931Z` | `apple/sample-food-truck` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3005` | Yes (`ba2be8e7...`) |
 | `CYCLE-20261020-WA7Q` | `2026-10-20T02:43:06.806Z` | `meshery/meshery` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/meshery-meshery-learnings.md` | Yes (`b3dd2d68...`) |
 | `CYCLE-20261020-WFDP` | `2026-10-20T02:43:13.501Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3006` | Yes (`ece3d9ae...`) |
+| `CYCLE-20261020-4DY2` | `2026-10-20T02:49:24.890Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3007` | Yes (`62767528...`) |
+| `CYCLE-20261020-4KB0` | `2026-10-20T02:49:33.132Z` | `alyssaxuu/later` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3008, Rule 3009` | Yes (`889f30fb...`) |

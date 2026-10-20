@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-J9DA",
-    "timestamp": "2026-10-19T10:41:12.238Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "823b1afbb89c034f2879b6046093df098abd6d4e9d7ee53e801e76124664fe9d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-JD0X",
-    "timestamp": "2026-10-19T10:41:16.977Z",
-    "repository": "mrkai77/Loop",
-    "learningId": "learn-github-mrkai77-loop",
-    "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-SM51",
     "timestamp": "2026-10-19T10:48:28.693Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7492,6 +7462,36 @@
     "contentHash": "ece3d9ae720e7d37d20e9b251be9506fe76545c684ea3b6e571fa475fd9d96be",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4DY2",
+    "timestamp": "2026-10-20T02:49:24.890Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-4KB0",
+    "timestamp": "2026-10-20T02:49:33.132Z",
+    "repository": "alyssaxuu/later",
+    "learningId": "learn-github-alyssaxuu-later",
+    "contentHash": "889f30fb5609c1847c79646202c79f2fe1e539fce5be633ef835924e42e827b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
