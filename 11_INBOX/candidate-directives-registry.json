@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T23:53:56.895Z",
+  "last_updated": "2026-10-20T00:12:52.999Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2026,6 +2026,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-J347",
+      "directive_title": "preserve prepared temporal result types and values (#30224)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "3d78d840",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-matrixorigin-matrixone"
     }
   ]
 }

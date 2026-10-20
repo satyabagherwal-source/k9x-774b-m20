@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `ef6d36ac`  
+> **Source Version**: `15d1c411`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:03:38.679Z  
+> **Timestamp**: 2026-10-20T00:12:44.203Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:03:38.671Z  
+> **Harvest Timestamp**: 2026-10-20T00:12:40.163Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50162 stars
+- **Stars / Engagement**: 50170 stars
 
 ---
 
@@ -2123,17 +2123,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29460** (2026-10-19): **[ty] Reject runtime_checkable on non-protocol classes**
-  *Symptoms*: ## Summary  We now report `invalid-argument-type` when `typing.runtime_checkable` or `typing_extensions.runtime_checkable` is applied to a non-protocol class, including a concrete subclass of a protocol. These applications raise `TypeError` at runtime. The check also covers direct calls.  ```python from typing import Protocol, runtime_checkable  @runtime_checkable  # Error: an ordinary class is not a protocol. class Ordinary: ...  @runtime_checkable  # OK: P directly inherits from Protocol. class P(Protocol): ...  @runtime_checkable  # Error: inheriting from P does not make this a protocol. class Concrete(P): ...  runtime_checkable(Ordinary)  # Error: direct calls have the same restriction. ```  Closes https://github.com/astral-sh/ty/issues/4470. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | prefect | 479.31MB | 479.32MB | +0.00% (9.91kB) | ⏫ | | sphinx | 172.70MB | 172.71MB | +0.00% (7.20kB) | ⏫ | | trio | 92.69MB | 92.70MB | +0.01% (6.56kB) | ⏫ | | flake8 | 38.03MB | 38.03MB | +0.01% (5.13kB) | ⏫ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### prefect  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_definition_types` | 38.11MB | 38.12MB | +0.03% (9.91kB) |⏫ |  ### sphinx  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_definition_types` | 11.68MB | 11.69MB | +0.06% (7.20kB) |⏫ |  ### trio  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_definition_types` | 4.73MB | 4.73MB | +0.14% (6.56kB) |⏫ |  ### flake8  | Name | Old | New | Diff | Outcome | |--
+- **Issue #29501** (2026-10-19): **Fixes for UP015, FURB116, FURB157 and RUF032 reuse the enclosing f-string quote and break code on Python 3.11 and earlier**
+  *Symptoms*: When the flagged expression sits inside an f-string replacement field, these four fixes build a new string literal using the file's detected quote style (or a hardcoded `"`), without checking the quote of the enclosing f-string. If the two match, the fixed code reuses the outer quote, which is only valid on Python 3.12+ (PEP 701). With the default `target-version` (py310) or any target before py312, the result no longer parses. UP015, FURB116 (integer literal case) and the FURB157 `float("-nan")` case are safe fixes, so this happens with a plain `ruff check --fix`.  Other fixes that generate string literals (for example C408, PT006, UP018) already pick the opposite quote inside f-strings via `Checker::default_string_flags` / `interpolated_string_quote_style`.  ## Reproduction  ```python # example.py x = "a" print(f"{open('f', 'wt').name}") print(f"{bin(1337)[2:]}") ```  ```console $ ruff check --isolated --preview --target-version py311 --select UP015,FURB116 --fix example.py invalid-syntax: Cannot reuse outer quote character in f-strings on Python 3.11 (syntax was added in Python 3.12)  --> example.py:2:20   | 2 | print(f"{open('f', "w").name}")   |                    ^ ... ```  The file now contains:  ```python x = "a" print(f"{open('f', "w").name}") print(f"{f"{1337:b}"}") ```  which fails with `SyntaxError` on Python 3.11.  The same happens for `f"{Decimal(float('-nan'))}"` (FURB157, becomes `f"{Decimal("nan")}"`) and `f"{Decimal(1.5)}"` (RUF032, unsafe fix, becomes `f"{D
 
-- **Issue #29429** (2026-10-18): **[ty] Avoid crashes when negating recursive aliases**
-  *Symptoms*: Negating a recursive legacy type alias such as `A: TypeAlias = "list[Not[A] | A]"` could repeatedly expand the alias until ty crashed. Preserve recursive alias identity when constructing negations and simplify an exact static complement pair, so indexing an `A` now reveals `object`.  Closes astral-sh/ty#4728.  Stacked on #29427. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  Memory usage unchanged ✅ 
+- **Issue #29483** (2026-10-19): **[`pylint`] Avoid false positive on starred elements (`PLE0643`)**
+  *Symptoms*: ## Summary  Closes #29343.  `potential-index-error` (`PLE0643`) statically calculates the length of sequence literals (lists and tuples) using the count of AST elements (`elts.len()`). When a sequence contains starred expressions (e.g., `(*a, 9)[2]` or `[*a, *a][2]`), the starred element is counted as a single item, causing `PLE0643` to falsely flag valid indexing that will not raise an `IndexError` at runtime.  This change skips `PLE0643` whenever a sequence literal contains any `Expr::Starred` element, as its runtime length cannot be determined statically.  ## Test Plan  Added regression test cases to `crates/ruff_linter/resources/test/fixtures/pylint/potential_index_error.py` covering unpacked elements in both tuples and lists. Verified locally with `cargo test -p ruff_linter -- rules::pylint`, `cargo clippy`, `cargo fmt --check`, and repository pre-commit hooks (`prek`).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2150,777 +2144,269 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77f2f1ca` (2026-10-18)
-**Commit Message**: [ty] Avoid crashes when negating recursive aliases (#29429)
+### Incident Patch 1: `e372f18d` (2026-10-19)
+**Commit Message**: [ty] Avoid stack overflow for recursive descriptor setter checks (#29467)
 
-Negating a recursive legacy type alias such as `A: TypeAlias =
-"list[Not[A] | A]"` could repeatedly expand the alias until ty crashed.
-Preserve recursive alias identity when constructing negations and
-simplify an exact static complement pair, so indexing an `A` now reveals
-`object`.
+Checking a class can overflow the stack when a descriptor's receiver
+requires a protocol that declares the same writable attribute. Track the
+descriptor-setter receiver check and provisionally accept an exact
+recursive revisit, allowing the surrounding protocol check to validate
+the member's read and write types.
 
-Closes astral-sh/ty#4728.
+Closes https://github.com/astral-sh/ty/issues/4738
 
-Stacked on #29427.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md` (modified, +11/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/descriptor_protocol.md` (modified, +45/-0)
 ```diff
-@@ -3284,3 +3284,14 @@ def inspect(
-     reveal_type([top_growing])  # revealed: list[Top[Growing[Any]]]
-     reveal_type([bottom_growing])  # revealed: list[Bottom[Growing[Any]]]
- ```
-+
-+### Recursive aliases and their complements
-+
-+```py
-+from ty_extensions import Not
-+
-+A = list["A | Not[A]"]
-+
-+def f(x: A):
-+    reveal_type(x[0])  # revealed: object
-+```
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/pep613_type_aliases.md` (modified, +49/-0)
-```diff
-@@ -483,6 +483,47 @@ def inspect(value: Nested):
-     reveal_type(value)  # revealed: Nested
+@@ -1227,6 +1227,51 @@ class C:
+ C().value
  ```
  
-+## Recursive aliases and their complements
++### A descriptor requires a protocol containing its own attribute
 +
-+A fully static alias and its complement cover every object, even when the alias refers to itself.
-+
-+```py
-+from typing import TypeAlias
-+from ty_extensions import Not
-+
-+A: TypeAlias = "list[Not[A] | A]"
-+
-+def f(x: A):
-+    reveal_type(x[0])  # revealed: object
-+```
-+
-+## Negated recursive aliases
++The descriptor's instance parameter can require the same attribute that the descriptor implements.
++Checking the enclosing class terminates, and an instance of that class satisfies the protocol.
 +
 +```py
-+from typing import TypeAlias
-+from ty_extensions import Not
++from typing import Protocol
 +
-+A: TypeAlias = "list[Not[A]]"
++class HasItem(Protocol):
++    item: int
 +
-+def f(x: A):
-+    reveal_type(x[0])  # revealed: ~A
++class ItemDescriptor:
++    def __get__(self, instance: HasItem, owner: type[object]) -> int:
++        return 0
++
++    def __set__(self, instance: HasItem, value: int) -> None: ...
++
++class Holder:
++    item = ItemDescriptor()
++
++compatible: HasItem = Holder()  # no diagnostic
 +```
 +
-+## Gradual recursive aliases and their complements
-+
-+The `Any` in each union member can have a different materialization, so the union does not simplify
-+to `object`.
++Checking a class that only annotates its attribute with the descriptor type also terminates:
 +
 +```py
-+from typing import Any, TypeAlias
-+from ty_extensions import Not
-+
-+B: TypeAlias = "list[tuple[Any, B]]"
-+
-+def f(x: B | Not[B]):
-+    reveal_type(x)  # revealed: B | ~B
++class AnnotationOnlyHolder:
++    item: ItemDescriptor  # no diagnostic
 +```
 +
- ## Specializing non-generic recursive aliases
++The recursive check does not make an incompatible setter acceptable:
++
++```py
++class WrongValueDescriptor:
++    def __get__(self, instance: HasItem, owner: type[object]) -> int:
++        return 0
++
++    def __set__(self, instance: HasItem, value: str) -> None: ...
++
++class WrongValueHolder:
++    item = WrongValueDescriptor()
++
++incompatible: HasItem = WrongValueHolder()  # error: [invalid-assignment]
++```
++
+ ### Recursive metaclass declarations containing dynamic types
  
- A recursive alias without type variables cannot be specialized. Quoting the entire definition does
-@@ -599,6 +640,14 @@ Growing: TypeAlias = "T | Growing[list[T]]"  # error: [cyclic-type-alias-definit
- reveal_type(Growing)  # revealed: str
- ```
- 
-+Adding the alias's complement does not make an unguarded cycle valid.
-+
-+```py
-+from ty_extensions import Not
-+
-+Complemented: TypeAlias = "T | Complemented[T] | Not[Complemented[T]]"  # error: [cyclic-type-alias-definition]
-+```
-+
- Invalid generic aliases use a divergent type for recovery with or without type arguments.
- 
- ```py
+ A recursive declaration containing `Any` can describe a data descriptor. Assignments to a class
 ```
 
-**File**: `crates/ty_python_semantic/src/types.rs` (modified, +1/-11)
+**File**: `crates/ty_python_semantic/src/types/attribute_write.rs` (modified, +26/-12)
 ```diff
-@@ -3267,17 +3267,6 @@ impl<'db> Type<'db> {
-                 .negated_divergent()
-                 .expect("matched `Type::Divergent` above"),
+@@ -22,10 +22,10 @@ use super::{
+     PropertyInstanceType, SelfBinding, Signature, Type, TypeContext, TypeMapping, TypeQualifiers,
+     TypeVarBoundOrConstraints, UnionType, UpcastPolicy,
+ };
+-use crate::ProgramEnvironment;
+ use crate::place::{
+     DefinedPlace, Definedness, Place, PlaceAndQualifiers, builtins_symbol, place_from_bindings,
+ };
++use crate::{Program, ProgramEnvironment};
  
--            Type::Recursive(recursive) => recursive
--                .unfold(db, env)
--                .map(|unfolded| unfolded.negate(db, env))
--                .unwrap_or_else(|| {
--                    Type::Intersection(IntersectionType::new(
--                        db,
--                        FxOrderSet::default(),
--                        NegativeIntersectionElements::Single(*self),
--                    ))
--                }),
--
-             Type::NominalInstance(instance) if instance.is_object() => Type::Never,
+ /// The operation required to write an attribute.
+ ///
+@@ -1147,6 +1147,30 @@ fn descriptor_setter<'db>(
+         .place
+ }
  
-             Type::AlwaysTruthy
-@@ -3313,6 +3302,7 @@ impl<'db> Type<'db> {
-             )),
- 
-             Type::TypeAlias(_)
-+            | Type::Recursive(_)
-             | Type::Union(_)
-             | Type::Intersection(_)
-             | Type::EnumComplement(_) => IntersectionBuilder::new(db, env)
-```
-
-**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +13/-6)
-```diff
-@@ -1179,6 +1179,18 @@ impl<'db> UnionBuilder<'db> {
-                     self.collapse_to_object();
-                     return;
-                 }
-+            } else if !self.cycle_recovery
-+                && let (alias @ Type::Recursive(_), Type::Intersection(negated))
-+                | (Type::Intersection(negated), alias @ Type::Recursive(_)) = (ty, element_type)
-+                && negated.is_simple_negation(db)
-+                && negated.negative(db).contains(&alias)
-+                && !alias.has_unguarded_alias_cycle(db)
-+                && alias.is_subtype_of(db, &self.env, alias)
-+            {
-+                // Apply the same complement law to an exact recursive alias pair. Avoid
-+                // provisional binders, and require reflexive subtyping to exclude gradual types.
-+                self.collapse_to_object();
-+                return;
-             }
++/// Checks whether `__set__` can be called with this receiver without constraining the written
++/// value. The receiver's type can require the same writable protocol member that this descriptor
++/// implements. Treat a recursive check of the same descriptor and receiver as provisionally
++/// successful; the outer protocol check still validates the member's read and write types.
++#[salsa::tracked(returns(copy), cycle_initial=|_, _, _, _, _| true, heap_size=ruff_memory_usage::heap_size)]
++fn descriptor_setter_accepts_receiver<'db>(
++    db: &'db dyn Db,
++    program: Program<'db>,
++    descriptor_ty: Type<'db>,
++    receiver_ty: Type<'db>,
++) -> bool {
++    !matches!(
++        descriptor_ty.try_call_dunder_with_policy(
++            db,
++            &ProgramEnvironment::from_program(program),
++            "__set__",
++            &mut CallArguments::positional([receiver_ty, Type::unknown()]),
++            TypeContext::default(),
++            MemberLookupPolicy::REQUIRE_CONCRETE,
++        ),
++        Err(CallDunderError::CallError(..) | CallDunderError::MethodNotAvailable)
++    )
++}
++
+ /// The values accepted by a descriptor setter, when representable as a single type.
+ #[derive(Copy, Clone)]
+ pub(super) enum DescriptorSetterDomain<'db> {
+@@ -1633,17 +1657,7 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
+                     self.check_descriptor_attribute_write(db, *descriptor_ty, object_ty, value_ty)
+                 });
          }
- 
-@@ -1626,13 +1638,8 @@ impl<'db> IntersectionBuilder<'db> {
-                 // Pass the original alias to preserve recursive self-references.
-                 // `InnerIntersectionBuilder::add_negative` resolves it for simplification
-                 // (for example, `~Any` becomes `Any`) and stores it if it remains negative.
--                let element = if matches!(original, Type::TypeAlias(_)) {
--                    original
--                } else {
--                    ty
--                };
-                 for inner in &mut self.intersections {
--                    inner.add_negative(db, &self.env, element);
-+                    inner.add_negative(db, &self.env, original);
-                 }
-             }
+-        if matches!(
+-            descriptor_ty.try_call_dunder_with_policy(
+-                db,
+-                env,
+-                "__set__",
+-                &mut CallArguments::positional([object_ty, Type::unknown()]),
+-                TypeContext::default(),
+-                MemberLookupPolicy::REQUIRE_CONCRETE,
+-            ),
+-            Err(CallDunderError::CallError(..) | CallDunderError::MethodNotAvailable)
+-        ) {
++        if !descriptor_setter_accepts_receiver(db, env.program(db), descriptor_ty, object_ty) {
+             return self.never();
          }
+         let Place::Defined(DefinedPlace { ty: setter_ty, .. }) =
 ```
 
 ---
 
-### Incident Patch 2: `9e3ea63f` (2026-10-16)
-**Commit Message**: [ty] Avoid panic when negating dynamic type aliases (#29427)
+### Incident Patch 2: `85430a95` (2026-10-19)
+**Commit Message**: Share postfix parsing and reduce expression copies (#29480)
 
-ty could panic when an exception handler used a negated alias whose
-value is gradual, such as `Not[Dynamic]` for `type Dynamic = Any`.
-Negating aliases now applies the same normalization as other negative
-intersection elements, so an alias of `Any` simplifies to `Any`. The
-builder retains unsimplified negative aliases to preserve recursive
-self-references.
+## Summary
 
-Closes astral-sh/ty#4729.
+We skip prefix-operator dispatch for identifiers and parse atoms together with their postfix chains. Keeping this work in `parse_primary_expression` makes the grouping-parenthesis flag local and avoids passing an intermediate `ParsedExpr` between atom and postfix parsing.
 
-**File**: `crates/ty_python_semantic/resources/mdtest/exception/basic.md` (modified, +27/-0)
+**File**: `crates/ruff_python_parser/src/parser/expression.rs` (modified, +84/-92)
 ```diff
-@@ -65,6 +65,33 @@ def foo(
-         reveal_type(j)  # revealed: ValueError
- ```
+@@ -335,94 +335,93 @@ impl<'src> Parser<'src> {
+         context: ExpressionContext,
+     ) -> ParsedExpr {
+         let token = self.current_token_kind();
+-        let start = self.node_start();
  
-+## Negated dynamic type aliases
-+
-+A negated alias of `Any` behaves like `Any` in both single and tuple exception handlers.
-+
-+```toml
-+[environment]
-+python-version = "3.12"
-+```
-+
-+```py
-+from typing import Any
-+from ty_extensions import Not
-+
-+type Dynamic = Any
-+
-+def catch_negated_alias(exc: Not[Dynamic]) -> None:
-+    try:
-+        raise ValueError
-+    except exc as single:
-+        reveal_type(single)  # revealed: Any
-+
-+    try:
-+        raise ValueError
-+    except (exc,) as tuple_element:
-+        reveal_type(tuple_element)  # revealed: Any
-+```
-+
- ## Exception-class expressions
+-        if let Some(unary_op) = token.as_unary_operator() {
+-            let expr = self.parse_unary_expression(unary_op, context);
++        if token != TokenKind::Identifier {
++            if let Some(unary_op) = token.as_unary_operator() {
++                let expr = self.parse_unary_expression(unary_op, context);
  
- Exception-class expressions can produce intersections, gradual refinements, or unions. Positive
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/intersection_types.md` (modified, +5/-0)
-```diff
-@@ -970,6 +970,11 @@ def any(
-     reveal_type(i2)  # revealed: P & Any
-     reveal_type(i3)  # revealed: Never
- 
-+type AnyAlias = Any
+-            if matches!(unary_op, UnaryOp::Not) {
+-                if left_precedence > OperatorPrecedence::Not {
+-                    self.add_error(
+-                        ParseErrorType::OtherError(
+-                            "Boolean 'not' expression cannot be used here".to_string(),
+-                        ),
+-                        &expr,
+-                    );
+-                }
+-            } else {
+-                // > The power operator `**` binds less tightly than an arithmetic
+-                // > or bitwise unary operator on its right, that is, 2**-1 is 0.5.
+-                //
+-                // Reference: https://docs.python.org/3/reference/expressions.html#id21
+-                if left_precedence > OperatorPrecedence::PosNegBitNot
+-                    && left_precedence != OperatorPrecedence::Exponent
+-                {
+-                    self.add_error(
+-                        ParseErrorType::OtherError(format!(
+-                            "Unary '{unary_op}' expression cannot be used here",
+-                        )),
+-                        &expr,
+-                    );
++                if matches!(unary_op, UnaryOp::Not) {
++                    if left_precedence > OperatorPrecedence::Not {
++                        self.add_error(
++                            ParseErrorType::OtherError(
++                                "Boolean 'not' expression cannot be used here".to_string(),
++                            ),
++                            &expr,
++                        );
++                    }
++                } else {
++                    // > The power operator `**` binds less tightly than an arithmetic
++                    // > or bitwise unary operator on its right, that is, 2**-1 is 0.5.
++                    //
++                    // Reference: https://docs.python.org/3/reference/expressions.html#id21
++                    if left_precedence > OperatorPrecedence::PosNegBitNot
++                        && left_precedence != OperatorPrecedence::Exponent
++                    {
++                        self.add_error(
++                            ParseErrorType::OtherError(format!(
++                                "Unary '{unary_op}' expression cannot be used here",
++                            )),
++                            &expr,
++                        );
++                    }
+                 }
 +
-+def aliased_any(value: ~AnyAlias) -> None:
-+    reveal_type(value)  # revealed: Any
-+
- def unknown(
-     i1: ~Unknown,
-     i2: P & ~Unknown,
-```
-
-**File**: `crates/ty_python_semantic/src/types.rs` (modified, +6/-6)
-```diff
-@@ -3306,18 +3306,18 @@ impl<'db> Type<'db> {
-             | Type::DataclassTransformer(_)
-             | Type::Callable(_)
-             | Type::WrapperDescriptor(_)
--            | Type::TypeAlias(_)
-             | Type::BoundMethod(_) => Type::Intersection(IntersectionType::new(
-                 db,
-                 FxOrderSet::default(),
-                 NegativeIntersectionElements::Single(*self),
-             )),
++                return Expr::UnaryOp(expr).into();
+             }
  
--            Type::Union(_) | Type::Intersection(_) | Type::EnumComplement(_) => {
--                IntersectionBuilder::new(db, env)
--                    .add_negative(*self)
--                    .build()
+-            return Expr::UnaryOp(expr).into();
+-        }
++            match token {
++                TokenKind::Star => {
++                    let starred_expr = self.parse_starred_expression(context);
+ 
+-        match token {
+-            TokenKind::Star => {
+-                let starred_expr = self.parse_starred_expression(context);
++                    if left_precedence > OperatorPrecedence::None
++                        || !context.is_starred_expression_allowed()
++                    {
++                        self.add_error(
++                            ParseErrorType::InvalidStarredExpressionUsage,
++                            &starred_expr,
++                        );
++                    }
+ 
+-                if left_precedence > OperatorPrecedence::None
+-                    || !context.is_starred_expression_allowed()
+-                {
+-                    self.add_error(ParseErrorType::InvalidStarredExpressionUsage, &starred_expr);
++                    return Expr::Starred(starred_expr).into();
+                 }
++                TokenKind::Await => {
++                    let await_expr = self.parse_await_expression();
+ 
+-                return Expr::Starred(starred_expr).into();
 -            }
-+            Type::TypeAlias(_)
-+            | Type::Union(_)
-+            | Type::Intersection(_)
-+            | Type::EnumComplement(_) => IntersectionBuilder::new(db, env)
-+                .add_negative(*self)
-+                .build(),
-         }
-     }
+-            TokenKind::Await => {
+-                let await_expr = self.parse_await_expression();
++                    // `await` expressions cannot be nested
++                    if left_precedence >= OperatorPrecedence::Await {
++                        self.add_error(
++                            ParseErrorType::OtherError(
++                                "Await expression cannot be used here".to_string(),
++                            ),
++                            &await_expr,
++                        );
++                    }
  
-```
-
-**File**: `crates/ty_python_semantic/src/types/set_theoretic.rs` (modified, +2/-1)
-```diff
-@@ -1135,7 +1135,8 @@ impl<'db> IntersectionType<'db> {
-             }
-             Type::Intersection(IntersectionType::new(db, positive, negative))
-         } else {
--            let mut builder = IntersectionBuilder::new(db, visitor.env).preserve_aliases(true);
-+            let mut builder =
-+                IntersectionBuilder::new(db, visitor.env).preserve_positive_aliases(true);
-             for positive in self.positive(db) {
-                 builder.add_positive_in_place(positive.apply_type_mapping_impl(
-                     db,
-```
-
-**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +46/-13)
-```diff
-@@ -1316,7 +1316,7 @@ pub(crate) struct IntersectionBuilder<'db> {
-     // One disjunction does not multiply alternatives. Only subsequent distributions consume
-     // the bounded constructor's budget, after impossible and redundant branches are removed.
-     has_disjunction: bool,
--    preserve_aliases: bool,
-+    preserve_positive_aliases: bool,
- }
- 
- impl<'db> IntersectionBuilder<'db> {
-@@ -1326,17 +1326,23 @@ impl<'db> IntersectionBuilder<'db> {
-             env: env.clone(),
-             intersections: vec![InnerIntersectionBuilder::default()],
-             has_disjunction: false,
--            preserve_aliases: false,
-+            preserve_positive_aliases: false,
-         }
-     }
- 
--    /// Retain aliases when rebuilding mapped intersections.
-+    /// Retain positive aliases when rebuilding mapped intersections.
-+    ///
-+    /// A positive alias can represent a type on its own, while `~A` is represented as an
-+    /// intersection with `A` as a negative element. Negative aliases that survive simplification
-+    /// are retained by default to preserve recursive self-references. Positive aliases are unfolded
-+    /// by default to preserve existing intersection normalization.
-     ///
-     /// Unfolding aliases after their mapping has completed can repeatedly insert a recursive
--    /// type into itself. The builder expands set operations to distribute and flatten them,
--    /// but retains atomic aliases unless simplifying the intersection changes their values.
--    pub(crate) fn preserve_aliases(mut self, preserve: bool) -> Self {
--        self.preserve_aliases = preserve;
-+    /// type into itself, so mapped intersections retain positive aliases as well. The builder still
-+    /// expands set operations to distribute and flatten them, and simplifies elements using their
-+    /// alias values.
-+    pub(crate) fn preserve_positive_aliases(mut self, preserve: bool) -> Self {
-+        self.preserve_positive_aliases = preserve;
-         self
-     }
- 
-@@ -1526,11 +1532,12 @@ impl<'db> IntersectionBuilder<'db> {
-             _ => {
-                 // If we are already a union-of-intersections, distribute the new intersected element
-                 // across all of those intersections.
--                let element = if self.preserve_aliases && matches!(original, Type::TypeAlias(_)) {
--                    original
--                } else {
--                    ty
--                };
-+                let element =
-+                    if self.preserve_positive_aliases && matches!(original, Type::TypeAlias(_)) {
-+                        original
-+                    } else {
-+                        ty
-+                    };
-                 for inner in &mut self.intersections {
-                     inner.add_positive(db, &self.env, element);
-                 }
-@@ -1616,7 +1623,10 @@ impl<'db> IntersectionBuilder<'db> {
-                 self.add_negative_impl::<L>(intersection, seen_aliases)?;
-             }
-             _ => {
--                let element = if self.preserve_aliases && matches!(original, Type::TypeAlias(_)) {
-+                // Pass the original alias to preserve recursive self-references.
-+                // `InnerIntersectionBuilder::add_negative` resolves it for simplification
-+                // (for example, `~Any` becomes `Any`) and stores it if it remains negative.
-+                let element = if matches!(original, Type::TypeAlias(_)) {
-                     original
-                 } else {
-                     ty
-@@ -2778,6 +2788,29 @@ mod tests {
-         assert_eq!(intersection, Type::object());
-     }
- 
-+    #[test]
-+    fn build_intersection_preserves_negated_alias() {
-+        let mut db = setup_db();
-+        db.write_dedented("/src/a.py", "type Alias = int").unwrap();
-+        let env = db.program_environment();
-+        let file = ruff_db::files::system_path_to_file(&db, "/src/a.py").unwrap();
-+        let module = ProgramFile::new(&db, file, env.program(&db));
-+        let alias = Type::TypeAlias(
-+            global_symbol(&db, module, "Alias")
-+                .place
-+                .expect_type()
-+                .as_type_alias()
-+                .expect("Alias is a type alias"),
-+        );
-+
-+        let negated = IntersectionBuilder::new(&db, &env)
-+            .add_negative(alias)
-+            .build();
-+        assert!(matches!(negated, Type::Intersection(intersection)
-+            if intersection.is_simple_negation(&db) && intersection.iter_negative(&db).eq([alias])));
-+        assert_eq!(negated, alias.negate(&db, &env));
-+    }
-+
-     #[test]
-     fn literal_intersection_simplification_matches_relations() {
-         let db = setup_db();
-```
-
----
-
-### Incident Patch 3: `8d122c1f` (2026-10-16)
-**Commit Message**: [`pylint`] Mark fixes unsafe when deleting comments (`PLR5501`, `PLW0120`) (#29414)
-
-Fixes #29395.
-
-Both fixes rewrote the `else:` line and silently dropped any comment
-after the colon. Following review, the fix no longer tries to move that
-comment. Instead, PLR5501 and PLW0120 now mark the fix as unsafe when
-the `else:` line has a comment that would be deleted, the same approach
-as UP035 (#29413). Without such a comment the fix stays safe. Inline
-bodies like `else: x = 1 # c` also stay safe, since only `else: ` is
-removed and the comment belongs to the statement.
-
-Both rules got a "Fix safety" section in their docs. The existing
-PLW0120 snapshots only gain the unsafe-fix note, because their fixtures
-use `else: # [useless-else-on-loop]`. New fixture cases cover the unsafe
-and safe paths for both rules.
-
-I used an AI assistant while working on this and reviewed the changes
-myself.
-
-**File**: `crates/ruff_linter/resources/test/fixtures/pylint/collapsible_else_if.py` (modified, +21/-0)
-```diff
-@@ -144,3 +144,24 @@ def not_ok1_with_mixed_indented_comments():
-             pass
-         else:
-             pass  # final pass comment
-+
-+
-+def not_ok1_with_else_line_comment(a, b):
-+    if a:
-+        return 1
-+    else:  # explain the fallback
-+        if b:
-+            return 2
-+        else:
-+            return 3
-+
-+
-+def not_ok1_with_else_line_and_inner_comments():
-+    if 1:
-+        pass
-+    else:  # else line comment
-+        # inner comment
-+        if 2:
-+            pass
-+        else:
-+            pass  # final pass comment
-```
-
-**File**: `crates/ruff_linter/resources/test/fixtures/pylint/useless_else_on_loop.py` (modified, +16/-0)
-```diff
-@@ -146,3 +146,19 @@ def test_retain_comment():
-         print("fat chance")
-         for j in range(10):
-             break
-+
-+
-+def test_delete_else_line_comment_retain_block_comment():
-+    """Delete the comment on the `else` line, but retain the comment within the `else` block"""
-+    for j in range(10):
-+        pass
-+    else:  # comment on the `else` line
-+        # comment within the `else` block
-+        print("fat chance")
-+
-+
-+def test_retain_inline_else_body_comment():
-+    """The comment trailing an inline `else` body belongs to its statement"""
-+    for j in range(10):
-+        pass
-+    else: print("fat chance")  # comment on the statement
-```
-
-**File**: `crates/ruff_linter/src/rules/pylint/rules/collapsible_else_if.rs` (modified, +18/-2)
-```diff
-@@ -5,14 +5,15 @@ use ruff_macros::{ViolationMetadata, derive_message_formats};
- use ruff_python_ast::{self as ast, ElifElseClause, Stmt};
- use ruff_python_codegen::Stylist;
- use ruff_python_index::Indexer;
-+use ruff_python_trivia::CommentRanges;
- use ruff_source_file::LineRanges;
- use ruff_text_size::{Ranged, TextRange};
- 
- use crate::Locator;
- use crate::checkers::ast::Checker;
- use crate::codes::Category;
- use crate::fix::edits::adjust_indentation;
--use crate::{Edit, Fix, FixAvailability, Violation};
-+use crate::{Applicability, Edit, Fix, FixAvailability, Violation};
- 
- /// ## What it does
- /// Checks for `else` blocks that consist of a single `if` statement.
-@@ -44,6 +45,10 @@ use crate::{Edit, Fix, FixAvailability, Violation};
- ///         print("Number is zero.")
- /// ```
- ///
-+/// ## Fix safety
-+/// This fix is marked unsafe if the `else` line has a trailing comment (e.g., `else:  # comment`),
-+/// since the fix deletes the comment.
-+///
- /// ## References
- /// - [Python documentation: `if` Statements](https://docs.python.org/3/tutorial/controlflow.html#if-statements)
- #[derive(ViolationMetadata)]
-@@ -95,6 +100,7 @@ pub(crate) fn collapsible_else_if(checker: &Checker, stmt: &Stmt) {
-             checker.locator(),
-             checker.indexer(),
-             checker.stylist(),
-+            checker.comment_ranges(),
-         )
-     });
- }
-@@ -106,6 +112,7 @@ fn convert_to_elif(
-     locator: &Locator,
-     indexer: &Indexer,
-     stylist: &Stylist,
-+    comment_ranges: &CommentRanges,
- ) -> Result<Fix> {
-     let inner_if_line_start = locator.line_start(first.start());
-     let inner_if_line_end = locator.line_end(first.end());
-@@ -146,12 +153,21 @@ fn convert_to_elif(
-     };
-     let indented = format!("{indentation}el{unindented}");
- 
--    Ok(Fix::safe_edits(
-+    // The `else` line is replaced, so a trailing comment on it (e.g., `else:  # comment`) is
-+    // deleted. Comments between the `else` and the `if` are restored above.
-+    let applicability = if comment_ranges.intersects(locator.line_range(else_clause.start())) {
-+        Applicability::Unsafe
-+    } else {
-+        Applicability::Safe
-+    };
-+
-+    Ok(Fix::applicable_edits(
-         Edit::replacement(
-             indented,
-             locator.line_start(else_clause.start()),
-             inner_if_line_end,
-         ),
-         trivia,
-+        applicability,
-     ))
- }
-```
-
-**File**: `crates/ruff_linter/src/rules/pylint/rules/useless_else_on_loop.rs` (modified, +24/-6)
-```diff
-@@ -6,14 +6,15 @@ use ruff_python_ast::identifier;
- use ruff_python_ast::{self as ast, ExceptHandler, MatchCase, Stmt};
- use ruff_python_codegen::Stylist;
- use ruff_python_index::Indexer;
-+use ruff_python_trivia::CommentRanges;
- use ruff_source_file::LineRanges;
- use ruff_text_size::{Ranged, TextRange};
- 
- use crate::Locator;
- use crate::checkers::ast::Checker;
- use crate::codes::Category;
- use crate::fix::edits::adjust_indentation;
--use crate::{Edit, Fix, FixAvailability, Violation};
-+use crate::{Applicability, Edit, Fix, FixAvailability, Violation};
- 
- /// ## What it does
- /// Checks for `else` clauses on loops without a `break` statement.
-@@ -45,6 +46,10 @@ use crate::{Edit, Fix, FixAvailability, Violation};
- /// print("All items printed")
- /// ```
- ///
-+/// ## Fix safety
-+/// This fix is marked unsafe if the `else` line has a trailing comment (e.g., `else:  # comment`),
-+/// since the fix deletes the comment.
-+///
- /// ## References
- /// - [Python documentation: `break` and `continue` Statements, and `else` Clauses on Loops](https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops)
- #[derive(ViolationMetadata)]
-@@ -83,6 +88,7 @@ pub(crate) fn useless_else_on_loop(checker: &Checker, stmt: &Stmt, body: &[Stmt]
-             checker.locator(),
-             checker.indexer(),
-             checker.stylist(),
-+            checker.comment_ranges(),
-         )
-     });
- }
-@@ -136,6 +142,7 @@ fn remove_else(
-     locator: &Locator,
-     indexer: &Indexer,
-     stylist: &Stylist,
-+    comment_ranges: &CommentRanges,
- ) -> Result<Fix> {
-     let Some(start) = orelse.first() else {
-         return Err(anyhow::anyhow!("Empty `else` clause"));
-@@ -169,11 +176,22 @@ fn remove_else(
-             stylist,
-         )?;
- 
-+        // The `else` line is replaced, so a trailing comment on it (e.g., `else:  # comment`) is
-+        // deleted.
-+        let applicability = if comment_ranges.intersects(locator.line_range(else_range.start())) {
-+            Applicability::Unsafe
-+        } else {
-+            Applicability::Safe
-+        };
-+
-         // Replace the content from the start of the `else` to the end of the loop.
--        Ok(Fix::safe_edit(Edit::replacement(
--            indented,
--            locator.line_start(else_range.start()),
--            locator.full_line_end(end.end()),
--        )))
-+        Ok(Fix::applicable_edit(
-+            Edit::replacement(
-+                indented,
-+                locator.line_start(else_range.start()),
-+                locator.full_line_end(end.end()),
-+            ),
-+            applicability,
-+        ))
-     }
- }
-```
-
-**File**: `crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__collapsible-else-if_collapsible_else_if.py.snap` (modified, +57/-0)
-```diff
-@@ -286,4 +286,61 @@ help: Convert to `elif`
- 143 +         pass
- 144 +     else:
- 145 +         pass  # final pass comment
-+146 |
-     |
-+
-+PLR5501 [*] Use `elif` instead of `else` then `if`, to reduce indentation
-+   --> collapsible_else_if.py:152:5
-+    |
-+150 |       if a:
-+151 |           return 1
-+152 | /     else:  # explain the fallback
-+153 | |         if b:
-+    | |________^
-+154 |               return 2
-+155 |           else:
-+    |
-+help: Convert to `elif`
-+    |
-+151 |         return 1
-+    -     else:  # explain the fallback
-+    -         if b:
-+    -             return 2
-+    -         else:
-+    -             return 3
-+152 +     elif b:
-+153 +         return 2
-+154 +     else:
-+155 +         return 3
-+156 |
-+    |
-+note: This is an unsafe fix and may change runtime behavior
-+
-+PLR5501 [*] Use `elif` instead of `else` then `if`, to reduce indentation
-+   --> collapsible_else_if.py:162:5
-+    |
-+160 |       if 1:
-+161 |           pass
-+162 | /     else:  # else line comment
-+163 | |         # inner comment
-+164 | |         if 2:
-+    | |________^
-+165 |               pass
-+166 |           else:
-+    |
-+help: Convert to `elif`
-+    |
-+161 |         pass
-+    -     else:  # else line comment
-+    -         # inner comment
-+    -         if 2:
-+    -             pass
-+    -         else:
-+    -             pass  # final pass comment
-+162 +     # inner comment
-+163 +     elif 2:
-+164 +         pass
-+165 +     else:
-+166 +         pass  # final pass comment
-+    |
-+note: This is an unsafe fix and may change runtime behavior
-```
-
-**File**: `crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__useless-else-on-loop_useless_else_on_loop.py.snap` (modified, +43/-0)
-```diff
-@@ -19,6 +19,7 @@ help: Remove `else`
- 9  +     print("math is broken")
- 10 |     return None
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-   --> useless_else_on_loop.py:18:5
-@@ -38,6 +39,7 @@ help: Remove `else`
- 18 +     print("math is broken")
- 19 |     return None
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-   --> useless_else_on_loop.py:30:1
-@@ -56,6 +58,7 @@ help: Remove `else`
- 30 + print("or else!")
- 31 |
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-   --> useless_else_on_loop.py:37:1
-@@ -74,6 +77,7 @@ help: Remove `else`
- 37 + print("or else!")
- 38 |
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-   --> useless_else_on_loop.py:42:1
-@@ -97,6 +101,7 @@ help: Remove `else`
- 44 +     break
- 45 |
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-   --> useless_else_on_loop.py:88:5
-@@ -116,6 +121,7 @@ help: Remove `else`
- 88 +     return True
- 89 |     return False
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-    --> useless_else_on_loop.py:98:9
-@@ -160,4 +166,41 @@ help: Remove `else`
- 145 +     print("fat chance")
- 146 +     for j in range(10):
- 147 +         break
-+148 |
-+    |
-+
-+PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-+   --> useless_else_on_loop.py:155:5
-+    |
-+153 |     for j in range(10):
-+154 |         pass
-+155 |     else:  # comment on the `else` line
-+    |     ^^^^
-+156 |         # comment within the `else` block
-+157 |         print("fat chance")
-+    |
-+help: Remove `else`
-+    |
-+154 |         pass
-+    -     else:  # comment on the `else` line
-+    -         # comment within the `else` block
-+    -         print("fat chance")
-+155 +     # comment within the `else` block
-+156 +     print("fat chance")
-+157 |
-+    |
-+note: This is an unsafe fix and may change runtime behavior
-+
-+PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
-+   --> useless_else_on_loop.py:164:5
-+    |
-+162 |     for j in range(10):
-+163 |         pass
-+164 |     else: print("fat chance")  # comment on the statement
-+    |     ^^^^
-+help: Remove `else`
-+    |
-+163 |         pass
-+    -     else: print("fat chance")  # comment on the statement
-+164 +     print("fat chance")  # comment on the statement
-     |
+-                // `await` expressions cannot be nested
+-                if left_precedence >= OperatorPrecedence::Await {
+-                    self.add_error(
+-                        ParseErrorType::OtherError(
+-                            "Await expression
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29464** (closed): Scan whitespace four spaces at a time (@charliermarsh)
-- **PR #29462** (2026-10-18): [ty] Revert protocol interface member walk (@charliermarsh)
-- **PR #29460** (2026-10-19): [ty] Reject runtime_checkable on non-protocol classes (@charliermarsh)
-- **PR #29451** (closed): [ty] Reuse external dependency environments within Markdown tests (@charliermarsh)
-- **PR #29442** (2026-10-16): [ruff] Adopt stable macOS signing identifiers (@zanieb)
-- **PR #29441** (2026-10-19): [ty] Report read-only keys when deleting, popping, or defaulting TypedDict items (@hsusul)
+- **PR #29514** (2026-10-19): Disable fail-fast in cargo-test-other job (@AlexWaygood)
+- **PR #29510** (2026-10-19): [ty] Rename the ty review skill (@AlexWaygood)
+- **PR #29509** (2026-10-19): [ty] Extend the review skill to local changes (@AlexWaygood)
+- **PR #29508** (closed): [ty] Extend the review skill to local changes (@AlexWaygood)
+- **PR #29507** (2026-10-19): Keep grouping metadata local to primary expression parsing (@charliermarsh)
+- **PR #29502** (closed): Use the opposite quote inside f-strings in UP015, FURB116, FURB157 and RUF032 fixes (@auraseb)
 
 ---
 
@@ -2940,31 +2426,65 @@ myself.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Avoid crashes when negating recursive aliases (#29429)
+## X. [ty] Avoid stack overflow for recursive descriptor setter checks (#29467)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/descriptor_protocol.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77f2f1ca`: [ty] Avoid crashes when negating recursive aliases (#29429). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e372f18d`: [ty] Avoid stack overflow for recursive descriptor setter checks (#29467). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/descriptor_protocol.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+### A descriptor requires a protocol containing its own attribute
 
-### Recursive aliases and their complements
+The descriptor's instance parameter can require the same attribute that the descriptor implements.
+Checking the enclosing class terminates, and an instance of that class satisfies the protocol.
 
 ```py
-from ty_extensions import Not
+from typing import Protocol
 
-A = list["A | Not[A]"]
+class HasItem(Protocol):
+    item: int
 
-def f(x: A):
-    reveal_type(x[0])  # revealed: object
+class ItemDescriptor:
+    def __get__(self, instance: HasItem, owner: type[object]) -> int:
+        return 0
+
+    def __set__(self, instance: HasItem, value: int) -> None: ...
+
+class Holder:
+    item = ItemDescriptor()
+
+compatible: HasItem = Holder()  # no diagnostic
 ```
+
+Checking a class that only annotates its attribute with the descriptor type also terminates:
+
+```py
+class AnnotationOnlyHolder:
+    item: ItemDescriptor  # no diagnostic
+```
+
+The recursive check does not make an incompatible setter acceptable:
+
+```py
+class WrongValueDescriptor:
+    def __get__(self, instance: HasItem, owner: type[object]) -> int:
+        return 0
+
+    def __set__(self, instance: HasItem, value: str) -> None: ...
+
+class WrongValueHolder:
+    item = WrongValueDescriptor()
+
+incompatible: HasItem = WrongValueHolder()  # error: [invalid-assignment]
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2974,4 +2494,4 @@ def f(x: A):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77f2f1ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e372f18d` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T00:06:16.544Z",
+  "last_updated": "2026-10-20T00:12:53.004Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4879,14 +4879,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "5551923c6ffaf2f1df9ad96d2dc83ec6bd01ececc9e551ca6fc43d16fdd8059e",
-      "verified_at": "2026-10-19T11:54:59.088Z",
+      "content_hash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
+      "verified_at": "2026-10-20T00:12:53.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:54:59.088Z"
+      "last_updated": "2026-10-20T00:12:53.003Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -11479,14 +11479,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
-      "verified_at": "2026-10-19T10:03:38.937Z",
+      "content_hash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
+      "verified_at": "2026-10-20T00:12:44.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:03:38.937Z"
+      "last_updated": "2026-10-20T00:12:44.527Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -14457,6 +14457,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T00:06:16.544Z"
+    },
+    "psf/requests": {
+      "repository": "psf/requests",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-psf-requests",
+      "content_hash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
+      "verified_at": "2026-10-20T00:12:44.902Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:12:44.902Z"
+    },
+    "WillieWangWei/SwiftUI-Tutorials": {
+      "repository": "WillieWangWei/SwiftUI-Tutorials",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-williewangwei-swiftui-tutorials",
+      "content_hash": "4db4806d03ee365035ec4099ce7bbf4bd3117cfa679772ce377024e6e70273d8",
+      "verified_at": "2026-10-20T00:12:45.271Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:12:45.271Z"
     }
   },
   "repos": {

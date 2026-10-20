@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T00:06:16.541Z",
-  "total_cycles_completed": 3554,
-  "total_learnings_persisted": 3554,
-  "total_rules_promoted": 2712,
+  "last_updated": "2026-10-20T00:12:53.000Z",
+  "total_cycles_completed": 3558,
+  "total_learnings_persisted": 3558,
+  "total_rules_promoted": 2715,
   "history": [
-    {
-      "timestamp": "2026-10-19T17:18:31.109Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T17:18:34.895Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T17:25:09.028Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T17:31:16.201Z",
-      "repository": "speedyapply/JobSpy",
-      "learningId": "learn-github-speedyapply-jobspy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T17:31:25.197Z",
       "repository": "tauri-apps/tauri",
@@ -1403,6 +1375,34 @@
       "repository": "jasonjmcghee/rem",
       "learningId": "learn-github-jasonjmcghee-rem",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:12:44.524Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:12:44.899Z",
+      "repository": "psf/requests",
+      "learningId": "learn-github-psf-requests",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:12:45.268Z",
+      "repository": "WillieWangWei/SwiftUI-Tutorials",
+      "learningId": "learn-github-williewangwei-swiftui-tutorials",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:12:53.000Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

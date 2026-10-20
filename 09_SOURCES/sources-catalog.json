@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "308b6b87",
+    "sourceVersion": "3d78d840",
     "license": "Apache-2.0",
-    "contentHash": "5551923c6ffaf2f1df9ad96d2dc83ec6bd01ececc9e551ca6fc43d16fdd8059e",
-    "lastHarvestedAt": "2026-10-19T11:54:59.082Z",
+    "contentHash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
+    "lastHarvestedAt": "2026-10-20T00:12:52.994Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "ef6d36ac",
+    "sourceVersion": "15d1c411",
     "license": "MIT",
-    "contentHash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
-    "lastHarvestedAt": "2026-10-19T10:03:38.931Z",
+    "contentHash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
+    "lastHarvestedAt": "2026-10-20T00:12:44.520Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
@@ -9608,5 +9608,25 @@
     "contentHash": "835614dce0ec57b36e86552f13bcac6c48a222e818d68e9eda632041c083cdba",
     "lastHarvestedAt": "2026-10-20T00:06:16.537Z",
     "learningId": "learn-github-jasonjmcghee-rem"
+  },
+  "psf-requests": {
+    "repository": "psf/requests",
+    "platform": "github",
+    "sourceUrl": "https://github.com/psf/requests",
+    "sourceVersion": "611c6162",
+    "license": "Apache-2.0",
+    "contentHash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
+    "lastHarvestedAt": "2026-10-20T00:12:44.894Z",
+    "learningId": "learn-github-psf-requests"
+  },
+  "williewangwei-swiftui-tutorials": {
+    "repository": "WillieWangWei/SwiftUI-Tutorials",
+    "platform": "github",
+    "sourceUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
+    "sourceVersion": "0ced68b2",
+    "license": "MIT",
+    "contentHash": "4db4806d03ee365035ec4099ce7bbf4bd3117cfa679772ce377024e6e70273d8",
+    "lastHarvestedAt": "2026-10-20T00:12:45.264Z",
+    "learningId": "learn-github-williewangwei-swiftui-tutorials"
   }
 }

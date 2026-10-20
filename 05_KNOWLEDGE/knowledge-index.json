@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:06:16.480Z",
-  "total_verified_learnings": 976,
+  "last_updated": "2026-10-20T00:12:52.943Z",
+  "total_verified_learnings": 978,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2845,14 +2845,19 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "ef6d36ac",
-      "content_hash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
+      "source_version": "15d1c411",
+      "content_hash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
         {
           "number": 2482,
           "title": "[ty] Avoid crashes when negating recursive aliases (#29429)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2910,
+          "title": "[ty] Avoid stack overflow for recursive descriptor setter checks (#29467)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2861,7 +2866,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:03:38.876Z",
+      "verified_at": "2026-10-20T00:12:44.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29743,8 +29748,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "308b6b87",
-      "content_hash": "5551923c6ffaf2f1df9ad96d2dc83ec6bd01ececc9e551ca6fc43d16fdd8059e",
+      "source_version": "3d78d840",
+      "content_hash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -29759,7 +29764,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:54:59.012Z",
+      "verified_at": "2026-10-20T00:12:52.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45110,22 +45115,35 @@
     "learn-github-williewangwei-swiftui-tutorials": {
       "learning_id": "learn-github-williewangwei-swiftui-tutorials",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "williewangwei-swiftui-tutorials",
+      "source": "WillieWangWei/SwiftUI-Tutorials",
+      "repository": "WillieWangWei/SwiftUI-Tutorials",
       "slug": "williewangwei-swiftui-tutorials",
       "platform": "github",
       "source_url": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
-      "source_version": "HEAD",
-      "content_hash": "5573ff3923e5cabbc0a248283539baf6f956c97694a68b5d5ba1e74bd86c3b22",
+      "source_version": "0ced68b2",
+      "content_hash": "4db4806d03ee365035ec4099ce7bbf4bd3117cfa679772ce377024e6e70273d8",
       "dossier_path": "07_PROJECT_LEARNING/williewangwei-swiftui-tutorials-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/williewangwei-swiftui-tutorials-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2912,
+          "title": "Upgrade \"SwiftUI Essentials\"",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.329Z"
+      "verified_at": "2026-10-20T00:12:45.210Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wix-detox": {
       "learning_id": "learn-github-wix-detox",
@@ -58049,20 +58067,35 @@
     "learn-github-psf-requests": {
       "learning_id": "learn-github-psf-requests",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "psf/requests",
       "repository": "psf/requests",
       "slug": "psf-requests",
       "platform": "github",
       "source_url": "https://github.com/psf/requests",
-      "source_version": "main",
-      "content_hash": "4ffe71fbe9ec8d4e2fd98545495940e7fca2f557bb9fc584897cff863a56827d",
+      "source_version": "611c6162",
+      "content_hash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
       "dossier_path": "07_PROJECT_LEARNING/psf-requests-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/psf-requests-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2911,
+          "title": "link to AI Policy in CONTRIBUTING.md (#7576)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:12:44.828Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-urllib3-urllib3": {
       "learning_id": "learn-github-urllib3-urllib3",
@@ -94944,6 +94977,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:06:16.468Z"
+    },
+    "rule-2910": {
+      "learning_id": "rule-2910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2910,
+      "title": "[ty] Avoid stack overflow for recursive descriptor setter checks (#29467)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "15d1c411",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:12:44.461Z"
+    },
+    "rule-2911": {
+      "learning_id": "rule-2911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2911,
+      "title": "link to AI Policy in CONTRIBUTING.md (#7576)",
+      "source_url": "https://github.com/psf/requests",
+      "source_version": "611c6162",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:12:44.828Z"
+    },
+    "rule-2912": {
+      "learning_id": "rule-2912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2912,
+      "title": "Upgrade \"SwiftUI Essentials\"",
+      "source_url": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
+      "source_version": "0ced68b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:12:45.210Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `308b6b87`  
+> **Source Version**: `3d78d840`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:54:58.811Z  
+> **Timestamp**: 2026-10-20T00:12:52.854Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:54:58.647Z  
+> **Harvest Timestamp**: 2026-10-20T00:12:52.844Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1917,14 +1917,11 @@ func (rc *ReadContext) GetTracker() *TransactionTracker {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30589** (2026-10-19): **fix(plan): report errno 1452 for INSERT foreign-key violations (#30540)**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #30540  ## What this PR does / why we need it:  A foreign-key violation raised by INSERT-family statements was reported to the client as internal error **20101** (`internal error: Cannot add or update a child row: a foreign key constraint fails`, sqlstate HY000) instead of MySQL errno **1452** (ER_NO_REFERENCED_ROW_2, sqlstate 23000). Root cause: the planner embedded a **2-argument untyped `assert()`**, whose runtime fallback is `moerr.NewInternalError`; the error never carried `ErrFKNoReferencedRow2` (20471), so the frontend's wire mapping (mysqlCode == ER_UNKNOWN_ERROR → send internal code) leaked 20101. The internal→mysql mapping 20471→1452/23000 always existed and is correct — the code was lost at plan time.  This PR embeds the **typed 3-argument assert** (errType `fk_no_referenced_row`, already supported by the runtime and used by the UPDATE path) at every INSERT-side emitter:  1. `buildModernChildFkAssert` (plain INSERT, and REPLACE which reuses it), 2. the ON DUPLICATE KEY UPDATE **action-row** foreign-key asserts, 3. the ON DUPLICATE KEY UPDATE **final-image** foreign-key asserts, 4. the legacy `appendForeignConstrantPlan`, which previously appended the errType argument only for UPDATE.  This also fixes the ALTER ... COPY backfill path: its validation INSERT goes through the same m
+- **Issue #30606** (2026-10-19): **fix(fulltext2): evict idle search cache after CDC flush so incremental DML is visible (#30401)**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #30401  ## What this PR does / why we need it:  A `FULLTEXT2` index indexed its initial (pre-create) rows correctly, but an `INSERT`/`UPDATE`/`DELETE` issued **after** `CREATE FULLTEXT2 INDEX` stayed invisible to `MATCH ... AGAINST` for ~10 minutes.  ### Root cause  The deltas are **not** lost. The ISCP consumer materializes them into `cdc_tail` frames correctly (confirmed: the frames are on disk, and a process restart — fresh cache — shows every incremental row). The defect is that the **warm in-memory fulltext2 search cache never refreshes** to include new `cdc_tail` frames in a live session, so `MATCH` keeps serving the create-time snapshot until the ~10-minute async stale sweep (`VectorIndexCacheTTL/2 × 4`) finally evicts the entry. DROP+recreate "fixes" it only because it builds a fresh cache object.  #29227 removed the post-flush idle-evict from `RunFulltext2` (and the `EvictIdleCache` helper), leaving the stale sweep as the only refresh path.  ### Fix  Restore the idle-evict: after a CDC tail flush that wrote frames, drop the cache entry **if idle** so the next query reloads the appended tail.  - `RemoveIdle` evicts only when no search is in flight, so it never thrashes   concurrent readers — a busy entry stays warm and refreshes later via the   sweep. This was #29227's stated conce
 
-- **Issue #30586** (2026-10-19): **design: atomic event-ledger sink profile for Kafka Connect and NiFi**
-  *Symptoms*: ## Design review only  Design for #29857 and implementation PR #30561. This PR contains only the design document so the design decision is distinct from implementation review.  Please review the exact design revision [`b2d0e15e38`](https://github.com/jiangxinmeng1/matrixone/blob/b2d0e15e38/docs/design/issue_29857_sink_profile.md) and record an explicit design-phase approval or blocking findings. The implementation PR remains blocked until that decision is recorded.  The document defines the event frame, MatrixOne transaction and checkpoint authority, owner epochs, ambiguous COMMIT recovery, broker/topic retention constraints, resource bounds, operational limits, and fault-injection acceptance matrix. 
-  **Post-Mortem & Fix Analysis**:
-  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
-  > **mo-bot review · `mo-bot-xupeng` · superseded**  Commit: `c2b5b5fa6e124263a65bfde096f0f69a5e666d2c`  "interrupted"  <!-- mo-bot-review:v1 {"service":"mo-bot-xupeng","job":"25ac60a5af12e574b1675824","head":"c2b5b5fa6e124263a65bfde096f0f69a5e666d2c","state":"superseded"} -->
+- **Issue #30602** (2026-10-19): **test(disttae): guard catalog replacement across lineage snapshot advance**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #30541. Production fixes are already present on main through #29539 and #29754; the release-branch correction is #30576.  ## What this PR does / why we need it:  Add the missing deterministic catalog regression for COPY ALTER's DROP/rename window. Existing main tests cover transferred data deletes and replacement keys, but do not check the same-name catalog replacement and the next real `txnDatabase.Delete` singleton guard.  The test commits an original table, creates its transaction-local replacement, drops and renames through the real engine APIs, synchronously flushes `mo_catalog.mo_tables` on TN, and advances through the shared lineage helper. It then requires exactly the replacement table ID and successfully executes the next real Delete.  There is no statement boundary between flush and verification: a normal boundary could repair the stale tombstone and hide the original defect. Setup reuses EnginePack with long checkpoint scanning, one PK column, two table identities, and no user data rows. Pack, setup/RC transactions and query results register cleanup immediately. No production hook, state, guard relaxation or runtime change is introduced.  Validation on Go 1.27.1 / Darwin arm64 CPU, with matching native provenance:  - New focused regression passes normally and with race; the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,1057 +1938,765 @@ func (rc *ReadContext) GetTracker() *TransactionTracker {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ef2eaf4` (2026-10-19)
-**Commit Message**: fix(python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)
+### Incident Patch 1: `d82e828b` (2026-10-19)
+**Commit Message**: fix: preserve prepared temporal result types and values (#30224)
 
-### Problem and behavior
+Prepared temporal expressions could expose string result types, discard time-of-day before CTAS materialization, or select an executor with an incompatible TIME result vector. Unary TIMESTAMP also lost fractional precision and introduced timezone-dependent materialization.
 
-Lazy engine construction previously counted as a successful connection; TLS settings, failed-state cleanup, password diagnostics and async deadlines were incomplete.
+Preserve direct parameter provenance and consume calendar operands before provisional casts truncate them. DATE_ADD/DATE_SUB use the original interval unit for DATE versus DATETIME(6); TIMESTAMPADD preserves full calendar inputs. Unary TIMESTAMP binds to appended DATETIME overloads 6–10, while released overloads 0–4 retain their original execution ABI and pair overload 5 stays unchanged. Dynamic ADDTIME/SUBTIME compute calendar arithmetic before extracting TIME(6), preserving genuine durations over 24 hours and explicit SQL casts. The FROM_UNIXTIME reproduction already passes on base; retain source-type and reuse regressions without an unnecessary kernel change.
 
-Require an authenticated probe before reporting success, dispose/clear failed engines, preserve connection timeout overrides and sync socket/charset options, and apply the AsyncClient.execute deadline through pool acquisition, execution, fetch and transaction completion. Required synchronous TLS uses a verifying SSLContext and rejects peers without TLS before authentication, including old PyMySQL. Password prompts use mysql -p; connection errors are sanitized before logging/wrapping and suppress the original display chain. Keep the exact SQLAlchemy 1.4 aiomysql pre-ping compatibility guard.
+MORPC 122 protects the changed result contracts after released main epochs 114–121. Reuse existing expression classification, worker placement, actual-destination validation, receiver/per
 
-The escaped-password follow-up handles both raw and repr/JSON-escaped forms, including backslashes, quotes, control characters and printable Unicode. Longer escaped forms are removed first to avoid partial replacements. Cancellation is not proof of server rollback; uncertain writes require reconciliation before retry. Indepen
-
-**File**: `clients/python/CONNECTION_POLICIES.md` (added, +38/-0)
+**File**: `docs/design/unary_timestamp_result_contract_v1.md` (added, +116/-0)
 ```diff
-@@ -0,0 +1,38 @@
-+# Connection and timeout contracts
+@@ -0,0 +1,116 @@
++# Unary TIMESTAMP result contract, revision 1
 +
-+`Client.connect()` creates an engine and requires an authenticated SELECT 1 before
-+reporting success. Initial probe failures dispose the failed engine and clear its
-+state. `connected()` reports successful initialization, not a live health probe;
-+use a query for live health. Reconnect disposes the old engine. Failed disposal
-+also clears the client's connected state, while preserving its error.
++Status: implemented compatibility design; independent review pending.
++PR: https://github.com/matrixorigin/matrixone/pull/30224
++Review addressed: https://github.com/matrixorigin/matrixone/pull/30224#pullrequestreview-5525155127
 +
-+`ssl_mode='required'` uses a certificate/hostname-verifying SSLContext. `ssl_ca`
-+selects a CA file; without it, system roots are used. Peers without TLS are refused
-+before authentication on older and current PyMySQL. `disabled` explicitly disables
-+TLS. `preferred` follows the driver's opportunistic behavior unless a CA is
-+supplied, in which case certificate verification is requested. A client certificate
-+requires a CA or required mode. This policy change may reject previously accepted
-+untrusted endpoints; configure a trusted test/organization CA rather than disabling
-+verification on a required connection.
++## Invariant
 +
-+Constructor `connection_timeout` is inherited unless connect explicitly overrides
-+it. The synchronous engine also passes query_timeout as read/write inactivity
-+limits and the configured charset. Async connect applies its connection deadline
-+and passes its driver connect timeout. `AsyncClient.execute()` applies query_timeout
-+to the full call (pool wait, execution, fetch and transaction completion).
-+Cancellation propagates and SQLAlchemy releases/invalidates the interrupted
-+connection. This is a client deadline, not a guaranteed server-side KILL operation.
-+Independently managed Session calls retain their own transaction/deadline scope.
++A serialized function identity has one physical result-vector type. Unary
++`TIMESTAMP` now binds a DATETIME result, preserving civil time and source FSP;
++reusing its released TIMESTAMP identities lets an older worker allocate the
++wrong result wrapper and panic during a rolling upgrade.
 +
-+A timed-out write can have an unknown commit outcome. Reconcile before retry;
-+TimeoutError or cancellation is not proof of rollback. No automatic retry is added.
++## Identities and admission
 +
-+Connection diagnostics use an interactive `mysql -p` prompt, redact any configured
-+password echoed in the driver error, and suppress the original exception's display
-+chain. The SDK depends on `SQLAlchemy[asyncio]` so supported async runtimes are
-+installed instead of silently leaving async imports unavailable.
++| Encoded identity (function 250) | Physical result | Binding | Required protocol |
++| --- | --- | --- | --- |
++| 0–4 (DATE, DATETIME, TIMESTAMP, VARCHAR, CHAR) | TIMESTAMP | Execution of released expressions only | Existing temporal floor 98 |
++| 5 (two arguments) | DATETIME | Unchanged | Existing temporal floor 98 |
++| 6–10 (corresponding unary signatures) | DATETIME | All new unary binding, including PREPARE/rebind | 122 |
 +
-+Transport regression tests require an isolated TLS CN with a test certificate
-+having only IP:127.0.0.1 in its SAN, a plaintext CN, an existing disposable test
-+database, and MO_SDK_ONLINE=1, MO_TLS_CA, MO_TLS_PORT and MO_PLAIN_PORT. Tests use
-+synthetic credentials and do not commit test private keys/certificates.
++Official main `873282742714436bff407dfcdbbe879147162bd3` advertises protocol 121;
++this single capability uses the next value, 122. A later rebase must allocate
++again from official main and update all gates and predecessor tests together.
++No protobuf fields or RPCs are added. The existing registry binding filter
++selects new identities while ID-based execution retains the released handlers.
++An older binary has no unary identities 6–10; it cannot dispatch them to a
++released TIMESTAMP handler.
++
++The common expression walk identifies new unary IDs and rejects an ID/result
++shape mismatch. Its independent feature is included in worker placement,
++sender rollout validation, the actual destination probe before encoding, and
++receiver validation after decoding and before operator construction. An old or
++unknown destination causes local placement or a send error, never a downgrade
++of the expression's result type. Capabilities are observed again at each send.
++Other temporal contracts remain at protocol 98.
++
++The same walk computes catalog read and authoring requirements for defaults,
++on-update expressions, generated columns (including functional-index backing
++columns), checks and view queries. The existing pre-fold view observer stores
++122 even when binding folds the expression to a literal. Existing catalog
++admission and its durable required floor continue to own publication and CN
++readiness. Local executor construction validates the ID/result shape before
++allocating a result wrapper; valid local execution needs no per-row protocol
++check. PREPARE specialization must bind the appended identity and retain its
++DATETIME metadata and value contract.
++
++## Upgrade and rollback
++
++Before capability 122 is enabled, old catalog unary expressions continue to
++execute with their original TIMESTAMP handlers and timezone semantics on new
++binaries. New DATETIME unary expressions can execute locally, but cannot be
++sent to protocol 112/121 workers or published below read/authoring floor 122.
++
++After catalog expressions requiring 122 are published, downgrading the binary
++alone is unsupported: the existing durable admission floor keeps an older CN
++out. Removing or rebinding those dependencies must follow the existing catalog
++admission procedure before any downgrade; this patch supplies no automatic
++floor reduction or lossy expression rewrite. Expressions from the unmerged PR
++that paired old IDs with DATETIME require SQL rebinding rather than ABI guessing.
++
++## Acceptance evidence
++
++Focused tests cover actual binding, all five old/new serialized unary domains
++in UTC and +08, NULL/masks/reuse, and invalid vector shapes. Protocol tests cover
++112/121 rejection, 122 acceptance, destination change after placement, rollback
++after success, unknown capability, sender and decoded receiver. Catalog tests
++cover read/authoring floors independently and serialized folded-view metadata.
++Existing prepared SELECT/CTAS/reuse tests assert the new identity where retained;
++BVT executes nonconstant DATETIME input via PREPARE and stored-view replay.
++
++No new mutable state, resource owner, wait, queue or per-row work is introduced.
++The versioned checks extend existing bounded admission paths. A live mixed
++binary cluster is not claimed by the deterministic component tests.
++
++## Maintenance revision 5: admission before CTAS effects
++
++The execution epoch is MORPC 122, after main's released epochs 114–121.
++Official epoch 120 remains reserved for current-session KILL authorization and
++proxy disconnect cleanup. Official epoch 121 preserves exact unsigned DECIMAL
++DIV domains. This PR appends epoch 122 and rejects immediate-
++predecessor 121 peers at each temporal boundary. The same epoch protects new
++unary TIMESTAMP DATETIME overloads and prepared
++ADDTIME/SUBTIME TIME results over non-TIME inputs. Native TIME durations and
++released TIMESTAMP overloads retain their exist
 ```
-
-**File**: `clients/python/matrixone/_connection_options.py` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+# Copyright 2026 Matrix Origin
-+# Licensed under the Apache License, Version 2.0.
-+
-+"""Explicit connection security and timeout options shared by SDK clients."""
-+
-+import json
-+import math
-+import ssl
-+
-+import pymysql
-+from pymysql.constants import CLIENT
-+
-+
-+def positive_timeout(value, name):
-+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
-+        raise ValueError('%s must be positive and finite' % name)
-+    return value
-+
-+
-+def redact_error(error, password):
-+    message = str(error)
-+    if not password:
-+        return message
-+    # DBAPI errors format their args with repr(), and SQLAlchemy embeds that
-+    # representation in its own message. Match escaped forms before the raw
-+    # password so replacing a raw substring cannot break the escaped match.
-+    quoted = repr(password)
-+    # Remove only the enclosing quote's escape, preserving escaped backslashes
-+    # and printable Unicode. The surrounding error can choose either quote.
-+    escaped = quoted[1:-1].replace('\\' + quoted[0], quoted[0])
-+    representations = {
-+        password,
-+        repr(password)[1:-1],
-+        ascii(password)[1:-1],
-+        escaped,
-+        escaped.replace("'", "\\'"),
-+        escaped.replace('"', '\\"'),
-+        json.dumps(password)[1:-1],
-+        json.dumps(password, ensure_ascii=False)[1:-1],
-+    }
-+    for value in sorted(representations, key=len, reverse=True):
-+        message = message.replace(value, '***')
-+    return message
-+
-+
-+def tls_options(params):
-+    mode = params.get('ssl_mode', 'preferred')
-+    if mode not in ('disabled', 'preferred', 'required'):
-+        raise ValueError('ssl_mode must be disabled, preferred or required')
-+    if mode == 'disabled':
-+        return {'ssl_disabled': True}
-+    if mode == 'required' or params.get('ssl_ca'):
-+        context = ssl.create_default_context(cafile=params.get('ssl_ca'))
-+        # Explicit context preserves hostname checking when system roots are
-+        # used; some driver versions disable it when no ca path is supplied.
-+        if params.get('ssl_cert'):
-+            context.load_cert_chain(params['ssl_cert'], params.get('ssl_key'))
-+        return {'ssl': context}
-+    if params.get('ssl_cert') or params.get('ssl_key'):
-+        raise ValueError('A client certificate requires ssl_ca or ssl_mode=required')
-+    return {}
-+
-+
-+class TLSRequiredConnection(pymysql.connections.Connection):
-+    """Fail before authentication when a peer cannot negotiate required TLS.
-+
-+    Older supported PyMySQL versions otherwise silently fall back to plaintext.
-+    Certificate and hostname verification are handled by the SSLContext.
-+    """
-+
-+    def _request_authentication(self):
-+        if not self.server_capabilities & CLIENT.SSL:
-+            raise pymysql.err.OperationalError(2026, 'TLS is required but the server does not advertise TLS')
-+        return super()._request_authentication()
-+
-+
-+def connect_required_tls(dialect, record, args, params):
-+    return TLSRequiredConnection(*args, **params)
-```
-
-**File**: `clients/python/matrixone/async_client.py` (modified, +55/-11)
-```diff
-@@ -606,7 +606,7 @@ async def connect(
-         account: Optional[str] = None,
-         role: Optional[str] = None,
-         charset: str = "utf8mb4",
--        connection_timeout: int = 30,
-+        connection_timeout: Optional[int] = None,
-         auto_commit: bool = True,
-         on_connect: Optional[Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]] = None,
-     ):
-@@ -624,7 +624,7 @@ async def connect(
-             account: Optional account name (will be combined with user if user doesn't contain '#' or ':')
-             role: Optional role name (will be combined with user if user doesn't contain '#' or ':')
-             charset: Character set for the connection (default: utf8mb4)
--            connection_timeout: Connection timeout in seconds (default: 30)
-+            connection_timeout: Override constructor connection timeout; None inherits it
-             auto_commit: Enable autocommit (default: True)
-             on_connect: Connection hook to execute after successful connection.
-                        Can be:
-@@ -650,6 +650,14 @@ async def my_callback(client):
-             await client.connect(host, port, user, password, database,
-                                on_connect=my_callback)
-         """
-+        from ._connection_options import positive_timeout
-+
-+        positive_timeout(self.query_timeout, 'query_timeout')
-+        timeout = self.connection_timeout if connection_timeout is None else connection_timeout
-+        positive_timeout(timeout, 'connection_timeout')
-+        if self._engine is not None:
-+            await self.disconnect()
-+        self.connection_timeout = timeout
-         try:
-             # Build final login info based on user parameter and optional account/role
-             final_user, parsed_info = self._build_login_info(user, account, role)
-@@ -666,15 +674,20 @@ async def my_callback(client):
-                 "database": database,
-                 "charset": charset,
-                 "autocommit": auto_commit,
--                "connect_timeout": connection_timeout,
-+                "connect_timeout": timeout,
-             }
- 
-             # Create SQLAlchemy async engine instead of direct aiomysql connection
-             self._engine = self._create_async_engine()
- 
-             # Test the connection by executing a simple query
--            async with self._engine.begin() as conn:
--                await conn.execute(text("SELECT 1"))
-+            import asyncio
-+
-+            async def probe():
-+                async with self._engine.begin() as conn:
-+                    await conn.execute(text("SELECT 1"))
-+
-+            await asyncio.wait_for(probe(), timeout=timeout)
- 
-             # Initialize vector managers after successful connection
-             self._initialize_vector_managers()
-@@ -694,21 +707,31 @@ async def my_callback(client):
-                 # Execute the hook once immediately for the initial connection
-                 await self._execute_connection_hook_immediately(on_connect)
- 
--        except Exception as e:
-+        except BaseException as e:
-+            engine, self._engine = self._engine, None
-+            if engine is not None:
-+                try:
-+                    await engine.dispose()
-+                except Exception:
-+                    pass
-+            if not isinstance(e, Exception):
-+                raise
-+            from ._connection_options import redact_error
-+
-+            error_msg = redact_error(e, password)
-             self.logger.log_connection(host, port, final_user, database or "default", success=False)
--            self.logger.log_error(e, context="Async connection")
-+            self.logger.log_error(ConnectionError(error_msg), context="Async connection")
- 
-             # Provide user-friendly error messages for common issues
--            error_msg = str(e)
-             if 'Unknown database' in error_msg or '1049' in error_msg:
-                 db_name = database or "default"
-                 raise ConnectionError(
-                     f"Database '{db_name}' does not exist. Please create it first:\n"
--                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p{password} "
-+                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p "
-                     f"-e \"CREATE DATABASE {db_name}\""
--                ) from e
-+                ) from None
-             else:
--                raise ConnectionError(f"Failed to connect to MatrixOne: {e}") from e
-+                raise ConnectionError(f"Failed to connect to MatrixOne: {error_msg}") from None
- 
-     def _setup_connection_hook(
-         self, on_connect: Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]
-@@ -871,9 +894,18 @@ def _create_async_engine(self) -> AsyncEngine:
-             pool_recycle=3600,  # Recycle connections after 1 hour
-             pool_pre_ping=True,  # Verify connections before use
-             pool_reset_on_return="commit",  # Reset co
-```
-
-**File**: `clients/python/matrixone/client.py` (modified, +52/-19)
-```diff
-@@ -441,7 +441,7 @@ def connect(
-         account: Optional[str] = None,
-         role: Optional[str] = None,
-         charset: str = "utf8mb4",
--        connection_timeout: int = 30,
-+        connection_timeout: Optional[int] = None,
-         auto_commit: bool = True,
-         on_connect: Optional[Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]] = None,
-     ) -> None:
-@@ -463,7 +463,7 @@ def connect(
-             account: Optional account name (will be combined with user if user doesn't contain '#' or ':')
-             role: Optional role name (will be combined with user if user doesn't contain '#' or ':')
-             charset: Character set for the connection (default: utf8mb4)
--            connection_timeout: Connection timeout in seconds (default: 30)
-+            connection_timeout: Override constructor connection timeout; None inherits it
-             auto_commit: Enable autocommit (default: True)
-             on_connect: Connection hook to execute after successful connection.
-                        Can be:
-@@ -489,6 +489,16 @@ def my_callback(client):
-             client.connect(host, port, user, password, database,
-                           on_connect=my_callback)
-         """
-+        from ._connection_options import positive_timeout
-+
-+        positive_timeout(self.query_timeout, 'query_timeout')
-+        timeout = self.connection_timeout if connection_timeout is None else connection_timeout
-+        positive_timeout(timeout, 'connection_timeout')
-+        if ssl_mode not in ('disabled', 'preferred', 'required'):
-+            raise ValueError('ssl_mode must be disabled, preferred or required')
-+        if self._engine is not None:
-+            self.disconnect()
-+        self.connection_timeout = timeout
-         # Build final login info based on user parameter and optional account/role
-         final_user, parsed_info = self._build_login_info(user, account, role)
- 
-@@ -502,7 +512,8 @@ def my_callback(client):
-             "password": password,
-             "database": database,
-             "charset": charset,
--            "connect_timeout": connection_timeout,
-+            "connect_timeout": timeout,
-+            "ssl_mode": ssl_mode,
-             "autocommit": auto_commit,
-             "ssl_disabled": ssl_mode == "disabled",
-             "ssl_verify_cert": ssl_mode == "required",
-@@ -520,6 +531,10 @@ def my_callback(client):
-         try:
-             # Create SQLAlchemy engine with connection pooling
-             self._engine = self._create_engine()
-+            # Engine construction is lazy; do not report success until an
-+            # authenticated connection has completed a real query.
-+            with self._engine.connect() as connection:
-+                connection.exec_driver_sql("SELECT 1")
-             self.logger.log_connection(host, port, final_user, database, success=True)
- 
-             # Initialize managers after engine is created
-@@ -541,20 +556,30 @@ def my_callback(client):
-                 # Execute the hook once immediately for the initial connection
-                 self._execute_connection_hook_immediately(on_connect)
- 
--        except Exception as e:
-+        except BaseException as e:
-+            engine, self._engine = self._engine, None
-+            if engine is not None:
-+                try:
-+                    engine.dispose()
-+                except Exception:
-+                    pass  # Preserve the primary connection failure.
-+            if not isinstance(e, Exception):
-+                raise
-+            from ._connection_options import redact_error
-+
-+            error_msg = redact_error(e, password)
-             self.logger.log_connection(host, port, final_user, database, success=False)
--            self.logger.log_error(e, context="Connection")
-+            self.logger.log_error(ConnectionError(error_msg), context="Connection")
- 
-             # Provide user-friendly error messages for common issues
--            error_msg = str(e)
-             if 'Unknown database' in error_msg or '1049' in error_msg:
-                 raise ConnectionError(
-                     f"Database '{database}' does not exist. Please create it first:\n"
--                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p{password} "
-+                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p "
-                     f"-e \"CREATE DATABASE {database}\""
--                ) from e
-+                ) from None
-             else:
--                raise ConnectionError(f"Failed to connect to MatrixOne: {e}") from e
-+                raise ConnectionError(f"Failed to connect to MatrixOne: {error_msg}") from None
- 
-     def _setup_connection_hook(
-         self, on_connect: Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]
-@@ -722,13 +747,15 @@ def _create_engine(self) -> Engine:
-         """Create SQLAlchemy engine with connection pooling"""
-         # Build connection URL using SQLA
-```
-
-**File**: `clients/python/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ requires-python = ">=3.8"
- dependencies = [
-     "PyMySQL>=1.0.0",
-     "aiomysql>=0.2.0",
--    "SQLAlchemy>=1.4.0,<3.0.0",
-+    "SQLAlchemy[asyncio]>=1.4.0,<3.0.0",
-     "typing-extensions>=4.0.0",
-     "python-dateutil>=2.8.0",
-     "numpy>=1.20.0",
-```
-
-**File**: `clients/python/tests/offline/test_async_client_query_comprehensive.py` (modified, +1/-0)
-```diff
-@@ -247,6 +247,7 @@ async def __aexit__(self, exc_type, exc_val, exc_tb):
-         class MockEngine:
-             def __init__(self, connection):
-                 self.connection = connection
-+                self.dialect = Mock()
- 
-             def begin(self):
-                 return MockBeginContext(self.connection)
-```
-
-**File**: `clients/python/tests/offline/test_connection_contracts.py` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+# Copyright 2026 Matrix Origin
-+# Licensed under the Apache License, Version 2.0.
-+
-+import asyncio
-+import ssl
-+from unittest.mock import AsyncMock, MagicMock, Mock
-+
-+import pytest
-+
-+from matrixone import Client
-+from matrixone.async_client import AsyncClient
-+from matrixone._connection_options import TLSRequiredConnection, tls_options
-+from matrixone.exceptions import ConnectionError
-+
-+
-+def test_failed_probe_disposes_engine_and_clears_state(monkeypatch):
-+    client = Client(logger=Mock())
-+    engine = MagicMock()
-+    engine.connect.return_value.__enter__.return_value.exec_driver_sql.side_effect = RuntimeError('unreachable')
-+    monkeypatch.setattr(client, '_create_engine', lambda: engine)
-+    with pytest.raises(ConnectionError, match='unreachable'):
-+        client.connect(database='test', on_connect=[])
-+    assert not client.connected()
-+    engine.dispose.assert_called_once()
-+    assert not any(call.kwargs.get('success') is True for call in client.logger.log_connection.call_args_list)
-+
-+
-+def test_success_requires_authenticated_query(monkeypatch):
-+    client = Client(logger=Mock(), connection_timeout=17)
-+    engine = MagicMock()
-+    monkeypatch.setattr(client, '_create_engine', lambda: engine)
-+    monkeypatch.setattr(client, '_detect_backend_version', lambda: None)
-+    client.connect(database='test', on_connect=[])
-+    engine.connect.return_value.__enter__.return_value.exec_driver_sql.assert_called_once_with('SELECT 1')
-+    assert client._connection_params['connect_timeout'] == 17
-+    assert client.connected()
-+    client.disconnect()
-+
-+
-+@pytest.mark.parametrize('mode', ['disabled', 'preferred', 'required'])
-+def test_security_policy_context(mode):
-+    options = tls_options({'ssl_mode': mode})
-+    if mode == 'required':
-+        context = options['ssl']
-+        assert context.verify_mode == ssl.CERT_REQUIRED
-+        assert context.check_hostname
-+    elif mode == 'disabled':
-+        assert options == {'ssl_disabled': True}
-+    else:
-+        assert options == {}
-+
-+
-+def test_required_tls_refused_before_authentication():
-+    import pymysql
-+
-+    connection = TLSRequiredConnection.__new__(TLSRequiredConnection)
-+    connection.server_capabilities = 0
-+    with pytest.raises(pymysql.err.OperationalError, match='does not advertise TLS'):
-+        connection._request_authentication()
-+
-+
-+def test_connection_error_redacts_password_and_suppresses_traceback_chain(monkeypatch):
-+    client = Client(logger=Mock())
-+    secret = 'synthetic-password-marker'
-+    monkeypatch.setattr(client, '_create_engine', Mock(side_effect=RuntimeError('1049 ' + secret)))
-+    with pytest.raises(ConnectionError) as result:
-+        client.connect(database='test', password=secret, on_connect=[])
-+    assert secret not in str(result.value)
-+    assert result.value.__suppress_context__
-+    assert secret not in str(client.logger.log_error.call_args)
-+    assert '-p ' in str(result.value)
-+
-+
-+@pytest.mark.parametrize('value', [0, -1, True, float('nan'), float('inf')])
-+def test_invalid_timeouts_rejected_without_engine(value, monkeypatch):
-+    client = Client(logger=Mock(), query_timeout=value)
-+    factory = Mock()
-+    monkeypatch.setattr(client, '_create_engine', factory)
-+    with pytest.raises(ValueError):
-+        client.connect(database='test', on_connect=[])
-+    factory.assert_not_called()
-+
-+
-+@pytest.mark.asyncio
-+async def test_async_deadline_cancels_the_operation():
-+    client = AsyncClient(logger=Mock(), query_timeout=0.02)
-+    finished = asyncio.Event()
-+
-+    async def stalled(*args):
-+        try:
-+            await asyncio.Event().wait()
-+        finally:
-+            finished.set()
-+
-+    client._execute = stalled
-+    with pytest.raises(asyncio.TimeoutError):
-+        await client.execute('SELECT 1')
-+    assert finished.is_set()
-+
-+
-+@pytest.mark.asyncio
-+async def test_async_explicit_cancellation_propagates():
-+    client = AsyncClient(logger=Mock(), query_timeout=10)
-+    started = asyncio.Event()
-+
-+    async def stalled(*args):
-+        started.set()
-+        await asyncio.Event().wait()
-+
-+    client._execute = stalled
-+    task = asyncio.create_task(client.execute('SELECT 1'))
-+    await started.wait()
-+    task.cancel()
-+    with pytest.raises(asyncio.CancelledError):
-+        await task
-+
-+
-+@pytest.mark.asyncio
-+async def test_async_failed_probe_clears_engine(monkeypatch):
-+    client = AsyncClient(logger=Mock(), connection_timeout=0.02)
-+    engine = MagicMock()
-+    engine.dispose = AsyncMock()
-+
-+    class Context:
-+        async def __aenter__(self):
-+            await asyncio.Event().wait()
-+
-+        async def __aexit__(self, *args):
-+            pass
-+
-+    engine.begin.return_value = Context()
-+    monkeypatch.setattr(client, '_create_async_engine', lambda: engine)
-+    with pytest.raises(ConnectionError):
-+        await client.connect(database='test', on_connect=[])
-+    assert not client.connected()
-+    engine.dispose.assert_awaited_once()
-+
-```
-
-**File**: `clients/python/tests/offline/test_connection_redaction_transport.py` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+# Copyright 2026 Matrix Origin
-+# Licensed under the Apache License, Version 2.0.
-+
-+"""Real drivers receiving a MySQL ERR greeting, without replacing engine factories."""
-+
-+import socket
-+import threading
-+from contextlib import contextmanager
-+from unittest.mock import Mock
-+
-+import pytest
-+
-+from matrixone import Client
-+from matrixone.async_client import AsyncClient
-+from matrixone.exceptions import ConnectionError
-+
-+
-+@contextmanager
-+def error_peer(password):
-+    listener = socket.socket()
-+    listener.bind(('127.0.0.1', 0))
-+    listener.listen()
-+    listener.settimeout(5)
-+    failures = []
-+
-+    def serve():
-+        try:
-+            with listener.accept()[0] as connection:
-+                payload = b'\xff\x15\x04#28000' + ('Access denied; echoed password: ' + password).encode('utf8')
-+                connection.sendall(len(payload).to_bytes(3, 'little') + b'\x00' + payload)
-+        except BaseException as error:
-+            failures.append(error)
-+
-+    thread = threading.Thread(target=serve, daemon=True)
-+    thread.start()
-+    try:
-+        yield listener.getsockname()[1]
-+    finally:
-+        thread.join(6)
-+        listener.close()
-+        assert not thread.is_alive()
-+        assert not failures
-+
-+
-+def assert_redacted(client, error, password):
-+    # Inspect the actual logged exception, before Mock's own repr escaping.
-+    logged = client.logger.log_error.call_args.args[0]
-+    for value in {password, repr(password)[1:-1], password.encode('unicode_escape').decode('ascii')}:
-+        assert value not in str(error)
-+        assert value not in str(logged)
-+    assert 'Access denied' in str(error)
-+    assert error.__suppress_context__
-+    assert not client.connected()
-+
-+
-+PASSWORDS = [
-+    'synthetic-plain-marker',
-+    r'synthetic\backslash-marker',
-+    'synthetic\\quote\'"-marker',
-+    'synthetic\ncontrol\\-marker',
-+]
-+
-+
-+@pytest.mark.parametrize('password', PASSWORDS)
-+def test_public_sync_connection_redacts_driver_representation(password):
-+    client = Client(logger=Mock(), connection_timeout=2)
-+    with error_peer(password) as port:
-+        with pytest.raises(ConnectionError) as error:
-+            client.connect(
-+                host='127.0.0.1', port=port, user='probe', password=password, database='probe', on_connect=[]
-+            )
-+    assert_redacted(client, error.value, password)
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize('password', PASSWORDS)
-+async def test_public_async_connection_redacts_driver_representation(password):
-+    client = AsyncClient(logger=Mock(), connection_timeout=2)
-+    with error_peer(password) as port:
-+        with pytest.raises(ConnectionError) as error:
-+            await client.connect(
-+                host='127.0.0.1', port=port, user='probe', password=password, database='probe', on_connect=[]
-+            )
-+    assert_redacted(client, error.value, password)
-+
-+
-+@pytest.mark.parametrize('password', ["雪\\quote'", '雪\n\\quote"', "both\\'\"\t雪"])
-+@pytest.mark.parametrize('message', ["driver's error: %s", 'driver "error": %s'])
-+def test_redaction_handles_quote_choice_and_printable_unicode(password, message):
-+    from pymysql.err import OperationalError
-+    from sqlalchemy.exc import OperationalError as WrappedError
-+
-+    from matrixone._connection_options import redact_error
-+
-+    error = WrappedError(None, None, OperationalError(1045, message % password))
-+    redacted = redact_error(error, password)
-+    assert '***' in redacted
-+    assert '雪' not in redacted
-+    assert 'driver' in redacted
-```
-
----
-
-### Incident Patch 2: `87328274` (2026-10-19)
-**Commit Message**: fix(plan): align DECIMAL DIV result domains with MySQL (#30171)
-
-DECIMAL DIV currently publishes BIGINT for narrow CTAS/view outputs and loses an unsigned integer operand's result domain during implicit casts. A negative quotient can consequently reach INSERT ... ON DUPLICATE KEY UPDATE and replace an existing row.
-
-- Derive DIV display precision and signedness from the original DECIMAL/integer operands. Keep 64-bit arithmetic and infer INT/BIGINT independently at CTAS/view schema boundaries, including folded constants and transparent projections.
-- Add a stable unsigned DECIMAL DIV overload using exact Decimal256 arithmetic. Accept the full uint64 range and negative fractions truncating to zero; reject negative nonzero or overflowing results before downstream writes. Preserve legacy overload 0 and integer/BIT execution contracts.
-- Preserve typed peers during prepared parameter inference and require MORPC v121 for the new expression contract at worker placement, send/receive, and persisted-expression boundaries. Preserve the independent coordinator-only fence for dependent subquery programs.
-
-- Preserve SELECT division-by-zero diagnostics for unsigned DECIMAL DIV through the exist
 
 **File**: `pkg/defines/const.go` (modified, +2/-1)
 ```diff
-@@ -156,7 +156,8 @@ const (
- 	MORPCVersion118    int64 = 118 // transactional database defaults and table charset alteration
+@@ -157,7 +157,8 @@ const (
  	MORPCVersion119    int64 = 119 // coordinator-owned parameterized subquery programs
  	MORPCVersion120    int64 = 120 // current-session KILL authorization and proxy disconnect cleanup
--	MORPCLatestVersion       = MORPCVersion120
-+	MORPCVersion121    int64 = 121 // exact unsigned DECIMAL DIV result domain
-+	MORPCLatestVersion       = MORPCVersion121
+ 	MORPCVersion121    int64 = 121 // exact unsigned DECIMAL DIV result domain
+-	MORPCLatestVersion       = MORPCVersion121
++	MORPCVersion122    int64 = 122 // unary TIMESTAMP and dynamic TIME result contracts
++	MORPCLatestVersion       = MORPCVersion122
  )
  
  // DefaultLockWaitTimeoutSeconds is shared by the frontend default and by
 ```
 
-**File**: `pkg/pb/plan/decimal_integer_division_protocol_test.go` (added, +46/-0)
+**File**: `pkg/pb/plan/string_literal_form.go` (modified, +30/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package plan
-+
-+import (
-+	"github.com/stretchr/testify/require"
-+	"testing"
-+)
-+
-+func TestDecimalIntegerDivisionRemoteFeature(t *testing.T) {
-+	for _, tc := range []struct {
-+		name               string
-+		function, overload int64
-+		width, scale       int32
-+		want               bool
-+	}{
-+		{"unsigned", 14, 1, 7, 0, true}, {"signed display", 14, 0, 8, 0, true},
-+		{"legacy", 14, 0, 64, -1, false}, {"unrelated function", 13, 0, 8, 0, false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			expr := &Expr{Typ: Type{Id: 24, Width: tc.width, Scale: tc.scale}, Expr: &Expr_F{F: &Function{Func: &ObjectRef{Obj: tc.function<<32 | tc.overload}}}}
-+			bytes, err := expr.Marshal()
-+			require.NoError(t, err)
-+			var decoded Expr
-+			require.NoError(t, decoded.Unmarshal(bytes))
-+			features, err := RequiredRemoteExpressionFeatures(&decoded)
-+			require.NoError(t, err)
-+			require.Equal(t, tc.want, features.DecimalIntegerDivisionSemantics)
-+			if tc.want {
-+				require.True(t, features.Any())
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/pb/plan/string_literal_form.go` (modified, +5/-0)
-```diff
-@@ -421,6 +421,7 @@ type RemoteExpressionFeatures struct {
- 	SpatialDistanceSemantics          bool
- 	PreparedPrecisionScalar           bool
- 	DecimalDivisionSemantics          bool
-+	DecimalIntegerDivisionSemantics   bool // v121: unsigned DIV overload and display precision
- 	// SpecialIntegerConsumers requires v98 independently of private CASTs.
- 	SpecialIntegerConsumers                 bool
- 	TemporalResultContracts                 bool
-@@ -459,6 +460,7 @@ func (features RemoteExpressionFeatures) Any() bool {
- 		features.PreparedPrecisionScalar ||
- 		features.SpecialIntegerConsumers ||
- 		features.DecimalDivisionSemantics ||
-+		features.DecimalIntegerDivisionSemantics ||
- 		features.TemporalResultContracts ||
- 		features.InvalidTemporalResultContract ||
- 		features.NormalizedIntervalUnits ||
-@@ -990,6 +992,9 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
- 					(current.Typ.Id == 32 || current.Typ.Id == 33 || current.Typ.Id == 34) {
- 					features.DecimalDivisionSemantics = true
+@@ -392,6 +392,10 @@ const (
+ // TableCollationFunction requires MORPC v118 for INTERNAL_TABLE_COLLATION's
+ // execution identity, including directly authored catalog expressions.
+ // CalendarIntervalNormalization requires MORPC v115 for the new normalization identity.
++// TimestampDatetimeResultContracts requires MORPC v122 for appended unary
++// TIMESTAMP identities; released unary identities retain TIMESTAMP vectors.
++// DynamicTimeResultContracts uses the same epoch for prepared TIME results
++// over string/calendar ADDTIME/SUBTIME inputs; native TIME inputs are unchanged.
+ type RemoteExpressionFeatures struct {
+ 	DependentPrograms             bool
+ 	CalendarIntervalNormalization bool
+@@ -431,6 +435,8 @@ type RemoteExpressionFeatures struct {
+ 	WeekSessionDefault                      bool
+ 	MediumIntAssignmentBounds               bool
+ 	DateNumericResultContracts              bool
++	TimestampDatetimeResultContracts        bool
++	DynamicTimeResultContracts              bool
+ 	DecimalStatisticalResultContracts       bool
+ 	TableCollationFunction                  bool
+ 	InvalidDecimalStatisticalResultContract bool
+@@ -467,6 +473,7 @@ func (features RemoteExpressionFeatures) Any() bool {
+ 		features.LegacyIntervalUnits ||
+ 		features.WeekSessionDefault ||
+ 		features.MediumIntAssignmentBounds ||
++		features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts ||
+ 		features.DateNumericResultContracts ||
+ 		features.DecimalStatisticalResultContracts ||
+ 		features.TableCollationFunction ||
+@@ -1016,6 +1023,16 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
+ 				if id == 216 && (overload == 0 || overload == 1) { // one-arg WEEK
+ 					features.WeekSessionDefault = true
  				}
-+				if id == 14 && (overload == 1 || (overload == 0 && current.Typ.Width > 0 && current.Typ.Width <= 20 && current.Typ.Scale == 0)) {
-+					features.DecimalIntegerDivisionSemantics = true
-+				}
- 				// Function IDs live in the function registry, which cannot be
- 				// imported here because the planner depends on this package.
- 				if id == 189 { // legacy TO_INTERVAL: ambiguous across pre-v97 and v97 binaries
-```
-
-**File**: `pkg/sql/colexec/division_warning_folding_test.go` (modified, +13/-2)
-```diff
-@@ -27,7 +27,7 @@ import (
- )
- 
- func TestDivisionWarningRuntimeFolding(t *testing.T) {
--	for _, name := range []string{"/", "div", "%"} {
-+	for _, name := range []string{"/", "div", "%", "unsigned decimal div"} {
- 		for _, parent := range []string{"direct", "coalesce"} {
- 			t.Run(name+"/"+parent, func(t *testing.T) {
- 				proc := testutil.NewProcess(t, testutil.WithFileService(nil))
-@@ -38,12 +38,23 @@ func TestDivisionWarningRuntimeFolding(t *testing.T) {
- 				sink := &preparedCastWarningSession{}
- 				proc.WarningSink = sink
- 				literal := func(n int64) *plan.Expr {
-+					if name == "unsigned decimal div" {
-+						return &plan.Expr{Typ: types.T_uint64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_U64Val{U64Val: uint64(n)}}}}
++				timestamp, dynamicTime := TemporalResultContractFeatures(current)
++				features.TimestampDatetimeResultContracts = features.TimestampDatetimeResultContracts || timestamp
++				features.DynamicTimeResultContracts = features.DynamicTimeResultContracts || dynamicTime
++				if id == 250 && overload >= 0 && overload <= 10 { // TIMESTAMP
++					want := planTimestampTypeID
++					if overload >= 5 {
++						want = planDatetimeTypeID
 +					}
- 					if name == "/" {
- 						return &plan.Expr{Typ: types.T_float64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_Dval{Dval: float64(n)}}}}
- 					}
- 					return &plan.Expr{Typ: types.T_int64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_I64Val{I64Val: n}}}}
- 				}
--				expr := bindTestFunction(t, proc, name, literal(1), literal(0))
-+				var expr *plan.Expr
-+				if name == "unsigned decimal div" {
-+					dividend := &plan.Expr{Typ: types.New(types.T_decimal64, 10, 3).PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_Decimal64Val{Decimal64Val: &plan.Decimal64{A: 1000}}}}}
-+					expr = bindTestFunction(t, proc, "div", dividend, literal(0))
-+					expr.GetF().Args[0] = bindTestCast(t, proc, 0, dividend, types.New(types.T_decimal256, 10, 3))
-+					expr.GetF().Args[1] = bindTestCast(t, proc, 0, literal(0), types.New(types.T_decimal256, 20, 0))
-+				} else {
-+					expr = bindTestFunction(t, proc, name, literal(1), literal(0))
++					features.InvalidTemporalResultContract = features.InvalidTemporalResultContract || current.Typ.Id != want
 +				}
- 				if parent == "coalesce" {
- 					expr = bindTestFunction(t, proc, "coalesce", expr, literal(7))
- 				}
-```
-
-**File**: `pkg/sql/compile/decimal_division_protocol_test.go` (modified, +64/-0)
-```diff
-@@ -91,3 +91,67 @@ func TestDecimalDivisionProtocolUnknownWorkerFallsBack(t *testing.T) {
- 	require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
- 	require.Equal(t, plan2.ExecTypeAP_ONECN, c.execType)
+ 				// Released overloads retain their physical vector ABI. The new
+ 				// numeric EXTRACT and string ADDTIME/SUBTIME results use appended
+ 				// identities, so 4.2 catalog expressions remain executable.
+@@ -1720,3 +1737,16 @@ func expressionOwnerContainer(kind reflect.Kind) bool {
+ 		return false
+ 	}
  }
 +
-+func TestDecimalIntegerDivisionProtocol(t *testing.T) {
-+	c, client := expressionProtocolTestCompile(t)
-+	expr := decimalDivisionProtocolExpr(types.T_uint64)
-+	expr.Typ = planpb.Type{Id: int32(types.T_uint64), Width: 7, Scale: 0}
-+	expr.GetF().Func.Obj = function.EncodeOverloadID(function.INTEGER_DIV, function.DecimalIntegerDivUnsignedOverload)
-+	qry := &planpb.Query{Nodes: []*planpb.Node{{ProjectList: []*planpb.Expr{expr}}}, Steps: []int32{0}}
-+	op := projection.NewArgument()
-+	defer op.Release()
-+	op.ProjectList = []*planpb.Expr{expr}
-+	scope := &Scope{Magic: Remote, Proc: c.proc, NodeInfo: engine.Node{Id: "old-worker", Addr: "remote:6001"}, RootOp: op}
-+	client.version = defines.MORPCVersion120
-+	c.execType = plan2.ExecTypeAP_MULTICN
-+	c.cnList = engine.Nodes{{Id: "old-worker", Addr: "remote:6001", Mcpu: 4}}
-+	require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
-+	require.Equal(t, plan2.ExecTypeAP_ONECN, c.execType)
-+	_, err := encodeRemoteScope(scope, c.proc)
-+	require.ErrorContains(t, err, "remote destination")
-+	client.version = defines.MORPCVersion121
-+	c.execType = plan2.ExecTypeAP_MULTICN
-+	c.cnList = engine.Nodes{{Id: "old-worker", Addr: "remote:6001", Mcpu: 4}}
-+	require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
-+	require.Equal(t, plan2.ExecTypeAP_MULTICN, c.execType)
-+	data, err := encodeRemoteScope(scope, c.proc)
-+	require.NoError(t, err)
-+	var wire pipeline.Pipeline
-+	require.NoError(t, wire.Unmarshal(data))
-+	require.Equal(t, expr.GetF().Func.Obj, wire.InstructionList[0].ProjectList[0].GetF().Func.Obj)
-+	rt := moruntime.ServiceRuntime(c.proc.GetService())
-+	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion120)
-+	require.ErrorContains(t, validateRemoteExpressionPipelineProtocol(c.proc, &wire), "version 121")
-+	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion121)
-+	require.NoError(t, validateRemoteExpressionPipelineProtocol(c.proc, &wire))
-+	required, err := plan2.RequiredPersistedExpressionProtocolVersion(expr)
-+	require.NoError(t, err)
-+	require.Equal(t, defines.MORPCVersion121, required)
-+	t.Run("dependent_program", func(t *testing.T) {
-+		dependent := &planpb.Expr{Typ: expr.Typ, Expr: &planpb.Expr_Dependent{Dependent: &planpb.DependentExpr{
-+			ProgramId: 1, Inputs: []*planpb.Expr{expr},
-+		}}}
-+		features, err := planpb.RequiredRemoteExpressionFeatures(dependent)
-+		require.NoError(t, err)
-+		require.True(t, features.DependentPrograms)
-+		require.True(t, features.DecimalIntegerDivisionSemantics)
-+		floor, err := plan2.RequiredPersistedExpressionProtocolVersion(dependent)
-+		require.NoError(t, err)
-+		require.Equal(t, defines.MORPCVersion121, floor)
-+		// DIV capability does not grant a worker the coordinator's program owner.
-+		op.ProjectList = []*planpb.Expr{dependent}
-+		defer func() { op.ProjectList = []*planpb.Expr{expr} }()
-+		_, err = encodeRemoteScope(scope, c.proc)
-+		require.ErrorContains(t, err, "coordinator execution owner")
-+		data, err := (&pipeline.Pipeline{InstructionList: []*pipeline.Instruction{{ProjectList: []*planpb.Expr{dependent}}}}).Marshal()
-+		require.NoError(t, err)
-+		_, err = decodeScope(data, c.proc, true, nil)
-+		require.ErrorContains(t, err, "coordinator execution owner")
-+	})
-+	// Historical overload zero remains admitted after immediate-predecessor rollback.
-+	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion120)
-+	expr.GetF().Func.Obj = function.EncodeOverloadID(function.INTEGER_DIV, 0)
-+	expr.Typ = planpb.Type{Id: int32(types.T_int64), Width: 64, Scale: -1}
-+	require.NoError(t, validateRemoteExpressionPipelineProtocol(c.proc, &pipeline.Pipeline{InstructionList: []*pipeline.Instruction{{ProjectList: []*planpb.Expr{expr}}}}))
-+	require.Equal(t, client.calls, client.releases)
++// TemporalResultContractFeatures classifies one expression before folding.
++// Native TIME inputs keep their released physical result contract.
++func TemporalResultContractFeatures(expr *Expr) (timestampDatetime, dynamicTime bool) {
++	fn := expr.GetF()
++	if fn == nil || fn.Func == nil {
++		return false, false
++	}
++	id, overload := int32(fn.Func.Obj>>32), int32(fn.Func.Obj)
++	return id == 250 && overload >= 6 && overload <= 10,
++		(id == 41 || id == 378) && expr.Typ.Id == planTimeTypeID &&
++			len(fn.Args) == 2 && fn.Args[0] != nil && fn.Args[0].Typ.Id != planTimeTypeID
 +}
+```
+
+**File**: `pkg/sql/colexec/evalExpression.go` (modified, +12/-0)
+```diff
+@@ -456,6 +456,18 @@ func newExpressionExecutorWithAllocation(
+ 
+ 	case *plan.Expr_F:
+ 		overloadID := t.F.GetFunc().GetObj()
++		// Validate before allocating the result wrapper, including plans retained
++		// from the pre-versioned unary TIMESTAMP implementation.
++		fid, oid := function.DecodeOverloadID(overloadID)
++		if fid == function.TIMESTAMP && oid >= 0 && oid <= 10 {
++			want := types.T_timestamp
++			if oid >= 5 {
++				want = types.T_datetime
++			}
++			if typ.Oid != want {
++				return nil, moerr.NewNotSupportedNoCtx("TIMESTAMP result vector contract mismatch requires rebinding")
++			}
++		}
+ 		overload, err := function.GetFunctionById(proc.Ctx, overloadID)
+ 		if err != nil {
+ 			return nil, err
+```
+
+**File**: `pkg/sql/compile/compile2.go` (modified, +9/-0)
+```diff
+@@ -153,6 +153,9 @@ func (c *Compile) Compile(
+ 	// rolling back the caller's workspace statement. This also covers
+ 	// frontend background execution and reused Compile instances.
+ 	if c.proc != nil && c.proc.IncrStatementDisabled() {
++		if err = validateTemporalResultProtocol(c.proc, queryPlan); err != nil {
++			return err
++		}
+ 		queryPlan, err = c.prepareCreateNamePlan(queryPlan)
+ 		if err != nil {
+ 			return err
+@@ -161,6 +164,9 @@ func (c *Compile) Compile(
+ 	if err = plan.RequireLegacyCollations(queryPlan); err != nil {
+ 		return err
+ 	}
++	if err = validateTemporalResultProtocol(c.proc, queryPlan); err != nil {
++		return err
++	}
+ 	if err = validateOctStringProtocol(c.proc, queryPlan); err != nil {
+ 		return err
+ 	}
+@@ -414,6 +420,9 @@ func expressionsContainUnresolvedFullText(expressions []*plan.Expr) bool {
+ // Run executes the pipeline and returns the result.
+ func (c *Compile) Run(_ uint64) (queryResult *util2.RunResult, err error) {
+ 	defer func() { err = process.UnwrapPipelineFailure(err) }()
++	if err = validateTemporalResultProtocol(c.proc, c.pn); err != nil {
++		return nil, err
++	}
+ 	if c.pn.GetDdl().GetDropTable() != nil {
+ 		// Retry generations share this statement owner. Other statements do
+ 		// not need a temporary DROP retirement journal.
 ```
 
 **File**: `pkg/sql/compile/expression_destination_protocol.go` (modified, +3/-0)
 ```diff
-@@ -72,6 +72,9 @@ func validateRemoteExpressionDestination(proc *process.Process, p *pipeline.Pipe
- 		{features.PreparedPrecisionScalar, defines.MORPCVersion95,
- 			"prepared scalar precision requires a versioned remote destination",
- 			"remote destination does not support prepared scalar precision (MORPC version %d)"},
-+		{features.DecimalIntegerDivisionSemantics, defines.MORPCVersion121,
-+			"decimal integer division requires a versioned remote destination",
-+			"remote destination does not support decimal integer division (MORPC version %d)"},
- 		{features.DecimalDivisionSemantics, defines.MORPCVersion97,
- 			"decimal division requires a versioned remote destination",
- 			"remote destination does not support decimal division (MORPC version %d)"},
+@@ -63,6 +63,9 @@ func validateRemoteExpressionDestination(proc *process.Process, p *pipeline.Pipe
+ 		{features.DecimalStatisticalResultContracts, defines.MORPCVersion113,
+ 			"decimal statistical DOUBLE results require a versioned remote destination",
+ 			"remote destination does not support decimal statistical DOUBLE results (MORPC version %d)"},
++		{features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts, defines.MORPCVersion122,
++			"temporal result contracts require a versioned remote destination",
++			"remote destination does not support temporal result contracts (MORPC version %d)"},
+ 		{features.DateNumericResultContracts, defines.MORPCVersion112,
+ 			"signed date result contracts require a versioned remote destination",
+ 			"remote destination does not support signed date result contracts (MORPC version %d)"},
 ```
 
-**File**: `pkg/sql/compile/expression_protocol.go` (modified, +3/-0)
+**File**: `pkg/sql/compile/expression_protocol.go` (modified, +49/-0)
 ```diff
-@@ -89,6 +89,9 @@ func remoteExpressionProtocolVersion(features plan.RemoteExpressionFeatures) int
- 	if features.PreparedPrecisionScalar {
- 		required = max(required, defines.MORPCVersion95)
+@@ -20,6 +20,7 @@ import (
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/clusterservice"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
+ 	"github.com/matrixorigin/matrixone/pkg/defines"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+@@ -43,6 +44,9 @@ func (c *Compile) constrainRemoteExpressionWorkers(qry *plan.Query) error {
+ 	if features.InvalidDecimalStatisticalResultContract {
+ 		return moerr.NewNotSupportedNoCtx("decimal statistical result contract requires rebinding")
  	}
-+	if features.DecimalIntegerDivisionSemantics {
-+		required = max(required, defines.MORPCVersion121)
++	if features.InvalidTemporalResultContract {
++		return moerr.NewNotSupportedNoCtx("temporal result vector contract mismatch requires rebinding")
 +	}
- 	if features.DecimalDivisionSemantics {
- 		required = max(required, defines.MORPCVersion97)
+ 	if features.LegacyIntervalUnits {
+ 		return moerr.NewNotSupportedNoCtx("legacy interval unit contract requires rebinding")
  	}
+@@ -74,6 +78,9 @@ func executionRemoteExpressionProtocolVersion(proc *process.Process, features pl
+ 
+ func remoteExpressionProtocolVersion(features plan.RemoteExpressionFeatures) int64 {
+ 	required := max(requiredExpressionContractProtocolVersion(features), temporalExpressionProtocolVersion(features))
++	if features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts {
++		required = max(required, defines.MORPCVersion122)
++	}
+ 	if features.IntegerArithmeticDomains {
+ 		required = max(required, defines.MORPCVersion71)
+ 	}
+@@ -253,3 +260,45 @@ func remoteWorkerProtocolVersion(ctx context.Context, proc *process.Process, wor
+ 	}
+ 	return resp.GetProtocolVersion.Version, true, nil
+ }
++
++// Cached compilations can survive a cluster capability rollback. Reject only
++// the changed result contracts here, before Prepare or statement effects; the
++// existing placement/receiver owners retain all other expression policies.
++func validateTemporalResultProtocol(proc *process.Process, owner any) error {
++	var required int64
++	if queryPlan, ok := owner.(*plan.Plan); ok {
++		if create := createTableForNameAdmission(queryPlan); create != nil {
++			required = create.CtasExecutionProtocolVersion
++		}
++	}
++	var version int64
++	var known bool
++	if proc != nil {
++		if rt := moruntime.ServiceRuntime(proc.GetService()); rt != nil {
++			value, exists := rt.GetGlobalVariables(moruntime.MOProtocolVersion)
++			var valid bool
++			version, valid = value.(int64)
++			known = exists && valid
++		}
++	}
++	if required < 0 {
++		return moerr.NewNotSupportedNoCtx("invalid CTAS population protocol requirement requires rebinding")
++	}
++	if required > 0 && (!known || version < required) {
++		return moerr.NewNotSupportedf(context.Background(), "CTAS population requires MORPC protocol version %d", required)
++	}
++	if known && version >= defines.MORPCVersion122 {
++		return nil
++	}
++	features, err := plan.RequiredRemoteExpressionFeatures(owner)
++	if err != nil {
++		return err
++	}
++	if features.InvalidTemporalResultContract {
++		return moerr.NewNotSupportedNoCtx("temporal result vector contract mismatch requires rebinding")
++	}
++	if features.TimestampDatetimeResultContracts || features.DynamicTimeResultContracts {
++		return moerr.NewNotSupportedNoCtx("temporal result contracts require MORPC protocol version 122")
++	}
++	return nil
++}
 ```
 
-**File**: `pkg/sql/compile/remoterun.go` (modified, +3/-0)
+**File**: `pkg/sql/compile/lifecycle_admission_test.go` (modified, +42/-5)
 ```diff
-@@ -2327,6 +2327,9 @@ func validateRemoteExpressionFeatures(proc *process.Process, features plan.Remot
- 	if features.DecimalStatisticalResultContracts && (!hasProtocolVersion || protocolVersion < defines.MORPCVersion113) {
- 		return moerr.NewNotSupportedNoCtx("decimal statistical DOUBLE results require MORPC protocol version 113")
- 	}
-+	if features.DecimalIntegerDivisionSemantics && (!hasProtocolVersion || protocolVersion < defines.MORPCVersion121) {
-+		return moerr.NewNotSupportedNoCtx("decimal integer division requires MORPC protocol version 121")
-+	}
- 	if features.DateNumericResultContracts && (!hasProtocolVersion || protocolVersion < defines.MORPCVersion112) {
- 		return moerr.NewNotSupportedNoCtx("signed date result contracts require MORPC protocol version 112")
- 	}
+@@ -17,12 +17,14 @@ package compile
+ import (
+ 	"context"
+ 	"errors"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/golang/mock/gomock"
+ 	"github.com/matrixorigin/matrixone/pkg/catalog"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
+ 	"github.com/matrixorigin/matrixone/pkg/defines"
+ 	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
+ 	"github.com/matrixorigin/matrixone/pkg/lockservice"
+@@ -177,7 +179,7 @@ func TestTransactionLocalReplacementRequiresBothGenerations(t *testing.T) {
+ }
+ 
+ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
+-	for _, mode := range []string{"unknown_binding", "stable_binding", "changed_domain", "canceled", "ctas_refresh"} {
++	for _, mode := range []string{"unknown_binding", "stable_binding", "changed_domain", "canceled", "ctas_refresh", "unsupported_temporal", "unsupported_ctas", "unsupported_temporary_ctas", "ctas_rollback"} {
+ 		t.Run(mode, func(t *testing.T) {
+ 			ctrl := gomock.NewController(t)
+ 			proc := testutil.NewProcess(t)
+@@ -190,7 +192,11 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
+ 			op.EXPECT().Txn().DoAndReturn(func() txn.TxnMeta {
+ 				return txn.TxnMeta{Mode: txn.TxnMode_Pessimistic, Isolation: txn.TxnIsolation_RC, SnapshotTS: now}
+ 			}).AnyTimes()
+-			op.EXPECT().Snapshot().Return(txn.CNTxnSnapshot{LockTables: []lock.LockTable{{Table: 33, Valid: true}}}, nil).AnyTimes()
++			snapshot := txn.CNTxnSnapshot{LockTables: []lock.LockTable{{Table: 33, Valid: true}}}
++			if strings.HasPrefix(mode, "unsupported_") {
++				snapshot.LockTables = nil
++			}
++			op.EXPECT().Snapshot().Return(snapshot, nil).AnyTimes()
+ 			op.EXPECT().TxnOptions().Return(txn.TxnOptions{}).AnyTimes()
+ 			op.EXPECT().CreateTS().Return(timestamp.Timestamp{}).AnyTimes()
+ 			op.EXPECT().AddWaitLock(gomock.Any(), gomock.Any(), gomock.Any()).Return(uint64(1)).AnyTimes()
+@@ -222,13 +228,20 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
+ 			original := &plan.Plan{Plan: &plan.Plan_Ddl{Ddl: &plan.DataDefinition{DdlType: plan.DataDefinition_CREATE_TABLE, Definition: &plan.DataDefinition_CreateTable{CreateTable: q}}}}
+ 			var source tree.Statement
+ 			var planner *plan2.MockCompilerContext
+-			if mode == "ctas_refresh" {
++			if mode == "ctas_refresh" || strings.HasPrefix(mode, "unsupported_") || mode == "ctas_rollback" {
+ 				var err error
+-				source, err = parsers.ParseOne(t.Context(), dialect.MYSQL, "create table db.t as select a + 1 from select_test.bind_select", 1)
++				sql := "create table db.t as select a + 1 from select_test.bind_select"
++				if strings.HasPrefix(mode, "unsupported_") || mode == "ctas_rollback" {
++					sql = "create table db.t as select timestamp(granted_time) from mo_catalog.mo_role_privs"
++				}
++				if mode == "unsupported_temporary_ctas" {
++					sql = strings.Replace(sql, "create table", "create temporary table", 1)
++				}
++				source, err = parsers.ParseOne(t.Context(), dialect.MYSQL, sql, 1)
+ 				require.NoError(t, err)
+ 				defer source.Free()
+ 				planner = plan2.NewMockCompilerContext(true, testutil.NewProcess(t))
+-				original, err = plan2.BuildPlan(planner, source, false)
++				original, err = plan2.BuildPlan(planner, source, mode == "unsupported_temporal")
+ 				require.NoError(t, err)
+ 			}
+ 			builds := 0
+@@ -254,9 +267,26 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
+ 				proc.Ctx = ctx
+ 				proc.ReplaceTopCtx(ctx)
+ 			}
++			if strings.HasPrefix(mode, "unsupported_") || mode == "ctas_rollback" {
++				rt := moruntime.ServiceRuntime(proc.GetService())
++				old, _ := rt.GetGlobalVariables(moruntime.MOProtocolVersion)
++				t.Cleanup(func() { rt.SetGlobalVariables(moruntime.MOProtocolVersion, old) })
++				rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion121)
++				if mode == "ctas_rollback" {
++					rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion122)
++				} else {
++					eng.dbErr = errors.New("catalog accessed before temporal admission")
++				}
++			}
+ 			err := c.Compile(proc.Ctx, original, nil)
+ 			got := c.GetPlan()
+ 			switch mode {
++			case "unsupported_temporal", "unsupported_ctas", "unsupported_temporary_ctas":
++				require.ErrorContains(t, err, "version 122")
++				require.NotErrorIs(t, err, eng.dbErr, "unsupported CTAS must not access catalog names")
++				require.Zero(t, builds)
++				require.Zero(t, advances)
++				require.Zero(t, locks)
+ 			case "canceled":
+ 				require.ErrorIs(t, err, context.Canceled)
+ 				require.Zero(t, builds)
+@@ -281,6 +311,13 @@ func TestBorrowedCreateNameRefreshBeforeEffects(t *testing.T) {
+ 				require.Equal(t, "a + 1", got.GetDdl().GetCreateTable().TableDef.Cols[0].Name)
+ 				require.Equal(t, original.GetDdl().GetCreateTable().CreateAsSelectSql, got.GetDdl().GetCreateTable().CreateAsSelectSql)
+ 			}
++			if mode == "ctas_rollback" {
++				before := locks
++				moruntime.ServiceRuntime(proc.GetService()).SetGlobalVariables(moruntime.M
 ```
 
 ---
 
-### Incident Patch 3: `95eb0f0c` (2026-10-19)
-**Commit Message**: fix: enforce session ownership for KILL and processlist (#30299)
+### Incident Patch 2: `e0314478` (2026-10-19)
+**Commit Message**: fix(check): make CHECK constraint names schema-unique, MySQL-style (#30343) (#30368)
 
-Authorize SQL KILL against the authenticated current-session identity and pin the target generation through the action. Ordinary users can affect their own sessions, account administrators their account, and sys/moadmin the cluster. Filter processlist rows before materialization using the same current statement identity.
+## What type of PR is this?
 
-Forward original SQL through the existing proxy backend, preserving role/user changes. Keep trusted disconnect cleanup separate from SQL authorization: complete terminal tunnel close before capturing its backend, use a bounded cleanup context, and never retry uncertain effects or fall back to re-authenticating the original login. Remote KILL has one outstanding RPC and a 10-second total bound.
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
 
-Rebase preserves main's SQL-mode/warning setup and samples account/user/role under the existing TenantInfo lock. Merge the authoritative query.proto additively and regenerate query.pb.go with the repository-pinned tooling. Published main methods and field tags remain unchanged. Preserve main capability 119; these new methods require 120 at sender and receiver, including 119→120→119 rollback.
+## Which issue(s) this PR fixes:
 
-Fix fixture owne
+issue #30343
 
-**File**: `docs/design/session-authorization.md` (added, +108/-0)
+## What this PR does / why we need it:
+
+Generic unnamed CHECK names and copied LIKE names allow separate tables
+to own the same `(CONSTRAINT_SCHEMA, CONSTRAINT_NAME)`, causing
+information_schema joins to associate the wrong expression with a table.
+Generate MySQL-style `<table>_chk_<n>` names, regenerate names for
+ordinary LIKE/CLONE, and reject new schema-wide duplicate claims with
+MySQL error 3822. Generated names retain the 64-character identifier
+limit (error 1059).
+
+Planning owns the names, the shared legacy SQL decoder supplies missing
+old catalog identities, and compile admission reserves newly introduced
+names using existing transactional catalog locks. COPY validates new
+logical names before its trusted replica; physical partition/index
+tables borrow their logical owner's namespace. Table/column rename
+composition validates and persists the final identities together,
+including SQL-only legacy s
+
+**File**: `optools/run_ut.sh` (modified, +40/-13)
 ```diff
-@@ -0,0 +1,108 @@
-+# Current-session KILL authorization and processlist visibility — design v2
-+
-+Owner issues: MatrixOne #30276 and #30278. Implementation: https://github.com/matrixorigin/matrixone/pull/30299. This versioned design records the current contract; approval evidence is retained in the task record.
-+
-+Design-first review: **APPROVED v2**, gpt-6-astra, reasoning_effort=medium, canonical collaboration session `/root/proxy_design`, 2026-10-15. Exact inspected base: `8795f3699b40504376343fa1acda8b4619f0c76e`. Design-only inspection; no source edits, builds, runtime tests or GitHub writes by this reviewer. Prior `design.md` evidence is reused and its local authorization/lifecycle and processlist conclusions remain applicable. This delta supersedes its unresolved proxy disposition. User explicitly chose full current-identity behavior, preserving legitimate KILL after SET ROLE and COM_CHANGE_USER.
-+
-+## Classification and evidence
-+
-+The original local authorization fixes are ordinary bug fixes. Complete closure now changes the CN internal wire protocol and ownership across proxy/frontend/query service; the feature-design gate applies because of wire compatibility, distributed routing and security boundaries. A document in the implementation PR is acceptable because this distinct design-first approval precedes implementation. This is the required versioned design, not an additional request for user approval.
-+
-+At inspected base, proxy `makeEvent` consumes single KILL commands; `handleKill` locates target CN and reauthenticates using the ORIGINAL handshake in `connAndExec`. `cacheIdentityChanged` records but cannot refresh changes to user or active role. Thus authorizing that temporary session still permits an original administrator to kill another user after changing to an ordinary identity. Conversely legitimate upgrades and same-current-user actions can fail. Disconnect cleanup also authenticates the original login. SQL request admission in `RoutineManager.Handler` already pins the executing session against COM_CHANGE_USER/reset/migration; normal SQL ordering is the correct owner of current identity.
-+
-+Production frontend connection IDs come from HAkeeper `AllocateIDByKey(ConnIDAllocKey)`; local incremental IDs are only the nil-HAkeeper unit-test fallback. Existing proxy global routing scans processlist; it is not a separate authoritative directory. Existing query RPC is a trusted internal control plane, already supporting reset/migration and account-wide kill. SQL/MySQL users cannot directly invoke its handlers. This design preserves that trust model; deployments must already isolate query-service RPC from untrusted clients. No user-supplied SQL principal or trusted boolean is introduced.
-+
-+## Invariants and contract
-+
-+Authenticated sys+moadmin may act globally; non-sys+accountadmin within its account; others only same account AND same user. Sys membership or username root alone grants nothing. Missing authenticated identity fails closed. Active role means the role of the current executing session, including earlier successful statements in a multi-statement request. Failed identity-changing commands preserve whatever identity the existing authentication/role implementation leaves installed; the proxy neither guesses nor replays it.
-+
-+Each SQL KILL executes on its existing authenticated backend, authorizes against the target's pinned current session generation, and has at most one selected target effect. No target CN forwards again. Target disappearance is distinct from permission denial or transport failure. A denied target is never canceled or closed. IDs above uint32 are rejected before lookup or conversion. Existing QUERY/CONNECTION/default, statement-ID and local self-KILL semantics are retained. Statement ID remains subject to current kernel semantics (killQuery currently cancels the request regardless of that string); this fix does not invent new semantics.
-+
-+Processlist remains the prior design: fetchSessions receives authenticated Account/User/Role from proc.SessionInfo, requests SysTenant only for actual sys+moadmin, and filters every returned row before vector materialization. Ordinary users see own rows, account admins own-account rows, moadmin all. SHOW, direct processlist() and information_schema view converge here. Empty identity and malformed/nil rows fail closed. Prepared execution must use current session information. No processlist wire change or SQL privilege catalog change.
-+
-+## Chosen architecture
-+
-+### 1. Forward SQL through the existing proxy tunnel
-+
-+`pkg/proxy/event.go`: stop consuming KILL. Remove the `tree.Kill` event case and obsolete killEvent definition/helpers, TypeKill references if otherwise unused, and the matching dispatch/handleKill in `client_conn.go`. The original packet travels through the ordinary c2s/s2c pipes. Do not replace it with a second writer, `ExecStmt`, synthetic OK/ERR, or a temporary connection. Update event/tunnel fixtures to expect KIL
-```
-
-**File**: `pkg/cnservice/server_query.go` (modified, +33/-0)
-```diff
-@@ -142,6 +142,8 @@ func (s *service) initQueryService() error {
- }
+@@ -231,6 +231,11 @@ function current_ut_command_is_prebuilt_helper(){
+ # Completion belongs to the existing helper owner, independently of report shards.
+ function prepare_ut_helper_completion(){
+     local path="${G_WKSP}/${G_TS}-owner-complete.$1"
++    remove_ut_report_file "${path}.cancel"
++    if [[ -e "${path}.cancel" ]]; then
++        printf -v "$2" '%s' 1
++        return 125
++    fi
+     if ! : > "${path}"; then
+         printf -v "$2" '%s' 1
+         return 125
+@@ -289,6 +294,12 @@ function join_ut_owner(){
+                 [[ "$(<"${completion_path}")" != "${join_status}" ]]; then
+                 join_status=125
+             fi
++            # The helper has joined and acknowledged descendant drainage.
++            # Only now can its parent's cancellation request be retired.
++            if (( join_status != 125 )); then
++                remove_ut_report_file "${completion_path}.cancel"
++                [[ ! -e "${completion_path}.cancel" ]] || join_status=125
++            fi
+         fi
+         if (( join_status == 125 )); then printf -v "${failed_flag_name}" '%s' 1; fi
+         printf -v "${pid_name}" '%s' ''
+@@ -1205,11 +1216,20 @@ function handle_ut_termination(){
+         exit 143
+     fi
+     UT_TERMINATING=1
++    local pid
++    local termination_status=${1:-143} child_status=0
++    if [[ -n "${CURRENT_UT_PID}" ]] && current_ut_command_is_prebuilt_helper; then
++        # TERM is a wakeup, not the only record of cancellation. The helper
++        # polls this request at PID-safe points even if a shell trap is delayed
++        # or consumed during a publication/probe boundary. Completion remains
++        # the separate authoritative acknowledgement of descendant drainage.
++        if ! : > "${G_WKSP}/${G_TS}-owner-complete.CURRENT_UT_PID.cancel"; then
++            termination_status=125
++        fi
++    fi
+     checkpoint_ut_event "cancel" "${CURRENT_UT_STAGE}" "${CURRENT_UT_LABEL}" "143" \
+         "current_pid=${CURRENT_UT_PID} light_pid=${LIGHT_RACE_JOB_PID} engine_pid=${ENGINE_RACE_JOB_PID} plan_pid=${PLAN_RACE_JOB_PID} prebuild_pid=${CLUSTER_PREBUILD_JOB_PID}"
  
- func (s *service) initQueryCommandHandler() {
-+	s.addQueryCommandHandler(query.CmdMethod_KillSession, s.handleKillSession)
-+	s.addQueryCommandHandler(query.CmdMethod_DisconnectSession, s.handleDisconnectSession)
- 	s.addQueryCommandHandler(query.CmdMethod_KillConn, s.handleKillConn)
- 	s.addQueryCommandHandler(query.CmdMethod_AlterAccount, s.handleAlterAccount)
- 	s.addQueryCommandHandler(query.CmdMethod_TraceSpan, s.handleTraceSpan)
-@@ -961,3 +963,34 @@ func (s *service) handleWorkspaceThresholdRequest(
+-    local pid
+-    local termination_status=${1:-143} child_status=0
+     # Notify every group before waiting, so the concurrent plan/helper cleanup
+     # gets the same grace window as the foreground writer.
+     for pid in "${CURRENT_UT_PID}" "${LIGHT_RACE_JOB_PID}" "${ENGINE_RACE_JOB_PID}" "${PLAN_RACE_JOB_PID}" "${CLUSTER_PREBUILD_JOB_PID}"; do
+@@ -2064,7 +2084,7 @@ function run_prebuilt_race_commands(){
+     local stage=$1 report=$2 parallel=$3 hard_timeout_seconds=$4
+     local exclusive_high_footprint=${5:-0}
+     local index candidate scheduled=0 active=0 high_footprint_active=0 progress status=0 child_status now remaining deadline
+-    local previous_term_trap execution_term_trap term_pending=0
++    local previous_term_trap term_pending=0
+     local -a child_pids=() test_pids=() watchdog_pids=() started=()
+     local -a reports=() expired=()
+     if ! [[ "${exclusive_high_footprint}" =~ ^[01]$ ]]; then
+@@ -2092,14 +2112,24 @@ function run_prebuilt_race_commands(){
+         publish_ut_helper_completion 143 || exit 125
+         exit 143
+     }
+-    trap cancel_prebuilt_race_commands TERM
+-    execution_term_trap=$(trap -p TERM)
++    function prebuilt_race_cancel_requested(){
++        (( term_pending != 0 )) ||
++            [[ -n "${UT_HELPER_COMPLETION:-}" && -e "${UT_HELPER_COMPLETION:-}.cancel" ]]
++    }
++    # Keep one sticky TERM latch for the entire admission/drain lifetime.
++    # Swapping traps around each $! publication creates a signal handoff
++    # window. The trap only records intent; the owner cancels at safe points
++    # after recording every newly admitted PID, never from inside a probe or
++    # while a PID is still unpublished. Do not reset this latch between spawns.
++    trap 'term_pending=1' TERM
+     rm -f "${report}" "${report}".*
  
- 	return nil
- }
-+
-+// SQL authorization is performed by the owning frontend routine manager. These
-+// trusted RPC handlers never execute SQL or forward to another CN.
-+func (s *service) handleKillSession(ctx context.Context, req *query.Request, resp *query.Response, _ *morpc.Buffer) error {
-+	if req == nil || req.KillSessionRequest == nil {
-+		return moerr.NewInvalidInput(ctx, "missing kill session request")
-+	}
-+	if err := qclient.CheckMethodVersion(ctx, s.serviceID(), req); err != nil {
-+		return err
-+	}
-+	found, err := s.mo.GetRoutineManager().KillSession(ctx, req.KillSessionRequest)
-+	if err != nil {
-+		return err
-+	}
-+	resp.KillSessionResponse = &query.KillSessionResponse{Found: found}
-+	return nil
-+}
-+
-+func (s *service) handleDisconnectSession(ctx context.Context, req *query.Request, resp *query.Response, _ *morpc.Buffer) error {
-+	if req == nil || req.DisconnectSessionRequest == nil {
-+		return moerr.NewInvalidInput(ctx, "missing disconnect session request")
-+	}
-+	if err := qclient.CheckMethodVersion(ctx, s.serviceID(), req); err != nil {
-+		return err
-+	}
-+	if err := s.mo.GetRoutineManager().DisconnectSession(ctx, req.DisconnectSessionRequest.ConnID); err != nil {
-+		return err
-+	}
-+	resp.DisconnectSessionResponse = &query.DisconnectSessionResponse{}
-+	return nil
-+}
+     while (( scheduled < ${#race_packages[@]} || active > 0 )); do
++        if prebuilt_race_cancel_requested; then cancel_prebuilt_race_commands; fi
+         # The same admission owner enforces exclusion in both directions:
+         # high-footprint work starts alone and keeps the wave until drained.
+         while (( scheduled < ${#race_packages[@]} && active < parallel )); do
++            if prebuilt_race_cancel_requested; then cancel_prebuilt_race_commands; fi
+             candidate=-1
+             for (( index=0; index<${#race_packages[@]}; index++ )); do
+                 [[ "${started[index]:-0}" == 0 ]] || continue
+@@ -2153,8 +2183,6 @@ function run_prebuilt_race_commands(){
+             fi
+             checkpoint_ut_event start "${stage}" "${race_packages[index]}" "" \
+                 "package_index=${index} prebuilt=true parallel=${parallel}"
+-            term_pending=0
+-            trap 'term_pending=1' TERM
+             set -m
+             (
+                 cd "${race_dirs[index]}" || exit 2
+@@ -2168,11 +2196,8 @@ function run_prebuilt_race_commands(){
+      
 ```
 
-**File**: `pkg/cnservice/server_query_test.go` (modified, +62/-0)
+**File**: `optools/ut_embedded_schedule_test.go` (modified, +141/-19)
 ```diff
-@@ -1793,3 +1793,65 @@ func (h *fakeIcebergCacheInvalidationHandler) InvalidateIcebergCache(ctx context
- 	h.req = req
- 	return h.removed, nil
- }
-+
-+func TestSessionControlHandlers(t *testing.T) {
-+	ctl := gomock.NewController(t)
-+	server := mock_moserver.NewMockServer(ctl)
-+	server.EXPECT().GetRoutineManager().Return(&frontend.RoutineManager{}).AnyTimes()
-+	sid := "session-control-handlers"
-+	rt := moruntime.DefaultRuntime()
-+	moruntime.SetupServiceBasedRuntime(sid, rt)
-+	t.Cleanup(func() { moruntime.CompareAndDeleteServiceBasedRuntime(sid, rt) })
-+	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion120)
-+	s := &service{mo: server, cfg: &Config{UUID: sid}}
-+	ctx := context.Background()
-+	for _, req := range []*query.Request{nil, {}} {
-+		require.Error(t, s.handleKillSession(ctx, req, &query.Response{}, nil))
-+		require.Error(t, s.handleDisconnectSession(ctx, req, &query.Response{}, nil))
-+	}
-+	req := &query.Request{CmdMethod: query.CmdMethod_KillSession, KillSessionRequest: &query.KillSessionRequest{ConnID: 123}}
-+	require.Error(t, s.handleKillSession(ctx, req, &query.Response{}, nil))
-+	req.KillSessionRequest.Principal = &query.KillSessionPrincipal{Account: "sys", User: "root", Role: "moadmin"}
-+	rsp := &query.Response{}
-+	require.NoError(t, s.handleKillSession(ctx, req, rsp, nil))
-+	require.NotNil(t, rsp.KillSessionResponse)
-+	require.False(t, rsp.KillSessionResponse.Found)
-+	req.KillSessionRequest.ConnID = 1<<32 + 123
-+	require.Error(t, s.handleKillSession(ctx, req, &query.Response{}, nil))
-+	rsp = &query.Response{}
-+	require.NoError(t, s.handleDisconnectSession(ctx, &query.Request{CmdMethod: query.CmdMethod_DisconnectSession, DisconnectSessionRequest: &query.DisconnectSessionRequest{ConnID: 123}}, rsp, nil))
-+	require.NotNil(t, rsp.DisconnectSessionResponse)
-+}
-+
-+// A receiver must reject rollback before looking up or acting on any routine.
-+// Leaving mo nil makes an accidentally admitted operation fail this test.
-+func TestSessionControlHandlersRejectRollback(t *testing.T) {
-+	sid := "session-control-rollback"
-+	rt := moruntime.DefaultRuntime()
-+	moruntime.SetupServiceBasedRuntime(sid, rt)
-+	t.Cleanup(func() { moruntime.CompareAndDeleteServiceBasedRuntime(sid, rt) })
-+	s := &service{cfg: &Config{UUID: sid}}
-+	ctx := context.Background()
-+	kill := &query.Request{CmdMethod: query.CmdMethod_KillSession, KillSessionRequest: &query.KillSessionRequest{ConnID: 123}}
-+	disconnect := &query.Request{CmdMethod: query.CmdMethod_DisconnectSession, DisconnectSessionRequest: &query.DisconnectSessionRequest{ConnID: 123}}
-+	for _, version := range []int64{defines.MORPCVersion119, defines.MORPCVersion120, defines.MORPCVersion119} {
-+		rt.SetGlobalVariables(moruntime.MOProtocolVersion, version)
-+		if version == defines.MORPCVersion120 {
-+			s.mo = mock_moserver.NewMockServer(gomock.NewController(t))
-+			s.mo.(*mock_moserver.MockServer).EXPECT().GetRoutineManager().Return(&frontend.RoutineManager{}).Times(2)
-+			rsp := &query.Response{}
-+			kill.KillSessionRequest.Principal = &query.KillSessionPrincipal{Account: "sys", User: "root", Role: "moadmin"}
-+			require.NoError(t, s.handleKillSession(ctx, kill, rsp, nil))
-+			require.NotNil(t, rsp.KillSessionResponse)
-+			require.NoError(t, s.handleDisconnectSession(ctx, disconnect, rsp, nil))
-+			require.NotNil(t, rsp.DisconnectSessionResponse)
-+			s.mo = nil
-+			continue
-+		}
-+		rsp := &query.Response{}
-+		require.ErrorContains(t, s.handleKillSession(ctx, kill, rsp, nil), "unsupported protocol version 120")
-+		require.Nil(t, rsp.KillSessionResponse)
-+		require.ErrorContains(t, s.handleDisconnectSession(ctx, disconnect, rsp, nil), "unsupported protocol version 120")
-+		require.Nil(t, rsp.DisconnectSessionResponse)
-+	}
-+}
+@@ -73,23 +73,23 @@ if [[ "$1" == tool && "$2" == test2json ]]; then
+   trap 'touch "$CASE_DIR/stopped-execute-a"; exit 143' TERM
+   printf '%s\n' "$$" > "$CASE_DIR/pid-execute-a"
+   printf 'ready\n' >&8
+-  while :; do read -r -t 0.01 _ <&9 || true; done
++  while :; do read -r _ <&9 || true; done
+  fi
+  if [[ "$MODE" == execute-timeout && "$leaf" == a ]]; then
+   ps -o pgid= -p $$ | tr -d ' ' > "$CASE_DIR/pgid-execute-timeout-a"
+   trap '' TERM
+-  while :; do read -r -t 0.01 _ <&9 || true; done
++  while :; do read -r _ <&9 || true; done
+  fi
+  if [[ "$MODE" == execute-timeout-zero && "$leaf" == a ]]; then
+   ps -o pgid= -p $$ | tr -d ' ' > "$CASE_DIR/pgid-execute-timeout-zero-a"
+   trap 'printf "{\"Action\":\"pass\",\"Package\":\"%s\"}\\n" "$package"; exit 0' TERM
+-  while :; do read -r -t 0.01 _ <&9 || true; done
++  while :; do read -r _ <&9 || true; done
+  fi
+  if [[ "$MODE" == execute-cancel-resistant && "$leaf" == a ]]; then
+   ps -o pgid= -p $$ | tr -d ' ' > "$CASE_DIR/pgid-execute-resistant-a"
+   printf 'ready\n' >&8
+   trap '' TERM
+-  while :; do read -r -t 0.01 _ <&9 || true; done
++  while :; do read -r _ <&9 || true; done
+  fi
+  if [[ "$MODE" == test-failure && "$leaf" == b ]]; then
+   printf '{"Action":"fail","Package":"%s"}\n' "$package"
+@@ -118,7 +118,7 @@ if [[ " $* " == *' -c '* ]]; then
+     if [[ -e "$CASE_DIR/join-waiting" ]]; then
+      if mkdir "$CASE_DIR/term-sent" 2>/dev/null; then kill -TERM "$RUNNER_PID"; fi
+     fi
+-    read -r -t 0.01 _ <&9 || true
++    read -r -t 1 _ <&9 || true
+    done
+   else
+    read -r _ <&9
+@@ -648,15 +648,7 @@ run_embedded_tests "$scope" 2
+ 			var transform func(string) string
+ 			mock := embeddedGoMock
+ 			switch phase {
+-			case "active-publication":
+-				transform = func(text string) string {
+-					const anchor = "            test_pids[index]=$!\n"
+-					if strings.Count(text, anchor) != 1 {
+-						t.Fatal("missing active pid publication")
+-					}
+-					return strings.Replace(text, anchor, "        ut_test_execution_spawned\n"+anchor, 1)
+-				}
+-			case "watchdog-publication", "cleanup":
++			case "active-publication", "watchdog-publication", "cleanup":
+ 				mock = strings.Replace(mock, `trap 'touch "$CASE_DIR/stopped-execute-a"; exit 143' TERM`, `trap 'fixture_self_pid fixture_pid; printf "MOCK_TERM shell=%s\n" "$fixture_pid" >&16; touch "$CASE_DIR/stopped-execute-a"; printf "MOCK_STOPPED shell=%s\n" "$fixture_pid" >&16; exit 143' TERM`, 1)
+ 				script = strings.Replace(script, " printf 'EXECUTE_CANCELLED %s\\n' \"$status\"", " cat \"$CASE_DIR/ut-signal-trace.log\"\n printf 'EXECUTE_CANCELLED %s\\n' \"$status\"", 1)
+ 				script = strings.Replace(script, "function ut_test_execution_spawned() {", `exec 16>"$CASE_DIR/ut-signal-trace.log"
+@@ -687,7 +679,10 @@ function ut_test_execution_spawned() {`, 1)
+   printf 'OBSERVER_RELEASE shell=%s\n' "$observer_pid" >&16) &`, 1)
+ 				}
+ 				transform = func(text string) string {
+-					const anchor = "            watchdog_pids[index]=$!\n"
++					anchor := "            watchdog_pids[index]=$!\n"
++					if phase == "active-publication" {
++						anchor = "            test_pids[index]=$!\n"
++					}
+ 					if strings.Count(text, anchor) != 1 {
+ 						t.Fatal("missing watchdog pid publication")
+ 					}
+@@ -705,19 +700,23 @@ function ut_test_execution_spawned() {`, 1)
+ 					text = strings.Replace(text, `            child_pids[index*2]=${test_pids[index]}`, `            child_pids[index*2]=${test_pids[index]}
+             fixture_self_pid fixture_pid
+             printf 'TEST_PUBLISHED shell=%s test=%s\n' "$fixture_pid" "${test_pids[index]}" >&16`, 1)
+-					text = strings.Replace(text, "    function cancel_prebuilt_race_commands(){\n", "    function cancel_prebuilt_race_commands(){\n        fixture_self_pid fixture_pid\n        printf 'CANCEL shell=%s test=%s watchdog=%s\\n' \"$fixture_pid\" \"${test_pids[*]}\" \"${watchdog_pids[*]}\" >&16\n", 1)
++					text = strings.Replace(text, "    function cancel_prebuilt_race_commands(){\n", "    function cancel_prebuilt_race_commands(){\n        fixture_self_pid fixture_pid\n        printf 'CANCEL shell=%s test=%s watchdog=%s\\n' \"$fixture_pid\" \"${test_pids[*]-}\" \"${watchdog_pids[*]-}\" >&16\n", 1)
+ 					text = strings.Replace(text, `        if ! terminate_ut_process_groups 20 ${child_pids[@]+"${child_pids[@]}"} >&2; then exit 125; fi`, `        local sweep_status=0
+         fixture_self_pid fixture_pid
+-        printf 'SWEEP_START shell=%s owners=%s\n' "$fixture_pid" "${child_pids[*]}" >&16
++        printf 'SWEEP_START shell=%s owners=%s\n' "$fixture_pid" "${child_pids[*]-}" >&16
+         terminate_ut_process_groups 20 ${child_pids[@]+"${child_pids[@]}"} >&2 || sweep_status=$?
+         printf 'SWEEP_RESULT shell=%s status=%s\n' "$fixture_pid" "$sweep_status" >&16
+         (( sweep_status == 0 )) || exit 125`, 1)
+ 					text = strings.Replace(text, "        wait 2>/dev/null || true\n", "        fixture_self_pid fixture_pid\n        printf 'DRAINED shell=%s\\n' \"$fixture_pid\" >&16\n 
 ```
 
-**File**: `pkg/defines/const.go` (modified, +2/-1)
+**File**: `optools/ut_schedule_test.go` (modified, +13/-1)
 ```diff
-@@ -155,7 +155,8 @@ const (
- 	MORPCVersion117    int64 = 117 // versioned collation-aware LEAST/GREATEST ordering
- 	MORPCVersion118    int64 = 118 // transactional database defaults and table charset alteration
- 	MORPCVersion119    int64 = 119 // coordinator-owned parameterized subquery programs
--	MORPCLatestVersion       = MORPCVersion119
-+	MORPCVersion120    int64 = 120 // current-session KILL authorization and proxy disconnect cleanup
-+	MORPCLatestVersion       = MORPCVersion120
- )
+@@ -998,7 +998,17 @@ func TestHeavyPlanCancellationStopsWritersBeforeMerge(t *testing.T) {
+ 	script := `source ./run_ut.sh UT
+ function logger() { :; }
+ trap handle_ut_termination TERM
+-trap 'printf "\nCANCEL_REPORT\n"; cat "$UT_REPORT"' EXIT
++function check_cancellation() {
++ status=$?
++ if [[ "$status" == 143 ]]; then
++  [[ -z "$CURRENT_UT_PID$PLAN_RACE_JOB_PID" ]] || status=94
++  if ut_process_group_alive "$writer_pid" || ut_process_group_alive "$plan_pid"; then status=95; fi
++ fi
++ printf '\nCANCEL_REPORT\n'
++ cat "$UT_REPORT"
++ exit "$status"
++}
++trap check_cancellation EXIT
+ ENGINE_RACE_REPORT="$CASE_DIR/engine-report"
+ printf 'engine\n' > "$ENGINE_RACE_REPORT"
+ mkfifo "$CASE_DIR/writer-ready" "$CASE_DIR/writer-wait"
+@@ -1009,13 +1019,15 @@ start_ut_command heavy 'heavy writer' bash -c '
+  printf "heavy\n" >&9
+  IFS= read -r _ <&8
+ '
++writer_pid=$CURRENT_UT_PID
+ function run_plan_race_shards() {
+  trap 'printf "plan-stopped\n" >> "$PLAN_RACE_REPORT"; ut_test_publish_completion; exit 143' TERM
+  printf 'plan-start\n' > "$PLAN_RACE_REPORT"
+  printf 'plan\n' >&9
+  IFS= read -r _ <&8
+ }
+ start_plan_race example/plan
++plan_pid=$PLAN_RACE_JOB_PID
+ IFS= read -r -t 10 first <&9 || exit 91
+ IFS= read -r -t 10 second <&9 || exit 92
+ [[ "$first:$second" == heavy:plan || "$first:$second" == plan:heavy ]] || exit 93
+```
+
+**File**: `pkg/common/moerr/error.go` (modified, +39/-29)
+```diff
+@@ -151,6 +151,9 @@ const (
+ 	// contract without reusing main's codes or the digest dependency's 20338/20339.
+ 	ErrInvalidJSONPathWildcard  uint16 = 20340
+ 	ErrCollationCharsetMismatch uint16 = 20341
++	// ErrDuplicateCheckConstraintName reports a CHECK constraint name already
++	// used by another table in the same schema (MySQL 3822).
++	ErrDuplicateCheckConstraintName uint16 = 20342
  
- // DefaultLockWaitTimeoutSeconds is shared by the frontend default and by
+ 	// Group 4: unexpected state and io errors
+ 	ErrInvalidState                             uint16 = 20400
+@@ -478,35 +481,36 @@ var errorMsgRefer = map[uint16]moErrorMsgItem{
+ 	ErrGroupConcatCut:              {ER_CUT_VALUE_GROUP_CONCAT, []string{"HY000"}, "%s"},
+ 
+ 	// Group 3: invalid input
+-	ErrBadConfig:               {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid configuration: %s"},
+-	ErrInvalidInput:            {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid input: %s"},
+-	ErrSyntaxError:             {ER_SYNTAX_ERROR, []string{"42000"}, "SQL syntax error: %s"},
+-	ErrParseError:              {ER_PARSE_ERROR, []string{"42000"}, "SQL parser error: %s"},
+-	ErrConstraintViolation:     {ER_CHECK_CONSTRAINT_VIOLATED, []string{MySQLDefaultSqlState}, "constraint violation: %s"},
+-	ErrDuplicate:               {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "tae data: duplicate"},
+-	ErrRoleGrantedToSelf:       {ER_ROLE_GRANTED_TO_ITSELF, []string{MySQLDefaultSqlState}, "cannot grant role %s to %s"},
+-	ErrDuplicateEntry:          {ER_DUP_ENTRY, []string{"23000"}, "Duplicate entry '%s' for key '%s'"},
+-	ErrWrongValueCountOnRow:    {ER_WRONG_VALUE_COUNT_ON_ROW, []string{"21S01"}, "Column count doesn't match value count at row %d"},
+-	ErrBadFieldError:           {ER_BAD_FIELD_ERROR, []string{"42S22"}, "Unknown column '%s' in '%s'"},
+-	ErrWrongDatetimeSpec:       {ER_WRONG_DATETIME_SPEC, []string{MySQLDefaultSqlState}, "wrong date/time format specifier: %s"},
+-	ErrUpgrateError:            {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "CN upgrade table or view '%s.%s' under tenant '%s:%d' reports error: %s"},
+-	ErrUnsupportedDML:          {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "unsupported DML: %s"},
+-	ErrOperandColumns:          {ER_OPERAND_COLUMNS, []string{"21000"}, "Operand should contain %d column(s)"},
+-	ErrSubqueryNo1Row:          {ER_SUBQUERY_NO_1_ROW, []string{"21000"}, "Subquery returns more than 1 row"},
+-	ErrInvalidTypeForJSON:      {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "Invalid data type for JSON data in argument %d to function %s; a JSON string or JSON type is required."},
+-	ErrInvalidJSONCharset:      {ER_INVALID_JSON_CHARSET, []string{"22032"}, "Cannot create a JSON value from a string with CHARACTER SET '%s'."},
+-	ErrUnknownStmtHandler:      {ER_UNKNOWN_STMT_HANDLER, []string{MySQLDefaultSqlState}, "Unknown prepared statement handler (%s) given to %s"},
+-	ErrViewWrongList:           {ER_VIEW_WRONG_LIST, []string{MySQLDefaultSqlState}, "In definition of view, derived table or common table expression, SELECT list and column names list have different column counts"},
+-	ErrWrongArguments:          {ER_WRONG_ARGUMENTS, []string{MySQLDefaultSqlState}, "Incorrect arguments to %s"},
+-	ErrDerivedMustHaveAlias:    {ER_DERIVED_MUST_HAVE_ALIAS, []string{"42000"}, "Every derived table must have its own alias"},
+-	ErrWrongUsage:              {ER_WRONG_USAGE, []string{MySQLDefaultSqlState}, "Incorrect usage of %s and %s"},
+-	ErrUpdateTableUsed:         {ER_UPDATE_TABLE_USED, []string{MySQLDefaultSqlState}, "You can't specify target table '%-.192s' for update in FROM clause"},
+-	ErrWindowInvalidUse:        {ER_WINDOW_INVALID_WINDOW_FUNC_USE, []string{"HY000"}, "You cannot use the window function '%s' in this context"},
+-	ErrViewSelectTmpTable:      {ER_VIEW_SELECT_TMPTABLE, []string{MySQLDefaultSqlState}, "View's SELECT refers to a temporary table '%-.192s'"},
+-	ErrTooManyRows:             {ER_TOO_MANY_ROWS, []string{"42000"}, "Result consisted of more than one row"},
+-	ErrCantChangeTxn:           {ER_CANT_CHANGE_TX_CHARACTERISTICS, []string{"25001"}, "Transaction characteristics can't be changed while a transaction is in progress"},
+-	ErrInvalidGroupFuncUse:     {ER_INVALID_GROUP_FUNC_USE, []string{MySQLDefaultSqlState}, "Invalid use of group function"},
+-	ErrInvalidJSONPathWildcard: {ER_INVALID_JSON_PATH_WILDCARD, []string{"42000"}, "In this situation, path expressions may not contain the * and ** tokens or an array range."},
++	ErrBadConfig:                    {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid configuration: %s"},
++	ErrInvalidInput:                 {ER_UNKNOWN_ERROR, []string{MySQLDefaultSqlState}, "invalid input: %s"},
++	ErrSyntaxError:                  {ER_SYNTAX_ERROR, []string{"42000"}, "SQL syntax error: %s"},
++	ErrParseError:                   {ER_PARSE_ERROR, []string{"42000"}, "SQL parser error: %s"},
++	ErrConstraintViolation:          {ER_CHECK_CONSTRAINT_VIOLATED, []string{MySQLDefaultSqlState}, "constraint violation: %s"},
++	ErrDuplicateChe
 ```
 
-**File**: `pkg/frontend/kill.go` (added, +188/-0)
+**File**: `pkg/defines/type.go` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,188 @@
+@@ -280,6 +280,12 @@ type IsMoLogger struct{}
+ 
+ type IgnoreForeignKey struct{}
+ 
++// TrustedCheckConstraintNames bridges StatementOption.WithTrustedCheckConstraintNames
++// to Scope.createTable: the statement intentionally keeps CHECK names inherited
++// from an owned source (ALTER ... COPY replica, partition backing table, TRUNCATE
++// recreate), so the schema-wide duplicate-name scan is skipped.
++type TrustedCheckConstraintNames struct{}
++
+ type AlterCopyOpt struct{}
+ 
+ // OptimizerHints carries a per-statement optimizer_hints string (same key=value
+```
+
+**File**: `pkg/embed/check_constraint_namespace_test.go` (added, +534/-0)
+```diff
+@@ -0,0 +1,534 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3006,333 +2711,691 @@ Fix fixture owne
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend
++package embed
 +
 +import (
++	"bytes"
 +	"context"
-+	"math"
-+	"strings"
-+	"time"
-+
-+	"github.com/matrixorigin/matrixone/pkg/clusterservice"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
-+	"github.com/matrixorigin/matrixone/pkg/pb/query"
-+	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
-+)
-+
-+func killPrincipal(tenant *TenantInfo) *query.KillSessionPrincipal {
-+	if tenant == nil {
-+		return nil
-+	}
-+	tenant.mu.Lock()
-+	defer tenant.mu.Unlock()
-+	return &query.KillSessionPrincipal{
-+		AccountID: tenant.TenantID, UserID: tenant.UserID,
-+		Account: tenant.Tenant, User: tenant.User, Role: tenant.DefaultRole,
-+	}
-+}
-+
-+func validKillPrincipal(p *query.KillSessionPrincipal) bool {
-+	return p != nil && p.Account != "" && p.User != "" && p.Role != "" &&
-+		(strings.EqualFold(p.Account, sysAccountName) == (p.AccountID == sysAccountID))
-+}
-+
-+func canKillSession(caller, target *query.KillSessionPrincipal) bool {
-+	if !validKillPrincipal(caller) || !validKillPrincipal(target) {
-+		return false
-+	}
-+	sys := strings.EqualFold(caller.Account, sysAccountName)
-+	if sys && strings.EqualFold(caller.Role, moAdminRoleName) {
-+		return true
-+	}
-+	return caller.AccountID == target.AccountID &&
-+		((!sys && strings.EqualFold(caller.Role, accountAdminRoleName)) || caller.UserID == target.UserID)
-+}
-+
-+// killLocal pins the target generation from authorization through cancellation.
-+// Absence is separate from denial so only absence can trigger remote routing.
-+func (rm *RoutineManager) killLocal(ctx context.Context, principal *query.KillSessionPrincipal,
-+	callerID, targetID uint64, killConnection bool, statementID string,
-+) (bool, error) {
-+	if targetID > math.MaxUint32 {
-+		return false, moerr.NewInvalidInputf(ctx, "connection id %d exceeds uint32", targetID)
-+	}
-+	if !validKillPrincipal(principal) {
-+		return false, moerr.NewInternalError(ctx, "access denied: missing authenticated KILL identity")
-+	}
-+	if err := ctx.Err(); err != nil {
-+		return false, err
-+	}
-+	rt := rm.getRoutineByConnID(uint32(targetID))
-+	if rt == nil {
-+		return false, nil
-+	}
-+	rt.mc.Lock()
-+	if rt.mc.closed || rt.mc.inProgress {
-+		rt.mc.Unlock()
-+		return true, moerr.NewInternalError(ctx, "cannot kill a closed or changing session")
-+	}
-+	ses := rt.getSession()
-+	if ses == nil || !canKillSession(principal, killPrincipal(ses.GetTenantInfo())) {
-+		rt.mc.Unlock()
-+		return true, moerr.NewInternalError(ctx, "access denied: KILL requires session ownership or an administrative role")
-+	}
-+	if err := ctx.Err(); err != nil {
-+		rt.mc.Unlock()
-+		return true, err
-+	}
-+	killMyself := callerID == targetID
-+	if !killConnection {
-+		rt.killQuery(killMyself, statementID)
-+		rt.mc.Unlock()
-+		return true, nil
-+	}
-+	// Seal identity-changing admission before releasing the guard. Closing the
-+	// protocol can enter routine cleanup and must happen outside this lock.
-+	rt.mc.closed = true
-+	rt.mc.cond.Broadcast()
-+	rt.mc.Unlock()
-+	rt.killConnection(killMyself)
-+	return true, nil
-+}
-+
-+// KillSession is a local-only operation for the trusted CN query service.
-+// A remote request cannot claim the local self-KILL exception or forward again.
-+func (rm *RoutineManager) KillSession(ctx context.Context, req *query.KillSessionRequest) (bool, error) {
-+	if req == nil {
-+		return false, moerr.NewInvalidInput(ctx, "missing kill session request")
-+	}
-+	return rm.killLocal(ctx, req.Principal, math.MaxUint64, req.ConnID, req.KillConnection, req.StatementID)
-+}
-+
-+// DisconnectSession is trusted proxy lifecycle cleanup, independent of SQL
-+// identity. The captured backend cannot be cached/reassigned during this call.
-+func (rm *RoutineManager) DisconnectSession(ctx context.Context, connID uint32) error {
-+	if err := ctx.Err(); err != nil {
-+		return err
-+	}
-+	if rt := rm.getRoutineByConnID(connID); rt != nil {
-+		rt.beginClose()
-+		rt.killConnection(false)
-+	}
-+	return nil
-+}
-+
-+func killSession(ctx context.Context, ses *Session, targetID uint64, connection bool, statementID string) error {
-+	principal := killPrincipal(ses.GetTenantInfo())
-+	found, err := getRtMgr(ses.GetService()).killLocal(ctx, principal, uint64(ses.GetConnectionID()), targetID, connection, statementID)
-+	if found || err != nil {
-+		return err
-+	}
-+	qc := getPu(ses.GetService()).QueryClient
-+	if qc == nil {
-+		return moerr.NewInter
-```
-
-**File**: `pkg/frontend/kill_test.go` (added, +267/-0)
-```diff
-@@ -0,0 +1,267 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package frontend
-+
-+import (
-+	"context"
++	"database/sql"
 +	"errors"
-+	"math"
++	"fmt"
++	"strings"
 +	"testing"
 +	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
-+	"github.com/matrixorigin/matrixone/pkg/pb/query"
-+	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
++	"github.com/go-sql-driver/mysql"
++	"github.com/google/uuid"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/lockservice"
++	"github.com/matrixorigin/matrixone/pkg/pb/api"
++	"github.com/matrixorigin/matrixone/pkg/pb/lock"
++	"github.com/matrixorigin/matrixone/pkg/queryservice"
++	"github.com/matrixorigin/matrixone/pkg/util/executor"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func killTestIdentity(account string, aid uint32, user string, uid uint32, role string) *TenantInfo {
-+	return &TenantInfo{Tenant: account, TenantID: aid, User: user, UserID: uid, DefaultRole: role}
-+}
-+
-+func TestKillSessionAuthorization(t *testing.T) {
-+	ordinary := killTestIdentity("sys", 0, "ordinary", 7, "public")
-+	owner := killTestIdentity("acme", 10, "owner", 7, "public")
-+	tests := []struct {
-+		name           string
-+		caller, target *TenantInfo
-+		allow          bool
-+	}{
-+		{"sys ordinary cannot kill root", ordinary, killTestIdentity("sys", 0, "root", 0, "moadmin"), false},
-+		{"sys own user across roles", ordinary, killTestIdentity("sys", 0, "ordinary", 7, "analyst"), true},
-+		{"same account other user", owner, killTestIdentity("acme", 10, "other", 8, "public"), false},
-+		{"same user other account", owner, killTestIdentity("other", 11, "owner", 7, "public"), false},
-+		{"same name different user ID", owner, killTestIdentity("acme", 10, "owner", 8, "public"), false},
-+		{"same user", owner, owner, true},
-+		{"account admin own account", killTestIdentity("acme", 10, "admin", 9, "accountadmin"), owner, true},
-+		{"account admin other account", killTestIdentity("other", 11, "admin", 9, "accountadmin"), owner, false},
-+		{"sys accountadmin not global", killTestIdentity("sys", 0, "admin", 9, "accountadmin"), owner, false},
-+		{"non sys moadmin not global", killTestIdentity("other", 11, "admin", 9, "moadmin"), owner, false},
-+		{"moadmin global", killTestIdentity("sys", 0, "admin", 9, "moadmin"), owner, true},
-+		{"root name not authority", killTestIdentity("sys", 0, "root", 0, "public"), owner, false},
-+		{"missing caller", nil, owner, false}, {"missing target", owner, nil, false},
-+		{"empty role", killTestIdentity("acme", 10, "owner", 7, ""), owner, false},
-+		{"inconsistent sys ID", killTestIdentity("sys", 10, "admin", 9, "moadmin"), owner, false},
-+	}
-+	for _, tt := range tests {
-+		for _, connection := range []bool{false, true} {
-+			t.Run(tt.name+map[bool]string{false: "/query", true: "/connection"}[connection], func(t *testing.T) {
-+				rt, _ := newUnitTestRoutine(t, 100)
-+				ses := &Session{tenant: tt.target}
-+				rt.setSession(ses)
-+				ses.SetQueryInExecute(true)
-+				reqCtx, cancel := context.WithCancel(context.Background())
-+				defer cancel()
-+				rt.setCancelRequestFunc(cancel)
-+				rm := &RoutineManager{routinesByConnID: map[uint32]*Routine{100: rt}}
-+				found, err := rm.killLocal(context.Background(), killPrincipal(tt.caller), 1, 100, connection, "statement")
-+				if tt.allow {
-+					require.NoError(t, err)
-+					require.True(t, found)
-+					if connection {
-+						require.True(t, rt.isCancelled())
-+						require.True(t, rt.mc.closed)
-+					} else {
-+						require.ErrorIs(t, reqCtx.Err(), context.Canceled)
-+						require.False(t, ses.GetQueryInExecute())
-+					}
-+				} else {
-+					require.Error(t, err)
-+					require.NoError(t, reqCtx.Err())
-+					require.False(t, rt.isCancelled())
-+					require.False(t, rt.mc.closed)
-+					require.True(t, ses.GetQueryInExecute())
-+				}
-+			})
++func TestCheckConstraintNamespace(t *testing.T) {
++	defer func() { require.NoError(t, CloseBaseClusterTests()) }()
++	RunBaseClusterTests(t, func(cluster Cluster) {
++		cn, err := cluster.GetCNService(0)
++		require.NoError(t, err)
++		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
++		require.NoError(t, err)
++		defer db.Close()
++		ctx, cancel := context.WithTimeout(t.Context(), 5*time.Minute)
++		defer cancel()
++		conn, err := db.Conn(ctx)
++		require.NoError(t, err)
++		defer conn.Close()
++		exec := func(t *testing.T, statement string) {
++			t.Helper()
++			_, err := conn.ExecContext(ctx, statement)
++			require.NoError(t, err, statement)
 +		}
-+	}
-+}
++		expectError := func(t *testing.T, statement string, code uint16) {
++			t.Helper()
++			_, err := conn.ExecContext(ctx, statement)
++			var serverError *mysql.MySQLError
++			require.True(t, errors.As(err, &serverError), "%s: %v", statement, err)
++			require.Equal(t, code, serverError.Number, "%s: %v", statement, err)
++		}
++		count := func(t *testing.T, query string, want int) {
++			t.Helper()
++			var actual int
++			require.NoError(t, conn.QueryRowContext(ctx, query).Scan(&actual), query)
++			require.Equal(t, want, actual, query)
++		}
++		const database = "check_namespace_review"
++		exec(t, "create database "+database)
++		exec(t, "use "+database)
++		defer func() {
++			cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), time.Minute)
++			defer cleanupCancel()
++			_, err := conn.ExecContext(cleanupCtx, "drop snapshot if exists check_namespace_legacy")
++			require.NoError(t, err)
++			_, err = conn.ExecContext(cleanupCtx, "drop database if exists "+database)
++			require.NoError(t, err)
++		}()
 +
-+func TestKillSessionGenerationAndBoundaries(t *testing.T) {
-+	rt, _ := newUnitTestRoutine(t, 100)
-+	old := killTestIdentity("acme", 10, "old", 7, "public")
-+	next := killTestIdentity("acme", 10, "next", 8, "public")
-+	rt.setSession(&Session{tenant: old})
-+	rm := &RoutineManager{routinesByConnID: map[uint32]*Routine{100: rt}}
-+	reqCtx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+	rt.setCancelRequestFunc(cancel)
-+	// A lifecycle transition owns admission. KILL must reject without waiting for it.
-+	rt.mc.Lock()
-+	rt.mc.inProgress = true
-+	rt.mc.Unlock()
-+	found, err := rm.killLocal(context.Background(), killPrincipal(old), 1, 100, false, "")
-+	require.True(t, found)
-+	require.Error(t, err)
-+	require.NoError(t, reqCtx.Err())
-+	rt.mc.Lock()
-+	rt.setSession(&Session{tenant: next})
-+	rt.mc.inProgress = false
-+	rt.mc.Unlock()
-+	found, err = rm.killLocal(context.Background(), killPrincipal(old), 1, 100, false, "")
-+	require.True(t, found)
-+	require.Error(t, err)
-+	re
++		t.Run("legacy SQL-only owners reject new claims", func(t *testing.T) {
++			defer func() {
++				// The artificial old-format rows must not affect later restore
++				// scenarios, including when an admission assertion fails.
++				for _, table := range []string{"legacy_duplicate", "structured_duplicate", "renamed_legacy", "sql_only_owner", "legacy_add_target", "rename_legacy_source", "structured_owner"} {
++					exec(t, "drop table if exists "+table)
++				}
++			}()
++			svc := cn.RawService().(cnservice.Service)
++			res, err := svc.GetSQLExecutor().Exec(defines.AttachAccountId(ctx, 0),
++				"create table "+database+".sql_only_owner(x int, constraint legacy_create check(x>0), constraint legacy_add check(x<10), constraint renamed_legacy_chk_1 check(x<>5))",
++				executor.Options{}.WithWaitCommittedLogApplied().WithAdjustTableExtraFunc(func(extra *api.SchemaExtra) error {
++					extra.Checks = nil
++					return nil
++				}))
++			require.NoError(t, err)
++			res.Close()
++			var encoded []byte
++			var createSQL string
++			require.NoError(t, conn.QueryRowContext(ctx,
++				"select extra_info, rel_createsql from mo_catalog.mo_tables where reldatabase=? and relname='sql_only_owner'", database).Scan(&encoded, &createSQL))
++			var extra api.SchemaExtra
++			require.NoError(t, extra.Unmarshal(encoded))
++			require.Empty(t, extra.Checks)
++			require.Contains(t, createSQL, "legacy_create")
++			count(t, "select count(*) from information_schema.table_constraints where table_schema='"+database+"' and table_name='sql_only_owner' and constraint_type='CHECK'", 3)
++			expectError(t, "create table legacy_duplicate(x int, constraint LEGACY_CREATE check(x<0))", 3822)
++			exec(t, "create table legacy_add_target(x int)")
++			expectError(t, "alter table legacy_add_target add constraint legacy_add check(x>0)", 3822)
++			exec(t, "create table rename_legacy_source(x int check(x>0))")
++			expe
 ```
 
-**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +7/-17)
+**File**: `pkg/fileservice/disk_cache_lifecycle_test.go` (modified, +4/-0)
 ```diff
-@@ -3755,16 +3755,8 @@ func handleSwitchRole(ses FeSession, execCtx *ExecCtx, sr *tree.SetRole) error {
- }
+@@ -1174,6 +1174,10 @@ func TestDiskCacheCloseCancelsActiveFileFinalizeBeforePublish(t *testing.T) {
  
- func doKill(ses *Session, execCtx *ExecCtx, k *tree.Kill) error {
--	var err error
--	//true: kill a connection
--	//false: kill a query in a connection
--	idThatKill := uint64(ses.GetConnectionID())
--	if !k.Option.Exist || k.Option.Typ == tree.KillTypeConnection {
--		err = getRtMgr(ses.GetService()).kill(execCtx.reqCtx, true, idThatKill, k.ConnectionId, "")
--	} else {
--		err = getRtMgr(ses.GetService()).kill(execCtx.reqCtx, false, idThatKill, k.ConnectionId, k.StmtOption.StatementId)
--	}
--	return err
-+	killConnection := !k.Option.Exist || k.Option.Typ == tree.KillTypeConnection
-+	return killSession(execCtx.reqCtx, ses, k.ConnectionId, killConnection, k.StmtOption.StatementId)
- }
+ func TestDiskCacheCloseWinsAtFilePublicationBoundary(t *testing.T) {
+ 	cache := newLifecycleTestDiskCache(t)
++	// Exercise publication/Close ordering without waiting for real fsync.
++	// Persistence errors and Close during an active sync have separate tests;
++	// this test must reach the publication gate before initiating Close.
++	cache.fileSync = func(*os.File) error { return nil }
+ 	publicationReached := make(chan struct{})
+ 	releasePublication := make(chan struct{})
+ 	unblock := sync.OnceFunc(func() { close(releasePublication) })
+```
+
+**File**: `pkg/partitionservice/storage.go` (modified, +12/-4)
+```diff
+@@ -356,11 +356,13 @@ func (s *storage) Redefine(
+ 				tree.WithSingleQuoteString(),
+ 			)
  
- // handleKill kill a connection or query
-@@ -4814,18 +4806,16 @@ func refreshStatementScopedSessionInfo(ses FeSession, proc *process.Process) {
- 	if proc == nil || proc.Base == nil {
- 		return
+-			// 1. create a temporary table
++			// 1. create a temporary table. The staged definition carries the
++			// parent's CHECK names and replaces the parent below, so it is an
++			// owned recreate, not an unrelated sibling.
+ 			txn.Use(def.DbName)
+ 			rs, err := txn.Exec(
+ 				sql,
+-				executor.StatementOption{},
++				executor.StatementOption{}.WithTrustedCheckConstraintNames(),
+ 			)
+ 			if err != nil {
+ 				return err
+@@ -443,7 +445,8 @@ func (s *storage) Rename(
+ 					),
+ 					executor.StatementOption{}.
+ 						WithIgnoreForeignKey().
+-						WithIgnorePublish(),
++						WithIgnorePublish().
++						WithTrustedCheckConstraintNames(),
+ 				)
+ 				if err != nil {
+ 					return err
+@@ -834,7 +837,12 @@ func (s *storage) createPartitionTable(
+ 			executor.StatementOption{}.
+ 				WithDisableLock().
+ 				WithIgnoreForeignKey().
+-				WithIgnorePublish(),
++				WithIgnorePublish().
++				// Backing tables copy the parent's CHECK names verbatim. They
++				// share ownership with the parent and never appear in
++				// information_schema, so the 3822 sibling scan must not treat
++				// them as unrelated tables.
++				WithTrustedCheckConstraintNames(),
+ 		)
+ 		if err != nil {
+ 			return err
+```
+
+---
+
+### Incident Patch 3: `27131f38` (2026-10-19)
+**Commit Message**: fix(sql): preserve LOAD locality during primary-key validation (#30527)
+
+## What type of PR is this?
+
+- [x] BUG
+- [ ] API-change
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #30520
+
+## What this PR does / why we need it:
+
+Ordinary LOAD's primary-key DEDUP sends its hash-partitioned output
+directly to bulk writers. An ordered import consequently produces
+overlapping key ranges, increasing the blocks read by subsequent OLTP
+range queries. This affects transactions after LOAD, independently of
+the COS boundary-reader Close cost tracked in #30511.
+
+Share the prepared, locked row image once. An independent, key-only
+DEDUP step retains exact input/snapshot conflict checks, while
+base/index writers consume the original image. All steps must complete
+before statement commit; duplicate errors still cancel and roll back
+writes. This preserves #30411 correctness, generated/autoincrement
+values, and existing LOAD exemptions without adding a global sort or
+disabling shuffle/spill.
+
+Validation on macOS arm64 / Go 1.27.1:
+
+- A bounded real-MySQL reproduction at the PR base uses 400,000 ordered
+composite-PK ro
+
+**File**: `pkg/sql/compile/load_unique_index_promotion.go` (modified, +125/-5)
+```diff
+@@ -226,7 +226,7 @@ func analyzeLoadUniqueIndexPromotionPlan(
  	}
--	// SessionInfo is reused across statements.  Role changes update the
--	// session's TenantInfo, so refresh the trusted names at the same boundary
--	// as the other statement-scoped fields before planning or execution.
-+	// Refresh the authenticated snapshot at every statement boundary, including
-+	// later statements within a COM_QUERY and prepared EXECUTE.
-+	proc.Base.SessionInfo.Account, proc.Base.SessionInfo.User, proc.Base.SessionInfo.Role = "", "", ""
- 	if ses != nil {
- 		if tenant := ses.GetTenantInfo(); tenant != nil {
--			// Read both names under one lock. Besides avoiding two lock
--			// acquisitions on every statement, this keeps the account/role pair
--			// from being sampled across a concurrent role transition.
- 			tenant.mu.Lock()
--			account, role := tenant.getTenantUnsafe(), tenant.getDefaultRoleUnsafe()
-+			account, user, role := tenant.Tenant, tenant.User, tenant.DefaultRole
- 			tenant.mu.Unlock()
- 			proc.Base.SessionInfo.Account = account
-+			proc.Base.SessionInfo.User = user
- 			proc.Base.SessionInfo.Role = role
+ 
+ 	reachable, ok := reachableLoadPlanNodes(qry)
+-	if !ok || len(qry.Steps) != 1 {
++	if !ok {
+ 		return nil, false
+ 	}
+ 	var lockNode, updateNode *plan.Node
+@@ -255,9 +255,7 @@ func analyzeLoadUniqueIndexPromotionPlan(
  		}
  	}
+ 	if lockNode == nil || updateNode == nil || externalScans != 1 ||
+-		qry.Steps[0] != updateNodeID ||
+-		!planNodeDescendsFrom(qry.Nodes, updateNodeID, lockNodeID) ||
+-		!planNodeDescendsFrom(qry.Nodes, lockNodeID, externalNodeID) {
++		!loadUniqueIndexPromotionTopology(qry, updateNodeID, lockNodeID, externalNodeID) {
+ 		return nil, false
+ 	}
+ 
+@@ -373,6 +371,111 @@ func analyzeLoadUniqueIndexPromotionPlan(
+ 	return promoted, true
+ }
+ 
++// Admit only the original single writer or the shared prepared-image LOAD.
++// SourceStep is a step index, not a node ID. The extra executable branch must
++// only validate the base PK; it must never supply the writer's partitions.
++// reachableLoadPlanNodes has already validated all references and cycles.
++func loadUniqueIndexPromotionTopology(qry *plan.Query, writer, lock, external int32) bool {
++	if !planNodeDescendsFrom(qry.Nodes, lock, external) {
++		return false
++	}
++	if len(qry.Steps) == 1 {
++		return qry.Steps[0] == writer && planNodeDescendsFrom(qry.Nodes, writer, lock)
++	}
++	if len(qry.Steps) != 3 {
++		return false
++	}
++	var source, validation int32 = -1, -1
++	writerSteps := 0
++	for step, root := range qry.Steps {
++		switch qry.Nodes[root].NodeType {
++		case plan.Node_SINK:
++			if source >= 0 {
++				return false
++			}
++			source = int32(step)
++		case plan.Node_PROJECT:
++			if validation >= 0 {
++				return false
++			}
++			validation = root
++		case plan.Node_MULTI_UPDATE:
++			if root != writer {
++				return false
++			}
++			writerSteps++
++		default:
++			return false
++		}
++	}
++	if source < 0 || validation < 0 || writerSteps != 1 ||
++		!planNodeDescendsFrom(qry.Nodes, qry.Steps[source], lock) {
++		return false
++	}
++	// The shared image is prepared and locked once, from one external input.
++	for id := qry.Steps[source]; ; {
++		n := qry.Nodes[id]
++		if id == external {
++			if len(n.Children) != 0 {
++				return false
++			}
++			break
++		}
++		switch n.NodeType {
++		case plan.Node_SINK, plan.Node_PROJECT, plan.Node_PRE_INSERT, plan.Node_LOCK_OP:
++		default:
++			return false
++		}
++		if len(n.Children) != 1 {
++			return false
++		}
++		id = n.Children[0]
++	}
++	sharedScan := func(n *plan.Node) bool {
++		return n.NodeType == plan.Node_SINK_SCAN && n.SourceStep[0] == source
++	}
++	update := qry.Nodes[writer]
++	if len(update.Children) != 1 {
++		return false
++	}
++	writeInput := loadPromotionSkipProjects(qry.Nodes, update.Children[0])
++	// Ordinary LOAD checks constraints after the shared image. ASSERT preserves
++	// successful rows and has no alternate source or partitioning of its own.
++	for writeInput.NodeType == plan.Node_ASSERT && len(writeInput.Children) == 1 {
++		writeInput = loadPromotionSkipProjects(qry.Nodes, writeInput.Children[0])
++	}
++	if !sharedScan(writeInput) {
++		return false
++	}
++	check := loadPromotionSkipProjects(qry.Nodes, validation)
++	if check.NodeType != plan.Node_JOIN || check.JoinType != plan.Node_DEDUP ||
++		check.OnDuplicateAction != plan.Node_FAIL || len(check.Children) != 2 {
++		return false
++	}
++	// swapJoinChildren exchanges the physical inputs for RIGHT DEDUP while
++	// retaining IsRightJoin. Resolve the logical roles before checking sources.
++	target, input := check.Children[0], check.Children[1]
++	if check.IsRightJoin {
++		target, input = input, target
++	}
++	if !sharedScan(loadPromotionSkipProjects(qry.Nodes, input)) {
++		return false
++	}
++	scan := loadPromotionSkipProjects(qry.Nodes, target)
++	base := qry.Nodes[lock].TableDef
++	return scan.NodeType == plan.Node_TABLE_SCAN && len(scan.Children) == 0 &&
++		base != nil && scan.TableDef != nil && scan.TableDef.TblId == base.TblId &&
++		objectRefMatchesTable(scan.ObjRef, base)
++}
++
++func loadPromotionSkipProjects(nodes []*plan.Node, id int32) *plan.Node {
++	n := nodes[id]
++	for n.NodeType == plan.Node_PROJECT && len(n.Children) == 1 {
++		n = nodes[n.Children[0]]
++	}
++	return n
++}
++
+ func reachableLoadPlanNodes(qry *plan.Query) (map[int32]struct{}, bool) {
+ 	reachable := make(map[int32]struct{}, len(qry.Nodes))
+ 	visiting := make(map[int32]struct{}, len(qry.Nodes))
+@@ -389,7 +492,24 @@ func reachableLoadPlanNodes(qry *plan.Query) (map[int32]struct{}, bool) {
+ 		}
+ 		visiting[nodeID] = struct{}{}
+ 		defer delete(visiting, nodeID)
+-		for _, child := range qry.Nodes[nodeID].Children {
++		n := qry.Nodes[nodeID]
++		if n.NodeType == plan.Node_SINK_SCAN {
++			if len(n.Children) != 0 || len(n.SourceStep) != 1 {
++				return false
++			}
++			step := n.SourceStep[0]
++			if step < 0 || int(step) >= len(qry.Steps) {
++				return false
++			}
++			root := qry.Steps[step]
++			if root < 0 || int(root) >= len(qry.Nodes) || qry.Nodes[root] == nil ||
++				qry.Nodes[root].NodeType != plan.Node_SINK || !visit(root) {
++				return false
++			}
++	
 ```
 
-**File**: `pkg/frontend/mysql_cmd_executor_test.go` (modified, +17/-0)
+**File**: `pkg/sql/compile/load_unique_index_promotion_test.go` (modified, +134/-0)
 ```diff
-@@ -5702,6 +5702,23 @@ func TestRefreshStatementScopedSessionInfo(t *testing.T) {
- 	setPu("", config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil))
- 	ses := NewSession(ctx, "", &testMysqlWriter{}, nil)
- 	proc := &process.Process{Base: &process.BaseProcess{}}
-+	ses.SetTenantInfo(killTestIdentity("sys", 0, "root", 0, "moadmin"))
-+	refreshStatementScopedSessionInfo(ses, proc)
-+	require.Equal(t, "sys", proc.Base.SessionInfo.Account)
-+	require.Equal(t, "root", proc.Base.SessionInfo.User)
-+	require.Equal(t, "moadmin", proc.Base.SessionInfo.Role)
-+	// Statements within one request reuse proc, including prepared EXECUTE.
-+	ses.tenant.SetDefaultRole("public")
-+	refreshStatementScopedSessionInfo(ses, proc)
-+	require.Equal(t, "public", proc.Base.SessionInfo.Role)
-+	ses.tenant.SetDefaultRole("moadmin")
-+	refreshStatementScopedSessionInfo(ses, proc)
-+	require.Equal(t, "moadmin", proc.Base.SessionInfo.Role)
-+	ses.SetTenantInfo(nil)
-+	refreshStatementScopedSessionInfo(ses, proc)
-+	require.Empty(t, proc.Base.SessionInfo.Account)
-+	require.Empty(t, proc.Base.SessionInfo.User)
-+	require.Empty(t, proc.Base.SessionInfo.Role)
+@@ -456,6 +456,7 @@ func TestAnalyzeLoadUniqueIndexPromotionMatchesPlannerShape(t *testing.T) {
+ 	qry, err := plan2.NewMockOptimizer(true, newPlanTestProcess(t)).Optimize(stmt)
+ 	require.NoError(t, err)
+ 	pn := &plan.Plan{Plan: &plan.Plan_Query{Query: qry}}
++	require.Len(t, qry.Steps, 3, "exercise the shared image, independent validation, and writer")
+ 	require.False(t, qry.LoadWriteS3,
+ 		"the modern LOAD binder does not use the legacy write-path marker")
+ 	var external, lockNode, updateNode *plan.Node
+@@ -510,6 +511,139 @@ func TestAnalyzeLoadUniqueIndexPromotionMatchesPlannerShape(t *testing.T) {
+ 	require.NotEmpty(t, targets)
+ }
  
- 	require.NoError(t, ses.SetSessionSysVar(ctx, "sql_mode", "ANSI_QUOTES"))
- 	refreshStatementScopedSessionInfo(ses, proc)
++func TestAnalyzeLoadUniqueIndexPromotionSharedImage(t *testing.T) {
++	newPlan := func() *plan.Plan {
++		pn := newLoadUniqueIndexPromotionPlan()
++		q := pn.GetQuery()
++		q.Nodes = append(q.Nodes,
++			&plan.Node{NodeType: plan.Node_SINK, Children: []int32{1}},
++			&plan.Node{NodeType: plan.Node_SINK_SCAN, SourceStep: []int32{0}},
++			&plan.Node{NodeType: plan.Node_SINK_SCAN, SourceStep: []int32{0}},
++			&plan.Node{NodeType: plan.Node_TABLE_SCAN, TableDef: q.Nodes[1].TableDef, ObjRef: q.Nodes[1].LockTargets[0].ObjRef},
++			&plan.Node{NodeType: plan.Node_JOIN, JoinType: plan.Node_DEDUP, OnDuplicateAction: plan.Node_FAIL, Children: []int32{6, 5}},
++			&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{7}},
++		)
++		q.Nodes[2].Children = []int32{4}
++		q.Steps = []int32{3, 8, 2} // Source step 0 resolves node 3, not node 0.
++		return pn
++	}
++	assertAdmission := func(t *testing.T, pn *plan.Plan, want bool) {
++		t.Helper()
++		for _, right := range []bool{false, true} {
++			if right {
++				check := pn.GetQuery().Nodes[7]
++				if len(check.Children) == 2 {
++					check.Children[0], check.Children[1] = check.Children[1], check.Children[0]
++				}
++				check.IsRightJoin = !check.IsRightJoin
++			}
++			targets, ok := analyzeLoadUniqueIndexPromotionPlan(pn, testLoadUniqueIndexMaxRowLocks)
++			require.Equal(t, want, ok, "swapped orientation: %t", right)
++			if want {
++				require.Len(t, targets, 1)
++				original := pn.GetQuery().Nodes[1].LockTargets[1]
++				require.Equal(t, original, targets[0].rowTarget)
++				require.NotSame(t, original, targets[0].rowTarget)
++			}
++		}
++	}
++	for _, tc := range []struct {
++		name   string
++		mutate func(*plan.Query)
++	}{
++		{"shared image", func(*plan.Query) {}},
++		{"reordered steps", func(q *plan.Query) {
++			q.Steps = []int32{2, 3, 8}
++			q.Nodes[4].SourceStep[0], q.Nodes[5].SourceStep[0] = 1, 1
++		}},
++		{"validation projection wrappers", func(q *plan.Query) {
++			q.Nodes = append(q.Nodes,
++				&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{6}},
++				&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{5}},
++			)
++			q.Nodes[7].Children = []int32{9, 10}
++		}},
++		{"projection wrappers", func(q *plan.Query) {
++			q.Nodes = append(q.Nodes, &plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{4}})
++			q.Nodes[2].Children[0] = 9
++		}},
++		{"writer CHECK assertions", func(q *plan.Query) {
++			q.Nodes = append(q.Nodes,
++				&plan.Node{NodeType: plan.Node_ASSERT, Children: []int32{4}},
++				&plan.Node{NodeType: plan.Node_PROJECT, Children: []int32{9}},
++			)
++			q.Nodes[2].Children[0] = 10
++		}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			pn := newPlan()
++			tc.mutate(pn.GetQuery())
++			assertAdmission(t, pn, true)
++		})
++	}
++	for _, tc := range []struct {
++		name   string
++		mutate func(*plan.Query)
++	}{
++		{"missing source", func(q *plan.Query) { q.Nodes[4].SourceStep = nil }},
++		{"multiple sources", func(q *plan.Query) { q.Nodes[4].SourceStep = []int32{0, 0} }},
++		{"negative source", func(q *plan.Query) { q.Nodes[4].SourceStep[0] = -1 }},
++		{"out of range source", func(q *plan.Query) { q.Nodes[4].SourceStep[0] = 3 }},
++		{"source is not sink", func(q *plan.Query) { q.Nodes[4].SourceStep[0] = 1 }},
++		{"scan with child", func(q *plan.Query) { q.Nodes[4].Children = []int32{0} }},
++		{"recursive scan", func(q *plan.Query) { q.Nodes[4].NodeType = plan.Node_RECURSIVE_SCAN }},
++		{"source on project", func(q *plan.Query) { q.Nodes[8].SourceStep = []int32{0} }},
++		{"source cycle", func(q *plan.Query) { q.Nodes[3].Children[0] = 4 }},
++		{"child cycle", func(q *plan.Query) { q.Nodes[1].Children[0] = 3 }},
++		{"nil source", func(q *plan.Query) { q.Nodes[3] = nil }},
++		{"invalid source root", func(q *plan.Query) { q.Steps[0] = 99 }},
++		{"nil child", func(q *plan.Query) { q.Nodes[6] = nil }},
++		{"invalid child", func(q *plan.Query) { q.Nodes[7].Children[0] = -1 }},
++		{"extra root", func(q *plan.Query) { q.Steps = append(q.Steps, 0) }},
++		{"duplicate root", func(q *plan.Query) { q.Steps[1] = 2 }},
++		{"second writer", func(q *plan.Query) { q.Nodes[8].NodeType = plan.Node_MULTI_UPDATE }},
++		{"second lock", func(q *plan.Query) { q.Nodes[8].NodeType = plan.Node_LOCK_OP }},
++		{"second external", func(q *plan.Query) { q.Nodes[6] = plan2.DeepCopyNode(q.Nodes[0]) }},
++		{"disconnected lock", func(q *plan.Query) { q.Nodes[3].Children[0] 
+```
+
+**File**: `pkg/sql/plan/bind_insert.go` (modified, +35/-0)
+```diff
+@@ -3474,6 +3474,22 @@ func (builder *QueryBuilder) appendDedupAndMultiUpdateNodesForBindInsert(
+ 		}
+ 
+ 		if !skipPkDedup && (!isFakePK || pkRoleIdxPos >= 0 || useTargetPk) {
++			// FAIL validation does not transform successful LOAD rows. Share the
++			// prepared, locked image so its hash/shuffle/spill partitions cannot
++			// become the bulk writer's partitions and destroy source locality.
++			loadSourceStep := int32(-1)
++			if builder.qry.LoadTag && builder.checkLoadPrimaryKey && onDupAction == plan.Node_FAIL && !isFakePK {
++				imageTag := builder.genNewBindTag()
++				imageID := builder.appendNode(&plan.Node{
++					NodeType:    plan.Node_PROJECT,
++					Children:    []int32{lastNodeID},
++					ProjectList: getProjectionByLastNodeWithTag(builder, selectNode.NodeId, imageTag),
++					BindingTags: []int32{imageTag},
++				}, bindCtx)
++				sinkID := appendSinkNodeWithTag(builder, bindCtx, imageID, builder.genNewBindTag())
++				loadSourceStep = builder.appendStep(sinkID)
++				lastNodeID = builder.appendTaggedSinkScan(bindCtx, loadSourceStep, selectTag)
++			}
+ 			builder.addNameByColRef(scanTag, tableDef)
+ 
+ 			scanNodeID := builder.appendNode(&plan.Node{
+@@ -3657,6 +3673,25 @@ func (builder *QueryBuilder) appendDedupAndMultiUpdateNodesForBindInsert(
+ 			}
+ 
+ 			lastNodeID = builder.appendNode(dedupJoinNode, bindCtx)
++			if loadSourceStep >= 0 {
++				pkPos := colName2Idx[tableDef.Name+"."+pkName]
++				validationID := builder.appendNode(&plan.Node{
++					NodeType: plan.Node_PROJECT,
++					Children: []int32{lastNodeID},
++					ProjectList: []*plan.Expr{{
++						Typ: selectNode.ProjectList[pkPos].Typ,
++						Expr: &plan.Expr_Col{Col: &plan.ColRef{
++							RelPos: selectTag, ColPos: pkPos,
++						}},
++					}},
++					BindingTags: []int32{builder.genNewBindTag()},
++				}, bindCtx)
++				// A normal DML step drains the exact check to EOF. All steps must
++				// succeed before commit; a duplicate cancels/rolls back the writes.
++				builder.appendStep(validationID)
++				lastNodeID = builder.appendTaggedSinkScan(bindCtx, loadSourceStep, selectTag)
++				selectNode = builder.qry.Nodes[lastNodeID]
++			}
+ 			if emitODKUActionRows {
+ 				if len(odkuActionConstraintDef.Checks) > 0 {
+ 					lastNodeID, err = appendCheckConstraintPlan(
+```
+
+**File**: `pkg/sql/plan/load_primary_key_test.go` (modified, +105/-0)
+```diff
+@@ -50,6 +50,9 @@ func TestLoadPrimaryKeyValidationPlan(t *testing.T) {
+ 				}
+ 			}
+ 			require.Equal(t, tc.want, dedups)
++			if tc.want > 0 {
++				requireLoadValidationIndependentOfWrites(t, pn.GetQuery())
++			}
+ 			if tc.table == "dept" {
+ 				maintained := 0
+ 				for _, n := range pn.GetQuery().Nodes {
+@@ -63,6 +66,62 @@ func TestLoadPrimaryKeyValidationPlan(t *testing.T) {
+ 	}
+ }
+ 
++func TestLoadPrimaryKeyValidationJoinOrientation(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		spillMem int64
++		right    bool
++	}{
++		{"right map fits", 512 << 20, true},
++		{"left spill fallback", 1 << 20, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			proc := newPlanTestProcess(t)
++			proc.Base.Lim.Size = 2 << 30 // Budget the estimated keys, without allocating rows.
++			mock := NewMockOptimizer(true, proc)
++			pn, err := runOneStmt(mock, t, "load data inline format='csv', data='1,d,l' into table dept fields terminated by ','")
++			require.NoError(t, err)
++			qry := pn.GetQuery()
++			var check *planpb.Node
++			for _, n := range qry.Nodes {
++				if n.NodeType == planpb.Node_JOIN && n.JoinType == planpb.Node_DEDUP {
++					require.Nil(t, check)
++					check = n
++				}
++			}
++			require.NotNil(t, check)
++			// Restore logical roles before rerunning the real orientation passes.
++			if check.IsRightJoin {
++				check.Children[0], check.Children[1] = check.Children[1], check.Children[0]
++				check.IsRightJoin = false
++			}
++			// Runtime filters are generated after these passes. Remove that later
++			// physical dependency before changing the costing inputs and replaying.
++			check.RuntimeFilterBuildList = nil
++			check.RuntimeFilterProbeList = nil
++			target, input := check.Children[0], check.Children[1]
++			require.Equal(t, planpb.Node_TABLE_SCAN, qry.Nodes[target].NodeType)
++			require.Equal(t, planpb.Node_SINK_SCAN, qry.Nodes[input].NodeType)
++			qry.Nodes[target].Stats = &planpb.Stats{Outcnt: 100, Rowsize: 8}
++			qry.Nodes[input].Stats = &planpb.Stats{Outcnt: 1 << 20, Rowsize: 1 << 10}
++			builder := NewQueryBuilder(planpb.Query_INSERT, &mock.ctxt, false, true)
++			builder.qry = qry
++			builder.joinSpillMem = tc.spillMem
++			builder.determineBuildAndProbeSide(check.NodeId, false)
++			require.True(t, check.IsRightJoin, "costing chooses the smaller existing target")
++			builder.disableMemoryUnsafeRightDedup(check.NodeId)
++			require.Equal(t, tc.right, check.IsRightJoin)
++			builder.swapJoinChildren(check.NodeId)
++			want := []int32{target, input}
++			if tc.right {
++				want = []int32{input, target}
++			}
++			require.Equal(t, want, check.Children)
++			requireLoadValidationIndependentOfWrites(t, qry)
++		})
++	}
++}
++
+ func TestLoadPrimaryKeyValidationFallback(t *testing.T) {
+ 	old := config.CNPrimaryCheck.Load()
+ 	t.Cleanup(func() { config.CNPrimaryCheck.Store(old) })
+@@ -142,4 +201,50 @@ func TestLoadCompositePrimaryKeyValidationPlan(t *testing.T) {
+ 		}
+ 	}
+ 	require.True(t, found)
++	requireLoadValidationIndependentOfWrites(t, pn.GetQuery())
++}
++
++// A successful FAIL check preserves the input row set, but its hash partitions
++// must not become the bulk writer's partitions. Check both sides of the shared
++// source so retaining an unreachable DEDUP node cannot satisfy this contract.
++func requireLoadValidationIndependentOfWrites(t *testing.T, qry *planpb.Query) {
++	t.Helper()
++	var validationSources, writeSources []int32
++	var visit func(int32, bool)
++	visit = func(id int32, writing bool) {
++		n := qry.Nodes[id]
++		if writing {
++			require.False(t, n.NodeType == planpb.Node_JOIN && n.JoinType == planpb.Node_DEDUP,
++				"bulk writers must read the prepared input, independently of validation partitioning")
++		}
++		if n.NodeType == planpb.Node_SINK_SCAN {
++			if writing {
++				writeSources = append(writeSources, n.SourceStep...)
++			} else {
++				validationSources = append(validationSources, n.SourceStep...)
++			}
++		}
++		for _, child := range n.Children {
++			visit(child, writing)
++		}
++	}
++	for _, n := range qry.Nodes {
++		if n.NodeType == planpb.Node_MULTI_UPDATE {
++			visit(n.NodeId, true)
++		}
++	}
++	for _, root := range qry.Steps {
++		n := qry.Nodes[root]
++		if n.NodeType == planpb.Node_PROJECT && len(n.Children) == 1 {
++			child := qry.Nodes[n.Children[0]]
++			if child.NodeType == planpb.Node_JOIN && child.JoinType == planpb.Node_DEDUP {
++				require.Equal(t, planpb.Node_FAIL, child.OnDuplicateAction)
++				require.Len(t, n.ProjectList, 1, "validation retains only the primary-key identity")
++				visit(root, false)
++			}
++		}
++	}
++	require.NotEmpty(t, validationSources, "the independent validation must be an executable step")
++	require.NotEmpty(t, writeSources)
++	require.Equal(t, validationSources, writeSources, "both branches consume one prepared image")
+ }
+```
+
+**File**: `pkg/tests/issues/issue_30411_test.go` (modified, +18/-0)
+```diff
+@@ -106,6 +106,24 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 			exec(t, load(writeInput(t, "composite_valid.csv", "1,1\n1,2\n"), "composite"))
+ 			require.Equal(t, 2, count(t, "composite"))
+ 		})
++		t.Run("shared prepared image and index rollback", func(t *testing.T) {
++			exec(t, "create table indexed(id int auto_increment primary key, u int unique key, v int, key idx_v(v))")
++			path := writeInput(t, "indexed.csv", "10,100\n20,200\n")
++			exec(t, load(path, "indexed")+" (u,v)")
++			var image string
++			require.NoError(t, conn.QueryRowContext(ctx,
++				"select group_concat(concat(id,':',u,':',v) order by id) from indexed").Scan(&image))
++			require.Equal(t, "1:10:100,2:20:200", image, "auto-increment image is evaluated once for validation and writes")
++			requireDuplicate(t, load(writeInput(t, "indexed_conflict.csv", "3,30,300\n1,40,400\n"), "indexed"))
++			require.Equal(t, 2, count(t, "indexed"))
++			var visible int
++			require.NoError(t, conn.QueryRowContext(ctx, "select count(*) from indexed force index(idx_v) where v>=300").Scan(&visible))
++			require.Zero(t, visible, "rejected LOAD leaves no secondary-index rows")
++			require.NoError(t, conn.QueryRowContext(ctx, "select count(*) from indexed where u in (30,40)").Scan(&visible))
++			require.Zero(t, visible, "rejected LOAD leaves no unique-index rows")
++			exec(t, load(writeInput(t, "indexed_reuse.csv", "3,30,300\n"), "indexed"))
++			require.Equal(t, 3, count(t, "indexed"))
++		})
+ 		t.Run("foreign key fallback", func(t *testing.T) {
+ 			exec(t, "create table parent(id int primary key)")
+ 			exec(t, "insert into parent values(1)")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #30606** (2026-10-19): fix(fulltext2): evict idle search cache after CDC flush so incremental DML is visible (#30401) (@cpegeric)
+- **PR #30602** (2026-10-19): test(disttae): guard catalog replacement across lineage snapshot advance (@XuPeng-SH)
+- **PR #30594** (2026-10-19): fix(plan): allow zero temporal column defaults by SQL mode (@jiangxinmeng1)
+- **PR #30593** (2026-10-19): fix(shardservice): count only local replicas in HasAllLocalReplicas (#25874) (@daviszhen)
+- **PR #30592** (2026-10-19): fix(build): ignore thirdparties scratch trees in native provenance checks (#30235) (@daviszhen)
 - **PR #30589** (2026-10-19): fix(plan): report errno 1452 for INSERT foreign-key violations (#30540) (@daviszhen)
-- **PR #30586** (closed): design: atomic event-ledger sink profile for Kafka Connect and NiFi (@jiangxinmeng1)
-- **PR #30585** (closed): design: atomic event-ledger sink profile for Kafka Connect and NiFi (@loveRhythm1990)
-- **PR #30580** (2026-10-19): [4.2-dev] fix(disttae): restore RC statement transfer state on rollback (@XuPeng-SH)
-- **PR #30576** (2026-10-19): [4.2-dev] fix: preserve tombstones across lineage snapshot advances (@XuPeng-SH)
-- **PR #30546** (2026-10-19): fix(frontend): allow session scope for information_schema_stats_expiry (#30473) (@daviszhen)
 
 ---
 
@@ -3352,39 +3415,44 @@ Fix fixture owne
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)
+## X. preserve prepared temporal result types and values (#30224)
 
 **RULE**:
-When implementing operations in `clients/python/CONNECTION_POLICIES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/unary_timestamp_result_contract_v1.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ef2eaf4`: python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d82e828b`: preserve prepared temporal result types and values (#30224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `clients/python/CONNECTION_POLICIES.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/unary_timestamp_result_contract_v1.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Connection and timeout contracts
+# Unary TIMESTAMP result contract, revision 1
 
-`Client.connect()` creates an engine and requires an authenticated SELECT 1 before
-reporting success. Initial probe failures dispose the failed engine and clear its
-state. `connected()` reports successful initialization, not a live health probe;
-use a query for live health. Reconnect disposes the old engine. Failed disposal
-also clears the client's connected state, while preserving its error.
+Status: implemented compatibility design; independent review pending.
+PR: https://github.com/matrixorigin/matrixone/pull/30224
+Review addressed: https://github.com/matrixorigin/matrixone/pull/30224#pullrequestreview-5525155127
 
-`ssl_mode='required'` uses a certificate/hostname-verifying SSLContext. `ssl_ca`
-selects a CA file; without it, system roots are used. Peers without TLS are refused
-before authentication on older and current PyMySQL. `disabled` explicitly disables
-TLS. `preferred` follows the driver's opportunistic behavior unless a CA is
-supplied, in which case certificate verification is requested. A client certificate
-requires a CA or required mode. This policy change may reject previously accepted
-untrusted endpoints; configure a trusted test/organization CA rather than disabling
-verification on a required connection.
+## Invariant
 
-Constructor `connection_timeout` is inherited unless connect explicitly overrides
-it. The synchronous engine also passes query_timeout as read/write inac
+A serialized function identity has one physical result-vector type. Unary
+`TIMESTAMP` now binds a DATETIME result, preserving civil time and source FSP;
+reusing its released TIMESTAMP identities lets an older worker allocate the
+wrong result wrapper and panic during a rolling upgrade.
+
+## Identities and admission
+
+| Encoded identity (function 250) | Physical result | Binding | Required protocol |
+| --- | --- | --- | --- |
+| 0–4 (DATE, DATETIME, TIMESTAMP, VARCHAR, CHAR) | TIMESTAMP | Execution of released expressions only | Existing temporal floor 98 |
+| 5 (two arguments) | DATETIME | Unchanged | Existing temporal floor 98 |
+| 6–10 (corresponding unary signatures) | DATETIME | All new unary binding, including PREPARE/rebind | 122 |
+
+Official main `873282742714436bff407dfcdbbe879147162bd3` advertises protocol 121;
+this single capability uses the next value, 122. A later rebase must allocate
+again fr
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3394,4 +3462,4 @@ it. The synchronous engine also passes query_timeout as read/write inac
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ef2eaf4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d82e828b` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0ZQX",
-    "timestamp": "2026-10-19T08:07:01.881Z",
-    "repository": "joreilly/PeopleInSpace",
-    "learningId": "learn-github-joreilly-peopleinspace",
-    "contentHash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-17MR",
-    "timestamp": "2026-10-19T08:07:12.099Z",
-    "repository": "assistant-ui/assistant-ui",
-    "learningId": "learn-github-assistant-ui-assistant-ui",
-    "contentHash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-18L6",
-    "timestamp": "2026-10-19T08:07:13.338Z",
-    "repository": "valeriansaliou/sonic",
-    "learningId": "learn-github-valeriansaliou-sonic",
-    "contentHash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ADCL",
-    "timestamp": "2026-10-19T08:14:19.413Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-AJSI",
     "timestamp": "2026-10-19T08:14:27.762Z",
     "repository": "bgreenwell/doxx",
@@ -7492,6 +7432,66 @@
     "contentHash": "835614dce0ec57b36e86552f13bcac6c48a222e818d68e9eda632041c083cdba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IWKL",
+    "timestamp": "2026-10-20T00:12:44.517Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IWUZ",
+    "timestamp": "2026-10-20T00:12:44.891Z",
+    "repository": "psf/requests",
+    "learningId": "learn-github-psf-requests",
+    "contentHash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IX59",
+    "timestamp": "2026-10-20T00:12:45.261Z",
+    "repository": "WillieWangWei/SwiftUI-Tutorials",
+    "learningId": "learn-github-williewangwei-swiftui-tutorials",
+    "contentHash": "4db4806d03ee365035ec4099ce7bbf4bd3117cfa679772ce377024e6e70273d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-J33Z",
+    "timestamp": "2026-10-20T00:12:52.991Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "2bb62ed45041d4f9b3936e8c33960b0340fbe0f0a2f2f52a398068223141510f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3584,3 +3584,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `61f24ce2` | Multi-dimensional audit evidence | 2026-10-20T00:06:12.017Z |
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `8d8e8440` | Multi-dimensional audit evidence | 2026-10-20T00:06:13.841Z |
 | `learn-github-jasonjmcghee-rem` | `https://github.com/jasonjmcghee/rem` | `f4f68049` | Multi-dimensional audit evidence | 2026-10-20T00:06:16.537Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `15d1c411` | Multi-dimensional audit evidence | 2026-10-20T00:12:44.520Z |
+| `learn-github-psf-requests` | `https://github.com/psf/requests` | `611c6162` | Multi-dimensional audit evidence | 2026-10-20T00:12:44.894Z |
+| `learn-github-williewangwei-swiftui-tutorials` | `https://github.com/WillieWangWei/SwiftUI-Tutorials` | `0ced68b2` | Multi-dimensional audit evidence | 2026-10-20T00:12:45.264Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3d78d840` | Multi-dimensional audit evidence | 2026-10-20T00:12:52.994Z |
