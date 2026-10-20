@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T00:31:56.377Z",
+  "last_updated": "2026-10-20T00:38:09.409Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11599,14 +11599,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "64ffd42ad0d294c3a53c7ff971a0272281f08c92e82e9fca8e834912aeb1c598",
-      "verified_at": "2026-10-19T10:28:47.386Z",
+      "content_hash": "8dc31bfed5670fe909a5415ec9c88a2558e1ffbbefe079c52109f0c16ef9cb1c",
+      "verified_at": "2026-10-20T00:38:04.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:28:47.386Z"
+      "last_updated": "2026-10-20T00:38:04.827Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -14577,6 +14577,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T00:31:49.240Z"
+    },
+    "digitalbazaar/jsonld.js": {
+      "repository": "digitalbazaar/jsonld.js",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-digitalbazaar-jsonld-js",
+      "content_hash": "a6b2fa1467beb3bbd77f21c4e5ef54df109e88a16a2c0fb64dc33e5929e76d08",
+      "verified_at": "2026-10-20T00:38:06.855Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:38:06.855Z"
+    },
+    "jtrivedi/Wave": {
+      "repository": "jtrivedi/Wave",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jtrivedi-wave",
+      "content_hash": "6deb64c2e847463e4801ed9b14880219ff41c5f2e1c69cca68533d8095915cd4",
+      "verified_at": "2026-10-20T00:38:09.408Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:38:09.408Z"
     }
   },
   "repos": {

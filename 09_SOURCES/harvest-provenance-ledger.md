@@ -3603,3 +3603,6 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `cf9e3a82` | Multi-dimensional audit evidence | 2026-10-20T00:31:51.379Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `db03d4e1` | Multi-dimensional audit evidence | 2026-10-20T00:31:53.132Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `75b02df6` | Multi-dimensional audit evidence | 2026-10-20T00:31:56.370Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `3880151f` | Multi-dimensional audit evidence | 2026-10-20T00:38:04.821Z |
+| `learn-github-digitalbazaar-jsonld-js` | `https://github.com/digitalbazaar/jsonld.js` | `7a93609e` | Multi-dimensional audit evidence | 2026-10-20T00:38:06.848Z |
+| `learn-github-jtrivedi-wave` | `https://github.com/jtrivedi/Wave` | `27b7e1d2` | Multi-dimensional audit evidence | 2026-10-20T00:38:09.401Z |

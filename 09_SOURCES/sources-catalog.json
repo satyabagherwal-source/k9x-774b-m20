@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "91e7e3b1",
+    "sourceVersion": "3880151f",
     "license": "NOASSERTION",
-    "contentHash": "64ffd42ad0d294c3a53c7ff971a0272281f08c92e82e9fca8e834912aeb1c598",
-    "lastHarvestedAt": "2026-10-19T10:28:47.380Z",
+    "contentHash": "8dc31bfed5670fe909a5415ec9c88a2558e1ffbbefe079c52109f0c16ef9cb1c",
+    "lastHarvestedAt": "2026-10-20T00:38:04.821Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -9688,5 +9688,25 @@
     "contentHash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
     "lastHarvestedAt": "2026-10-20T00:31:49.233Z",
     "learningId": "learn-github-iplug2-iplug2"
+  },
+  "digitalbazaar-jsonld.js": {
+    "repository": "digitalbazaar/jsonld.js",
+    "platform": "github",
+    "sourceUrl": "https://github.com/digitalbazaar/jsonld.js",
+    "sourceVersion": "7a93609e",
+    "license": "NOASSERTION",
+    "contentHash": "a6b2fa1467beb3bbd77f21c4e5ef54df109e88a16a2c0fb64dc33e5929e76d08",
+    "lastHarvestedAt": "2026-10-20T00:38:06.848Z",
+    "learningId": "learn-github-digitalbazaar-jsonld-js"
+  },
+  "jtrivedi-wave": {
+    "repository": "jtrivedi/Wave",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jtrivedi/Wave",
+    "sourceVersion": "27b7e1d2",
+    "license": "MIT",
+    "contentHash": "6deb64c2e847463e4801ed9b14880219ff41c5f2e1c69cca68533d8095915cd4",
+    "lastHarvestedAt": "2026-10-20T00:38:09.401Z",
+    "learningId": "learn-github-jtrivedi-wave"
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `91e7e3b1`  
+> **Source Version**: `3880151f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:28:47.121Z  
+> **Timestamp**: 2026-10-20T00:38:04.535Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:28:47.113Z  
+> **Harvest Timestamp**: 2026-10-20T00:38:03.498Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96299 stars
+- **Stars / Engagement**: 96306 stars
 
 ---
 
@@ -978,13 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #45831** (2026-10-19): **minimumReleaseAge is not enforced when the package manifest is already in the install cache**
+  *Symptoms*: ### What version of Bun is running?  1.4.3 (also reproduces on 1.4.1)  ### What platform is your computer?  Darwin 25.2.0 arm64  ### What steps can reproduce the bug?  `install.minimumReleaseAge` is not enforced when the package's manifest is already in the install cache. It is enforced with `--no-cache` or a cold cache.  ```sh export BUN_INSTALL_CACHE_DIR="$(mktemp -d)" mkdir a b c for d in a b c; do echo '{ "name": "repro", "private": true, "dependencies": { "happy-dom": "21.0.3" } }' > $d/package.json; done printf '[install]\nminimumReleaseAge = 604800\n' > b/bunfig.toml cp b/bunfig.toml c/  (cd a && bun install)              # warms the cache; no age setting here (cd b && bun install)              # age setting on, warm cache (cd c && bun install --no-cache)   # age setting on, cache bypassed ```  happy-dom 21.0.3 was published 2026-10-15T23:32:07Z, less than 7 days before the run (2026-10-18).  ### What is the expected behavior?  Step `b` fails the same way as step `c`:  ``` error: No version matching "happy-dom" found for specifier "21.0.3" (blocked by minimum-release-age: 604800 seconds) error: happy-dom@21.0.3 failed to resolve ```  ### What do you see instead?  Step `b` installs the version the setting should block:  ``` + happy-dom@21.0.3 9 packages installed [657.00ms] ```  Step `c`, and step `b` with an empty cache, both block it as expected.  ### Additional information  `minimumReleaseAge` is a supply-chain safeguard, so a warm cache that silently bypasses it def
+
 - **Issue #45733** (2026-10-19): **bun check: false TS2321 "Excessive stack depth" with --threads >= 2, clean with --threads=1 and in tsc 7.0.2**
   *Symptoms*: ### What version of Bun is running?  1.4.3+c6da4a4d3 (also reproduces on canary 1.4.4-canary.1+5f5799ed1)  ### What platform is your computer?  Linux 6.18.40.1-microsoft-standard-WSL2 x86_64 (16 cores)  ### What steps can reproduce the bug?  Save the script below as `repro.sh` and run `bash repro.sh ./repro` (creates a 10-file project, installs `@sinclair/typebox@0.34.38` and `typescript@7.0.2`, runs both checkers).  ```bash #!/usr/bin/env bash set -euo pipefail dir="${1:?usage: repro.sh <empty-dir>}" mkdir -p "$dir/src/e" && cd "$dir"  cat > package.json <<'EOF' { "name": "bun-check-threads-repro", "private": true, "type": "module" } EOF  cat > tsconfig.json <<'EOF' {   "compilerOptions": {     "target": "ES2023",     "module": "es2022",     "moduleResolution": "Bundler",     "strict": true,     "skipLibCheck": true,     "noEmit": true,     "types": []   },   "include": ["src"] } EOF  cat > src/a.ts <<'EOF' import './c.js'; EOF  cat > src/b.ts <<'EOF' import { Type } from '@sinclair/typebox'; import { KindSchema } from './d-schema.js';  export function routes(register: (schema: unknown) => void) {   register({     query: Type.Object({       kind: Type.Exclude(KindSchema, Type.Literal('default')),     }),   }); } EOF  cat > src/c.ts <<'EOF' import { Type } from '@sinclair/typebox'; import { KindSchema } from './d-schema.js'; import './f.js';  export function routes(register: (schema: unknown) => void) {   register({     body: Type.Object({       kind: Type.Optional(Type.Exclu
-
-- **Issue #45643** (2026-10-17): **bun wont exit**
-  *Symptoms*: ### What version of Bun is running?  1.4,.3 (1.4+)  ### What platform is your computer?  Microsoft Windows NT 10.0.26300.0 x64  ### What steps can reproduce the bug?  ### bun.exe --version   ### What is the expected behavior?  show version (1.4.3) and exit   ### What do you see instead?  shows 1.4.3 and freezes  ### Additional information  same for --help or other commands. The command gets executed but bun wont terminate.  because of this even install wont run (shows 100% and freezes)  
-  **Post-Mortem & Fix Analysis**:
-  > okay it is related to Comodo-Firewall.  Looks like even when it is (HIPS) deaktivated it tries to inject code.  so far I didn't found a workaround for this.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1001,907 +999,493 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bb5dc19` (2026-10-19)
-**Commit Message**: `bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun lint` and `bun fmt` (#45800)
+### Incident Patch 1: `3880151f` (2026-10-19)
+**Commit Message**: Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to bindgen schemas (#45888)
 
 ### What does this PR do?
 
-Makes `bun check` 1.4 to 7.8 times faster than in Bun 1.4.3 on five
-large projects (one small project gets slower, see the known issues),
-fixes bugs in `bun check`, `bun lint` and `bun fmt`, and fixes how the
-three commands read the command line.
+Moves six classes from `.classes.ts` to `b.class` schemas of the bindgen
+(`docs/project/bindgen.mdx`): `Crypto`, `TextDecoder`,
+`Bun.FileSystemRouter`, `MatchedRoute`, `ResourceUsage` and `S3Stat`.
 
-#### `bun check`: speed
+Each method was a host function that took a `CallFrame` and checked its
+arguments by hand, and each getter made a `JSValue` by hand. The schema
+now says what each member takes and gives, and the struct implements a
+generated trait with typed parameters.
 
-8 threads, cold, best of 3. Both print the same number of errors on each
-project.
+```ts
+export const TextDecoder = b.class({
+  rustPath: "crate::webcore::TextDecoder",
+  configurable: false,
+  construct: {
+    args: { label: b.string.loose.utf8.optional, options: TextDecoderOptions.nullable.default({}) },
+    expected: { options: ["object"] },
+    capability: "heap",
+    throws: true,
+  },
+  proto: {
+    decode: { ... },
+    encoding: { getter: b.string.local, cache: true, capability: "heap" },
+    fatal: { getter: b.bool },
+    ignoreBOM: { getter: b.bool },
+  },
+});
+```
 
-| project | time, 1.4.3 | time, this PR | memory, 1.4.3 | memory, this
-PR |
-|---|---|---|---|---|
-| mui (docs) | 10.28 s | 1.31 s | 11.2 GB | 1.3 GB |
-| supabase (studio) | 2.84 s | 1.27 s | 1.0 GB | 1.2 GB |
-| t3code (server) | 4.59 s | 1.62 s | 1.0 GB | 1.0 GB |
-| mikro-orm | 3.30 s | 1.82 s | 0.9 GB | 1.1 GB |
-| vscode | 4.09 s | 2.82 s | 1.6 GB | 1.9 GB |
+```rust
+impl TextDecoderClass for TextDecoder {
+    ...
+    fn fatal(&self) -> bool {
+        self.fatal
+    }
+    .
 
-- **No steps and no barriers.** 1.4.3 split a program into steps.
-Between steps, all threads waited for each other and merged what they
-had computed. Now each thread picks files from one queue, heavy files
-first, and threads share results in small commits while they run. The
-old plan, its options and every debugging switch are deleted, about
-
-
-**File**: `docs/format/index.mdx` (modified, +7/-2)
+**File**: `.claude/skills/implementing-jsc-classes-rust/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -95,6 +95,8 @@ options = { printWidth = 120 }
+@@ -7,7 +7,7 @@ description: Creates JavaScript classes using Bun's Rust bindings generator (.cl
  
- ## Ignore files
+ Bridge JavaScript and Rust through `.classes.ts` definitions and Rust implementations.
  
-+Every `.gitignore` in the repository counts, whichever directory you run `bun fmt` from. Outside a repository, those in the current directory and below it count. With a Prettier config, only the `.gitignore` in the current directory does, because that's the only one Prettier reads.
-+
- To skip more than `.gitignore` does, list the files in `bunfig.toml`. A `.prettierignore` file works too.
+-`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity`, `estimatedSize` or writing to a cached getter's slot yet.
++`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity` or `estimatedSize` yet.
  
- ```toml bunfig.toml icon="settings"
-@@ -146,6 +148,7 @@ import { a, b, c } from "./util";
- - Each group is sorted by path, and the names in `{ }` are sorted too.
- - Two imports from the same module become one.
- - Side-effect imports like `import "./setup"` never move, and nothing moves past one.
-+- A comment directly above an import moves with it. Above the first import, comments about the whole file stay at the top: `// @ts-nocheck`, `/// <reference ... />`, `/* eslint-disable */`, `// @flow`, `/** @jsxImportSource ... */`, a license.
- 
- To pick your own groups, use a table. See [`format.sortImports`](/runtime/bunfig#format-sortimports).
- 
-@@ -281,7 +284,9 @@ bun run generate-types | bun fmt --parser typescript > types.ts
- bun fmt --staged
- ```
- 
--A file with both staged and unstaged changes isn't written, because staging it again would commit the rest. Bun names the file and exits with code `2`.
-+If a file has both staged and unstaged changes, Bun looks at the staged version, which is what the commit gets. It doesn't write such a file, because staging it again would commit the rest. If the staged version needs formatting, Bun names the file and exits with code `2`.
-+
-+Config files, such as `bunfig.toml` and `.prettierrc`, are read from disk.
- 
- `--changed` formats the files that differ from your default branch. Pass a ref to compare with something else.
- 
-@@ -303,7 +308,7 @@ Already have a `.prettierrc` or an `.oxfmtrc.json`? `bun fmt` reads it and print
- }
- ```
- 
--If `package.json` has a `fmt` script, `bun fmt` runs that script. Inside the script, `bun fmt` is the formatter.
-+If `package.json` has a `fmt` script, `bun fmt` runs that script. Inside the script, `bun fmt` is the formatter. If `package.json` has `"fmt"` in it but can't be parsed, as in the middle of a merge, `bun fmt` can't tell whether that is a script: it formats nothing and exits with code 2.
- 
- Writing a tool that calls Bun in projects you don't control? Pass `--no-script`: `bun fmt --no-script` is always the formatter.
+ ## Architecture
  
 ```
 
-**File**: `docs/guides/format/migrate-from-prettier.mdx` (modified, +1/-1)
+**File**: `docs/project/bindgen.mdx` (modified, +55/-17)
 ```diff
-@@ -86,7 +86,7 @@ Keep `prettier` if your editor's Prettier extension uses it.
- Bun reads everything Prettier reads:
+@@ -66,7 +66,10 @@ A function of a `node:*` module names what Node's own source expects of an argum
+ `expected: { data: ["Buffer", "TypedArray", "DataView", "string"] }`. A value the argument's type
+ refuses then throws Node's `ERR_INVALID_ARG_TYPE(name, expected, actual)`, "The "data" argument must
+ be of type string or an instance of Buffer, TypedArray, or DataView. Received null", and not "data
+-must be a string, ArrayBuffer or ArrayBufferView". What the type takes is the same.
++must be a string, ArrayBuffer or ArrayBufferView". What the type takes is the same. A string in the
++place of the list is the whole message: Node's C++ writes its own out that way, and so do the Bun APIs
++that have a message of their own. A dictionary named in `expected` reports what is not an object as the
++argument, and not under the dictionary's name.
  
- - `.prettierrc` in JSON, YAML, TOML, JavaScript, or TypeScript, `prettier.config.*`, and `"prettier"` in `package.json`, with `overrides`
--- `.editorconfig`, `.prettierignore`, and `.gitignore`
-+- `.editorconfig`, and the `.prettierignore` and `.gitignore` in the current directory
- - `// prettier-ignore` comments and the `@format` and `@noformat` pragmas
- - Every flag of Prettier 3 except `--file-info` and `--support-info`
+ Nothing else is written by hand, except once per crate: `src/<crate>/generated_bindgen.rs`
+ includes the generated file, the crate root declares `mod generated_bindgen`, and a
+@@ -76,7 +79,7 @@ not compile.
+ 
+ To reach the function:
+ 
+-- from `src/js`: `$bindgen("bindgen_test.bind.ts", "add")`, which is typed from the schema. An argument's type is what it takes, so one that coerces (`.loose`, `.wrap`, `.enforceRange()`) is `any`;
++- from `src/js`: `$bindgen("bindgen_test.bind.ts", "add")`, which is typed from the schema. An argument's type is what it takes, so one that coerces (`.loose`, `.wrap`, `.enforceRange()`) is `any`. A `.nullable` result, and a `.nullable` getter without a setter, is `T | null`;
+ - from a C++ static property table: `Bun::Bindgen::Generated::BindgenTest::jsAdd` in `GeneratedBindgenTest.h`.
+ 
+ ### Namespaces
+@@ -129,7 +132,11 @@ to may run JavaScript, and the compiler cannot see that. Read what is called all
+ before writing the `SAFETY` comment. `ToString` of an object, a property that is looked up or
+ set and not defined, and a call to a constructor found on the global object all run JavaScript.
+ Throwing tells the debugger, which can run code, so after a throw the body returns without
+-reading what it borrowed.
++reading what it borrowed. A `mutates: true` method does not throw: what the debugger runs can call
++a method of the same object while the `&mut self` is live. It returns the error, which is thrown
++after the borrow ends. Every `heap.create_*` that returns a `Result` throws at once, except
++`create_utf16_string_from_vec`. A method that has to call one takes `capability: "js"` and borrows
++with `with_mut` (see [the receiver](#the-receiver)).
+ 
+ ```rust
+ // SAFETY: parsing runs no JavaScript. Nor does making the result: its keys are primitives, and its properties are
+@@ -139,10 +146,11 @@ let global = unsafe { heap.global() };
+ 
+ `throws: true` makes the return type a `Result`. The error is a
+ `bindgen::Error<'a>`, made by `heap.error(..)`, `heap.type_error(..)`,
+-`heap.range_error(..)`, `heap.error_with_code(ErrorCode::OUT_OF_RANGE, ..)`, `heap.invalid_arguments(..)` or
+-`bindgen::Error::from_value(value)` (`?` makes one of a `JsError` or an `AllocError`), or any type that
+-implements `bindgen::IntoError` (`bun_sys::Error`, `SystemError`, `JsError` and a `Box` of
+-one do), which lets a `capability: "none"` function fail too.
++`heap.range_error(..)`, `heap.error_with_code(ErrorCode::OUT_OF_RANGE, ..)`, `heap.invalid_arguments(..)`,
++`heap.illegal_constructor()`, `heap.string_too_long()`, `heap.memory_allocation_failed()` or
++`bindgen::Error::from_value(value)` (`?` makes one of a `JsError` or an `AllocError`), or any
++type that implements `bindgen::IntoError` (`bun_sys::Error`,
++`SystemError`, `JsError` and a `Box` of one do), which lets a `capability: "none"` function fail too.
+ 
+ `cx.global()` is the `&JSGlobalObject`, for code that takes one. It borrows all of
+ `cx`. Such a function can return `JsResult<T>`, and a plain `JSValue` under
+@@ -222,14 +230,25 @@ These come last, in this order (`b.any` already takes `undefined` and `null`, so
+ - `.default(value)`: what to use when absent; `T`. `.nullable.default(value)` also applies to `null`.
+ 
+ As results, `b.string.utf8` is anything that is `AsRef<[u8]>` and `b.array(T)` anything that
+-is `IntoIterator`. The body of a `b.fn` or of a namespace's function whose bytes do not outlive
+-it returns the string itself, from `heap.create_utf8_string(bytes)`. `b.u64.asBigInt` is a
+-result only: a `u64` that is always returned as a BigInt. `b.bufferSource` as a result is what
++is `IntoIterator`. `b.bufferSource` as a result is what
+ `heap.create_uninitialized_uint8_array(length)`, `heap.create_uint8_array(bytes)`,
+ `heap.create_buffer(bytes)`, `heap.create_uint8_array_from_box(bytes)` or
+ `heap.create_buffer_from_box(bytes)` made. The last two take over the allocation, and the two
+ before them copy.
+ 
++These are results only:
++
++| Schema           | Rust                                          | JavaScript gets                                                                                                   
+```
+
+**File**: `docs/runtime/child-process.mdx` (modified, +3/-3)
+```diff
+@@ -635,9 +635,9 @@ interface ResourceUsage {
+   };
+ 
+   cpuTime: {
+-    user: number;
+-    system: number;
+-    total: number;
++    user: bigint;
++    system: bigint;
++    total: bigint;
+   };
+   maxRSS: number;
  
 ```
 
-**File**: `docs/lint/index.mdx` (modified, +33/-2)
+**File**: `docs/runtime/file-system-router.mdx` (modified, +6/-1)
 ```diff
-@@ -46,6 +46,12 @@ To lint specific files, pass paths or globs.
- bun lint src "test/**/*.test.ts"
- ```
+@@ -102,7 +102,12 @@ interface Bun {
+       fileExtensions?: string[];
+     });
  
-+An argument that starts with `!` leaves files out of what the other arguments select, as it does for `bun fmt`. This holds with an ESLint or oxlint config too.
+-    reload(): void;
++    readonly assetPrefix: string | null;
++    readonly origin: string | null;
++    readonly routes: Record<string, string>;
++    readonly style: "nextjs";
 +
-+```bash terminal icon="terminal"
-+bun lint src "!src/generated" "!**/*.test.ts"
-+```
-+
- The exit code is `1` if there are errors and `0` if there are only warnings.
++    reload(): this;
  
- ## Fix problems
-@@ -56,6 +62,8 @@ Many rules can fix what they report. `--fix` applies those fixes and writes the
- bun lint --fix
- ```
- 
-+`--fix` is for changes that keep what your program does and keep your comments. Where a rule's fix is known to alter behavior or drop a comment, the problem is still reported, but only `--fix-suggestions` or `--fix-dangerously` applies the fix, even if ESLint or oxlint apply it with `--fix`. Each rule's page says which flag it needs.
-+
- ## Default rules
- 
- With no config, `bun lint` turns on the rules that catch real bugs:
-@@ -85,7 +93,7 @@ Each rule's page says what differs and how to change it.
- 
- ## Configure rules
- 
--Rules live in `bunfig.toml`. Every built-in rule works the same way, with nothing to install.
-+Rules live in `bunfig.toml`. Every built-in rule works the same way, with nothing to install. The exceptions are the rules for [JSON and Markdown](/lint/plugins#other-languages), which need an ESLint config.
- 
- ```toml bunfig.toml icon="settings"
- [lint.rules]
-@@ -162,6 +170,25 @@ Use `*` as the rule name to turn off every rule of a plugin. A setting for a sin
- ignorePatterns = ["vendor/", "**/*.gen.ts"]
- ```
- 
-+## ES modules and CommonJS
-+
-+`bun lint` works out whether a file is an ES module or CommonJS from the file itself, the way Node.js does:
-+
-+- `.mjs` and `.mts` files are modules. `.cjs` and `.cts` files are CommonJS.
-+- Any other file is a module if the nearest `package.json` has `"type": "module"`.
-+- Otherwise, a file with an `import`, an `export`, `import.meta` or a top-level `await` is a module. A file with none of them is CommonJS.
-+
-+A CommonJS file can `return` at the top level, and it's only in strict mode if it starts with `"use strict"`.
-+
-+To decide for every file yourself, set `sourceType` to `"module"`, `"commonjs"` or `"script"`:
-+
-+```toml bunfig.toml icon="settings"
-+[lint.parserOptions]
-+sourceType = "commonjs"
-+```
-+
-+Next to an `eslint.config.js`, ESLint's defaults apply instead: `.js` and `.mjs` files are modules and `.cjs` files are CommonJS, unless `languageOptions.sourceType` says otherwise.
-+
- ## Disable a rule in code
- 
- `bun lint` uses ESLint's comments, so existing ones keep working. oxlint's `oxlint-disable` comments mean the same, except next to an ESLint config, where they are ordinary comments as in ESLint.
-@@ -235,6 +262,10 @@ With an oxlint config, `--tsconfig` does what it does in oxlint. It sets the `ts
- bun lint --staged --fix
- ```
- 
-+If a file has both staged and unstaged changes, Bun lints the staged version, which is what the commit gets. `--fix` doesn't write such a file, because staging it again would commit the rest. If it has something to fix, Bun names the file and exits with code `2`.
-+
-+The same goes for the files that a staged file imports, which the type-aware rules and the `import` rules read. A file you staged and then deleted is still linted. Config files, such as `bunfig.toml` and `eslint.config.js`, are read from disk.
-+
- `--changed` lints the files that differ from your default branch. Pass a ref to compare with something else.
- 
- ```bash terminal icon="terminal"
-@@ -268,7 +299,7 @@ Already have an `eslint.config.js`, `.eslintrc`, or `.oxlintrc.json`? `bun lint`
- }
- ```
- 
--If `package.json` has a `lint` script, `bun lint` runs that script. Inside the script, `bun lint` is the linter.
-+If `package.json` has a `lint` script, `bun lint` runs that script. Inside the script, `bun lint` is the linter. If `package.json` has `"lint"` in it but can't be parsed, as in the middle of a merge, `bun lint` can't tell whether that is a script: it lints nothing and exits with code 2.
- 
- Writing a tool that calls Bun in projects you don't control? Pass `--no-script`: `bun lint --no-script` is always the linter.
- 
+     match(path: string | Request | Response): {
+       filePath: string;
 ```
 
-**File**: `docs/lint/rules/bun-test/consistent-test-it.mdx` (modified, +1/-1)
+**File**: `packages/bun-types/bun.d.ts` (modified, +27/-20)
 ```diff
-@@ -16,7 +16,7 @@ deprecated: false
- 
- By default, a test at the top level of a file uses `test`, and a test inside a `describe` uses `it`.
- 
--`--fix` renames the call if the file already imports the other name.
-+`--fix` renames the call if the file imports the other name from `bun:test`, and no variable around the call has that name.
- 
- {/* Generated by src/codegen/lint-rule-docs.ts. Do not edit this section. */}
- 
-```
-
-**File**: `docs/lint/rules/bun-test/no-unneeded-async-expect-function.mdx` (modified, +8/-11)
-```diff
-@@ -12,9 +12,9 @@ typeAware: false
- deprecated: false
- ---
- 
--`.rejects` and `.resolves` work on a promise, so you can pass the call itself to `expect`. An async function that only awaits the call rejects with the same error, so the wrapper is extra code.
-+`.rejects` and `.resolves` work on a promise. `bun test` doesn't call a function for them, so an async function in `expect` fails with `Expected promise`. Pass the call itself.
- 
--`--fix` replaces the function with the call.
-+`--fix` replaces the function with the call. It leaves a function that has a comment in it alone, because the comment would be lost.
- 
- {/* Generated by src/codegen/lint-rule-docs.ts. Do not edit this section. */}
- 
-@@ -57,20 +57,17 @@ test("rejects an empty name", async () => {
- });
- ```
- 
--A function that does more than await one call isn't reported:
-+Without `.rejects` or `.resolves` the function is needed, so it isn't reported. `toThrow` calls it and waits for its promise. Given the promise itself, it fails with `Expected value must be a function`:
- 
- {/* good */}
- ```ts
- import { expect, test } from "bun:test";
- 
--test("rejects a second save", async () => {
--  await expect(async () => {
--    await saveUser({ name: "Ada" });
--    await saveUser({ name: "Ada" });
--  }).rejects.toThrow("name is taken");
-+test("rejects an empty name", () => {
-+  expect(async () => {
-+    await saveUser({ name: "" });
-+  }).toThrow("name is required");
- });
- ```
- 
--## When not to use it
--
--The two forms differ if the call can throw before it returns a promise. The async function turns that error into a rejection. Without the function, the error is thrown before `expect` runs.
-+That form also catches an error that the call throws before it returns a promise. Without the function, such an error is thrown before `expect` runs.
-```
-
-**File**: `docs/lint/rules/bun-test/prefer-todo.mdx` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ A test with an empty body passes, so the summary counts a test you haven't writt
- 
- A test with only a title is reported too, and so is an empty `test.skip`.
- 
--`--fix` rewrites the call to `test.todo` and removes the empty function. A test with options, such as `{ timeout: 500 }`, is reported but not fixed.
-+`--fix` rewrites the call to `test.todo` and removes the empty function. It leaves a call with a comment in the function alone, because the comment would be lost. A test with options, such as `{ timeout: 500 }`, is reported but not fixed.
- 
- {/* Generated by src/codegen/lint-rule-docs.ts. Do not edit this section. */}
- 
-```
-
-**File**: `docs/lint/rules/eslint/no-extra-boolean-cast.mdx` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ deprecated: false
- 
- The test of an `if`, a loop or a `? :`, the operand of `!`, and the argument of `Boolean()` are already converted to a boolean. Writing `!!value` or `Boolean(value)` there converts twice and gives the same result.
- 
--`--fix` removes the cast.
-+`--fix` removes the cast. In a TypeScript file, it leaves the test of an `if` or a `? :` alone if the file shows that the value is a function, a promise or an enum member. TypeScript rejects `if (callback)` when `callback` is always defined, and `if (!!callback)` is how people tell it they mean it. `--fix-dangerously` removes those casts too.
- 
- This rule is on by default.
- 
-```
-
-**File**: `docs/lint/rules/eslint/no-implicit-coercion.mdx` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ deprecated: false
- 
- `!!value`, `+value` and `"" + value` convert a value as a side effect of an operator. You have to know the trick to see that a conversion happens. `Boolean(value)`, `Number(value)` and `String(value)` say it by name.
- 
--`--fix` rewrites `!!value` to `Boolean(value)`. For the conversions to a number or a string, the rewrite is offered as a suggestion.
-+`--fix` rewrites `!!value` to `Boolean(value)`. For the conversions to a number or a string, the rewrite is offered as a suggestion. Neither is offered where a comment would be lost, as in `!!(value /* or null */)`.
- 
- {/* Generated by src/codegen/lint-rule-docs.ts. Do not edit this section. */}
- 
-```
-
----
-
-### Incident Patch 2: `c1df64b8` (2026-10-18)
-**Commit Message**: install: fix regressions since 1.4.3 and resolve peer dependencies more like pnpm (#45898)
-
-### What does this PR do?
-
-Follow-up to #45710. It fixes five things that worked in Bun 1.4.3 and
-broke on `main`, makes peer dependency resolution work more like pnpm's,
-and rewrites the comments, test names and docs from #44968, #45307,
-#45460 and #45710 in plain English.
-
-None of the regressions below were ever released.
-
-#### Regressions since 1.4.3
-
-**Flags from npm, Yarn and pnpm no longer fail the command.** `main`
-turned every unknown `--flag` into an error, so lines like `bun install
---no-package-lock`, `bun install --network-timeout 100000` or `bun add
---ignore-workspace-root-check x` stopped working in CI scripts and
-Dockerfiles. `bun install`, `bun add`, `bun remove` and `bun update` now
-ignore about 180 flags of those tools that Bun has no equivalent for,
-like 1.4.3 did.
-
-- A few more are translated: `--save-catalog` → `--catalog`,
-`--location=global` → `--global`, `--node-linker=…` and
-`--install-strategy=…` → `--linker=…`.
-- A typo like `--frozen-lockfil` is still an error.
-- That includes flags that Bun can't honor, like `--prefix`,
-`--workspace`, `--userconfig`, `--tag`, `--
-
-**File**: `docs/pm/cli/install.mdx` (modified, +26/-10)
-```diff
-@@ -174,7 +174,9 @@ For reproducible installs, use `--frozen-lockfile`. Bun installs the exact versi
- bun install --frozen-lockfile
- ```
- 
--`package.json` disagrees with `bun.lock` when a dependency would resolve to a different package, and also when a dependency of the root or of a workspace was added, removed, moved to another group or given another range (`^1.0.0` to `>=1.0.0`) while every package stays as locked. The same goes for `overrides` and `catalog`. Run `bun install` and commit the updated `bun.lock` to fix it. Other edits, such as a workspace's `version`, `bin` or `scripts`, `trustedDependencies` and `patchedDependencies`, do not fail the install. If the `package.json` of a `file:` directory changed its dependencies, Bun prints a warning and installs what is locked.
-+`package.json` disagrees with `bun.lock` when an edit adds a package, removes one, or changes a version. The error names the first dependency that changed. Run `bun install` and commit the updated `bun.lock` to fix it.
-+
-+Edits that keep every package at its locked version don't fail the install. For example, you can change `^1.0.0` to `>=1.0.0`, move a dependency to another group, or add a dependency that another workspace already has. The same goes for a workspace's `version`, `bin` and `scripts`, and for `trustedDependencies` and `patchedDependencies`. If the `package.json` of a `file:` directory changed its dependencies, Bun prints a warning and installs what's locked.
- 
- Bun does not enable `--frozen-lockfile` automatically in CI; pass the flag or use `bun ci`. If there is no lockfile at all, `--frozen-lockfile` installs from `package.json` without writing one.
- 
-@@ -410,7 +412,7 @@ Environment variables take priority over `bunfig.toml`.
- | `BUN_CONFIG_HTTP_RETRY_COUNT`      | How often a failed request is retried (default: 5)        |
- | `BUN_CONFIG_HTTP_RETRY_BACKOFF`    | Wait before the first retry, in ms (default: 50)          |
- 
--A request is retried after a connection failure or a 5xx, 429 or 408 response. The wait doubles with every retry, up to 40 times the first one, with ±20% jitter. A longer `Retry-After` header is honored, up to 60 seconds. `BUN_CONFIG_HTTP_RETRY_BACKOFF=0` retries at once. `bun info`, `bun pm whoami`, `bun pm diff` and `bun audit` follow the same rule, but give up after one timeout or a 501. `bun publish` uploads a package once and never retries the upload.
-+A request is retried after a connection failure or a 5xx, 429 or 408 response. The wait doubles with every retry, up to 40 times the first one, with ±20% jitter. A longer `Retry-After` header is honored, up to 60 seconds. `BUN_CONFIG_HTTP_RETRY_BACKOFF=0` retries immediately. `bun info`, `bun pm whoami`, `bun pm diff` and `bun audit` follow the same rule, but give up after one timeout or a 501. `bun publish` uploads a package once and never retries the upload.
- 
- Bun uses the fastest installation method available on the target platform: `clonefile` on macOS and `hardlink` on Linux and Windows. You can change the installation method with the `--backend` flag. When unavailable or on error, `clonefile` and `hardlink` fall back to a platform-specific implementation of copying files.
- 
-@@ -496,9 +498,17 @@ Each flag can be repeated, takes `*` to allow every value, and takes `!name` to
- 
- ## Peer dependencies?
- 
--Bun handles peer dependencies like Yarn: `bun install` installs them automatically. If the dependency is marked optional in `peerDependenciesMeta`, Bun uses an existing dependency if possible.
-+`bun install` installs peer dependencies automatically, and picks versions much like pnpm does:
-+
-+1. If a package above the one with the peer dependency depends on that name, the peer uses that version. "Above" means its parent, its parent's parent, and so on up to your workspace and the root `package.json`. This applies even if the version is out of range: if your app depends on `react@17`, every library that it uses gets `react@17`.
-+2. Otherwise, Bun picks one version that satisfies every package with a peer dependency on that name. It prefers a version that's already installed, then the newest matching version in the registry.
-+3. If no version satisfies all of them, Bun doesn't install a copy for each one, because packages like `react` or `graphql` break when two copies are loaded. Each package uses an installed version that satisfies its range if there is one. Otherwise, it shares the version that the others use, which is out of its range.
-+
-+The isolated linker applies these rules everywhere a package is used. The hoisted linker usually installs a package once, and that copy loads whichever version of the peer is nearest to it in `node_modules`. If another version of the peer is at the top of `node_modules`, the packages that need the peer can each get their own copy of it.
- 
--If nothing else depends on the peer, Bun installs the newest version that every package asking for it accepts. Otherwise the peer reuses the copy that is already ther
-```
-
-**File**: `docs/pm/cli/pm.mdx` (modified, +1/-1)
-```diff
-@@ -427,7 +427,7 @@ Cache: /home/user/.bun/install/cache
- - Dependencies resolve the way `bun install` resolves them, but `node_modules` is not created, lifecycle scripts do not run, and `package.json` and the lockfile are left untouched.
- - With a lockfile, only what is missing from the cache is downloaded: the tarball URLs and git commits the lockfile records.
- - In a monorepo, you only need the root `package.json` and the lockfile. Bun downloads the dependencies of every workspace in the lockfile, even if the workspace isn't on disk yet. That means a Docker layer with `COPY package.json bun.lock ./` and `RUN bun pm fetch` is only rebuilt when one of those two files changes. Also copy `bunfig.toml` and `.npmrc` if they set a registry. Cache entries are keyed by the registry's host, so without them the later `bun install` downloads everything again. The layer also needs any patch files and local tarballs in the lockfile, and any workspace that the root `package.json` depends on with `workspace:`.
--- A later `bun install` (or `bun install --offline`) installs from the cache. Without a lockfile, `--offline` cannot tell which commit a `github:` ref or which file a tarball URL stands for, so commit the lockfile if you depend on those.
-+- A later `bun install` (or `bun install --offline`) installs from the cache. Without a lockfile, `--offline` can't tell which commit a `github:` ref points to or which file a tarball URL serves, so commit the lockfile if you depend on those.
- - Packages for another operating system or CPU are skipped; pass `--os` / `--cpu` to fetch them.
- - `-g` fetches the dependencies of globally installed packages.
- - `--dry-run` prints how many packages are missing from the cache and downloads none of them.
-```
-
-**File**: `docs/pm/global-cache.mdx` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ Configure this with the `--backend` flag, which all of Bun's package management
- - **`copyfile`**: The fallback used when any of the above fail. It is the slowest option. On macOS, it uses `fcopyfile()`; on Linux it uses `copy_file_range()`.
- - **`symlink`**: Symlinks each file instead of copying it. Only hoisted installs use it: `--backend=symlink` applies it to every package (macOS and Linux; Windows ignores the flag); without the flag, Bun uses it only for a package that depends on itself (`"pkg": "file:."`).
- 
--`file:` folders, inside or outside the project directory, are hardlinked (copied where that is not possible) without their `node_modules`. `bun install` installs a folder again when a file in it was added, removed or replaced. What a folder lists in `bundleDependencies` is symlinked from its `node_modules`. A folder that a published package ships inside itself (`"dep": "file:./vendor/dep"`) is a single symlink to where it is.
-+`file:` folders, inside or outside the project directory, are hardlinked (copied where that is not possible) without their `node_modules`. `bun install` installs a folder again when a file in it was added, removed or replaced. The packages that a folder lists in `bundleDependencies` are symlinked from its `node_modules`. A folder that a published package ships inside itself (`"dep": "file:./vendor/dep"`) is installed as a single symlink to that folder.
- 
- If you install with `--backend=symlink`, Node.js doesn't resolve node_modules of dependencies unless each dependency has its own `node_modules` folder or you pass `--preserve-symlinks` to `node`. See [Node.js documentation on `--preserve-symlinks`](https://nodejs.org/api/cli.html#--preserve-symlinks).
- 
-```
-
-**File**: `docs/pm/isolated-installs.mdx` (modified, +1/-1)
-```diff
-@@ -207,7 +207,7 @@ If you encounter issues, you can:
-    bun install --linker hoisted
-    ```
- 
--   Switching linkers in either direction reinstalls the existing `node_modules` from scratch. Dot-directories of other tools, like `.cache` and `.vite`, stay. Those of a package manager, like `.pnpm`, go. The previous tree is moved to `node_modules/.old_modules-<random>` and deleted once the install has succeeded. [`bun prune`](/pm/cli/prune) removes the ones a failed install or an older version of Bun left.
-+   Switching linkers in either direction reinstalls the existing `node_modules` from scratch. Dot-directories of other tools, like `.cache` and `.vite`, are kept. Those of a package manager, like `.pnpm`, are removed. The previous tree is moved to `node_modules/.old_modules-<random>` and deleted once the install has succeeded. [`bun prune`](/pm/cli/prune) removes the ones that a failed install or an older version of Bun left behind.
- 
-    Bun installs through a `node_modules` that is a symlink (the project's or a workspace's), but clears nothing behind the link and prints a warning. Empty the folder yourself before you switch.
- 
-```
-
-**File**: `docs/pm/lifecycle.mdx` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ Defining `trustedDependencies` in `package.json` **replaces** the default list r
- 
- Set `trustedDependencies: []` when you want to opt out of the default allow list entirely without passing `--ignore-scripts` on every install. If you define `trustedDependencies` with an explicit list, include any packages from the [default list](https://github.com/oven-sh/bun/blob/main/src/install/default-trusted-dependencies.txt) whose lifecycle scripts you still need (for example, `sharp` or `esbuild`). Bun no longer trusts those packages implicitly.
- 
--The lockfile records the list, also an empty one. In a checkout that leaves out the workspace that declares it (a Docker layer, for example), `bun install --frozen-lockfile` keeps the default list off: of its packages, only those the lockfile records run their scripts.
-+The lockfile records the list, even if it's empty. In a checkout without the workspace that declares it (a Docker layer, for example), `bun install --frozen-lockfile` still ignores the default list, and only the packages that the lockfile records run their scripts.
- 
- ---
- 
-```
-
-**File**: `docs/pm/npmrc.mdx` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ Bun reads up to two `.npmrc` files. Options in the later file override the earli
- 1. The user-level file. This is the file `NPM_CONFIG_USERCONFIG` (npm's `userconfig` option) points at when that variable is set; otherwise `$XDG_CONFIG_HOME/.npmrc` if it exists, otherwise `$HOME/.npmrc`.
- 2. The `.npmrc` next to your project's root `package.json`.
- 
--Bun warns when one of these files exists but cannot be read. A command that installs or publishes packages then stops with an error. Other commands continue without its settings. A directory in the file's place gets the warning only.
-+Like npm, Bun skips any of these files that it can't read.
- 
- A relative `cache` or `cafile` is relative to the `.npmrc` it is written in. A relative `NPM_CONFIG_USERCONFIG` is relative to the directory you run `bun` in. In all three, a leading `~/` is your home directory.
- 
-@@ -80,7 +80,7 @@ The equivalent `bunfig.toml` option is to add a key in [`install.scopes`](/runti
- myorg = "http://localhost:4873/"
- ```
- 
--A scope whose registry is empty uses the default registry. If `--registry` or an environment variable names another host than the config files do, a scope that has credentials of its own stays at the registry of the config files.
-+A scope whose registry is empty uses the default registry. If `--registry` or an environment variable points to a different host than the config files, a scope that has its own credentials keeps using the registry from the config files.
- 
- ### Configure options for a specific registry
- 
-```
-
-**File**: `docs/pm/workspaces.mdx` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ Each workspace has its own `package.json`. To reference another package in the m
- 
- A workspace needs a `"name"`. Bun skips a matched `package.json` that has no `"name"`, such as a test fixture containing only `{ "type": "module" }`. Bun does not link the skipped directory into `node_modules` and does not install its dependencies. If the skipped `package.json` declares dependencies, `bun install` prints a warning that names the directory.
- 
--A workspace can be outside the directory of the root `package.json`, for example `"../shared"` or a symlink that leads there. Other packages can depend on it, and `bun.lock` lists it. Like npm, `bun install` does not install its dependencies or run its scripts. Reached by its own path, that directory is a project of its own: `bun install` works there unless it has `workspace:` or `catalog:` dependencies. Reached through the symlink, commands that install (`bun install`, `bun add`, `bun remove`, `bun update`) end with an error and change nothing.
-+A workspace can be outside the directory of the root `package.json`, for example `"../shared"` or a symlink that points there. It works like any other workspace: other packages can depend on it, `bun.lock` lists it, and `bun install` installs its dependencies and runs its scripts. Another project may own that directory, so [`bun prune`](/pm/cli/prune) doesn't clean its `node_modules`, and switching linkers doesn't move it aside.
- 
- `bun install` installs dependencies for all workspaces in the monorepo, de-duplicating packages if possible. To install dependencies for specific workspaces only, use the `--filter` flag.
- 
-```
-
-**File**: `docs/runtime/auto-install.mdx` (modified, +3/-3)
-```diff
-@@ -15,7 +15,7 @@ foo();
- 
- The first time you run this script, Bun auto-installs `"foo"` and caches it. Later runs use the cached version.
- 
--Auto-install is off when a [security scanner](/runtime/bunfig#install-security-scanner) is configured in the global `.bunfig.toml`, or in a `bunfig.toml` from the working directory or the importing file up to the [project root](#project-root). It is also off when one of those files, a `.npmrc`, or a `package.json` that Bun reads to find the project root cannot be read or parsed. `-i` and `--install` do not turn it back on. The import fails and tells you to run `bun install`.
-+Auto-install is off when a [security scanner](/runtime/bunfig#install-security-scanner) is configured in the global `.bunfig.toml`, or in a `bunfig.toml` from the working directory or the importing file up to the [project root](#project-root). It is also off when one of those files can't be parsed, or when a `package.json` that Bun reads to find the project root can't be read or parsed. `-i` and `--install` do not turn it back on. The import fails and tells you to run `bun install`.
- 
- ---
- 
-@@ -64,7 +64,7 @@ The first import of a package that is not in the cache blocks the thread until t
- 
- The import fails if the registry sends nothing for about 30 seconds (`BUN_CONFIG_HTTP_IDLE_TIMEOUT` changes that).
- 
--When the registry answers that a package does not exist (404), Bun does not ask for it again for 5 minutes, or less if the response's `Cache-Control` says so. After any other failure of a lookup or a download, such as a 5xx or a dropped connection, Bun retries the request a few times. If the import still fails, an import in a later turn of the event loop (after a timer or I/O) asks again.
-+When the registry responds that a package doesn't exist (404), Bun doesn't request it again for 5 minutes, or less if the response's `Cache-Control` says so. After any other failure of a lookup or a download, such as a 5xx or a dropped connection, Bun retries the request a few times. If the import still fails, an import in a later turn of the event loop (after a timer or I/O) sends the request again.
- 
- When Bun cannot write to the cache, on a read-only file system for example, packages that are already in the cache still load. An import that needs a download throws the same error as an import of a missing package, with the reason as a note.
- 
-@@ -89,7 +89,7 @@ Auto-install replaces `${NAME}` with a variable from the environment of the scri
- 
- Bun installs and caches packages into `<cache>/<pkg>@<version>`, so Bun can cache multiple versions of the same package at once. It also creates a symlink under `<cache>/<pkg>/<version>` to speed up looking up all cached versions of a package.
- 
--A package whose tarball ships a `node_modules` folder (`bundledDependencies`) loads what is in that folder from there, and its other dependencies from the cache.
-+A package whose tarball ships a `node_modules` folder (`bundledDependencies`) loads the packages in that folder from there, and its other dependencies from the cache.
- 
- ---
- 
-```
-
----
-
-### Incident Patch 3: `5667cd6c` (2026-10-18)
-**Commit Message**: sql: fixes for problems found after the consolidation (#45304) (#45711)
-
-### What does this PR do?
-
-Follow-up fixes to #45304, and three older bugs that were found on the
-way. Each is something that an ordinary program can run into.
-
-#### Regressions of #45304
-
-**A pool that the server refuses more connections dialed again for every
-caller that had to wait.** Since #45304 a pool that lost connections
-grows back: a caller that has to wait makes the pool dial, unless a dial
-in flight covers it. When `max` is above the number of connections the
-server has left (several processes whose `max` adds up to more than
-`max_connections`), those dials are refused, nothing remembered that,
-and every waiting caller cost another refused login: a forked backend
-and a FATAL line in the server's log each. The client paid too: it got
-through 40 % of the queries.
-
-| A real PostgreSQL with 7 free slots, `max: 20`, a 20 ms query every 2
-ms for 5 s | before #45304 | after #45304 |
-|---|---|---|
-| refused logins | 13 | about 1,750 |
-| queries issued | about 2,310 | about 920 |
-
-With no connection ready (none, all reserved, only dials in flight) the
-pool still dials until `max`, and reads no clock and no m
-
-**File**: `docs/runtime/sql.mdx` (modified, +22/-3)
-```diff
-@@ -635,7 +635,7 @@ Simple queries cannot use parameters (`${value}`). If you need parameters, split
- These rules apply to every string with several statements, also through `sql.file` and `sql.unsafe`:
- 
- - On PostgreSQL and MySQL, the query resolves to an array with one result per statement.
--- On SQLite, every statement runs and the query resolves to one result. It holds the rows of the first statement if that statement returns rows. Otherwise its `count` is the number of rows that all the statements changed. Only the first statement can have parameters.
-+- On SQLite, every statement runs and the query resolves to one result. It holds the rows of the first statement if that statement returns rows. Otherwise its `count` is the number of rows that all the statements changed. Only the first statement can have parameters. Bun refuses a later statement that has one when it reaches it, like any other statement that fails.
- - Only PostgreSQL runs the string as one implicit transaction. On MySQL and SQLite, the statements before a failing one stay applied. Wrap the call in [`sql.begin`](#transactions) if you need all or nothing.
- 
- ### Queries in files
-@@ -718,7 +718,25 @@ What `cancel()` does depends on how far the query got:
- 
- ### Unhandled rejections
- 
--`.then()` and `.catch()` return a promise like any other. When it rejects and nothing handles the rejection, Bun reports an unhandled rejection, which ends the process unless you listen for [`unhandledRejection`](https://nodejs.org/api/process.html#event-unhandledrejection). So does an error that your `.finally()` callback throws. A query that you only start, with `.execute()` or `.finally()`, is the exception: once it has a connection, its own failure is not reported, and the error is lost. On SQLite, `.execute()` outside a transaction does report it. Add a `.catch()` to a query that you start and do not await:
-+`.then()` and `.catch()` return a promise like any other. When it rejects and nothing handles the rejection, Bun reports an unhandled rejection, which ends the process unless you listen for [`unhandledRejection`](https://nodejs.org/api/process.html#event-unhandledrejection). So does an error that your `.finally()` callback throws.
-+
-+A query that you only start, with `.execute()` or `.finally()`, is the exception. Its own failure is not reported, and the error is lost, when:
-+
-+- The query had a connection: the server refused it, or the connection was lost.
-+- `close({ timeout: 0 })` closed the pool while the query waited for a connection.
-+- You called `.cancel()` before you started it.
-+- Its reservation was released, or its transaction or savepoint has ended.
-+
-+After `.execute()`, Bun does report the failure when:
-+
-+- It cannot connect: nothing listens, the login fails or the connection times out.
-+- The pool was already closed.
-+- The time of `close({ timeout })`, with a timeout above 0, runs out while the query waits for a connection.
-+- You call `.cancel()` while the query waits for a connection.
-+- It cannot build the query or read the file of `sql.file()`.
-+- The adapter is SQLite and the query runs outside a transaction.
-+
-+Add a `.catch()` to a query that you start and do not await:
- 
- ```ts
- sql`UPDATE stats SET hits = hits + 1`.catch(err => console.error(err));
-@@ -1170,6 +1188,7 @@ The adapters differ in two ways:
- The `tx` client belongs to its transaction. Once Bun has sent `COMMIT` or `ROLLBACK`, a query on `tx` never reaches the database. It rejects with `ERR_POSTGRES_INVALID_TRANSACTION_STATE`, or the same code with `MYSQL` or `SQLITE`.
- 
- Queries are lazy, so this includes a query that you create inside the callback and first await later. Await every query inside the callback, or return the queries in an array.
-+`sql.begin` resolves once the database has answered `COMMIT`. If the connection is lost while `COMMIT` is unanswered, `sql.begin` rejects and nobody can know whether the transaction was committed, so check before you run it again.
- 
- ```ts
- let late;
-@@ -1372,7 +1391,7 @@ await Promise.all([
- - `sql.begin` and `sql.reserve` need a connection of their own, so they wait for an idle one.
- - Bun serves the callers that wait for a connection oldest first.
- - A pool that lost some of its connections opens new ones when queries have to wait.
--- When Bun cannot open a new connection, callers wait for the connections that are open. They reject with the error of that attempt only when the pool has no connection left.
-+- When Bun cannot open a new connection, callers wait for the connections that are open. They reject with the error of that attempt only when the pool has no connection left. A caller that finds every open connection reserved makes Bun try again at once. While an open connection can still take queries, Bun adds at most one connection at a time for the queries that wait, and after each failed attempt it pauses before the next: a few tens of milliseconds at first, then twice as long each time, up to 1 second.
- - Bun clo
-```
-
-**File**: `packages/bun-types/sql.d.ts` (modified, +9/-2)
-```diff
-@@ -907,9 +907,16 @@ declare module "bun" {
-      * What `then()` and `catch()` return is a promise like any other: when it
-      * rejects with nothing to handle the rejection, that is reported as an
-      * unhandled rejection. So is an error that a `finally()` callback throws.
-+     *
-      * The failure of a query that was only started, with `execute()` or
--     * `finally()`, is not reported once it has a connection. On SQLite,
--     * `execute()` outside a transaction does report it.
-+     * `finally()`, is not reported once it has a connection, nor when
-+     * `close({ timeout: 0 })` closes the pool while it waits for one, when it
-+     * was cancelled before it started, or when its reservation, transaction or
-+     * savepoint has ended. After `execute()`, a failure to connect, a pool that
-+     * was already closed, a `cancel()` or the end of the time of
-+     * `close({ timeout })`, with a timeout above 0, while it waits for a
-+     * connection, and a query that cannot be built are reported. So is the
-+     * failure of a query that SQLite runs outside a transaction.
-      *
-      * Bun reads the parameters when it sends the query. Leave a `Buffer`,
-      * `TypedArray`, `Date` or object that you passed alone until the query
-```
-
-**File**: `src/js/bun/sql.ts` (modified, +13/-1)
-```diff
-@@ -102,6 +102,8 @@ class Scope implements Target {
-   /// The caller's statements pass. close() and release() clear it in the call, COMMIT and ROLLBACK where they are handed over.
-   accepting = true;
-   finishing: Promise<any> | null = null;
-+  /// The callback is over and run() waits for the answer to the end. Only that answer settles the transaction.
-+  awaitingAnswer = false;
-   error: Error | null = null;
-   running = new Set<Query>();
-   children = new Set<Scope>();
-@@ -209,6 +211,10 @@ function onQueryConnected(
- ) {
-   query[_waiter] = null;
-   if (err) {
-+    // The caller dropped it while it waited. As in onQuerySettled(): one that is only started ends no process.
-+    if (this.closedAtOnce) {
-+      $pokePromiseAsHandled(query);
-+    }
-     return query.reject(err);
+@@ -8177,15 +8177,15 @@ declare module "bun" {
+       /**
+        * User CPU time used by the process, in microseconds.
+        */
+-      user: number;
++      user: bigint;
+       /**
+        * System CPU time used by the process, in microseconds.
+        */
+-      system: number;
++      system: bigint;
+       /**
+        * Total CPU time used by the process, in microseconds.
+        */
+-      total: number;
++      total: bigint;
+     };
+     /**
+      * The maximum resident set size (in bytes) used by the process during its lifetime.
+@@ -9180,6 +9180,21 @@ declare module "bun" {
+     [Symbol.dispose](): void;
    }
-   pooledConnection!.bindQuery?.(query);
-@@ -217,6 +223,9 @@ function onQueryConnected(
  
- function dispatchToPool(this: Client, query: Query, handle: QueryHandle) {
-   const pool = this.pool;
-+  if (pool.closed) {
-+    return query.reject(pool.connectionClosedError());
++  /** Options for the {@link FileSystemRouter} constructor. */
++  interface FileSystemRouterOptions {
++    /**
++     * The root directory containing the files to route
++     */
++    dir: string;
++    style: "nextjs";
++
++    /** The base path to use when routing */
++    assetPrefix?: string;
++    origin?: string;
++    /** Limit the pages to those with particular file extensions. */
++    fileExtensions?: string[];
 +  }
-   pool.connect((query[_waiter] = onQueryConnected.bind(pool, query, handle)));
++
+   /**
+    * Resolve routes against a directory of files using Next.js-style (`pages`
+    * directory) conventions.
+@@ -9202,29 +9217,19 @@ declare module "bun" {
+      * @param options.dir The root directory containing the files to route
+      * @param options.style The style of router to use (only "nextjs" is supported)
+      */
+-    constructor(options: {
+-      /**
+-       * The root directory containing the files to route
+-       */
+-      dir: string;
+-      style: "nextjs";
+-
+-      /** The base path to use when routing */
+-      assetPrefix?: string;
+-      origin?: string;
+-      /** Limit the pages to those with particular file extensions. */
+-      fileExtensions?: string[];
+-    });
++    constructor(options: FileSystemRouterOptions);
+ 
+     // todo: URL
+     match(input: string | Request | Response): MatchedRoute | null;
+ 
+-    readonly assetPrefix: string;
+-    readonly origin: string;
+-    readonly style: string;
++    /** The `assetPrefix` option, or `null` if it was absent or empty */
++    readonly assetPrefix: string | null;
++    /** The `origin` option, or `null` if it was absent or empty */
++    readonly origin: string | null;
++    readonly style: "nextjs";
+     readonly routes: Record<string, string>;
+ 
+-    reload(): void;
++    reload(): this;
+   }
+ 
+   interface MatchedRoute {
+@@ -9251,6 +9256,8 @@ declare module "bun" {
+     readonly name: string;
+     readonly kind: "exact" | "catch-all" | "optional-catch-all" | "dynamic";
+     readonly src: string;
++    /** @deprecated Use {@link src} */
++    readonly scriptSrc: string;
+   }
+ 
+   /**
+```
+
+**File**: `scripts/build/codegen.ts` (modified, +1/-0)
+```diff
+@@ -951,6 +951,7 @@ export function emitBindgen({ n, cfg, sources, o, dirStamp }: Ctx): void {
+     ...outputNames.map(name => resolve(cfg.codegenDir, `${name}.h`)),
+     resolve(cfg.codegenDir, "GeneratedBindings+Tables.h"),
+     resolve(cfg.codegenDir, "GeneratedBindings+Counts.h"),
++    resolve(cfg.codegenDir, "GeneratedBindings+Classes.h"),
+   ];
+   const rust = [...new Set(compiled.map(src => crates.get(src)))].map(crate =>
+     resolve(cfg.codegenDir, `generated_bindgen_${crate}.rs`),
+```
+
+**File**: `src/codegen/bindgen-emit.ts` (modified, +132/-71)
+```diff
+@@ -68,12 +68,11 @@ function walk(type: Type, visit: (type: Type) => void, seen = new Set<Type>()):
+   for (const dependency of type.dependencies) walk(dependency, visit, seen);
  }
  
-@@ -262,6 +271,8 @@ function dispatch(this: Scope, query: Query, handle: QueryHandle) {
-     // SQLite ends a transaction inside some failing statements. What follows would run in autocommit.
-     (this.kind !== Kind.reservation && this.pool.isInTransaction?.(this.connection) === false)
-   ) {
-+    // as in onQuerySettled()
-+    $pokePromiseAsHandled(query);
-     return query.reject(refusal(this));
+-/** Marks which direction each dictionary travels and gives every table entry its index. */
++/** Marks which direction each named type travels and gives every table entry its index. */
+ export function analyze(files: readonly SchemaFile[]): Tables {
+   const tables: Tables = { memberNames: [], enumerationValues: [], classes: [] };
+-  const markAccepted = (type: Type) => walk(type, t => void (t instanceof DictionaryType && (t.accepted = true)));
+-  const markReturned = (type: Type) =>
+-    walk(type, t => void ((t instanceof DictionaryType || t instanceof EnumerationType) && (t.returned = true)));
++  const markAccepted = (type: Type) => walk(type, t => void (t instanceof NamedType && (t.accepted = true)));
++  const markReturned = (type: Type) => walk(type, t => void (t instanceof NamedType && (t.returned = true)));
+   for (const file of files) {
+     for (const type of file.types) {
+       if (type instanceof DictionaryType && type.fromJS) markAccepted(type);
+@@ -236,7 +235,7 @@ function cppConvertToAlternative(type: UnionType, candidates: readonly number[])
+ }
+ RETURN_IF_EXCEPTION(scope, void());`;
+       if (alternative instanceof UnitType) return `result.tag = ${i};\nreturn;`;
+-      const convert = (target: string) => alternative.cppConvertInto(target, "value", "ctx", "");
++      const convert = (target: string) => alternative.cppConvertInto(target, "value", "ctx", "", "");
+       return `result.tag = ${i};
+ scope.release();
+ ${alternative.convertsInPlace ? cppEmplace(member, convert) : convert(member)}
+@@ -341,7 +340,7 @@ template<> std::optional<${type.cpp}> WebCore::parseEnumerationFromString<${type
+ template<> std::optional<${type.cpp}> WebCore::parseEnumeration<${type.cpp}>(JSC::JSGlobalObject&, JSC::JSValue);
+ `;
    }
-   start(this, query, handle);
-@@ -396,7 +407,7 @@ function abandon(scope: Scope, err: Error | null) {
-   }
-   abandonChildren(scope, err);
-   // savepoint() settles when its callback does.
--  if (scope.kind === Kind.transaction) {
-+  if (scope.kind === Kind.transaction && !scope.awaitingAnswer) {
-     const failure = scope.failure;
-     settle(scope, scope.reject, failure !== null && err !== null ? withCause(err, failure.error) : refusal(scope));
-   }
-@@ -562,6 +573,7 @@ async function run(scope: Scope, callback: TransactionCallback) {
-   }
- 
-   let answer: { command?: string | null } | undefined;
-+  scope.awaitingAnswer = true;
-   try {
-     answer = await finish(scope, failure === null, undefined);
-   } catch (err) {
-```
-
-**File**: `src/js/internal/sql/options.ts` (modified, +56/-22)
-```diff
-@@ -12,11 +12,20 @@ type AnyOptions = Bun.SQL.__internal.AnyOptions;
- type TLSOptions = Bun.SQL.TLSOptions;
- 
- const ObjectDefineProperty = Object.defineProperty;
-+const ObjectGetPrototypeOf = Object.getPrototypeOf;
- const ObjectHasOwn = Object.hasOwn;
-+const ObjectPrototype = Object.prototype;
- const kInspectCustom = Symbol.for("nodejs.util.inspect.custom");
- const env = Bun.env;
- 
-+/** `Bun.env` inherits from `Object.prototype`, and what is there is no variable. */
-+function envVar(name: string): string | undefined {
-+  return ObjectHasOwn(env, name) ? env[name] : undefined;
-+}
-+
- const SQLITE_MEMORY = ":memory:";
-+const REDACTED = "[REDACTED]";
-+const SCHEME = /^[a-z][a-z0-9+.-]*$/i;
- const SUPPORTED_ADAPTERS = `"postgres", "sqlite", "mysql", "mariadb"`;
- 
- function decodeIfValid(value: string | null | undefined): string | null {
-@@ -143,7 +152,7 @@ function urlFromEnvironment(
- 
-     for (let i = 1; i < row.length; i++) {
-       const name = row[i] as string;
--      const url = env[name];
-+      const url = envVar(name);
-       if (!url) continue;
- 
-       const tls = name.startsWith("TLS_");
-@@ -220,10 +229,17 @@ const SERVER_OPTIONS = [
-   "onclose",
- ];
- 
-+/** What somebody put on `Object.prototype` is not the caller's. What the caller's own prototypes have is. */
-+function isFromObjectPrototype(object: object | null, name: string): boolean {
-+  if (!ObjectHasOwn(ObjectPrototype, name)) return false;
-+  while (object && object !== ObjectPrototype && !ObjectHasOwn(object, name)) object = ObjectGetPrototypeOf(object);
-+  return !object || object === ObjectPrototype;
-+}
-+
- /** `options` has the own keys of `source` already. Every key is read once: a getter is the caller's code. */
- function readInherited(options: AnyOptions, source: AnyOptions, names: string[]) {
-   for (const name of names) {
--    if (ObjectHasOwn(options, name)) continue;
-+    if (ObjectHasOwn(options, name) || isFromObjectPrototype(source, name)) continue;
-     const value = source[name];
-     if (value !== undefined) options[name] = value;
-   }
-@@ -245,7 +261,7 @@ function resolveTarget(
-     first = undefined;
-   }
-   const readsEnvironment = target === null;
--  const options: AnyOptions = { ...first, ...second };
-+  const options = { __proto__: null, ...first, ...second } as unknown as AnyOptions;
-   // An options object that stands alone behind a URL, or behind nothing, also gives what it inherits.
-   const inherits = first ? null : second;
-   if (inherits) readInherited(options, inherits, TARGET_OPTIONS);
-@@ -298,7 +314,9 @@ function resolveTarget(
-         ? "postgres"
-         : adapterFromScheme(scheme);
-     if (!adapter) {
--      throw new Error(`Unsupported protocol: ${scheme}. Supported adapters: ${SUPPORTED_ADAPTERS}`);
-+      // Without a scheme, what is in front of a `://` further back can be anything.
-+      const named = SCHEME.test(scheme) ? scheme : REDACTED;
-+      throw new Error(`Unsupported protocol: ${named}. Supported adapters: ${SUPPORTED_ADAPTERS}`);
-     }
-   }
- 
-@@ -375,11 +393,20 @@ function parseSQLiteOptions(target: string | URL | null, options: AnyOptions): B
-   const safeIntegers = options.safeIntegers ?? options.bigint;
-   if (safeIntegers !== undefined) sqliteOptions.safeIntegers = safeIntegers;
- 
--  if (sqliteOptions.transform != null) sqliteOptions.transform = parseTransform(sqliteOptions.transform);
-+  const transform = options.transform;
-+  if (transform != null) sqliteOptions.transform = parseTransform(transform);
- 
-   return sqliteOptions;
+-  if (type instanceof UnionType) return cppHeaderForUnion(type);
++  if (type instanceof UnionType) return type.accepted ? cppHeaderForUnion(type) : "";
+   assert(type instanceof DictionaryType);
+   if (!type.accepted) return "";
+   return `
+@@ -461,6 +460,10 @@ template<> std::optional<${type.cpp}> WebCore::parseEnumeration<${type.cpp}>(JSC
+ `;
  }
  
-+/** What an error may say of a connection URL that cannot be parsed: anything behind the scheme can be a password. */
-+function withoutSecrets(value: string): string {
-+  const start = value.indexOf("://") + 3;
-+  // The `://` is further back, and anything can be in front of it.
-+  if (!SCHEME.test(value.slice(0, start - 3))) return REDACTED;
-+  return value.slice(0, start) + (value.startsWith(SQLITE_MEMORY, start) ? SQLITE_MEMORY : REDACTED);
-+}
++/** Made of literals, so it is static and a call stores nothing for it. */
++const cppStaticContext = (variable: string, context: string) =>
++  `[[maybe_unused]] static constinit auto ${variable} = Bun::Bindgen::${context};`;
 +
- function parseServerUrl(
-   target: string | URL,
-   adapter: Adapter,
-@@ -392,7 +419,7 @@ function parseServerUrl(
-     const value = target.includes("://") ? target : `${adapter}://${target}`;
-     try {
-       url = new URL(value);
--    } catch (e) {
-+    } catch {
-       // `new URL()` refuses credentials or a port without a host. libpq takes the host from elsewhere.
-       const start = value.indexOf("://") + 3;
-       let end = start;
-@@ -403,13 +430,18 @@ function parseServerUrl(
-         if (withHost) return [withHost, ""];
-       }
+ function cppSourceForDictionary(type: DictionaryType): string {
+   if (!type.accepted) return "";
+   let nameIndex = 0;
+@@ -470,7 +473,7 @@ function cppSourceForDictionary(type: DictionaryType): string {
+     );
+     const qualified = `${type.name}.${member.name}`;
+     const lines = [
+-      `[[maybe_unused]] auto ctx${i} = Bun::Bindgen::LiteralConversionContext { ${asciiLiteral(qualified)} };`,
++      cppStaticContext(`ctx${i}`, `LiteralConversionContext { ${asciiLiteral(qualified)} }`),
+       `JSC::JSValue value${i} = ${first}`,
+       ...others.map(read => `if (value${i}.isUndefined()) {\n${indent(`value${i} = ${read}`, 4)}\n}`),
+     ];
+@@ -479,8 +482,15 @@ function cppSourceForDictionary(type: DictionaryType): string {
+     ctx${i}.throwRequired(*globalObject, scope);
+     return;
+ }`);
+-    lines.push(member.type.cppConvertInto(`result.${member.fieldName}`, `value${i}`, `ctx${i}`, qualified));
+-    if (member.type.conversionThrows) lines.push("RETURN_IF_EXCEPTION(scope, void());");
++    lines.push(
++      member.type.cppConvertInto(
++        `result.${member.fieldName}`,
++        `value${i}`,
++        `ctx${i}`,
++        qualified,
++        "RETURN_IF_EXCEPTION(scope, void());",
++      ),
++    );
+     return `    {\n${indent(lines.join("\n"), 8)}\n    }`;
+   });
+   const count = type.names.length;
+@@ -490,7 +500,7 @@ template<> void Bun::Bindgen::convertDictionaryInto<${type.cpp}>(JSC::JSGlobalOb
+     auto* globalObject = &lexicalGlobalObject;
+     auto& vm = JSC::getVM(globalObject);
+     auto scope = DECLARE_THROW_SCOPE(vm);
+-    [[maybe_unused]] auto ctx = Bun::Bindgen::LiteralConversionContext { ${asciiLiteral(type.name)} };
++    ${cppStaticContext("ctx", `LiteralConversionContext { ${asciiLiteral(type.name)} }`)}
+     auto* object = value.getObject();
+ ${
+   type.nonObjectAsEmpty
+@@ -551,10 +561,21 @@ const overloadSuffix = (fn: FunctionDefinition, signature: Signature) =>
+ const thunkSymbol = (fn: FunctionDefinition, signature: Signature) =>
+   `Bun__Bindgen__${fn.origin!.namespace}__${fn.name.replace(/^_+/, "")}${overloadSuffix(fn, signature)}`;
  
-+      // The error of `new URL()` has the whole string.
-+      const input = withoutSecrets(value);
-       if (adapterOption && value.includes("sqlite")) {
-         throw new Error(
--          `Invalid URL '${value}' for ${adapterOption}. Did you mean to specify \`{ adapter: "sqlite" }\`?`,
--          { cause: e },
-+          `Invalid URL '${input}' for ${adapterOption}. Did you mean to specify \`{ adapter: "sqlite" }\`?`,
-         );
-       }
--      throw e;
-+      
+-/** Lines that declare `variable` as what `value` converts to. */
+-function cppDeclareConverted(type: Type, variable: string, value: string, ctx: string, name: string): string[] {
+-  if (!type.convertsInPlace) return [`auto ${variable} = ${type.cppConvert(value, ctx, name)};`];
+-  return [`${implementationType(type)} ${variable};`, ...type.cppConvertInto(variable, value, ctx
 ```
 
-**File**: `src/js/internal/sql/pool.ts` (modified, +41/-9)
+**File**: `src/codegen/bindgen-lib-internal.ts` (modified, +163/-63)
 ```diff
-@@ -207,7 +207,7 @@ class PooledConnection<ConnectionHandle extends NativeConnection = any> {
-       return false;
-     }
-     // an explicit connectionTimeout of 0 disables the connect timer, and with it the retry budget
--    const connectionTimeout = adapter.connectionInfo.connectionTimeout ?? 30 * 1000;
-+    const connectionTimeout = $getByIdDirect(adapter.connectionInfo, "connectionTimeout") ?? 30 * 1000;
-     return connectionTimeout > 0 && monotonicNowMs() - this.connectStartedAt < connectionTimeout;
-   }
- 
-@@ -336,7 +336,7 @@ function sameSettings(a: BaseSQLAdapter<any, any>, b: BaseSQLAdapter<any, any>):
-       return false;
-     }
-   }
--  return x.transform?.column.from === y.transform?.column.from;
-+  return $getByIdDirect(x, "transform")?.column.from === $getByIdDirect(y, "transform")?.column.from;
+@@ -145,6 +145,8 @@ export function indent(text: string, by: number): string {
+     .join("\n");
  }
  
- /// bun --hot only. This module and the open connections outlive a reload, the `new SQL()` of the program does not.
-@@ -413,7 +413,8 @@ async function createPooledConnectionHandle<ConnectionHandle>(
-     foundRows,
-     channelBinding,
-     transform,
--  } = options;
-+    // Not what `Object.prototype` has for a key that is not set.
-+  } = { __proto__: null, ...options } as unknown as typeof options;
- 
-   // What script of a disposed Bun.ModuleGraph starts does not start: nothing is dialed, and what
-   // waits for this connection waits.
-@@ -503,6 +504,11 @@ abstract class BaseSQLAdapter<ConnectionHandle extends NativeConnection, QueryHa
-   public saslprep: boolean | undefined;
-   /// One login is finding out which form the server has. Nothing else is dialed until it has settled.
-   #dialsHeld = false;
-+  /// The most connections it has had open at once since a dial last failed, when that was, and how often it has
-+  /// asked for one more since the last login, see #dialForQueued().
-+  #most = 0;
-+  #refusedAt = -Infinity;
-+  #tries = 0;
-   public readonly generation: number = hotReloadGeneration();
-   /// see retireUnusedPools()
-   public asked: boolean = false;
-@@ -553,7 +559,9 @@ abstract class BaseSQLAdapter<ConnectionHandle extends NativeConnection, QueryHa
-     this.connectionInfo = connectionInfo;
-     this.ownerGraphFrame = AsyncContextFrame.currentGraphFrame();
-     this.callbackAsyncContext =
--      connectionInfo.onconnect || connectionInfo.onclose ? AsyncContextFrame.current() : undefined;
-+      $getByIdDirect(connectionInfo, "onconnect") || $getByIdDirect(connectionInfo, "onclose")
-+        ? AsyncContextFrame.current()
-+        : undefined;
-     if (this.generation !== -1) {
-       hotPools.add(this);
-     }
-@@ -563,6 +571,9 @@ abstract class BaseSQLAdapter<ConnectionHandle extends NativeConnection, QueryHa
-     return this.#closing !== null;
-   }
- 
-+  /// close({ timeout: 0 }) was called: the caller gave up on what is queued.
-+  public closedAtOnce: boolean = false;
++const cppThenCheck = (statement: string, check: string) => (check ? `${statement}\n${check}` : statement);
 +
-   abstract array(values: any[], typeNameOrID?: number | ArrayType): SQLArrayParameter;
-   abstract getDistributedTransactionCommands(name: string): TransactionCommands | null;
- 
-@@ -649,7 +660,9 @@ abstract class BaseSQLAdapter<ConnectionHandle extends NativeConnection, QueryHa
+ /** C++ statements that engage `optional`, a `std::optional`, then fill what it holds: `fill` is given a name for that. */
+ export function cppEmplace(optional: string, fill: (target: string) => string): string {
+   const [first, ...rest] = optional.split(/\W+/);
+@@ -261,9 +263,9 @@ export abstract class Type {
+   get convertsInPlace(): boolean {
+     return false;
+   }
+-  /** C++ statements that convert `value` into `target`, which names an object that was just default-constructed. */
+-  cppConvertInto(target: string, value: string, ctx: string, name: string): string {
+-    return `${target} = ${this.cppConvert(value, ctx, name)};`;
++  /** C++ statements that convert `value` into `target`, just default-constructed. `check` returns if an exception is pending and follows what can throw; a caller that returns next passes "". */
++  cppConvertInto(target: string, value: string, ctx: string, name: string, check: string): string {
++    return cppThenCheck(`${target} = ${this.cppConvert(value, ctx, name)};`, this.conversionThrows ? check : "");
    }
  
-   /// For the callers that wait. If no connection is ready, the pool is started: it dials until `max` is reached.
--  /// Otherwise it grows by one dial for each waiting caller that no dial in flight covers.
-+  /// Otherwise it grows by one dial for each waiting caller that no dial in flight covers: back to what it has had
-+  /// since a dial last failed, and by one more 20 ms after that, a pause that doubles with each such try, up to 1 s.
-+  /// A login ends it.
-   #dialForQueued() {
-     if (this.queue.length !== 0) {
-       this.#dial(this.readyConnections.size === 0);
-@@ -658,15 +671,20 @@ abstract class BaseSQLAdapter<ConnectionHandle extends NativeConnection, QueryHa
- 
-   #dial(start: boolean) {
-     const connections = this.connections;
-+    const pause = Math.min(20 * 2 ** this.#tries, 1000);
-+    const limit = start ? 0 : this.#most + (monotonicNowMs() - this.#refusedAt < pause ? 0 : 1);
-     while (
-       !this.#dialsHeld &&
-       connections.length < this.connectionInfo.max &&
-       this.#closing === null &&
--      (start || this.#connecting() < this.queue.length)
-+      (start || (connections.length < limit && this.#connecting() < this.queue.length))
-     ) {
-       if (!this.#adopt()) {
-         const connection = new PooledConnection(this);
-         connections.push(connection);
-+        if (!start && connections.length > this.#most) {
-+          this.#tries++;
-+        }
-         connection.dial();
-         if (connection.otherPassword === true && this.saslprep === undefined) {
-           this.#dialsHeld = true;
-@@ -736,7 +754,8 @@ abstract class BaseSQLAdapter<ConnectionHandle extends NativeConnection, QueryHa
-   #serveNext(): boolean {
-     const queue = this.queue;
-     let reservationsAhead = 0;
--    for (let i = 0; i < queue.length; i++) {
-+    // Behind as many reservations as there are connections nobody can be
-```
-
-**File**: `src/js/internal/sql/postgres.ts` (modified, +2/-2)
-```diff
-@@ -598,7 +598,7 @@ class ListenConnection {
-               resolve(conn);
-               this.#clearSweep();
-               this.#sweep();
--              adapter.runUserCallback(adapter.connectionInfo.onconnect, null);
-+              adapter.runUserCallback($getByIdDirect(adapter.connectionInfo, "onconnect"), null);
-             }),
-             adapter.ownerCallback(err => {
-               err ??= adapter.connectionClosedError();
-@@ -612,7 +612,7 @@ class ListenConnection {
-                 for (const entry of this.#channels.values()) entry.ready = null;
-                 this.#scheduleSweep();
-               }
--              adapter.runUserCallback(adapter.connectionInfo.onclose, err);
-+              adapter.runUserCallback($getByIdDirect(adapter.connectionInfo, "onclose"), err);
-             }),
-             undefined,
-             login,
-```
-
-**File**: `src/js/internal/sql/query.ts` (modified, +2/-0)
-```diff
-@@ -129,6 +129,8 @@ class Query<T, Handle extends BaseQueryHandle<any>> extends PublicPromise<T> {
-     }
- 
-     if (status & SQLQueryStatus.cancelled) {
-+      // as in onQuerySettled()
-+      $pokePromiseAsHandled(this);
-       this.reject(this[_adapter].queryCancelledError());
-       return;
-     }
-```
-
-**File**: `src/js/internal/sql/shared.ts` (modified, +4/-2)
-```diff
-@@ -393,12 +393,12 @@ class QueryBuilder {
+   abstract layout(): Layout;
+@@ -276,7 +278,7 @@ export abstract class Type {
+     return expr;
    }
  
-   undefinedValue(): unknown {
--    return this.adapter.connectionInfo.transform?.undefined;
-+    return $getByIdDirect(this.adapter.connectionInfo, "transform")?.undefined;
+-  /** The type of a field of a returned dictionary. */
++  /** The type of a member of a returned dictionary, and of an alternative of a returned union. */
+   rustResultFieldType(scope: RustScope): string {
+     return this.rustType(scope);
    }
+@@ -435,15 +437,22 @@ export class IntegerType extends PrimitiveType {
+   }
+ }
  
-   identifier(name: string | number): string {
-     const { quote, connectionInfo } = this.adapter;
--    const to = connectionInfo.transform?.column.to;
-+    const to = $getByIdDirect(connectionInfo, "transform")?.column.to;
-     name = String(to === undefined ? name : to(String(name)));
-     if (name.includes("\0")) {
-       throw $ERR_INVALID_ARG_VALUE("name", name, "must not contain null bytes");
-@@ -607,6 +607,8 @@ export interface DatabaseAdapter<Connection, ConnectionHandle, QueryHandle> exte
+-export class BigIntResultType extends Type {
++/** What a body returns and nothing takes, so it has no C++ type. */
++export abstract class ResultType extends Type {
+   readonly idlType = "";
+-  readonly tsType = "bigint";
+-  layout(): Layout {
+-    return { size: 8, align: 8 };
++  /** What a schema that takes one is told. */
++  abstract readonly refusal: string;
++  layout(): never {
++    throw new TypeError(this.refusal);
+   }
+-  rustExternType(): string {
+-    return "u64";
++  rustExternType(): never {
++    return this.layout();
+   }
++}
++
++export class BigIntResultType extends ResultType {
++  readonly tsType = "bigint";
++  readonly refusal = ".asBigInt is a result; an argument is b.u64.allowBigInt";
+   rustType(): string {
+     return "u64";
+   }
+@@ -505,6 +514,11 @@ export class DoubleType extends PrimitiveType {
+   constructor(idlType = "Bun::Bindgen::IDLStrictDouble", valueKinds: ValueKinds = ["number"]) {
+     super(idlType, valueKinds === "any" ? "any" : "number", "f64", 8, valueKinds);
+   }
++  /** As a result: a `Date` with that time value. */
++  get asDate(): DateResultType {
++    assert(this.idlType === "Bun::Bindgen::IDLStrictDouble", ".asDate follows b.f64");
++    return new DateResultType();
++  }
+   /** `ToNumber`: WebIDL's `unrestricted double`. */
+   get loose(): LooseDoubleType {
+     return new LooseDoubleType("WebCore::IDLUnrestrictedDouble", "any");
+@@ -518,6 +532,17 @@ export class LooseDoubleType extends DoubleType {
+   }
+ }
  
-   isConnected(): boolean;
-   get closed(): boolean;
-+  /** close({ timeout: 0 }) was called: the caller gave up on what is queued. */
-+  readonly closedAtOnce?: boolean;
++export class DateResultType extends ResultType {
++  readonly tsType = "Date";
++  readonly refusal = ".asDate is a result";
++  rustType(): string {
++    return "f64";
++  }
++  rustToJS(value: string): string {
++    return `bindgen::to_js::date(heap, ${value})`;
++  }
++}
++
+ /** Only as a union alternative or a return type. */
+ export class UnitType extends Type {
+   readonly idlType: string;
+@@ -591,6 +616,11 @@ export class StringType extends Type {
+   get utf8(): Utf8Type {
+     return new Utf8Type(this.valueKinds === "any");
+   }
++  /** As a result: the JS string, which the body made. */
++  get local(): LocalStringResultType {
++    assert(this.idlType === "Bun::Bindgen::IDLStrictString", ".local follows b.string");
++    return new LocalStringResultType();
++  }
+   get nullRepresentation() {
+     return "pointer" as const;
+   }
+@@ -618,6 +648,20 @@ export class StringType extends Type {
+   }
+ }
  
-   readonly supportsReservedConnections: boolean;
-   /** `true`: `onConnected` was still queued and will never run. */
++export class LocalStringResultType extends ResultType {
++  readonly tsType = "string";
++  readonly refusal = ".local is a result";
++  get holdsJSValue(): boolean {
++    return true;
++  }
++  rustType(): string {
++    return "bindgen::JsLocal<'a, bun_jsc::JSString>";
++  }
++  rustToJS(value: string): string {
++    return `bindgen::to_js::any(heap, ${value})`;
++  }
++}
++
+ /** UTF-8 to keep: the JS string's own buffer, shared, when it is 8-bit ASCII, otherwise a transcoded copy. */
+ export class OwnedUtf8Type extends StringType {
+   get loose(): never {
+@@ -674,8 +718,11 @@ export class Utf8Type extends Type {
+   get convertsInPlace(): boolean {
+     return true;
+   }
+-  cppConvertInto(target: string, value: string, ctx: string): string {
+-    return `WebCore::Converter<${this.idlType}>::convertInto(*globalObject, ${value}, ${ctx}, ${target}, "a string"_s);`;
++  cppConvertInto(target: string, value: string, 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1930,35 +1514,28 @@ pool still dials until `max`, and reads no clock and no m
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. `bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun 
+## X. Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to b
 
 **RULE**:
-When implementing operations in `docs/format/index.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/implementing-jsc-classes-rust/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bb5dc19`: `bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun lint` and `bun fmt` (#45800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3880151f`: Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to bindgen schemas (#45888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/format/index.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/implementing-jsc-classes-rust/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Every `.gitignore` in the repository counts, whichever directory you run `bun fmt` from. Outside a repository, those in the current directory and below it count. With a Prettier config, only the `.gitignore` in the current directory does, because that's the only one Prettier reads.
-
-- A comment directly above an import moves with it. Above the first import, comments about the whole file stay at the top: `// @ts-nocheck`, `/// <reference ... />`, `/* eslint-disable */`, `// @flow`, `/** @jsxImportSource ... */`, a license.
-If a file has both staged and unstaged changes, Bun looks at the staged version, which is what the commit gets. It doesn't write such a file, because staging it again would commit the rest. If the staged version needs formatting, Bun names the file and exits with code `2`.
-
-Config files, such as `bunfig.toml` and `.prettierrc`, are read from disk.
-If `package.json` has a `fmt` script, `bun fmt` runs that script. Inside the script, `bun fmt` is the formatter. If `package.json` has `"fmt"` in it but can't be parsed, as in the middle of a merge, `bun fmt` can't tell whether that is a script: it formats nothing and exits with code 2.
+`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity` or `estimatedSize` yet.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-A file with both staged and unstaged changes isn't written, because staging it again would commit the rest. Bun names the file and exits with code `2`.
-If `package.json` has a `fmt` script, `bun fmt` runs that script. Inside the script, `bun fmt` is the formatter.
+`src/codegen/bindgen.ts` (`*.bind.ts`, `docs/project/bindgen.mdx`) is replacing this generator: typed arguments, and the struct stored inside the JS object. Use it for a class whose struct only the JS object owns. It does not do ref-counted or shared structs, `hasPendingActivity`, `estimatedSize` or writing to a cached getter's slot yet.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bb5dc19` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3880151f` are properly handled with clean fallback behavior.

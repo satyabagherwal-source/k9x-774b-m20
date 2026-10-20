@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T00:31:56.374Z",
-  "total_cycles_completed": 3573,
-  "total_learnings_persisted": 3573,
-  "total_rules_promoted": 2729,
+  "last_updated": "2026-10-20T00:38:09.406Z",
+  "total_cycles_completed": 3576,
+  "total_learnings_persisted": 3576,
+  "total_rules_promoted": 2732,
   "history": [
-    {
-      "timestamp": "2026-10-19T18:03:04.487Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:03:58.682Z",
-      "repository": "vuetifyjs/vuetify",
-      "learningId": "learn-github-vuetifyjs-vuetify",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:10:15.430Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T18:10:15.623Z",
       "repository": "melbahja/seo",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T00:31:56.374Z",
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:38:04.825Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:38:06.852Z",
+      "repository": "digitalbazaar/jsonld.js",
+      "learningId": "learn-github-digitalbazaar-jsonld-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:38:09.406Z",
+      "repository": "jtrivedi/Wave",
+      "learningId": "learn-github-jtrivedi-wave",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

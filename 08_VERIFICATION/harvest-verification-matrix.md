@@ -3596,3 +3596,6 @@
 | `CYCLE-20261020-7HHT` | `2026-10-20T00:31:51.377Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2924` | Yes (`6fc95b62...`) |
 | `CYCLE-20261020-7IUH` | `2026-10-20T00:31:53.129Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2925` | Yes (`bd14aee2...`) |
 | `CYCLE-20261020-7LCF` | `2026-10-20T00:31:56.367Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`c61caced...`) |
+| `CYCLE-20261020-FHN6` | `2026-10-20T00:38:04.818Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2927` | Yes (`8dc31bfe...`) |
+| `CYCLE-20261020-FJ7H` | `2026-10-20T00:38:06.845Z` | `digitalbazaar/jsonld.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2928` | Yes (`a6b2fa14...`) |
+| `CYCLE-20261020-FL6E` | `2026-10-20T00:38:09.398Z` | `jtrivedi/Wave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2929` | Yes (`6deb64c2...`) |

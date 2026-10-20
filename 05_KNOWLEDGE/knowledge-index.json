@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:31:56.311Z",
-  "total_verified_learnings": 984,
+  "last_updated": "2026-10-20T00:38:09.335Z",
+  "total_verified_learnings": 986,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26565,22 +26565,35 @@
     "learn-github-jtrivedi-wave": {
       "learning_id": "learn-github-jtrivedi-wave",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jtrivedi-wave",
+      "source": "jtrivedi/Wave",
+      "repository": "jtrivedi/Wave",
       "slug": "jtrivedi-wave",
       "platform": "github",
       "source_url": "https://github.com/jtrivedi/Wave",
-      "source_version": "HEAD",
-      "content_hash": "eababe6cdaeeb95b19e11db3fb9a8f5c77b8aa0a88b5571904e3637753d363c9",
+      "source_version": "27b7e1d2",
+      "content_hash": "6deb64c2e847463e4801ed9b14880219ff41c5f2e1c69cca68533d8095915cd4",
       "dossier_path": "07_PROJECT_LEARNING/jtrivedi-wave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jtrivedi-wave-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2929,
+          "title": "Merge pull request #23 from jtrivedi/janum/fix-block-retain-cycle",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.734Z"
+      "verified_at": "2026-10-20T00:38:09.323Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-juanpe-about-swiftui": {
       "learning_id": "learn-github-juanpe-about-swiftui",
@@ -34987,14 +35000,19 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "91e7e3b1",
-      "content_hash": "64ffd42ad0d294c3a53c7ff971a0272281f08c92e82e9fca8e834912aeb1c598",
+      "source_version": "3880151f",
+      "content_hash": "8dc31bfed5670fe909a5415ec9c88a2558e1ffbbefe079c52109f0c16ef9cb1c",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
         {
           "number": 2491,
           "title": "`bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2927,
+          "title": "Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to b",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35003,7 +35021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:28:47.314Z",
+      "verified_at": "2026-10-20T00:38:04.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95339,6 +95357,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:31:56.300Z"
+    },
+    "rule-2927": {
+      "learning_id": "rule-2927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2927,
+      "title": "Move `Crypto`, `TextDecoder`, `Bun.FileSystemRouter` and three more classes to b",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "3880151f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:38:04.761Z"
+    },
+    "learn-github-digitalbazaar-jsonld-js": {
+      "learning_id": "learn-github-digitalbazaar-jsonld-js",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "digitalbazaar/jsonld.js",
+      "repository": "digitalbazaar/jsonld.js",
+      "slug": "digitalbazaar-jsonld.js",
+      "platform": "github",
+      "source_url": "https://github.com/digitalbazaar/jsonld.js",
+      "source_version": "7a93609e",
+      "content_hash": "a6b2fa1467beb3bbd77f21c4e5ef54df109e88a16a2c0fb64dc33e5929e76d08",
+      "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-jsonld.js-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-jsonld.js-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2928,
+          "title": "Add fix to changelog.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:38:06.777Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2928": {
+      "learning_id": "rule-2928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2928,
+      "title": "Add fix to changelog.",
+      "source_url": "https://github.com/digitalbazaar/jsonld.js",
+      "source_version": "7a93609e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:38:06.777Z"
+    },
+    "rule-2929": {
+      "learning_id": "rule-2929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2929,
+      "title": "Merge pull request #23 from jtrivedi/janum/fix-block-retain-cycle",
+      "source_url": "https://github.com/jtrivedi/Wave",
+      "source_version": "27b7e1d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:38:09.323Z"
     }
   },
   "aliases": {
