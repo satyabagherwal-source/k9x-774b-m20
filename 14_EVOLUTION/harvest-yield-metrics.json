@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:00:37.922Z",
-  "total_cycles_completed": 3816,
-  "total_learnings_persisted": 3816,
-  "total_rules_promoted": 3025,
+  "last_updated": "2026-10-20T14:10:21.234Z",
+  "total_cycles_completed": 3820,
+  "total_learnings_persisted": 3820,
+  "total_rules_promoted": 3030,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:03:14.155Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:03:18.314Z",
-      "repository": "google/closure-compiler",
-      "learningId": "learn-github-google-closure-compiler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:03:20.253Z",
-      "repository": "Shpigford/chops",
-      "learningId": "learn-github-shpigford-chops",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:03:25.472Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:09:31.324Z",
       "repository": "pointfreeco/sqlite-data",
@@ -1403,6 +1375,34 @@
       "repository": "beclab/Olares",
       "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:07:25.228Z",
+      "repository": "DylanVann/react-native-fast-image",
+      "learningId": "learn-github-dylanvann-react-native-fast-image",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:07:26.903Z",
+      "repository": "openkruise/kruise",
+      "learningId": "learn-github-openkruise-kruise",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:07:33.299Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:10:21.234Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

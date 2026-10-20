@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `d9eea49a`  
+> **Source Version**: `90d7dd75`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:12:56.162Z  
+> **Timestamp**: 2026-10-20T14:07:32.894Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:12:56.012Z  
+> **Harvest Timestamp**: 2026-10-20T14:07:32.077Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9471 stars
+- **Stars / Engagement**: 9472 stars
 
 ---
 
@@ -1238,11 +1238,11 @@ impl<'a, T: BitChunk> Iterator for BitChunksExactMut<'a, T> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20771** (2026-10-19): **ci: fix metachaos FUSE disconnects on statx**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fix recurring post-release metachaos failures: the toda bundled with Chaos Mesh 2.6.3 stops its FUSE session on `FUSE_STATX`, causing snapshot/WAL IO to fail with `EEXIST` and `ENOTCONN`.  - Replace only toda with checksum-verified v0.3.0 in a derived chaos-daemon image. Keep Chaos Mesh and fault-injection parameters unchanged. - Bundle a private glibc runtime for toda, leaving the daemon's system libraries unchanged, and wait for daemonset rollout before testing. - CI-only change; no meta implementation changes or temporary validation workflow included.  ## Tests  - [ ] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_ - [x] [Complete metachaos passed](https://github.com/databendlabs/databend/actions/runs/39198519992/job/117886405026): reused failing-release binaries, two injection/removal rounds, verifier `10 × 15000` completed. [Diagnostic logs](https://github.com/databendlabs/databend/actions/runs/39198519992/artifacts/12162624345) contain no original FUSE/snapshot errors. - [x] Actual-image FUSE regression: three mount/recovery rounds, 100 Rust snapshot IO cycles each. Old toda reproduces the failure. - [x] `bash -n`, `shfmt`, `git diff --check`.  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue)  ## AI assistance  - AI usage: An AI coding agent investigated, drafted the fix, ran validation, and prepared this 
+- **Issue #20797** (2026-10-20): **fix(query): reclaim metadata of dropped tables with retired engines**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  After #20558 removed the `DELTA` table engine, existing `DELTA` tables were left behind in metadata. On builds without #20663, `VACUUM ALL` failed with `Unknown table engine DELTA`, because `list_tables` built the engine for every table. #20663 fixed that hard failure by skipping tables it cannot load during listing.  This PR fixes the two problems that remain:  1. **Dropped tables with a removed engine are never cleaned.** `VACUUM DROP TABLE` / `VACUUM DROPPED OBJECTS` calls `get_table_by_info` for every table that is not fuse-backed. For `DELTA` this always fails, so the table metadata, and the metadata of its database, is kept and a warning is added on every run.    - Add `RETIRED_TABLE_ENGINES` (currently only `DELTA`) and `is_retired_engine()` in `table_keys.rs`.    - In `VacuumDropTablesInterpreter`, dropped tables with a retired engine skip the engine check and get metadata-only GC. This is safe because `DELTA` was a read-only external engine, so Databend never owned any data files for it.    - Engines that are not known and not on the retired list are still kept, with a warning, as before. The existing test for this behavior does not change. 2. **The error did not say which table.** `Unknown table engine X` now reads `Unknown table engine X for table 'db'.'tbl' (id: N)`. It uses the table name when `desc` is empty. This improves the `load_tables` warning, the 
 
-- **Issue #20746** (2026-10-19): **Iceberg tables: DELETE, UPDATE, MERGE, partition transforms, schema/partition/sort evolution, refs, maintenance**
-  *Symptoms*: ## Summary  These are the Iceberg operations that Databend refuses on a REST-catalog Iceberg table today. The bench that found them (https://github.com/djouallah/lakehouse_benchmark, Iceberg support tab) asks each engine the same questions against Microsoft Fabric OneLake's Iceberg REST catalog. The silent no-ops and panics are filed separately as bugs (#20735–#20742); this issue is the plain "not implemented" list.  Today Databend creates tables (unstaged, the catalog assigns the location), INSERTs with `fast_append` (concurrent appends retry correctly), creates and drops namespaces, and drops tables with their files.  | Operation | What Databend returns | |---|---| | **DELETE** (position or equality deletes, merge-on-read) | `Unimplemented. Code: 1002, Text = table ..., engine type iceberg, does not support DELETE.` | | **UPDATE** | `... engine type iceberg, does not support UPDATE.` | | **MERGE INTO** (matched UPDATE + not-matched INSERT) | `Unimplemented. Code: 1002, Text = Table ... does not support MERGE.` | | **Partition transforms** `bucket`, `truncate`, `year`/`month`/`day`/`hour` in `PARTITION BY` | `BadArguments. Code: 1006, Text = Iceberg PARTITION BY only supports column identifiers, got `bucket(4, id)`.` | | **RENAME COLUMN** | `TableEngineNotSupported. Code: 1302, Text = ... engine is iceberg that doesn't support rename column name.` | | **Type promotion** (int → long, `ALTER TABLE ... MODIFY COLUMN c BIGINT`) | `Internal. Code: 1001, Text = [FUSE-TABLE] Expect
+- **Issue #20792** (2026-10-20): **fix(version): remove nightly suffix from binary versions**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Remove the trailing `-nightly` suffix from Databend's binary version at the shared build-time entry point. For example, a release version of `v1.2.952-nightly` now produces `DATABEND_GIT_SEMVER=v1.2.952` and commit versions beginning with `v1.2.952-<sha>`.  - Normalize versions from both `DATABEND_RELEASE_VERSION` and Git tag discovery before exporting `DATABEND_GIT_SEMVER`. - Keep the internal `DATABEND_SEMVER` and externally displayed Query/Meta versions consistent. - Preserve release tags, other prerelease suffixes such as `-p2` and `-rc.1`, and Rust nightly toolchain identifiers. - Add normalization coverage and checks for the internal semantic version and Query/Meta commit-version prefixes.  Compatibility: consumers of binary version strings will no longer see `-nightly` for nightly-tagged builds. No persisted-data migration or release-tag changes are required.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  Local validation:  ```sh DATABEND_RELEASE_VERSION=v1.2.952-nightly cargo test -p databend-common-building -p databend-common-version --lib cargo clippy -p databend-common-building -p databend-common-version --all-targets -- -D warnings rustfmt --check --edition 2024 src/common/building/src/lib.rs src/common/version/src/lib.rs git diff --check ```  Full workspace and SQL logic tests w
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1259,943 +1259,635 @@ impl<'a, T: BitChunk> Iterator for BitChunksExactMut<'a, T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `085b9b61` (2026-10-15)
-**Commit Message**: refactor: meta: make metactl RPC timeouts configurable (#20706)
+### Incident Patch 1: `5c09ab04` (2026-10-20)
+**Commit Message**: fix(query): preserve original pipeline errors before interruption (#20750)
 
-# Summary
+* fix(query): preserve original pipeline errors before interruption
 
-Raise `new_grpc_client`'s default timeout from 2s to 60s. Log slow or
-failed Lua client calls and use a single-thread Tokio runtime.
+* fix(query): run memory diagnostics outside finished_error lock
 
-# Details
+QueryPipelineExecutor::finish() ran memory limit diagnostics while it held
+finished_error. The diagnostics lock DataExchangeManager::queries_coordinator,
+and DataExchangeManager::shutdown_query calls finish() with that lock held,
+which is an ABBA deadlock between an OOM worker and StatisticsSender.
 
-Loaded leaders can exceed the old 2s timeout while still committing
-writes. Premature retries add load and delay recovery.
+Save the first error under the lock, release it, interrupt the graph, then
+collect diagnostics in an unlimited memory scope so that a diagnostics
+allocation on an over-limit thread cannot panic before workers are stopped.
 
-`metactl.new_grpc_client(address[, opts])` supports client overrides
-while inheriting configured credentials and TLS. Duration options use
-seconds and reject overflow or values that round to zero.
-
-`lua_call` logs failures and successful calls taking at least 500ms
-at WARN, with elapsed time, so overload is visible at normal log levels.
-
-Lua tasks use `spawn_local` on a `LocalSet`. One Tokio thread avoids
-CPU oversubscription when several benchmark processes share a host.
-
-Example:
-
-```lua
-metactl.new_grpc_client("127.0.0.1:9191", {timeout = 120})
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `src/query/service/src/pipelines/executor/query_pipeline_executor.rs` (modified, +184/-11)
 ```diff
-@@ -3873,6 +3873,7 @@ dependencies = [
-  "databend-meta-test-harness",
-  "display-more 0.2.6",
-  "futures",
-+ "log",
-  "mlua",
-  "prost 0.14.3",
-  "raft-log",
-```
-
-**File**: `src/meta/binaries/metactl/main.rs` (modified, +9/-2)
-```diff
-@@ -672,9 +672,16 @@ enum CtlCommand {
- ///   ["raft_log",{"Logs":{"key":0,"value":{"log_id":{"leader_id":{"term":0,"node_id":0},"index":0},"payload":{"Membership":{"configs":[[1]],"nodes":{"1":{}}}}}}}]
- ///   ["raft_log",{"Logs":{"key":1,"value":{"log_id":{"leader_id":{"term":1,"node_id":0},"index":1},"payload":"Blank"}}}]
- ///   ```
--#[tokio::main]
--async fn main() -> anyhow::Result<()> {
-+#[allow(clippy::disallowed_methods, clippy::disallowed_types)]
-+fn main() -> anyhow::Result<()> {
-     let app = App::parse();
-+
-+    let mut builder = tokio::runtime::Builder::new_current_thread();
-+    builder.enable_all();
-+    builder.build()?.block_on(run(app))
-+}
-+
-+async fn run(app: App) -> anyhow::Result<()> {
-     let client_config = app.client_config.load()?;
+@@ -259,21 +259,36 @@ impl QueryPipelineExecutor {
+     pub fn finish<C>(&self, cause: Option<ErrorCode<C>>) {
+         let cause = cause.map(|err| err.with_context("Pipeline executor finished"));
  
-     let log_config = LogConfig {
-```
-
-**File**: `src/meta/control/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@ databend-meta = { workspace = true }
- databend-meta-admin = { workspace = true }
- databend-meta-client = { workspace = true }
- databend-meta-runtime = { workspace = true }
-+log = { workspace = true }
- 
- anyhow = { workspace = true }
- clap = { workspace = true }
-```
-
-**File**: `src/meta/control/src/lua_support.rs` (modified, +225/-19)
-```diff
-@@ -21,6 +21,7 @@ use std::time::Duration;
- use databend_meta_client::ClientHandle;
- use databend_meta_client::DEFAULT_GRPC_MESSAGE_SIZE;
- use databend_meta_client::MetaGrpcClient;
-+use databend_meta_client::RpcClientTlsConfig;
- use databend_meta_client::errors::CreationError;
- use databend_meta_client::types::ConditionResult;
- use databend_meta_client::types::TxnCondition;
-@@ -44,6 +45,18 @@ use crate::grpc_client_config::GrpcClientConfig;
- const LUA_UTIL: &str = include_str!("../lua/lua_util.lua");
- const ZIPF_LOAD_GENERATOR: &str = include_str!("../lua/zipf_load_generator.lua");
- 
-+/// Default gRPC RPC timeout for Lua-created clients, in seconds. The Lua
-+/// `new_grpc_client(address[, opts])` binding overrides it via `opts.timeout`.
-+/// It is deliberately generous: under heavy concurrent load the leader's commit
-+/// latency can reach several seconds, and too short a timeout turns overload
-+/// into congestion collapse — the client gives up on a write the server is
-+/// actually committing, then blind-retries, amplifying the load.
-+const DEFAULT_CLIENT_TIMEOUT_SECS: f64 = 60.0;
-+
-+/// Client RPC calls at least this slow are logged at WARN, so slow paths are
-+/// visible without turning on debug logging for every call.
-+const SLOW_CLIENT_OP: Duration = Duration::from_millis(500);
-+
- fn invalid_input(path: &str, message: impl std::fmt::Display) -> Error {
-     Error::RuntimeError(format!("{path}: {message}"))
- }
-@@ -260,12 +273,25 @@ where
-     F: FnOnce() -> Fut,
-     Fut: Future<Output = Result<T, E>>,
- {
--    match f().await {
--        Ok(result) => match lua.to_value(&result) {
--            Ok(v) => Ok((Some(v), None)),
--            Err(e) => Ok((None, Some(format!("Lua conversion error: {e}")))),
--        },
--        Err(e) => Ok((None, Some(format!("{api_err}: {e}")))),
-+    let start = std::time::Instant::now();
-+    let outcome = f().await;
-+    let elapsed = start.elapsed();
-+    match outcome {
-+        Ok(result) => {
-+            if elapsed >= SLOW_CLIENT_OP {
-+                log::warn!("lua client op `{api_err}` slow: took {elapsed:?}");
-+            } else {
-+                log::debug!("lua client op `{api_err}` ok: took {elapsed:?}");
-+            }
-+            match lua.to_value(&result) {
-+                Ok(v) => Ok((Some(v), None)),
-+                Err(e) => Ok((None, Some(format!("Lua conversion error: {e}")))),
-+            }
-+        }
-+        Err(e) => {
-+            log::warn!("lua client op `{api_err}` failed after {elapsed:?}: {e}");
-+            Ok((None, Some(format!("{api_err}: {e}"))))
-+        }
-     }
- }
- 
-@@ -380,18 +406,119 @@ impl UserData for LuaTask {
-     }
- }
- 
-+/// Read an optional duration field expressed in (possibly fractional) seconds.
-+///
-+/// Returns `Ok(None)` when the field is absent. A present value must be finite
-+/// and representable as a nonzero `Duration`.
-+fn read_duration_secs(table: &Table, path: &str, field: &str) -> mlua::Result<Option<Duration>> {
-+    let Some(secs) = table.raw_get::<Option<f64>>(field)? else {
-+        return Ok(None);
-+    };
-+    let invalid_duration = || {
-+        invalid_input(
-+            path,
-+            format!(
-+                "field `{field}` must be a positive, representable duration in seconds, got {secs}"
-+            ),
-+        )
-+    };
-+    let duration = Duration::try_from_secs_f64(secs).map_err(|_| invalid_duration())?;
-+    if duration.is_zero() {
-+        return Err(invalid_duration());
-+    }
-+    Ok(Some(duration))
-+}
-+
-+/// Options for `metactl.new_grpc_client(address[, opts])`, parsed from an
-+/// optional Lua table. Every field is optional; omitted fields keep the
-+/// defaults in [`GrpcClientOptions::new`]. Unknown fields are rejected.
-+struct GrpcClientOptions {
-+    username: String,
-+    password: String,
-+    timeout: Option<Duration>,
-+    auto_sync_interval: Option<Duration>,
-+    max_msg_size: usize,
-+    tls: Option<RpcClientTlsConfig>,
-+}
-+
-+impl GrpcClientOptions {
-+    fn new(client_config: &GrpcClientConfig) -> Self {
-+        Self {
-+            username: client_config.auth.username().to_string(),
-+            password: client_config.auth.expose_password().to_string(),
-+            timeout: Some(Duration::from_secs_f64(DEFAULT_CLIENT_TIMEOUT_SECS)),
-+            auto_sync_interval: Some(Duration::from_secs(1)),
-+            max_msg_size: DEFAULT_GRPC_MESSAGE_SIZE,
-+            tls: client_config.tls.clone(),
-+        }
-+    }
-+
-+    const PATH: &'static str = "new_grpc_client options";
-+    const FIELDS: &'static [&'static str] = &[
-+        "username",
-+        "password",
-+        "timeout",
-+        "auto_sync_interval",
-+        "max_msg_size",
-+    ];
-+
-+    /// Parse the optional Lua options table, layering provided fields over the
-+    /// defaults.
-+    fn from_lua(options: Option<Table>, client_config: &GrpcClientConfig) -> mlua::Result<Self> {
-+        let mut opts = Self::new(client_config);
-+        let Some(table) = options else {
-+            return Ok(opts);
-+   
-```
-
----
-
-### Incident Patch 2: `deb7c251` (2026-10-19)
-**Commit Message**: fix(query): clean up cancelled lock waits and FlightSQL statements (#20734)
-
-Stop the lease keeper when the last LockHolder owner is dropped so
-cancelled or externally timed-out acquisitions cannot keep renewing
-abandoned lock revisions.
-
-Decode FlightSQL close handles as binary UUIDs and propagate session and
-malformed-handle errors. Return NotFound for closed statements and release
-cache read guards before awaiting execution so Close can proceed safely.
-
-Add regression coverage for cancellation, normal lock release, prepared
-statement cleanup, and closing statements through the Arrow SDK.
-
-Leave prepared-statement planning and session expiry behavior unchanged.
-
-fix
-
-fix
-
-**File**: `src/query/service/src/locks/coordination_manager.rs` (modified, +1/-4)
-```diff
-@@ -217,10 +217,7 @@ impl CoordinationManager {
-                     revision,
-                 ))))
+-        let mut finished_error = self.finished_error.lock();
+-        if let Some(cause) = cause {
+-            // We only save the cause of the first error.
+-            if finished_error.is_none() {
+-                if !self.graph.is_should_finish() {
+-                    log_memory_limit_diagnostics(&cause, "memory limit exceeded");
++        let mut diagnose_cause = None;
++        {
++            let mut finished_error = self.finished_error.lock();
++            if let Some(cause) = cause {
++                // We only save the cause of the first error. It must be saved before
++                // interrupting the graph, otherwise a sibling worker may observe the
++                // interruption and save ABORTED_QUERY first.
++                if finished_error.is_none() {
++                    if !self.graph.is_should_finish()
++                        && cause.code() == ErrorCode::MEMORY_EXCEEDS_LIMIT
++                    {
++                        diagnose_cause = Some(cause.clone());
++                    }
++                    *finished_error = Some(cause);
+                 }
+-                *finished_error = Some(cause);
              }
--            Err(error) => {
--                holder.shutdown();
--                Err(error)
--            }
-+            Err(error) => Err(error),
+         }
+ 
+-        drop(finished_error);
+         self.global_tasks_queue.finish(self.workers_condvar.clone());
+         self.graph.interrupt();
+         self.finished_notify.notify_waiters();
++
++        // Collect diagnostics after releasing `finished_error` and interrupting the graph.
++        // The diagnostics lock DataExchangeManager, while DataExchangeManager::shutdown_query
++        // calls finish() with that lock held, so holding `finished_error` here can deadlock.
++        // The diagnostics may run on a thread that has already exceeded its memory limit.
++        if let Some(cause) = diagnose_cause {
++            let _guard = LimitMemGuard::enter_unlimited();
++            log_memory_limit_diagnostics(&cause, "memory limit exceeded");
++        }
+     }
+ 
+     pub fn is_finished(&self) -> bool {
+@@ -422,7 +437,8 @@ impl QueryPipelineExecutor {
+                 let this_clone = this.clone();
+                 let try_result = catch_unwind(|| this_clone.execute_single_thread(thread_num));
+ 
+-                // finish the pipeline executor when has error or panic
++                // Save the original error before interrupting other processors. Workers must
++                // not interrupt the graph first, or a secondary abort can win finished_error.
+                 if let Err(cause) = try_result.flatten() {
+                     span.with_property(|| ("error", "true")).add_properties(|| {
+                         [
+@@ -477,7 +493,6 @@ impl QueryPipelineExecutor {
+                                             executed_pid,
+                                             NodeErrorType::ScheduleEventError(cause.clone()),
+                                         );
+-                                        graph.should_finish(Err(cause.clone()))?;
+                                         return Err(cause);
+                                     }
+                                 }
+@@ -487,7 +502,6 @@ impl QueryPipelineExecutor {
+                             let cause = error_type.get_error_code();
+                             if let Some((graph, node_index)) = task_info {
+                                 graph.record_node_error(node_index, *error_type);
+-                                graph.should_finish(Err(cause.clone()))?;
+                             }
+                             return Err(cause);
+                         }
+@@ -541,3 +555,162 @@ impl Drop for QueryPipelineExecutor {
          }
      }
  }
++
++#[cfg(test)]
++mod tests {
++    use std::any::Any;
++    use std::sync::Arc;
++    use std::time::Duration;
++    use std::time::Instant;
++
++    use databend_common_base::runtime::Thread;
++    use databend_common_base::runtime::ThreadTracker;
++    use databend_common_exception::ErrorCode;
++    use databend_common_exception::Result;
++    use databend_common_pipeline::core::Event;
++    use databend_common_pipeline::core::Pipe;
++    use databend_common_pipeline::core::PipeItem;
++    use databend_common_pipeline::core::Pipeline;
++    use databend_common_pipeline::core::Processor;
++    use databend_common_pipeline::core::ProcessorPtr;
++    use databend_common_pipeline::core::check_interrupt;
++    use petgraph::graph::NodeIndex;
++
++    use super::QueryPipelineExecutor;
++    use crate::pipelines::executor::ExecutorSettings;
++    use crate::servers::flight::v1::exchange::DataExchangeManager;
++    use crate::test_kits::TestFixture;
++
++    #[tokio::test(flavor = "multi_thread", worker_threads = 1)]
++    async fn test_worker_error_precedes_interrupt() -> anyhow::Result<()> {
++        let _fixture = TestFixture::setup().await?;
++
++        // Exercise errors from both process() and the sub
 ```
 
-**File**: `src/query/service/src/locks/lock_holder.rs` (modified, +8/-0)
+**File**: `src/query/service/src/servers/flight/v1/exchange/exchange_manager.rs` (modified, +6/-0)
 ```diff
-@@ -72,6 +72,14 @@ pub struct LockHolder {
-     keeper: Arc<LeaseKeeper>,
- }
+@@ -257,6 +257,12 @@ impl DataExchangeManager {
+             .collect()
+     }
  
-+impl Drop for LockHolder {
-+    fn drop(&mut self) {
-+        // The keeper's task outlives this holder. Stop it if acquisition is cancelled before
-+        // CoordinationManager takes ownership of the holder.
-+        self.shutdown();
++    /// Holds the coordinator lock like `shutdown_query` does, for lock-order tests.
++    #[cfg(test)]
++    pub(crate) fn lock_queries_coordinator_for_test(&self) -> impl Sized + '_ {
++        self.queries_coordinator.lock()
 +    }
-+}
 +
- impl LockHolder {
-     #[async_backtrace::framed]
-     pub(crate) async fn try_acquire_lock(
-```
-
-**File**: `src/query/service/src/servers/flight_sql/flight_sql_service/service.rs` (modified, +41/-37)
-```diff
-@@ -189,17 +189,20 @@ impl FlightSqlService for FlightSqlServiceImpl {
-         let fetch_results: FetchResults = try_unpack_any(message)?;
- 
-         let handle = Uuid::try_parse(&fetch_results.handle).map_err(|e| {
--            Status::internal(format!(
--                "do_get_fallback Error decoding handle: {e} {:?}",
--                fetch_results.handle
--            ))
-+            Status::invalid_argument(format!("Invalid prepared statement ticket handle: {e}"))
-         })?;
- 
-         info!("do_get_fallback with handle={handle}");
- 
--        let handle_plan = self.statements.get(&handle).unwrap();
-+        // Own the execution plan without holding the cache read lock across await, so Close can
-+        // remove the statement without releasing resources still used by this execution.
-+        let (plan, extras) = self
-+            .statements
-+            .get(&handle)
-+            .map(|entry| entry.value().clone())
-+            .ok_or_else(|| Status::not_found("Prepared statement not found"))?;
-         let stream = self
--            .execute_query(session, &handle_plan.value().0, &handle_plan.value().1)
-+            .execute_query(session, &plan, &extras)
-             .await
-             .map_err(|e| status!("fail to execute", e))?;
-         let resp = Response::new(stream);
-@@ -223,13 +226,17 @@ impl FlightSqlService for FlightSqlServiceImpl {
-         cmd: CommandPreparedStatementQuery,
-         request: Request<FlightDescriptor>,
-     ) -> std::result::Result<Response<FlightInfo>, Status> {
--        let _session = self.get_session(&request);
--        let handle = Uuid::from_slice(cmd.prepared_statement_handle.as_ref())
--            .map_err(|e| Status::internal(format!("Error decoding handle: {e}")))?;
-+        let _session = self.get_session(&request)?;
-+        let handle = Uuid::from_slice(cmd.prepared_statement_handle.as_ref()).map_err(|e| {
-+            Status::invalid_argument(format!("Invalid prepared statement handle: {e}"))
-+        })?;
- 
-         info!("get_flight_info_prepared_statement with handle={handle}");
- 
--        let handle_plan_ref = self.statements.get(&handle).unwrap();
-+        let handle_plan_ref = self
-+            .statements
-+            .get(&handle)
-+            .ok_or_else(|| Status::not_found("Prepared statement not found"))?;
-         let schema = handle_plan_ref.value().0.schema().as_ref().into();
-         let loc = Location {
-             uri: "grpc+tcp://127.0.0.1".to_string(),
-@@ -529,14 +536,19 @@ impl FlightSqlService for FlightSqlServiceImpl {
-         request: Request<PeekableFlightDataStream>,
-     ) -> std::result::Result<DoPutPreparedStatementResult, Status> {
-         let session = self.get_session(&request)?;
--        let handle = Uuid::from_slice(query.prepared_statement_handle.as_ref())
--            .map_err(|e| Status::internal(format!("Error decoding handle: {e}")))?;
-+        let handle = Uuid::from_slice(query.prepared_statement_handle.as_ref()).map_err(|e| {
-+            Status::invalid_argument(format!("Invalid prepared statement handle: {e}"))
-+        })?;
- 
-         info!("do_put_prepared_statement_query with handle={handle}");
- 
--        let handle_plan = self.statements.get(&handle).unwrap();
-+        let (plan, extras) = self
-+            .statements
-+            .get(&handle)
-+            .map(|entry| entry.value().clone())
-+            .ok_or_else(|| Status::not_found("Prepared statement not found"))?;
-         let record_count = self
--            .execute_update(session, &handle_plan.value().0, &handle_plan.value().1)
-+            .execute_update(session, &plan, &extras)
-             .await
-             .map_err(|e| status!("fail to execute", e))?;
-         let result = DoPutUpdateResult { record_count };
-@@ -557,14 +569,19 @@ impl FlightSqlService for FlightSqlServiceImpl {
-         request: Request<PeekableFlightDataStream>,
-     ) -> std::result::Result<i64, Status> {
-         let session = self.get_session(&request)?;
--        let handle = Uuid::from_slice(query.prepared_statement_handle.as_ref())
--            .map_err(|e| Status::internal(format!("Error decoding handle: {e}")))?;
-+        let handle = Uuid::from_slice(query.prepared_statement_handle.as_ref()).map_err(|e| {
-+            Status::invalid_argument(format!("Invalid prepared statement handle: {e}"))
-+        })?;
- 
-         info!("do_put_prepared_statement_update with handle={handle}");
- 
--        let handle_plan = self.statements.get(&handle).unwrap();
-+        let (plan, extras) = self
-+            .statements
-+            .get(&handle)
-+            .map(|entry| entry.value().clone())
-+            .ok_or_else(|| Status::not_found("Prepared statement not found"))?;
-         let res = self
--            .execute_update(session, &handle_plan.value().0, &handle_plan.value().1)
-+            .execute_update(session, &plan, &extras)
-             .await
-             .map_err(|e| status!("fail to execute", e))?;
- 
-@@ -619,25 +636,12 @@ impl FlightSqlService for FlightSqlSer
-```
-
-**File**: `src/query/service/tests/it/servers/flight_sql/flight_sql_handler.rs` (modified, +216/-3)
-```diff
-@@ -16,33 +16,51 @@
- 
- use std::fs;
- use std::io::Write;
-+use std::sync::Arc;
-+use std::time::Duration;
- 
- use arrow_array::RecordBatch;
- use arrow_cast::pretty::pretty_format_batches;
-+use arrow_flight::Action;
-+use arrow_flight::FlightData;
-+use arrow_flight::FlightDescriptor;
-+use arrow_flight::Ticket;
- use arrow_flight::error::FlightError;
- use arrow_flight::flight_service_server::FlightServiceServer;
-+use arrow_flight::sql::ActionClosePreparedStatementRequest;
-+use arrow_flight::sql::Any;
-+use arrow_flight::sql::CommandPreparedStatementQuery;
-+use arrow_flight::sql::CommandPreparedStatementUpdate;
-+use arrow_flight::sql::ProstMessageExt;
- use arrow_flight::sql::client::FlightSqlServiceClient;
- use databend_common_base::runtime::Runtime;
- use databend_common_config::InnerConfig;
- use databend_common_config::UserAuthConfig;
- use databend_common_config::UserConfig;
- use databend_common_exception::Result;
- use databend_common_meta_app::principal::PasswordHashMethod;
-+use databend_common_meta_app::schema::ListLockRevReq;
-+use databend_common_meta_app::schema::LockKey;
- use databend_query::servers::flight_sql::flight_sql_service::FlightSqlServiceImpl;
-+use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::ConfigBuilder;
- use databend_query::test_kits::TestFixture;
- use futures::TryStreamExt;
- use goldenfile::Mint;
- use hyper_util::rt::TokioIo;
- use log::debug;
-+use prost::Message;
- use tempfile::NamedTempFile;
- use tokio::net::UnixListener;
- use tokio::net::UnixStream;
- use tokio_stream::wrappers::UnixListenerStream;
-+use tonic::Code;
-+use tonic::Request;
- use tonic::transport::Channel;
- use tonic::transport::Endpoint;
- use tonic::transport::Server;
- use tower::service_fn;
-+use uuid::Uuid;
- 
- const TEST_USER: &str = "test_user";
- const TEST_PASSWORD: &str = "test_password";
-@@ -80,9 +98,187 @@ async fn run_query(
-             .map_err(FlightError::from)?
-             .to_string()
-     };
-+    stmt.close().await?;
-     Ok(res)
- }
- 
-+fn prepared_request<T>(
-+    client: &FlightSqlServiceClient<Channel>,
-+    message: T,
-+    authenticated: bool,
-+) -> Request<T> {
-+    let mut request = Request::new(message);
-+    if authenticated {
-+        let token = client.token().expect("client must be authenticated");
-+        request
-+            .metadata_mut()
-+            .insert("authorization", format!("Bearer {token}").parse().unwrap());
-+    }
-+    request
-+}
-+
-+async fn assert_prepared_put_handle_errors(client: &mut FlightSqlServiceClient<Channel>) {
-+    // Go through the real FlightService dispatcher: PeekableFlightDataStream cannot be
-+    // constructed directly, and both Query and Update commands must reject malformed UUIDs.
-+    for (bytes, authenticated, expected) in [
-+        (
-+            Uuid::nil().to_string().into_bytes(),
-+            true,
-+            Code::InvalidArgument,
-+        ),
-+        (Uuid::nil().as_bytes().to_vec(), true, Code::NotFound),
-+        // One malformed handle per handler is enough to verify authentication comes first.
-+        (
-+            Uuid::nil().to_string().into_bytes(),
-+            false,
-+            Code::Unauthenticated,
-+        ),
-+    ] {
-+        for command in [
-+            CommandPreparedStatementQuery {
-+                prepared_statement_handle: bytes.clone().into(),
-+            }
-+            .as_any(),
-+            CommandPreparedStatementUpdate {
-+                prepared_statement_handle: bytes.clone().into(),
-+            }
-+            .as_any(),
-+        ] {
-+            let data = FlightData {
-+                flight_descriptor: Some(FlightDescriptor::new_cmd(command.encode_to_vec())),
-+                ..Default::default()
-+            };
-+            let request = prepared_request(client, futures::stream::iter([data]), authenticated);
-+            let error = client
-+                .inner_mut()
-+                .do_put(request)
-+                .await
-+                .expect_err("an invalid or unknown prepared handle must not execute");
-+            assert_eq!(error.code(), expected, "{}: {error}", command.type_url);
-+        }
-+    }
-+}
-+
-+async fn assert_prepared_statement_lifecycle(client: &mut FlightSqlServiceClient<Channel>) {
-+    let mut statement = client.prepare("SELECT 1".to_string(), None).await.unwrap();
-+    for authenticated in [false, true] {
-+        let expected = if authenticated {
-+            Code::InvalidArgument
-+        } else {
-+            Code::Unauthenticated
-+        };
-+        // UUID text is malformed here: prepared statement handles are opaque binary UUIDs.
-+        let handle = Uuid::nil().to_string().into_bytes();
-+        let action = Action {
-+            r#type: "ClosePreparedStatement".to_string(),
-+            body: ActionClosePreparedStatementRequest {
-+                prepared_statement_handle: handle.clone().into(),
-+            }
-+            .as_any()
-+            .encode_to_vec()
-+            .into(),
-+        };
-+        let request = prepared_request(client, a
-```
-
-**File**: `src/query/service/tests/it/sessions/query_ctx.rs` (modified, +139/-0)
-```diff
-@@ -12,9 +12,20 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use std::time::Duration;
-+
-+use anyhow::Context;
-+use databend_common_catalog::lock::LockTableOption;
-+use databend_common_meta_app::schema::DeleteLockRevReq;
-+use databend_common_meta_app::schema::ListLockRevReq;
-+use databend_common_meta_app::schema::LockKey;
- use databend_common_meta_app::storage::StorageFsConfig;
- use databend_common_meta_app::storage::StorageParams;
- use databend_common_meta_app::storage::StorageS3Config;
-+use databend_common_meta_store::MetaStore;
-+use databend_meta_client::kvapi::KvApiExt;
-+use databend_meta_client::kvapi::StructKey;
-+use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::ConfigBuilder;
- use databend_query::test_kits::TestFixture;
-@@ -131,3 +142,131 @@ async fn test_query_created_time_propagation() -> anyhow::Result<()> {
-     );
-     Ok(())
- }
-+
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn test_external_timeout_releases_table_lock_revision() -> anyhow::Result<()> {
-+    let ttl = Duration::from_secs(3);
-+    let cleanup_timeout = ttl * 2 + Duration::from_secs(1);
-+    // Catalog lists revisions while UserApiProvider watches them. Both must connect to the
-+    // same Meta; the default fixture gives each a separate embedded Meta instance.
-+    let meta = MetaStore::new_local_testing::<DatabendRuntime>().await;
-+    let mut config = ConfigBuilder::create().build();
-+    config.meta.endpoints = meta.inner().get_cached_endpoints().await?;
-+    config.meta.auto_sync_interval = 0;
-+    let fixture = TestFixture::setup_with_config(&config).await?;
-+    let settings = fixture.default_session().get_settings();
-+    settings.set_setting(
-+        "table_lock_expire_secs".to_string(),
-+        ttl.as_secs().to_string(),
-+    )?;
-+    settings.set_setting("acquire_lock_timeout".to_string(), "60".to_string())?;
-+    fixture.create_default_database().await?;
-+    fixture.create_default_table().await?;
-+    let catalog_name = fixture.default_catalog_name();
-+    let owner_ctx = fixture.new_query_ctx().await?;
-+    let catalog = owner_ctx.get_catalog(&catalog_name).await?;
-+    let table_id = fixture.latest_default_table().await?.get_id();
-+    let lock_key = LockKey::Table {
-+        tenant: fixture.default_tenant(),
-+        table_id,
-+    };
-+    let wait_for_revisions = |count| {
-+        let catalog = &catalog;
-+        let lock_key = lock_key.clone();
-+        async move {
-+            tokio::time::timeout(cleanup_timeout, async {
-+                loop {
-+                    let revisions = catalog
-+                        .list_lock_revisions(ListLockRevReq::new(lock_key.clone()))
-+                        .await?;
-+                    if revisions.len() == count {
-+                        return Ok::<_, anyhow::Error>(revisions);
-+                    }
-+                    tokio::time::sleep(Duration::from_millis(10)).await;
-+                }
-+            })
-+            .await
-+            .with_context(|| format!("expected {count} lock revisions"))?
-+        }
-+    };
-+    let owner = owner_ctx
-+        .acquire_table_lock_by_id(&catalog_name, table_id, &LockTableOption::LockWithRetry)
-+        .await?
-+        .context("the first writer must acquire the lock")?;
-+    let owner_revision = wait_for_revisions(1).await?[0].0;
-+    let waiter_ctx = fixture.new_query_ctx().await?;
-+    let mut acquisition = Box::pin(waiter_ctx.clone().acquire_table_lock_by_id(
-+        &catalog_name,
-+        table_id,
-+        &LockTableOption::LockWithRetry,
-+    ));
-+    // Poll on the initialized test thread: Databend's test globals are thread-name scoped.
-+    let queued = tokio::select! {
-+        result = &mut acquisition => {
-+            match result {
-+                Ok(_) => anyhow::bail!("the second writer acquired an already held lock"),
-+                Err(error) => anyhow::bail!("waiting failed before cancellation: {error}"),
-+            }
-+        }
-+        result = wait_for_revisions(2) => result?,
-+    };
-+    let waiting_revision = queued
-+        .iter()
-+        .find(|(_, meta)| meta.acquired_on.is_none())
-+        .context("the second writer must have a queued revision")?
-+        .0;
-+    let key = lock_key.gen_v2_key(waiting_revision).to_string_key();
-+    let initial_seq = meta
-+        .get_kv(&key)
-+        .await?
-+        .context("queued lease must exist")?
-+        .seq;
-+    let renewal = async {
-+        loop {
-+            let lease = meta.get_kv(&key).await?.context("queued lease expired")?;
-+            if lease.seq > initial_seq {
-+                return Ok::<_, anyhow::Error>(());
-+            }
-+            tokio::time::sleep(Duration::from_millis(10)).await;
-+        }
-+    };
-+    // Observing Create alone can race its reply. A renewal proves the keeper has started.
-+    tokio::select! {
-+        result = &mut acquisitio
+     pub fn get_query_ctx(&self, query_id: &str) -> Result<Arc<QueryContext>> {
+         let queries_coordinator_guard = self.queries_coordinator.lock();
+         let queries_coordinator = unsafe { &mut *queries_coordinator_guard.deref().get() };
 ```
 
 ---
 
-### Incident Patch 3: `b5388922` (2026-10-16)
-**Commit Message**: fix(query): source query data metrics from per-query IoStats (#20687)
+### Incident Patch 2: `d3880a7f` (2026-10-20)
+**Commit Message**: chore(build): cut clean debug build time by ~20% (#20745)
 
-* fix(query): source query data metrics from per-query IoStats
+* chore(deps): drop async-compression and orc-rust forks
 
-`QueryContextShared::get_data_metrics()` summed the `StorageMetrics` of
-the table instances attached to the query (`tables_refs`). Execution
-rebuilds tables via `build_table_by_table_info` /
-`build_table_from_source_plan`, whose counters were never collected, so
-`system.processes.data_read_bytes / data_write_bytes`,
-`system.query_log.scan_io_bytes / written_io_bytes` and the Prometheus
-`query_scan_io_bytes / query_write_io_bytes` only reported the snapshot
-and segment metadata touched on the coordinator (~1-2 KB), or 0 for
-REPLACE INTO, regardless of how much block data was read or written.
+- Replace the datafuse-extras async-compression fork with the upstream
+  compression-codecs crate, which now exposes the raw codec API we need.
+  Pin it to 0.4.39 so it stays on zstd 0.13 with arrow/parquet.
+- Move orc-rust from the datafuse-extras fork (0.6) to crates.io 0.8,
+  which already supports Arrow 58. COPY ORC now measures scan bytes from
+  the chunk reader since StreamMap is no longer public.
+- Bump apache-avro 0.17 -> 0.21 to share the version used by
+  iceberg/paimon.
+- Bump zip 3 -> 4.6 (default features off, same codec set) so it shares
+  bzip2/liblzma with the rest of the graph.
 
-Source the byte and cost counters from the per-query `IoStats` instead,
-which the global storage metrics layer records for every operator call:
+Removes 7 packages and 8 duplicated crate versions from Cargo.lock.
 
-- `QueryContextShared` owns the local node's `Arc<IoStats>` and the
-  latest cumulative snapshot of every remote node; `get_io_stats()`
-  merges them, `get_data_metrics()` takes bytes/cost from it and keeps
-  partition counters from the attached tables.
-- Entry points (HTTP page handler and spawned executor, streaming l
+* chore(deps): drop OpenSSL and aws-lc from the build graph
 
-**File**: `src/common/base/src/runtime/runtime_tracker.rs` (modified, +65/-0)
+The vendored OpenSSL build (~73s) and aws-lc-sys (~71s) were the first
+~75s of the clean-build critical path: reqwest waits for them, and
+opendal / databend-common-exception / everything downstream waits for
+reqwest. Removing either alone does not help, the other takes its place.
+
+- reqwest: native-tls-vendored -> rustls-tls-native-roots (ring).
+- 
+
+**File**: `.github/actions/check/action.yml` (modified, +4/-0)
 ```diff
-@@ -189,6 +189,33 @@ impl IoStatsSnapshot {
-         self.write_bytes += other.write_bytes;
-         self.write_duration_ms += other.write_duration_ms;
-     }
+@@ -40,6 +40,10 @@ runs:
+         taplo check --config .config/taplo.toml
+         taplo fmt --config .config/taplo.toml --check
+ 
++    - name: Check TLS backend
++      shell: bash
++      run: ./scripts/ci/ci-check-tls-backend.sh
 +
-+    /// The increment from `earlier` to `self`.
-+    ///
-+    /// Both snapshots must come from the same monotonically increasing
-+    /// `IoStats`. Fields are saturating so a torn read never yields a wrap.
-+    pub fn delta_since(&self, earlier: &IoStatsSnapshot) -> IoStatsSnapshot {
-+        IoStatsSnapshot {
-+            list_count: self.list_count.saturating_sub(earlier.list_count),
-+            list_duration_ms: self
-+                .list_duration_ms
-+                .saturating_sub(earlier.list_duration_ms),
-+            read_count: self.read_count.saturating_sub(earlier.read_count),
-+            read_bytes: self.read_bytes.saturating_sub(earlier.read_bytes),
-+            read_duration_ms: self
-+                .read_duration_ms
-+                .saturating_sub(earlier.read_duration_ms),
-+            write_count: self.write_count.saturating_sub(earlier.write_count),
-+            write_bytes: self.write_bytes.saturating_sub(earlier.write_bytes),
-+            write_duration_ms: self
-+                .write_duration_ms
-+                .saturating_sub(earlier.write_duration_ms),
-+        }
-+    }
+     - name: Clippy
+       shell: bash
+       run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+```
+
+**File**: `.github/actions/test_unit/action.yml` (modified, +2/-0)
+```diff
+@@ -23,6 +23,8 @@ runs:
+       env:
+         RUST_LOG: ERROR
+         RUST_MIN_STACK: 33554432
++        # CI always compiles from scratch, where incremental tracking only adds overhead.
++        CARGO_INCREMENTAL: 0
+         # RUST_BACKTRACE: 1
+ 
+     - name: Test vacuum2 streaming GC against AWS S3
+```
+
+**File**: `Cargo.toml` (modified, +71/-34)
+```diff
+@@ -171,10 +171,10 @@ structkey = "0.1.1"
+ 
+ # Crates.io dependencies
+ ahash = { version = "0.8", features = ["no-rng"] }
+-aho-corasick = { version = "1.0.1" } #
++aho-corasick = { version = "1.0.1" }
+ anyerror = { version = "=0.1.13" }
+ anyhow = { version = "1.0.65" }
+-apache-avro = { version = "0.17.0", features = ["snappy", "zstandard", "xz", "bzip"] }
++apache-avro = { version = "0.21.0", features = ["snappy", "zstandard", "xz", "bzip"] }
+ approx = "0.5.1"
+ arrow = { version = "58.4.0" }
+ arrow-array = { version = "58.4.0" }
+@@ -187,14 +187,14 @@ arrow-json = { version = "58.4.0" }
+ arrow-ord = { version = "58.4.0" }
+ arrow-schema = { version = "58.4.0", features = ["serde"] }
+ arrow-select = { version = "58.4.0" }
+-arrow-udf-runtime = { version = "0.8.0", default-features = false, features = ["javascript", "wasm"] }
++# `javascript-runtime` rather than `javascript`: the latter also pulls in `javascript-fetch`,
++# which requires reqwest (with native-tls by default) for a `fetch()` API we never enable —
++# `Runtime::enable_fetch()` is not called anywhere.
++arrow-udf-runtime = { version = "0.8.0", default-features = false, features = ["javascript-runtime", "wasm"] }
+ async-backtrace = "0.2"
+ async-channel = "2.3.1"
+ async-compat = { version = "0.2" }
+-async-compression = { git = "https://github.com/datafuse-extras/async-compression", rev = "dc81082", features = [
+-    "futures-io",
+-    "all-algorithms",
+-] }
++async-compression = { version = "0.4.39", features = ["futures-io", "gzip", "zlib"] }
+ async-recursion = "1.1.1"
+ async-stream = "0.3.3"
+ async-trait = { version = "0.1.89" }
+@@ -212,7 +212,6 @@ bitvec = "1.0.1"
+ blake3 = "1.3.1"
+ bollard = { version = "0.17" }
+ borsh = { version = "1.2.1", features = ["derive"] }
+-brotli = { version = "3.3", features = ["std"] }
+ bstr = "1"
+ buf-list = "1.0.3"
+ bumpalo = "3.12.0"
+@@ -228,6 +227,17 @@ cidr = { version = "0.3.1" }
+ clap = { version = "4.4.2", features = ["derive"] }
+ codeq = { version = "0.5.2" }
+ comfy-table = "7"
++# Pinned: 0.4.40+ moves to zstd 0.14, while arrow/parquet still use zstd 0.13.
++compression-codecs = { version = "=0.4.39", features = [
++    "brotli",
++    "bzip2",
++    "deflate",
++    "gzip",
++    "lzma",
++    "xz",
++    "zlib",
++    "zstd",
++] }
+ concurrent-queue = "2.5.0"
+ convert_case = "0.6.0"
+ cookie = "0.18.1"
+@@ -275,7 +285,7 @@ globiter = "0.1"
+ goldenfile = "1.4"
+ h3o = "0.9.4"
+ hashbrown = { version = "0.15.2", default-features = false }
+-hashlink = "0.8"
++hashlink = "0.10"
+ headers = "0.4.0"
+ hex = "0.4.3"
+ hickory-resolver = "0.25"
+@@ -290,15 +300,15 @@ proc-macro2 = "1.0"
+ quote = "1.0"
+ 
+ ## Arrow 58 compatible variant metadata support.
+-iceberg = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", rev = "9e6116a67bd34790bb73da62beff6a8086d6d012", features = [
++iceberg = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", branch = "dev", features = [
+     "storage-all",
+     # Not in iceberg-rust's `storage-all`: without it every abfs[s]:// table fails to load.
+     "storage-azdls",
+ ] }
+-iceberg-catalog-glue = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", rev = "9e6116a67bd34790bb73da62beff6a8086d6d012" }
+-iceberg-catalog-hms = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", rev = "9e6116a67bd34790bb73da62beff6a8086d6d012" }
+-iceberg-catalog-rest = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", rev = "9e6116a67bd34790bb73da62beff6a8086d6d012" }
+-iceberg-catalog-s3tables = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", rev = "9e6116a67bd34790bb73da62beff6a8086d6d012" }
++iceberg-catalog-glue = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", branch = "dev" }
++iceberg-catalog-hms = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", branch = "dev" }
++iceberg-catalog-rest = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", branch = "dev" }
++iceberg-catalog-s3tables = { version = "0.8.0", git = "https://github.com/databendlabs/iceberg-rust", branch = "dev" }
+ paimon = { version = "=0.2.0", default-features = false, features = ["storage-fs", "storage-s3", "storage-oss"] }
+ 
+ indexmap = "2.0.0"
+@@ -319,7 +329,7 @@ limits-rs = "0.2.0"
+ lindera = { version = "5.0.1", features = ["embed-ipadic"] }
+ lindera-analysis = "5.0.1"
+ lindera-tantivy = { version = "5.0.1", features = ["embed-ipadic"] }
+-logforth = { git = "https://github.com/datafuse-extras/logforth", branch = "main", features = [
++logforth = { git = "https://github.com/datafuse-extras/logforth", branch = "dev", features = [
+     'json',
+     'rolling-file',
+     'opentelemetry',
+@@ -332,7 +342,12 @@ memchr = { version = "2", default-features = false }
+ micromarshal = "0.7.0"
+ mlua = { version = "0.11", features = ["lua54", "vendored", "async", "serialize"] }
+ mockall = "0.11.2"
+-mysql_async = { version = "0.34", default-features = false, features 
+```
+
+**File**: `Makefile` (modified, +2/-0)
+```diff
+@@ -19,6 +19,8 @@ lint:
+ 	typos --config .config/typos.toml
+ 	# Cargo.toml file formatter(make setup to install)
+ 	taplo fmt --config .config/taplo.toml
++	# Keep OpenSSL / aws-lc out of the dependency graph
++	./scripts/ci/ci-check-tls-backend.sh
+ 	# Python file formatter(make setup to install)
+ 	# ruff format tests/
+ 	# Bash file formatter(make setup to install)
+```
+
+**File**: `scripts/ci/ci-check-tls-backend.sh` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++#!/bin/bash
++# Copyright 2020-2025 The Databend Authors.
++# SPDX-License-Identifier: Apache-2.0.
 +
-+    pub fn is_empty(&self) -> bool {
-+        *self == IoStatsSnapshot::default()
++# Fails if OpenSSL or aws-lc sneaks back into the dependency graph.
++#
++# Both are C builds that sit at the very start of the clean-build critical path: everything
++# that needs `reqwest` (opendal, databend-common-exception, ...) waits for them, which costs
++# ~75s of build time. Cargo features are additive, so one dependency that asks for reqwest's
++# default TLS backend (`native-tls`) or for the `aws-lc` rustls provider brings them back for
++# the whole graph. See https://github.com/databendlabs/databend/pull/20745 for the details.
++
++set -e
++
++cd "$(dirname "$0")/../.." || exit
++
++banned=(openssl openssl-sys native-tls native-tls-crate hyper-tls aws-lc-sys aws-lc-rs)
++
++found=()
++for crate in "${banned[@]}"; do
++	if grep -qx "name = \"$crate\"" Cargo.lock; then
++		found+=("$crate")
++	fi
++done
++
++if [[ ${#found[@]} -ne 0 ]]; then
++	echo "Found banned crates in Cargo.lock: ${found[*]}" >&2
++	echo >&2
++	echo "These pull in a C build of OpenSSL or aws-lc, on the critical path of every build." >&2
++	echo "To find the dependent crate:" >&2
++	echo "  cargo tree --workspace --target x86_64-unknown-linux-gnu -e normal,build,features -i openssl-sys" >&2
++	echo >&2
++	echo "Fix it by asking the dependency for a rustls backend instead, e.g." >&2
++	echo '  reqwest = { version = "0.12", default-features = false, features = ["rustls-tls-native-roots"] }' >&2
++	echo "and, if it is a third-party crate that does not allow this, send it upstream or patch it." >&2
++	exit 1
++fi
++
++echo "No OpenSSL or aws-lc in Cargo.lock"
+```
+
+**File**: `src/common/base/src/http_client.rs` (modified, +4/-4)
+```diff
+@@ -80,8 +80,8 @@ pub fn get_global_http_client(
+         // Disable http2 for better performance.
+         builder = builder.http1_only();
+ 
+-        // Enforce to use native tls backend.
+-        builder = builder.use_native_tls();
++        // Enforce to use rustls (ring) backend.
++        builder = builder.use_rustls_tls();
+ 
+         // Set dns resolver.
+         builder = builder.dns_resolver(GLOBAL_HICKORY_RESOLVER.clone());
+@@ -139,8 +139,8 @@ impl HttpClient {
+         // Disable http2 for better performance.
+         builder = builder.http1_only();
+ 
+-        // Enforce to use native tls backend.
+-        builder = builder.use_native_tls();
++        // Enforce to use rustls (ring) backend.
++        builder = builder.use_rustls_tls();
+ 
+         // Set dns resolver.
+         builder = builder.dns_resolver(GLOBAL_HICKORY_RESOLVER.clone());
+```
+
+**File**: `src/common/building/Cargo.toml` (modified, +1/-2)
+```diff
+@@ -10,9 +10,8 @@ edition = { workspace = true }
+ anyhow = { workspace = true }
+ base64 = { workspace = true }
+ cargo_metadata = { workspace = true }
+-gix = { workspace = true }
+ log = { workspace = true }
+-vergen-gix = { workspace = true }
++vergen-gitcl = { workspace = true }
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `src/common/building/src/git.rs` (modified, +69/-46)
+```diff
+@@ -12,65 +12,88 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++//! Git metadata for build scripts, read through the `git` CLI.
++//!
++//! We used to link `gix` into the build scripts, which costs ~85 CPU-seconds (125 crates) at the
++//! start of every clean build. Shelling out to `git` is what `vergen-gitcl` does as well.
++
+ use std::collections::BTreeMap;
++use std::path::Path;
++use std::process::Command;
+ 
+ use anyhow::Context;
+ use anyhow::Result;
+-use gix::Repository;
+-use gix::commit::describe::SelectRef;
++use anyhow::bail;
+ 
+-// Get the latest tag:
+-// git describe --tags --abbrev=0
+-// v0.6.99-nightly
+-pub fn get_latest_tag(repo: &Repository) -> Result<String> {
+-    let hc = repo.head_commit()?;
++/// Run `git <args>` in `dir` and return its trimmed stdout.
++fn git(dir: &Path, args: &[&str]) -> Result<String> {
++    let output = Command::new("git")
++        .current_dir(dir)
++        .args(args)
++        .output()
++        .with_context(|| format!("failed to run `git {}`", args.join(" ")))?;
++    if !output.status.success() {
++        bail!(
++            "`git {}` failed: {}",
++            args.join(" "),
++            String::from_utf8_lossy(&output.stderr).trim()
++        );
 +    }
++    Ok(String::from_utf8(output.stdout)?.trim().to_string())
++}
++
++/// Top-level directory of the git work tree containing `dir`.
++pub fn discover(dir: &Path) -> Result<std::path::PathBuf> {
++    Ok(git(dir, &["rev-parse", "--show-toplevel"])?.into())
++}
+ 
+-    let desc = hc
+-        .describe()
+-        .names(SelectRef::AllTags)
+-        .try_resolve()?
+-        .with_context(|| {
+-            format!(
+-                "Did not find a single candidate ref for naming id '{}'",
+-                hc.id
+-            )
+-        })?;
+-    let tag = desc
+-        .format()?
+-        .name
+-        .with_context(|| format!("Did not find a valid tag for '{}'", hc.id))?;
+-    Ok(tag.to_string())
++/// Name of the nearest tag (annotated or lightweight) reachable from HEAD.
++pub fn get_latest_tag(repo: &Path) -> Result<String> {
++    git(repo, &["describe", "--tags", "--abbrev=0", "HEAD"])
++        .context("Did not find a valid tag for HEAD")
  }
  
- impl IoStats {
-@@ -663,4 +690,42 @@ mod tests {
-             write_duration_ms: 36,
-         });
+-// Get commit author list
+-// git shortlog HEAD -sne | awk '{$1=""; sub(" ", "    \""); print }' | awk -F'<' '!x[$1]++' | awk -F'<' '!x[$2]++' | awk -F'<' '{gsub(/ +$/, "\",", $1); print $1}' | sort | xargs
+-// use email to uniq authors
+-pub fn get_commit_authors(repo: &Repository) -> Result<String> {
+-    let mut authors: BTreeMap<String, String> = BTreeMap::new();
++/// Comma separated, sorted, de-duplicated author names of all commits reachable from HEAD.
++/// Authors are keyed by email; the name of the most recent commit for an email wins.
++pub fn get_commit_authors(repo: &Path) -> Result<String> {
++    let log = git(repo, &["log", "--format=%ae%x00%an", "HEAD"])?;
+ 
+-    let revwalk = repo
+-        .rev_walk(Some(repo.head_id()?.detach()))
+-        .all()?
+-        .filter_map(Result::ok);
+-    for oid in revwalk {
+-        let cm = oid.object()?;
+-        let author = cm.author()?;
+-        let email = author.email.to_string();
+-        if authors.contains_key(&email) {
+-            continue;
++    let mut authors: BTreeMap<&str, &str> = BTreeMap::new();
++    for line in log.lines() {
++        if let Some((email, name)) = line.split_once('\0') {
++            authors.entry(email).or_insert(name);
+         }
+-        let name = author.name.to_string();
+-        authors.insert(email, name);
      }
+ 
+-    let result = authors
+-        .values()
+-        .map(|name| (name, 1))
+-        .collect::<BTreeMap<&String, u8>>()
+-        .keys()
+-        .map(|name| name.as_str())
++    let names = authors
++        .into_values()
++        .collect::<std::collections::BTreeSet<&str>>()
++        .into_iter()
+         .collect::<Vec<&str>>()
+         .join(", ");
++    Ok(names)
++}
++
++#[cfg(test)]
++mod tests {
++    use std::path::Path;
++
++    use super::*;
+ 
+-    Ok(result)
++    #[test]
++    fn test_git_metadata() -> Result<()> {
++        let repo = discover(Path::new(env!("CARGO_MANIFEST_DIR")))?;
++        // A shallow clone may have no tag; only check that the command works when one exists.
++        if let Ok(tag) = get_latest_tag(&repo) {
++            assert!(!tag.is_empty());
++        }
++        let authors = get_commit_authors(&repo)?;
++        assert!(!authors.is_empty());
++        let names: Vec<&str> = authors.split(", ").collect();
++        let mut sorted = names.clone();
++        sorted.sort();
++        sorted.dedup();
++        assert_eq!(names, sorted);
++        Ok(())
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `90d7dd75` (2026-10-20)
+**Commit Message**: fix(version): remove nightly suffix from binary versions (#20792)
+
+**File**: `src/common/building/src/lib.rs` (modified, +28/-1)
+```diff
+@@ -86,7 +86,10 @@ pub fn set_env_config() -> Result<()> {
+ pub fn add_env_version() {
+     println!("cargo:rerun-if-env-changed=DATABEND_RELEASE_VERSION");
+     let version = discover_version().expect(VERSION_ERROR_MESSAGE);
+-    println!("cargo:rustc-env=DATABEND_GIT_SEMVER={}", version);
++    println!(
++        "cargo:rustc-env=DATABEND_GIT_SEMVER={}",
++        normalize_version(&version)
++    );
+ }
+ 
+ fn discover_version() -> Result<String> {
+@@ -101,6 +104,11 @@ fn discover_version() -> Result<String> {
+     }
+ }
+ 
++// Keep the release tag unchanged, but omit its nightly suffix from binary versions.
++fn normalize_version(version: &str) -> &str {
++    version.strip_suffix("-nightly").unwrap_or(version)
++}
++
+ pub fn add_env_license() {
+     println!("cargo:rerun-if-env-changed=DATABEND_ENTERPRISE_LICENSE_EMBEDDED");
+     let v = env::var("DATABEND_ENTERPRISE_LICENSE_EMBEDDED").unwrap_or_default();
+@@ -218,3 +226,22 @@ pub fn add_opt_level() {
+         }
+     };
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::normalize_version;
 +
 +    #[test]
-+    fn io_stats_snapshot_delta_since() {
-+        let stats = IoStats::default();
-+        let mut sent = IoStatsSnapshot::default();
-+        let receiver = IoStats::default();
-+
-+        // Nothing recorded yet: nothing to send.
-+        assert!(stats.snapshot().delta_since(&sent).is_empty());
-+
-+        // Repeatedly sending deltas and adding them up on the other side
-+        // reproduces the cumulative counter.
-+        stats.record_operation_bytes("read", 10);
-+        stats.record_operation_duration("read", Duration::from_millis(3));
-+        let current = stats.snapshot();
-+        let delta = current.delta_since(&sent);
-+        assert_eq!(delta.read_count, 1);
-+        assert_eq!(delta.read_bytes, 10);
-+        assert_eq!(delta.read_duration_ms, 3);
-+        receiver.merge_snapshot(&delta);
-+        sent = current;
-+
-+        stats.record_operation_bytes("write", 7);
-+        let current = stats.snapshot();
-+        let delta = current.delta_since(&sent);
-+        assert_eq!(delta, IoStatsSnapshot {
-+            write_bytes: 7,
-+            ..Default::default()
-+        });
-+        receiver.merge_snapshot(&delta);
-+        sent = current;
-+
-+        assert_eq!(receiver.snapshot(), stats.snapshot());
-+        assert!(stats.snapshot().delta_since(&sent).is_empty());
-+
-+        // A later snapshot never produces a wrap-around.
-+        assert!(sent.delta_since(&stats.snapshot()).is_empty());
-+    }
- }
-```
-
-**File**: `src/query/catalog/src/table_context.rs` (modified, +3/-2)
-```diff
-@@ -19,6 +19,7 @@ use std::sync::Arc;
- use std::time::SystemTime;
- 
- use databend_common_base::base::ProgressValues;
-+use databend_common_base::runtime::IoStatsSnapshot;
- pub use databend_common_component::BroadcastRegistry;
- pub use databend_common_component::CopyState;
- pub use databend_common_component::FragmentId;
-@@ -30,7 +31,6 @@ use databend_common_exception::Result;
- use databend_common_meta_app::principal::UserInfo;
- use databend_common_settings::Settings;
- use databend_common_storage::StageFileInfo;
--use databend_common_storage::StorageMetrics;
- 
- mod authorization;
- mod execution;
-@@ -121,7 +121,8 @@ pub struct ProcessInfo {
-     pub session_extra_info: Option<String>,
-     pub memory_usage: i64,
-     /// storage metrics for persisted data reading.
--    pub data_metrics: Option<StorageMetrics>,
-+    /// Object-storage IO of the running query (local node plus remote nodes).
-+    pub data_metrics: Option<IoStatsSnapshot>,
-     pub scan_progress_value: Option<ProgressValues>,
-     pub write_progress_value: Option<ProgressValues>,
-     pub spill_progress_value: Option<ProgressValues>,
-```
-
-**File**: `src/query/service/src/interpreters/common/query_log.rs` (modified, +7/-9)
-```diff
-@@ -18,7 +18,6 @@ use std::sync::Arc;
- use std::time::SystemTime;
- 
- use databend_common_base::runtime::IoStatsSnapshot;
--use databend_common_base::runtime::ThreadTracker;
- use databend_common_base::runtime::profile::ProfileStatisticsName;
- use databend_common_catalog::plan::PartStatistics;
- use databend_common_catalog::plan::PruningStatistics;
-@@ -324,17 +323,20 @@ impl InterpreterQueryLog {
-         let query_start_time = convert_query_log_timestamp(ctx.get_query_created_time());
-         let query_duration_ms = ctx.get_query_duration_ms();
-         let query_queued_duration_ms = ctx.get_query_queued_duration().as_millis() as i64;
-+        // Read the IO counter once so that the `*_io_bytes*` columns and
-+        // `resource_usage` describe the same IoStatsSnapshot.
-+        let io_stats = ctx.get_io_stats();
-         let data_metrics = ctx.get_data_metrics();
- 
-         let written_rows = ctx.get_write_progress_value().rows as u64;
-         let written_bytes = ctx.get_write_progress_value().bytes as u64;
--        let written_io_bytes = data_metrics.get_write_bytes() as u64;
--        let written_io_bytes_cost_ms = data_metrics.get_write_bytes_cost();
-+        let written_io_bytes = io_stats.write_bytes;
-+        let written_io_bytes_cost_ms = io_stats.write_duration_ms;
- 
-         let scan_rows = ctx.get_scan_progress_value().rows as u64;
-         let scan_bytes = ctx.get_scan_progress_value().bytes as u64;
--        let scan_io_bytes = data_metrics.get_read_bytes() as u64;
--        let scan_io_bytes_cost_ms = data_metrics.get_read_bytes_cost();
-+        let scan_io_bytes = io_stats.read_bytes;
-+        let scan_io_bytes_cost_ms = io_stats.read_duration_ms;
- 
-         let scan_partitions = data_metrics.get_partitions_scanned();
-         let total_partitions = data_metrics.get_partitions_total();
-@@ -401,10 +403,6 @@ impl InterpreterQueryLog {
- 
-         let peek_memory_usage = ctx.get_node_peek_memory_usage();
-         let extra = pruning_stats_query_log_extra(&ctx.get_pruned_partitions_stats())?;
--        let mut io_stats = ctx.get_io_stats();
--        if let Some(stats) = ThreadTracker::io_stats() {
--            io_stats.merge(&stats.snapshot());
--        }
-         let resource_usage = resource_usage_query_log(io_stats, query_profiles);
- 
-         Self::write_log(QueryLogElement {
-```
-
-**File**: `src/query/service/src/interpreters/interpreter.rs` (modified, +26/-0)
-```diff
-@@ -23,6 +23,8 @@ use databend_common_ast::ast::Literal;
- use databend_common_ast::ast::ModifyColumnAction;
- use databend_common_ast::ast::Statement;
- use databend_common_base::base::short_sql;
-+use databend_common_base::runtime::ThreadTracker;
-+use databend_common_base::runtime::TrackingPayloadExt;
- use databend_common_catalog::query_kind::QueryKind;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
-@@ -91,10 +93,34 @@ pub trait Interpreter: Sync + Send {
- 
-     /// Build and run the pipeline with the given lifecycle hooks.
-     /// All logging (start/finish) is handled here based on `hooks.log_finished`.
-+    ///
-+    /// Runs inside a tracking scope whose `io_stats` is the query's own
-+    /// counter, so the pipeline nodes built here (which capture the current
-+    /// payload) attribute their storage IO to the query no matter which
-+    /// handler called us. Handlers that already installed it see no change.
-     async fn execute_with_hooks(
-         &self,
-         ctx: Arc<QueryContext>,
-         hooks: QueryFinishHooks,
-+    ) -> Result<SendableDataBlockStream> {
-+        let query_io_stats = ctx.get_local_io_stats();
-+        let already_tracked =
-+            ThreadTracker::io_stats().is_some_and(|current| Arc::ptr_eq(current, &query_io_stats));
-+        if already_tracked {
-+            return self.execute_with_hooks_inner(ctx, hooks).await;
++    fn test_normalize_version() {
++        for (version, expected) in [
++            ("v1.2.952-nightly", "v1.2.952"),
++            ("1.2.952-nightly", "1.2.952"),
++            ("v1.2.952", "v1.2.952"),
++            ("1.2.952", "1.2.952"),
++            ("v1.2.952-p2", "v1.2.952-p2"),
++            ("v1.2.952-rc.1", "v1.2.952-rc.1"),
++        ] {
++            assert_eq!(normalize_version(version), expected);
 +        }
++    }
++}
+```
+
+**File**: `src/common/version/src/lib.rs` (modified, +10/-0)
+```diff
+@@ -100,6 +100,16 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[test]
++    fn test_version_without_nightly() {
++        assert!(!DATABEND_GIT_SEMVER.ends_with("-nightly"));
++        assert_ne!(DATABEND_SEMVER.pre.as_str(), "nightly");
 +
-+        let mut tracking_payload = ThreadTracker::new_tracking_payload();
-+        tracking_payload.io_stats = Some(query_io_stats);
-+        tracking_payload
-+            .tracking(self.execute_with_hooks_inner(ctx, hooks))
-+            .await
++        let prefix = format!("{DATABEND_GIT_SEMVER}-{VERGEN_GIT_SHA}");
++        assert!(DATABEND_COMMIT_VERSION.starts_with(&prefix));
++        assert!(METASRV_COMMIT_VERSION.starts_with(&prefix));
 +    }
 +
-+    async fn execute_with_hooks_inner(
-+        &self,
-+        ctx: Arc<QueryContext>,
-+        hooks: QueryFinishHooks,
-     ) -> Result<SendableDataBlockStream> {
-         if hooks.log_finished {
-             log_query_start(&ctx);
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_metrics.rs` (modified, +5/-4)
-```diff
-@@ -55,17 +55,18 @@ impl InterpreterMetrics {
-             .map(|d| d.as_micros() as f64 / 1000.0)
-             .unwrap_or(0.0);
- 
-+        let io_stats = ctx.get_io_stats();
-         let data_metrics = ctx.get_data_metrics();
- 
-         let written_rows = ctx.get_write_progress_value().rows as u64;
-         let written_bytes = ctx.get_write_progress_value().bytes as u64;
--        let written_io_bytes = data_metrics.get_write_bytes() as u64;
--        let written_io_bytes_cost_ms = data_metrics.get_write_bytes_cost();
-+        let written_io_bytes = io_stats.write_bytes;
-+        let written_io_bytes_cost_ms = io_stats.write_duration_ms;
- 
-         let scan_rows = ctx.get_scan_progress_value().rows as u64;
-         let scan_bytes = ctx.get_scan_progress_value().bytes as u64;
--        let scan_io_bytes = data_metrics.get_read_bytes() as u64;
--        let scan_io_bytes_cost_ms = data_metrics.get_read_bytes_cost();
-+        let scan_io_bytes = io_stats.read_bytes;
-+        let scan_io_bytes_cost_ms = io_stats.read_duration_ms;
- 
-         let scan_partitions = data_metrics.get_partitions_scanned();
-         let total_partitions = data_metrics.get_partitions_total();
-```
-
-**File**: `src/query/service/src/servers/flight/v1/actions/init_query_env.rs` (modified, +3/-0)
-```diff
-@@ -45,6 +45,9 @@ pub async fn init_query_env(env: QueryEnv) -> Result<()> {
- 
-     let mut tracking_payload = ThreadTracker::new_tracking_payload();
-     tracking_payload.query_id = Some(env.query_id.clone());
-+    tracking_payload.io_stats = Some(std::sync::Arc::new(
-+        databend_common_base::runtime::IoStats::default(),
-+    ));
-     tracking_payload.warehouse_id = env.cluster.get_warehouse_id().ok();
-     tracking_payload.mem_stat = Some(query_mem_stat.clone());
-     tracking_payload.workload_group_resource = tracking_workload_group;
-```
-
-**File**: `src/query/service/src/servers/flight/v1/actions/init_query_fragments.rs` (modified, +4/-0)
-```diff
-@@ -31,6 +31,10 @@ pub async fn init_query_fragments(fragments: QueryFragments) -> Result<()> {
-     tracking_payload.mem_stat = ctx.get_query_memory_tracking();
-     tracking_payload.query_id = Some(fragments.query_id.clone());
-     tracking_payload.warehouse_id = ctx.get_cluster().get_warehouse_id().ok();
-+    // Pipeline preparation may already read storage (e.g. lazy pruning of a
-+    // DELETE / UPDATE source). Bind the query's counter so that IO is attributed
-+    // to it like the IO done later under `start_prepared_query`.
-+    tracking_payload.io_stats = Some(ctx.get_local_io_stats());
- 
-     debug!("init query fragments with {:?}", fragments);
- 
-```
-
-**File**: `src/query/service/src/servers/flight/v1/actions/start_prepared_query.rs` (modified, +1/-3)
-```diff
-@@ -26,9 +26,7 @@ pub async fn start_prepared_query(id: String) -> Result<()> {
- 
-     let mut tracking_payload = ThreadTracker::new_tracking_payload();
-     tracking_payload.query_id = Some(id.clone());
--    tracking_payload.io_stats = Some(std::sync::Arc::new(
--        databend_common_base::runtime::IoStats::default(),
--    ));
-+    tracking_payload.io_stats = Some(ctx.get_local_io_stats());
-     tracking_payload.warehouse_id = ctx.get_cluster().get_warehouse_id().ok();
-     tracking_payload.mem_stat = ctx.get_query_memory_tracking();
-     let _guard = ThreadTracker::tracking(tracking_payload);
+     #[test]
+     fn test_basic_version() -> Result<(), regex::Error> {
+         assert_eq!(VERGEN_GIT_SHA.len(), 10);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20797** (2026-10-20): fix(query): reclaim metadata of dropped tables with retired engines (@SkyFan2002)
+- **PR #20792** (2026-10-20): fix(version): remove nightly suffix from binary versions (@sundy-li)
 - **PR #20771** (2026-10-19): ci: fix metachaos FUSE disconnects on statx (@bohutang)
+- **PR #20750** (2026-10-20): fix(query): preserve original pipeline errors before interruption (@SkyFan2002)
+- **PR #20745** (2026-10-20): chore(build): cut clean debug build time by ~20% (@sundy-li)
 - **PR #20744** (2026-10-19): fix(storage): cache decoded vector indexes (@bohutang)
-- **PR #20734** (2026-10-19): fix(query): clean up cancelled lock waits and FlightSQL statements (@zhyass)
-- **PR #20729** (2026-10-18): refactor(storage): share adaptive concurrency and retry observation (@bohutang)
-- **PR #20721** (2026-10-19): fix(storage): only honor s3 storage class setting for external tables, mark it experimental (@dantengsky)
-- **PR #20719** (2026-10-18): fix(storage): merge transaction statistics on commit retry (@zhyass)
 
 ---
 
@@ -2215,28 +1907,59 @@ which the global storage metrics layer records for every operator call:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta: make metactl RPC timeouts configurable (#20706)
+## X. query): preserve original pipeline errors before interruption (#20750)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/pipelines/executor/query_pipeline_executor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `085b9b61`: meta: make metactl RPC timeouts configurable (#20706). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c09ab04`: query): preserve original pipeline errors before interruption (#20750). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/pipelines/executor/query_pipeline_executor.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "log",
+        let mut diagnose_cause = None;
+        {
+            let mut finished_error = self.finished_error.lock();
+            if let Some(cause) = cause {
+                // We only save the cause of the first error. It must be saved before
+                // interrupting the graph, otherwise a sibling worker may observe the
+                // interruption and save ABORTED_QUERY first.
+                if finished_error.is_none() {
+                    if !self.graph.is_should_finish()
+                        && cause.code() == ErrorCode::MEMORY_EXCEEDS_LIMIT
+                    {
+                        diagnose_cause = Some(cause.clone());
+                    }
+                    *finished_error = Some(cause);
+
+        // Collect diagnostics after releasing `finished_error` and interrupting the graph.
+        // The diagnostics lock DataExchangeManager, while DataExchangeManager::shutdown_query
+        // calls finish() with that lock held, so holding `finished_error` here can deadlock.
+        // The diagnostics may run on a thread that has already exceeded its memory limit.
+        if let Some(cause) = diagnose_cause {
+            let _guard = LimitMemGuard::enter_unlimited();
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let mut finished_error = self.finished_error.lock();
+        if let Some(cause) = cause {
+            // We only save the cause of the first error.
+            if finished_error.is_none() {
+                if !self.graph.is_should_finish() {
+                    log_memory_limit_diagnostics(&cause, "memory limit exceeded");
+                *finished_error = Some(cause);
+        drop(finished_error);
+                // finish the pipeline executor when has error or panic
+                                        graph.should_finish(Err(cause.clone()))?;
+                                graph.should_finish(Err(cause.clone()))?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `085b9b61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c09ab04` are properly handled with clean fallback behavior.

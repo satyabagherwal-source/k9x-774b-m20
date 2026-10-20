@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T14:00:37.926Z",
+  "last_updated": "2026-10-20T14:10:21.239Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
-      "verified_at": "2026-10-19T00:28:51.167Z",
+      "content_hash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
+      "verified_at": "2026-10-20T14:10:21.238Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:28:51.167Z"
+      "last_updated": "2026-10-20T14:10:21.238Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -4656,14 +4656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openkruise-kruise",
-      "content_hash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
-      "verified_at": "2026-10-18T22:35:41.448Z",
+      "content_hash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
+      "verified_at": "2026-10-20T14:07:26.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:35:41.448Z"
+      "last_updated": "2026-10-20T14:07:26.906Z"
     },
     "callstack/react-native-paper": {
       "repository": "callstack/react-native-paper",
@@ -7176,14 +7176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dylanvann-react-native-fast-image",
-      "content_hash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
-      "verified_at": "2026-10-19T01:57:04.135Z",
+      "content_hash": "13612cf8183e95d9d1defda5b8746c286da8caf3ae46abffe466ce47dfde7d9e",
+      "verified_at": "2026-10-20T14:07:25.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:57:04.135Z"
+      "last_updated": "2026-10-20T14:07:25.231Z"
     },
     "pulumi/pulumi": {
       "repository": "pulumi/pulumi",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
-      "verified_at": "2026-10-19T09:12:56.332Z",
+      "content_hash": "b075f3486301ca36f4c8e35a22855268e2a28a8a48cd1078f9d1c3fde823a444",
+      "verified_at": "2026-10-20T14:07:33.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:12:56.332Z"
+      "last_updated": "2026-10-20T14:07:33.302Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

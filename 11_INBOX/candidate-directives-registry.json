@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:53:45.492Z",
+  "last_updated": "2026-10-20T14:07:26.902Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2224,6 +2224,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
+    },
+    {
+      "id": "CD-CCDY",
+      "directive_title": "docs(changelog): add v1.9.1 and v1.9.2 release notes",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openkruise/kruise",
+      "source_commit": "4fdf516e",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-openkruise-kruise"
     }
   ]
 }

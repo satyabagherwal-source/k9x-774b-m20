@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:00:37.826Z",
+  "last_updated": "2026-10-20T14:10:21.162Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6737,14 +6737,19 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "d9eea49a",
-      "content_hash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
+      "source_version": "90d7dd75",
+      "content_hash": "b075f3486301ca36f4c8e35a22855268e2a28a8a48cd1078f9d1c3fde823a444",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
         {
           "number": 2462,
           "title": "meta: make metactl RPC timeouts configurable (#20706)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3211,
+          "title": "query): preserve original pipeline errors before interruption (#20750)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6753,7 +6758,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:12:56.285Z",
+      "verified_at": "2026-10-20T14:07:33.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8227,14 +8232,19 @@
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "2462d5ad",
-      "content_hash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
+      "source_version": "d03026c0",
+      "content_hash": "13612cf8183e95d9d1defda5b8746c286da8caf3ae46abffe466ce47dfde7d9e",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "promoted_rules": [
         {
           "number": 1994,
           "title": "a url string where a source goes resolves not ok, instead of crashing (#1301)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3210,
+          "title": "require()d images among several sizes, and defaultSource only without a placehol",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8243,7 +8253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:57:04.090Z",
+      "verified_at": "2026-10-20T14:07:25.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17113,7 +17123,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
+      "content_hash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -17135,6 +17145,21 @@
         {
           "number": 1918,
           "title": "Truncation Strategy for Cross-Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3212,
+          "title": "Cross-Encoder Truncation Directionality Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3213,
+          "title": "Identity Activation Logit Scoring Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3214,
+          "title": "Explicit Segment Token Type Invariant for Pairwise BERT",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17478,7 +17503,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-10-19T00:28:51.132Z",
+      "verified_at": "2026-10-20T14:10:21.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35351,8 +35376,8 @@
       "slug": "openkruise-kruise",
       "platform": "github",
       "source_url": "https://github.com/openkruise/kruise",
-      "source_version": "567ce15b",
-      "content_hash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
+      "source_version": "4fdf516e",
+      "content_hash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
       "dossier_path": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
       "promoted_rules": [
@@ -35367,7 +35392,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:35:41.404Z",
+      "verified_at": "2026-10-20T14:07:26.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101496,6 +101521,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:00:37.812Z"
+    },
+    "rule-3210": {
+      "learning_id": "rule-3210",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3210,
+      "title": "require()d images among several sizes, and defaultSource only without a placehol",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "d03026c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:07:25.148Z"
+    },
+    "rule-3211": {
+      "learning_id": "rule-3211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3211,
+      "title": "query): preserve original pipeline errors before interruption (#20750)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "90d7dd75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:07:33.216Z"
+    },
+    "rule-3212": {
+      "learning_id": "rule-3212",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3212,
+      "title": "Cross-Encoder Truncation Directionality Guard",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:10:21.149Z"
+    },
+    "rule-3213": {
+      "learning_id": "rule-3213",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3213,
+      "title": "Identity Activation Logit Scoring Contract",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:10:21.149Z"
+    },
+    "rule-3214": {
+      "learning_id": "rule-3214",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3214,
+      "title": "Explicit Segment Token Type Invariant for Pairwise BERT",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:10:21.149Z"
     }
   },
   "aliases": {

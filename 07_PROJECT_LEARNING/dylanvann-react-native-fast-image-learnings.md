@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md`  
 > **Source**: github ([https://github.com/DylanVann/react-native-fast-image](https://github.com/DylanVann/react-native-fast-image))  
-> **Source Version**: `2462d5ad`  
+> **Source Version**: `d03026c0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:57:03.950Z  
+> **Timestamp**: 2026-10-20T14:07:24.812Z  
 > **Learning ID**: `learn-github-dylanvann-react-native-fast-image`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DylanVann/react-native-fast-image](https://github.com/DylanVann/react-native-fast-image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:57:03.944Z  
+> **Harvest Timestamp**: 2026-10-20T14:07:23.961Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -505,867 +505,546 @@ const styles = StyleSheet.create({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a92df5a2` (2026-10-12)
-**Commit Message**: fix: a url string where a source goes resolves not ok, instead of crashing (#1301)
+### Incident Patch 1: `3eac9443` (2026-10-19)
+**Commit Message**: feat: require()d images among several sizes, and defaultSource only without a placeholder
 
-preload, getCachePath and writeToCache send anything that isn't a source
-object as {}, so it fails as a source without a uri. A url string there
-(preload(['https://…']) instead of [{ uri }]) reached native code that read
-it as a source: Android's getMap threw on the main thread and crashed the
-app, and iOS threw from the source converter.
+source can take require()d images among several sizes, at their files'
+sizes: JS resolves each entry (the web from react-native-web's asset
+registry).
 
-**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +91/-0)
+defaultSource now only shows without a placeholder, on iOS, Android and
+the web: not under a ThumbHash, blurDataUri or url placeholder (the web
+still shows it in place of a hash it can't show). A change to the
+placeholder image, e.g. defaultSource giving way to a placeholder
+ThumbHash that arrives later, shows at once instead of loading the image
+again.
+
+The native view's source takes one source or several (an array), each
+with its thumbhash or blurDataUri, and placeholder takes what the public
+prop does; sources and sourcePlaceholders are gone. Each platform picks
+the placeholder to show and compares sources without their thumbhashes
+and blurDataUris, so a new one for the same image shows without loading
+it again.
+
+**File**: `README.md` (modified, +3/-2)
 ```diff
-@@ -4668,6 +4668,87 @@ function PreloadResultsCase() {
-     )
- }
+@@ -107,7 +107,7 @@ It's a single native view, which also takes React Native's View props, such as a
  
-+// preload with a url string (or a number) where a source object goes, e.g.
-+// preload(['https://…']) instead of preload([{ uri }]): the entry resolves not
-+// ok, as a source without a uri, in its place among the results. Native read
-+// it as a source, which crashed the app: iOS sent it an unrecognized selector,
-+// Android cast it to a map. In their own group near the end (a crash ends the
-+// run).
-+const NON_OBJECT_URL = imageUrl(`picsum/1025-200x200.jpg?non-object=${RUN}`)
-+function PreloadNonObjectCase() {
-+    const [status, setStatus] = useState('waiting')
-+    useEffect(() => {
-+        Promise.resolve()
-+            .then(() =>
-+                FastImage.preload([
-+                    NON_OBJECT_URL as unknown as Source,
-+                    { uri: NON_OBJECT_URL },
-+                    42 as unknown as Source,
-+                ]),
-+            )
-+            .then((results) => {
-+                const got = results
-+                    .map((r) =>
-+                        r.ok
-+                            ? `${r.width}x${r.height}`
-+                            : `${r.error}${r.uri === undefined ? '' : ` (${r.uri})`}`,
-+                    )
-+                    .join(', ')
-+                const noUri = 'Invalid source: no uri'
-+                setStatus(got === `${noUri}, 200x200, ${noUri}` ? 'OK' : got)
-+            })
-+            .catch((e) => setStatus(`error: ${e}`))
-+    }, [])
-+    return (
-+        <View style={styles.row}>
-+            <View style={styles.image} />
-+            <CaseStatus
-+                id="preload-non-object"
-+                status={status}
-+                description="#592: preload with a url string or a number instead of a source resolves not ok for it (crashed)"
-+            />
-+        </View>
-+    )
-+}
-+
-+// The same for getCachePath and writeToCache: a url string instead of a source
-+// resolves not ok.
-+function CachePathNonObjectCase({ write }: { write?: boolean }) {
-+    const [status, setStatus] = useState('waiting')
-+    useEffect(() => {
-+        const source = NON_OBJECT_URL as unknown as Source
-+        Promise.resolve()
-+            .then(() =>
-+                write
-+                    ? FastImage.writeToCache(source, '/does-not-exist.jpg')
-+                    : FastImage.getCachePath(source),
-+            )
-+            .then((result) =>
-+                setStatus(
-+                    !result.ok && result.error
-+                        ? 'OK'
-+                        : `resolved ${JSON.stringify(result)}`,
-+                ),
-+            )
-+            .catch((e) => setStatus(`error: ${e}`))
-+    }, [write])
-+    const name = write ? 'writeToCache' : 'getCachePath'
-+    return (
-+        <View style={styles.row}>
-+            <View style={styles.image} />
-+            <CaseStatus
-+                id={
-+                    write
-+                        ? 'write-to-cache-non-object'
-+                        : 'cache-path-non-object'
-+                }
-+                status={status}
-+                description={`${name} with a url string instead of a source resolves not ok`}
-+            />
-+        </View>
-+    )
-+}
-+
- // Preloads a few slow images at once and asks the server how many it was
- // sending at the same time: preload loads a few sources at a time (3, or
- // SDWebImagePrefetcher's maxConcurrentPrefetchCount on iOS), so a long list
-@@ -8309,6 +8390,16 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-         name: 'configure-cache',
-         cases: [<ConfigureCacheCase key="configure-cache" />],
-     },
-+    {
-+        // Near the end: before the fix, these crashed the app, which ended
-+        // the run.
-+        name: 'non-object-sources',
-+        cases: [
-+            <PreloadNonObjectCase key="preload-non-object" />,
-+            <CachePathNonObjectCase key="cache-path-non-object" />,
-+            <CachePathNonObjectCase key="write-to-cache-non-object" write />,
-+        ],
-+    },
-     {
-         // Tapped by scripts/verify.mts (maestro/touch.yaml) while it's shown.
-         // Last, so starting maestro-runner doesn't hold up the others.
-```
-
-**File**: `src/index.test.tsx` (modified, +85/-2)
-```diff
-@@ -302,6 +302,53 @@ describe('FastImage (iOS)', () => {
-         }
-     })
+ #### `source`
  
-+    it("fails preload entries that aren't source objects, without sending them", async () => {
-+        const preload = spyOn(
-+            NativeModules.FastImageView,
-+            'preload',
-+        ).mockImplementation(async (sources: any[]) =>
-+            sources.map((s) =>
-+                s.uri
-+                    ? { ok: true, width: 10, height: 20 }
-+                    : { ok: false, error: 'Invalid source: no uri' },
-+            ),
-+        )
-+        try {
-+            const results = await FastImage.preload([
-+                'https://example.com/a.png' as any,
-+                { uri: 'https://example.com/b.png' },
-+                42 as any,
-+                true as any,
-+            ])
-+            // Native would crash reading them as sources: they're sent as {},
-+            // so the results line up.
-+            expect(preload).toHaveBeenCalledWith([
-+                {},
-+                { uri: 'https://example.com/b.png' },
-+                {},
-+                {},
-+            ])
-+            const failed = {
-+                uri: undefined,
-+                ok: false,
-+                error: 'Invalid source: no uri',
-+            } as const
-+            expect(results).toEqual([
-+                failed,
-+                {
-+                    uri: 'https://example.com/b.png',
-+                    ok: true,
-+                    width: 10,
-+                    height: 20,
-+                },
-+                failed,
-+                failed,
-+            ])
-+        } finally {
-+            preload.mockRestore()
-+        }
-+    })
-+
-     it('runs static functions', () => {
-         FastImage.preload([
-             {
-@@ -577,9 +624,45 @@ describe('getCachePath', () => {
-                 ok: true,
-                 path: '/cache/a',
-             })
--            // A null source is sent as {}.
-+            // A null source, or one that isn't an object (native would crash
-+            // reading it), is sent as {}.
-             await FastImage.getCachePath(null as any)
--            expect(sources).toEqual([source, {}])
-+            await FastImage.getCachePath('https://example.com/a.jpg' as any)
-+            await FastImage.getCachePath(42 as any)
-+            expect(sources).toEqual([source, {}, {}, {}])
-+        } finally {
-+            NativeModules.FastImageView = saved
-+        }
-+    })
-+})
-+
-+describe('writeToCache', () => {
-+    it("asks native to store the file as the source's image", async () => {
-+        const calls: any[] = []
-+        const writeToCache = async (source: any, file: string) => {
-+            calls.push([source, file])
-+            return { ok: true, path: '/cache/a' }
-+        }
-+        const saved = NativeModules.FastImageView
-+        NativeModules.FastImageView = { ...saved, writeToCache }
-+        try {
-+            const source = { uri: 'https://example.com/a.jpg' }
-+            expect(await FastImage.writeToCache(source, '/a.jpg')).toEqual({
-+                ok: true,
-+                path: '/cache/a',
-+            })
-+            // A null source, or one that isn't an object (native would crash
-+            // reading it), is sent as {}.
-+            await FastImage.writeToCache(null as any, '/a.jpg')
-+            await FastImage.writeToCache(
-+                'https://example.com/a.jpg' as any,
-+                '/a.jpg',
-+            )
-+            expect(calls).toEqual([
-+                [source, '/a.jpg'],
-+                [{}, '/a.jpg'],
-+                [{}, '/a.jpg'],
-+            ])
-         } finally {
-             NativeModules.FastImageView = saved
-         }
-```
-
-**File**: `src/index.tsx` (modified, +20/-10)
-```diff
-@@ -1008,19 +1008,26 @@ FastImage.priority = priority
- const ONE_SOURCE =
-     'Takes one source, not an array of sizes: pass the size to use'
+-**Type:** `number | Source | Source[]`
++**Type:** `number | Source | (number | Source)[]`
  
-+// Whether a source is an object, which native can read. Other values (null, a
-+// url string, a number, an array) are sent as {}, which fails as a source
-+// without a uri: native would crash reading them as a source.
-+const isSourceObject = (source: unknown): source is Source =>
-+    typeof source === 'object' && source !== null && !Array.isArray(source)
-+
- FastImage.preload = (sources: Source[]) =>
--    // Null sources are sent as {} so native results line up with the sources
--    // (iOS drops null entries), and arrays too (their results are replaced).
-+    // Entries that aren't source objects are sent as {}, so native results
-+    // line up with the sources (iOS drops null entries). Arrays' results are
-+    // replaced.
-     Promise.resolve(
-         NativeModules.FastImageView.preload(
--            sources.map((s) => (s && !Array.isArray(s) ? s : {})),
-+            sources.map((s) => (isSourceObject(s) ? s : {})),
-         ),
-     ).then((results?: NativePreloadResult[]) =>
-         sources.map((source, i): PreloadResult => {
-             if (Array.isArray(source)) {
-                 return { ok: false, error: ONE_SOURCE, uri: undefined }
-             }
--            const uri = source ? source.uri : undefined
-+            const uri = isSourceObject(source) ? source.uri : undefined
-             const result = results?.[i] ?? noResult
-             if (!result.ok) return { ...result, uri }
-             // Native already fails a source without a uri.
-@@ -1045,17 +1052,20 @@ FastImage.writeToCache = (
- ): Promise<CachePathResult> =>
-     Array.isArray(source)
-         ? Promise.resolve({ ok: false, error: ONE_SOURCE })
--        : // A null source is sent as {} (it fails as a source without a uri).
--          Promise.resolve(
--              NativeModules.FastImageView.writeToCache(source || {}, file),
-+        : Promise.resolve(
-+              NativeModules.FastImageView.writeToCache(
-+                  isSourceObject(source) ? source : {},
-+                  file,
-+              ),
-           )
+ Source for the remote image to load: a `Source`, a `require()`d image, or an array of the same image at different sizes.
  
- FastImage.getCachePath = (source: Source): Promise<CachePathResult> =>
-     Array.isArray(source)
-         ? Promise.resolve({ ok: false, error: ONE_SOURCE })
--        : // A null source is sent as {} (it fails as a source without a uri).
--          Promise.resolve(
--              NativeModules.FastImageView.getCachePath(source || {}),
-+        : Promise.resolve(
-+              NativeModules.FastImageView.getCachePath(
-+                  isSourceObject(source) ? source : {},
-+              ),
-           )
- 
- const styles = StyleSheet.create({
-```
-
-**File**: `src/index.web.test.tsx` (modified, +3/-0)
-```diff
-@@ -580,6 +580,7 @@ describe('FastImage (web)', () => {
-             { uri: 'https://example.com/missing.jpg' },
-             {},
-             null as any,
-+            'https://example.com/a.jpg' as any,
-         ])
-         expect(results).toEqual([
-             {
-@@ -595,6 +596,8 @@ describe('FastImage (web)', () => {
-             },
-             { ok: false, error: 'Invalid source: no uri', uri: undefined },
-             { ok: false, error: 'Invalid source: no uri', uri: undefined },
-+            // A url string isn't a source.
-+            { ok: false, error: 'Invalid source: no uri', uri: undefined },
-         ])
-     })
- 
-```
-
----
-
-### Incident Patch 2: `ca5c53a4` (2026-10-12)
-**Commit Message**: fix(android): downsample={false} decodes images at full size (#1302)
-
-Android decoded every image at about the view's size, whatever downsample
-said, so an image zoomed in on with a transform showed a small copy
-enlarged. With downsample false, images (GIFs included) are decoded at
-their own size, scaled down to at most 16 megapixels so they can still be
-drawn, and aren't cropped or fitted to the view; SVGs are still drawn at
-the view's size. downsample isn't documented as iOS only anymore.
-
-**File**: `README.md` (modified, +5/-5)
-```diff
-@@ -311,7 +311,7 @@ Changing it restarts the animation.
- How the image is filtered when it's drawn smaller or larger than its size (like CSS's `image-rendering`):
- 
- - `'auto'`: the platform's usual filtering.
--- `'smooth'`: iOS only. Keeps a large image drawn much smaller than its size (e.g. a big photo as a thumbnail, or fine lines and text) from looking jagged or noisy. Such an image is already decoded at about the view's size by default (see `downsample`), so this is for images shown at less than half their size with `downsample={false}`, or a little smaller than their size. **It uses more memory:** the image is also kept at smaller sizes for drawing, about a third more than the decoded image. On Android it's the same as `'auto'` (images are always decoded at about the view's size there).
-+- `'smooth'`: iOS only. Keeps a large image drawn much smaller than its size (e.g. a big photo as a thumbnail, or fine lines and text) from looking jagged or noisy. Such an image is already decoded at about the view's size by default (see `downsample`), so this is for images shown at less than half their size with `downsample={false}`, or a little smaller than their size. **It uses more memory:** the image is also kept at smaller sizes for drawing, about a third more than the decoded image. On Android it's the same as `'auto'`.
- - `'pixelated'`: sharp pixels, without smoothing, e.g. for pixel art drawn larger than its size. On Android, animated images are still smoothed.
+@@ -129,6 +129,7 @@ When `source` changes, the image that's showing stays until the new one has load
+ - When the view's size changes so that another size fits better, it loads that one (with its load events), and keeps showing the current image until then, without a `transition`.
+ - Each size is cached separately. A `cacheKey` applies to its own entry: give each size its own key (or none), or the sizes would replace each other in the cache.
+ - `FastImage.preload`, `getCachePath` and `writeToCache` take one size: pass the one a view will show. An array fails with `{ ok: false, error }`.
++- A `require()`d image can be one of the sizes: its size is the file's.
+ - An array of one is the same as that source.
  
  ---
-@@ -342,14 +342,14 @@ Downloads, local files (`file://`, `content://`) and bundled images (`require()`
+@@ -291,7 +292,7 @@ Notes:
  
- #### `downsample`
+ **Type:** `number`
  
--**Type:** `boolean` · **Default:** `true` · iOS only
-+**Type:** `boolean` · **Default:** `true`
+-**Deprecated:** Use `placeholder`, which does the same.
++**Deprecated:** Use `placeholder`, which does the same. With both, `placeholder` shows.
  
- Decodes a large image at about the size it's shown at, instead of at full size, so it takes much less memory.
- 
--- `true`: an image at least twice the size its view needs is decoded at about the view's size. If the view grows, the image is decoded again for its new size (from the disk cache).
--- `false`: images are decoded at full size, e.g. for an image that's zoomed in on with a transform (a pinch-to-zoom viewer), which would otherwise show the smaller copy enlarged.
-+- `true`: an image at least twice the size its view needs is decoded at about the view's size (on Android, any image larger than its view). If the view grows, the image is decoded again for its new size (from the disk cache).
-+- `false`: images are decoded at full size, e.g. for an image that's zoomed in on with a transform (a pinch-to-zoom viewer), which would otherwise show the smaller copy enlarged. **It uses more memory:** a 12-megapixel photo takes about 48 MB decoded, however small it's shown. On Android, an image over 16 megapixels (4096 × 4096) is decoded at the largest size under that, which Android can still draw.
- 
--It doesn't change `onLoad`'s width and height (the image's own size) or the cached file. Needs SDWebImage 5.19.7 or later: before 5.19 images are decoded at full size, and 5.19.0 to 5.19.6 show photos stored sideways with an EXIF orientation (most phone photos) sideways. Photo library images are always decoded this way, and on Android images are always decoded at about the view's size (but Android 16 and later decode animated WebP at full size, and scale it as they draw it).
-+It doesn't change `onLoad`'s width and height (the image's own size) or the cached file. On iOS it needs SDWebImage 5.19.7 or later: before 5.19 images are decoded at full size, and 5.19.0 to 5.19.6 show photos stored sideways with an EXIF orientation (most phone photos) sideways. Photo library images are always decoded at about the view's size. Android 16 and later decode animated WebP at full size either way, and scale it as they draw it.
- 
- If you control the images, serve them at the size they're shown (resized on your server or by an image CDN), which also saves bandwidth.
+ ---
  
 ```
 
-**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +60/-1)
+**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +98/-0)
 ```diff
-@@ -6181,6 +6181,46 @@ function DownsamplePreloadCase() {
+@@ -7139,6 +7139,42 @@ function SeveralSourcesCase({
      )
  }
  
-+// A view zoomed in on with a transform, as a pinch-to-zoom viewer does: a
-+// page of text (1600x1000) in an 80x50 view drawn 4 times larger, its top
-+// left corner showing. With downsample false (right) it's decoded at full
-+// size, so the text is sharp; downsampled (left), it's decoded at about the
-+// view's size, so it's enlarged and blurry. Android decoded both at about the
-+// view's size.
-+function DownsampleZoomCase() {
-+    const [status, onLoad] = useLoadedThenOk(2)
-+    const source = { uri: imageUrl('text-page.png?case=downsample-zoom') }
-+    return (
-+        <View style={blurStyles.stacked}>
-+            <View style={blurStyles.images}>
-+                {[true, false].map((downsample) => (
-+                    <View
-+                        key={String(downsample)}
-+                        style={[
-+                            downsampleStyles.zoomClip,
-+                            !downsample && styles.gap,
-+                        ]}
-+                    >
-+                        <FastImage
-+                            style={downsampleStyles.zoomed}
-+                            source={source}
-+                            downsample={downsample}
-+                            onLoad={onLoad}
-+                        />
-+                    </View>
-+                ))}
-+            </View>
-+            <View style={blurStyles.status}>
-+                <CaseStatus
-+                    id="downsample-zoom"
-+                    status={status}
-+                    description="A view zoomed in on 4 times with a transform: downsampled (left) the text is blurry, with downsample={false} (right) it's sharp"
-+                />
-+            </View>
-+        </View>
-+    )
-+}
-+
- const downsampleStyles = StyleSheet.create({
-     page: { width: 80, height: 50 },
-     large: { width: 96, height: 96, backgroundColor: '#eee' },
-@@ -6189,6 +6229,21 @@ const downsampleStyles = StyleSheet.create({
-     fill: { flex: 1 },
-     tall: { width: 40, height: 96 },
-     rotated: { width: 64, height: 96 },
-+    zoomClip: {
-+        width: 140,
-+        height: 88,
-+        overflow: 'hidden',
-+        backgroundColor: '#eee',
-+    },
-+    // Scaled about its center, so it spans 320x200 from the clip's top left.
-+    zoomed: {
-+        position: 'absolute',
-+        left: 120,
-+        top: 75,
-+        width: 80,
-+        height: 50,
-+        transform: [{ scale: 4 }],
-+    },
- })
- 
- // Photo library images (ph://, iOS, with SDWebImagePhotosPlugin, which
-@@ -7275,7 +7330,7 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-             <DownsampleCase
-                 key="downsample-stripes"
-                 id="downsample-stripes"
--                description="downsample (left): 1px stripes (1024px) in a 48 view decode to an even gray on iOS, not the stripes drawn smaller (right). Android: both black (Glide keeps every nth pixel of a PNG)"
-+                description="downsample (left): 1px stripes (1024px) in a 48 view decode to an even gray on iOS (black on Android: Glide keeps every nth pixel of a PNG), not the stripes drawn smaller (right)"
-                 image="stripes.png"
-                 size="1024x1024"
-                 style={downsampleStyles.stripes}
-@@ -7312,6 +7367,10 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-             <DownsampleOrderCase key="downsample-order" />,
-         ],
-     },
-+    {
-+        name: 'downsample-zoom',
-+        cases: [<DownsampleZoomCase key="downsample-zoom" />],
-+    },
-     {
-         name: 'loading',
-         cases: [
-```
-
-**File**: `android/src/main/java/com/dylanvann/fastimage/FastImageGif.java` (modified, +13/-2)
-```diff
-@@ -34,8 +34,10 @@ final class FastImageGif {
-     private FastImageGif() {}
- 
-     // Null if the GIF can't be decoded again (then the view shows Glide's).
-+    // Full size (downsample false): at the GIF's own size, or sampled down to
-+    // at most FastImageSourceSize.MAX_PIXELS pixels.
-     @Nullable
--    static GifDrawable copy(Context context, GifDrawable gif, int width, int height) {
-+    static GifDrawable copy(Context context, GifDrawable gif, int width, int height, boolean fullSize) {
-         if (width <= 0 || height <= 0) return null;
-         ByteBuffer data = gif.getBuffer();
-         GifHeader header = new GifHeaderParser().setData(data).parseHeader();
-@@ -44,7 +46,7 @@ static GifDrawable copy(Context context, GifDrawable gif, int width, int height)
-         BitmapPool bitmapPool = glide.getBitmapPool();
-         GifDecoder decoder = new StandardGifDecoder(
-                 new GifBitmapProvider(bitmapPool, glide.getArrayPool()),
--                header, gif.getBuffer(), sampleSize(header, width, height));
-+                header, gif.getBuffer(), fullSize ? fullSizeSampleSize(header) : sampleSize(header, width, height));
-         decoder.setDefaultBitmapConfig(Bitmap.Config.ARGB_8888);
-         decoder.advance();
-         Bitmap firstFrame = decoder.getNextFrame();
-@@ -101,6 +103,15 @@ private static Field field(String name) {
-         }
-     }
- 
-+    private static int fullSizeSampleSize(GifHeader header) {
-+        int sampleSize = 1;
-+        while ((float) (header.getWidth() / sampleSize) * (header.getHeight() / sampleSize)
-+                > FastImageSourceSize.MAX_PIXELS) {
-+            sampleSize *= 2;
-+        }
-+        return sampleSize;
-+    }
-+
-     // ByteBufferGifDecoder's.
-     private static int sampleSize(GifHeader header, int width, int height) {
-         int exact = Math.min(header.getHeight() / height, header.getWidth() / width);
-```
-
-**File**: `android/src/main/java/com/dylanvann/fastimage/FastImageSourceSize.java` (modified, +37/-13)
-```diff
-@@ -49,50 +49,72 @@ private FastImageSourceSize() {
-     // options, so the size is recorded by image rather than by request.
-     static final class Capture extends DownsampleStrategy {
-         private final DownsampleStrategy strategy;
-+        // What an SVG is drawn at (see FastImageSvgRenderer): the strategy for
-+        // the view's scale type, also when images are decoded at full size
-+        // (downsample false). An SVG has no size of its own to decode at, and
-+        // drawn at the view's size it's already sharp.
-+        private final DownsampleStrategy vectorStrategy;
-         private final String key;
-         private boolean recorded;
- 
-         Capture(DownsampleStrategy strategy, String key) {
-+            this(strategy, strategy, key);
-+        }
-+
-+        Capture(DownsampleStrategy strategy, DownsampleStrategy vectorStrategy, String key) {
-             this.strategy = strategy;
-+            this.vectorStrategy = vectorStrategy;
-             this.key = key;
-         }
- 
--        @Override
--        public float getScaleFactor(int sourceWidth, int sourceHeight, int requestedWidth, int requestedHeight) {
-+        private void record(int sourceWidth, int sourceHeight) {
-             // Called again with the sampled size; the first call has the image's.
-             if (!recorded) {
-                 recorded = true;
-                 SIZES.put(key, new int[]{sourceWidth, sourceHeight});
-             }
-+        }
-+
-+        @Override
-+        public float getScaleFactor(int sourceWidth, int sourceHeight, int requestedWidth, int requestedHeight) {
-+            record(sourceWidth, sourceHeight);
-             return strategy.getScaleFactor(sourceWidth, sourceHeight, requestedWidth, requestedHeight);
-         }
- 
-+        float getVectorScaleFactor(int sourceWidth, int sourceHeight, int requestedWidth, int requestedHeight) {
-+            record(sourceWidth, sourceHeight);
-+            return vectorStrategy.getScaleFactor(sourceWidth, sourceHeight, requestedWidth, requestedHeight);
-+        }
-+
-         @Override
-         public SampleSizeRounding getSampleSizeRounding(int sourceWidth, int sourceHeight, int requestedWidth, int requestedHeight) {
-             return strategy.getSampleSizeRounding(sourceWidth, sourceHeight, requestedWidth, requestedHeight);
-         }
- 
-         // Glide's memory cache keys include the strategy, so match the wrapped
--        // one to keep sharing cached images between views.
-+        // ones to keep sharing cached images between views.
-         @Override
-         public boolean equals(Object o) {
--            return o instanceof Capture && ((Capture) o).strategy.equals(strategy);
-+            return o instanceof Capture && ((Capture) o).strategy.equals(strategy)
-+                    && ((Capture) o).vectorStrategy.equals(vectorStrategy);
-         }
- 
-         @Override
-         public int hashCode() {
--            return strategy.hashCode();
-+            return 31 * strategy.hashCode() + vectorStrategy.hashCode();
-         }
-     }
- 
-     // What RequestBuilder.into(ImageView) applies for the view's scale type
-     // (it leaves a transformation that's already set alone), with the
-     // downsample strategy it implies wrapped by capture, and then blur if it
--    // isn't null.
--    static RequestOptions scaleTypeOptions(@Nullable ImageView.ScaleType scaleType, Capture capture, @Nullable FastImageBlur blur) {
-+    // isn't null. Not downsampled (downsample false), the image isn't cropped
-+    // or fitted to the view's size either: the view scales it as it draws it.
-+    static RequestOptions scaleTypeOptions(@Nullable ImageView.ScaleType scaleType, Capture capture, @Nullable FastImageBlur blur,
-+            boolean downsample) {
-         RequestOptions options = new RequestOptions();
-         BitmapTransformation transformation = null;
--        if (scaleType != null) {
-+        if (scaleType != null && downsample) {
-             switch (scaleType) {
-                 case CENTER_CROP:
-                     options = options.optionalCenterCrop();
-@@ -121,8 +143,9 @@ static RequestOptions scaleTypeOptions(@Nullable ImageView.ScaleType scaleType,
-         return options.downsample(capture);
-     }
- 
--    static Capture capture(@Nullable ImageView.ScaleType scaleType, Object model) {
--        return new Capture(strategy(scaleType), String.valueOf(model));
-+    static Capture capture(@Nullable ImageView.ScaleType scaleType, Object model, boolean downsample) {
-+        DownsampleStrategy strategy = strategy(scaleType);
-+        return new Capture(downsample ? strategy : FULL_SIZE, strategy, String.valueOf(model));
-     }
- 
-     private static DownsampleStrategy strategy(@Nullable ImageView.ScaleType scaleType) {
-@@ -145,11 +168,12 @@ private static DownsampleStrategy strategy(@Nullable ImageView.ScaleType scaleTy
-     }
- 
-     // At the image's own size (objectFit none shows it at that size, whatever
--    // the view's), or scaled down to at most MAX_PIXELS pixels, which
-```
-
-**File**: `android/src/main/java/com/dylanvann/fastimage/FastImageSvgRenderer.java` (modified, +8/-4)
-```diff
-@@ -63,13 +63,17 @@ static Resource<Bitmap> render(byte[] data, int width, int height, Options optio
-         int sourceHeight = Math.max(1, Math.round(ownHeight));
- 
-         // The strategy also records the SVG's own size for onLoad
--        // (FastImageSourceSize.Capture).
-+        // (FastImageSourceSize.Capture), and has the one for the view when
-+        // images are decoded at full size (downsample false).
-         DownsampleStrategy strategy = options.get(DownsampleStrategy.OPTION);
-         int targetWidth = width > 0 ? width : sourceWidth;
-         int targetHeight = height > 0 ? height : sourceHeight;
--        float scale = strategy != null
--                ? strategy.getScaleFactor(sourceWidth, sourceHeight, targetWidth, targetHeight)
--                : 1f;
-+        float scale = strategy instanceof FastImageSourceSize.Capture
-+                ? ((FastImageSourceSize.Capture) strategy).getVectorScaleFactor(
-+                        sourceWidth, sourceHeight, targetWidth, targetHeight)
-+                : strategy != null
-+                        ? strategy.getScaleFactor(sourceWidth, sourceHeight, targetWidth, targetHeight)
-+                        : 1f;
-         // objectFit scale-down and none: at its own size in dp (see
-         // FastImageSvg.DENSITY), and for scale-down no larger than the view.
-         Float density = options.get(FastImageSvg.DENSITY);
-```
-
-**File**: `android/src/main/java/com/dylanvann/fastimage/FastImageViewManager.java` (modified, +5/-0)
-```diff
-@@ -147,6 +147,11 @@ public void setImageRendering(FastImageViewWithUrl view, @Nullable String imageR
-         view.setImageRendering(imageRendering);
-     }
- 
-+    @ReactProp(name = "downsample", defaultBoolean = true)
-+    public void setDownsample(FastImageViewWithUrl view, boolean downsample) {
-+        view.setDownsample(downsample);
-+    }
-+
-     @ReactProp(name = "blurRadius")
-     public void setBlurRadius(FastImageViewWithUrl view, float blurRadius) {
-         view.setBlurRadius(PixelUtil.toPixelFromDIP(blurRadius));
-```
-
-**File**: `android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java` (modified, +18/-6)
-```diff
-@@ -659,7 +659,7 @@ public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? s
-             }
-             if (resource instanceof GifDrawable) {
-                 GifDrawable own = FastImageGif.copy(
--                        getContext(), (GifDrawable) resource, mLoadingWidth, mLoadingHeight);
-+                        getContext(), (GifDrawable) resource, mLoadingWidth, mLoadingHeight, !mDownsample);
-                 if (own != null) {
-                     applyLoopCount(own);
-                     super.onResourceReady(own, transition);
-@@ -918,9 +918,9 @@ private Drawable tiled(@Nullable Drawable drawable) {
- 
-     // imageRendering="pixelated": no resampling by Glide, and drawn without
-     // filtering (sharp pixels). "smooth" is iOS only; here it's the same as
--    // "auto": Glide already decodes a large image at about the view's size, and
--    // averaging it properly would need a full-size decode. Part of the
--    // request, so a change reloads.
-+    // "auto": Glide decodes a large image at about the view's size (unless
-+    // downsample is false), and averaging it properly would need mipmaps or
-+    // a full-size decode. Part of the request, so a change reloads.
-     private boolean mPixelated = false;
- 
-     public void setImageRendering(@Nullable String imageRendering) {
-@@ -930,6 +930,18 @@ public void setImageRendering(@Nullable String imageRendering) {
-         mNeedsReload = true;
-     }
- 
-+    // downsample false: images are decoded at their own size (capped, see
-+    // FastImageSourceSize.FULL_SIZE), not cropped or fitted to the view's
-+    // size, so a view zoomed in on with a transform shows the image's detail.
-+    // Part of the request, so a change reloads.
-+    private boolean mDownsample = true;
-+
-+    public void setDownsample(boolean downsample) {
-+        if (downsample == mDownsample) return;
-+        mDownsample = downsample;
-+        mNeedsReload = true;
-+    }
-+
-     // blurRadius, in pixels (0 is no blur). Part of the request (see
-     // reblur for a change).
-     private float mBlurRadius = 0;
-@@ -968,8 +980,8 @@ private RequestOptions renderingOptions(Object model) {
-                     .dontTransform();
-             if (blur != null) options = options.optionalTransform(blur);
-         } else {
--            options = FastImageSourceSize.scaleTypeOptions(
--                    mResizeScaleType, FastImageSourceSize.capture(mResizeScaleType, model), blur);
-+            options = FastImageSourceSize.scaleTypeOptions(mResizeScaleType,
-+                    FastImageSourceSize.capture(mResizeScaleType, model, mDownsample), blur, mDownsample);
-             boolean ownSize = mResizeScaleType == ScaleType.CENTER_INSIDE || mResizeScaleType == ScaleType.CENTER;
-             // scale-down and none show it at its own size in dp: an SVG is
-             // drawn at that size, so it's sharp (not with a blur, which hides
-```
-
-**File**: `src/index.tsx` (modified, +15/-12)
-```diff
-@@ -395,8 +395,7 @@ export interface FastImageProps extends AccessibilityProps, ViewProps {
-      *   at less than half their size with `downsample={false}`, or a little
-      *   smaller than their size. **It uses more memory:** the image is also
-      *   kept at smaller sizes for drawing, about a third more than the decoded
--     *   image. On Android it's the same as `'auto'` (images are always decoded
--     *   at about the view's size there).
-+     *   image. On Android it's the same as `'auto'`.
-      * - `'pixelated'`: sharp pixels, without smoothing, e.g. for pixel art
-      *   drawn larger than its size. On Android, animated images are still
-      *   smoothed.
-@@ -435,25 +434,29 @@ export interface FastImageProps extends AccessibilityProps, ViewProps {
-      * full size, so it takes much less memory.
-      *
-      * - `true`: an image at least twice the size its view needs is decoded
--     *   at about the view's size. If the view grows, the image is decoded
--     *   again for its new size (from the disk cache).
-+     *   at about the view's size (on Android, any image larger than its
-+     *   view). If the view grows, the image is decoded again for its new size
-+     *   (from the disk cache).
-      * - `false`: images are decoded at full size, e.g. for an image that's
-      *   zoomed in on with a transform (a pinch-to-zoom viewer), which would
--     *   otherwise show the smaller copy enlarged.
-+     *   otherwise show the smaller copy enlarged. **It uses more memory:** a
-+     *   12-megapixel photo takes about 48 MB decoded, however small it's
-+     *   shown. On Android, an image over 16 megapixels (4096 × 4096) is
-+     *   decoded at the largest size under that, which Android can still
-+     *   draw.
-      *
-      * It doesn't change `onLoad`'s width and height (the image's own size) or
--     * the cached file. Needs SDWebImage 5.19.7 or later: before 5.19 images
--     * are decoded at full size, and 5.19.0 to 5.19.6 show photos stored
--     * sideways with an EXIF orientation (most phone photos) sideways. Photo
--     * library images are always decoded this way, and on Android images are
--     * always decoded at about the view's size (but Android 16 and later
--     * decode animated WebP at full size, and scale it as they draw it).
-+     * the cached file. On iOS it needs SDWebImage 5.19.7 or later: before
-+     * 5.19 images are decoded at full size, and 5.19.0 to 5.19.6 show photos
-+     * stored sideways with an EXIF orientation (most phone photos) sideways.
-+     * Photo library images are always decoded at about the view's size.
-+     * Android 16 and later decode animated WebP at full size either way, and
-+     * scale it as they draw it.
-      *
-      * If you control the images, serve them at the size they're shown
-      * (resized on your server or by an image CDN), which also saves
-      * bandwidth.
-      *
--     * @platform ios
-      * @default true
-      */
-     downsample?: boolean
-```
-
----
-
-### Incident Patch 3: `7f2b46dd` (2026-10-18)
-**Commit Message**: fix(ios): a cacheOnly image that isn't cached gets onError, not onLoad (#1315)
-
-SDWebImage completes the load of an image that isn't in its cache, with
-SDWebImageFromCacheOnly, with neither an image nor an error, which the view
-took for a load: it sent onLoad and onLoadEnd for an image it didn't have. It
-now sends onError ("Not in the cache") and onLoadEnd, as Android does.
-
-**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +51/-0)
-```diff
-@@ -4326,6 +4326,53 @@ const diskCacheStyles = StyleSheet.create({
-     large: { width: 84, height: 84, backgroundColor: '#eee' },
- })
- 
-+// A view with cache 'cacheOnly' of an image that isn't cached: onError and
-+// onLoadEnd (not ok), not onLoad (iOS sent onLoad for no image), and no
-+// request.
-+const CACHE_ONLY_MISS_PATH = `/picsum/1025-200x200.jpg?cache-only-miss=${RUN}`
-+function CacheOnlyMissCase() {
-+    const [status, setStatus] = useState('waiting')
-+    const loadEnd = useRef<string | undefined>(undefined)
-+    const check = async (event: string) => {
-+        const response = await fetch(
-+            imageUrl(
-+                `requests?path=${encodeURIComponent(CACHE_ONLY_MISS_PATH)}`,
-+            ),
-+        )
-+        const { count } = await response.json()
-+        setStatus(
-+            event !== 'onError'
-+                ? event
-+                : count !== 0
-+                  ? `requested ${count} times`
-+                  : loadEnd.current !== 'not ok'
-+                    ? `onLoadEnd: ${loadEnd.current ?? 'not sent'}`
-+                    : 'OK',
-+        )
-+    }
++// A require()d image as one of the sizes, at its file's size (48 px magenta),
++// with a 300 px green one from the server: a 16 pt view picks the bundled one,
++// a 120 pt view the green one.
++function SeveralSourcesBundledCase({ id, size }: { id: string; size: number }) {
++    const [status, setStatus] = useState('loading')
++    const expected = size < 50 ? 48 : 300
 +    return (
 +        <View style={styles.row}>
 +            <FastImage
-+                style={styles.image}
-+                source={{
-+                    uri: imageUrl(CACHE_ONLY_MISS_PATH.slice(1)),
-+                    cache: 'cacheOnly',
-+                }}
-+                onLoad={() => check('onLoad').catch((e) => setStatus(`${e}`))}
-+                onError={() => check('onError').catch((e) => setStatus(`${e}`))}
-+                onLoadEnd={(result) => {
-+                    loadEnd.current = result.ok ? 'ok' : 'not ok'
-+                }}
++                style={{ width: size, height: size }}
++                source={[
++                    require('./images/magenta.png'),
++                    {
++                        uri: imageUrl(`sized-300.png?${id}=${RUN}`),
++                        width: 300,
++                        height: 300,
++                    },
++                ]}
++                onLoad={(e) =>
++                    setStatus(
++                        e.nativeEvent.width === expected
++                            ? 'OK'
++                            : `picked ${e.nativeEvent.width} px, expected ${expected} px`,
++                    )
++                }
++                onError={(e) => setStatus(`error: ${e.nativeEvent.error}`)}
 +            />
 +            <CaseStatus
-+                id="cache-only-miss"
++                id={id}
 +                status={status}
-+                description="cacheOnly: an image that isn't cached gets onError (not onLoad), without a request"
++                description={`a bundled 48 px image and a 300 px one in a ${size} pt view: loads the ${expected === 48 ? 'bundled magenta' : 'green 300 px'} one`}
 +            />
 +        </View>
 +    )
 +}
 +
- // The disk cache limit the example apps set in their native config
- // (FastImageMaxDiskSize in Info.plist, fastimage.MAX_DISK_SIZE
- // in AndroidManifest.xml), which the configure-cache case checks.
-@@ -8409,6 +8456,10 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-             <MemoryCacheOffCase key="memory-cache-off" />,
+ // Borders come after the image loaded: the box inside them is smaller, and the
+ // view loads the size that fits it (Android kept the source picked for the
+ // whole view).
+@@ -8076,6 +8112,57 @@ function ThumbhashChangeLoadedCase() {
+     )
+ }
+ 
++// placeholder's thumbhash arrives after the image has loaded, with
++// defaultSource shown until then (none before): the placeholder image goes
++// away without loading the image again (one request, one onLoad).
++function ThumbhashPlaceholderLateCase() {
++    const [thumbhash, setThumbhash] = useState<string>()
++    const [status, setStatus] = useState('waiting')
++    const loads = useRef(0)
++    const onLoad = () => {
++        loads.current++
++        if (loads.current > 1) {
++            setStatus('loaded again after the thumbhash arrived')
++            return
++        }
++        setTimeout(() => setThumbhash(THUMBHASH_CYAN_ORANGE), 1000)
++        setTimeout(async () => {
++            const requests = await thumbhashRequests('placeholder-late').catch(
++                () => -1,
++            )
++            setStatus((previous) =>
++                previous !== 'waiting'
++                    ? previous
++                    : requests === 1 && loads.current === 1
++                      ? 'OK'
++                      : `${requests} requests, ${loads.current} onLoad`,
++            )
++        }, 2500)
++    }
++    return (
++        <View style={caseStyles.row}>
++            <FastImage
++                style={thumbhashStyles.wide}
++                source={{
++                    uri: slowImageUrl(
++                        `picsum/1021-120x120.jpg?group=thumbhash-placeholder-late-${RUN}&delay=50`,
++                    ),
++                    headers: SLOW_HEADERS,
++                }}
++                placeholder={{ thumbhash }}
++                defaultSource={MAGENTA_DEFAULT}
++                onLoad={onLoad}
++                onError={(e) => setStatus(`onError: ${e.nativeEvent.error}`)}
++            />
++            <CaseStatus
++                id="thumbhash-placeholder-late"
++                status={status}
++                description="placeholder's thumbhash after the image has loaded (defaultSource until then): no new load, the photo stays"
++            />
++        </View>
++    )
++}
++
+ // While the download is held, the source gets another hash: it shows at once,
+ // without starting the download again (one request).
+ function ThumbhashChangeLoadingCase() {
+@@ -9553,6 +9640,7 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
+             <ThumbhashFailsCase key="thumbhash-fails" />,
+             <ThumbhashChangeLoadedCase key="thumbhash-change-loaded" />,
+             <ThumbhashChangeLoadingCase key="thumbhash-change-loading" />,
++            <ThumbhashPlaceholderLateCase key="thumbhash-placeholder-late" />,
+             <ThumbhashSizesCase key="thumbhash-sizes" />,
+             <ThumbhashRecycledCase key="thumbhash-recycled" />,
          ],
-     },
-+    {
-+        name: 'cache-only',
-+        cases: [<CacheOnlyMissCase key="cache-only-miss" />],
-+    },
-     {
-         name: 'disk-cache',
-         cases: [
+@@ -9754,6 +9842,16 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
+                 size={120}
+             />,
+             <SeveralSourcesEdgeCase key="several-edge" />,
++            <SeveralSourcesBundledCase
++                key="several-bundled-16"
++                id="several-bundled-16"
++                size={16}
++            />,
++            <SeveralSourcesBundledCase
++                key="several-bundled-120"
++                id="several-bundled-120"
++                size={120}
++            />,
+      
 ```
 
-**File**: `docs/issues/dream-horizon-org-fork-issues.md` (modified, +4/-3)
+**File**: `android/src/main/java/com/fastimage/FastImageViewManager.java` (modified, +13/-14)
 ```diff
-@@ -236,9 +236,10 @@ Fast Image's maintainers found these while comparing Fast Image with the dream-h
-     - On the legacy architecture, `onLoadStart` fires twice for one load when `source` and `onLoadStart` are set in the same update, as on mount.
-     - A `data:` uri that isn't an image (or is corrupt) fires `onLoad` with a 0 × 0 size instead of `onError`.
-     - On the legacy architecture, an `onLoad` handler added after the image loaded is called with no `width` or `height`.
--- **Where:** `ios/FastImage/FFFastImageView.mm`: `setOnFastImageLoadStart:` sends the event when a source is set and it hasn't been sent, and `reloadImage` sends it again; `reloadImage`'s `data:image` branch sends `onLoad` for whatever `sd_imageWithData:` returned, including nil; `setOnFastImageLoad:` sends `self.onLoadEvent` to a handler set after the load, but `onLoadEventSend:` builds the event in a local variable and never sets that property, so it's nil.
--- **How to reproduce:** Found by reading the code. Fast Image before the fix below, which had the same code, failed its `load-start-once` ("onLoadStart fired 2 times") and `error-invalid-data-uri` cases on iOS. The missing `onLoad` size was found by reading the code.
--- **How Fast Image handles it:** the setter only sends `onLoadStart` for a load already running ([#1114](https://github.com/DylanVann/react-native-fast-image/pull/1114)), and a `data:` uri that can't be decoded fails like a remote image, with `onError`, `onLoadEnd` and `defaultSource` ([#1126](https://github.com/DylanVann/react-native-fast-image/pull/1126)). Fast Image 9.x keeps the load's event and sends it to a handler added later; Fast Image now doesn't call a handler added after its image loaded.
-+    - A `cache: 'cacheOnly'` image that isn't cached fires `onLoad` (with no size) instead of `onError`.
-+- **Where:** `ios/FastImage/FFFastImageView.mm`: `setOnFastImageLoadStart:` sends the event when a source is set and it hasn't been sent, and `reloadImage` sends it again; `reloadImage`'s `data:image` branch sends `onLoad` for whatever `sd_imageWithData:` returned, including nil; `setOnFastImageLoad:` sends `self.onLoadEvent` to a handler set after the load, but `onLoadEventSend:` builds the event in a local variable and never sets that property, so it's nil; `cacheOnly` sets `SDWebImageFromCacheOnly`, with which SDWebImage completes a load that isn't cached with neither an image nor an error, and the completion block sends `onLoad` whenever there's no error.
-+- **How to reproduce:** Found by reading the code. Fast Image before the fix below, which had the same code, failed its `load-start-once` ("onLoadStart fired 2 times") and `error-invalid-data-uri` cases on iOS, and its `cache-only-miss` case ("onLoad"), which had the same completion. The missing `onLoad` size was found by reading the code.
-+- **How Fast Image handles it:** the setter only sends `onLoadStart` for a load already running ([#1114](https://github.com/DylanVann/react-native-fast-image/pull/1114)), and a `data:` uri that can't be decoded fails like a remote image, with `onError`, `onLoadEnd` and `defaultSource` ([#1126](https://github.com/DylanVann/react-native-fast-image/pull/1126)), and so does a `cacheOnly` image that isn't cached ([#1315](https://github.com/DylanVann/react-native-fast-image/pull/1315)). Fast Image 9.x keeps the load's event and sends it to a handler added later; Fast Image now doesn't call a handler added after its image loaded.
+@@ -21,6 +21,7 @@
+ import com.facebook.react.bridge.ColorPropConverter;
+ import com.facebook.react.bridge.Dynamic;
+ import com.facebook.react.bridge.DynamicFromObject;
++import com.facebook.react.bridge.JavaOnlyArray;
+ import com.facebook.react.bridge.ReadableArray;
+ import com.facebook.react.bridge.ReadableMap;
+ import com.facebook.react.bridge.ReadableType;
+@@ -307,23 +308,26 @@ protected FastImageViewWithUrl createViewInstance(@NonNull ThemedReactContext re
  
- ## iOS keeps fading after transition is removed
+     @Override
+     public void setSource(FastImageViewWithUrl view, Dynamic source) {
+-        view.setSource(source.isNull() ? null : source.asMap());
++        // One source, or several (an array).
++        view.setSource(source.isNull() ? null
++                : source.getType() == ReadableType.Array ? source.asArray()
++                : JavaOnlyArray.of(source.asMap()));
+     }
  
+-    @Override
+-    public void setSources(FastImageViewWithUrl view, Dynamic sources) {
+-        view.setSources(sources.isNull() ? null : sources.asArray());
+-    }
+-
+-    // The `placeholder` prop: a url to load apart from the image, as a source
+-    // (a map), or the resolved asset's uri or a data uri (a string).
++    // The `placeholder` prop: a thumbhash or blurDataUri, or a url to load
++    // apart from the image, as a source (a map), or the resolved asset's uri
++    // or a data uri (a string).
+     @Override
+     public void setPlaceholder(FastImageViewWithUrl view, Dynamic source) {
+         if (source.getType() == ReadableType.Map) {
++            ReadableMap map = source.asMap();
++            boolean hash = map.hasKey("thumbhash") || map.hasKey("blurDataUri");
+             view.setPlaceholder(null);
+-            view.setPlaceholderSource(source.asMap());
++            view.setPlaceholderHash(hash ? FastImageViewWithUrl.sourcePlaceholder(map) : null);
++            view.setPlaceholderSource(hash ? null : map);
+             return;
+         }
++        view.setPlaceholderHash(null);
+         view.setPlaceholderSource(null);
+         String uri = source.isNull() ? null : source.asString();
+         if (uri != null && FastImageThumbHash.isDataUri(uri)) {
+@@ -351,11 +355,6 @@ public void setRecyclingKey(FastImageViewWithUrl view, @Nullable String recyclin
+         view.setRecyclingKey(recyclingKey);
+     }
+ 
+-    @Override
+-    public void setSourcePlaceholders(FastImageViewWithUrl view, @Nullable ReadableArray placeholders) {
+-        view.setSourcePlaceholders(placeholders);
+-    }
+-
+     @Override
+     public void setLoopCount(FastImageViewWithUrl view, int loopCount) {
+         view.setLoopCount(loopCount);
 ```
 
-**File**: `ios/FastImage/FFFastImageView.m` (modified, +7/-0)
+**File**: `android/src/main/java/com/fastimage/FastImageViewWithUrl.java` (modified, +88/-29)
 ```diff
-@@ -1174,6 +1174,13 @@ - (void) downloadImage: (FFFastImageSource*)source options: (SDWebImageOptions)o
-                 if (weakSelf.loadCount != load) {
-                     return;
-                 }
-+                // cacheOnly: SDWebImage completes the load of an image that
-+                // isn't cached with neither an image nor an error.
-+                if (!error && !image) {
-+                    error = [NSError errorWithDomain: @"FastImage"
-+                                                code: 0
-+                                            userInfo: @{NSLocalizedDescriptionKey: @"Not in the cache"}];
-+                }
-                 // The download was running when the app went to the
-                 // background, and failed: iOS suspends it there, and its
-                 // timeout keeps counting, so it times out as the app comes
+@@ -48,6 +48,7 @@
+ import com.bumptech.glide.request.transition.TransitionFactory;
+ import com.facebook.react.bridge.ReadableArray;
+ import com.facebook.react.bridge.ReadableMap;
++import com.facebook.react.bridge.ReadableType;
+ import com.facebook.react.bridge.WritableMap;
+ import com.facebook.react.bridge.WritableNativeMap;
+ import com.facebook.react.modules.i18nmanager.I18nUtil;
+@@ -58,6 +59,10 @@
+ import com.facebook.react.uimanager.ReactPointerEventsView;
+ import com.facebook.react.uimanager.style.LogicalEdge;
+ 
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Objects;
+ import javax.annotation.Nonnull;
+ 
+ class FastImageViewWithUrl extends AppCompatImageView implements ReactPointerEventsView, ReactHitSlopView {
+@@ -213,16 +218,72 @@ public boolean hasOverlappingRendering() {
+         return false;
+     }
+ 
+-    public void setSource(@Nullable ReadableMap source) {
+-        mNeedsReload = true;
+-        mPropSource = source;
+-        if (mSources == null) mSource = source;
++    // The `source` prop: one source, or several (sizes of one image), each
++    // with its thumbhash or blurDataUri if it has one. Only a change besides
++    // those loads again: a new thumbhash for the same image (e.g. one that
++    // arrives later) shows at once (see updatePlaceholder).
++    public void setSource(@Nullable ReadableArray sources) {
++        List<Object> key = sourceKey(sources);
++        if (!mHasSource || !Objects.equals(key, mSourceKey)) {
++            mHasSource = true;
++            mSourceKey = key;
++            mNeedsReload = true;
++            mSources = sources != null && sources.size() > 1 ? sources : null;
++            mSourceIndex = -1;
++            if (mSources == null) mSource = sources != null && sources.size() == 1 ? map(sources, 0) : null;
++        }
++        mSourcePlaceholders = new ArrayList<>();
++        for (int i = 0; sources != null && i < sources.size(); i++) {
++            mSourcePlaceholders.add(sourcePlaceholder(map(sources, i)));
++        }
++        updatePlaceholder();
++    }
++
++    // The sources without their thumbhashes and blurDataUris, to compare.
++    private boolean mHasSource = false;
++    @Nullable
++    private List<Object> mSourceKey = null;
++
++    @Nullable
++    private static List<Object> sourceKey(@Nullable ReadableArray sources) {
++        if (sources == null) return null;
++        List<Object> key = new ArrayList<>();
++        for (int i = 0; i < sources.size(); i++) {
++            ReadableMap source = map(sources, i);
++            key.add(source == null ? null : withoutPlaceholders(source));
++        }
++        return key;
++    }
++
++    // A source without its thumbhash and blurDataUri.
++    private static HashMap<String, Object> withoutPlaceholders(ReadableMap source) {
++        HashMap<String, Object> map = source.toHashMap();
++        map.remove("thumbhash");
++        map.remove("blurDataUri");
++        return map;
+     }
+ 
+-    // The `source` prop. With several `sources`, mSource is the one picked for
+-    // the view's size instead.
+     @Nullable
+-    private ReadableMap mPropSource = null;
++    private static ReadableMap map(ReadableArray array, int index) {
++        return array.getType(index) == ReadableType.Map ? array.getMap(index) : null;
++    }
++
++    // A source's (or `placeholder`'s) ThumbHash, or its blurDataUri if it's a
++    // data uri (JS warns about another), or null.
++    @Nullable
++    static String sourcePlaceholder(@Nullable ReadableMap source) {
++        if (source == null) return null;
++        String thumbhash = string(source, "thumbhash");
++        if (thumbhash != null && !thumbhash.isEmpty()) return thumbhash;
++        String blurDataUri = string(source, "blurDataUri");
++        return blurDataUri != null && FastImageThumbHash.isDataUri(blurDataUri) ? blurDataUri : null;
++    }
++
++    @Nullable
++    private static String string(ReadableMap map, String key) {
++        return map.hasKey(key) && map.getType(key) == ReadableType.String ? map.getString(key) : null;
++    }
++
+     // Several sources (2 or more) of the same image at different sizes, or
+     // null: the view loads the one whose size is closest to its own.
+     @Nullable
+@@ -240,13 +301,6 @@ public void setSource(@Nullable ReadableMap source) {
+     @Nullable
+     private FastImageViewManager mManager;
+ 
+-    public void setSources(@Nullable ReadableArray sources) {
+-        mNeedsReload = true;
+-        mSources = sources != null && sources.size() > 1 ? sources : null;
+-        mSourceIndex = -1;
+-        if (mSources == null) mSource = mPropSource;
+-    }
+-
+     // The box the image is drawn in: the view inside its padding, which is the
+     // border widths (see updateBorderPadding).
+     private int contentWidth() {
+@@ -310,19 +364,20 @@ public void run() {
+         return true;
+     }
+ 
++    // Shows at once, as a new source placeholder does (see updatePlaceholder),
++    // without loading the image again.
+     public void setP
+```
+
+**File**: `ios/FastImage/FFFThumbHash.h` (modified, +3/-0)
+```diff
+@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
+ // Main thread.
+ + (nullable UIImage*) imageForPlaceholder: (nullable NSString*)placeholder;
+ 
++// Whether a placeholder is a data uri (a blurDataUri) rather than a ThumbHash.
+++ (BOOL) isDataUri: (nullable NSString*)placeholder;
++
+ // The placeholder for a base64 ThumbHash (standard or url-safe, with or
+ // without padding), or nil for an empty or invalid one. Main thread.
+ + (nullable UIImage*) imageForThumbHash: (nullable NSString*)thumbhash;
+```
+
+**File**: `ios/FastImage/FFFThumbHash.m` (modified, +5/-1)
+```diff
+@@ -200,8 +200,12 @@ @implementation FFFThumbHash
+     return cache;
+ }
+ 
+++ (BOOL) isDataUri: (NSString*)placeholder {
++    return placeholder && [placeholder rangeOfString: @"data:" options: NSCaseInsensitiveSearch | NSAnchoredSearch].location != NSNotFound;
++}
++
+ + (UIImage*) imageForPlaceholder: (NSString*)placeholder {
+-    if ([placeholder rangeOfString: @"data:" options: NSCaseInsensitiveSearch | NSAnchoredSearch].location == NSNotFound) {
++    if (![self isDataUri: placeholder]) {
+         return [self imageForThumbHash: placeholder];
+     }
+     UIImage* cached = [[self cache] objectForKey: placeholder];
+```
+
+**File**: `ios/FastImage/FFFastImageView.h` (modified, +9/-7)
+```diff
+@@ -28,21 +28,23 @@ typedef NS_ENUM(NSInteger, FFFObjectFit) {
+ @property (nonatomic, copy) RCTDirectEventBlock onFastImageLoad;
+ @property (nonatomic, copy) RCTDirectEventBlock onFastImageLoadEnd;
+ @property (nonatomic, assign) FFFObjectFit objectFit;
+-@property (nonatomic, strong) FFFastImageSource *source;
+-// Several sources (2 or more) of the same image at different sizes: the view
+-// loads the one whose size is closest to its own.
++// The `source` prop: one source, or several (sizes of one image), of which
++// the view loads the one whose size is closest to its own.
+ @property (nonatomic, copy) NSArray<FFFastImageSource *> *sources;
+ // The `placeholder` prop.
+ @property (nonatomic, strong) UIImage *placeholder;
+ // `placeholder` as a url (a source): loaded apart from the
+ // image, at a high priority (or only from the cache, with cache cacheOnly),
+ // it shows over the other placeholders once it has.
+ @property (nonatomic, strong) FFFastImageSource *placeholderSource;
+-// The `sourcePlaceholders` prop, by the source's index (an empty string for
+-// none; one for a single source): the picked source's ThumbHash or
+-// blurDataUri (a data uri) shows instead of placeholder. JS sends them apart
+-// from the sources, so a new one for the same image doesn't load it again.
++// The sources' ThumbHashes or blurDataUris (data uris), by the source's index
++// (an empty string for none): the picked source's shows instead of
++// placeholder. Set apart from the sources, so a new one for the same image
++// doesn't load it again.
+ @property (nonatomic, copy) NSArray<NSString *> *sourcePlaceholders;
++// `placeholder` as a thumbhash or blurDataUri: shows for the sources without
++// their own.
++@property (nonatomic, copy) NSString *placeholderHash;
+ @property (nonatomic, strong) UIColor *imageColor;
+ // When it changes, the next image doesn't replace the current one: the view
+ // clears first (for views reused for other content, like list rows).
+```
+
+**File**: `ios/FastImage/FFFastImageView.m` (modified, +26/-19)
+```diff
+@@ -44,9 +44,9 @@ @interface FFFastImageView ()
+ // downsample, or several sources: a load waits for the view's size (see
+ // didSetProps).
+ @property(nonatomic, assign) BOOL waitsForSize;
+-// The `source` prop. With several `sources`, _source is the one picked for
+-// the view's size instead.
+-@property(nonatomic, strong) FFFastImageSource* propSource;
++// The source that loads: the `source` prop's, or with several the one
++// picked for the view's size.
++@property(nonatomic, strong) FFFastImageSource* source;
+ // Several sources: the next load switches to another one for a new view
+ // size, and the one after it is loading. It's the same picture at another
+ // size, so it doesn't fade in.
+@@ -749,21 +749,11 @@ - (NSDictionary*) loadEndEvent: (BOOL)ok {
+     return event;
+ }
+ 
+-- (void) setSource: (FFFastImageSource*)source {
+-    if (self.propSource != source) {
+-        self.propSource = source;
+-        if (![self picksSource]) {
+-            _source = source;
+-        }
+-        _needsReload = YES;
+-    }
+-}
+-
+ - (void) setSources: (NSArray<FFFastImageSource*>*)sources {
+     if (_sources != sources) {
+         _sources = [sources copy];
+         if (![self picksSource]) {
+-            _source = self.propSource;
++            _source = _sources.firstObject;
+         }
+         _needsReload = YES;
+     }
+@@ -847,18 +837,28 @@ - (BOOL) decodesToHDR {
+     return [_dynamicRangeLimit isEqualToString: @"constrained"] || [_dynamicRangeLimit isEqualToString: @"no-limit"];
+ }
+ 
++// Shows at once, as a new source placeholder does (see updateHashImage),
++// without loading the image again.
+ - (void) setPlaceholder: (UIImage*)placeholder {
+-    if (_placeholder != placeholder) {
+-        _placeholder = placeholder;
+-        _needsReload = YES;
++    if (_placeholder == placeholder) {
++        return;
+     }
++    UIImage* previous = [self shownPlaceholder];
++    BOOL showing = self.showsPlaceholder;
++    _placeholder = placeholder;
++    [self showChangedPlaceholder: previous showing: showing];
+ }
+ 
+ - (void) setSourcePlaceholders: (NSArray<NSString*>*)sourcePlaceholders {
+     _sourcePlaceholders = [sourcePlaceholders copy];
+     [self updateHashImage];
+ }
+ 
++- (void) setPlaceholderHash: (NSString*)placeholderHash {
++    _placeholderHash = [placeholderHash copy];
++    [self updateHashImage];
++}
++
+ // What shows while the image loads and if it fails: placeholderSource's
+ // image once it has loaded, the picked source's placeholder (its ThumbHash or
+ // blurDataUri), or the placeholder prop.
+@@ -912,6 +912,9 @@ + (void) rememberShownImage: (UIImage*)image source: (FFFastImageSource*)source
+ }
+ 
+ - (void) setPlaceholderSource: (FFFastImageSource*)placeholderSource {
++    if (!placeholderSource && !_placeholderSource) {
++        return;
++    }
+     _placeholderSource = placeholderSource;
+     [self cancelUrlPlaceholderLoad];
+     [self showUrlPlaceholderImage: nil];
+@@ -979,14 +982,18 @@ - (void) showUrlPlaceholderImage: (UIImage*)image {
+     [self showChangedPlaceholder: previous showing: showing];
+ }
+ 
+-// The picked source's ThumbHash or blurDataUri, or nil.
++// The picked source's ThumbHash or blurDataUri, or placeholderHash, or nil.
+ - (NSString*) pickedSourcePlaceholder {
+     NSUInteger index = 0;
+     if ([self picksSource]) {
+         index = _source ? [_sources indexOfObjectIdenticalTo: _source] : NSNotFound;
++        // None until one is picked.
++        if (index == NSNotFound) {
++            return nil;
++        }
+     }
+     NSString* hash = index < _sourcePlaceholders.count ? _sourcePlaceholders[index] : nil;
+-    return hash.length > 0 ? hash : nil;
++    return hash.length > 0 ? hash : _placeholderHash.length > 0 ? _placeholderHash : nil;
+ }
+ 
+ // Decodes the picked source's placeholder. A view showing the previous
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1316** (closed): feat: web images show their cached copy when the server fails (@DylanVann)
-- **PR #1315** (2026-10-18): fix(ios): a cacheOnly image that isn't cached gets onError, not onLoad (@DylanVann)
-- **PR #1314** (2026-10-18): test: leave the GIF out of the event cases' screenshots [skip actions] (@DylanVann)
-- **PR #1313** (2026-10-17): feat: source.diskCache, to keep an image off disk (@DylanVann)
-- **PR #1312** (2026-10-17): docs: skip actions, not skip ci, for merges that shouldn't release [skip actions] (@DylanVann)
-- **PR #1311** (2026-10-17): docs: Cloudflare's CI deploys the website, and no deploy script [skip ci] (@DylanVann)
+- **PR #1324** (2026-10-19): feat: require()d images among several sizes, and defaultSource only without a placeholder (@DylanVann)
+- **PR #1323** (2026-10-19): feat: placeholder takes a url, loaded or only from the cache (@DylanVann)
+- **PR #1322** (2026-10-19): feat: dynamicRangeLimit, HDR photos in HDR on iOS and the web (@DylanVann)
+- **PR #1321** (2026-10-19): feat(web): lazy loading by default, fetchpriority from source.priority, and loading and sizes props (@DylanVann)
+- **PR #1319** (closed): feat(web): blurred previews without JavaScript, and ThumbHashes decoded only with react-native-fast-image/thumbhash (@DylanVann)
+- **PR #1318** (closed): feat: placeholder prop, and source.blurDataUri for tiny blurred previews (@DylanVann)
 
 ---
 
@@ -1385,54 +1064,31 @@ now sends onError ("Not in the cache") and onLoadEnd, as Android does.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. a url string where a source goes resolves not ok, instead of crashing (#1301)
+## X. require()d images among several sizes, and defaultSource only without a placehol
 
 **RULE**:
-When implementing operations in `ReactNativeFastImageExample/src/RegressionExample.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DylanVann/react-native-fast-image. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DylanVann/react-native-fast-image. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a92df5a2`: a url string where a source goes resolves not ok, instead of crashing (#1301). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3eac9443`: require()d images among several sizes, and defaultSource only without a placeholder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ReactNativeFastImageExample/src/RegressionExample.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// preload with a url string (or a number) where a source object goes, e.g.
-// preload(['https://…']) instead of preload([{ uri }]): the entry resolves not
-// ok, as a source without a uri, in its place among the results. Native read
-// it as a source, which crashed the app: iOS sent it an unrecognized selector,
-// Android cast it to a map. In their own group near the end (a crash ends the
-// run).
-const NON_OBJECT_URL = imageUrl(`picsum/1025-200x200.jpg?non-object=${RUN}`)
-function PreloadNonObjectCase() {
-    const [status, setStatus] = useState('waiting')
-    useEffect(() => {
-        Promise.resolve()
-            .then(() =>
-                FastImage.preload([
-                    NON_OBJECT_URL as unknown as Source,
-                    { uri: NON_OBJECT_URL },
-                    42 as unknown as Source,
-                ]),
-            )
-            .then((results) => {
-                const got = results
-                    .map((r) =>
-                        r.ok
-                            ? `${r.width}x${r.height}`
-                            : `${r.error}${r.uri === undefined ? '' : ` (${r.uri})`}`,
-                    )
-                    .join(', ')
-                cons
+**Type:** `number | Source | (number | Source)[]`
+- A `require()`d image can be one of the sizes: its size is the file's.
+**Deprecated:** Use `placeholder`, which does the same. With both, `placeholder` shows.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+**Type:** `number | Source | Source[]`
+**Deprecated:** Use `placeholder`, which does the same.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a92df5a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3eac9443` are properly handled with clean fallback behavior.

@@ -3846,3 +3846,7 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-mmkv` | `https://github.com/margelo/react-native-mmkv` | `ca5acf0c` | Multi-dimensional audit evidence | 2026-10-20T14:00:33.859Z |
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-20T14:00:37.248Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `555b5f3b` | Multi-dimensional audit evidence | 2026-10-20T14:00:37.917Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `d03026c0` | Multi-dimensional audit evidence | 2026-10-20T14:07:25.223Z |
+| `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `4fdf516e` | Multi-dimensional audit evidence | 2026-10-20T14:07:26.897Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `90d7dd75` | Multi-dimensional audit evidence | 2026-10-20T14:07:33.294Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-20T14:10:21.229Z |

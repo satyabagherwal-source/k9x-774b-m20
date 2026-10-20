@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source**: github ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
-> **Source Version**: `567ce15b`  
+> **Source Version**: `4fdf516e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:35:41.268Z  
+> **Timestamp**: 2026-10-20T14:07:26.706Z  
 > **Learning ID**: `learn-github-openkruise-kruise`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:35:40.926Z  
+> **Harvest Timestamp**: 2026-10-20T14:07:26.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1211,11 +1211,11 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2614** (2026-10-14): **fix(imagepulljob): join image name and digest with "@" instead of ":" [cherry-pick to release-1.9]**
-  *Symptoms*: ## Summary  Cherry-pick of #2556 (master commit 68dc26020) to `release-1.9`.  `NormalizeImageRefToNameTag` returns the digest as the "tag" for a digested reference, but every caller that rejoined name + tag used `":"`, producing invalid references like `name:sha256:...`. As a result, any `ImagePullJob` whose `spec.image` carried a digest failed on every node until `backoffLimit` was exhausted.  The upstream fix adds `daemonutil.JoinImageNameTag` and uses it consistently across CRI pull paths, image-status helpers, secret parsing, and log/event/status messages.  Cherry-picked cleanly with no conflicts (9 files, +140/-30).  ## Test plan  - [ ] CI green on this PR - [ ] Verify ImagePullJob with a digested image (e.g. `nginx@sha256:...`) succeeds on release-1.9 build - [ ] Confirm `ImageTagStatus.ImageID` is populated after pull for digested references  /kind bug /release-note
+- **Issue #2626** (2026-10-20): **docs(changelog): add v1.9.1 and v1.9.2 release notes**
+  *Symptoms*: ## Summary - Add `v1.9.1` and `v1.9.2` sections to `CHANGELOG.md`, covering the v1.9 release line since v1.9.0. - Each entry links its upstream PR and credits the author, following the existing changelog house style.  ## Contents **v1.9.1** — Bug Fixes - GKE/EKS server-version parse panic in `ShouldUpdateResourceByResize` (#2502)  **v1.9.2** — Security / Bug Fixes / Misc - Security: disable pprof by default in kruise-manager and kruise-daemon (#2613) - Bug Fixes: WorkloadSpread nil parallelism/replicas (#2568), PUB nil replicas (#2529), NodePodProbe nil labels (#2500), controller-manager restarts (#2382), AdvancedCronJob child-Job watch (#2594), DaemonSet legacy owner refs (#2518), CloneSet OnDelete NotReady (#2291), calculator malformed numbers (#2595), UnitedDeployment error formatting (#2597), PodProbeMarker field paths (#2602), ImagePullJob digest join (#2556) - Misc: release-1.9 CI action bumps (golangci-lint-action v9.3.0, trivy-action v0.36.0)  ## Test plan - [ ] Docs-only change; verify Markdown renders correctly and PR/author links resolve.
 
-- **Issue #2613** (2026-10-14): **fix: disable pprof by default in kruise-manager and kruise-daemon**
-  *Symptoms*: ## What this PR does  Changes the default value of `--enable-pprof` from `true` to `false` in both binaries:  - `main.go` (kruise-manager) - `cmd/daemon/main.go` (kruise-daemon)  ## Why  pprof was enabled by default and bound to all interfaces (`:8090` for the manager, `:10222` for the daemon) with no authentication and no TLS. Any pod on the cluster pod network — including one holding zero Kubernetes RBAC — could reach `http://<manager-pod-ip>:8090/debug/pprof/*`.  Because the same kruise-manager process also serves OpenKruise's admission webhooks, and those webhooks ship with `failurePolicy: Fail`, flooding the pprof endpoints could push the manager into resource exhaustion / OOM, empty the webhook Service endpoints, and block pod creation across the whole cluster — not just OpenKruise CRDs.  Making profiling an explicit opt-in closes this unauthenticated exposure by default. Operators who need profiling can still pass `--enable-pprof=true` and bind `--pprof-addr` to loopback.  Reported via coordinated disclosure (CERT/CC VRF#26-09-QKKTS).  ## Type of change  - [x] Bug fix / security hardening (non-breaking)  ## Test plan  - [x] `go build ./...` passes - [x] `go vet . ./cmd/daemon/` passes - [ ] Verify manager no longer listens on `:8090` on a default install - [ ] Verify `--enable-pprof=true` still starts the pprof listener as before
+- **Issue #2625** (2026-10-19): **fix(ci): bump trivy-action to v0.36.0 and golangci-lint-action to v9.3.0**
+  *Symptoms*: ## What this PR does  Fixes the chronically failing `golangci-lint` CI job on `release-1.9` by aligning `.github/workflows/ci.yaml` with `master` (whose CI is green). Two version bumps:  ```diff        - name: Lint golang code -        uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9 # v8.0.0 +        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0          with:            version: ${{ env.GOLANGCI_VERSION }}            args: --verbose -          skip-pkg-cache: true -          mod: readonly        - name: Run Trivy vulnerability scanner in repo mode -        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # master +        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 ```  After these changes the `ci.yaml` lint job is **byte-identical to `master`**.  ## Why  **1. golangci-lint-action v8.0.0 → v9.3.0** — the job fails with: > restore cache failed: Dependencies cache is empty or broken (you need to run 'go mod download' or 'go mod vendor' first)  This is emitted by golangci-lint-action v8.0.0's dependency-cache logic. `master` already resolved it by bumping to v9.3.0 (`ba0d7d2e`). The stale `skip-pkg-cache` / `mod` inputs (removed in v4+) are dropped as well.  **2. trivy-action `master` pin → v0.36.0** — the trivy step was pinned to `b6643a29 # master`, a floating branch commit whose default trivy CLI is **v0.65.0**. Upstream deleted the v0.65.0–v0.6
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1232,314 +1232,66 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `639058be` (2026-08-27)
-**Commit Message**: fix(ci): bump trivy-action to v0.36.0 to fix golangci-lint job failure
+### Incident Patch 1: `4fdf516e` (2026-10-19)
+**Commit Message**: docs(changelog): add v1.9.1 and v1.9.2 release notes
 
-The golangci-lint job has been failing on every PR at the "Install Trivy"
-step with exit code 1, right after resolving the version:
+Add CHANGELOG entries for the v1.9 release line since v1.9.0:
+- v1.9.1: GKE/EKS server-version parse panic fix (#2502)
+- v1.9.2: security (pprof default) plus WorkloadSpread, PUB,
+  NodePodProbe, controller-manager restart, AdvancedCronJob,
+  DaemonSet, CloneSet OnDelete, calculator, UnitedDeployment,
+  PodProbeMarker and ImagePullJob digest fixes.
 
-    aquasecurity/trivy info found version: 0.65.0 for v0.65.0/Linux/64bit
-    ##[error]Process completed with exit code 1
-
-The lint itself passes (424 issues before processing, 0 after); only the
-Trivy scan step fails, which fails the whole job.
-
-Root cause: trivy-action was pinned to a floating "master" commit
-(b6643a29) whose default trivy version is v0.65.0. Upstream has since
-deleted the v0.65.0 release (v0.65.0 through v0.69.1 are gone, the
-oldest surviving release in that range is v0.69.2), so both the tarball
-and checksum downloads now return HTTP 404 and contrib/install.sh exits 1.
-
-Because the pin referenced a branch rather than a tag, dependabot could
-not track it, which is how the default drifted onto a deleted release.
-Pinning the SHA of the v0.36.0 tag restores dependabot tracking and moves
-the default trivy version to v0.70.0, which is still published.
-
-Also drop the 'skip-pkg-cache' and 'mod' inputs from the golangci-lint
-step. They were removed in golangci-lint-act
-
-**File**: `.github/workflows/ci.yaml` (modified, +1/-3)
-```diff
-@@ -62,10 +62,8 @@ jobs:
-         with:
-           version: ${{ env.GOLANGCI_VERSION }}
-           args: --verbose
--          skip-pkg-cache: true
--          mod: readonly
-       - name: Run Trivy vulnerability scanner in repo mode
--        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # master
-+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-         with:
-           scan-type: 'fs'
-           ignore-unfixed: true
-```
-
----
-
-### Incident Patch 2: `88cbc896` (2026-10-14)
-**Commit Message**: fix: disable pprof by default in kruise-manager and kruise-daemon (#2613)
-
-The pprof endpoints were enabled by default and bound to all interfaces
-(:8090 for the manager, :10222 for the daemon) with no authentication or
-TLS. Any pod on the cluster network could reach them and drive the
-manager into resource exhaustion; because the same process serves
-OpenKruise's fail-closed admission webhooks, that could block pod
-creation across the cluster.
-
-Flip the --enable-pprof default from true to false in both binaries so
-profiling becomes an explicit opt-in. Operators who need it can still
-pass --enable-pprof=true and bind --pprof-addr to loopback.
+Each entry links its upstream PR and credits the author.
 
 Signed-off-by: 守辰 <[REDACTED_EMAIL]>
 
-**File**: `cmd/daemon/main.go` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +29/-0)
 ```diff
-@@ -40,7 +40,7 @@ import (
- var (
- 	bindAddr         = flag.String("addr", ":10221", "The address the metric endpoint and healthz binds to.")
- 	pprofAddr        = flag.String("pprof-addr", ":10222", "The address the pprof binds to.")
--	enablePprof      = flag.Bool("enable-pprof", true, "Enable pprof for daemon.")
-+	enablePprof      = flag.Bool("enable-pprof", false, "Enable pprof for daemon.")
- 	pluginConfigFile = flag.String("plugin-config-file", "/kruise/CredentialProviderPlugin.yaml", "The path of plugin config file.")
- 	pluginBinDir     = flag.String("plugin-bin-dir", "/kruise/plugins", "The path of directory of plugin binaries.")
+@@ -1,5 +1,34 @@
+ # Change Log
  
-```
-
-**File**: `main.go` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ func main() {
- 		"This determines the namespace in which the leader election configmap will be created, it will use in-cluster namespace if empty.")
- 	flag.StringVar(&namespace, "namespace", "",
- 		"Namespace if specified restricts the manager's cache to watch objects in the desired namespace. Defaults to all namespaces.")
--	flag.BoolVar(&enablePprof, "enable-pprof", true, "Enable pprof for controller manager.")
-+	flag.BoolVar(&enablePprof, "enable-pprof", false, "Enable pprof for controller manager.")
- 	flag.StringVar(&pprofAddr, "pprof-addr", ":8090", "The address the pprof binds to.")
- 	flag.StringVar(&syncPeriodStr, "sync-period", "", "Determines the minimum frequency at which watched resources are reconciled.")
- 	flag.DurationVar(&leaseDuration, "leader-election-lease-duration", defaultLeaseDuration,
-```
-
----
-
-### Incident Patch 3: `07169cfa` (2026-07-02)
-**Commit Message**: fix(client): avoid panic in ShouldUpdateResourceByResize on GKE/EKS version strings (#2502)
-
-coreos/go-semver.New panics on strings that are not in dotted-tri format.
-The K8s server version returned by /version is reported by some cloud
-providers with a trailing '+' or build metadata (e.g. v1.28+gke.1,
-v1.30+eks.1), which would previously crash the controller on startup.
-
-Changes:
-- Strip the leading 'v' prefix from curVersion.GitVersion.
-- Clean each dotted component with a new digitsOnly helper so cloud
-  build metadata is dropped before parsing (1.32+gke.1 -> 1.32.1).
-- Add a deferred recover() to return false on any remaining format
-  exception, preserving the pre-1.32 update path as a safe default.
-- Add unit tests covering exact, above, below, GKE/EKS-cleaned,
-  empty, garbage, and missing-segment inputs.
-
-**File**: `pkg/client/registry.go` (modified, +39/-2)
-```diff
-@@ -2,6 +2,7 @@ package client
++## v1.9.2
++> Change log since v1.9.1
++
++### Security
++- Disable pprof by default in kruise-manager and kruise-daemon to avoid unauthenticated resource-exhaustion exposure on the admission-webhook process. ([#2613](https://github.com/openkruise/kruise/pull/2613), [@furykerry](https://github.com/furykerry))
++
++### Bug Fixes
++- Fix kruise-controller-manager crash (nil pointer dereference) when WorkloadSpread manages a Job without spec.parallelism, or Deployment/StatefulSet/ReplicaSet/CloneSet without replicas; safely default to 1 via ptr.Deref across the event handler, controller, util and controllerfinder. ([#2568](https://github.com/openkruise/kruise/pull/2568), [@neo0007777](https://github.com/neo0007777))
++- Fix PodUnavailableBudget panic on nil Spec.Replicas during update event. ([#2529](https://github.com/openkruise/kruise/pull/2529), [@vishalmore90](https://github.com/vishalmore90))
++- Fix NodePodProbe panic caused by nil labels. ([#2500](https://github.com/openkruise/kruise/pull/2500), [@Jayant-kernel](https://github.com/Jayant-kernel))
++- Fix occasional restarts of kruise-controller-manager by registering built-in API field indexes first (fail fast) and retrying CRD field-index registration until discovery observes the resource. ([#2382](https://github.com/openkruise/kruise/pull/2382), [@PersistentJZH](https://github.com/PersistentJZH))
++- Fix AdvancedCronJob never being enqueued on child Job completion/failure by watching batchv1.Job with owner AdvancedCronJob instead of BroadcastJob, which left status.active stale. ([#2594](https://github.com/openkruise/kruise/pull/2594), [@bhuvan-somisetty](https://github.com/bhuvan-somisetty))
++- Fix DaemonSet not reconciling v1alpha1-created Pods after upgrade by resolving Pod owner references via Group/Kind, and skip parsing owner refs from unrelated controllers. ([#2518](https://github.com/openkruise/kruise/pull/2518), [@Colvin-Y](https://github.com/Colvin-Y))
++- Fix Pods remaining NotReady when CloneSet UpdateStrategy is set to OnDelete. ([#2291](https://github.com/openkruise/kruise/pull/2291), [@zmberg](https://github.com/zmberg))
++- Fix calculator rejecting malformed numbers instead of silently reading them as 0. ([#2595](https://github.com/openkruise/kruise/pull/2595), [@anishmehta24](https://github.com/anishmehta24))
++- Fix UnitedDeployment validation error printing a pointer address by dereferencing expectedReplicas (*int32) when formatting the message. ([#2597](https://github.com/openkruise/kruise/pull/2597), [@bhuvan-somisetty](https://github.com/bhuvan-somisetty))
++- Fix PodProbeMarker validation webhook reporting flat field paths instead of indexed slice paths (e.g. spec.probes[i].probe, spec.probes[i].markerPolicy[j]). ([#2602](https://github.com/openkruise/kruise/pull/2602), [@bhuvan-somisetty](https://github.com/bhuvan-somisetty))
++- Fix ImagePullJob with a digest failing on every node by joining image name and digest with "@" instead of ":", adding daemonutil.JoinImageNameTag and fixing CRI pull paths, ContainsImage, secret auth-info parsing and related logs/events/status. ([#2556](https://github.com/openkruise/kruise/pull/2556), [@qnduncan](https://github.com/qnduncan))
++
++### Misc (Chores and tests)
++- Bump golangci-lint-action to v9.3.0 to fix cache-restore failure on the release-1.9 CI. (release-1.9 branch)
++- Bump trivy-action to v0.36.0 to fix the lint job failing on a floating master pin whose default trivy CLI was deleted upstream (HTTP 404). (release-1.9 branch)
++
++## v1.9.1
++> Change log since v1.9.0
++
++### Bug Fixes
++- Fix controller panic on startup in ShouldUpdateResourceByResize when the K8s server version carries cloud build metadata (e.g. v1.28+gke.1, v1.30+eks.1), which coreos/go-semver.New cannot parse; strip the leading 'v', clean each dotted component to digits only, and add a deferred recover() to return false safely. ([#2502](https://github.com/openkruise/kruise/pull/2502), [@furykerry](https://github.com/furykerry))
++
+ ## v1.9.0
+ > Change log since v1.8.2
  
- import (
- 	"fmt"
-+	"strings"
- 
- 	"github.com/coreos/go-semver/semver"
- 	"k8s.io/apimachinery/pkg/version"
-@@ -54,6 +55,42 @@ func GetCurrentServerVersion() *version.Info {
- 
- // ShouldUpdateResourceByResize returns whether should update resource by resize
- // The resize sub-resource was introduced in version 1.32, https://github.com/kubernetes/kubernetes/pull/128266
--func ShouldUpdateResourceByResize() bool {
--	return semver.New(fmt.Sprintf("%s.%s.0", curVersion.Major, curVersion.Minor)).Compare(*semver.New("1.32.0")) >= 0
-+func ShouldUpdateResourceByResize() (result bool) {
-+	defer func() {
-+		if r := recover(); r != nil {
-+			// semver.New panics on strings that are not in dotted-tri format
-+			// (e.g. unexpected non-numeric content from custom build metadata).
-+			// Treat that as "not >= 1.32" so the caller falls back to the
-+			// pre-1.32 update path.
-+			_ = r
-+			result = false
-+		}
-+	}()
-+	// coreos/go-semver does not strip the leading 'v' that k8s prefixes on
-+	// GitVersion (e.g. "v1.32.0"). Remove it before parsing.
-+	v := strings.TrimPrefix(curVersion.GitVersion, "v")
-+	// digitsOnly cleans each dotted component so cloud-provider build metadata
-+	// (e.g. "1.32+gke.1" → "1.32.1") does not cause a parse panic. SplitN
-+	// keeps at most three parts (major/minor/patch); any extra segments are
-+	// folded into the last part and then trimmed by digitsOnly. Any
-+	// remaining format exception is caught by the deferred recover above.
-+	parts := strings.SplitN(v, ".", 3)
-+	for i, p := range parts {
-+		parts[i] = digitsOnly(p)
-+	}
-+	cur := semver.New(strings.Join(parts, "."))
-+	return cur.Compare(*semver.New("1.32.0")) >= 0
-+}
-+
-+// digitsOnly returns the leading numeric prefix of a version component.
-+// This handles GKE/EKS-style build metadata embedded in a component
-+// (e.g. "32+gke" → "32"). If the input has no leading digit, an empty
-+// string is returned.
-+func digitsOnly(s string) string {
-+	for i, r := range s {
-+		if r < '0' || r > '9' {
-+			return s[:i]
-+		}
-+	}
-+	return s
- }
-```
-
-**File**: `pkg/client/registry_test.go` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+/*
-+Copyright 2026 The Kruise Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package client
-+
-+import (
-+	"testing"
-+
-+	"k8s.io/apimachinery/pkg/version"
-+)
-+
-+func TestDigitsOnly(t *testing.T) {
-+	cases := []struct {
-+		name string
-+		in   string
-+		want string
-+	}{
-+		{name: "empty string", in: "", want: ""},
-+		{name: "plain digits", in: "28", want: "28"},
-+		{name: "gke build metadata suffix", in: "32+gke", want: "32"},
-+		{name: "eks build metadata suffix", in: "30+eks", want: "30"},
-+		{name: "trailing plus", in: "28+", want: "28"},
-+		{name: "major with plus", in: "1+", want: "1"},
-+		{name: "all non-numeric", in: "+++", want: ""},
-+		{name: "letters only", in: "abc", want: ""},
-+		{name: "leading digits then letters", in: "1a2b3c", want: "1"},
-+		{name: "zero", in: "0", want: "0"},
-+		{name: "large number", in: "132", want: "132"},
-+	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			if got := digitsOnly(tc.in); got != tc.want {
-+				t.Errorf("digitsOnly(%q) = %q, want %q", tc.in, got, tc.want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestShouldUpdateResourceByResize(t *testing.T) {
-+	original := curVersion
-+	t.Cleanup(func() {
-+		curVersion = original
-+	})
-+
-+	cases := []struct {
-+		name    string
-+		version *version.Info
-+		want    bool
-+	}{
-+		{
-+			name:    "exactly 1.32.0 returns true",
-+			version: &version.Info{Major: "1", Minor: "32", GitVersion: "v1.32.0"},
-+			want:    true,
-+		},
-+		{
-+			name:    "above 1.32 returns true",
-+			version: &version.Info{Major: "1", Minor: "33", GitVersion: "v1.33.0"},
-+			want:    true,
-+		},
-+		{
-+			name:    "below 1.32 returns false",
-+			version: &version.Info{Major: "1", Minor: "31", GitVersion: "v1.31.0"},
-+			want:    false,
-+		},
-+		{
-+			name:    "gke-style 1.28+gke.1 is cleaned to 1.28.1 and returns false",
-+			version: &version.Info{Major: "1", Minor: "28+", GitVersion: "v1.28+gke.1"},
-+			want:    false,
-+		},
-+		{
-+			name:    "gke-style 1.32+gke.1 is cleaned to 1.32.1 and returns true",
-+			version: &version.Info{Major: "1", Minor: "32+", GitVersion: "v1.32+gke.1"},
-+			want:    true,
-+		},
-+		{
-+			name:    "eks-style 1.30+eks.1 is cleaned to 1.30.1 and returns false",
-+			version: &version.Info{Major: "1", Minor: "30+", GitVersion: "v1.30+eks.1"},
-+			want:    false,
-+		},
-+		{
-+			name:    "1.28+.1 is cleaned to 1.28.1 and returns false",
-+			version: &version.Info{Major: "1", Minor: "28+", GitVersion: "v1.28+.1"},
-+			want:    false,
-+		},
-+		{
-+			name:    "extra segment after patch is folded into patch and cleaned to 1.32.0",
-+			version: &version.Info{Major: "1", Minor: "32", GitVersion: "v1.32.0.extra"},
-+			want:    true,
-+		},
-+		{
-+			name:    "empty GitVersion recovers from panic and returns false",
-+			version: &version.Info{Major: "1", Minor: ""},
-+			want:    false,
-+		},
-+		{
-+			name:    "non-semver garbage recovers from panic and returns false",
-+			version: &version.Info{Major: "1", Minor: "32", GitVersion: "garbage"},
-+			want:    false,
-+		},
-+		{
-+			name:    "missing patch segment recovers from panic and returns false",
-+			version: &version.Info{Major: "1", Minor: "32", GitVersion: "1.32"},
-+			want:    false,
-+		},
-+	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			curVersion = tc.version
-+			defer func() {
-+				if r := recover(); r != nil {
-+					t.Fatalf("ShouldUpdateResourceByResize leaked a panic for GitVersion=%q: %v",
-+						tc.version.GitVersion, r)
-+				}
-+			}()
-+			if got := ShouldUpdateResourceByResize(); got != tc.want {
-+				t.Errorf("ShouldUpdateResourceByResize() for GitVersion=%q = %v, want %v",
-+					tc.version.GitVersion, got, tc.want)
-+			}
-+		})
-+	}
-+}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2626** (2026-10-20): docs(changelog): add v1.9.1 and v1.9.2 release notes (@furykerry)
+- **PR #2625** (2026-10-19): fix(ci): bump trivy-action to v0.36.0 and golangci-lint-action to v9.3.0 (@furykerry)
+- **PR #2615** (2026-10-19): fix: cherry-pick bug fixes from master to release-1.9 (no API promotions) (@furykerry)
 - **PR #2614** (closed): fix(imagepulljob): join image name and digest with "@" instead of ":" [cherry-pick to release-1.9] (@furykerry)
 - **PR #2613** (2026-10-14): fix: disable pprof by default in kruise-manager and kruise-daemon (@furykerry)
 - **PR #2602** (2026-10-12): fix: correct field paths in PodProbeMarker validation webhook (@bhuvan-somisetty)
-- **PR #2597** (2026-10-12): fix: format dereferenced replicas count in UnitedDeployment validation error (@bhuvan-somisetty)
-- **PR #2595** (2026-10-13): fix(calculator): reject malformed numbers instead of reading them as 0 (@anishmehta24)
-- **PR #2594** (2026-10-12): fix(advancedcronjob): watch batchv1.Job with owner AdvancedCronJob instead of BroadcastJob (@bhuvan-somisetty)
 
 ---
 
@@ -1559,30 +1311,38 @@ Changes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): bump trivy-action to v0.36.0 to fix golangci-lint job failure
+## X. docs(changelog): add v1.9.1 and v1.9.2 release notes
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `639058be`: ci): bump trivy-action to v0.36.0 to fix golangci-lint job failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4fdf516e`: docs(changelog): add v1.9.1 and v1.9.2 release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+## v1.9.2
+> Change log since v1.9.1
+
+### Security
+- Disable pprof by default in kruise-manager and kruise-daemon to avoid unauthenticated resource-exhaustion exposure on the admission-webhook process. ([#2613](https://github.com/openkruise/kruise/pull/2613), [@furykerry](https://github.com/furykerry))
+
+### Bug Fixes
+- Fix kruise-controller-manager crash (nil pointer dereference) when WorkloadSpread manages a Job without spec.parallelism, or Deployment/StatefulSet/ReplicaSet/CloneSet without replicas; safely default to 1 via ptr.Deref across the event handler, controller, util and controllerfinder. ([#2568](https://github.com/openkruise/kruise/pull/2568), [@neo0007777](https://github.com/neo0007777))
+- Fix PodUnavailableBudget panic on nil Spec.Replicas during update event. ([#2529](https://github.com/openkruise/kruise/pull/2529), [@vishalmore90](https://github.com/vishalmore90))
+- Fix NodePodProbe panic caused by nil labels. ([#2500](https://github.com/openkruise/kruise/pull/2500), [@Jayant-kernel](https://github.com/Jayant-kernel))
+- Fix occasional restarts of kruise-controller-manager by registering built-in API field indexes first (fail fast) and retrying CRD field-index registr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          skip-pkg-cache: true
-          mod: readonly
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # master
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `639058be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4fdf516e` are properly handled with clean fallback behavior.

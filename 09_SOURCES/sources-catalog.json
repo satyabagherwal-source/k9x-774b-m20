@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
-    "lastHarvestedAt": "2026-10-19T00:28:51.163Z",
+    "contentHash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
+    "lastHarvestedAt": "2026-10-20T14:10:21.229Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -3023,10 +3023,10 @@
     "repository": "openkruise/kruise",
     "platform": "github",
     "sourceUrl": "https://github.com/openkruise/kruise",
-    "sourceVersion": "567ce15b",
+    "sourceVersion": "4fdf516e",
     "license": "NOASSERTION",
-    "contentHash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
-    "lastHarvestedAt": "2026-10-18T22:35:41.441Z",
+    "contentHash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
+    "lastHarvestedAt": "2026-10-20T14:07:26.897Z",
     "learningId": "learn-github-openkruise-kruise"
   },
   "callstack-react-native-paper": {
@@ -4703,10 +4703,10 @@
     "repository": "DylanVann/react-native-fast-image",
     "platform": "github",
     "sourceUrl": "https://github.com/DylanVann/react-native-fast-image",
-    "sourceVersion": "2462d5ad",
+    "sourceVersion": "d03026c0",
     "license": "MIT",
-    "contentHash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
-    "lastHarvestedAt": "2026-10-19T01:57:04.131Z",
+    "contentHash": "13612cf8183e95d9d1defda5b8746c286da8caf3ae46abffe466ce47dfde7d9e",
+    "lastHarvestedAt": "2026-10-20T14:07:25.223Z",
     "learningId": "learn-github-dylanvann-react-native-fast-image"
   },
   "pulumi-pulumi": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "d9eea49a",
+    "sourceVersion": "90d7dd75",
     "license": "Apache-2.0",
-    "contentHash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
-    "lastHarvestedAt": "2026-10-19T09:12:56.328Z",
+    "contentHash": "b075f3486301ca36f4c8e35a22855268e2a28a8a48cd1078f9d1c3fde823a444",
+    "lastHarvestedAt": "2026-10-20T14:07:33.294Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

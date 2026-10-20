@@ -3839,3 +3839,7 @@
 | `CYCLE-20261020-3HOA` | `2026-10-20T14:00:33.850Z` | `margelo/react-native-mmkv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1987` | Yes (`6889ce25...`) |
 | `CYCLE-20261020-3KAF` | `2026-10-20T14:00:37.239Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3208, Rule EXISTING` | Yes (`21fa75ed...`) |
 | `CYCLE-20261020-3KT6` | `2026-10-20T14:00:37.914Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3209` | Yes (`c499f285...`) |
+| `CYCLE-20261020-CB33` | `2026-10-20T14:07:25.215Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3210` | Yes (`13612cf8...`) |
+| `CYCLE-20261020-CCDQ` | `2026-10-20T14:07:26.894Z` | `openkruise/kruise` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openkruise-kruise-learnings.md` | Yes (`7da28b3c...`) |
+| `CYCLE-20261020-CHB9` | `2026-10-20T14:07:33.285Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3211` | Yes (`b075f348...`) |
+| `CYCLE-20261020-G2W4` | `2026-10-20T14:10:21.220Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3212, Rule 3213, Rule 3214` | Yes (`bfdc84d1...`) |
