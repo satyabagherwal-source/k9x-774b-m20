@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `95901ef6`  
+> **Source Version**: `d6b56f86`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:09:13.902Z  
+> **Timestamp**: 2026-10-20T13:27:41.013Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:09:13.491Z  
+> **Harvest Timestamp**: 2026-10-20T13:27:40.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1933,56 +1933,14 @@ pub fn chat_completion(
 
 ### Core Architecture Module: `src/util.rs`
 ```
-#[cfg(any(feature = "feature_capable", feature = "lite"))]
-use std::borrow::Cow;
-#[allow(unused_imports)]
-use std::fmt::Write as _;
-#[cfg(target_family = "unix")]
-use std::os::unix::process::ExitStatusExt;
-#[cfg(feature = "polars")]
-use std::sync::Arc;
-use std::{
-    cmp::min,
-    env, fs,
-    fs::File,
-    io::{BufRead, BufReader, BufWriter, Read, Write},
-    path::{Path, PathBuf},
-    process::Command,
-    str,
-    sync::OnceLock,
-    time::{Duration, Instant, SystemTime},
-};
+use std::sync::OnceLock;
+#[cfg(feature = "self_update")]
+use std::time::Duration;
 
-use csv::ByteRecord;
-use csv_index::RandomAccessSimple;
-use docopt::{ArgvMap, Docopt, Value};
-use filetime::FileTime;
-use human_panic::setup_panic;
-#[cfg(any(feature = "feature_capable", feature = "lite"))]
-use indicatif::ProgressDrawTarget;
-use indicatif::{HumanCount, ProgressBar, ProgressStyle};
-use log::{info, log_enabled, warn};
-#[cfg(feature = "polars")]
-use polars::prelude::Schema;
-use reqwest::Client;
+use docopt::Docopt;
 use serde::de::DeserializeOwned;
-#[cfg(any(feature = "feature_capable", feature = "lite"))]
-use serde::de::{Deserialize, Deserializer, Error};
-use sysinfo::System;
-use zip::read::root_dir_common_filter;
 
-#[cfg(feature = "polars")]
-use crate::cmd::count::polars_count_input;
-use crate::{
-    CURRENT_COMMAND, CliError, CliResult, QsvExitCode,
-    cmd::stats::{JsonTypes, STATSDATA_TYPES_MAP, StatsData},
-    config,
-    config::{
-        Config, DEFAULT_RDR_BUFFER_CAPACITY, DEFAULT_WTR_BUFFER_CAPACITY, Delimiter, SpecialFormat,
-        get_delim_by_extension, get_special_format,
-    },
-    select::SelectColumns,
-};
+use crate::{CliError, CliResult, config::Delimiter, select::SelectColumns};
 
 #[macro_export]
 macro_rules! regex_oncelock {
@@ -2117,112 +2075,111 @@ const WHITESPACE_MARKERS: &[(char, &str)] = &[
     ('\u{200B}', "《zwsp》"),  // zero width space
 ];
 
-/// Render a duration in seconds as a compact, single-unit string: "28d", "6h", "45m", "3s".
-///
-/// Deliberately ONE unit, the largest that fits, and deliberately WORDLESS. Callers that want a
-/// phrase build it around this ("last fetched {} ago"); callers that want a table cell use it
-/// as-is. An earlier version baked the phrase in, which made it unusable as a column value.
-///
-/// Precision beyond one unit is noise for both consumers — the number exists to answer "do I
-/// care?", not to be arithmetic. Days are the largest unit: `qsv get --older-than` also accepts
-/// weeks on INPUT, but "28d" reads more plainly in a cache listing than "4w", and no caller
-/// round-trips this back through that parser.
-// `diskcache::rich`'s stale-refresh warning and `get cache-list`'s AGE column are the only
-// callers, and both live under the `get` feature.
-#[cfg(any(feature = "get", test))]
-pub fn fmt_duration_compact(secs: i64) -> String {
-    const MINUTE: i64 = 60;
-    const HOUR: i64 = 60 * MINUTE;
-    const DAY: i64 = 24 * HOUR;
+const OTHER_ENV_VARS: &[&str] = &["all_proxy", "no_proxy", "http_proxy", "https_proxy"];
 
-    match secs {
-        s if s >= DAY => format!("{}d", s / DAY),
-        s if s >= HOUR => format!("{}h", s / HOUR),
-        s if s >= MINUTE => format!("{}m", s / MINUTE),
-        s => format!("{s}s"),
-    }
-}
+#[cfg(all(feature = "fetch", not(feature = "lite")))]
+macro_rules! update_cache_info {
+    ($progress:expr_2021, $cache_instance:expr_2021) => {
+        use cached::Cached;
+        use indicatif::HumanCount;
 
-pub fn reset_sigpipe() {
-    cfg_select! {
-        unix => unsafe {
-            libc::signal(libc::SIGPIPE, libc::SIG_DFL);
-        },
-        _ => {},
-    }
-}
-
-pub fn current_exe() -> CliResult<PathBuf> {
-    let exe_path = std::env::current_exe()?;
-    Ok(exe_path)
-}
-
-/// Visualizes whitespace characters in a string by replacing them with visible markers
-///
-/// This function takes a string and returns a new string where whitespace characters
-/// are replaced with visible Unicode markers to make them easier to see.
-///
-/// # Arguments
-///
-/// * `s` - The input string to visualize whitespace in
-///
-/// # Returns
-///
-/// A new String with whitespace characters replaced by visible markers
-///
-/// # Behavior
-///
-/// - If the input string contains only spaces, each space is replaced with "《_》"
-/// - For other whitespace characters (tab, newline, etc), uses markers defined in
-///   `WHITESPACE_MARKERS`
-/// - Non-whitespace characters are left unchanged
-/// - For strings with mixed content, single spaces are preserved as-is
-///
-/// # Examples
-///
-/// ```
-/// let s = "hello\tworld\n";
-/// let vis = visualize_whitespace(s);
-/// assert_eq!(vis, "hello《→》world《¶》");
-///
-/// let spaces = "   ";
-/// let vis = visualize_whitespace(spaces);
-/// assert_eq!(vis, "《_》《_》《_》");
-/// ```
-pub fn visualize_whitespace(s: &str) -> String {
-    // Check if string is all spaces
-    let is_all_spaces = s.chars().all(|c| c == ' ');
-
-    let mut result = String::with_capacity(s.len() * 3);
-    for c in s.chars() {
-        if c == ' ' {
-            if is_all_spaces {
-                // Only use space marker if entire string is spaces
-                result.push_str("《_》");
-            } else {
-                result.push(c);
-            }
-        } else if let Some((_, replacement)) = WHITESPACE_MARKERS.iter().find(|(ws, _)| *ws == c) {
-            result.push_str(replacement);
-        } else {
-            result.push(c);
+        let cache = $cache_instance.read();
+        let size = cache.cache_size();
+        if size > 0 {
+            let hits = cache.cache_hits().unwrap_or_default();
+            let misses = cache.cache_misses().unwrap_or(1);
+            #[allow(clippy::cast_precision_loss)]
+            let hit_ratio = (hits as f64 / (hits + misses) as f64) * 100.0;
+            let capacity = cache.cache_capacity();
+            drop(cache);
+            $progress.set_message(format!(
+                " of {} records. Cache {:.2}% entries: {} capacity: {}.",
+                HumanCount($progress.length().unwrap()),
+                hit_ratio,
+                HumanCount(size as u64),
+                HumanCount(capacity.unwrap() as u64),
+            ));
         }
-    }
-    result
+    };
+    ($progress:expr_2021, $cache_hits:expr_2021, $num_rows:expr_2021) => {
+        use indicatif::HumanCount;
+
+        #[allow(clippy::cast_precision_loss)]
+        let hit_ratio = ($cache_hits as f64 / $num_rows as f64) * 100.0;
+        $progress.set_message(format!(
+            " of {} records. Cache hit ratio: {hit_ratio:.2}%",
+            HumanCount($progress.length().unwrap()),
+        ));
+    };
 }
 
-/// Converts a byte slice to a `Cow<str>` for output formatting.
-///
-/// Uses SIMD-accelerated UTF-8 validation via `simdutf8::basic::from_utf8` on the
-/// happy path (returns a borrowed `&str` with no allocation on valid UTF-8, which
-/// is the overwhelming common case including all-ASCII).
-///
-/// Falls back to `String::from_utf8_lossy` only when the bytes are not valid
-/// UTF-8 (replacement characters substituted, allocates).
-///
-/// This is faster than `String::from_utf8_lossy` alone, which always uses scalar
-/// UTF-8 validation and pre-allocates a `String` of the input length.
-#[i
+#[cfg(all(feature = "fetch", not(feature = "lite")))]
+pub(crate) use update_cache_info;
+
+pub fn get_args<T>(usage: &str, argv: &[&str]) -> CliResult<T>
+where
+    T: DeserializeOwned,
+{
+    // `Docopt::deserialize` is just `parse().and_then(ArgvMap::deserialize)`, so splitting
+    // it costs nothing and lets the guard see docopt's PARSED values. `parse` is also
+    // where --help/--version are detected, so both still short-circuit ahead of the guard.
+    let vals = Docopt::new(usage)
+        .and_then(|d| {
+            d.argv(argv.iter().copied())
+                .version(Some(version()))
+                .parse()
+        })
+        .map_err(CliError::from)?;
+
+    check_output_is_not_input(&vals, argv)?;
+
+    vals.deserialize().map_err(CliError::from)
+}
+
+pub type Idx = Option<usize>;
+
+// how often a background (non-flag) update check is allowed to hit GitHub: ~twice a month
+#[cfg(feature = "self_update")]
+const UPDATE_CHECK_INTERVAL: Duration = Duration::from_hours(360);
+
+/// Tabular file extensions qsv recognizes for delimiter inference inside a zip.
+const ZIP_TABULAR_EXTS: [&str; 4] = ["csv", "tsv", "tab", "ssv"];
+
+mod args;
+mod derived_file;
+mod envvars;
+mod headers;
+mod http;
+mod index;
+mod input;
+mod json_out;
+mod rows;
+mod runtime;
+mod special_format;
+mod stats_cache;
+mod subprocess;
+mod update;
+mod version;
+
+pub use args::*;
+pub use derived_file::*;
+pub use envvars::*;
+pub use headers::*;
+pub use http::*;
+pub use index::*;
+pub use input::*;
+pub use json_out::*;
+pub use rows::*;
+pub use runtime::*;
+pub use special_format::*;
+pub use stats_cache::*;
+pub use subprocess::*;
+pub use update::*;
+pub use version::*;
+
+#[cfg(test)]
+mod tests;
+
 ```
 
 
@@ -2252,115 +2209,745 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95901ef6` (2026-10-20)
-**Commit Message**: deps: update lock file - notably tokio from 1.53.3 to 1.54.0
+### Incident Patch 1: `d6b56f86` (2026-10-20)
+**Commit Message**: refactor: split src/util.rs into src/util/ submodules (#4855)
 
-**File**: `Cargo.lock` (modified, +16/-16)
+Pure code motion: src/util.rs becomes a facade re-exporting 15 child modules under src/util/ with explicit, cfg-gated imports; every util:: path is unchanged. Also allowlists `oout` in _typos.toml (the viz_daemon -oout.html short-flag test).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -286,9 +286,9 @@ dependencies = [
+@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **Inert by default.** The bridge does nothing unless the schematic was opened from disk or is served from loopback, so published schematics never contact the viewer's machine or trigger local-network permission prompts. Without the daemon, schematics are unchanged.
+   - **Opt-out and port.** `--no-daemon-bridge` (or `QSV_VIZ_NO_DAEMON=1`) leaves the script out. `QSV_CLIENTD_PORT` sets the port it probes (default 14470).
  
- [[package]]
- name = "annotate-snippets"
--version = "0.12.16"
-+version = "0.12.17"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f211a51805bc641f3ad5b7664c77d2547af685cc33b4cd8d31964027a46f13f1"
-+checksum = "b2a5b0a5ab8561c603f16c3b78c24a386b1f70e7fc1b1b1e8c15738828e4a176"
- dependencies = [
-  "anstyle",
-  "memchr",
-@@ -426,9 +426,9 @@ checksum = "03918c3dbd7701a85c6b9887732e2921175f26c350b4563841d0958c21d57e6d"
- 
- [[package]]
- name = "argminmax"
--version = "0.7.0"
-+version = "0.7.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b6c5fb0d1ac4352a9581c758c2e942e0228ae4476ec32ddcc9fcc95b82d1a183"
-+checksum = "088a9c28ca36500c581f9f54b63460492d2b4f71e1e61d176e8fb79565109b01"
- dependencies = [
-  "half",
-  "num-traits",
-@@ -4045,9 +4045,9 @@ dependencies = [
- 
- [[package]]
- name = "inout"
--version = "0.2.4"
-+version = "0.2.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3ce983bb6fb399067d101fbfc9e74174e07e9f29a2bc679efefeb8c645819c3f"
-+checksum = "3b5cf4372d022092674a83b8febf5865f7a573cc0c5baec5e49c879b6a20978f"
- dependencies = [
-  "hybrid-array",
- ]
-@@ -8180,9 +8180,9 @@ checksum = "eec689c0bc40ff2458a5977b6619cb718087084a18e02a131c599b62d05e1a5f"
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "aws-lc-rs",
-  "ring",
-@@ -9461,9 +9461,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
- dependencies = [
-  "bytes",
-  "libc",
-@@ -9801,9 +9801,9 @@ dependencies = [
- 
- [[package]]
- name = "typed-path"
--version = "0.12.3"
-+version = "0.12.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
-+checksum = "54ec2755506471f54baf5e4bb5499d8e510cc1caf271270e778a736bd2d7336c"
- 
- [[package]]
- name = "typeid"
-@@ -10334,18 +10334,18 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.9"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
-+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
- dependencies = [
-  "rustls-pki-types",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
++### Changed
++- **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
++
+ ### Fixed
+ - **`schema`: the 26.0.0 Unicode length pass made indexed runs 7× slower.** The character-length pass added in [#4827](https://github.com/dathere/qsv/pull/4827) read the whole file on one thread, decoding every field, whenever a String column had non-ASCII text. It now decodes only the columns it measures and, when the file is indexed, splits the rows across threads like `frequency`. On the 1M-row benchmark file, indexed `schema` drops from 442 ms to 93 ms (25.0.0, before the pass existed: 55 ms); the schema it writes is unchanged ([#4852](https://github.com/dathere/qsv/pull/4852)).
+ - **Benchmark archive: 247 more invalid historical runs removed** ([#4851](https://github.com/dathere/qsv/pull/4851)). 237 runs timed a command that errored out at startup. 10 more were found by rerunning suspect windows with the original release binaries: `joinp`/`joinp_streaming` 14.0.0–15.0.1 fail with a Polars dtype error on `Incident Zip`, and `count`/`count_polars_lowmem` 2.0.0–2.1.0 print `0` instead of `1000000`. The other fast windows (`count` 0.125.0–1.0.0, the `sqlp` family 0.126.0–0.135.0, and the suite-wide 2.0.0–3.0.0 dip) reproduced and were kept.
+```
+
+**File**: `_typos.toml` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@ Environnement = "Environnement"
+ fo            = "fo"
+ hel           = "hel"
+ inout         = "inout"
++oout          = "oout"
+ UE            = "UE"
+ seeked        = "seeked"
+ DNE           = "DNE"
+```
+
+**File**: `src/util/args.rs` (added, +533/-0)
+```diff
+@@ -0,0 +1,533 @@
++#[cfg(any(feature = "feature_capable", feature = "lite"))]
++use std::borrow::Cow;
++use std::{
++    env, fs,
++    path::{Path, PathBuf},
++};
++
++use csv::ByteRecord;
++use docopt::{ArgvMap, Value};
++#[cfg(any(feature = "feature_capable", feature = "lite"))]
++use serde::{de::Deserialize, de::Deserializer, de::Error};
++use sysinfo::System;
++
++use super::{DEFAULT_FREEMEMORY_HEADROOM_PCT, Idx, SAFETY_MARGIN, get_envvar_flag};
++use crate::{
++    CliResult,
++    config::{Config, Delimiter},
++};
++
++/// Refuse to run when `--output` names one of the command's own inputs.
++///
++/// Most commands build the `--output` writer BEFORE opening the input reader, so
++/// `File::create` truncates the input to zero length and the command then reads an empty
++/// file and exits 0 — silent data loss (issue #4580). Unlike shell redirection
++/// (`cmd f > f`), where the shell opens the file before qsv starts, `-o` is opened by qsv
++/// itself, so qsv can refuse.
++///
++/// This works off docopt's PARSED values rather than raw argv. It has to: docopt accepts
++/// `--flag value`, `--flag=value` and `-fvalue` interchangeably, so a raw-argv scan sees
++/// `--payload-tpl=payload.tpl` as one opaque token and misses that the template is an
++/// input — letting `fetchpost --payload-tpl=payload.tpl … -o payload.tpl` zero the
++/// template, which is the very bug being guarded against. The parsed map has each value
++/// already separated from its flag, in every spelling.
++///
++/// Identity is tested with `same_file::is_same_file`, which compares inode/dev (file-id on
++/// Windows) and therefore catches `./data.csv`, symlinks AND hard links. Canonicalizing
++/// cannot: two hard links to one inode have two distinct canonical paths.
++///
++/// Two known bounds, both accepted deliberately:
++///  - Docopt reports values, not their ROLE, so any USER-SUPPLIED argument that happens to name an
++///    existing file is treated as an input. `qsv select letter in.csv -o letter`, with a file named
++///    `letter` present, is refused even though the selector is not an input. Distinguishing them
++///    needs per-command schema knowledge that does not exist at this chokepoint, and the failure is
++///    a clear message rather than a destroyed file. Note the scope: docopt-populated DEFAULTS are
++///    excluded, because a user can neither see nor avoid a collision with a value they never
++///    passed.
++///  - A path named inside a query string — `qsv sqlp "select * from read_csv('d.csv')" -o d.csv` —
++///    is not a value of its own and is not seen.
++pub(super) fn check_output_is_not_input(vals: &ArgvMap, argv: &[&str]) -> CliResult<()> {
++    let Some(out_val) = vals.find("--output") else {
++        // this command has no --output flag at all
++        return Ok(());
++    };
++    let output = out_val.as_str();
++    if output.is_empty() {
++        return Ok(());
++    }
++
++    let out_path = Path::new(output);
++    // An output that does not exist yet cannot be the same file as an existing input, and
++    // a directory is never a valid --output (File::create reports that on its own). Both
++    // early exits are what keep the guard quiet on ordinary invocations.
++    if !out_path.is_file() {
++        return Ok(());
++    }
++
++    // Compare by pointer, not by key or by string. Docopt stores `-o` and `--output` as
++    // synonyms of ONE entry and which key is canonical is an implementation detail; and
++    // skipping by string would be outright wrong, since `qsv fmt data.csv -o data.csv` is
++    // the flagship case and there the input and output strings are identical.
++    let out_ptr = std::ptr::from_ref(out_val);
++
++    // Does `token` supply `value`? Covers docopt's three spellings: `--flag value` (the
++    // value is its own token), `--flag=value`, and `-fvalue`. Uses strip_prefix + chars
++    // rather than byte slicing, so a non-ASCII token cannot panic on a char boundary.
++    fn token_supplies(token: &str, value: &str) -> bool {
++        if token == value {
++            return true;
++        }
++        if let Some(long) = token.strip_prefix("--") {
++            return long.split_once('=').is_some_and(|(_, v)| v == value);
++        }
++        let Some(short) = token.strip_prefix('-') else {
++            return false;
++        };
++        // Short options CLUSTER: docopt reads `-ntpayload.tpl` as `-n -t payload.tpl`, so an
++        // attached value can begin after any run of single-char flags, not just the first.
++        // Consuming only one char missed exactly that, and let `fetchpost -ntpayload.tpl
++        // ... -o payload.tpl` zero the template. Flag characters are alphanumeric, so stop
++        // at the first character that cannot be one - that bounds the candidate suffixes to
++        // plausible split points instead of every suffix of the token.
++        let mut rest = short;
++        while rest
++            .chars()
++            .next()
++            .is_some_and(|c| c.is_ascii_alphanumeric())
++        {
++            l
+```
+
+**File**: `src/util/derived_file.rs` (added, +317/-0)
+```diff
+@@ -0,0 +1,317 @@
++use std::{
++    fs::File,
++    io::Write,
++    path::{Path, PathBuf},
++};
++
++use crate::CliResult;
++
++/// Reads a CSV file (comma-delimited) and writes it with a different delimiter to a writer.
++pub fn csv_to_delimited_writer<W: Write>(
++    input_csv: &str,
++    writer: &mut W,
++    delimiter: u8,
++) -> CliResult<()> {
++    let file = File::open(input_csv)?;
++    let mut rdr = csv::ReaderBuilder::new()
++        .has_headers(true)
++        .delimiter(b',')
++        .from_reader(file);
++    let mut wtr = csv::WriterBuilder::new()
++        .delimiter(delimiter)
++        .from_writer(writer);
++
++    let headers = rdr.headers()?.clone();
++    wtr.write_record(&headers)?;
++
++    for result in rdr.records() {
++        let record = result?;
++        wtr.write_record(&record)?;
++    }
++    wtr.flush()?;
++    Ok(())
++}
++
++/// What mode does a newly created file ACTUALLY get in `dir`?
++///
++/// Creates an empty probe at 0666, reads back the mode the kernel gave it, and removes it. This
++/// is an oracle rather than a calculation: it captures the process umask and anything else the
++/// filesystem applies to new files here (on Linux a directory default ACL constrains the mode the
++/// same way), none of which std exposes directly.
++///
++/// The real derived file must NOT be created this way - an fd obtained while it is briefly wide
++/// survives every later chmod, which is the hole roborev 4796 closed. The probe is safe precisely
++/// because it never receives a single byte, so an fd on it reveals nothing.
++///
++/// Returns `None` if no probe could be created; the caller then assumes owner-only, and the real
++/// temp's own creation produces the actionable error.
++#[cfg(unix)]
++fn new_file_mode_in(dir: &Path) -> Option<u32> {
++    use std::os::unix::fs::{OpenOptionsExt, PermissionsExt};
++
++    static PROBE_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
++    let pid = std::process::id();
++    for _ in 0..16 {
++        let seq = PROBE_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++        let probe_path = dir.join(format!(".qsv-probe-{pid}-{seq}.tmp"));
++        match std::fs::OpenOptions::new()
++            .write(true)
++            .create_new(true)
++            .mode(0o666)
++            .open(&probe_path)
++        {
++            Ok(probe) => {
++                // no `?` between create and remove, so the probe cannot be leaked
++                let mode = probe
++                    .metadata()
++                    .ok()
++                    .map(|m| m.permissions().mode() & 0o777);
++                drop(probe);
++                let _ = std::fs::remove_file(&probe_path);
++                return mode;
++            },
++            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
++            Err(_) => return None,
++        }
++    }
++    None
++}
++
++/// A `<FILESTEM>.*` artifact derived from a source file - a stats or frequency cache - that
++/// must never be readable by anyone the source itself does not admit (#4619).
++///
++/// Such an artifact holds the DATA (every non-high-cardinality value and its count, a column's
++/// min/max/mode/antimode), not byte offsets like an `.idx`, so a 0600 CSV must not yield a 0644
++/// cache. It is built in a sibling temp, CREATED at its final mode, and renamed over `dest`:
++///   - the file never exists wider than its target. Creating at the umask default and chmod-ing
++///     afterwards - in either order relative to the write - leaves a window in which the file is
++///     openable at the wider mode, and an fd obtained in that window stays readable through every
++///     later chmod. The only fix is for the file never to be born wide;
++///   - a failure part-way (ENOSPC, EDQUOT, EIO, a network-mount hiccup) leaves the PREVIOUS
++///     artifact intact rather than a 0-byte or half-written one. What that is worth was measured on
++///     ONE reader, so it is stated as such: for `frequency`, a truncated cache is not a correctness
++///     problem - `read_frequency_cache` treats a missing or unparseable metadata line, an
++///     unparseable entry, and an empty entry set alike as a cache MISS and recomputes, so the
++///     command still prints the right answer and exits 0. What it costs there is speed, silently
++///     and indefinitely: an ordinary run does not rewrite the broken file, so every later run pays
++///     the full recompute until the cache is regenerated explicitly. That - not recoverability - is
++///     what is being bought here.
++///
++///     Do NOT promote that to "every reader misses": it is already false for one. `scoresql`'s
++///     `load_freq_cache` reads the same `.freq.csv.data.jsonl` and silently SKIPS lines that fail
++///     to parse, so a truncated cache scores against a partial one instead of missing. A consumer
++///     gets whatever its own reader does; check that reader rather than assuming this bullet.
++///     The temp is removed on drop, so no stray is left beside the user's CSV
+```
+
+**File**: `src/util/envvars.rs` (added, +197/-0)
+```diff
+@@ -0,0 +1,197 @@
++use super::{ByteString, current_exe, to_lowercase_into};
++use crate::CliResult;
++
++#[inline]
++/// Rounds a floating point number to a specified number of decimal places.
++///
++/// This function takes a 64-bit floating point number and rounds it to the specified number of
++/// decimal places using "Bankers Rounding" (Midpoint Nearest Even) strategy. It returns the result
++/// as a String.
++///
++/// # Arguments
++///
++/// * `dec_f64` - The floating point number to round
++/// * `places` - The number of decimal places to round to. If set to 9999, no rounding is performed.
++///
++/// # Returns
++///
++/// * A String containing the rounded number with trailing zeros removed and -0.0 normalized to 0.0
++pub fn round_num(dec_f64: f64, places: u32) -> String {
++    use rust_decimal::{Decimal, RoundingStrategy};
++
++    if dec_f64.is_nan() {
++        return String::new();
++    }
++
++    // if places is the sentinel value 9999, we don't round, just return the number as is
++    if places == 9999 {
++        return zmij::Buffer::new().format(dec_f64).to_owned();
++    }
++
++    // use from_f64_retain, so we have all the excess bits before rounding with
++    // round_dp_with_strategy as from_f64 will prematurely round when it drops the excess bits
++    let Some(dec_num) = Decimal::from_f64_retain(dec_f64) else {
++        return String::new();
++    };
++
++    // round using Midpoint Nearest Even Rounding Strategy AKA "Bankers Rounding."
++    // https://docs.rs/rust_decimal/latest/rust_decimal/enum.RoundingStrategy.html#variant.MidpointNearestEven
++    // we also normalize to remove trailing zeroes and to change -0.0 to 0.0.
++    dec_num
++        .round_dp_with_strategy(places, RoundingStrategy::MidpointNearestEven)
++        .normalize()
++        .to_string()
++}
++
++#[inline]
++/// Transforms a byte slice into a `ByteString` with optional case-insensitive conversion.
++///
++/// This function takes a byte slice and attempts to convert it to a UTF-8 string. If successful,
++/// it trims whitespace and optionally converts to lowercase. If the input is not valid UTF-8,
++/// it returns the original bytes unchanged.
++///
++/// It's fine-tuned for speed and memory usage, using simdutf8 for UTF-8 validation and
++/// `to_lowercase_into` for non-allocating, in-place lowercase conversion.
++///
++/// # Arguments
++///
++/// * `bs` - The input byte slice to transform
++/// * `casei` - If true, converts the string to lowercase. If false, leaves case unchanged.
++///
++/// # Returns
++///
++/// * A `ByteString` (Vec<u8>) containing the transformed bytes
++pub fn transform(bs: &[u8], casei: bool) -> ByteString {
++    if let Ok(s) = simdutf8::basic::from_utf8(bs) {
++        if casei {
++            let mut buffer = String::with_capacity(bs.len());
++            to_lowercase_into(s.trim(), &mut buffer);
++            buffer.into_bytes()
++        } else {
++            s.trim().as_bytes().to_vec()
++        }
++    } else {
++        bs.to_vec()
++    }
++}
++
++pub fn load_dotenv() -> CliResult<()> {
++    // First, check if there is a QSV_DOTENV_PATH environment variable set
++    // if there is, use that as the .env file.
++    // Second, use the default .env file in the current directory.
++    // If there is no .env file in the current directory, check if there is
++    // an .env file with the same filestem as the binary, in the same directory as the binary.
++    // If there is, use that. Failing that, qsv proceeds with its default settings and
++    // whatever manually set environment variables are present.
++
++    if let Ok(dotenv_path) = std::env::var("QSV_DOTENV_PATH") {
++        // <NONE> is a sentinel value to disable dotenv processing
++        if dotenv_path == "<NONE>" {
++            log::warn!("dotenv processing disabled with QSV_DOTENV_PATH=<NONE>");
++            return Ok(());
++        }
++
++        let canonical_dotenv_path = std::fs::canonicalize(dotenv_path)?;
++        if let Err(e) = dotenvy::from_filename_override(canonical_dotenv_path.clone()) {
++            return fail_clierror!(
++                "Cannot process .env file set in QSV_DOTENV_PATH - {}: {e}",
++                canonical_dotenv_path.display()
++            );
++        }
++        log::info!("Using .env file: {}", canonical_dotenv_path.display());
++        return Ok(());
++    }
++
++    // check if there is an .env file in the current directory
++    if dotenvy::dotenv_override().is_ok() {
++        log::info!(
++            "Using .env file in current directory: {}",
++            std::env::current_dir()?.display()
++        );
++    } else {
++        // no .env file in the current directory or it was invalid
++        // now check if there is an .env file with the same name as the executable
++        // in the same directory as the executable
++        let qsv_binary_path = current_exe()?;
++
++        let qsv_dir = qsv_binary_path.parent().ok_or("No parent directory")?;
++
++        // safety: we know that the file_stem() will not be None as we checked above
++        let qsv_binary_filestem = 
+```
+
+**File**: `src/util/headers.rs` (added, +466/-0)
+```diff
+@@ -0,0 +1,466 @@
++use super::to_lowercase_into;
++use crate::select::SelectColumns;
++
++/// The column selection a `--stats-options` string (moarstats, pragmastat) hands to `qsv stats`
++/// (`--select <arg>`, `--select=<arg>`, `-s <arg>`, `-s<arg>`, or `s` ending a docopt cluster of
++/// no-argument short flags such as `-Es <arg>`), if any. The last one wins. Mirrors
++/// moarstats' `stats_options_redirect_output` cluster rules: scanning stops at the first
++/// argument-taking short option, whose value is the rest of the token.
++pub fn stats_options_select(stats_options: &str) -> Option<String> {
++    // no-argument short flags accepted by `qsv stats`
++    const STATS_SHORT_FLAGS: [char; 3] = ['E', 'h', 'n'];
++
++    let tokens: Vec<&str> = stats_options.split_whitespace().collect();
++    let mut found = None;
++    for (i, token) in tokens.iter().enumerate() {
++        if let Some(long) = token.strip_prefix("--") {
++            if long == "select" {
++                found = tokens.get(i + 1).map(ToString::to_string);
++            } else if let Some(v) = long.strip_prefix("select=") {
++                found = Some(v.to_string());
++            }
++        } else if let Some(short) = token.strip_prefix('-') {
++            for (pos, ch) in short.char_indices() {
++                if ch == 's' {
++                    let rest = &short[pos + ch.len_utf8()..];
++                    found = if rest.is_empty() {
++                        tokens.get(i + 1).map(ToString::to_string)
++                    } else {
++                        Some(rest.to_string())
++                    };
++                    break;
++                }
++                if !STATS_SHORT_FLAGS.contains(&ch) {
++                    break;
++                }
++            }
++        }
++    }
++    found
++}
++
++/// The exact column of every row that `qsv stats` writes when run with `stats_options`: its
++/// `--select` resolved against `headers`, or every column in order. `None` if that selection
++/// doesn't resolve. For `resolve_stats_columns`' `selection`.
++pub fn stats_options_selection(
++    stats_options: &str,
++    headers: &csv::ByteRecord,
++    use_names: bool,
++) -> Option<Vec<usize>> {
++    match stats_options_select(stats_options) {
++        None => Some((0..headers.len()).collect()),
++        Some(spec) => SelectColumns::parse(&spec)
++            .and_then(|sc| sc.selection(headers, use_names))
++            .ok()
++            .map(|sel| sel.to_vec()),
++    }
++}
++
++/// Map each stats row (`names`: the stats CSV's `field` column, in row order) to the CSV column
++/// it describes. A plain name lookup is wrong whenever a header repeats: first-match sent every
++/// duplicate to the first column (#4663), last-match to the last. Shared by moarstats and
++/// pragmastat, which append columns to a stats cache.
++///
++/// - `selection`: the exact column of every row, when the baseline `stats` ran in THIS invocation
++///   (its `--select`, resolved against the header, or every column in order). It is used only if it
++///   lines up with `names` row for row.
++/// - Otherwise the stats cache was reused, and which columns it covers is not recorded reliably. A
++///   name that occurs once in the header maps to that column, however many rows carry it (`--select
++///   1,1`). A repeated name maps by occurrence - the k-th row named N to the k-th column named N -
++///   only when the cache has exactly as many rows named N as the header has columns. Any other
++///   count means a selection that skipped or repeated a twin, which cannot be told apart without
++///   the selection, so those rows map to `None` and their names are returned for a warning. An
++///   empty result beats another column's statistics.
++///
++/// Known limit: equal counts do not prove the order. A reused cache built with a selection that
++/// reorders or repeats twins while keeping the count (on `a,b,a`: `--select 3,1` or `3,3`) is
++/// mapped by occurrence, so a twin can get the other twin's appended statistics. The stats CSV
++/// does not record the selection. The optional `.stats.csv.json` cache-metadata sidecar (not every
++/// stats cache has one) keeps it as `flag_select`, but as the selectors' `Debug` text (`Index(3),
++/// Index(1)`), not resolved columns, and that format is not a contract, so it is not parsed here.
++/// Recomputing the baseline in the same invocation takes the exact `selection` path.
++pub fn resolve_stats_columns(
++    names: &[&str],
++    csv_headers: &csv::StringRecord,
++    selection: Option<&[usize]>,
++) -> (Vec<Option<usize>>, Vec<String>) {
++    if let Some(sel) = selection
++        && sel.len() == names.len()
++        && sel
++            .iter()
++            .zip(names)
++            .all(|(&col, name)| csv_headers.get(col) == Some(*name))
++    {
++        return (sel.iter().map(|&col| Some(col)).collect(), Vec::new());
++    }
++
++    let mut positions: std::collections::HashMap<&str, Vec<usize>> =
++        std::collections::HashMap::new();
++    for (idx, h) in csv_headers
+```
+
+**File**: `src/util/http.rs` (added, +402/-0)
+```diff
+@@ -0,0 +1,402 @@
++use std::{
++    cmp::min,
++    env,
++    fs::File,
++    io::{BufWriter, Write},
++    path::PathBuf,
++    time::Duration,
++};
++
++#[cfg(any(feature = "feature_capable", feature = "lite"))]
++use indicatif::{ProgressBar, ProgressDrawTarget, ProgressStyle};
++use log::log_enabled;
++use reqwest::Client;
++
++#[cfg(any(feature = "feature_capable", feature = "lite"))]
++use super::get_envvar_flag;
++use super::{CARGO_BIN_NAME, CARGO_PKG_VERSION, QSV_KIND, TARGET, timeout_secs};
++use crate::{CURRENT_COMMAND, CliError, CliResult, config::DEFAULT_WTR_BUFFER_CAPACITY};
++
++pub(super) fn default_user_agent() -> String {
++    let unknown_command = "Unknown".to_string();
++    let current_command = CURRENT_COMMAND.get().unwrap_or(&unknown_command);
++    format!(
++        "{CARGO_BIN_NAME}/{CARGO_PKG_VERSION} ({TARGET}; {current_command}; {QSV_KIND}; https://github.com/dathere/qsv)"
++    )
++}
++
++/// Strip an API key out of any text that may quote a request URL.
++///
++/// NOT optional hygiene: `reqwest`'s own error `Display` embeds the full URL, query string
++/// included, so interpolating an error into a message prints a `key=` credential to stderr or
++/// the log verbatim. A key is a credential — it must not reach a log, a terminal, or a bug
++/// report — so every error built from a key-bearing URL or an underlying error goes through here.
++#[cfg(any(feature = "geocode", all(feature = "viz", feature = "feature_capable")))]
++pub fn redact_api_key(text: &str) -> String {
++    let mut out = String::with_capacity(text.len());
++    let mut rest = text;
++    while let Some(at) = rest.find("key=") {
++        // Redact unless "key=" is the tail of a longer word ("monkey="). Deliberately NOT
++        // "preceded by ? or &": a wrapped or reformatted log line puts whitespace there, and a
++        // credential that survives because a line broke in the wrong place is not protected.
++        let is_param = at == 0
++            || !matches!(
++                rest.as_bytes()[at - 1],
++                b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'-'
++            );
++        out.push_str(&rest[..at + 4]);
++        rest = &rest[at + 4..];
++        if !is_param {
++            continue;
++        }
++        let end = rest
++            .find(|c: char| c == '&' || c == ')' || c == '\'' || c.is_whitespace())
++            .unwrap_or(rest.len());
++        out.push_str("REDACTED");
++        rest = &rest[end..];
++    }
++    out.push_str(rest);
++    out
++}
++
++/// sets custom user agent
++/// if user agent is not set, then use the default user agent
++/// it supports four special LITERALs: $`QSV_BIN_NAME`, $`QSV_VERSION`, $`QSV_TARGET`, $`QSV_KIND`
++/// and $`QSV_COMMAND` which will be replaced with the actual values during runtime
++pub fn set_user_agent(user_agent: Option<String>) -> CliResult<String> {
++    use reqwest::header::HeaderValue;
++
++    let ua = match user_agent {
++        Some(ua_arg) => ua_arg,
++        None => env::var("QSV_USER_AGENT").unwrap_or_else(|_| default_user_agent()),
++    };
++
++    let unknown_command = "Unknown".to_string();
++    let current_command = CURRENT_COMMAND.get().unwrap_or(&unknown_command);
++
++    // look for special literals - $QSV_VERSION and $QSV_TARGET and replace them
++    let ua = ua
++        .replace("$QSV_BIN_NAME", CARGO_BIN_NAME)
++        .replace("$QSV_VERSION", CARGO_PKG_VERSION)
++        .replace("$QSV_TARGET", TARGET)
++        .replace("$QSV_KIND", QSV_KIND)
++        .replace("$QSV_COMMAND", current_command);
++
++    match HeaderValue::from_str(ua.as_str()) {
++        Ok(_) => (),
++        Err(e) => return fail_incorrectusage_clierror!("Invalid user-agent value: {e}"),
++    }
++
++    log::info!("set user agent: {ua}");
++    Ok(ua)
++}
++
++/// Creates a standardized async reqwest client with common configuration options.
++/// This function centralizes the client creation logic used across multiple commands.
++///
++/// # Arguments
++///
++/// * `user_agent` - Optional custom user agent string
++/// * `timeout_secs` - Inactivity (idle) timeout in seconds for HTTP requests. If 0, no timeout.
++/// * `base_url` - Optional base URL for retry configuration
++///
++/// # Returns
++///
++/// Returns a configured reqwest client with:
++/// - Custom user agent (or default)
++/// - Compression support (brotli, gzip, deflate, zstd)
++/// - Rustls TLS backend
++/// - HTTP/2 adaptive window
++/// - Connection verbose logging (when debug/trace enabled)
++/// - Idle/read timeout configuration (NOT a total-request deadline)
++/// - Retry logic for service unavailable errors
++pub fn create_reqwest_async_client(
++    user_agent: Option<String>,
++    timeout_secs: u16,
++    base_url: Option<String>,
++) -> CliResult<Client> {
++    let base_url_for_retry = base_url.unwrap_or_default();
++
++    let retries = reqwest::retry::for_host(base_url_for_retry).classify_fn(|req_rep| {
++        if req_rep.status() == Some(reqwest::StatusCode::SERVICE_UNAVAILABLE) {
++            req_rep.retryable()
++        } else {
++            req_rep.s
+```
+
+**File**: `src/util/index.rs` (added, +144/-0)
+```diff
+@@ -0,0 +1,144 @@
++use std::{
++    fs,
++    io::{BufWriter, Write},
++    path::{Path, PathBuf},
++};
++
++use csv_index::RandomAccessSimple;
++
++use crate::{
++    CliResult,
++    config::{Config, DEFAULT_WTR_BUFFER_CAPACITY},
++};
++
++pub fn idx_path(csv_path: &Path) -> PathBuf {
++    // safety: we know the path has a filename
++    let mut p = csv_path
++        .to_path_buf()
++        .into_os_string()
++        .into_string()
++        .unwrap();
++    p.push_str(".idx");
++    PathBuf::from(&p)
++}
++
++/// Builds a CSV index for `rdr` into a unique temp file beside `dest`, then renames it into
++/// place - so `dest` is only ever replaced by a COMPLETE index.
++///
++/// Writing straight to `dest` means `fs::File::create` TRUNCATES it before a single byte of
++/// the new index is written, and a `BufWriter` dropped on the error path flushes whatever it
++/// had buffered to that same destination. So any mid-build failure both destroys a
++/// pre-existing good index and leaves a partial one in its place.
++///
++/// That partial index is not detectably broken to a reader: `RandomAccessSimple::open` reads
++/// only the trailing 8 bytes and trusts them as the record count, so in a truncated index it
++/// returns a byte OFFSET as the count and every downstream command reports a wrong row count
++/// at exit 0 (issue #4615). `Config::index_files` rejects such an index defensively, but the
++/// real repair is to never produce one.
++///
++/// The temp is created with `OpenOptions::create_new` (`O_CREAT`|`O_EXCL`) rather than through
++/// `tempfile`: it applies the process umask, whereas `tempfile` creates 0600 and would carry
++/// that onto the `.idx` through the rename, silently turning indexes into owner-only files
++/// (roborev 4371). Uniqueness needs no randomness - `create_new` fails with `AlreadyExists`,
++/// so the loop advances the counter until it wins. pid separates processes, the counter
++/// separates threads and repeat calls within one.
++pub fn write_index_atomically(rdr: &mut csv::Reader<fs::File>, dest: &Path) -> CliResult<()> {
++    // The temp MUST be a sibling of the DESTINATION, not of the input: `qsv index --output`
++    // can point anywhere, and `fs::rename` across filesystems fails with EXDEV.
++    let idx_dir = dest.parent().unwrap_or_else(|| Path::new("."));
++
++    static TMP_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
++
++    let pid = std::process::id();
++    let mut tmp_path = None;
++    let mut tmp_file = None;
++    for _ in 0..16 {
++        let seq = TMP_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++        let candidate = idx_dir.join(format!(".qsv-index-{pid}-{seq}.tmp"));
++        if let Ok(f) = fs::OpenOptions::new()
++            .write(true)
++            .create_new(true)
++            .open(&candidate)
++        {
++            tmp_path = Some(candidate);
++            tmp_file = Some(f);
++            break;
++        }
++    }
++    let (Some(tmp_path), Some(idxfile)) = (tmp_path, tmp_file) else {
++        return fail_clierror!(
++            "Could not create a temp index file for {} in {}",
++            dest.display(),
++            idx_dir.display()
++        );
++    };
++
++    // any early return from here on must not leave the temp behind
++    let cleanup = |tmp: &Path| {
++        let _ = fs::remove_file(tmp);
++    };
++
++    // the BufWriter is scoped so its file handle is dropped BEFORE the rename below -
++    // an un-dropped write handle deadlocks on Windows ARM64
++    let build = {
++        let mut wtr = BufWriter::with_capacity(DEFAULT_WTR_BUFFER_CAPACITY, idxfile);
++        RandomAccessSimple::create(rdr, &mut wtr).and_then(|()| wtr.flush().map_err(Into::into))
++    };
++    if let Err(e) = build {
++        cleanup(&tmp_path);
++        return Err(e.into());
++    }
++
++    // On a REBUILD, carry over the existing index's permissions, so an index someone
++    // deliberately chmod'd keeps that mode instead of reverting to the umask default.
++    #[cfg(unix)]
++    if let Ok(existing) = fs::metadata(dest) {
++        let _ = fs::set_permissions(&tmp_path, existing.permissions());
++    }
++
++    // rename is atomic on the same filesystem: readers see either the old complete index
++    // or the new one, never a torn file
++    if let Err(e) = fs::rename(&tmp_path, dest) {
++        cleanup(&tmp_path);
++        return fail_clierror!(
++            "Could not put the index in place at {}: {e}",
++            dest.display()
++        );
++    }
++    Ok(())
++}
++
++/// Creates an index file for the given CSV file path.
++///
++/// This function creates a CSV index file that enables random access and parallel processing.
++/// It checks for edge cases like snappy-compressed files and stdin input.
++///
++/// The index is built atomically (see `write_index_atomically`), so a failure here leaves any
++/// pre-existing index untouched and no partial index behind.
++///
++/// # Arguments
++///
++/// * `path` - Path to the CSV file to index
++/// * `rconfig` - CSV reader configuration
++///
++///
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4855** (2026-10-20): refactor: split src/util.rs into src/util/ submodules (@jqnatividad)
 - **PR #4854** (2026-10-20): fix(benchmarks): sync before each extsort run (@jqnatividad)
 - **PR #4853** (2026-10-20): fix(benchmarks): remove 28 sqlp_tryparsedates runs that timed a cached schema (@jqnatividad)
 - **PR #4852** (2026-10-20): perf(schema): parallelize the Unicode length pass on indexed files (@jqnatividad)
 - **PR #4851** (2026-10-20): fix(benchmarks): remove 247 historical runs that timed a failed or broken command (@jqnatividad)
 - **PR #4850** (2026-10-19): fix(benchmarks): keep multi-release deltas out of the change charts (@jqnatividad)
-- **PR #4849** (2026-10-19): benchmarks: regenerate Data Schematic for the 26.0.0 run (@jqnatividad)
 
 ---
 
@@ -2380,58 +2967,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file - notably tokio from 1.53.3 to 1.54.0
+## X. split src/util.rs into src/util/ submodules (#4855)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95901ef6`: deps: update lock file - notably tokio from 1.53.3 to 1.54.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d6b56f86`: split src/util.rs into src/util/ submodules (#4855). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.12.17"
-checksum = "b2a5b0a5ab8561c603f16c3b78c24a386b1f70e7fc1b1b1e8c15738828e4a176"
-version = "0.7.1"
-checksum = "088a9c28ca36500c581f9f54b63460492d2b4f71e1e61d176e8fb79565109b01"
-version = "0.2.5"
-checksum = "3b5cf4372d022092674a83b8febf5865f7a573cc0c5baec5e49c879b6a20978f"
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
-version = "1.54.0"
-checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
-version = "0.12.4"
-checksum = "54ec2755506471f54baf5e4bb5499d8e510cc1caf271270e778a736bd2d7336c"
-version = "1.0.10"
-checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
-version = "1.0.10"
-checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+### Changed
+- **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.12.16"
-checksum = "f211a51805bc641f3ad5b7664c77d2547af685cc33b4cd8d31964027a46f13f1"
-version = "0.7.0"
-checksum = "b6c5fb0d1ac4352a9581c758c2e942e0228ae4476ec32ddcc9fcc95b82d1a183"
-version = "0.2.4"
-checksum = "3ce983bb6fb399067d101fbfc9e74174e07e9f29a2bc679efefeb8c645819c3f"
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-version = "1.53.3"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-version = "0.12.3"
-checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
-version = "1.0.9"
-checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
-version = "1.0.9"
-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95901ef6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d6b56f86` are properly handled with clean fallback behavior.

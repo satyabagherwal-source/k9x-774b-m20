@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T13:21:13.998Z",
+  "last_updated": "2026-10-20T13:27:41.283Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6915,8 +6915,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "95901ef6",
-      "content_hash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
+      "source_version": "d6b56f86",
+      "content_hash": "d0c2453d29c84c9860f65be2d04a66ec34e6c301738ddd2f68f501d2d9aa201d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6999,6 +6999,11 @@
           "number": 3143,
           "title": "deps: update lock file - notably tokio from 1.53.3 to 1.54.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3193,
+          "title": "split src/util.rs into src/util/ submodules (#4855)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7006,7 +7011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:09:14.239Z",
+      "verified_at": "2026-10-20T13:27:41.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14389,7 +14394,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
+      "content_hash": "aadcbb797d895f1c77c493d3f833c16602f8df1aae5e2c9dddf8f369ee083731",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -14436,6 +14441,16 @@
           "number": 1878,
           "title": "Calibrated Decision Output Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3191,
+          "title": "Calibrated Probability Output for Decision Systems",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3192,
+          "title": "Dual-Path Inference Architecture (System 1 / System 2)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14455,7 +14470,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-18T23:51:46.094Z",
+      "verified_at": "2026-10-20T13:27:36.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27664,14 +27679,19 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "2f33f554",
-      "content_hash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
+      "source_version": "594ed87e",
+      "content_hash": "0f0c66d324a752e56ee280a9e9fc73aec64fd70f193578f0f2074695d8f5d156",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
         {
           "number": 1959,
           "title": "modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3190,
+          "title": "share): make sharing into chat reliable on iOS and Android (#29789)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27680,7 +27700,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:16:26.768Z",
+      "verified_at": "2026-10-20T13:27:32.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65927,7 +65947,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:51:46.094Z"
+      "verified_at": "2026-10-20T13:27:36.604Z"
     },
     "rule-738": {
       "learning_id": "rule-738",
@@ -101116,6 +101136,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T13:21:13.986Z"
+    },
+    "rule-3190": {
+      "learning_id": "rule-3190",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3190,
+      "title": "share): make sharing into chat reliable on iOS and Android (#29789)",
+      "source_url": "https://github.com/keybase/client",
+      "source_version": "594ed87e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:27:32.288Z"
+    },
+    "rule-3191": {
+      "learning_id": "rule-3191",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3191,
+      "title": "Calibrated Probability Output for Decision Systems",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:27:36.604Z"
+    },
+    "rule-3192": {
+      "learning_id": "rule-3192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3192,
+      "title": "Dual-Path Inference Architecture (System 1 / System 2)",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:27:36.604Z"
+    },
+    "rule-3193": {
+      "learning_id": "rule-3193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3193,
+      "title": "split src/util.rs into src/util/ submodules (#4855)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d6b56f86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:27:41.272Z"
     }
   },
   "aliases": {

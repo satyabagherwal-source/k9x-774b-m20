@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:21:14.066Z",
-  "total_cycles_completed": 3795,
-  "total_learnings_persisted": 3795,
-  "total_rules_promoted": 3002,
+  "last_updated": "2026-10-20T13:27:41.343Z",
+  "total_cycles_completed": 3798,
+  "total_learnings_persisted": 3798,
+  "total_rules_promoted": 3007,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:21:06.747Z",
-      "repository": "React95/React95",
-      "learningId": "learn-github-react95-react95",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:21:07.937Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:21:12.313Z",
-      "repository": "rdfjs-base/namespace",
-      "learningId": "learn-github-rdfjs-base-namespace",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:21:13.159Z",
       "repository": "wzh4869/AppPorts",
@@ -1403,6 +1382,27 @@
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:27:32.359Z",
+      "repository": "keybase/client",
+      "learningId": "learn-github-keybase-client",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:27:36.669Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:27:41.343Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

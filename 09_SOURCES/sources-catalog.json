@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
-    "lastHarvestedAt": "2026-10-18T23:51:46.141Z",
+    "contentHash": "aadcbb797d895f1c77c493d3f833c16602f8df1aae5e2c9dddf8f369ee083731",
+    "lastHarvestedAt": "2026-10-20T13:27:36.664Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "95901ef6",
+    "sourceVersion": "d6b56f86",
     "license": "NOASSERTION",
-    "contentHash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
-    "lastHarvestedAt": "2026-10-20T11:09:14.320Z",
+    "contentHash": "d0c2453d29c84c9860f65be2d04a66ec34e6c301738ddd2f68f501d2d9aa201d",
+    "lastHarvestedAt": "2026-10-20T13:27:41.338Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "2f33f554",
+    "sourceVersion": "594ed87e",
     "license": "BSD-3-Clause",
-    "contentHash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
-    "lastHarvestedAt": "2026-10-19T01:16:26.800Z",
+    "contentHash": "0f0c66d324a752e56ee280a9e9fc73aec64fd70f193578f0f2074695d8f5d156",
+    "lastHarvestedAt": "2026-10-20T13:27:32.354Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {

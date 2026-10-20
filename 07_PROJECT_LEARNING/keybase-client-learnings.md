@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source**: github ([https://github.com/keybase/client](https://github.com/keybase/client))  
-> **Source Version**: `2f33f554`  
+> **Source Version**: `594ed87e`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:16:26.666Z  
+> **Timestamp**: 2026-10-20T13:27:32.036Z  
 > **Learning ID**: `learn-github-keybase-client`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/keybase/client](https://github.com/keybase/client))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:16:26.661Z  
+> **Harvest Timestamp**: 2026-10-20T13:27:31.830Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1869,1191 +1869,1288 @@ func ClassifyDomain(domain string) chat1.UnfurlType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73ea8277` (2026-10-12)
-**Commit Message**: feat(modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken-dialog fixes (#29750)
+### Incident Patch 1: `7f18ea4d` (2026-10-19)
+**Commit Message**: fix(share): make sharing into chat reliable on iOS and Android (#29789)
 
-* fix(desktop): text outside Kb.Text never falls back to the browser default font
+* fix(chat): don't silently drop a share to a suggested conversation before its meta loads
 
-body now uses the Keybase family, so stray text can't render in Times. The
-desktop ModalHeader also gives a component title's box the Header text style,
-so a headerTitle that renders bare text still gets the header's size, weight
-and color; Kb.Text children set their own and are unaffected.
+* fix(chat): keep the drag-and-drop upload path and explain a disabled Send
 
-(cherry picked from commit b7042981812c387c437dc272f8ed26b077cf9c5b)
+* fix(ios-share): give each shared file its own subdirectory so same-named photos don't collide
 
-* fix(teams): render the join-team and add-to-channel header titles in Kb.Text
+* fix(ios-share): stop decoding images in the share extension; transcode them in the app
 
-JoinTeamHeaderTitle returned a bare string, which the desktop modal header
-showed unstyled. AddToChannelHeaderTitle's mobile branch returned a bare
-string too.
+Image types the app couldn't take as-is (TIFF, RAW, webp, avif) were loaded
+into Data, fully decoded by UIImage and re-encoded inside the share extension,
+several at once. A 48MP decode alone is past the extension's memory limit,
+and no downsample cap avoids a full decode for sources under twice the cap.
 
-(cherry picked from commit ded160f875346d6ea48f8e669e2b13f6a9e0c555)
+The extension now copies those files as-is, keeping their real name and
+extension, and the Safari path writes downloaded webp/avif bytes unchanged.
+Only a provider that vends nothing but an in-memory UIImage is still encoded
+there, with ImageIO and no resize.
 
-* fix(teams): keep invite-by-email inside the modal; role picker below the prompt on mobile
+The app now does the transcode. With compression on, the new extensions
+are handled like heic. With compression off they still go out as
+full-size JPEGs at the quality the extension used, 0.85, so recipi
 
-(cherry picked from commit 659bad3e7b21d9b51681ee3386c85985e85df1c4)
-
-* fix(teams): pad the last-owner leave dialog on desktop
-
-(cherry picked from commit 4ec963bd66c859e4dc90aced2e16dd221db5d2d8)
-
-* fix(settings): drop the duplicate in-body
-
-**File**: `shared/chat/blocking/block-modal.tsx` (modified, +19/-45)
+**File**: `go/chat/attachments/preprocess.go` (modified, +4/-4)
 ```diff
-@@ -135,6 +135,7 @@ const ReportOptions = (props: ReportOptionsProps) => {
+@@ -194,16 +194,16 @@ func processCallerPreview(ctx context.Context, g *globals.Context, callerPreview
  
- const BlockModal = (ownProps: OwnProps) => {
-   const styles = useStyles()
-+  const theme = Kb.Styles.useTheme()
-   const {context, conversationIDKey, blockUserByDefault = false, filterUserByDefault = false} = ownProps
-   const {flagUserByDefault = false, reportsUserByDefault = false, team: teamname} = ownProps
-   let {username: adderUsername, others} = ownProps
-@@ -417,9 +418,9 @@ const BlockModal = (ownProps: OwnProps) => {
+ func DetectMIMEType(ctx context.Context, src ReadResetter, filename string) (res string, err error) {
+ 	head := make([]byte, 512)
+-	_, err = io.ReadFull(src, head)
++	n, err := io.ReadFull(src, head)
+ 	switch {
+-	case err == nil:
+-	case errors.Is(err, io.EOF), errors.Is(err, io.ErrUnexpectedEOF):
++	case err == nil, errors.Is(err, io.ErrUnexpectedEOF):
++	case errors.Is(err, io.EOF):
+ 		return "", nil
+ 	default:
+ 		return res, err
+ 	}
  
-   if (loadingWaiting) {
-     return (
--      <Kb.Box2 direction="vertical" alignSelf="center" padding="medium">
-+      <Kb.ModalScreen centered={true}>
-         <Kb.Animation animationType="spinner" style={styles.loadingAnimation} />
--      </Kb.Box2>
-+      </Kb.ModalScreen>
-     )
-   }
- 
-@@ -434,6 +435,9 @@ const BlockModal = (ownProps: OwnProps) => {
-     if (item === 'topStuff') {
-       return (
-         <>
-+          <Kb.Box2 direction="vertical" fullWidth={true} alignItems="center" style={styles.blockIcon}>
-+            <Kb.Icon type="iconfont-user-block" sizeType="Big" color={theme.red} />
-+          </Kb.Box2>
-           {(!!teamname || !adderUsername) && (
-             <>
-               <CheckboxRow
-@@ -458,65 +462,35 @@ const BlockModal = (ownProps: OwnProps) => {
-   }
- 
-   return (
--    <>
-+    <Kb.ModalScreen
-+      scroll={false}
-+      padding="none"
-+      footer={
-+        <Kb.ButtonBar fullWidth={true} style={styles.buttonBar}>
-+          {!isMobile && <Kb.Button fullWidth={true} label="Cancel" onClick={navigateUp} type="Dim" />}
-+          <Kb.WaitingButton label="Finish" onClick={onClickFinish} fullWidth={true} type="Danger" />
-+        </Kb.ButtonBar>
-+      }
-+    >
-       <Kb.List
-         items={items}
-         renderItem={renderItem}
-         indexAsKey={true}
-         extraData={newBlocks}
-         itemHeight={itemHeightTrueVariable}
-         estimatedItemHeight={81}
--        style={
--          isMobile
--            ? styles.grow
--            : getListHeightStyle(
--                !!teamname || !adderUsername,
--                !!adderUsername,
--                !!adderUsername && getShouldReport(adderUsername),
--                otherUsernames?.length ?? 0
--              )
--        }
-+        style={styles.grow}
-       />
--      <Kb.ModalFooter>
--        <Kb.ButtonBar fullWidth={true} style={styles.buttonBar}>
--          {!isMobile && <Kb.Button fullWidth={true} label="Cancel" onClick={navigateUp} type="Dim" />}
--          <Kb.WaitingButton label="Finish" onClick={onClickFinish} fullWidth={true} type="Danger" />
--        </Kb.ButtonBar>
--      </Kb.ModalFooter>
--    </>
-+    </Kb.ModalScreen>
-   )
- }
- 
- export default BlockModal
- 
--// Items measure themselves; this is only used to size the modal (which is
--// content-sized on desktop, capped at the modal maxHeight). Overshooting is
--// fine — the modal clamps and the list scrolls.
- const itemHeightTrueVariable = {type: 'trueVariable'} as const
--const checkboxRowHeight = 40
--const getListHeightStyle = (
--  hasLeaveRow: boolean,
--  hasAdder: boolean,
--  expanded: boolean,
--  numOthers: number
--) => ({
--  height:
--    (hasLeaveRow ? checkboxRowHeight + 1 : 0) +
--    // Adder gets block + hide + report checkboxes.
--    (hasAdder ? 3 * checkboxRowHeight : 0) +
--    (expanded
--      ? // When you expand the report menu, every option gets an 18px row + 54px for the extra notes + 40px transcript
--        reasons.length * 18 + 54 + 40 + 20
--      : 0) +
--    (numOthers >= 1
--      ? // "Also block others" header is 41px. Without an adder every other user also
--        // gets a report checkbox, so rows are 3 checkboxes tall instead of 2 (+1px divider).
--        // We cap the count at 4 but even that is greater than the max modal height in Keybase.
--        41 + Math.min(numOthers, 4) * ((hasAdder ? 2 : 3) * checkboxRowHeight + 1)
--      : 0),
--})
- 
- const useStyles = Kb.Styles.createStyleHook(theme => ({
-+  blockIcon: {paddingTop: Kb.Styles.globalMargins.small},
-   buttonBar: {minHeight: undefined},
-   checkBoxRow: Kb.Styles.padding(Kb.Styles.globalMargins.tiny, Kb.Styles.globalMargins.small),
-   feedback: Kb.Styles.padding(Kb.Styles.globalMargins.tiny, Kb.Styles.globalMargins.small, 0),
+-	res = http.DetectContentType(head)
++	res = http.DetectContentType(head[:n])
+ 	if err = src.Reset(); err != nil {
+ 		return res, err
+ 	}
 ```
 
-**File**: `shared/chat/conversation/attachment-get-titles.tsx` (modified, +62/-85)
+**File**: `go/chat/attachments/preprocess_test.go` (added, +34/-0)
 ```diff
-@@ -351,53 +351,18 @@ const ContainerInner = (ownProps: OwnProps) => {
-   const multiUpload = pathAndInfos.length > 1
- 
-   return (
--    <>
--      <Kb.ErrorBanner
--        error={error}
--        onClose={() => {
--          setError(undefined)
--        }}
--      />
--      <Kb.Box2 alignItems="center" direction="vertical" fullWidth={true} style={styles.container}>
--        <Kb.ClickableBox direction="vertical" fullWidth={true} alignItems="center" style={styles.container2} onClick={() => inputRef.current?.blur()}>
--          <Kb.BoxGrow style={styles.boxGrow}>{preview}</Kb.BoxGrow>
--          {pathAndInfos.length > 0 && !isMobile && (
--            <Kb.Box2 direction="vertical" style={styles.filename}>
--              <Kb.Text type="BodySmallSemibold">Filename</Kb.Text>
--              <Kb.Text type="BodySmall" center={true}>
--                {info.filename} ({index + 1} of {pathAndInfos.length})
--              </Kb.Text>
--            </Kb.Box2>
--          )}
--          <Kb.Box2 direction="vertical" fullWidth={true} style={styles.inputContainer}>
--            <Kb.Input3
--              ref={inputRef}
--              autoFocus={!isMobile}
--              onClick={(e: React.BaseSyntheticEvent) => {
--                e.stopPropagation()
--              }}
--              autoCorrect={true}
--              disabled={!!progress}
--              placeholder={titleHint}
--              multiline={true}
--              rowsMin={2}
--              value={titles[index]}
--              onEnterKeyDown={onNext}
--              onChangeText={updateTitle}
--              hideBorder={true}
--              containerStyle={styles.inputBare}
--              inputStyle={styles.input}
--            />
--          </Kb.Box2>
--        </Kb.ClickableBox>
--        {progress ? (
--          <Kb.Box2 direction="horizontal" gap="tiny" alignItems="center" style={styles.progress}>
--            <Kb.ProgressIndicator />
--            {/* done counts completed items; the label names the one in flight */}
--            <Kb.Text type="BodySmall">{`Processing ${Math.min(progress.done + 1, progress.total)} of ${progress.total}...`}</Kb.Text>
--          </Kb.Box2>
--        ) : null}
--        <Kb.ButtonBar fullWidth={true} small={true} style={styles.buttonContainer}>
-+    <Kb.ModalScreen
-+      scroll={false}
-+      banner={
-+        <Kb.ErrorBanner
-+          error={error}
-+          onClose={() => {
-+            setError(undefined)
-+          }}
-+        />
-+      }
-+      footer={
-+        <Kb.ButtonBar fullWidth={true} small={true}>
-           {!isMobile && <Kb.Button fullWidth={true} type="Dim" onClick={onCancel} label="Cancel" />}
-           {isLast ? (
-             <Kb.WaitingButton
-@@ -422,8 +387,47 @@ const ContainerInner = (ownProps: OwnProps) => {
-             />
-           ) : null}
-         </Kb.ButtonBar>
--      </Kb.Box2>
--    </>
-+      }
-+    >
-+      <Kb.ClickableBox direction="vertical" fullWidth={true} alignItems="center" style={styles.container} onClick={() => inputRef.current?.blur()}>
-+        <Kb.BoxGrow style={styles.boxGrow}>{preview}</Kb.BoxGrow>
-+        {pathAndInfos.length > 0 && !isMobile && (
-+          <Kb.Box2 direction="vertical" style={styles.filename}>
-+            <Kb.Text type="BodySmallSemibold">Filename</Kb.Text>
-+            <Kb.Text type="BodySmall" center={true}>
-+              {info.filename} ({index + 1} of {pathAndInfos.length})
-+            </Kb.Text>
-+          </Kb.Box2>
-+        )}
-+        <Kb.Box2 direction="vertical" fullWidth={true} style={styles.inputContainer}>
-+          <Kb.Input3
-+            ref={inputRef}
-+            autoFocus={!isMobile}
-+            onClick={(e: React.BaseSyntheticEvent) => {
-+              e.stopPropagation()
-+            }}
-+            autoCorrect={true}
-+            disabled={!!progress}
-+            placeholder={titleHint}
-+            multiline={true}
-+            rowsMin={2}
-+            value={titles[index]}
-+            onEnterKeyDown={onNext}
-+            onChangeText={updateTitle}
-+            hideBorder={true}
-+            containerStyle={styles.inputBare}
-+            inputStyle={styles.input}
-+          />
-+        </Kb.Box2>
-+      </Kb.ClickableBox>
-+      {progress ? (
-+        <Kb.Box2 direction="horizontal" gap="tiny" alignItems="center" style={styles.progress}>
-+          <Kb.ProgressIndicator />
-+          {/* done counts completed items; the label names the one in flight */}
-+          <Kb.Text type="BodySmall">{`Processing ${Math.min(progress.done + 1, progress.total)} of ${progress.total}...`}</Kb.Text>
-+        </Kb.Box2>
-+      ) : null}
-+    </Kb.ModalScreen>
-   )
- }
- 
-@@ -435,30 +439,9 @@ const useStyles = Kb.Styles.createStyleHook(
-         marginBottom: isMobile ? Kb.Styles.globalMargins.small : 0,
-         width: '100%',
-       },
--      buttonContainer: Kb.Styles.platformStyles({
--        isElectron: {
--          alignSelf: 'flex-end',
--          borderStyle: 'solid',
--          borderTopColor: theme.black_10,
--          borderTopWidth: 1,
--          flexShri
-```
-
-**File**: `shared/chat/conversation/bot/confirm.test.tsx` (modified, +3/-2)
-```diff
-@@ -7,7 +7,8 @@ jest.mock('@/common-adapters', () => {
-   const R = jest.requireActual<typeof React>('react')
-   const passThrough = ({children}: {children?: React.ReactNode}) =>
-     R.createElement('div', null, children)
--  const anyStyle: unknown = new Proxy({}, {get: () => () => ({})})
-+  // every Styles.* is a style-hook factory: createStyleHook(...) gives a hook that returns {}
-+  const anyStyle: unknown = new Proxy({}, {get: () => () => () => ({})})
-   const components: {[key: string]: unknown} = {
-     Avatar: () => null,
-     ConfirmModal: (p: {onCancel: () => void; onConfirm: () => void; prompt: string}) =>
-@@ -105,7 +106,7 @@ describe('ConfirmBotRemove', () => {
-     rpc.on('previewConversation', () => previewResult(['testuser', 'testuser-mac']))
- 
-     renderConfirm()
--    expect(screen.getByText('Are you sure you want to uninstall helperbot?')).toBeTruthy()
-+    expect(screen.getByText('Uninstall helperbot?')).toBeTruthy()
-     await clickConfirm()
- 
-     expect(rpc.calls('removeBotMember')).toEqual([
-```
-
-**File**: `shared/chat/conversation/bot/confirm.tsx` (modified, +3/-3)
-```diff
-@@ -47,12 +47,12 @@ const ConfirmBotRemoveImpl = (props: {
-   )
-   return (
-     <Kb.ConfirmModal
--      prompt={`Are you sure you want to uninstall ${botUsername}?`}
-+      confirmText="Uninstall"
-+      prompt={`Uninstall ${botUsername}?`}
-       waitingKey={C.waitingKeyChatBotRemove}
-       onConfirm={onRemove}
-       onCancel={onClose}
--      description=""
--      header={<Kb.Avatar username={botUsername} size={96} />}
-+      header={<Kb.Avatar username={botUsername} size={isMobile ? 96 : 64} />}
-     />
-   )
- }
-```
-
-**File**: `shared/chat/conversation/bot/install.test.tsx` (modified, +2/-0)
-```diff
-@@ -29,6 +29,8 @@ jest.mock('@/common-adapters', () => {
-         p.items.map((item, i) => R.createElement('button', {key: i, onClick: () => p.onChangedIdx(i)}, item))
-       ),
-     LoadingScreen: () => R.createElement('span', null, 'loading'),
-+    ModalScreen: (p: {children?: React.ReactNode; footer?: React.ReactNode}) =>
-+      R.createElement('div', null, p.children, p.footer),
-     NameWithIcon: (p: {username: string}) => R.createElement('span', null, p.username),
-     ProgressIndicator: () => R.createElement('span', null, 'progress'),
-     Styles: anyStyle,
-```
-
-**File**: `shared/chat/conversation/bot/install.tsx` (modified, +27/-68)
-```diff
-@@ -330,7 +330,7 @@ const InstallBotPopup = (props: Props) => {
-     />
-   )
-   const featuredContent = !!featured && (
--    <Kb.Box2 direction="vertical" style={styles.container} fullWidth={true} gap="small">
-+    <Kb.Box2 direction="vertical" fullWidth={true} gap="small">
-       <Kb.Box2 direction="vertical" gap="small">
-         <Kb.NameWithIcon
-           botAlias={featured.botAlias}
-@@ -366,7 +366,7 @@ const InstallBotPopup = (props: Props) => {
-     </Kb.Box2>
-   )
-   const usernameContent = !featured && (
--    <Kb.Box2 direction="vertical" gap="small" style={styles.container} fullWidth={true}>
-+    <Kb.Box2 direction="vertical" gap="small" fullWidth={true}>
-       <Kb.NameWithIcon horizontal={true} onClick="profile" username={botUsername} size="big" />
-       {inTeam && isBot && !inTeamUnrestricted && (
-         <PermsList
-@@ -382,7 +382,7 @@ const InstallBotPopup = (props: Props) => {
-     </Kb.Box2>
-   )
-   const installContent = installScreen && (
--    <Kb.Box2 direction="vertical" fullWidth={true} style={styles.container} gap="small">
-+    <Kb.Box2 direction="vertical" fullWidth={true} gap="small">
-       <Kb.NameWithIcon
-         botAlias={featured?.botAlias}
-         horizontal={true}
-@@ -466,20 +466,18 @@ const InstallBotPopup = (props: Props) => {
-   )
- 
-   const channelPickerContent = channelPickerScreen && teamID && teamname && (
--    <Kb.Box2 direction="vertical" fullWidth={true} gap="small" style={styles.pickerContainer}>
--      <ChannelPicker
--        allSelected={installInAllConvs}
--        channelMetas={channelMetas}
--        channelsKnown={channelsKnown}
--        installInConvs={installInConvs}
--        setAllSelected={setInstallInAllConvs}
--        setChannelPickerScreen={setChannelPickerScreen}
--        setDisableDone={setDisableDone}
--        setInstallInConvs={setInstallInConvs}
--        teamID={teamID}
--        teamName={teamname}
--      />
--    </Kb.Box2>
-+    <ChannelPicker
-+      allSelected={installInAllConvs}
-+      channelMetas={channelMetas}
-+      channelsKnown={channelsKnown}
-+      installInConvs={installInConvs}
-+      setAllSelected={setInstallInAllConvs}
-+      setChannelPickerScreen={setChannelPickerScreen}
-+      setDisableDone={setDisableDone}
-+      setInstallInConvs={setInstallInConvs}
-+      teamID={teamID}
-+      teamName={teamname}
-+    />
-   )
- 
-   const content = channelPickerScreen
-@@ -621,29 +619,14 @@ const InstallBotPopup = (props: Props) => {
-   }, [channelPickerScreen, installScreen, inTeam, readOnly, navigateUp, clearModals])
- 
-   const enabled = !!conversationIDKey
--  const bodyContent =
--    enabled && !channelPickerScreen ? (
--      <Kb.ScrollView style={styles.bodyScroll} contentContainerStyle={styles.bodyScrollContent}>
--        {content}
--      </Kb.ScrollView>
--    ) : enabled ? (
--      content
--    ) : (
--      <Kb.LoadingScreen type="Large" />
--    )
-   return (
--    <>
--      <Kb.Box2
--        direction="vertical"
--        flex={1}
--        style={styles.outerContainer}
--        fullWidth={true}
--        testID={TestIDs.CHAT_BOT_INSTALL}
--      >
--        {bodyContent}
--      </Kb.Box2>
--      {enabled && (!readOnly || showReviewButton) ? (
--        <Kb.ModalFooter>
-+    <Kb.ModalScreen
-+      // the channel picker scrolls its rows under a fixed search field
-+      scroll={enabled && !channelPickerScreen}
-+      padding={enabled && !channelPickerScreen ? 'standard' : 'none'}
-+      testID={TestIDs.CHAT_BOT_INSTALL}
-+      footer={
-+        enabled && (!readOnly || showReviewButton) ? (
-           <Kb.Box2 direction="horizontal" gap="tiny" fullWidth={true} centerChildren={true}>
-             <Kb.ButtonBar direction="column">
-               {doneButton}
-@@ -667,9 +650,11 @@ const InstallBotPopup = (props: Props) => {
-               </Kb.Text>
-             )}
-           </Kb.Box2>
--        </Kb.ModalFooter>
--      ) : null}
--    </>
-+        ) : undefined
-+      }
-+    >
-+      {enabled ? content : <Kb.LoadingScreen type="Large" />}
-+    </Kb.ModalScreen>
-   )
- }
- 
-@@ -797,38 +782,12 @@ const PermsList = (props: PermsListProps) => {
- }
- 
- const useStyles = Kb.Styles.createStyleHook(() => ({
--  // the picker brings its own scroller, so it has to be able to shrink to the modal
--  pickerContainer: {
--    flexGrow: 1,
--    flexShrink: 1,
--    minHeight: 0,
--  },
--  bodyScroll: {
--    flex: 1,
--    minHeight: 0,
--    position: 'relative',
--  },
--  bodyScrollContent: Kb.Styles.platformStyles({
--    common: {
--      ...Kb.Styles.globalStyles.flexBoxColumn,
--      flexGrow: 1,
--      width: '100%',
--    },
--  }),
--  container: {
--    ...Kb.Styles.padding(Kb.Styles.globalMargins.medium, Kb.Styles.globalMargins.small),
--  },
-   dropdown: {
-     width: '100%',
-   },
-   dropdownButton: {
-     padding: Kb.Styles.globalMargins.tiny,
-   },
--  outerContainer: Kb.Styles.platformStyles({
--    common: {
--      minHeight: 0,
--    },
--  }),
-   reviewButton: {marginTop: -Kb.Styles.globalMargins.tiny},
- }))
- 
-```
-
-**File**: `shared/chat/conversation/bot/search.tsx` (modified, +16/-21)
-```diff
-@@ -193,36 +193,31 @@ const SearchBotPopupInner = (props: Props & {conversationIDKey: T.Chat.Conversat
-     title: 'Users',
-   } satisfies Section
-   return (
--    <>
--      <Kb.Box2 direction="vertical" fullHeight={true} fullWidth={true} style={styles.modal}>
--        <Kb.Box2 direction="vertical" fullWidth={true} style={styles.inputContainer}>
--          <Kb.SearchFilter
--            size="full-width"
--            focusOnMount={true}
--            onChange={query => onSearch(query)}
--            placeholderText="Search featured bots or users..."
--            waiting={waiting}
--          />
--        </Kb.Box2>
--        <Kb.SectionList
--          renderSectionHeader={renderSectionHeader}
--          stickySectionHeadersEnabled={true}
--          sections={[usersSection, botSection]}
--          style={{flexGrow: 1}}
--          testID={TestIDs.CHAT_BOT_SEARCH_RESULTS}
-+    <Kb.ModalScreen scroll={false} padding="none">
-+      <Kb.Box2 direction="vertical" fullWidth={true} style={styles.inputContainer}>
-+        <Kb.SearchFilter
-+          size="full-width"
-+          focusOnMount={true}
-+          onChange={query => onSearch(query)}
-+          placeholderText="Search featured bots or users..."
-+          waiting={waiting}
-         />
-       </Kb.Box2>
--    </>
-+      <Kb.SectionList
-+        renderSectionHeader={renderSectionHeader}
-+        stickySectionHeadersEnabled={true}
-+        sections={[usersSection, botSection]}
-+        style={{flexGrow: 1}}
-+        testID={TestIDs.CHAT_BOT_SEARCH_RESULTS}
-+      />
-+    </Kb.ModalScreen>
-   )
- }
- 
- const useStyles = Kb.Styles.createStyleHook(() => ({
-   inputContainer: Kb.Styles.platformStyles({
-     isElectron: {padding: Kb.Styles.globalMargins.tiny},
-   }),
--  modal: Kb.Styles.platformStyles({
--    isElectron: {height: 500},
--  }),
-   paddedItem: Kb.Styles.padding(Kb.Styles.globalMargins.tiny),
- }))
- 
-```
-
-**File**: `shared/chat/conversation/bot/team-picker.tsx` (modified, +27/-34)
-```diff
-@@ -59,47 +59,40 @@ const BotTeamPicker = (props: Props) => {
-     )
-   }
-   return (
--    <>
--      <Kb.Box2 direction="vertical" fullWidth={true}>
--        <Kb.Box2 direction="horizontal">
--          <Kb.SearchFilter
--            size="full-width"
--            icon="iconfont-search"
--            placeholderText={`Search chats and teams...`}
--            placeholderCentered={true}
--            onChange={debounce(setTerm, 200)}
--            style={styles.searchFilter}
--            focusOnMount={true}
--            waiting={waiting}
--          />
--        </Kb.Box2>
--        <Kb.Box2 direction="vertical" fullWidth={true} style={styles.container}>
--          {error.length > 0 ? (
--            <Kb.Text type="Body" style={{alignSelf: 'center', color: theme.redDark}}>
--              {error}
--            </Kb.Text>
--          ) : (
--            <Kb.List
--              indexAsKey={true}
--              items={results}
--              itemHeight={{sizeType: 'Large', type: 'fixedListItemAuto'}}
--              renderItem={renderResult}
--            />
--          )}
--        </Kb.Box2>
-+    <Kb.ModalScreen scroll={false} padding="none">
-+      <Kb.Box2 direction="horizontal" fullWidth={true}>
-+        <Kb.SearchFilter
-+          size="full-width"
-+          icon="iconfont-search"
-+          placeholderText={`Search chats and teams...`}
-+          placeholderCentered={true}
-+          onChange={debounce(setTerm, 200)}
-+          style={styles.searchFilter}
-+          focusOnMount={true}
-+          waiting={waiting}
-+        />
-       </Kb.Box2>
--    </>
-+      {error.length > 0 ? (
-+        <Kb.Text type="Body" style={{alignSelf: 'center', color: theme.redDark}}>
-+          {error}
-+        </Kb.Text>
-+      ) : (
-+        <Kb.BoxGrow2>
-+          <Kb.List
-+            indexAsKey={true}
-+            items={results}
-+            itemHeight={{sizeType: 'Large', type: 'fixedListItemAuto'}}
-+            renderItem={renderResult}
-+          />
-+        </Kb.BoxGrow2>
-+      )}
-+    </Kb.ModalScreen>
-   )
- }
- 
- const useStyles = Kb.Styles.createStyleHook(
-   () =>
-     ({
--      container: Kb.Styles.platformStyles({
--        isElectron: {
--          height: 450,
--        },
--      }),
-       results: Kb.Styles.platformStyles({
-         common: {
-           ...Kb.Styles.paddingH(Kb.Styles.globalMargins.tiny),
-```
-
----
-
-### Incident Patch 2: `e0af5c35` (2026-10-12)
-**Commit Message**: refactor(box2): remove proven-redundant pins, fix desktop/native parity, widen the visual gate (#29747)
-
-* chore(codemods): Box2 unpin mode removes center pins under a centering parent
-
-* refactor(box2): drop center pins a centering parent already provides
-
-* test(visual): KB_VISUAL_NO_OPEN prints the report path without opening it
-
-* chore(codemods): Box2 unpin removes gate-covered pins the gate proves inert
-
-`unpin --coverage-from <sha>` (U4) removes a literal or conditional center
-pin at any call site the coverage base mounted, in an unmasked entry, on
-every platform its file renders on. The gate run on the result is the
-proof: sites whose removal moved pixels are kept by a committed skip list
-(box2-unpin-skips.json), keyed by file, the opening tag without the pin and
-an nth index, so entries survive line shifts and other removals. A stale or
-ambiguous entry fails the run.
-
-* refactor(box2): drop center pins the visual gate shows change nothing
-
-* refactor(box2): narrow flex to 1 and overflow to hidden | visible
-
-Native drops overflow scroll and auto, and a flex other than 1 means
-different things to CSS (grow N, shrink 1, basis 0%) and Yoga (grow N,
-shrink 0). No call site used
-
-**File**: `shared/app/global-errors.tsx` (modified, +7/-5)
-```diff
-@@ -7,6 +7,7 @@ import {useConfigState} from '@/stores/config'
- import type {RPCError} from '@/util/errors'
- import {settingsFeedbackTab} from '@/constants/settings'
- import {useDaemonState} from '@/stores/daemon'
-+import * as TestIDs from '@/tests/e2e/shared/test-ids'
- 
- type Size = 'Closed' | 'Small' | 'Big'
- 
-@@ -146,16 +147,17 @@ const GlobalError = () => {
- 
-   if (isMobile) {
-     return (
--      <Kb.Box2 alignSelf="center"
-+      <Kb.Box2
-         direction="vertical"
-         style={Kb.Styles.collapseStyles([
-           styles.mobileContainer,
-           size === 'Big' && Kb.Styles.globalStyles.fillAbsolute,
-         ])}
-+        testID={TestIDs.GLOBAL_ERROR}
-       >
-         <Kb.SafeAreaViewTop style={styles.mobileSafeAreaView} />
--        <Kb.Box2 alignSelf="center" direction="vertical">
--          <Kb.Box2 alignSelf="center"
-+        <Kb.Box2 direction="vertical">
-+          <Kb.Box2
-             direction="horizontal"
-             style={Kb.Styles.collapseStyles([styles.mobileSummaryRow, styles.mobileErrorTextContainer])}
-           >
-@@ -182,7 +184,7 @@ const GlobalError = () => {
-               fontSize={21}
-             />
-           </Kb.Box2>
--          <Kb.Box2 alignSelf="center" direction="horizontal" style={styles.mobileSummaryRow}>
-+          <Kb.Box2 direction="horizontal" style={styles.mobileSummaryRow}>
-             <Kb.Button fullWidth={true} label="Please tell us" onClick={onFeedback} small={true} type="Dim" />
-           </Kb.Box2>
-         </Kb.Box2>
-@@ -213,7 +215,7 @@ const GlobalError = () => {
-   }
- 
-   return (
--    <Kb.ClickableBox alignSelf="center" style={stylesContainer} onClick={onExpandClick} direction="vertical">
-+    <Kb.ClickableBox style={stylesContainer} onClick={onExpandClick} direction="vertical" testID={TestIDs.GLOBAL_ERROR}>
-       <Kb.Box2 alignSelf="center" direction="horizontal" flex={1} centerChildren={true} gap="small" style={styles.innerContainer}>
-         <Kb.Text center={true} type="BodyBig" style={styles.summary}>
-           {summary}
-```
-
-**File**: `shared/app/index.native.tsx` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ import {colors, darkColors} from '@/styles/colors'
- import {initPlatformListener, onEngineConnected, onEngineDisconnected, onEngineIncoming} from '@/constants/init/index'
- import {listenForAppLifecycle} from '@/constants/init/shared'
- import logger from '@/logger'
-+// the visual gate's dev-only fixture runtime; production builds resolve this to an empty module
-+import '@/tests/e2e/visual/fixtures/runtime'
- 
- logger.info('INIT App index module load')
- 
-```
-
-**File**: `shared/app/runtime-stats.tsx` (modified, +7/-6)
-```diff
-@@ -2,6 +2,7 @@ import * as React from 'react'
- import * as Kb from '@/common-adapters'
- import * as T from '@/constants/types'
- import {useConfigState} from '@/stores/config'
-+import * as TestIDs from '@/tests/e2e/shared/test-ids'
- 
- const isIPhoneX = false as boolean
- // import lagRadar from 'lag-radar'
-@@ -227,7 +228,7 @@ const RuntimeStatsDesktop = ({stats}: Props) => {
- 
-   return (
-     <Kb.BoxGrow style={styles.boxGrow}>
--      <Kb.ClickableBox onClick={() => setMoreLogs(m => !m)} direction="vertical" style={styles.container} gap="xxtiny" fullWidth={true}>
-+      <Kb.ClickableBox onClick={() => setMoreLogs(m => !m)} direction="vertical" style={styles.container} gap="xxtiny" fullWidth={true} testID={TestIDs.RUNTIME_STATS}>
-             {!moreLogs &&
-               stats.processStats?.map((stat, i) => {
-                 return (
-@@ -327,7 +328,7 @@ const RuntimeStatsMobile = ({stats}: Props) => {
-   const kbfsCompaction = compactionActive(stats.dbStats, kbfsDbs)
-   return (
-     <>
--      <Kb.Box2 alignSelf="center"
-+      <Kb.Box2
-         direction="vertical"
-         style={showLogs ? styles.modalLogStats : styles.modalLogStatsHidden}
-         gap="xtiny"
-@@ -336,9 +337,9 @@ const RuntimeStatsMobile = ({stats}: Props) => {
-           <LogStats />
-         </Kb.ClickableBox>
-       </Kb.Box2>
--      <Kb.Box2 alignSelf="center" direction="horizontal" style={styles.container} gap="xtiny" pointerEvents="none">
-+      <Kb.Box2 direction="horizontal" style={styles.container} gap="xtiny" pointerEvents="none" testID={TestIDs.RUNTIME_STATS}>
-         {processStat && (
--          <Kb.Box2 alignSelf="center" direction="vertical">
-+          <Kb.Box2 direction="vertical">
-             <Kb.Box2 direction="horizontal" gap="xxtiny" alignSelf="flex-end">
-               <Kb.Text
-                 style={Kb.Styles.collapseStyles([styles.stat, severityStyle(processStat.cpuSeverity, styles)])}
-@@ -358,7 +359,7 @@ const RuntimeStatsMobile = ({stats}: Props) => {
-             </Kb.Box2>
-           </Kb.Box2>
-         )}
--        <Kb.Box2 alignSelf="center" direction="vertical">
-+        <Kb.Box2 direction="vertical">
-           <Kb.Text
-             style={Kb.Styles.collapseStyles([
-               styles.stat,
-@@ -374,7 +375,7 @@ const RuntimeStatsMobile = ({stats}: Props) => {
-             type="BodyTiny"
-           >{`SSA: ${yesNo(stats.selectiveSyncActive)}`}</Kb.Text>
-         </Kb.Box2>
--        <Kb.Box2 alignSelf="center" direction="vertical">
-+        <Kb.Box2 direction="vertical">
-           <Kb.Text
-             style={Kb.Styles.collapseStyles([
-               styles.stat,
-```
-
-**File**: `shared/chat/audio/audio-player.tsx` (modified, +4/-2)
-```diff
-@@ -4,6 +4,7 @@ import AudioVideo from './audio-video'
- import {formatAudioRecordDuration} from '@/util/timestamp'
- // The non-iOS module throws when rendered, so usage is gated on isIOS.
- import {SFSymbol} from '@react-navigation/native'
-+import * as TestIDs from '@/tests/e2e/shared/test-ids'
- 
- type VisProps = {
-   amps: undefined | ReadonlyArray<number>
-@@ -98,12 +99,13 @@ const AudioPlayer = (props: Props) => {
- 
-   const timeLeft = duration - playedRatio * duration
-   return (
--    <Kb.Box2 alignSelf="center"
-+    <Kb.Box2
-       direction="horizontal"
-       style={Kb.Styles.collapseStyles([styles.container, {height: big ? 56 : 40}])}
-+      testID={TestIDs.CHAT_AUDIO_PLAYER}
-       gap="tiny"
-     >
--      <Kb.ClickableBox alignSelf="center" direction="vertical" justifyContent="center" onClick={url ? onClick : undefined}>
-+      <Kb.ClickableBox direction="vertical" justifyContent="center" onClick={url ? onClick : undefined}>
-         {isIOS ? (
-           <SFSymbol
-             name={paused ? 'play.fill' : 'pause.fill'}
-```
-
-**File**: `shared/chat/audio/audio-send.native.tsx` (modified, +2/-2)
-```diff
-@@ -42,8 +42,8 @@ const AudioSend = (props: Props) => {
-   return (
-     <Portal hostName="audioSend" useFullScreenOverlay={false}>
-       <Kb.Box2 direction="horizontal" style={styles.container} fullWidth={true} alignItems="center" justifyContent="space-between">
--        <Kb.Box2 alignSelf="center" direction="horizontal" alignItems="center">
--          <Kb.Box2 alignSelf="center" direction="vertical" centerChildren={true} style={styles.icon}>
-+        <Kb.Box2 direction="horizontal" alignItems="center">
-+          <Kb.Box2 direction="vertical" centerChildren={true} style={styles.icon}>
-             <Kb.Icon type="iconfont-remove" onClick={cancelRecording} />
-           </Kb.Box2>
-           {player}
-```
-
-**File**: `shared/chat/avatars.tsx` (modified, +2/-2)
-```diff
-@@ -83,7 +83,7 @@ const Avatars = function Avatars(p: Props) {
- 
-   if (!participantTwo) {
-     return (
--      <Kb.Box2 alignSelf="center" direction="vertical" relative={true} style={containerStyle}>
-+      <Kb.Box2 direction="vertical" relative={true} style={containerStyle}>
-         <Kb.Avatar username={participantOne} size={singleSize} style={{opacity}} />
-         <OverlayIcon isHovered={isHovered} isSelected={isSelected} isMuted={isMuted} isLocked={isLocked} />
-       </Kb.Box2>
-@@ -122,7 +122,7 @@ const TeamAvatar = function TeamAvatar(p: {
-   const styles = useStyles()
-   const {teamname, size, isSelected, isMuted, isHovered} = p
-   return (
--    <Kb.Box2 alignSelf="center" direction="vertical" relative={true} style={styles.container}>
-+    <Kb.Box2 direction="vertical" relative={true} style={styles.container}>
-       <Kb.Avatar teamname={teamname} size={size || 48} />
-       <OverlayIcon isSelected={isSelected} isMuted={isMuted} isHovered={isHovered} isLocked={false} />
-     </Kb.Box2>
-```
-
-**File**: `shared/chat/blocking/block-modal.tsx` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ const CheckboxRow = (props: CheckboxRowProps) => {
-         onClick={() => onCheck(!checked)}
-         style={styles.shrink}
-       />
--      <Kb.Box2 alignSelf="center" direction="vertical" flex={1} style={styles.iconBox} />
-+      <Kb.Box2 direction="vertical" flex={1} style={styles.iconBox} />
-       {props.info && (
-         <Kb.WithTooltip
-           tooltip={props.info}
-```
-
-**File**: `shared/chat/blocking/invitation-to-block.tsx` (modified, +1/-1)
-```diff
-@@ -148,7 +148,7 @@ const BlockButtons = () => {
-       </Kb.Box2>
-     </Kb.Box2>
-   ) : (
--    <Kb.Box2 alignSelf="center" direction="horizontal" gap="xsmall" alignItems="center" style={styles.container}>
-+    <Kb.Box2 direction="horizontal" gap="xsmall" alignItems="center" style={styles.container}>
-       <Kb.Text type="BodySmall">
-         {team ? `${adder} added you to this team.` : `You don't follow ${adder}.`}
-       </Kb.Text>
-```
-
----
-
-### Incident Patch 3: `ddc1f4d0` (2026-10-13)
-**Commit Message**: Electron renderer CSS, paste and hover cleanup (part 2) (#29766)
-
-* refactor(desktop): drop -webkit- prefixes from image-set, grab cursors and placeholder
-
-* fix(desktop): hide scroll-view scrollbars with scrollbar-width: none
-
-body's inherited scrollbar-color makes Chromium ignore every ::-webkit-scrollbar rule, so .hide-scrollbar has not hidden anything since Chromium 121.
-
-* refactor(desktop): fold dark-mode color media queries into light-dark()
-
-The dark-only !important overrides on highlighted messages have no light counterpart and stay in their media query, as do the image-set backgrounds. The avatar border blocks only swapped one fully transparent color for another, so they go.
-
-* fix(desktop): team header hover shadow uses light-dark() on the color only
-
-light-dark() takes colors, so the whole-shadow form was an invalid declaration and the shadow never rendered.
-
-* refactor(desktop): delete the unused growFadeIn classes
-
-Nothing in the repo references .growFadeInSmall or .growFadeInBig, including built class names.
-
-* feat(desktop): paste images from the paste event's clipboardData
-
-A pasted PNG is read straight from event.clipboardData.files in the renderer. Anything else 
-
-**File**: `shared/chat/avatars.stories.tsx` (modified, +3/-3)
-```diff
-@@ -40,18 +40,18 @@ type TeamStory = StoryObj<typeof TeamAvatar>
- 
- export const Team: TeamStory = {
-   render: () => (
--    <TeamAvatar teamname="keybase" isMuted={false} isSelected={false} isHovered={false} />
-+    <TeamAvatar teamname="keybase" isMuted={false} isSelected={false} />
-   ),
- }
- 
- export const TeamMuted: TeamStory = {
-   render: () => (
--    <TeamAvatar teamname="keybase" isMuted={true} isSelected={false} isHovered={false} />
-+    <TeamAvatar teamname="keybase" isMuted={true} isSelected={false} />
-   ),
- }
- 
- export const TeamSelected: TeamStory = {
-   render: () => (
--    <TeamAvatar teamname="keybase" isMuted={false} isSelected={true} isHovered={false} />
-+    <TeamAvatar teamname="keybase" isMuted={false} isSelected={true} />
-   ),
- }
-```
-
-**File**: `shared/chat/avatars.tsx` (modified, +5/-11)
-```diff
-@@ -2,13 +2,12 @@ import * as Kb from '@/common-adapters'
- import './chat.css'
- 
- const OverlayIcon = function OverlayIcon(p: {
--  isHovered: boolean
-   isMuted: boolean
-   isSelected: boolean
-   isLocked: boolean
- }) {
-   const styles = useStyles()
--  const {isHovered, isMuted, isSelected, isLocked} = p
-+  const {isMuted, isSelected, isLocked} = p
- 
-   if (isMobile) {
-     const type = isMuted
-@@ -30,7 +29,6 @@ const OverlayIcon = function OverlayIcon(p: {
-     <Kb.Box2 alignSelf="center" direction="vertical" style={styles.mutedIcon}>
-       <Kb.Icon
-         className={Kb.Styles.classNames('overlay-icon', 'stroked', {
--          hovered: isHovered,
-           locked: isLocked,
-           muted: isMuted,
-           selected: isSelected,
-@@ -40,7 +38,6 @@ const OverlayIcon = function OverlayIcon(p: {
-       />
-       <Kb.Icon
-         className={Kb.Styles.classNames('overlay-icon', {
--          hovered: isHovered,
-           locked: isLocked,
-           muted: isMuted,
-           selected: isSelected,
-@@ -55,7 +52,6 @@ const OverlayIcon = function OverlayIcon(p: {
- type Props = {
-   participantOne?: string
-   participantTwo?: string
--  isHovered?: boolean
-   isLocked?: boolean
-   isMuted?: boolean
-   isSelected?: boolean
-@@ -67,7 +63,6 @@ const Avatars = function Avatars(p: Props) {
-   const styles = useStyles()
-   const {participantOne, participantTwo, backgroundColor} = p
-   const {singleSize = 48} = p
--  const {isHovered = false} = p
-   const {isLocked = false} = p
-   const {isMuted = false} = p
-   const {isSelected = false} = p
-@@ -85,7 +80,7 @@ const Avatars = function Avatars(p: Props) {
-     return (
-       <Kb.Box2 direction="vertical" relative={true} style={containerStyle}>
-         <Kb.Avatar username={participantOne} size={singleSize} style={{opacity}} />
--        <OverlayIcon isHovered={isHovered} isSelected={isSelected} isMuted={isMuted} isLocked={isLocked} />
-+        <OverlayIcon isSelected={isSelected} isMuted={isMuted} isLocked={isLocked} />
-       </Kb.Box2>
-     )
-   }
-@@ -94,7 +89,7 @@ const Avatars = function Avatars(p: Props) {
-     <Kb.Box2 alignSelf="center" direction="horizontal" alignItems="center" relative={true} style={containerStyle}>
-       <Kb.Avatar username={participantTwo} size={32} style={leftStyle} />
-       <Kb.Avatar username={participantOne} size={32} style={rightStyle} />
--      <OverlayIcon isHovered={isHovered} isSelected={isSelected} isMuted={isMuted} isLocked={isLocked} />
-+      <OverlayIcon isSelected={isSelected} isMuted={isMuted} isLocked={isLocked} />
-     </Kb.Box2>
-   )
- }
-@@ -114,17 +109,16 @@ const useStyles = Kb.Styles.createStyleHook(() => ({
- 
- const TeamAvatar = function TeamAvatar(p: {
-   teamname: string
--  isHovered: boolean
-   isMuted: boolean
-   isSelected: boolean
-   size?: 128 | 96 | 64 | 48 | 32 | 24 | 16
- }) {
-   const styles = useStyles()
--  const {teamname, size, isSelected, isMuted, isHovered} = p
-+  const {teamname, size, isSelected, isMuted} = p
-   return (
-     <Kb.Box2 direction="vertical" relative={true} style={styles.container}>
-       <Kb.Avatar teamname={teamname} size={size || 48} />
--      <OverlayIcon isSelected={isSelected} isMuted={isMuted} isHovered={isHovered} isLocked={false} />
-+      <OverlayIcon isSelected={isSelected} isMuted={isMuted} isLocked={false} />
-     </Kb.Box2>
-   )
- }
-```
-
-**File**: `shared/chat/chat.css` (modified, +6/-8)
-```diff
-@@ -5,14 +5,6 @@
-   right: 0;
-   bottom: 0;
- 
--  &.hovered {
--    color: var(--color-black_20);
--    &.stroked {
--      -webkit-text-stroke: 2px var(--color-blueGreyDark);
--      color: var(--color-blueGreyDark);
--    }
--  }
--
-   &.selected {
-     color: var(--color-white);
-     &.stroked {
-@@ -28,6 +20,12 @@
-   }
- }
- 
-+/* The stroke matches the row's hover background. :where() keeps this below .selected.stroked */
-+:where(.overlay-icon-row:hover) .overlay-icon.stroked {
-+  -webkit-text-stroke: 2px var(--color-blueGreyDark);
-+  color: var(--color-blueGreyDark);
+@@ -0,0 +1,34 @@
++package attachments
++
++import (
++	"bytes"
++	"context"
++	"image"
++	"image/color"
++	"image/png"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++func TestDetectMIMETypeSmallFile(t *testing.T) {
++	img := image.NewRGBA(image.Rect(0, 0, 4, 4))
++	for x := 0; x < 4; x++ {
++		for y := 0; y < 4; y++ {
++			img.Set(x, y, color.RGBA{R: 200, G: 30, B: 30, A: 255})
++		}
++	}
++	var buf bytes.Buffer
++	require.NoError(t, png.Encode(&buf, img))
++	require.Less(t, buf.Len(), 512)
++
++	typ, err := DetectMIMEType(context.Background(), NewBufReadResetter(buf.Bytes()), "testuser.png")
++	require.NoError(t, err)
++	require.Equal(t, "image/png", typ)
 +}
 +
- .scroll-ignore-pointer .WrapperMessage-hoverBox {
-   pointer-events: none;
++func TestDetectMIMETypeEmptyFile(t *testing.T) {
++	typ, err := DetectMIMEType(context.Background(), NewBufReadResetter(nil), "testuser.png")
++	require.NoError(t, err)
++	require.Empty(t, typ)
++}
+```
+
+**File**: `go/kbfs/libkbfs/subscription_manager.go` (modified, +175/-110)
+```diff
+@@ -129,13 +129,21 @@ type nonPathSubscription struct {
+ // This is per client. For example, if we have multiple GUI instances, each of
+ // them get their own client ID and their subscriptions won't affect each
+ // other.
++//
++// lock is never held while calling into a folder (getFolderBranch,
++// RegisterForChanges, UnregisterFromChanges): folders call back into the
++// subscription manager (LocalChange, BatchChanges) while holding their own
++// locks. subscribeLock, taken before lock, serializes subscribing,
++// unsubscribing and polling instead, so the registration made after
++// releasing lock matches the count change made under it.
+ type subscriptionManager struct {
+ 	clientID SubscriptionManagerClientID
+ 	config   Config
+ 	log      logger.Logger
+ 	notifier SubscriptionNotifier
+ 
+ 	onlineStatusTracker *onlineStatusTracker
++	subscribeLock       sync.Mutex
+ 	lock                sync.RWMutex
+ 	// TODO HOTPOT-416: add another layer here to reference by topics, and
+ 	// actually check topics in LocalChange and BatchChanges.
+@@ -179,55 +187,76 @@ func newSubscriptionManager(clientID SubscriptionManagerClientID, config Config,
+ 
+ func (sm *subscriptionManager) Shutdown(ctx context.Context) {
+ 	sm.onlineStatusTracker.shutdown()
++	sm.subscribeLock.Lock()
++	defer sm.subscribeLock.Unlock()
+ 	sm.lock.Lock()
+-	defer sm.lock.Unlock()
+ 	pathSids := make([]SubscriptionID, 0, len(sm.pathSubscriptionIDToRef))
+ 	nonPathSids := make([]SubscriptionID, 0, len(sm.nonPathSubscriptionIDToTopic))
+ 	for sid := range sm.pathSubscriptionIDToRef {
+ 		pathSids = append(pathSids, sid)
+ 	}
++	for sid := range sm.folderBranchPollerCancelers {
++		pathSids = append(pathSids, sid)
++	}
+ 	for sid := range sm.nonPathSubscriptionIDToTopic {
+ 		nonPathSids = append(nonPathSids, sid)
+ 	}
++	var unregister []data.FolderBranch
+ 	for _, sid := range pathSids {
+-		sm.unsubscribePathLocked(ctx, sid)
++		if fb, last := sm.unsubscribePathLocked(ctx, sid); last {
++			unregister = append(unregister, fb)
++		}
+ 	}
+ 	for _, sid := range nonPathSids {
+ 		sm.unsubscribeNonPathLocked(ctx, sid)
+ 	}
++	sm.lock.Unlock()
++	for _, fb := range unregister {
++		sm.unregisterFromChanges(ctx, fb)
++	}
++}
++
++// registerForChanges and unregisterFromChanges call into the folder, so they
++// run under subscribeLock with lock released.
++//
++// registerForChanges registers for fb's first subscription, sid. If that
++// fails it removes sid, so the next subscription to fb tries again.
++func (sm *subscriptionManager) registerForChanges(
++	ctx context.Context, sid SubscriptionID, fb data.FolderBranch,
++) error {
++	err := sm.config.Notifier().RegisterForChanges([]data.FolderBranch{fb}, sm)
++	if err != nil {
++		sm.log.CWarningf(ctx, "RegisterForChanges fb=%s err=%v", fb, err)
++		sm.lock.Lock()
++		_, _ = sm.unsubscribePathLocked(ctx, sid)
++		sm.lock.Unlock()
++	}
++	return err
++}
++
++func (sm *subscriptionManager) unregisterFromChanges(
++	ctx context.Context, fb data.FolderBranch,
++) {
++	err := sm.config.Notifier().UnregisterFromChanges(
++		[]data.FolderBranch{fb}, sm)
++	if err != nil {
++		sm.log.CWarningf(ctx, "UnregisterFromChanges fb=%s err=%v", fb, err)
++	}
+ }
+ 
+ func (sm *subscriptionManager) OnlineStatusTracker() OnlineStatusTracker {
+ 	return sm.onlineStatusTracker
+ }
+ 
+ func (sm *subscriptionManager) checkSubscriptionIDLocked(sid SubscriptionID) (setter func(), err error) {
+-	if sm.subscriptionIDs[sid] {
++	if sm.subscriptionIDs[sid] || sm.folderBranchPollerCancelers[sid] != nil {
+ 		return nil, errors.Errorf("duplicate subscription ID %q", sid)
+ 	}
+ 	return func() {
+ 		sm.subscriptionIDs[sid] = true
+ 	}, nil
+ }
+ 
+-func (sm *subscriptionManager) registerForChangesLocked(fb data.FolderBranch) {
+-	if sm.subscriptionCountByFolderBranch[fb] == 0 {
+-		_ = sm.config.Notifier().RegisterForChanges(
+-			[]data.FolderBranch{fb}, sm)
+-	}
+-	sm.subscriptionCountByFolderBranch[fb]++
+-}
+-
+-func (sm *subscriptionManager) unregisterForChangesLocked(fb data.FolderBranch) {
+-	if sm.subscriptionCountByFolderBranch[fb] == 1 {
+-		_ = sm.config.Notifier().UnregisterFromChanges(
+-			[]data.FolderBranch{fb}, sm)
+-		delete(sm.subscriptionCountByFolderBranch, fb)
+-		return
+-	}
+-	sm.subscriptionCountByFolderBranch[fb]--
+-}
+-
+ func (sm *subscriptionManager) preparePathNotification(
+ 	ref pathSubscriptionRef) (sids []SubscriptionID,
+ 	paths []string, topics []keybase1.PathSubscriptionTopic,
+@@ -300,10 +329,12 @@ type subscribePathRequest struct {
+ 	deduplicateInterval *time.Duration
+ }
+ 
++// subscribePathWithFolderBranchLocked reports whether this is fb's first
++// subscription; the caller must then RegisterForChanges after unlocking.
+ func (sm *subscriptionManager) subscribePathWithFolderBranchLocked(
+ 	req subscribePathRequest,
+ 	parsedPath *parsedPath, fb data.FolderBranch,
+-) error {
++) (first bool, err error) {
+ 	nitp := getCleanInTlfPath(parsedPath)
+ 	ref := pathSubscriptionRef{
+ 		folderBranch: fb,
+@@ -312,9 +343,10 @@ func (sm *subscriptionManager) subscribePathWithFolderBranchLocked(
+ 
+ 	subscriptionIDS
+```
+
+**File**: `go/kbfs/libkbfs/subscription_manager_test.go` (modified, +497/-0)
+```diff
+@@ -6,8 +6,10 @@ package libkbfs
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"reflect"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -16,6 +18,7 @@ import (
+ 	"github.com/keybase/client/go/kbfs/favorites"
+ 	"github.com/keybase/client/go/kbfs/libcontext"
+ 	"github.com/keybase/client/go/kbfs/tlf"
++	"github.com/keybase/client/go/kbfs/tlfhandle"
+ 	keybase1 "github.com/keybase/client/go/protocol/keybase1"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -47,6 +50,10 @@ func initSubscriptionManagerTest(t *testing.T) (config Config,
+ 	sm = config.SubscriptionManager(
+ 		testSubscriptionManagerClientID, false, notifier)
+ 	return config, sm, notifier, func() {
++		if t.Failed() {
++			// A failed test may leave a goroutine blocked in a gate.
++			return
++		}
+ 		err := config.Shutdown(context.Background())
+ 		require.NoError(t, err)
+ 		ctl.Finish()
+@@ -272,3 +279,493 @@ func TestSubscriptionManagerSubscribePathNoFolderBranch(t *testing.T) {
+ 
+ 	waiter0()
+ }
++
++// gatedRootNodeOps holds a found root node until release is closed, standing
++// in for a folder whose head lock is held by an in-progress write. Lookups
++// that find nothing pass straight through.
++type gatedRootNodeOps struct {
++	KBFSOps
++	enteredOnce sync.Once
++	entered     chan struct{}
++	release     chan struct{}
++}
++
++func (o *gatedRootNodeOps) GetRootNode(
++	ctx context.Context, h *tlfhandle.Handle, branch data.BranchName) (
++	Node, data.EntryInfo, error,
++) {
++	node, ei, err := o.KBFSOps.GetRootNode(ctx, h, branch)
++	if node == nil {
++		return node, ei, err
++	}
++	o.enteredOnce.Do(func() { close(o.entered) })
++	<-o.release
++	return node, ei, err
++}
++
++// gatedObserver blocks in BatchChanges once armed, holding the folder's
++// observer-list lock the way a notification in progress does.
++type gatedObserver struct {
++	entered chan struct{}
++	release chan struct{}
++}
++
++func (o *gatedObserver) LocalChange(context.Context, Node, WriteRange) {}
++func (o *gatedObserver) BatchChanges(context.Context, []NodeChange, []NodeID) {
++	close(o.entered)
++	<-o.release
++}
++func (o *gatedObserver) TlfHandleChange(context.Context, *tlfhandle.Handle) {}
++
++func recvWithin[T any](t *testing.T, ch <-chan T, what string) T {
++	select {
++	case v := <-ch:
++		return v
++	case <-time.After(5 * time.Second):
++		require.FailNow(t, what+" timed out")
++	}
++	var zero T
++	return zero
++}
++
++func runWithin(t *testing.T, timeout time.Duration, what string, f func()) {
++	done := make(chan struct{})
++	go func() {
++		f()
++		close(done)
++	}()
++	select {
++	case <-done:
++	case <-time.After(timeout):
++		require.FailNow(t, what+" deadlocked")
++	}
++}
++
++func TestSubscriptionManagerNotifyDuringSubscribeLookup(t *testing.T) {
++	config, smi, _, finish := initSubscriptionManagerTest(t)
++	defer finish()
++	sm := smi.(*subscriptionManager)
++	ctx := t.Context()
++
++	tlfHandle, err := GetHandleFromFolderNameAndType(
++		ctx, config.KBPKI(), config.MDOps(), config, "jdoe", tlf.Private)
++	require.NoError(t, err)
++	_, _, err = config.KBFSOps().GetOrCreateRootNode(
++		ctx, tlfHandle, data.MasterBranch)
++	require.NoError(t, err)
++
++	realOps := config.KBFSOps()
++	gated := &gatedRootNodeOps{
++		KBFSOps: realOps,
++		entered: make(chan struct{}),
++		release: make(chan struct{}),
++	}
++	config.(*ConfigLocal).SetKBFSOps(gated)
++	defer config.(*ConfigLocal).SetKBFSOps(realOps)
++
++	subscribed := make(chan error, 1)
++	go func() {
++		subscribed <- sm.SubscribePath(ctx, "sid1", "/keybase/private/jdoe",
++			keybase1.PathSubscriptionTopic_CHILDREN, nil)
++	}()
++	recvWithin(t, gated.entered, "root node lookup")
++
++	// The folder can't finish the lookup until its own change notification
++	// returns, so that notification must not wait on the subscribe.
++	runWithin(t, 5*time.Second, "change notification", func() {
++		sm.BatchChanges(ctx, nil, nil)
++	})
++	close(gated.release)
++	require.NoError(t, recvWithin(t, subscribed, "subscribe"))
++}
++
++// testStopDuringSubscribeLookup stops a subscription while SubscribePath is
++// still looking up its folderBranch, and checks it leaves nothing behind.
++func testStopDuringSubscribeLookup(
++	t *testing.T, stop func(context.Context, *subscriptionManager),
++) {
++	config, smi, _, finish := initSubscriptionManagerTest(t)
++	defer finish()
++	sm := smi.(*subscriptionManager)
++	ctx := t.Context()
++
++	tlfHandle, err := GetHandleFromFolderNameAndType(
++		ctx, config.KBPKI(), config.MDOps(), config, "jdoe", tlf.Private)
++	require.NoError(t, err)
++	rootNode, _, err := config.KBFSOps().GetOrCreateRootNode(
++		ctx, tlfHandle, data.MasterBranch)
++	require.NoError(t, err)
++	fb := rootNode.GetFolderBranch()
++	fbo := config.KBFSOps().(*KBFSOpsStandard).getOpsNoAdd(ctx, fb)
++
++	realOps := config.KBFSOps()
++	gated := &gatedRootNodeOps{
++		KBFSOps: realOps,
++		entered: make(chan struct{}),
++		release: make(chan struct{}),
++	}
++	config.(*ConfigLocal).SetKBFSOps(gated)
++
++	subscribed := make(chan error, 1)
++	go func() {
++		subscribed <- sm.SubscribePath(ctx, "sid1", "/keybase/private/jdoe",
++			keybase1.PathSubscriptionTopic_CHILDRE
+```
+
+**File**: `go/protocol/keybase1/incoming-share.go` (modified, +26/-2)
+```diff
+@@ -101,6 +101,30 @@ func (o IncomingShareItem) DeepCopy() IncomingShareItem {
+ 	}
+ }
+ 
++type IncomingShareItems struct {
++	Items        []IncomingShareItem `codec:"items" json:"items"`
++	DroppedCount int                 `codec:"droppedCount" json:"droppedCount"`
++	Id           string              `codec:"id" json:"id"`
++}
++
++func (o IncomingShareItems) DeepCopy() IncomingShareItems {
++	return IncomingShareItems{
++		Items: (func(x []IncomingShareItem) []IncomingShareItem {
++			if x == nil {
++				return nil
++			}
++			ret := make([]IncomingShareItem, len(x))
++			for i, v := range x {
++				vCopy := v.DeepCopy()
++				ret[i] = vCopy
++			}
++			return ret
++		})(o.Items),
++		DroppedCount: o.DroppedCount,
++		Id:           o.Id,
++	}
++}
++
+ type IncomingShareCompressPreference int
+ 
+ const (
+@@ -148,7 +172,7 @@ type SetPreferenceArg struct {
+ }
+ 
+ type IncomingShareInterface interface {
+-	GetIncomingShareItems(context.Context) ([]IncomingShareItem, error)
++	GetIncomingShareItems(context.Context) (IncomingShareItems, error)
+ 	GetPreference(context.Context) (IncomingSharePreference, error)
+ 	SetPreference(context.Context, IncomingSharePreference) error
+ }
+@@ -200,7 +224,7 @@ type IncomingShareClient struct {
+ 	Cli rpc.GenericClient
+ }
+ 
+-func (c IncomingShareClient) GetIncomingShareItems(ctx context.Context) (res []IncomingShareItem, err error) {
++func (c IncomingShareClient) GetIncomingShareItems(ctx context.Context) (res IncomingShareItems, err error) {
+ 	err = c.Cli.Call(ctx, "keybase.1.incomingShare.getIncomingShareItems", []any{GetIncomingShareItemsArg{}}, &res, 0*time.Millisecond)
+ 	return
  }
 ```
 
-**File**: `shared/chat/conversation/bot/team-picker.tsx` (modified, +1/-1)
+**File**: `go/service/incoming-share.go` (modified, +125/-14)
 ```diff
-@@ -48,7 +48,7 @@ const BotTeamPicker = (props: Props) => {
-     return (
-       <Kb.ClickableBox key={index} onClick={() => onSelect(item.convID)} direction="horizontal" fullWidth={true} gap="tiny" style={styles.results}>
-         {item.isTeam ? (
--          <TeamAvatar isHovered={false} isMuted={false} isSelected={false} teamname={item.name} />
-+          <TeamAvatar isMuted={false} isSelected={false} teamname={item.name} />
-         ) : (
-           <Avatars participantOne={item.parts?.[0]} participantTwo={item.parts?.[1]} />
-         )}
+@@ -6,9 +6,10 @@ package service
+ import (
+ 	"context"
+ 	"encoding/json"
+-	"errors"
+ 	"os"
+ 	"path/filepath"
++	"sync"
++	"time"
+ 
+ 	"github.com/keybase/client/go/libkb"
+ 	keybase1 "github.com/keybase/client/go/protocol/keybase1"
+@@ -60,25 +61,135 @@ func IncomingShareFolder(mobileSharedHome string) string {
+ 	return filepath.Join(mobileSharedHome, "Library", "Caches", "incoming-shares")
+ }
+ 
+-func (h *IncomingShareHandler) GetIncomingShareItems(ctx context.Context) (items []keybase1.IncomingShareItem, err error) {
++const (
++	incomingShareManifest = "manifest.json"
++	// A manifest being read is moved here first. Reads are serialized by
++	// lastIncomingShare; one a crash left behind is replaced by the next read,
++	// or purged.
++	incomingShareClaimedManifest = "manifest.claimed"
++)
++
++// How long a claimed share is still handed out again. The app can throw an
++// answer away (a newer load superseded it, a disconnect cancelled it) and load
++// again; that reload has to get the share, not nothing.
++const incomingShareRepeatWindow = 30 * time.Second
++
++// The last share claimed, and the user it was handed to, guarded by its mutex,
++// which also serializes reads.
++var lastIncomingShare struct {
++	sync.Mutex
++	folder string
++	uid    keybase1.UID
++	at     time.Time
++	res    keybase1.IncomingShareItems
++}
++
++// GetIncomingShareItems hands out each share once. The manifest is moved aside
++// before it is read and removed after; a repeat call within
++// incomingShareRepeatWindow, by the same user, gets the same share again, and
++// any other (a stale or replayed keybase://incoming-share link, or another
++// account after a switch) gets no items and no error.
++// The payload files stay until they are sent or purged.
++// A repeat carries the share's id, and only the app knows whether it already
++// acted on that share, so keeping a share from being acted on twice is up to it.
++func (h *IncomingShareHandler) GetIncomingShareItems(ctx context.Context) (res keybase1.IncomingShareItems, err error) {
+ 	mctx := libkb.NewMetaContext(ctx, h.G())
+-	manifestPath := filepath.Join(IncomingShareFolder(h.G().Env.GetMobileSharedHome()), "manifest.json")
+-	f, err := os.Open(manifestPath)
++	folder := IncomingShareFolder(h.G().Env.GetMobileSharedHome())
++	if folder == "" {
++		return res, nil
++	}
++	last := &lastIncomingShare
++	last.Lock()
++	defer last.Unlock()
++	now := h.G().Clock().Now()
++	uid := mctx.CurrentUID()
++	res, claimed, err := h.claimIncomingShare(mctx, folder)
++	switch {
++	case err != nil:
++		// a newer share that can't be read still replaces the last one
++		last.folder = ""
++		return res, err
++	case claimed:
++		last.folder, last.uid, last.at, last.res = folder, uid, now, res
++		return res, nil
++	case last.folder == folder && last.uid.Equal(uid) &&
++		now.Sub(last.at) < incomingShareRepeatWindow:
++		mctx.Debug("incoming-share: handing out the share claimed %v ago again", now.Sub(last.at))
++		return stillPresentIncomingShare(last.res), nil
++	default:
++		return keybase1.IncomingShareItems{}, nil
++	}
++}
++
++// stillPresentIncomingShare is the share as handed out again: an item whose
++// file is gone was sent or exported since, so it is left out, and a share with
++// nothing left is nothing to share.
++// A share that had no items to begin with (every one dropped) is handed out
++// as it was, so its notice survives a reload.
++func stillPresentIncomingShare(share keybase1.IncomingShareItems) (res keybase1.IncomingShareItems) {
++	if len(share.Items) == 0 {
++		return share
++	}
++	for _, item := range share.Items {
++		if item.OriginalPath != nil {
++			if _, err := os.Stat(*item.OriginalPath); err != nil {
++				continue
++			}
++		}
++		res.Items = append(res.Items, item)
++	}
++	if len(res.Items) == 0 {
++		return keybase1.IncomingShareItems{}
++	}
++	res.DroppedCount = share.DroppedCount
++	res.Id = share.Id
++	return res
++}
++
++// claimIncomingShare reads and removes the manifest; claimed is false when
++// there is none.
++func (h *IncomingShareHandler) claimIncomingShare(mctx libkb.MetaContext, folder string) (
++	res keybase1.IncomingShareItems, claimed bool, err error,
++) {
++	id, err := libkb.RandHexString("", 8)
++	if err != nil {
++		return res, false, err
++	}
++	claimedPath := filepath.Join(folder, incomingShareClaimedManifest)
++	// A rename is atomic, so of two calls racing for one manifest only one gets it.
++	if err := os.Rename(filepath.Join(folder, incomingShareManifest), claimedPath); err != nil {
++		if os.IsNotExist(err) {
++			mctx.Debug("incoming-share: no manifest, nothing to share")
++			return res, false, nil
++		}
++		mctx.Debug("incoming-share: claim manifest.json error: %v", err)
++		return res, false, err
++	}
++	defer func() {
++		if err := os.Remove(claimedPath); err != nil {
++			mctx.Debug("incoming-share: remove claimed manifest error: %v", err)
++		}
++	}()
++	f, err := os.Open(claimedPath)
+ 	if err != nil {
+ 		mctx.Debug("incoming-share: open manifest.json error: %v", err)
+-		return nil, err
++		return res, true, err
+ 	}
+ 	defer f.Clos
 ```
 
-**File**: `shared/chat/conversation/conversation.css` (modified, +5/-40)
+**File**: `go/service/incoming-share_test.go` (added, +337/-0)
 ```diff
-@@ -85,7 +85,7 @@
- 
-   &:hover {
-     .WrapperMessage-emojiButton {
--      box-shadow: 0 1px 1px 0 var(--color-black_10);
-+      box-shadow: 0 1px 1px 0 light-dark(var(--color-black_10), transparent);
-       &.noShadow,
-       &:active {
-         box-shadow: none;
-@@ -115,17 +115,7 @@
+@@ -0,0 +1,337 @@
++// Copyright 2026 Keybase, Inc. All rights reserved. Use of
++// this source code is governed by the included BSD license.
++
++package service
++
++import (
++	"context"
++	"encoding/json"
++	"os"
++	"path/filepath"
++	"testing"
++	"time"
++
++	"github.com/keybase/client/go/libkb"
++	keybase1 "github.com/keybase/client/go/protocol/keybase1"
++	clockwork "github.com/keybase/clockwork"
++	"github.com/stretchr/testify/require"
++)
++
++// Writes the manifest that makeManifest builds from the share folder and
++// returns a handler that reads it.
++func setupIncomingShare(t *testing.T, makeManifest func(folder string) []map[string]string) (*IncomingShareHandler, func()) {
++	tc := libkb.SetupTest(t, "incoming-share", 1)
++	tc.G.Env.Test.MobileSharedHome = t.TempDir()
++	folder := IncomingShareFolder(tc.G.Env.GetMobileSharedHome())
++	require.NoError(t, os.MkdirAll(folder, 0o700))
++	b, err := json.Marshal(makeManifest(folder))
++	require.NoError(t, err)
++	require.NoError(t, os.WriteFile(filepath.Join(folder, "manifest.json"), b, 0o600))
++	return NewIncomingShareHandler(nil, tc.G), tc.Cleanup
++}
++
++func TestIncomingShareCountsDroppedItems(t *testing.T) {
++	var good string
++	h, cleanup := setupIncomingShare(t, func(folder string) []map[string]string {
++		good = filepath.Join(folder, "guid", "photo.jpg")
++		require.NoError(t, os.MkdirAll(filepath.Dir(good), 0o700))
++		require.NoError(t, os.WriteFile(good, []byte("jpeg"), 0o600))
++		return []map[string]string{
++			{"type": "image", "originalPath": good},
++			{"type": "error", "error": "loadImage: failed"},
++			{"type": "image", "originalPath": filepath.Join(folder, "guid2", "gone.jpg")},
++			{"type": "text", "content": "hello"},
++		}
++	})
++	defer cleanup()
++
++	res, err := h.GetIncomingShareItems(context.Background())
++	require.NoError(t, err)
++	require.Equal(t, 2, res.DroppedCount)
++	require.Len(t, res.Items, 2)
++	require.Equal(t, keybase1.IncomingShareType_IMAGE, res.Items[0].Type)
++	require.Equal(t, good, *res.Items[0].OriginalPath)
++	require.Equal(t, 4, *res.Items[0].OriginalSize)
++	require.Equal(t, keybase1.IncomingShareType_TEXT, res.Items[1].Type)
++	require.Equal(t, "hello", *res.Items[1].Content)
++}
++
++func TestIncomingShareAllDroppedIsNotAnError(t *testing.T) {
++	h, cleanup := setupIncomingShare(t, func(string) []map[string]string {
++		return []map[string]string{{"type": "error", "error": "loadImage: failed"}}
++	})
++	defer cleanup()
++
++	res, err := h.GetIncomingShareItems(context.Background())
++	require.NoError(t, err)
++	require.Empty(t, res.Items)
++	require.Equal(t, 1, res.DroppedCount)
++}
++
++// The extension writes an empty manifest when the user cancels the share.
++func TestIncomingShareEmptyManifestIsNothingToShare(t *testing.T) {
++	h, cleanup := setupIncomingShare(t, func(string) []map[string]string {
++		return []map[string]string{}
++	})
++	defer cleanup()
++
++	res, err := h.GetIncomingShareItems(context.Background())
++	require.NoError(t, err)
++	require.Empty(t, res.Items)
++	require.Zero(t, res.DroppedCount)
++}
++
++func writeIncomingShareManifest(t *testing.T, h *IncomingShareHandler, items []map[string]string) {
++	b, err := json.Marshal(items)
++	require.NoError(t, err)
++	folder := IncomingShareFolder(h.G().Env.GetMobileSharedHome())
++	require.NoError(t, os.WriteFile(filepath.Join(folder, "manifest.json"), b, 0o600))
++}
++
++func incomingShareText(t *testing.T, h *IncomingShareHandler) string {
++	res, err := h.GetIncomingShareItems(context.Background())
++	require.NoError(t, err)
++	require.Zero(t, res.DroppedCount)
++	if len(res.Items) == 0 {
++		return ""
++	}
++	require.Len(t, res.Items, 1)
++	return *res.Items[0].Content
++}
++
++func TestIncomingShareIsReadOnce(t *testing.T) {
++	h, cleanup := setupIncomingShare(t, func(string) []map[string]string {
++		return []map[string]string{{"type": "text", "content": "hello"}}
++	})
++	defer cleanup()
++	clock := clockwork.NewFakeClock()
++	h.G().SetClock(clock)
++	folder := IncomingShareFolder(h.G().Env.GetMobileSharedHome())
++
++	require.Equal(t, "hello", incomingShareText(t, h))
++
++	// Neither the manifest nor the claimed copy is left behind.
++	entries, err := os.ReadDir(folder)
++	require.NoError(t, err)
++	require.Empty(t, entries)
++
++	// A reload of an answer the app threw away gets the share again.
++	clock.Advance(incomingShareRepeatWindow - time.Second)
++	require.Equal(t, "hello", incomingShareText(t, h))
++
++	// A replayed incoming-share link later on gets nothing, without an error.
++	clock.Advance(2 * time.Second)
++	require.Empty(t, incomingShareText(t, h))
++}
++
++func TestIncomingShareRepeatLeavesOutFilesSinceRemoved(t *testing.T) {
++	var sent, kept string
++	h, cleanup := setupIncomingShare(t, func(folder string) []map[string]string {
++		sent = filepath.Join(folder, "guid", "sent.jpg")
++		kept = filepath.Join(folder, "guid2", "kept.jpg")
++		for _, p := range []string{sent, kept} {
++			require.NoError(t, os.MkdirAll(filepath.Dir(p), 0o700))
++			require.NoError(t, os.WriteFile(p, []byte("jpeg"), 0o600))
++		}
++		return []map[string]
+```
+
+**File**: `go/service/main.go` (modified, +22/-2)
+```diff
+@@ -441,6 +441,7 @@ func (d *Service) purgeOldIncomingShareData() {
+ 		return
+ 	}
+ 	cutoff := time.Now().Add(-incomingShareMaxAge)
++	d.purgeOldClaimedIncomingShareManifest(dir, cutoff)
+ 	for _, entry := range entries {
+ 		// manifest.json lives alongside the payload dirs and is the live handoff
+ 		// to the app; only the directories are ours to remove.
+@@ -451,8 +452,10 @@ func (d *Service) purgeOldIncomingShareData() {
+ 		if err != nil {
+ 			continue
+ 		}
+-		// Writing the processed copy into the payload dir bumps its mtime, so a
+-		// share still being worked on keeps renewing its lease.
++		// The payload dir's mtime is when the extension last added an item to
++		// it. Each item lives in its own subdirectory, so the app's processed
++		// copies land there and don't renew it: a share left unsent past the
++		// cutoff is removed.
+ 		if info.ModTime().After(cutoff) {
+ 			continue
+ 		}
+@@ -463,6 +466,23 @@ func (d *Service) purgeOldIncomingShareData() {
+ 	}
  }
- .WrapperMessage-hoverColor {
-   &:hover {
--    background-color: var(--color-blueLighter2);
--  }
--}
--
--@media (prefers-color-scheme: dark) {
--  .WrapperMessage-hoverColor:hover {
--    background-color: var(--color-blueLighter3);
--  }
--
--  .WrapperMessage-hoverBox:hover .WrapperMessage-emojiButton {
--    box-shadow: none;
-+    background-color: light-dark(var(--color-blueLighter2), var(--color-blueLighter3));
+ 
++// purgeOldClaimedIncomingShareManifest removes a claimed manifest that a crash
++// left mid-read. A read holds lastIncomingShare while it uses the claimed
++// manifest, which keeps the manifest's old mtime, so this must not run during
++// one.
++func (d *Service) purgeOldClaimedIncomingShareManifest(dir string, cutoff time.Time) {
++	lastIncomingShare.Lock()
++	defer lastIncomingShare.Unlock()
++	p := filepath.Join(dir, incomingShareClaimedManifest)
++	info, err := os.Stat(p)
++	if err != nil || info.ModTime().After(cutoff) {
++		return
++	}
++	if err := os.Remove(p); err != nil {
++		d.G().Log.Debug("purgeOldIncomingShareData: failed to remove %s: %s", p, err)
++	}
++}
++
+ func (d *Service) startChatModules() {
+ 	kuid := d.G().Env.GetUID()
+ 	if !kuid.IsNil() {
+```
+
+---
+
+### Incident Patch 2: `594ed87e` (2026-10-19)
+**Commit Message**: perf(rpc): cache typed-array probe names, drop incoming rest-spread copy; fix JSI test/bench scripts (#29799)
+
+* fix(rn-kb): add cxxstableapi include path to the JSI test and bench scripts
+
+RN 0.88's CallInvoker.h includes react/cxxstableapi/UmbrellaGuard.h, so both
+scripts failed to compile against the current pods.
+
+* fix(rn-kb): build the JSI bench baseline against the current bridge API
+
+The baseline still targeted master's pre-hardening install/onDataFromGo
+signatures and skipped frame-parser.cpp, so it no longer compiled. Copy the
+base ref's whole cpp/ directory instead, and let KB_BENCH_BASE pick the ref.
+
+* perf(rn-kb): cache the typed-array probe PropNameIDs
+
+tryPackTypedArray looked up byteLength (and buffer/byteOffset for views) by
+C string, interning a fresh PropNameID on every outgoing plain object. Cache
+them like rpcOnJs, released with the rest of the JSI state.
+
+Bench on the real-traffic corpus: encode 507 -> 501 ms best of 7.
+
+* perf(engine): index incoming messages instead of rest-spreading them
+
+dispatchDecodedMessage copied every incoming message array with
+[type, ...rest]. Read the fields by index; validation is unchanged and now
+covered per message type.
+
+* fi
+
+**File**: `rnmodules/react-native-kb/cpp/react-native-kb.cpp` (modified, +24/-9)
+```diff
+@@ -67,6 +67,9 @@ void KBBridge::releaseJSIState() {
+   cachedUint8ArrayCtor_.reset();
+   cachedIsView_.reset();
+   cachedRpcOnJsName_.reset();
++  cachedByteLengthName_.reset();
++  cachedBufferName_.reset();
++  cachedByteOffsetName_.reset();
+   cachedPropNames_.clear();
+   cachedRuntime_ = nullptr;
+ }
+@@ -97,6 +100,16 @@ void KBBridge::resetRecvLocked() {
    }
  }
  
-@@ -141,13 +131,7 @@
- .WrapperMessage-decorated {
-   min-height: 26px;
-   &.active {
--    background-color: var(--color-blueLighter2);
--  }
--}
--
--@media (prefers-color-scheme: dark) {
--  .WrapperMessage-decorated.active {
--    background-color: var(--color-blueLighter3);
-+    background-color: light-dark(var(--color-blueLighter2), var(--color-blueLighter3));
-   }
- }
++const PropNameID &KBBridge::cachedName(Runtime &runtime,
++                                       std::unique_ptr<PropNameID> &slot,
++                                       const char *name) {
++  resetCaches(runtime);
++  if (!slot) {
++    slot = std::make_unique<PropNameID>(PropNameID::forAscii(runtime, name));
++  }
++  return *slot;
++}
++
+ Function &KBBridge::uint8ArrayCtor(Runtime &runtime) {
+   resetCaches(runtime);
+   if (!cachedUint8ArrayCtor_) {
+@@ -360,6 +373,11 @@ Value KBBridge::convertMPToJSI(Runtime &runtime, void *mpObj) {
+ void KBBridge::convertJSIToMP(Runtime &runtime, const Value &value,
+                               void *packer) {
+   auto &pk = *static_cast<msgpack::packer<msgpack::sbuffer> *>(packer);
++  const auto &byteLengthName =
++      cachedName(runtime, cachedByteLengthName_, "byteLength");
++  const auto &bufferName = cachedName(runtime, cachedBufferName_, "buffer");
++  const auto &byteOffsetName =
++      cachedName(runtime, cachedByteOffsetName_, "byteOffset");
+   std::vector<PackFrame> stack;
+   stack.reserve(16);
  
-@@ -158,28 +142,9 @@
- 
- .ReplyBox {
-   &:hover {
--    background-color: white;
-+    background-color: light-dark(white, var(--color-blackOrBlack));
-     .text_BodySmall {
--      color: var(--color-blackOrBlack) !important;
--    }
--  }
--}
--
--@media (prefers-color-scheme: dark) {
--  .ReplyBox:hover {
--    background-color: var(--color-blackOrBlack);
--  }
--
--  .ReplyBox:hover .text_BodySmall {
--    color: var(--color-whiteOrWhite) !important;
--  }
--}
--
--.react-button {
--  &.border {
--    &:hover {
--      backgroundcolor: var(--color-blueLighter2);
--      bordercolor: var(--color-blue);
-+      color: light-dark(var(--color-blackOrBlack), var(--color-whiteOrWhite)) !important;
+@@ -388,14 +406,14 @@ void KBBridge::convertJSIToMP(Runtime &runtime, const Value &value,
+   // byteLength/buffer fields is never mistaken for binary. The range is
+   // always bounds-checked against the backing buffer.
+   auto tryPackTypedArray = [&](Object &obj) -> bool {
+-    auto byteLengthProp = obj.getProperty(runtime, "byteLength");
++    auto byteLengthProp = obj.getProperty(runtime, byteLengthName);
+     if (!byteLengthProp.isNumber()) {
+       return false;
      }
-   }
+     if (!isArrayBufferView(runtime, obj)) {
+       return false;
+     }
+-    auto bufferProp = obj.getProperty(runtime, "buffer");
++    auto bufferProp = obj.getProperty(runtime, bufferName);
+     if (!bufferProp.isObject()) {
+       return false;
+     }
+@@ -404,7 +422,7 @@ void KBBridge::convertJSIToMP(Runtime &runtime, const Value &value,
+       return false;
+     }
+     auto arrayBuf = bufferObj.getArrayBuffer(runtime);
+-    auto byteOffsetProp = obj.getProperty(runtime, "byteOffset");
++    auto byteOffsetProp = obj.getProperty(runtime, byteOffsetName);
+     packArrayBufferRange(
+         arrayBuf, byteOffsetProp.isNumber() ? byteOffsetProp.getNumber() : 0,
+         byteLengthProp.getNumber());
+@@ -716,15 +734,12 @@ void KBBridge::onDataFromGo(uint8_t *data, int size, int64_t epoch) {
+       }
+ 
+       self->resetCaches(runtime);
+-      if (!self->cachedRpcOnJsName_) {
+-        self->cachedRpcOnJsName_ = std::make_unique<PropNameID>(
+-            PropNameID::forAscii(runtime, "rpcOnJs"));
+-      }
+       // Deliberately re-read the global each batch instead of caching the
+       // function: JS installs a fresh rpcOnJs whenever the engine client is
+       // recreated, and a cached handle would keep feeding the dead one.
+-      auto onJsValue =
+-          runtime.global().getProperty(runtime, *self->cachedRpcOnJsName_);
++      auto onJsValue = runtime.global().getProperty(
++          runtime,
++          self->cachedName(runtime, self->cachedRpcOnJsName_, "rpcOnJs"));
+       if (!onJsValue.isObject() ||
+           !onJsValue.getObject(runtime).isFunction(runtime)) {
+         // These messages are already consumed from the unpacker and cannot be
+```
+
+**File**: `rnmodules/react-native-kb/cpp/react-native-kb.h` (modified, +8/-0)
+```diff
+@@ -90,6 +90,10 @@ class KBBridge : public std::enable_shared_from_this<KBBridge> {
+   std::unique_ptr<facebook::jsi::Function> cachedUint8ArrayCtor_;
+   std::unique_ptr<facebook::jsi::Function> cachedIsView_;
+   std::unique_ptr<facebook::jsi::PropNameID> cachedRpcOnJsName_;
++  // Typed-array probe names, looked up on every outgoing plain object.
++  std::unique_ptr<facebook::jsi::PropNameID> cachedByteLengthName_;
++  std::unique_ptr<facebook::jsi::PropNameID> cachedBufferName_;
++  std::unique_ptr<facebook::jsi::PropNameID> cachedByteOffsetName_;
+   std::unordered_map<std::string, facebook::jsi::PropNameID> cachedPropNames_;
+   std::string propNameScratch_;
+   facebook::jsi::Runtime *cachedRuntime_ = nullptr;
+@@ -104,6 +108,10 @@ class KBBridge : public std::enable_shared_from_this<KBBridge> {
+   void setObjectKey(facebook::jsi::Runtime &runtime,
+                     facebook::jsi::Object &obj, const char *ptr, size_t size,
+                     const facebook::jsi::Value &value);
++  const facebook::jsi::PropNameID &
++  cachedName(facebook::jsi::Runtime &runtime,
++             std::unique_ptr<facebook::jsi::PropNameID> &slot,
++             const char *name);
+   facebook::jsi::Function &uint8ArrayCtor(facebook::jsi::Runtime &runtime);
+   facebook::jsi::Function &arrayBufferIsView(facebook::jsi::Runtime &runtime);
+   bool isArrayBufferView(facebook::jsi::Runtime &runtime,
+```
+
+**File**: `rnmodules/react-native-kb/cpp/tests/jsi-convert-bench.cpp` (modified, +2/-15)
+```diff
+@@ -2,7 +2,7 @@
+ // Hermes runtime against a corpus of real RPC payloads.
+ //
+ // The corpus comes from an actual mobile session's Metro log; see
+-// scripts/make-bench-corpus.mjs. Build and run both this and the master
++// scripts/make-bench-corpus.mjs. Build and run both this and the
+ // baseline with scripts/bench-jsi-convert.sh.
+ //
+ // Decode direction (msgpack -> JSI): frames are handed to onDataFromGo exactly
+@@ -82,20 +82,13 @@ int main(int argc, char **argv) {
+     }
+   };
+ 
+-#ifdef KB_BASELINE
+-  bridge->install(
+-      rt, invoker,
+-      [&](void *, size_t size) { bytesWritten += size; },
+-      onError);
+-#else
+   bridge->install(
+       rt, invoker,
+       [&](void *, size_t size) {
+         bytesWritten += size;
+         return true;
+       },
+       onError, [&](int64_t) { fprintf(stderr, "fatal\n"); });
+-#endif
+ 
+   // Collects everything the decode pass produced so the encode pass has real
+   // JSI values to pack. Held in JS so the values stay exactly what rpcOnJs got.
+@@ -138,7 +131,7 @@ int main(int argc, char **argv) {
+   printf("corpus %s: %zu frames, %.2f MB\n", corpusPath, frames,
+          double(corpus.size()) / (1024 * 1024));
+ #ifdef KB_BASELINE
+-  printf("build: baseline (origin/master)\n");
++  printf("build: baseline\n");
+ #else
+   printf("build: branch\n");
+ #endif
+@@ -151,17 +144,11 @@ int main(int argc, char **argv) {
+     // way they do on device rather than as one impossible 10MB read.
+     constexpr size_t kReadSize = 300 * 1024;
+     rt.global().setProperty(rt, "received", jsi::Array(rt, 0));
+-#ifndef KB_BASELINE
+     bridge->resetRecv();
+-#endif
+     auto t0 = std::chrono::steady_clock::now();
+     for (size_t off = 0; off < corpus.size(); off += kReadSize) {
+       const size_t n = std::min(kReadSize, corpus.size() - off);
+-#ifdef KB_BASELINE
+-      bridge->onDataFromGo(corpus.data() + off, int(n));
+-#else
+       bridge->onDataFromGo(corpus.data() + off, int(n), 1);
+-#endif
+     }
+     double decodeMs = msSince(t0);
+ 
+```
+
+**File**: `rnmodules/react-native-kb/cpp/tests/jsi-convert-test.cpp` (modified, +63/-0)
+```diff
+@@ -820,6 +820,65 @@ void testEncodeTypedArrayViews() {
+             "ArrayBuffer packed the wrong bytes");
  }
+ 
++// The typed-array probe names are cached on the bridge, so repeated sends on
++// one runtime must keep telling views from look-alike plain objects.
++void testEncodeTypedArrayProbeRepeats() {
++  Harness h;
++  for (int i = 0; i < 3; ++i) {
++    h.send("{bin: new Uint8Array([1, 2, 3]).subarray(1),"
++           " fake: {byteLength: 2, buffer: new ArrayBuffer(2), byteOffset: 0}}");
++    auto oh = h.lastPayload();
++    const auto &o = oh.get();
++    CHECK(o.type == msgpack::type::MAP);
++    CHECK_EQ(o.via.map.size, uint32_t(2));
++    CHECK_MSG(mpBinToString(o.via.map.ptr[0].val) == std::string("\x02\x03", 2),
++              "subarray view packed the wrong bytes on send " +
++                  std::to_string(i));
++    CHECK_MSG(o.via.map.ptr[1].val.type == msgpack::type::MAP,
++              "look-alike object packed as binary on send " + std::to_string(i));
++    CHECK_EQ(o.via.map.ptr[1].val.via.map.size, uint32_t(3));
++  }
++}
++
++// The cached probe names follow whichever runtime is converting, so sends that
++// alternate between two runtimes sharing one bridge all pack views correctly.
++void testEncodeTypedArrayProbeAcrossRuntimes() {
++  Harness h;
++  auto other = facebook::hermes::makeHermesRuntime();
++  auto sendOn = [&](jsi::Runtime &rt, const char *src) {
++    auto value = rt.evaluateJavaScript(
++        std::make_shared<jsi::StringBuffer>(std::string("(") + src + ")"),
++        "test.js");
++    rt.global().getPropertyAsFunction(rt, "rpcOnGo").call(rt, value);
++  };
++  auto checkBin = [&](const std::string &want, const std::string &label) {
++    auto oh = h.lastPayload();
++    CHECK_MSG(oh.get().type == msgpack::type::BIN, label + ": not BIN");
++    CHECK_MSG(mpBinToString(oh.get()) == want, label + ": wrong bytes");
++  };
++
++  try {
++    sendOn(h.rt(), "new Uint8Array([1, 2])");
++    checkBin(std::string("\x01\x02", 2), "first runtime");
++
++    h.bridge->install(
++        *other, std::make_shared<InlineCallInvoker>(*other),
++        [&h](void *ptr, size_t size) {
++          const auto *p = static_cast<const uint8_t *>(ptr);
++          h.writes.emplace_back(p, p + size);
++          return true;
++        },
++        [](const std::string &) {}, [](int64_t) {});
++    sendOn(*other, "new Uint8Array([3, 4, 5]).subarray(1)");
++    checkBin(std::string("\x04\x05", 2), "second runtime");
++
++    sendOn(h.rt(), "new Uint8Array([6])");
++    checkBin(std::string("\x06", 1), "back on the first runtime");
++  } catch (const jsi::JSError &e) {
++    throw kbtest::CheckFailed("JS threw: " + e.getMessage());
++  }
++}
++
+ void testEncodeEmptyContainers() {
+   Harness h;
+   h.send("{arr: [], map: {}, str: '', bin: new Uint8Array(0)}");
+@@ -1204,6 +1263,10 @@ int main() {
+              testEncodeIsViewNotDigitHeuristic);
+   runner.add("encode: typed array byteOffset/byteLength bounds",
+              testEncodeTypedArrayViews);
++  runner.add("encode: cached probe names across repeated sends",
++             testEncodeTypedArrayProbeRepeats);
++  runner.add("encode: cached probe names across a runtime switch",
++             testEncodeTypedArrayProbeAcrossRuntimes);
+   runner.add("encode: empty containers", testEncodeEmptyContainers);
+   runner.add("encode: UTF-8, multibyte, embedded NUL", testEncodeUtf8Strings);
+   runner.add("encode: kMaxDepth", testEncodeDepthLimit);
 ```
 
-**File**: `shared/chat/conversation/fwd-msg.tsx` (modified, +0/-1)
+**File**: `rnmodules/react-native-kb/scripts/bench-jsi-convert.sh` (modified, +14/-13)
 ```diff
-@@ -157,7 +157,6 @@ const TeamPickerInner = (props: Props) => {
-       <Kb.ClickableBox key={index} onClick={() => onSelect(item.convID)} direction="horizontal" fullWidth={true} gap="tiny" style={styles.results}>
-         {item.isTeam ? (
-           <TeamAvatar
--            isHovered={false}
-             isMuted={false}
-             isSelected={false}
-             teamname={item.name.split('#')[0] ?? ''}
+@@ -1,8 +1,9 @@
+ #!/usr/bin/env bash
+ # Builds and runs cpp/tests/jsi-convert-bench.cpp twice -- once against this
+-# branch's bridge, once against origin/master's -- on a real Hermes runtime,
+-# replaying the corpus built by make-bench-corpus.mjs from a real mobile
+-# session's RPC traffic.
++# branch's bridge, once against KB_BENCH_BASE's (default origin/master) -- on
++# a real Hermes runtime, replaying the corpus built by make-bench-corpus.mjs
++# from a real mobile session's RPC traffic. KB_BENCH_BASE must already have the
++# current bridge API (frame-parser.cpp, epoch-taking onDataFromGo).
+ #
+ # Hermes comes from the already-installed iOS pod, which ships a macOS slice, so
+ # nothing has to be built from source. Development-only; not part of the shipped
+@@ -16,13 +17,15 @@ PODS="$ROOT/shared/ios/Pods"
+ HERMES="$PODS/hermes-engine/destroot"
+ CORPUS="${1:-/tmp/kb-bench-corpus.bin}"
+ ITERS="${2:-5}"
++BASE="${KB_BENCH_BASE:-origin/master}"
+ 
+ # Sets MSGPACK_INCLUDE, fetching the headers if yarn hasn't unpacked them.
+ # shellcheck source=./msgpack-include.sh
+ source "$(dirname "${BASH_SOURCE[0]}")/msgpack-include.sh"
+ 
+ for p in "$HERMES/include" \
+-         "$PODS/Headers/Public/React-callinvoker"; do
++         "$PODS/Headers/Public/React-callinvoker" \
++         "$PODS/Headers/Public/React-cxxstableapi"; do
+   test -d "$p" || { echo "missing $p -- run yarn and yarn ios:pod:install first" >&2; exit 1; }
+ done
+ test -f "$CORPUS" || {
+@@ -37,33 +40,31 @@ test -f "$CORPUS" || {
+ WORK="$(mktemp -d /tmp/kb-bench.XXXXXX)"
+ trap 'rm -rf "$WORK"' EXIT
+ 
+-# The baseline is master's bridge, checked out to its own directory so the two
+-# builds each see their own react-native-kb.h.
++# The baseline is BASE's bridge (origin/master unless overridden), checked out
++# to its own directory so the two builds each see their own headers.
+ mkdir -p "$WORK/baseline"
+-for f in react-native-kb.cpp react-native-kb.h msgpack-safe.hpp; do
+-  git -C "$ROOT" show "origin/master:rnmodules/react-native-kb/cpp/$f" > "$WORK/baseline/$f"
+-done
++git -C "$ROOT" archive "$BASE" rnmodules/react-native-kb/cpp |
++  tar -x -C "$WORK/baseline" --strip-components=3 --exclude='*/tests/*'
+ 
+ FRAMEWORKS="$HERMES/Library/Frameworks/macosx"
+ COMMON=(
+   -std=c++20 -O2 -DNDEBUG -DMSGPACK_NO_BOOST
+   -I "$MSGPACK_INCLUDE"
+   -I "$HERMES/include"
+   -I "$PODS/Headers/Public/React-callinvoker"
++  -I "$PODS/Headers/Public/React-cxxstableapi"
+   -F "$FRAMEWORKS" -framework hermesvm
+   -Wl,-rpath,"$FRAMEWORKS"
+ )
+ 
+ build() { # build <outfile> <src-dir> [extra flags...]
+   local out="$1" dir="$2"; shift 2
+-  local srcs=("$dir/react-native-kb.cpp")
+-  # frame-parser.cpp only exists on the branch.
+-  [ -f "$dir/frame-parser.cpp" ] && srcs+=("$dir/frame-parser.cpp")
++  local srcs=("$dir/react-native-kb.cpp" "$dir/frame-parser.cpp")
+   clang++ "${COMMON[@]}" "$@" -I "$dir" \
+     "${srcs[@]}" "$CPP_DIR/tests/jsi-convert-bench.cpp" -o "$out"
+ }
+ 
+-echo "building baseline (origin/master)..."
++echo "building baseline ($BASE)..."
+ build "$WORK/bench-baseline" "$WORK/baseline" -DKB_BASELINE=1
+ echo "building branch..."
+ build "$WORK/bench-branch" "$CPP_DIR"
 ```
 
-**File**: `shared/chat/conversation/info-panel/menu.tsx` (modified, +0/-1)
+**File**: `rnmodules/react-native-kb/scripts/test-jsi-convert.sh` (modified, +3/-1)
 ```diff
-@@ -494,7 +494,6 @@ const TeamHeader = (props: TeamHeaderProps) => {
-         teamname={props.teamname}
-         isMuted={props.isMuted}
-         isSelected={false}
--        isHovered={false}
-         size={32}
-       />
-       <Kb.Text type="BodySemibold" style={styles.maybeLongText} onClick={props.onViewTeam}>
+@@ -24,7 +24,8 @@ HERMES="$PODS/hermes-engine/destroot"
+ source "$(dirname "${BASH_SOURCE[0]}")/msgpack-include.sh"
+ 
+ for p in "$MSGPACK_INCLUDE" "$HERMES/include" \
+-         "$PODS/Headers/Public/React-callinvoker"; do
++         "$PODS/Headers/Public/React-callinvoker" \
++         "$PODS/Headers/Public/React-cxxstableapi"; do
+   test -d "$p" || {
+     echo "missing $p -- run yarn and yarn ios:pod:install first" >&2
+     exit 1
+@@ -55,6 +56,7 @@ clang++ -std=c++20 -O1 -g -DMSGPACK_NO_BOOST \
+   -I "$MSGPACK_INCLUDE" \
+   -I "$HERMES/include" \
+   -I "$PODS/Headers/Public/React-callinvoker" \
++  -I "$PODS/Headers/Public/React-cxxstableapi" \
+   -I "$CPP_DIR" \
+   -F "$FRAMEWORKS" -framework hermesvm \
+   -Wl,-rpath,"$FRAMEWORKS" \
 ```
 
-**File**: `shared/chat/conversation/normal/index.tsx` (modified, +3/-3)
+**File**: `shared/engine/rpc-transport.test.ts` (modified, +49/-0)
 ```diff
-@@ -13,7 +13,7 @@ import {useConversationThreadCloseSearch, useConversationThreadToggleSearch} fro
- import {useThreadSearchRoute} from '../thread-search-route'
- import {indefiniteArticle} from '@/util/string'
- import {useConversationAttachmentActions} from '../attachment-actions'
--import {readImageFromClipboard} from '@/util/clipboard.desktop'
-+import {readImageFromPaste} from '@/util/clipboard.desktop'
- import ThreadSearch from '../search'
- import '../conversation.css'
- import {PortalHost} from '@/common-adapters/portal.native'
-@@ -62,8 +62,8 @@ const DesktopConversation = function DesktopConversation() {
-     ? `You must be at least ${indefiniteArticle(minWriterRole)} ${minWriterRole} to post.`
-     : undefined
-   const {pasteAttachment} = useConversationAttachmentActions()
--  const onPaste = (e: React.SyntheticEvent) => {
--    readImageFromClipboard(e)
-+  const onPaste = (e: React.ClipboardEvent) => {
-+    readImageFromPaste(e)
-       .then(clipboardData => {
-         if (clipboardData) {
-           pasteAttachment(clipboardData)
+@@ -729,6 +729,55 @@ test('cancel packets surface a cancelled response payload', () => {
+   )
+ })
+ 
++test('notify packets dispatch method and params with no response handlers', () => {
++  const incoming = jest.fn()
++  const transport = new TestTransport({incomingRPCCallback: incoming})
++
++  transport.dispatchDecodedMessage([2, 'keybase.1.test.notify', [{sessionID: 3}]])
++
++  expect(incoming).toHaveBeenCalledTimes(1)
++  expect(incoming).toHaveBeenCalledWith({method: 'keybase.1.test.notify', param: [{sessionID: 3}]})
++  expect(transport.sent).toEqual([])
++})
++
++test('malformed packets of every type are dropped without dispatching or answering', () => {
++  const incoming = jest.fn()
++  const transport = new TestTransport({incomingRPCCallback: incoming})
++  const cb = jest.fn()
++  transport.invoke('keybase.1.test.pending', [{}], cb)
++  const [, seqid] = transport.sent[0]!
++  transport.sent.length = 0
++  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
++
++  const malformed: Array<unknown> = [
++    [0],
++    ['0', 1, 'keybase.1.test.hello', [{}]],
++    [0, 'x', 'keybase.1.test.hello', [{}]],
++    [0, 1, 5, [{}]],
++    [0, 1, 'keybase.1.test.hello', {}],
++    [2, 5, [{}]],
++    [2, 'keybase.1.test.notify', {}],
++    [1, String(seqid), null, {ok: true}],
++    [3, 'x'],
++    [9, 1],
++  ]
++  try {
++    for (const m of malformed) {
++      transport.dispatchDecodedMessage(m)
++    }
++    expect(warn).toHaveBeenCalledTimes(malformed.length)
++  } finally {
++    warn.mockRestore()
++  }
++  expect(incoming).not.toHaveBeenCalled()
++  expect(cb).not.toHaveBeenCalled()
++  expect(transport.sent).toEqual([])
++
++  // The pending invoke was untouched by the bad response and still settles.
++  transport.dispatchDecodedMessage([1, seqid, null, {ok: true}])
++  expect(cb).toHaveBeenCalledTimes(1)
++})
++
+ test('close settles every queued invoke exactly once with EOF and drops queued sends', () => {
+   const transport = new TestTransport({connected: false})
+   const calls: Array<Array<unknown>> = []
+```
+
+**File**: `shared/engine/rpc-transport.tsx` (modified, +10/-5)
+```diff
+@@ -401,10 +401,12 @@ export abstract class RPCTransport {
+       return
+     }
+ 
+-    const [type, ...rest] = message
++    const type = message[0]
+     switch (type) {
+       case MESSAGE_TYPE_INVOKE: {
+-        const [seqid, method, param] = rest
++        const seqid = message[1]
++        const method = message[2]
++        const param = message[3]
+         if (typeof seqid !== 'number' || typeof method !== 'string' || !Array.isArray(param)) {
+           console.warn('Invalid invoke packet received')
+           return
+@@ -435,7 +437,8 @@ export abstract class RPCTransport {
+         return
+       }
+       case MESSAGE_TYPE_NOTIFY: {
+-        const [method, param] = rest
++        const method = message[1]
++        const param = message[2]
+         if (typeof method !== 'string' || !Array.isArray(param)) {
+           console.warn('Invalid notify packet received')
+           return
+@@ -447,7 +450,9 @@ export abstract class RPCTransport {
+         return
+       }
+       case MESSAGE_TYPE_RESPONSE: {
+-        const [seqid, error, result] = rest
++        const seqid = message[1]
++        const error = message[2]
++        const result = message[3]
+         if (typeof seqid !== 'number') {
+           console.warn('Invalid response packet received')
+           return
+@@ -461,7 +466,7 @@ export abstract class RPCTransport {
+         return
+       }
+       case MESSAGE_TYPE_CANCEL: {
+-        const [seqid] = rest
++        const seqid = message[1]
+         if (typeof seqid !== 'number') {
+           console.warn('Invalid cancel packet received')
+           return
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #29799** (2026-10-19): perf(rpc): cache typed-array probe names, drop incoming rest-spread copy; fix JSI test/bench scripts (@chrisnojima)
+- **PR #29798** (2026-10-19): update deps: expo 58.0.15, expo-* patch bumps, keyboard-controller 1.22.8 (@chrisnojima)
 - **PR #29797** (2026-10-18): update deps: react-native 0.88.0, expo 58.0.14, electron 44.9.0 (@chrisnojima)
 - **PR #29794** (2026-10-17): fix(desktop): build and lint after the Expo 58 upgrade (@chrisnojima)
 - **PR #29793** (2026-10-16): fix background goroutine leaks (@zoom-ua)
 - **PR #29791** (2026-10-16): drop unusable data helper (@zoom-ua)
-- **PR #29790** (2026-10-16): clone default transport config then override (@zoom-ua)
-- **PR #29788** (2026-10-16): fix(chat): clear an inbox that can't be decrypted instead of failing every sync (@chrisnojima)
 
 ---
 
@@ -3073,78 +3170,34 @@ A pasted PNG is read straight from event.clipboardData.files in the renderer. An
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken
+## X. share): make sharing into chat reliable on iOS and Android (#29789)
 
 **RULE**:
-When implementing operations in `shared/chat/blocking/block-modal.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go/chat/attachments/preprocess.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73ea8277`: modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken-dialog fixes (#29750). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f18ea4d`: share): make sharing into chat reliable on iOS and Android (#29789). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/chat/blocking/block-modal.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/chat/attachments/preprocess.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  const theme = Kb.Styles.useTheme()
-      <Kb.ModalScreen centered={true}>
-      </Kb.ModalScreen>
-          <Kb.Box2 direction="vertical" fullWidth={true} alignItems="center" style={styles.blockIcon}>
-            <Kb.Icon type="iconfont-user-block" sizeType="Big" color={theme.red} />
-          </Kb.Box2>
-    <Kb.ModalScreen
-      scroll={false}
-      padding="none"
-      footer={
-        <Kb.ButtonBar fullWidth={true} style={styles.buttonBar}>
-          {!isMobile && <Kb.Button fullWidth={true} label="Cancel" onClick={navigateUp} type="Dim" />}
-          <Kb.WaitingButton label="Finish" onClick={onClickFinish} fullWidth={true} type="Danger" />
-        </Kb.ButtonBar>
-      }
-    >
-        style={styles.grow}
-    </Kb.ModalScreen>
-  blockIcon: {paddingTop: Kb.Styles.globalMargins.small},
+	n, err := io.ReadFull(src, head)
+	case err == nil, errors.Is(err, io.ErrUnexpectedEOF):
+	case errors.Is(err, io.EOF):
+	res = http.DetectContentType(head[:n])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      <Kb.Box2 direction="vertical" alignSelf="center" padding="medium">
-      </Kb.Box2>
-    <>
-        style={
-          isMobile
-            ? styles.grow
-            : getListHeightStyle(
-                !!teamname || !adderUsername,
-                !!adderUsername,
-                !!adderUsername && getShouldReport(adderUsername),
-                otherUsernames?.length ?? 0
-              )
-        }
-      <Kb.ModalFooter>
-        <Kb.ButtonBar fullWidth={true} style={styles.buttonBar}>
-          {!isMobile && <Kb.Button fullWidth={true} label="Cancel" onClick={navigateUp} type="Dim" />}
-          <Kb.WaitingButton label="Finish" onClick={onClickFinish} fullWidth={true} type="Danger" />
-        </Kb.ButtonBar>
-      </Kb.ModalFooter>
-    </>
-// Items measure themselves; this is only used to size the modal (which is
-// content-sized on desktop, capped at the modal maxHeight). Overshooting is
-// fine — the modal clamps and the list scrolls.
-const checkboxRowHeight = 40
-const getListHeightStyle = (
-  hasLeaveRow: boolean,
-  hasAdder: boolean,
-  expanded: boolean,
-  numOthers: number
-) => ({
-  height:
-    (hasLeaveRow ? checkboxRowHeight + 1 : 0) +
-    // Adder gets block + hide + 
+	_, err = io.ReadFull(src, head)
+	case err == nil:
+	case errors.Is(err, io.EOF), errors.Is(err, io.ErrUnexpectedEOF):
+	res = http.DetectContentType(head)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73ea8277` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f18ea4d` are properly handled with clean fallback behavior.

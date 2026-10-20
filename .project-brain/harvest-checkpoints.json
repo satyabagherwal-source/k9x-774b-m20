@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:21:14.070Z",
+  "last_updated": "2026-10-20T13:27:41.347Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,14 +1775,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
-      "verified_at": "2026-10-18T23:51:46.148Z",
+      "content_hash": "aadcbb797d895f1c77c493d3f833c16602f8df1aae5e2c9dddf8f369ee083731",
+      "verified_at": "2026-10-20T13:27:36.673Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:51:46.148Z"
+      "last_updated": "2026-10-20T13:27:36.673Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
-      "verified_at": "2026-10-20T11:09:14.328Z",
+      "content_hash": "d0c2453d29c84c9860f65be2d04a66ec34e6c301738ddd2f68f501d2d9aa201d",
+      "verified_at": "2026-10-20T13:27:41.346Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:09:14.328Z"
+      "last_updated": "2026-10-20T13:27:41.346Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
-      "verified_at": "2026-10-19T01:16:26.805Z",
+      "content_hash": "0f0c66d324a752e56ee280a9e9fc73aec64fd70f193578f0f2074695d8f5d156",
+      "verified_at": "2026-10-20T13:27:32.362Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:16:26.805Z"
+      "last_updated": "2026-10-20T13:27:32.362Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",

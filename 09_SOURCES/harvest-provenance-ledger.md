@@ -3825,3 +3825,6 @@ Every entry in this ledger must capture:
 | `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `bf66e3ad` | Multi-dimensional audit evidence | 2026-10-20T13:18:46.168Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `c8a55fff` | Multi-dimensional audit evidence | 2026-10-20T13:19:40.610Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-20T13:21:14.059Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `594ed87e` | Multi-dimensional audit evidence | 2026-10-20T13:27:32.354Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T13:27:36.664Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d6b56f86` | Multi-dimensional audit evidence | 2026-10-20T13:27:41.338Z |

@@ -3818,3 +3818,6 @@
 | `CYCLE-20261020-LQQ9` | `2026-10-20T13:18:46.161Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3181, Rule 3182, Rule 3183` | Yes (`c3eaf0b3...`) |
 | `CYCLE-20261020-MWQJ` | `2026-10-20T13:19:40.603Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3184, Rule 3185, Rule 3186` | Yes (`bb848b47...`) |
 | `CYCLE-20261020-OWUB` | `2026-10-20T13:21:14.051Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3187, Rule 3188, Rule 3189` | Yes (`1c3a5f39...`) |
+| `CYCLE-20261020-X0QK` | `2026-10-20T13:27:32.348Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3190` | Yes (`0f0c66d3...`) |
+| `CYCLE-20261020-X42D` | `2026-10-20T13:27:36.661Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 3191, Rule 3192` | Yes (`aadcbb79...`) |
+| `CYCLE-20261020-X7O2` | `2026-10-20T13:27:41.330Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3193` | Yes (`d0c2453d...`) |
