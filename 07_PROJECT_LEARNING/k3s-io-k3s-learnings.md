@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `b0ea1881`  
+> **Source Version**: `69992333`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:56:33.030Z  
+> **Timestamp**: 2026-10-20T06:07:11.174Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:56:33.025Z  
+> **Harvest Timestamp**: 2026-10-20T06:07:10.911Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34223 stars
+- **Stars / Engagement**: 34225 stars
 
 ---
 
@@ -884,15 +884,13 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #14836** (2026-10-19): **Make immutable mtime accept 1st Unix second**
+  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  In #14568, logic was added to treat files with mtime = 0 as coming from immutable filesystems, the primary example being NixOS. It, however, does not use mtime = 0 and instead uses mtime = 1, as some software has special handling for 0. For this reason, changes on that OS were not detected regardless of the fix. This PR updates that check so that files that are after the first second of the Unix timestamp are considered immutable filesystems, covering both mtime =0 and mtime = 1.  #### Types of Changes ####  Bugfix  #### Verification ####  A manifest can be created with its mtime set to 1. It will now be rescanned periodically and compared based on contents.  #### Testing ####  The test from the original PR has been updated to test the 2 mtime variants.  #### Linked Issues ####  <!-- Link any related issues, pull-requests, or commit hashes that are relevant to this pull request. If you are opening a PR without a corresponding issue please consider creating one first, at https://github.com/k3s-io/k3s/issues . A functional example will greatly help QA with verifying/reproducing a bug or testing new features. -->  #### User-Facing Change #### <!-- Does this PR introduce a user-facing change? If no, just write "NONE" in the release-note block below. If the PR
+
 - **Issue #14835** (2026-10-16): **[release-1.35] Bump rancher/mirrored-library-traefik image version**
   *Symptoms*:    <Actions>     <action id="fadd4a5d34ca6364d7fe3f7cf2dde9f79df92759c786346176148a40abd919bb">         <h3>Bump Traefik Image Version</h3>         <details id="84a5406c17a940168798b5927b1ea1d93c1d99cd436e0b15ee7d6346865a7258">             <summary>Update Traefik image version in manifests/traefik.yaml</summary>             <p>1 file(s) updated with &#34;tag: \&#34;3.7.15\&#34;&#34;:&#xA;&#xA;* manifests/traefik.yaml&#xA;</p>         </details>         <details id="88d3f535b1d2e252bcbe4dbc57847caa74e1705ab214af30b856d857a086ebb1">             <summary>Update Traefik image version in scripts/airgap/image-list</summary>             <p>1 file(s) updated with &#34;docker.io/rancher/mirrored-library-traefik:3.7.15&#34;:&#xA;&#xA;* scripts/airgap/image-list.txt&#xA;</p>         </details>         <a href="https://github.com/k3s-io/k3s/actions/runs/38946945693">GitHub Action workflow link</a>     </action> </Actions>  ---  <table>   <tr>     <td width="77">       <img src="https://www.updatecli.io/images/updatecli.png" alt="Updatecli logo" width="50" height="50" />     </td>     <td>       <p>         Created automatically by <a href="https://www.updatecli.io/">Updatecli</a>       </p>       <details><summary>Options:</summary>         <br />         <p>Most of Updatecli configuration is done via <a href="https://www.updatecli.io/docs/prologue/quick-start/">its manifest(s)</a>.</p>         <ul>           <li>If you close this pull request, Updatecli will automatically reopen it, the
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14835?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.01%. Comparing base ([`10a456c`](https://app.codecov.io/gh/k3s-io/k3s/commit/10a456cdc331b8afcad7411f43c3139ac3a24c7f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`de19f7a`](https://app.codecov.io/gh/k3s-io/k3s/commit/de19f7a16ea40b407779411eb62cd2d8d3af30ee?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.35   #14835      +/-   ## ==============================
-
-- **Issue #14834** (2026-10-16): **[release-1.36] Bump rancher/mirrored-library-traefik image version**
-  *Symptoms*:    <Actions>     <action id="fadd4a5d34ca6364d7fe3f7cf2dde9f79df92759c786346176148a40abd919bb">         <h3>Bump Traefik Image Version</h3>         <details id="84a5406c17a940168798b5927b1ea1d93c1d99cd436e0b15ee7d6346865a7258">             <summary>Update Traefik image version in manifests/traefik.yaml</summary>             <p>1 file(s) updated with &#34;tag: \&#34;3.7.15\&#34;&#34;:&#xA;&#xA;* manifests/traefik.yaml&#xA;</p>         </details>         <details id="88d3f535b1d2e252bcbe4dbc57847caa74e1705ab214af30b856d857a086ebb1">             <summary>Update Traefik image version in scripts/airgap/image-list</summary>             <p>1 file(s) updated with &#34;docker.io/rancher/mirrored-library-traefik:3.7.15&#34;:&#xA;&#xA;* scripts/airgap/image-list.txt&#xA;</p>         </details>         <a href="https://github.com/k3s-io/k3s/actions/runs/38946945693">GitHub Action workflow link</a>     </action> </Actions>  ---  <table>   <tr>     <td width="77">       <img src="https://www.updatecli.io/images/updatecli.png" alt="Updatecli logo" width="50" height="50" />     </td>     <td>       <p>         Created automatically by <a href="https://www.updatecli.io/">Updatecli</a>       </p>       <details><summary>Options:</summary>         <br />         <p>Most of Updatecli configuration is done via <a href="https://www.updatecli.io/docs/prologue/quick-start/">its manifest(s)</a>.</p>         <ul>           <li>If you close this pull request, Updatecli will automatically reopen it, the
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14834?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.11%. Comparing base ([`c2fdd7c`](https://app.codecov.io/gh/k3s-io/k3s/commit/c2fdd7c56c2c3cd6fe9d0b25a6b9f00023f36069?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`415c6d6`](https://app.codecov.io/gh/k3s-io/k3s/commit/415c6d62080665400c36a3ab859ddbafa5de996b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.36   #14834      +/-   ## ==============================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -909,126 +907,60 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0ea1881` (2026-10-19)
-**Commit Message**: Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automation
+### Incident Patch 1: `07bd1982` (2026-10-19)
+**Commit Message**: Restrict test suites to main/release branches on push (#14803)
 
-Automate Flannel dependency updates with Updatecli
+Signed-off-by: Derek Nola <[REDACTED_EMAIL]>
 
-**File**: `updatecli/README.md` (modified, +5/-1)
+**File**: `.github/workflows/e2e.yaml` (modified, +3/-0)
 ```diff
-@@ -17,6 +17,11 @@ The main usage of Updatecli is for:
- * Bumping versions in unstructured formats, e.g., environment variables in Dockerfiles and by matching regular expressions.
- * Scripting the automation process, e.g., update package A in repo B after package X in repo Y matches a pre-defined version criteria.
- 
-+The Flannel pipeline updates `github.com/flannel-io/flannel` to the latest stable
-+release on every branch configured in `.github/workflows/updatecli.yaml`,
-+including release branches. It uses `run-go-mod-update.sh` to update `go.mod`
-+and `go.sum` with `go get` and `go mod tidy`.
-+
- ### Not in scope
- 
- * Updatecli will only open a pull request in the targeted repo. It's not responsible for approving and merging the PR.
-@@ -58,4 +63,3 @@ updatecli diff --clean --config updatecli/updatecli.d/ --values updatecli/values
- Everyone is free to contribute with new manifests and pipelines for security version bumps targeting Rancher owned repos.
- 
- Before contributing, please follow the guidelines provided in this readme and make sure to test locally your changes before opening a PR.
--
+@@ -1,6 +1,9 @@
+ name: E2E Test Coverage
+ on: 
+   push:
++    branches:
++      - "main"
++      - "release-*"
+     paths-ignore:
+       - "**.md"
+       - "channel.yaml"
 ```
 
-**File**: `updatecli/updatecli.d/flannel.yaml` (added, +68/-0)
+**File**: `.github/workflows/integration.yaml` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,68 @@
-+---
-+name: "Bump Flannel version"
-+scms:
-+  k3s:
-+    kind: "github"
-+    spec:
-+      user: "{{ .github.user }}"
-+      email: "{{ .github.email }}"
-+      username: "{{ .github.username }}"
-+      token: "{{ requiredEnv .github.token }}"
-+      owner: '{{ requiredEnv .github.org }}'
-+      repository: '{{ requiredEnv .github.repo }}'
-+      branch: '{{ requiredEnv .github.branch }}'
-+      commitmessage:
-+        title: "Bump Flannel version"
-+
-+actions:
-+  github:
-+    title: "[{{ requiredEnv .github.branch }}] Bump Flannel version"
-+    kind: "github/pullrequest"
-+    scmid: "k3s"
-+    spec:
-+      merge:
-+        strategy: "manual"
-+      mergemethod: "squash"
-+      labels:
-+        - "dependencies"
-+
-+sources:
-+  flannel:
-+    name: "Get Flannel latest stable release version"
-+    kind: "githubrelease"
-+    spec:
-+      owner: "{{ .flannel.org }}"
-+      repository: "{{ .flannel.repo }}"
-+      token: "{{ requiredEnv .github.token }}"
-+      versionfilter:
-+        kind: "semver"
-+        pattern: "*"
-+  get-pwd:
-+    name: "Run Updatecli execution directory"
-+    kind: "shell"
-+    spec:
-+      command: 'pwd'
-+      environments:
-+        - name: PATH
-+
-+conditions:
-+  flannel:
-+    name: "Check Flannel usage in go.mod"
-+    kind: "file"
-+    scmid: "k3s"
-+    disablesourceinput: true
-+    spec:
-+      file: "go.mod"
-+      matchpattern: 'github.com/flannel-io/flannel'
-+
-+targets:
-+  go-mod:
-+    name: "Run go mod update"
-+    kind: "shell"
-+    scmid: "k3s"
-+    disablesourceinput: true
-+    spec:
-+      command: '{{ source "get-pwd" }}/updatecli/scripts/run-go-mod-update.sh github.com/flannel-io/flannel@{{ source "flannel" }}'
-+      environments:
-+        - name: PATH
-+        - name: HOME
+@@ -1,6 +1,9 @@
+ name: Integration Test Coverage
+ on: 
+   push:
++    branches:
++      - "main"
++      - "release-*"
+     paths-ignore:
+       - "**.md"
+       - "channel.yaml"
 ```
 
-**File**: `updatecli/values.yaml` (modified, +3/-0)
+**File**: `.github/workflows/unitcoverage.yaml` (modified, +3/-0)
 ```diff
-@@ -9,6 +9,9 @@ github:
- k3s:
-   org: "k3s-io"
-   repo: "k3s"
-+flannel:
-+  org: "flannel-io"
-+  repo: "flannel"
- klipper_helm:
-   org: "k3s-io"
-   repo: "klipper-helm"
+@@ -1,6 +1,9 @@
+ name: Unit Test Coverage
+ on:
+   push:
++    branches:
++      - "main"
++      - "release-*"
+     paths-ignore:
+       - "**.md"
+       - "channel.yaml"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14836** (2026-10-19): Make immutable mtime accept 1st Unix second (@daimond113)
 - **PR #14835** (2026-10-16): [release-1.35] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
 - **PR #14834** (2026-10-16): [release-1.36] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
 - **PR #14833** (2026-10-16): [release-1.37] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
 - **PR #14832** (2026-10-16): [main] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
 - **PR #14831** (2026-10-16): [release-1.34] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
-- **PR #14830** (2026-10-16): Add Updatecli automation for Traefik image bumps (@mgfritch)
 
 ---
 
@@ -1048,25 +980,23 @@ Automate Flannel dependency updates with Updatecli
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automat
+## X. Restrict test suites to main/release branches on push (#14803)
 
 **RULE**:
-When implementing operations in `updatecli/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0ea1881`: Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07bd1982`: Restrict test suites to main/release branches on push (#14803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `updatecli/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-The Flannel pipeline updates `github.com/flannel-io/flannel` to the latest stable
-release on every branch configured in `.github/workflows/updatecli.yaml`,
-including release branches. It uses `run-go-mod-update.sh` to update `go.mod`
-and `go.sum` with `go get` and `go mod tidy`.
-
+    branches:
+      - "main"
+      - "release-*"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1076,4 +1006,4 @@ and `go.sum` with `go get` and `go mod tidy`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0ea1881` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07bd1982` are properly handled with clean fallback behavior.

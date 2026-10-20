@@ -3748,3 +3748,7 @@ Every entry in this ledger must capture:
 | `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `ee0492da` | Multi-dimensional audit evidence | 2026-10-20T06:00:38.834Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `f18bad32` | Multi-dimensional audit evidence | 2026-10-20T06:00:52.097Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1f5f2fa6` | Multi-dimensional audit evidence | 2026-10-20T06:00:54.338Z |
+| `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `690ee7d9` | Multi-dimensional audit evidence | 2026-10-20T06:07:02.945Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `d046d733` | Multi-dimensional audit evidence | 2026-10-20T06:07:08.280Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `5c72fa95` | Multi-dimensional audit evidence | 2026-10-20T06:07:08.515Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `69992333` | Multi-dimensional audit evidence | 2026-10-20T06:07:11.484Z |

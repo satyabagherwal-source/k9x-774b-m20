@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "e3378f94",
+    "sourceVersion": "d046d733",
     "license": "NOASSERTION",
-    "contentHash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
-    "lastHarvestedAt": "2026-10-18T07:55:31.686Z",
+    "contentHash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
+    "lastHarvestedAt": "2026-10-20T06:07:08.280Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "b35c47e3",
+    "sourceVersion": "690ee7d9",
     "license": "MIT",
-    "contentHash": "7e4ab00674c1e1a1287c971cb125d69941b37e2b427cdcb7f60ee9ce41921fb7",
-    "lastHarvestedAt": "2026-10-18T21:33:23.673Z",
+    "contentHash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
+    "lastHarvestedAt": "2026-10-20T06:07:02.945Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {
@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "c184eec6",
+    "sourceVersion": "5c72fa95",
     "license": "AGPL-3.0",
-    "contentHash": "5b69971ac23d47508d27fa8989e3992513b3e1cda4f606b4e1673c12fcd2a90c",
-    "lastHarvestedAt": "2026-10-18T21:39:37.330Z",
+    "contentHash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
+    "lastHarvestedAt": "2026-10-20T06:07:08.515Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "b0ea1881",
+    "sourceVersion": "69992333",
     "license": "Apache-2.0",
-    "contentHash": "07b593a65f1f5b51eff06c2c5b1910a89683a855911ef88be6e1278b71c7266b",
-    "lastHarvestedAt": "2026-10-19T17:56:33.257Z",
+    "contentHash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
+    "lastHarvestedAt": "2026-10-20T06:07:11.484Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {

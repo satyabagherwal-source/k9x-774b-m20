@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:00:54.341Z",
-  "total_cycles_completed": 3718,
-  "total_learnings_persisted": 3718,
-  "total_rules_promoted": 2895,
+  "last_updated": "2026-10-20T06:07:11.488Z",
+  "total_cycles_completed": 3722,
+  "total_learnings_persisted": 3722,
+  "total_rules_promoted": 2899,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:56:06.156Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:56:09.186Z",
-      "repository": "inikulin/parse5",
-      "learningId": "learn-github-inikulin-parse5",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:56:11.962Z",
-      "repository": "kitlangton/Hex",
-      "learningId": "learn-github-kitlangton-hex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:56:19.765Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:02:53.842Z",
       "repository": "fb55/css-select",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T06:00:54.341Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:07:02.949Z",
+      "repository": "tamagui/tamagui",
+      "learningId": "learn-github-tamagui-tamagui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:07:08.287Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:07:08.519Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:07:11.488Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

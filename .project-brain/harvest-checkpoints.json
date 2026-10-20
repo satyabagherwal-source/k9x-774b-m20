@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T06:00:54.344Z",
+  "last_updated": "2026-10-20T06:07:11.492Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
-      "verified_at": "2026-10-18T07:55:31.689Z",
+      "content_hash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
+      "verified_at": "2026-10-20T06:07:08.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:55:31.689Z"
+      "last_updated": "2026-10-20T06:07:08.292Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -3816,14 +3816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tamagui-tamagui",
-      "content_hash": "7e4ab00674c1e1a1287c971cb125d69941b37e2b427cdcb7f60ee9ce41921fb7",
-      "verified_at": "2026-10-18T21:33:23.680Z",
+      "content_hash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
+      "verified_at": "2026-10-20T06:07:02.952Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:33:23.680Z"
+      "last_updated": "2026-10-20T06:07:02.952Z"
     },
     "BurntSushi/ripgrep": {
       "repository": "BurntSushi/ripgrep",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "5b69971ac23d47508d27fa8989e3992513b3e1cda4f606b4e1673c12fcd2a90c",
-      "verified_at": "2026-10-18T21:39:37.336Z",
+      "content_hash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
+      "verified_at": "2026-10-20T06:07:08.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:39:37.336Z"
+      "last_updated": "2026-10-20T06:07:08.522Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "07b593a65f1f5b51eff06c2c5b1910a89683a855911ef88be6e1278b71c7266b",
-      "verified_at": "2026-10-19T17:56:33.262Z",
+      "content_hash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
+      "verified_at": "2026-10-20T06:07:11.491Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:56:33.262Z"
+      "last_updated": "2026-10-20T06:07:11.491Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",

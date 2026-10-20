@@ -3741,3 +3741,7 @@
 | `CYCLE-20261020-YBAO` | `2026-10-20T06:00:38.832Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3086` | Yes (`a9806ffc...`) |
 | `CYCLE-20261020-YLJ2` | `2026-10-20T06:00:52.094Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3087` | Yes (`bf3d3fc8...`) |
 | `CYCLE-20261020-YN97` | `2026-10-20T06:00:54.331Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3088` | Yes (`ef33c61e...`) |
+| `CYCLE-20261020-6JOE` | `2026-10-20T06:07:02.942Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3089` | Yes (`abee0ee1...`) |
+| `CYCLE-20261020-6NSK` | `2026-10-20T06:07:08.276Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3090` | Yes (`c1a46671...`) |
+| `CYCLE-20261020-6NZ4` | `2026-10-20T06:07:08.512Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3091` | Yes (`479cb9e0...`) |
+| `CYCLE-20261020-6Q9L` | `2026-10-20T06:07:11.481Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3092` | Yes (`44d2710f...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:00:54.296Z",
+  "last_updated": "2026-10-20T06:07:11.423Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27124,8 +27124,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "b0ea1881",
-      "content_hash": "07b593a65f1f5b51eff06c2c5b1910a89683a855911ef88be6e1278b71c7266b",
+      "source_version": "69992333",
+      "content_hash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -27138,6 +27138,11 @@
           "number": 2720,
           "title": "Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automat",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3092,
+          "title": "Restrict test suites to main/release branches on push (#14803)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27145,7 +27150,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:56:33.210Z",
+      "verified_at": "2026-10-20T06:07:11.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27195,14 +27200,19 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "c184eec6",
-      "content_hash": "5b69971ac23d47508d27fa8989e3992513b3e1cda4f606b4e1673c12fcd2a90c",
+      "source_version": "5c72fa95",
+      "content_hash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
         {
           "number": 1736,
           "title": "web): upgrade next to 16.4.1 for the October security release (#3196)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3091,
+          "title": "docs: update admin password reset instructions for better-auth",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27211,7 +27221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:39:37.276Z",
+      "verified_at": "2026-10-20T06:07:08.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42618,8 +42628,8 @@
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "b35c47e3",
-      "content_hash": "7e4ab00674c1e1a1287c971cb125d69941b37e2b427cdcb7f60ee9ce41921fb7",
+      "source_version": "690ee7d9",
+      "content_hash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "promoted_rules": [
@@ -42637,6 +42647,11 @@
           "number": 1731,
           "title": "Immediate Frame-Origin Inversion for Zero-Duration Writes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3089,
+          "title": "migrate remaining scroll consumers to strict declarations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42644,7 +42659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:33:23.629Z",
+      "verified_at": "2026-10-20T06:07:02.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60762,8 +60777,8 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "e3378f94",
-      "content_hash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
+      "source_version": "d046d733",
+      "content_hash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
@@ -60781,6 +60796,11 @@
           "number": 1678,
           "title": "Edge Routing Lookahead Exclusion for Broad Wildcards",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3090,
+          "title": "dev): warn instead of failing when nitro dev detects a vite config (#4850)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60788,7 +60808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:55:31.650Z",
+      "verified_at": "2026-10-20T06:07:08.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99045,6 +99065,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:00:54.287Z"
+    },
+    "rule-3089": {
+      "learning_id": "rule-3089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3089,
+      "title": "migrate remaining scroll consumers to strict declarations",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "690ee7d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:07:02.886Z"
+    },
+    "rule-3090": {
+      "learning_id": "rule-3090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3090,
+      "title": "dev): warn instead of failing when nitro dev detects a vite config (#4850)",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "d046d733",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:07:08.186Z"
+    },
+    "rule-3091": {
+      "learning_id": "rule-3091",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3091,
+      "title": "docs: update admin password reset instructions for better-auth",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "5c72fa95",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:07:08.456Z"
+    },
+    "rule-3092": {
+      "learning_id": "rule-3092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3092,
+      "title": "Restrict test suites to main/release branches on push (#14803)",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "69992333",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:07:11.410Z"
     }
   },
   "aliases": {
