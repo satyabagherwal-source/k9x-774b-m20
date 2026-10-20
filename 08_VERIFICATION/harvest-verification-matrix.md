@@ -3614,3 +3614,7 @@
 | `CYCLE-20261020-EQM6` | `2026-10-20T01:05:29.406Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2952` | Yes (`e8e43ade...`) |
 | `CYCLE-20261020-EQPU` | `2026-10-20T01:05:29.538Z` | `jsonld-java/jsonld-java` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2953` | Yes (`ce9fe0a7...`) |
 | `CYCLE-20261020-ET96` | `2026-10-20T01:05:32.826Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2954` | Yes (`47b8313a...`) |
+| `CYCLE-20261020-MU1D` | `2026-10-20T01:11:47.089Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2955` | Yes (`772738ae...`) |
+| `CYCLE-20261020-MUXT` | `2026-10-20T01:11:48.257Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2956` | Yes (`19d150f3...`) |
+| `CYCLE-20261020-MWQW` | `2026-10-20T01:11:50.600Z` | `aheze/Popovers` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aheze-popovers-learnings.md` | Yes (`06000cbe...`) |
+| `CYCLE-20261020-N2EI` | `2026-10-20T01:11:57.930Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`ae8c89fe...`) |

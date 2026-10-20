@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `273ac2db`  
+> **Source Version**: `cc4b96dc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:01:03.973Z  
+> **Timestamp**: 2026-10-20T01:11:46.802Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:01:03.482Z  
+> **Harvest Timestamp**: 2026-10-20T01:11:45.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source Rust agent engine and terminal client for Codewhale, with provider choice, tools, approvals and receipts.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41100 stars
+- **Stars / Engagement**: 41105 stars
 
 ---
 
@@ -1355,495 +1355,564 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba6366bc` (2026-10-19)
-**Commit Message**: fix(hooks): Esc stops a running tool_call_before hook
+### Incident Patch 1: `ac5b611f` (2026-10-19)
+**Commit Message**: fix: complete 0.10.2 terminal and release blockers
 
-The pre-tool hook gate never saw the turn's cancel token. The legacy
-runner received None and the native runner received only its job's
-own token. Esc or POST /v1/threads/{id}/turns/{turn}/interrupt marked
-the turn cancelled, but the engine kept waiting for the hook, and the
-hook kept running and could still change files afterwards.
+Match undo snapshots conservatively for long, multiline and trimmed prompts;
+keep terminal outcomes attached to the unchanged conversation prefix through
+rewinds, replacement and branching. Document exec Full Access, reject misplaced
+flags, honor stricter sandboxes, and report actual enforcement. Save tool-enabled
+exec sessions in every format with terminal failures and separate retention.
+Restore local-runtime onboarding and update complete locale packs and docs.
 
-run_tool_call_before_hooks_for_context now takes the turn's cancel token
-and binds it to the executor through HookExecutor::with_cancel:
-- legacy runner: gets the token, so its 25 ms wait loop kills and reaps
-  the process tree on cancel. The result now reads "Hook cancelled with
-  its turn" instead of a timeout.
-- native runner: execute_hook is raced against the token. Dropping it
-  drops the Invocation, which cancels the job token that the running
-  closure polls.
-- execute(): stops before starting the next hook once cancelled.
-Strict hooks still fail closed, and the existing batch-start cancel check
-keeps a cancelled turn from dispatching the tool.
+Serialize RC test-binary builds to avoid the reproduced linker OOM. Replace
+both Chocolatey NSIS consumers with a checksum-pinned official installer and
+verified compiler version. Put the release summary first, retain detailed notes
+and contributor credits, and set an explicit release title.
 
-Found by GPT-6 Astra (codex) in a read-only engine sweep.
+Validation on frozen 849af501cf plus this diff: workspace check and CI-flag
+Clippy passed; formatting passed; focused TUI 683 passed, 0 failed, 1 ignored;
+CLI 541 passed, 0 failed; feature registry 2 passed; localization 54 passed.
+The registry ran with the empty default feature disabled; an earlier redundant
+build was intentionally interrupted before tests. Source hashes stayed fi
 
-Live check: codewhale serve --http against a mock provider. A
-tool_call_before hook runs 
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
+**File**: `.github/workflows/ci.yml` (modified, +1/-33)
 ```diff
-@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -828,39 +828,7 @@ jobs:
+       - name: Install NSIS for Windows installer regression
+         if: needs.changes.outputs.heavy == 'true' && matrix.os == 'windows-latest'
+         shell: pwsh
+-        # Bounded retry, not a weaker check (#5403). Every observed failure here
+-        # was Chocolatey's feed, not the code: a 504 from the V2 API, and
+-        # "package was not found with the source(s) listed". A single attempt
+-        # made `Test (windows-latest)` — a required check on every PR — report
+-        # on community.chocolatey.org's availability instead of on the tree.
+-        # NSIS must still install for the regression below to run; this only
+-        # survives a transient outage.
+-        #
+-        # A feed failure also makes `choco install` exit 0 without installing
+-        # anything ("Chocolatey installed 0/0 packages" after a V2 feed 504),
+-        # so an attempt only counts when `makensis.exe` exists where the installer
+-        # regression looks for it (Program Files; choco does not put it on PATH).
+-        # Without that check the retry reported success on an unprovisioned
+-        # runner and the regression below failed as an unattributable exit
+-        # code instead of this step naming the outage (2026-09-24).
+-        run: |
+-          $ErrorActionPreference = 'Continue'
+-          $delays = @(0, 20, 45)
+-          for ($attempt = 0; $attempt -lt $delays.Count; $attempt++) {
+-            if ($delays[$attempt] -gt 0) {
+-              Write-Host "NSIS install attempt $($attempt + 1) after $($delays[$attempt])s backoff"
+-              Start-Sleep -Seconds $delays[$attempt]
+-            }
+-            choco install nsis -y --no-progress
+-            $makensis = @("${env:ProgramFiles(x86)}\NSIS\makensis.exe", "$env:ProgramFiles\NSIS\makensis.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+-            if ($LASTEXITCODE -eq 0 -and $makensis) {
+-              Write-Host "NSIS installed on attempt $($attempt + 1)"
+-              exit 0
+-            }
+-            Write-Host "::warning::NSIS is still unavailable after attempt $($attempt + 1) (choco exit $LASTEXITCODE)"
+-          }
+-          Write-Host "::error::NSIS could not be provisioned from Chocolatey after $($delays.Count) attempts"
+-          exit 1
++        run: ./scripts/installer/install-nsis.ps1
+       - name: Test Windows installer PATH regression
+         if: needs.changes.outputs.heavy == 'true' && matrix.os == 'windows-latest'
+         shell: pwsh
+```
+
+**File**: `.github/workflows/release-artifacts.yml` (modified, +1/-1)
+```diff
+@@ -439,7 +439,7 @@ jobs:
+           pattern: '*windows-x64*'
+       - name: Install NSIS
+         shell: pwsh
+-        run: choco install nsis -y --no-progress
++        run: ./scripts/installer/install-nsis.ps1
+       - name: Build NSIS installer
+         shell: pwsh
+         run: |
+```
+
+**File**: `.github/workflows/release-parity.yml` (modified, +1/-0)
+```diff
+@@ -115,6 +115,7 @@ jobs:
+           kill "$monitor" 2>/dev/null || true
+           exit "$status"
+         env:
++          CARGO_BUILD_JOBS: '1'
+           # Match the CI test lane: test threads get the same stack the product
+           # gives itself (main.rs CODEWHALE_MAIN_STACK_BYTES). See the note in
+           # ci.yml's "Run tests" step. Without it this gate runs the deep
+```
+
+**File**: `.github/workflows/release.yml` (modified, +1/-0)
+```diff
+@@ -428,6 +428,7 @@ jobs:
+       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
+         with:
+           tag_name: ${{ needs.resolve.outputs.tag }}
++          name: Codewhale ${{ needs.resolve.outputs.tag }}
+           files: artifacts/*
+           draft: true
+           prerelease: false
+```
+
+**File**: `CHANGELOG.md` (modified, +40/-16)
+```diff
+@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- Esc, or a Runtime interrupt, now stops a `tool_call_before` hook that is
-+  still running: its process tree is killed and reaped, hooks queued behind
-+  it are skipped, and the turn stops at once. Before, the turn waited for the
-+  hook to finish, and the hook could still change files after the turn was
-+  reported as stopped.
- - With a sub-agent open in the main pane, scrolling and redraws reuse its
-   rendered transcript instead of re-rendering every message on every frame,
-   and a finished sub-agent's transcript file is no longer reread from disk
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- Esc, or a Runtime interrupt, now stops a `tool_call_before` hook that is
-+  still running: its process tree is killed and reaped, hooks queued behind
-+  it are skipped, and the turn stops at once. Before, the turn waited for the
-+  hook to finish, and the hook could still change files after the turn was
-+  reported as stopped.
- - With a sub-agent open in the main pane, scrolling and redraws reuse its
-   rendered transcript instead of re-rendering every message on every frame,
-   and a finished sub-agent's transcript file is no longer reread from disk
-```
-
-**File**: `crates/tui/src/core/engine/turn_loop.rs` (modified, +10/-3)
-```diff
-@@ -1983,6 +1983,7 @@ impl Engine {
-                 match run_tool_call_before_hooks_for_context(
-                     hook_context.as_ref(),
-                     self.config.hook_executor.as_ref(),
-+                    &self.cancel_token,
-                     self.extension_host.as_ref().filter(|_| {
-                         self.config
-                             .features
-@@ -8594,6 +8595,7 @@ mod tests {
- pub(crate) async fn run_tool_call_before_hooks_for_context(
-     context: Option<&crate::tools::spec::ToolContext>,
-     hooks: Option<&Arc<crate::hooks::HookExecutor>>,
-+    cancel: &CancellationToken,
-     attachment: Option<&crate::extension_host::HostAttachment>,
-     name: &str,
-     id: &str,
-@@ -8610,9 +8612,14 @@ pub(crate) async fn run_tool_call_before_hooks_for_context(
-             "hook caller context is unavailable",
-         ));
-     }
--    let bound = hooks.map(|hooks| match context {
--        Some(context) => Arc::new(hooks.bind_caller(crate::hooks::HookCaller::from_tool(context))),
--        None => Arc::clone(hooks),
-+    let bound = hooks.map(|hooks| {
-+        Arc::new(
-+            match context {
-+                Some(context) => hooks.bind_caller(crate::hooks::HookCaller::from_tool(context)),
-+                None => hooks.as_ref().clone(),
-+            }
-+            .with_cancel(cancel.clone()),
-+        )
-     });
-     run_tool_call_before_hooks(
-         bound.as_ref(),
-```
-
-**File**: `crates/tui/src/hooks/executor.rs` (modified, +45/-14)
-```diff
-@@ -1571,6 +1571,7 @@ pub struct HookExecutor {
-     background_supervisor: BackgroundSupervisor,
-     caller: Option<HookCaller>,
-     fire_context: Option<Arc<HookContext>>,
-+    cancel: Option<tokio_util::sync::CancellationToken>,
-     host_manager: Arc<crate::extension_host::ExtensionHostManager>,
-     engine_handle: Option<tokio::runtime::Handle>,
-     native_policy: bool,
-@@ -1588,6 +1589,20 @@ impl fmt::Debug for HookExecutor {
-     }
- }
- impl HookExecutor {
-+    /// Foreground hooks run under this executor stop, and are reaped, when
-+    /// `token` is cancelled; hooks not yet started are skipped.
-+    #[must_use]
-+    pub(crate) fn with_cancel(mut self, token: tokio_util::sync::CancellationToken) -> Self {
-+        self.cancel = Some(token);
-+        self
-+    }
++## [0.10.2] - 2026-10-19
 +
-+    fn cancelled(&self) -> bool {
-+        self.cancel
-+            .as_ref()
-+            .is_some_and(tokio_util::sync::CancellationToken::is_cancelled)
-+    }
++Codewhale v0.10.2 adds an animated pet view (`/pet on`), a live Terminal work
++dock and per-chat composer colors (`/color`). It closes three session
++data-loss paths, a sandbox escape through the Runtime daemon socket and a
++`codewhale web` session leak; holds a `curl` or `wget` that uploads a
++credential; refuses shell commands containing invisible Unicode; keeps the
++Linux sandbox working when a hidden credential directory is a symlink; and
++uses much less CPU while the TUI waits on you. `/undo` takes back a whole
++request, including long and multiline prompts. `exec --auto` explains its
++Full Access default, honors an explicitly stricter sandbox, and saves
++tool-enabled runs and their failure receipts. Local runtimes appear during
++onboarding, `/diff` works outside a Git repository, DeepSeek's Responses route
++no longer rejects replayed tool history, and contributor fixes improve token
++accounting, relay model lists, localized replies and Windows launcher
++guidance.
 +
-     /// One Engine scheduler, propagated through the existing std workers.
-     pub(crate) fn bind_caller(&self, caller: HookCaller) -> Self {
-         let mut bound = self.clone();
-@@ -1680,6 +1695,7 @@ impl HookExecutor {
-             background_supervisor: BackgroundSupervisor::new(),
-             caller: None,
-             fire_context: None,
-+            cancel: None,
-             host_manager: crate::extension_host::manager(),
-             engine_handle: tokio::runtime::Handle::try_current().ok(),
-             native_policy: crate::plugins::activation::extension_host_policy_enabled(),
-@@ -1706,6 +1722,7 @@ impl HookExecutor {
-                 .clone()
-                 .filter(|c| c.workspace == default_working_dir),
-             fire_context: None,
-+            cancel: self.cancel.clone(),
-             host_manager: Arc::clone(&self.host_manager),
-             engine_handle: self.engine_handle.clone(),
-             native_policy: self.native_policy,
-@@ -1728,6 +1745,7 @@ impl HookExecutor {
-             background_supervisor: BackgroundSupervisor::new(),
-             caller: None,
-             fire_context: None,
-+            cancel: None,
-             host_manager: crate::extension_host::manager(),
-             engine_handle: tokio::runtime::Handle::try_current().ok(),
-             native_policy: crate::plugins::activation::extension_host_policy_enabled(),
-@@ -2072,6 +2090,9 @@ impl HookExecutor {
-         let mut results = Vec::new();
++### Latest fixes
++
++- `/undo` takes back the latest request and its file changes without requiring
++  trust mode, while refusing ambiguous snapshot matches. Trailing whitespace
++  in a prompt label no longer prevents a match, and an empty first line in
++  another request no longer blocks the whole conversation.
++- `exec --auto` help and documentation now state its default Full Access:
++  automatic tool approvals, no Codewhale shell sandbox, and trust mode on.
++  Selecting any sandbox other than `danger-full-access`, by flag or config,
++  keeps trust mode off. This includes `external-sandbox`, which relies on
++  host-managed isolation and no longer grants file tools trust-mode access.
++  Stream metadata reports whether the requested sandbox is actually enforced.
++- Exec flags go before the prompt. A known long flag or `--flag=value` after
++  the prompt now produces an error instead of silently becoming prompt text;
++  use `--` for literal flag text or a prompt starting with `-`.
++- Exec runs that offer tools save sessions in every output format. Exec and
++  interactive sessions each keep their own retention allowance, so CI runs
++  cannot archive interactive conversations. Live and saved receipts include
++  retained terminal failures, and conversation rewinds discard outcomes from
++  removed turns so they cannot be attributed to later requests.
++- Onboarding lists Ollama, LM Studio, and vLLM even before a local runtime is
++  detected, so they can be selected and configured. The `L` filter is available
++  during onboarding after local-runtime detection.
+ - `/fork <id>` now shows the forked conversation. Before, the screen kept
+   the previous conversation while the model already had the fork's history.
+ - With `/translate` on, each translated thinking block lands in its own
+@@ -96,22 +136,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   rebinding) and drive the Runtime API from your browser; such requests now
+   get `421 Misdirected Request`. Servers with auth are unchanged.
  
-         for hook in &hooks {
-+            if this.cancelled() {
-+                break;
-+            }
-             if !self.matches_condition(hook, context) {
-                 continue;
-             }
-@@ -2341,7 +2362,7 @@ impl HookExecutor {
-             if hook.native_shell.is_some() {
-                 return unavailable_hook(hook, "Native shell hook is disabled");
-             }
--            return self.execute_sync_legacy(hook, env_vars, stdin_json, None);
-+            return self.execute_sync_legacy(hook, env_vars, stdin_json, self.cancel.as_ref());
-         }
-         let Some(caller) = self.caller.clone() else {
-             return unavailable_hook(hook, "hook caller receipt is unavailable");
-@@ -2382,18 +2403,24 @@ impl HookExecutor {
-                 .cloned()
-                 .unwrap_or_default()
-         };
-+        let turn_cancel = self.cancel.clone();
-         let work = handle.spawn(async move {
-             let _policy = crate::plugins::activation::PolicyScope::propagate(policy);
-             #[cfg(test)]
-             let _env_scope = crate::test_support::join_env_scope(env_scope);
-             let timeout = Duration::from_secs(executor.effective_timeout_secs(&owned_hook));
-             let hook_for_run = owned_hook.clone();
--            let result = manager
--                .execute_hook(caller, owned_hook, timeout, query, move |cancel| {
--                    let _policy = crate::plugins::activation::PolicyScope::propagate(policy);
--                    executor.execute_sync_legacy(&hook_for_run, &env, input.as_ref(), Some(&cancel))
--                })
--                .await;
-+            let run = manager.execute_hook(caller, owned_hook, timeout, query, move |cancel| {
-+                let _policy = crate::plugins::activation::PolicyScope::propagate(policy);
-+                executor.execute_sync_legacy(&hook_for_run, &env, input.as_ref(), Some(&cancel))
-+            });
-+            let result = match turn_cancel {
-+                Some(turn_cancel) => tokio::select! {
-+                    result = run => result,
-+                    () = turn_cancel.cancelled() => Err("hook cancelled with its turn".into()),
-+                },
-+                None => run.await,
-+            };
-             let _ = sender.send(result);
-         });
-         // Never block an Engine/UI runtime worker. Its synchronous callsites already use
-@@ -2647,13 +2674,17 @@ impl HookExecutor {
-                     stdout: String::new(),
-                     stderr: String::new(),
-                     duration: started.elapsed(),
--             
+-## [0.10.2] - 2026-10-18
+-
+-Codewhale v0.10.2 adds an animated pet view (`/pet on`), a live Terminal work
+-dock and per-chat composer colors (`/color`). It closes three session
+-data-loss paths, a sandbox escape through the Runtime daemon socket and a
+-`codewhale web` session leak; holds a `curl` or `wget` that uploads a
+-credential; refuses shell commands containing invisible Unicode; keeps the
+-Linux sandbox working when a hidden credential directory is a symlink; and
+-uses much less CPU while the TUI waits on you. `/undo` takes back a whole
+-request, `/diff` works outside a Git repository, DeepSeek's Responses route no
+-longer rejects replayed tool history, and contributor fixes improve token
+-accounting, relay model lists, localized replies and Windows launcher
+-guidance.
+-
+-### Latest fixes
+-
+ - Sandboxed commands can no longer reach Codewhale's Runtime daemon socket.
+   On Linux with bubblewrap, and on macOS with sandbox network access on, a
+   command the agent ran (a test script or a postinstall hook, say) could read
+```
+
+**File**: `README.ar.md` (modified, +14/-6)
+```diff
+@@ -1,4 +1,4 @@
+-<!-- source: README.md sha256:eefdc9e645b6 -->
++<!-- source: README.md sha256:30c9b9765b04 -->
+ <div align="center">
+ 
+ <picture>
+@@ -80,12 +80,14 @@ Fix the failing tests and explain what changed.
+ يرفضه. ويُلغي `/undo` آخر طلب لك وتغييرات الملفات الناتجة عنه (في 0.10.1، شغّل
+ `/trust on` أولًا). ويسرد `/help` الأوامر واختصارات لوحة المفاتيح.
+ 
+-في السكربتات وCI، يشغّل `codewhale exec` مهمة واحدة دون الواجهة. ومع `--auto`
+-يعدّل الملفات ويشغّل أوامر الصدفة دون أن يسأل، لذا شغّله داخل حاوية أو في نسخة
+-checkout يمكن التخلص منها:
++في السكربتات وCI، يشغّل `codewhale exec` مهمة واحدة دون الواجهة. افتراضيًا،
++يستخدم `--auto` وضع Full Access: تعمل الأدوات دون سؤال، وتعمل أوامر الصدفة دون
++صندوق حماية Codewhale، ويتيح وضع الثقة لأدوات الملفات الكتابة خارج مساحة العمل.
++أضف `--sandbox workspace-write` للإبقاء على صندوق حماية الصدفة وقيود مساحة العمل
++على أدوات الملفات، مع تعطيل وضع الثقة:
+ 
+ ```bash
+-codewhale exec --auto "fix the failing tests and explain what changed"
++codewhale exec --auto --sandbox workspace-write "fix the failing tests and explain what changed"
+ ```
+ 
+ ## الأوضاع والأذونات
+@@ -146,6 +148,12 @@ OpenAI، وكذلك النماذج المحلية عبر Ollama أو vLLM أو S
+ كلها إلى لقطة سابقة؛ ولأن ذلك يكتب فوق التعديلات اللاحقة، فإنه يتطلب `/trust on`
+ أو Full Access. راجع [الإيصالات](docs/RECEIPTS.md).
+ 
++تُحفظ عمليات تشغيل exec التي تتيح أدوات بكل صيغ الإخراج، لذا يعمل
++`codewhale receipts --last` بعد `exec --auto`، بما في ذلك مع `--json`.
++أما عمليات التشغيل التي تقتصر على الإجابة بإخراج نصي أو `--json` فلا تُحفظ إلا
++عند الاستئناف أو عند بدء ضغط المحادثة؛ استخدم `--output-format stream-json`
++لحفظها دائمًا من أجل الإيصالات أو `exec --continue`.
++
+ ### الأعمال الأطول
+ 
+ يحدد `/goal` هدفًا يستمر عبر دورات المحادثة. ويستطيع Codewhale توزيع العمل على
+@@ -182,7 +190,7 @@ OpenAI، وكذلك النماذج المحلية عبر Ollama أو vLLM أو S
+ | الأمر | ما يفعله |
+ | --- | --- |
+ | `codewhale` | تطبيق الطرفية التفاعلي |
+-| `codewhale exec "…"` | مهمة واحدة دون الواجهة. دون خيارات إضافية يجيب دون استخدام الأدوات؛ ويسمح له `--auto` بتعديل الملفات وتشغيل الأوامر، ويبث `--output-format stream-json` الأحداث بصيغة JSON |
++| `codewhale exec "…"` | مهمة واحدة دون الواجهة. دون خيارات إضافية يجيب دون استخدام الأدوات؛ ويفعّل `--auto` الأدوات مع Full Access افتراضيًا، ويقيّدها `--sandbox workspace-write`، ويبث `--output-format stream-json` الأحداث بصيغة JSON |
+ | `codewhale web` | واجهة ويب محلية على `127.0.0.1` ([الدليل](docs/WEB.md)) |
+ | `codewhale review --pr N` | مراجعة استشارية لطلب pull request على GitHub. لا ينشر شيئًا ما لم تضف `--post`؛ ويُجري [GitHub Action](docs/GITHUB_ACTION.md) المراجعة نفسها في CI |
+ | `codewhale app-server --http` | واجهة [Runtime API](docs/RUNTIME_API.md)، وهي واجهة HTTP محلية للخيوط والأحداث والموافقات وتغييرات الملفات في كل دورة |
+```
+
+**File**: `README.ca.md` (modified, +15/-5)
+```diff
+@@ -1,4 +1,4 @@
+-<!-- source: README.md sha256:eefdc9e645b6 -->
++<!-- source: README.md sha256:30c9b9765b04 -->
+ <div align="center">
+ 
+ <picture>
+@@ -88,11 +88,14 @@ teva última petició i els canvis que va fer als fitxers (a la 0.10.1, executa
+ primer `/trust on`). `/help` llista les ordres i les tecles.
+ 
+ Per a scripts i CI, `codewhale exec` executa una sola tasca sense la interfície.
+-Amb `--auto` edita fitxers i executa ordres de shell sense preguntar, així que
+-fes-lo servir en un contenidor o en una còpia de treball d’un sol ús:
++Per defecte, `--auto` fa servir Full Access: les eines s’executen sense preguntar,
++les ordres de shell no tenen cap sandbox de Codewhale i el mode de confiança
++permet que les eines de fitxers escriguin fora de l’espai de treball. Afegeix
++`--sandbox workspace-write` per mantenir el sandbox de shell i les restriccions
++de les eines de fitxers a l’espai de treball, amb el mode de confiança desactivat:
+ 
+ ```bash
+-codewhale exec --auto "fix the failing tests and explain what changed"
++codewhale exec --auto --sandbox workspace-write "fix the failing tests and explain what changed"
+ ```
+ 
+ ## Modes i permisos
+@@ -160,6 +163,13 @@ crida d’eina cada vegada. `/restore` torna tot l’espai de treball a una
+ instantània anterior; com que això sobreescriu les edicions posteriors,
+ necessita `/trust on` o Full Access. Consulta [Rebuts](docs/RECEIPTS.md).
+ 
++Les execucions d’exec que ofereixen eines es desen en tots els formats de
++sortida, de manera que `codewhale receipts --last` funciona després
++d’`exec --auto`, també amb `--json`. Les execucions que només donen una resposta
++en text o amb `--json` només es desen quan es reprèn una conversa o quan
++comença la compactació de la conversa; fes servir `--output-format stream-json`
++per desar-les sempre per als rebuts o per a `exec --continue`.
++
+ ### Feines més llargues
+ 
+ `/goal` defineix un objectiu que es manté entre torns. Codewhale pot repartir la
+@@ -199,7 +209,7 @@ l’accés i l’actives ([guia](crates/tui/plugins/computer-use/README.md)).
+ | Ordre | Què fa |
+ | --- | --- |
+ | `codewhale` | L’aplicació interactiva de terminal |
+-| `codewhale exec "…"` | Una tasca sense la interfície. Per si sol respon sense fer servir eines; `--auto` li permet editar fitxers i executar ordres, i `--output-format stream-json` emet els esdeveniments en streaming com a JSON |
++| `codewhale exec "…"` | Una tasca sense la interfície. Per si sol respon sense fer servir eines; `--auto` activa les eines amb Full Access per defecte, `--sandbox workspace-write` les restringeix, i `--output-format stream-json` emet els esdeveniments en streaming com a JSON |
+ | `codewhale web` | Una interfície web local a `127.0.0.1` ([guia](docs/WEB.md)) |
+ | `codewhale review --pr N` | Una revisió orientativa d’un pull request de GitHub. No publica res tret que hi afegeixis `--post`; la [GitHub Action](docs/GITHUB_ACTION.md) executa la mateixa revisió a CI |
+ | `codewhale app-server --http` | La [Runtime API](docs/RUNTIME_API.md), una API HTTP local per a fils, esdeveniments, aprovacions i els canvis de fitxers de cada torn |
+```
+
+**File**: `README.de.md` (modified, +17/-6)
+```diff
+@@ -1,4 +1,4 @@
+-<!-- source: README.md sha256:eefdc9e645b6 -->
++<!-- source: README.md sha256:30c9b9765b04 -->
+ <div align="center">
+ 
+ <picture>
+@@ -89,12 +89,16 @@ Rest der Unterhaltung, `n` lehnt ab. `/undo` macht deine letzte Anfrage samt
+ ihren Dateiänderungen rückgängig (in 0.10.1 führe vorher `/trust on` aus).
+ `/help` listet Befehle und Tasten auf.
+ 
+-Für Skripte und CI führt `codewhale exec` eine Aufgabe ohne Oberfläche aus. Mit
+-`--auto` bearbeitet es Dateien und führt Shell-Befehle aus, ohne zu fragen; gib
+-ihm deshalb einen Container oder einen Wegwerf-Checkout:
++Für Skripte und CI führt `codewhale exec` eine Aufgabe ohne Oberfläche aus.
++Standardmäßig nutzt `--auto` Full Access: Tools laufen ohne Nachfrage,
++Shell-Befehle haben keine Codewhale-Sandbox, und der Vertrauensmodus erlaubt
++Datei-Tools, außerhalb des Arbeitsbereichs zu schreiben. Füge
++`--sandbox workspace-write` hinzu, um die Shell-Sandbox und die Beschränkung
++der Datei-Tools auf den Arbeitsbereich beizubehalten, bei ausgeschaltetem
++Vertrauensmodus:
+ 
+ ```bash
+-codewhale exec --auto "fix the failing tests and explain what changed"
++codewhale exec --auto --sandbox workspace-write "fix the failing tests and explain what changed"
+ ```
+ 
+ ## Modi und Berechtigungen
+@@ -164,6 +168,13 @@ Arbeitsbereich auf einen früheren Snapshot zurück; weil dabei spätere
+ Änderungen überschrieben werden, braucht es `/trust on` oder Full Access. Siehe
+ [Belege](docs/RECEIPTS.md).
+ 
++Exec-Läufe, die Tools anbieten, werden in jedem Ausgabeformat gespeichert,
++sodass `codewhale receipts --last` nach `exec --auto` funktioniert, auch mit
++`--json`. Läufe, die nur antworten, werden im Textformat und mit `--json` nur
++beim Fortsetzen oder beim Beginn der Gesprächskompaktierung gespeichert;
++verwende `--output-format stream-json`, um sie immer für Belege oder
++`exec --continue` zu speichern.
++
+ ### Längere Arbeit
+ 
+ `/goal` setzt ein Ziel, das über mehrere Turns bestehen bleibt. Codewhale kann
+@@ -204,7 +215,7 @@ bis du seine Zugriffsrechte geprüft und es aktiviert hast
+ | Befehl | Was er tut |
+ | --- | --- |
+ | `codewhale` | Die interaktive Terminal-App |
+-| `codewhale exec "…"` | Eine Aufgabe ohne Oberfläche. Ohne weitere Optionen antwortet es, ohne Tools zu verwenden; `--auto` erlaubt ihm, Dateien zu bearbeiten und Befehle auszuführen, und `--output-format stream-json` streamt Ereignisse als JSON |
++| `codewhale exec "…"` | Eine Aufgabe ohne Oberfläche. Ohne weitere Optionen antwortet es, ohne Tools zu verwenden; `--auto` aktiviert Tools standardmäßig mit Full Access, `--sandbox workspace-write` schränkt sie ein, und `--output-format stream-json` streamt Ereignisse als JSON |
+ | `codewhale web` | Eine lokale Web-Oberfläche auf `127.0.0.1` ([Anleitung](docs/WEB.md)) |
+ | `codewhale review --pr N` | Ein beratendes Review eines GitHub-Pull-Requests. Es veröffentlicht nichts, solange du nicht `--post` angibst; die [GitHub Action](docs/GITHUB_ACTION.md) führt dasselbe Review in der CI aus |
+ | `codewhale app-server --http` | Die [Runtime API](docs/RUNTIME_API.md), eine lokale HTTP-API für Threads, Ereignisse, Freigaben und die Dateiänderungen jedes Turns |
 ```
 
 ---
 
-### Incident Patch 2: `27b57751` (2026-10-19)
-**Commit Message**: fix(tui): /fork <id> shows the conversation it forked
+### Incident Patch 2: `cc4b96dc` (2026-10-19)
+**Commit Message**: ci: bound all-features test builds to one job
 
-SessionLifecycleAdapter::fork_from saved the forked document, installed
-its session id and called app.restore_api_messages, which updates the
-journal, stamps and API messages but not the transcript cells or the
-session-owned indexes. After `/fork <A>` from conversation B, the screen
-still showed B while the model received A's history.
+Main CI on ac5b611fe0 exhausted about 15.4 GiB RAM and 11.2 GiB swap
+while compiling test binaries, then the runner shut down with exit 143
+before any assertion ran. Match the RC parity limit in both Run tests
+and the alternate Shared-process workspace qualification step.
 
-fork_from now saves the fork and installs it through
-apply_loaded_session_with_goal, the same loader /resume uses
-(transcript reconstruction plus session-owned indexes). The sync
-payload is then built from that App state. The existing fork test now
-starts from a different visible conversation and checks that the
-transcript shows the parent's turn afterwards.
+Validation: git diff --check and actionlint -shellcheck= pass. Independent
+review caught the alternate consumer and it is included. No runtime,
+packaging or web source changes; reuse ac5b611fe0's local npm gate:
+wrapper 101, SDK 19, extension host 413 passed/7 skipped, web 772 and
+security 7, all zero failures. Exact macOS arm64 RC walkthrough at ac5
+passed 11 offline scenarios, zero failed; this does not replace the new
+candidate's exact-SHA hosted gates or prove paid provider compatibility.
 
-Found by GPT-6 Astra (codex) in a read-only TUI sweep (T4). Coded by
-GPT-6 Astra (codex, workspace-write, no builds); reviewed, built and
-tested by Claude.
+Co-Authored-By: Codex <[REDACTED_EMAIL]>
 
-Verification:
-- RUST_MIN_STACK=8388608 cargo test -p codewhale-tui --lib -- history
-  tool_routing translat fork active_cell streaming thinking session:
-  1583 passed, 4 failed, 2 ignored. The four failures pass alone and
-  are outside these changes: client chat_translation_http_error, e
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `.github/workflows/ci.yml` (modified, +2/-0)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- `/fork <id>` now shows the forked conversation. Before, the screen kept
-+  the previous conversation while the model already had the fork's history.
- - Pasting text that contains an escape sequence written out, such as
-   `print("\x1b[?25l")`, keeps it as pasted. Before, part of it was removed
-   from the message box as if it were a stray mouse report.
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- `/fork <id>` now shows the forked conversation. Before, the screen kept
-+  the previous conversation while the model already had the fork's history.
- - Pasting text that contains an escape sequence written out, such as
-   `print("\x1b[?25l")`, keeps it as pasted. Before, part of it was removed
-   from the message box as if it were a stray mouse report.
-```
-
-**File**: `crates/tui/src/commands/contract.rs` (modified, +21/-19)
-```diff
-@@ -621,6 +621,11 @@ impl CommandSessionLifecycleContext for SessionLifecycleAdapter<'_> {
-     }
- 
-     fn fork_from(&mut self, session_id_or_prefix: &str) -> Result<SessionForkFromReceipt, String> {
-+        let mut config = self
-+            .host
-+            .config
-+            .ok_or_else(|| "The fork command has no active provider configuration.".to_string())?
-+            .clone();
-         let mut app = self.host.app.borrow_mut();
-         let manager = match crate::session_manager::SessionManager::default_location() {
-             Ok(m) => m,
-@@ -681,35 +686,24 @@ impl CommandSessionLifecycleContext for SessionLifecycleAdapter<'_> {
-         forked.artifacts = source_session.artifacts.clone();
-         forked.work_state = source_session.work_state.clone();
-         forked.last_auto_route = source_session.last_auto_route.clone();
--        let queue_transition =
--            crate::tui::ui::prepare_offline_queue_transition(&app, &forked.metadata.id)?;
-         if let Err(err) = manager.save_session(&forked) {
-             return Err(format!("Failed to save forked session: {err}"));
-         }
--        crate::tui::ui::install_offline_queue_transition(&mut app, queue_transition);
--        app.current_session_id = Some(forked.metadata.id.clone());
--        app.current_session_metadata = Some(forked.metadata.clone());
--        app.restore_api_messages(forked.messages.clone(), &forked);
--        app.session_title = Some(forked.metadata.title.clone());
--        // A fork starts as its own session: no inherited tab/window title.
--        app.window_title = None;
--        app.composer_color = None;
-         let parent_label =
-             crate::session_manager::truncate_id(&source_session.metadata.id).to_string();
-         let fork_label = crate::session_manager::truncate_id(&forked.metadata.id).to_string();
-+        let spawn_depth = forked.metadata.spawn_depth;
-+        crate::tui::ui::apply_loaded_session_with_goal(&mut app, &mut config, forked, None)?;
-         let mode = to_command_mode(app.mode);
-         Ok(SessionForkFromReceipt {
-             parent_label,
-             fork_label,
--            spawn_depth: forked.metadata.spawn_depth.into(),
-+            spawn_depth: spawn_depth.into(),
-             sync: SessionSyncPayload {
--                session_id: Some(forked.metadata.id.clone()),
--                messages: forked.messages.clone(),
--                system_prompt: forked
--                    .system_prompt
--                    .as_ref()
--                    .map(|s| codewhale_models::SystemPrompt::Text(s.clone())),
--                model: forked.metadata.model.clone(),
-+                session_id: app.current_session_id.clone(),
-+                messages: app.api_messages.as_ref().clone(),
-+                system_prompt: app.system_prompt.clone(),
-+                model: app.model.clone(),
-                 workspace: app.workspace.clone(),
-                 mode,
-             },
-@@ -6949,8 +6943,12 @@ mod tests {
-                 .messages
-                 .len()
-         };
-+        app.add_message(HistoryCell::System {
-+            content: "another conversation".to_string(),
-+        });
-+        let config = crate::config::Config::default();
-         {
--            let mut bundle = app.command_contexts();
-+            let mut bundle = app.command_contexts_with_config(Some(&config));
-             let mut parts = bundle.parts();
-             let facet = parts.lifecycle.as_deref_mut().expect("lifecycle slot");
-             let forked = facet.fork_from(&parent_id).expect("explicit fork ok");
-@@ -6961,6 +6959,10 @@ mod tests {
-             );
-             assert_eq!(forked.sync.messages.len(), 1);
-         }
-+        assert!(matches!(
-+            app.history.as_slice(),
-+            [HistoryCell::User { content }] if content == "parent turn"
-+        ));
-         let manager = crate::session_manager::SessionManager::default_location().unwrap();
-         let reloaded = manager
-             .load_session(&parent_id)
+@@ -993,6 +993,7 @@ jobs:
+           if [ -n "$monitor" ]; then kill "$monitor" 2>/dev/null || true; fi
+           exit "$status"
+         env:
++          CARGO_BUILD_JOBS: '1'
+           QA_PTY_DIAGNOSTICS_DIR: ${{ runner.temp }}/pty-failures
+           CODEWHALE_EXT_HOST_TESTS: '1'
+           CODEWHALE_EXT_HOST_BUN_TESTS: '1'
+@@ -1030,6 +1031,7 @@ jobs:
+         if: github.event_name == 'workflow_dispatch' && inputs.workspace_test_mode == 'shared-process-twice' && matrix.os == 'ubuntu-latest'
+         shell: bash
+         env:
++          CARGO_BUILD_JOBS: '1'
+           EXPECTED_SHA: ${{ inputs.expected_sha }}
+           CODEWHALE_EXT_HOST_TESTS: '1'
+           CODEWHALE_EXT_HOST_BUN_TESTS: '1'
 ```
 
 ---
 
-### Incident Patch 3: `031b3d12` (2026-10-19)
-**Commit Message**: fix(tui): Ctrl+Enter after /edit replaces the message like Enter
+### Incident Patch 3: `850f510b` (2026-10-19)
+**Commit Message**: fix(deepseek): replay each turn's reasoning before its text and tool calls
 
-`/edit` arms app.edit_in_progress. Ordinary Enter goes through
-submit_decided_composer_input, where edit_replacement_result takes the
-flag and rolls the last exchange back before sending the revision.
-Ctrl+Enter (force submit) called dispatch_composer_message directly and
-skipped that. The revision was appended instead of replacing, the flag
-stayed armed, and the next ordinary Enter rolled back the revision and
-its reply.
+0.10.2 regression found by hands-on testing of the first release
+candidate (273ac2dbd8). On the default deepseek-flash Responses route, a
+real multi-step task ("fix the failing tests") failed in 2 of 4 runs:
 
-The shared part is now dispatch_submitted_composer_message (edit
-replacement, then dispatch), used by both paths, so the flag is consumed
-exactly once either way.
+  Responses API request failed: Invalid request (400): The
+  `reasoning_text` in the thinking mode must be passed back to the API.
 
-Found by GPT-6 Astra (codex) in a read-only TUI sweep (T2). Coded by
-GPT-6 Astra (codex, workspace-write, no builds); reviewed, built and
-tested by Claude.
+The same task, model and key passed 4 of 4 on released v0.10.1.
 
-Verification: same run as the /new goal fix (the two runtime_threads
-failures are load timeouts that pass alone; clippy and fmt clean).
+Cause: 25966bca59 inserted the "(reasoning omitted)" placeholder just
+before an assistant turn's first function_call. When the model wrote text
+and then called tools without visible reasoning, the replay was
+message → reasoning → function_call. Live probes against
+api.deepseek.com/beta/responses on 2026-10-19:
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01NBKbhx19BRbZtvWK8rVKjz
+  text, reasoning, function_call      -> 400
+  reasoning, text, function_call      -> 200
+  text, function_call (no reasoning)  -> 400
+  function_call (no reasoning)        -> 400
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+For DeepSeek, convert_messages_to_responses_input now emits all of an
+assistant turn's reasoning items first, then its text and tool calls. It
+adds the placeholder when the turn has a tool call and no reasoning, and
+also rep
+
+**File**: `CHANGELOG.md` (modified, +9/-5)
 ```diff
-@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `/new` and `/clear` start without the previous conversation's goal.
-   Before, a paused goal followed you into the new conversation, where
-   `/goal resume` picked it up again. The old session keeps its saved goal.
-+- After `/edit`, sending the revision with Ctrl+Enter replaces the earlier
-+  message as Enter does. Before, it was appended instead, and the next
-+  message then undid the wrong exchange.
- - In `/resume`, pressing `d` and then scrolling with the mouse before
-   answering `y` could delete the session you scrolled to instead of the one
-   you chose. The prompt now ignores the mouse, and `y` deletes only the
+@@ -549,11 +549,15 @@ guidance.
+ - DeepSeek on the Responses route (the `deepseek-flash` default) no longer
+   fails with `400 reasoning_text must be passed back` when a session replays a
+   tool call that has no stored DeepSeek reasoning: a turn that was interrupted,
+-  ran with thinking off, or came from another provider. Codewhale now sends the
+-  same `(reasoning omitted)` placeholder the Chat route already uses, before
+-  that turn's tool calls. A live probe on 2026-10-17 returned 400 without it and
+-  200 with it. On Chat, DeepSeek enforces this only for tool-call turns, which
+-  were already covered (Refs CW-7450).
++  ran with thinking off, came from another provider, or where the model wrote
++  text before its tool calls without visible reasoning. Codewhale now sends each
++  assistant turn's reasoning first, ahead of its text and tool calls, using the
++  same `(reasoning omitted)` placeholder the Chat route already uses when there
++  is none. Live probes on 2026-10-19 returned 400 for text → reasoning → tool
++  call and for no reasoning, and 200 for reasoning → text → tool call. The same
++  multi-step task that failed in 2 of 4 runs on the first 0.10.2 candidate
++  passed 6 of 6 with the fix. On Chat, DeepSeek enforces this only for
++  tool-call turns, which were already covered (Refs CW-7450).
+ - At reasoning effort `max`, the first-party DeepSeek route now asks for up to
+   131,072 output tokens, DeepSeek's documented default at that effort, instead
+   of 65,536. Every other provider and effort keeps 65,536, and explicit
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +9/-5)
 ```diff
-@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `/new` and `/clear` start without the previous conversation's goal.
-   Before, a paused goal followed you into the new conversation, where
-   `/goal resume` picked it up again. The old session keeps its saved goal.
-+- After `/edit`, sending the revision with Ctrl+Enter replaces the earlier
-+  message as Enter does. Before, it was appended instead, and the next
-+  message then undid the wrong exchange.
- - In `/resume`, pressing `d` and then scrolling with the mouse before
-   answering `y` could delete the session you scrolled to instead of the one
-   you chose. The prompt now ignores the mouse, and `y` deletes only the
+@@ -549,11 +549,15 @@ guidance.
+ - DeepSeek on the Responses route (the `deepseek-flash` default) no longer
+   fails with `400 reasoning_text must be passed back` when a session replays a
+   tool call that has no stored DeepSeek reasoning: a turn that was interrupted,
+-  ran with thinking off, or came from another provider. Codewhale now sends the
+-  same `(reasoning omitted)` placeholder the Chat route already uses, before
+-  that turn's tool calls. A live probe on 2026-10-17 returned 400 without it and
+-  200 with it. On Chat, DeepSeek enforces this only for tool-call turns, which
+-  were already covered (Refs CW-7450).
++  ran with thinking off, came from another provider, or where the model wrote
++  text before its tool calls without visible reasoning. Codewhale now sends each
++  assistant turn's reasoning first, ahead of its text and tool calls, using the
++  same `(reasoning omitted)` placeholder the Chat route already uses when there
++  is none. Live probes on 2026-10-19 returned 400 for text → reasoning → tool
++  call and for no reasoning, and 200 for reasoning → text → tool call. The same
++  multi-step task that failed in 2 of 4 runs on the first 0.10.2 candidate
++  passed 6 of 6 with the fix. On Chat, DeepSeek enforces this only for
++  tool-call turns, which were already covered (Refs CW-7450).
+ - At reasoning effort `max`, the first-party DeepSeek route now asks for up to
+   131,072 output tokens, DeepSeek's documented default at that effort, instead
+   of 65,536. Every other provider and effort keeps 65,536, and explicit
 ```
 
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +43/-27)
+**File**: `crates/tui/src/client/responses.rs` (modified, +64/-43)
 ```diff
-@@ -1755,24 +1755,39 @@ async fn submit_decided_composer_input(
-             return Ok(true);
-         }
-     } else {
--        // #383: /edit — if the user invoked /edit to revise the last
--        // message, undo the last exchange before dispatching the
--        // replacement. Sync the engine session so it also drops the old
--        // exchange.
--        if let Some(result) = edit_replacement_result(app, &input) {
--            return apply_command_result(
--                terminal,
--                app,
--                engine_handle,
--                task_manager,
--                config,
--                result,
--            )
-+        return dispatch_submitted_composer_message(
-+            terminal,
-+            app,
-+            engine_handle,
-+            task_manager,
-+            config,
-+            input,
-+            action,
-+        )
-+        .await;
-+    }
-+    Ok(false)
-+}
-+
-+async fn dispatch_submitted_composer_message(
-+    terminal: &mut AppTerminal,
-+    app: &mut App,
-+    engine_handle: &mut EngineHandle,
-+    task_manager: &SharedTaskManager,
-+    config: &mut Config,
-+    input: String,
-+    action: ComposerSubmitAction,
-+) -> Result<bool> {
-+    // #383: /edit — if the user invoked /edit to revise the last
-+    // message, undo the last exchange before dispatching the
-+    // replacement. Sync the engine session so it also drops the old
-+    // exchange.
-+    if let Some(result) = edit_replacement_result(app, &input) {
-+        return apply_command_result(terminal, app, engine_handle, task_manager, config, result)
-             .await;
--        }
--        let (queued, recovery) = message_from_submitted_input(app, input);
--        dispatch_composer_message(app, config, engine_handle, queued, recovery, action).await?;
-     }
-+    let (queued, recovery) = message_from_submitted_input(app, input);
-+    dispatch_composer_message(app, config, engine_handle, queued, recovery, action).await?;
-     Ok(false)
- }
- 
-@@ -6971,17 +6986,18 @@ pub(crate) async fn run_event_loop(
-                             {
-                                 return Ok(());
-                             }
--                        } else {
--                            let (queued, recovery) = message_from_submitted_input(app, input);
--                            dispatch_composer_message(
--                                app,
--                                config,
--                                &engine_handle,
--                                queued,
--                                recovery,
--                                action,
--                            )
--                            .await?;
-+                        } else if dispatch_submitted_composer_message(
-+                            terminal,
-+                            app,
-+                            &mut engine_handle,
-+                            &task_manager,
-+                            config,
-+                            input,
-+                            action,
-+                        )
-+                        .await?
-+                        {
-+                            return Ok(());
-                         }
-                     }
+@@ -883,7 +883,67 @@ pub(super) fn convert_messages_to_responses_input(
                  }
+             }
+             RolePlacement::Assistant | RolePlacement::InterruptedAssistant => {
+-                let mut reasoning_emitted = false;
++                let reasoning_item = |block: &ContentBlock| -> Option<Value> {
++                    let ContentBlock::Thinking {
++                        thinking, state, ..
++                    } = block
++                    else {
++                        return None;
++                    };
++                    if let Some(state) = state {
++                        let matches = state.provider == provider.as_str()
++                            && if provider == ProviderKind::OpenaiCodex {
++                                reasoning_api.is_some_and(|api| state.api == api)
++                            } else {
++                                state.api == "openai-responses"
++                            }
++                            && state.model == request.model;
++                        if !matches {
++                            return None;
++                        }
++                        let mut item = json!({
++                            "type": "reasoning",
++                            "summary": [],
++                            "encrypted_content": state.encrypted_content,
++                        });
++                        if let Some(id) = state.id.as_ref() {
++                            item["id"] = json!(id);
++                        }
++                        return Some(item);
++                    }
++                    is_deepseek.then(|| {
++                        let text = if thinking.trim().is_empty() {
++                            REASONING_REPLAY_PLACEHOLDER
++                        } else {
++                            thinking.as_str()
++                        };
++                        json!({
++                            "type": "reasoning",
++                            "content": [{
++                                "type": "reasoning_text",
++                                "text": text,
++                            }],
++                        })
++                    })
++                };
++                if is_deepseek {
++                    let before = items.len();
++                    items.extend(msg.content.iter().filter_map(&reasoning_item));
++                    if items.len() == before
++                        && msg
++                            .content
++                            .iter()
++                            .any(|block| matches!(block, ContentBlock::ToolUse { .. }))
++                    {
++                        items.push(json!({
++                            "type": "reasoning",
++                            "content": [{
++                                "type": "reasoning_text",
++                                "text": REASONING_REPLAY_PLACEHOLDER,
++                            }],
++                        }));
++                    }
++                }
+                 for block in &msg.content {
+                     match block {
+                         ContentBlock::Text { text, .. } => {
+@@ -908,16 +968,6 @@ pub(super) fn convert_messages_to_responses_input(
+                         ContentBlock::ToolUse {
+                             id, name, input, ..
+                         } => {
+-                            if is_deepseek && !reasoning_emitted {
+-                                items.push(json!({
+-                                    "type": "reasoning",
+-                                    "content": [{
+-                                        "type": "reasoning_text",
+-                                        "text": REASONING_REPLAY_PLACEHOLDER,
+-                                    }],
+-                                }));
+-                                reasoning_emitted = true;
+-                            }
+                             let (call_id, _item_id) = parse_tool_use_id(id);
+                             let mut item = json!({
+                                 "type": "function_call",
+@@ -930,38 +980,9 @@ pub(super) fn convert_messages_to_responses_input(
+                             }
+                             items.push(item);
+                         }
+-                        ContentBlock::Thinking {
+-                            thinking, state, ..
+-                        } => {
+-                            if let Some(state) = state {
+-                                if state.provider == provider.as_str()
+-                                    && if provider == ProviderKind::OpenaiCodex {
+-                                        reasoning_api.is_some_and(|api| state.api == api)
+-                                    } else {
+-                                        state.api == "openai-responses"
+-                                    }
+-                                    && state.model == request.model
+-                                {
+-                                    let mut item = json
 ```
 
 #### Recent Merged Pull Requests:
@@ -1872,32 +1941,46 @@ Claude-Session: https://claude.ai/code/session_01NBKbhx19BRbZtvWK8rVKjz
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hooks): Esc stops a running tool_call_before hook
+## X. complete 0.10.2 terminal and release blockers
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba6366bc`: hooks): Esc stops a running tool_call_before hook. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac5b611f`: complete 0.10.2 terminal and release blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Esc, or a Runtime interrupt, now stops a `tool_call_before` hook that is
-  still running: its process tree is killed and reaped, hooks queued behind
-  it are skipped, and the turn stops at once. Before, the turn waited for the
-  hook to finish, and the hook could still change files after the turn was
-  reported as stopped.
+        run: ./scripts/installer/install-nsis.ps1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        # Bounded retry, not a weaker check (#5403). Every observed failure here
+        # was Chocolatey's feed, not the code: a 504 from the V2 API, and
+        # "package was not found with the source(s) listed". A single attempt
+        # made `Test (windows-latest)` — a required check on every PR — report
+        # on community.chocolatey.org's availability instead of on the tree.
+        # NSIS must still install for the regression below to run; this only
+        # survives a transient outage.
+        #
+        # A feed failure also makes `choco install` exit 0 without installing
+        # anything ("Chocolatey installed 0/0 packages" after a V2 feed 504),
+        # so an attempt only counts when `makensis.exe` exists where the installer
+        # regression looks for it (Program Files; choco does not put it on PATH).
+        # Without that check the retry reported success on an unprovisioned
+        # runner and the regression below failed as an unattributable exit
+        # code instead of this step naming the outage (2026-09-24).
+        run: |
+          $ErrorActionPreference = 'Continue'
+          $delays = @(0, 20, 45)
+          for ($attempt = 0; $attempt -lt $delays.C
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba6366bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac5b611f` are properly handled with clean fallback behavior.

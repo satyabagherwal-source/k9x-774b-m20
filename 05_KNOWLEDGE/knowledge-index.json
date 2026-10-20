@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:05:32.766Z",
-  "total_verified_learnings": 994,
+  "last_updated": "2026-10-20T01:11:57.879Z",
+  "total_verified_learnings": 996,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -916,22 +916,29 @@
     "learn-github-aheze-popovers": {
       "learning_id": "learn-github-aheze-popovers",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aheze-popovers",
+      "source": "aheze/Popovers",
+      "repository": "aheze/Popovers",
       "slug": "aheze-popovers",
       "platform": "github",
       "source_url": "https://github.com/aheze/Popovers",
-      "source_version": "HEAD",
-      "content_hash": "544ff2b88581a5b54db31e92b1e03551ff1d04c4a7489daa9920a3de13d4b501",
+      "source_version": "576b4d3e",
+      "content_hash": "06000cbe3b2e834a0cadb89534e9edcfa1d40af89f37ce89c2afafee6d0bd777",
       "dossier_path": "07_PROJECT_LEARNING/aheze-popovers-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aheze-popovers-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.680Z"
+      "verified_at": "2026-10-20T01:11:50.524Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-aiming-lab-simplemem": {
       "learning_id": "learn-github-aiming-lab-simplemem",
@@ -5695,13 +5702,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "273ac2db",
-      "content_hash": "c7c64ebfba91c3171cf552705bfdc6f9ea0047884ca49e1ec14fcac8e79b35e7",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "cc4b96dc",
+      "content_hash": "772738ae8227638c7e34e79e5c4f807b5f270d0fd22da031dfd6b6aa0a8b0270",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -5712,6 +5719,11 @@
           "number": 2516,
           "title": "hooks): Esc stops a running tool_call_before hook",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 2955,
+          "title": "complete 0.10.2 terminal and release blockers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5719,7 +5731,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:44:54.529Z",
+      "verified_at": "2026-10-20T01:11:47.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35870,8 +35882,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "10f23bdb",
-      "content_hash": "77257fe69f683314f26cb6d391e91cc413344e242d04453242c15a3689b61cd0",
+      "source_version": "031953b6",
+      "content_hash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -35886,7 +35898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:45:35.686Z",
+      "verified_at": "2026-10-20T01:11:57.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58575,20 +58587,35 @@
     "learn-github-digitalbazaar-pyld": {
       "learning_id": "learn-github-digitalbazaar-pyld",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "digitalbazaar/pyld",
       "repository": "digitalbazaar/pyld",
       "slug": "digitalbazaar-pyld",
       "platform": "github",
       "source_url": "https://github.com/digitalbazaar/pyld",
-      "source_version": "main",
-      "content_hash": "7beccb9b7fcc3f69ba8ba13a49906fa23cf2d2655c1ccd46ab177a0af13a43b2",
+      "source_version": "b69c22fb",
+      "content_hash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
       "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2956,
+          "title": "Update CHANGELOG for the @direction fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:11:48.185Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rdfjs-namespace": {
       "learning_id": "learn-github-rdfjs-namespace",
@@ -95994,6 +96021,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:05:32.754Z"
+    },
+    "rule-2955": {
+      "learning_id": "rule-2955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2955,
+      "title": "complete 0.10.2 terminal and release blockers",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "cc4b96dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:11:47.029Z"
+    },
+    "rule-2956": {
+      "learning_id": "rule-2956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2956,
+      "title": "Update CHANGELOG for the @direction fixes",
+      "source_url": "https://github.com/digitalbazaar/pyld",
+      "source_version": "b69c22fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:11:48.185Z"
     }
   },
   "aliases": {

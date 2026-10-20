@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-5P6I",
-    "timestamp": "2026-10-19T09:06:40.698Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5UOW",
-    "timestamp": "2026-10-19T09:06:47.840Z",
-    "repository": "oramasearch/orama",
-    "learningId": "learn-github-oramasearch-orama",
-    "contentHash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-DGXY",
-    "timestamp": "2026-10-19T09:12:43.270Z",
-    "repository": "pamburus/hl",
-    "learningId": "learn-github-pamburus-hl",
-    "contentHash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-DKR6",
-    "timestamp": "2026-10-19T09:12:48.210Z",
-    "repository": "linkwarden/linkwarden",
-    "learningId": "learn-github-linkwarden-linkwarden",
-    "contentHash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-DLQB",
     "timestamp": "2026-10-19T09:12:49.475Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7432,66 @@
     "contentHash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MU1D",
+    "timestamp": "2026-10-20T01:11:47.089Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "772738ae8227638c7e34e79e5c4f807b5f270d0fd22da031dfd6b6aa0a8b0270",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MUXT",
+    "timestamp": "2026-10-20T01:11:48.257Z",
+    "repository": "digitalbazaar/pyld",
+    "learningId": "learn-github-digitalbazaar-pyld",
+    "contentHash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MWQW",
+    "timestamp": "2026-10-20T01:11:50.600Z",
+    "repository": "aheze/Popovers",
+    "learningId": "learn-github-aheze-popovers",
+    "contentHash": "06000cbe3b2e834a0cadb89534e9edcfa1d40af89f37ce89c2afafee6d0bd777",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N2EI",
+    "timestamp": "2026-10-20T01:11:57.930Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

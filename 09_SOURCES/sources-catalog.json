@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "10f23bdb",
+    "sourceVersion": "031953b6",
     "license": "Apache-2.0",
-    "contentHash": "77257fe69f683314f26cb6d391e91cc413344e242d04453242c15a3689b61cd0",
-    "lastHarvestedAt": "2026-10-18T23:45:35.732Z",
+    "contentHash": "ae8c89febfe0df8b6eda2c5a16abf17ef723172af648dd1ff8001a751f26374d",
+    "lastHarvestedAt": "2026-10-20T01:11:57.933Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "273ac2db",
+    "sourceVersion": "cc4b96dc",
     "license": "MIT",
-    "contentHash": "2be40e2094560b701e29d18cacff241c69659b8affc6193a115d08aacffb3f9e",
-    "lastHarvestedAt": "2026-10-19T11:01:04.234Z",
+    "contentHash": "772738ae8227638c7e34e79e5c4f807b5f270d0fd22da031dfd6b6aa0a8b0270",
+    "lastHarvestedAt": "2026-10-20T01:11:47.092Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -9788,5 +9788,25 @@
     "contentHash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
     "lastHarvestedAt": "2026-10-20T01:05:32.829Z",
     "learningId": "learn-github-sozercan-kaset"
+  },
+  "digitalbazaar-pyld": {
+    "repository": "digitalbazaar/pyld",
+    "platform": "github",
+    "sourceUrl": "https://github.com/digitalbazaar/pyld",
+    "sourceVersion": "b69c22fb",
+    "license": "BSD-3-Clause",
+    "contentHash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
+    "lastHarvestedAt": "2026-10-20T01:11:48.260Z",
+    "learningId": "learn-github-digitalbazaar-pyld"
+  },
+  "aheze-popovers": {
+    "repository": "aheze/Popovers",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aheze/Popovers",
+    "sourceVersion": "576b4d3e",
+    "license": "MIT",
+    "contentHash": "06000cbe3b2e834a0cadb89534e9edcfa1d40af89f37ce89c2afafee6d0bd777",
+    "lastHarvestedAt": "2026-10-20T01:11:50.603Z",
+    "learningId": "learn-github-aheze-popovers"
   }
 }

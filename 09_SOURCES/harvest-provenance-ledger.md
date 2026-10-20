@@ -3621,3 +3621,7 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `60e8c185` | Multi-dimensional audit evidence | 2026-10-20T01:05:29.409Z |
 | `learn-github-jsonld-java-jsonld-java` | `https://github.com/jsonld-java/jsonld-java` | `4a7305f2` | Multi-dimensional audit evidence | 2026-10-20T01:05:29.541Z |
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `24929e68` | Multi-dimensional audit evidence | 2026-10-20T01:05:32.829Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `cc4b96dc` | Multi-dimensional audit evidence | 2026-10-20T01:11:47.092Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `b69c22fb` | Multi-dimensional audit evidence | 2026-10-20T01:11:48.260Z |
+| `learn-github-aheze-popovers` | `https://github.com/aheze/Popovers` | `576b4d3e` | Multi-dimensional audit evidence | 2026-10-20T01:11:50.603Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `031953b6` | Multi-dimensional audit evidence | 2026-10-20T01:11:57.933Z |

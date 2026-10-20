@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T00:12:52.999Z",
+  "last_updated": "2026-10-20T01:11:57.938Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2037,6 +2037,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matrixorigin-matrixone"
+    },
+    {
+      "id": "CD-N2EQ",
+      "directive_title": "Review PRs only on request, with an optional focus, one pass per review skill (#",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pixeltable/pixeltable",
+      "source_commit": "031953b6",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-pixeltable-pixeltable"
     }
   ]
 }

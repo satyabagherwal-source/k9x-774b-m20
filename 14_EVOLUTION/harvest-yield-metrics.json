@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:05:32.833Z",
-  "total_cycles_completed": 3591,
-  "total_learnings_persisted": 3591,
-  "total_rules_promoted": 2757,
+  "last_updated": "2026-10-20T01:11:57.939Z",
+  "total_cycles_completed": 3595,
+  "total_learnings_persisted": 3595,
+  "total_rules_promoted": 2759,
   "history": [
-    {
-      "timestamp": "2026-10-19T18:35:48.146Z",
-      "repository": "angular/angular",
-      "learningId": "learn-github-angular-angular",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:35:50.272Z",
-      "repository": "adobe/structured-data-validator",
-      "learningId": "learn-github-adobe-structured-data-validator",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:35:51.497Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:35:57.062Z",
-      "repository": "hi-manshu/charty",
-      "learningId": "learn-github-hi-manshu-charty",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T18:36:01.187Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1403,6 +1375,34 @@
       "repository": "sozercan/kaset",
       "learningId": "learn-github-sozercan-kaset",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:11:47.096Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:11:48.264Z",
+      "repository": "digitalbazaar/pyld",
+      "learningId": "learn-github-digitalbazaar-pyld",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:11:50.607Z",
+      "repository": "aheze/Popovers",
+      "learningId": "learn-github-aheze-popovers",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:11:57.939Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
