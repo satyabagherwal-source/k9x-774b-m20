@@ -3799,3 +3799,4 @@
 | `CYCLE-20261020-83Q0` | `2026-10-20T12:12:10.584Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`52505cc7...`) |
 | `CYCLE-20261020-8BA6` | `2026-10-20T12:12:20.382Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3158` | Yes (`d14cbad0...`) |
 | `CYCLE-20261020-GAJ0` | `2026-10-20T12:18:32.652Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3159, Rule 3160` | Yes (`aea93f3f...`) |
+| `CYCLE-20261020-OGX5` | `2026-10-20T12:24:54.185Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3161, Rule 3162` | Yes (`c2fd7ab3...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-BBTF",
-    "timestamp": "2026-10-19T14:46:58.707Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-J0JJ",
     "timestamp": "2026-10-19T14:52:57.343Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "contentHash": "aea93f3fa057853b921dc605ffe73f229d4b9fa42069cfb39e73c15fd89b1bbe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-OGX5",
+    "timestamp": "2026-10-20T12:24:54.185Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "c2fd7ab3c13578b1b693e51c36fa8bd160cbc85850992b9b5e0a38c25571127f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

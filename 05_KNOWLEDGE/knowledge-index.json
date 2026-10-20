@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T12:18:32.606Z",
+  "last_updated": "2026-10-20T12:24:54.139Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15211,7 +15211,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "adde2965e99b530edcac61c0bd777548612acb295672dd9b7e998a47c70f72bd",
+      "content_hash": "c2fd7ab3c13578b1b693e51c36fa8bd160cbc85850992b9b5e0a38c25571127f",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
@@ -15258,6 +15258,16 @@
           "number": 1825,
           "title": "Deterministic Inference Environment for Model Artifacts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3161,
+          "title": "Semantic Index Immutability in ML Artifacts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3162,
+          "title": "Model Size vs. Latency Budget Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15277,7 +15287,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-10-18T23:08:20.199Z",
+      "verified_at": "2026-10-20T12:24:54.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100560,6 +100570,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T12:18:32.595Z"
+    },
+    "rule-3161": {
+      "learning_id": "rule-3161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3161,
+      "title": "Semantic Index Immutability in ML Artifacts",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:24:54.128Z"
+    },
+    "rule-3162": {
+      "learning_id": "rule-3162",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3162,
+      "title": "Model Size vs. Latency Budget Alignment",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:24:54.128Z"
     }
   },
   "aliases": {
