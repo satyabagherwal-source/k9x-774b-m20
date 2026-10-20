@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:09:14.257Z",
+  "last_updated": "2026-10-20T11:26:54.502Z",
   "total_verified_learnings": 1053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11480,8 +11480,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "dc64f3b4",
-      "content_hash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
+      "source_version": "43dfe11b",
+      "content_hash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -11504,6 +11504,11 @@
           "number": 2785,
           "title": "portal: align robot account immutability label (#24171)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3145,
+          "title": "replication): make the image resource filter take effect again (#24176)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11511,7 +11516,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:04:19.557Z",
+      "verified_at": "2026-10-20T11:26:54.491Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45215,14 +45220,19 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "50a71b68",
-      "content_hash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
+      "source_version": "5d9136e9",
+      "content_hash": "50c5e54a5b4b6d5ead7984ffb96554520e4160beca89342281e0d4bd3581f0a4",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
         {
           "number": 2234,
           "title": "claude): keep the cloud API key off the Claude Code command line (#594)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3144,
+          "title": "sync the local tool text with the cloud MCP server (#604)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45231,7 +45241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:19:09.925Z",
+      "verified_at": "2026-10-20T11:21:59.394Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100210,6 +100220,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:09:14.239Z"
+    },
+    "rule-3144": {
+      "learning_id": "rule-3144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3144,
+      "title": "sync the local tool text with the cloud MCP server (#604)",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "5d9136e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:21:59.394Z"
+    },
+    "rule-3145": {
+      "learning_id": "rule-3145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3145,
+      "title": "replication): make the image resource filter take effect again (#24176)",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "43dfe11b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:26:54.491Z"
     }
   },
   "aliases": {

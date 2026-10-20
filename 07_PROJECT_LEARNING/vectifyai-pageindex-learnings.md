@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `50a71b68`  
+> **Source Version**: `5d9136e9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:19:09.715Z  
+> **Timestamp**: 2026-10-20T11:21:59.160Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:19:09.706Z  
+> **Harvest Timestamp**: 2026-10-20T11:21:57.444Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 39264 stars
+- **Stars / Engagement**: 39334 stars
 
 ---
 
@@ -72,6 +72,42 @@ import re
 # helpers and their asyncio tasks without threading it through every call.
 _llm_backend: contextvars.ContextVar = contextvars.ContextVar(
     "pageindex_llm_backend", default=None)
+
+# Same scope: the dict the token usage of every indexing model call is
+# summed into, which LocalAPI returns from submit_document.
+_llm_usage: contextvars.ContextVar = contextvars.ContextVar(
+    "pageindex_llm_usage", default=None)
+
+
+def _add_usage(response) -> None:
+    usage, counted = _llm_usage.get(), getattr(response, "usage", None)
+    if usage is None or counted is None:
+        return
+    prompt = getattr(counted, "prompt_tokens", 0) or 0
+    completion = getattr(counted, "completion_tokens", 0) or 0
+    details = getattr(counted, "prompt_tokens_details", None)
+    cached = getattr(details, "cached_tokens", 0)
+    cache_write = getattr(details, "cache_write_tokens", 0)
+    reasoning = getattr(getattr(counted, "completion_tokens_details", None),
+                        "reasoning_tokens", 0)
+    usage["prompt_tokens"] += prompt
+    usage["completion_tokens"] += completion
+    usage["total_tokens"] += prompt + completion
+    usage["prompt_tokens_details"]["cached_tokens"] += cached or 0
+    usage["prompt_tokens_details"]["cache_write_tokens"] += cache_write or 0
+    usage["completion_tokens_details"]["reasoning_tokens"] += reasoning or 0
+
+
+def _add_usage_counts(counts, usage=None) -> None:
+    """Add a chat-shape usage dict (a claude-code/ run's) to the tally."""
+    usage = _llm_usage.get() if usage is None else usage
+    if usage is None:
+        return
+    for key, value in counts.items():
+        if isinstance(value, dict):
+            _add_usage_counts(value, usage.setdefault(key, {}))
+        else:
+            usage[key] = usage.get(key, 0) + (value or 0)
 
 
 def _repair_litellm_types() -> None:
@@ -230,6 +266,7 @@ def llm_completion(model, prompt, chat_history=None, return_finish_reason=False)
                 "max_retries": 0,
                 **(backend or {}),
             })
+            _add_usage(response)
             content = response.choices[0].message.content
             if return_finish_reason:
                 finish_reason = "max_output_reached" if response.choices[0].finish_reason == "length" else "finished"
@@ -245,55 +282,7 @@ def llm_completion(model, prompt, chat_history=None, return_finish_reason=False)
             else:
                 raise LLMRetriesExhausted(
                     f"LLM completion failed after {max_retries} retries: {e}",
-                    status_code=getattr(e, "status_code", None),
-                ) from e
-
-
-async def llm_acompletion(model, prompt, **params):
-    from .integrations.claude_agent_sdk import claude_code_complete, is_claude_code
-    if is_claude_code(model):
-        return await claude_code_complete(model, prompt, **params)
-    import litellm
-    max_retries = 10
-    messages = [{"role": "user", "content": prompt}]
-    backend = _llm_backend.get()
-    model = _litellm_model(model)
-    _repair_litellm_types()
-    _quiet_litellm()
-    for i in range(max_retries):
-        try:
-            response = await litellm.acompletion(**{
-                "model": model,
-                "messages": messages,
-                "drop_params": True,
-                "max_retries": 0,
-                **(backend or {}),
-                **params,
-            })
-            return response.choices[0].message.content
-        except Exception as e:
-            if getattr(e, "status_code", None) in _NO_RETRY_STATUS:
-                raise
-            logging.error(f"Error: {e}")
-            if i < max_retries - 1:
-                logging.warning("Retrying LLM completion")
-                await asyncio.sleep(1)
-            else:
-                raise LLMRetriesExhausted(
-                    f"LLM completion failed after {max_retries} retries: {e}",
-                    status_code=getattr(e, "status_code", None),
-                ) from e
-
-
-def get_json_content(response):
-    start_idx = response.find("```json")
-    if start_idx != -1:
-        start_idx += 7
-        response = response[start_idx:]
-        
-    end_idx = response.rfind("```")
-    if end_idx != -1:
-        response = r
+                    status_code=getattr(e, "status_
 ```
 
 ### Core Architecture Module: `cookbook/pageindex-claude-subscription.py`
@@ -479,13 +468,19 @@ TOOL_CONTRACT: dict[str, dict[str, Any]] = {
         "annotations": {"readOnlyHint": True, "openWorldHint": False},
         "description": (
             "Primary document retrieval tool. After orienting with "
-            "get_folder_structure() (when available), use this for all "
-            "document-related questions. The bare call returns root-level "
-            "sub-folders and documents; pass folder_id to drill into a "
-            'sub-folder level by level. Use sort="relevance" + query for '
-            "semantic ranking. Do NOT jump to search_documents() first — it "
-            "is an escalation path, only after "
-            'browse_documents(sort="relevance") has failed.'
+            "`get_folder_structure()` (when available) — and, for queries "
+            "that may involve typed attributes, pairing it with "
+            "`get_metadata_schema()` so you know which fields metadata mode "
+            "could filter on — use this for all document-related questions. "
+            "The bare call returns root-level sub-folders and documents; pass "
+            "`folder_id` to drill into a sub-folder level by level. Use "
+            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
+            "to `search_documents()` first — keyword search and metadata mode "
+            "are escalation paths, only after "
+            '`browse_documents(sort="relevance")` + the persistence retries '
+            "have failed. `browse_documents` does not filter by attribute — "
+            "for typed-attribute queries, escalate to "
+            '`search_documents(mode="metadata")`.'
         ),
         "schema": {
             "type": "object",
@@ -566,10 +561,9 @@ TOOL_CONTRACT: dict[str, dict[str, Any]] = {
     "get_document": {
         "annotations": {"readOnlyHint": True, "openWorldHint": False},
         "description": (
-            "Check a document's processing status and metadata. `status` is "
-            'one of "pending", "queued", "processing", "completed", or '
-            '"failed" — call this before `get_document_structure()` or '
-            "`get_page_content()` to confirm the document is ready."
+            "Check a document's processing status and metadata. Call this "
+            "before `get_document_structure()` or `get_page_content()` to "
+            'confirm the document is ready (`status === "completed"`).'
         ),
         "schema": {
             "type": "object",
@@ -622,19 +616,7 @@ TOOL_CONTRACT: dict[str, dict[str, Any]] = {
                     "description": (
                         "Part number for pagination (1-based, default 1). For "
                         "large outlines, increment until the response's "
-                        "`pagination.has_more` becomes false."
-                    ),
-                },
-                "wait_for_completion": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": _WAIT_FOR_COMPLETION_DESCRIPTION,
-                },
-            },
-            "required": ["doc_name"],
-        },
-    },
-   
+                  
 ```
 
 ### Core Architecture Module: `pageindex/chat_stream.py`
@@ -1247,13 +1229,21 @@ class CloudAPI:
 class PageIndexAPIError(Exception):
     """status_code carries the HTTP status when the raising site passes it;
     None does not imply local/client-side. rpc_error carries an MCP
-    server's JSON-RPC error object as it was sent."""
+    server's JSON-RPC error object as it was sent. usage is set when an
+    own-model chat run fails: what its finished model calls had spent, in
+    the protocol's usage shape with each call listed (claude-code/: the
+    run's total only, None on a tool failure or if the run ends before
+    Claude Code reports it); None on any other error. partial_answer is
+    the text a non-streamed chat() answer reached before it was cut short
+    (a stream has already delivered its text); None otherwise."""
 
     def __init__(self, *args: object, status_code: int | None = None,
                  rpc_error: dict | None = None) -> None:
         super().__init__(*args)
         self.status_code = status_code
         self.rpc_error = rpc_error
+        self.usage: dict | None = None
+        self.partial_answer: str | None = None
 
 
 def _pageindex_cause(exc: BaseException | None) -> PageIndexAPIError | None:
@@ -1282,13 +1272,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #603** (2026-10-19): **fix(claude): a missing login fails in one clear error, saying how to log in**
-  *Symptoms*: Indexing on `claude-code/` without a Claude login, or with one that has expired, now fails in a 9-line traceback that ends with how to fix it: "Log in with your Claude subscription: run `claude`, then /login (install Claude Code first if needed)." It was 77 lines of three chained errors, the first an unrelated `RuntimeError: no running event loop`, and the old hint pointed to a `claude` command that pip never installs.  ## Changes  **The no-running-loop RuntimeError** (`utils.run_off_loop`) `run_off_loop` called the function inside its `except RuntimeError` block, so every error from a sync `submit_document()` or `chat()` call, on any model route, chained onto "no running event loop" and printed it first. The function now runs after the loop check.  **One error, not three** (`local_api.submit_document`) An exhausted LLM retry ladder that carries an HTTP status (401, 429, 5xx) is raised as the submit error alone: its message already names the cause, and the ladder's error stays on `__context__`. Without a status, usually a bug the ladder retried, the chain is kept for its frames.  **The login hint** (`integrations/claude_agent_sdk._run_error`, cookbook) The 401 hint follows Claude Code's own message ("Not logged in · Please run /login", or "Failed to authenticate: OAuth session expired and could not be refreshed") and now says where to log in and that Claude Code may need installing first. The cookbook says the same before its run line.  ## Verification  - Real CLI, logged out
-
-- **Issue #601** (2026-10-18): **docs(cookbook): index the Harness² paper, show progress, stream the answer**
-  *Symptoms*: The Claude subscription example now indexes a paper long enough that the model reads the tree before the pages, and shows its progress instead of sitting silent.  ## Changes  - **Document**: the Harness² paper (arXiv 2610.14224, 37 pages) replaces the 22-page earnings release. Past 20 pages the tools ask the model to read the structure first; on the earnings release it often went straight to pages 1–2. On Harness² it read the tree first in every run we made, then its method's pages (4–6 or 4–7). - **Progress**: a line before and after indexing, and the answer streamed with its tool calls (`chat(..., stream=True)`). - **Comment**: the chat model "retrieves from the tree and answers". - **Pinned**: the arXiv link names v1, so a later revision can't change what the example reads.  Verified on pageindex 0.4.2 from PyPI with the script alone in an empty folder: downloaded the paper, indexed it in about 25 s, read the tree, then the method's pages, and explained Propose → Probe → Compose. 
+- **Issue #606** (2026-10-20): **docs: update readme**
+  *Symptoms*: Rewords the PageIndex SDK line under Updates.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"3500a8a598e322a4fe49a4c7e5f01ef527729f89","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"3500a8a598e322a4fe49a4c7e5f01ef527729f89","mergeGateEnabled":false,"pullRequestNumber":601,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-18T13:50:09.281376Z">2026-10-18T13:50:09.281376Z</relative-time> | `3500a8a` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"8ae6b0af3c0ef8ebae643e48ccec543e8641a333","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"8ae6b0af3c0ef8ebae643e48ccec543e8641a333","mergeGateEnabled":false,"pullRequestNumber":606,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-20T11:04:14.540960Z">2026-10-20T11:04:14.540960Z</relative-time> | `8ae6b0a` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
+
+- **Issue #605** (2026-10-20): **build: raise the litellm floor to 1.106.0**
+  *Symptoms*: Release prep for 0.4.5. `pip install -U pageindex` now pulls litellm 1.106.0 or newer.  ## Changes  - `build: raise the litellm floor to 1.106.0`: `pyproject.toml` and `requirements.txt` move from `>=1.105.1` to `>=1.106.0`. The release rule raises the floor to the latest CI-tested litellm, and main's CI has run 1.106.0 since v0.4.3 (16c284d included). A fresh-venv dry run of `pip install -r requirements.txt .` resolves litellm 1.106.0, openai 2.54.0 and openai-agents 0.20.0, the same set main's CI installs. - `style: tidy four comments`: comments only, no behavior change; local suite 952 passed, 7 skipped.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"e35ee53856feef3f7cfef24e14fe071ccde01cbc","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"e35ee53856feef3f7cfef24e14fe071ccde01cbc","mergeGateEnabled":false,"pullRequestNumber":605,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-20T10:30:02.206015Z">2026-10-20T10:30:02.206015Z</relative-time> | `e35ee53` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1305,767 +1297,299 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7162ef62` (2026-10-18)
-**Commit Message**: fix(claude): keep the cloud API key off the Claude Code command line (#594)
+### Incident Patch 1: `9cdec401` (2026-10-20)
+**Commit Message**: fix: sync the local tool text with the cloud MCP server (#604)
 
-On cloud, as_claude_mcp() now returns an in-process server instead of a
-remote server config, so the PageIndex API key no longer appears on the
-Claude Code CLI's command line, where any local process could read it
-with ps while the CLI ran. The server relays the PageIndex MCP server's
-own handshake, instructions, tools and resources, fetched live for each
-session through McpBridge, which retries 429/5xx and keeps each error
-with its own request; a failure never ends the session.
+The cloud server shipped metadata mode (pageindex-chat #268) and fit its
+instructions under Claude Code's 4,096-char cap (#494) on Oct 19. The two
+live parity tests have failed on every CI leg since.
 
-The relay needs claude-agent-sdk 0.2.160 (in-process servers over mcp's
-own transport, and stdin kept open past the first turn), so cloud
-as_claude_mcp() raises with an upgrade hint below it. The claude extra
-moves to 0.2.166, whose CLI hands the model 4,096 characters of a
-server's instructions instead of 2,048; system_prompt stays the channel
-that carries them whole.
+Contract (verbatim from tools/list): new browse_documents and get_document
+descriptions. Local mode uses the get_document one as is; browse_documents
+keeps its localized text.
 
-Local tools declare maxResultSizeChars at twice TOOL_RESPONSE_CHAR_LIMIT
-(200,000), so Claude Code shows normal PageIndex results whole instead of
-a 2KB preview past 50,000 characters, while an oversized single page
-still falls back to the preview.
+Local instructions follow the cloud's rewrite: the new header line, the
+"results returned != correct results" rule folded into the PERSISTENCE
+head, TOOL USAGE RULES moved last, and READING WORKFLOW dropped (the
+get_document_structure and get_page_content descriptions carry it).
 
-Behavior change
+The header says PageIndex "manages" the user's PDFs, not "hosts" them:
+local mode hosts nothing. The cloud header changed to the same word in
+pageindex-chat #498, so the line stays shared.
 
-**File**: `pageindex/client.py` (modified, +17/-13)
+The parity test treats get_metadata_schema and the two metadata-mode
+bullets as cloud-only.
+
+**File**: `pageindex/agent_tools.py` (modified, +21/-24)
 ```diff
-@@ -2259,24 +2259,28 @@ def anthropic_runner_config(
-     def as_claude_mcp(self, include_management: bool = False, *,
-                       server_name: str = "pageindex"):
-         """
--        ``mcp_servers`` entry for the Claude Agent SDK.
+@@ -70,13 +70,19 @@
+         "annotations": {"readOnlyHint": True, "openWorldHint": False},
+         "description": (
+             "Primary document retrieval tool. After orienting with "
+-            "get_folder_structure() (when available), use this for all "
+-            "document-related questions. The bare call returns root-level "
+-            "sub-folders and documents; pass folder_id to drill into a "
+-            'sub-folder level by level. Use sort="relevance" + query for '
+-            "semantic ranking. Do NOT jump to search_documents() first — it "
+-            "is an escalation path, only after "
+-            'browse_documents(sort="relevance") has failed.'
++            "`get_folder_structure()` (when available) — and, for queries "
++            "that may involve typed attributes, pairing it with "
++            "`get_metadata_schema()` so you know which fields metadata mode "
++            "could filter on — use this for all document-related questions. "
++            "The bare call returns root-level sub-folders and documents; pass "
++            "`folder_id` to drill into a sub-folder level by level. Use "
++            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
++            "to `search_documents()` first — keyword search and metadata mode "
++            "are escalation paths, only after "
++            '`browse_documents(sort="relevance")` + the persistence retries '
++            "have failed. `browse_documents` does not filter by attribute — "
++            "for typed-attribute queries, escalate to "
++            '`search_documents(mode="metadata")`.'
+         ),
+         "schema": {
+             "type": "object",
+@@ -157,10 +163,9 @@
+     "get_document": {
+         "annotations": {"readOnlyHint": True, "openWorldHint": False},
+         "description": (
+-            "Check a document's processing status and metadata. `status` is "
+-            'one of "pending", "queued", "processing", "completed", or '
+-            '"failed" — call this before `get_document_structure()` or '
+-            "`get_page_content()` to confirm the document is ready."
++            "Check a document's processing status and metadata. Call this "
++            "before `get_document_structure()` or `get_page_content()` to "
++            'confirm the document is ready (`status === "completed"`).'
+         ),
+         "schema": {
+             "type": "object",
+@@ -1586,16 +1591,10 @@ def build_agent_tools(client, include_management: bool = False,
+ # ── agent instructions ──
+ 
+ _INSTRUCTIONS_HEADER = (
+-    "PageIndex by Vectify AI is a document platform for uploading and "
+-    "managing long PDFs (research papers, financial reports, legal docs, "
+-    "textbooks, etc.)."
++    "PageIndex by Vectify AI manages the user's long PDFs (research papers, "
++    "financial reports, legal docs, textbooks, etc.)."
+ )
+ 
+-_READING_WORKFLOW = f"""\
+-READING WORKFLOW:
+-- For documents over {STRUCTURE_FIRST_PAGE_THRESHOLD} pages: call get_document_structure() first to locate relevant sections, then get_page_content() with targeted page ranges.
+-- For small documents ({STRUCTURE_FIRST_PAGE_THRESHOLD} pages or fewer): call get_page_content() directly."""
 -
--        Cloud: returns the remote PageIndex MCP config.
--        ``include_management`` picks the endpoint, so the URL itself is
--        the gate — the default connects to the read-only endpoint
--        (``/mcp?tools=read``: the server registers only read-only tools),
--        ``True`` connects to the full tool set. Local: returns an
--        in-process SDK MCP server exposing the agent tools, gated the
--        same way at registration (requires ``claude-agent-sdk``;
--        ``pip install 'pageindex[claude]'``). ``server_name`` names the
--        in-process server — match it to the key you register the entry
--        under (cloud entries carry no name).
-+        ``mcp_servers`` entry for the Claude Agent SDK: an in-process SDK
-+        MCP server, in both modes (requires ``claude-agent-sdk``;
-+        ``pip install 'pageindex[claude]'``).
-+
-+        Cloud: a relay to the PageIndex MCP server — its tools,
-+        instructions and resources, fetched live for each session — that
-+        keeps the API key off the Claude Code CLI's command line (where a
-+        remote server config would carry it, readable by any local
-+        process). ``include_management`` picks the endpoint: the
-+        default relays the read-only one (``/mcp?tools=read``: the server
-+        registers only read-only tools), ``True`` the full tool set.
-+        Local: the agent tools over the local store, gated the same way at
-+        registration. ``server_name`` names the server — match it to the
-+        key you register the entry under.
+ _TOOL_USAGE_RULES = """\
+ TOOL USAGE RULES:
+ - Invoke a tool only when all required parameters are present or clearly inferable. Never invent placeholder values.
+@@ -1612,25 +1611,23 @@ def build_agent_tools(client, include_management: bool = False,
  
-         Cloud hosts that surface MCP server instructions receive the tool
-         guidance natively — not the client's ``instructions``, which only
-         ``system_prompt`` carries; passing both duplicates the guidance
-         (harmless). ``system_prompt`` stays the recommended channel: it is
--        guaranteed delivery, and the only channel local mode has.
-+        guaranteed delivery, whole (Claude Code hands the model at most
-+        4,096 characters of a server's instructions), and the only channel
-+        local mode has.
+ _AFTER_DISCOVERY = """\
+ - Skip discovery ONLY for questions with NO possible document connection (e.g., "capital of France").
+-- After discovery: 1 match or 1 clearly best match → proceed to read and answer without asking. Multiple equally relevant → ask user to pick.
+-- Results returned ≠ correct results. If the returned documents do not clearly match the user's intent (e.g., wrong topic, wrong time period, wrong document type), treat it the same as "not found" and continue the PERSISTENCE protocol below."""
++- After discovery: 1 match or 1 clearly best match → proceed to read and answer without asking. Multiple equally relevant → ask user to pick."""
  
-         Usage (or ``claude_agent_config()`` for the whole bundle in one
-         call)::
+ _PERSISTENCE = """\
+ PERSISTENCE (before concluding the target document is not in the library):
+-This protocol applies both when results are empty AND when results are returned but none match the user's intent. Do NOT give up after a single discovery attempt. Follow these steps in order:
++Applies both when results are empty AND when returned results do not clearly match the user's intent (wrong topic, time period, or document type) — treat a mismatch as "not found". Do NOT give up after a single discovery attempt. Follow these steps in order:
+ 1. browse_documents() and compare every returned name/description against the user's intent
+ 2. Rephrase the query with synonyms or alternative terms and browse again
+ 3. Page through the ENTIRE library with `limit: 50` and `offset: next_offset` until has_more is false — MANDATORY, must be completed before concluding "not foun
 ```
 
-**File**: `pageindex/errors.py` (modified, +5/-2)
+**File**: `tests/data/cloud_mcp_contract.json` (modified, +2/-2)
 ```diff
-@@ -1,10 +1,13 @@
- class PageIndexAPIError(Exception):
-     """status_code carries the HTTP status when the raising site passes it;
--    None does not imply local/client-side."""
-+    None does not imply local/client-side. rpc_error carries an MCP
-+    server's JSON-RPC error object as it was sent."""
- 
--    def __init__(self, *args: object, status_code: int | None = None) -> None:
-+    def __init__(self, *args: object, status_code: int | None = None,
-+                 rpc_error: dict | None = None) -> None:
-         super().__init__(*args)
-         self.status_code = status_code
-+        self.rpc_error = rpc_error
- 
- 
- def _pageindex_cause(exc: BaseException | None) -> PageIndexAPIError | None:
+@@ -6,7 +6,7 @@
+         "readOnlyHint": true,
+         "openWorldHint": false
+       },
+-      "description": "Primary document retrieval tool. After orienting with get_folder_structure() (when available), use this for all document-related questions. The bare call returns root-level sub-folders and documents; pass folder_id to drill into a sub-folder level by level. Use sort=\"relevance\" + query for semantic ranking. Do NOT jump to search_documents() first — it is an escalation path, only after browse_documents(sort=\"relevance\") has failed.",
++      "description": "Primary document retrieval tool. After orienting with `get_folder_structure()` (when available) — and, for queries that may involve typed attributes, pairing it with `get_metadata_schema()` so you know which fields metadata mode could filter on — use this for all document-related questions. The bare call returns root-level sub-folders and documents; pass `folder_id` to drill into a sub-folder level by level. Use `sort=\"relevance\"` + `query` for semantic ranking. Do NOT jump to `search_documents()` first — keyword search and metadata mode are escalation paths, only after `browse_documents(sort=\"relevance\")` + the persistence retries have failed. `browse_documents` does not filter by attribute — for typed-attribute queries, escalate to `search_documents(mode=\"metadata\")`.",
+       "schema": {
+         "type": "object",
+         "properties": {
+@@ -56,7 +56,7 @@
+         "readOnlyHint": true,
+         "openWorldHint": false
+       },
+-      "description": "Check a document's processing status and metadata. `status` is one of \"pending\", \"queued\", \"processing\", \"completed\", or \"failed\" — call this before `get_document_structure()` or `get_page_content()` to confirm the document is ready.",
++      "description": "Check a document's processing status and metadata. Call this before `get_document_structure()` or `get_page_content()` to confirm the document is ready (`status === \"completed\"`).",
+       "schema": {
+         "type": "object",
+         "properties": {
 ```
 
-**File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +86/-17)
+**File**: `tests/test_agent_tools.py` (modified, +12/-4)
 ```diff
-@@ -1,31 +1,35 @@
- """Claude Agent SDK adapter: one value for the mcp_servers slot.
+@@ -2577,10 +2577,12 @@ def test_live_cloud_instructions_nonempty():
+ _CLOUD_ONLY_MARKERS = (
+     "get_folder_structure(", "search_documents", "get_document_image",
+     "image_path", "folder_id", "recursive=", 'sort="relevance"',
++    "get_metadata_schema",
+ )
  
--Cloud clients get the remote PageIndex MCP config — the framework connects
--directly, and include_management picks the endpoint (the read-only
--``?tools=read`` URL by default); local clients get an in-process SDK MCP
--server over the same tool contract, gated the same way at registration,
--its results passed through as the MCP content they are.
-+An in-process SDK MCP server in both modes. Cloud clients get a relay that
-+answers the CLI's MCP session with the PageIndex MCP server's own (its
-+handshake and instructions, tools, resources), fetched live over this
-+SDK's MCP client, so the API key stays off the CLI's command line (where
-+a remote server config would carry it, readable by any local process);
-+include_management picks the endpoint (the read-only
-+``?tools=read`` URL by default). Local clients get a server over the same
-+tool contract, gated the same way at registration, its results passed
-+through as the MCP content they are.
- """
- from __future__ import annotations
+-# The two lines no marker catches — they exist only because the sections
+-# above do: the discovery heading and the escalation ladder's closer.
++# The lines no marker catches — they exist only because the sections above
++# do: the discovery heading, the escalation ladder's closer, and the
++# metadata-mode bullets.
+ _CLOUD_ONLY_LINES = (
+     "DOCUMENT DISCOVERY (three-step funnel):",
+     '- "What do I have / list / recent / browse the X folder" '
+@@ -2589,6 +2591,12 @@ def test_live_cloud_instructions_nonempty():
+     "document is not in the library. Do NOT fall back to general "
+     "knowledge \u2014 if the user's question references their own "
+     "documents, exhaust every discovery path first.",
++    "- Fallback: when the funnel and PERSISTENCE miss on a question that "
++    "narrows by a typed attribute (year, status, category, …). Browse "
++    "and keyword search match prose, not schema fields, so attribute "
++    "filters there silently return nothing.",
++    "- Direct: counts / averages / extremes / distributions, which browse "
++    "cannot answer.",
+ )
  
- import asyncio
-+import re
- from typing import Any
  
- from .._version import sdk_version
-+from ..agent_tools import TOOL_RESPONSE_CHAR_LIMIT
- from ..errors import PageIndexAPIError
- 
-+# Claude Code shows the model only a 2KB preview of an MCP result over
-+# 50,000 chars; PageIndex results run to about TOOL_RESPONSE_CHAR_LIMIT,
-+# so twice it keeps them whole.
-+MAX_RESULT_CHARS = TOOL_RESPONSE_CHAR_LIMIT * 2
-+
- 
- def build_claude_mcp(client, include_management: bool = False, *,
-                      server_name: str = "pageindex"):
-     if getattr(client, "api_key", None):
--        # include_management picks the endpoint — the URL itself is the
--        # gate (?tools=read serves only readOnlyHint-annotated tools).
--        suffix = "" if include_management else "?tools=read"
--        return {
--            "type": "http",
--            "url": f"{client.BASE_URL}/mcp{suffix}",
--            "headers": {"Authorization": f"Bearer {client.api_key}"},
--        }
-+        return _cloud_relay(client, include_management, server_name)
- 
-     try:
-         from claude_agent_sdk import create_sdk_mcp_server, tool
-@@ -46,14 +50,13 @@ async def handler(arguments: dict[str, Any]) -> dict[str, Any]:
-         return handler
- 
-     def tool_kwargs(name: str) -> dict:
--        annotations = TOOL_CONTRACT[name].get("annotations")
--        if not annotations:
--            return {}
-         try:
-             from claude_agent_sdk import ToolAnnotations
-         except ImportError:
-             return {}
--        return {"annotations": ToolAnnotations(**annotations)}
-+        return {"annotations": ToolAnnotations(
-+            **(TOOL_CONTRACT[name].get("annotations") or {}),
-+            maxResultSizeChars=MAX_RESULT_CHARS)}
- 
-     tools = [
-         tool(name, description, schema,
-@@ -63,3 +66,69 @@ def tool_kwargs(name: str) -> dict:
-     ]
-     return create_sdk_mcp_server(name=server_name, version=sdk_version(),
-                                  tools=tools)
-+
-+
-+def _cloud_relay(client, include_management: bool, server_name: str):
-+    from importlib.metadata import version
-+    try:
-+        release = tuple(int(n) for n in
-+                        re.findall(r"\d+", version("claude-agent-sdk"))[:3])
-+    except ImportError:  # not installed
-+        release = ()
-+    if release < (0, 2, 160):
-+        # older releases answer the CLI from a server's registered
-+        # handlers, which the relay lacks (before 0.2.140), or close the
-+        # CLI's stdin at the first result (before 0.2.160): the agent
-+        # would quietly run without the tools
-+        raise PageIndexAPIError(
-+            "as_claude_mcp on cloud requires claude-agent-sdk 0.2.160 or "
-+            "newer — pip install -U claude-agent-sdk.")
-+    import anyio.to_thread
-+    import mcp.types
-+    from mcp.server.lowlevel import Server
-+    from ..mcp_bridge import McpBridge
-+
-+    # include_management picks the endpoint — the URL itself is the gate
-+    # (?tools=read serves only readOnlyHint-annotated tools).
-+    url = f"{client.BASE_URL}/mcp" + ("" if include_management else "?tools=read")
-+    headers = {"Authorization": f"Bearer {client.api_key}"}
-+
-+    class Relay(Server):
-+        async def run(self, read_stream, write_stream, *args, **kwargs):
-+            bridge = McpBridge(url, headers)  # a cloud session per CLI session
-+
-+            async def answer(request):
-+                reply = {"jsonrpc": "2.0", "id": request.id}
-+                try:
-+                    result = await anyio.to_thread.run_sync(
-+                        bridge.relay, request.method, request.params,
-+                        abandon_on_cancel=True)
-+                    outgoing = _session_message({**reply, "result": result or {}})
-+                except Exception as exc:  # one bad call must not end the session
-+                    # the server's own error, which Claude Code may act on
-+                    er
+@@ -2672,7 +2680,7 @@ def test_instructions_parity_detects_shared_drift(change):
+         "edit": AGENT_INSTRUCTIONS.replace(shared, "- Never invoke a tool."),
+         "edit_with_cloud_marker": AGENT_INSTRUCTIONS.replace(
+             shared, "- Invoke tools without parameters, including folder tools."),
+-        "truncation": "READING WORKFLOW:",
++        "truncation": AGENT_INSTRUCTIONS.split("\n\n")[0],
+     }[change]
+     with pytest.raises(AssertionError):
+         _assert_instructions_local_parity(cloud)
+@@ -2693,7 +2701,7 @@ def test_live_cloud_instructions_local_parity():
+ def test_agent_instructions_default(client):
+     text = client.agent_instructions()
+     assert text == AGENT_INSTRUCTIONS
+-    assert "READING WORKFLOW" in text
++    assert "PERSISTENCE" in text
+     assert "browse_documents" in text
+     assert "search_documents" not in text
+     assert "get_folder_structure" not in text
 ```
 
-**File**: `pageindex/mcp_bridge.py` (modified, +16/-3)
+**File**: `tests/test_local_chat.py` (modified, +3/-3)
 ```diff
-@@ -1,7 +1,8 @@
- """Minimal MCP client (streamable HTTP) for the PageIndex cloud MCP server.
- 
--Backs the cloud branches of ``client.agent_tools()`` and
--``client.agent_instructions()``: ``tools/list`` discovers the live tool set,
-+Backs the cloud branches of ``client.agent_tools()``,
-+``client.agent_instructions()`` and ``client.as_claude_mcp()`` (whose relay
-+forwards the CLI's requests): ``tools/list`` discovers the live tool set,
- ``tools/call`` executes a tool, ``prompts/list`` / ``prompts/get`` fetch the
- server's prompts (e.g. ``cited_answer``), and the ``initialize`` handshake
- carries the server's agent instructions and capabilities. Synchronous,
-@@ -61,6 +62,7 @@ def __init__(self, url: str, headers: dict[str, str]):
-         self._protocol_version: Optional[str] = None
-         self._instructions: Optional[str] = None
-         self._capabilities: dict[str, Any] = {}
-+        self._handshake: dict[str, Any] = {}
-         self._initialized = False
-         self._lock = threading.RLock()
-         self._next_id = 0
-@@ -114,7 +116,8 @@ def _extract_result(self, response: requests.Response, request_id: int) -> Any:
-         if "error" in reply:
-             error = reply["error"] or {}
-             raise PageIndexAPIError(
--                f"MCP error {error.get('code')}: {error.get('message')}"
-+                f"MCP error {error.get('code')}: {error.get('message')}",
-+                rpc_error=error,
-             )
-         return reply.get("result")
- 
-@@ -175,6 +178,7 @@ def _ensure_initialized(self) -> None:
-                     status_code=response.status_code,
-                 )
-             result = self._extract_result(response, request_id) or {}
-+            self._handshake = result
-             self._session_id = response.headers.get("Mcp-Session-Id")
-             self._protocol_version = result.get("protocolVersion",
-                                                 _PROTOCOL_VERSION)
-@@ -259,6 +263,15 @@ def call_tool(self, name: str, arguments: dict[str, Any],
-                                {"name": name, "arguments": arguments}) or {}
-         return list(result.get("content") or []), bool(result.get("isError"))
- 
-+    def relay(self, method: str, params: Optional[dict] = None) -> Any:
-+        """One request from another MCP client, answered as the server
-+        would: ``initialize`` with the server's own handshake result, any
-+        other request forwarded on this session."""
-+        if method == "initialize":
-+            self._ensure_initialized()
-+            return self._handshake
-+        return self._request(method, params)
-+
- 
- def render_text(blocks: list) -> str:
-     """The text-only rendering of MCP content: text verbatim, base64
-```
-
-**File**: `pyproject.toml` (modified, +4/-2)
-```diff
-@@ -41,8 +41,10 @@ regex = ">=2024.0.0"
- python-dotenv = ">=1.0.0"
- pyyaml = ">=6.0"
- Pillow = ">=9.0"
--# Older releases break string prompts with SDK MCP servers (#597, #780).
--claude-agent-sdk = { version = ">=0.1.53", optional = true }
-+# as_claude_mcp()'s cloud relay needs in-process servers served over mcp's
-+# own transport (0.2.140); 0.2.160 stops closing stdin on them too early;
-+# 0.2.166 bundles a CLI that passes 4,096 chars of server instructions, not 2,048.
-+claude-agent-sdk = { version = ">=0.2.166", optional = true }
- # Pre-0.122 lacks the Bedrock/Vertex tool runner; pre-0.108 executes a
- # refusal turn's tool_use blocks.
- anthropic = { version = ">=0.122.0", optional = true }
-```
-
-**File**: `tests/test_agent_tools.py` (modified, +215/-20)
-```diff
-@@ -705,18 +705,152 @@ def call_tool(self, name, arguments):
-     assert tools[0].params_json_schema is not schema  # copied, not aliased
+@@ -231,7 +231,7 @@ def test_chat_completions_end_to_end(client, store_path, fake_model):
+     assert "report.pdf" in turn2 and "completed" in turn2
+     # Managed instructions: header + the local agent guidance.
+     assert fake.instructions[0].startswith(CHAT_HEADER)
+-    assert "READING WORKFLOW" in fake.instructions[0]
++    assert "PERSISTENCE" in fake.instructions[0]
  
  
--def test_as_claude_mcp_cloud_needs_no_framework(monkeypatch):
--    monkeypatch.setitem(sys.modules, "claude_agent_sdk", None)
-+def _claude_session(server, *requests):
-+    """The server's replies to the handshake, then to each (method, params)
-+    request, through the Claude Agent SDK's own bridge: the path the
-+    Claude Code CLI's MCP messages take."""
-+    from claude_agent_sdk._internal.sdk_mcp_bridge import SdkMcpBridge
-+
-+    async def run():
-+        bridge = SdkMcpBridge(server["name"], server["instance"])
-+
-+        async def handle(message):  # a silent server fails, never hangs
-+            return await asyncio.wait_for(bridge.handle(message), 10)
-+        try:
-+            replies = [await handle({
-+                "jsonrpc": "2.0", "id": 0, "method": "initialize",
-+                "params": {"protocolVersion": "2025-06-18", "capabilities": {},
-+                           "clientInfo": {"name": "claude-code", "version": "2"}}})]
-+            await handle({"jsonrpc": "2.0",
-+                          "method": "notifications/initialized"})
-+            for request_id, (method, params) in enumerate(requests, 1):
-+                replies.append(await handle({
-+                    "jsonrpc": "2.0", "id": request_id, "method": method,
-+                    "params": params}))
-+            return replies
-+        finally:
-+            await bridge.aclose()
-+    return asyncio.run(run())
-+
-+
-+def test_as_claude_mcp_cloud_relays_the_server_with_the_key_in_process(
-+        cloud_with_fake_bridge):
-+    """A remote server config put the API key on the Claude Code CLI's
-+    command line; the in-process relay answers the CLI's MCP session with
-+    the server's own instead: its handshake and instructions, the
-+    endpoint's tool set and gate, a cloud session per CLI session."""
-+    pytest.importorskip("claude_agent_sdk")
-+    from claude_agent_sdk import ClaudeAgentOptions
-+    from claude_agent_sdk._internal.transport.subprocess_cli import (
-+        SubprocessCLITransport)
-+    cloud, created = cloud_with_fake_bridge
-+    server = cloud.as_claude_mcp()
-+    assert server["type"] == "sdk" and server["name"] == "pageindex"
-+    # the CLI's command line, as the SDK builds it
-+    argv = SubprocessCLITransport("Q", ClaudeAgentOptions(
-+        mcp_servers={"pageindex": server}, cli_path="claude"))._build_command()
-+    assert "--mcp-config" in argv and "pi-test-key" not in " ".join(argv)
-+    assert not created  # nothing is fetched until a session starts
-+
-+    init, listed, called, refused, broken, missing, again = _claude_session(
-+        server, ("tools/list", {}),
-+        ("tools/call", {"name": "get_document",
-+                        "arguments": {"doc_name": "a.pdf"}}),
-+        ("tools/call", {"name": "remove_document",
-+                        "arguments": {"doc_names": ["a.pdf"]}}),
-+        ("tools/call", {"name": "garbled", "arguments": {}}),
-+        ("resources/read", {"uri": "pageindex://gone"}),
-+        ("tools/list", {}))
-+    bridge = created["bridge"]
-+    assert bridge.url == "https://api.pageindex.ai/mcp?tools=read"
-+    assert bridge.headers == {"Authorization": "Bearer pi-test-key"}
-+    assert init["result"]["instructions"] == "SERVER GUIDANCE"
-+    tools = listed["result"]["tools"]
-+    assert [tool["name"] for tool in tools] == ["search_documents",
-+                                                "get_document"]
-+    assert tools[0]["annotations"]["readOnlyHint"] is True
-+    assert json.loads(called["result"]["content"][0]["text"])["tool"] == "get_document"
-+    assert "Tool not found" in refused["error"]["message"]
-+    # an unexpected failure stays with its call; the session goes on
-+    assert "garbled reply" in broken["error"]["message"]
-+    # the server's own error reaches the CLI intact (Claude Code acts on
-+    # -32002: the resource is gone, list again)
-+    assert missing["error"] == {"code": -32002, "message": "Resource not found",
-+                                "data": {"uri": "pageindex://gone"}}
-+    assert again["result"] == listed["result"]
-+    assert bridge.calls == [("get_document", {"doc_name": "a.pdf"})]
-+
-+    _, listed = _claude_session(cloud.as_claude_mcp(include_management=True),
-+                                ("tools/list", {}))
-+    assert created["bridge"].url == "https://api.pageindex.ai/mcp"
-+    assert len(listed["result"]["tools"]) == 4
-+
-+
-+def test_as_claude_mcp_cloud_relay_runs_calls_side_by_side(
-+        cloud_with_fake_bridge, monkeypatch):
-+    """The CLI runs read tools in parallel: a quick call is answered while a
-+    slow one runs, and the session closes at once with the slow one still
-+    in flight."""
-+    pytest.importorskip("claude_agent_sdk")
-+    import threading
-+    from claude_agent_sdk._internal.sdk_mcp_bridge import SdkMcpBridge
-+    cloud, _ = cloud_with_fake_bridge
-+    rel
+ @needs_agents
+@@ -3120,7 +3120,7 @@ def test_bridge_chat_runs_engine_over_cloud_tools(bridge_client, fake_model):
+     assert bridge.calls == [("get_document", {"doc_name": "r.pdf"})]
+     assert fake.instructions[0].startswith(CHAT_HEADER)
+     assert "CLOUD LIVE INSTRUCTIONS" in fake.instructions[0]
+-    assert "READING WORKFLOW" not in fake.instructions[0]
++    assert "PERSISTENCE" not in fake.instructions[0]
+     # The tool result made it back into turn 2.
+     assert "cloud-doc" in json.dumps(fake.inputs[1])
+ 
+@@ -3427,7 +3427,7 @@ def test_bridge_messages_lane_runs_cloud_tools(bridge_client, fake_anthropic):
+     assert wire["tools"][0]["name"] == "get_document"
+     system_text = json.dumps(wire["system"])
+     assert "CLOUD LIVE INSTRUCTIONS" in system_text
+-    assert "READING WORKFLOW" not in system_text
++    assert "PERSISTENCE" not in system_text
+ 
+ 
+ @needs_agents
 ```
 
 ---
 
-### Incident Patch 2: `50a71b68` (2026-10-19)
-**Commit Message**: fix(claude): a missing login fails in one clear error, saying how to log in (#603)
+### Incident Patch 2: `8e3eefb5` (2026-10-20)
+**Commit Message**: build: raise the litellm floor to 1.106.0 (#605)
 
-Indexing on claude-code/ without a Claude login, or with one that has
-expired, now fails in a 9-line traceback whose only error ends with the
-hint; it was 77 lines, three chained errors, the first an unrelated
-"RuntimeError: no running event loop". The hint now says where to log
-in: "run `claude`, then /login (install Claude Code first if needed)",
-since pip installs no `claude` command; the cookbook says the same
-before its run line.
+The release rule raises the floor to the latest CI-tested litellm.
+Main's CI has run 1.106.0 since v0.4.3, 16c284d included.
 
-run_off_loop calls the function after its loop check instead of inside
-the except block, so no error from a sync submit_document or chat call
-chains onto that RuntimeError, on any model route. submit_document
-shows an exhausted LLM retry ladder alone when it carries an HTTP
-status (401, 429, 5xx): the message already names the cause, and the
-chain stays on __context__. Without a status, usually a bug the ladder
-retried, the chain is kept for its frames.
+Also tidies four comments; comments only, no behavior change.
 
-**File**: `cookbook/pageindex-claude-subscription.py` (modified, +3/-0)
+**File**: `pageindex/flash/parser_pdfium_parallel.py` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,9 @@
+@@ -71,7 +71,7 @@ def _anonymous_main():
+     everything by module name and never need __main__. Depth-counted so
+     overlapping windows restore the true originals, not a mid-window snapshot.
  
-     pip install -U "pageindex[claude]"
- 
-+Log in with your Claude subscription: run `claude`, then /login (install
-+Claude Code first if needed). Then:
-+
-     python pageindex-claude-subscription.py
- """
- from pathlib import Path
+-    ponytail: window covers the whole map; a concurrent pool spawned from
++    The window covers the whole map; a concurrent pool spawned from
+     another thread whose tasks live in __main__ would break during it."""
+     global _window_depth, _window_saved
+     main = sys.modules.get("__main__")
 ```
 
 **File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +2/-2)
 ```diff
-@@ -263,8 +263,8 @@ def _run_error(result, kind, max_turns) -> PageIndexAPIError:
-         return _wrap_max_turns(max_turns)
-     status = result.api_error_status or _ERROR_STATUS.get(kind)
-     text = result.result or "; ".join(result.errors or []) or result.subtype
--    hint = {401: " Run `claude` once and log in with your Claude "
--                 "subscription.",
-+    hint = {401: " Log in with your Claude subscription: run `claude`, then "
-+                 "/login (install Claude Code first if needed).",
-             429: " Your Claude subscription's usage limit is reached; it "
-                  "resets on its own."}.get(status, "")
-     return PageIndexAPIError(f"Claude Code failed: {text.rstrip('.')}.{hint}",
+@@ -251,7 +251,7 @@ def _drop_probe_reaped(record) -> bool:
+     watcher logs this for an exit code nobody reads. Matched on the ending
+     every child watcher's wording shares, which LiteLLM's redaction filter on
+     the same logger keeps when it renders the message first."""
+-    # ponytail: drops this one message process-wide, not only for the probe;
++    # drops this one message process-wide, not only for the probe;
+     # remove once the SDK stops terminating an exited probe
+     return not (isinstance(record.msg, str)
+                 and record.msg.endswith("will report returncode 255"))
+@@ -345,7 +345,7 @@ async def claude_code_complete(model: str, prompt: str,
+     only a 400 stays per-prompt, for the indexing callers to absorb."""
+     from ..utils import LLMRetriesExhausted, _add_usage_counts
+     loop = asyncio.get_running_loop()
+-    # ponytail: one cap per event loop; submits on separate threads each get their own
++    # one cap per event loop; submits on separate threads each get their own
+     entry = _GATES.setdefault(loop, [asyncio.Semaphore(CLAUDE_CODE_CONCURRENCY), 0])
+     entry[1] += 1
+     reply = ""
 ```
 
-**File**: `pageindex/local_api.py` (modified, +5/-1)
+**File**: `pageindex/local_chat.py` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,7 @@
- from .errors import PageIndexAPIError
- from .local_store import DocStore
- from .naming import sanitize_filename, truncate_filename
--from .utils import count_tokens, run_off_loop
-+from .utils import LLMRetriesExhausted, count_tokens, run_off_loop
- 
- logger = logging.getLogger(__name__)
- 
-@@ -150,6 +150,10 @@ def submit_document(
-                 )
-         except PageIndexAPIError:
-             raise
-+        except LLMRetriesExhausted as e:
-+            # with a status its message names the cause; the chain stays on __context__
-+            raise PageIndexAPIError(f"Failed to submit document: {e}") from (
-+                None if e.status_code else e)
-         except Exception as e:
-             raise PageIndexAPIError(f"Failed to submit document: {e}") from e
-         self._check_page_bounds(structure, len(page_texts))
-```
-
-**File**: `pageindex/utils.py` (modified, +6/-4)
-```diff
-@@ -104,10 +104,12 @@ def run_off_loop(func, *args):
-     try:
-         asyncio.get_running_loop()
-     except RuntimeError:
--        return func(*args)
--    from concurrent.futures import ThreadPoolExecutor
--    with ThreadPoolExecutor(max_workers=1) as pool:
--        return pool.submit(func, *args).result()
-+        pass  # called below, so its errors don't chain onto this one
-+    else:
-+        from concurrent.futures import ThreadPoolExecutor
-+        with ThreadPoolExecutor(max_workers=1) as pool:
-+            return pool.submit(func, *args).result()
-+    return func(*args)
- 
- 
- def _litellm_model(model):
-```
-
-**File**: `tests/test_claude_code.py` (modified, +2/-1)
-```diff
-@@ -227,7 +227,8 @@ def test_missing_login_says_how_to_log_in(monkeypatch):
-              AssistantMessage(content=[TextBlock("Not logged in")], model="haiku",
-                               error="authentication_failed"),
-              result("Not logged in · Please run /login", is_error=True))
--    with pytest.raises(LLMRetriesExhausted, match="log in") as err:
-+    with pytest.raises(LLMRetriesExhausted,
-+                       match="Log in with your Claude subscription") as err:
-         asyncio.run(llm_acompletion("claude-code/haiku", "P"))
-     assert err.value.status_code == 401
- 
-```
-
-**File**: `tests/test_client.py` (modified, +20/-0)
-```diff
-@@ -892,6 +892,26 @@ def first_llm_call(*args, **kwargs):
-     assert local_client.list_documents()["total"] == 0
- 
- 
-+@pytest.mark.parametrize("status", [401, None])
-+def test_submit_shows_an_explained_llm_failure_alone(local_client, sample_pdf,
-+                                                     monkeypatch, status):
-+    """An exhausted ladder with a status (a claude-code/ login included)
-+    names its cause, so the traceback shows the submit error alone; one
-+    without, such as a bug the ladder retried, keeps its chain. Neither
-+    carries run_off_loop's no-running-loop RuntimeError."""
-+    def fail(pdf, **kwargs):
-+        raise pageindex.utils.LLMRetriesExhausted("LLM call failed",
-+                                                  status_code=status)
-+    monkeypatch.setattr(pageindex.flash, "page_index_flash", fail)
-+    with pytest.raises(PageIndexAPIError, match="LLM call failed") as err:
-+        local_client.submit_document(sample_pdf)
-+    ladder = err.value.__context__
-+    assert isinstance(ladder, pageindex.utils.LLMRetriesExhausted)
-+    assert err.value.__cause__ is (None if status else ladder)
-+    assert err.value.__suppress_context__
-+    assert ladder.__context__ is None
-+
-+
- def test_submit_rejections(local_client, sample_pdf, tmp_path):
-     with pytest.raises(FileNotFoundError):
-         local_client.submit_document(str(tmp_path / "missing.pdf"))
-```
-
----
-
-### Incident Patch 3: `05cedbc1` (2026-10-18)
-**Commit Message**: fix(claude): quiet the reaped-probe warning, name an old or missing Agent SDK (#600)
-
-On Python 3.12 and earlier, claude-code/ runs and apps that use
-as_claude_mcp() (so also claude_agent_config()) no longer print
-asyncio's "... will report returncode 255" warning. The Claude Agent SDK
-terminates its `claude -v` probe even after it has exited; asyncio's
-terminate() reaps it first, and the child watcher then logs the warning
-for an exit code nobody reads (CPython gh-87744, fixed in 3.13). A
-filter on the asyncio logger drops a record whose message ends in "will
-report returncode 255", the ending both child watchers' wordings share
-(ThreadedChildWatcher's, and PidfdChildWatcher's on Linux under 3.12),
-whether or not LiteLLM's redaction filter has rendered it. The filter is
-process-wide, so it also drops this message for the app's other asyncio
-subprocesses, and it never renders a record.
-
-The claude-code/ route refuses claude-agent-sdk older than 0.2.166, the
-claude extra's floor, with pip install -U 'pageindex[claude]'; before
-0.2.158 it failed deep inside on "unexpected keyword argument
-'verbatim_prompts'". An SDK whose import fails is refused with
-pip install 'pageindex[claude]'.
-
-**File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +31/-5)
-```diff
-@@ -16,6 +16,7 @@
- from __future__ import annotations
- 
- import asyncio
-+import logging
- import os
- import re
- import tempfile
-@@ -33,6 +34,8 @@
- 
- def build_claude_mcp(client, include_management: bool = False, *,
-                      server_name: str = "pageindex"):
-+    # the app's own Agent SDK sessions reap the same probe
-+    logging.getLogger("asyncio").addFilter(_drop_probe_reaped)
-     if getattr(client, "api_key", None):
-         return _cloud_relay(client, include_management, server_name)
-     return tool_server(client, include_management, server_name=server_name)
-@@ -91,14 +94,18 @@ def tool_kwargs(name: str) -> dict:
-                                  tools=tools)
- 
- 
--def _cloud_relay(client, include_management: bool, server_name: str):
-+def _sdk_release() -> tuple:
-+    """The installed claude-agent-sdk's (major, minor, patch); () if none."""
-     from importlib.metadata import version
-     try:
--        release = tuple(int(n) for n in
--                        re.findall(r"\d+", version("claude-agent-sdk"))[:3])
-+        return tuple(int(n) for n in
-+                     re.findall(r"\d+", version("claude-agent-sdk"))[:3])
-     except ImportError:  # not installed
--        release = ()
--    if release < (0, 2, 160):
-+        return ()
-+
-+
-+def _cloud_relay(client, include_management: bool, server_name: str):
-+    if _sdk_release() < (0, 2, 160):
-         # older releases answer the CLI from a server's registered
-         # handlers, which the relay lacks (before 0.2.140), or close the
-         # CLI's stdin at the first result (before 0.2.160): the agent
-@@ -198,6 +205,12 @@ def claude_code_options(model: str, reasoning_effort=None, **options):
+@@ -1426,7 +1426,7 @@ def _anthropic_client(backend, route):
          raise PageIndexAPIError(
-             f"{model!r} names the claude-code route but no model — e.g. "
-             "'claude-code/sonnet'.", status_code=404)
-+    if _sdk_release() < (0, 2, 166):
-+        # the claude extra's floor, the oldest release the route is verified
-+        # on; before 0.2.158 the options don't even take verbatim_prompts
-+        raise PageIndexAPIError(
-+            "claude-code/ models run on claude-agent-sdk 0.2.166 or newer — "
-+            "pip install -U 'pageindex[claude]'.")
-     try:
-         from claude_agent_sdk import ClaudeAgentOptions
-     except ImportError as exc:
-@@ -232,6 +245,18 @@ def _claude_client(options):
-     return ClaudeSDKClient(options=options)
- 
- 
-+def _drop_probe_reaped(record) -> bool:
-+    """The SDK terminates its `claude -v` probe even after it has exited; on
-+    Python 3.12 and earlier that reaps the probe first, and asyncio's child
-+    watcher logs this for an exit code nobody reads. Matched on the ending
-+    every child watcher's wording shares, which LiteLLM's redaction filter on
-+    the same logger keeps when it renders the message first."""
-+    # ponytail: drops this one message process-wide, not only for the probe;
-+    # remove once the SDK stops terminating an exited probe
-+    return not (isinstance(record.msg, str)
-+                and record.msg.endswith("will report returncode 255"))
-+
-+
- def _run_error(result, kind, max_turns) -> PageIndexAPIError:
-     if result.subtype == "error_max_turns":
-         from ..local_chat import _wrap_max_turns
-@@ -257,6 +282,7 @@ async def claude_code_messages(prompt, options):
-     itself failed). The client disconnects inline however the run ends, so
-     no CLI process outlives its event loop."""
-     from claude_agent_sdk import AssistantMessage, ResultMessage
-+    logging.getLogger("asyncio").addFilter(_drop_probe_reaped)  # added once
-     try:
-         async with _claude_client(options) as client:
-             info = (await client.get_server_info()) or {}
+             f"The Anthropic backend is not configured: {exc}") from exc
+     if key is not None and len(_ANTHROPIC_CLIENTS) < 8:
+-        # ponytail: cache capped at 8 backends; the tail constructs per call.
++        # cache capped at 8 backends; the tail constructs per call.
+         # setdefault: never evict a client another thread may already hold.
+         client = _ANTHROPIC_CLIENTS.setdefault(key, client)
+     return client
 ```
 
-**File**: `tests/test_claude_code.py` (modified, +99/-0)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,8 @@
- """The claude-code/ route — indexing and chat as Claude Code CLI runs on the
- user's subscription — over a faked CLI session: no subprocess, no login."""
- import asyncio
-+import logging
-+import sys
- import time
- from types import SimpleNamespace
- 
-@@ -104,6 +106,55 @@ def test_standard_mode_refuses_claude_code(tmp_path, sample_pdf):
-             model="gpt-4.1", summary_model="claude-code/haiku"))
- 
- 
-+SDK_FIX = r"claude-agent-sdk 0\.2\.166 or newer — pip install -U 'pageindex\[claude\]'"
-+
-+
-+def fake_sdk_version(monkeypatch, installed):
-+    import importlib.metadata
-+
-+    def version(name):
-+        if installed is None:
-+            raise importlib.metadata.PackageNotFoundError(name)
-+        return installed
-+    monkeypatch.setattr(importlib.metadata, "version", version)
-+    monkeypatch.setattr(cc, "_claude_client",
-+                        lambda options: pytest.fail("the CLI would start"))
-+
-+
-+@pytest.mark.parametrize("installed", ["0.1.53", "0.2.165", None])
-+def test_indexing_names_an_old_or_missing_agent_sdk(
-+        monkeypatch, tmp_path, sample_pdf, installed):
-+    """Before 0.2.158 the route failed deep inside, on a TypeError about
-+    verbatim_prompts; below 0.2.166 it is unverified."""
-+    fake_sdk_version(monkeypatch, installed)
-+    if installed is None:  # no module either
-+        monkeypatch.setitem(sys.modules, "claude_agent_sdk", None)
-+    client = PageIndexLocalClient(storage_path=str(tmp_path / "s"),
-+                                  index_model="claude-code/haiku")
-+    with pytest.raises(PageIndexAPIError, match=SDK_FIX):
-+        client.submit_document(sample_pdf)
-+
-+
-+def test_indexing_names_a_broken_agent_sdk(monkeypatch, tmp_path, sample_pdf):
-+    """Its metadata passes the floor but the import fails."""
-+    fake_sdk_version(monkeypatch, "0.2.168")
-+    monkeypatch.setitem(sys.modules, "claude_agent_sdk", None)
-+    client = PageIndexLocalClient(storage_path=str(tmp_path / "s"),
-+                                  index_model="claude-code/haiku")
-+    with pytest.raises(PageIndexAPIError, match=r"pip install 'pageindex\[claude\]'"):
-+        client.submit_document(sample_pdf)
-+
-+
-+@needs_claude
-+def test_chat_names_an_old_agent_sdk_and_takes_the_extras_floor(
-+        monkeypatch, chat_client):
-+    fake_sdk_version(monkeypatch, "0.2.165")
-+    with pytest.raises(PageIndexAPIError, match=SDK_FIX):
-+        chat_client.chat("Q")
-+    fake_sdk_version(monkeypatch, "0.2.166")
-+    assert cc.claude_code_options("claude-code/haiku").model == "haiku"
-+
-+
- def test_chat_refuses_what_the_cli_cannot_take(chat_client):
-     with pytest.raises(PageIndexAPIError, match="takes no temperature"):
-         chat_client.chat_completions("Q", temperature=0)
-@@ -258,6 +309,54 @@ async def many():
-     assert cc._GATES == {}  # the cap goes with its last call, not kept per loop
- 
- 
-+@pytest.fixture
-+def asyncio_log():
-+    """The asyncio logger without the probe filter an earlier test may have
-+    left on it (a filter stays: it is process-wide)."""
-+    log = logging.getLogger("asyncio")
-+    log.removeFilter(cc._drop_probe_reaped)
-+    return log
-+
-+
-+def test_the_probe_filter_renders_no_other_record():
-+    """It sees every asyncio record in the app: rendering one with bad
-+    arguments would raise into the caller, where logging alone reports it."""
-+    bad = logging.makeLogRecord({"name": "asyncio", "msg": "%s %s", "args": ("x",)})
-+    assert cc._drop_probe_reaped(bad) is True
-+
-+
-+def assert_drops_only_the_probe_warning(log, caplog):
-+    caplog.clear()
-+    with caplog.at_level(logging.WARNING, logger="asyncio"):
-+        log.warning("Unknown child process pid %d, will report returncode 255", 42)
-+        # Python 3.12's pidfd child watcher on Linux
-+        log.warning("child process pid %d exit status already read: "
-+                    " will report returncode 255", 44)
-+        # as LiteLLM's redaction filter on this logger leaves it: rendered
-+        log.warning("Unknown child process pid 43, will report returncode 255")
-+        log.warning("Executing %s took %.3f seconds", "<Task>", 0.2)
-+    # only that message: asyncio's other warnings still reach the user
-+    assert [r.getMessage() for r in caplog.records] == [
-+        "Executing <Task> took 0.200 seconds"]
-+
-+
-+@needs_claude
-+def test_a_run_drops_asyncio_noise_about_the_reaped_version_probe(
-+        monkeypatch, caplog, asyncio_log):
-+    fake_cli(monkeypatch, result("ok"))
-+    assert asyncio.run(llm_acompletion("claude-code/haiku", "P")) == "ok"
-+    assert_drops_only_the_probe_warning(asyncio_log, caplog)
-+
-+
-+@needs_claude
-+def test_as_claude_mcp_drops_it_for_the_apps_own_sessions(
-+        chat_client, caplog, asyncio_log):
-+    """An app running its own Agent SDK sessions reaps the same probe;
-+    claude_agent_config() builds its server through as_claude_mcp()."""
-+    chat_client.as_claude_mcp()
-+    assert_drops_only_the_probe_warning(asyncio_log, caplog)
-+
-+
- @needs_claude
- def test_fla
+@@ -33,7 +33,7 @@ openai = ">=1.70.0"
+ # Older releases crash on current openai before the request is sent.
+ openai-agents = ">=0.18.1"
+ mcp = ">=1.19.0,<3"
+-litellm = ">=1.105.1"
++litellm = ">=1.106.0"
+ PyPDF2 = ">=3.0.0"
+ pypdfium2 = ">=5"
+ sortedcontainers = ">=2.4.0"
+```
+
+**File**: `requirements.txt` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-litellm>=1.105.1
++litellm>=1.106.0
+ openai>=1.70.0
+ requests>=2.28.0
+ # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #606** (2026-10-20): docs: update readme (@rejojer)
+- **PR #605** (2026-10-20): build: raise the litellm floor to 1.106.0 (@rejojer)
+- **PR #604** (2026-10-20): fix: sync the local tool text with the cloud MCP server (@rejojer)
 - **PR #603** (2026-10-19): fix(claude): a missing login fails in one clear error, saying how to log in (@rejojer)
 - **PR #601** (2026-10-18): docs(cookbook): index the Harness² paper, show progress, stream the answer (@rejojer)
 - **PR #600** (2026-10-18): fix(claude): quiet the reaped-probe warning, name an old or missing Agent SDK (@rejojer)
-- **PR #599** (2026-10-18): docs(cookbook): Claude subscription example, linked from the README (@rejojer)
-- **PR #598** (2026-10-18): docs(readme): Claude subscription paragraph; build: litellm floor 1.105.1 (@rejojer)
-- **PR #595** (2026-10-18): feat(claude): run indexing and chat on a Claude subscription (claude-code/) (@rejojer)
 
 ---
 
@@ -2085,56 +1609,61 @@ pip install 'pageindex[claude]'.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. claude): keep the cloud API key off the Claude Code command line (#594)
+## X. sync the local tool text with the cloud MCP server (#604)
 
 **RULE**:
-When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7162ef62`: claude): keep the cloud API key off the Claude Code command line (#594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9cdec401`: sync the local tool text with the cloud MCP server (#604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        ``mcp_servers`` entry for the Claude Agent SDK: an in-process SDK
-        MCP server, in both modes (requires ``claude-agent-sdk``;
-        ``pip install 'pageindex[claude]'``).
-
-        Cloud: a relay to the PageIndex MCP server — its tools,
-        instructions and resources, fetched live for each session — that
-        keeps the API key off the Claude Code CLI's command line (where a
-        remote server config would carry it, readable by any local
-        process). ``include_management`` picks the endpoint: the
-        default relays the read-only one (``/mcp?tools=read``: the server
-        registers only read-only tools), ``True`` the full tool set.
-        Local: the agent tools over the local store, gated the same way at
-        registration. ``server_name`` names the server — match it to the
-        key you register the entry under.
-        guaranteed delivery, whole (Claude Code hands the model at most
-        4,096 characters of a server's instructions), and the only channel
-        local mode has.
+            "`get_folder_structure()` (when available) — and, for queries "
+            "that may involve typed attributes, pairing it with "
+            "`get_metadata_schema()` so you know which fields metadata mode "
+            "could filter on — use this for all document-related questions. "
+            "The bare call returns root-level sub-folders and documents; pass "
+            "`folder_id` to drill into a sub-folder level by level. Use "
+            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
+            "to `search_documents()` first — keyword search and metadata mode "
+            "are escalation paths, only after "
+            '`browse_documents(sort="relevance")` + the persistence retries '
+            "have failed. `browse_documents` does not filter by attribute — "
+            "for typed-attribute queries, escalate to "
+            '`search_documents(mode="metadata")`.'
+            "Check a document's processing status and metadata. Call this "
+            "before `get_document_structure()` or `get_page_content()` to "
+            'confirm the document is ready (`status === "completed"`).'
+    "PageIndex by Vectify AI manages the user's long PD
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        ``mcp_servers`` entry for the Claude Agent SDK.
-
-        Cloud: returns the remote PageIndex MCP config.
-        ``include_management`` picks the endpoint, so the URL itself is
-        the gate — the default connects to the read-only endpoint
-        (``/mcp?tools=read``: the server registers only read-only tools),
-        ``True`` connects to the full tool set. Local: returns an
-        in-process SDK MCP server exposing the agent tools, gated the
-        same way at registration (requires ``claude-agent-sdk``;
-        ``pip install 'pageindex[claude]'``). ``server_name`` names the
-        in-process server — match it to the key you register the entry
-        under (cloud entries carry no name).
-        guaranteed delivery, and the only channel local mode has.
+            "get_folder_structure() (when available), use this for all "
+            "document-related questions. The bare call returns root-level "
+            "sub-folders and documents; pass folder_id to drill into a "
+            'sub-folder level by level. Use sort="relevance" + query for '
+            "semantic ranking. Do NOT jump to search_documents() first — it "
+            "is an escalation path, only after "
+            'browse_documents(sort="relevance") has failed.'
+            "Check a document's processing status and metadata. `status` is "
+            'one of "pending", "queued", "processing", "completed", or '
+            '"failed" — call this before `get_document_structure()` or '
+            "`get_page_content()` to confirm the document is ready."
+    "PageIndex by Vectify AI is a document platform for uploading and "
+    "managing long PDFs (research papers, financial reports, legal docs, "
+    "textbooks, etc.)."
+_READING_WORKFLOW = f"""\
+READING WORKFLOW:
+- For documents over {STRUCTURE_FIRST_PAGE_THRESHOLD} pages: call get_document_structure() first to locate relevant sections, then get_page_content() with targeted page ranges.
+- For small documents ({STRUCT
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7162ef62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9cdec401` are properly handled with clean fallback behavior.

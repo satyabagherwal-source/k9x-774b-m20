@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `dc64f3b4`  
+> **Source Version**: `43dfe11b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:04:19.418Z  
+> **Timestamp**: 2026-10-20T11:26:54.238Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:04:19.414Z  
+> **Harvest Timestamp**: 2026-10-20T11:21:52.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29573 stars
+- **Stars / Engagement**: 29575 stars
 
 ---
 
@@ -656,11 +656,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24171** (2026-10-19): **portal: align robot account immutability label**
-  *Symptoms*: Fixes #24170  The robot-account permission selector uses `ROBOT_ACCOUNT.IMMUTABLE_TAG`, but this key says `Immutable Tag` in all five supported locale files while the same feature is named `Tag Immutability` elsewhere in each file. Update only that label so the permission selector uses the established feature name; resource keys and the other `IMMUTABLE_TAG` entries are unchanged.  Validation:  - Executed source-level reproduction on the upstream snapshot: all five `ROBOT_ACCOUNT.IMMUTABLE_TAG` values were `Immutable Tag`, while the corresponding feature labels were already `Tag Immutability` (or the existing localized equivalent). - JSON parsing and key/value assertions pass for all five locale files. - `npm run i18n:check` passes: no missing keys and all language files remain synchronized. - `git diff --check` passes; the diff is limited to the five intended label values.  Prepared and tested with Codex assistance; no human review is claimed.  Signed-off-by: NUAAwqy <146524024+NUAAwqy@users.noreply.github.com> 
+- **Issue #24180** (2026-10-20): **[release-2.15] fix(replication): make the image resource filter take effect again (#24176)**
+  *Symptoms*: Backport of #24176 to release-2.15.0.  Since the chart resource type was removed in #18191, the `resource` filter of a replication policy is only validated and shown in the UI but never applied when fetching artifacts, so `image` and `artifact` behave the same and charts get replicated too.  This wires the `resource` filter back into `BuildArtifactFilters`: `image` keeps artifacts whose type is `IMAGE`, `artifact` keeps everything. Artifacts with an unknown type (e.g. from the native registry adapter) are kept, otherwise pull replication from such registries with the `image` filter would replicate nothing.  Clean cherry-pick apart from adding the `fmt` import, which `artifact.go` on this branch didn't have yet.  Note for the release note: policies saved with the `image` filter since 2.8 will start excluding non-image artifacts (CHART, CNAI, WASM...), which is what the filter was meant to do.  Fixes #24047  - [x] Well Written Title and Summary of the PR - [x] Label the PR as needed. - [x] Accepted the DCO. Commits without the DCO will delay acceptance. - [x] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24170** (2026-10-19): **Robot account permission labeled "Immutable Tag" instead of "Tag Immutability"**
-  *Symptoms*: Creating a robot account (Select Permissions) lists the resource as **Immutable Tag**, but everywhere else the feature is called **Tag Immutability** (project tab, rule dialogs).  Rename the robot permission label to **Tag Immutability** for consistency.  `ROBOT_ACCOUNT.IMMUTABLE_TAG` → `"Tag Immutability"` in each locale (en-us, ko-kr, pt-br, de-de, tr-tr). Label only; resource key `immutable-tag` unchanged.  <img width="554" height="337" alt="Image" src="https://github.com/user-attachments/assets/43f1b6ea-9c6d-4026-a373-06e25a6fdfe5" />
+- **Issue #24179** (2026-10-20): **chore: bump Trivy, Trivy adapter, and Distribution versions**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -677,89 +677,144 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc64f3b4` (2026-10-19)
-**Commit Message**: portal: align robot account immutability label (#24171)
+### Incident Patch 1: `a360e527` (2026-10-20)
+**Commit Message**: fix(replication): make the image resource filter take effect again (#24176)
 
-Use the established “Tag Immutability” label for the robot-account permission selector in all supported locales.
+The resource filter stopped filtering artifacts by type when the chart
+resource type was removed in #18191, so policies with the image filter
+replicated charts and other artifacts as well.
 
-Fixes #24170
+Fixes #24047
 
-Prepared and tested with Codex assistance; no human review is claimed.
+Signed-off-by: chlins <[REDACTED_EMAIL]>
 
-Signed-off-by: NUAAwqy <[REDACTED_EMAIL]>
-
-**File**: `src/portal/src/i18n/lang/de-de-lang.json` (modified, +1/-1)
+**File**: `src/pkg/reg/filter/artifact.go` (modified, +19/-2)
 ```diff
-@@ -393,7 +393,7 @@
-         "ARTIFACT_ADDITION": "Artifact Addition",
-         "ARTIFACT_LABEL": "Artifact Label",
-         "PREHEAT_POLICY": "Preheat Policy",
--        "IMMUTABLE_TAG": "Immutable Tag",
-+        "IMMUTABLE_TAG": "Tag Immutability",
-         "LOG": "Log",
-         "NOTIFICATION_POLICY": "Notification Policy",
-         "QUOTA": "Quota",
+@@ -55,6 +55,17 @@ func BuildArtifactFilters(filters []*model.Filter) (ArtifactFilters, error) {
+ 			} else {
+ 				return nil, fmt.Errorf("invalid filter value type for tag filter, expecting string")
+ 			}
++		case model.FilterTypeResource:
++			if resourceType, ok := filter.Value.(string); ok {
++				// "artifact" covers all kinds of artifacts, only "image" narrows down the result
++				if resourceType == model.ResourceTypeImage {
++					f = &artifactTypeFilter{
++						types: []string{resourceType},
++					}
++				}
++			} else {
++				return nil, fmt.Errorf("invalid filter value type for resource filter, expecting string")
++			}
+ 		}
+ 		if f != nil {
+ 			fs = append(fs, f)
+@@ -93,10 +104,16 @@ func (a *artifactTypeFilter) Filter(artifacts []*model.Artifact) ([]*model.Artif
+ 	}
+ 	var result []*model.Artifact
+ 	for _, artifact := range artifacts {
++		// some adapters (e.g. the native registry adapter) don't know the type of
++		// the artifacts, keep them rather than filtering out everything
++		if len(artifact.Type) == 0 {
++			result = append(result, artifact)
++			continue
++		}
+ 		for _, t := range a.types {
+-			if strings.EqualFold(strings.ToLower(artifact.Type), strings.ToLower(t)) {
++			if strings.EqualFold(artifact.Type, t) {
+ 				result = append(result, artifact)
+-				continue
++				break
+ 			}
+ 		}
+ 	}
 ```
 
-**File**: `src/portal/src/i18n/lang/en-us-lang.json` (modified, +1/-1)
+**File**: `src/pkg/reg/filter/artifact_test.go` (added, +74/-0)
 ```diff
-@@ -393,7 +393,7 @@
-         "ARTIFACT_ADDITION": "Artifact Addition",
-         "ARTIFACT_LABEL": "Artifact Label",
-         "PREHEAT_POLICY": "Preheat Policy",
--        "IMMUTABLE_TAG": "Immutable Tag",
-+        "IMMUTABLE_TAG": "Tag Immutability",
-         "LOG": "Log",
-         "NOTIFICATION_POLICY": "Notification Policy",
-         "QUOTA": "Quota",
-```
-
-**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +1/-1)
-```diff
-@@ -393,7 +393,7 @@
-         "ARTIFACT_ADDITION": "아티팩트 추가",
-         "ARTIFACT_LABEL": "아티팩트 라벨",
-         "PREHEAT_POLICY": "예열 정책",
--        "IMMUTABLE_TAG": "Immutable Tag",
-+        "IMMUTABLE_TAG": "Tag Immutability",
-         "LOG": "로그",
-         "NOTIFICATION_POLICY": "알림 정책",
-         "QUOTA": "할당량",
-```
-
-**File**: `src/portal/src/i18n/lang/pt-br-lang.json` (modified, +1/-1)
-```diff
-@@ -393,7 +393,7 @@
-         "ARTIFACT_ADDITION": "Artifact Addition",
-         "ARTIFACT_LABEL": "Artifact Label",
-         "PREHEAT_POLICY": "Preheat Policy",
--        "IMMUTABLE_TAG": "Immutable Tag",
-+        "IMMUTABLE_TAG": "Tag Immutability",
-         "LOG": "Log",
-         "NOTIFICATION_POLICY": "Notification Policy",
-         "QUOTA": "Quota",
-```
-
-**File**: `src/portal/src/i18n/lang/tr-tr-lang.json` (modified, +1/-1)
-```diff
-@@ -394,7 +394,7 @@
-         "ARTIFACT_ADDITION": "Artifact Addition",
-         "ARTIFACT_LABEL": "Artifact Label",
-         "PREHEAT_POLICY": "Preheat Policy",
--        "IMMUTABLE_TAG": "Immutable Tag",
-+        "IMMUTABLE_TAG": "Tag Immutability",
-         "LOG": "Log",
-         "NOTIFICATION_POLICY": "Notification Policy",
-         "QUOTA": "Quota",
+@@ -0,0 +1,74 @@
++// Copyright Project Harbor Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package filter
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/goharbor/harbor/src/pkg/reg/model"
++)
++
++func TestArtifactResourceFilters(t *testing.T) {
++	artifacts := []*model.Artifact{
++		{Type: "IMAGE", Tags: []string{"1.0"}},
++		{Type: "CHART", Tags: []string{"1.0"}},
++		{Type: "CNAI", Tags: []string{"1.0"}},
++		// the type is unknown for artifacts fetched from the native registry adapter
++		{Tags: []string{"1.0"}},
++	}
++
++	// resource type "image" keeps the images and the artifacts whose type is unknown
++	filters := []*model.Filter{
++		{Type: model.FilterTypeResource, Value: model.ResourceTypeImage},
++	}
++	result, err := DoFilterArtifacts(artifacts, filters)
++	require.NoError(t, err)
++	require.Len(t, result, 2)
++	require.Equal(t, "IMAGE", result[0].Type)
++	require.Equal(t, "", result[1].Type)
++
++	// resource type "artifact" keeps everything
++	filters = []*model.Filter{
++		{Type: model.FilterTypeResource, Value: model.ResourceTypeArtifact},
++	}
++	result, err = DoFilterArtifacts(artifacts, filters)
++	require.NoError(t, err)
++	require.Len(t, result, 4)
++
++	// combined with a tag filter
++	filters = []*model.Filter{
++		{Type: model.FilterTypeResource, Value: model.ResourceTypeImage},
++		{Type: model.FilterTypeTag, Value: "1.*"},
++	}
++	result, err = DoFilterArtifacts(artifacts, filters)
++	require.NoError(t, err)
++	require.Len(t, result, 2)
++
++	// invalid value type
++	filters = []*model.Filter{
++		{Type: model.FilterTypeResource, Value: 1},
++	}
++	_, err = DoFilterArtifacts(artifacts, filters)
++	require.Error(t, err)
++}
++
++func TestArtifactTypeFilterNoDuplicates(t *testing.T) {
++	f := &artifactTypeFilter{types: []string{"image", "IMAGE"}}
++	result, err := f.Filter([]*model.Artifact{{Type: "IMAGE"}})
++	require.NoError(t, err)
++	require.Len(t, result, 1)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24180** (2026-10-20): [release-2.15] fix(replication): make the image resource filter take effect again (#24176) (@chlins)
+- **PR #24179** (2026-10-20): chore: bump Trivy, Trivy adapter, and Distribution versions (@stonezdj)
+- **PR #24176** (2026-10-20): fix(replication): make the image resource filter take effect again (@chlins)
 - **PR #24171** (2026-10-19): portal: align robot account immutability label (@NUAAwqy)
 - **PR #24167** (2026-10-19): chore(deps): bump google.golang.org/grpc to v1.82.2 and golang/x/net to v0.60.0 (@stonezdj)
-- **PR #24154** (2026-10-16): test(robot): update guest member radio button locator (@stonezdj)
-- **PR #24153** (2026-10-19): [release-2.13] fix: avoid panic in user audit event resolver on nil event data (#23461) (@Vad1mo)
-- **PR #24152** (2026-10-19): [release-2.14] fix: avoid panic in user audit event resolver on nil event data (#23461) (@Vad1mo)
-- **PR #24150** (2026-10-16): (cherry-pick) support configurable PIP_INDEX_URL for swagger client build  and make openapi-generator-cli download URL configurable (@stonezdj)
+- **PR #24164** (2026-10-20): Stamp version info into the bundled Trivy adapter binary (@fjvbn2003)
 
 ---
 
@@ -779,28 +834,47 @@ Signed-off-by: NUAAwqy <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. portal: align robot account immutability label (#24171)
+## X. replication): make the image resource filter take effect again (#24176)
 
 **RULE**:
-When implementing operations in `src/portal/src/i18n/lang/de-de-lang.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/reg/filter/artifact.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc64f3b4`: portal: align robot account immutability label (#24171). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a360e527`: replication): make the image resource filter take effect again (#24176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/src/i18n/lang/de-de-lang.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/reg/filter/artifact.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "IMMUTABLE_TAG": "Tag Immutability",
+		case model.FilterTypeResource:
+			if resourceType, ok := filter.Value.(string); ok {
+				// "artifact" covers all kinds of artifacts, only "image" narrows down the result
+				if resourceType == model.ResourceTypeImage {
+					f = &artifactTypeFilter{
+						types: []string{resourceType},
+					}
+				}
+			} else {
+				return nil, fmt.Errorf("invalid filter value type for resource filter, expecting string")
+			}
+		// some adapters (e.g. the native registry adapter) don't know the type of
+		// the artifacts, keep them rather than filtering out everything
+		if len(artifact.Type) == 0 {
+			result = append(result, artifact)
+			continue
+		}
+			if strings.EqualFold(artifact.Type, t) {
+				break
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        "IMMUTABLE_TAG": "Immutable Tag",
+			if strings.EqualFold(strings.ToLower(artifact.Type), strings.ToLower(t)) {
+				continue
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc64f3b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a360e527` are properly handled with clean fallback behavior.

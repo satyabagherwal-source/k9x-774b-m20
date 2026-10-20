@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T11:09:14.325Z",
-  "total_cycles_completed": 3759,
-  "total_learnings_persisted": 3759,
-  "total_rules_promoted": 2950,
+  "last_updated": "2026-10-20T11:26:54.562Z",
+  "total_cycles_completed": 3761,
+  "total_learnings_persisted": 3761,
+  "total_rules_promoted": 2952,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:19:05.571Z",
-      "repository": "urllib3/urllib3",
-      "learningId": "learn-github-urllib3-urllib3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:19:07.061Z",
-      "repository": "simibac/ConfettiSwiftUI",
-      "learningId": "learn-github-simibac-confettiswiftui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:19:16.925Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T11:09:14.325Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T11:21:59.461Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T11:26:54.562Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

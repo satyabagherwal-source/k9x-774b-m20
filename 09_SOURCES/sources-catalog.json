@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "50a71b68",
+    "sourceVersion": "5d9136e9",
     "license": "MIT",
-    "contentHash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
-    "lastHarvestedAt": "2026-10-19T06:19:09.980Z",
+    "contentHash": "50c5e54a5b4b6d5ead7984ffb96554520e4160beca89342281e0d4bd3581f0a4",
+    "lastHarvestedAt": "2026-10-20T11:21:59.456Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "dc64f3b4",
+    "sourceVersion": "43dfe11b",
     "license": "Apache-2.0",
-    "contentHash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
-    "lastHarvestedAt": "2026-10-19T20:04:19.594Z",
+    "contentHash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
+    "lastHarvestedAt": "2026-10-20T11:26:54.558Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {

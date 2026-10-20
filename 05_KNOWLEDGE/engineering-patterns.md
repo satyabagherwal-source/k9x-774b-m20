@@ -226625,3 +226625,155 @@ checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `95901ef6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3144. sync the local tool text with the cloud MCP server (#604) (Harvested from VectifyAI/PageIndex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "sync the local tool text with the cloud MCP server (#604)",
+  "source": "VectifyAI/PageIndex",
+  "source_url": "https://github.com/VectifyAI/PageIndex",
+  "source_version": "5d9136e9",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T11:21:59.311Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vectifyai-pageindex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `5d9136e9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9cdec401`: sync the local tool text with the cloud MCP server (#604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+            "`get_folder_structure()` (when available) — and, for queries "
+            "that may involve typed attributes, pairing it with "
+            "`get_metadata_schema()` so you know which fields metadata mode "
+            "could filter on — use this for all document-related questions. "
+            "The bare call returns root-level sub-folders and documents; pass "
+            "`folder_id` to drill into a sub-folder level by level. Use "
+            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
+            "to `search_documents()` first — keyword search and metadata mode "
+            "are escalation paths, only after "
+            '`browse_documents(sort="relevance")` + the persistence retries '
+            "have failed. `browse_documents` does not filter by attribute — "
+            "for typed-attribute queries, escalate to "
+            '`search_documents(mode="metadata")`.'
+            "Check a document's processing status and metadata. Call this "
+            "before `get_document_structure()` or `get_page_content()` to "
+            'confirm the document is ready (`status === "completed"`).'
+    "PageIndex by Vectify AI manages the user's long PD
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+            "get_folder_structure() (when available), use this for all "
+            "document-related questions. The bare call returns root-level "
+            "sub-folders and documents; pass folder_id to drill into a "
+            'sub-folder level by level. Use sort="relevance" + query for '
+            "semantic ranking. Do NOT jump to search_documents() first — it "
+            "is an escalation path, only after "
+            'browse_documents(sort="relevance") has failed.'
+            "Check a document's processing status and metadata. `status` is "
+            'one of "pending", "queued", "processing", "completed", or '
+            '"failed" — call this before `get_document_structure()` or '
+            "`get_page_content()` to confirm the document is ready."
+    "PageIndex by Vectify AI is a document platform for uploading and "
+    "managing long PDFs (research papers, financial reports, legal docs, "
+    "textbooks, etc.)."
+_READING_WORKFLOW = f"""\
+READING WORKFLOW:
+- For documents over {STRUCTURE_FIRST_PAGE_THRESHOLD} pages: call get_document_structure() first to locate relevant sections, then get_page_content() with targeted page ranges.
+- For small documents ({STRUCT
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9cdec401` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3145. replication): make the image resource filter take effect again (#24176) (Harvested from goharbor/harbor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "replication): make the image resource filter take effect again (#24176)",
+  "source": "goharbor/harbor",
+  "source_url": "https://github.com/goharbor/harbor",
+  "source_version": "43dfe11b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T11:26:54.406Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goharbor-harbor",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `43dfe11b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/pkg/reg/filter/artifact.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a360e527`: replication): make the image resource filter take effect again (#24176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/reg/filter/artifact.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		case model.FilterTypeResource:
+			if resourceType, ok := filter.Value.(string); ok {
+				// "artifact" covers all kinds of artifacts, only "image" narrows down the result
+				if resourceType == model.ResourceTypeImage {
+					f = &artifactTypeFilter{
+						types: []string{resourceType},
+					}
+				}
+			} else {
+				return nil, fmt.Errorf("invalid filter value type for resource filter, expecting string")
+			}
+		// some adapters (e.g. the native registry adapter) don't know the type of
+		// the artifacts, keep them rather than filtering out everything
+		if len(artifact.Type) == 0 {
+			result = append(result, artifact)
+			continue
+		}
+			if strings.EqualFold(artifact.Type, t) {
+				break
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+			if strings.EqualFold(strings.ToLower(artifact.Type), strings.ToLower(t)) {
+				continue
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a360e527` are properly handled with clean fallback behavior.

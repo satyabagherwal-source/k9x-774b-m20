@@ -3789,3 +3789,5 @@ Every entry in this ledger must capture:
 | `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `3b7e5cb5` | Multi-dimensional audit evidence | 2026-10-20T11:09:01.235Z |
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `64d9b691` | Multi-dimensional audit evidence | 2026-10-20T11:09:05.514Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `95901ef6` | Multi-dimensional audit evidence | 2026-10-20T11:09:14.320Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `5d9136e9` | Multi-dimensional audit evidence | 2026-10-20T11:21:59.456Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `43dfe11b` | Multi-dimensional audit evidence | 2026-10-20T11:26:54.558Z |

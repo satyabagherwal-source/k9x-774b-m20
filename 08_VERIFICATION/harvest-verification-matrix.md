@@ -3782,3 +3782,5 @@
 | `CYCLE-20261020-YVU8` | `2026-10-20T11:09:01.232Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3141` | Yes (`4c2cfa7c...`) |
 | `CYCLE-20261020-YZ53` | `2026-10-20T11:09:05.511Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3142` | Yes (`aad725d3...`) |
 | `CYCLE-20261020-Z5XP` | `2026-10-20T11:09:14.317Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`222a37e7...`) |
+| `CYCLE-20261020-FKBD` | `2026-10-20T11:21:59.449Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3144` | Yes (`50c5e54a...`) |
+| `CYCLE-20261020-LW0N` | `2026-10-20T11:26:54.551Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3145` | Yes (`f0a4d742...`) |

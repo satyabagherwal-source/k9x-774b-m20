@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T11:09:14.328Z",
+  "last_updated": "2026-10-20T11:26:54.566Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
-      "verified_at": "2026-10-19T06:19:09.987Z",
+      "content_hash": "50c5e54a5b4b6d5ead7984ffb96554520e4160beca89342281e0d4bd3581f0a4",
+      "verified_at": "2026-10-20T11:21:59.464Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:19:09.987Z"
+      "last_updated": "2026-10-20T11:21:59.464Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "a2fe3d4261b5d7140867ca4a6ab125cb39cb076765f3163a31cbe12ca2d54370",
-      "verified_at": "2026-10-19T20:04:19.599Z",
+      "content_hash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
+      "verified_at": "2026-10-20T11:26:54.565Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:04:19.599Z"
+      "last_updated": "2026-10-20T11:26:54.565Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
