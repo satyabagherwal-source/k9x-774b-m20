@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e5174995`  
+> **Source Version**: `1abd9936`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:16:59.065Z  
+> **Timestamp**: 2026-10-20T18:51:50.108Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:16:58.964Z  
+> **Harvest Timestamp**: 2026-10-20T18:51:50.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -978,319 +978,80 @@ export function enlarge(matrix: GridObject, rows: number, cols: number): Grid {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5174995` (2026-10-20)
-**Commit Message**: Add Matrix.locate and offset-based pad for ARC
+### Incident Patch 1: `1abd9936` (2026-10-20)
+**Commit Message**: Rename few-shot prompt label to dataset
 
-Add Matrix.locate to return a tight crop with its top-left x/y position, and change Matrix.pad to place the matrix at explicit left/top offsets instead of centering it, validating offsets and fit.
-
-The visualizer now sends cropped train instances plus the instance location to the LLM, passes previously solved input_instances as context for later instances, and pads output instances back using the x/y from output_value. TestInstance gains output and value fields. README documents the new behavior.
-
-**File**: `arc/README.md` (modified, +17/-9)
+**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
 ```diff
-@@ -323,15 +323,23 @@ occupied cells are preserved. Empty and all-zero matrices return `[]`. The input
- is not modified. Ragged matrices and non-finite or nonnumeric cells are rejected
- explicitly.
- This standalone utility does not change the full-size instance masks or return
--position metadata; callers must retain the original position separately.
--
--`Matrix.pad(matrix, rows, cols)` returns a new matrix of the requested dimensions,
--centering the input and filling the surrounding cells with zeros. Any extra odd
--row or column of padding goes on the bottom or right. The input is not modified.
--Empty matrices can be padded to an all-zero canvas. Invalid matrices, negative
--or non-integer dimensions, and dimensions smaller than the input are rejected.
--Centering does not restore the original position discarded by cropping or
--automatically change full-size instance masks.
-+position metadata. Use `Matrix.locate` to retain the original position with
-+the crop.
-+
-+`Matrix.locate(matrix)` returns `{ matrix, x, y }`, pairing the same tight crop
-+with its zero-based top-left position in the original matrix: `x` is the column
-+and `y` is the row. Empty and all-zero matrices return
-+`{ matrix: [], x: 0, y: 0 }`. It uses the same validation as `Matrix.crop` and
-+does not modify the input. For a located result,
-+`Matrix.pad(result.matrix, rows, cols, result.x, result.y)` restores the crop
-+to its original position on a canvas with the supplied dimensions.
-+
-+`Matrix.pad(matrix, rows, cols, left, top)` returns a new matrix of the requested
-+dimensions, placing the input at the required zero-based column and row offsets
-+and filling the remaining cells with zeros. It does not center or modify the
-+input. Empty matrices can be padded to an all-zero canvas. Invalid matrices,
-+dimensions or offsets that are not non-negative safe integers, and placements
-+that do not fit inside the requested dimensions are rejected.
- 
- The same prediction path replays every training pair before predicting the
- held-out input. A training mismatch stops the run. Held-out predictions are
-```
-
-**File**: `arc/src/app.ts` (modified, +11/-0)
-```diff
-@@ -110,21 +110,32 @@ export async function start(): Promise<Grid> {
-     () => Array<number>(test_output_matrix[0].length).fill(0)
-   );
- 
-+  const input_instances = [];
-+
-   for (const { input_instance_matrix } of instances) {
-     const { input_value, output_value } = await visualizer.value({
-       instance_name: `obj${test_index++}`,
-       train_dataset,
-+      input_instances,
-       input_instance_matrix,
+@@ -18,7 +18,7 @@ export async function generate<T = unknown>({
+     messages.unshift({
+       role: "assistant",
+       content: `
+-        few_shot_dataset:
++        dataset:
+         ${dataset.document()}
+       `,
      });
- 
-     const { output_instance_matrix } = await visualizer.output_instance_matrix({
-       test_input_matrix,
-       train_dataset,
-+      input_instances,
-       input_instance_matrix,
-       input_value,
-       output_value,
+```
+
+---
+
+### Incident Patch 2: `e533088a` (2026-10-20)
+**Commit Message**: Send few-shot dataset as assistant message in ARC LLM
+
+Change the control ID and few-shot document messages in the shared LLM wrapper to the assistant role, and label the dataset as few_shot_dataset. Enable the document for visualizer value and output_instance_matrix calls by removing document: false. Also pass instance_name in the value request.
+
+**File**: `arc/src/lib/llm.ts` (modified, +6/-3)
+```diff
+@@ -8,16 +8,19 @@ export async function generate<T = unknown>({
+   document = true,
+ }: GenerateOptions): Promise<T> {
+   messages.unshift({
+-    role: "user",
++    role: "assistant",
+     content: `
+       control_id:
+       ${uuid()}
+     `,
+   });
+   if (document) {
+     messages.unshift({
+-      role: "user",
+-      content: dataset.document(),
++      role: "assistant",
++      content: `
++        few_shot_dataset:
++        ${dataset.document()}
++      `,
      });
- 
-+    input_instances.push({
-+      input_value,
-+      input_instance_matrix,
-+      output_value,
-+      output_instance_matrix,
-+    });
-+
-     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
    }
  
 ```
 
-**File**: `arc/src/lib/Matrix.ts` (modified, +34/-5)
+**File**: `arc/src/visualizer.ts` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,14 @@
- import type { Grid } from "../types";
+@@ -63,11 +63,12 @@ export async function value({
  
- export function crop(matrix: Grid): Grid {
-+  return locate(matrix).matrix;
-+}
-+
-+export function locate(matrix: Grid): {
-+  matrix: Grid;
-+  x: number;
-+  y: number;
-+} {
-   if (!Array.isArray(matrix)) {
-     throw new Error("Matrix must be an array for cropping");
-   }
-@@ -29,11 +37,23 @@ export function crop(matrix: Grid): Grid {
-     }
-   }
- 
--  if (bottom === -1) return [];
--  return matrix.slice(top, bottom + 1).map((row) => row.slice(left, right + 1));
-+  if (bottom === -1) return { matrix: [], x: 0, y: 0 };
-+  return {
-+    matrix: matrix
-+      .slice(top, bottom + 1)
-+      .map((row) => row.slice(left, right + 1)),
-+    x: left,
-+    y: top,
-+  };
- }
- 
--export function pad(matrix: Grid, rows: number, cols: number): Grid {
-+export function pad(
-+  matrix: Grid,
-+  rows: number,
-+  cols: number,
-+  left: number,
-+  top: number
-+): Grid {
-   if (!Array.isArray(matrix)) {
-     throw new Error("Matrix must be an array for padding");
-   }
-@@ -45,13 +65,22 @@ export function pad(matrix: Grid, rows: number, cols: number): Grid {
-   ) {
-     throw new Error("Padding dimensions must be non-negative safe integers");
-   }
-+  if (
-+    !Number.isSafeInteger(left) ||
-+    !Number.isSafeInteger(top) ||
-+    left < 0 ||
-+    top < 0
-+  ) {
-+    throw new Error("Padding offsets must be non-negative safe integers");
-+  }
-   const sourceRows = matrix.length;
-   const sourceCols = matrix[0]?.length ?? 0;
-   if (sourceRows > rows || sourceCols > cols) {
-     throw new Error("Padding dimensions must not be smaller than the matrix");
-   }
--  const top = Math.floor((rows - sourceRows) / 2);
--  const left = Math.floor((cols - sourceCols) / 2);
-+  if (left > cols - sourceCols || top > rows - sourceRows) {
-+    throw new Error("Matrix placement exceeds the padding dimensions");
-+  }
-   const result = Array.from({ length: rows }, () =>
-     Array<number>(cols).fill(0)
-   );
-```
-
-**File**: `arc/src/types.ts` (modified, +4/-0)
-```diff
-@@ -28,6 +28,10 @@ export interface TrainingDataset extends TrainingInput {
- 
- export interface TestInstance {
-   input_instance_matrix: Grid;
-+  output_instance_matrix: Grid;
-+  input_code: string;
-+  input_value: unknown;
-+  output_value: unknown;
- }
- 
- export interface Message {
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +58/-8)
-```diff
-@@ -51,31 +51,59 @@ export async function instances({
- export async function value({
-   instance_name,
-   train_dataset,
-+  input_instances,
-   input_instance_matrix,
- }: {
-   instance_name: string;
-   train_dataset: TrainingDataset;
-+  input_instances: TestInstance[];
-   input_instance_matrix: Grid;
- }): Promise<{ input_value: unknown; output_value: unknown }> {
-+  const { x, y } = Matrix.locate(input_instance_matrix);
-+
    console.log("Calculating test value...");
    const { input_code } = await llm.generate<{ input_code: string }>({
-+    document: false,
+-    document: false,
      messages: [
        {
          role: "user",
          content: `
-+          train_instances:
-+          ${JSON.stringify(
-+            train_dataset.dataset.map(({ instances }) => ({
-+              instances: instances.map(
-+                ({
-+                  input_value,
-+                  input_instance_matrix,
-+                  output_value,
-+                  output_instance_matrix,
-+                }) => ({
-+                  input_value,
-+                  input_instance_matrix: Matrix.crop(input_instance_matrix),
-+                  output_value,
-+                  output_instance_matrix: Matrix.crop(output_instance_matrix),
-+                })
-+              ),
-+            }))
-+          )}
-           instance_name:
-           ${instance_name}
--          train_dataset:
--          ${JSON.stringify(train_dataset)}
-+          input_instances:
-+          ${JSON.stringify(input_instances)}
-           input_instance_matrix:
--          ${JSON.stringify(input_instance_matrix)}
-+          ${JSON.stringify(Matrix.crop(input_instance_matrix))}
-+          input_instance_location:
-+          { "x": ${x}, "y": ${y} }
-           json_format:
-           { "input_code": <INPUT_CODE> }
-         `,
-       },
-     ],
-   });
- 
-+  console.debug("input_code:");
-+  console.debug(input_code);
-+
-   console.log("Creating test instance in Nucleoid...");
-   const input_value = await nucleoid.run(
-     [train_dataset.declarations[0], input_code].join("\n\n")
-@@ -84,8 +112,6 @@ export async function value({
-     [...train_dataset.declarations, input_code].join("\n\n")
-   );
- 
--  console.debug("input_code:");
--  console.debug(input_code);
-   console.debug("input_value:");
-   console.debug(input_value);
-   console.debug("output_value:");
-@@ -97,16 +123,20 @@ export async function value({
- export async function output_instance_matrix({
-   test_input_matrix,
-   train_dataset,
-+  input_instances,
-   input_instance_matrix,
-   input_value,
-   output_value,
- }: {
-   test_input_matrix: Grid;
-   train_dataset: TrainingDataset;
-+  input_instances: TestInstance[];
-   input_instance_matrix: Grid;
-   input_value: unknown;
-   output_value: unknown;
- }): Promise<{ output_instance_matrix: Grid }> {
-+  const { x: left, y: top } = output_value as { x: number; y: number };
-+
-   console.log("Extracting test output_instance_matrix...");
-   const { output_instance_matrix } = await llm.generate<{
-     output_instance_matrix: Grid;
-@@ -116,7 +146,7 @@ export async function output_instance_matrix({
-       {
-         role: "user",
-         content: `
--          instances:
-+          train_instances:
++          instance_name:
++          ${instance_name}
+           train_instances:
            ${JSON.stringify(
              train_dataset.dataset.map(({ instances }) => ({
-               instances: instances.map(
-@@ -134,6 +164,22 @@ export async function output_instance_matrix({
-               ),
-             }))
-           )}
-+          input_instances:
-+          ${JSON.stringify(
-+            input_instances.map(
-+              ({
-+                input_value,
-+                input_instance_matrix,
-+                output_value,
-+                output_instance_matrix,
-+              }) => ({
-+                input_value,
-+                input_instance_matrix: Matrix.crop(input_instance_matrix),
-+                output_value,
-+                output_instance_matrix: Matrix.crop(output_instance_matrix),
-+              })
-+            )
-+          )}
-           input_instance_matrix:
-           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
-           input_value:
-@@ -151,12 +197,16 @@ export async function output_instance_matrix({
- 
-   console.debug("output_instance_matrix:");
-   Matrix.toString(output_instance_matrix);
--  console.debug("");
-+
-   const output_instance_padded_matrix = Matrix.pad(
-     output_instance_matrix,
-     test_input_matrix.length,
--    test_input_matrix[0].length
-+    test_input_matrix[0].length,
-+    left,
-+    top
-   );
-+
-+  console.debug("");
-   Matrix.toString(output_instance_padded_matrix);
- 
-   return { output_instance_matrix: output_instance_padded_matrix };
+@@ -143,7 +144,6 @@ export async function output_instance_matrix({
+   const { output_instance_matrix } = await llm.generate<{
+     output_instance_matrix: Grid;
+   }>({
+-    document: false,
+     messages: [
+       {
+         role: "user",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1319,52 +1080,28 @@ The visualizer now sends cropped train instances plus the instance location to t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Matrix.locate and offset-based pad for ARC
+## X. Rename few-shot prompt label to dataset
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/lib/llm.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e5174995`: Add Matrix.locate and offset-based pad for ARC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1abd9936`: Rename few-shot prompt label to dataset. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/lib/llm.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-position metadata. Use `Matrix.locate` to retain the original position with
-the crop.
-
-`Matrix.locate(matrix)` returns `{ matrix, x, y }`, pairing the same tight crop
-with its zero-based top-left position in the original matrix: `x` is the column
-and `y` is the row. Empty and all-zero matrices return
-`{ matrix: [], x: 0, y: 0 }`. It uses the same validation as `Matrix.crop` and
-does not modify the input. For a located result,
-`Matrix.pad(result.matrix, rows, cols, result.x, result.y)` restores the crop
-to its original position on a canvas with the supplied dimensions.
-
-`Matrix.pad(matrix, rows, cols, left, top)` returns a new matrix of the requested
-dimensions, placing the input at the required zero-based column and row offsets
-and filling the remaining cells with zeros. It does not center or modify the
-input. Empty matrices can be padded to an all-zero canvas. Invalid matrices,
-dimensions or offsets that are not non-negative safe integers, and placements
-that do not fit inside the requested dimensions are rejected.
+        dataset:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-position metadata; callers must retain the original position separately.
-
-`Matrix.pad(matrix, rows, cols)` returns a new matrix of the requested dimensions,
-centering the input and filling the surrounding cells with zeros. Any extra odd
-row or column of padding goes on the bottom or right. The input is not modified.
-Empty matrices can be padded to an all-zero canvas. Invalid matrices, negative
-or non-integer dimensions, and dimensions smaller than the input are rejected.
-Centering does not restore the original position discarded by cropping or
-automatically change full-size instance masks.
+        few_shot_dataset:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e5174995` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1abd9936` are properly handled with clean fallback behavior.

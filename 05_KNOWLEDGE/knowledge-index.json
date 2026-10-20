@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:43:25.305Z",
+  "last_updated": "2026-10-20T18:51:50.447Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2986,8 +2986,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "15d1c411",
-      "content_hash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
+      "source_version": "2983c7c5",
+      "content_hash": "cc5ce361f321fb1701b30f2dfa7bbdc4cfa66c37dbc2d0715156847bf89bf85f",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3000,6 +3000,11 @@
           "number": 2910,
           "title": "[ty] Avoid stack overflow for recursive descriptor setter checks (#29467)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3326,
+          "title": "Pin Codex workflows to the merged output-protection fix (#29541)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3007,7 +3012,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:12:44.461Z",
+      "verified_at": "2026-10-20T18:51:35.260Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11616,14 +11621,19 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "9d623e5e",
-      "content_hash": "cf0ba426d88d8cdabe25f9e3940f75ab518ad33332ed3a20cafe4c436a95b82f",
+      "source_version": "cfc94e21",
+      "content_hash": "e26749ee99da440082ca46ffab4a66cf7ee286124941686178ae4fc7620cb362",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
         {
           "number": 2056,
           "title": "build(deps): bump ldap plugin to version with CVE-patched LDAP API",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3327,
+          "title": "config-repo): prevent incorrect removal of partials produced by config repo chan",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11632,7 +11642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:07:49.830Z",
+      "verified_at": "2026-10-20T18:51:43.436Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16576,7 +16586,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
+      "content_hash": "ee3c5c7375847f6ba37a3648bb088d293d6a82271c7d2d031700b9ce86776368",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -16652,6 +16662,16 @@
           "number": 2164,
           "title": "CFG-Decoupled Step Count Enforcement for Distilled ODE Trajectories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3328,
+          "title": "Binary Asset Versioning & Path Contract Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3329,
+          "title": "Quantization Precision & Inference Step Coupling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16672,7 +16692,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-10-19T05:06:41.794Z",
+      "verified_at": "2026-10-20T18:51:45.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34708,14 +34728,19 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e5174995",
-      "content_hash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
+      "source_version": "1abd9936",
+      "content_hash": "39b27a913a14753ed22f6c87335f91a9481c9307de1e7ef9e89767891e598579",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
         {
           "number": 3289,
           "title": "Add Matrix.locate and offset-based pad for ARC",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3330,
+          "title": "Rename few-shot prompt label to dataset",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34724,7 +34749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:16:59.327Z",
+      "verified_at": "2026-10-20T18:51:50.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103752,6 +103777,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:43:25.287Z"
+    },
+    "rule-3326": {
+      "learning_id": "rule-3326",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3326,
+      "title": "Pin Codex workflows to the merged output-protection fix (#29541)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "2983c7c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:51:35.260Z"
+    },
+    "rule-3327": {
+      "learning_id": "rule-3327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3327,
+      "title": "config-repo): prevent incorrect removal of partials produced by config repo chan",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "cfc94e21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:51:43.436Z"
+    },
+    "rule-3328": {
+      "learning_id": "rule-3328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3328,
+      "title": "Binary Asset Versioning & Path Contract Invariance",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:51:45.866Z"
+    },
+    "rule-3329": {
+      "learning_id": "rule-3329",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3329,
+      "title": "Quantization Precision & Inference Step Coupling",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:51:45.866Z"
+    },
+    "rule-3330": {
+      "learning_id": "rule-3330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3330,
+      "title": "Rename few-shot prompt label to dataset",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "1abd9936",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:51:50.433Z"
     }
   },
   "aliases": {

@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
-    "lastHarvestedAt": "2026-10-19T05:06:41.846Z",
+    "contentHash": "ee3c5c7375847f6ba37a3648bb088d293d6a82271c7d2d031700b9ce86776368",
+    "lastHarvestedAt": "2026-10-20T18:51:45.945Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e5174995",
+    "sourceVersion": "1abd9936",
     "license": "Apache-2.0",
-    "contentHash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
-    "lastHarvestedAt": "2026-10-20T17:16:59.394Z",
+    "contentHash": "39b27a913a14753ed22f6c87335f91a9481c9307de1e7ef9e89767891e598579",
+    "lastHarvestedAt": "2026-10-20T18:51:50.510Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "9d623e5e",
+    "sourceVersion": "cfc94e21",
     "license": "Apache-2.0",
-    "contentHash": "cf0ba426d88d8cdabe25f9e3940f75ab518ad33332ed3a20cafe4c436a95b82f",
-    "lastHarvestedAt": "2026-10-19T03:07:49.879Z",
+    "contentHash": "e26749ee99da440082ca46ffab4a66cf7ee286124941686178ae4fc7620cb362",
+    "lastHarvestedAt": "2026-10-20T18:51:43.520Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "15d1c411",
+    "sourceVersion": "2983c7c5",
     "license": "MIT",
-    "contentHash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
-    "lastHarvestedAt": "2026-10-20T00:12:44.520Z",
+    "contentHash": "cc5ce361f321fb1701b30f2dfa7bbdc4cfa66c37dbc2d0715156847bf89bf85f",
+    "lastHarvestedAt": "2026-10-20T18:51:35.335Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

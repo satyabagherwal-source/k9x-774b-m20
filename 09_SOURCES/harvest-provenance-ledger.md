@@ -3968,3 +3968,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-20T18:43:15.267Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `a907fbc6` | Multi-dimensional audit evidence | 2026-10-20T18:43:18.159Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `dfeb34b2` | Multi-dimensional audit evidence | 2026-10-20T18:43:25.369Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `2983c7c5` | Multi-dimensional audit evidence | 2026-10-20T18:51:35.335Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cfc94e21` | Multi-dimensional audit evidence | 2026-10-20T18:51:43.520Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T18:51:45.945Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1abd9936` | Multi-dimensional audit evidence | 2026-10-20T18:51:50.510Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `9d623e5e`  
+> **Source Version**: `cfc94e21`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:07:49.658Z  
+> **Timestamp**: 2026-10-20T18:51:43.100Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:07:49.649Z  
+> **Harvest Timestamp**: 2026-10-20T18:51:43.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7430 stars
+- **Stars / Engagement**: 7431 stars
 
 ---
 
@@ -880,359 +880,392 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b4b6b29` (2026-10-06)
-**Commit Message**: build(deps): bump ldap plugin to version with CVE-patched LDAP API
+### Incident Patch 1: `cfc94e21` (2026-10-20)
+**Commit Message**: fix(config-repo): prevent incorrect removal of partials produced by config repo changes independent of an SCM revision change (#14663)
 
-**File**: `tw-go-plugins/build.gradle` (modified, +3/-3)
+It is possible for a config repo to produce different partials, even if its revision has not changed, e.g based on tracking upstream branches/PRs, and being
+triggered by polling.
+
+In this case entity-based operations (e.g via admin UI) can cause an accidental removal of partials from the cached state, which is not intentional. We can address
+this by also checking a new partial's equivalence to decide whether we need to mark the partial as valid, not just whether the config repo itself has a revision change.
+
+This corrects drift between the partials that are `known` vs those that are known to be `valid` which happens for config repos that have poll-oriented behaviour triggered
+by external systems outside SCM.
+
+**File**: `api/api-config-repo-operations-v1/src/main/java/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1.java` (modified, +1/-1)
 ```diff
-@@ -24,9 +24,9 @@ def dependencies = [
-   new GithubArtifact(
-     user: 'gocd',
-     repo: 'gocd-ldap-authentication-plugin',
--    tagName: 'v4.0.1-540',
--    asset: 'gocd-ldap-authentication-plugin-4.0.1-540.jar',
--    checksum: '8928076076e482342e3e1a65b56cef27e7bb7a3dc43d56e6a660990cbb3eee14'
-+    tagName: 'v4.0.2-546',
-+    asset: 'gocd-ldap-authentication-plugin-4.0.2-546.jar',
-+    checksum: 'e1816228653688d827f09c26a66f342d30e61e6b5be04184ffdff47bdbd719a0'
-   ),
-   new GithubArtifact(
-     user: 'gocd',
+@@ -115,7 +115,7 @@ String preflight(Request req, Response res) throws IOException {
+             } else {
+                 PartialConfig partialConfig = plugin.parseContent(contents, context);
+                 partialConfig.setOrigins(adHocConfigOrigin(repo));
+-                CruiseConfig config = partialConfigService.merge(partialConfig, context.configMaterial().getFingerprint(), gcs.clonedConfigForEdit());
++                CruiseConfig config = partialConfigService.merge(context.configMaterial().getFingerprint(), partialConfig, gcs.clonedConfigForEdit());
+ 
+                 gcs.validateCruiseConfig(config);
+                 result.update(Collections.emptyList(), true);
+```
+
+**File**: `api/api-config-repo-operations-v1/src/test/groovy/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1Test.groovy` (modified, +3/-3)
+```diff
+@@ -132,7 +132,7 @@ class ConfigRepoOperationsControllerV1Test implements SecurityServiceTrait, Cont
+         def cruiseConfig = mock(CruiseConfig.class)
+         when(plugin.parseContent(any() as Map<String, String>, any() as PartialConfigLoadContext)).thenReturn(partialConfig)
+         when(pluginService.partialConfigProviderFor(PLUGIN_ID)).thenReturn(plugin)
+-        when(partialConfigService.merge(eq(partialConfig), any() as String, any() as CruiseConfig)).thenReturn(cruiseConfig)
++        when(partialConfigService.merge(any() as String, eq(partialConfig), any() as CruiseConfig)).thenReturn(cruiseConfig)
+ 
+         postWithApiHeader(controller.controllerPath("$PREFLIGHT_PATH?pluginId=$PLUGIN_ID"), [:])
+ 
+@@ -152,7 +152,7 @@ class ConfigRepoOperationsControllerV1Test implements SecurityServiceTrait, Cont
+ 
+         postWithApiHeader(controller.controllerPath("$PREFLIGHT_PATH?pluginId=$PLUGIN_ID"), [:])
+ 
+-        verify(partialConfigService, never()).merge(any(PartialConfig.class), anyString(), any(CruiseConfig.class))
++        verify(partialConfigService, never()).merge(anyString(), any(PartialConfig.class), any(CruiseConfig.class))
+         verify(goConfigService, never()).validateCruiseConfig(any() as CruiseConfig)
+ 
+         assertThatResponse().hasJsonBody([
+@@ -168,7 +168,7 @@ class ConfigRepoOperationsControllerV1Test implements SecurityServiceTrait, Cont
+         def cruiseConfig = mock(CruiseConfig.class)
+         when(plugin.parseContent(any() as Map<String, String>, any() as PartialConfigLoadContext)).thenReturn(partialConfig)
+         when(pluginService.partialConfigProviderFor(PLUGIN_ID)).thenReturn(plugin)
+-        when(partialConfigService.merge(eq(partialConfig), any() as String, any() as CruiseConfig)).thenReturn(cruiseConfig)
++        when(partialConfigService.merge(any() as String, eq(partialConfig), any() as CruiseConfig)).thenReturn(cruiseConfig)
+         when(goConfigService.validateCruiseConfig(cruiseConfig)).thenThrow(new GoConfigInvalidException(cruiseConfig, "nope!"))
+ 
+         postWithApiHeader(controller.controllerPath("$PREFLIGHT_PATH?pluginId=$PLUGIN_ID"), [:])
+```
+
+**File**: `server/src/main/java/com/thoughtworks/go/config/CachedGoConfig.java` (modified, +1/-1)
+```diff
+@@ -127,7 +127,7 @@ public CruiseConfig currentConfig() {
+     }
+ 
+     public void loadConfigIfNull() {
+-        if (currentConfig == null || currentConfigForEdit == null || configHolder == null || (mergedCurrentConfigForEdit == null && !cachedGoPartials.lastValidPartials().isEmpty())) {
++        if (currentConfig == null || currentConfigForEdit == null || configHolder == null || (mergedCurrentConfigForEdit == null && cachedGoPartials.hasValidPartials())) {
+             forceReload();
+         }
+     }
+```
+
+**File**: `server/src/main/java/com/thoughtworks/go/config/CachedGoPartials.java` (modified, +62/-47)
+```diff
+@@ -19,23 +19,27 @@
+ import com.thoughtworks.go.config.remote.RepoConfigOrigin;
+ import com.thoughtworks.go.serverhealth.HealthStateScope;
+ import com.thoughtworks.go.serverhealth.ServerHealthService;
++import org.jetbrains.annotations.Nullable;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Component;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Optional;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+ @Component
+ public class CachedGoPartials implements PartialConfigResolver {
+     private final ServerHealthService serverHealthService;
++    private final PartialConfigHelper partialConfigHelper;
+     private final Map<String, PartialConfig> fingerprintToLatestValidConfigMap = new ConcurrentHashMap<>();
+     private final Map<String, PartialConfig> fingerprintToLatestKnownConfigMap = new ConcurrentHashMap<>();
+ 
+     @Autowired
+-    public CachedGoPartials(ServerHealthService serverHealthService) {
++    public CachedGoPartials(ServerHealthService serverHealthService, PartialConfigHelper partialConfigHelper) {
+         this.serverHealthService = serverHealthService;
++        this.partialConfigHelper = partialConfigHelper;
+     }
+ 
+     public List<PartialConfig> lastValidPartials() {
+@@ -46,43 +50,61 @@ public List<PartialConfig> lastKnownPartials() {
+         return new ArrayList<>(fingerprintToLatestKnownConfigMap.values());
+     }
+ 
+-    public void removeKnown(String fingerprint) {
+-        if (fingerprintToLatestKnownConfigMap.containsKey(fingerprint)) {
+-            fingerprintToLatestKnownConfigMap.remove(fingerprint);
+-            serverHealthService.removeByScope(HealthStateScope.forPartialConfigRepo(fingerprint));
+-        }
++    boolean hasValidPartials() {
++        return !fingerprintToLatestValidConfigMap.isEmpty();
++    }
++
++    boolean hasEquivalentPartials() {
++        return fingerprintToLatestKnownConfigMap.isEmpty() || partialConfigHelper.isEquivalent(lastKnownPartials(), lastValidPartials());
+     }
+ 
+     public PartialConfig getValid(String fingerprint) {
+-        return getPartialConfig(fingerprint, fingerprintToLatestValidConfigMap);
++        return fingerprintToLatestValidConfigMap.get(fingerprint);
+     }
+ 
+     public PartialConfig getKnown(String fingerprint) {
+-        return getPartialConfig(fingerprint, fingerprintToLatestKnownConfigMap);
++        return fingerprintToLatestKnownConfigMap.get(fingerprint);
+     }
+ 
+     public void removeValid(String fingerprint) {
+-        if (fingerprintToLatestValidConfigMap.containsKey(fingerprint)) {
+-            fingerprintToLatestValidConfigMap.remove(fingerprint);
++        PartialConfig removed = fingerprintToLatestValidConfigMap.remove(fingerprint);
++        if (removed != null) {
+             serverHealthService.removeByScope(HealthStateScope.forPartialConfigRepo(fingerprint));
+         }
+     }
+ 
+-    public void removeValidWithoutClearingServerHealthMessage(String fingerprint) {
+-        fingerprintToLatestValidConfigMap.remove(fingerprint);
++    public void removeKnown(String fingerprint) {
++        PartialConfig removed = fingerprintToLatestKnownConfigMap.remove(fingerprint);
++        if (removed != null) {
++            serverHealthService.removeByScope(HealthStateScope.forPartialConfigRepo(fingerprint));
++        }
+     }
+ 
+-    public void cacheAsLastKnown(String fingerprint, PartialConfig newPart) {
+-        fingerprintToLatestKnownConfigMap.put(fingerprint, newPart);
++    public void removeValidWithoutClearingServerHealthMessage(String fingerprint) {
++        fingerprintToLatestValidConfigMap.remove(fingerprint);
+     }
+ 
+-    public void markAsValid(String fingerprint, PartialConfig newPart) {
+-        if (fingerprintToLatestValidConfigMap.containsKey(fingerprint)) {
+-            if (!fingerprintToLatestValidConfigMap.get(fingerprint).getOrigin().equals(newPart.getOrigin())) {
+-                markAsValidAndUpdateServerHealthMessage(fingerprint, newPart);
+-            }
+-        } else {
+-            markAsValidAndUpdateServerHealthMessage(fingerprint, newPart);
++    public void cacheAsLastKnown(String fingerprint, PartialConfig incoming) {
++        fingerprintToLatestKnownConfigMap.put(fingerprint, incoming);
++    }
++
++    /**
++     * Records the last partial for {@code fingerprint} known to have survived a full config merge
++     * and validation, clearing any server health messages for that config repo.
++     * <p>
++     * The replacement is skipped when the new partial is equivalent (same origin AND same structure) to the one already
++     * cached as valid. This guard matters on the fallback path: when a save fails on the last known partials and is
++     * retried with the last valid ones, re-marking those as valid must not clear health messages describing why the
++     * newer (still broken) partials were rejected.
++     * <p>
++     * Structure is compared as well as origin because a config repo plugin may legitim
+```
+
+**File**: `server/src/main/java/com/thoughtworks/go/config/ConfigReposMaterialParseResultManager.java` (modified, +2/-2)
+```diff
+@@ -135,10 +135,10 @@ PartialConfigParseResult parseFailed(String fingerprint, Modification modificati
+         }
+     }
+ 
+-    PartialConfigParseResult parseSuccess(String fingerprint, Modification modification, PartialConfig newPart) {
++    PartialConfigParseResult parseSuccess(String fingerprint, Modification modification, PartialConfig incoming) {
+         //if no result exists in the map, create a new one
+         //if already a result exists in the map, override the result, as the latest modification is successful. regardless of the result being successful or failed
+-        return fingerprintOfPartialToParseResultMap.put(fingerprint, PartialConfigParseResult.parseSuccess(modification, newPart));
++        return fingerprintOfPartialToParseResultMap.put(fingerprint, PartialConfigParseResult.parseSuccess(modification, incoming));
+     }
+ 
+     static class ConfigRepoReparseListener extends EntityConfigChangedListener<Object> {
+```
+
+**File**: `server/src/main/java/com/thoughtworks/go/config/GoConfigRepoConfigDataSource.java` (modified, +8/-10)
+```diff
+@@ -36,13 +36,11 @@
+ import org.springframework.stereotype.Component;
+ 
+ import java.io.File;
+-import java.util.HashSet;
+ import java.util.List;
+ import java.util.Set;
++import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.CopyOnWriteArrayList;
+ 
+-import static java.util.Collections.synchronizedSet;
+-
+ /**
+  * Parses partial configurations and exposes latest configurations as soon as possible.
+  */
+@@ -55,7 +53,7 @@ public class GoConfigRepoConfigDataSource implements ChangedRepoConfigWatchListL
+     private final ConfigReposMaterialParseResultManager configReposMaterialParseResultManager;
+ 
+     private final List<PartialConfigUpdateCompletedListener> listeners = new CopyOnWriteArrayList<>();
+-    private final Set<ConfigRepoConfig> modifiedConfigRepoConfigsAwaitingParse = synchronizedSet(new HashSet<>());
++    private final Set<ConfigRepoConfig> modifiedConfigRepoConfigsAwaitingParse = ConcurrentHashMap.newKeySet();
+ 
+     @Autowired
+     public GoConfigRepoConfigDataSource(GoConfigWatchList configWatchList, GoConfigPluginService configPluginService,
+@@ -160,17 +158,17 @@ post event about completed (successful or not) parsing
+                 //TODO put modifications and previous partial config in context
+                 // the context is just a helper for plugin.
+                 PartialConfigLoadContext context = new LoadContext(repoConfig);
+-                PartialConfig newPart = plugin.load(folder, context);
+-                if (newPart == null) {
++                PartialConfig incoming = plugin.load(folder, context);
++                if (incoming == null) {
+                     LOGGER.warn("Parsed configuration material {} by {} is null", material.getDisplayName(), plugin.displayName());
+-                    newPart = new PartialConfig();
++                    incoming = new PartialConfig();
+                 }
+ 
+-                newPart.setOrigins(new RepoConfigOrigin(repoConfig, modification.getRevision()));
+-                this.configReposMaterialParseResultManager.parseSuccess(fingerprint, modification, newPart);
++                incoming.setOrigins(new RepoConfigOrigin(repoConfig, modification.getRevision()));
++                this.configReposMaterialParseResultManager.parseSuccess(fingerprint, modification, incoming);
+ 
+                 // it is the responsibility of the success listeners to clear the ServerHealthState
+-                notifySuccessListeners(repoConfig, newPart);
++                notifySuccessListeners(repoConfig, incoming);
+             } catch (Exception ex) {
+                 this.configReposMaterialParseResultManager.parseFailed(fingerprint, modification, ex);
+                 LOGGER.error("Failed to parse configuration material {} by {}", material.getDisplayName(), plugin.displayName(), ex);
+```
+
+**File**: `server/src/main/java/com/thoughtworks/go/config/GoFileConfigDataSource.java` (modified, +6/-14)
+```diff
+@@ -382,7 +382,7 @@ public synchronized GoConfigSaveResult writeFullConfigWithLock(FullConfigUpdateC
+             try {
+                 validatedConfigHolder = trySavingConfigWithLastKnownPartials(updatingCommand, configHolder);
+             } catch (Exception e) {
+-                if (cannotUpdateConfigWithLastValidPartials()) {
++                if (cachedGoPartials.hasEquivalentPartials()) {
+                     throw e;
+                 }
+ 
+@@ -432,7 +432,7 @@ private synchronized GoConfigHolder forceLoad() throws IOException, JDOMExceptio
+             try {
+                 goConfigHolder = fullConfigSaveNormalFlow.execute(new FullConfigUpdateCommand(cruiseConfig, null), cachedGoPartials.lastKnownPartials(), FILESYSTEM);
+             } catch (GoConfigInvalidException e) {
+-                if (cannotUpdateConfigWithLastValidPartials()) {
++                if (cachedGoPartials.hasEquivalentPartials()) {
+                     throw e;
+                 }
+ 
+@@ -456,12 +456,11 @@ synchronized GoConfigHolder forceLoad(Path configFile) throws IOException, JDOME
+                 List<PartialConfig> lastKnownPartials = cloner.deepClone(cachedGoPartials.lastKnownPartials());
+                 return internalLoad(Files.readString(configFile, UTF_8), new ConfigModifyingUser(FILESYSTEM), lastKnownPartials);
+             } catch (GoConfigInvalidException e) {
+-                if (cannotUpdateConfigWithLastValidPartials()) {
++                if (cachedGoPartials.hasEquivalentPartials()) {
+                     throw e;
+-                } else {
+-                    List<PartialConfig> lastValidPartials = cloner.deepClone(cachedGoPartials.lastValidPartials());
+-                    return internalLoad(Files.readString(configFile, UTF_8), new ConfigModifyingUser(FILESYSTEM), lastValidPartials);
+                 }
++                List<PartialConfig> lastValidPartials = cloner.deepClone(cachedGoPartials.lastValidPartials());
++                return internalLoad(Files.readString(configFile, UTF_8), new ConfigModifyingUser(FILESYSTEM), lastValidPartials);
+             }
+         } catch (Exception e) {
+             logConfigLoadException(configFile, e);
+@@ -523,7 +522,7 @@ private GoConfigHolder trySavingConfigWithLastValidPartials(FullConfigUpdateComm
+         GoConfigHolder goConfigHolder;
+ 
+         try {
+-            goConfigHolder = trySavingFullConfig(updateCommand, configHolder, cachedGoPartials.lastValidPartials());
++            goConfigHolder = trySavingFullConfig(updateCommand, configHolder, lastValidPartials);
+             if (LOGGER.isDebugEnabled()) {
+                 LOGGER.debug("Update operation on merged configuration succeeded with old {} LAST VALID partials.", lastValidPartials.size());
+             }
+@@ -534,13 +533,6 @@ private GoConfigHolder trySavingConfigWithLastValidPartials(FullConfigUpdateComm
+         return goConfigHolder;
+     }
+ 
+-    private boolean cannotUpdateConfigWithLastValidPartials() {
+-        List<PartialConfig> lastKnownPartials = cachedGoPartials.lastKnownPartials();
+-        List<PartialConfig> lastValidPartials = cachedGoPartials.lastValidPartials();
+-
+-        return lastKnownPartials.isEmpty() || partials.isEquivalent(lastKnownPartials, lastValidPartials);
+-    }
+-
+     private void updateMergedConfigForEdit(GoConfigHolder validatedConfigHolder, List<PartialConfig> partialConfigs) {
+         if (partialConfigs.isEmpty()) {
+             return;
+```
+
+**File**: `server/src/main/java/com/thoughtworks/go/config/PartialConfigHelper.java` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ public boolean isEquivalent(Collection<PartialConfig> left, Collection<PartialCo
+     }
+ 
+     private Set<String> identities(Collection<PartialConfig> collection) {
+-        if (null == collection) {
++        if (collection == null) {
+             return Collections.emptySet();
+         }
+         return collection.stream().map(this::identity).collect(Collectors.toSet());
 ```
 
 ---
 
-### Incident Patch 2: `9d623e5e` (2026-10-18)
-**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14659)
+### Incident Patch 2: `59784143` (2026-10-20)
+**Commit Message**: build(deps): bump com.fasterxml.jackson:jackson-bom (#14662)
 
-Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.105.1 to 1.105.2.
-- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sass/embedded-host-node/compare/1.105.1...1.105.2)
+Bumps [com.fasterxml.jackson:jackson-bom](https://github.com/FasterXML/jackson-bom) from 2.22.3 to 2.22.4.
+- [Commits](https://github.com/FasterXML/jackson-bom/compare/jackson-bom-2.22.3...jackson-bom-2.22.4)
 
 ---
 updated-dependencies:
-- dependency-name: sass-embedded
-  dependency-version: 1.105.2
-  dependency-type: direct:development
+- dependency-name: com.fasterxml.jackson:jackson-bom
+  dependency-version: 2.22.4
+  dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+**File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -104,7 +104,7 @@
-     "license-checker": "^25.0.1",
-     "mini-css-extract-plugin": "^2.10.2",
-     "mockdate": "^3.0.5",
--    "sass-embedded": "^1.105.1",
-+    "sass-embedded": "^1.105.2",
-     "sass-loader": "^17.0.1",
-     "simulate-event": "^1.4.0",
-     "sourcemapped-stacktrace": "^1.1.11",
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
-```diff
-@@ -4640,7 +4640,7 @@ __metadata:
-     normalize-scss: "npm:^8.0.0"
-     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
-     prismjs: "npm:^1.30.0"
--    sass-embedded: "npm:^1.105.1"
-+    sass-embedded: "npm:^1.105.2"
-     sass-loader: "npm:^17.0.1"
-     shell-quote: "npm:^1.12.0"
-     shellwords-ts: "npm:^3.0.1"
-@@ -7310,162 +7310,162 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-all-unknown@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-all-unknown@npm:1.105.1"
-+"sass-embedded-all-unknown@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-all-unknown@npm:1.105.2"
-   dependencies:
--    sass: "npm:1.105.1"
-+    sass: "npm:1.105.2"
-   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-arm64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-android-arm64@npm:1.105.1"
-+"sass-embedded-android-arm64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-android-arm64@npm:1.105.2"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-arm@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-android-arm@npm:1.105.1"
-+"sass-embedded-android-arm@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-android-arm@npm:1.105.2"
-   conditions: os=android & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-riscv64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-android-riscv64@npm:1.105.1"
-+"sass-embedded-android-riscv64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-android-riscv64@npm:1.105.2"
-   conditions: os=android & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-x64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-android-x64@npm:1.105.1"
-+"sass-embedded-android-x64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-android-x64@npm:1.105.2"
-   conditions: os=android & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-arm64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-darwin-arm64@npm:1.105.1"
-+"sass-embedded-darwin-arm64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-darwin-arm64@npm:1.105.2"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-x64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-darwin-x64@npm:1.105.1"
-+"sass-embedded-darwin-x64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-darwin-x64@npm:1.105.2"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-arm64@npm:1.105.1"
-+"sass-embedded-linux-arm64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-arm64@npm:1.105.2"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-arm@npm:1.105.1"
-+"sass-embedded-linux-arm@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-arm@npm:1.105.2"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-musl-arm64@npm:1.105.1"
-+"sass-embedded-linux-musl-arm64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-musl-arm64@npm:1.105.2"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-musl-arm@npm:1.105.1"
-+"sass-embedded-linux-musl-arm@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-musl-arm@npm:1.105.2"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-riscv64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-musl-riscv64@npm:1.105.1"
-+"sass-embedded-linux-musl-riscv64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-musl-riscv64@npm:1.105.2"
-   conditions: os=linux & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-x64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-musl-x64@npm:1.105.1"
-+"sass-embedded-linux-musl-x64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-musl-x64@npm:1.105.2"
-   conditions: os=linux & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-riscv64@npm:1.105.1":
--  version: 1.105.1
--  resolution: "sass-embedded-linux-riscv64@npm:1.105.1"
-+"sass-embedded-linux-riscv64@npm:1.105.2":
-+  version: 1.105.2
-+  resolution: "sass-embedded-linux-riscv64@npm:1.105.2"
-   conditions: os=linux & cpu=riscv64
-   languageName: no
+@@ -107,7 +107,7 @@ def libraries = [
+   h2                  : 'com.h2database:h2:1.4.200',
+   hamcrest            : 'org.hamcrest:hamcrest:3.0',
+   hibernate           : 'org.hibernate:hibernate-ehcache:3.6.10.Final',
+-  jacksonBom          : 'com.fasterxml.jackson:jackson-bom:2.22.3',
++  jacksonBom          : 'com.fasterxml.jackson:jackson-bom:2.22.4',
+   jakartaAnnotation   : 'jakarta.annotation:jakarta.annotation-api:1.3.5',
+   jakartaInject       : 'jakarta.inject:jakarta.inject-api:1.0.5',
+   jakartaMail         : 'jakarta.mail:jakarta.mail-api:2.1.5',
 ```
 
 ---
 
-### Incident Patch 3: `d0c43b0a` (2026-10-18)
-**Commit Message**: build(deps-ui-dev): bump webpack (#14658)
+### Incident Patch 3: `00c80355` (2026-10-20)
+**Commit Message**: build(deps-dev): bump aquasec/trivy from 0.75.0 to 0.76.0 in /docker (#14661)
 
-Bumps the webpack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [webpack](https://github.com/webpack/webpack).
-
-
-Updates `webpack` from 5.111.1 to 5.112.0
-- [Release notes](https://github.com/webpack/webpack/releases)
-- [Changelog](https://github.com/webpack/webpack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/webpack/webpack/compare/v5.111.1...v5.112.0)
+Bumps aquasec/trivy from 0.75.0 to 0.76.0.
 
 ---
 updated-dependencies:
-- dependency-name: webpack
-  dependency-version: 5.112.0
-  dependency-type: direct:development
+- dependency-name: aquasec/trivy
+  dependency-version: 0.76.0
+  dependency-type: direct:production
   update-type: version-update:semver-minor
-  dependency-group: webpack
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+**File**: `docker/docker-compose.yml` (modified, +1/-1)
 ```diff
-@@ -119,7 +119,7 @@
-     "typescript": "^6.0.3",
-     "upath": "^3.0.8",
-     "url-loader": "^4.1.1",
--    "webpack": "^5.111.1",
-+    "webpack": "^5.112.0",
-     "webpack-assets-manifest": "^6.5.4",
-     "webpack-cli": "^7.2.3"
-   },
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +16/-16)
-```diff
-@@ -3560,7 +3560,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"enhanced-resolve@npm:^5.25.0":
-+"enhanced-resolve@npm:^5.26.0":
-   version: 5.26.0
-   resolution: "enhanced-resolve@npm:5.26.0"
-   dependencies:
-@@ -4660,7 +4660,7 @@ __metadata:
-     url-loader: "npm:^4.1.1"
-     url-parse: "npm:^1.5.10"
-     uuid: "npm:^14.0.3"
--    webpack: "npm:^5.111.1"
-+    webpack: "npm:^5.112.0"
-     webpack-assets-manifest: "npm:^6.5.4"
-     webpack-cli: "npm:^7.2.3"
-     what-input: "npm:^5.2.12"
-@@ -6060,7 +6060,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"minimizer-webpack-plugin@npm:^5.7.0":
-+"minimizer-webpack-plugin@npm:^5.13.0":
-   version: 5.13.0
-   resolution: "minimizer-webpack-plugin@npm:5.13.0"
-   dependencies:
-@@ -8906,12 +8906,12 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"watchpack@npm:^2.5.2":
--  version: 2.5.2
--  resolution: "watchpack@npm:2.5.2"
-+"watchpack@npm:^2.6.1":
-+  version: 2.6.1
-+  resolution: "watchpack@npm:2.6.1"
-   dependencies:
-     graceful-fs: "npm:^4.1.2"
--  checksum: 10c0/8290e89f03e1e7136e1ef9b8d04bd03822963fa4b442781a40999e7b9ba29ab333a7a5285312b2d4f3e91bc8c5c526cf1f91f5ce0e857dafe56db28ab1c17dca
-+  checksum: 10c0/43929cc2ed2482a52cba0578046977e7e39ce9a967b5d5bb350da2c1246f6b623b89fa6d24ea94051a6a5b01a7c9c85c9eb5e52e20c75428431adab531167b81
-   languageName: node
-   linkType: hard
- 
-@@ -8976,16 +8976,16 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"webpack-sources@npm:^3.5.1":
-+"webpack-sources@npm:^3.6.0":
-   version: 3.6.0
-   resolution: "webpack-sources@npm:3.6.0"
-   checksum: 10c0/c7ec73fc07177421eff4ab9f6ec100d7923d3864fb62d271ff4b264328e5ab0122fa50345450646f3631b5a1ed6330b53bb8f78fa9b5d3c0a655dea836e79bcc
-   languageName: node
-   linkType: hard
- 
--"webpack@npm:^5.111.1":
--  version: 5.111.1
--  resolution: "webpack@npm:5.111.1"
-+"webpack@npm:^5.112.0":
-+  version: 5.112.0
-+  resolution: "webpack@npm:5.112.0"
-   dependencies:
-     "@types/estree": "npm:^1.0.8"
-     "@types/json-schema": "npm:^7.0.15"
-@@ -8994,22 +8994,22 @@ __metadata:
-     "@webassemblyjs/wasm-parser": "npm:^1.14.1"
-     browserslist: "npm:^4.28.1"
-     chrome-trace-event: "npm:^1.0.2"
--    enhanced-resolve: "npm:^5.25.0"
-+    enhanced-resolve: "npm:^5.26.0"
-     es-module-lexer: "npm:^2.1.0"
-     events: "npm:^3.2.0"
-     graceful-fs: "npm:^4.2.11"
-     mime-db: "npm:^1.54.0"
--    minimizer-webpack-plugin: "npm:^5.7.0"
-+    minimizer-webpack-plugin: "npm:^5.13.0"
-     schema-utils: "npm:^4.5.0"
-     tapable: "npm:^2.3.0"
--    watchpack: "npm:^2.5.2"
--    webpack-sources: "npm:^3.5.1"
-+    watchpack: "npm:^2.6.1"
-+    webpack-sources: "npm:^3.6.0"
-   peerDependenciesMeta:
-     webpack-cli:
-       optional: true
-   bin:
-     webpack: bin/webpack.js
--  checksum: 10c0/e14333a01f4a547950d4844f3da9de7311be3644ec6fedede569f203aa4289a2dab7323cdb88f746e2d3cbc7f8c465bd2b030b30292c2d6ef1e5d2ead39cead2
-+  checksum: 10c0/dee2e7ad612138536e1b8d5dc306955fc5b110146085061e43ed5e100293ebeb23d3521a1b400da9f4e11e99396305bba8aabb5fc35be9480c15c38759c163f9
-   languageName: node
-   linkType: hard
- 
+@@ -1,6 +1,6 @@
+ services:
+   trivy:
+-    image: docker.io/aquasec/trivy:0.75.0@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa
++    image: docker.io/aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222
+     command: [ image, --input, /scan-image, --exit-code, "${EXIT_CODE_ON_ERROR}", --config, /trivy.yaml ]
+     volumes:
+       - ./trivy.yaml:/trivy.yaml:ro
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14665** (closed): View resources in alphabetical case insensitive order (@sriramnrn)
+- **PR #14663** (2026-10-20): fix(config-repo): prevent incorrect dashboard removal of pipelines produced by config repo changes independent of an SCM revision change (@chadlwilson)
+- **PR #14662** (2026-10-20): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.3 to 2.22.4 (@dependabot[bot])
+- **PR #14661** (2026-10-20): build(deps-dev): bump aquasec/trivy from 0.75.0 to 0.76.0 in /docker (@dependabot[bot])
 - **PR #14659** (2026-10-18): build(deps-ui-dev): bump sass-embedded from 1.105.1 to 1.105.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14658** (2026-10-18): build(deps-ui-dev): bump webpack from 5.111.1 to 5.112.0 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
-- **PR #14657** (2026-10-15): build(deps): bump com.github.ben-manes.caffeine:caffeine from 3.3.0 to 3.3.1 (@dependabot[bot])
-- **PR #14656** (2026-10-13): build(deps-ui): bump filesize from 11.0.25 to 11.0.26 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14655** (2026-10-13): build(deps): bump com.github.oshi:oshi-core from 7.7.0 to 7.7.1 (@dependabot[bot])
-- **PR #14654** (2026-10-13): build(deps): bump commons-codec:commons-codec from 1.22.1 to 1.23.0 (@dependabot[bot])
 
 ---
 
@@ -1252,32 +1285,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump ldap plugin to version with CVE-patched LDAP API
+## X. config-repo): prevent incorrect removal of partials produced by config repo chan
 
 **RULE**:
-When implementing operations in `tw-go-plugins/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/api-config-repo-operations-v1/src/main/java/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b4b6b29`: build(deps): bump ldap plugin to version with CVE-patched LDAP API. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfc94e21`: config-repo): prevent incorrect removal of partials produced by config repo changes independent of an SCM revision change (#14663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `tw-go-plugins/build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/api-config-repo-operations-v1/src/main/java/com/thoughtworks/go/apiv1/configrepooperations/ConfigRepoOperationsControllerV1.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    tagName: 'v4.0.2-546',
-    asset: 'gocd-ldap-authentication-plugin-4.0.2-546.jar',
-    checksum: 'e1816228653688d827f09c26a66f342d30e61e6b5be04184ffdff47bdbd719a0'
+                CruiseConfig config = partialConfigService.merge(context.configMaterial().getFingerprint(), partialConfig, gcs.clonedConfigForEdit());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    tagName: 'v4.0.1-540',
-    asset: 'gocd-ldap-authentication-plugin-4.0.1-540.jar',
-    checksum: '8928076076e482342e3e1a65b56cef27e7bb7a3dc43d56e6a660990cbb3eee14'
+                CruiseConfig config = partialConfigService.merge(partialConfig, context.configMaterial().getFingerprint(), gcs.clonedConfigForEdit());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b4b6b29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfc94e21` are properly handled with clean fallback behavior.

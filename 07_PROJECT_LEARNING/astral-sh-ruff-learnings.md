@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `15d1c411`  
+> **Source Version**: `2983c7c5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:12:44.203Z  
+> **Timestamp**: 2026-10-20T18:51:34.944Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:12:40.163Z  
+> **Harvest Timestamp**: 2026-10-20T18:51:34.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50170 stars
+- **Stars / Engagement**: 50183 stars
 
 ---
 
@@ -2123,11 +2123,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29501** (2026-10-19): **Fixes for UP015, FURB116, FURB157 and RUF032 reuse the enclosing f-string quote and break code on Python 3.11 and earlier**
-  *Symptoms*: When the flagged expression sits inside an f-string replacement field, these four fixes build a new string literal using the file's detected quote style (or a hardcoded `"`), without checking the quote of the enclosing f-string. If the two match, the fixed code reuses the outer quote, which is only valid on Python 3.12+ (PEP 701). With the default `target-version` (py310) or any target before py312, the result no longer parses. UP015, FURB116 (integer literal case) and the FURB157 `float("-nan")` case are safe fixes, so this happens with a plain `ruff check --fix`.  Other fixes that generate string literals (for example C408, PT006, UP018) already pick the opposite quote inside f-strings via `Checker::default_string_flags` / `interpolated_string_quote_style`.  ## Reproduction  ```python # example.py x = "a" print(f"{open('f', 'wt').name}") print(f"{bin(1337)[2:]}") ```  ```console $ ruff check --isolated --preview --target-version py311 --select UP015,FURB116 --fix example.py invalid-syntax: Cannot reuse outer quote character in f-strings on Python 3.11 (syntax was added in Python 3.12)  --> example.py:2:20   | 2 | print(f"{open('f', "w").name}")   |                    ^ ... ```  The file now contains:  ```python x = "a" print(f"{open('f', "w").name}") print(f"{f"{1337:b}"}") ```  which fails with `SyntaxError` on Python 3.11.  The same happens for `f"{Decimal(float('-nan'))}"` (FURB157, becomes `f"{Decimal("nan")}"`) and `f"{Decimal(1.5)}"` (RUF032, unsafe fix, becomes `f"{D
+- **Issue #29536** (2026-10-20): **[`pydocstyle`] Treat backslash-escaped `*args` and `**kwargs` as documented (`D417`)**
+  *Symptoms*: ## Summary  Closes #29535.  Sphinx-style docstrings often escape the stars as `\*args` and `\*\*kwargs`, because a bare `*` starts emphasis in reST. D417 didn't account for that, so it reported those parameters as undocumented even though they were documented.  It went wrong in a different way for each style. In NumPy-style sections, the name before the `:` was taken verbatim, so `\*\*kwargs` never matched `**kwargs`. In Google-style sections, the regex didn't accept a leading `\`, so the whole line was skipped.  I added a small `unescape_parameter_name` helper in `sections.rs` that strips backslashes from the documented name, and both parsers now use it. The Google regex also accepts up to two escaped stars now. Since a backslash can't be part of a Python parameter name, removing all of them should be safe. This also covers non-raw docstrings that write `\\*\\*kwargs`.  ## Test Plan  I added five cases to `D417.py`: escaped NumPy and Google docstrings with every parameter documented, the same two styles with one parameter actually missing, and a non-raw docstring. Without the fix, all five `d417` tests fail and report `*args` and `**kwargs` as missing. With the fix, the fully documented functions aren't flagged. In the missing variants, only the parameters that really are missing get reported. The snapshots are updated, and `cargo test -p ruff_linter -- pydocstyle` and clippy both pass.  I used Claude (via T3 Code) to help with the implementation. I've reviewed the change an
 
-- **Issue #29483** (2026-10-19): **[`pylint`] Avoid false positive on starred elements (`PLE0643`)**
-  *Symptoms*: ## Summary  Closes #29343.  `potential-index-error` (`PLE0643`) statically calculates the length of sequence literals (lists and tuples) using the count of AST elements (`elts.len()`). When a sequence contains starred expressions (e.g., `(*a, 9)[2]` or `[*a, *a][2]`), the starred element is counted as a single item, causing `PLE0643` to falsely flag valid indexing that will not raise an `IndexError` at runtime.  This change skips `PLE0643` whenever a sequence literal contains any `Expr::Starred` element, as its runtime length cannot be determined statically.  ## Test Plan  Added regression test cases to `crates/ruff_linter/resources/test/fixtures/pylint/potential_index_error.py` covering unpacked elements in both tuples and lists. Verified locally with `cargo test -p ruff_linter -- rules::pylint`, `cargo clippy`, `cargo fmt --check`, and repository pre-commit hooks (`prek`).
+- **Issue #29535** (2026-10-20): **Improve D417 missdetection for *args and **kwargs when backslash.**
+  *Symptoms*: ### Summary  When generating documentation with Sphinx RST, the **kwargs syntax is incorrect; you need to escape the "*" characters with "\\".   Let see this little rst compatible docstring:  ```python def foo(**kwargs):     r"""Stupid example function.      Parameters     ----------     \*\*kwargs : dict         A rst compatible sphinx docstring.     """ ```  In the example above, ruff triggers the following error:  ```D417 Missing argument description in the docstring for foo: **kwargs```  The idea behind this issue is simply to request that a "\\" be allowed before the "*" in docstrings!  That it! Thank you.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2144,269 +2144,50 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e372f18d` (2026-10-19)
-**Commit Message**: [ty] Avoid stack overflow for recursive descriptor setter checks (#29467)
+### Incident Patch 1: `1e795df6` (2026-10-20)
+**Commit Message**: Pin Codex workflows to the merged output-protection fix (#29541)
 
-Checking a class can overflow the stack when a descriptor's receiver
-requires a protocol that declares the same writable attribute. Track the
-descriptor-setter receiver check and provisionally accept an exact
-recursive revisit, allowing the surrounding protocol check to validate
-the member's read and write types.
+Pin the shared security-review workflow and its matching
+secure-token-service rule to `f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d`,
+which uses the merged output-protection fix from
+[openai/codex-action#187](https://github.com/openai/codex-action/pull/187).
 
-Closes https://github.com/astral-sh/ty/issues/4738
+Validation: checked matching workflow and policy pins, valid JSON, and
+no new actionlint diagnostics.
 
-**File**: `crates/ty_python_semantic/resources/mdtest/descriptor_protocol.md` (modified, +45/-0)
+**File**: `.github/secure-token-service.json` (modified, +1/-1)
 ```diff
-@@ -1227,6 +1227,51 @@ class C:
- C().value
- ```
- 
-+### A descriptor requires a protocol containing its own attribute
-+
-+The descriptor's instance parameter can require the same attribute that the descriptor implements.
-+Checking the enclosing class terminates, and an instance of that class satisfies the protocol.
-+
-+```py
-+from typing import Protocol
-+
-+class HasItem(Protocol):
-+    item: int
-+
-+class ItemDescriptor:
-+    def __get__(self, instance: HasItem, owner: type[object]) -> int:
-+        return 0
-+
-+    def __set__(self, instance: HasItem, value: int) -> None: ...
-+
-+class Holder:
-+    item = ItemDescriptor()
-+
-+compatible: HasItem = Holder()  # no diagnostic
-+```
-+
-+Checking a class that only annotates its attribute with the descriptor type also terminates:
-+
-+```py
-+class AnnotationOnlyHolder:
-+    item: ItemDescriptor  # no diagnostic
-+```
-+
-+The recursive check does not make an incompatible setter acceptable:
-+
-+```py
-+class WrongValueDescriptor:
-+    def __get__(self, instance: HasItem, owner: type[object]) -> int:
-+        return 0
-+
-+    def __set__(self, instance: HasItem, value: str) -> None: ...
-+
-+class WrongValueHolder:
-+    item = WrongValueDescriptor()
-+
-+incompatible: HasItem = WrongValueHolder()  # error: [invalid-assignment]
-+```
-+
- ### Recursive metaclass declarations containing dynamic types
- 
- A recursive declaration containing `Any` can describe a data descriptor. Assignments to a class
+@@ -43,7 +43,7 @@
+       "environment": "automations",
+       "caller_ref": "refs/pull/*/merge",
+       "caller_workflow": "ci.yaml",
+-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
++      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
+       "on": ["pull_request"],
+       "permissions": { "pull_requests": "write" },
+       "target": "ruff"
 ```
 
-**File**: `crates/ty_python_semantic/src/types/attribute_write.rs` (modified, +26/-12)
+**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
 ```diff
-@@ -22,10 +22,10 @@ use super::{
-     PropertyInstanceType, SelfBinding, Signature, Type, TypeContext, TypeMapping, TypeQualifiers,
-     TypeVarBoundOrConstraints, UnionType, UpcastPolicy,
- };
--use crate::ProgramEnvironment;
- use crate::place::{
-     DefinedPlace, Definedness, Place, PlaceAndQualifiers, builtins_symbol, place_from_bindings,
- };
-+use crate::{Program, ProgramEnvironment};
- 
- /// The operation required to write an attribute.
- ///
-@@ -1147,6 +1147,30 @@ fn descriptor_setter<'db>(
-         .place
- }
- 
-+/// Checks whether `__set__` can be called with this receiver without constraining the written
-+/// value. The receiver's type can require the same writable protocol member that this descriptor
-+/// implements. Treat a recursive check of the same descriptor and receiver as provisionally
-+/// successful; the outer protocol check still validates the member's read and write types.
-+#[salsa::tracked(returns(copy), cycle_initial=|_, _, _, _, _| true, heap_size=ruff_memory_usage::heap_size)]
-+fn descriptor_setter_accepts_receiver<'db>(
-+    db: &'db dyn Db,
-+    program: Program<'db>,
-+    descriptor_ty: Type<'db>,
-+    receiver_ty: Type<'db>,
-+) -> bool {
-+    !matches!(
-+        descriptor_ty.try_call_dunder_with_policy(
-+            db,
-+            &ProgramEnvironment::from_program(program),
-+            "__set__",
-+            &mut CallArguments::positional([receiver_ty, Type::unknown()]),
-+            TypeContext::default(),
-+            MemberLookupPolicy::REQUIRE_CONCRETE,
-+        ),
-+        Err(CallDunderError::CallError(..) | CallDunderError::MethodNotAvailable)
-+    )
-+}
-+
- /// The values accepted by a descriptor setter, when representable as a single type.
- #[derive(Copy, Clone)]
- pub(super) enum DescriptorSetterDomain<'db> {
-@@ -1633,17 +1657,7 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
-                     self.check_descriptor_attribute_write(db, *descriptor_ty, object_ty, value_ty)
-                 });
-         }
--        if matches!(
--            descriptor_ty.try_call_dunder_with_policy(
--                db,
--                env,
--                "__set__",
--                &mut CallArguments::positional([object_ty, Type::unknown()]),
--                TypeContext::default(),
--                MemberLookupPolicy::REQUIRE_CONCRETE,
--            ),
--            Err(CallDunderError::CallError(..) | CallDunderError::MethodNotAvailable)
--        ) {
-+        if !descriptor_setter_accepts_receiver(db, env.program(db), descriptor_ty, object_ty) {
-             return self.never();
-         }
-         let Place::Defined(DefinedPlace { ty: setter_ty, .. }) =
-```
-
----
-
-### Incident Patch 2: `85430a95` (2026-10-19)
-**Commit Message**: Share postfix parsing and reduce expression copies (#29480)
-
-## Summary
-
-We skip prefix-operator dispatch for identifiers and parse atoms together with their postfix chains. Keeping this work in `parse_primary_expression` makes the grouping-parenthesis flag local and avoids passing an intermediate `ParsedExpr` between atom and postfix parsing.
-
-**File**: `crates/ruff_python_parser/src/parser/expression.rs` (modified, +84/-92)
-```diff
-@@ -335,94 +335,93 @@ impl<'src> Parser<'src> {
-         context: ExpressionContext,
-     ) -> ParsedExpr {
-         let token = self.current_token_kind();
--        let start = self.node_start();
- 
--        if let Some(unary_op) = token.as_unary_operator() {
--            let expr = self.parse_unary_expression(unary_op, context);
-+        if token != TokenKind::Identifier {
-+            if let Some(unary_op) = token.as_unary_operator() {
-+                let expr = self.parse_unary_expression(unary_op, context);
- 
--            if matches!(unary_op, UnaryOp::Not) {
--                if left_precedence > OperatorPrecedence::Not {
--                    self.add_error(
--                        ParseErrorType::OtherError(
--                            "Boolean 'not' expression cannot be used here".to_string(),
--                        ),
--                        &expr,
--                    );
--                }
--            } else {
--                // > The power operator `**` binds less tightly than an arithmetic
--                // > or bitwise unary operator on its right, that is, 2**-1 is 0.5.
--                //
--                // Reference: https://docs.python.org/3/reference/expressions.html#id21
--                if left_precedence > OperatorPrecedence::PosNegBitNot
--                    && left_precedence != OperatorPrecedence::Exponent
--                {
--                    self.add_error(
--                        ParseErrorType::OtherError(format!(
--                            "Unary '{unary_op}' expression cannot be used here",
--                        )),
--                        &expr,
--                    );
-+                if matches!(unary_op, UnaryOp::Not) {
-+                    if left_precedence > OperatorPrecedence::Not {
-+                        self.add_error(
-+                            ParseErrorType::OtherError(
-+                                "Boolean 'not' expression cannot be used here".to_string(),
-+                            ),
-+                            &expr,
-+                        );
-+                    }
-+                } else {
-+                    // > The power operator `**` binds less tightly than an arithmetic
-+                    // > or bitwise unary operator on its right, that is, 2**-1 is 0.5.
-+                    //
-+                    // Reference: https://docs.python.org/3/reference/expressions.html#id21
-+                    if left_precedence > OperatorPrecedence::PosNegBitNot
-+                        && left_precedence != OperatorPrecedence::Exponent
-+                    {
-+                        self.add_error(
-+                            ParseErrorType::OtherError(format!(
-+                                "Unary '{unary_op}' expression cannot be used here",
-+                            )),
-+                            &expr,
-+                        );
-+                    }
-                 }
-+
-+                return Expr::UnaryOp(expr).into();
-             }
- 
--            return Expr::UnaryOp(expr).into();
--        }
-+            match token {
-+                TokenKind::Star => {
-+                    let starred_expr = self.parse_starred_expression(context);
- 
--        match token {
--            TokenKind::Star => {
--                let starred_expr = self.parse_starred_expression(context);
-+                    if left_precedence > OperatorPrecedence::None
-+                        || !context.is_starred_expression_allowed()
-+                    {
-+                        self.add_error(
-+                            ParseErrorType::InvalidStarredExpressionUsage,
-+                            &starred_expr,
-+                        );
-+                    }
- 
--                if left_precedence > OperatorPrecedence::None
--                    || !context.is_starred_expression_allowed()
--                {
--                    self.add_error(ParseErrorType::InvalidStarredExpressionUsage, &starred_expr);
-+                    return Expr::Starred(starred_expr).into();
-                 }
-+                TokenKind::Await => {
-+                    let await_expr = self.parse_await_expression();
- 
--                return Expr::Starred(starred_expr).into();
--            }
--            TokenKind::Await => {
--                let await_expr = self.parse_await_expression();
-+                    // `await` expressions cannot be nested
-+                    if left_precedence >= OperatorPrecedence::Await {
-+                        self.add_error(
-+                            ParseErrorType::OtherError(
-+                                "Await expression cannot be used here".to_string(),
-+                            ),
-+                            &await_expr,
-+                        );
-+                    }
- 
--                // `await` expressions cannot be nested
--                if left_precedence >= OperatorPrecedence::Await {
--                    self.add_error(
--                        ParseErrorType::OtherError(
--                            "Await expression
+@@ -37,7 +37,7 @@ jobs:
+   security-review:
+     needs: determine_changes
+     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/ruff' && github.event.pull_request.head.repo.full_name == github.repository && needs.determine_changes.outputs.code == 'true' }}
+-    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e
++    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d
+     with:
+       runner: depot-ubuntu-22.04-16
+       helper-runner: github-ubuntu-24.04-x86_64-4
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29514** (2026-10-19): Disable fail-fast in cargo-test-other job (@AlexWaygood)
-- **PR #29510** (2026-10-19): [ty] Rename the ty review skill (@AlexWaygood)
-- **PR #29509** (2026-10-19): [ty] Extend the review skill to local changes (@AlexWaygood)
-- **PR #29508** (closed): [ty] Extend the review skill to local changes (@AlexWaygood)
-- **PR #29507** (2026-10-19): Keep grouping metadata local to primary expression parsing (@charliermarsh)
-- **PR #29502** (closed): Use the opposite quote inside f-strings in UP015, FURB116, FURB157 and RUF032 fixes (@auraseb)
+- **PR #29541** (2026-10-20): Pin Codex workflows to the merged output-protection fix (@zsol)
+- **PR #29540** (closed): [ruff] Update documentation for non-PEP 695 generic function and type alias (@FrancescoPezzella)
+- **PR #29539** (2026-10-20): Update Codex workflows to protect workflow command output (@zsol)
+- **PR #29538** (2026-10-20): Update certifi to 2026.10.19 (@konstin)
+- **PR #29536** (2026-10-20): [`pydocstyle`] Treat backslash-escaped `*args` and `**kwargs` as documented (`D417`) (@fixfon)
+- **PR #29530** (2026-10-20): Update Wrangler for playground deployment (@AlexWaygood)
 
 ---
 
@@ -2426,72 +2207,28 @@ We skip prefix-operator dispatch for identifiers and parse atoms together with t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Avoid stack overflow for recursive descriptor setter checks (#29467)
+## X. Pin Codex workflows to the merged output-protection fix (#29541)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/resources/mdtest/descriptor_protocol.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/secure-token-service.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e372f18d`: [ty] Avoid stack overflow for recursive descriptor setter checks (#29467). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e795df6`: Pin Codex workflows to the merged output-protection fix (#29541). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/descriptor_protocol.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/secure-token-service.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### A descriptor requires a protocol containing its own attribute
-
-The descriptor's instance parameter can require the same attribute that the descriptor implements.
-Checking the enclosing class terminates, and an instance of that class satisfies the protocol.
-
-```py
-from typing import Protocol
-
-class HasItem(Protocol):
-    item: int
-
-class ItemDescriptor:
-    def __get__(self, instance: HasItem, owner: type[object]) -> int:
-        return 0
-
-    def __set__(self, instance: HasItem, value: int) -> None: ...
-
-class Holder:
-    item = ItemDescriptor()
-
-compatible: HasItem = Holder()  # no diagnostic
-```
-
-Checking a class that only annotates its attribute with the descriptor type also terminates:
-
-```py
-class AnnotationOnlyHolder:
-    item: ItemDescriptor  # no diagnostic
-```
-
-The recursive check does not make an incompatible setter acceptable:
-
-```py
-class WrongValueDescriptor:
-    def __get__(self, instance: HasItem, owner: type[object]) -> int:
-        return 0
-
-    def __set__(self, instance: HasItem, value: str) -> None: ...
-
-class WrongValueHolder:
-    item = WrongValueDescriptor()
-
-incompatible: HasItem = WrongValueHolder()  # error: [invalid-assignment]
-```
-
+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e372f18d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e795df6` are properly handled with clean fallback behavior.

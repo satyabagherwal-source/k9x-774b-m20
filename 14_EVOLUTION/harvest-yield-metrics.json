@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:43:25.374Z",
-  "total_cycles_completed": 3938,
-  "total_learnings_persisted": 3938,
-  "total_rules_promoted": 3151,
+  "last_updated": "2026-10-20T18:51:50.515Z",
+  "total_cycles_completed": 3942,
+  "total_learnings_persisted": 3942,
+  "total_rules_promoted": 3156,
   "history": [
-    {
-      "timestamp": "2026-10-20T08:21:56.771Z",
-      "repository": "crawlseo/crawlseo",
-      "learningId": "learn-github-crawlseo-crawlseo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T08:22:19.892Z",
-      "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T08:36:22.782Z",
-      "repository": "heygen-com/hyperframes",
-      "learningId": "learn-github-heygen-com-hyperframes",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T08:36:36.969Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T08:45:51.902Z",
       "repository": "duckdb/duckdb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T18:43:25.374Z",
       "repository": "bridgecrewio/checkov",
       "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:51:35.340Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:51:43.528Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:51:45.951Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:51:50.515Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

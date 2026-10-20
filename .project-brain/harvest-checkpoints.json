@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:43:25.377Z",
+  "last_updated": "2026-10-20T18:51:50.519Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
-      "verified_at": "2026-10-19T05:06:41.851Z",
+      "content_hash": "ee3c5c7375847f6ba37a3648bb088d293d6a82271c7d2d031700b9ce86776368",
+      "verified_at": "2026-10-20T18:51:45.955Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:06:41.851Z"
+      "last_updated": "2026-10-20T18:51:45.955Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "40973f890609cb353e1f37f2968a6979c003f6dea78f89d6156dd496e0e5356d",
-      "verified_at": "2026-10-20T17:16:59.402Z",
+      "content_hash": "39b27a913a14753ed22f6c87335f91a9481c9307de1e7ef9e89767891e598579",
+      "verified_at": "2026-10-20T18:51:50.518Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:16:59.402Z"
+      "last_updated": "2026-10-20T18:51:50.518Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "cf0ba426d88d8cdabe25f9e3940f75ab518ad33332ed3a20cafe4c436a95b82f",
-      "verified_at": "2026-10-19T03:07:49.884Z",
+      "content_hash": "e26749ee99da440082ca46ffab4a66cf7ee286124941686178ae4fc7620cb362",
+      "verified_at": "2026-10-20T18:51:43.532Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:07:49.884Z"
+      "last_updated": "2026-10-20T18:51:43.532Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
-      "verified_at": "2026-10-20T00:12:44.527Z",
+      "content_hash": "cc5ce361f321fb1701b30f2dfa7bbdc4cfa66c37dbc2d0715156847bf89bf85f",
+      "verified_at": "2026-10-20T18:51:35.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:12:44.527Z"
+      "last_updated": "2026-10-20T18:51:35.344Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

@@ -3961,3 +3961,7 @@
 | `CYCLE-20261020-716O` | `2026-10-20T18:43:15.264Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`366adf8a...`) |
 | `CYCLE-20261020-73EV` | `2026-10-20T18:43:18.151Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3324` | Yes (`919eb769...`) |
 | `CYCLE-20261020-78Z5` | `2026-10-20T18:43:25.361Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3325` | Yes (`823788f4...`) |
+| `CYCLE-20261020-HR1B` | `2026-10-20T18:51:35.327Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3326` | Yes (`cc5ce361...`) |
+| `CYCLE-20261020-HXCM` | `2026-10-20T18:51:43.510Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3327` | Yes (`e26749ee...`) |
+| `CYCLE-20261020-HZ7Y` | `2026-10-20T18:51:45.934Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3328, Rule 3329` | Yes (`ee3c5c73...`) |
+| `CYCLE-20261020-I2QT` | `2026-10-20T18:51:50.501Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3330` | Yes (`39b27a91...`) |
