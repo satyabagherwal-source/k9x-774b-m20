@@ -3744,3 +3744,4 @@ Every entry in this ledger must capture:
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `3cef243d` | Multi-dimensional audit evidence | 2026-10-20T05:43:05.662Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6ab624ab` | Multi-dimensional audit evidence | 2026-10-20T05:43:08.613Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `03002a00` | Multi-dimensional audit evidence | 2026-10-20T05:48:12.860Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `251d8fcd` | Multi-dimensional audit evidence | 2026-10-20T05:54:34.856Z |

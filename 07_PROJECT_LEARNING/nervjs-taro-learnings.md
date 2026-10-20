@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source**: github ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
-> **Source Version**: `53b9d3fc`  
+> **Source Version**: `251d8fcd`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:26:14.812Z  
+> **Timestamp**: 2026-10-20T05:54:34.653Z  
 > **Learning ID**: `learn-github-nervjs-taro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:26:14.417Z  
+> **Harvest Timestamp**: 2026-10-20T05:54:33.602Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37714 stars
+- **Stars / Engagement**: 37720 stars
 
 ---
 
@@ -1195,11 +1195,11 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #19522** (2026-10-19): **H5 Swiper 初始化、断开及重建缺少生命周期保护，可能导致 loop/autoplay 访问无效 wrapper**
+  *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  None  ### 使用框架  React  ### 相关平台  - [ ] 所有平台 - [x] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [ ] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  线上 Taro 3.5.7 / Swiper 6.8.4 出现 TypeError: undefined is not an object (evaluating 'm[0]')，堆栈为 getSwiperTranslate → loopFix → autoplay timer，其中 m 为实例的 $wrapperEl。另有缺失 wrapper 时的 loopDestroy 异常，由 #19353 原始补丁保护。  #### 原 PR 对应的线上异常（脱敏堆栈）  ```text TypeError: Cannot read properties of undefined (reading 'children')  at e.loopDestroy (/<app>/chunk/<bundle>.js:2:60102) at e.<anonymous> (/<app>/chunk/<bundle>.js:2:159517) at ? (/<app>/chunk/<bundle>.js:2:1742) ```  业务项目名、资源文件标识和截图水印已移除，保留函数名及行列位置。未上传原始截图。  这条堆栈证明异常发生在 `loopDestroy` 读取 `children` 的路径。#19353 原始补丁针对 `wrapperEl` 缺失时的调用增加检查。该异常的准确触发时序仍待确认，与 `getSwiperTranslate → loopFix → autoplay` 报错是否同源尚未证实；此截图本身也不足以确认其 Taro/Swiper 版本。  准确线上触发时序尚未稳定复现。检查当前 main（4.3.0）的 H5 Stencil Swiper，确认仍存在以下生命周期缺口： - 使用全局 CSS 选择器和构造时自动 init。 - 属性监听和回调缺少当前实例、initialized、destroyed 和 wrapper 有效性保护。 - disconnectedCallback 只断开 MutationObserver，未停止 autoplay、销毁 Swiper 或清理 pending debounce。 - 重建后需要重新观察新 wrapper，重连需要恢复实例。  预期：只对当前已初始化且具有有效 DOM 的实例执行操作，断开后清理定时任务和实例，重连后恢复。#19353 已完善这些路径。旧版 Swiper 的线上异常与当前 main 的生命周期缺口需分别验证，不能视为已稳定复现或完全解决。  ### 复现链接  h
+
 - **Issue #19505** (2026-09-29): **RN下的uploadFile中的createFormData方法存在name写死的问题**
   *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  _No response_  ### 使用框架  React  ### 相关平台  - [ ] 所有平台 - [ ] Web 端（H5） - [x] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [ ] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  下方是file.js的源码，可以看出fileObj的name被写死成了file，导致文件上传时，后端错误的获取了name，对于我的场景是，xxxx.jpg格式的文件，name为file，后端无法通过name获取正确的文件后缀区分文件类型 ``` const createFormData = (filePath, body, name) => {     const data = new FormData();     const uri = isAndroid ? filePath : filePath.replace('file://', '');     const fileObj = { uri: uri, type: 'application/octet-stream', name: 'file' };     Object.keys(body).forEach(key => {         data.append(key, body[key]);     });     // @ts-ignore     data.append(name, fileObj);     return data; }; ``` 解决方法也很简单，只要在createFormData添加第四个参数fileName即可，uploadFile调用的时候fileName并没有被使用，并且文档上标出fileName只对h5生效，按照这种修改方式，可以在RN下生效了，即使name值在某些情况下有必须为file的必要，可以对其设置缺省值‘file’  ### 复现链接  -  ### 复现步骤  如上  ### 环境信息  ```bash 👽 Taro v4.2.1     Taro CLI 4.2.1 environment info:     System:       OS: macOS 27.0       Shell: 5.9 - /bin/zsh     Binaries:       Node: 26.8.2 - /opt/homebrew/bin/node       npm: 11.19.1 - /opt/homebrew/bin/npm     npmPackages:       @tarojs/cli: 4.2.1 => 4.2.1        @tarojs/components: 4.2.1 => 4.2.1        @tarojs/components-rn: 4.2.1 => 4.2.1
-
-- **Issue #19504** (2026-10-08): **[mini-runner] Prerender produces wrong snapshots for sub-package pages (silent, no error/warning)**
-  *Symptoms*: ### 请先确认  - [x] 我已搜索并确定这个提交不是重复的  ### Taro 版本  v4  ### 相关领域  None  ### 使用框架  React  ### 相关平台  - [x] 所有平台 - [ ] Web 端（H5） - [ ] 移动端（React-Native） - [ ] 鸿蒙（Harmony） - [ ] 鸿蒙容器（Harmony Hybrid） - [ ] ASCF 元服务 - [ ] 快应用（QuickApp） - [ ] 所有小程序 - [ ] 微信小程序 - [ ] 企业微信小程序 - [ ] 京东小程序 - [ ] 百度小程序 - [ ] 支付宝小程序 - [ ] 支付宝 IOT 小程序 - [ ] 头条小程序 - [ ] QQ 小程序 - [ ] 钉钉小程序 - [ ] 飞书小程序 - [ ] 快手小程序  ### 小程序基础库版本  _No response_  ### 问题描述  # [mini-runner] 分包页面开启预渲染后快照内容错误（构建无报错、无告警）  ## 环境  - Taro 4.2.x / 4.2.2（`main` 分支 2026-09-20 核实仍未修复） - 编译目标：weapp（微信小程序） - `mini.prerender.match` 包含分包路径，如 `['pages/**', 'sub/**']`  ## 现象  为分包页开启预渲染后，构建**不会报错也不会告警**，但每个分包页的预渲染快照（写入该页自身 `.wxml` 的 `<block wx:else>` 兜底块）内容是错误的：  - 实测：13 个分包页的 `index.wxml` 字节数完全相同（48042 B），且内容都是主包最后一个页面（一个 `push-landing` 页）。即每个分包页首屏渲染的是「上一个编译页模块」的实例，而非自己的首屏。  ## 根因  框架内两个子系统对「哪些页面可预渲染」口径不一致：  1. **渲染/校验侧**——`packages/taro-webpack5-runner/src/prerender/prerender.js` 的 `Prerender.render()`：遍历 `Object.keys(stat.entrypoints)`——**全部 webpack 入口，含分包**——并调用 `validatePrerenderPages(paths, prerenderConfig)`，后者只按 `match` / `exclude` 的 glob 过滤。所以 `match: ['sub/**']` 的分包页能过校验、进入渲染队列。 2. **注入侧**——`packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts` 的 `getPages()`：     ```ts    const appPages = this.appConfig.pages          // 仅主包    this.prerenderPages = new Set(validatePrerenderPages(appPages, prerender).map(p => p.path))    // ... 之后 ...    this.getSubPackages(this.appConfig)            // 收集分包，但不更新 this.prerenderPages    ```     `getSubPacka
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1216,367 +1216,774 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `039023c2` (2026-10-16)
-**Commit Message**: fix(h5): clear download timeout after completion (#19532)
+### Incident Patch 1: `cc3a868d` (2026-10-19)
+**Commit Message**: fix(components): 修复 H5 Swiper 初始化、卸载和重建生命周期 (#19353)
 
-**File**: `packages/taro-h5/__tests__/network/download.test.ts` (added, +63/-0)
+* fix(components): guard swiper loop destroy
+
+* fix(components): manage swiper initialization and connection lifecycle
+
+* fix(components): recover invalid swiper after DOM changes
+
+* test(components): reproduce swiper disconnect and invalid wrapper lifecycle
+
+* docs(examples): add manual H5 swiper lifecycle reproduction
+
+* fix(components): preserve pending swiper current and validate slides element
+
+* refactor(components): simplify swiper lifecycle ownership
+
+* fix(components): clean up failed swiper initialization and preserve reset index
+
+* fix(components): apply pending swiper item id after reconnect
+
+* test(components): cover detached swiper currentItemId updates
+
+---------
+
+Co-authored-by: wangfangjie <[REDACTED_EMAIL]>
+
+**File**: `examples/swiper-lifecycle/.gitignore` (added, +1/-0)
 ```diff
-@@ -0,0 +1,63 @@
-+import { downloadFile } from '../../src/api/network/download'
+@@ -0,0 +1 @@
++bundle.js
+```
+
+**File**: `examples/swiper-lifecycle/README.md` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++# H5 Swiper 生命周期手工复现
 +
-+describe('downloadFile lifecycle', () => {
-+  let xhr: XMLHttpRequest
-+  let abort: jest.SpyInstance
++用于验证 PR #19353 / Issue #19522。直接使用编译后的 Stencil 组件和真实 Swiper，不修改实例内部字段。
++
++## 准备
++
++按仓库贡献指南安装依赖，构建 `@tarojs/components`。随后在仓库根目录执行：
++
++```sh
++pnpm --filter @tarojs/components exec esbuild ../../examples/swiper-lifecycle/index.js --bundle --format=iife --outfile=../../examples/swiper-lifecycle/bundle.js
++```
++
++使用 Chrome 打开本目录的 `index.html`，或通过已有静态服务访问。`bundle.js` 是本地产物，不提交。
++
++## 操作顺序
++
++1. 点击「挂载三图」，等待轮播开始。
++2. 点击「卸载保留节点」。宿主从文档移除，仍保留引用。
++3. 点击「切换 circular」，将其改为 false；等待页面状态更新。
++4. 再次点击「切换 circular」，改回 true；等待页面状态更新。
++5. 点击「追加一图」。
++6. 在修复分支中继续点击「重新挂载」。
++
++## 已观察结果
++
++基线：main `4a1ea09a1b0`，Taro 4.3.0 / Swiper 11.1.15 / Stencil 2.22.3，Chrome。
++
++- 卸载后旧实例仍自动播放。
++- 断开期间切换 circular 会触发 reset，以全局选择器重建实例；节点不在文档中，构造出的实例没有有效 wrapper。
++- 追加节点时抛出 `TypeError: Cannot read properties of undefined (reading 'children')`，堆栈为 `elementChildren → recalcSlides → loopDestroy → beforeDomOperation → appendChild`。
++
++PR 分支：同一操作顺序没有捕获到异常；旧实例被销毁，重新挂载后四张图和 autoplay 恢复。
++
++这是 H5 自定义元素脱离文档后仍被更新的复现，未证明 React 页面所有卸载方式都会执行后续操作，也不是线上 Taro 3.5.7 / Swiper 6 的完整用户操作还原。`getSwiperTranslate → loopFix → autoplay` 原始堆栈尚未复现。
++
++## 自动化回归
++
++`packages/taro-components/__tests__/swiper-lifecycle.spec.tsx` 使用现有 `newSpecPage` 和 Swiper mock 覆盖 11 个生命周期场景。最初 5 个场景在 main 基线失败；本轮新增索引覆盖回归，并将失效节点用例对齐真实 slidesEl 路径，两个针对用例在本轮修复前失败、修复后通过。当前 18 个 Swiper 用例及 7 个快照通过，新增旧实例事件隔离和子节点更新期间事件抑制回归。mock 场景与上面的真实浏览器结果分别记录。
++
++当前实现仅在属性更新、外部子节点更新及连接/断开入口管理实例；不依赖 componentDidRender 重建。实例初始化成功后才保存引用，current 恢复索引显式传入 reset，不再维护额外 pending 标志。
++
++脱离文档期间更新 `currentItemId` 的回归分别覆盖 circular 开启和关闭，以及最新值为空字符串的情况；连续更新只应用最新目标，应用后再次重连应保留用户后来滑到的位置。临时移除重连后的目标应用逻辑时，这 3 个新增用例全部失败；恢复修复后通过。mock 按真实循环初始化写入 `data-swiper-slide-index`，循环快照同步更新。
+```
+
+**File**: `examples/swiper-lifecycle/index.html` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++<!doctype html><meta charset="utf-8"><title>Swiper 手工复现 — H5 生命周期</title>
++<style>body{font:16px system-ui;margin:32px;max-width:900px}button{padding:12px;margin:6px}taro-swiper-core{display:block;width:600px;height:200px}taro-swiper-item-core{display:block;height:200px;text-align:center;line-height:200px;background:#d6e9f1}pre{white-space:pre-wrap;background:#eee;padding:16px}</style>
++<h1>Swiper 手工复现 — H5 生命周期</h1><p>Taro main 4.3.0 / Swiper 11.1.15。此页用于手工演示生命周期。请分别使用 main 基线及 PR 分支构建产物验证。</p>
++<button id="mount">1. 挂载三图</button><button id="detach">2. 卸载保留节点</button><button id="circular">3. 切换 circular</button><button id="autoplay">4. 切换 autoplay</button><button id="add">5. 追加一图</button><button id="reconnect">6. 重新挂载</button>
++<div id="stage"></div><p id="state">尚未挂载</p><pre id="log"></pre>
++<script src="./bundle.js"></script>
+```
+
+**File**: `examples/swiper-lifecycle/index.js` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { defineCustomElement } from '../../packages/taro-components/dist/components/taro-swiper-core.js'
++
++defineCustomElement()
++
++let host, instance, events=0;
++const stage=document.getElementById('stage'), output=document.getElementById('log');
++const log=s=>{output.textContent+=s+'\n'};
++window.addEventListener('error',e=>log('ERROR: '+e.message+'\n'+(e.error?.stack||'')));
++window.addEventListener('unhandledrejection',e=>log('REJECTION: '+(e.reason?.stack||e.reason)));
++const originalError=console.error;console.error=(...args)=>{log('CONSOLE ERROR: '+args.map(x=>x?.stack||String(x)).join(' '));originalError(...args)};
++const slide=n=>{const item=document.createElement('taro-swiper-item-core');item.className='swiper-slide';item.setAttribute('item-id',String(n));item.textContent='图片 '+n;return item};
++const action=(id,fn)=>document.getElementById(id).onclick=()=>{try{fn()}catch(e){log('ERROR: '+e.stack)}};
++action('mount',()=>{if(host){log('已有节点，请刷新页面重做');return}host=document.createElement('taro-swiper-core');host.circular=true;host.autoplay=true;host.interval=400;host.duration=100;for(let n=1;n<=3;n++)host.appendChild(slide(n));host.addEventListener('change',()=>events++);stage.appendChild(host);log('挂载三图 circular=true autoplay=true')});
++action('detach',()=>{host.remove();log('卸载，保留节点引用')});
++action('circular',()=>{host.circular=!host.circular;log('circular='+host.circular)});
++action('autoplay',()=>{host.autoplay=!host.autoplay;log('autoplay='+host.autoplay)});
++action('add',()=>{host.appendChild(slide(4));log('追加一图')});
++action('reconnect',()=>{stage.appendChild(host);log('重新挂载同一节点')});
++setInterval(()=>{if(!host)return;const current=host.querySelector('.swiper-container')?.swiper;if(current)instance=current;document.getElementById('state').textContent=JSON.stringify({connected:host.isConnected,circular:host.circular,autoplay:host.autoplay,initialized:instance?.initialized,destroyed:instance?.destroyed,running:instance?.autoplay?.running,realIndex:instance?.realIndex,events})},500);
+```
+
+**File**: `packages/taro-components/__mocks__/swiper/bundle.ts` (modified, +56/-9)
+```diff
+@@ -26,6 +26,26 @@ import { SwiperOptions } from 'swiper/types/swiper-options'
+ import type ISwiper from 'swiper/types/swiper-class'
+ 
+ export default class Swiper implements ISwiper {
++  initialized = false
++
++  constructor (el: string | HTMLElement, options: SwiperOptions = {}) {
++    this.params = options
++    this.el = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
++    this.realIndex = options.initialSlide || 0
++    this.activeIndex = this.realIndex
++    this.destroyed = false
++    this.autoplay = {
++      running: false,
++      paused: false,
++      timeLeft: 0,
++      start: () => { this.autoplay.running = true },
++      stop: () => { this.autoplay.running = false },
++      pause: () => { this.autoplay.paused = true },
++      resume: () => { this.autoplay.paused = false },
++    } as AutoplayMethods
++    if (options.init !== false) this.init()
++  }
++
+   originalParams: SwiperOptions
+   loopedSlides: number | null
+   snapIndex: number
+@@ -44,12 +64,27 @@ export default class Swiper implements ISwiper {
+     throw new Error('Method not implemented.')
+   }
+ 
++  loopFix (): void {}
++
+   loopDestroy (): void {
+-    throw new Error('Method not implemented.')
++    // Swiper 11 的 recalcSlides 从 slidesEl 读取子节点
++    Array.from(this.slidesEl.children)
+   }
+ 
+   init (el?: HTMLElement | undefined): ISwiper {
+-    throw new Error('Method not implemented.')
++    if (el) this.el = el
++    if (!this.el) return this
++    this.wrapperEl = this.el.querySelector('.swiper-wrapper') as HTMLElement
++    if (!this.wrapperEl) return this
++    this.slidesEl = this.wrapperEl
++    this.slides = Array.from(this.slidesEl.querySelectorAll('taro-swiper-item-core'))
++    if (this.params.loop) {
++      this.slides.forEach((slide, index) => slide.setAttribute('data-swiper-slide-index', String(index)))
++    }
++    this.initialized = true
++    if (this.params.autoplay) this.autoplay.start()
++    this.params.on?.init?.call(this, this)
++    return this
+   }
+ 
+   creativeEffect: CreativeEffectMethods
+@@ -58,6 +93,9 @@ export default class Swiper implements ISwiper {
+   params: SwiperOptions
+   el: HTMLElement
+   wrapperEl: HTMLElement
++  slidesEl: HTMLElement
++  slidesGrid: number[]
++  slidesSizesGrid: number[]
+   slides
+   width: number
+   height: number
+@@ -82,17 +120,21 @@ export default class Swiper implements ISwiper {
+ 
+   setProgress (progress: number, speed?: number | undefined): void {}
+ 
+-  slideNext (speed?: number | undefined, runCallbacks?: boolean | undefined): void {}
++  slideNext (speed?: number | undefined, runCallbacks?: boolean | undefined): boolean { return true }
++
++  slidePrev (speed?: number | undefined, runCallbacks?: boolean | undefined): boolean { return true }
+ 
+-  slidePrev (speed?: number | undefined, runCallbacks?: boolean | undefined): void {}
++  slideTo (index: number, speed?: number | undefined, runCallbacks?: boolean | undefined): boolean { return true }
+ 
+-  slideTo (index: number, speed?: number | undefined, runCallbacks?: boolean | undefined): void {}
++  slideToLoop (index: number, speed?: number | undefined, runCallbacks?: boolean | undefined): ISwiper { return this }
+ 
+-  slideToLoop (index: number, speed?: number | undefined, runCallbacks?: boolean | undefined): void {}
++  slideReset (speed?: number | undefined, runCallbacks?: boolean | undefined): boolean { return true }
+ 
+-  slideReset (speed?: number | undefined, runCallbacks?: boolean | undefined): void {}
++  slideToClosest (speed?: number | undefined, runCallbacks?: boolean | undefined): boolean { return true }
+ 
+-  slideToClosest (speed?: number | undefined, runCallbacks?: boolean | undefined): void {}
++  minTranslate (): number { return 0 }
++
++  maxTranslate (): number { return 0 }
+ 
+   updateAutoHeight (speed?: number | undefined): void {}
+ 
+@@ -112,7 +154,12 @@ export default class Swiper implements ISwiper {
+ 
+   attachEvents (): void {}
+ 
+-  destroy (deleteInstance?: boolean | undefined, cleanStyles?: boolean | undefined): void {}
++  destroy (deleteInstance?: boolean | undefined, cleanStyles?: boolean | undefined): void {
++    if (this.params.loop) this.loopDestroy()
++    this.autoplay.stop()
++    this.initialized = false
++    this.destroyed = true
++  }
+ 
+   appendSlide (slides: string | HTMLElement | string[] | HTMLElement[]): void {}
+ 
+```
+
+**File**: `packages/taro-components/__tests__/__snapshots__/swiper.spec.tsx.snap` (modified, +3/-3)
+```diff
+@@ -98,15 +98,15 @@ exports[`Swiper should be circular 1`] = `
+               .taro-swiper-2 > .swiper-container > .swiper-pagination { display: none;font-size: 0; }
+     </style>
+     <div class="swiper-wrapper">
+-      <taro-swiper-item-core class="swiper-slide">
++      <taro-swiper-item-core class="swiper-slide" data-swiper-slide-index="0">
+         <!---->
+         <div></div>
+       </taro-swiper-item-core>
+-      <taro-swiper-item-core class="swiper-slide">
++      <taro-swiper-item-core class="swiper-slide" data-swiper-slide-index="1">
+         <!---->
+         <div></div>
+       </taro-swiper-item-core>
+-      <taro-swiper-item-core class="swiper-slide">
++      <taro-swiper-item-core class="swiper-slide" data-swiper-slide-index="2">
+         <!---->
+         <div></div>
+       </taro-swiper-item-core>
+```
+
+**File**: `packages/taro-components/__tests__/swiper-lifecycle.spec.tsx` (added, +244/-0)
+```diff
+@@ -0,0 +1,244 @@
++import { h } from '@stencil/core'
++import { newSpecPage, SpecPage } from '@stencil/core/testing'
++
++import SwiperJS from '../__mocks__/swiper/bundle'
++import { Swiper } from '../src/components/swiper/swiper'
++
++type SwiperComponent = Omit<Swiper, never> & { swiper: SwiperJS }
++
++describe('Swiper lifecycle', () => {
++  let page: SpecPage
++
++  const mount = async () => {
++    page = await newSpecPage({
++      components: [Swiper],
++      template: () => (
++        <taro-swiper-core circular autoplay interval={400}>
++          <taro-swiper-item-core class='swiper-slide' item-id='first' />
++          <taro-swiper-item-core class='swiper-slide' item-id='second' />
++          <taro-swiper-item-core class='swiper-slide' item-id='third' />
++        </taro-swiper-core>
++      ),
++    })
++    return page.rootInstance as SwiperComponent
++  }
++
++  afterEach(() => {
++    jest.useRealTimers()
++    jest.restoreAllMocks()
++  })
++
++  it('stops autoplay and destroys the instance when disconnected', async () => {
++    const component = await mount()
++    const instance = component.swiper
++    expect(instance.initialized).toBe(true)
++    expect(instance.autoplay.running).toBe(true)
++
++    page.root!.remove()
++    await page.waitForChanges()
++
++    expect(instance.autoplay.running).toBe(false)
++    expect(instance.destroyed).toBe(true)
++    expect(component.swiper).toBeNull()
++  })
++
++  it('defers detached prop changes and restores them on reconnect', async () => {
++    const component = await mount()
++    const previous = component.swiper
++    const loopDestroy = jest.spyOn(previous, 'loopDestroy')
++    page.root!.remove()
++    await page.waitForChanges()
++    expect(loopDestroy).toHaveBeenCalledTimes(1)
++    loopDestroy.mockClear()
++
++    page.root!.circular = false
++    page.root!.current = 2
++    page.root!.autoplay = false
++    await page.waitForChanges()
++    page.root!.circular = true
++    page.root!.autoplay = true
++    await page.waitForChanges()
++
++    expect(loopDestroy).not.toHaveBeenCalled()
++    expect(component.swiper).toBeNull()
++    page.doc.body.appendChild(page.root!)
++    await page.waitForChanges()
++
++    expect(component.swiper).not.toBe(previous)
++    expect(component.swiper.initialized).toBe(true)
++    expect(component.swiper.realIndex).toBe(2)
++    expect(component.swiper.autoplay.running).toBe(true)
++  })
++
++  it.each([true, false])('applies the latest detached currentItemId once with circular=%s', async (circular) => {
++    const component = await mount()
++    page.root!.circular = circular
++    await page.waitForChanges()
++    component.swiper.realIndex = 1
++    page.root!.remove()
++    await page.waitForChanges()
++    const slideTo = jest.spyOn(SwiperJS.prototype, circular ? 'slideToLoop' : 'slideTo')
++
++    page.root!.currentItemId = 'second'
++    await page.waitForChanges()
++    page.root!.currentItemId = 'third'
++    await page.waitForChanges()
++
++    expect(component.swiper).toBeNull()
++    expect(slideTo).not.toHaveBeenCalled()
++    page.doc.body.appendChild(page.root!)
++    await page.waitForChanges()
++
++    expect(component.swiper.initialized).toBe(true)
++    expect(slideTo).toHaveBeenCalledTimes(1)
++    expect(slideTo).toHaveBeenCalledWith(2)
++    expect(slideTo.mock.instances[0]).toBe(component.swiper)
++
++    // 目标项只应用一次，后续重连仍保留用户后来滑到的位置
++    component.swiper.realIndex = 1
++    slideTo.mockClear()
++    page.root!.remove()
++    await page.waitForChanges()
++    page.doc.body.appendChild(page.root!)
++    await page.waitForChanges()
++
++    expect(component.swiper.realIndex).toBe(1)
++    expect(slideTo).not.toHaveBeenCalled()
++  })
++
++  it('keeps an empty currentItemId as the latest detached update', async () => {
++    const component = await mount()
++    component.swiper.realIndex = 1
++    page.root!.remove()
++    await page.waitForChanges()
++    const slideToLoop = jest.spyOn(SwiperJS.prototype, 'slideToLoop')
++
++    page.root!.currentItemId = 'third'
++    await page.waitForChanges()
++    page.root!.currentItemId = ''
++    await page.waitForChanges()
++    page.doc.body.appendChild(page.root!)
++    await page.waitForChanges()
++
++    expect(slideToLoop).toHaveBeenCalledTimes(1)
++    expect(slideToLoop).toHaveBeenCalledWith(0)
++  })
++
++  it('allows child updates while detached after changing circular', async () => {
++    const component = await mount()
++    page.root!.remove()
++    await page.waitForChanges()
++    page.root!.circular = false
++    await page.waitForChanges()
++    page.root!.circular = true
++    await page.waitForChanges()
++    const child = page.doc.createElement('taro-swiper-item-core')
++    child.className = 'swiper-slide'
++
++    expect(() => page.root!.appendChild(child)).not.toThrow()
++    page.doc.body.appendChild(page.root!)
++    await page.waitForChanges()
++
++    expect(component.swiper.initialized).toBe(true)
++    expect(component.swiper.wrapperEl.contains(child)).toBe(true)
++    expect(component.swiper.autoplay.running).toBe(true)
++  })
++
++  it('cancels
+```
+
+**File**: `packages/taro-components/src/components/swiper/swiper.tsx` (modified, +162/-118)
+```diff
+@@ -1,9 +1,11 @@
+-import { Component, h, ComponentInterface, Prop, Event, EventEmitter, Host, Element, State, Watch } from '@stencil/core'
++import { Component, h, ComponentInterface, Prop, Event, EventEmitter, Host, Element, Watch } from '@stencil/core'
+ import SwiperJS from 'swiper/bundle'
+ 
+-import { debounce } from '../../utils'
+ import type ISwiper from 'swiper'
+ 
++// 补充 Swiper 运行时存在但未公开声明的生命周期与循环方法
++type SwiperInstance = ISwiper & { initialized: boolean, loopFix: () => void }
++
+ let INSTANCE_ID = 0
+ const ONE_ADDITIONAL_SLIDES_THRESHOLD = 5
+ const TWO_ADDITIONAL_SLIDES_THRESHOLD = 7
+@@ -17,14 +19,23 @@ export class Swiper implements ComponentInterface {
+   #id = INSTANCE_ID++
+   #source = 'autoplay'
+   #swiperResetting = false
+-  // dom 变化是否由外部引起，因为 swiper 的循环模式也会引起 dom 的变化。如果不是由外部引起的 dom 变化，就不需要重新初始化 swiper
+-  #domChangeByOutSide = false
+   #lastSwiperActiveIndex = 0
++  #pendingCurrentItemId: string | null = null
++  #didLoad = false
++  #container: HTMLElement | null = null
++  #sizeTimer: ReturnType<typeof setTimeout>
+ 
+   @Element() el: HTMLElement
+-  @State() swiperWrapper: HTMLElement | null
+-  @State() private swiper: ISwiper
+-  @State() isWillLoadCalled = false
++  private swiper: SwiperInstance | null = null
++  private observer: MutationObserver | null = null
++
++  // 属性入口统一恢复失效实例，事件回调只需排除旧实例
++  private getSwiper (current?: number) {
++    const swiper = this.swiper
++    if (swiper && (swiper.destroyed || !swiper.wrapperEl || !swiper.slidesEl)) this.reset(current)
++    return this.swiper
++  }
++
+   /**
+    * 是否显示面板指示点
+    */
+@@ -115,24 +126,35 @@ export class Swiper implements ComponentInterface {
+ 
+   @Watch('current')
+   watchCurrent (newVal) {
+-    if (this.currentItemId || !this.isWillLoadCalled || !this.swiper) return
++    if (this.currentItemId || !this.#didLoad) return
+     const n = parseInt(newVal, 10)
+-    if (isNaN(n) || n === this.swiper.realIndex) return
++    if (isNaN(n)) return
++    const swiper = this.getSwiper(n)
++    if (!swiper) {
++      this.#lastSwiperActiveIndex = n
++      return
++    }
++    if (n === swiper.realIndex) return
+     this.#source = ''
+     if (this.circular) {
+-      this.swiper.slideToLoop(n) // 更新下标
+-      this.autoplay && this.swiper.autoplay.pause()
++      swiper.slideToLoop(n) // 更新下标
++      this.autoplay && swiper.autoplay.pause()
+       // @ts-ignore
+-      this.swiper.loopFix()
+-      this.autoplay && this.swiper.autoplay.start()
++      swiper.loopFix()
++      this.autoplay && swiper.autoplay.start()
+     } else {
+-      this.swiper.slideTo(n) // 更新下标
++      swiper.slideTo(n) // 更新下标
+     }
+   }
+ 
+   @Watch('currentItemId')
+   watchCurrentItemId (newVal) {
+-    if (!this.swiperWrapper || !this.isWillLoadCalled) return
++    const swiper = this.getSwiper()
++    if (!swiper) {
++      this.#pendingCurrentItemId = newVal
++      return
++    }
++    this.#pendingCurrentItemId = null
+ 
+     let itemIdIndex = 0
+     this.getSlidersList().forEach((swiperItem, index) => {
+@@ -145,32 +167,33 @@ export class Swiper implements ComponentInterface {
+         }
+       }
+     })
+-    if(itemIdIndex === this.swiper.realIndex) return // 无需更新
++    if(itemIdIndex === swiper.realIndex) return // 无需更新
+     this.#source = ''
+     if (this.circular) {
+-      this.swiper.slideToLoop(itemIdIndex) // 更新下标
++      swiper.slideToLoop(itemIdIndex) // 更新下标
+       // @ts-ignore
+-      this.swiper.loopFix()
+-      this.autoplay && this.swiper.autoplay.start()
++      swiper.loopFix()
++      this.autoplay && swiper.autoplay.start()
+     } else {
+-      this.swiper.slideTo(itemIdIndex) // 更新下标
++      swiper.slideTo(itemIdIndex) // 更新下标
+     }
+   }
+ 
+   @Watch('autoplay')
+   watchAutoplay (newVal) {
+-    if (!this.isWillLoadCalled || !this.swiper) return
++    const swiper = this.getSwiper()
++    if (!swiper) return
+ 
+-    const swiperAutoplay = this.swiper.autoplay
++    const swiperAutoplay = swiper.autoplay
+     if (swiperAutoplay) {
+       if (swiperAutoplay.running === newVal) return
+ 
+       if (newVal) {
+-        if (this.swiper.params && typeof this.swiper.params.autoplay === 'object') {
+-          if (this.swiper.params.autoplay.disableOnInteraction === true) {
+-            this.swiper.params.autoplay.disableOnInteraction = false
++        if (swiper.params && typeof swiper.params.autoplay === 'object') {
++          if (swiper.params.autoplay.disableOnInteraction === true) {
++            swiper.params.autoplay.disableOnInteraction = false
+           }
+-          this.swiper.params.autoplay.delay = this.interval
++          swiper.params.autoplay.delay = this.interval
+         }
+         swiperAutoplay.start()
+       } else {
+@@ -181,106 +204,107 @@ export class Swiper implements ComponentInterface {
+ 
+   @Watch('duration')
+   watchDuration (newVal) {
+-    if (!this.swiper || !this.isWillLoadCalled) return
+-    this.swiper.params.speed = newVal
++    const swiper = this.getSwiper()
++    if (!swiper) return
++    swiper.params.speed = newVal
+   }
+ 
+   @Watch('interval')
+   watchInterval (newVal) 
+```
+
+---
+
+### Incident Patch 2: `251d8fcd` (2026-10-20)
+**Commit Message**: fix(vite): reset stateful regex cursors in compile filters (#19541)
+
+**File**: `packages/taro-vite-runner/src/utils/createFilter.ts` (modified, +2/-0)
+```diff
+@@ -62,12 +62,14 @@ export default function createFilter(include, exclude, options?) {
+     const pathId = normalizePath(id)
+     for (let i = 0; i < excludeMatchers.length; ++i) {
+       const matcher = excludeMatchers[i]
++      if (matcher instanceof RegExp) matcher.lastIndex = 0
+       if (matcher.test(pathId)) {
+         return false
+       }
+     }
+     for (let i = 0; i < includeMatchers.length; ++i) {
+       const matcher = includeMatchers[i]
++      if (matcher instanceof RegExp) matcher.lastIndex = 0
+       if (matcher.test(pathId)) {
+         return true
+       }
+```
+
+**File**: `packages/taro-vite-runner/tests/utils/createFilter.spec.ts` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++import { describe, expect, test } from 'vitest'
++
++import createFilter, { createFilterWithCompileOptions } from '../../src/utils/createFilter'
++
++describe('createFilter', () => {
++  test.each(['g', 'y', 'gy'])('repeated include matching with /%s is deterministic', flags => {
++    const filter = createFilter([new RegExp('.*\\.tsx$', flags)], [])
++    expect([filter('/src/page.tsx'), filter('/src/page.tsx'), filter('/src/other.tsx')]).toEqual([true, true, true])
++    expect(filter('/src/page.css')).toBe(false)
++  })
++
++  test.each(['g', 'y', 'gy'])('repeated exclude matching with /%s is deterministic', flags => {
++    const filter = createFilter([], [new RegExp('.*\\.tsx$', flags)])
++    expect([filter('/src/page.tsx'), filter('/src/page.tsx'), filter('/src/other.tsx')]).toEqual([false, false, false])
++    expect(filter('/src/page.css')).toBe(true)
++  })
++
++  test('ignores an existing regex cursor and keeps exclusions ahead of inclusions', () => {
++    const include = /.*\.tsx$/g
++    const exclude = /.*excluded\.tsx$/y
++    include.lastIndex = 100
++    exclude.lastIndex = 100
++    const filter = createFilter([include], [exclude])
++    expect(filter('/src/excluded.tsx')).toBe(false)
++    expect(filter('/src/page.tsx')).toBe(true)
++    expect(filter('/src/excluded.tsx')).toBe(false)
++  })
++
++  test('applies stateful compile include/exclude rules consistently', () => {
++    const filter = createFilterWithCompileOptions({ include: [/.*\.tsx$/g], exclude: [/.*vendor.*/g] })
++    expect(filter('/src/page.tsx')).toBe(true)
++    expect(filter('/src/page.tsx')).toBe(true)
++    expect(filter('/vendor/page.tsx')).toBe(false)
++    expect(filter('/vendor/page.tsx')).toBe(false)
++  })
++
++  test('preserves glob matching and Windows path normalization', () => {
++    const filter = createFilter(['**/*.tsx'], ['**/vendor/**'])
++    expect(filter('C:\\src\\page.tsx')).toBe(true)
++    expect(filter('C:\\src\\vendor\\page.tsx')).toBe(false)
++    expect(filter('/src/page.css')).toBe(false)
++    expect(filter(null)).toBe(false)
++  })
++})
+```
+
+---
+
+### Incident Patch 3: `eb54af42` (2026-10-20)
+**Commit Message**: fix(h5): accept valid zero and negative location coordinates (#19543)
+
+**File**: `packages/taro-h5/__tests__/location/chooseLocation.test.ts` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
++import { chooseLocation } from '../../src/api/location/chooseLocation'
++
++describe('chooseLocation coordinates', () => {
++  let apiKey: PropertyDescriptor | undefined
 +
 +  beforeEach(() => {
 +    jest.useFakeTimers()
-+    xhr = new XMLHttpRequest()
-+    jest.spyOn(window, 'XMLHttpRequest').mockImplementation(() => xhr)
-+    jest.spyOn(xhr, 'open').mockImplementation(() => {})
-+    jest.spyOn(xhr, 'send').mockImplementation(() => {})
-+    abort = jest.spyOn(xhr, 'abort').mockImplementation(() => {
-+      xhr.onabort?.(new ProgressEvent('abort'))
-+    })
-+    Object.defineProperty(window.URL, 'createObjectURL', {
-+      configurable: true,
-+      value: jest.fn(() => 'blob:download')
-+    })
++    apiKey = Object.getOwnPropertyDescriptor(globalThis, 'LOCATION_APIKEY')
++    Object.defineProperty(globalThis, 'LOCATION_APIKEY', { configurable: true, value: 'test-key' })
 +  })
 +
 +  afterEach(() => {
-+    jest.clearAllTimers()
++    document.querySelector<HTMLElement>('.taro_choose_location_back')?.click()
++    jest.runOnlyPendingTimers()
++    document.body.innerHTML = ''
++    if (apiKey) Object.defineProperty(globalThis, 'LOCATION_APIKEY', apiKey)
++    else delete globalThis.LOCATION_APIKEY
 +    jest.useRealTimers()
-+    jest.restoreAllMocks()
-+    delete window.URL.createObjectURL
 +  })
 +
-+  test.each(['success', 'error', 'abort', 'timeout'])('%s settles callbacks once and clears the timeout', async outcome => {
++  function openChooser (mapOpts = {}) {
 +    const success = jest.fn()
 +    const fail = jest.fn()
 +    const complete = jest.fn()
-+    const task = downloadFile({ url: '/file', timeout: 100, success, fail, complete })
-+    // Attach the rejection handler before triggering a terminal event.
-+    const result = task.catch(error => error)
++    const result = chooseLocation({ mapOpts, success, fail, complete }).catch(error => error)
++    return { result, success, fail, complete }
++  }
 +
-+    switch (outcome) {
-+      case 'success':
-+        xhr.onload?.(new ProgressEvent('load'))
-+        break
-+      case 'error':
-+        xhr.onerror?.(Object.assign(new ProgressEvent('error'), { message: 'network error' }))
-+        break
-+      case 'abort':
-+        task.abort()
-+        break
-+      case 'timeout':
-+        jest.advanceTimersByTime(100)
-+        break
-+    }
++  function confirm (latitude?: number, longitude?: number) {
++    window.dispatchEvent(new MessageEvent('message', {
++      data: {
++        module: 'locationPicker', poiname: 'place', poiaddress: 'address', latlng: { lat: latitude, lng: longitude }
++      }
++    }))
++    document.querySelector<HTMLElement>('.taro_choose_location_submit')!.click()
++  }
 +
++  test.each([[-33.86, 151.21], [37.77, -122.42], [-33.45, -70.66], [0, 0], [90, 180], [-90, -180]])('passes initial coordinates %s,%s to the map iframe', (latitude, longitude) => {
++    openChooser({ latitude, longitude })
++    const iframe = document.querySelector<HTMLIFrameElement>('.taro_choose_location_frame')!
++    expect(new URL(iframe.src).searchParams.get('coord')).toBe(`${latitude},${longitude}`)
++  })
++
++  test.each([
++    {}, { latitude: 1 }, { longitude: 1 }, { latitude: NaN, longitude: 1 },
++    { latitude: 91, longitude: 1 }, { latitude: 1, longitude: 181 }
++  ])('omits invalid or incomplete initial coordinates: %j', mapOpts => {
++    openChooser(mapOpts)
++    const iframe = document.querySelector<HTMLIFrameElement>('.taro_choose_location_frame')!
++    expect(new URL(iframe.src).searchParams.has('coord')).toBe(false)
++  })
++
++  test('preserves an explicit coord override', () => {
++    openChooser({ latitude: 1, longitude: 2, coord: '-33.86,151.21' })
++    const iframe = document.querySelector<HTMLIFrameElement>('.taro_choose_location_frame')!
++    expect(new URL(iframe.src).searchParams.get('coord')).toBe('-33.86,151.21')
++  })
++
++  test.each([[0, 120], [45, 0], [0, 0], [-33.45, -70.66], [90, 180], [-90, -180]])('confirms a selected point at %s,%s', async (latitude, longitude) => {
++    const { result, success, fail, complete } = openChooser()
++    confirm(latitude, longitude)
 +    const response = await result
-+    expect(response.errMsg).toBe(outcome === 'success'
-+      ? 'downloadFile:ok'
-+      : `downloadFile:fail ${outcome === 'error' ? 'network error' : outcome}`)
-+    expect(jest.getTimerCount()).toBe(0)
-+    jest.advanceTimersByTime(200)
-+    expect(success).toHaveBeenCalledTimes(outcome === 'success' ? 1 : 0)
-+    expect(fail).toHaveBeenCalledTimes(outcome === 'success' ? 0 : 1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(abort).toHaveBeenCalledTimes(['abort', 'timeout'].includes(outcome) ? 1 : 0)
-+  })
-+})
-```
-
-**File**: `packages/taro-h5/src/api/network/download.ts` (modified, +2/-0)
-```diff
-@@ -34,6 +34,7 @@ const createDownloadTask = ({ url, header, withCredentials = true, timeout, succ
-   }
- 
-   xhr.onload = () => {
-+    clearTimeout(timeoutInter)
-     const response = xhr.response
-     const status = xhr.status
-     success({
-@@ -51,6 +52,7 @@ const createDownloadTask = ({ url, header, withCredentials = true, timeout, succ
-   }
- 
-   xhr.onerror = (e: ProgressEvent<EventTarget> & { message?: string }) => {
-+    clearTimeout(timeoutInter)
-     error({
-       errMsg: `${apiName}:fail ${e.message}`
-     })
-```
-
----
-
-### Incident Patch 2: `7219d19a` (2026-10-16)
-**Commit Message**: fix(h5): keep chooseMedia tempFiles in FileList order (#19516)
-
-chooseMedia pushed each file into tempFiles as soon as it finished
-loading, so a multi-select returned files in load-time order instead of
-FileList order. Collect the loads first, then push them in FileList
-order. Files that fail to load are still dropped.
-
-fix #19515
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/taro-h5/__tests__/media/chooseMedia.test.ts` (added, +82/-0)
-```diff
-@@ -0,0 +1,82 @@
-+import * as Taro from '@tarojs/taro-h5'
-+
-+// 用假的 Image 控制每个文件完成加载的先后
-+class FakeImage {
-+  static created: FakeImage[] = []
-+  crossOrigin = ''
-+  complete = false
-+  width = 0
-+  height = 0
-+  src = ''
-+  onload: (() => void) | null = null
-+  onerror: ((e: unknown) => void) | null = null
-+
-+  constructor () {
-+    FakeImage.created.push(this)
-+  }
-+}
-+
-+// 让挂起的回调都执行完，确保一个文件加载完成后再处理下一个
-+const flush = () => new Promise(resolve => setTimeout(resolve, 0))
-+
-+function finishLoading (index: number) {
-+  const image = FakeImage.created[index]
-+  image.width = 1080
-+  image.height = 1920
-+  image.onload?.()
-+}
-+
-+function failLoading (index: number) {
-+  FakeImage.created[index].onerror?.(new Error('decode failed'))
-+}
-+
-+/** 调用 chooseMedia，并让隐藏的 input 以 names 作为 FileList 触发 change */
-+function chooseFiles (names: string[]) {
-+  const result = Taro.chooseMedia({ mediaType: ['image'], count: names.length })
-+  const input = document.getElementById('taroChooseMedia') as HTMLInputElement
-+  const files = names.map(name => new File(['x'], name, { type: 'image/png' }))
-+  Object.defineProperty(input, 'files', { value: files, configurable: true })
-+  input.dispatchEvent(new Event('change'))
-+  return result
-+}
-+
-+const pathsOf = (res: Taro.chooseMedia.SuccessCallbackResult) => res.tempFiles.map(file => file.tempFilePath)
-+
-+describe('chooseMedia', () => {
-+  const OriginalImage = window.Image
-+  const originalCreateObjectURL = URL.createObjectURL
-+
-+  beforeEach(() => {
-+    FakeImage.created = []
-+    window.Image = FakeImage as unknown as typeof Image
-+    URL.createObjectURL = jest.fn((file: File) => `blob:${file.name}`)
-+    jest.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
-+    jest.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('')
-+    jest.spyOn(console, 'error').mockImplementation(() => {})
-+  })
-+
-+  afterEach(() => {
-+    window.Image = OriginalImage
-+    URL.createObjectURL = originalCreateObjectURL
-+    jest.restoreAllMocks()
-+  })
-+
-+  test('tempFiles should keep FileList order when files finish loading in reverse', async () => {
-+    const result = chooseFiles(['A', 'B', 'C', 'D'])
-+    for (const index of [3, 2, 1, 0]) {
-+      finishLoading(index)
-+      await flush()
-+    }
-+    expect(pathsOf(await result)).toEqual(['blob:A', 'blob:B', 'blob:C', 'blob:D'])
-+  })
-+
-+  test('should drop a file that fails to load and keep the others in order', async () => {
-+    const result = chooseFiles(['A', 'B', 'C'])
-+    finishLoading(2)
-+    await flush()
-+    failLoading(1)
-+    await flush()
-+    finishLoading(0)
-+    expect(pathsOf(await result)).toEqual(['blob:A', 'blob:C'])
-+  })
-+})
-```
-
-**File**: `packages/taro-h5/src/api/media/video/chooseMedia.ts` (modified, +6/-2)
-```diff
-@@ -100,15 +100,19 @@ export const chooseMedia = async function (
-       if (target) {
-         const files = target.files || []
-         const arr = [...files]
--        await Promise.all(
-+        // 先收集再按 FileList 顺序写入，避免 tempFiles 按加载完成先后排序
-+        const loaded = await Promise.all(
-           arr.map(async item => {
-             try {
--              res.tempFiles?.push(await loadMedia(item))
-+              return await loadMedia(item)
-             } catch (error) {
-               console.error(error)
-             }
-           })
-         )
-+        loaded.forEach(item => {
-+          if (item) res.tempFiles?.push(item)
-+        })
-       }
-       handle.success(res, { resolve, reject })
-       target.value = ''
-```
-
----
-
-### Incident Patch 3: `73d9cb05` (2026-09-29)
-**Commit Message**: fix(rn): uploadFile sends the real file name instead of hardcoded 'file' (#19507)
-
-On React Native, createFormData hardcoded the multipart file object's
-name to 'file', so backends could not read the original file name or
-extension (e.g. to distinguish image types). The H5 implementation
-already forwards a meaningful name (option fileName, blob name, or a
-generated fallback).
-
-RN now resolves the name as: explicit fileName option, then the
-filePath basename, then the historical 'file' fallback. The public
-Taro.uploadFile.Option type already exposes fileName; its @supported
-tag is updated to include rn.
-
-Adds regression tests covering the basename derivation, the explicit
-fileName override, and the 'file' fallback.
-
-Fixes #19505
-
-**File**: `packages/taro-rn/__tests__/uploadFile.test.ts` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+import { uploadFile } from '../src/lib/file'
-+
-+describe('uploadFile', () => {
-+  const realFetch = global.fetch
-+
-+  afterEach(() => {
-+    global.fetch = realFetch
-+    jest.restoreAllMocks()
-+  })
-+
-+  const mockFetchOk = () => {
-+    global.fetch = jest.fn().mockResolvedValue(new Response('ok', { status: 200 }))
-+  }
-+
-+  test('uses the real file name derived from filePath', async () => {
-+    mockFetchOk()
-+    const appendSpy = jest.spyOn(FormData.prototype, 'append')
-+    const success = jest.fn()
-+    const fail = jest.fn()
-+
-+    await uploadFile({
-+      url: 'https://example.com/upload',
-+      filePath: '/data/user/0/com.example/cache/xxxx.jpg',
-+      name: 'file',
-+      success,
-+      fail
-+    })
-+
-+    const fileCall = appendSpy.mock.calls.find(([key]) => key === 'file')
-+    expect(fileCall).toBeDefined()
-+    expect(fileCall![1]).toMatchObject({ name: 'xxxx.jpg', type: 'application/octet-stream' })
++    expect(response).toEqual({ errMsg: 'chooseLocation:ok', latitude, longitude, name: 'place', address: 'address' })
 +    expect(success).toHaveBeenCalledTimes(1)
 +    expect(fail).not.toHaveBeenCalled()
++    expect(complete).toHaveBeenCalledTimes(1)
 +  })
 +
-+  test('honors an explicit fileName option over the filePath basename', async () => {
-+    mockFetchOk()
-+    const appendSpy = jest.spyOn(FormData.prototype, 'append')
-+
-+    await uploadFile({
-+      url: 'https://example.com/upload',
-+      filePath: '/data/user/0/com.example/cache/xxxx.jpg',
-+      name: 'file',
-+      fileName: 'custom-name.png'
-+    })
-+
-+    const fileCall = appendSpy.mock.calls.find(([key]) => key === 'file')
-+    expect(fileCall).toBeDefined()
-+    expect(fileCall![1]).toMatchObject({ name: 'custom-name.png' })
++  test.each([[undefined, 1], [1, undefined], [NaN, 1], [Infinity, 1], [91, 1], [1, -181]])('rejects invalid selected coordinates %s,%s', async (latitude, longitude) => {
++    const { result, success, fail, complete } = openChooser()
++    confirm(latitude, longitude)
++    expect(await result).toEqual({ errMsg: 'chooseLocation:fail' })
++    expect(success).not.toHaveBeenCalled()
++    expect(fail).toHaveBeenCalledTimes(1)
++    expect(complete).toHaveBeenCalledTimes(1)
 +  })
 +
-+  test('keeps the historical "file" fallback when no name can be derived', async () => {
-+    mockFetchOk()
-+    const appendSpy = jest.spyOn(FormData.prototype, 'append')
++  test('still fails when no point has been selected', async () => {
++    const { result, success, fail } = openChooser()
++    document.querySelector<HTMLElement>('.taro_choose_location_submit')!.click()
++    expect(await result).toEqual({ errMsg: 'chooseLocation:fail' })
++    expect(success).not.toHaveBeenCalled()
++    expect(fail).toHaveBeenCalledTimes(1)
++  })
 +
-+    await uploadFile({
-+      url: 'https://example.com/upload',
-+      filePath: '/data/user/0/com.example/cache/',
-+      name: 'file'
-+    })
-+
-+    const fileCall = appendSpy.mock.calls.find(([key]) => key === 'file')
-+    expect(fileCall).toBeDefined()
-+    expect(fileCall![1]).toMatchObject({ name: 'file' })
++  test('preserves cancellation', async () => {
++    const { result, success, fail } = openChooser()
++    document.querySelector<HTMLElement>('.taro_choose_location_back')!.click()
++    expect(await result).toEqual({ errMsg: 'chooseLocation:fail cancel' })
++    expect(success).not.toHaveBeenCalled()
++    expect(fail).toHaveBeenCalledTimes(1)
 +  })
 +})
 ```
 
-**File**: `packages/taro-rn/src/lib/file.ts` (modified, +4/-4)
+**File**: `packages/taro-h5/src/api/location/chooseLocation.ts` (modified, +7/-2)
 ```diff
-@@ -32,10 +32,10 @@ const _fetch = (requestPromise, timeout) => {
+@@ -5,13 +5,18 @@ import queryString from 'query-string'
  
- const isAndroid = Platform.OS === 'android'
+ import { MethodHandler } from '../../utils/handler'
  
--const createFormData = (filePath, body, name) => {
-+const createFormData = (filePath, body, name, fileName) => {
-   const data = new FormData()
-   const uri = isAndroid ? filePath : filePath.replace('file://', '')
--  const fileObj = { uri: uri, type: 'application/octet-stream', name: 'file' }
-+  const fileObj = { uri: uri, type: 'application/octet-stream', name: fileName || filePath.split('/').pop() || 'file' }
- 
-   Object.keys(body).forEach(key => {
-     data.append(key, body[key])
-@@ -59,11 +59,11 @@ const createFormData = (filePath, body, name) => {
-  * @return UploadTask - 一个可以监听上传进度进度变化的事件和取消上传的对象
-  */
- function uploadFile (opts: Taro.uploadFile.Option): Promise<Taro.uploadFile.SuccessCallbackResult & Taro.UploadTask> {
--  const { url, timeout = 2000, filePath, name, header, formData = {}, success, fail, complete } = opts
-+  const { url, timeout = 2000, filePath, name, header, formData = {}, fileName, success, fail, complete } = opts
- 
-   const execFetch = fetch(url, {
-     method: 'POST',
--    body: createFormData(filePath, formData, name),
-+    body: createFormData(filePath, formData, name, fileName),
-     headers: header
-   })
- 
-```
-
-**File**: `packages/taro/types/api/network/upload.d.ts` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ declare module '../../index' {
-        */
-       enableQuic?: boolean
-       /** 上传的文件名
--       * @supported h5
-+       * @supported h5, rn
-        */
-       fileName?: string
-       /** 是否应使用传出凭据 (cookie) 发送此请求
++function isValidCoordinates (latitude: unknown, longitude: unknown) {
++  return typeof latitude === 'number' && latitude >= -90 && latitude <= 90 &&
++    typeof longitude === 'number' && longitude >= -180 && longitude <= 180
++}
++
+ let container: HTMLDivElement | null = null
+ function createLocationChooser (handler, key = LOCATION_APIKEY, mapOpt: Taro.chooseLocation.Option['mapOpts'] = {}) {
+   const { latitude, longitude, ...opts } = mapOpt
+   const query = {
+     key,
+     type: 1,
+-    coord: mapOpt.coord ?? [latitude, longitude].every(e => Number(e) >= 0) ? `${latitude},${longitude}` : undefined,
++    coord: isValidCoordinates(latitude, longitude) ? `${latitude},${longitude}` : undefined,
+     referer: 'myapp',
+     ...opts
+   }
+@@ -106,7 +111,7 @@ export const chooseLocation: typeof Taro.chooseLocation = ({ success, fail, comp
+       if (res) {
+         return handle.fail(res, { resolve, reject })
+       } else {
+-        if (chooseLocation.latitude && chooseLocation.longitude) {
++        if (isValidCoordinates(chooseLocation.latitude, chooseLocation.longitude)) {
+           return handle.success(chooseLocation, { resolve, reject })
+         } else {
+           return handle.fail({}, { resolve, reject })
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19543** (2026-10-20): fix(h5): accept valid zero and negative location coordinates (@Jarvis636431)
+- **PR #19541** (2026-10-20): fix(vite): reset stateful regex cursors in compile filters (@Jarvis636431)
 - **PR #19534** (2026-10-16): fix(h5): release socket slots on server close (@Jarvis636431)
 - **PR #19532** (2026-10-16): fix(h5): clear download timeout after completion (@Jarvis636431)
 - **PR #19530** (2026-10-16): fix(runtime): preserve hyphen-prefixed style property keys (@sep2)
 - **PR #19529** (2026-10-16): fix(runtime): 修复移除未注册事件处理器时误删已有监听器 (@sep2)
-- **PR #19528** (2026-10-16): fix(runtime): 修复逻辑索引未命中时事件目标信息丢失的问题 (@sep2)
-- **PR #19527** (2026-10-15): fix:修复 H5 WaterFlow 动态切列后卡片高度变化导致的布局错位 (@Adamlyu-hub)
 
 ---
 
@@ -1596,55 +2003,58 @@ Fixes #19505
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h5): clear download timeout after completion (#19532)
+## X. components): 修复 H5 Swiper 初始化、卸载和重建生命周期 (#19353)
 
 **RULE**:
-When implementing operations in `packages/taro-h5/__tests__/network/download.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/swiper-lifecycle/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `039023c2`: h5): clear download timeout after completion (#19532). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc3a868d`: components): 修复 H5 Swiper 初始化、卸载和重建生命周期 (#19353). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/network/download.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/swiper-lifecycle/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { downloadFile } from '../../src/api/network/download'
+# H5 Swiper 生命周期手工复现
 
-describe('downloadFile lifecycle', () => {
-  let xhr: XMLHttpRequest
-  let abort: jest.SpyInstance
+用于验证 PR #19353 / Issue #19522。直接使用编译后的 Stencil 组件和真实 Swiper，不修改实例内部字段。
 
-  beforeEach(() => {
-    jest.useFakeTimers()
-    xhr = new XMLHttpRequest()
-    jest.spyOn(window, 'XMLHttpRequest').mockImplementation(() => xhr)
-    jest.spyOn(xhr, 'open').mockImplementation(() => {})
-    jest.spyOn(xhr, 'send').mockImplementation(() => {})
-    abort = jest.spyOn(xhr, 'abort').mockImplementation(() => {
-      xhr.onabort?.(new ProgressEvent('abort'))
-    })
-    Object.defineProperty(window.URL, 'createObjectURL', {
-      configurable: true,
-      value: jest.fn(() => 'blob:download')
-    })
-  })
+## 准备
 
-  afterEach(() => {
-    jest.clearAllTimers()
-    jest.useRealTimers()
-    jest.restoreAllMocks()
-    delete window.URL.createObjectURL
-  })
+按仓库贡献指南安装依赖，构建 `@tarojs/components`。随后在仓库根目录执行：
 
-  test.each(['success', 'error', 'abort', 'timeout'])('%s settles callbacks once and clears the timeout', async outcome => {
-    const success = jest.fn()
-    const fail = jest.fn()
-    const complete = jest.fn()
-    const task = downloadFile({ url: '/file', timeout: 100, success, fail, complete })
-    // Attach the rejection handler before triggering a terminal event.
+```sh
+pnpm --filter @tarojs/components exec esbuild ../../examples/swiper-lifecycle/index.js --bundle --format=iife --outfile=../../examples/swiper-lifecycle/bundle.js
+```
 
+使用 Chrome 打开本目录的 `index.html`，或通过已有静态服务访问。`bundle.js` 是本地产物，不提交。
+
+## 操作顺序
+
+1. 点击「挂载三图」，等待轮播开始。
+2. 点击「卸载保留节点」。宿主从文档移除，仍保留引用。
+3. 点击「切换 circular」，将其改为 false；等待页面状态更新。
+4. 再次点击「切换 circular」，改回 true；等待页面状态更新。
+5. 点击「追加一图」。
+6. 在修复分支中继续点击「重新挂载」。
+
+## 已观察结果
+
+基线：main `4a1ea09a1b0`，Taro 4.3.0 / Swiper 11.1.15 / Stencil 2.22.3，Chrome。
+
+- 卸载后旧实例仍自动播放。
+- 断开期间切换 circular 会触发 reset，以全局选择器重建实例；节点不在文档中，构造出的实例没有有效 wrapper。
+- 追加节点时抛出 `TypeError: Cannot read properties of undefined (reading 'children')`，堆栈为 `elementChildren → recalcSlides → loopDestroy → beforeDomOperation → appendChild`。
+
+PR 分支：同一操作顺序没有捕获到异常；旧实例被销毁，重新挂载后四张图和 autoplay 恢复。
+
+这是 H5 自定义元素脱离文档后仍被更新的复现，未证明 React 页面所有卸载方式都会执行后续操作，也不是线上 Taro 3.5.7 / Swiper 6 的完整用户操作还原。`getSwiperTranslate → loopFix → autoplay` 原始堆栈尚未复现。
+
+## 自动化回归
+
+`packages/taro-components/__tests__/swiper-lifecycle.spec.tsx` 使用现有 `newSpecPage` 和 Swiper mock 覆盖 1
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1654,4 +2064,4 @@ describe('downloadFile lifecycle', () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `039023c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc3a868d` are properly handled with clean fallback behavior.

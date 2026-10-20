@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:48:12.811Z",
+  "last_updated": "2026-10-20T05:54:34.787Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33139,8 +33139,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "53b9d3fc",
-      "content_hash": "61f8e5bfc88b174dc9f410de801236135d6cbf33502a2c766fb42f3101d4a553",
+      "source_version": "251d8fcd",
+      "content_hash": "af24adcf6ab84bb133a833906b610cacfa660b7cbf3f096488c527732f69a9dd",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -33155,7 +33155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:26:14.904Z",
+      "verified_at": "2026-10-20T05:54:34.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

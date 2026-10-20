@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:35:37.430Z",
+  "last_updated": "2026-10-20T05:54:34.861Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2147,6 +2147,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-open-policy-agent-opa"
+    },
+    {
+      "id": "CD-QIGD",
+      "directive_title": "components): 修复 H5 Swiper 初始化、卸载和重建生命周期 (#19353)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NervJS/taro",
+      "source_commit": "251d8fcd",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nervjs-taro"
     }
   ]
 }

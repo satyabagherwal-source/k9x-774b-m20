@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:48:12.865Z",
-  "total_cycles_completed": 3714,
-  "total_learnings_persisted": 3714,
+  "last_updated": "2026-10-20T05:54:34.863Z",
+  "total_cycles_completed": 3715,
+  "total_learnings_persisted": 3715,
   "total_rules_promoted": 2892,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:41:20.292Z",
-      "repository": "html5lib/html5lib-python",
-      "learningId": "learn-github-html5lib-html5lib-python",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:42:04.328Z",
       "repository": "relatedcode/ProgressHUD",
@@ -1403,6 +1396,13 @@
       "repository": "fastapi/fastapi",
       "learningId": "learn-github-fastapi-fastapi",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:54:34.863Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
