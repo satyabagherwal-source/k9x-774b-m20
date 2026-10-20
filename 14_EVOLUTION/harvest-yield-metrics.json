@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:24:54.196Z",
-  "total_cycles_completed": 3777,
-  "total_learnings_persisted": 3777,
-  "total_rules_promoted": 2973,
+  "last_updated": "2026-10-20T12:31:17.230Z",
+  "total_cycles_completed": 3780,
+  "total_learnings_persisted": 3780,
+  "total_rules_promoted": 2975,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:44:01.678Z",
-      "repository": "rdfjs/N3.js",
-      "learningId": "learn-github-rdfjs-n3-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:44:04.883Z",
-      "repository": "iziz/libPhoneNumber-iOS",
-      "learningId": "learn-github-iziz-libphonenumber-ios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:51:35.161Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:51:38.232Z",
       "repository": "RDFLib/rdflib",
@@ -1403,6 +1382,27 @@
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:31:03.101Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:31:13.452Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:31:17.230Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

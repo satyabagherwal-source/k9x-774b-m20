@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "ef602180d59ed245231beef9a9d5d05c58ef4f1b655cfd2b1d1d00be67df0e53",
-    "lastHarvestedAt": "2026-10-18T23:14:25.022Z",
+    "contentHash": "53fc451508fae00e19dfc61e7cca14b33560f7081beb00155599ff5b2e0f8a63",
+    "lastHarvestedAt": "2026-10-20T12:31:03.096Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "c39bd4fa",
+    "sourceVersion": "99c44018",
     "license": "Apache-2.0",
-    "contentHash": "7c0d5c79cf68a6d27360f12e7ed3d9061ca42bed3316e1bf6d3f8b370accb608",
-    "lastHarvestedAt": "2026-10-18T21:20:17.507Z",
+    "contentHash": "3d4692956a873cb88cf2ed9775c74f1012306faa289450fc8a01c15ebb23cb33",
+    "lastHarvestedAt": "2026-10-20T12:31:13.447Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "d64e478e",
+    "sourceVersion": "bd5b94d1",
     "license": "MIT",
-    "contentHash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
-    "lastHarvestedAt": "2026-10-19T20:22:58.579Z",
+    "contentHash": "b40c47b431ef0eb0e2dc62370b1bd818d48f1d3a72d80f894b547bc570502329",
+    "lastHarvestedAt": "2026-10-20T12:31:17.217Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

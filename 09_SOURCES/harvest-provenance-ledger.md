@@ -3807,3 +3807,6 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `51af51f9` | Multi-dimensional audit evidence | 2026-10-20T12:12:20.388Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-20T12:18:32.658Z |
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-20T12:24:54.192Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-20T12:31:03.096Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `99c44018` | Multi-dimensional audit evidence | 2026-10-20T12:31:13.447Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `bd5b94d1` | Multi-dimensional audit evidence | 2026-10-20T12:31:17.217Z |

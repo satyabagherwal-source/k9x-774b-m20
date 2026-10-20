@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T12:24:54.200Z",
+  "last_updated": "2026-10-20T12:31:17.234Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,14 +1700,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "ef602180d59ed245231beef9a9d5d05c58ef4f1b655cfd2b1d1d00be67df0e53",
-      "verified_at": "2026-10-18T23:14:25.027Z",
+      "content_hash": "53fc451508fae00e19dfc61e7cca14b33560f7081beb00155599ff5b2e0f8a63",
+      "verified_at": "2026-10-20T12:31:03.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:14:25.027Z"
+      "last_updated": "2026-10-20T12:31:03.104Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "7c0d5c79cf68a6d27360f12e7ed3d9061ca42bed3316e1bf6d3f8b370accb608",
-      "verified_at": "2026-10-18T21:20:17.510Z",
+      "content_hash": "3d4692956a873cb88cf2ed9775c74f1012306faa289450fc8a01c15ebb23cb33",
+      "verified_at": "2026-10-20T12:31:13.455Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:20:17.510Z"
+      "last_updated": "2026-10-20T12:31:13.455Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "c0b55efc3a8eacf9f00f32064f766ae6ca96e1a6bc6336fab5a6b6411786752f",
-      "verified_at": "2026-10-20T10:09:43.486Z",
+      "content_hash": "b40c47b431ef0eb0e2dc62370b1bd818d48f1d3a72d80f894b547bc570502329",
+      "verified_at": "2026-10-20T12:31:17.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:09:43.486Z"
+      "last_updated": "2026-10-20T12:31:17.233Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
