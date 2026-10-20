@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:51:16.598Z",
-  "total_cycles_completed": 3836,
-  "total_learnings_persisted": 3836,
-  "total_rules_promoted": 3050,
+  "last_updated": "2026-10-20T14:57:45.227Z",
+  "total_cycles_completed": 3838,
+  "total_learnings_persisted": 3838,
+  "total_rules_promoted": 3051,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:34:20.294Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:34:25.869Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:34:27.973Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T14:51:16.598Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:57:44.877Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:57:45.227Z",
+      "repository": "elastic/eui",
+      "learningId": "learn-github-elastic-eui",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

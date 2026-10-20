@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:51:16.556Z",
+  "last_updated": "2026-10-20T14:57:45.160Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8562,8 +8562,8 @@
       "slug": "elastic-eui",
       "platform": "github",
       "source_url": "https://github.com/elastic/eui",
-      "source_version": "bfd03740",
-      "content_hash": "0f86fd9b570d88b19612c4e7e51faeb501930860303540b9913975447d7ba7d4",
+      "source_version": "42254b6c",
+      "content_hash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
       "dossier_path": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "promoted_rules": [
@@ -8576,6 +8576,11 @@
           "number": 2607,
           "title": "[ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3235,
+          "title": "Re-enabling Figma EUI lib link (#10224)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8583,7 +8588,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:27:26.885Z",
+      "verified_at": "2026-10-20T14:57:45.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22614,7 +22619,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "438460b4d780be4c2dd47becd6a403df43e97182ffd4151eb4c63dad96f2fdc9",
+      "content_hash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
@@ -22652,7 +22657,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-10-19T01:16:28.025Z",
+      "verified_at": "2026-10-20T14:57:44.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101972,6 +101977,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:51:16.548Z"
+    },
+    "rule-3235": {
+      "learning_id": "rule-3235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3235,
+      "title": "Re-enabling Figma EUI lib link (#10224)",
+      "source_url": "https://github.com/elastic/eui",
+      "source_version": "42254b6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:57:45.142Z"
     }
   },
   "aliases": {

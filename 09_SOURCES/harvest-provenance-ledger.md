@@ -3866,3 +3866,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-20T14:51:02.632Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `9117c253` | Multi-dimensional audit evidence | 2026-10-20T14:51:15.289Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `c8550922` | Multi-dimensional audit evidence | 2026-10-20T14:51:16.594Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T14:57:44.873Z |
+| `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `42254b6c` | Multi-dimensional audit evidence | 2026-10-20T14:57:45.222Z |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-9ALF",
-    "timestamp": "2026-10-19T16:37:22.275Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "bf53c8ee4e373cd07e5b4a80852767d7f4f62685854ddee6633be1224a1d5223",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9ENU",
-    "timestamp": "2026-10-19T16:37:27.546Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-HA1K",
     "timestamp": "2026-10-19T16:43:34.808Z",
     "repository": "carbon-design-system/carbon",
@@ -7490,6 +7460,36 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-512E",
+    "timestamp": "2026-10-20T14:57:44.870Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-51BZ",
+    "timestamp": "2026-10-20T14:57:45.215Z",
+    "repository": "elastic/eui",
+    "learningId": "learn-github-elastic-eui",
+    "contentHash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1756,8 +1756,8 @@
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-20T11:33:01.787Z",
-    "lastVerified": "2026-10-20T11:33:01.787Z",
+    "lastChecked": "2026-10-20T14:57:49.995Z",
+    "lastVerified": "2026-10-20T14:57:49.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chrispybacon-dev-dockflare",
@@ -2755,12 +2755,12 @@
     "revisionIdentifier": "e6bd9f7b"
   },
   "hf-qwen-qwen3.8-27b": {
-    "name": "Qwen/Qwen3.8-27B",
+    "name": "Qwen3.8-27B",
     "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-19T01:16:16.959Z",
-    "lastVerified": "2026-10-19T01:16:16.959Z",
+    "lastChecked": "2026-10-20T14:57:42.166Z",
+    "lastVerified": "2026-10-20T14:57:42.166Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b",
@@ -2769,7 +2769,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "hf-qwen-qwen"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -4192,8 +4193,8 @@
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T22:32:59.631Z",
-    "lastVerified": "2026-10-19T22:32:59.631Z",
+    "lastChecked": "2026-10-20T14:57:52.686Z",
+    "lastVerified": "2026-10-20T14:57:52.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -6614,8 +6615,8 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T23:15:38.230Z",
-    "lastVerified": "2026-10-19T23:15:38.230Z",
+    "lastChecked": "2026-10-20T14:57:47.710Z",
+    "lastVerified": "2026-10-20T14:57:47.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
@@ -6973,22 +6974,21 @@
     "revisionIdentifier": "f7a7f957"
   },
   "elastic-eui": {
-    "name": "eui",
+    "name": "elastic/eui",
     "officialUrl": "https://github.com/elastic/eui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T00:12:28.284Z",
-    "lastVerified": "2026-10-20T00:12:28.284Z",
+    "lastChecked": "2026-10-20T14:57:44.635Z",
+    "lastVerified": "2026-10-20T14:57:44.635Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-elastic-eui",
-    "contentHash": "0f86fd9b570d88b19612c4e7e51faeb501930860303540b9913975447d7ba7d4",
+    "contentHash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bfd03740"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "arco-design-arco-design": {
     "name": "arco-design",
@@ -8112,12 +8112,12 @@
     "revisionIdentifier": "e9d81da3"
   },
   "midudev-preguntas-entrevista-react": {
-    "name": "midudev/preguntas-entrevista-react",
+    "name": "preguntas-entrevista-react",
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
     "sourceType": "github",
     "technology": "Astro",
-    "lastChecked": "2026-10-19T02:55:00.939Z",
-    "lastVerified": "2026-10-19T02:55:00.939Z",
+    "lastChecked": "2026-10-20T14:57:44.894Z",
+    "lastVerified": "2026-10-20T14:57:44.894Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-midudev-preguntas-entrevista-react",
@@ -8126,7 +8126,8 @@
     "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7093d802"
   },
   "go-eagle-eagle": {
     "name": "eagle",
@@ -10499,12 +10500,12 @@
     "revisionIdentifier": "8b68a141"
   },
   "yvgude-lean-ctx": {
-    "name": "yvgude/lean-ctx",
+    "name": "lean-ctx",
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T20:28:47.706Z",
-    "lastVerified": "2026-10-19T20:28:47.706Z",
+    "lastChecked": "2026-10-20T14:57:39.991Z",
+    "lastVerified": "2026-10-20T14:57:39.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
@@ -10513,7 +10514,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1fba4a0e"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -18446,8 +18448,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-20T14:32:02.496Z",
-    "lastVerified": "2026-10-20T14:32:02.496Z",
+    "lastChecked": "2026-10-20T14:57:54.924Z",
+    "lastVerified": "2026-10-20T14:57:54.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -27260,8 +27262,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-20T14:51:19.132Z",
-    "lastVerified": "2026-10-20T14:51:19.132Z",
+    "lastChecked": "2026-10-20T14:57:54.940Z",
+    "lastVerified": "2026-10-20T14:57:54.940Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

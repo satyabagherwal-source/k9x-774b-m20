@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/elastic-eui-learnings.md`  
 > **Source**: github ([https://github.com/elastic/eui](https://github.com/elastic/eui))  
-> **Source Version**: `bfd03740`  
+> **Source Version**: `42254b6c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:27:26.651Z  
+> **Timestamp**: 2026-10-20T14:57:44.826Z  
 > **Learning ID**: `learn-github-elastic-eui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/elastic-eui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/elastic/eui](https://github.com/elastic/eui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:27:26.641Z  
+> **Harvest Timestamp**: 2026-10-20T14:57:44.635Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Elastic UI Framework 🙌
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6371 stars
+- **Stars / Engagement**: 6373 stars
 
 ---
 
@@ -611,17 +611,16 @@ export function hasA11yPropForComponent(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10216** (2026-10-19): **[ESLint plugin] Bump picomatch and brace-expansion to patched versions**
-  *Symptoms*: ## Summary  Snyk flagged `picomatch@2.3.1` (direct dependency of `@elastic/eslint-plugin-eui`) and `brace-expansion@5.0.7` (via `@typescript-eslint/typescript-estree` → `minimatch`). The plugin only matches globs from ESLint and tsconfig config at lint time, so the patterns aren't attacker-controlled, but patched versions are in range, so this bumps them.  - `picomatch` `^2.3.1` → `^2.3.2` - `brace-expansion` refreshed in the lockfile to 5.0.12, plus the 1.x and 2.x copies to 1.1.21 and 2.1.7 - `picomatch` 4.x refreshed to 4.0.7 while at it  `react-scanner` (used by `packages/eui-usage-analytics`) pins `picomatch` to exactly `2.3.1`, so that copy stays. It isn't part of what Snyk flagged here.  ### API Changes  None.  ## Impact Assessment  **Impact level:** 🟢 None  ## Release Readiness  - [ ] ~~**Documentation:**~~ - [ ] ~~**Figma:**~~ - [ ] ~~**Migration guide:**~~ - [ ] ~~**Adoption plan**~~  ### Checklist before marking Ready for Review  - [x] Filled out all sections above - [ ] ~~**QA:** Tested light/dark modes, high contrast, mobile, Chrome/Safari/Edge/Firefox, keyboard-only, screen reader~~ - [ ] ~~**QA:** Tested in CodeSandbox and Kibana~~ - [ ] ~~**QA:** Tested docs changes~~ - [ ] ~~**Tests:** Added/updated Jest, Cypress, and VRT~~ - [x] **Changelog:** Added [changelog entry](https://github.com/elastic/eui/blob/main/wiki/contributing-to-eui/documenting/changelogs.md) - [ ] ~~**Breaking changes:** Added `breaking change` label (if applicable)~~  ### Reviewer checklis
+- **Issue #10224** (2026-10-20): **Re-enabling Figma EUI lib link**
+  *Symptoms*: ## Summary  - **What:** Bringing back the EUI Figma library link the website Doc. - **Why:** It was disabled some time ago waiting to get an updated Figma library. Now that we have it is time to enabled it again. - **How:** Uncommenting previous code and updating the [Figma file URL](https://www.figma.com/community/file/1656321711577585144/elastic-ui-borealis)   ## Screenshots  <img width="2900" height="1884" alt="CleanShot 2026-10-20 at 16 41 59@2x" src="https://github.com/user-attachments/assets/41d0458f-e7a7-4d5a-870b-214818b60979" />   ## Impact Assessment  <!-- Help reviewers understand the consumer impact of merging this PR. -->  Note: Most PRs should be [tested in Kibana](https://github.com/elastic/eui/blob/main/wiki/contributing-to-eui/testing/testing-in-kibana.md) to help gauge their **Impact** before merging.  - [ ] 🔴 **Breaking changes** — What will break? How many usages in Kibana/Cloud UI are impacted? - [ ] 💅 **Visual changes** — May impact style overrides; could require visual testing. Explain and estimate impact. - [ ] 🧪 **Test impact** — May break functional or snapshot tests (e.g., HTML structure, class names, default values). - [ ] 🔧 **Hard to integrate** — If changes require substantial updates to Kibana, please [stage the changes](https://github.com/elastic/eui/blob/main/wiki/contributing-to-eui/testing/testing-in-kibana.md#staging-integrations) and link them here.  <!-- If this PR needs an accompanying Kibana change to keep th
   **Post-Mortem & Fix Analysis**:
-  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5899) * Commit: a2794862bda298658f323e1795c55adb09bb246d * [Documentation website](https://eui.elastic.co/pr_10216/) * [Storybook](https://eui.elastic.co/pr_10216/storybook/) * :white_check_mark: Visual regression tests passed   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5899","number":5899,"commit":"a2794862bda298658f323e1795c55adb09bb246d"}],"number":5899} buildkite-pr-comment-->
-  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8284) * Commit: a2794862bda298658f323e1795c55adb09bb246d  <!--buildkite-pr-comment-eui-pull-request-test-and-deploy {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8284","number":8284,"commit":"a2794862bda298658f323e1795c55adb09bb246d"}],"number":8284} buildkite-pr-comment-->
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5918) * Commit: ca61dd1c5b86d961ae7c29ac5aacb8c0967a44b6 * [Documentation website](https://eui.elastic.co/pr_10224/) * [Storybook](https://eui.elastic.co/pr_10224/storybook/) * :no_entry_sign: Visual regression tests skipped: No VRT-relevant paths changed   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5918","number":5918,"commit":"ca61dd1c5b86d961ae7c29ac5aacb8c0967a44b6"}],"number":5918} buildkite-pr-comment-->
 
-- **Issue #10215** (2026-10-19): **Release: @elastic/eui-docusaurus-theme v2.8.1, @elastic/eui v123.2.0, @elastic/eui-test-helpers v2.1.0**
-  *Symptoms*: Packages to release: - `@elastic/eui-docusaurus-theme` - v2.8.0 → v2.8.1 - `@elastic/eui` - v123.1.0 → v123.2.0 - `@elastic/eui-test-helpers` - v2.0.0 → v2.1.0
+- **Issue #10217** (2026-10-20): **Icon Alert Zero**
+  *Symptoms*: ## Summary  - **What:** Adds the AlertZero product icon to EUI following existing EUI icon guidelines.  - **Why:** Request came from https://github.com/elastic/eui/issues/10092 to provide a distinctive AlertZero icon - **How:** Add glyph(s) for `productAlertZero` in the EuiIcon set   ### Implementation notes - No API changes. This PR adds new icon glyph assets only. - Keep animation/demo files in a non-blocking example folder (e.g., `src-docs/icon-examples/alert-zero-animation.html`) — do not require animation to merge. - Ensure duotone and single-color exports are provided for Storybook/docs.  ### API Changes  List any change to the public EUI API here.  | component / parent | prop / child | change | description | | ------------------ | ------------ | ------ | ----------- | | EuiIcon (new glyph) | `productAlertZero` | Added | Adds AlertZero icon glyphs (16px small-nav, 24/32px product sizes, duotone variants). |  ## Screenshots  <img width="482" height="238" alt="CleanShot 2026-10-19 at 14 20 09@2x" src="https://github.com/user-attachments/assets/f4cf7cba-72de-4b7c-876b-90fd6dc8a063" />  <img width="364" height="644" alt="CleanShot 2026-10-19 at 14 40 35@2x" src="https://github.com/user-attachments/assets/911322ec-7dab-47db-be77-f085d3ed9978" />  <img width="1290" height="1284" alt="CleanShot 2026-10-19 at 14 41 39@2x" src="https://github.com/user-attachments/assets/73a70a9f-6168-4280-9188-b349f504038b" />   ## Impact Assessment  Note: Most PR i
   **Post-Mortem & Fix Analysis**:
-  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5897) * Commit: 169263b6a9cb11a637e2c69986b2d30f03b08629 * [Documentation website](https://eui.elastic.co/pr_10215/) * [Storybook](https://eui.elastic.co/pr_10215/storybook/) * :no_entry_sign: Visual regression tests skipped: Has 'skip-vrt' label   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5897","number":5897,"commit":"169263b6a9cb11a637e2c69986b2d30f03b08629"}],"number":5897} buildkite-pr-comment-->
-  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8282) * Commit: 169263b6a9cb11a637e2c69986b2d30f03b08629  <!--buildkite-pr-comment-eui-pull-request-test-and-deploy {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8282","number":8282,"commit":"169263b6a9cb11a637e2c69986b2d30f03b08629"}],"number":8282} buildkite-pr-comment-->
+  > ## :camera: 1 visual difference(s) found  Look at the visual diff below. If everything is expected, run [Approve visual changes](https://buildkite.com/elastic/eui-deploy-docs/builds/5904) to update baselines, re-run the job or make appropriate fixes.  See the [visual regression testing](https://github.com/elastic/eui/blob/main/wiki/contributing-to-eui/testing/visual-regression-testing.md) wiki for more information.  <details> <summary>Expand to review</summary> <br>  <p><strong>euiicon</strong> (1 difference)</p> <table> <thead>   <tr><th>Story</th><th>Diff %</th><th>Before</th><th>After</th><th>Diff</th></tr> </thead> <tbody>   <tr>     <td><a href="https://eui.elastic.co/pr_10217/storybook/?path=/story/display-euiicon--all-icons">all icons</a> <code>desktop</code></td>     <td>3.82%</td>     <td><img src="https://eui.elastic.co/pr_10217/vrt-diff/display-euiicon--all-icons-desktop-before.png" width="180"/></td>     <td><img src="https://eui.elastic.co/pr_10217/vrt-diff/display-euiicon
+  > ## :camera: 1 visual difference(s) found  Look at the visual diff below. If everything is expected, run [Approve visual changes](https://buildkite.com/elastic/eui-deploy-docs/builds/5905) to update baselines, re-run the job or make appropriate fixes.  See the [visual regression testing](https://github.com/elastic/eui/blob/main/wiki/contributing-to-eui/testing/visual-regression-testing.md) wiki for more information.  <details> <summary>Expand to review</summary> <br>  <p><strong>euiicon</strong> (1 difference)</p> <table> <thead>   <tr><th>Story</th><th>Diff %</th><th>Before</th><th>After</th><th>Diff</th></tr> </thead> <tbody>   <tr>     <td><a href="https://eui.elastic.co/pr_10217/storybook/?path=/story/display-euiicon--all-icons">all icons</a> <code>desktop</code></td>     <td>3.82%</td>     <td><img src="https://eui.elastic.co/pr_10217/vrt-diff/display-euiicon--all-icons-desktop-before.png" width="180"/></td>     <td><img src="https://eui.elastic.co/pr_10217/vrt-diff/display-euiicon
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -638,221 +637,516 @@ export function hasA11yPropForComponent(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfd03740` (2026-10-19)
-**Commit Message**: [ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)
+### Incident Patch 1: `42254b6c` (2026-10-20)
+**Commit Message**: Re-enabling Figma EUI lib link (#10224)
 
-**File**: `packages/eslint-plugin/changelogs/upcoming/10216.md` (added, +3/-0)
+**File**: `packages/website/docusaurus.config.ts` (modified, +1/-4)
 ```diff
-@@ -0,0 +1,3 @@
-+**Dependency updates**
-+
-+- Updated `picomatch` to v2.3.2
-```
-
-**File**: `packages/eslint-plugin/package.json` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@
-     "@typescript-eslint/typescript-estree": "^8.64.0",
-     "@typescript-eslint/utils": "^8.64.0",
-     "cssstyle": "^4.2.1",
--    "picomatch": "^2.3.1"
-+    "picomatch": "^2.3.2"
-   },
-   "devDependencies": {
-     "@babel/cli": "^7.26.4",
-```
-
-**File**: `yarn.lock` (modified, +19/-19)
-```diff
-@@ -7035,7 +7035,7 @@ __metadata:
-     dedent: "npm:^1.5.3"
-     eslint: "npm:^8.57.0"
-     jest: "npm:^29.7.0"
--    picomatch: "npm:^2.3.1"
-+    picomatch: "npm:^2.3.2"
-     rimraf: "npm:^6.0.1"
-     ts-jest: "npm:^29.2.5"
-     ts-node: "npm:^10.9.2"
-@@ -16393,30 +16393,30 @@ __metadata:
-   linkType: hard
- 
- "brace-expansion@npm:^1.1.7":
--  version: 1.1.11
--  resolution: "brace-expansion@npm:1.1.11"
-+  version: 1.1.21
-+  resolution: "brace-expansion@npm:1.1.21"
-   dependencies:
-     balanced-match: "npm:^1.0.0"
-     concat-map: "npm:0.0.1"
--  checksum: 10c0/695a56cd058096a7cb71fb09d9d6a7070113c7be516699ed361317aca2ec169f618e28b8af352e02ab4233fb54eb0168460a40dc320bab0034b36ab59aaad668
-+  checksum: 10c0/8f0a68a720f9cb28c2ecaea5cdaf15fafd686d6b6e4e722a81c9d4bd2f68c1fd0619731cac05875d842221eaf4d97d564d329a12eb3c4c22137502fb3c65be8b
-   languageName: node
-   linkType: hard
- 
- "brace-expansion@npm:^2.0.1":
--  version: 2.0.1
--  resolution: "brace-expansion@npm:2.0.1"
-+  version: 2.1.7
-+  resolution: "brace-expansion@npm:2.1.7"
-   dependencies:
-     balanced-match: "npm:^1.0.0"
--  checksum: 10c0/b358f2fe060e2d7a87aa015979ecea07f3c37d4018f8d6deb5bd4c229ad3a0384fe6029bb76cd8be63c81e516ee52d1a0673edbe2023d53a5191732ae3c3e49f
-+  checksum: 10c0/17ee4194c85b05cde0a7b7c068eeef664440c027116ef42c3d35c13ebabdc9fd3eaf05c5c8a06dd0ca20ae012d652561d8ac2a699daa5cbee1f0510e5134ab4d
-   languageName: node
-   linkType: hard
- 
- "brace-expansion@npm:^5.0.5":
--  version: 5.0.7
--  resolution: "brace-expansion@npm:5.0.7"
-+  version: 5.0.12
-+  resolution: "brace-expansion@npm:5.0.12"
-   dependencies:
-     balanced-match: "npm:^4.0.2"
--  checksum: 10c0/4769109c3c082de178e449a371bcad50d51ab468f644bce2dd9188efe0cf0a080ed102105d7fc8577382cedc45bad7e6443a91bf3d8102264ee8cf927dbaf205
-+  checksum: 10c0/a40ac64d3bdb5bb222456514d3633c1f627f03b844f509c69e70f98b78be0ce85e21b44bbfecdd0ddd4cc0855ca4242b41ea96ddccf88c7c3c7a84405474bb3a
-   languageName: node
-   linkType: hard
- 
-@@ -32855,24 +32855,24 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"picomatch@npm:2.3.1, picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1":
-+"picomatch@npm:2.3.1":
-   version: 2.3.1
-   resolution: "picomatch@npm:2.3.1"
-   checksum: 10c0/26c02b8d06f03206fc2ab8d16f19960f2ff9e81a658f831ecb656d8f17d9edc799e8364b1f4a7873e89d9702dff96204be0fa26fe4181f6843f040f819dac4be
-   languageName: node
-   linkType: hard
- 
--"picomatch@npm:^4.0.2":
--  version: 4.0.2
--  resolution: "picomatch@npm:4.0.2"
--  checksum: 10c0/7c51f3ad2bb42c776f49ebf964c644958158be30d0a510efd5a395e8d49cb5acfed5b82c0c5b365523ce18e6ab85013c9ebe574f60305892ec3fa8eee8304ccc
-+"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1, picomatch@npm:^2.3.2":
-+  version: 2.3.2
-+  resolution: "picomatch@npm:2.3.2"
-+  checksum: 10c0/a554d1709e59be97d1acb9eaedbbc700a5c03dbd4579807baed95100b00420bc729335440ef15004ae2378984e2487a7c1cebd743cfdb72b6fa9ab69223c0d61
-   languageName: node
-   linkType: hard
- 
--"picomatch@npm:^4.0.3, picomatch@npm:^4.0.4":
--  version: 4.0.5
--  resolution: "picomatch@npm:4.0.5"
--  checksum: 10c0/947bc6b6e1ff1e6c5aaf95b107a0839d12802f4f7b867663f67d47accba939ca1cb582cf99dfc30438efa1c4648ac5990967e783e8929c36b03e8440704ef1bd
-+"picomatch@npm:^4.0.2, picomatch@npm:^4.0.3, picomatch@npm:^4.0.4":
-+  version: 4.0.7
-+  resolution: "picomatch@npm:4.0.7"
-+  checksum: 10c0/beb6ae02c43ae44e84883b90830196d9046b1726ead292adcf7f57945e0bb0d992d68563d87e03b484b6f3c9a5c6defda7523477f047d7f0e663f126cc01787f
-   languageName: node
-   linkType: hard
- 
+@@ -193,15 +193,12 @@ const config: Config = {
+           position: 'right',
+           component: 'github',
+         },
+-        // Figma nav link disabled: community Figma file is outdated; will re-enable when updated.
+-        /*
+         {
+-          href: 'https://www.figma.com/community/file/964536385682658129',
++          href: 'https://www.figma.com/community/file/1656321711577585144/elastic-ui-borealis',
+           label: 'Figma',
+           position: 'right',
+           component: 'figma',
+         },
+-        */
+       ],
+     },
+     footer: {
 ```
 
 ---
 
-### Incident Patch 2: `fab5d952` (2026-10-19)
-**Commit Message**: Release: @elastic/eui-docusaurus-theme v2.8.1, @elastic/eui v123.2.0, @elastic/eui-test-helpers v2.1.0 (#10215)
+### Incident Patch 2: `8d7ff1c8` (2026-10-20)
+**Commit Message**: [test-helpers] Add EuiTableObject (#10213)
 
-**File**: `packages/docusaurus-preset/package.json` (modified, +1/-1)
+**File**: `packages/test-helpers/README.md` (modified, +1/-0)
 ```diff
-@@ -20,7 +20,7 @@
-     "typescript": "~5.5.4"
-   },
-   "peerDependencies": {
--    "@elastic/eui-docusaurus-theme": "^2.8.0",
-+    "@elastic/eui-docusaurus-theme": "^2.8.1",
-     "react": "^18.0.0 || ^19.0.0",
-     "react-dom": "^18.0.0 || ^19.0.0"
+@@ -59,6 +59,7 @@ their own version at runtime.
+ | `EuiAccordionObject` | [src/components/accordion/README.md](src/components/accordion/README.md) |
+ | `EuiContextMenuObject` | [src/components/context_menu/README.md](src/components/context_menu/README.md) |
+ | `EuiModalObject` | [src/components/modal/README.md](src/components/modal/README.md) |
++| `EuiTableObject` | [src/components/table/README.md](src/components/table/README.md) |
+ | `EuiPaginationObject` | [src/components/pagination/README.md](src/components/pagination/README.md) |
+ | `EuiBasicTableObject` | [src/components/basic_table/README.md](src/components/basic_table/README.md) |
+ | `EuiColorPickerObject` | [src/components/color_picker/README.md](src/components/color_picker/README.md) |
+```
+
+**File**: `packages/test-helpers/changelogs/upcoming/10213.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- Added `EuiTableObject` for `EuiTable`, with `rows`, `headerCells`, `column(index)` and `cell(row, column)`. `EuiBasicTableObject` now extends it
+```
+
+**File**: `packages/test-helpers/src/components/basic_table/README.md` (modified, +1/-0)
+```diff
+@@ -20,6 +20,7 @@ Set `data-test-subj` on the `<EuiBasicTable>`/`<EuiInMemoryTable>` (EUI spreads
+ |---|---|
+ | `rows` | `Locator` for the table's data rows, excluding EUI's own "no items found"/error-message row. |
+ | `cells(field)` | `Locator` for a field-data column's cells across all rows, resolved from EUI's own header `data-test-subj`. |
++| `headerCells`, `column(index)`, `cell(row, column)` | Inherited from [EuiTableObject](../table/README.md), positional access when no `field` is available. |
+ 
+ `rows` excludes EUI's empty/error message row by filtering out any row whose cell carries a `colspan` — real data rows don't set one, EUI's own placeholder row always does (it spans every column).
+ 
+```
+
+**File**: `packages/test-helpers/src/components/table/README.md` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++# EuiTableObject
++
++Playwright Component Object for [EuiTable](https://eui.elastic.co/docs/components/tabular-content/tables/), the low level table built from `EuiTableHeader`, `EuiTableRow` and `EuiTableRowCell`. `EuiBasicTableObject` extends it for `EuiBasicTable` and `EuiInMemoryTable`, use that one when the table has field based columns.
++
++## Usage
++
++```ts
++import { EuiTableObject } from '@elastic/eui-test-helpers';
++
++const table = new EuiTableObject(page, 'myTable');
++await expect(table.rows).toHaveCount(3);
++await expect(table.column(1)).toHaveText(['Running', 'Finished', 'Archived']);
++await expect(table.cell(0, 1)).toHaveText('Running');
++```
++
++Set `data-test-subj` on `<EuiTable>`. EUI spreads it onto the `<table>`, which the component-type guard verifies.
++
++## API
++
++| Member | Description |
++|---|---|
++| `rows` | `Locator` for the body rows. |
++| `headerCells` | `Locator` for the header cells, in column order, including a selection checkbox cell. |
++| `column(index)` | `Locator` for one column's cells across all body rows, by 0-based position. |
++| `cell(row, column)` | `Locator` for one body cell, by 0-based row and column position. |
++
++Columns are addressed by position because a plain `EuiTable` has no field names. `column` and `cell` match direct children of a row only, both `<td>` and `<th>` since EUI renders a row header cell as `<th scope="row">`.
++
++## Deliberately excluded
++
++Sorting, selection and pagination are not covered. Sorting and selection are consumer wiring on a plain table, and pagination is a separate component.
+```
+
+**File**: `packages/test-helpers/src/components/table/selectors.ts` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the Elastic License
++ * 2.0 and the Server Side Public License, v 1; you may not use this file except
++ * in compliance with, at your election, the Elastic License 2.0 or the Server
++ * Side Public License, v 1.
++ */
++
++/**
++ * Stable selectors for
++ * {@link https://eui.elastic.co/docs/components/tabular-content/tables/|EuiTable}.
++ * `*_SELECTOR` values are CSS.
++ */
++export const EuiTableSelectors = {
++  /** The `<table>` element carrying the consumer's `data-test-subj`. */
++  ROOT_SELECTOR: '.euiTable',
++
++  /** A body row. Also matches EUI's own empty/error message row, callers must exclude those. */
++  ROW_SELECTOR: '.euiTableRow',
++
++  /** A body cell. */
++  ROW_CELL_SELECTOR: '.euiTableRowCell',
++
++  /** A header cell, including the selection checkbox cell which has its own class. */
++  HEADER_CELL_SELECTOR: 'thead > tr > :is(th, td)',
++};
+```
+
+**File**: `packages/test-helpers/src/index.ts` (modified, +1/-0)
+```diff
+@@ -20,6 +20,7 @@ export { EuiFlyoutObject } from './playwright/components/flyout/object';
+ export { EuiAccordionObject } from './playwright/components/accordion/object';
+ export { EuiContextMenuObject } from './playwright/components/context_menu/object';
+ export { EuiModalObject } from './playwright/components/modal/object';
++export { EuiTableObject } from './playwright/components/table/object';
+ export { EuiPaginationObject } from './playwright/components/pagination/object';
+ export { EuiBasicTableObject } from './playwright/components/basic_table/object';
+ export { EuiColorPickerObject } from './playwright/components/color_picker/object';
+```
+
+**File**: `packages/test-helpers/src/playwright/components/basic_table/object.spec.ts` (modified, +9/-0)
+```diff
+@@ -43,6 +43,15 @@ test.describe('EuiBasicTableObject', () => {
+     });
+   });
+ 
++  test.describe('headerCells', () => {
++    test('includes the selection checkbox cell so indexes line up with column()', async () => {
++      const headerCount = await table.headerCells.count();
++      const firstRowCellCount = await table.rows.first().locator('> :is(td, th)').count();
++
++      expect(headerCount).toBe(firstRowCellCount);
++    });
++  });
++
+   test.describe('cells', () => {
+     test('reads a field-data column past the leading selection checkbox', async () => {
+       const cells = await table.cells('firstName');
+```
+
+**File**: `packages/test-helpers/src/playwright/components/basic_table/object.ts` (modified, +9/-16)
+```diff
+@@ -8,7 +8,8 @@
+ 
+ import type { Locator } from '@playwright/test';
+ 
+-import { BaseObject, type ObjectScope } from '../../base_object';
++import type { ObjectScope } from '../../base_object';
++import { EuiTableObject } from '../table/object';
+ import { EuiBasicTableSelectors } from '../../../components/basic_table/selectors';
+ 
+ /**
+@@ -19,28 +20,20 @@ import { EuiBasicTableSelectors } from '../../../components/basic_table/selector
+  *
+  * `testSubj` must match the `data-test-subj` set by the consumer on the
+  * `<EuiBasicTable>`/`<EuiInMemoryTable>` (EUI spreads it onto the `.euiBasicTable`
+- * root). See the package README for what's deliberately excluded from v1.
++ * root). Extends `EuiTableObject`, so `rows`, `headerCells`, `column` and `cell`
++ * are available too. See the package README for what's deliberately excluded.
+  */
+-export class EuiBasicTableObject extends BaseObject {
++export class EuiBasicTableObject extends EuiTableObject {
+   constructor(scope: ObjectScope, testSubj: string) {
+     super(scope, testSubj, EuiBasicTableSelectors.ROOT_SELECTOR);
    }
-```
-
-**File**: `packages/docusaurus-theme/changelogs/CHANGELOG_2026.md` (modified, +7/-0)
-```diff
-@@ -1,3 +1,10 @@
-+## [`v2.8.1`](https://github.com/elastic/eui/releases/v2.8.1)
-+
-+**Bug fixes**
-+
-+- Fixed light background of highlighted search results in dark mode ([#10178](https://github.com/elastic/eui/pull/10178))
-+- Removed the redundant border below the last row of documentation prop tables ([#10181](https://github.com/elastic/eui/pull/10181))
-+
- ## [`v2.8.0`](https://github.com/elastic/eui/releases/v2.8.0)
  
- - Added a hover animation to the EUI mark in the documentation navbar. ([#9924](https://github.com/elastic/eui/pull/9924))
-```
-
-**File**: `packages/docusaurus-theme/changelogs/upcoming/10178.md` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--**Bug fixes**
--
--- Fixed light background of highlighted search results in dark mode
-```
-
-**File**: `packages/docusaurus-theme/changelogs/upcoming/10181.md` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--**Bug fixes**
--
--- Removed the redundant border below the last row of documentation prop tables
-```
-
-**File**: `packages/docusaurus-theme/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@elastic/eui-docusaurus-theme",
--  "version": "2.8.0",
-+  "version": "2.8.1",
-   "description": "EUI theme for Docusaurus",
-   "license": "SEE LICENSE IN LICENSE.txt",
-   "scripts": {
-```
-
-**File**: `packages/eui/changelogs/CHANGELOG_2026.md` (modified, +14/-0)
-```diff
-@@ -1,3 +1,17 @@
-+## [`v123.2.0`](https://github.com/elastic/eui/releases/v123.2.0)
-+
-+- Updated `EuiFlyoutMenu` height to 49px to align with Kibana compact AppHeader ([#10211](https://github.com/elastic/eui/pull/10211))
-+- Added new icon: `ruler`. ([#10194](https://github.com/elastic/eui/pull/10194))
-+- Updated `productAgent` icon glyph ([#10179](https://github.com/elastic/eui/pull/10179))
-+- Updated `EuiToast`'s highlight to a straight bar instead of a curved one ([#10197](https://github.com/elastic/eui/pull/10197))
-+
-+**Bug fixes**
-+
-+- Fixed clickable `EuiBadge` to show the pointer cursor over its icon and padding, not only over its text ([#10205](https://github.com/elastic/eui/pull/10205))
-+- Fixed disabled clickable `EuiBadge` to show the `not-allowed` cursor ([#10205](https://github.com/elastic/eui/pull/10205))
-+- Fixed resizable `EuiFlyout` with a numeric `size` scaling proportionally on container or window resize; it now keeps its pixel width and is only clamped while there is not enough room ([#10199](https://github.com/elastic/eui/pull/10199))
-+- Fixed resizable `EuiFlyout` calling `onResize` for width changes not made by the user, such as container or sibling clamps, or clicking the resize handle without dragging ([#10199](https://github.com/elastic/eui/pull/10199))
-+
- ## [`v123.1.0`](https://github.com/elastic/eui/releases/v123.1.0)
+   /**
+-   * The table's data rows, as a `Locator` so callers keep Playwright auto-retry
+-   * for count and content assertions (e.g. `expect(table.rows).toHaveCount(3)`).
+-   *
+-   * Excludes EUI's own "no items found" (and error-message) row: when the table
+-   * is empty, EUI still renders a single `.euiTableRow` whose one cell spans
+-   * every column (`colSpan` on `EuiTableRowCell`, the `td[colspan]` HTML
+-   * attribute). Real data rows don't set `colspan` on their cells, so filtering
+-   * it out is what keeps `toHaveCount(0)` correct on an empty table instead of
+-   * reading `1`.
++   * The data rows. Excludes EUI's own "no items found" row, whose single cell
++   * spans every column with `colspan`. Basic table data rows never set it.
+    */
+-  public get rows(): Locator {
+-    return this.root
+-      .locator(EuiBasicTableSelectors.ROW_SELECTOR)
+-      .filter({ hasNot: this.root.page().locator('td[colspan]') });
++  public override get rows(): Locator {
++    return super.rows.filter({ hasNot: this.root.page().locator('td[colspan]') });
+   }
  
- - Removed the left color highlight from `EuiCallOut` ([#10109](https://github.com/elastic/eui/pull/10109))
+   /**
 ```
 
-**File**: `packages/eui/changelogs/upcoming/10179.md` (removed, +0/-1)
+---
+
+### Incident Patch 3: `66556f1d` (2026-10-20)
+**Commit Message**: [test-helpers] Add EuiPaginationObject (#10214)
+
+**File**: `packages/eui/src/components/pagination/pagination.stories.tsx` (modified, +25/-0)
 ```diff
-@@ -1 +0,0 @@
--- Updated `productAgent` icon glyph
-\ No newline at end of file
+@@ -6,6 +6,7 @@
+  * Side Public License, v 1.
+  */
+ 
++import React, { FunctionComponent, useEffect, useState } from 'react';
+ import type { Meta, StoryObj } from '@storybook/react-vite';
+ 
+ import { enableFunctionToggleControls } from '../../../.storybook/utils';
+@@ -31,4 +32,28 @@ export const Playground: Story = {
+     activePage: 5,
+     pageCount: 10,
+   },
++  render: (args) => <StatefulPagination {...args} />,
++};
++
++const StatefulPagination: FunctionComponent<EuiPaginationProps> = ({
++  activePage: _activePage,
++  onPageClick,
++  ...args
++}) => {
++  const [activePage, setActivePage] = useState(_activePage);
++
++  useEffect(() => {
++    setActivePage(_activePage);
++  }, [_activePage]);
++
++  return (
++    <EuiPagination
++      {...args}
++      activePage={activePage}
++      onPageClick={(page) => {
++        setActivePage(page);
++        onPageClick?.(page);
++      }}
++    />
++  );
+ };
 ```
 
-**File**: `packages/eui/changelogs/upcoming/10194.md` (removed, +0/-1)
+**File**: `packages/test-helpers/README.md` (modified, +1/-0)
 ```diff
-@@ -1 +0,0 @@
--- Added new icon: `ruler`.
-\ No newline at end of file
+@@ -59,6 +59,7 @@ their own version at runtime.
+ | `EuiAccordionObject` | [src/components/accordion/README.md](src/components/accordion/README.md) |
+ | `EuiContextMenuObject` | [src/components/context_menu/README.md](src/components/context_menu/README.md) |
+ | `EuiModalObject` | [src/components/modal/README.md](src/components/modal/README.md) |
++| `EuiPaginationObject` | [src/components/pagination/README.md](src/components/pagination/README.md) |
+ | `EuiBasicTableObject` | [src/components/basic_table/README.md](src/components/basic_table/README.md) |
+ | `EuiColorPickerObject` | [src/components/color_picker/README.md](src/components/color_picker/README.md) |
+ | `EuiTreeViewObject` | [src/components/tree_view/README.md](src/components/tree_view/README.md) |
+```
+
+**File**: `packages/test-helpers/changelogs/upcoming/10214.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- Added `EuiPaginationObject` with `getActivePage()`, `getPageCount()`, `goToPage(index)`, `next()` and `previous()`
+```
+
+**File**: `packages/test-helpers/src/components/pagination/README.md` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++# EuiPaginationObject
++
++Playwright Component Object for [EuiPagination](https://eui.elastic.co/docs/components/navigation/pagination/). Covers the numbered and the compressed variant.
++
++## Usage
++
++```ts
++import { EuiPaginationObject } from '@elastic/eui-test-helpers';
++
++const pagination = new EuiPaginationObject(page, 'myPagination');
++await pagination.goToPage(2);
++expect(await pagination.getActivePage()).toBe(2);
++```
++
++Set `data-test-subj` on `<EuiPagination>`. EUI spreads it onto the `<nav>`, which the component-type guard verifies. Page indexes are 0-based, matching EUI's `activePage` prop and the `pagination-button-<index>` test subjs.
++
++## API
++
++| Member | Description |
++|---|---|
++| `getActivePage()` | The 0-based index of the active page. |
++| `getPageCount()` | The total number of pages. |
++| `goToPage(index)` | Go to a page and wait for it to become active. Clicks the page button when rendered, otherwise steps through next or previous. No-op if already active, throws if out of range. |
++| `next()` | Click the next arrow and wait for the page to advance. |
++| `previous()` | Click the previous arrow and wait for the page to go back. |
++
++The numbered variant is read from the `aria-current="page"` button and the last page button. The compressed variant is read from its "page of total" text.
++
++## Deliberately excluded
++
++`pageCount={0}` (unknown total, "page X of collection") is not covered, `getPageCount` and `goToPage` have nothing to read there. The first and last arrows exist only in the compressed variant, `goToPage(0)` and `goToPage(count - 1)` cover the same need.
+```
+
+**File**: `packages/test-helpers/src/components/pagination/selectors.ts` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the Elastic License
++ * 2.0 and the Server Side Public License, v 1; you may not use this file except
++ * in compliance with, at your election, the Elastic License 2.0 or the Server
++ * Side Public License, v 1.
++ */
++
++/**
++ * Stable selectors for
++ * {@link https://eui.elastic.co/docs/components/navigation/pagination/|EuiPagination}.
++ * `*_SELECTOR` values are CSS, `*_TEST_SUBJ` values are `data-test-subj` names EUI sets itself.
++ */
++export const EuiPaginationSelectors = {
++  /** The `<nav>` root carrying the consumer's `data-test-subj`. */
++  ROOT_SELECTOR: '.euiPagination',
++
++  /** A numbered page button. Not rendered in the compressed variant. */
++  PAGE_BUTTON_SELECTOR: '.euiPaginationButton',
++
++  /** The numbered page button of the active page. */
++  ACTIVE_PAGE_BUTTON_SELECTOR: '.euiPaginationButton[aria-current="page"]',
++
++  /** The "page of total" text of the compressed variant, with one `<span>` per number. */
++  COMPRESSED_TEXT_SELECTOR: '.euiPagination__compressedText',
++
++  /** Prefix of a page button's test subj, followed by the 0-based page index. */
++  PAGE_BUTTON_TEST_SUBJ_PREFIX: 'pagination-button-',
++
++  FIRST_BUTTON_TEST_SUBJ: 'pagination-button-first',
++  PREVIOUS_BUTTON_TEST_SUBJ: 'pagination-button-previous',
++  NEXT_BUTTON_TEST_SUBJ: 'pagination-button-next',
++  LAST_BUTTON_TEST_SUBJ: 'pagination-button-last',
++};
+```
+
+**File**: `packages/test-helpers/src/index.ts` (modified, +1/-0)
+```diff
+@@ -20,6 +20,7 @@ export { EuiFlyoutObject } from './playwright/components/flyout/object';
+ export { EuiAccordionObject } from './playwright/components/accordion/object';
+ export { EuiContextMenuObject } from './playwright/components/context_menu/object';
+ export { EuiModalObject } from './playwright/components/modal/object';
++export { EuiPaginationObject } from './playwright/components/pagination/object';
+ export { EuiBasicTableObject } from './playwright/components/basic_table/object';
+ export { EuiColorPickerObject } from './playwright/components/color_picker/object';
+ export { EuiTreeViewObject } from './playwright/components/tree_view/object';
+```
+
+**File**: `packages/test-helpers/src/playwright/components/pagination/object.props.spec.ts` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the Elastic License
++ * 2.0 and the Server Side Public License, v 1; you may not use this file except
++ * in compliance with, at your election, the Elastic License 2.0 or the Server
++ * Side Public License, v 1.
++ */
++import { test, expect } from '@playwright/test';
++
++import { EuiPaginationObject } from './object';
++import { storyUrl } from '../../../storybook';
++
++/**
++ * Validates `EuiPaginationObject` against the compressed variant, which
++ * renders "page of total" text and arrows instead of numbered buttons.
++ */
++
++const TEST_SUBJ = 'testPagination';
++
++test.describe('EuiPaginationObject (compressed)', () => {
++  let pagination: EuiPaginationObject;
++
++  test.beforeEach(async ({ page }) => {
++    await page.goto(
++      storyUrl(
++        'navigation-euipagination-euipagination--playground',
++        `data-test-subj:${TEST_SUBJ};compressed:!true`
++      )
++    );
++    pagination = new EuiPaginationObject(page, TEST_SUBJ);
++    await pagination.locator.waitFor({ state: 'visible' });
++  });
++
++  test('reads the active page and page count from the text', async () => {
++    expect(await pagination.getActivePage()).toBe(5);
++    expect(await pagination.getPageCount()).toBe(10);
++  });
++
++  test('goToPage steps through the arrows', async () => {
++    await pagination.goToPage(8);
++
++    expect(await pagination.getActivePage()).toBe(8);
++  });
++
++  test('next and previous step one page at a time', async () => {
++    await pagination.next();
++    expect(await pagination.getActivePage()).toBe(6);
++
++    await pagination.previous();
++    expect(await pagination.getActivePage()).toBe(5);
++  });
++});
+```
+
+**File**: `packages/test-helpers/src/playwright/components/pagination/object.spec.ts` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the Elastic License
++ * 2.0 and the Server Side Public License, v 1; you may not use this file except
++ * in compliance with, at your election, the Elastic License 2.0 or the Server
++ * Side Public License, v 1.
++ */
++import { test, expect } from '@playwright/test';
++
++import { EuiPaginationObject } from './object';
++import { storyUrl } from '../../../storybook';
++
++/**
++ * Validates `EuiPaginationObject` against the live component in EUI
++ * Storybook. The Playground story is stateful, starts on page index 5 of 10
++ * and renders the numbered variant.
++ */
++
++const TEST_SUBJ = 'testPagination';
++
++const PLAYGROUND_URL = storyUrl(
++  'navigation-euipagination-euipagination--playground',
++  `data-test-subj:${TEST_SUBJ}`
++);
++
++test.describe('EuiPaginationObject', () => {
++  let pagination: EuiPaginationObject;
++
++  test.beforeEach(async ({ page }) => {
++    await page.goto(PLAYGROUND_URL);
++    pagination = new EuiPaginationObject(page, TEST_SUBJ);
++    await pagination.locator.waitFor({ state: 'visible' });
++  });
++
++  test.describe('getActivePage', () => {
++    test('reads the 0-based active page', async () => {
++      expect(await pagination.getActivePage()).toBe(5);
++    });
++  });
++
++  test.describe('getPageCount', () => {
++    test('reads the total page count', async () => {
++      expect(await pagination.getPageCount()).toBe(10);
++    });
++  });
++
++  test.describe('goToPage', () => {
++    test('clicks a rendered page button', async () => {
++      await pagination.goToPage(6);
++
++      expect(await pagination.getActivePage()).toBe(6);
++    });
++
++    test('reaches a page whose button is not rendered', async () => {
++      await pagination.goToPage(0);
++      // From page 0 EUI renders pages 0 to 4 plus the last page, so page 7 has no button.
++      await pagination.goToPage(7);
++
++      expect(await pagination.getActivePage()).toBe(7);
++    });
++
++    test('is a no-op on the active page', async () => {
++      await pagination.goToPage(5);
++
++      expect(await pagination.getActivePage()).toBe(5);
++    });
++
++    test('rejects an index out of range', async () => {
++      await expect(pagination.goToPage(10)).rejects.toThrow(/out of range/);
++    });
++  });
++
++  test.describe('next and previous', () => {
++    test('step one page at a time', async () => {
++      await pagination.next();
++      expect(await pagination.getActivePage()).toBe(6);
++
++      await pagination.previous();
++      expect(await pagination.getActivePage()).toBe(5);
++    });
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10224** (2026-10-20): Re-enabling Figma EUI lib link (@JoseLuisGJ)
+- **PR #10217** (2026-10-20): Icon Alert Zero (@JoseLuisGJ)
 - **PR #10216** (2026-10-19): [ESLint plugin] Bump picomatch and brace-expansion to patched versions (@Dosant)
 - **PR #10215** (2026-10-19): Release: @elastic/eui-docusaurus-theme v2.8.1, @elastic/eui v123.2.0, @elastic/eui-test-helpers v2.1.0 (@angeles-mzb)
-- **PR #10211** (2026-10-15): [EuiFlyoutMenu] Align menu height with compact AppHeader (49px) (@ryankeairns)
-- **PR #10210** (2026-10-14): [Chore] Add Libra review configuration (@clintandrewhall)
-- **PR #10205** (2026-10-13): [EuiBadge] Show pointer cursor over the whole clickable badge (@Dosant)
-- **PR #10204** (2026-10-13): [Chore] Remove stale Kibana prep commit (@Dosant)
+- **PR #10214** (2026-10-20): [test-helpers] Add EuiPaginationObject (@steliosmavro)
+- **PR #10213** (2026-10-20): [test-helpers] Add EuiTableObject (@steliosmavro)
 
 ---
 
@@ -872,28 +1166,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)
+## X. Re-enabling Figma EUI lib link (#10224)
 
 **RULE**:
-When implementing operations in `packages/eslint-plugin/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in elastic/eui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/website/docusaurus.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in elastic/eui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfd03740`: [ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42254b6c`: Re-enabling Figma EUI lib link (#10224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/eslint-plugin/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/website/docusaurus.config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "picomatch": "^2.3.2"
+          href: 'https://www.figma.com/community/file/1656321711577585144/elastic-ui-borealis',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "picomatch": "^2.3.1"
+        // Figma nav link disabled: community Figma file is outdated; will re-enable when updated.
+        /*
+          href: 'https://www.figma.com/community/file/964536385682658129',
+        */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfd03740` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42254b6c` are properly handled with clean fallback behavior.

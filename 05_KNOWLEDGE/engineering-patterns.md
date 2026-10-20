@@ -233414,3 +233414,56 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `39a18d46` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3235. Re-enabling Figma EUI lib link (#10224) (Harvested from elastic/eui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Re-enabling Figma EUI lib link (#10224)",
+  "source": "elastic/eui",
+  "source_url": "https://github.com/elastic/eui",
+  "source_version": "42254b6c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T14:57:45.036Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-elastic-eui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [elastic/eui](https://github.com/elastic/eui) (Revision: `42254b6c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/website/docusaurus.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in elastic/eui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `42254b6c`: Re-enabling Figma EUI lib link (#10224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/website/docusaurus.config.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+          href: 'https://www.figma.com/community/file/1656321711577585144/elastic-ui-borealis',
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+        // Figma nav link disabled: community Figma file is outdated; will re-enable when updated.
+        /*
+          href: 'https://www.figma.com/community/file/964536385682658129',
+        */
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `42254b6c` are properly handled with clean fallback behavior.

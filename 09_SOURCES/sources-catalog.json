@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "438460b4d780be4c2dd47becd6a403df43e97182ffd4151eb4c63dad96f2fdc9",
-    "lastHarvestedAt": "2026-10-19T01:16:28.055Z",
+    "contentHash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
+    "lastHarvestedAt": "2026-10-20T14:57:44.873Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -4833,10 +4833,10 @@
     "repository": "elastic/eui",
     "platform": "github",
     "sourceUrl": "https://github.com/elastic/eui",
-    "sourceVersion": "bfd03740",
+    "sourceVersion": "42254b6c",
     "license": "NOASSERTION",
-    "contentHash": "0f86fd9b570d88b19612c4e7e51faeb501930860303540b9913975447d7ba7d4",
-    "lastHarvestedAt": "2026-10-19T13:27:26.953Z",
+    "contentHash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
+    "lastHarvestedAt": "2026-10-20T14:57:45.222Z",
     "learningId": "learn-github-elastic-eui"
   },
   "aome510-spotify-player": {
