@@ -3981,3 +3981,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-20T19:17:05.760Z |
 | `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `86390f6d` | Multi-dimensional audit evidence | 2026-10-20T19:17:06.124Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `ea6a2c7b` | Multi-dimensional audit evidence | 2026-10-20T19:17:08.158Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `81bfb811` | Multi-dimensional audit evidence | 2026-10-20T19:23:28.532Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `4c0fa90a` | Multi-dimensional audit evidence | 2026-10-20T19:23:32.378Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `3b9bcb26` | Multi-dimensional audit evidence | 2026-10-20T19:23:34.525Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-20T19:23:36.498Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `cc579285` | Multi-dimensional audit evidence | 2026-10-20T19:23:38.091Z |

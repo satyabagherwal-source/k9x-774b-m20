@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-J3BN",
-    "timestamp": "2026-10-19T20:28:56.339Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "94e8f36f97ba276fedf356a98260703a353b99c752b720a3a5b9746934ef12a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-J6IG",
-    "timestamp": "2026-10-19T20:29:00.472Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R0GO",
-    "timestamp": "2026-10-19T20:35:05.880Z",
-    "repository": "melihandic/deep-in-gsc",
-    "learningId": "learn-github-melihandic-deep-in-gsc",
-    "contentHash": "9fa7fa0cdb513e20342f6bc25df0d29a2eaeee6e643cd15f249446ac4ccb4624",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R26M",
-    "timestamp": "2026-10-19T20:35:08.110Z",
-    "repository": "DamascenoRafael/reminders-menubar",
-    "learningId": "learn-github-damascenorafael-reminders-menubar",
-    "contentHash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R59T",
-    "timestamp": "2026-10-19T20:35:12.113Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-YQ6B",
     "timestamp": "2026-10-19T20:41:05.795Z",
     "repository": "Ataraxy-Labs/sem",
@@ -7490,6 +7415,81 @@
     "repository": "oven-sh/bun",
     "learningId": "learn-github-oven-sh-bun",
     "contentHash": "b5a96ce2c09e7af0f23e8de1b5c18309b5fd78911fdc2ce97b6cef9501c4ec09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MR9S",
+    "timestamp": "2026-10-20T19:23:28.528Z",
+    "repository": "cosscom/ui",
+    "learningId": "learn-github-cosscom-ui",
+    "contentHash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MU8N",
+    "timestamp": "2026-10-20T19:23:32.375Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MVW7",
+    "timestamp": "2026-10-20T19:23:34.519Z",
+    "repository": "onejs/one",
+    "learningId": "learn-github-onejs-one",
+    "contentHash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MXEZ",
+    "timestamp": "2026-10-20T19:23:36.491Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MYN8",
+    "timestamp": "2026-10-20T19:23:38.084Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

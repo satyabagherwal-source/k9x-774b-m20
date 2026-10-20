@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T19:17:08.167Z",
+  "last_updated": "2026-10-20T19:23:38.099Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "4b4aee84a0443cba590b8c35a5358bb08acb7b7fa1af668f2cd32ca0cd9d1fcc",
-      "verified_at": "2026-10-19T05:39:03.385Z",
+      "content_hash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
+      "verified_at": "2026-10-20T19:23:36.505Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:39:03.385Z"
+      "last_updated": "2026-10-20T19:23:36.505Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -2082,14 +2082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
-      "verified_at": "2026-10-20T04:44:56.876Z",
+      "content_hash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
+      "verified_at": "2026-10-20T19:23:28.542Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:44:56.876Z"
+      "last_updated": "2026-10-20T19:23:28.542Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
-      "verified_at": "2026-10-19T03:39:20.945Z",
+      "content_hash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
+      "verified_at": "2026-10-20T19:23:38.098Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:39:20.945Z"
+      "last_updated": "2026-10-20T19:23:38.098Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "18e5edd8fccc9cd818c1ec113ac9f55be8f3eae67f3260fc3f6facd228025dc3",
-      "verified_at": "2026-10-19T07:10:10.753Z",
+      "content_hash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
+      "verified_at": "2026-10-20T19:23:34.533Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:10:10.753Z"
+      "last_updated": "2026-10-20T19:23:34.533Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
-      "verified_at": "2026-10-20T00:44:00.782Z",
+      "content_hash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
+      "verified_at": "2026-10-20T19:23:32.385Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:44:00.782Z"
+      "last_updated": "2026-10-20T19:23:32.385Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

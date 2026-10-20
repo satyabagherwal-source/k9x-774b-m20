@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `9d67cb94`  
+> **Source Version**: `4c0fa90a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:44:00.536Z  
+> **Timestamp**: 2026-10-20T19:23:32.034Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:43:59.237Z  
+> **Harvest Timestamp**: 2026-10-20T19:23:32.024Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23119 stars
+- **Stars / Engagement**: 23132 stars
 
 ---
 
@@ -1229,11 +1229,17 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #27980** (2026-10-19): **chore(deps): update dependency oxlint to v1.89.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [oxlint](https://oxc.rs/docs/guide/usage/linter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxlint)) | [`1.88.0` → `1.89.0`](https://renovatebot.com/diffs/npm/oxlint/1.88.0/1.89.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxlint/1.89.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/oxlint/1.89.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/oxlint/1.88.0/1.89.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxlint/1.88.0/1.89.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxlint)</summary>  ### [`v1.89.0`](https://redirect.github.com/oxc-project/oxc/blob/HEAD/npm/oxlint/CHANGELOG.md#1890---2026-10-19)  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxlint_v1.88.0...oxlint_v1.89.0)  ##### 🐛 Bug Fixes  - [`9a424c2`](https://redirect.github.com/oxc-project/oxc/commit/9a424c2) oxlint,oxfmt: Correct Node.js TypeScript support range ([#&#8203;27699](https://redirect.github.com/oxc-project/oxc/issues/27699)) (camc314)  </details>  ---  ### Configuration  📅 **Schedule
+- **Issue #27990** (2026-10-20): **fix(minifier,linter): keep `delete` of constant members and later JSX keys**
+  *Symptoms*: `delete "a"[0]`, `delete "a".length`, `delete [1].length` and `delete Number.NaN` delete a non-configurable property, so they are `false`, or a `TypeError` in strict mode. The minifier folded the member to its value first, and deleting a value is `true`:  ```js console.log(delete "😀"[0]); // false; minified to `console.log(!0)` ```  #27096 extended the string index fold to every string, so `delete "😀"[0]` became `!0` in 0.155.0. `delete "abc"[0]` and `delete "abc".length` were already wrong in 0.154.0. The member folds, the `Number.*` constant replacement and the `Number.NaN` normalization now skip the operand of `delete`. `delete obj["x"]` still becomes `delete obj.x`, and `delete Number["NaN"]` now minifies the same way every time.  `react/jsx-key` with `warnOnDuplicates` stopped at a template key with a substitution, `` key={`${a}`} ``, instead of reading the element's next `key`. Since #26717 the duplicate in `[<li key={`${a}`} key="dup" />, <li key={`${a}`} key="dup" />]` went unreported. The rule now falls through to the next `key` as 0.154.0 did.  Found by comparing 0.154.0 and 0.155.0 builds. Part of #26242.  Implemented with AI assistance.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 82` untouched benchmarks   `⏩ 14` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>claude/fix-delete-index-and-jsx-key</code> (526d208) with <code>main</code> (aa7642a)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/claude%2Ffix-delete-index-and-jsx-key?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 14 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive them to remove them
+  > ### Merge activity  * **Oct 20, 7:49 AM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Oct 20, 7:49 AM UTC**: `Dunqing` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Oct 20, 7:54 AM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
-- **Issue #27979** (2026-10-19): **chore(deps): update dependency oxfmt to ^0.74.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [oxfmt](https://oxc.rs/docs/guide/usage/formatter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt)) | [`^0.73.0` → `^0.74.0`](https://renovatebot.com/diffs/npm/oxfmt/0.73.0/0.74.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.74.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/oxfmt/0.74.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/oxfmt/0.73.0/0.74.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.73.0/0.74.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxfmt)</summary>  ### [`v0.74.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.74.0): oxfmt v0.74.0  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.73.0...oxfmt_v0.74.0)  ##### 🐛 Bug Fixes  - [`e236de0`](https://redirect.github.com/oxc-project/oxc/commit/e236de0) formatter_tests: Skip conformance spec calls with non-literal options ([#&#8203;27957](https://redirect.github.com/oxc-project/oxc/issues/27957)) (leaysgur) - [`782ab6e`](https://redirect.github.com/oxc-pro
+- **Issue #27989** (2026-10-20): **fix(formatter): keep an arrow signature that exactly fills the line for any body**
+  *Symptoms*: Revert #24440 and reclassify DIVERGENCES.md#arrow-exact-fill-signature as "uniform-rule".  ---  > It seems like oxc is correct here and Prettier has a bug? > https://github.com/oxc-project/oxc/issues/24416  Having the opportunity to revisit the details..., I found that this is indeed the truth.
+  **Post-Mortem & Fix Analysis**:
+  > * **#27989** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27989?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27989?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * **#27988** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27988?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> * **#27987** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27987?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</k
+  > ## [Oxfmt Ecosystem CI]([Open](https://github.com//oxc-project/oxc-ecosystem-ci/actions/runs/39376112401)) | suite | oxfmt@latest | main | refs/pull/27989/head branch | |-------|:---:|:---:|:---:| | [formatjs/formatjs](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522120) | :white_check_mark: | :white_check_mark: | :white_check_mark: | | [vercel/turborepo](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522179) | :x: | :white_check_mark: | :white_check_mark: | | [getsentry/sentry-javascript](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522181) | :x: | :white_check_mark: | :white_check_mark: | | [huggingface/huggingface.js](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522197) | :x: | :white_check_mark: | :white_check_mark: | | [vuejs/pinia](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522203) | :x: | :wh
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1250,228 +1256,558 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0298062d` (2026-10-19)
-**Commit Message**: fix(linter/arrow-body-style): keep type assertions when adding a block body (#27978)
+### Incident Patch 1: `aa7642ad` (2026-10-20)
+**Commit Message**: fix(react-compiler): let branches inside `try` control reactivity (#27817)
 
-Closes #27977
+Fixes #27400
+Fixes #27808
 
-With `arrow-body-style: ["error", "always"]`, the fix unwrapped the
-concise body with `get_inner_expression`, which strips TS wrappers
-together with the parentheses, so the type assertion was lost. Now only
-the parentheses around the leading object literal are removed (the same
-tokens ESLint removes) and the rest of the expression is kept.
+When a ternary, `if` or `switch` inside `try` picks a value based on a prop, the compiler treated that value as a constant, so anything built from it was cached once per mount.
 
-| Input | Before | After |
-| --- | --- | --- |
-| `() => <T>{ id }` | `() => {return { id }}` | `() => {return <T>{ id
-}}` |
-| `() => <T>({ id })` | `() => {return { id }}` | `() => {return <T>({
-id })}` |
-| `() => ({ id }) as T` | `() => {return { id }}` | `() => {return { id
-} as T}` |
-| `() => ({ id }) satisfies T` | `() => {return { id }}` | `() =>
-{return { id } satisfies T}` |
-
-Plain `() => ({ id })` still becomes `() => {return { id }}`.
-
-Tests: added a `.ts` test (`test_typescript`) with pass/fail/fix cases
-(also `({ id })!`, `(({ id }) as T)` and
-`requireReturnForObjectLiteral`) and its snapshot. `cargo test
---all-features -p oxc_linter` and `just lint -p oxc_linter` pass.
-
-AI disclosure: this PR was prepared with the help of an AI assist
-
-**File**: `crates/oxc_linter/src/rules/eslint/arrow_body_style.rs` (modified, +102/-11)
-```diff
-@@ -4,7 +4,9 @@ use serde_json::Value;
- 
- use oxc_ast::{
-     AstKind,
--    ast::{ArrowFunctionExpression, Expression, ReturnStatement, Statement},
-+    ast::{
-+        ArrowFunctionExpression, Expression, ParenthesizedExpression, ReturnStatement, Statement,
-+    },
- };
- use oxc_diagnostics::OxcDiagnostic;
- use oxc_macros::declare_oxc_lint;
-@@ -318,21 +320,37 @@ impl ArrowBodyStyle {
-             return fixer.noop();
-         };
- 
--        let expr_text = ctx.source_range(expr.span());
--
--        // Check if the expression is a parenthesized object literal: `() => ({ ... })`
--        // In that case, we need to remove the outer parens when converting to block:
--        // `() => ({ ... })` → `() => { return { ... } }`
--        let inner_expr = expr.get_inner_expression();
--        if matches!(inner_expr, Expression::ObjectExpression(_)) {
--            let inner_text = ctx.source_range(inner_expr.span());
--            return fixer.replace(body.span(), format!("{{return {inner_text}}}"));
-+        // Only the parens around the object literal can be dropped; a type assertion wrapping it
-+        // must be kept: `() => ({ ... }) as T` → `() => { return { ... } as T }`
-+        if let Some(paren) = Self::leading_parenthesized_object(expr) {
-+            let object_text = ctx.source_range(paren.expression.without_parentheses().span());
-+            let rest_text = ctx.source_range(Span::new(paren.span.end, expr.span().end));
-+            return fixer.replace(body.span(), format!("{{return {object_text}{rest_text}}}"));
-         }
- 
--        // For all other expressions, just wrap in `{ return ... }`
-+        let expr_text = ctx.source_range(expr.span());
-         fixer.replace(body.span(), format!("{{return {expr_text}}}"))
-     }
- 
-+    /// Find the parenthesized object literal a concise body starts with, looking through
-+    /// postfix TS wrappers: `({ ... })`, `({ ... }) as T`, `({ ... }) satisfies T`, `({ ... })!`
-+    fn leading_parenthesized_object<'b, 'a>(
-+        expr: &'b Expression<'a>,
-+    ) -> Option<&'b ParenthesizedExpression<'a>> {
-+        match expr {
-+            Expression::ParenthesizedExpression(paren) => {
-+                matches!(paren.expression.without_parentheses(), Expression::ObjectExpression(_))
-+                    .then_some(&**paren)
-+            }
-+            Expression::TSAsExpression(e) => Self::leading_parenthesized_object(&e.expression),
-+            Expression::TSSatisfiesExpression(e) => {
-+                Self::leading_parenthesized_object(&e.expression)
-+            }
-+            Expression::TSNonNullExpression(e) => Self::leading_parenthesized_object(&e.expression),
-+            _ => None,
-+        }
-+    }
-+
-     /// Fix: Convert block body to concise body
-     /// `() => { return expr }` → `() => expr`
-     fn fix_block_to_concise<'a>(
-@@ -1104,3 +1122,76 @@ var foo = () =>
-         .expect_fix(fix)
-         .test_and_snapshot();
- }
-+
-+#[test]
-+fn test_typescript() {
-+    use crate::tester::Tester;
-+
-+    let pass = vec![
-+        ("var foo = () => { return <Foo>{ id }; };", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => { return { id } as Foo; };", Some(serde_json::json!(["always"]))),
-+    ];
-+
-+    let fail = vec![
-+        ("var foo = () => <Foo>{ id };", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => <Foo>({ id });", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => ({ id }) as Foo;", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => ({ id }) satisfies Foo;", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => ({ id })!;", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => (({ id }) as Foo);", Some(serde_json::json!(["always"]))),
-+        ("var foo = () => <Foo>JSON.parse(id);", Some(serde_json::json!(["always"]))),
-+        (
-+            "var foo = () => ({ id }) as Foo;",
-+            Some(serde_json::json!(["as-needed", { "requireReturnForObjectLiteral": true }])),
-+        ),
-+    ];
-+
-+    let fix = vec![
-+        (
-+            "var foo = () => <Foo>{ id };",
-+            "var foo = () => {return <Foo>{ id }};",
-+            Some(serde_json::json!(["always"])),
-+        ),
-+        (
-+            "var foo = () => <Foo>({ id });",
-+            "var foo = () => {return <Foo>({ id })};",
-+            Some(serde_json::json!(["always"])),
-+        ),
-+        (
-+            "var foo = () => ({ id }) as Foo;",
-+            "var foo = () => {return { id } as Foo};",
-+            Some(serde_json::json!(["always"])),
-+        ),
-+        (
-+            "var foo = () => ({ id }) satisfies Foo;",
-+            "var foo = () => {return { id } satisfies Foo};",
-+            Some(serde_json::json!(["always"])),
-+        ),
-+        (
-+            "var foo = () => ({ id })!;",
-+            "var foo = () => {return { id }!};",
-+            Some(serde_json::json!(["always"])),
-+        ),
-+        (
-+            "var foo = () => (({ id }) as Foo);",
-+            "var foo = () 
+```jsx
+function Component({ cond }) {
+  let value;
+  try {
+    if (cond) {
+      value = "a";
+    } else {
+      value = "b";
+    }
+  } catch {
+    value = "c";
+  }
+  return <div>{value}</div>;
+}
 ```
 
-**File**: `crates/oxc_linter/src/snapshots/eslint_arrow_body_style@ts.snap` (added, +59/-0)
 ```diff
-@@ -0,0 +1,59 @@
+-  if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
++  if ($[0] !== value) {
+     t1 = <div>{value}</div>;
+```
+
+Before this PR, changing `cond` from `true` to `false` still rendered `a`.
+
+## Cause
+
+Inside `try`, every assignment ends its block with a "may throw" edge to the `catch`. When `infer_reactive_places` looked for the branch that decides a value, it stopped at that edge and never reached `if (cond)`.
+
+The same logic in Babel's React Compiler (facebook/react main, `098d2e87`):
+
+- [`HIRBuilder.push`](https://github.com/facebook/react/blob/098d2e87a1f7142947418d15f63f975b58c4685b/compiler/packages/babel-plugin-react-compiler/src/HIR/HIRBuilder.ts#L164-L181) ends the block after each instru
+
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++// A let assigned from a ternary with constant branches inside `try` is reactive
++// through the ternary's test, so the JSX that reads it must depend on it.
++function Component({kind}) {
++  let label = 'init';
++  try {
++    label = kind === 1 ? 'one' : 'other';
++  } catch {
++    label = 'caught';
++  }
++  return <div>{label}</div>;
++}
++
++export const FIXTURE_ENTRYPOINT = {
++  fn: Component,
++  params: [{kind: 1}],
++  sequentialRenders: [{kind: 1}, {kind: 2}, {kind: 1}],
++};
+```
+
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-if-statement-reactive-test.js` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++// Constant assignments in the branches of an `if` inside `try` make the
++// variable reactive through the `if`'s test.
++function Component({cond}) {
++  let value;
++  try {
++    if (cond) {
++      value = 'a';
++    } else {
++      value = 'b';
++    }
++  } catch {
++    value = 'c';
++  }
++  return <div>{value}</div>;
++}
++
++export const FIXTURE_ENTRYPOINT = {
++  fn: Component,
++  params: [{cond: true}],
++  sequentialRenders: [{cond: true}, {cond: false}, {cond: true}],
++};
+```
+
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-switch-reactive-test.js` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++// Constant assignments in the cases of a `switch` inside `try` make the
++// variable reactive through the `switch`'s test.
++function Component({kind}) {
++  let value;
++  try {
++    switch (kind) {
++      case 1:
++        value = 'one';
++        break;
++      default:
++        value = 'other';
++    }
++  } catch {
++    value = 'caught';
++  }
++  return <div>{value}</div>;
++}
++
++export const FIXTURE_ENTRYPOINT = {
++  fn: Component,
++  params: [{kind: 1}],
++  sequentialRenders: [{kind: 1}, {kind: 2}, {kind: 1}],
++};
+```
+
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-ternary-reactive-test.js` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++// The ternary's branches are constants, so only its reactive test makes the
++// result change; the object built from it must depend on that result.
++function Component({dark, items}) {
++  let style;
++  try {
++    style = {color: dark ? 'white' : 'black', count: items.length};
++  } catch {
++    style = {};
++  }
++  return <span style={style}>x</span>;
++}
++
++export const FIXTURE_ENTRYPOINT = {
++  fn: Component,
++  params: [{dark: true, items: ['a']}],
++  sequentialRenders: [
++    {dark: true, items: ['a']},
++    {dark: false, items: ['a']},
++    {dark: false, items: ['a', 'b']},
++    {dark: true, items: ['a', 'b']},
++  ],
++};
+```
+
+**File**: `crates/oxc_react_compiler/src/react_compiler_hir/dominator.rs` (modified, +83/-9)
+```diff
+@@ -15,7 +15,7 @@ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_index::{IndexSlice, IndexVec};
+ 
+ use crate::diagnostics;
+-use crate::react_compiler_hir::visitors::each_terminal_successor;
++use crate::react_compiler_hir::visitors::{TerminalBlockList, each_terminal_successor};
+ use crate::react_compiler_hir::{BlockId, HirFunction, Terminal};
+ 
+ // =============================================================================
+@@ -40,6 +40,13 @@ impl PostDominatorFrontiers {
+     pub fn iter(&self, id: BlockId) -> impl Iterator<Item = BlockId> + '_ {
+         self.frontiers.get(&id).into_iter().flatten().copied()
+     }
++
++    /// Adds every block in `other`'s frontiers to the frontiers of `self`.
++    pub fn extend(&mut self, other: Self) {
++        for (id, frontier) in other.frontiers {
++            self.frontiers.entry(id).or_default().extend(frontier);
++        }
++    }
+ }
+ 
+ impl PostDominator {
+@@ -95,7 +102,22 @@ pub fn compute_post_dominator_tree(
+     next_block_id_counter: u32,
+     include_throws_as_exit_node: bool,
+ ) -> Result<PostDominator, OxcDiagnostic> {
+-    let graph = build_reverse_graph(func, next_block_id_counter, include_throws_as_exit_node);
++    post_dominator_tree(func, next_block_id_counter, include_throws_as_exit_node, true)
++}
++
++/// Compute the post-dominator tree, optionally ignoring `MaybeThrow` handler edges.
++fn post_dominator_tree(
++    func: &HirFunction,
++    next_block_id_counter: u32,
++    include_throws_as_exit_node: bool,
++    include_exception_edges: bool,
++) -> Result<PostDominator, OxcDiagnostic> {
++    let graph = build_reverse_graph(
++        func,
++        next_block_id_counter,
++        include_throws_as_exit_node,
++        include_exception_edges,
++    );
+     let mut nodes = compute_immediate_dominators(&graph)?;
+ 
+     // When include_throws_as_exit_node is false, nodes that flow into a throw
+@@ -110,14 +132,27 @@ pub fn compute_post_dominator_tree(
+     Ok(PostDominator { exit: graph.entry, nodes })
+ }
+ 
++/// Returns the successors of `terminal`, without a `MaybeThrow`'s edge to its exception
++/// handler unless `include_exception_edges` is set.
++fn terminal_successors(terminal: &Terminal, include_exception_edges: bool) -> TerminalBlockList {
++    match terminal {
++        Terminal::MaybeThrow { continuation, .. } if !include_exception_edges => {
++            TerminalBlockList::from_slice(&[*continuation])
++        }
++        _ => each_terminal_successor(terminal),
++    }
++}
++
+ /// Build the reverse graph from the HIR function.
+ ///
+-/// Reverses all edges and adds a synthetic exit node that receives edges from
+-/// return (and optionally throw) terminals. The result is put into RPO order.
++/// Reverses all edges (optionally except `MaybeThrow` handler edges) and adds a
++/// synthetic exit node that receives edges from return (and optionally throw)
++/// terminals. The result is put into RPO order.
+ fn build_reverse_graph(
+     func: &HirFunction,
+     next_block_id_counter: u32,
+     include_throws_as_exit_node: bool,
++    include_exception_edges: bool,
+ ) -> Graph {
+     let exit_id = BlockId::from_usize(next_block_id_counter as usize);
+     // All block ids are below `next_block_id_counter`; add one slot for the exit node.
+@@ -136,9 +171,20 @@ fn build_reverse_graph(
+     });
+ 
+     for (id, block) in &func.body.blocks {
+-        let successors = each_terminal_successor(&block.terminal);
++        let successors = terminal_successors(&block.terminal, include_exception_edges);
+         let mut preds_set: FxHashSet<BlockId> = successors.into_iter().collect();
+-        let succs_set: FxHashSet<BlockId> = block.preds.iter().copied().collect();
++        let succs_set: FxHashSet<BlockId> = block
++            .preds
++            .iter()
++            .copied()
++            .filter(|pred| {
++                include_exception_edges
++                    || !matches!(
++                        func.body.blocks.get(pred).map(|pred| &pred.terminal),
++                        Some(Terminal::MaybeThrow { continuation, .. }) if continuation != id
++                    )
++            })
++            .collect();
+ 
+         let is_return = matches!(&block.terminal, Terminal::Return { .. });
+         let is_throw = matches!(&block.terminal, Terminal::Throw { .. });
+@@ -276,16 +322,44 @@ pub fn compute_post_dominator_frontiers(
+     next_block_id_counter: u32,
+     include_throws_as_exit_node: bool,
+ ) -> Result<PostDominatorFrontiers, OxcDiagnostic> {
+-    let post_dominators =
+-        compute_post_dominator_tree(func, next_block_id_counter, include_throws_as_exit_node)?;
++    post_dominator_frontiers(func, next_block_id_counter, include_throws_as_exit_node, true)
++}
++
++/// Like [`compute_post_dominator_frontiers`], but over normal control flow only: the edge
++/// from each `MaybeThrow` terminal to its exception handler is ignored.
++///
++/// Inside `try`, the handler edge of a `MaybeThrow` lets execution bypass everything after
++/// it, so with that edge the frontiers stop at the n
+```
+
+**File**: `crates/oxc_react_compiler/src/react_compiler_inference/infer_reactive_places.rs` (modified, +17/-3)
+```diff
+@@ -21,7 +21,8 @@ use rustc_hash::FxHashMap;
+ 
+ use crate::diagnostics;
+ use crate::react_compiler_hir::dominator::{
+-    PostDominatorFrontiers, compute_post_dominator_frontiers,
++    PostDominatorFrontiers, compute_normal_flow_post_dominator_frontiers,
++    compute_post_dominator_frontiers,
+ };
+ use crate::react_compiler_hir::environment::Environment;
+ use crate::react_compiler_hir::object_shape::HookKind;
+@@ -63,8 +64,21 @@ pub fn infer_reactive_places(
+     // Collect block IDs for iteration
+     let block_ids: Vec<BlockId> = func.body.blocks.keys().copied().collect();
+ 
+-    let frontiers =
+-        compute_post_dominator_frontiers(func, env.next_block_id().index() as u32, false)?;
++    let next_block_id = env.next_block_id().index() as u32;
++    let mut frontiers = compute_post_dominator_frontiers(func, next_block_id, false)?;
++    // Inside `try`, a store ends its block with a `MaybeThrow` whose handler edge skips
++    // the rest of the `try`, so the frontiers above stop at that `MaybeThrow` and miss
++    // the `If`/`Branch`/`Switch` that chose which store ran: a phi over the stores of
++    // a ternary or of `if`/`switch` branches would never become reactive. Also add the
++    // frontiers of normal control flow, keeping those through handler edges.
++    if func
++        .body
++        .blocks
++        .values()
++        .any(|block| matches!(block.terminal, Terminal::MaybeThrow { handler: Some(_), .. }))
++    {
++        frontiers.extend(compute_normal_flow_post_dominator_frontiers(func, next_block_id, false)?);
++    }
+ 
+     // Track phi operand reactive flags during fixpoint.
+     // In TS, isReactive() sets place.reactive as a side effect. But when a phi
+```
+
+**File**: `crates/oxc_react_compiler/tests/snapshots/try-catch-conditional-assignment-reactive-test.snap` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
 +---
-+source: crates/oxc_linter/src/tester.rs
++source: crates/oxc_react_compiler/tests/snapshot.rs
++input_file: crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js
 +---
++import { c as _c } from "react/compiler-runtime";
++// A let assigned from a ternary with constant branches inside `try` is reactive
++// through the ternary's test, so the JSX that reads it must depend on it.
++function Component(t0) {
++	const $ = _c(2);
++	const { kind } = t0;
++	let label;
++	try {
++		label = kind === 1 ? "one" : "other";
++	} catch {
++		label = "caught";
++	}
++	let t1;
++	if ($[0] !== label) {
++		t1 = <div>{label}</div>;
++		$[0] = label;
++		$[1] = t1;
++	} else {
++		t1 = $[1];
++	}
++	return t1;
++}
++export const FIXTURE_ENTRYPOINT = {
++	fn: Component,
++	params: [{ kind: 1 }],
++	sequentialRenders: [
++		{ kind: 1 },
++		{ kind: 2 },
++		{ kind: 1 }
++	]
++};
+```
+
+**File**: `crates/oxc_react_compiler/tests/snapshots/try-catch-if-statement-reactive-test.snap` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++---
++source: crates/oxc_react_compiler/tests/snapshot.rs
++input_file: crates/oxc_react_compiler/fixtures/try-catch-if-statement-reactive-test.js
++---
++import { c as _c } from "react/compiler-runtime";
++// Constant assignments in the branches of an `if` inside `try` make the
++// variable reactive through the `if`'s test.
++function Component(t0) {
++	const $ = _c(2);
++	const { cond } = t0;
++	let value;
++	try {
++		if (cond) {
++			value = "a";
++		} else {
++			value = "b";
++		}
++	} catch {
++		value = "c";
++	}
++	let t1;
++	if ($[0] !== value) {
++		t1 = <div>{value}</div>;
++		$[0] = value;
++		$[1] = t1;
++	} else {
++		t1 = $[1];
++	}
++	return t1;
++}
++export const FIXTURE_ENTRYPOINT = {
++	fn: Component,
++	params: [{ cond: true }],
++	sequentialRenders: [
++		{ cond: true },
++		{ cond: false },
++		{ cond: true }
++	]
++};
+```
+
+---
+
+### Incident Patch 2: `32443217` (2026-10-20)
+**Commit Message**: refactor(formatter_core): check width via `overflows()` in `fits_text()` (#27988)
+
+Now it uses `overflows()` everywhere.
+
+**File**: `crates/oxc_formatter_core/src/printer/mod.rs` (modified, +7/-12)
+```diff
+@@ -1195,7 +1195,8 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+         Ok(!self.overflows())
+     }
+ 
+-    /// Like Prettier's `fits` loop head (`remainingWidth >= 0`), checked at every `Fits::Yes` exit:
++    /// Like Prettier's `fits` loop head (`remainingWidth >= 0`),
++    /// checked at every `Fits::Yes` exit except a fill entry boundary (see `fits`):
+     /// a line that already overflows never fits, even if no text was measured.
+     /// A pending `Space` counts, a pending `line` space does not.
+     fn overflows(&self) -> bool {
+@@ -1535,22 +1536,16 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+                 self.state.line_width += text.len();
+             }
+             Text::Text { text: _, width } => {
++                self.state.line_width += width.value() as usize;
 +
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => <Foo>{ id };
-+   ·                 ───────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
++                // The width is checked at the `Fits::Yes` exit, see `overflows`
+                 if width.is_multiline() {
+-                    return if self.must_be_flat
+-                        || self.state.line_width + width.value() as usize
+-                            > usize::from(self.options().print_width)
+-                    {
+-                        Fits::No
+-                    } else {
+-                        Fits::Yes
+-                    };
++                    return Fits::from(!self.must_be_flat);
+                 }
+-
+-                self.state.line_width += width.value() as usize;
+             }
+         }
+ 
+-        if self.state.line_width > usize::from(self.options().print_width) {
++        if self.overflows() {
+             return Fits::No;
+         }
+ 
+```
+
+---
+
+### Incident Patch 3: `eb1d9f95` (2026-10-20)
+**Commit Message**: fix(formatter_core): count a flat `line` space in `fits` only when text follows (#27987)
+
+Check overflow at every `Fits::Yes` exit like Prettier's loop head, replacing the expanded-line pending space resolution.
+
+Seems a side effect of #20954.
+
+**File**: `crates/oxc_formatter_core/src/printer/mod.rs` (modified, +23/-18)
+```diff
+@@ -1147,7 +1147,9 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+ 
+         let fits_state = FitsState {
+             pending_indent: printer.state.pending_indent,
++            // Already printed, so it counts like Prettier's `pos` even if it came from a `line`
+             pending_space: printer.state.pending_space,
++            pending_line_space: false,
+             line_width: printer.state.line_width,
+             has_line_suffix: printer.state.line_suffixes.has_pending(),
+             sorted_tailwind_classes: printer.state.sorted_tailwind_classes,
+@@ -1177,17 +1179,28 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+     {
+         while let Some(element) = self.queue.pop() {
+             match self.fits_element(element)? {
+-                Fits::Yes => return Ok(true),
++                Fits::Yes => return Ok(!self.overflows()),
+                 Fits::No => return Ok(false),
+                 Fits::Maybe => {
++                    // A fill entry ends but the line goes on: the measurement of the next entry
++                    // counts a pending `Space` once text follows, like Prettier measuring
++                    // `[content, separator, next content]` together
+                     if predicate.is_end(element)? {
+-                        break;
++                        return Ok(self.state.line_width <= usize::from(self.options().print_width));
+                     }
+                 }
+             }
+         }
+ 
+-        Ok(true)
++        Ok(!self.overflows())
++    }
 +
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => <Foo>({ id });
-+   ·                 ─────────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
-+
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => ({ id }) as Foo;
-+   ·                 ───────────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
-+
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => ({ id }) satisfies Foo;
-+   ·                 ──────────────────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
-+
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => ({ id })!;
-+   ·                 ─────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
-+
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => (({ id }) as Foo);
-+   ·                 ─────────────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
-+
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => <Foo>JSON.parse(id);
-+   ·                 ───────────────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
-+
-+  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
-+   ╭─[arrow_body_style.ts:1:17]
-+ 1 │ var foo = () => ({ id }) as Foo;
-+   ·                 ───────────────
-+   ╰────
-+  help: Surround the arrow body with braces and use a return statement.
++    /// Like Prettier's `fits` loop head (`remainingWidth >= 0`), checked at every `Fits::Yes` exit:
++    /// a line that already overflows never fits, even if no text was measured.
++    /// A pending `Space` counts, a pending `line` space does not.
++    fn overflows(&self) -> bool {
++        self.state.line_width + usize::from(self.state.pending_space)
++            > usize::from(self.options().print_width)
+     }
+ 
+     /// Tests if the content of a `Fill` item fits in [PrintMode::Flat].
+@@ -1254,7 +1267,7 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+                 if args.mode().is_flat() {
+                     match line_mode {
+                         LineMode::SoftOrSpace => {
+-                            self.state.pending_space = true;
++                            self.state.pending_line_space = true;
+                         }
+                         LineMode::Soft => {}
+                         LineMode::Hard
+@@ -1311,17 +1324,6 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+                     // is what the mode's initialized to by default
+                     // This means, the printer is outside of the current element at this point and any
+                     // line break should be printed as regular line break -> Fits
+-                    //
+-                    // Before returning, resolve any pending space so the width check is accurate.
+-                    // Without this, a deferred `Space` before a group boundary can be lost when
+-                    // the fits measurer exits early via an expanded-mode line break, causing the
+-                    // measured width to be off by one.
+-                    if self.state.pending_space {
+-                        self.state.line_width += 1;
+-                        if self.state.line_width > usize::from(self.options().print_width) {
+-                            return Ok(Fits::No);
+-                        }
+-                    }
+                     return Ok(Fits::Yes);
+                 }
+             }
+@@ -1522,7 +1524,9 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+         self.state.line_width +=
+             indent.width(&self.printer.state.prefix_nodes, self.options().indent_width());
+ 
+-        if self.state.pending_space {
++        if std::mem::take(&mut self.state.pending_space)
++            | std::mem::take(&mut self.state.pending_line_space)
++        {
+             self.state.line_width += 1;
+         }
+ 
+@@ -1550,8 +1554,6 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
+             return Fits::No;
+         }
+ 
+-        self.state.pending_space = false;
+-
+         Fits::Maybe
+     }
+ 
+@@ -1638,7 +1640,10 @@ impl From<bool> for Fits {
+ #[derive(Debug)]
+ struct FitsState<'print> {
+     pending_indent: Indention,
++    /// A `Space`: like Prettier's `" "`, it counts even if no text follows it.
+     pending_space: bool,
++    /// A flat `soft_line_break_or_space`: like Prettier's `line`, it counts only once text follows it.
++    pending_line_space: bool,
+     has_line_suffix: bool,
+     line_width: usize,
+     sorted_tailwind_classes: &'print [String],
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27990** (2026-10-20): fix(minifier,linter): keep `delete` of constant members and later JSX keys (@Dunqing)
+- **PR #27989** (2026-10-20): fix(formatter): keep an arrow signature that exactly fills the line for any body (@leaysgur)
+- **PR #27988** (2026-10-20): refactor(formatter_core): check width via `overflows()` in `fits_text()` (@leaysgur)
+- **PR #27987** (2026-10-20): fix(formatter_core): count a flat `line` space in `fits` only when text follows (@leaysgur)
+- **PR #27983** (2026-10-20): refactor(minifier): share string concat size estimation (@Dunqing)
 - **PR #27980** (2026-10-19): chore(deps): update dependency oxlint to v1.89.0 (@renovate[bot])
-- **PR #27979** (2026-10-19): chore(deps): update dependency oxfmt to ^0.74.0 (@renovate[bot])
-- **PR #27978** (2026-10-19): fix(linter/arrow-body-style): keep type assertions when adding a block body (@yan-almeida)
-- **PR #27973** (2026-10-19): chore(deps): update oxc to ^0.155.0 (@renovate[bot])
-- **PR #27971** (closed): refactor(linter): remove unreachable from disable directive parsing (@camchenry)
-- **PR #27967** (2026-10-19): refactor(linter/eslint/no-restricted-imports): remove use of `unreachable!` (@camchenry)
 
 ---
 
@@ -1491,56 +1827,44 @@ AI disclosure: this PR was prepared with the help of an AI assist
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linter/arrow-body-style): keep type assertions when adding a block body (#27978)
+## X. react-compiler): let branches inside `try` control reactivity (#27817)
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/eslint/arrow_body_style.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0298062d`: linter/arrow-body-style): keep type assertions when adding a block body (#27978). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa7642ad`: react-compiler): let branches inside `try` control reactivity (#27817). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/arrow_body_style.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ast::{
-        ArrowFunctionExpression, Expression, ParenthesizedExpression, ReturnStatement, Statement,
-    },
-        // Only the parens around the object literal can be dropped; a type assertion wrapping it
-        // must be kept: `() => ({ ... }) as T` → `() => { return { ... } as T }`
-        if let Some(paren) = Self::leading_parenthesized_object(expr) {
-            let object_text = ctx.source_range(paren.expression.without_parentheses().span());
-            let rest_text = ctx.source_range(Span::new(paren.span.end, expr.span().end));
-            return fixer.replace(body.span(), format!("{{return {object_text}{rest_text}}}"));
-        let expr_text = ctx.source_range(expr.span());
-    /// Find the parenthesized object literal a concise body starts with, looking through
-    /// postfix TS wrappers: `({ ... })`, `({ ... }) as T`, `({ ... }) satisfies T`, `({ ... })!`
-    fn leading_parenthesized_object<'b, 'a>(
-        expr: &'b Expression<'a>,
-    ) -> Option<&'b ParenthesizedExpression<'a>> {
-        match expr {
-            Expression::ParenthesizedExpression(paren) => {
-                matches!(paren.expression.without_parentheses(), Expression::ObjectExpression(_))
+// A let assigned from a ternary with constant branches inside `try` is reactive
+// through the ternary's test, so the JSX that reads it must depend on it.
+function Component({kind}) {
+  let label = 'init';
+  try {
+    label = kind === 1 ? 'one' : 'other';
+  } catch {
+    label = 'caught';
+  }
+  return <div>{label}</div>;
+}
 
+export const FIXTURE_ENTRYPOINT = {
+  fn: Component,
+  params: [{kind: 1}],
+  sequentialRenders: [{kind: 1}, {kind: 2}, {kind: 1}],
+};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    ast::{ArrowFunctionExpression, Expression, ReturnStatement, Statement},
-        let expr_text = ctx.source_range(expr.span());
-
-        // Check if the expression is a parenthesized object literal: `() => ({ ... })`
-        // In that case, we need to remove the outer parens when converting to block:
-        // `() => ({ ... })` → `() => { return { ... } }`
-        let inner_expr = expr.get_inner_expression();
-        if matches!(inner_expr, Expression::ObjectExpression(_)) {
-            let inner_text = ctx.source_range(inner_expr.span());
-            return fixer.replace(body.span(), format!("{{return {inner_text}}}"));
-        // For all other expressions, just wrap in `{ return ... }`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0298062d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa7642ad` are properly handled with clean fallback behavior.

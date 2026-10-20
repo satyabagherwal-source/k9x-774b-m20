@@ -3974,3 +3974,8 @@
 | `CYCLE-20261020-EJX9` | `2026-10-20T19:17:05.757Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`3a435e67...`) |
 | `CYCLE-20261020-EK78` | `2026-10-20T19:17:06.116Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3337` | Yes (`c2315fb0...`) |
 | `CYCLE-20261020-ELRQ` | `2026-10-20T19:17:08.150Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3338` | Yes (`b5a96ce2...`) |
+| `CYCLE-20261020-MR9S` | `2026-10-20T19:23:28.528Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`84b36417...`) |
+| `CYCLE-20261020-MU8N` | `2026-10-20T19:23:32.375Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3339` | Yes (`5af41427...`) |
+| `CYCLE-20261020-MVW7` | `2026-10-20T19:23:34.519Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3340` | Yes (`d1144645...`) |
+| `CYCLE-20261020-MXEZ` | `2026-10-20T19:23:36.491Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1266, Rule 3341` | Yes (`f4958d7f...`) |
+| `CYCLE-20261020-MYN8` | `2026-10-20T19:23:38.084Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3342` | Yes (`9016cbbb...`) |

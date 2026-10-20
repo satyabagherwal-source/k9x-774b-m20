@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "4b4aee84a0443cba590b8c35a5358bb08acb7b7fa1af668f2cd32ca0cd9d1fcc",
-    "lastHarvestedAt": "2026-10-19T05:39:03.379Z",
+    "contentHash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
+    "lastHarvestedAt": "2026-10-20T19:23:36.498Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -1333,10 +1333,10 @@
     "repository": "cosscom/ui",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/ui",
-    "sourceVersion": "7f7cbd0e",
+    "sourceVersion": "81bfb811",
     "license": "AGPL-3.0",
-    "contentHash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
-    "lastHarvestedAt": "2026-10-20T04:44:56.869Z",
+    "contentHash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
+    "lastHarvestedAt": "2026-10-20T19:23:28.532Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "62f353da",
+    "sourceVersion": "cc579285",
     "license": "MIT",
-    "contentHash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
-    "lastHarvestedAt": "2026-10-19T03:39:20.940Z",
+    "contentHash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
+    "lastHarvestedAt": "2026-10-20T19:23:38.091Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "fe273a10",
+    "sourceVersion": "3b9bcb26",
     "license": "NOASSERTION",
-    "contentHash": "18e5edd8fccc9cd818c1ec113ac9f55be8f3eae67f3260fc3f6facd228025dc3",
-    "lastHarvestedAt": "2026-10-19T07:10:10.748Z",
+    "contentHash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
+    "lastHarvestedAt": "2026-10-20T19:23:34.525Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "9d67cb94",
+    "sourceVersion": "4c0fa90a",
     "license": "MIT",
-    "contentHash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
-    "lastHarvestedAt": "2026-10-20T00:44:00.777Z",
+    "contentHash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
+    "lastHarvestedAt": "2026-10-20T19:23:32.378Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

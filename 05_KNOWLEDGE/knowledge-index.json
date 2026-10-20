@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T19:17:08.097Z",
+  "last_updated": "2026-10-20T19:23:38.037Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7783,14 +7783,19 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "62f353da",
-      "content_hash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
+      "source_version": "cc579285",
+      "content_hash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
         {
           "number": 2083,
           "title": "build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (#5005)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3342,
+          "title": "ci: fix harden-runner pin SHA in fuzzing workflow (#5016)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7799,7 +7804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:39:20.879Z",
+      "verified_at": "2026-10-20T19:23:38.027Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13556,7 +13561,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "4b4aee84a0443cba590b8c35a5358bb08acb7b7fa1af668f2cd32ca0cd9d1fcc",
+      "content_hash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -13599,6 +13604,11 @@
           "number": 1566,
           "title": "Temporal Continuity State Management in Video Generation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3341,
+          "title": "Temporal Chunking Continuity Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13619,7 +13629,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-19T05:39:03.327Z",
+      "verified_at": "2026-10-20T19:23:36.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35383,8 +35393,8 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "fe273a10",
-      "content_hash": "18e5edd8fccc9cd818c1ec113ac9f55be8f3eae67f3260fc3f6facd228025dc3",
+      "source_version": "3b9bcb26",
+      "content_hash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
@@ -35402,6 +35412,11 @@
           "number": 2276,
           "title": "Mixed Module Export Writable Binding Synchronization Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3340,
+          "title": "Upgrade Tamagui dependencies to 3.1.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35409,7 +35424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:10:10.712Z",
+      "verified_at": "2026-10-20T19:23:34.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36451,8 +36466,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "9d67cb94",
-      "content_hash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
+      "source_version": "4c0fa90a",
+      "content_hash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -36465,6 +36480,11 @@
           "number": 2930,
           "title": "linter/arrow-body-style): keep type assertions when adding a block body (#27978)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3339,
+          "title": "react-compiler): let branches inside `try` control reactivity (#27817)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36472,7 +36492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:44:00.720Z",
+      "verified_at": "2026-10-20T19:23:32.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54912,8 +54932,8 @@
       "slug": "cosscom-ui",
       "platform": "github",
       "source_url": "https://github.com/cosscom/ui",
-      "source_version": "7f7cbd0e",
-      "content_hash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
+      "source_version": "81bfb811",
+      "content_hash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "promoted_rules": [
@@ -54938,7 +54958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:44:56.809Z",
+      "verified_at": "2026-10-20T19:23:28.444Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74095,15 +74115,15 @@
       "learning_id": "rule-1266",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1266,
-      "title": "Adapter-Base Model Version Locking Invariant (Harvested from akatz-ai/MiniMax-H3-Character-Swap-LoRA)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Adapter-Base Model Version Locking Invariant",
+      "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-10-20T19:23:36.434Z"
     },
     "rule-1267": {
       "learning_id": "rule-1267",
@@ -103999,6 +104019,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T19:17:08.085Z"
+    },
+    "rule-3339": {
+      "learning_id": "rule-3339",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3339,
+      "title": "react-compiler): let branches inside `try` control reactivity (#27817)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "4c0fa90a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:23:32.320Z"
+    },
+    "rule-3340": {
+      "learning_id": "rule-3340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3340,
+      "title": "Upgrade Tamagui dependencies to 3.1.0",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "3b9bcb26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:23:34.461Z"
+    },
+    "rule-3341": {
+      "learning_id": "rule-3341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3341,
+      "title": "Temporal Chunking Continuity Guard",
+      "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:23:36.434Z"
+    },
+    "rule-3342": {
+      "learning_id": "rule-3342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3342,
+      "title": "ci: fix harden-runner pin SHA in fuzzing workflow (#5016)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "cc579285",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T19:23:38.027Z"
     }
   },
   "aliases": {
