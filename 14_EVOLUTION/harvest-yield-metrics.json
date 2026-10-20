@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T00:51:47.760Z",
-  "total_cycles_completed": 3584,
-  "total_learnings_persisted": 3584,
-  "total_rules_promoted": 2749,
+  "last_updated": "2026-10-20T00:59:13.210Z",
+  "total_cycles_completed": 3588,
+  "total_learnings_persisted": 3588,
+  "total_rules_promoted": 2754,
   "history": [
-    {
-      "timestamp": "2026-10-19T18:16:47.404Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:23:15.445Z",
-      "repository": "LifeSciForge/seo-auditor",
-      "learningId": "learn-github-lifesciforge-seo-auditor",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:23:17.835Z",
-      "repository": "ShiftHackZ/Stable-Diffusion-KMP",
-      "learningId": "learn-github-shifthackz-stable-diffusion-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:23:26.668Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T18:29:42.740Z",
       "repository": "lucide-icons/lucide",
@@ -1403,6 +1375,34 @@
       "repository": "primer/react",
       "learningId": "learn-github-primer-react",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:58:02.271Z",
+      "repository": "RDFLib/pySHACL",
+      "learningId": "learn-github-rdflib-pyshacl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:58:03.530Z",
+      "repository": "mikelikesdesign/SwiftUI-experiments",
+      "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:58:05.952Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T00:59:13.210Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

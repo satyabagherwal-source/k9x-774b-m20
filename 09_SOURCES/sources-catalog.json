@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "2f5583e5",
+    "sourceVersion": "c7a3d5b9",
     "license": "Apache-2.0",
-    "contentHash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
-    "lastHarvestedAt": "2026-10-19T01:01:03.144Z",
+    "contentHash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
+    "lastHarvestedAt": "2026-10-20T00:58:05.948Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "0d322ce7",
+    "sourceVersion": "ce685ee6",
     "license": "MIT",
-    "contentHash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
-    "lastHarvestedAt": "2026-10-19T10:48:31.318Z",
+    "contentHash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
+    "lastHarvestedAt": "2026-10-20T00:59:13.205Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -9748,5 +9748,25 @@
     "contentHash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
     "lastHarvestedAt": "2026-10-20T00:51:42.791Z",
     "learningId": "learn-github-kartiklabhshetwar-better-shot"
+  },
+  "rdflib-pyshacl": {
+    "repository": "RDFLib/pySHACL",
+    "platform": "github",
+    "sourceUrl": "https://github.com/RDFLib/pySHACL",
+    "sourceVersion": "469cca7a",
+    "license": "Apache-2.0",
+    "contentHash": "4da0545ca8390d5a948031fc84e0e7c8558d269596b627b36b12bf251181151c",
+    "lastHarvestedAt": "2026-10-20T00:58:02.267Z",
+    "learningId": "learn-github-rdflib-pyshacl"
+  },
+  "mikelikesdesign-swiftui-experiments": {
+    "repository": "mikelikesdesign/SwiftUI-experiments",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+    "sourceVersion": "b75268ca",
+    "license": "MIT",
+    "contentHash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
+    "lastHarvestedAt": "2026-10-20T00:58:03.526Z",
+    "learningId": "learn-github-mikelikesdesign-swiftui-experiments"
   }
 }

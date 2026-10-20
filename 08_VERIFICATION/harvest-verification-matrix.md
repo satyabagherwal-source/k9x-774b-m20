@@ -3607,3 +3607,7 @@
 | `CYCLE-20261020-X0SK` | `2026-10-20T00:51:42.788Z` | `KartikLabhshetwar/better-shot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2939, Rule 2940, Rule 2941` | Yes (`ac38387c...`) |
 | `CYCLE-20261020-X21O` | `2026-10-20T00:51:44.412Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2942, Rule 2943` | Yes (`8e5c44fe...`) |
 | `CYCLE-20261020-X4MH` | `2026-10-20T00:51:47.753Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2944, Rule 2945, Rule 2946` | Yes (`ab17c1e0...`) |
+| `CYCLE-20261020-55LK` | `2026-10-20T00:58:02.264Z` | `RDFLib/pySHACL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2947` | Yes (`4da0545c...`) |
+| `CYCLE-20261020-56KJ` | `2026-10-20T00:58:03.523Z` | `mikelikesdesign/SwiftUI-experiments` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2948` | Yes (`a5c8f0c9...`) |
+| `CYCLE-20261020-58FT` | `2026-10-20T00:58:05.945Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2949` | Yes (`54fa1b16...`) |
+| `CYCLE-20261020-6OC2` | `2026-10-20T00:59:13.202Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2950, Rule 2951` | Yes (`a5f41546...`) |

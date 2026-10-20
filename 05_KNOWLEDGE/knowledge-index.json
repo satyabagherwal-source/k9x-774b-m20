@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:51:47.709Z",
-  "total_verified_learnings": 990,
+  "last_updated": "2026-10-20T00:59:13.150Z",
+  "total_verified_learnings": 992,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -605,14 +605,19 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "2f5583e5",
-      "content_hash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
+      "source_version": "c7a3d5b9",
+      "content_hash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
         {
           "number": 1948,
           "title": "sdk/python): make memory exists() detect a missing key (#1106)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2949,
+          "title": "sdk): stop harness retries triggered by prompt text in timeout errors (#1104)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -621,7 +626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:01:03.093Z",
+      "verified_at": "2026-10-20T00:58:05.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31064,22 +31069,35 @@
     "learn-github-mikelikesdesign-swiftui-experiments": {
       "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mikelikesdesign-swiftui-experiments",
+      "source": "mikelikesdesign/SwiftUI-experiments",
+      "repository": "mikelikesdesign/SwiftUI-experiments",
       "slug": "mikelikesdesign-swiftui-experiments",
       "platform": "github",
       "source_url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
-      "source_version": "HEAD",
-      "content_hash": "b375df66375bd002392b13c53b29fa47ed46462226a83f5a27627c8aec7d35e9",
+      "source_version": "b75268ca",
+      "content_hash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
       "dossier_path": "07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2948,
+          "title": "Optimize drag delete scrub rendering",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.341Z"
+      "verified_at": "2026-10-20T00:58:03.455Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mikepenz-aboutlibraries": {
       "learning_id": "learn-github-mikepenz-aboutlibraries",
@@ -43016,8 +43034,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "0d322ce7",
-      "content_hash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
+      "source_version": "ce685ee6",
+      "content_hash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -43030,6 +43048,16 @@
           "number": 2507,
           "title": "Context Boundary Enforcement for Asynchronous System Primitives",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2950,
+          "title": "Inherent Separation of Zero-Copy Reference and Owned Codec Traits",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2951,
+          "title": "State Invalidation and Drain Invariance During Framed Stream Errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43037,7 +43065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:48:31.261Z",
+      "verified_at": "2026-10-20T00:59:13.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58461,22 +58489,36 @@
     "learn-github-rdflib-pyshacl": {
       "learning_id": "learn-github-rdflib-pyshacl",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RDFLib/pySHACL",
       "repository": "RDFLib/pySHACL",
       "slug": "rdflib-pyshacl",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/pySHACL",
-      "source_version": "main",
-      "content_hash": "9058ccbb24be0496fb8662934ad242fa2deba49a93374268c99c8125032f5bd7",
+      "source_version": "469cca7a",
+      "content_hash": "4da0545ca8390d5a948031fc84e0e7c8558d269596b627b36b12bf251181151c",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md",
       "promoted_rules": [
-        "Rule 1632"
+        "Rule 1632",
+        {
+          "number": 2947,
+          "title": "Merge pull request #322 from gaoflow/fix-319-httpresponse-close",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:58:02.193Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jsonld-java-jsonld-java": {
       "learning_id": "learn-github-jsonld-java-jsonld-java",
@@ -95808,6 +95850,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:51:47.697Z"
+    },
+    "rule-2947": {
+      "learning_id": "rule-2947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2947,
+      "title": "Merge pull request #322 from gaoflow/fix-319-httpresponse-close",
+      "source_url": "https://github.com/RDFLib/pySHACL",
+      "source_version": "469cca7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:58:02.193Z"
+    },
+    "rule-2948": {
+      "learning_id": "rule-2948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2948,
+      "title": "Optimize drag delete scrub rendering",
+      "source_url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+      "source_version": "b75268ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:58:03.455Z"
+    },
+    "rule-2949": {
+      "learning_id": "rule-2949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2949,
+      "title": "sdk): stop harness retries triggered by prompt text in timeout errors (#1104)",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "c7a3d5b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:58:05.876Z"
+    },
+    "rule-2950": {
+      "learning_id": "rule-2950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2950,
+      "title": "Inherent Separation of Zero-Copy Reference and Owned Codec Traits",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "ce685ee6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:59:13.133Z"
+    },
+    "rule-2951": {
+      "learning_id": "rule-2951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2951,
+      "title": "State Invalidation and Drain Invariance During Framed Stream Errors",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "ce685ee6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:59:13.133Z"
     }
   },
   "aliases": {

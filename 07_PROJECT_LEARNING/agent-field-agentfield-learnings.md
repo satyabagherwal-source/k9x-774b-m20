@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `2f5583e5`  
+> **Source Version**: `c7a3d5b9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:01:02.923Z  
+> **Timestamp**: 2026-10-20T00:58:05.568Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:01:02.915Z  
+> **Harvest Timestamp**: 2026-10-20T00:58:05.559Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2613 stars
+- **Stars / Engagement**: 2614 stars
 
 ---
 
@@ -1418,723 +1418,1533 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2460793d` (2026-10-17)
-**Commit Message**: fix(sdk/python): make memory exists() detect a missing key (#1106)
+### Incident Patch 1: `f3e284af` (2026-10-19)
+**Commit Message**: fix(sdk): stop harness retries triggered by prompt text in timeout errors (#1104)
 
-* fix(sdk/python): make memory exists() detect a missing key
+* fix(harness): keep prompt text out of transient retry classification
 
-MemoryClient.exists() called get() and reported True whenever it did not
-raise. get() answers the control plane's deliberate 404 for an absent key
-with the caller's default instead of raising, so exists() returned True for
-every key as long as the backend was reachable, and the scoped, global and
-MemoryInterface surfaces inherited that answer. #966 documented the behavior
-and left the implementation fix for its own PR.
+A wall-clock timeout message embedded the full command line, and providers
+pass the prompt as an argv element. The runner's transient-error classifier
+matches error text, so prompt prose ("its coded 500 would fall through the
+global filter") made a 90-minute opencode timeout look like a transient
+server error and the whole call was re-run from scratch (the replacement
+process started one second after the cap, the first-retry backoff).
 
-Decide presence against a private sentinel passed as get()'s default: a
-stored value -- including a falsy one such as None, 0 or "" -- means True,
-a 404 means False, and a transport or backend failure still means False.
-get()'s default-on-404 contract is unchanged. This matches the TypeScript
-sibling, which decides presence from the returned value rather than from
-"did not raise". The four docstrings #966 rewrote now state the real
-behavior again.
+- _cli.format_command_preview bounds the argv quoted into timeout/crash
+  messages to whole arguments fitting ~200 chars. An oversized element (the
+  positional prompt) is dropped entirely, so prompt text never reaches the
+  classifier. Used by both timeout messages and the overflow warning log.
+- _runner._is_transient rejects FailureType.TIMEOUT outright, so a declared
+  timeout stays non-retryable regardless of message text.
+- TRANSIENT_PATTERNS drops bare 500/502/503/504. Status codes now match only
+  with HTTP/status/code context ("http 503", "status: 502", "error code 429"),
+  normalizing ':'/
 
-Refs #966
-
-* docs(sdk/python): state the real memory exists() contract in Agent.memory
-
-#966 recorded the exists() limitation in five places: the four docstrings in
-memory.py and the exists bul
-
-**File**: `sdk/python/agentfield/agent.py` (modified, +2/-3)
+**File**: `sdk/go/harness/cli.go` (modified, +16/-2)
 ```diff
-@@ -1638,9 +1638,8 @@ async def get_conversation_summary() -> dict:
-               Read a value; with `scope=None` this is the hierarchical lookup above
-             - `await app.memory.set(key, data, scope=None, scope_id=None)`: Store a value
-             - `await app.memory.delete(key, scope=None, scope_id=None)`: Remove a value
--            - `await app.memory.exists(key)`: Present, but it answers True for any key
--              as long as the backend is reachable; compare
--              `await app.memory.get(key, sentinel)` against a sentinel instead
-+            - `await app.memory.exists(key)`: True when the key is stored in any
-+              reachable scope, False when it is absent or the lookup itself failed
-             - `await app.memory.set_vector(key, embedding, metadata=None)`: Store an embedding
-             - `await app.memory.delete_vector(key)`: Remove an embedding
-             - `await app.memory.similarity_search(query_embedding, top_k=10, filters=None,
-```
-
-**File**: `sdk/python/agentfield/memory.py` (modified, +21/-18)
-```diff
-@@ -385,24 +385,26 @@ async def exists(
-         """
-         Check if a memory key exists.
- 
--        Known limitation: ``get`` returns ``default`` rather than raising when the
--        key is absent, so this answers ``True`` for any key as long as the memory
--        backend is reachable. Only a transport or backend failure yields ``False``.
--        For a real existence test, compare ``get(key, sentinel)`` against a
--        sentinel of your own.
-+        ``get`` answers the control plane's 404 with its ``default`` rather than
-+        raising, so presence is decided against a private sentinel: a stored value
-+        — including a falsy one such as ``None``, ``0`` or ``""`` — means ``True``,
-+        while a missing key means ``False``. A transport or backend failure also
-+        yields ``False``.
- 
-         Args:
-             key: The memory key
-             scope: Optional explicit scope override
- 
-         Returns:
--            True unless the lookup itself failed.
-+            True when the key is stored, False when it is absent or the lookup
-+            itself failed.
-         """
-+        missing = object()
-         try:
--            await self.get(key, scope=scope, scope_id=scope_id)
--            return True
-+            value = await self.get(key, default=missing, scope=scope, scope_id=scope_id)
-         except Exception:
-             return False
-+        return value is not missing
- 
-     async def delete(
-         self, key: str, scope: Optional[str] = None, scope_id: Optional[str] = None
-@@ -581,8 +583,8 @@ async def get(self, key: str, default: Any = None) -> Any:
-     async def exists(self, key: str) -> bool:
-         """Check if a key exists in this specific scope.
- 
--        Carries the same limitation as ``MemoryClient.exists``: it answers ``True``
--        whenever the backend is reachable.
-+        Delegates to ``MemoryClient.exists``, so a key this scope has never stored
-+        reads as ``False``; see there for the falsy-value and failure semantics.
-         """
-         return await self.memory_client.exists(
-             key, scope=self.scope, scope_id=self.scope_id
-@@ -679,8 +681,8 @@ async def get(self, key: str, default: Any = None) -> Any:
-     async def exists(self, key: str) -> bool:
-         """Check if a key exists in global scope.
- 
--        Carries the same limitation as ``MemoryClient.exists``: it answers ``True``
--        whenever the backend is reachable.
-+        Delegates to ``MemoryClient.exists``, so a key never stored in global scope
-+        reads as ``False``; see there for the falsy-value and failure semantics.
-         """
-         return await self.memory_client.exists(key, scope="global")
- 
-@@ -933,17 +935,18 @@ async def exists(self, key: str) -> bool:
-         """
-         Check if a memory key exists in any scope.
- 
--        Known limitation: this answers ``True`` for any key as long as the memory
--        backend is reachable - a missing key is not distinguished from a stored one
--        (see ``MemoryClient.exists``). Compare
--        ``await app.memory.get(key, sentinel)`` against a sentinel of your own
--        instead.
-+        Delegates to ``MemoryClient.exists``, which walks the same
-+        ``workflow -> session -> actor -> global`` precedence as ``get``: a key
-+        stored in any reachable scope reads as ``True``, a key that was never
-+        stored reads as ``False``, and a transport or backend failure also reads
-+        as ``False``.
- 
-         Args:
-             key: The memory key
- 
-         Returns:
--            True unless the lookup itself failed.
-+            True when the key is stored, False when it is absent or the lookup
-+            itself failed.
-         """
-         return await self.memory_client.exists(key)
- 
-```
-
-**File**: `sdk/python/tests/test_memory_client_core.py` (modified, +75/-0)
-```diff
-@@ -240,6 +240,81 @@ async def request(self, method, url, params=None, headers=None, timeout=None):
-     assert result == ["a", "b"]
- 
- 
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+async def test_exists_is_false_when_the_control_plane_returns_404(
-+    memory_client, monkeypatch
-+):
-+    # The control plane answers a missing key with 404 (handlers/memory.go) and
-+    # get() turns that into its default instead of raising, so "did not raise"
-+    # cannot mean "is stored".
-+    class NotFoundResponse:
-+        status_code = 404
-+
-+        def raise_for_status(self):
-+            return None
-+
-+        def json(self):
-+            return {}
-+
-+    async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
-+        assert url.endswith("/memory/get")
-+        return NotFoundResponse()
-+
-+    monkeypatch.setattr(memory_client, "_async_request", fake_request)
-+
-+    assert await memory_client.exists("never-stored") is False
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+async def test_exists_is_true_for_a_stored_falsy_value(memory_client, monkeypatch):
-+    # A stored null/0/"" is present; only the 404 means missing.
-+    class StoredNullResponse:
-+        status_code = 200
-+
-+        def raise_for_status(self):
-+            return None
-+
-+        def json(self):
-+            return {"data": "null"}
-+
-+    async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
-+        return StoredNullResponse()
-+
-+    monkeypatch.setattr(memory_client, "_async_request", fake_request)
-+
-+    assert await memory_client.exists("stored-null") is True
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+async def test_scoped_exists_is_false_for_a_missing_key(memory_client, monkeypatch):
-+    # The scoped/global/interface surfaces delegate here, so a missing key must
-+    # read as absent through them too.
-+    class NotFoundResponse:
-+        status_code = 404
-+
-+        def raise_for_status(self):
-+            return None
-+
-+        def json(self):
-+            return {}
-+
-+    captured: dict[str, Any] = {}
-+
-+    async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
-+        captured["json"] = json
-+        return NotFoundResponse()
-+
-+    monkeypatch.setattr(memory_client, "_async_request", fake_request)
-+
-+    scoped = ScopedMemoryClient(memory_client, "session", "sess-1", event_client=None)
-+
-+    assert await scoped.exists("never-stored") is False
-+    assert captured["json"]["scope"] == "session"  # type: ignore[index]
-+
-+
- @pytest.mark.unit
- @pytest.mark.asyncio
- async def test_exists_handles_errors(memory_client, monkeypatch):
-```
-
----
-
-### Incident Patch 2: `ef721281` (2026-10-15)
-**Commit Message**: fix(control-plane): write the executions row for legacy reasoner and skill calls (#1099)
-
-* fix(control-plane): write the executions row for legacy reasoner and skill calls
-
-ExecuteReasonerHandler and ExecuteSkillHandler (POST /reasoners/:id and
-/skills/:id) sent X-Execution-ID to the agent but never created the
-executions row, so the agent's POST /api/v1/executions/:id/status
-callback hit UpdateExecutionRecord with no row and got a 404.
-
-Both handlers now create the row (status running) right after the input
-is marshalled, before the serverless branch and before dispatch. The
-shape matches the normal execute path in execute_prepare.go. A failed
-insert is logged and the call continues, so the legacy endpoints gain
-no new failure mode.
-
-persistWorkflowExecution, which every terminal exit of both handlers
-already calls, now also copies status, error, result, completed_at and
-duration onto the executions row. A row the agent's own callback has
-already made terminal is left untouched.
-
-Tests: two handler tests check the row exists while the agent is being
-called and ends as succeeded. A third test runs the legacy reasoner
-endpoint and the real status callback handler on LocalStorage; t
-
-**File**: `control-plane/internal/handlers/coverage_handlers_90_test.go` (modified, +4/-0)
-```diff
-@@ -69,6 +69,10 @@ func (s *persistWorkflowExecutionStore) StoreWorkflowExecution(ctx context.Conte
- 	return s.err
+@@ -39,6 +39,20 @@ func resolveIdleSeconds() int {
+ 	return v
  }
  
-+func (s *persistWorkflowExecutionStore) UpdateExecutionRecord(ctx context.Context, executionID string, update func(*types.Execution) (*types.Execution, error)) (*types.Execution, error) {
-+	return nil, s.err
++// formatCommandPreview describes a command in error and log messages without
++// quoting its arguments. Providers pass the prompt as an argv element (opencode
++// on POSIX, gemini, cursor), and the runner's retry classifier reads error text,
++// so only the executable and the number of hidden arguments are named.
++func formatCommandPreview(cmd []string) string {
++	if len(cmd) == 0 {
++		return ""
++	}
++	if len(cmd) == 1 {
++		return cmd[0]
++	}
++	return fmt.Sprintf("%s [%d args omitted]", cmd[0], len(cmd)-1)
 +}
 +
- func TestWorkflowExecutionEventHelpersCoverage(t *testing.T) {
- 	now := time.Date(2026, 4, 8, 12, 0, 0, 0, time.UTC)
- 	parentExecutionID := "parent-exec"
-```
-
-**File**: `control-plane/internal/handlers/empty_input_test.go` (modified, +8/-0)
-```diff
-@@ -31,6 +31,14 @@ func (s *reasonerTestStorage) GetAgent(ctx context.Context, id string) (*types.A
- 	return nil, nil
- }
+ var ansiRe = regexp.MustCompile(`\x1B\[[0-?]*[ -/]*[@-~]`)
  
-+func (s *reasonerTestStorage) CreateExecutionRecord(ctx context.Context, execution *types.Execution) error {
-+	return nil
-+}
-+
-+func (s *reasonerTestStorage) UpdateExecutionRecord(ctx context.Context, executionID string, update func(*types.Execution) (*types.Execution, error)) (*types.Execution, error) {
-+	return update(nil)
-+}
-+
- func (s *reasonerTestStorage) StoreWorkflowExecution(ctx context.Context, execution *types.WorkflowExecution) error {
- 	if execution != nil {
- 		copy := *execution
-```
-
-**File**: `control-plane/internal/handlers/reasoners.go` (modified, +147/-20)
-```diff
-@@ -24,12 +24,122 @@ type ExecuteReasonerRequest struct {
- 	Context map[string]interface{} `json:"context,omitempty"`
- }
+ // StripANSI removes ANSI escape sequences from text.
+@@ -245,14 +259,14 @@ func runCLIWithStdin(ctx context.Context, cmd []string, env map[string]string, c
+ 	}
  
-+// legacyPersistTimeout bounds the final writes of a legacy call.
-+const legacyPersistTimeout = 5 * time.Second
-+
-+// legacyPersistContext returns the context for the final writes of a legacy
-+// call. It keeps the request's values but not its cancellation: a caller that
-+// hangs up after dispatch must not leave the execution running with no
-+// completion time.
-+func legacyPersistContext(ctx context.Context) (context.Context, context.CancelFunc) {
-+	return context.WithTimeout(context.WithoutCancel(ctx), legacyPersistTimeout)
-+}
-+
- func persistWorkflowExecution(ctx context.Context, storageProvider storage.StorageProvider, execution *types.WorkflowExecution) {
--	if err := storageProvider.StoreWorkflowExecution(ctx, execution); err != nil {
-+	persistCtx, cancel := legacyPersistContext(ctx)
-+	defer cancel()
-+	if err := storageProvider.StoreWorkflowExecution(persistCtx, execution); err != nil {
-+		logger.Logger.Error().
-+			Err(err).
-+			Str("execution_id", execution.ExecutionID).
-+			Msg("failed to persist workflow execution state")
-+	}
-+	finalizeLegacyExecutionRecord(persistCtx, storageProvider, execution)
-+}
-+
-+// persistLegacyAcknowledgement records a legacy call the agent answered with
-+// HTTP 202. The reasoner is still running in the background and its status
-+// callback or workflow event completes the execution later, so neither row
-+// is made terminal here.
-+func persistLegacyAcknowledgement(ctx context.Context, storageProvider storage.StorageProvider, execution *types.WorkflowExecution) {
-+	persistCtx, cancel := legacyPersistContext(ctx)
-+	defer cancel()
-+	if err := storageProvider.StoreWorkflowExecution(persistCtx, execution); err != nil {
- 		logger.Logger.Error().
- 			Err(err).
- 			Str("execution_id", execution.ExecutionID).
- 			Msg("failed to persist workflow execution state")
-+		return
-+	}
-+
-+	// A callback that landed before the 202 found no workflow row to update.
-+	// Copy its outcome over now, so the row just written is not left running.
-+	current, err := storageProvider.GetExecutionRecord(persistCtx, execution.ExecutionID)
-+	if err != nil || current == nil || !types.IsTerminalExecutionStatus(current.Status) {
-+		return
-+	}
-+	if err := storageProvider.UpdateWorkflowExecution(persistCtx, execution.ExecutionID, func(wf *types.WorkflowExecution) (*types.WorkflowExecution, error) {
-+		if wf == nil {
-+			return nil, fmt.Errorf("workflow execution %s not found", execution.ExecutionID)
-+		}
-+		if types.IsTerminalExecutionStatus(wf.Status) {
-+			return wf, nil
-+		}
-+		wf.Status = current.Status
-+		wf.StatusReason = current.StatusReason
-+		wf.ErrorMessage = current.ErrorMessage
-+		wf.OutputData = current.ResultPayload
-+		wf.OutputSize = len(current.ResultPayload)
-+		wf.CompletedAt = current.CompletedAt
-+		wf.DurationMS = current.DurationMS
-+		wf.UpdatedAt = time.Now()
-+		return wf, nil
-+	}); err != nil {
-+		logger.Logger.Warn().
-+			Err(err).
-+			Str("execution_id", execution.ExecutionID).
-+			Msg("failed to sync workflow execution with an early status callback")
-+	}
-+}
-+
-+// createLegacyExecutionRecord writes the executions row for a legacy
-+// /reasoners or /skills call before it is dispatched, so the agent's
-+// status callback (POST /api/v1/executions/:id/status) finds it.
-+func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
-+	exec := &types.Execution{
-+		ExecutionID:       wfExec.ExecutionID,
-+		RunID:             wfExec.WorkflowID,
-+		ParentExecutionID: wfExec.ParentExecutionID,
-+		AgentNodeID:       wfExec.AgentNodeID,
-+		ReasonerID:        wfExec.ReasonerID,
-+		NodeID:            wfExec.AgentNodeID,
-+		Status:            string(types.ExecutionStatusRunning),
-+		InputPayload:      json.RawMessage(wfExec.InputData),
-+		SessionID:         wfExec.SessionID,
-+		ActorID:           wfExec.ActorID,
-+		StartedAt:         wfExec.StartedAt,
-+		CreatedAt:         wfExec.CreatedAt,
-+		UpdatedAt:         wfExec.UpdatedAt,
-+	}
-+	if err := storageProvider.CreateExecutionRecord(ctx, exec); err != nil {
-+		logger.Logger.Error().
-+			Err(err).
-+			Str("execution_id", wfExec.ExecutionID).
-+			Msg("failed to create execution record for legacy call")
-+	}
-+}
-+
-+// finalizeLegacyExecutionRecord copies the outcome of a legacy call onto its
-+// executions row, unless the agent's own status callback already made it terminal.
-+func finalizeLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
-+	_, err := storageProvider.UpdateExecutionRecord(ctx, wfExec.ExecutionID, func(current *types.Execution) (*types.Execution, error) {
-+		if current == nil || types.IsTerminalExecutionStatus(current.Status) {
-+			// Returning nil leaves the row as it is.
-+			return nil, nil
-+		}
-+		current.Status = wfExec.Status
-+		current.ErrorMessage = wfExec.ErrorMessage
-+		current.R
+ 	if idleTimedOut {
+-		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, strings.Join(cmd, " "))
++		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, formatCommandPreview(cmd))
+ 	}
+ 
+ 	if waitErr != nil {
+ 		if exitErr, ok := waitErr.(*exec.ExitError); ok {
+ 			result.ReturnCode = exitErr.ExitCode()
+ 		} else if ctx.Err() != nil {
+-			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, strings.Join(cmd, " "))
++			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, formatCommandPreview(cmd))
+ 		} else {
+ 			return nil, waitErr
+ 		}
 ```
 
-**File**: `control-plane/internal/handlers/reasoners_test.go` (modified, +524/-0)
+**File**: `sdk/go/harness/cli_preview_test.go` (added, +101/-0)
 ```diff
-@@ -7,10 +7,13 @@ import (
- 	"io"
- 	"net/http"
- 	"net/http/httptest"
+@@ -0,0 +1,101 @@
++package harness
++
++import (
++	"context"
++	"os"
 +	"path/filepath"
- 	"strings"
- 	"testing"
-+	"time"
- 
- 	"github.com/Agent-Field/agentfield/control-plane/internal/events"
-+	"github.com/Agent-Field/agentfield/control-plane/internal/services"
- 	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
- 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
- 
-@@ -376,3 +379,524 @@ func TestExecuteReasonerHandler_ServerlessPayloadAndHeaderPropagation(t *testing
- 	require.Equal(t, "session-1", execCtx["session_id"])
- 	require.NotEmpty(t, execCtx["execution_id"])
- }
++	"runtime"
++	"strings"
++	"testing"
 +
-+func (s *reasonerHandlerStorage) GetExecutionRecord(ctx context.Context, executionID string) (*types.Execution, error) {
-+	return s.exec.GetExecutionRecord(ctx, executionID)
-+}
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
 +
-+func (s *reasonerHandlerStorage) UpdateExecutionRecord(ctx context.Context, executionID string, update func(*types.Execution) (*types.Execution, error)) (*types.Execution, error) {
-+	return s.exec.UpdateExecutionRecord(ctx, executionID, update)
-+}
-+
-+type legacyDispatchObservation struct {
-+	executionID string
-+	record      *types.Execution
-+}
-+
-+// legacyRowAgent returns a stub agent that captures the executions row as it
-+// exists while the control plane is dispatching to it.
-+func legacyRowAgent(t *testing.T, store *reasonerHandlerStorage, observed chan<- legacyDispatchObservation) *httptest.Server {
++// previewTestDir returns a temp directory whose path contains no digits. The
++// runner's transient classifier matches substrings such as "500" anywhere in
++// the error text, and a path with random digits can match by accident, so the
++// fixture keeps the executable path free of them.
++func previewTestDir(t *testing.T) string {
 +	t.Helper()
-+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		executionID := r.Header.Get("X-Execution-ID")
-+		rec, err := store.GetExecutionRecord(r.Context(), executionID)
-+		if err != nil {
-+			rec = nil
++	dir, err := os.MkdirTemp("", "agentfieldpreview")
++	require.NoError(t, err)
++	safe := filepath.Join(filepath.Dir(dir), strings.Map(func(r rune) rune {
++		if r >= '0' && r <= '9' {
++			return 'x'
 +		}
-+		observed <- legacyDispatchObservation{executionID: executionID, record: rec}
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = w.Write([]byte(`{"ok":true}`))
++		return r
++	}, filepath.Base(dir)))
++	require.NoError(t, os.Rename(dir, safe))
++	t.Cleanup(func() { os.RemoveAll(safe) })
++	require.False(t, isTransient(safe), "temp fixture path looks transient: %s", safe)
++	return safe
++}
++
++func TestFormatCommandPreviewNamesOnlyTheExecutable(t *testing.T) {
++	assert.Equal(t, "", formatCommandPreview(nil))
++	assert.Equal(t, "/usr/local/bin/opencode", formatCommandPreview([]string{"/usr/local/bin/opencode"}))
++	assert.Equal(t, "opencode [6 args omitted]", formatCommandPreview([]string{
++		"opencode", "run", "--format", "json", "--agent", "agentfield-harness", "return 500 error",
 +	}))
 +}
 +
-+func TestExecuteReasonerHandler_CreatesExecutionRowBeforeDispatch(t *testing.T) {
-+	gin.SetMode(gin.TestMode)
++func TestNoProgressErrorOmitsCommandArguments(t *testing.T) {
++	dir := previewTestDir(t)
++	script := writeTestScript(t, dir, "opencode-hang", "#!/bin/sh\nsleep 30\n")
 +
-+	store := newReasonerHandlerStorage(nil)
-+	observed := make(chan legacyDispatchObservation, 1)
-+	agentServer := legacyRowAgent(t, store, observed)
-+	defer agentServer.Close()
-+	store.agent = newReasonerAgent(agentServer.URL)
++	_, err := runCLIWithStdinIdle(context.Background(), []string{script, "run", "return 500 error"}, nil, dir, 0, 1, nil)
 +
-+	router := gin.New()
-+	router.POST("/reasoners/:reasoner_id", ExecuteReasonerHandler(store))
-+
-+	req := httptest.NewRequest(http.MethodPost, "/reasoners/node-1.ping", strings.NewReader(`{"input":{"q":1}}`))
-+	req.Header.Set("Content-Type", "application/json")
-+	req.Header.Set("X-Workflow-ID", "wf-legacy")
-+	resp := httptest.NewRecorder()
-+	router.ServeHTTP(resp, req)
-+	require.Equal(t, http.StatusOK, resp.Code)
-+
-+	obs := <-observed
-+	require.NotEmpty(t, obs.executionID)
-+	require.NotNil(t, obs.record, "executions row must exist while the agent is being called")
-+	require.Equal(t, string(types.ExecutionStatusRunning), obs.record.Status)
-+	require.Equal(t, "wf-legacy", obs.record.RunID)
-+	require.Equal(t, "node-1", obs.record.AgentNodeID)
-+	require.Equal(t, "ping", obs.record.ReasonerID)
-+	require.JSONEq(t, `{"q":1}`, string(obs.record.InputPayload))
-+
-+	final, err := store.GetExecutionRecord(context.Background(), obs.executionID)
-+	require.NoError(t, err)
-+	require.NotNil(t, final)
-+	require.Equal(t, string(types.ExecutionStatusSucceeded), final.Status)
-+	require.JSONEq(t, `{"ok":true}`, string(final.ResultPayload))
-+	require.NotNil(t, final.CompletedAt)
++	require.Error(t, err)
++	message := err.Error()
++	assert.Contains(t, message, "CLI command made no progress for 1s: ")
++	assert.Contains(t, message, script+" [2 args omitted]")
++	assert.NotContains(t, message, "return 500 error")
++	assert.False(t, isTransient(message), "prompt text must not make a no-progress error retryable")
 +}
 +
-+func TestExecuteSkillHandler_CreatesExecutionRowBeforeDispatch(t *testing.T) {
-+	gin.SetMode(gin.TestMode)
++func TestNoProgressWithStatusLikePromptRunsOnce(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("opencode sends the prompt over stdin on Windows")
++	}
++	dir := previewTestDir(t)
++	counter := filepath.Join(dir, "runs")
++	script := writeTestScript(t, dir, "opencode-hang", "#!/bin/sh\necho x >> "+counter+"\nsleep 30\n")
++	t.Setenv("AGENTFIELD_HARNESS_IDLE_SECONDS", "1")
 +
-+	store := newReasonerHandlerStorage(nil)
-+	observed := make(chan legacyDispatchObservation, 1)
-+	agentServer := legacyRowAgent(t, store, observed)
-+	defer agentServer.Close()
-+	agent := newReasonerAgent(agentServer.URL)
-+	agent.Skills = []types.SkillDefinition{{ID: "ping"}}
-+	store.agent = agent
++	provider := NewOpenCodeProvider(script, "")
++	runner := NewRunner(Options{Provider: "opencode"})
++	opts := Options{
++		Provider:     "opencode",
++		MaxRetries:   3,
++		InitialDelay: 0.001,
++		MaxDelay:     0.002,
++	}
 +
-+	router := gin.New()
-+	router.POST("/skills/:skill_id", ExecuteSkillHandler(store))
++	_, err := runner.executeWithRetry(context.Background(), provider, "return 500 error", opts)
++	require.Error(t, err)
 +
-+	req := httptest.NewRequest(http.MethodPost, "/skills/node-1.ping", strings.NewReader(`{"input":{"q":1}}`))
-+	req.Header.Set("Content-Type", "application/json")
-+	resp := httptest.NewRecorder()
-+	router.ServeHTTP(resp, req)
-+	require.Equal(t, http.StatusOK, resp.Code)
-+
-+	obs := <-observed
-+	require.NotEmpty(t, obs.executionID)
-+	require.NotNil(t, obs.record, "executions row must exist while the agent is being called")
-+	require.Equal(t, string(types.ExecutionStatusRunning), obs.record.Status)
-+	require.Equal(t, "ping", obs.record.ReasonerID)
-+
-+	final, err := store.GetExecutionRecord(context.Background(), obs.executionID)
-+	require.NoError(t, err)
-+	require.NotNil(t, final)
-+	require.Equal(t, string(types.ExecutionStatusSucceeded), final.Status)
++	data, readErr := os.ReadFile(counter)
++	require.NoError(t, readErr)
++	assert.Equal(t, 1, len(strings.Fields(string(data))), "a timed out run must not be retried because of prompt text")
 +}
 +
-+// TestExecuteReasonerHandler_AgentStatusCallbackFindsExecution reproduces #1086
-+// end to end on the real local storage: while the legacy endpoint is
-+// dispatching, the agent posts its status callback to the real
-+// UpdateExecutionStatusHandler. Without the executions row that callback is a
-+// 404. The legacy handler must also keep the terminal status the agent
-+// repor
++func TestTransientStatusErrorStillRetries(t *testing.T) {
++	calls := 0
++	provider := &funcProvider{fn: func(_ context.Context, _ string, _ Options) (*RawResult, error) {
++		calls++
++		if calls == 1 {
++			return &RawResult{IsError: true, ErrorMessage: "Error 503", FailureType: FailureAPIError}, nil
++		}
++		return &RawResult{Result: "ok", Metrics: Metrics{NumTurns: 1}}, nil
++	}}
++	runner := NewRunner(Options{Provider: "opencode"})
++	opts := Options{Provider: "opencode", MaxRetries: 3, InitialDelay: 0.001, MaxDelay: 0.002}
++
++	raw, err := runner.executeWithRetry(context.Background(), provider, "hello", opts)
++
++	require.NoError(t, err)
++	require.NotNil(t, raw)
++	assert.False(t, raw.IsError)
++	assert.Equal(t, 2, calls)
++}
+```
+
+**File**: `sdk/python/agentfield/harness/_cli.py` (modified, +18/-3)
+```diff
+@@ -85,6 +85,17 @@ def resolve_cli_command(name: str) -> str:
+     return shutil.which(name) or name
+ 
+ 
++def format_command_preview(cmd: List[str]) -> str:
++    """Describe a command for error messages without quoting its arguments.
++
++    Providers pass the prompt as an argv element, and the runner's retry
++    classifier reads error text, so only the executable is named.
++    """
++    if len(cmd) <= 1:
++        return cmd[0] if cmd else ""
++    return f"{cmd[0]} [{len(cmd) - 1} args omitted]"
++
++
+ def _resolve_idle_seconds(idle_seconds: Optional[float]) -> Optional[float]:
+     """Resolve the no-progress watchdog window.
+ 
+@@ -402,9 +413,13 @@ def _kill_group() -> None:
+         fallback_returncode = await _wait_process_exit(proc, _kill_group)
+ 
+     if idle_timed_out:
+-        raise TimeoutError(f"CLI command made no progress for {idle}s: {' '.join(cmd)}")
++        raise TimeoutError(
++            f"CLI command made no progress for {idle}s: {format_command_preview(cmd)}"
++        )
+     if timed_out:
+-        raise TimeoutError(f"CLI command timed out after {timeout}s: {' '.join(cmd)}")
++        raise TimeoutError(
++            f"CLI command timed out after {timeout}s: {format_command_preview(cmd)}"
++        )
+ 
+     returncode = proc.returncode
+     if returncode is None:
+@@ -417,7 +432,7 @@ def _kill_group() -> None:
+                 name,
+                 max_output_bytes,
+                 buf.dropped_bytes,
+-                " ".join(cmd[:3]),
++                format_command_preview(cmd),
+             )
+     return (
+         stdout_chunks.joined().decode("utf-8", errors="replace"),
+```
+
+**File**: `sdk/python/tests/test_harness_cli.py` (modified, +57/-0)
+```diff
+@@ -3,13 +3,15 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import sys
+ from unittest.mock import AsyncMock, MagicMock, patch
+ 
+ import pytest
+ 
+ from agentfield.harness._cli import (
+     estimate_cli_cost,
+     extract_final_text,
++    format_command_preview,
+     parse_jsonl,
+     resolve_model_and_variant,
+     run_cli,
+@@ -57,6 +59,61 @@ def test_resolve_model_and_variant_uses_suffix_when_no_explicit_option():
+     )
+ 
+ 
++# The live incident's prompt text: a bare "500" quoted into a timeout message
++# made the runner's classifier re-run the whole 90-minute call from scratch.
++_LONG_PROMPT = (
++    "PROMPT-MARKER fix the output check, where its coded 500 would fall "
++    "through the global filter" + ("x" * 5000)
++)
++
++
++@pytest.mark.parametrize("executable", ["opencode", "/tmp/review-500/opencode"])
++def test_format_command_preview_names_only_the_executable(executable):
++    cmd = [
++        executable,
++        "run",
++        "--format",
++        "json",
++        "--agent",
++        "agentfield-harness",
++        _LONG_PROMPT,
++    ]
++
++    preview = format_command_preview(cmd)
++
++    assert preview == f"{executable} [6 args omitted]"
++    assert "PROMPT-MARKER" not in preview
++
++
++@pytest.mark.parametrize(
++    ("cmd", "expected"),
++    [
++        ([], ""),
++        (["opencode"], "opencode"),
++        (["opencode", "run", "return 500 error"], "opencode [2 args omitted]"),
++    ],
++)
++def test_format_command_preview_drops_a_short_prompt_too(cmd, expected):
++    assert format_command_preview(cmd) == expected
++
++
++@pytest.mark.asyncio
++async def test_run_cli_timeout_message_excludes_the_prompt():
++    """End-to-end: the TimeoutError providers surface embeds only the argv
++    prefix, so prompt text never reaches the retry classifier."""
++    cmd = [sys.executable, "-c", "import time; time.sleep(30)", _LONG_PROMPT]
++
++    with pytest.raises(TimeoutError) as excinfo:
++        await run_cli(cmd, timeout=0.2, idle_seconds=0)
++
++    message = str(excinfo.value)
++    assert message == (
++        f"CLI command timed out after 0.2s: {sys.executable} [3 args omitted]"
++    )
++    assert _LONG_PROMPT not in message
++    assert "PROMPT-MARKER" not in message
++
++
+ def _stream_reader(chunks: list[bytes]) -> MagicMock:
+     """Build a fake asyncio StreamReader yielding ``chunks`` then EOF (b"")."""
+     queued = list(chunks) + [b""]
+```
+
+**File**: `sdk/python/tests/test_harness_provider_opencode.py` (modified, +29/-0)
+```diff
+@@ -9,6 +9,7 @@
+ import pytest
+ from agentfield.exceptions import HarnessProviderUnavailable
+ 
++from agentfield.harness._result import FailureType
+ from agentfield.harness.providers._factory import build_provider
+ from agentfield.harness.providers.opencode import OpenCodeProvider
+ from agentfield.types import HarnessConfig
+@@ -1076,3 +1077,31 @@ async def fake_run_cli(cmd, *, env=None, cwd=None, timeout=None, input_text=None
+     await provider.execute("hello", {"model": "deepseek/deepseek-v4-flash"})
+ 
+     assert "--variant" not in captured["cmd"]
++
++
++@pytest.mark.asyncio
++async def test_opencode_timeout_message_excludes_prompt_text(
++    monkeypatch: pytest.MonkeyPatch, tmp_path
++):
++    """The TIMEOUT error message the provider surfaces keeps the argv prefix
++    and never quotes the prompt (the runner classifies this text for retries)."""
++    fake_bin = tmp_path / "opencode-hang"
++    fake_bin.write_text("#!/bin/sh\nsleep 30\n", encoding="utf-8")
++    fake_bin.chmod(0o755)
++    monkeypatch.setenv("AGENTFIELD_HARNESS_TIMEOUT_SECONDS", "1")
++
++    prompt = (
++        "PROMPT-MARKER fix the shape check, where its coded 500 would fall "
++        "through the global filter" + ("x" * 5000)
++    )
++
++    result = await OpenCodeProvider(bin_path=str(fake_bin)).execute(
++        prompt, {"cwd": str(tmp_path), "project_dir": str(tmp_path)}
++    )
++
++    assert result.is_error is True
++    assert result.failure_type == FailureType.TIMEOUT
++    message = result.error_message or ""
++    assert message == f"CLI command timed out after 1s: {fake_bin} [8 args omitted]"
++    assert prompt not in message
++    assert "PROMPT-MARKER" not in message
+```
+
+**File**: `sdk/python/tests/test_harness_runner.py` (modified, +63/-0)
+```diff
+@@ -685,3 +685,66 @@ async def test_incremental_mode_recovers_by_patching_missing_field(tmp_path):
+     retry_prompt = provider.prompts[1].lower()
+     assert "patch only" in retry_prompt
+     assert "count" in retry_prompt
++
++
++@pytest.mark.asyncio
++async def test_execute_with_retry_retries_error_503(tmp_path, monkeypatch):
++    provider = MockProvider(
++        [
++            RawResult(is_error=True, error_message="Error 503"),
++            RawResult(result="ok", metrics=Metrics(num_turns=1)),
++        ]
++    )
++
++    async def fake_sleep(delay: float) -> None:
++        return None
++
++    monkeypatch.setattr("agentfield.harness._runner.asyncio.sleep", fake_sleep)
++
++    with patch("agentfield.harness._runner.build_provider", return_value=provider):
++        result = await HarnessRunner().run(
++            "hello", provider="codex", cwd=str(tmp_path), max_retries=3
++        )
++
++    assert result.is_error is False
++    assert provider.call_count == 2
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "prompt",
++    [
++        "return 500 error",
++        "fix the check, where its coded 500 would fall through" + "x" * 5000,
++    ],
++)
++async def test_timed_out_run_with_status_like_prompt_runs_once(
++    tmp_path, monkeypatch, prompt
++):
++    from agentfield.harness.providers.opencode import OpenCodeProvider
++
++    counter = tmp_path / "runs"
++    fake_bin = tmp_path / "opencode-hang"
++    fake_bin.write_text(
++        f"#!/bin/sh\necho x >> {counter}\nsleep 30\n", encoding="utf-8"
++    )
++    fake_bin.chmod(0o755)
++    monkeypatch.setenv("AGENTFIELD_HARNESS_TIMEOUT_SECONDS", "1")
++
++    async def fake_sleep(delay: float) -> None:
++        return None
++
++    monkeypatch.setattr("agentfield.harness._runner.asyncio.sleep", fake_sleep)
++
++    # Keep the diagnostic's retained executable independent of tmp_path:
++    # pytest's parent directory may itself contain classifier markers like 500.
++    monkeypatch.chdir(tmp_path)
++    provider = OpenCodeProvider(bin_path="./opencode-hang")
++
++    with patch("agentfield.harness._runner.build_provider", return_value=provider):
++        result = await HarnessRunner().run(
++            prompt, provider="opencode", cwd=str(tmp_path), max_retries=3
++        )
++
++    assert result.is_error is True
++    assert len(counter.read_text().splitlines()) == 1
 ```
 
 ---
 
-### Incident Patch 3: `e960677b` (2026-10-01)
-**Commit Message**: fix(sdk/python): parse AGENTFIELD_ASYNC boolean flags with the repo's env vocabulary (#1082)
+### Incident Patch 2: `f4ea098b` (2026-10-19)
+**Commit Message**: fix(web): render untrusted markdown and links safely in the UI (#1118)
 
-AsyncConfig.from_environment() read all five boolean feature flags with
-`lambda x: x.lower() == "true"`. Four of those fields default to True, so the
-only values that could be expressed were "true" and "false": setting
-AGENTFIELD_ASYNC_ENABLE_RESULT_CACHING=1 -- or =yes, or =on -- evaluated to
-False and silently disabled result caching, the opposite of what the value says.
-The same inversion applied to enable_async_execution, enable_batch_polling and
-fallback_to_sync, and it reaches users by default because both Agent (agent.py:846)
-and AgentFieldClient (client.py:182) build their async_config from
-from_environment() when none is passed.
+* fix(web): render untrusted markdown previews without raw HTML
 
-The lambda also never raises, so get_env_var's `except (ValueError, TypeError):
-return default_value` fallback is unreachable for booleans and an unparseable
-value overrides the field with False instead of leaving the default. PR #714,
-which wired this into the client default, documents the intended contract:
-from_environment() "only overrides fields when the corresponding env var is set
-(falling back to the default on unparseable values)".
+The JSON viewer's Markdown Preview and the data modal's markdown tab
+built HTML from execution and webhook strings with regex replacements and
+inserted it with dangerouslySetInnerHTML, so markup in an execution input,
+output or inbound payload became live DOM in the operator's browser.
 
-Use the vocab
+Both previews now use a shared SafeMarkdown component on top of the
+existing react-markdown + remark-gfm dependencies. No raw-HTML plugin is
+enabled, so HTML in the source is shown as literal text. Every URL passes
+through safeExternalUrl (http, https and, for markdown, mailto; no
+credentials); a rejected link renders as plain text, and accepted links
+open in a new tab with rel="noopener noreferrer". Markdown images render
+as their alt text and are never fetched.
 
-**File**: `sdk/python/agentfield/async_config.py` (modified, +26/-5)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): escape quotes in the JSON syntax highlighter
+
+highlightJsonText already escapes &, < and > for every token, and its
+attributes are fixed class names, so the existing output was safe. Escape
+double and single quotes as well so the helper stays
+
+**File**: `control-plane/web/client/src/components/execution/CompactExecutionHeader.tsx` (modified, +2/-1)
 ```diff
-@@ -8,6 +8,23 @@
- from dataclasses import dataclass
- import os
- 
-+# Default-on flags opt out with a falsey value, matching log_writer._queue_enabled,
-+# logger._stdout_mirror_enabled, node_logs.logs_enabled and
-+# openrouter_attribution.attribution_enabled. Default-off flags opt in with a truthy
-+# one, matching litellm_observability._TRUE_VALUES. Either way a value outside the
-+# vocabulary leaves the field at its default, which is what from_environment()
-+# promises for unparseable input.
-+_FALSE_VALUES = ("0", "false", "no", "off")
-+_TRUE_VALUES = ("1", "true", "yes", "on")
-+
-+
-+def _env_flag_default_on(value: str) -> bool:
-+    return value.strip().lower() not in _FALSE_VALUES
-+
-+
-+def _env_flag_default_off(value: str) -> bool:
-+    return value.strip().lower() in _TRUE_VALUES
-+
- 
- @dataclass
- class AsyncConfig:
-@@ -97,6 +114,10 @@ def from_environment(cls) -> "AsyncConfig":
-         - AGENTFIELD_ASYNC_MAX_EXECUTION_TIMEOUT=1800
-         - AGENTFIELD_ASYNC_BATCH_SIZE=50
- 
-+        Boolean flags take the usual shell vocabulary: a flag that defaults to
-+        true is turned off with 0/false/no/off, and one that defaults to false is
-+        turned on with 1/true/yes/on. Any other value leaves the default in place.
-+
-         Returns:
-             AsyncConfig instance with values from environment variables
-         """
-@@ -163,25 +184,25 @@ def get_env_var(name: str, default_value, converter=None):
-         config.enable_async_execution = get_env_var(
-             "enable_async_execution",
-             config.enable_async_execution,
--            lambda x: x.lower() == "true",
-+            _env_flag_default_on,
-         )
-         config.enable_batch_polling = get_env_var(
-             "enable_batch_polling",
-             config.enable_batch_polling,
--            lambda x: x.lower() == "true",
-+            _env_flag_default_on,
-         )
-         config.enable_result_caching = get_env_var(
-             "enable_result_caching",
-             config.enable_result_caching,
--            lambda x: x.lower() == "true",
-+            _env_flag_default_on,
-         )
-         config.fallback_to_sync = get_env_var(
--            "fallback_to_sync", config.fallback_to_sync, lambda x: x.lower() == "true"
-+            "fallback_to_sync", config.fallback_to_sync, _env_flag_default_on
-         )
-         config.enable_event_stream = get_env_var(
-             "enable_event_stream",
-             config.enable_event_stream,
--            lambda x: x.lower() == "true",
-+            _env_flag_default_off,
-         )
-         config.event_stream_path = get_env_var(
-             "event_stream_path", config.event_stream_path
+@@ -1,3 +1,4 @@
++import { safeExternalUrl } from "@/utils/safeExternalUrl";
+ import { useState, useEffect, type ComponentType } from "react";
+ import {
+   ArrowLeft,
+@@ -319,7 +320,7 @@ export function CompactExecutionHeader({
+               {normalizedStatus === "waiting" &&
+                 execution.approval_request_url && (
+                   <a
+-                    href={execution.approval_request_url}
++                    href={safeExternalUrl(execution.approval_request_url) ?? undefined}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="inline-flex"
 ```
 
-**File**: `sdk/python/tests/test_async_config.py` (modified, +87/-0)
+**File**: `control-plane/web/client/src/components/execution/EnhancedModal.test.tsx` (added, +54/-0)
 ```diff
-@@ -1,3 +1,5 @@
-+import pytest
+@@ -0,0 +1,54 @@
++import { TooltipProvider } from "@/components/ui/tooltip";
++import { cleanup, render, screen } from "@testing-library/react";
++import userEvent from "@testing-library/user-event";
++import { afterEach, expect, it, vi } from "vitest";
++import { DataModal } from "./EnhancedModal";
++import { attackMarkdown, expectLegitimateMarkdown, expectSafeMarkdown, legitimateMarkdown } from "@/test/markdownSecurity";
 +
- from agentfield.async_config import AsyncConfig
- from agentfield.client import AgentFieldClient
++afterEach(() => { cleanup(); vi.restoreAllMocks(); });
++
++it("C7: DataModal's deeply nested markdown tab falls back to text and keeps the dialog mounted", async () => {
++  vi.spyOn(console, "error").mockImplementation(() => {});
++  const content = "> ".repeat(20000) + '**x** <img src=x onerror="window.__pwned=1">';
++  const user = userEvent.setup();
++  render(<DataModal isOpen onClose={() => {}} title="Output" data={content} />, { wrapper: TooltipProvider });
++  await user.click(screen.getByRole("tab", { name: "Markdown Preview" }));
++  const dialog = screen.getByRole("dialog");
++  const preview = dialog.querySelector(".prose")!;
++  expect(preview.querySelector("pre")?.textContent).toBe(content);
++  expectSafeMarkdown(preview);
++  expect(screen.getByRole("tab", { name: "Markdown Preview" })).toHaveAttribute("data-state", "active");
++
++  await user.click(screen.getByRole("tab", { name: "Raw JSON" }));
++  expect(screen.getByRole("dialog")).toBe(dialog);
++  expect(screen.getByRole("tab", { name: "Raw JSON" })).toHaveAttribute("data-state", "active");
++}, 30000);
++
++it("C1 C2 C3 C5: DataModal's Markdown Preview tab safely renders an attacker string", async () => {
++  const user = userEvent.setup();
++  render(<DataModal isOpen onClose={() => {}} title="Output" data={attackMarkdown} />, { wrapper: TooltipProvider });
++  await user.click(screen.getByRole("tab", { name: "Markdown Preview" }));
++  const preview = screen.getByRole("dialog").querySelector(".prose")!;
++  expect(preview.textContent).toContain('<img src=x onerror="window.__pwned=1">');
++  expect(preview.textContent).toContain("blocked");
++  expect(preview.querySelectorAll("a[href]")).toHaveLength(1);
++  expectSafeMarkdown(preview);
++  await new Promise((resolve) => setTimeout(resolve, 0));
++  expect(window).not.toHaveProperty("__pwned");
++});
++
++it("C4 C5: DataModal's markdown tab retains legitimate markdown", async () => {
++  const user = userEvent.setup();
++  render(<DataModal isOpen onClose={() => {}} title="Output" data={legitimateMarkdown} />, { wrapper: TooltipProvider });
++  await user.click(screen.getByRole("tab", { name: "Markdown Preview" }));
++  expectLegitimateMarkdown(screen.getByRole("dialog").querySelector(".prose")!);
++});
++
++it("C5: DataModal keeps non-markdown on the formatted and raw views", async () => {
++  const user = userEvent.setup();
++  render(<DataModal isOpen onClose={() => {}} title="Output" data="plain <img src=x>" />, { wrapper: TooltipProvider });
++  expect(screen.queryByRole("tab", { name: "Markdown Preview" })).toBeNull();
++  await user.click(screen.getByRole("tab", { name: "Raw JSON" }));
++  expect(screen.getByRole("dialog").querySelector("pre")).toHaveTextContent('"plain <img src=x>"');
++  expect(screen.getByRole("dialog").querySelector("img")).toBeNull();
++});
+```
+
+**File**: `control-plane/web/client/src/components/execution/EnhancedModal.tsx` (modified, +2/-20)
+```diff
+@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+ import { Button } from "../ui/button";
+ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+ import { UnifiedJsonViewer } from "@/components/ui/UnifiedJsonViewer";
++import { SafeMarkdown } from "@/components/ui/SafeMarkdown";
+ import { JsonHighlightedPre } from "@/components/ui/json-syntax-highlight";
  
-@@ -70,3 +72,88 @@ def test_client_keeps_explicit_async_config(monkeypatch):
-     client = AgentFieldClient(async_config=explicit_config)
+ interface EnhancedModalProps {
+@@ -122,25 +123,6 @@ export function DataModal({ isOpen, onClose, title, icon, data }: DataModalProps
+     return false;
+   }, [data]);
  
-     assert client.async_config is explicit_config
+-  const MarkdownRenderer = ({ content }: { content: string }) => {
+-    const formattedContent = React.useMemo(() => {
+-      return content
+-        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+-        .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+-        .replace(/`(.*?)`/g, '<code class="bg-muted px-1 rounded text-sm font-mono">$1</code>')
+-        .replace(/\n\n/g, '</p><p class="mt-2">')
+-        .replace(/\n/g, '<br>')
+-        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-500 hover:underline" target="_blank" rel="noopener">$1</a>');
+-    }, [content]);
+-
+-    return (
+-      <div
+-        className="prose prose-sm max-w-none text-foreground"
+-        dangerouslySetInnerHTML={{ __html: `<p>${formattedContent}</p>` }}
+-      />
+-    );
+-  };
+-
+   return (
+     <EnhancedModal
+       isOpen={isOpen}
+@@ -213,7 +195,7 @@ export function DataModal({ isOpen, onClose, title, icon, data }: DataModalProps
+               <TabsContent value="markdown" className="h-full m-0 p-4 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
+                 <div className="border border-border rounded-lg h-full overflow-auto bg-background scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border">
+                   <div className="p-4 h-full overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground">
+-                    <MarkdownRenderer content={typeof data === "string" ? data : jsonString} />
++                    <SafeMarkdown content={typeof data === "string" ? data : jsonString} />
+                   </div>
+                 </div>
+               </TabsContent>
+```
+
+**File**: `control-plane/web/client/src/components/execution/ExecutionApprovalPanel.tsx` (modified, +2/-1)
+```diff
+@@ -1,3 +1,4 @@
++import { safeExternalUrl } from "@/utils/safeExternalUrl";
+ import {
+   CheckCircle,
+   XCircle,
+@@ -185,7 +186,7 @@ export function ExecutionApprovalPanel({ execution }: ExecutionApprovalPanelProp
+             <div className="flex items-center justify-between gap-2">
+               <label className="text-muted-foreground flex-shrink-0">Review Page</label>
+               <a
+-                href={execution.approval_request_url}
++                href={safeExternalUrl(execution.approval_request_url) ?? undefined}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="text-xs font-medium text-foreground hover:underline flex items-center gap-1"
+```
+
+**File**: `control-plane/web/client/src/components/execution/approval-url.test.tsx` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++import type { PropsWithChildren } from "react";
++import { cleanup, render, screen } from "@testing-library/react";
++import userEvent from "@testing-library/user-event";
++import { MemoryRouter } from "react-router";
++import { afterEach, expect, it, vi } from "vitest";
++import { TooltipProvider } from "@/components/ui/tooltip";
++import type { WorkflowExecution } from "@/types/executions";
++import { CompactExecutionHeader } from "./CompactExecutionHeader";
++import { ExecutionApprovalPanel } from "./ExecutionApprovalPanel";
 +
++vi.mock("@/components/ui/notification", () => ({
++  useErrorNotification: () => vi.fn(),
++  useSuccessNotification: () => vi.fn(),
++}));
 +
-+# The four flags below default to True, so an environment variable has to be able
-+# to turn them *off*. The package already settles this shape for default-on env
-+# flags: log_writer._queue_enabled, logger._stdout_mirror_enabled,
-+# node_logs.logs_enabled and openrouter_attribution.attribution_enabled all treat
-+# ("0", "false", "no", "off") as the opt-out vocabulary and everything else as
-+# "keep the default".
-+DEFAULT_ON_FLAGS = [
-+    ("AGENTFIELD_ASYNC_ENABLE_ASYNC_EXECUTION", "enable_async_execution"),
-+    ("AGENTFIELD_ASYNC_ENABLE_BATCH_POLLING", "enable_batch_polling"),
-+    ("AGENTFIELD_ASYNC_ENABLE_RESULT_CACHING", "enable_result_caching"),
-+    ("AGENTFIELD_ASYNC_FALLBACK_TO_SYNC", "fallback_to_sync"),
-+]
++afterEach(cleanup);
 +
-+TRUTHY_VALUES = ["1", "true", "TRUE", "yes", "on", " true "]
-+FALSEY_VALUES = ["0", "false", "FALSE", "no", "off", " false "]
-+UNPARSEABLE_VALUES = ["maybe", "", "2"]
++function Wrapper({ children }: PropsWithChildren) {
++  return <MemoryRouter><TooltipProvider>{children}</TooltipProvider></MemoryRouter>;
++}
 +
-+EVENT_STREAM_ENV = "AGENTFIELD_ASYNC_ENABLE_EVENT_STREAM"
++function execution(url: string): WorkflowExecution {
++  return {
++    id: 1, execution_id: "execution", workflow_id: "workflow", agentfield_request_id: "request",
++    agent_node_id: "agent", reasoner_id: "reasoner", workflow_depth: 0,
++    input_data: null, output_data: null, input_size: 0, output_size: 0, workflow_tags: [],
++    status: "waiting", started_at: "2026-10-01T00:00:00Z", retry_count: 0,
++    created_at: "2026-10-01T00:00:00Z", updated_at: "2026-10-01T00:00:00Z",
++    approval_request_id: "approval", approval_request_url: url,
++  };
++}
 +
++for (const component of ["panel", "header"] as const) {
++  it.each(["javascript:alert(1)", "java\tscript:alert(1)", "data:text/html,payload", "https://user:pass@example.com"])(
++    `C2: approval ${component} rejects agent-controlled %s`, async (url) => {
++      const { container } = render(component === "panel" ? <ExecutionApprovalPanel execution={execution(url)} /> :
++        <CompactExecutionHeader execution={execution(url)} activeTab="approval" onTabChange={() => {}} navigationTabs={[]} />, { wrapper: Wrapper });
++      if (component === "panel") await userEvent.click(screen.getByText("Request Details"));
++      expect(screen.getByText(component === "panel" ? "Open in Hub" : "Approval Required")).toBeInTheDocument();
++      expect(container.querySelector("a[href]")).toBeNull();
++    },
++  );
 +
-+@pytest.mark.parametrize("env_name,field", DEFAULT_ON_FLAGS)
-+@pytest.mark.parametrize("value", TRUTHY_VALUES)
-+def test_default_on_flag_accepts_conventional_truthy_values(
-+    monkeypatch, env_name, field, value
-+):
-+    """`=1`/`=yes`/`=on` must not silently disable a default-on feature."""
-+    monkeypatch.setenv(env_name, value)
++  it(`C2: approval ${component} retains safe https review links`, async () => {
++    const url = "https://example.com/review";
++    render(component === "panel" ? <ExecutionApprovalPanel execution={execution(url)} /> :
++      <CompactExecutionHeader execution={execution(url)} activeTab="approval" onTabChange={() => {}} navigationTabs={[]} />, { wrapper: Wrapper });
++    if (component === "panel") await userEvent.click(screen.getByText("Request Details"));
++    const link = screen.getByRole("link", { name: component === "panel" ? "Open in Hub" : "Approval Required" });
++    expect(link).toHaveAttribute("href", url);
++    expect(link).toHaveAttribute("target", "_blank");
++    expect(link).toHaveAttribute("rel", "noopener noreferrer");
++  });
++}
+```
+
+**File**: `control-plane/web/client/src/components/ui/SafeMarkdown.boundary.test.tsx` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++import { cleanup, render, screen } from "@testing-library/react";
++import { afterEach, expect, it, vi } from "vitest";
++import { expectSafeMarkdown } from "@/test/markdownSecurity";
++import { SafeMarkdown } from "./SafeMarkdown";
 +
-+    assert getattr(AsyncConfig.from_environment(), field) is True
++afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 +
++// 20,000 nested blockquotes overflow the renderer under any vitest pool/stack size, so the
++// fallback assertions are deterministic. Shallower nesting may or may not overflow depending on
++// the runtime stack; for that case only the no-crash / no-live-markup invariant is asserted.
++const overflowingContent = "> ".repeat(20000) + '**x** <img src=x onerror="window.__pwned=1">';
 +
-+@pytest.mark.parametrize("env_name,field", DEFAULT_ON_FLAGS)
-+@pytest.mark.parametrize("value", FALSEY_VALUES)
-+def test_default_on_flag_still_opts_out(monkeypatch, env_name, field, value):
-+    """The opt-out vocabulary that already works keeps working."""
-+    monkeypatch.setenv(env_name, value)
++it("C7: nested markdown that may or may not overflow never crashes and never yields live markup", () => {
++  vi.spyOn(console, "error").mockImplementation(() => {});
++  const content = "- ".repeat(1250) + '**x** <img src=x onerror="window.__pwned=1">';
++  const { container } = render(
++    <>
++      <SafeMarkdown content={content} />
++      <span>Surrounding page</span>
++    </>,
++  );
++  expect(container.querySelector(".prose")?.textContent).toContain("x");
++  expect(screen.getByText("Surrounding page")).toBeInTheDocument();
++  expectSafeMarkdown(container);
++}, 30000);
 +
-+    assert getattr(AsyncConfig.from_environment(), field) is False
++it.each([
++  ["20,000 nested blockquotes", overflowingContent],
++])("C7: deeply nested markdown falls back to text for %s without losing its sibling", (_name, content) => {
++  vi.spyOn(console, "error").mockImplementation(() => {});
++  const { container } = render(
++    <>
++      <SafeMarkdown content={content} className="preview-style" />
++      <span>Surrounding page</span>
++    </>,
++  );
++  const preview = container.querySelector(".prose")!;
++  expect(preview).toHaveClass("preview-style");
++  expect(preview.querySelector("pre")?.textContent).toBe(content);
++  expect(preview.querySelector("pre")?.childElementCount).toBe(0);
++  expect(screen.getByText("Surrounding page")).toBeInTheDocument();
++  expectSafeMarkdown(container);
++}, 30000);
 +
++it("C7: the same SafeMarkdown resets its failed boundary when content changes", () => {
++  const errors = vi.spyOn(console, "error").mockImplementation(() => {});
++  const content = overflowingContent;
++  const { container, rerender } = render(<SafeMarkdown content={content} />);
++  const preview = container.querySelector(".prose")!;
++  expect(preview.querySelector("pre")?.textContent).toBe(content);
 +
-+@pytest.mark.parametrize("env_name,field", DEFAULT_ON_FLAGS)
-+@pytest.mark.parametrize("value", UNPARSEABLE_VALUES)
-+def test_default_on_flag_falls_back_to_default_when_unparseable(
-+    monkeypatch, env_name, field, value
-+):
-+    """A value that means nothing must leave the field at its default.
++  // An unrelated prop change must keep the fallback without retrying the failed content.
++  const errorCount = errors.mock.calls.length;
++  rerender(<SafeMarkdown content={content} className="updated-style" />);
++  expect(preview).toHaveClass("updated-style");
++  expect(preview.querySelector("pre")?.textContent).toBe(content);
++  expect(errors).toHaveBeenCalledTimes(errorCount);
 +
-+    This is the contract PR #714 states for from_environment(): it "only
-+    overrides fields when the corresponding env var is set (falling back to the
-+    default on unparseable values)". The float and int converters honour that
-+    through get_env_var's except clause; a boolean converter that never raises
-+    has to honour it through its vocabulary instead.
-+    """
-+    monkeypatch.setenv(env_name, value)
++  rerender(<SafeMarkdown content={"# Recovered\n\n**normal**\ntext"} />);
++  expect(container.querySelector(".prose")).toBe(preview);
++  expect(screen.getByRole("heading", { name: "Recovered" })).toBeInTheDocument();
++  expect(preview.querySelector("strong")?.textContent).toBe("normal");
++  expect(preview.querySelectorAll("br")).toHaveLength(1);
++  expect(preview.querySelector("pre")).toBeNull();
++  expectSafeMarkdown(container);
++}, 30000);
+```
+
+**File**: `control-plane/web/client/src/components/ui/SafeMarkdown.followup.test.tsx` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++import { cleanup, render, screen } from "@testing-library/react";
++import { afterEach, describe, expect, it } from "vitest";
++import { expectSafeMarkdown } from "@/test/markdownSecurity";
++import { SafeMarkdown } from "./SafeMarkdown";
 +
-+    expected = getattr(AsyncConfig(), field)
-+    assert getattr(AsyncConfig.from_environment(), field) is expected
++afterEach(cleanup);
 +
++describe("SafeMarkdown review follow-ups", () => {
++  it.each([
++    ["soft", "first\nsecond", "first<br>\nsecond"],
++    ["hard", "**first**  \nsecond", "<strong>first</strong><br>\nsecond"],
++  ])("C4: a paragraph %s break produces exactly one structural line break", (_name, content, html) => {
++    const { container } = render(<SafeMarkdown content={content} />);
++    const paragraph = container.querySelector("p")!;
++    expect(paragraph.innerHTML).toBe(html);
++    expect(paragraph.querySelectorAll("br")).toHaveLength(1);
++    expect(paragraph).not.toHaveClass("whitespace-pre-line");
++  });
 +
-+@pytest.mark.parametrize("value", TRUTHY_VALUES)
-+def test_event_stream_opts_in_with_truthy_values(monkeypatch, value):
-+    """enable_event_stream defaults to False, so it needs the opt-in vocabulary."""
-+    monkeypatch.setenv(EVENT_STREAM_ENV, value)
++  it("C4: a tight list continuation has one line break inside the list item", () => {
++    const { container } = render(<SafeMarkdown content={"- **first**\n  continuation"} />);
++    const item = screen.getByRole("listitem");
++    expect(item.innerHTML).toBe("<strong>first</strong><br>\ncontinuation");
++    expect(container.querySelectorAll("br")).toHaveLength(1);
++    expect(item.querySelector("p")).toBeNull();
++  });
 +
-+    assert AsyncConfig.from_environment().enable_event_stream is True
++  it.each([
++    ["fenced", "```text\nfirst\nsecond\n```"],
++    ["indented", "    first\n    second"],
++  ])("C4: %s code keeps its newlines without br elements", (_name, content) => {
++    const { container } = render(<SafeMarkdown content={content} />);
++    expect(container.querySelector("pre code")?.textContent).toBe("first\nsecond\n");
++    expect(container.querySelector("br")).toBeNull();
++  });
 +
++  it("C4: inline code retains normal markdown whitespace and literal content", () => {
++    const { container } = render(<SafeMarkdown content={"before `first\n<img>` after"} />);
++    expect(container.querySelector("p")?.innerHTML).toBe(
++      'before <code class="bg-muted px-1 rounded text-sm font-mono">first &lt;img&gt;</code> after',
++    );
++    expect(container.querySelector("br")).toBeNull();
++    expectSafeMarkdown(container);
++  });
 +
-+@pytest.mark.parametrize("value", FALSEY_VALUES + UNPARSEABLE_VALUES)
-+def test_event_stream_stays_off_for_falsey_or_unparseable(monkeypatch, value):
-+    monkeypatch.setenv(EVENT_STREAM_ENV, value)
++  it("C4: ordered lists retain their numeric start", () => {
++    render(<SafeMarkdown content={"5. Fifth\n6. Sixth"} />);
++    expect(screen.getByRole("list")).toHaveAttribute("start", "5");
++    expect(screen.getAllByRole("listitem").map((item) => item.textContent)).toEqual(["Fifth", "Sixth"]);
++  });
 +
-+    assert AsyncConfig.from_environment().enable_event_stream is False
++  it("C2: a javascript reference definition leaves visible text without a link", () => {
++    const { container } = render(<SafeMarkdown content={"[x][r]\n\n[r]: javascript:alert(1)"} />);
++    expect(container.querySelector("p")?.innerHTML).toBe("x");
++    expect(screen.queryByRole("link")).toBeNull();
++    expectSafeMarkdown(container);
++  });
 +
++  it("C3: a reference-style image renders only its alt text", () => {
++    const { container } = render(<SafeMarkdown content={"![reference alt][r]\n\n[r]: https://example.com/image.png"} />);
++    expect(container.querySelector("p")?.innerHTML).toBe("reference alt");
++    expectSafeMarkdown(container);
++  });
 +
-+def test_boolean_env_flags_reach_the_client_default(monkeypatch):
-+    """The public path: AgentFieldClient() with no explicit async_config."""
-+    monkeypatch.setenv("AGENTFIELD_ASYNC_ENABLE_RESULT_CACHING", "1")
-+    monkeypatch.setenv("AGENTFIELD_ASYNC_ENABLE_EVENT_STREAM", "yes")
++  it("C1: fenced code info markup stays inside the class attribute", () => {
++    const { container } = render(<SafeMarkdown content={'```"><img src=x>\ncode\n```'} />);
++    const code = container.querySelector("pre code")!;
++    expect(code.textContent).toBe("code\n");
++    expect(code.getAttributeNames()).toEqual(["class"]);
++    expect(code).toHaveClass('language-"><img');
++    expectSafeMarkdown(container);
++  });
 +
-+    client = AgentFieldClient()
++  it("C1 C2: GFM footnotes retain their text without unsafe fragment links", () => {
++    const { container } = render(<SafeMarkdown content={"A note[^r].\n\n[^r]: Footnote **text**."} />);
++    expect(container.querySelector("p")?.textContent).toBe("A note1.");
++    expect(container.textContent).toContain("Footnote text.");
++    expect(screen.queryByRole("link")).toBeNull();
++    expectSafeMarkdown(container);
++  });
 +
-+    assert client.async_config.enable_result_caching is True
-+    assert client.async_config.enable_event_stream is True
++  it.each([
++    '<base href="https://evil.example/">',
++    '<math href="javascript:alert(1)">text</math>',
++    '<meta http-equiv="refresh" content="0;url=https://evil.example/">',
++    '<link rel="stylesheet" href="https://evil.example/style.css">',
++  ])("C1: raw forbidden element remains literal text: %s", (content) => {
++    const { container } = render(<SafeMarkdown content={content} />);
++    expect(container.textContent).toBe(content);
++    expectSafeMarkdown(container);
++  });
++});
+```
+
+**File**: `control-plane/web/client/src/components/ui/SafeMarkdown.test.tsx` (added, +84/-0)
+```diff
+@@ -0,0 +1,84 @@
++import { cleanup, render, screen } from "@testing-library/react";
++import { afterEach, describe, expect, it } from "vitest";
++import { SafeMarkdown } from "./SafeMarkdown";
++import { expectLegitimateMarkdown, expectSafeMarkdown, legitimateMarkdown } from "@/test/markdownSecurity";
++
++afterEach(cleanup);
++
++describe("SafeMarkdown", () => {
++  it.each([
++    ["img onerror", '<img src=x onerror="window.__pwned=1">'],
++    ["script", '<script>window.__pwned=1</script>'],
++    ["svg onload", '<svg onload="window.__pwned=1"></svg>'],
++    ["iframe", '<iframe src="https://example.com"></iframe>'],
++    ["object", '<object data="https://example.com"></object>'],
++    ["embed", '<embed src="https://example.com">'],
++    ["raw javascript anchor", '<a href="javascript:alert(1)">click</a>'],
++    ["style", '<style>body { display: none }</style>'],
++    ["form", '<form action="javascript:alert(1)">form</form>'],
++    ["comment", '<!-- <img src=x onerror="window.__pwned=1"> -->'],
++    ["unclosed tag", '<img src=x onerror="window.__pwned=1"'],
++    ["malformed tag", '<img/src=x/onerror="window.__pwned=1">'],
++  ])("C1: raw %s remains visible literal text", async (_name, payload) => {
++    const { container } = render(<SafeMarkdown content={payload} />);
++    expect(container.textContent).toBe(payload);
++    expectSafeMarkdown(container);
++    await new Promise((resolve) => setTimeout(resolve, 0));
++    expect(window).not.toHaveProperty("__pwned");
++  });
++
++  it.each([
++    ['**<img src=x onerror="window.__pwned=1">**', '<img src=x onerror="window.__pwned=1">'],
++    ['`<img src=x onerror="window.__pwned=1">`', '<img src=x onerror="window.__pwned=1">'],
++    ['[<img src=x onerror="window.__pwned=1">](x)', '<img src=x onerror="window.__pwned=1">'],
++    ['&lt;img src=x onerror="window.__pwned=1"&gt;', '<img src=x onerror="window.__pwned=1">'],
++    ['&#60;script&#62;window.__pwned=1&#60;/script&#62;', '<script>window.__pwned=1</script>'],
++    ['&amp;lt;img&amp;gt;', '&lt;img&gt;'],
++  ])("C1: markdown and entity variant %s stays text", (content, expected) => {
++    const { container } = render(<SafeMarkdown content={content} />);
++    expect(container.textContent).toContain(expected);
++    expectSafeMarkdown(container);
++  });
++
++  it("C1: HTML in a link title is literal attribute text", () => {
++    const title = '<img src=x onerror="window.__pwned=1">';
++    const { container } = render(<SafeMarkdown content={`[title](https://example.com '${title}')`} />);
++    expect(screen.getByRole("link")).toHaveAttribute("title", title);
++    expectSafeMarkdown(container);
++  });
++
++  it.each([
++    "javascript:alert%281%29", "JaVaScRiPt:alert%281%29", "java\tscript:alert%281%29",
++    " \x01javascript:alert%281%29", "&#106;avascript:alert%281%29", "javascript&colon;alert%281%29",
++    "java&#x09;script:alert%281%29", "%6aavascript:alert%281%29", "javascript%3Aalert%281%29",
++    "data:text/html,payload", "vbscript:alert%281%29", "file:///tmp/payload", "blob:https://example.com/id",
++    "//evil.example.com", "/relative", "relative", "#fragment", "https://user:pass@example.com",
++  ])("C2: rejects markdown destination %s", (url) => {
++    const { container } = render(<SafeMarkdown content={`[blocked](<${url}>)`} />);
++    expect(container.querySelector("a[href]")).toBeNull();
++    expect(container.textContent).toContain("blocked");
++    expectSafeMarkdown(container);
++  });
++
++  it.each(["http://example.com", "https://example.com/path?q=a&b=c", "HTTPS://example.com", "https:x", "http:/x", "mailto:operator@example.com"])(
++    "C2: safe destination %s opens with isolation", (url) => {
++      const { container } = render(<SafeMarkdown content={`[safe](${url})`} />);
++      expect(screen.getByRole("link")).toHaveAttribute("href", new URL(url).href);
++      expectSafeMarkdown(container);
++    },
++  );
++
++  it("C3: images become alt text and GFM autolinks obey C2", () => {
++    const { container } = render(<SafeMarkdown content={'![visible alt](https://example.com/tracker) ![](data:image/png,x)\n\nwww.example.com https://example.com/path https://user:pass@example.com'} />);
++    expect(container.textContent).toContain("visible alt");
++    expect(container.querySelector("img")).toBeNull();
++    expect(screen.getAllByRole("link").map((a) => a.getAttribute("href"))).toEqual(["http://www.example.com/", "https://example.com/path"]);
++    expectSafeMarkdown(container);
++  });
++
++  it("C4: legitimate markdown retains all supported constructs and styling", () => {
++    const { container } = render(<SafeMarkdown content={legitimateMarkdown} />);
++    expectLegitimateMarkdown(container);
++    expect(container.firstChild).toHaveClass("prose-sm");
++  });
++});
+```
+
+---
+
+### Incident Patch 3: `c794b4ee` (2026-10-19)
+**Commit Message**: chore(deps): patch npm Dependabot advisories (brace-expansion, http-cache-semantics, fast-uri, undici) (#1095)
+
+* chore(deps): bump npm transitive floors for Dependabot advisories
+
+Raise package overrides to patched releases for brace-expansion
+(1.1.21 / 2.1.7 / 5.0.12), http-cache-semantics 4.3.0, fast-uri 3.1.8,
+and undici 6.29.0 across the web client, desktop, and mastra-bench
+lockfiles.
+
+Note: braces remains at 3.0.3 with no upstream patched release yet
+(CVE-2026-93687 / GHSA-vfj7-8cjw-p6xm).
+
+Co-authored-by: instrument.santosh <[REDACTED_EMAIL]>
+
+* fix(sdk-python): cap litellm below 1.104 for langfuse v2 canary
+
+LiteLLM 1.104.0 requires langfuse>=4.7 for the standard langfuse
+callback, which breaks the v2 canary exercised by coverage after any
+control-plane change. Cap the 3.11+ floor at <1.104.0 until the
+langfuse extra migrates to v4 / langfuse_otel.
+
+Co-authored-by: instrument.santosh <[REDACTED_EMAIL]>
+
+* chore(deps): refresh patched npm security floors
+
+Cover all currently patchable npm alerts in web, desktop, SDK, and examples. Keep no-release braces and sprintf-js advisories explicit; also clear the audited tar and diff advisories with major-scoped patch overrides.
+
+Co-
+
+**File**: `control-plane/web/client/package-lock.json` (modified, +15/-15)
+```diff
+@@ -4036,9 +4036,9 @@
+             }
+         },
+         "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion": {
+-            "version": "2.1.4",
+-            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-            "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++            "version": "2.1.7",
++            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++            "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+@@ -4598,9 +4598,9 @@
+             }
+         },
+         "node_modules/brace-expansion": {
+-            "version": "1.1.18",
+-            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-            "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++            "version": "1.1.21",
++            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++            "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+@@ -8655,9 +8655,9 @@
+             }
+         },
+         "node_modules/postcss-selector-parser": {
+-            "version": "6.1.4",
+-            "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.4.tgz",
+-            "integrity": "sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==",
++            "version": "7.1.6",
++            "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.6.tgz",
++            "integrity": "sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==",
+             "license": "MIT",
+             "dependencies": {
+                 "cssesc": "^3.0.0",
+@@ -9473,9 +9473,9 @@
+             }
+         },
+         "node_modules/source-map-js": {
+-            "version": "1.2.1",
+-            "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+-            "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
++            "version": "1.2.2",
++            "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
++            "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+             "license": "BSD-3-Clause",
+             "engines": {
+                 "node": ">=0.10.0"
+@@ -9682,9 +9682,9 @@
+             }
+         },
+         "node_modules/sucrase/node_modules/brace-expansion": {
+-            "version": "2.1.4",
+-            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-            "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++            "version": "2.1.7",
++            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++            "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+             "license": "MIT",
+             "dependencies": {
+                 "balanced-match": "^1.0.0"
+```
+
+**File**: `control-plane/web/client/package.json` (modified, +8/-6)
+```diff
+@@ -91,11 +91,12 @@
+         "nanoid": "3.3.18",
+         "esbuild": "0.28.1",
+         "ws": "8.21.0",
+-        "brace-expansion@1": "1.1.18",
+-        "brace-expansion@2": "2.1.4",
++        "brace-expansion@1": "1.1.21",
++        "brace-expansion@2": "2.1.7",
+         "postcss": "$postcss",
+         "@humanfs/node": "0.16.8",
+-        "postcss-selector-parser": "6.1.4"
++        "postcss-selector-parser": "7.1.6",
++        "source-map-js": "1.2.2"
+     },
+     "pnpm": {
+         "overrides": {
+@@ -105,11 +106,12 @@
+             "nanoid": "3.3.18",
+             "esbuild": "0.28.1",
+             "ws": "8.21.0",
+-            "brace-expansion@1": "1.1.18",
+-            "brace-expansion@2": "2.1.4",
++            "brace-expansion@1": "1.1.21",
++            "brace-expansion@2": "2.1.7",
+             "postcss": "8.5.25",
+             "@humanfs/node": "0.16.8",
+-            "postcss-selector-parser": "6.1.4"
++            "postcss-selector-parser": "7.1.6",
++            "source-map-js": "1.2.2"
+         }
+     }
+ }
+```
+
+**File**: `control-plane/web/client/pnpm-lock.yaml` (modified, +25/-24)
+```diff
+@@ -11,11 +11,12 @@ overrides:
+   nanoid: 3.3.18
+   esbuild: 0.28.1
+   ws: 8.21.0
+-  brace-expansion@1: 1.1.18
+-  brace-expansion@2: 2.1.4
++  brace-expansion@1: 1.1.21
++  brace-expansion@2: 2.1.7
+   postcss: 8.5.25
+   '@humanfs/node': 0.16.8
+-  postcss-selector-parser: 6.1.4
++  postcss-selector-parser: 7.1.6
++  source-map-js: 1.2.2
+ 
+ importers:
+ 
+@@ -1811,11 +1812,11 @@ packages:
+     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
+     engines: {node: '>=8'}
+ 
+-  brace-expansion@1.1.18:
+-    resolution: {integrity: sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==}
++  brace-expansion@1.1.21:
++    resolution: {integrity: sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==}
+ 
+-  brace-expansion@2.1.4:
+-    resolution: {integrity: sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==}
++  brace-expansion@2.1.7:
++    resolution: {integrity: sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==}
+ 
+   braces@3.0.3:
+     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
+@@ -3041,8 +3042,8 @@ packages:
+     peerDependencies:
+       postcss: 8.5.25
+ 
+-  postcss-selector-parser@6.1.4:
+-    resolution: {integrity: sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==}
++  postcss-selector-parser@7.1.6:
++    resolution: {integrity: sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==}
+     engines: {node: '>=4'}
+ 
+   postcss-value-parser@3.3.1:
+@@ -3313,8 +3314,8 @@ packages:
+       react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+       react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+ 
+-  source-map-js@1.2.1:
+-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
++  source-map-js@1.2.2:
++    resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
+     engines: {node: '>=0.10.0'}
+ 
+   source-map@0.7.6:
+@@ -5313,12 +5314,12 @@ snapshots:
+ 
+   binary-extensions@2.3.0: {}
+ 
+-  brace-expansion@1.1.18:
++  brace-expansion@1.1.21:
+     dependencies:
+       balanced-match: 1.0.2
+       concat-map: 0.0.1
+ 
+-  brace-expansion@2.1.4:
++  brace-expansion@2.1.7:
+     dependencies:
+       balanced-match: 1.0.2
+ 
+@@ -6151,7 +6152,7 @@ snapshots:
+     dependencies:
+       '@babel/parser': 7.29.7
+       '@babel/types': 7.29.7
+-      source-map-js: 1.2.1
++      source-map-js: 1.2.2
+ 
+   make-dir@4.0.0:
+     dependencies:
+@@ -6514,11 +6515,11 @@ snapshots:
+ 
+   minimatch@3.1.5:
+     dependencies:
+-      brace-expansion: 1.1.18
++      brace-expansion: 1.1.21
+ 
+   minimatch@9.0.9:
+     dependencies:
+-      brace-expansion: 2.1.4
++      brace-expansion: 2.1.7
+ 
+   minimist@1.2.8: {}
+ 
+@@ -6695,14 +6696,14 @@ snapshots:
+   postcss-nested@5.0.6(postcss@8.5.25):
+     dependencies:
+       postcss: 8.5.25
+-      postcss-selector-parser: 6.1.4
++      postcss-selector-parser: 7.1.6
+ 
+   postcss-nested@6.2.0(postcss@8.5.25):
+     dependencies:
+       postcss: 8.5.25
+-      postcss-selector-parser: 6.1.4
++      postcss-selector-parser: 7.1.6
+ 
+-  postcss-selector-parser@6.1.4:
++  postcss-selector-parser@7.1.6:
+     dependencies:
+       cssesc: 3.0.0
+       util-deprecate: 1.0.2
+@@ -6715,7 +6716,7 @@ snapshots:
+     dependencies:
+       nanoid: 3.3.18
+       picocolors: 1.1.1
+-      source-map-js: 1.2.1
++      source-map-js: 1.2.2
+ 
+   preact@10.29.8: {}
+ 
+@@ -6744,7 +6745,7 @@ snapshots:
+       commander: 8.3.0
+       glob: 7.2.3
+       postcss: 8.5.25
+-      postcss-selector-parser: 6.1.4
++      postcss-selector-parser: 7.1.6
+ 
+   queue-microtask@1.2.3: {}
+ 
+@@ -7021,7 +7022,7 @@ snapshots:
+       react: 19.2.8
+       react-dom: 19.2.8(react@19.2.8)
+ 
+-  source-map-js@1.2.1: {}
++  source-map-js@1.2.2: {}
+ 
+   source-map@0.7.6: {}
+ 
+@@ -7132,7 +7133,7 @@ snapshots:
+       postcss-js: 3.0.3
+       postcss-load-config: 3.1.4(postcss@8.5.25)
+       postcss-nested: 5.0.6(postcss@8.5.25)
+-      postcss-selector-parser: 6.1.4
++      postcss-selector-parser: 7.1.6
+       postcss-value-parser: 4.2.0
+       pretty-hrtime: 1.0.3
+       purgecss: 4.1.3
+@@ -7164,7 +7165,7 @@ snapshots:
+       postcss-js: 4.1.0(postcss@8.5.25)
+       postcss-load-config: 4.0.2(postcss@8.5.25)
+       postcss-nested: 6.2.0(postcss@8.5.25)
+-      postcss-selector-parser: 6.1.4
++      postcss-selector-parser: 7.1.6
+       resolve: 1.22.10
+       sucrase: 3.35.0
+     transitivePeerDependencies:
+```
+
+**File**: `desktop/package-lock.json` (modified, +33/-33)
+```diff
+@@ -362,9 +362,9 @@
+       "license": "MIT"
+     },
+     "node_modules/@electron/asar/node_modules/brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -661,9 +661,9 @@
+       "license": "MIT"
+     },
+     "node_modules/@electron/universal/node_modules/brace-expansion": {
+-      "version": "2.1.4",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++      "version": "2.1.7",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -2525,9 +2525,9 @@
+       "optional": true
+     },
+     "node_modules/brace-expansion": {
+-      "version": "5.0.9",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
+-      "integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
++      "version": "5.0.12",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
++      "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -3088,9 +3088,9 @@
+       "license": "MIT"
+     },
+     "node_modules/dir-compare/node_modules/brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -3656,9 +3656,9 @@
+       "license": "MIT"
+     },
+     "node_modules/fast-uri": {
+-      "version": "3.1.7",
+-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
+-      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
++      "version": "3.1.8",
++      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
++      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
+       "dev": true,
+       "funding": [
+         {
+@@ -3708,9 +3708,9 @@
+       "license": "MIT"
+     },
+     "node_modules/filelist/node_modules/brace-expansion": {
+-      "version": "2.1.4",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+-      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
++      "version": "2.1.7",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
++      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -3927,9 +3927,9 @@
+       "license": "MIT"
+     },
+     "node_modules/glob/node_modules/brace-expansion": {
+-      "version": "1.1.18",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
+-      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
++      "version": "1.1.21",
++      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
++      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -4147,9 +4147,9 @@
+       "license": "ISC"
+     },
+     "node_modules/http-cache-semantics": {
+-      "version": "4.2.0",
+-      "resolved": "https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.2.0.tgz",
+-      "integrity": "sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==",
++      "version": "4.3.0",
++      "resolved": "https://registry.npmjs.org/http-cache
+```
+
+**File**: `desktop/package.json` (modified, +8/-5)
+```diff
+@@ -94,12 +94,15 @@
+     "vitest": "4.1.11"
+   },
+   "overrides": {
+-    "fast-uri": "3.1.7",
++    "fast-uri": "3.1.8",
++    "http-cache-semantics": "4.3.0",
+     "nanoid": "3.3.18",
+     "postcss": "8.5.25",
+-    "undici": "6.28.0",
+-    "brace-expansion@1": "1.1.18",
+-    "brace-expansion@2": "2.1.4",
+-    "brace-expansion@5": "5.0.9"
++    "undici": "6.29.0",
++    "brace-expansion@1": "1.1.21",
++    "brace-expansion@2": "2.1.7",
++    "brace-expansion@5": "5.0.12",
++    "source-map-js": "1.2.2",
++    "tar@7": "7.5.21"
+   }
+ }
+```
+
+**File**: `examples/benchmarks/100k-scale/mastra-bench/package-lock.json` (modified, +14/-10)
+```diff
+@@ -665,12 +665,12 @@
+       }
+     },
+     "node_modules/@modelcontextprotocol/sdk": {
+-      "version": "1.29.0",
+-      "resolved": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.29.0.tgz",
+-      "integrity": "sha512-zo37mZA9hJWpULgkRpowewez1y6ML5GsXJPY8FI0tBBCd77HEvza4jDqRKOXgHNn867PVGCyTdzqpz0izu5ZjQ==",
++      "version": "1.31.0",
++      "resolved": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.31.0.tgz",
++      "integrity": "sha512-UvTMgnNlnIBO/22ob2RcVGDlcvOslQs8T59+FTGdA0L27a39fdGF/EDETNtDVK4DZGpwomlsYpRdA8UXcVL/pw==",
+       "license": "MIT",
+       "dependencies": {
+-        "@hono/node-server": "^1.19.9",
++        "@hono/node-server": "^1.19.9 || ^2.0.5",
+         "ajv": "^8.17.1",
+         "ajv-formats": "^3.0.1",
+         "content-type": "^1.0.5",
+@@ -1431,9 +1431,9 @@
+       "license": "MIT"
+     },
+     "node_modules/fast-uri": {
+-      "version": "3.1.7",
+-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
+-      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
++      "version": "3.1.8",
++      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
++      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
+       "funding": [
+         {
+           "type": "github",
+@@ -2905,16 +2905,20 @@
+       }
+     },
+     "node_modules/proxy-addr": {
+-      "version": "2.0.7",
+-      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+-      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
++      "version": "2.0.8",
++      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
++      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
+       "license": "MIT",
+       "dependencies": {
+         "forwarded": "0.2.0",
+         "ipaddr.js": "1.9.1"
+       },
+       "engines": {
+         "node": ">= 0.10"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/express"
+       }
+     },
+     "node_modules/qs": {
+```
+
+**File**: `examples/benchmarks/100k-scale/mastra-bench/package.json` (modified, +4/-2)
+```diff
+@@ -16,12 +16,14 @@
+   },
+   "overrides": {
+     "js-yaml": "4.3.2",
+-    "fast-uri": "3.1.7",
++    "fast-uri": "3.1.8",
+     "body-parser": "2.3.0",
+     "@ai-sdk/provider-utils": "4.0.51",
+     "@ai-sdk/provider-utils-v5": "npm:@ai-sdk/provider-utils@4.0.51",
+     "@ai-sdk/provider-utils-v6": "npm:@ai-sdk/provider-utils@4.0.51",
+     "hono": "4.13.7",
+-    "@hono/node-server": "2.0.12"
++    "@hono/node-server": "2.0.12",
++    "proxy-addr": "2.0.8",
++    "@modelcontextprotocol/sdk": "1.31.0"
+   }
+ }
+```
+
+**File**: `examples/python_agent_nodes/rag_evaluation/ui/package-lock.json` (modified, +164/-164)
+```diff
+@@ -22,7 +22,7 @@
+         "clsx": "^2.1.1",
+         "framer-motion": "^11.11.9",
+         "lucide-react": "^0.453.0",
+-        "next": "15.5.25",
++        "next": "15.5.27",
+         "react": "^18.3.1",
+         "react-dom": "^18.3.1",
+         "react-markdown": "^10.1.0",
+@@ -111,9 +111,9 @@
+       }
+     },
+     "node_modules/@img/sharp-darwin-arm64": {
+-      "version": "0.35.4",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.4.tgz",
+-      "integrity": "sha512-Uhfl4V4lhP2nbUVF9+hyH1+luj86f1gUFeo8ALYxFoULoU+G87D43BfeMP8XHsk9boxAnCY/bf2EHwhA7MuGsA==",
++      "version": "0.35.5",
++      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.5.tgz",
++      "integrity": "sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -129,13 +129,13 @@
+         "url": "https://opencollective.com/libvips"
+       },
+       "optionalDependencies": {
+-        "@img/sharp-libvips-darwin-arm64": "1.3.3"
++        "@img/sharp-libvips-darwin-arm64": "1.3.4"
+       }
+     },
+     "node_modules/@img/sharp-darwin-x64": {
+-      "version": "0.35.4",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.4.tgz",
+-      "integrity": "sha512-hWniXY3bG5qKpkKrAwPe4y+VTPmf086YQAnkxWh7uA1YrlRouWGa0M0Mxj3ZjnXFkv7/TD1bTy9lGUK26vRvWw==",
++      "version": "0.35.5",
++      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.5.tgz",
++      "integrity": "sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==",
+       "cpu": [
+         "x64"
+       ],
+@@ -151,20 +151,20 @@
+         "url": "https://opencollective.com/libvips"
+       },
+       "optionalDependencies": {
+-        "@img/sharp-libvips-darwin-x64": "1.3.3"
++        "@img/sharp-libvips-darwin-x64": "1.3.4"
+       }
+     },
+     "node_modules/@img/sharp-freebsd-wasm32": {
+-      "version": "0.35.4",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.4.tgz",
+-      "integrity": "sha512-lIsKw/BU+kjB4eZjxrYrZmwOJYi3Ajrv66iAlBmUPyKc3HpnloevB1g3wxGD9P/5BbQ1brBGl65VRRrCvQDEqA==",
++      "version": "0.35.5",
++      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.5.tgz",
++      "integrity": "sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==",
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+         "freebsd"
+       ],
+       "dependencies": {
+-        "@img/sharp-wasm32": "0.35.4"
++        "@img/sharp-wasm32": "0.35.5"
+       },
+       "engines": {
+         "node": ">=20.9.0"
+@@ -174,9 +174,9 @@
+       }
+     },
+     "node_modules/@img/sharp-libvips-darwin-arm64": {
+-      "version": "1.3.3",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.3.tgz",
+-      "integrity": "sha512-suTBPTDGrI9WodccaDdwZItTSaBYASlBk1NSfElSHrUfzu3szG6lvIF58+WiFvnfzuK8ZBFS5zE00PxqxnRiPg==",
++      "version": "1.3.4",
++      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.4.tgz",
++      "integrity": "sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -190,9 +190,9 @@
+       }
+     },
+     "node_modules/@img/sharp-libvips-darwin-x64": {
+-      "version": "1.3.3",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.3.tgz",
+-      "integrity": "sha512-FVJZ5mITMobmXIz/hPDTw0EintTW5H3WfrxwLqEqjiIihlu+hVRyGrFQ60xl0Lxn7Bt3zdpevPaQi0HEzqz9fw==",
++      "version": "1.3.4",
++      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.4.tgz",
++      "integrity": "sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==",
+       "cpu": [
+         "x64"
+       ],
+@@ -206,9 +206,9 @@
+       }
+     },
+     "node_modules/@img/sharp-libvips-linux-arm": {
+-      "version": "1.3.3",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.3.tgz",
+-      "integrity": "sha512-3rbU4vqXXc3hY/OiXdl52xZvT0F1yEngWfvqudtPJg/KkyiaQw2DRsFrNzpmLvfavbwOq3qXn36GP8obHRULQA==",
++      "version": "1.3.4",
++      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.4.tgz",
++      "integrity": "sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw==",
+       "cpu": [
+         "arm"
+       ],
+@@ -222,9 +222,9 @@
+       }
+     },
+     "node_modules/@img/sharp-libvips-linux-arm64": {
+-      "version": "1.3.3",
+-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.3.tgz",
+-     
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1106** (2026-10-17): fix(sdk/python): make memory exists() detect a missing key (@remote-controlled-man)
-- **PR #1105** (2026-10-17): fix(sdk/python): report a provider-confirmed zero cost instead of unknown (@remote-controlled-man)
-- **PR #1102** (2026-10-15): feat(sdk/go/ai): support IO Intelligence (io.net) provider (@smiraldr)
-- **PR #1100** (2026-10-14): fix(sdk/python): let AsyncConfig env flags fall back to the class default (@remote-controlled-man)
-- **PR #1099** (2026-10-15): fix(control-plane): write the executions row for legacy reasoner and skill calls (@theluckystrike)
-- **PR #1096** (2026-10-05): Telemetry updates (@santoshkumarradha)
+- **PR #1122** (2026-10-19): fix(control-plane): refuse IPv4-embedding and special-use ranges in the webhook URL guard (@AbirAbbas)
+- **PR #1121** (2026-10-19): fix(control-plane): run session tool calls through the execute pipeline in-process (@AbirAbbas)
+- **PR #1120** (2026-10-19): test(sdk/python): drop the stale enable_mcp kwarg from Agent fixtures (@AbirAbbas)
+- **PR #1119** (2026-10-19): fix(control-plane): preserve DID identities across restarts and home path changes (@AbirAbbas)
+- **PR #1118** (2026-10-19): fix(web): render untrusted markdown and links safely in the UI (@AbirAbbas)
+- **PR #1117** (2026-10-19): fix(control-plane): enforce memory authorization on the scope each request accesses (@AbirAbbas)
 
 ---
 
@@ -2154,31 +2964,44 @@ Use the vocab
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk/python): make memory exists() detect a missing key (#1106)
+## X. sdk): stop harness retries triggered by prompt text in timeout errors (#1104)
 
 **RULE**:
-When implementing operations in `sdk/python/agentfield/agent.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/harness/cli.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2460793d`: sdk/python): make memory exists() detect a missing key (#1106). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3e284af`: sdk): stop harness retries triggered by prompt text in timeout errors (#1104). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/agent.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/harness/cli.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            - `await app.memory.exists(key)`: True when the key is stored in any
-              reachable scope, False when it is absent or the lookup itself failed
+// formatCommandPreview describes a command in error and log messages without
+// quoting its arguments. Providers pass the prompt as an argv element (opencode
+// on POSIX, gemini, cursor), and the runner's retry classifier reads error text,
+// so only the executable and the number of hidden arguments are named.
+func formatCommandPreview(cmd []string) string {
+	if len(cmd) == 0 {
+		return ""
+	}
+	if len(cmd) == 1 {
+		return cmd[0]
+	}
+	return fmt.Sprintf("%s [%d args omitted]", cmd[0], len(cmd)-1)
+}
+
+		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, formatCommandPreview(cmd))
+			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, formatCommandPreview(cmd))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            - `await app.memory.exists(key)`: Present, but it answers True for any key
-              as long as the backend is reachable; compare
-              `await app.memory.get(key, sentinel)` against a sentinel instead
+		return result, fmt.Errorf("CLI command made no progress for %ds: %s", idleSeconds, strings.Join(cmd, " "))
+			return result, fmt.Errorf("CLI command timed out after %ds: %s", timeout, strings.Join(cmd, " "))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2460793d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3e284af` are properly handled with clean fallback behavior.

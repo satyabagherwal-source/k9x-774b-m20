@@ -3614,3 +3614,7 @@ Every entry in this ledger must capture:
 | `learn-github-kartiklabhshetwar-better-shot` | `https://github.com/KartikLabhshetwar/better-shot` | `7b7d0077` | Multi-dimensional audit evidence | 2026-10-20T00:51:42.791Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `4c5542b9` | Multi-dimensional audit evidence | 2026-10-20T00:51:44.415Z |
 | `learn-github-primer-react` | `https://github.com/primer/react` | `0d5607c3` | Multi-dimensional audit evidence | 2026-10-20T00:51:47.756Z |
+| `learn-github-rdflib-pyshacl` | `https://github.com/RDFLib/pySHACL` | `469cca7a` | Multi-dimensional audit evidence | 2026-10-20T00:58:02.267Z |
+| `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `b75268ca` | Multi-dimensional audit evidence | 2026-10-20T00:58:03.526Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `c7a3d5b9` | Multi-dimensional audit evidence | 2026-10-20T00:58:05.948Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `ce685ee6` | Multi-dimensional audit evidence | 2026-10-20T00:59:13.205Z |

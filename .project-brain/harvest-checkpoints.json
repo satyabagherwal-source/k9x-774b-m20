@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T00:51:47.764Z",
+  "last_updated": "2026-10-20T00:59:13.213Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6589,14 +6589,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
-      "verified_at": "2026-10-19T01:01:03.148Z",
+      "content_hash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
+      "verified_at": "2026-10-20T00:58:05.956Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:01:03.148Z"
+      "last_updated": "2026-10-20T00:58:05.956Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -11689,14 +11689,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "6f8234c8b70032500b6eb011c0ae81a3988456fb225648543848808b85437ca0",
-      "verified_at": "2026-10-19T10:48:31.324Z",
+      "content_hash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
+      "verified_at": "2026-10-20T00:59:13.213Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:48:31.324Z"
+      "last_updated": "2026-10-20T00:59:13.213Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -14667,6 +14667,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T00:51:42.798Z"
+    },
+    "RDFLib/pySHACL": {
+      "repository": "RDFLib/pySHACL",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rdflib-pyshacl",
+      "content_hash": "4da0545ca8390d5a948031fc84e0e7c8558d269596b627b36b12bf251181151c",
+      "verified_at": "2026-10-20T00:58:02.275Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:58:02.275Z"
+    },
+    "mikelikesdesign/SwiftUI-experiments": {
+      "repository": "mikelikesdesign/SwiftUI-experiments",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
+      "content_hash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
+      "verified_at": "2026-10-20T00:58:03.534Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:58:03.534Z"
     }
   },
   "repos": {

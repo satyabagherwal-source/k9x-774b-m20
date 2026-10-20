@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-VC37",
-    "timestamp": "2026-10-19T08:58:37.171Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "9683f885c164d0f64d380994fc9d32b8a91736cfcbf48b3c61b83b519a897d93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VEW5",
-    "timestamp": "2026-10-19T08:58:40.805Z",
-    "repository": "jordanbaird/Ice",
-    "learningId": "learn-github-jordanbaird-ice",
-    "contentHash": "457264c56a3fec735980663245f3e5269e6553fb9482f0474239401c39ee3b3c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VLC1",
-    "timestamp": "2026-10-19T08:58:49.153Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VN1S",
-    "timestamp": "2026-10-19T08:58:51.376Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "811b2473e4d71dcbe32a5e348bfdcd669b126defbccea7d78e4232750f725be1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-WUGT",
     "timestamp": "2026-10-19T08:59:47.645Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7492,6 +7432,66 @@
     "contentHash": "ab17c1e01ba730f2b6ae800367170236c42cf5457a5a999f09733c2d04a57e90",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-55LK",
+    "timestamp": "2026-10-20T00:58:02.264Z",
+    "repository": "RDFLib/pySHACL",
+    "learningId": "learn-github-rdflib-pyshacl",
+    "contentHash": "4da0545ca8390d5a948031fc84e0e7c8558d269596b627b36b12bf251181151c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-56KJ",
+    "timestamp": "2026-10-20T00:58:03.523Z",
+    "repository": "mikelikesdesign/SwiftUI-experiments",
+    "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
+    "contentHash": "a5c8f0c9a9c9940e861438dd145d7ef504c888aab86aee649551040733a45f39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-58FT",
+    "timestamp": "2026-10-20T00:58:05.945Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "54fa1b16b30ff90f0467aa9b202354b3b18b01784695c433839c7318aa9a8250",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6OC2",
+    "timestamp": "2026-10-20T00:59:13.202Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

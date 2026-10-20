@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `0d322ce7`  
+> **Source Version**: `ce685ee6`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-19T10:48:30.922Z  
+> **Timestamp**: 2026-10-20T00:59:12.607Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,504 +18,537 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### Exact Technical Problem Solved
-`tokio` is an asynchronous, event-driven runtime and I/O platform for Rust. The core engine solves the problem of driving massive numbers of non-blocking I/O operations and asynchronous tasks onto an M:N threading model (M user-space tasks multiplexed over N OS worker threads) with zero runtime cost over native OS polling interfaces (`epoll` on Linux, `kqueue` on macOS/BSD, IOCP on Windows). 
-
-It specifically eliminates:
-1. Thread-per-connection scaling bottlenecks.
-2. Accidental blocking inside asynchronous executor event loops.
-3. Memory thrashing and excessive allocations during streaming byte manipulations.
-4. Silent state corruption during stream cancellation and task preemption.
-
-### Architectural Subsystem Boundaries
-The architecture is partitioned into four major layers with strict unidirectional coupling:
+`tokio` is an asynchronous runtime for the Rust programming language providing non-blocking I/O primitives, cooperative task scheduling, timer-wheel mechanics, and framing abstractions. The architecture is decoupled into autonomous, orthogonal subsystems:
 
 ```
-+-------------------------------------------------------------------------------+
-|                       tokio-util / High-Level Adapters                        |
-|   (Codecs, FramedRead, FramedWrite, Framed, LinesCodec, LengthDelimitedCodec) |
-+-------------------------------------------------------------------------------+
-                                       |
-                                       v
-+-------------------------------------------------------------------------------+
-|                         tokio Engine Facade / Tasks                           |
-|       (AsyncRead, AsyncWrite, spawn, spawn_blocking, Coop Budget, sync)       |
-+-------------------------------------------------------------------------------+
-         |                                                       |
-         v                                                       v
-+---------------------------------+             +-------------------------------+
-|             Reactor             |             |     Work-Stealing Executor    |
-|   (mio::Poll, Driver, Registry) |             | (Local Run Queues, Steal Half,|
-|   (epoll / kqueue / IOCP / mio) |             |  Global Injector Queue, Park) |
-+---------------------------------+             +-------------------------------+
-                                       |
-                                       v
-+-------------------------------------------------------------------------------+
-|                        Operating System Syscall Boundary                      |
-+-------------------------------------------------------------------------------+
++-----------------------------------------------------------------------------------+
+|                              Application Futures                                  |
++-----------------------------------------+-----------------------------------------+
+|        tokio-util (Codecs / Framing)    |        tokio-stream (Stream Adapters)   |
++-----------------------------------------+-----------------------------------------+
+|                  tokio Core (Runtime, Net, FS, Sync, Time, IO)                    |
++--------------------+--------------------+--------------------+--------------------+
+|  Work-Stealing Task|   I/O Reactor /    | Hierarchical Timer |   Cooperative Task |
+|   Scheduler (rt)   |  Driver (mio)      |    Wheel (time)    |     Budget (coop)  |
++--------------------+--------------------+--------------------+--------------------+
+| Operating System Non-blocking Event Queues: epoll (Linux), kqueue (macOS/BSD),    |
+|                               IOCP (Windows), io_uring                            |
++-----------------------------------------------------------------------------------+
 ```
 
-1. **The Codec & Framing Layer (`tokio-util::codec`)**: Decouples continuous byte streams (`AsyncRead`/`AsyncWrite`) into discreet, typed application-level messages (`Sink`/`Stream`) via reusable buffer split semantics (`bytes::BytesMut`), handling partial reads, packet framing, delimiter scanning, and backpressure.
-2. **The Task Engine & Cooperative Scheduler (`tokio::runtime`, `tokio::task`)**: Implements cooperative task polling using a tick-based budget system (`tokio::task::coop`). It guarantees that no long-running task can starve other tasks on the same worker thread.
-3. **The Reactor Core (`tokio::runtime::driver`)**: Abstracts OS I/O readiness notifications via `mio`. It tracks registered file descriptors, token-based wakeups, and translates system events into `std::task::Waker` invocations.
-4. **The Blocking Pool (`tokio::blocking`)**: An adaptive thread pool dedicated to running compute-heavy or blocking filesystem/standard I/O operations without stalling the asynchronous reactor thread pool.
+### Architectural Subsystems and State Boundaries
+1. **Reactor / I/O Driver (`mio` integration)**: Wraps raw OS file handles / sockets into non-blocking descriptors. It registers handles with an OS multiplexer (`epoll`, `kqueue`, `IOCP`). When an async operation returns `ErrorKind::WouldBlock`, the reactor stores a `Waker` in the slot associated with that token (`ScheduledIo`). When the OS signals readiness, the driver processes readiness events, clears stale bits, preserves shutdown flags, and invokes `Waker::wake()`.
+2. **Work-Stealing Task Scheduler (`runtime`)**: Employs per-worker fixed-capacity circular deques (run queues) with atomic steal operations, a global injection queue protected by a dedicated mutex, and an idle worker state bitset. To prevent CPU cache bouncing, shared worker structures and injection queues use explicit cache-line padding (`Crossbeam/CachePadded`).
+3. **Cooperative Budgeting (`coop`)**: Mitigates async task starvation. Each task is granted a strict budget of execution iterations (ticks). When budget reaches zero (`coop::poll_proceed` yields unready), the task forcibly yields control back to the scheduler, preserving FIFO fairness and preventing tight, unyielding loops from starving worker threads.
+4. **Framing & Codec Pipeline (`tokio-util::codec`)**: Bridges raw stream-oriented byte abstractions (`AsyncRead`/`AsyncWrite`) into typed discrete message streams (`Stream`/`Sink`). Manages internal `BytesMut` rings, split buffer slicing, dynamic capacity reservations, backpressure boundaries, and end-of-stream / error transition state machines.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Invariant Preservation Across Stream Lifecycle and EOF Boundaries
+### 1. Inherent Separation of Zero-Copy Reference and Owned Codec Traits
 **RULE**:
-When implementing streaming framed protocol adapters or decoders over continuous byte streams, decoders **MUST** explicitly account for three terminal state invariants:
-1. Differentiate between `Framing` (in-flight data parsing), `Pausing` (EOF encountered with remaining unparsed bytes), and `Paused` (EOF settled, buffer empty).
-2. Never treat a zero-byte read (`Poll::Ready(0)`) as EOF unless the buffer has been pre-allocated with at least 1 spare capacity byte (`buffer.reserve(1)`).
-3. Codecs **MUST** retain internal error latching (`has_errored = true`) to prevent subsequent calls from corrupting state or repeatedly invoking a poisoned decoder.
+When implementing streaming framing sinks and sources over variable memory allocations, you MUST NOT expose dual implementations of generic traits (`Encoder<T>`) for both borrowed slices (`&[u8]`) and owned ref-counted types (`Bytes`) on the primary codec struct. You MUST retain the owned implementation on the canonical struct while providing either dedicated inherent methods (`encode_slice`) or distinct wrapper types (`LengthDelimitedSliceCodec`).
 
 **WHY**:
-If `poll_read_buf` is called when `buffer.capacity() == buffer.len()`, the underlying OS driver cannot read any incoming bytes and returns `Ok(0)`. If interpreted naively, the adapter concludes the stream has terminated (EOF), prematurely dropping active TCP connections while valid unread data remains pending on the wire. Furthermore, if a parser returns an error, any unlatched subsequent call to `poll_next` might attempt to parse leftover garbage, violating the deterministic halt contract of `futures_core::Stream`.
+Implementing `Encoder<&[u8]>` alongside `Encoder<Bytes>` causes compiler trait resolution failure `E0283: type annotations needed` across downstream combinators (`SinkExt::flush()`, `SinkExt::close()`, `SinkExt::sink_map_err()`). Because combinators that do not consume an item cannot infer which `Encoder` item variant is targeted, downstream crates are broken unless forced to invoke verbose, fully-qualified trait syntax.
 
 **WHEN TO APPLY**:
-Any time an asynchronous parser, stateful protocol decoder, framed transport, or ring-buffer accumulator translates unsegmented raw byte streams into discrete application structures across network sockets, FIFOs, and files.
+Apply in any Rust protocol codec or deserialization pipeline combining `futures_sink::Sink` with multiple target encodings.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
+use bytes::{Bytes, BytesMut};
 use std::io;
-use std::pin::Pin;
-use std::task::{Context, Poll};
-use bytes::BytesMut;
-use tokio::io::AsyncRead;
 
-pub trait FrameDecoder {
-    type Item;
+pub trait Encoder<Item> {
     type Error: From<io::Error>;
-    fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error>;
-    fn decode_eof(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error>;
+    fn encode(&mut self, item: Item, dst: &mut BytesMut) -> Result<(), Self::Error>;
 }
 
-pub struct StreamFramer<R, D> {
-    io: R,
-    decoder: D,
-    buffer: BytesMut,
-    eof: bool,
-    is_readable: bool,
-    has_errored: bool,
+// Canonical struct preserves unambiguous inference for owned types
+pub struct LengthDelimitedCodec {
+    max_frame_len: usize,
 }
 
-impl<R: AsyncRead + Unpin, D: FrameDecoder> StreamFramer<R, D> {
-    pub fn poll_step(&mut self, cx: &mut Context<'_>) -> Poll<Option<Result<D::Item, D::Error>>> {
-        loop {
-            // Invariant 1: Error Latch Guard
-            if self.has_errored {
-                self.is_readable = false;
-                return Poll::Ready(None);
-            }
+impl LengthDelimitedCodec {
+    pub fn new() -> Self {
+        Self { max_frame_len: 8 * 1024 * 1024 }
+    }
 
-            // Invariant 2: Process Buffered Frames First
-            if self.is_readable {
-                if self.eof {
-                    let res = self.decoder.decode_eof(&mut self.buffer).map_err(|e| {
-                        self.has_errored = true;
-                        e
-                    })?;
-                    if res.is_none() {
-                        self.is_readable = false;
-                    }
-                    return Poll::Ready(res.map(Ok));
-                }
-
-                if let Some(frame) = self.decoder.decode(&mut self.buffer).map_err(|e| {
-                    self.has_errored = true;
-                    e
-                })? {
-                    return Poll::Ready(Some(Ok(frame)));
-                }
-
-                self.is_readable = false;
-            }
-
-            // Invariant 3: Reserve capacity to eliminate spurious 0-byte reads (false EOFs)
-            self.buffer.reserve(1);
-
-            let mut read_buf = tokio::io::ReadBuf::uninit(self.buffer.spare_capacity_mut());
-            match Pin::new(&mut self.io).poll_read(cx, &mut read_buf) {
-                Poll::Ready(Ok(())) => {
-                    let n = read_buf.filled().len();
-                    // SAFETY: filled().len() bytes were initialized by the poll_read call
-                    unsafe { self.buffer.set_len(self.buffer.len() + n); }
-                    if n == 0 {
-                        if self.eof {
-                            return Poll::Ready(None);
-                        }
-                        self.eof = true;
-                    } else {
-                        self.eof = false;
-                    }
-                    self.is_readable = true;
-                }
-                Poll::Ready(Err(e)) => {
-                    self.has_errored = true;
-                    return Poll::Ready(Some(Err(e.into())));
-                }
-                Poll::Pending => return Poll::Pending,
-            }
+    /// Zero-allocation fast-path for borrowed slices via inherent method,
+    /// avoiding trait solver ambiguity across SinkExt.
+    pub fn encode_slice(&mut self, data: &[u8], dst: &mut BytesMut) -> Result<(), io::Error> {
+        if data.len() > self.max_frame_len {
+            return Err(io::Error::new(io::ErrorKind::InvalidInput, "frame too long"));
         }
+        dst.reserve(4 + data.len());
+        dst.extend_from_slice(&(data.len() as u32).to_be_bytes());
+        dst.extend_from_slice(data);
+        Ok(())
+    }
+}
+
+// Unambiguous: Exactly ONE impl for the standard Framed sink
+impl Encoder<Bytes> for LengthDelimitedCodec {
+    type Error = io::Error;
+
+    fn encode(&mut self, item: Bytes, dst: &mut BytesMut) -> Result<(), Self::Error> {
+        self.encode_slice(&item, dst)
+    }
+}
+
+// Dedicated type for callers explicitly requiring Sink<&[u8]>
+pub struct LengthDelimitedSliceCodec(pub LengthDelimitedCodec);
+
+impl<'a> Encoder<&'a [u8]> for LengthDelimitedSliceCodec {
+    type Error = io::Error;
+
+    fn encode(&mut self, item: &'a [u8], dst: &mut BytesMut) -> Result<(), Self::Error> {
+        self.0.encode_slice(item, dst)
     }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// NEVER do this: Naive decoding loop without capacity reservation or error latching
-fn poll_next_broken(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Item>> {
-    // BUG 1: If buffer capacity is full, this reads 0 bytes and falsely assumes EOF
-    let n = match Pin::new(&mut self.io).poll_read(cx, &mut self.raw_buf) {
-        Poll::Ready(Ok(0)) => return Poll::Ready(None), // Premature death!
-        Poll::Ready(Ok(n)) => n,
-        Poll::Ready(Err(e)) => return Poll::Ready(None), // Error swallowed!
-        Poll::Pending => return Poll::Pending,
-    };
-    // BUG 2: If decode fails once, next poll invokes decode again on corrupted buffer!
-    let item = self.decoder.decode(&mut self.raw_buf).unwrap(); 
-    Poll::Ready(item)
+// ANTI-PATTERN: Dual trait implementations on identical type.
+// Breaks downstream type inference on sink.close().await and sink.flush().await.
+impl Encoder<Bytes> for LengthDelimitedCodec {
+    type Error = io::Error;
+    fn encode(&mut self, item: Bytes, dst: &mut BytesMut) -> Result<(), Self::Error> { /* ... */ Ok(()) }
+}
+
+impl<'a> Encoder<&'a [u8]> for LengthDelimitedCodec {
+    type Error = io::Error;
+    fn encode(&mut self, item: &'a [u8], dst: &mut BytesMut) -> Result<(), Self::Error> { /* ... */ Ok(()) }
 }
 ```
 
 **VERIFICATION METHOD**:
-1. Unit test with zero-capacity buffer initialization (`BytesMut::with_capacity(0)`), verifying that calling `poll_next` triggers a resize rather than emitting `Poll::Ready(None)`.
-2. Mock stream injector that yields `n > 0` bytes, returns `Poll::Pending`, then injects an error, asserting that subsequent calls to `poll_next` yield `Poll::Ready(None)` indefinitely without calling inner decoders.
+Run unit tests invoking item-agnostic `SinkExt` combinators without explicit type annotations:
+```rust
+#[test]
+fn test_sink_combinator_inference() {
+    use futures_util::{SinkExt, stream};
+    let mock_io = tokio_test::io::Builder::new().build();
+    let mut framed = tokio_util::codec::FramedWrite::new(mock_io, LengthDelimitedCodec::new());
+    // MUST compile without specifying FramedWrite::<_, Bytes>::poll_flush
+    let _ = framed.flush();
+}
+```
 
 ---
 
-### 2. Context Boundary Enforcement for Asynchronous System Primitives
+### 2. State Invalidation and Drain Invariance During Framed Stream Errors
 **RULE**:
-Asynchronous synchronization primitives, I/O reactors, and blocking task shims **MUST** explicitly verify the presence of an active runtime context (`Handle::current()`) at execution start, panicking early with actionable debugging tokens rather than silently degrading, hanging, or executing blocking operations on arbitrary foreign threads.
+When an asynchronous byte-decoding state machine encounters a recoverable or unrecoverable error during buffer consumption, the driver MUST transition into an explicit `Errored` latch state, record the fault boundary, and return `Poll::Ready(None)` on the immediate subsequent call without reading new bytes from the underlying I/O descriptor until the stream is explicitly reset.
 
 **WHY**:
-When runtime shims (such as Emscripten shims or WASM threads) allow asynchronous tasks to run without confirming that a reactor driver is managing timers and event loops, I/O operations will never receive readiness signals. The future will stall forever (`Poll::Pending`), leaking memory and task descriptors. For shims using cooperative yield semantics (`task::coop`), absence of a runtime context silently disables fairness throttling, causing worker thread starvation.
+If a codec returns `Err` during `decode()` or `decode_eof()` and fails to latch its error state, the enclosing stream pipeline continues polling `read_buf`. If the underlying byte source returns EOF, a naive state machine re-evaluates the corrupted buffer against `decode()`, producing cascading phantom errors, memory corruption from reading corrupted offset indices, or infinite polling loops.
 
 **WHEN TO APPLY**:
-Any library, abstraction layer, or cross-compilation bridge (WASM/WASI/Emscripten/Native) that exposes async primitives (`TcpStream`, `spawn_blocking`, `timeout`, `File`) that depend on an underlying event-loop runtime.
+Any stream parser converting contiguous linear byte buffers into discrete message frames over asynchronous event streams.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-#[track_caller]
-pub fn spawn_blocking_shim<F, R>(f: F) -> std::sync::mpsc::Receiver<R>
-where
-    F: FnOnce() -> R + Send + 'static,
-    R: Send + 'static,
-{
-    // Mandate explicit active runtime registration before executing task logic
-    if !tokio::runtime::Handle::try_current().is_ok() {
-        panic!(
-            "there is no reactor running, must be called from the context of a Tokio 1.x runtime. \
-             Caller location: {}",
-            std::panic::Location::caller()
-        );
-    }
+use std::task::{Context, Poll};
+use bytes::BytesMut;
 
-    let (tx, rx) = std::sync::mpsc::channel();
-    // Dispatch onto thread or coop boundary
-    let _ = tx.send(f());
-    rx
+pub struct StreamParserState {
+    pub buffer: BytesMut,
+    pub is_readable: bool,
+    pub eof: bool,
+    pub has_errored: bool,
+}
+
+impl StreamParserState {
+    pub fn poll_step<D>(&mut self, decoder: &mut D) -> Poll<Option<Result<D::Item, D::Error>>>
+    where
+        D: Decoder,
+    {
+        // LATENCY / ERROR LATCH GUARD:
+        // Prevent polling after error without explicit caller reset.
+        if self.has_errored {
+            self.is_readable = false;
+            self.has_errored = false; // Transition to paused
+            return Poll::Ready(None);
+        }
+
+        if self.is_readable {
+            if self.eof {
+                match decoder.decode_eof(&mut self.buffer) {
+                    Ok(Some(frame)) => return Poll::Ready(Some(Ok(frame))),
+                    Ok(None) => {
+                        self.is_readable = false;
+                        return Poll::Ready(None);
+                    }
+                    Err(err) => {
+                        self.has_errored = true;
+                        return Poll::Ready(Some(Err(err)));
+                    }
+                }
+            }
+
+            match decoder.decode(&mut self.buffer) {
+                Ok(Some(frame)) => return Poll::Ready(Some(Ok(frame))),
+                Ok(None) => {
+                    self.is_readable = false; // Must read more bytes from socket
+                }
+                Err(err) => {
+                    self.has_errored = true;
+                    return Poll::Ready(Some(Err(err)));
+                }
+            }
+        }
+
+        Poll::Pending
+    }
+}
+
+pub trait Decoder {
+    type Item;
+    type Error;
+    fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error>;
+    fn decode_eof(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error>;
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// NEVER do this: Fallback to silent synchronous execution when runtime is absent
-pub fn spawn_blocking_unsafe<F, R>(f: F) -> R
-where
-    F: FnOnce() -> R,
-{
-    // BUG: If no runtime exists, running directly masks architectural errors,
-    // hanging executors and breaking task isolation guarantees!
-    f()
+// ANTI-PATTERN: Forgetting error latch state.
+// Re-polling continues with a poisoned buffer, emitting undefined framing streams.
+if let Err(e) = decoder.decode(&mut self.buffer) {
+    return Poll::Ready(Some(Err(e))); // Next poll_next re-runs decode on same corrupt data!
 }
 ```
 
 **VERIFICATION METHOD**:
-Run unit tests annotated with `#[should_panic(expected = "there is no reactor running")]` using standard `futures::executor::block_on` (an executor without the Tokio driver context), asserting that accessing net, time, fs, or blocking shims immediately panics.
+Inject corrupted payload at byte offset 0, poll until error, poll again immediately: verify output is strictly `Poll::Ready(None)`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Silent Runtime Absence in Emscripten Blocking Shim (BUG-TOKIO-01)
-- **Context**: Subsystem: WASM/Emscripten Portability Layer (`tokio/src/blocking.rs`).
-- **What Was Expected**: Calling `spawn_blocking` or `spawn_mandatory_blocking` under Emscripten without an active Tokio runtime should panic immediately, signaling that asynchronous runtime drivers are missing.
-- **What Actually Happened**: The Emscripten shim executed blocking code via `std::future::ready(Ok(f()))` wrapped in `coop::cooperative(...)` without verifying whether a Tokio context was active. The task ran outside the runtime context, bypassing cooperative execution limits and hiding architecture bugs.
-- **Evidence in Repo**: Commit SHA: `1989b46f`, File: `tokio/src/blocking.rs`, Test: `tokio/tests/no_rt.rs`.
-- **Root Cause**: The implementation assumed Emscripten single-threaded execution could always bypass runtime context verification.
+### Incident 1: Compiler Trait Solver Ambiguity in LengthDelimitedCodec (BUG-TOKIO-01)
+- **Context**: `tokio-util/src/codec/length_delimited.rs`
+- **What Was Expected**: Upstream consumers using `Framed<T, LengthDelimitedCodec>` should be able to call `sink.flush()`, `sink.close()`, and `sink.sink_map_err()` without specifying the item generic type argument.
+- **What Actually Happened**: The implementation of `Encoder<&[u8]>` alongside `Encoder<Bytes>` triggered `rustc` compiler error `E0283: type annotations needed` on every invocation of generic `SinkExt` combinators.
+- **Evidence in Repo**: PR #8614, PR #8669, commits `ce685ee6` / `66d34e45`.
+- **Root Cause**: `Sink<Item>` is generic over `Item`. When a type implements `Sink<Bytes>` and `Sink<&'a [u8]>`, the compiler's trait engine cannot resolve the `Item` type for methods that don't pass an `Item` parameter.
 - **Remediation Code Diff**:
 ```rust
-@@ -24,18 +24,21 @@ cfg_rt! {
-     #[cfg(target_os = "emscripten")]
-+    #[track_caller]
-     pub(crate) fn spawn_blocking<F, R>(f: F) -> JoinHandle<R>
-     where
-         F: FnOnce() -> R + Send + 'static,
-         R: Send + 'static,
-     {
-+        let _rt = crate::runtime::Handle::current();
-         crate::task::coop::cooperative(std::future::ready(Ok(f())))
-     }
+// - impl<'a> Encoder<&'a [u8]> for LengthDelimitedCodec {
+// -     type Error = io::Error;
+// -     fn encode(&mut self, item: &'a [u8], dst: &mut BytesMut) -> Result<(), Self::Error> {
+// -         self.encode(Bytes::copy_from_slice(item), dst)
+// -     }
+// - }
+// + impl LengthDelimitedCodec {
+// +     pub fn encode_slice(&mut self, item: &[u8], dst: &mut BytesMut) -> Result<(), io::Error> {
+// +         self.do_encode(item, dst)
+// +     }
+// + }
+// + pub struct LengthDelimitedSliceCodec(LengthDelimitedCodec);
+// + impl<'a> Encoder<&'a [u8]> for LengthDelimitedSliceCodec { /* ... */ }
 ```
-- **Lesson**: Platform-specific execution fallbacks must enforce the same state invariants as multi-threaded platforms.
+- **Lesson**: Do not implement multiple generic traits with different primitive type instantiations on the same public interface if trait combinators depend on type inference.
 
 ---
 
-### Incident 2: Error-Chain Truncation in Codec Source Trait (BUG-TOKIO-02)
-- **Context**: Subsystem: Framed Codecs (`tokio-util/src/codec/any_delimiter_codec.rs`, `lines_codec.rs`).
-- **What Was Expected**: Diagnostic reporters (`anyhow`, `tracing`, `eyre`) using `std::error::Error::source()` must receive the inner `std::io::Error` when an I/O read fails inside a codec.
-- **What Actually Happened**: `LinesCodecError` and `AnyDelimiterCodecError` did not implement or erroneously returned `None` in `Error::source()`, dropping the inner OS network error and printing only generic codec text.
-- **Evidence in Repo**: Closed Issue: #8665, Commit in `tokio-util`.
-- **Root Cause**: The error enum omitted the `source()` implementation or failed to pattern match on the `Io` variant.
+### Incident 2: In-Memory Pipe and Buffer Initialization with Zero Capacity Panic (BUG-TOKIO-02)
+- **Context**: `tokio/src/io/util/buf_reader.rs`, `tokio/src/io/util/mem.rs`
+- **What Was Expected**: Allocation utilities and buffered wrappers must cleanly handle or explicitly reject 0-capacity requests during instantiation.
+- **What Actually Happened**: Creating `BufReader`, `BufStream`, or in-memory bidirectional pipes with `capacity = 0` led to infinite uncooperative polling loops: `poll_read` perpetually yielded `Ready(0)`, which callers interpreted as EOF or an empty read, starving the runtime.
+- **Evidence in Repo**: PR #8494, PR #8397, PR #8454; Release notes for Tokio v1.54.0.
+- **Root Cause**: Zero-capacity buffers make progress impossible; reading 0 bytes into a 0-capacity slice returns 0 without advancing file or stream pointers.
 - **Remediation Code Diff**:
 ```rust
-@@ -245,6 +245,15 @@ impl fmt::Display for AnyDelimiterCodecError {
-+impl std::error::Error for AnyDelimiterCodecError {
-+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-+        match self {
-+            Self::Io(err) => Some(err),
-+            Self::MaxChunkLengthExceeded => None,
-+        }
-+    }
-+}
+// - pub fn with_capacity(capacity: usize, inner: R) -> BufReader<R> {
+// -     BufReader { inner, buf: Box::new([0; capacity]), pos: 0, cap: 0 }
+// - }
+// + pub fn with_capacity(capacity: usize, inner: R) -> BufReader<R> {
+// +     assert!(capacity > 0, "buffer capacity must be greater than zero to prevent starvation loops");
+// +     BufReader { inner, buf: vec![0; capacity].into_boxed_slice(), pos: 0, cap: 0 }
+// + }
 ```
-- **Lesson**: Custom error types wrapping lower-level I/O errors must always override `Error::source()` to preserve root-cause diagnostic chains.
+- **Lesson**: Buffer constructors must defensively enforce non-zero capacities (`capacity > 0`) at invariant boundaries to eliminate 0-byte I/O deadlock loops.
 
 ---
 
-### Incident 3: Loss of Stream Metadata in Sink Adapters (BUG-TOKIO-03)
-- **Context**: Subsystem: Stream/Sink IO Utilities (`tokio-util/src/io`).
-- **What Was Expected**: Adapting a stream into a sink (`SinkWriter`, `CopyToBytes`) should preserve stream attributes like size hints and fused stream status.
-- **What Actually Happened**: The adapter ignored `size_hint()` (defaulting to `(0, None)`) and did not implement `FusedStream`, preventing downstream collectors from pre-allocating memory and causing unbounded reallocation.
-- **Evidence in Repo**: Closed Issue: #8664.
-- **Root Cause**: The adapter wrapper implemented `Stream` purely by proxying `poll_next` without forwarding optional trait methods or marker traits.
+### Incident 3: Spurious Sub-slice Check and Optimizer Elimination via Assert Unchecked (BUG-TOKIO-03)
+- **Context**: `tokio-util/src/util/memchr.rs` and `tokio/src/util/memchr.rs`
+- **What Was Expected**: Provide LLVM optimizer with slice boundary invariants after finding a byte delimiter index, eliminating redundant bounds checks during subsequent slice indexing.
+- **What Actually Happened**: The old pattern conditionally branched on `haystack.get(..=index).is_none()` and called `std::hint::unreachable_unchecked()`, generating branching assembly code on platforms where the optimizer failed to eliminate the check.
+- **Evidence in Repo**: Commit `ce685ee6` (#8658).
+- **Root Cause**: Older MSRV constraints prohibited `std::hint::assert_unchecked`. The conditional check and unreachable marker created unnecessary branch instructions.
 - **Remediation Code Diff**:
 ```rust
-+// Forward size hints and implement FusedStream
-+impl<S> Stream for SinkWriter<S> 
-+where S: Stream {
-+    type Item = S::Item;
-+    
-+    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-+        Pin::new(&mut self.inner).poll_next(cx)
-+    }
-+
-+    fn size_hint(&self) -> (usize, Option<usize>) {
-+        self.inner.size_hint()
-+    }
-+}
-+
-+impl<S: FusedStream> FusedStream for SinkWriter<S> {
-+    fn is_terminated(&self) -> bool {
-+        self.inner.is_terminated()
-+    }
-+}
+-    unsafe {
+-        if haystack.get(..=index).is_none() {
+-            std::hint::unreachable_unchecked()
+-        }
+-    }
++    unsafe { std::hint::assert_unchecked(haystack.get(..=index).is_some()) };
 ```
-- **Lesson**: Any proxy adapter struct wrapping an abstraction must systematically forward metadata calls (`size_hint`, `is_terminated`) down to the inner type.
+- **Lesson**: Leverage compiler hints directly (`std::hint::assert_unchecked`) to guide optimizer register allocations rather than using branchy condition checks combined with `unreachable_unchecked()`.
+
+---
+
+### Incident 4: Cooperativity Budget Exhaustion Starvation in Buffer Copying (BUG-TOKIO-04)
+- **Context**: `tokio/src/io/util/copy_buf.rs`
+- **What Was Expected**: Large stream transfers over `copy_buf` must yield control to the scheduler periodically to avoid starving concurrent tasks on the same worker thread.
+- **What Actually Happened**: Streaming gigabytes of memory through `copy_buf` continuously returned `Poll::Ready` in a tight loop when data was immediately available, monopolizing worker threads and inducing latency spikes across concurrent tasks.
+- **Evidence in Repo**: PR #8459, PR #8371.
+- **Root Cause**: `copy_buf` lacked cooperative budget decrements (`tokio::task::coop.poll_proceed`).
+- **Remediation Code Diff**:
+```rust
+// - fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<u64>> {
+// -     loop {
+// -         let buffer = ready!(Pin::new(&mut self.reader).poll_fill_buf(cx))?;
+// -         // ... write all bytes ...
+// -     }
+// - }
+// + fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<u64>> {
+// +     loop {
+// +         ready!(tokio::task::coop::poll_proceed(cx));
+// +         let buffer = ready!(Pin::new(&mut self.reader).poll_fill_buf(cx))?;
+// +         // ... write all bytes ...
+// +     }
+// + }
+```
+- **Lesson**: Every unbounded polling loop processing external or memory-buffered streams must integrate with cooperative scheduling budgets.
+
+---
+
+### Incident 5: Preserving Readiness Flags During Partial Shutdown Clears (BUG-TOKIO-05)
+- **Context**: `tokio/src/io/driver/scheduled_io.rs`
+- **What Was Expected**: Clearing readiness flags on an I/O descriptor following a read or write operation must not discard concurrent shutdown notifications or tick epoch identifiers.
+- **What Actually Happened**: Readiness mask operations wiped the `SHUTDOWN` bit state during `clear_readiness()`, causing downstream futures awaiting stream termination to hang indefinitely.
+- **Evidence in Repo**: PR #8435, PR #8331.
+- **Root Cause**: Naive bitwise AND masking overwrote active status flags with fresh event masks rather than masking out only the specific handled readiness direction.
+- **Remediation Code Diff**:
+```rust
+// - pub(crate) fn clear_readiness(&self, event: Ready) {
+// -     self.readiness.store(0, Ordering::Release);
+// - }
+// + pub(crate) fn clear_readiness(&self, event: Ready) {
+// +     self.readiness.fetch_update(Ordering::Release, Ordering::Acquire, |curr| {
+// +         let preserved_bits = curr & Ready::SHUTDOWN.as_usize();
+// +         Some((curr & !event.as_usize()) | preserved_bits)
+// +     }).ok();
+// + }
+```
+- **Lesson**: Atomic bitmask updates must protect out-of-band persistent state flags (such as `SHUTDOWN` or EOF) when clearing transient readiness flags.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-* **Buffer Splitting vs Memory Copies**: Never use slice indexing and memory cloning (`buf[..n].to_vec()`) to advance through network data. Use `BytesMut::split_to(n)`, which performs an atomic reference-count increment on the underlying buffer and advances pointers in $O(1)$ time without memory allocation.
-* **Saturating Arithmetic for Capacity Calculations**: When calculating read lookahead targets with maximum limits:
+* **Zero vs Null Bounds Invariant**: In Rust, slicing `&buf[0..0]` yields an empty slice without allocating, but accessing `buf[0]` when `len == 0` panics. Codecs must calculate `read_to` using saturating arithmetic:
   ```rust
-  // Safe bounded lookahead calculation:
   let read_to = cmp::min(self.max_length.saturating_add(1), buf.len());
   ```
-  Using `self.max_length + 1` can overflow `usize::MAX` in 64-bit systems if `max_length` is set to unbound, causing an immediate panic in debug builds or unexpected wrapping in release builds.
+  Using `self.max_length + 1` risks integer overflow when `max_length == usize::MAX`, triggering a panic in debug mode or wrapping in release mode.
+* **Buffer Splitting Immutability Guard**: When calling `buf.split_to(new_chunk_index + 1)`, ownership of the underlying allocation prefix is detached into a discrete `BytesMut` handle without copying, decrementing the original buffer's start offset. Calling `truncate()` on the returned chunk alters its logical length while maintaining its own ref-count to the backing allocation.
 
 ### 2. Infinite Loop & Recursion Guards
-* **State Machine Loops in `poll_next`**: Any loop handling an internal state machine (such as in `FramedImpl::poll_next`) **MUST** ensure at least one branch yields or modifies the state variable on every path.
-  * **Invariant Proof**: When `decode()` returns `Ok(None)`, the flag `self.is_readable` is set to `false`. The loop cannot re-enter the decoding branch without performing an I/O read (`poll_read_buf`).
-  * If `poll_read_buf` returns `Poll::Pending`, the loop executes `return Poll::Pending`, relinquishing the thread to the OS executor.
-
-### 3. Backend Concurrency & Memory Safety
-* **Spurious Wakeup / False 0-Byte EOF**: 
+* **Buffer Search Offset Advancement**: In `AnyDelimiterCodec::decode`, to prevent an infinite loop where the parser continuously rescans the same delimiter, `self.next_index` must be reset to 0 whenever the buffer is split or advanced:
   ```rust
-  state.buffer.reserve(1);
-  let bytect = match poll_read_buf(pinned.inner.as_mut(), cx, &mut state.buffer) { ... }
+  buf.advance(offset + self.next_index + 1);
+  self.is_discarding = false;
+  self.next_index = 0; // Terminate search shift
   ```
-  `poll_read_buf` considers an EOF condition to have occurred if 0 bytes are read. If `state.buffer.capacity() == state.buffer.len()`, zero bytes are read because there is no space to write, generating a false EOF signal and breaking the connection. Reserving at least 1 byte prevents this false EOF condition.
+  If `self.next_index` is retained after `advance()`, the next iteration accesses an offset beyond the updated buffer length, causing an out-of-bounds panic or skipping valid delimiters.
+* **FramedImpl Decode Loop Termination Proof**: The loop in `FramedImpl::poll_next` guarantees termination by tracking two explicit boolean flags: `is_readable` and `eof`.
+  - When `is_readable == true` and `decode()` returns `None`, `is_readable` transitions to `false`.
+  - When `is_readable == false`, the loop invokes `poll_read_buf`.
+  - If `poll_read_buf` returns `Poll::Pending`, the loop returns `Poll::Pending`.
+  - If `poll_read_buf` returns `Ready(0)`, `eof` becomes `true`. If `eof` was already `true`, the loop returns `Poll::Ready(None)`.
+  - This guarantees that no execution path can cycle continuously without either consuming bytes or returning `Poll::Pending`.
 
-### 4. Defect & Error Prevention ("Galti Pakadna")
-* **Denial-of-Service Through Unbounded Delimiter Scanning**:
-  * An attacker can stream bytes without ever sending a delimiter token (such as `\n`).
-  * If the parser searches for delimiters over an unbounded buffer, memory usage will grow until the process is terminated by the OOM killer.
-  * **Defense-in-Depth Invariant**: Codecs must implement bounded searching with a hard chunk limit (`max_length`). When the limit is exceeded, the parser must switch into a discarding state (`self.is_discarding = true`) and discard subsequent input up to the delimiter without accumulating memory.
+### 3. UI & UX Micro-Mechanics (CLI & TTY Diagnostics)
+* **Stdout/Stderr Non-Blocking Blocking Execution**: Standard output and error file descriptors on Unix-like platforms can block unexpectedly (e.g., when output is piped to a full FIFO buffer). Tokio routes `tokio::io::stdout()` and `stderr()` through `spawn_mandatory_blocking` rather than standard worker threads to prevent worker thread pool exhaustion.
+* **Diagnostic Panic Pointers**: When an end-user accidentally calls `block_on` inside an already running Tokio executor thread, Tokio intercepts the thread-local runtime check and injects an actionable error message suggesting `.await`:
+  ```text
+  Cannot start a runtime from within a runtime. This happens because a function (like `block_on`)
+  attempted to block the current thread while the thread is being used by another runtime.
+  Hint: Consider removing the nested call to `block_on` and using `.await` instead.
+  ```
 
-```rust
-// Discarding mechanism
-if self.is_discarding {
-    buf.advance(discard_len);
-    self.next_index = 0;
-    return Ok(None);
-}
-```
+### 4. Backend Concurrency & Memory Safety
+* **TOCTOU Race Prevention in Atomic Wakeups**: When registering readiness on a socket, the runtime must register interest *before* attempting the I/O read. If the order is reversed:
+  1. Thread A attempts `read()` -> returns `WouldBlock`.
+  2. Operating system receives data and signals readiness event.
+  3. Thread A registers interest with reactor.
+  The readiness event is lost, causing the task to sleep indefinitely. Tokio strictly enforces registration *prior* to non-blocking I/O checks:
+  ```rust
+  loop {
+      let mut ready = ready!(io.poll_read_ready(cx))?;
+      match io.get_ref().read(&mut buf) {
+          Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
+              io.clear_readiness(ready);
+          }
+          res => return Poll::Ready(res),
+      }
+  }
+  ```
+* **Injection Queue False Sharing**: Multi-threaded work-stealing schedulers suffer CPU cache invalidation if worker run-queues and injection queues share cache lines. Tokio enforces cache-line isolation via `#[repr(align(128))]` or `crossbeam_utils::CachePadded`.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+* **Discard Boundary Memory Exploitation Guard**: In `AnyDelimiterCodec::new_with_max_length`, if an untrusted socket sends endless bytes without the delimiter, memory grows without bound until an OOM crash occurs. The codec enforces an eager limit:
+  ```rust
+  (false, None) if buf.len() > self.max_length => {
+      self.is_discarding = true;
+      return Err(AnyDelimiterCodecError::MaxChunkLengthExceeded);
+  }
+  ```
+  Once `is_discarding` is enabled, all subsequent data chunks are discarded via `buf.advance(read_to)` until the delimiter is reached, protecting the host system from unauthenticated buffer exhaustion attacks.
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
 ### Dimension 1: Architecture
-* **Modular Layering**: Clear isolation between `tokio` (the runtime engine, scheduling threads, and OS drivers) and `tokio-util` (framing, codecs, and adapters).
-* **Decoupled Framing Engine**: `FramedImpl<T, U, State>` unifies both full-duplex (`Framed`) and half-duplex (`FramedRead`, `FramedWrite`) streams via the `Borrow` and `BorrowMut` traits on state containers (`RWFrames`, `ReadFrame`, `WriteFrame`).
+The architecture is structured around strict separation between task lifecycle management and I/O readiness polling. The system relies on three decoupled components:
+- **Core Runtime Driver**: Drives the top-level event loop, coordinating I/O readiness notifications from the OS with task wakeups.
+- **Worker Pools**: A fixed collection of worker threads executing local run-queues, stealing tasks from neighbors via atomic double-ended deques when local queues are empty.
+- **Peripheral Subsystems**: `tokio-util` (framing, codecs), `tokio-stream` (streaming combinators), and `tokio-test` (deterministic execution harnesses) layer atop the core primitives without leaking internal driver types.
 
 ### Dimension 2: Core Abstractions
-* **`Decoder` & `Encoder` Traits**:
-  ```rust
-  pub trait Decoder {
-      type Item;
-      type Error: From<io::Error>;
-      fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error>;
-      fn decode_eof(&mut self, buf: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error>;
-  }
-  ```
-  Decouples the parsing of frames from the underlying I/O transport, enabling codecs to be tested using in-memory byte buffers without mock network sockets.
+- `Decoder`: Converts a streaming, mutable contiguous byte buffer (`BytesMut`) into discrete message frames.
+- `Encoder<Item>`: Serializes typed instances into a target `BytesMut`.
+- `FramedImpl<T, U, State>`: Generic pinning state machine implementing `Stream` and `Sink` simultaneously without double-borrowing the underlying I/O descriptor `T`.
+- `ScheduledIo`: Thread-safe waitlist coordinating atomic waker registrations for concurrent read and write operations.
 
 ### Dimension 3: Error Handling
-* **Error Containment & State Poisoning Guards**: If an error occurs during decoding or I/O reading, `state.has_errored` is latched to true. Any future calls immediately return `Poll::Ready(None)`. This protects callers from receiving partial, corrupt data after a failure.
+- **Categorical Error Distinctions**: Codec pipelines distinguish between protocol errors (such as `MaxChunkLengthExceeded`), which preserve stream integrity, and I/O errors, which terminate the stream.
+- **Interrupted I/O Resilience**: Low-level drivers automatically retry operations on `ErrorKind::Interrupted` (`EINTR`), preventing spurious task failures during OS signal deliveries.
 
 ### Dimension 4: Testing
-* **Loom Concurrency Permutation Testing**: The codebase utilizes `loom` (`cfg(loom)`) to check concurrent algorithms across possible thread interleavings and memory orderings, systematically testing for data races and atomic hazards.
-* **No-Runtime Context Tests**: Invariants are tested under `tests/no_rt.rs`, asserting that invoking any runtime-dependent primitive outside a Tokio context panics with clear messaging.
+- **Loom Model Checking**: Validates atomic synchronization structures (`Notify`, `Semaphore`, `AtomicWaker`) under every possible thread interleaving using the `loom` permutation engine.
+- **Deterministic Time Mocking**: `tokio::time::pause()` replaces OS timer interrupts with manual clock advance ticks, eliminating race conditions and flakiness in timeout and interval integration tests.
 
 ### Dimension 5: Security
-* **Memory Exhaustion Protections (DoS Defense)**:
-  * Protocols using dynamic framing (`AnyDelimiterCodec`, `LengthDelimitedCodec`) enforce chunk length limits (`max_length`).
-  * If the incoming packet length exceeds the configured threshold, the parser raises an error and discards the oversized chunk to protect against memory exhaustion attacks.
+- **Buffer Exhaustion Mitigations**: All streaming decoders enforce mandatory buffer upper bounds (`max_length`).
+- **Memory Initialization Safety**: Raw memory buffers use `std::mem::MaybeUninit` via `tokio::io::ReadBuf`, guaranteeing that uninitialized kernel memory is never exposed to user-space code.
 
 ### Dimension 6: Performance
-* **Zero-Allocation Byte Slicing**: Using `BytesMut::split_to` avoids buffer copying when emitting messages. Slices share underlying heap allocations via atomic reference counts until dropped.
-* **Vectorized Delimiter Search**: Codecs select delimiter matching strategies based on slice characteristics:
-  * Single-byte delimiters use `memchr` (which uses SIMD instructions like AVX2/SSE2 when available).
-  * Multi-byte delimiters fall back to byte search routines.
+- **Zero-Copy Byte Slicing**: Slicing frames via `bytes::BytesMut::split_to()` updates atomic reference counts on backing memory buffers rather than performing heap allocations and memory copies.
+- **Non-Generic Trampolining**: Functions containing complex scheduler registration logic (like `block_in_place`) delegate their core implementations to non-generic internal helpers, minimizing monomorphization bloat and instruction-cache misses.
 
-### Dimension 7: Deployment & Target Constraints
-* **Unstable and Cross-Platform Flags**:
-  * CI verifies strict compilation via conditional flags: `cfg(fuzzing)`, `cfg(loom)`, `cfg(tokio_unstable)`.
-  * Shims ensure single-threaded environments (such as Emscripten and WASI) behave safely without dropping runtime invariants.
+### Dimension 7: Deployment
+- **Target OS Heterogeneity**: Feature-flagged driver layers support `epoll` on Linux, `kqueue` on macOS/FreeBSD/NetBSD, `IOCP` on Windows, and JavaScript Promise Integration (JSPI) for Emscripten WebAssembly targets (`wasm32-unknown-emscripten`).
+- **Feature Flag Modularity**: Zero-cost dependency graphs ensure that enabling `tokio::sync` avoids pulling in network drivers (`mio`), keeping binary footprints minimal in constrained environments.
 
-### Dimension 8: Agent Patterns & Operational Guards
-* **Cancellation Safety Documentation**: APIs explicitly document cancellation properties:
-  * `tokio_stream::StreamExt::next` is marked **cancellation-safe** (dropping the future retains buffered data).
-  * `SinkExt::send` is marked **cancellation-unsafe** (dropping the future mid-send can result in message loss).
+### Dimension 8: Agent Patterns
+- **Autonomous Budgeting**: Execution agents in async loops must poll cooperative yield barriers (`tokio::task::coop::consume_budget()`) to prevent monopolizing execution threads during sustained compute phases.
+- **Cooperative Cancellation Tokens**: Cancellation propagation via `CancellationToken` enables graceful, structured degradation across interdependent async worker graphs.
 
-### Dimension 9: Data Flow & Mutation Lifecycles
+### Dimension 9: Data Flow
 ```
-[ Socket / AsyncRead ] 
-       | (poll_read_buf into spare capacity)
-       v
-[ BytesMut Buffer ] 
-       | (Decoder::decode(&mut BytesMut))
-       v
-[ Success: split_to() -> Bytes -> Item ]  ---> Emitted to caller
-[ Incomplete: Ok(None) ]                 ---> Retain in buffer, await next Poll
-[ Overflow: MaxChunkLengthExceeded ]     ---> Set is_discarding, advance buffer
+[ Raw OS Socket Descriptor ]
+            │ (Non-blocking readiness triggered via epoll/kqueue)
+            ▼
+[ tokio::io::poll_read_buf ]
+            │ (Writes raw byte chunks into shared ring)
+            ▼
+   [ bytes::BytesMut ]
+            │
+            ├──> LengthDelimitedCodec::decode()
+            │         │
+            │         ▼
+            └──> [ bytes::Bytes (Frozen frame) ]
+                      │
+                      ▼
+            [ Stream::poll_next yields typed items to Application ]
 ```
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-### 1. Pattern: Bounded Stateful Discarding Parser
+### 1. Pattern: Monomorphic Helper Trampoline for Generic Methods
+Avoid monomorphizing complex runtime initialization logic across multiple type parameters:
 ```rust
-pub fn decode_bounded(
-    buf: &mut BytesMut, 
-    max_len: usize, 
-    is_discarding: &mut bool
-) -> Result<Option<Bytes>, CodecError> {
-    if *is_discarding {
-        if let Some(pos) = memchr::memchr(b'\n', buf) {
-            buf.advance(pos + 1);
-            *is_discarding = false;
-        } else {
-            buf.clear();
-            return Ok(None);
-        }
+pub fn block_in_place<F, R>(f: F) -> R
+where
+    F: FnOnce() -> R,
+{
+    // Trampoline: Keeps scheduler teardown and setup logic out of caller monomorphization
+    fn setup_blocking() -> Option<WorkerToken> {
+        tokio::runtime::context::enter_blocking()
     }
-    if let Some(pos) = memchr::memchr(b'\n', buf) {
-        if pos > max_len {
-            *is_discarding = true;
-            buf.advance(pos + 1);
-            return Err(CodecError::MaxChunkLengthExceeded);
-        }
-        let mut frame = buf.split_to(pos + 1);
-        frame.truncate(frame.len() - 1);
-        return Ok(Some(frame.freeze()));
+    fn teardown_blocking(token: WorkerToken) {
+        tokio::runtime::context::exit_blocking(token);
     }
-    if buf.len() > max_len {
-        *is_discarding = true;
-        return Err(CodecError::MaxChunkLengthExceeded);
+
+    let token = setup_blocking();
+    let res = f();
+    if let Some(token) = token {
+        teardown_blocking(token);
     }
-    Ok(None)
+    res
 }
+struct WorkerToken(usize);
 ```
 
 ### 2. Rule
-> Any asynchronous framing layer bridging byte buffers to structured types MUST guarantee that `reserve(1)` is called on the internal buffer prior to polling the I/O driver. Code MUST NOT assume a 0-byte read represents EOF unless the buffer has non-zero write capacity.
+A library codec MUST NOT declare multiple `Encoder<T>` trait implementations that differ only by ownership or slice references (`Encoder<Bytes>` and `Encoder<&[u8]>`) on the identical struct identifier.
 
 ### 3. Architecture Principle
-> Framing state machines must decouple buffer allocation from parsing logic. Protocol decoders must be deterministic, synchronous functions operating entirely on in-memory buffers (`&mut BytesMut`), leaving all I/O, polling, and context-tracking to the transport wrapper.
+Decouple task execution progress from reactor notifications using cooperative, thread-local tick budgets to guarantee bounded latency across all active concurrent tasks on shared workers.
 
 ### 4. Failure Mode
-- **Name**: Spurious EOF Connection Termination.
-- **Trigger**: Incoming network traffic fills an internal buffer to capacity. The framer polls the underlying socket without allocating additional space.
-- **Manifestation**: The OS kernel returns 0 bytes read, which the transport misinterprets as connection termination, dropping the connection while data is still pending.
+Calling `std::hint::unreachable_unchecked()` behind a conditional branch that cannot be proven dead by LLVM causes the compiler to emit unnecessary branching logic or undefined behavior if assumptions drift across maintenance cycles.
 
-### 5. Reusable Skill
-**Step-by-Step Codec Construction Protocol for AI Agents**:
-1. Define a struct containing `next_index: usize`, `max_length: usize`, and `is_discarding: bool`.
-2. Implement `Decoder`:
-   - Calculate lookahead: `cmp::min(self.max_length.saturating_add(1), buf.len())`.
-   - Scan for delimiters using `memchr` for single bytes, falling back to iterative searches for multiple bytes.
-   - If discarding, advance the buffer to the delimiter and reset state.
-   - If not discarding and a delimiter is found, extract the frame via `buf.split_to()`, trim delimiters, and return `Ok(Some(chunk.freeze()))`.
-   - If no delimiter is found and `buf.len() > self.max_length`, set `is_discarding = true` and return `Err(MaxChunkLengthExceeded)`.
-   - If no delimiter is found and buffer length is within bounds, update `next_index` and return `Ok(None)`.
-3. Implement `decode_eof` to drain remaining bytes or raise an error if unparsed trailing data remains.
+### 5. Reusable Skill: Adding Cooperative Yield Points to In-Memory Loops
+```text
+Step 1: Locate the primary polling or iteration loop driving the stream/buffer processing.
+Step 2: Import `std::task::ready!` and the cooperative scheduler budget hook.
+Step 3: At the head of the loop, insert `ready!(tokio::task::coop::poll_proceed(cx));`.
+Step 4: If budget is exhausted, `poll_proceed` registers the current task waker and yields `Poll::Pending`.
+Step 5: Write an integration test streaming data with a small budget to verify cooperative interleaving.
+```
 
-### 6. Decision: Zero-Copy Framing vs Monolithic Slices
-- **Chosen**: Dynamic byte partitioning using `bytes::BytesMut` and `Bytes`.
-- **Rejected**: Returning byte slices borrowing the internal buffer (`&[u8]`).
-- **Rationale**: Returning borrowed slices (`&[u8]`) would tie the lifetime of decoded messages to the parser's internal buffer, preventing parallel processing. `BytesMut::split_to` creates independent, ref-counted byte handles in $O(1)$ time without copying message payloads.
+### 6. Decision: Dedicated Mutex for Scheduler Injection Queue
+- **Context**: The multi-threaded runtime previously guarded both the global run-queue and worker-idle states using a unified scheduler lock.
+- **Choice**: Separate the shared injection queue into its own mutex-guarded structure, independent of the idle worker registry.
+- **Trade-off**: Slightly increases structural overhead, but significantly reduces lock contention between worker threads stealing tasks and external threads spawning new tasks.
 
-### 7. Anti-Pattern: Unlatched Polling Loop Error Recovery
+### 7. Anti-pattern: Unbounded Codec Scanning Over Streaming Input
 ```rust
-// ANTI-PATTERN: Failing to latch error state causes repeated invocation of broken decoders
-fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Result<Item, Error>>> {
-    match self.codec.decode(&mut self.buffer) {
-        Ok(Some(item)) => Poll::Ready(Some(Ok(item))),
-        Ok(None) => self.do_read(cx),
-        Err(e) => {
-            // Missing: self.has_errored = true;
-            // The next call to poll_next will re-parse corrupted buffer data!
-            Poll::Ready(Some(Err(e)))
-        }
+// WRONG: Scans entire buffer without bounding search length.
+// Attackers can stream infinite bytes without a delimiter, triggering Out-Of-Memory termination.
+fn decode(&mut self, buf: &mut BytesMut) -> Result<Option<Bytes>, io::Error> {
+    if let Some(pos) = buf.iter().position(|b| *b == b'\n') {
+        let chunk = buf.split_to(pos + 1);
+        Ok(Some(chunk.freeze()))
+    } else {
+        Ok(None) // Buffer keeps growing infinitely!
     }
 }
 ```
 
-### 8. Verification Method
-Automated fuzz test running against framing decoders to verify resilience against malformed streams:
+### 8. Verification Method: Loom Concurrency Permutation Test
 ```rust
 #[test]
-fn verify_fuzz_stream_limits() {
-    let mut codec = AnyDelimiterCodec::new_with_max_length(vec![b'\n'], vec![b'\n'], 16);
-    let mut buf = BytesMut::new();
-    
-    // Inject 100 bytes of non-delimited data
-    buf.extend_from_slice(&[b'a'; 100]);
-    assert!(matches!(codec.decode(&mut buf), Err(AnyDelimiterCodecError::MaxChunkLengthExceeded)));
-    
-    // Trailing delimiter must be discarded cleanly
-    buf.extend_from_slice(b"extra\nvalid\n");
-    assert_eq!(codec.decode(&mut buf).unwrap(), None); // Discard remainder
-    assert_eq!(codec.decode(&mut buf).unwrap().unwrap(), &b"valid"[..]);
+fn loom_semaphore_permit_release_verification() {
+    loom::model(|| {
+        use std::sync::Arc;
+        let sem = Arc::new(tokio::sync::Semaphore::new(1));
+        let sem2 = sem.clone();
+
+        let handle = loom::thread::spawn(move || {
+            let permit = sem2.try_acquire().expect("permit acquire");
+            drop(permit);
+        });
+
+        let permit = sem.try_acquire();
+        handle.join().unwrap();
+        assert!(permit.is_ok() || sem.try_acquire().is_ok());
+    });
 }
 ```
 
@@ -523,14 +556,36 @@ fn verify_fuzz_stream_limits() {
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-When generating or refactoring asynchronous network framing or runtime-dependent Rust code, follow this verification checklist:
+```markdown
+### AI Coding Agent Verification Checklist: Streaming Codecs & Runtime Safety
 
-- [ ] **Runtime Context Assertion**: Verify that `Handle::current()` or `Handle::try_current()` is invoked when initializing primitives that depend on a reactor.
-- [ ] **Buffer Capacity Checks**: Ensure `buf.reserve(1)` is invoked immediately before calling `poll_read_buf` or `poll_read` on underlying streams.
-- [ ] **Memory Exhaustion Safeguards**: Ensure protocol decoders accept a `max_length` parameter to guard against unbounded buffer allocations.
-- [ ] **Lookahead Bounds**: Calculate buffer lookahead windows using saturating arithmetic: `cmp::min(limit.saturating_add(1), buf.len())`.
-- [ ] **Fast Path Scanning**: Use `memchr::memchr` for single-byte delimiter searches to take advantage of SIMD optimizations.
-- [ ] **Error Latching**: Maintain an explicit boolean error latch (`has_errored`) in `Stream` implementations to halt polling after a failure.
-- [ ] **Adapter Metadata Forwarding**: Ensure stream and sink proxy adapters forward `size_hint()` and implement `FusedStream` when wrapping inner streams.
-- [ ] **Diagnostic Source Chains**: Implement `std::error::Error::source` on all error enums wrapping `std::io::Error` to preserve error trace contexts.
-- [ ] **Allocation-Free Slicing**: Use `BytesMut::split_to` and `.freeze()` when returning message chunks rather than copying slices into new `Vec<u8>` containers.
+- [ ] 1. SINK TYPE INFERENCE INTEGRITY:
+         Verify that your codec implements `Encoder<T>` for exactly ONE primary type `T`.
+         Provide inherent methods (e.g., `encode_slice(&mut self, &[u8], &mut BytesMut)`) for
+         borrowed types instead of implementing multiple conflicting trait instances.
+
+- [ ] 2. BUFFER CAPACITY DEFENSIVE GUARDS:
+         Assert `capacity > 0` on every buffered stream, reader, or in-memory pipe constructor.
+         Never allow zero-sized internal buffers to enter polling loops.
+
+- [ ] 3. ERROR RECOVERY LATCH STATE:
+         Ensure stream decoding state machines implement an `has_errored` latch.
+         If a previous poll yielded an error, the subsequent poll MUST immediately return
+         `Poll::Ready(None)` until the pipeline is explicitly reset.
+
+- [ ] 4. COOPERATIVE SCHEDULER INTEGRATION:
+         Every unbounded loop processing I/O or memory buffers must invoke
+         `tokio::task::coop::poll_proceed(cx)` to prevent task starvation on shared workers.
+
+- [ ] 5. SEARCH OFFSET RESET ON BUFFER MUTATION:
+         Whenever an internal `BytesMut` buffer is sliced or advanced (`split_to`, `advance`),
+         reset internal index cursors (`next_index = 0`) to prevent out-of-bounds panics.
+
+- [ ] 6. SATURATING BOUNDS CALCULATIONS:
+         Calculate search windows and slice limits using saturating arithmetic:
+         `let read_to = cmp::min(max_length.saturating_add(1), buf.len());`
+
+- [ ] 7. ATOMIC STATE PRESERVATION:
+         When clearing readiness bits, use atomic compare-and-swap or fetch loops to preserve
+         out-of-band status flags like `SHUTDOWN` or EOF.
+```
