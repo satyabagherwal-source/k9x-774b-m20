@@ -4054,3 +4054,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `afa1fdeb` | Multi-dimensional audit evidence | 2026-10-20T21:40:53.222Z |
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T21:40:54.802Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `2cf64c2f` | Multi-dimensional audit evidence | 2026-10-20T21:40:59.730Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T21:47:04.919Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `36c879e3` | Multi-dimensional audit evidence | 2026-10-20T21:47:14.977Z |

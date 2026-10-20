@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T21:40:59.738Z",
+  "last_updated": "2026-10-20T21:47:14.984Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
-      "verified_at": "2026-10-19T08:14:19.427Z",
+      "content_hash": "424fb282f4a615ea56e349dbb061cd66f6ebd0d98d6a12f93fb97fbc78e8e048",
+      "verified_at": "2026-10-20T21:47:04.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:14:19.427Z"
+      "last_updated": "2026-10-20T21:47:04.925Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "ca5898bf06b9d71707afb6220878afa42c33e327c09aa9ad9f9694cdf48f2522",
-      "verified_at": "2026-10-20T06:25:50.000Z",
+      "content_hash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
+      "verified_at": "2026-10-20T21:47:14.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:25:50.000Z"
+      "last_updated": "2026-10-20T21:47:14.984Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

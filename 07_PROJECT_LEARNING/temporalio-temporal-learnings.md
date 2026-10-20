@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `b7bc978d`  
+> **Source Version**: `36c879e3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:25:49.794Z  
+> **Timestamp**: 2026-10-20T21:47:14.613Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:25:48.956Z  
+> **Harvest Timestamp**: 2026-10-20T21:47:14.606Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23843 stars
+- **Stars / Engagement**: 23862 stars
 
 ---
 
@@ -2121,887 +2121,316 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7bc978d` (2026-10-20)
-**Commit Message**: Log silently dropped links and update callbacks (#12579)
+### Incident Patch 1: `4fa3ed47` (2026-10-20)
+**Commit Message**: Fix priority backlog acknowledgement after expired tasks (#12595)
 
 ## What changed?
-Add logs where Nexus-related attachments are silently dropped:
-- `SignalWorkflowExecution` and `SignalWithStartWorkflowExecution`
-return early when the request ID was already recorded, so the links on
-the retried request are never attached.
-- `Update.AttachCallbacks` returns `(false, nil)` for states that are
-too early or not applicable (`Created`, `ProvisionallyAdmitted`,
-`Admitted`, `Aborted`).
+Advance the priority backlog reader's acknowledgement level across
+scanned ranges when no tasks remain outstanding, including when expired
+tasks have moved the read level ahead of the acknowledgement level.
+Preserve the stale-read guard and protection for unfinished tasks.
 
-No behavior change.
+Add deterministic regressions for expired tails with and without
+trailing ID gaps. Extend the existing drain test to verify that scanning
+a gap does not advance acknowledgement or reset the backlog count while
+tasks remain unfinished. Enable the expired-only priority backlog test.
 
 ## Why?
-In these paths the caller gets a successful response, but its links or
-completion callbacks are never attached, and nothing in the logs shows
-that happened. The logs make these drops visible while debugging SDK
-Ergonomics for Nexus operations.
+Fixes #12472.
 
-## How did you test it?
-- [x] built
-- [ ] run locally and tested manually
-- [x] covered by existing tests
-- [x] added new unit test(s)
-- [ ] added new functional test(s)
+If valid tasks finish before the reader scans an expired tail, or if all
+tasks have expired, the priority reader can leave acknowledgement stuck
+until another task is written and completed. Expired tasks advance the
+read level without entering the outstanding-task map, so requiring equal
+acknowledgement and read levels prevents further acknowledgement.
 
-## Potential risks
-Low, logging only.
+This affects production queue behavior: the persisted acknowledgement
+level stays stale, expired tasks cannot be garbage-collected, and the
+approximate backlog count is not reset.
 
-**File**: `service/history/api/signalwithstartworkflow/signal_with_start_workflow.go` (modified, +8/-0)
+**File**: `service/matching/backlog_manager_test.go` (modified, +62/-5)
 ```diff
-@@ -379,6 +379,14 @@ func signalWorkflow(
+@@ -309,6 +309,8 @@ func (s *BacklogManagerTestSuite) TestApproximateBacklogCount_ResetOnDrained() {
+ 	updateBacklogStatsForTest(db, 2, time.Time{})
+ 	s.EqualValues(5, totalApproximateBacklogCount(s.blm))
+ 
++	_, ackLevelBeforeGap := blm.subqueues[subqueueZero].getLevels()
++
+ 	// Advance maxReadLevel past all task IDs to simulate a range renewal.
+ 	// After direct-add, readLevel == old maxReadLevel == last task ID.
+ 	maxRL := db.GetMaxReadLevel(subqueueZero) + 100
+@@ -324,6 +326,12 @@ func (s *BacklogManagerTestSuite) TestApproximateBacklogCount_ResetOnDrained() {
+ 		return rl >= maxRL
+ 	}, 5*time.Second, 10*time.Millisecond)
+ 
++	// All three tasks are still unfinished, so only readLevel may advance.
++	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
++	s.Require().Equal(ackLevelBeforeGap, ackLevel)
++	s.Require().Equal(ackLevelBeforeGap, s.dbAckLevel(blm))
++	s.Require().EqualValues(5, totalApproximateBacklogCount(s.blm))
++
+ 	// Complete all tasks. On the last completion:
+ 	// - outstandingTasks is empty
+ 	// - readLevel >= maxReadLevel (pump already scanned)
+@@ -334,7 +342,7 @@ func (s *BacklogManagerTestSuite) TestApproximateBacklogCount_ResetOnDrained() {
+ 		t.finish(taskFinishResult{consumedToken: true})
  	}
  
- 	if request.GetRequestId() != "" && mutableState.IsSignalRequested(request.GetRequestId()) {
-+		if len(request.GetLinks()) > 0 {
-+			shardContext.GetThrottledLogger().Info("Signal deduplicated by request ID, links on this request not attached.",
-+				tag.WorkflowNamespace(request.GetNamespace()),
-+				tag.WorkflowID(request.GetWorkflowId()),
-+				tag.WorkflowRunID(mutableState.GetExecutionState().GetRunId()),
-+				tag.RequestID(request.GetRequestId()),
-+				tag.Int("link-count", len(request.GetLinks())))
-+		}
- 		return nil
+-	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
++	_, ackLevel = blm.subqueues[subqueueZero].getLevels()
+ 	s.Equal(ackLevel, maxRL)
+ 
+ 	s.Zero(totalApproximateBacklogCount(s.blm))
+@@ -495,13 +503,65 @@ func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_NoReloadSignalWhenCau
  	}
- 	if request.GetRequestId() != "" {
-```
-
-**File**: `service/history/api/signalwithstartworkflow/signal_with_start_workflow_test.go` (modified, +19/-3)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"github.com/google/uuid"
- 	"github.com/stretchr/testify/require"
- 	"github.com/stretchr/testify/suite"
-+	commonpb "go.temporal.io/api/common/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	historypb "go.temporal.io/api/history/v1"
- 	"go.temporal.io/api/workflowservice/v1"
-@@ -16,11 +17,11 @@ import (
- 	"go.temporal.io/server/common/clock"
- 	"go.temporal.io/server/common/definition"
- 	"go.temporal.io/server/common/dynamicconfig"
--	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/metrics/metricstest"
- 	"go.temporal.io/server/common/persistence"
- 	"go.temporal.io/server/common/testing/fakedata"
-+	"go.temporal.io/server/common/testing/testlogger"
- 	"go.temporal.io/server/service/history/api"
- 	"go.temporal.io/server/service/history/configs"
- 	"go.temporal.io/server/service/history/consts"
-@@ -39,6 +40,7 @@ type (
- 		controller     *gomock.Controller
- 		shardContext   *historyi.MockShardContext
- 		metricsHandler *metricstest.CaptureHandler
-+		logger         *testlogger.TestLogger
- 
- 		namespaceID string
- 		workflowID  string
-@@ -78,15 +80,16 @@ func (s *signalWithStartWorkflowSuite) SetupTest() {
- 	s.currentRunID = uuid.New().String()
- 	s.timeSource = clock.NewEventTimeSource()
- 	s.metricsHandler = metricstest.NewCaptureHandler()
-+	s.logger = testlogger.NewTestLogger(s.T(), testlogger.FailOnExpectedErrorOnly)
- 	s.currentExecutionInfo = &persistencespb.WorkflowExecutionInfo{
- 		WorkflowId:    s.workflowID,
- 		ExecutionTime: timestamppb.New(s.timeSource.Now()),
- 	}
- 
- 	s.config = tests.NewDynamicConfig()
- 	s.shardContext.EXPECT().GetConfig().Return(s.config).AnyTimes()
--	s.shardContext.EXPECT().GetLogger().Return(log.NewTestLogger()).AnyTimes()
--	s.shardContext.EXPECT().GetThrottledLogger().Return(log.NewTestLogger()).AnyTimes()
-+	s.shardContext.EXPECT().GetLogger().Return(s.logger).AnyTimes()
-+	s.shardContext.EXPECT().GetThrottledLogger().Return(s.logger).AnyTimes()
- 	s.shardContext.EXPECT().GetMetricsHandler().Return(s.metricsHandler).AnyTimes()
- 	s.shardContext.EXPECT().GetTimeSource().Return(s.timeSource).AnyTimes()
- 
-@@ -134,9 +137,11 @@ func (s *signalWithStartWorkflowSuite) TestSignalWorkflow_Dedup() {
- 		s.currentMutableState,
- 	)
- 	request := s.randomRequest()
-+	request.Links = []*commonpb.Link{{}}
- 
- 	s.currentMutableState.EXPECT().IsWorkflowCloseAttempted().Return(false)
- 	s.currentMutableState.EXPECT().IsSignalRequested(request.GetRequestId()).Return(true)
-+	capture := s.logger.StartCapture()
- 
- 	err := signalWorkflow(
- 		ctx,
-@@ -146,6 +151,17 @@ func (s *signalWithStartWorkflowSuite) TestSignalWorkflow_Dedup() {
- 	)
- 	s.NoError(err)
- 	s.Zero(released)
-+	capture.RequireContains(s.T(), testlogger.CapturedLogPattern{
-+		Level:   testlogger.Info,
-+		Message: "Signal deduplicated by request ID, links on this request not attached.",
-+		Tags: map[string]any{
-+			"wf-namespace": request.GetNamespace(),
-+			"wf-id":        request.GetWorkflowId(),
-+			"wf-run-id":    s.currentRunID,
-+			"request-id":   request.GetRequestId(),
-+			"link-count":   1,
-+		},
-+	})
  }
  
- func (s *signalWithStartWorkflowSuite) TestSignalWorkflow_NewWorkflowTask() {
-```
-
-**File**: `service/history/api/signalworkflow/api.go` (modified, +10/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	enumspb "go.temporal.io/api/enums/v1"
- 	"go.temporal.io/server/api/historyservice/v1"
- 	"go.temporal.io/server/common/definition"
-+	"go.temporal.io/server/common/log/tag"
- 	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/service/history/api"
- 	"go.temporal.io/server/service/history/consts"
-@@ -43,6 +44,15 @@ func Invoke(
- 			mutableState := workflowLease.GetMutableState()
- 			runID = mutableState.GetExecutionState().GetRunId()
- 			if request.GetRequestId() != "" && mutableState.IsSignalRequested(request.GetRequestId()) {
-+				if len(request.GetLinks()) > 0 {
-+					shard.GetThrottledLogger().Info("Signal deduplicated by request ID, links on this request not attached.",
-+						tag.WorkflowNamespace(request.GetNamespace()),
-+						tag.WorkflowNamespaceID(namespaceID.String()),
-+						tag.WorkflowID(request.GetWorkflowExecution().GetWorkflowId()),
-+						tag.WorkflowRunID(runID),
-+						tag.RequestID(request.GetRequestId()),
-+						tag.Int("link-count", len(request.GetLinks())))
-+				}
- 				return &api.UpdateWorkflowAction{
- 					Noop:               true,
- 					CreateWorkflowTask: false,
-```
-
-**File**: `service/history/api/signalworkflow/api_test.go` (modified, +43/-3)
-```diff
-@@ -15,9 +15,9 @@ import (
- 	"go.temporal.io/server/common/cluster"
- 	"go.temporal.io/server/common/cluster/clustertest"
- 	"go.temporal.io/server/common/locks"
--	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/namespace"
-+	"go.temporal.io/server/common/testing/testlogger"
- 	"go.temporal.io/server/service/history/api"
- 	"go.temporal.io/server/service/history/consts"
- 	historyi "go.temporal.io/server/service/history/interfaces"
-@@ -32,6 +32,7 @@ type (
- 		*require.Assertions
- 
- 		controller        *gomock.Controller
-+		logger            *testlogger.TestLogger
- 		shardContext      *historyi.MockShardContext
- 		namespaceRegistry *namespace.MockRegistry
- 
-@@ -58,13 +59,14 @@ func (s *signalWorkflowSuite) SetupTest() {
- 	s.Assertions = require.New(s.T())
- 
- 	s.controller = gomock.NewController(s.T())
-+	s.logger = testlogger.NewTestLogger(s.T(), testlogger.FailOnExpectedErrorOnly)
- 	s.namespaceRegistry = namespace.NewMockRegistry(s.controller)
- 	s.namespaceRegistry.EXPECT().GetNamespaceByID(tests.GlobalNamespaceEntry.ID()).Return(tests.GlobalNamespaceEntry, nil).AnyTimes()
- 
- 	s.shardContext = historyi.NewMockShardContext(s.controller)
- 	s.shardContext.EXPECT().GetConfig().Return(tests.NewDynamicConfig()).AnyTimes()
--	s.shardContext.EXPECT().GetLogger().Return(log.NewTestLogger()).AnyTimes()
--	s.shardContext.EXPECT().GetThrottledLogger().Return(log.NewTestLogger()).AnyTimes()
-+	s.shardContext.EXPECT().GetLogger().Return(s.logger).AnyTimes()
-+	s.shardContext.EXPECT().GetThrottledLogger().Return(s.logger).AnyTimes()
- 	s.shardContext.EXPECT().GetMetricsHandler().Return(metrics.NoopMetricsHandler).AnyTimes()
- 	s.shardContext.EXPECT().GetTimeSource().Return(clock.NewRealTimeSource()).AnyTimes()
- 	s.shardContext.EXPECT().GetNamespaceRegistry().Return(s.namespaceRegistry).AnyTimes()
-@@ -121,3 +123,41 @@ func (s *signalWorkflowSuite) TestSignalWorkflow_WorkflowCloseAttempted() {
- 	s.Nil(resp)
- 	s.ErrorIs(consts.ErrWorkflowClosing, err)
- }
++func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTail() {
++	s.testSetReadLevelAfterGapExpiredTail(2)
++}
 +
-+func (s *signalWorkflowSuite) TestSignalWorkflow_DuplicateRequestID_LogsDroppedLinks() {
-+	const requestID = "duplicate-request-id"
-+	s.currentMutableState.EXPECT().IsSignalRequested(requestID).Return(true)
-+	capture := s.logger.StartCapture()
++func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTailWithGap() {
++	s.testSetReadLevelAfterGapExpiredTail(100)
++}
 +
-+	_, err := Invoke(
-+		context.Background(),
-+		&historyservice.SignalWorkflowExecutionRequest{
-+			NamespaceId: tests.NamespaceID.String(),
-+			SignalRequest: &workflowservice.SignalWorkflowExecutionRequest{
-+				Namespace: tests.Namespace.String(),
-+				WorkflowExecution: &commonpb.WorkflowExecution{
-+					WorkflowId: tests.WorkflowID,
-+					RunId:      tests.RunID,
-+				},
-+				SignalName: "signal-name",
-+				RequestId:  requestID,
-+				Links:      []*commonpb.Link{{}},
-+			},
++func (s *BacklogManagerTestSuite) testSetReadLevelAfterGapExpiredTail(maxReadLevelOffset int64) {
++	if s.fairness {
++		s.T().Skip("this test is only for priority backlog manager")
++	}
++	s.setupToCaptureTasks()
++	blm, tr, start := s.initPriReaderAtEnd()
++
++	tr.signalNewTasks(s.createTasksAt(blm, start+1))
++	_, err := blm.db.CreateTasks(blm.tqCtx, []*writeTaskRequest{{
++		subqueue:  subqueueZero,
++		fairLevel: fairLevel{id: start + 2},
++		taskInfo: &persistencespb.TaskInfo{
++			CreateTime: timestamp.TimeNowPtrUtcAddSeconds(-3600),
++			ExpiryTime: timestamp.TimeNowPtrUtcAddSeconds(-60),
 +		},
-+		s.shardContext,
-+		s.workflowConsistencyChecker,
-+	)
++	}})
 +	s.Require().NoError(err)
-+	capture.RequireContains(s.T(), testlogger.CapturedLogPattern{
-+		Level:   testlogger.Info,
-+		Message: "Signal deduplicated by request ID, links on this request not attached.",
-+		Tags: map[string]any{
-+			"wf-namespace":    tests.Namespace.String(),
-+			"wf-namespace-id": tests.NamespaceID.String(),
-+			"wf-id":           tests.WorkflowID,
-+			"wf-run-id":       tests.RunID,
-+			"request-id":      requestID,
-+			"link-count":      1,
-+		},
-+	})
++	maxReadLevel := start + maxReadLevelOffset
++	blm.db.setMaxReadLevelForTesting(subqueueZero, maxReadLevel)
++
++	// Complete the valid task before the reader scans the expired tail.
++	tasks := s.capturedTasks()
++	s.Require().Len(tasks, 1)
++	tasks[0].finish(taskFinishResult{consumedToken: true})
++	s.Require().Equal(start+1, s.dbAckLevel(blm))
++
++	batch, err := tr.getTaskBatch(blm.tqCtx)
++	s.Require().NoError(err)
++	s.Require().Len(batch.tasks, 1)
++	tr.processTaskBatch(batch.tasks)
++
++	batch, err = tr.getTaskBatch(blm.tqCtx)
++	s.Require().NoError(err)
++	s.Require().Empty(batch.tasks)
++	s.Require().True(batch.isReadBatchDone)
++	tr.setReadLevelAfterGap(batch.readLevel)
++
++	readLevel, ackLevel := tr.getLevels()
++	s.Require().Equal(maxReadLevel, readLevel)
++	s.Require().Equal(maxReadLevel, ackLevel)
++	s.Require().Equal(maxReadLevel, s.dbAckLevel(blm))
++	s.Require().Zero(blm.db.getTotalApproximateBacklogCount())
 +}
-```
-
-**File**: `service/history/workflow/update/update.go` (modified, +4/-0)
-```diff
-@@ -475,6 +475,10 @@ func (u *Update) AttachCallbacks(
- 
- 	default:
- 		// All other states are too early or not applicable for callback attachment.
-+		// Callbacks on the admitting request travel with u.request and are attached on acceptance.
-+		if req.GetRequestId() != u.originalReqID {
-+			u.instrumentation.logCallbacksNotAttached(u.id, req.GetRequestId(), u.state.String(), len(req.GetCompletionCallbacks()))
-+		}
- 		return false, nil
++
+ // TestProcessTaskBatch_IgnoresAlreadyAckedTasks covers the other half of the same read/write
+ // race: here the in-flight read does return the newly-written rows, but they get acked before the
+ // pump processes them. outstandingTasks only remembers tasks above the ack level, so its dedup
+ // check can't see them and they used to be dispatched and acked a second time.
+ func (s *BacklogManagerTestSuite) TestProcessTaskBatch_IgnoresAlreadyAckedTasks() {
+ 	if s.fairness {
+-		s.T().Skip("only for fairness backlog manager")
++		s.T().Skip("this test is only for priority backlog manager")
  	}
- }
-```
-
-**File**: `service/history/workflow/update/update_test.go` (modified, +98/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"go.temporal.io/server/common/future"
- 	"go.temporal.io/server/common/payloads"
- 	. "go.temporal.io/server/common/testing/protoutils"
-+	"go.temporal.io/server/common/testing/testlogger"
- 	"go.temporal.io/server/common/testing/testvars"
- 	"go.temporal.io/server/service/history/consts"
- 	"go.temporal.io/server/service/history/workflow/update"
-@@ -1301,6 +1302,103 @@ func TestAttachCallbacks(t *testing.T) {
- 		require.False(t, *eventCreated)
- 	})
- 
-+	// The admitting request carries its callbacks in the Update's request, so only a
-+	// different request's callbacks are dropped in these states.
-+	otherRequest := &updatepb.Request{
-+		Meta:                &updatepb.Meta{UpdateId: tv.UpdateID()},
-+		Input:               &updatepb.Input{Name: "not_empty"},
-+		RequestId:           "other-" + tv.RequestID(),
-+		CompletionCallbacks: testCallbacks,
-+	}
-+	admitWithRequest := func(t *testing.T, store mockEventStore, upd *update.Update) {
-+		t.Helper()
-+		require.NoError(t, upd.Admit(testRequest, store))
-+	}
-+
-+	for _, tc := range []struct {
-+		name  string
-+		state string
-+		setup func(t *testing.T, store mockEventStore, effects *effect.Buffer, upd *update.Update)
-+	}{
-+		{
-+			name:  "stateCreated",
-+			state: "Created",
-+			setup: func(*testing.T, mockEventStore, *effect.Buffer, *update.Update) {},
-+		},
-+		{
-+			name:  "stateProvisionallyAdmitted",
-+			state: "ProvisionallyAdmitted",
-+			setup: func(t *testing.T, store mockEventStore, _ *effect.Buffer, upd *update.Update) {
-+				admitWithRequest(t, store, upd)
-+			},
-+		},
-+		{
-+			name:  "stateAdmitted",
-+			state: "Admitted",
-+			setup: func(t *testing.T, store mockEventStore, effects *effect.Buffer, upd *update.Update) {
-+				admitWithRequest(t, store, upd)
-+				effects.Apply(context.Background())
-+			},
-+		},
-+		{
-+			name:  "stateAborted",
-+			state: "Aborted",
-+			setup: func(t *testing.T, store mockEventStore, effects *effect.Buffer, upd *update.Update) {
-+				admitWithRequest(t, store, upd)
-+				effects.Apply(context.Background())
-+				upd.Abort(update.AbortReasonRegistryCleared, effects)
-+				effects.Apply(context.Background())
-+			},
-+		},
-+	} {
-+		t.Run("on "+tc.name+" logs when a different request's callbacks are not attached", func(t *testing.T) {
-+			tl := testlogger.NewTestLogger(t, testlogger.FailOnAnyUnexpectedError)
-+			capture := tl.StartCapture()
-+			reg := update.NewRegistry(&emptyUpdateStore, update.WithLogger(tl), update.WithNamespace("test-ns"))
-+			effects := &effect.Buffer{}
-+			store, eventCreated := trackingStore(effects)
-+			upd, _, err := reg.FindOrCreate(context.Background(), tv.UpdateID())
-+			require.NoError(t, err)
-+			tc.setup(t, store, effects, upd)
-+
-+			fired, err := upd.AttachCallbacks(otherRequest, store)
-+			require.NoError(t, err)
-+			require.False(t, fired)
-+			require.False(t, *eventCreated)
-+			capture.RequireContains(t, testlogger.CapturedLogPattern{
-+				Level:   testlogger.Info,
-+				Message: "update completion callbacks were not attached",
-+				Tags: map[string]any{
-+					"update-id":      tv.UpdateID(),
-+					"request-id":     otherRequest.GetRequestId(),
-+					"update-state":   tc.state,
-+					"callback-count": 1,
-+					"namespace":      "test-ns",
-+				},
-+			})
-+		})
-+	}
-+
-+	t.Run("on stateAdmitted does not log for the admitting request", func(t *testing.T) {
-+		tl := testlogger.NewTestLogger(t, testlogger.FailOnAnyUnexpectedError)
-+		capture := tl.StartCapture()
-+		reg := update.NewRegistry(&emptyUpdateStore, update.WithLogger(tl))
-+		effects := &effect.Buffer{}
-+		store, eventCreated := trackingStore(effects)
-+		upd, _, err := reg.FindOrCreate(context.Background(), tv.UpdateID())
-+		require.NoError(t, err)
-+		admitWithRequest(t, store, upd)
-+		effects.Apply(context.Background())
-+
-+		fired, err := upd.AttachCallbacks(testRequest, store)
-+		require.NoError(t, err)
-+		require.False(t, fired)
-+		require.False(t, *eventCreated)
-+		for _, record := range capture.Snapshot() {
-+			require.NotEqual(t, "update completion callbacks were not attached", record.Message)
-+		}
-+	})
-+
- 	t.Run("on stateSent buffers callbacks and returns true", func(t *testing.T) {
- 		effects := &effect.Buffer{}
- 		store, optionsEventCount := countingOptionsStore(effects)
-```
-
-**File**: `service/history/workflow/update/util.go` (modified, +10/-0)
-```diff
-@@ -59,6 +59,16 @@ func (i *instrumentation) countRegistrySizeLimited(updateCount, registrySize, pa
- 	)
+ 	s.setupToCaptureTasks()
+ 	blm, tr, start := s.initPriReaderAtEnd()
+@@ -738,9 +798,6 @@ func (s *BacklogManagerTestSuite) TestSkipExpiredTasks_ValidThenExpired() {
  }
  
-+func (i *instrumentation) logCallbacksNotAttached(updateID, requestID, state string, callbackCount int) {
-+	i.log.Info("update completion callbacks were not attached",
-+		tag.String("update-id", updateID),
-+		tag.RequestID(requestID),
-+		tag.String("update-state", state),
-+		tag.Int("callback-count", callbackCount),
-+		tag.String("namespace", i.namespace),
-+	)
-+}
-+
- func (i *instrumentation) countTooMany() {
- 	i.oneOf(metrics.WorkflowExecutionUpdateTooMany.Name())
+ func (s *BacklogManagerTestSuite) TestSkipExpiredTasks_AllExpired() {
+-	if !s.fairness {
+-		s.T().Skip("this case doesn't work with priTaskReader yet")
+-	}
+ 	s.testSkipExpiredTasks(10, expiredBlock(33))
  }
+ 
+```
+
+**File**: `service/matching/pri_task_reader.go` (modified, +6/-7)
+```diff
+@@ -493,13 +493,12 @@ func (tr *priTaskReader) setReadLevelAfterGap(newReadLevel int64) {
+ 		tr.SignalTaskLoading()
+ 		return
+ 	}
+-	if tr.ackLevel == tr.readLevel {
+-		// This is called after we read a range and find no tasks. The range we read was tr.readLevel to newReadLevel.
+-		// (We know this because nothing should change tr.readLevel except the getTasksPump loop itself, after initialization.
+-		// And getTasksPump doesn't start until it gets a signal from taskWriter that it's initialized the levels.)
+-		// If we've acked all tasks up to tr.readLevel, and there are no tasks between that and newReadLevel, then we've
+-		// acked all tasks up to newReadLevel too. This lets us advance the ack level on a task queue with no activity
+-		// but where the rangeid has moved higher, to prevent excessive reads on the next load.
++	if tr.outstandingTasks.Empty() {
++		// The scan found no tasks in (tr.readLevel, newReadLevel]. The stale-read guard above
++		// handles signalNewTasks advancing readLevel during that scan. Tasks through readLevel
++		// are already acked, expired, or in outstandingTasks, so an empty map means everything
++		// through newReadLevel can be acknowledged. This also advances idle queues over gaps
++		// left by range ID changes.
+ 		tr.ackLevel = newReadLevel
+ 		// Push the updated ack level to the db. If we didn't do this here, the updated ack level
+ 		// wouldn't reach the db until another task is written and acked, which could be far in the
 ```
 
 ---
 
-### Incident Patch 2: `87c7a5ec` (2026-10-19)
-**Commit Message**: Scope events cache entries to the shard context instance (#11660)
+### Incident Patch 2: `d6a9890a` (2026-10-20)
+**Commit Message**: Fix Nexus API endpoint isolation in parallel outcome tests (#12619)
 
 ## What changed?
-
-Added `ShardUUID` to `events.EventKey`, populated from
-`shardContext.GetOwner()`, so cache entries become unreachable once the
-shard context is rebuilt.
+Generate a fresh endpoint name for each start/cancel outcome subtest
+invocation.
 
 ## Why?
+Sibling dispatch subtests can share a cluster and reuse the endpoint
+name stored in their table row, causing endpoint registration to fail
+with “already registered”.
 
-Events are cached when they are built, before the transaction persists.
-A write that loses the shard's range CAS leaves the entry behind, a
-later transaction reuses that event ID for a different event, and
-`transfer_queue_active_task_executor.go:967` then nil-derefs the
-mismatched attributes. Before #11450 a shard reload dropped the cache;
-now it is process-lifetime, so this mirrors the workflow context cache,
-whose `Key` already carries a `ShardUUID`.
-
-## How did you test it?
-- [x] built
-- [x] covered by existing tests
-- [x] added new unit test(s)
-
-`TestStaleCachedEventNotServedAfterShardReload` panics on `main` and
-passes here.
-
-**File**: `service/history/events/cache.go` (modified, +5/-2)
+**File**: `common/testing/testvars/test_vars.go` (modified, +6/-0)
 ```diff
-@@ -26,6 +26,7 @@ type (
- 		RunID       string
- 		EventID     int64
- 		Version     int64
-+		ShardUUID   string
- 	}
- 
- 	Cache interface {
-@@ -95,13 +96,15 @@ func newEventsCache(
+@@ -434,6 +434,12 @@ func (tv *TestVars) Service() string {
+ 	return getOrCreate(tv, "service", tv.uniqueString, tv.stringNSetter)
  }
  
- func (e *CacheImpl) validateKey(key EventKey) bool {
--	if len(key.NamespaceID) == 0 || len(key.WorkflowID) == 0 || len(key.RunID) == 0 || key.EventID < common.FirstEventID {
-+	if len(key.NamespaceID) == 0 || len(key.WorkflowID) == 0 || len(key.RunID) == 0 ||
-+		len(key.ShardUUID) == 0 || key.EventID < common.FirstEventID {
- 		// This is definitely a bug, but just warn and don't crash so we can find anywhere this happens.
- 		e.logger.Warn("one or more ids is invalid in event cache",
- 			tag.WorkflowID(key.WorkflowID),
- 			tag.WorkflowRunID(key.RunID),
- 			tag.WorkflowNamespaceID(key.NamespaceID.String()),
--			tag.WorkflowEventID(key.EventID))
-+			tag.WorkflowEventID(key.EventID),
-+			tag.NewStringTag("shard-uuid", key.ShardUUID))
- 		return false
- 	}
- 	return true
-```
-
-**File**: `service/history/events/cache_test.go` (modified, +82/-34)
-```diff
-@@ -18,6 +18,19 @@ import (
- 	"go.uber.org/mock/gomock"
- )
- 
-+const shardUUID = "events-cache-test-shard-uuid"
-+
-+func testEventKey(namespaceID namespace.ID, workflowID, runID string, eventID int64, shardUUID string) EventKey {
-+	return EventKey{
-+		NamespaceID: namespaceID,
-+		WorkflowID:  workflowID,
-+		RunID:       runID,
-+		EventID:     eventID,
-+		Version:     common.EmptyVersion,
-+		ShardUUID:   shardUUID,
-+	}
++func (tv *TestVars) NexusEndpointName() string {
++	return getOrCreate(tv, "nexus_endpoint_name", func(key string) string {
++		return "endpoint-" + tv.uuidString(key)
++	}, unsupportedNSetter[string])
 +}
 +
- type (
- 	eventsCacheSuite struct {
- 		suite.Suite
-@@ -82,12 +95,12 @@ func (s *eventsCacheSuite) TestEventsCacheHitSuccess() {
- 	}
- 
- 	s.cache.PutEvent(
--		EventKey{namespaceID, workflowID, runID, eventID, common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, eventID, shardUUID),
- 		event)
- 	actualEvent, err := s.cache.GetEvent(
- 		context.Background(),
- 		shardID,
--		EventKey{namespaceID, workflowID, runID, eventID, common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, eventID, shardUUID),
- 		eventID, nil)
- 	s.NoError(err)
- 	s.Equal(event, actualEvent)
-@@ -142,12 +155,12 @@ func (s *eventsCacheSuite) TestEventsCacheMissMultiEventsBatchV2Success() {
- 	}, nil)
- 
- 	s.cache.PutEvent(
--		EventKey{namespaceID, workflowID, runID, event2.GetEventId(), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, event2.GetEventId(), shardUUID),
- 		event2)
- 	actualEvent, err := s.cache.GetEvent(
- 		context.Background(),
- 		shardID,
--		EventKey{namespaceID, workflowID, runID, event6.GetEventId(), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, event6.GetEventId(), shardUUID),
- 		event1.GetEventId(), []byte("store_token"))
- 	s.NoError(err)
- 	s.Equal(event6, actualEvent)
-@@ -172,7 +185,7 @@ func (s *eventsCacheSuite) TestEventsCacheMissV2Failure() {
- 	actualEvent, err := s.cache.GetEvent(
- 		context.Background(),
- 		shardID,
--		EventKey{namespaceID, workflowID, runID, int64(14), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, int64(14), shardUUID),
- 		int64(11), []byte("store_token"))
- 	s.Nil(actualEvent)
- 	s.Equal(expectedErr, err)
-@@ -207,16 +220,16 @@ func (s *eventsCacheSuite) TestEventsCacheDisableSuccess() {
- 	}, nil)
- 
- 	s.cache.PutEvent(
--		EventKey{namespaceID, workflowID, runID, event1.GetEventId(), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, event1.GetEventId(), shardUUID),
- 		event1)
- 	s.cache.PutEvent(
--		EventKey{namespaceID, workflowID, runID, event2.GetEventId(), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, event2.GetEventId(), shardUUID),
- 		event2)
- 	s.cache.disabled = true
- 	actualEvent, err := s.cache.GetEvent(
- 		context.Background(),
- 		shardID,
--		EventKey{namespaceID, workflowID, runID, event2.GetEventId(), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, event2.GetEventId(), shardUUID),
- 		event2.GetEventId(), []byte("store_token"))
- 	s.NoError(err)
- 	s.Equal(event2, actualEvent)
-@@ -248,54 +261,89 @@ func (s *eventsCacheSuite) TestEventsCacheGetCachesResult() {
- 	gotEvent1, _ := s.cache.GetEvent(
- 		context.Background(),
- 		shardID,
--		EventKey{namespaceID, workflowID, runID, int64(14), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, int64(14), shardUUID),
- 		int64(11), branchToken)
- 	s.Equal(gotEvent1, event1)
- 	gotEvent2, _ := s.cache.GetEvent(
- 		context.Background(),
- 		shardID,
--		EventKey{namespaceID, workflowID, runID, int64(14), common.EmptyVersion},
-+		testEventKey(namespaceID, workflowID, runID, int64(14), shardUUID),
- 		int64(11), branchToken)
- 	s.Equal(gotEvent2, event1)
+ func (tv *TestVars) Operation() string {
+ 	return getOrCreate(tv, "operation", tv.uniqueString, tv.stringNSetter)
  }
- 
- func (s *eventsCacheSuite) TestEventsCacheInvalidKey() {
- 	namespaceID := namespace.ID("events-cache-invalid-key-namespace")
- 	workflowID := "events-cache-invalid-key-workflow-id"
--	runID := "" // <-- this is invalid
-+	runID := "events-cache-invalid-key-run-id"
- 	branchToken := []byte("store_token")
--
- 	shardID := int32(10)
--	event1 := &historypb.HistoryEvent{
-+	event := &historypb.HistoryEvent{
- 		EventId:   14,
- 		EventType: enumspb.EVENT_TYPE_ACTIVITY_TASK_STARTED,
+```
+
+**File**: `tests/nexus_api_test.go` (modified, +27/-33)
+```diff
+@@ -86,7 +86,6 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 		},
  	}
-+
-+	// An invalid key is a caller bug: serve the event from the store, but never cache it.
-+	for name, key := range map[string]EventKey{
-+		"empty run ID":   testEventKey(namespaceID, workflowID, "", event.EventId, shardUUID),
-+		"empty shard ID": testEventKey(namespaceID, workflowID, runID, event.EventId, ""),
-+	} {
-+		s.Run(name, func() {
-+			s.mockExecutionManager.EXPECT().ReadHistoryBranch(gomock.Any(), gomock.Any()).Return(
-+				&persistence.ReadHistoryBranchResponse{
-+					HistoryEvents: []*historypb.HistoryEvent{event},
-+				}, nil).Times(2)
-+
-+			s.cache.PutEvent(key, event)
-+			s.Nil(s.cache.Get(key))
-+
-+			for range 2 {
-+				got, err := s.cache.GetEvent(context.Background(), shardID, key, int64(11), branchToken)
-+				s.NoError(err)
-+				s.Equal(event, got)
-+				s.Nil(s.cache.Get(key))
-+			}
-+		})
-+	}
-+}
-+
-+// An entry cached by one shard context instance must not be visible to the next one.
-+func (s *eventsCacheSuite) TestEventsCacheNotSh
-```
-
-**File**: `service/history/history_engine2_test.go` (modified, +4/-0)
-```diff
-@@ -1067,6 +1067,7 @@ func (s *engine2Suite) TestRecordActivityTaskStartedSuccess() {
- 			RunID:       workflowExecution.GetRunId(),
- 			EventID:     scheduledEvent.GetEventId(),
- 			Version:     0,
-+			ShardUUID:   s.mockShard.GetOwner(),
- 		},
- 		workflowTaskCompletedEvent.GetEventId(),
- 		gomock.Any(),
-@@ -1133,6 +1134,7 @@ func (s *engine2Suite) TestRecordActivityTaskStartedDuplicateRequest() {
- 			RunID:       workflowExecution.GetRunId(),
- 			EventID:     scheduledEvent.GetEventId(),
- 			Version:     0,
-+			ShardUUID:   s.mockShard.GetOwner(),
- 		},
- 		workflowTaskCompletedEvent.GetEventId(),
- 		gomock.Any(),
-@@ -4808,6 +4810,7 @@ func (s *engine2Suite) TestRefreshWorkflowTasks() {
- 			RunID:       execution.GetRunId(),
- 			EventID:     common.FirstEventID,
- 			Version:     startVersion,
-+			ShardUUID:   s.mockShard.GetOwner(),
- 		},
- 		common.FirstEventID,
- 		gomock.Any(),
-@@ -4821,6 +4824,7 @@ func (s *engine2Suite) TestRefreshWorkflowTasks() {
- 			RunID:       execution.GetRunId(),
- 			EventID:     timeoutEvent.GetEventId(),
- 			Version:     startVersion,
-+			ShardUUID:   s.mockShard.GetOwner(),
- 		},
- 		timeoutEvent.GetEventId(),
- 		gomock.Any(),
-```
-
-**File**: `service/history/ndc/workflow_state_replicator.go` (modified, +1/-0)
-```diff
-@@ -2272,6 +2272,7 @@ func (r *WorkflowStateReplicatorImpl) addEventToCache(
- 				RunID:       workflowKey.RunID,
- 				EventID:     event.GetEventId(),
- 				Version:     event.GetVersion(),
-+				ShardUUID:   r.shardContext.GetOwner(),
+ 	handlerNexusLink := commonnexus.ConvertLinkWorkflowEventToNexusLink(handlerLink)
+-	asyncSuccessEndpoint := testcore.RandomizeStr("test-endpoint")
+ 
+ 	operationErrorOutcome := "operation_error"
+ 	if useTemporalFailures {
+@@ -96,7 +95,6 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 	type testcase struct {
+ 		name           string
+ 		outcome        string
+-		endpointName   string
+ 		timeout        time.Duration
+ 		handler        nexusTaskHandler
+ 		assertion      func(*NexusApiTestSuite, *nexusrpc.ClientStartOperationResponse[string], error, http.Header)
+@@ -105,10 +103,9 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 
+ 	testCases := []testcase{
+ 		{
+-			name:         "sync_success",
+-			outcome:      "sync_success",
+-			endpointName: testcore.RandomizeStr("test-endpoint"),
+-			handler:      nexusEchoHandler,
++			name:    "sync_success",
++			outcome: "sync_success",
++			handler: nexusEchoHandler,
+ 			assertion: func(s *NexusApiTestSuite, res *nexusrpc.ClientStartOperationResponse[string], err error, headers http.Header) {
+ 				s.NoError(err)
+ 				s.Equal("input", res.Successful)
+@@ -118,11 +115,9 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 			name:           "async_success",
+ 			outcome:        "async_success",
+ 			onlyByEndpoint: true,
+-			endpointName:   asyncSuccessEndpoint,
+ 			handler: func(t *testing.T, res *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
+ 				// Choose an arbitrary test case to assert that all of the input is delivered to the
+ 				// poll response.
+-				require.Equal(t, asyncSuccessEndpoint, res.Request.Endpoint)
+ 				start := res.Request.Variant.(*nexuspb.Request_StartOperation).StartOperation
+ 				require.Equal(t, op.Name(), start.Operation)
+ 				require.Equal(t, "http://localhost/callback", start.Callback)
+@@ -146,9 +141,8 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
  			},
- 			event,
- 		)
-```
-
-**File**: `service/history/ndc/workflow_state_replicator_test.go` (modified, +8/-1)
-```diff
-@@ -1285,6 +1285,7 @@ func (s *workflowReplicatorSuite) Test_bringLocalEventsUpToSourceCurrentBranch_W
- 	mockShard.EXPECT().GenerateTaskID().Return(taskId3, nil).Times(1)
- 	mockShard.EXPECT().GetRemoteAdminClient(sourceClusterName).Return(s.mockRemoteAdminClient, nil).AnyTimes()
- 	mockShard.EXPECT().GetShardID().Return(int32(0)).AnyTimes()
-+	mockShard.EXPECT().GetOwner().Return("test-shard-owner").AnyTimes()
- 	mockShard.EXPECT().GetMetricsHandler().Return(s.mockShard.GetMetricsHandler()).AnyTimes()
- 	mockShard.EXPECT().GetConfig().Return(s.mockShard.GetConfig()).AnyTimes()
- 	s.workflowStateReplicator.shardContext = mockShard
-@@ -1449,6 +1450,7 @@ func (s *workflowReplicatorSuite) Test_bringLocalEventsUpToSourceCurrentBranch_W
- 	mockShard.EXPECT().GenerateTaskID().Return(taskId3, nil).Times(1)
- 	mockShard.EXPECT().GetRemoteAdminClient(sourceClusterName).Return(s.mockRemoteAdminClient, nil).AnyTimes()
- 	mockShard.EXPECT().GetShardID().Return(int32(0)).AnyTimes()
-+	mockShard.EXPECT().GetOwner().Return("test-shard-owner").AnyTimes()
- 	mockShard.EXPECT().GetMetricsHandler().Return(s.mockShard.GetMetricsHandler()).AnyTimes()
- 	mockShard.EXPECT().GetConfig().Return(s.mockShard.GetConfig()).AnyTimes()
- 	s.workflowStateReplicator.shardContext = mockShard
-@@ -1638,6 +1640,7 @@ func (s *workflowReplicatorSuite) Test_bringLocalEventsUpToSourceCurrentBranch_W
- 	mockShard.EXPECT().GenerateTaskID().Return(taskId3, nil).Times(1)
- 	mockShard.EXPECT().GetRemoteAdminClient(sourceClusterName).Return(s.mockRemoteAdminClient, nil).AnyTimes()
- 	mockShard.EXPECT().GetShardID().Return(int32(0)).AnyTimes()
-+	mockShard.EXPECT().GetOwner().Return("test-shard-owner").AnyTimes()
- 	mockShard.EXPECT().GetMetricsHandler().Return(s.mockShard.GetMetricsHandler()).AnyTimes()
- 	mockShard.EXPECT().GetConfig().Return(s.mockShard.GetConfig()).AnyTimes()
- 	s.workflowStateReplicator.shardContext = mockShard
-@@ -2362,10 +2365,14 @@ func (s *workflowReplicatorSuite) Test_bringLocalEventsUpToSourceCurrentBranch_E
- 	mockShard.EXPECT().GenerateTaskID().Return(taskID, nil).Times(1)
- 	mockShard.EXPECT().GetRemoteAdminClient(sourceClusterName).Return(s.mockRemoteAdminClient, nil).AnyTimes()
- 	mockShard.EXPECT().GetShardID().Return(int32(0)).AnyTimes()
-+	mockShard.EXPECT().GetOwner().Return("test-shard-owner").AnyTimes()
- 	mockShard.EXPECT().GetMetricsHandler().Return(s.mockShard.GetMetricsHandler()).AnyTimes()
- 	mockShard.EXPECT().GetConfig().Return(s.mockShard.GetConfig()).AnyTimes()
- 	mockEventsCache := events.NewMockCache(s.controller)
--	mockEventsCache.EXPECT().PutEvent(gomock.Any(), gomock.Any()).AnyTimes()
-+	// Assert the key is shard-scoped; an unscoped key would be rejected by the cache.
-+	mockEventsCache.EXPECT().PutEvent(gomock.Cond(func(k events.EventKey) bool {
-+		return k.ShardUUID == "test-shard-owner"
-+	}), gomock.Any()).AnyTimes()
- 	mockShard.EXPECT().GetEventsCache().Return(mockEventsCache).AnyTimes()
- 	s.workflowStateReplicator.shardContext = mockShard
- 
-```
-
-**File**: `service/history/shard/context_testutil.go` (modified, +8/-1)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"sync"
- 
-+	"github.com/google/uuid"
- 	otellog "go.opentelemetry.io/otel/log"
- 	"go.temporal.io/server/api/historyservice/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
-@@ -137,9 +138,15 @@ func newTestContext(t *resourcetest.Test, eventsCache events.Cache, config Conte
- 	taskCategoryRegistry := tasks.NewDefaultTaskCategoryRegistry()
- 	taskCategoryRegistry.AddCategory(tasks.CategoryArchival)
- 
-+	// A real shard context always has an owner unique to that instance.
-+	owner := fmt.Sprintf("test-shard-owner-%v-%v", config.ShardInfo.GetShardId(), uuid.NewString())
-+	if configured := config.ShardInfo.GetOwner(); configured != "" {
-+		owner = configured
-+	}
-+
- 	ctx := &ContextImpl{
- 		shardID:             config.ShardInfo.GetShardId(),
--		owner:               config.ShardInfo.GetOwner(),
-+		owner:               owner,
- 		stringRepr:          fmt.Sprintf("Shard(%d)", config.ShardInfo.GetShardId()),
- 		executionManager:    executionManager,
- 		metricsHandler:      t.MetricsHandler,
-```
-
-**File**: `service/history/workflow/mutable_state_impl.go` (modified, +20/-64)
-```diff
-@@ -1015,6 +1015,17 @@ func (ms *MutableStateImpl) CloneToProto() *persistencespb.WorkflowMutableState
- 	return common.CloneProto(msProto)
- }
- 
-+func (ms *MutableStateImpl) eventKey(eventID int64, version int64) events.EventKey {
-+	return events.EventKey{
-+		NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
-+		WorkflowID:  ms.executionInfo.WorkflowId,
-+		RunID:       ms.executionState.RunId,
-+		EventID:     eventID,
-+		Version:     version,
-+		ShardUUID:   ms.shard.GetOwner(),
-+	}
-+}
-+
- func (ms *MutableStateImpl) GetWorkflowKey() definition.WorkflowKey {
- 	return definition.NewWorkflowKey(
- 		ms.executionInfo.NamespaceId,
-@@ -1441,14 +1452,7 @@ func (ms *MutableStateImpl) LoadHistoryEvent(ctx context.Context, token []byte)
- 	if err != nil {
- 		return nil, err
- 	}
--	wfKey := ms.GetWorkflowKey()
--	eventKey := events.EventKey{
--		NamespaceID: namespace.ID(wfKey.NamespaceID),
--		WorkflowID:  wfKey.WorkflowID,
--		RunID:       wfKey.RunID,
--		EventID:     ref.EventId,
--		Version:     version,
--	}
-+	eventKey := ms.eventKey(ref.EventId, version)
- 
- 	return ms.eventsCache.GetEvent(ctx, ms.shard.GetShardID(), eventKey, ref.EventBatchId, branchToken)
- }
-@@ -1602,13 +1606,7 @@ func (ms *MutableStateImpl) getUpdateOutcomeEvent(
- 	if err != nil {
- 		return nil, err
- 	}
--	eventKey := events.EventKey{
--		NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--		WorkflowID:  ms.executionInfo.WorkflowId,
--		RunID:       ms.executionState.RunId,
--		EventID:     completion.EventId,
--		Version:     version,
--	}
-+	eventKey := ms.eventKey(completion.EventId, version)
- 	event, err := ms.eventsCache.GetEvent(ctx, ms.shard.GetShardID(), eventKey, completion.EventBatchId, currentBranchToken)
- 	if err != nil {
- 		return nil, err
-@@ -1635,13 +1633,7 @@ func (ms *MutableStateImpl) GetActivityScheduledEvent(
- 	event, err := ms.eventsCache.GetEvent(
- 		ctx,
- 		ms.shard.GetShardID(),
--		events.EventKey{
--			NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--			WorkflowID:  ms.executionInfo.WorkflowId,
--			RunID:       ms.executionState.RunId,
--			EventID:     ai.ScheduledEventId,
--			Version:     version,
--		},
-+		ms.eventKey(ai.ScheduledEventId, version),
- 		ai.ScheduledEventBatchId,
- 		currentBranchToken,
- 	)
-@@ -1732,13 +1724,7 @@ func (ms *MutableStateImpl) GetChildExecutionInitiatedEvent(
- 	event, err := ms.eventsCache.GetEvent(
- 		ctx,
- 		ms.shard.GetShardID(),
--		events.EventKey{
--			NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--			WorkflowID:  ms.executionInfo.WorkflowId,
--			RunID:       ms.executionState.RunId,
--			EventID:     ci.InitiatedEventId,
--			Version:     version,
--		},
-+		ms.eventKey(ci.InitiatedEventId, version),
- 		ci.InitiatedEventBatchId,
- 		currentBranchToken,
- 	)
-@@ -1778,13 +1764,7 @@ func (ms *MutableStateImpl) GetRequesteCancelExternalInitiatedEvent(
- 	event, err := ms.eventsCache.GetEvent(
- 		ctx,
- 		ms.shard.GetShardID(),
--		events.EventKey{
--			NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--			WorkflowID:  ms.executionInfo.WorkflowId,
--			RunID:       ms.executionState.RunId,
--			EventID:     ri.InitiatedEventId,
--			Version:     version,
--		},
-+		ms.eventKey(ri.InitiatedEventId, version),
- 		ri.InitiatedEventBatchId,
- 		currentBranchToken,
- 	)
-@@ -1854,13 +1834,7 @@ func (ms *MutableStateImpl) GetSignalExternalInitiatedEvent(
- 	event, err := ms.eventsCache.GetEvent(
- 		ctx,
- 		ms.shard.GetShardID(),
--		events.EventKey{
--			NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--			WorkflowID:  ms.executionInfo.WorkflowId,
--			RunID:       ms.executionState.RunId,
--			EventID:     si.InitiatedEventId,
--			Version:     version,
--		},
-+		ms.eventKey(si.InitiatedEventId, version),
- 		si.InitiatedEventBatchId,
- 		currentBranchToken,
- 	)
-@@ -1906,13 +1880,7 @@ func (ms *MutableStateImpl) GetCompletionEvent(
- 	event, err = ms.eventsCache.GetEvent(
- 		ctx,
- 		ms.shard.GetShardID(),
--		events.EventKey{
--			NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--			WorkflowID:  ms.executionInfo.WorkflowId,
--			RunID:       ms.executionState.RunId,
--			EventID:     completionEventID,
--			Version:     version,
--		},
-+		ms.eventKey(completionEventID, version),
- 		firstEventID,
- 		currentBranchToken,
- 	)
-@@ -2004,13 +1972,7 @@ func (ms *MutableStateImpl) GetStartEvent(
- 	event, err := ms.eventsCache.GetEvent(
- 		ctx,
- 		ms.shard.GetShardID(),
--		events.EventKey{
--			NamespaceID: namespace.ID(ms.executionInfo.NamespaceId),
--			WorkflowID:  ms.executionInfo.WorkflowId,
--			RunID:       ms.executionState.RunId,
--			EventID:     common.FirstEventID,
--			Version:     startVersion,
--		},
-+		ms.eventKey(common.FirstEventID, startVersion),
- 		common.FirstEventID,
- 		currentBranchToken,
- 	)
-@@ -2119,13 +2081,7 @@ func (ms *MutableStateImpl) writeEventToCache(
- 	// during the processing of DeleteTransferTask without loading this event from database.
- 	// For Update events: store it here so that Update disposition lookups can be fast.
- 	ms.eventsCache.PutEvent(
--		events.EventKey{
--			Na
-```
-
-**File**: `service/history/workflow/mutable_state_impl_test.go` (modified, +1/-0)
-```diff
-@@ -2620,6 +2620,7 @@ func (s *mutableStateSuite) prepareTransientWorkflowTaskCompletionFirstBatchAppl
- 			RunID:       execution.GetRunId(),
- 			EventID:     workflowStartEvent.GetEventId(),
- 			Version:     version,
-+			ShardUUID:   s.mockShard.GetOwner(),
  		},
- 		workflowStartEvent,
- 	)
+ 		{
+-			name:         "operation_error",
+-			outcome:      operationErrorOutcome,
+-			endpointName: testcore.RandomizeStr("test-endpoint"),
++			name:    "operation_error",
++			outcome: operationErrorOutcome,
+ 			handler: func(_ *testing.T, _ *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
+ 				return nil, &nexus.OperationError{
+ 					State: nexus.OperationStateFailed,
+@@ -198,9 +192,8 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 			},
+ 		},
+ 		{
+-			name:         "handler_error",
+-			outcome:      "handler_error:INTERNAL",
+-			endpointName: testcore.RandomizeStr("test-endpoint"),
++			name:    "handler_error",
++			outcome: "handler_error:INTERNAL",
+ 			handler: func(_ *testing.T, _ *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
+ 				return nil, &nexus.HandlerError{
+ 					Type: nexus.HandlerErrorTypeInternal,
+@@ -221,9 +214,8 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 			},
+ 		},
+ 		{
+-			name:         "handler_error_non_retryable",
+-			outcome:      "handler_error:INTERNAL",
+-			endpointName: testcore.RandomizeStr("test-endpoint"),
++			name:    "handler_error_non_retryable",
++			outcome: "handler_error:INTERNAL",
+ 			handler: func(_ *testing.T, _ *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
+ 				return nil, &nexus.HandlerError{
+ 					Type:          nexus.HandlerErrorTypeInternal,
+@@ -245,10 +237,9 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 			},
+ 		},
+ 		{
+-			name:         "handler_timeout",
+-			outcome:      "handler_timeout",
+-			endpointName: testcore.RandomizeStr("test-service"),
+-			timeout:      2 * time.Second,
++			name:    "handler_timeout",
++			outcome: "handler_timeout",
++			timeout: 2 * time.Second,
+ 			handler: func(t *testing.T, res *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
+ 				timeoutStr, set := res.Request.Header[nexus.HeaderRequestTimeout]
+ 				require.True(t, set)
+@@ -273,10 +264,15 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 
+ 	testFn := func(s *NexusApiTestSuite, tc testcase, dispatchOnlyByEndpoint bool) {
+ 		env := newNexusTestEnv(s.T(), useTemporalFailures)
+-		endpoint := env.createNexusEndpoint(s.Context(), s.T(), tc.endpointName, testcore.RandomizeStr("task-queue"))
++		endpoint := env.createNexusEndpoint(s.Context(), s.T(), env.Tv().NexusEndpointName(), env.Tv().TaskQueue().Name)
+ 		var dispatchURL string
+ 		if dispatchOnlyByEndpoint {
+ 			dispatchURL = env.dispatchByEndpointURL(endpoint.Id)
++			originalHandler := tc.handler
++			tc.handler = func(t *testing.T, res *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
++				require.Equal(t, env.Tv().NexusEndpointName(), res.Request.Endpoint)
++				re
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12631** (closed): Log malformed Nexus requests from non-server senders at warn (@stephanos)
+- **PR #12629** (closed): Document pending activity start time semantics (@wenlong-gu)
+- **PR #12628** (2026-10-20): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12623** (2026-10-20): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12621** (closed): Fix enhanced DescribeTaskQueue cache isolation and partial refreshes (@stephanos)
-- **PR #12616** (2026-10-19): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12614** (2026-10-18): Make oss-foundations code owner of chasm workflow nexus package (@feiyang3cat)
-- **PR #12612** (2026-10-18): move time-skipping validator to CHASM for nexus (@feiyang3cat)
-- **PR #12610** (2026-10-18): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12619** (2026-10-20): Fix Nexus API endpoint isolation in parallel outcome tests (@stephanos)
 
 ---
 
@@ -3021,35 +2450,62 @@ passes here.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Log silently dropped links and update callbacks (#12579)
+## X. priority backlog acknowledgement after expired tasks (#12595)
 
 **RULE**:
-When implementing operations in `service/history/api/signalwithstartworkflow/signal_with_start_workflow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/matching/backlog_manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7bc978d`: Log silently dropped links and update callbacks (#12579). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4fa3ed47`: priority backlog acknowledgement after expired tasks (#12595). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/api/signalwithstartworkflow/signal_with_start_workflow.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/matching/backlog_manager_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if len(request.GetLinks()) > 0 {
-			shardContext.GetThrottledLogger().Info("Signal deduplicated by request ID, links on this request not attached.",
-				tag.WorkflowNamespace(request.GetNamespace()),
-				tag.WorkflowID(request.GetWorkflowId()),
-				tag.WorkflowRunID(mutableState.GetExecutionState().GetRunId()),
-				tag.RequestID(request.GetRequestId()),
-				tag.Int("link-count", len(request.GetLinks())))
-		}
+	_, ackLevelBeforeGap := blm.subqueues[subqueueZero].getLevels()
+
+	// All three tasks are still unfinished, so only readLevel may advance.
+	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
+	s.Require().Equal(ackLevelBeforeGap, ackLevel)
+	s.Require().Equal(ackLevelBeforeGap, s.dbAckLevel(blm))
+	s.Require().EqualValues(5, totalApproximateBacklogCount(s.blm))
+
+	_, ackLevel = blm.subqueues[subqueueZero].getLevels()
+func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTail() {
+	s.testSetReadLevelAfterGapExpiredTail(2)
+}
+
+func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTailWithGap() {
+	s.testSetReadLevelAfterGapExpiredTail(100)
+}
+
+func (s *BacklogManagerTestSuite) testSetReadLevelAfterGapExpiredTail(maxReadLevelOffset int64) {
+	if s.fairness {
+		s.T().Skip("this test is only for priority backlog manager")
+	}
+	s.setupToCaptureTasks()
+	blm, tr, start := s.initPriReaderAtEnd()
+
+	tr.signalNewTasks(s.createTasksAt(blm, start+1))
+	_, err := blm.db.CreateTasks(blm.tqCtx, []*writeTaskRequest{{
+		subqueue:  subqueueZero,
+		fairLevel: fairLevel{id: start + 2},
+		taskInfo: &persistencespb.TaskInfo{
+			CreateTime: timestamp.TimeNowPtrUtcAddSeconds(-3600),
+			Expi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
+		s.T().Skip("only for fairness backlog manager")
+	if !s.fairness {
+		s.T().Skip("this case doesn't work with priTaskReader yet")
+	}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7bc978d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4fa3ed47` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:40:59.669Z",
+  "last_updated": "2026-10-20T21:47:14.929Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19090,7 +19090,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "028f23b445bf18bc975316394a091b15d3d9d3f84ba5806e988bbb2ca9629b2a",
+      "content_hash": "424fb282f4a615ea56e349dbb061cd66f6ebd0d98d6a12f93fb97fbc78e8e048",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -19137,7 +19137,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-19T08:14:19.358Z",
+      "verified_at": "2026-10-20T21:47:04.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44279,8 +44279,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "b7bc978d",
-      "content_hash": "ca5898bf06b9d71707afb6220878afa42c33e327c09aa9ad9f9694cdf48f2522",
+      "source_version": "36c879e3",
+      "content_hash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -44298,6 +44298,11 @@
           "number": 3096,
           "title": "Log silently dropped links and update callbacks (#12579)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3401,
+          "title": "priority backlog acknowledgement after expired tasks (#12595)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44305,7 +44310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:25:49.947Z",
+      "verified_at": "2026-10-20T21:47:14.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105168,6 +105173,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:40:59.655Z"
+    },
+    "rule-3401": {
+      "learning_id": "rule-3401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3401,
+      "title": "priority backlog acknowledgement after expired tasks (#12595)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "36c879e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:47:14.914Z"
     }
   },
   "aliases": {
