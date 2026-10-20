@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:32:59.056Z",
+  "last_updated": "2026-10-20T22:39:35.421Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1010,14 +1010,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "content_hash": "0c2141b08dfe8480dd363f65ea36a4b7a98ccf46cef44474986070b8c8f07da7",
-      "verified_at": "2026-10-19T09:19:11.075Z",
+      "content_hash": "1dc018e2af674320a258a2a71360f70f11fd300db562a6119498615b2d6129e0",
+      "verified_at": "2026-10-20T22:39:19.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:19:11.075Z"
+      "last_updated": "2026-10-20T22:39:19.650Z"
     },
     "amazon/chronos-2": {
       "repository": "amazon/chronos-2",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
-      "verified_at": "2026-10-20T06:33:13.360Z",
+      "content_hash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
+      "verified_at": "2026-10-20T22:39:35.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:33:13.360Z"
+      "last_updated": "2026-10-20T22:39:35.420Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
-      "verified_at": "2026-10-19T11:09:12.565Z",
+      "content_hash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
+      "verified_at": "2026-10-20T22:39:26.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:09:12.565Z"
+      "last_updated": "2026-10-20T22:39:26.381Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

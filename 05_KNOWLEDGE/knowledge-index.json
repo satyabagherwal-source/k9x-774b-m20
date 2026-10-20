@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:32:58.992Z",
+  "last_updated": "2026-10-20T22:39:35.341Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24448,7 +24448,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "0c2141b08dfe8480dd363f65ea36a4b7a98ccf46cef44474986070b8c8f07da7",
+      "content_hash": "1dc018e2af674320a258a2a71360f70f11fd300db562a6119498615b2d6129e0",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -24506,7 +24506,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-19T09:19:11.014Z",
+      "verified_at": "2026-10-20T22:39:19.569Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44506,8 +44506,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "75795724",
-      "content_hash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
+      "source_version": "5ab93e49",
+      "content_hash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -44525,6 +44525,11 @@
           "number": 2528,
           "title": "Content-Addressable Release Asset Immutability Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3416,
+          "title": "build(deps): bump the github-actions group with 4 updates (#1361)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44532,7 +44537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:09:12.504Z",
+      "verified_at": "2026-10-20T22:39:26.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46627,8 +46632,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "5f2a3da1",
-      "content_hash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
+      "source_version": "f7d92df4",
+      "content_hash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -46646,6 +46651,11 @@
           "number": 3098,
           "title": "Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3417,
+          "title": "ValueUpdate inheritors doc comments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46653,7 +46663,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:33:13.285Z",
+      "verified_at": "2026-10-20T22:39:35.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105453,6 +105463,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:32:58.976Z"
+    },
+    "rule-3416": {
+      "learning_id": "rule-3416",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3416,
+      "title": "build(deps): bump the github-actions group with 4 updates (#1361)",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "5ab93e49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:39:26.292Z"
+    },
+    "rule-3417": {
+      "learning_id": "rule-3417",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3417,
+      "title": "ValueUpdate inheritors doc comments",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "f7d92df4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:39:35.323Z"
     }
   },
   "aliases": {

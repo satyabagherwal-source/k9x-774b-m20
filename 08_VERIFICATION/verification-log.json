@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-M34S",
-    "timestamp": "2026-10-19T23:47:13.372Z",
-    "repository": "superhighfives/pika",
-    "learningId": "learn-github-superhighfives-pika",
-    "contentHash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-MCEE",
-    "timestamp": "2026-10-19T23:47:25.382Z",
-    "repository": "wooorm/parse-entities",
-    "learningId": "learn-github-wooorm-parse-entities",
-    "contentHash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-UIDS",
-    "timestamp": "2026-10-19T23:53:46.384Z",
-    "repository": "sindresorhus/got",
-    "learningId": "learn-github-sindresorhus-got",
-    "contentHash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-UJX9",
     "timestamp": "2026-10-19T23:53:48.381Z",
     "repository": "SDWebImage/SDWebImageSwiftUI",
@@ -7490,6 +7445,51 @@
     "repository": "projectcontour/contour",
     "learningId": "learn-github-projectcontour-contour",
     "contentHash": "38a4b00de174bfaf3231b1553b73bffb8f5b122cc3a4ff21d12a4cbac399f3cc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MMHK",
+    "timestamp": "2026-10-20T22:39:19.640Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "1dc018e2af674320a258a2a71360f70f11fd300db562a6119498615b2d6129e0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MROE",
+    "timestamp": "2026-10-20T22:39:26.366Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MYNN",
+    "timestamp": "2026-10-20T22:39:35.411Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

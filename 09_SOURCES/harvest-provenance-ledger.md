@@ -4074,3 +4074,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-20T22:32:49.540Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `2a41b35c` | Multi-dimensional audit evidence | 2026-10-20T22:32:56.154Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `0f487604` | Multi-dimensional audit evidence | 2026-10-20T22:32:59.049Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-20T22:39:19.643Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `5ab93e49` | Multi-dimensional audit evidence | 2026-10-20T22:39:26.374Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `f7d92df4` | Multi-dimensional audit evidence | 2026-10-20T22:39:35.413Z |

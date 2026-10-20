@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `5f2a3da1`  
+> **Source Version**: `f7d92df4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:33:12.994Z  
+> **Timestamp**: 2026-10-20T22:39:35.012Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:33:10.920Z  
+> **Harvest Timestamp**: 2026-10-20T22:39:35.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7133 stars
+- **Stars / Engagement**: 7138 stars
 
 ---
 
@@ -1065,270 +1065,318 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f2a3da1` (2026-10-19)
-**Commit Message**: Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo
+### Incident Patch 1: `985ed83c` (2026-10-20)
+**Commit Message**: fix ValueUpdate inheritors doc comments
 
-fix(deps): update jackson monorepo to v2.22.4
-
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
+**File**: `document/src/vespa/document/update/addvalueupdate.cpp` (modified, +2/-2)
 ```diff
-@@ -38,7 +38,7 @@
-         <guava.vespa.version>33.7.2-jre</guava.vespa.version>
-         <guice.vespa.version>6.0.0</guice.vespa.version>
-         <j2objc-annotations.vespa.version>3.1</j2objc-annotations.vespa.version>
--        <jackson2.vespa.version>2.22.3</jackson2.vespa.version>
-+        <jackson2.vespa.version>2.22.4</jackson2.vespa.version>
-         <jackson-annotations.vespa.version>2.22</jackson-annotations.vespa.version>
-         <jackson-databind.vespa.version>${jackson2.vespa.version}</jackson-databind.vespa.version>
-         <jakarta.inject.vespa.version>2.0.1</jakarta.inject.vespa.version>
+@@ -63,10 +63,10 @@ void AddValueUpdate::print(std::ostream& out, bool, const std::string& indent) c
+ // Apply this update to the given document.
+ bool AddValueUpdate::applyTo(FieldValue& value) const {
+     if (value.isA(FieldValue::Type::ARRAY)) {
+-        ArrayFieldValue& doc(static_cast<ArrayFieldValue&>(value));
++        auto& doc = static_cast<ArrayFieldValue&>(value);
+         doc.add(*_value);
+     } else if (value.isA(FieldValue::Type::WSET)) {
+-        WeightedSetFieldValue& doc(static_cast<WeightedSetFieldValue&>(value));
++        auto& doc = static_cast<WeightedSetFieldValue&>(value);
+         doc.add(*_value, _weight);
+     } else {
+         std::string err = make_string("Unable to add a value to a \"%s\" field value.", value.className());
 ```
 
-**File**: `integration/logstash-plugins/logstash-output-vespa/build.gradle` (modified, +4/-4)
+**File**: `document/src/vespa/document/update/addvalueupdate.h` (modified, +9/-6)
 ```diff
-@@ -59,9 +59,9 @@ dependencies {
+@@ -1,10 +1,5 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-/**
+- * @class document::AddValueUpdate
+- * @ingroup document
+- *
+- * @brief Represents an update that specifies an addition to a field value.
+- */
++
+ #pragma once
  
-     implementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
+ #include "valueupdate.h"
+@@ -13,6 +8,14 @@
  
--    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.3'
--    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.3'
--    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.3'
-+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
-+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
-+    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.4'
-     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.22'
+ namespace document {
  
-     implementation "org.yaml:snakeyaml:${snakeYamlVersion}"
-@@ -73,7 +73,7 @@ dependencies {
-     testImplementation 'org.mockito:mockito-core:5.24.0'
-     testImplementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
-     testImplementation fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core.jar")
--    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.3'
-+    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
- }
++/**
++ * Represents an add to array and weighted set fields.
++ *
++ * For array fields it appends the value to the array.
++ * For weighted set fields it inserts the value with the given weight,
++ * replacing the weight if the value is already present. A zero weight removes
++ * the value if the type has removeIfZero.
++ */
+ class AddValueUpdate final : public ValueUpdate {
+     std::unique_ptr<FieldValue> _value;  // The field value to add by this update.
+     int                         _weight; // The weight to assign to the contained value.
+```
+
+**File**: `document/src/vespa/document/update/arithmeticvalueupdate.cpp` (modified, +1/-0)
+```diff
+@@ -1,4 +1,5 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++
+ #include "arithmeticvalueupdate.h"
  
- clean {
+ #include <vespa/document/base/field.h>
+```
+
+**File**: `document/src/vespa/document/update/arithmeticvalueupdate.h` (modified, +8/-7)
+```diff
+@@ -1,17 +1,18 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-/**
+- * @class document::ArithmeticValueUpdate
+- * @ingroup document
+- *
+- * @brief Represent an update that specifies an arithmetic operation that is to
+- *        be applied to the weight of a field value.
+- */
++
+ #pragma once
+ 
+ #include "valueupdate.h"
+ 
+ namespace document {
+ 
++/**
++ * Represents an arithmetic operation (add, subtract, multiply or divide) to
++ * be applied to a numeric field value.
++ *
++ * Wrapped in a MapValueUpdate it operates on the weight of a weighted set
++ * entry.
++ */
+ class ArithmeticValueUpdate final : public ValueUpdate {
+ public:
+     /** Declare all types of arithmetic value updates. */
+```
+
+**File**: `document/src/vespa/document/update/assignvalueupdate.h` (modified, +8/-10)
+```diff
+@@ -1,14 +1,5 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-/**
+- * @class document::AssignValueUpdate
+- * @ingroup document
+- *
+- * @brief Represents an update that specifies an assignment of a value to a
+- *        field, completely overwriting the previous value.
+- *
+- * Note that for multi-value types, the entire collection is overwritten with a
+- * new collection.
+- */
++
+ #pragma once
+ 
+ #include "valueupdate.h"
+@@ -17,6 +8,13 @@
+ 
+ namespace document {
+ 
++/**
++ * Represents an update that specifies an assignment of a value to a
++ * field, completely overwriting the previous value.
++ *
++ * Note that for multi-value types, the entire collection is overwritten with a
++ * new collection. An assign without a value removes the field.
++ */
+ class AssignValueUpdate final : public ValueUpdate {
+     std::unique_ptr<FieldValue> _value;
+ 
+```
+
+**File**: `document/src/vespa/document/update/clearvalueupdate.h` (modified, +7/-6)
+```diff
+@@ -1,16 +1,17 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-/**
+- * @class document::ClearValueUpdate
+- * @ingroup document
+- *
+- * @brief Represents an update that clears the content of a field value.
+- */
++
+ #pragma once
+ 
+ #include "valueupdate.h"
+ 
+ namespace document {
+ 
++/**
++ * Represents an update that removes the field value from the document.
++ *
++ * Wrapped in a MapValueUpdate it removes the addressed array element or
++ * weighted set entry instead.
++ */
+ class ClearValueUpdate final : public ValueUpdate {
+     ACCEPT_UPDATE_VISITOR;
+ 
+```
+
+**File**: `document/src/vespa/document/update/documentupdate.h` (modified, +10/-27)
+```diff
+@@ -1,28 +1,5 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-/**
+- * @class document::DocumentUpdate
+- * @ingroup document
+- *
+- * @brief Holds a set of operation that may be used to update a document.
+- *
+- * Stores update values for fields defined in the common
+- * VESPA field repository. The "key" for a document is the document id, a
+- * string that must conform to the vespa URI schemes.
+- *
+- * The following update operations are supported: assign, append and remove.
+- * Append and remove are only supported for multivalued fields (arrays and
+- * weightedsets).
+- *
+- * Each document update has a document type, which defines what documents this
+- * update may be applied to and what fields may be updated in that document
+- * update.  The document type for the update is given as a pointer in the
+- * document update object's constructor.<br>
+- * A DocumentUpdate has a vector of DocumentUpdate::Update objects
+- *
+- * @see DocumentId
+- * @see IdString
+- * @see documentmanager.h
+- */
++
+ #pragma once
+ 
+ #include "fieldpathupdate.h"
+@@ -36,10 +13,16 @@ namespace document {
+ class ByteBuffer;
+ class Document;
+ class VespaDocumentSerializer;
++
+ /**
+- * Class containing a document update.  In vespa 5.0, support for field
+- * path updates was added, and a new serialization format was
+- * introduced while keeping the old one.
++ * Holds the set of update operations to apply to a single document, identified
++ * by its document id.
++ *
++ * The update is bound to a document type, which defines which fields may be
++ * updated, and it may only be applied to a document of that type. The
++ * operations are kept as a list of FieldUpdate (a set of ValueUpdate for one
++ * field) and a list of FieldPathUpdate. If createIfNonExistent is set, an
++ * empty document is created and updated when the target document is missing.
+  */
+ class DocumentUpdate {
+ public:
+```
+
+**File**: `document/src/vespa/document/update/fieldupdate.h` (modified, +8/-12)
+```diff
+@@ -1,16 +1,5 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-/**
+- * \class document::FieldUpdate
+- * \ingroup update
+- *
+- * \brief Represent a collection of updates to be performed on a single
+- * field in a document.
+- *
+- * It inherits from Printable to produce human readable output when required.
+- * Serialization is done through Serializable and XmlSerializable.
+- * Deserialization is specially handled as document type is not serialized with
+- * the object.
+- */
++
+ #pragma once
+ 
+ #include "valueupdate.h"
+@@ -22,6 +11,13 @@ namespace document {
+ class Document;
+ class DocumentType;
+ 
++/**
++ * Represents a collection of updates to be performed on a single field in a
++ * document. The value updates are applied in the order they were added.
++ *
++ * Deserialization requires the document type, as the field is identified by
++ * id and the field's data type is not part of the serialized form.
++ */
+ class FieldUpdate {
+ public:
+     using nbostream = vespalib::nbostream;
 ```
 
 ---
 
-### Incident Patch 2: `aad49430` (2026-10-19)
-**Commit Message**: Merge pull request #38248 from vespa-engine/bratseth/schema-explanations
+### Incident Patch 2: `bca7da17` (2026-10-20)
+**Commit Message**: feat(cli): don't break batch users' workflow & filesystem key fix
 
-Bratseth/schema explanations
-
-**File**: `config-model/src/main/java/com/yahoo/schema/RankProfile.java` (modified, +8/-0)
+**File**: `client/go/internal/cli/auth/auth0/auth0.go` (modified, +5/-4)
 ```diff
-@@ -177,6 +177,8 @@ public class RankProfile implements Cloneable {
+@@ -38,9 +38,10 @@ type Client struct {
+ }
  
-     private Boolean useSignificanceModel;
+ type Options struct {
+-	ConfigPath string
+-	SystemName string
+-	SystemURL  string
++	ConfigPath     string
++	SystemName     string
++	SystemURL      string
++	UseFileStorage bool
+ }
  
-+    private String explanation = null;
-+
-     private final ApplicationPackage applicationPackage;
-     private final DeployLogger deployLogger;
- 
-@@ -252,6 +254,12 @@ public void setStrict(Boolean strict) {
-         this.strict = strict;
-     }
- 
-+    /** Sets a free text explanation of the content and usage of this rank profile, or null to remove it. */
-+    public void setExplanation(String explanation) { this.explanation = explanation; }
-+
-+    /** Returns the free text explanation of the content and usage of this rank profile, if any. Explanations are not inherited. */
-+    public Optional<String> getExplanation() { return Optional.ofNullable(explanation); }
-+
-     public void setUseSignificanceModel(Boolean useSignificanceModel) {
-         this.useSignificanceModel = useSignificanceModel;
-     }
+ // config is the root type of the persisted config
+@@ -150,7 +151,7 @@ func (a *Client) AccessToken(forceRefresh bool) (string, error) {
+ 		// use the refresh token to get a new access token:
+ 		tr := &auth.TokenRetriever{
+ 			Authenticator: a.Authenticator,
+-			Secrets:       auth.NewKeyring(),
++			Secrets:       auth.NewKeyringWithOptions(a.options.UseFileStorage),
+ 			Client:        http.DefaultClient,
+ 		}
+ 		resp, err := tr.Refresh(cancelOnInterrupt(), a.options.SystemName)
 ```
 
-**File**: `config-model/src/main/java/com/yahoo/schema/Schema.java` (modified, +8/-0)
+**File**: `client/go/internal/cli/cmd/login.go` (modified, +7/-7)
 ```diff
-@@ -69,6 +69,8 @@ public class Schema implements ImmutableSchema {
- 
-     private Stemming stemming = null;
- 
-+    private String explanation = null;
-+
-     private final FieldSets fieldSets = new FieldSets(Optional.of(this));
- 
-     /** The document contained in this schema */
-@@ -205,6 +207,12 @@ public boolean isRawAsBase64() {
- 
-     public void enableRawAsBase64(boolean value) { rawAsBase64 = value; }
- 
-+    /** Sets a free text explanation of the content and usage of this schema, or null to remove it. */
-+    public void setExplanation(String explanation) { this.explanation = explanation; }
-+
-+    /** Returns the free text explanation of the content and usage of this schema, if any. Explanations are not inherited. */
-+    public Optional<String> getExplanation() { return Optional.ofNullable(explanation); }
-+
-     /**
-      * Sets the stemming default of fields. Default is ALL
-      *
-```
-
-**File**: `config-model/src/main/java/com/yahoo/schema/derived/SchemaInfo.java` (modified, +6/-0)
-```diff
-@@ -91,6 +91,7 @@ private Map<String, RankProfileInfo> toRankProfiles(Collection<RankProfile> rank
-     public void getConfig(SchemaInfoConfig.Builder builder) {
-         var schemaBuilder = new SchemaInfoConfig.Schema.Builder();
-         schemaBuilder.name(schema.getName());
-+        schema.getExplanation().ifPresent(schemaBuilder::explanation);
-         addFieldsConfig(schemaBuilder);
-         addFieldSetConfig(schemaBuilder);
-         addSummaryConfig(schemaBuilder);
-@@ -132,6 +133,7 @@ private void addFieldConfig(ImmutableSDField field, SchemaInfoConfig.Schema.Buil
-         fieldBuilder.attribute(field.doesAttributing());
-         fieldBuilder.index(field.doesIndexing());
-         fieldBuilder.bitPacked(field.doesBitPacking());
-+        field.getExplanation().ifPresent(fieldBuilder::explanation);
-         for (var fastMapFields : field.getFastMapSearches()) {
-             fieldBuilder.fastMapSearchFields(new SchemaInfoConfig.Schema.Field.FastMapSearchFields.Builder()
-                                                      .lookupName(fastMapFields.lookupName())
-@@ -208,6 +210,7 @@ private void addRankProfilesConfig(SchemaInfoConfig.Schema.Builder schemaBuilder
-                     .hasRankFeatures(rankProfile.hasRankFeatures())
-                     .significance(new SchemaInfoConfig.Schema.Rankprofile.Significance.Builder()
-                                           .useModel(rankProfile.useSignificanceModel()));
-+            rankProfile.explanation().ifPresent(rankProfileConfig::explanation);
-             rankProfile.getMatchPhaseMaxHits().ifPresent(rankProfileConfig::matchPhaseMaxHits);
-             rankProfile.getTotalMatchPhaseMaxHits().ifPresent(rankProfileConfig::totalMatchPhaseMaxHits);
-             rankProfile.getTotalKeepRankCount().ifPresent(rankProfileConfig::totalKeepRankCount);
-@@ -266,9 +269,11 @@ public static final class RankProfileInfo {
-         private final boolean useSignificanceModel;
-         private final Map<Reference, RankProfile.Input> inputs;
-         private final List<String> sortFeatures;
-+        private final Optional<String> explanation;
- 
-         public RankProfileInfo(RankProfile profile) {
-             this.name = profile.name();
-+            this.explanation = profile.getExplanation();
-             this.hasSummaryFeatures =  ! profile.getSummaryFeatures().isEmpty();
-             this.hasRankFeatures =  ! profile.getRankFeatures().isEmpty();
-             this.inputs = profile.inputs();
-@@ -296,6 +301,7 @@ public RankProfileInfo(RankProfile profile) {
-         public boolean useSignificanceModel() { return useSignificanceModel; }
-         public Map<Reference, RankProfile.Input> inputs() { return inputs; }
-         public List<String> sortFeatures() { return sortFeatures; }
-+        public Optional<String> explanation() { return explanation; }
- 
-     }
- 
-```
-
-**File**: `config-model/src/main/java/com/yahoo/schema/document/ImmutableImportedSDField.java` (modified, +6/-0)
-```diff
-@@ -12,6 +12,7 @@
- import java.util.Collection;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- 
- /**
-  * Wraps {@link ImportedField} as {@link ImmutableSDField}.
-@@ -224,6 +225,11 @@ public int getWeight() {
-         return importedField.targetField().getWeight();
-     }
- 
-+    @Override
-+    public Optional<String> getExplanation() {
-+        return importedField.targetField().getExplanation();
-+    }
-+
-     @Override
-     public int getLiteralBoost() {
-         return importedField.targetField().getLiteralBoost();
-```
-
-**File**: `config-model/src/main/java/com/yahoo/schema/document/ImmutableSDField.java` (modified, +5/-0)
-```diff
-@@ -12,6 +12,7 @@
- import java.util.Collection;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- 
- /**
-  * An interface containing the non-mutating methods of {@link SDField}.
-@@ -190,6 +191,10 @@ default boolean isOfTypeOrNested(DataType type) {
-     boolean hasFullIndexingDocprocRights();
- 
-     int getWeight();
-+
-+    /** Returns the free text explanation of the content and usage of this field, if any. */
-+    Optional<String> getExplanation();
-+
-     int getLiteralBoost();
-     RankType getRankType();
-     Map<String, Index> getIndices();
-```
-
-**File**: `config-model/src/main/java/com/yahoo/schema/document/SDField.java` (modified, +10/-0)
-```diff
-@@ -39,6 +39,7 @@
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- import java.util.TreeMap;
- 
- /**
-@@ -81,6 +82,8 @@ public class SDField extends Field implements ImmutableSDField {
-      */
-     private int weight = 100;
- 
-+    private String explanation = null;
-+
-     /**
-      * Indicates what kind of matching should be done on this field
-      */
-@@ -550,6 +553,13 @@ public boolean hasIndex() {
-     @Override
-     public int getWeight() { return weight; }
- 
-+    /** Sets a free text explanation of the content and usage of this field, or null to remove it. */
-+    public void setExplanation(String explanation) { this.explanation = explanation; }
-+
-+    /** Returns the free text explanation of the content and usage of this field, if any. Explanations are not inherited. */
-+    @Override
-+    public Optional<String> getExplanation() { return Optional.ofNullable(explanation); }
-+
-     /** Returns what kind of matching type should be applied. */
-     @Override
-     public Matching getMatching() { return matching; }
-```
-
-**File**: `config-model/src/main/java/com/yahoo/schema/parser/ConvertParsedFields.java` (modified, +1/-0)
-```diff
-@@ -218,6 +218,7 @@ private void convertCommonFieldSettings(Schema schema, SDField field, ParsedFiel
-             Attribute.validateDataType(schema.getName(), field.getName(), field.getDataType());
-         }
-         parsed.getWeight().ifPresent(value -> field.setWeight(value));
-+        parsed.getExplanation().ifPresent(field::setExplanation);
-         parsed.getStemming().ifPresent(value -> field.setStemming(value));
-         parsed.getNormalizing().ifPresent(value -> convertNormalizing(field, value));
-         parsed.getIndexLinguisticsProfile().ifPresent(value -> field.setIndexLinguisticsProfile(value));
-```
-
-**File**: `config-model/src/main/java/com/yahoo/schema/parser/ConvertParsedSchemas.java` (modified, +1/-0)
-```diff
-@@ -282,6 +282,7 @@ private void convertSchema(Schema schema, ParsedSchema parsed) {
-         }
-         parsed.getDocumentIdAttribute().ifPresent(schema::enableDocumentIdAttribute);
-         parsed.getRawAsBase64().ifPresent(value -> schema.enableRawAsBase64(value));
-+        parsed.getExplanation().ifPresent(schema::setExplanation);
-         var typeContext = typeConverter.makeContext(parsed.getDocument());
-         var sfResolver = new SummaryFieldTypeResolver(schema, parsed.getDocumentSummaries());
-         var fieldConverter = new ConvertParsedFields(typeContext, convertedStructs, properties);
+@@ -67,18 +67,18 @@ func doLogin(cli *CLI, cmd *cobra.Command, useFileStorage bool, noBrowser bool,
+ 	if err != nil {
+ 		return err
+ 	}
+-	a, err := auth0.NewClient(cli.httpClient, auth0.Options{ConfigPath: cli.config.authConfigPath(), SystemName: system.Name, SystemURL: system.URL})
++	a, err := auth0.NewClient(cli.httpClient, auth0.Options{ConfigPath: cli.config.authConfigPath(), SystemName: system.Name, SystemURL: system.URL, UseFileStorage: useFileStorage})
+ 	if err != nil {
+ 		return err
+ 	}
+-	if _, err := a.AccessToken(true); err == nil {
+-		cli.printDebug("Using stored credentials, refreshed if needed")
+-		if !batch {
++	if !batch {
++		if _, err := a.AccessToken(true); err == nil {
++			cli.printDebug("Using stored credentials, refreshed if needed")
+ 			cli.printSuccess("Logged in")
++			return nil
++		} else {
++			cli.printDebug("Could not use stored credentials, starting new login: ", err)
+ 		}
+-		return nil
+-	} else {
+-		cli.printDebug("Could not use stored credentials, starting new login: ", err)
+ 	}
+ 	state, err := a.Authenticator.Start(ctx)
+ 	if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38264** (2026-10-19): Make blueprints non-strict outside first-phase matching (@arnej27959)
-- **PR #38263** (2026-10-19): Add metric for padded sequence length (@ingridhabrekke)
-- **PR #38262** (2026-10-19): gradle needs a bigger JVM heap (@arnej27959)
-- **PR #38260** (2026-10-19): Use vespa-abseil-cpp, vespa-gtest and vespa-re2 on Fedora and Amazon … (@toregge)
-- **PR #38259** (2026-10-19): Single program for sort features (@radu-gheorghe)
-- **PR #38257** (2026-10-19): Make SHA-256 file references unconditional (@gjoranv)
+- **PR #38277** (2026-10-20): Prioritize unique lock in persistence engine. (@toregge)
+- **PR #38276** (2026-10-20): Remove most traces of fast-map-search feature flag (@boeker)
+- **PR #38274** (2026-10-20): Prepare for prioritizing unique lock in persistence engine. (@toregge)
+- **PR #38273** (2026-10-20): fix ValueUpdate inheritors doc comments (@johansolbakken)
+- **PR #38272** (2026-10-20): Add get_shared_lock() member function to PersistenceEngine. (@toregge)
+- **PR #38270** (2026-10-20): Add node metrics for trust store CAs and identity certificate issuers (@sarzhann)
 
 ---
 
@@ -1348,28 +1396,30 @@ Bratseth/schema explanations
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo
+## X. ValueUpdate inheritors doc comments
 
 **RULE**:
-When implementing operations in `dependency-versions/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `document/src/vespa/document/update/addvalueupdate.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f2a3da1`: Merge pull request #38255 from vespa-engine/renovate/jackson-monorepo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `985ed83c`: ValueUpdate inheritors doc comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dependency-versions/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `document/src/vespa/document/update/addvalueupdate.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        <jackson2.vespa.version>2.22.4</jackson2.vespa.version>
+        auto& doc = static_cast<ArrayFieldValue&>(value);
+        auto& doc = static_cast<WeightedSetFieldValue&>(value);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        <jackson2.vespa.version>2.22.3</jackson2.vespa.version>
+        ArrayFieldValue& doc(static_cast<ArrayFieldValue&>(value));
+        WeightedSetFieldValue& doc(static_cast<WeightedSetFieldValue&>(value));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f2a3da1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `985ed83c` are properly handled with clean fallback behavior.

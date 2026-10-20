@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "0c2141b08dfe8480dd363f65ea36a4b7a98ccf46cef44474986070b8c8f07da7",
-    "lastHarvestedAt": "2026-10-19T09:19:11.068Z",
+    "contentHash": "1dc018e2af674320a258a2a71360f70f11fd300db562a6119498615b2d6129e0",
+    "lastHarvestedAt": "2026-10-20T22:39:19.643Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "5f2a3da1",
+    "sourceVersion": "f7d92df4",
     "license": "Apache-2.0",
-    "contentHash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
-    "lastHarvestedAt": "2026-10-20T06:33:13.353Z",
+    "contentHash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
+    "lastHarvestedAt": "2026-10-20T22:39:35.413Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "75795724",
+    "sourceVersion": "5ab93e49",
     "license": "GPL-3.0",
-    "contentHash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
-    "lastHarvestedAt": "2026-10-19T11:09:12.559Z",
+    "contentHash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
+    "lastHarvestedAt": "2026-10-20T22:39:26.374Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {
