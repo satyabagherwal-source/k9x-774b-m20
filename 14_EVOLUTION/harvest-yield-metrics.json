@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:58:50.819Z",
-  "total_cycles_completed": 3790,
-  "total_learnings_persisted": 3790,
-  "total_rules_promoted": 2990,
+  "last_updated": "2026-10-20T13:10:16.624Z",
+  "total_cycles_completed": 3792,
+  "total_learnings_persisted": 3792,
+  "total_rules_promoted": 2993,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:05:32.833Z",
-      "repository": "sozercan/kaset",
-      "learningId": "learn-github-sozercan-kaset",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:11:47.096Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:11:48.264Z",
       "repository": "digitalbazaar/pyld",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T12:58:50.819Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:10:16.489Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:10:16.624Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

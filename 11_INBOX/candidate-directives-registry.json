@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:03:34.207Z",
+  "last_updated": "2026-10-20T13:10:16.487Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2202,6 +2202,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-ahmadhassan-bted-autoswarm-shadow-adapter"
+    },
+    {
+      "id": "CD-ATGN",
+      "directive_title": "Base vs. SFT Model Versioning Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "OpenMOSS-Team/MOSS-Image-Base",
+      "source_commit": "hf-openmoss-",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-openmoss-team-moss-image-base"
     }
   ]
 }

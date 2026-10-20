@@ -3820,3 +3820,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-20T12:58:44.858Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `69466bd3` | Multi-dimensional audit evidence | 2026-10-20T12:58:46.823Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0dc6de17` | Multi-dimensional audit evidence | 2026-10-20T12:58:50.814Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-20T13:10:16.482Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `eaf2c471` | Multi-dimensional audit evidence | 2026-10-20T13:10:16.619Z |

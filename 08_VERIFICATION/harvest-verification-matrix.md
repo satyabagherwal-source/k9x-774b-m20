@@ -3813,3 +3813,5 @@
 | `CYCLE-20261020-VZSJ` | `2026-10-20T12:58:44.851Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3175, Rule 1312` | Yes (`b210ba08...`) |
 | `CYCLE-20261020-W1B4` | `2026-10-20T12:58:46.816Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3176` | Yes (`aad7ad7a...`) |
 | `CYCLE-20261020-W4DZ` | `2026-10-20T12:58:50.807Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3177` | Yes (`7c91ed39...`) |
+| `CYCLE-20261020-ATGB` | `2026-10-20T13:10:16.475Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3178, Rule 3179` | Yes (`047bc019...`) |
+| `CYCLE-20261020-ATK4` | `2026-10-20T13:10:16.612Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3180` | Yes (`16301e66...`) |

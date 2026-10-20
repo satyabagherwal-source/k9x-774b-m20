@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `cc23e63f`  
+> **Source Version**: `eaf2c471`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:13:18.158Z  
+> **Timestamp**: 2026-10-20T13:10:16.300Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:13:17.895Z  
+> **Harvest Timestamp**: 2026-10-20T13:10:15.741Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25688 stars
+- **Stars / Engagement**: 25690 stars
 
 ---
 
@@ -1259,11 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49470** (2026-10-19): **gha/conformance-gke: Accept /ci-gke arguments as a JSON string**
-  *Symptoms*: ariane passes the capture of a trigger comment to the workflow as a JSON string, so /ci-gke versions=all arrives as "versions=all". The Generate Matrix step indexes it with jq like the object that conformance-kpr-gke passes, so every /ci-gke with an argument fails before any cluster exists [1]:    jq: error (at <stdin>:1): Cannot index string with string "ipsec"  Its awk parsing also kept the closing quote, so versions=all never matched, and channel=rapid became the filter channels.channel=RAPID".  This commit turns extra-args into one JSON object first, splitting a key=value string into a single key, and both steps read every option from that object.  Fixes: 1337c87c9955 ("Add vanilla cloud-provider configs for conformance tests") 1: https://github.com/cilium/cilium/actions/runs/39252040705/job/118057961373  This PR was prepared with AIL:3. I personally checked the diff. 
+- **Issue #49490** (2026-10-20): **renovate: Bump envoy version for main and v1.20**
+  *Symptoms*: This is a part of regular rolling upgrade  ```release-note renovate: Bump envoy version for main and v1.20 ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate of Origin]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#dev-coo [Submitting a pull request]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#submitting-a-pull-request [kind]: https://kind.sigs.k8s.io 
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
-- **Issue #49467** (2026-10-19): **[v1.20] Backports 2026-10-19**
-  *Symptoms*:  * [x] #49453 (@aanm)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49453 ``` 
+- **Issue #49478** (2026-10-20): **vendor: Update `controller-runtime` to `v0.25.2`**
+  *Symptoms*: When we updated k8s libs to 0.37 in #48400, there wasn't any release of controller-runtime in the 0.25 line so we had to temporary switch to a pseudo-version via a replace statement. Proper 0.25 controller-runtime tags are now available so we can drop this.
   **Post-Mortem & Fix Analysis**:
   > /test
   > /test
@@ -1283,81 +1285,82 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46fabd0e` (2026-10-19)
-**Commit Message**: Revert "workflows: Upgrade to RHEL 9"
+### Incident Patch 1: `7b9d6df6` (2026-09-09)
+**Commit Message**: loader: give each BPF compile its own timeout
 
-Since commit c868dd3804eb ("workflows: Upgrade to RHEL 9") moved the
-kube-proxy-1 and kube-proxy-6 legs of the scheduled Cilium E2E Upgrade
-workflow from rhel8.10 to rhel9, both legs fail in all 9 runs since
-the merge. The same legs passed on rhel8.10 in every run before it.
-Every failing action is an IPv6 pod-to-world request through the L7
-proxy to fake.external.service.cilium, with curl exiting with code 22
-or 28 in the client-egress-l7*, to-fqdns-with-proxy and
-client-egress-tls-sni tests:
+Reinitialize shares one 300-second ExecTimeout across all compiles and
+the rest of datapath setup. On CPU-contended nodes, the later compiles
+can run out of time even when none takes 300 seconds on its own.
 
-  ❌ 4/23 tests failed (24/312 actions), 7 tests skipped, 0 scenarios skipped:
+In CI run [1], bpf_overlay.c hit the shared deadline, but the retry
+compiled it in 61 seconds. Endpoint regeneration had to wait for
+reinitialization to finish.
 
-This commit reverts the kernel change until we understand why IPv6 L7
-egress breaks on the RHEL 9 image. We lose RHEL 9 coverage in the
-meantime, which is acceptable since the two kube-proxy legs never
-passed on it.
+Move the timeout into compile() and the compiler version probe. Each
+gets its own 300-second limit. Caller cancellation and earlier
+deadlines still apply.
 
-This commit was prepared with AIL:2. I personally checked the job logs
-of the failing runs.
+[1] https://github.com/cilium/cilium/actions/runs/33862617835
 
-Fixes: c868dd3804eb ("workflows: Upgrade to RHEL 9")
+This commit was prepared with AIL:3. I personally checked the compile
+timestamps in the run 33862617835 agent log.
+
 Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
-**File**: `.github/actions/e2e/ipsec.yaml` (modified, +1/-1)
+**File**: `pkg/datapath/loader/base.go` (modified, +1/-2)
 ```diff
-@@ -1,5 +1,5 @@
- - name: 'ipsec-1'
--  kernel: 'rhel9'
-+  kernel: 'rhel8.10'
-   kube-proxy: 'iptables'
-   kpr: 'false'
-   tunnel: 'vxlan'
+@@ -400,8 +400,7 @@ func (l *loader) Reinitialize(ctx context.Context, lnc *config.Config, tunnelCon
+ 		}
+ 	}
+ 
+-	ctx, cancel := context.WithTimeout(ctx, defaults.ExecTimeout)
+-	defer cancel()
++	// Each clang run below has its own ExecTimeout; the rest inherits ctx.
+ 
+ 	if lnc.KPRConfig.EnableSocketLB {
+ 		// compile bpf_sock.c and attach/detach progs for socketLB
 ```
 
-**File**: `.github/actions/e2e/kernel-versions.yml` (modified, +1/-1)
+**File**: `pkg/datapath/loader/compile.go` (modified, +8/-0)
 ```diff
-@@ -1,6 +1,6 @@
- kernels:
-   # renovate: datasource=docker depName=quay.io/lvh-images/kind
--  rhel9: 'rhel9.6-20260921.012558'
-+  rhel8.10: 'rhel8.10-20260921.012558'
-   # renovate: datasource=docker depName=quay.io/lvh-images/kind
-   5.15: '5.15-20260921.012558'
-   # renovate: datasource=docker depName=quay.io/lvh-images/kind
-```
-
-**File**: `.github/actions/e2e/kube-proxy.yaml` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- - name: 'kube-proxy-1'
--  kernel: 'rhel9'
-+  kernel: 'rhel8.10'
-   kube-proxy: 'iptables'
-   kpr: 'false'
-   tunnel: 'vxlan'
-@@ -50,7 +50,7 @@
-   # L7 testing: WireGuard encryption in kube-proxy mode - covered by wireguard.yaml, test on schedule only
-   test-l7: 'false'
- - name: 'kube-proxy-6'
--  kernel: 'rhel9'
-+  kernel: 'rhel8.10'
-   kube-proxy: 'iptables'
-   kpr: 'false'
-   tunnel: 'vxlan'
+@@ -21,6 +21,7 @@ import (
+ 
+ 	"github.com/cilium/cilium/pkg/datapath/linux/probes"
+ 	"github.com/cilium/cilium/pkg/datapath/loader/types"
++	"github.com/cilium/cilium/pkg/defaults"
+ 	"github.com/cilium/cilium/pkg/lock"
+ 	"github.com/cilium/cilium/pkg/logging/logfields"
+ 	"github.com/cilium/cilium/pkg/option"
+@@ -147,6 +148,9 @@ func getBPFCPU(logger *slog.Logger) string {
+ }
+ 
+ func getCompilerVersion(ctx context.Context) ([]byte, error) {
++	ctx, cancel := context.WithTimeout(ctx, defaults.ExecTimeout)
++	defer cancel()
++
+ 	out, err := exec.CommandContext(ctx, compiler, "--version").CombinedOutput()
+ 	if ctxErr := ctx.Err(); ctxErr != nil {
+ 		err = ctxErr
+@@ -169,6 +173,10 @@ func pidFromProcess(proc *os.Process) string {
+ //
+ // May output assembly or source code after prepocessing.
+ func compile(ctx context.Context, logger *slog.Logger, prog *progInfo, dir *directoryInfo) (string, error) {
++	// Bound each clang run by its own ExecTimeout.
++	ctx, cancel := context.WithTimeout(ctx, defaults.ExecTimeout)
++	defer cancel()
++
+ 	compileArgs := append(testIncludes,
+ 		fmt.Sprintf("-I%s", path.Join(dir.Runtime, "globals")),
+ 		fmt.Sprintf("-I%s", dir.State),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49490** (2026-10-20): renovate: Bump envoy version for main and v1.20 (@sayboras)
+- **PR #49478** (2026-10-20): vendor: Update `controller-runtime` to `v0.25.2` (@HadrienPatte)
+- **PR #49471** (2026-10-20): endpoint: use final regeneration error to resolve rollback state (@jrajahalme)
 - **PR #49470** (2026-10-19): gha/conformance-gke: Accept /ci-gke arguments as a JSON string (@aanm)
 - **PR #49467** (2026-10-19): [v1.20] Backports 2026-10-19 (@aanm)
 - **PR #49464** (2026-10-19): auto-approve: Only approve trusted Renovate PRs (@aanm)
-- **PR #49462** (2026-10-19): cilium, docs: update Maglev reassignment claims (@borkmann)
-- **PR #49455** (2026-10-20): Revert "workflows: Upgrade to RHEL 9" (@aanm)
-- **PR #49453** (2026-10-19): ci: Pass the auto-committer secrets to the base images workflow (@aanm)
 
 ---
 
@@ -1377,28 +1380,29 @@ Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "workflows: Upgrade to RHEL 9"
+## X. loader: give each BPF compile its own timeout
 
 **RULE**:
-When implementing operations in `.github/actions/e2e/ipsec.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/datapath/loader/base.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46fabd0e`: Revert "workflows: Upgrade to RHEL 9". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b9d6df6`: loader: give each BPF compile its own timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/e2e/ipsec.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/datapath/loader/base.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  kernel: 'rhel8.10'
+	// Each clang run below has its own ExecTimeout; the rest inherits ctx.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  kernel: 'rhel9'
+	ctx, cancel := context.WithTimeout(ctx, defaults.ExecTimeout)
+	defer cancel()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46fabd0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b9d6df6` are properly handled with clean fallback behavior.
