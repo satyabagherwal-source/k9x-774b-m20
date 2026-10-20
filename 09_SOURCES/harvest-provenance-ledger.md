@@ -3752,3 +3752,5 @@ Every entry in this ledger must capture:
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `d046d733` | Multi-dimensional audit evidence | 2026-10-20T06:07:08.280Z |
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `5c72fa95` | Multi-dimensional audit evidence | 2026-10-20T06:07:08.515Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `69992333` | Multi-dimensional audit evidence | 2026-10-20T06:07:11.484Z |
+| `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `4c85057e` | Multi-dimensional audit evidence | 2026-10-20T06:13:22.609Z |
+| `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `48d650be` | Multi-dimensional audit evidence | 2026-10-20T06:13:26.779Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T06:07:11.492Z",
+  "last_updated": "2026-10-20T06:13:26.790Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3186,14 +3186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-h3js-h3",
-      "content_hash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
-      "verified_at": "2026-10-18T08:01:01.462Z",
+      "content_hash": "dc6a11455223643f326a2793d880467ea736c9b61d9e79835f3abc968d401a82",
+      "verified_at": "2026-10-20T06:13:26.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T08:01:01.462Z"
+      "last_updated": "2026-10-20T06:13:26.789Z"
     },
     "unjs/ufo": {
       "repository": "unjs/ufo",
@@ -3846,14 +3846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-coss",
-      "content_hash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
-      "verified_at": "2026-10-19T19:22:19.078Z",
+      "content_hash": "a068ae9044609689d290ffb7bb088a58bfee217a310d210fb1b46a7193aa81dd",
+      "verified_at": "2026-10-20T06:13:22.616Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:22:19.078Z"
+      "last_updated": "2026-10-20T06:13:22.616Z"
     },
     "sharkdp/bat": {
       "repository": "sharkdp/bat",

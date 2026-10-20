@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-S2P3",
-    "timestamp": "2026-10-19T13:08:01.575Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-T5C5",
-    "timestamp": "2026-10-19T13:08:51.653Z",
-    "repository": "twostraws/ControlRoom",
-    "learningId": "learn-github-twostraws-controlroom",
-    "contentHash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0PT6",
     "timestamp": "2026-10-19T13:14:44.778Z",
     "repository": "watchexec/watchexec",
@@ -7492,6 +7462,36 @@
     "contentHash": "44d2710fae8f430fe154dfe044c49b5fdff544643a163e42c27af449d1a7d7a1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-EOMM",
+    "timestamp": "2026-10-20T06:13:22.606Z",
+    "repository": "cosscom/coss",
+    "learningId": "learn-github-cosscom-coss",
+    "contentHash": "a068ae9044609689d290ffb7bb088a58bfee217a310d210fb1b46a7193aa81dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ERUG",
+    "timestamp": "2026-10-20T06:13:26.776Z",
+    "repository": "h3js/h3",
+    "learningId": "learn-github-h3js-h3",
+    "contentHash": "dc6a11455223643f326a2793d880467ea736c9b61d9e79835f3abc968d401a82",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

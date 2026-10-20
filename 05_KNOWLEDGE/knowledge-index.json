@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T06:07:11.423Z",
+  "last_updated": "2026-10-20T06:13:26.730Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6037,8 +6037,8 @@
       "slug": "cosscom-coss",
       "platform": "github",
       "source_url": "https://github.com/cosscom/coss",
-      "source_version": "674fd511",
-      "content_hash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
+      "source_version": "4c85057e",
+      "content_hash": "a068ae9044609689d290ffb7bb088a58bfee217a310d210fb1b46a7193aa81dd",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "promoted_rules": [
@@ -6051,6 +6051,11 @@
           "number": 2767,
           "title": "coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3093,
+          "title": "Merge pull request #155 from cosscom/migrate-imports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6058,7 +6063,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:22:18.998Z",
+      "verified_at": "2026-10-20T06:13:22.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60825,8 +60830,8 @@
       "slug": "unjs-h3",
       "platform": "github",
       "source_url": "https://github.com/unjs/h3",
-      "source_version": "b64166ae",
-      "content_hash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
+      "source_version": "48d650be",
+      "content_hash": "dc6a11455223643f326a2793d880467ea736c9b61d9e79835f3abc968d401a82",
       "dossier_path": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
       "promoted_rules": [
@@ -60851,7 +60856,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T08:01:01.427Z",
+      "verified_at": "2026-10-20T06:13:26.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99121,6 +99126,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T06:07:11.410Z"
+    },
+    "rule-3093": {
+      "learning_id": "rule-3093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3093,
+      "title": "Merge pull request #155 from cosscom/migrate-imports",
+      "source_url": "https://github.com/cosscom/coss",
+      "source_version": "4c85057e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T06:13:22.550Z"
     }
   },
   "aliases": {

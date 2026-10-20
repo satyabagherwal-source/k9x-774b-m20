@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
-> **Source Version**: `674fd511`  
+> **Source Version**: `4c85057e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:22:18.723Z  
+> **Timestamp**: 2026-10-20T06:13:22.315Z  
 > **Learning ID**: `learn-github-cosscom-coss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:22:17.662Z  
+> **Harvest Timestamp**: 2026-10-20T06:13:20.496Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3 stars
+- **Stars / Engagement**: 4 stars
 
 ---
 
@@ -1847,13 +1847,11 @@ export function createWebhookListenerRoutes(deps: {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #146** (2026-10-19): **Release: sign and notarize the CLI's macOS executables**
-  *Symptoms*: ## Summary  This signs and notarizes the CLI's macOS executables in CI, so a copy downloaded with a browser opens without Gatekeeper's warning. It's off until the repository variable `CLI_MACOS_NOTARIZE` is `true`; until then releases ship the ad-hoc signed builds as they do today.  - **`cli-binaries-notarize`** is a new `release.yml` job that runs after the build:   - It runs on a macOS runner, in the new `apple` environment (deployable from `main` only).   - It imports the Developer ID certificate into a keychain of its own and runs `packages/cli/scripts/notarize.ts`.   - The script re-signs both darwin executables with the hardened runtime and the JIT entitlements Bun documents for compiled executables. Before submitting, it checks the signature has the runtime flag, a Developer ID authority and a secure timestamp.   - It submits each executable to Apple with `notarytool --wait`. If Apple rejects one, it prints Apple's log.   - It archives them again with a new `SHA256SUMS` and replaces the build artifact.   - A bare executable can't be stapled, so Gatekeeper checks the notarization online. - **Smoke tests** wait for notarization when it's on and test the notarized builds. On macOS, a new step marks the executable quarantined, as a browser download is, and runs it. - **Job conditions:** a skipped notarize job must not skip the smoke tests or the release, so `cli-binaries-smoke` and `cli-binaries-release` now have explicit `always()` conditions. - **Docs:** the AGENTS.md "C
-  **Post-Mortem & Fix Analysis**:
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6474">ENG-6474</a></p>
+- **Issue #155** (2026-10-19): **Import from Resend, SendGrid and Postmark**
+  *Symptoms*: ## Summary  Imports from **Resend, SendGrid and Postmark**, dashboard only (an environment's **Developers → Import** page, plus a link in "Get started"). The customer pastes the old provider's API key; coss.com reads the account and brings over what they choose:  - **Domains**: added to the organization (DNS records to add; Domain Connect where available). Created by the dashboard's start action, since only its IAM policy may create SES identities and tenants. - **Templates**: converted from SendGrid Handlebars, Postmark Mustachio (layouts merged) and Resend to the template language. Published only when the conversion is exact; otherwise left as drafts with warnings by line and column. SendGrid templates keep their `d-…` id as the alias. - **Contacts and lists**: custom fields → contact properties, lists/segments → audiences, unsubscribe groups/topics → topics, with each contact's topic choices. - **Suppressions**: keep the provider's reason and date. Unsubscribe-group members become topic opt-outs, or category-scoped suppressions when they aren't contacts. - **Webhook endpoints**: events mapped to coss.com's; created **disabled** with new signing secrets.  **How it works**  - New package `@coss/migrate`:   - Provider sources: fixed hosts, throttled below providers' shared limits, retries honoring `Retry-After`; SendGrid's contact exports are downloaded through a public-address-pinned, size-capped fetch.   - Template converters.   - The worker's new `migrations` loop: leased,
 
-- **Issue #145** (2026-10-19): **Scoped API keys: full access, sending, read only or custom permissions**
-  *Symptoms*: ## Summary  API keys can now be created with **Full access**, **Sending access** (`email:send` only), **Read only** (every `read` permission) or **Custom** (any mix of the catalog's permissions).  Every route already declared its permission and every key already stored `apikey.permissions`; what was missing was a way to choose them, and a way to tell full keys from restricted ones.  - **`environment_api_key.access`** (`full` | `restricted`, migration `0080`). Existing keys become `full`.   - Full-access keys are checked against the current `API_KEY_PERMISSIONS` on every request, so they get new products' permissions without a migration.   - Restricted keys hold exactly what they were created with. This replaces the per-product `apikey.permissions` backfills (`0004`…`0077`), which would have widened restricted keys. `AGENTS.md`'s "Add a product" recipe now says never to backfill.   - The column defaults to `full` because migrations run before the rollout: dashboard tasks still running old code insert bindings without it, and old code only made full keys. - **`@coss/auth/api-key-permissions`** (client-safe) holds:   - a label, product group and description for every resource and action;   - the presets, plus validation (known permissions only, at least one) and summaries.   - A test fails if `API_KEY_PERMISSIONS` gains a permission without a label. - **Dashboard**   - The create dialog adds an access choice and a per-product permission checklist for Custom.   - The keys table h
+- **Issue #154** (2026-10-19): **Production: send SMS through Twilio**
+  *Symptoms*: Switches production's live SMS from the fake provider to Twilio (README, "SMS on Twilio"):  - web, api, worker: `SMS_PROVIDER=twilio` - web, worker: `TWILIO_PRIMARY_CUSTOMER_PROFILE_SID` (the ISV's approved primary customer profile), `SMS_SUBACCOUNT_PREFIX=coss-production` - `TWILIO_ACCOUNT_SID` becomes a secret (`infra/aws/services.ts`): the repository is public and GitHub's push protection refuses the SID in `production.tfvars`. - `TWILIO_AUTH_TOKEN` leaves `unset_secrets`.  **Order:** both `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` must be in `coss/production` (`put-secret.sh`) **before** `terraform apply`, or web and worker tasks can't start. Then apply and run the Deploy workflow.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1870,1258 +1868,476 @@ export function createWebhookListenerRoutes(deps: {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e13f0e45` (2026-10-19)
-**Commit Message**: coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render
+### Incident Patch 1: `4c85057e` (2026-10-19)
+**Commit Message**: Merge pull request #155 from cosscom/migrate-imports
 
-The API renders a template's draft (or a published version) as a send would,
-without sending: POST /v1/email_templates/{id}/render with locale and
-variables (sample_variables by default), coss.email.templates.render() in the
-SDK. renderTemplateForSend and the preview share renderVersion.
+Import from Resend, SendGrid and Postmark
 
-The CLI gets coss domains list|add|get|verify (records as a table or BIND
-zone-file lines; verify --wait checks every 10 s until verified, reading
-instead of retrying a throttled check) and coss templates list|pull|push|
-preview: a folder per template (template.json + <locale>.subject.txt/.html/
-.txt), push finds templates by alias (creating missing ones), skips unchanged
-drafts, shows problems by file:line:column, --publish and --watch; preview
-renders with sample values plus --var, --open/--output for the HTML.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/cli-domains-templates.md` (added, +6/-0)
+**File**: `AGENTS.md` (modified, +10/-9)
 ```diff
-@@ -0,0 +1,6 @@
+@@ -47,6 +47,7 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
+ | `packages/screening` | `@coss/screening` | Product-agnostic AI content screening: sampling per org + product, the `ContentClassifier` interface (`./classifier`; content kinds `email`, `sms` and `text`, the last for risk's user content; Vercel AI SDK `experimental_decide` adapter under `./ai`, `fakeClassifier` in `./testing`), `prepareText`/`prepareLinks` (`./text`), verdict history, the `content_screening` reputation check; `./env` (zod only), `./runtime`. `./classifier`, `./text`, `./ai`, `./runtime` and `./testing` import no workspace package. See `packages/screening/AGENTS.md`. |
+ | `packages/risk` | `@coss/risk` | Risk assessments: `assessRisk` (signals under a time budget, scoring, decision, one transaction with the log line, mailbox identity and `risk.assessment.review` webhook), velocity (`VELOCITY_SCRIPT` in Valkey or memory), lists, feedback + fraud memory, forgetting users, IP datasets (`refreshDueDatasets` in the worker, `createIpIntelligenceSource` in the API), the building blocks (`checkEmail`, `checkIp`, `classifyContent` in `lookups.ts`), customers' rate limit buckets (`checkRiskLimit` in `limits.ts`), device tokens (`device.ts`), IP privacy data (`privacy.ts`, `ipinfoPrivacyLookup`), calibration from feedback (`calibration.ts`), sandbox fixtures, purges; `./schemas` (zod only: wire schemas, `REASONS`, `VELOCITY_RULES`, `RISK_EVENT_TYPES`), `./env` (zod only), `./runtime`, `./datasets`, `./testing`. See `packages/risk/AGENTS.md`. |
+ | `packages/billing` | `@coss/billing` | Plans and billing: the price catalog (`./catalog`: meters, list rates, plans, entitlements, add-ons) and contract terms (`./schemas`), both client-safe; the pure rating engine (`./engine`); accounts, contracts (self-serve and sales), hourly metered usage (`./metering`, the only module products import), credit grants and their ledger, month closes, invoices, payments, credit notes, dunning and holds, usage alerts, plan enforcement (`PlanGate`/`UsageGate` types in `./gate`), providers (fake, manual, Stripe under `./stripe`), the public API's read models and `billing.*` webhook events (wire schemas in `./wire`, client-safe); `./env` (zod only), `./runtime`, `./testing`. `scripts/seed.ts`, `scripts/close-period.ts`. See `packages/billing/AGENTS.md`. |
++| `packages/migrate` | `@coss/migrate` | Imports from Resend, SendGrid and Postmark (dashboard only): provider sources (`src/sources/*.ts`, throttled `providerClient`, SendGrid's contact exports through `publicDownloader`), the worker's `runDueMigrations` (leased, resumable phases: custom fields, topics, lists, templates, contacts, list members, suppressions, webhook endpoints), template converters (`./templates`, client-safe), purges; `./testing` (`fakeSource`). Domains are created by the dashboard's start action. See `packages/migrate/AGENTS.md`. |
+ | `packages/observability` | `@coss/observability` | Sentry setup shared by every app: env shape (`./env`, zod only), `sentryConfig`/`sentryOptions`, PII scrubbing (`scrubEvent`), the browser init (`./browser`), the dashboard's envelope tunnel (`./tunnel`) and `withSentryConfig` options (`./build`). Takes each app's SDK; depends on no framework SDK and no workspace. |
+ | `packages/logs` | `@coss/logs` | Environment logs and the org audit log: the day-partitioned `log_entry` table (API requests, email events, webhook attempts), the buffered fail-open request writer, queries (keyset pages, histogram, facets, related lines, CSV/NDJSON export), partition retention, `org_audit_event`, the log drain outbox (`log_drain_record`, written by `appendLogEntries`/`recordOrgAuditEvent`); `./schemas` + `./query` (search syntax; zod only), `./testing`. See `packages/logs/AGENTS.md`. |
+ | `packages/versioning` | `@coss/versioning` | Dated public API versions (`Coss-Version`): `API_VERSIONS`, the `VERSION_CHANGES` registry and the engine that renders latest-shape responses/webhook payloads in older versions and upgrades older request bodies. Zero deps, client-safe; `./testing` (`testVersioning()`). |
+@@ -64,17 +65,17 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
+ | `infra` | `@coss/infra` | AWS deployment spec (ECS services, env vars, ALB rules, CloudFront behaviours), checked by tests, and the production Terraform + deploy scripts that apply it. See `infra/AGENTS.md`. |
+ 
+ Runtime dependencies: `observability` (no workspace deps) ← `api`, `worker`, `web`, `site`, `portal`, `smtp`, `infra`; `signals` (no workspace deps) ← `auth`, `webhooks`, `risk`; `db ← auth ← tenancy`,
+-`db ← logs ← webhooks ← risk` (`risk` also `→ signals, ratelimit, retention, screening` — only screening's DB-free `./classifier`, `./text`, `./runtime`, `./testing`; `email` imports only `@coss/risk/schemas`, for `WEBHOOK_EVENT_TYPES`), `db ← logs ← webhooks ← reputation ← screening ← email`, `webhooks ← sms → billing, reputation, retention, v
+```
+
+**File**: `apps/site/content/docs/(start)/meta.json` (modified, +1/-1)
+```diff
+@@ -3,5 +3,5 @@
+   "description": "What coss.com is, your first email, and the keys every product shares.",
+   "root": true,
+   "icon": "Rocket",
+-  "pages": ["index", "quickstart", "environments"]
++  "pages": ["index", "quickstart", "environments", "---Migrating---", "...migrate"]
+ }
+```
+
+**File**: `apps/site/content/docs/(start)/migrate/index.mdx` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
 +---
-+"coss": minor
-+"coss-cli": minor
++title: Overview
++description: Import your domains, templates, contacts, suppressions and webhooks from Resend, SendGrid or Postmark.
 +---
 +
-+`coss.email.templates.render(template, { version, locale, variables })` renders a template's draft (or a published version) as a send would, without sending (`POST /v1/email_templates/{id}/render`). The CLI gets `coss domains list|add|get|verify` (DNS records as a table or zone-file lines with `--format bind`; `verify --wait` follows the domain until it's verified) and templates as code: `coss templates list|pull|push|preview` (a folder per template, `push --watch` and `--publish`, `preview --var … --open`).
++Moving from another provider doesn't mean rebuilding your account by hand. The dashboard's
++**Import** page (an environment's **Developers** pages) reads your old account through its API and
++brings what you choose into that environment:
++
++| Provider                          | Domains | Templates | Contacts and lists | Suppressions | Webhook endpoints |
++| --------------------------------- | ------- | --------- | ------------------ | ------------ | ----------------- |
++| [Resend](/docs/migrate/resend)     | Yes     | Yes       | Yes                | Where your account has Resend's suppression API | Yes |
++| [SendGrid](/docs/migrate/sendgrid) | Yes     | Yes       | Yes                | Yes          | Yes               |
++| [Postmark](/docs/migrate/postmark) | With an account token | Yes | Postmark keeps none | Yes | Yes       |
++
++Nothing changes in your old account: an import only reads it. Imports run in the dashboard only.
++There is no API, SDK or CLI for them, so your old provider's key never passes through your own
++code.
++
++## How an import runs
++
++1. **Connect.** Choose the provider and paste an API key. coss.com checks it with one or two
++   requests to the provider. Each organization can check only a limited number of keys a day.
++2. **coss.com reads your account.** This usually takes seconds. With large contact lists it can
++   take a few minutes, because some providers have no way to count contacts other than listing
++   them.
++3. **Choose.** The page shows what was found. Pick the kinds to import and, for domains, which
++   ones. Starting an import needs the same permissions as creating those things yourself: domains,
++   templates (create and publish), contacts, suppressions and webhooks.
++4. **Import.** The import runs in the background, and the page follows its progress. You can leave
++   it and come back. Imports go at a pace that stays well within your old provider's rate limits,
++   which your live sending there shares.
++5. **Next steps.** When the import is done, its report lists what was imported, what was already
++   there, what was skipped and why, and what's left for you to do.
++
++You can cancel an import at any time. Whatever it imported up to then stays.
++
++## Your old provider's key
++
++The key is stored encrypted, only for the import. It is deleted as soon as the import finishes or
++is canceled. An import you never start is deleted, key included, after 24 hours. Revoke the key at
++your old provider once you're done.
++
++Import reports are kept for <RetentionPeriod of="migrations" /> (see
++[data retention](/docs/data-retention)). What an import created is yours, like anything you create
++yourself.
++
++## What each kind becomes
++
++- **Domains** are added to the organization, so every environment can send from them. Each one
++  needs coss.com's DNS records before it verifies (see [domains](/docs/email/domains)). Where your
++  DNS provider supports it, **Connect DNS** on the domain's page adds them in one click. coss.com's
++  DKIM records sit next to your old provider's, so you can keep sending through the old provider
++  until you switch. An organization can have only a few domains waiting for verification at once.
++  If you import more than that, verify some and import the rest in a second import.
++- **Templates** are converted to [coss.com's template language](/docs/email/templates). A template
++  that converts exactly is published, ready to send. One that uses something coss.com templates
++  don't have (a formatting helper, a partial, a comparison) is left as a **draft**, with the parts
++  to fix marked in the report. coss.com variable names can't contain dots, so nested data is
++  flattened: `{{user.name}}` becomes `{{user_name}}`, and the report lists every rename. Your
++  sends then pass `user_name`, because coss.com refuses variables a template doesn't declare.
++- **Contacts** come with their names, custom fields and topic choices; lists become
++  [audiences](/docs/email/audiences-and-segments). Custom fields become contact properties with
++  lower-case keys (`Company Size` becomes `company_size`, and a name coss.com uses itself, like
++  `email`, gets the provider's name in front: `sendgrid_email`). Imports never re-subscribe a contact
++  who unsubscribed, and never turn a topic opt-out into an opt-in. A value coss.com can't read (say,
++  a date in another format) is left out, and the contact is still imported. Your plan's contact
++  limit applies: past it, the rest of the contacts aren't imported, but the other kinds still are.
++- **Suppressions** keep their reason (bounce, complaint, unsubscribe or manual) and their date,
++  so nobody who bounced, complained or unsubscribed gets your email again. See
++  [suppressions](/docs/email/suppressions).
++- **Webhook endpoints** keep their URL, and their events are mapped to
+
 ```
 
-**File**: `apps/api/openapi.json` (modified, +389/-0)
+**File**: `apps/site/content/docs/(start)/migrate/meta.json` (added, +4/-0)
 ```diff
-@@ -2758,6 +2758,104 @@
-           }
-         ]
-       },
-+      "RenderedEmailTemplate": {
-+        "type": "object",
-+        "properties": {
-+          "object": {
-+            "type": "string",
-+            "enum": [
-+              "email_template_render"
-+            ]
-+          },
-+          "template_id": {
-+            "type": "string"
-+          },
-+          "version": {
-+            "type": [
-+              "integer",
-+              "null"
-+            ],
-+            "description": "The version rendered; `null` for the draft."
-+          },
-+          "locale": {
-+            "type": "string",
-+            "description": "The locale rendered."
-+          },
-+          "subject": {
-+            "type": "string"
-+          },
-+          "html": {
-+            "type": [
-+              "string",
-+              "null"
-+            ]
-+          },
-+          "text": {
-+            "type": [
-+              "string",
-+              "null"
-+            ]
-+          }
-+        },
-+        "required": [
-+          "object",
-+          "template_id",
-+          "version",
-+          "locale",
-+          "subject",
-+          "html",
-+          "text"
-+        ],
-+        "examples": [
-+          {
-+            "object": "email_template_render",
-+            "template_id": "etpl_01k7c8m4q2f3e9v6t5r1n0p8yz",
-+            "version": null,
-+            "locale": "en",
-+            "subject": "Welcome, Ada",
-+            "html": "<p>Hi Ada, thanks for signing up!</p>",
-+            "text": null
-+          }
-+        ]
-+      },
-+      "RenderEmailTemplateRequest": {
-+        "type": "object",
-+        "properties": {
-+          "version": {
-+            "type": "integer",
-+            "minimum": 1,
-+            "description": "A published version to render. Default: the draft."
-+          },
-+          "locale": {
-+            "type": "string",
-+            "maxLength": 35,
-+            "description": "The locale to render, e.g. \"pt-BR\". Falls back to the language (\"pt\"), then to the default locale, as sends do.",
-+            "examples": [
-+              "en"
-+            ]
-+          },
-+          "variables": {
-+            "type": "object",
-+            "additionalProperties": {},
-+            "examples": [
-+              {
-+                "first_name": "Ada"
-+              }
-+            ],
-+            "description": "Values by variable name, checked as a send checks them. Default: `sample_variables`."
-+          }
-+        },
-+        "additionalProperties": false,
-+        "description": "What to render: nothing is sent or stored.",
-+        "examples": [
-+          {
-+            "locale": "en",
-+            "variables": {
-+              "first_name": "Ada"
-+            }
-+          }
-+        ]
-+      },
-       "EmailTemplateVersionList": {
-         "type": "object",
-         "properties": {
-@@ -23094,6 +23192,297 @@
-         }
-       }
-     },
-+    "/v1/email_templates/{id}/render": {
-+      "post": {
-+        "operationId": "renderEmailTemplate",
-+        "tags": [
-+          "Email templates"
-+        ],
-+        "summary": "Render a template",
-+        "description": "Renders the draft (or a published `version`) with `variables`, exactly as a send would, and returns the subject, HTML and text: a preview, nothing is sent or stored. Without `variables` it renders the version's `sample_variables`.",
-+        "security": [
-+          {
-+            "bearerAuth": []
-+          }
-+        ],
-+        "parameters": [
-+          {
-+            "schema": {
-+              "type": "string",
-+              "description": "The template's id or alias.",
-+              "examples": [
-+                "etpl_01k7c8m4q2f3e9v6t5r1n0p8yz"
-+              ]
-+            },
-+            "required": true,
-+            "description": "The template's id or alias.",
-+            "name": "id",
-+            "in": "path"
-+          },
-+          {
-+            "$ref": "#/components/parameters/CossVersion"
-+          }
-+        ],
-+        "requestBody": {
-+          "required": true,
-+          "content": {
-+            "application/json": {
-+              "schema": {
-+                "$ref": "#/components/schemas/RenderEmailTemplateRequest"
-+              }
-+            }
-+          }
-+        },
-+        "responses": {
-+          "200": {
-+            "description": "The rendered template.",
-+            "headers": {
-+              "X-Request-Id": {
-+                "description": "Unique id of this request. Include it when contacting support.",
-+                "schema": {
-+                  "type": "string",
-+                  "examples": [
-+                    "req_01k7c8m4q2f3e9v6t5r1n0p8yz"
-+                  ]
-+                }
-+              },
-+              "Coss-Version": {
-+                "description": "The API version this response is rendered in.",
-+                "schema": {
-+                  "type": "string",
-+                  "examples": [
-+                    "2026-10-10"
-+                  ]
-+    
+@@ -0,0 +1,4 @@
++{
++  "title": "Migrating",
++  "pages": ["index", "resend", "sendgrid", "postmark"]
++}
 ```
 
-**File**: `apps/api/src/routes/email-templates.ts` (modified, +57/-0)
+**File**: `apps/site/content/docs/(start)/migrate/postmark.mdx` (added, +132/-0)
 ```diff
-@@ -7,6 +7,7 @@ import {
-   pageEmailTemplates,
-   pageTemplateVersions,
-   publishTemplateDraft,
-+  renderEmailTemplate,
-   requireEmailTemplate,
-   restoreTemplateVersion,
-   saveTemplateDraft,
-@@ -28,6 +29,8 @@ import {
-   ListEmailTemplatesQuery,
-   ListEmailTemplateVersionsQuery,
-   PublishEmailTemplateRequest,
-+  RenderEmailTemplateRequest,
-+  RenderedEmailTemplateObject,
-   UpdateEmailTemplateDraftRequest,
-   UpdateEmailTemplateRequest,
- } from "@coss/email/schemas";
-@@ -270,6 +273,43 @@ export const publishEmailTemplateRoute = createRoute({
-   },
- });
- 
-+export const renderEmailTemplateRoute = createRoute({
-+  method: "post",
-+  path: "/email_templates/{id}/render",
-+  operationId: "renderEmailTemplate",
-+  tags: [TAG],
-+  summary: "Render a template",
-+  description:
-+    "Renders the draft (or a published `version`) with `variables`, exactly as a send would, " +
-+    "and returns the subject, HTML and text: a preview, nothing is sent or stored. Without " +
-+    "`variables` it renders the version's `sample_variables`.",
-+  security: [{ bearerAuth: [] }],
-+  middleware: [
-+    requireApiKey({ emailTemplate: ["read"] }),
-+    rateLimit("api.read"),
-+    upgradeRequestBody("POST /v1/email_templates/{id}/render"),
-+  ],
-+  request: {
-+    params: EmailTemplateIdParams,
-+    body: {
-+      required: true,
-+      content: { "application/json": { schema: RenderEmailTemplateRequest } },
-+    },
-+  },
-+  responses: {
-+    200: jsonDoc("The rendered template.", RenderedEmailTemplateObject),
-+    ...bodyErrors,
-+    ...commonErrors,
-+    404: templateNotFound,
-+    422: errorDoc(
-+      "The body failed validation (`validation_error`), the draft has problems " +
-+        "(`template_invalid`, see `issues`), the variables don't match its declarations " +
-+        "(`invalid_template_variables`), it has no such version (`template_version_not_found`), " +
-+        "or it doesn't render (`template_render_failed`).",
-+    ),
-+  },
-+});
+@@ -0,0 +1,132 @@
++---
++title: From Postmark
++description: What an import brings over from Postmark, how it maps onto coss.com, and how to switch your code.
++---
 +
- export const listEmailTemplateVersionsRoute = createRoute({
-   method: "get",
-   path: "/email_templates/{id}/versions",
-@@ -429,6 +469,23 @@ export function createEmailTemplateRoutes(): OpenAPIHono<AppEnv> {
-     return c.json(toEmailTemplateVersionObject(version), 200);
-   });
- 
-+  router.openapi(renderEmailTemplateRoute, async (c) => {
-+    const { id } = c.req.valid("param");
-+    const rendered = await renderEmailTemplate(scope(c), id, c.req.valid("json"));
-+    return c.json(
-+      {
-+        object: "email_template_render" as const,
-+        template_id: rendered.template.id,
-+        version: rendered.template.version,
-+        locale: rendered.template.locale,
-+        subject: rendered.subject,
-+        html: rendered.html,
-+        text: rendered.text,
-+      },
-+      200,
-+    );
-+  });
++Start an import from the dashboard's **Import** page (see the [overview](/docs/migrate)) with a
++Postmark token:
 +
-   router.openapi(listEmailTemplateVersionsRoute, async (c) => {
-     const { id } = c.req.valid("param");
-     const query = c.req.valid("query");
++- An **account token** (Postmark's API Tokens page) imports domains as well, and lets you choose
++  which server to import. coss.com reads that server's own token from Postmark on each run and never
++  stores it.
++- A **server token** imports only its server, without domains.
++
++Each import brings one server into one environment. To bring over several servers (say, production
++and staging), import each into its own environment.
++
++Postmark keeps no contacts, lists or custom fields, so there are none to import.
++
++## What's imported
++
++| Postmark                     | coss.com                                                                     |
++| ---------------------------- | ---------------------------------------------------------------------------- |
++| Domains                      | [Domains](/docs/email/domains) of the organization, to verify with coss.com's DNS records |
++| Templates (with their layouts) | [Templates](/docs/email/templates), with the same alias                    |
++| Suppressions of every stream | [Suppressions](/docs/email/suppressions), with their dates                   |
++| Webhooks, the inbound webhook | Disabled [webhook endpoints](/docs/webhooks) with new secrets               |
++
++**Not imported:** layouts as templates of their own (each template gets its layout merged in),
++inbound rules, message streams' settings, server and account tokens, and webhooks' basic auth
++credentials and custom headers (coss.com signs its requests instead).
++
++### Suppressions
++
++Suppressions of transactional and broadcast streams are imported; inbound streams are skipped:
++
++| Postmark reason                       | Transactional stream                 | Broadcast stream                                   |
++| ------------------------------------- | ------------------------------------ | -------------------------------------------------- |
++| Hard bounce                           | Every email (`*`), reason `bounce`   | Every email (`*`), reason `bounce`                 |
++| Spam complaint                        | Every email (`*`), reason `complaint`| Every email (`*`), reason `complaint`              |
++| Manual, by the recipient (unsubscribed) | Every email (`*`), reason `unsubscribe` | Marketing email (`stream:marketing`), reason `unsubscribe` |
++| Manual, by you or Postmark            | Every email (`*`), reason `manual`   | Marketing email (`stream:marketing`), reason `manual` |
++
++Postmark's broadcast streams match coss.com's [marketing stream](/docs/email/streams).
++
++## Templates
++
++Postmark templates use Mustachio. The import merges each template into its layout (at
++`{{{ @content }}}`) and converts it to coss.com's template language. Postmark's suggested template
++model, the data a template expects, tells loops from objects and text from numbers:
++
++| Mustachio                                | coss.com                                                 |
++| ---------------------------------------- | -------------------------------------------------------- |
++| `{{name}}`, `{{{html}}}`, `{{& html}}`   | `{{name}}`, `{{{html}}}`                                 |
++| `{{company.name}}`                       | `{{company_name}}` (the report lists every rename)       |
++| `{{#each items}}{{name}}{{/each}}`       | `{{#each items}}{{name}}{{/each}}`, a list of objects    |
++| `{{#items}}…{{/items}}` over a list      | `{{#each items}}…{{/each}}`                              |
++| `{{#name}}…{{/name}}` over a value       | `{{#if name}}…{{/if}}`                                   |
++| `{{^name}}…{{/name}}`                    | `{{#if name}}{{else}}…{{/if}}`                           |
++| `../name` in a loop                      | The top-level `{{name}}`                                 |
++| `{{! comment }}`                         | Dropped                                                  |
++| `{{{ pm:unsubscribe }}}`                 | `{{{unsubscribe_url}}}` in a link's `href`, else a link to it |
++
++`{{{unsubscribe_url}}}` is filled on [marketing sends](/docs/email/streams).
++
++A template that converts exactly is published. These are left in the draft as they were, for you to
++rewrite before you publish it: partials, changed delimiters, sections over an object (their fields
++become separate variables, shown even when the object is missing), loops inside loops, lists of plain
++values (`{{.}}`: each item becomes an object with a `value` field) and `{{#name}}` over a number
++(coss.com treats `0` as true).
++
++A template keeps its Postmark alias when it is a valid coss.com alias (lower-case letters, digits,
++`-` and `_`; aliases are lower-cased). One without an alias gets one made from its name.
++
++## Webhooks
++
++Each webho
 ```
 
-**File**: `apps/api/test/app.test.ts` (modified, +2/-0)
+**File**: `apps/site/content/docs/(start)/migrate/resend.mdx` (added, +116/-0)
 ```diff
-@@ -194,6 +194,7 @@ describe("GET /openapi.json", () => {
-       "/v1/email_templates/{id}",
-       "/v1/email_templates/{id}/draft",
-       "/v1/email_templates/{id}/publish",
-+      "/v1/email_templates/{id}/render",
-       "/v1/email_templates/{id}/versions",
-       "/v1/email_templates/{id}/versions/{version}",
-       "/v1/email_templates/{id}/versions/{version}/restore",
-@@ -459,6 +460,7 @@ describe("GET /openapi.json", () => {
-       ["get /v1/email_templates/{id}/draft", "getEmailTemplateDraft"],
-       ["put /v1/email_templates/{id}/draft", "updateEmailTemplateDraft"],
-       ["post /v1/email_templates/{id}/publish", "publishEmailTemplate"],
-+      ["post /v1/email_templates/{id}/render", "renderEmailTemplate"],
-       ["get /v1/email_templates/{id}/versions", "listEmailTemplateVersions"],
-       ["get /v1/email_templates/{id}/versions/{version}", "getEmailTemplateVersion"],
-       ["post /v1/email_templates/{id}/versions/{version}/restore", "restoreEmailTemplateVersion"],
+@@ -0,0 +1,116 @@
++---
++title: From Resend
++description: What an import brings over from Resend, how it maps onto coss.com, and how to switch your code.
++---
++
++Start an import from the dashboard's **Import** page (see the [overview](/docs/migrate)) with a
++Resend API key that has **full access**. A sending-only key can't read your account, and the
++import refuses it.
++
++Resend shares one rate limit between all of a team's keys, your live sending included, so imports
++read your account at a fraction of it. Contacts are the slow part. Resend returns a contact's
++custom properties and topic choices one contact at a time, so with properties or topics an import
++brings over a few thousand contacts an hour.
++
++## What's imported
++
++| Resend                          | coss.com                                                                     |
++| ------------------------------- | ---------------------------------------------------------------------------- |
++| Domains                         | [Domains](/docs/email/domains) of the organization, to verify with coss.com's DNS records |
++| Templates                       | [Templates](/docs/email/templates), with the same alias                      |
++| Contacts                        | [Contacts](/docs/email/contacts), unsubscribed ones still unsubscribed      |
++| Contact properties              | Contact properties (`string` and `number`, fallbacks kept)                   |
++| Segments                        | [Audiences](/docs/email/audiences-and-segments) with the same members        |
++| Topics                          | [Topics](/docs/email/topics-and-preferences), with each contact's choices    |
++| Suppressions                    | [Suppressions](/docs/email/suppressions) for every email, same reason and date |
++| Webhooks                        | Disabled [webhook endpoints](/docs/webhooks) with new secrets                |
++
++**Not imported:** broadcasts, API keys, a template's `from` and reply-to addresses (pass them with
++each send; the report notes which templates had them), domains' open and click tracking settings
++(see [tracking](/docs/email/tracking)), and webhook signing secrets.
++
++### Suppressions
++
++Resend's suppression API isn't available to every account. Where it is, bounces, complaints and
++manual entries become suppressions for every email (scope `*`) with the same reason. Where it
++isn't, the import says so: export the list from Resend's dashboard and import the CSV on the
++**Suppressions** page ([importing](/docs/email/suppressions#importing-and-exporting)). Contacts
++who unsubscribed are imported as `unsubscribed` contacts, which marketing email skips.
++
++### Topics
++
++A topic's key, which is what a send's `category` names, is made from its name in lower case:
++`Product updates` becomes `product_updates`. Its default subscription and visibility are kept,
++and so is each contact's opt-in or opt-out.
++
++## Templates
++
++Resend templates fill `{{{VARIABLE}}}` placeholders. The import converts them to coss.com's
++template language and declares every variable the Resend template had:
++
++- `{{{NAME}}}` stays raw in the HTML and becomes `{{NAME}}` in the subject and text, which are
++  never HTML-escaped anyway.
++- A variable's type (`string` or `number`) is kept. Its fallback becomes its default; one without
++  a fallback is required, as it was in Resend. `{{{NAME|fallback}}}` becomes a default too.
++- Names keep their case, so you keep sending `FIRST_NAME`. A name with dots is flattened:
++  `{{{order.id}}}` becomes `{{order_id}}`.
++- `{{{UNSUBSCRIBE_URL}}}` (and `{{{RESEND_UNSUBSCRIBE_URL}}}`) becomes `{{{unsubscribe_url}}}`,
++  which coss.com fills on [marketing sends](/docs/email/streams).
++- `FIRST_NAME`, `LAST_NAME` and `EMAIL` came from the contact on Resend's broadcasts. Here they are
++  ordinary variables: pass them when you send.
++
++A template whose placeholders all convert is published. Anything else is left as a draft, with what
++to fix listed in the report. A template keeps its Resend alias when it is a valid coss.com alias
++(lower-case letters, digits, `-` and `_`); otherwise the alias is made from its name.
++
++## Webhooks
++
++Resend's email and contact events have the same names on coss.com: `email.sent`,
++`email.delivered`, `email.delivery_delayed`, `email.bounced`, `email.complained`, `email.failed`,
++`email.opened`, `email.clicked`, `email.scheduled`, `email.suppressed`, `email.received`,
++`contact.created`, `contact.updated` and `contact.deleted`. `contact.topics.updated` becomes
++`contact.unsubscribed` and `contact.updated`. Domain, suppression, topic and inbox events have no
++coss.com counterpart, and the report lists them as left out. The payloads differ from Resend's, and
++requests are signed with the endpoint's new secret, so update your handler before you enable an
++endpoint (see [verifying requests](/docs/webhooks#verifying-requests)).
++
++## Domains and DNS
++
++coss.com's DKIM records don't collide with Resend's, so add
 ```
 
-**File**: `apps/api/test/cli-contract.test.ts` (modified, +52/-3)
+**File**: `apps/site/content/docs/(start)/migrate/sendgrid.mdx` (added, +150/-0)
 ```diff
-@@ -1,10 +1,11 @@
- /**
-  * Contract test: the published `coss-cli` (built dist, on the built `coss` SDK) against the real
-  * app, in process: sign in with a key, send a simulated bounce and wait for it, and forward the
-- * environment's webhook events to a local receiver with `coss listen`.
-+ * environment's webhook events to a local receiver with `coss listen`; add and verify a domain;
-+ * keep templates as files (pull, edit, push, publish, preview).
-  */
- import { describe, expect, test } from "bun:test";
--import { mkdtempSync, readFileSync } from "node:fs";
-+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
- import { tmpdir } from "node:os";
- import { join } from "node:path";
- import { runDueHookDeliveries } from "@coss/hooks";
-@@ -15,7 +16,7 @@ import { createTestTenant } from "@coss/tenancy/testing";
- import { webhookReceiver } from "@coss/webhooks/testing";
- import { verifyWebhook } from "coss";
- import { type CliIo, run } from "coss-cli";
--import { createTestApp, type TestApp } from "./helpers.ts";
-+import { apiRequest, createTestApp, type TestApp, uniqueDomainName } from "./helpers.ts";
- 
- function toRequest(input: string | URL | Request, init?: RequestInit): Request {
-   return input instanceof Request ? new Request(input, init) : new Request(String(input), init);
-@@ -54,6 +55,7 @@ function cliIo(
-       void signal;
-     },
-     openBrowser: async () => false,
-+    watch: () => undefined,
-     readStdin: async () => opts.stdin ?? "",
-     prompt: async () => answers.shift() ?? "",
-     hostname: () => "contract-test",
-@@ -344,6 +346,53 @@ describe("coss-cli against the API", () => {
-     expect(objects.slice(1).map((object) => object.id)).toEqual([later]);
-   });
- 
-+  test("domains: add, verify --wait; templates: pull, edit, push --publish, preview", async () => {
-+    const tenant = await createTestTenant();
-+    const { app } = createTestApp();
-+    const cli = cliIo(app, { answers: [tenant.liveKey] });
-+    expect(await run(["login", "--manual"], cli.io)).toBe(0);
-+    const last = () => JSON.parse(cli.stdout().trim().split("\n").at(-1) ?? "{}");
+@@ -0,0 +1,150 @@
++---
++title: From SendGrid
++description: What an import brings over from SendGrid, how it maps onto coss.com, and how to switch your code.
++---
 +
-+    const name = uniqueDomainName();
-+    expect(await run(["domains", "add", name, "--format", "bind"], cli.io)).toBe(0);
-+    expect(cli.stdout()).toContain(`; ${name}: the DNS records coss.com needs`);
-+    expect(cli.stdout()).toMatch(/\._domainkey\..+\t3600\tIN\tCNAME\t.+\.$/m);
-+    expect(await run(["domains", "verify", name, "--wait", "--json"], cli.io)).toBe(0);
-+    expect(last()).toMatchObject({ name, status: "verified", can_send: true });
++Start an import from the dashboard's **Import** page (see the [overview](/docs/migrate)) with a
++SendGrid API key. A restricted key works: give it read access to everything you want to import.
++If the key can't read something, the import shows that kind as unavailable instead of failing.
++Keys of EU regional subusers are recognized and read from SendGrid's EU API.
 +
-+    const created = await apiRequest(app, "POST", "/v1/email_templates", {
-+      key: tenant.liveKey,
-+      body: {
-+        name: "Welcome",
-+        alias: "welcome",
-+        variables: [{ name: "first_name", type: "string" }],
-+        sample_variables: { first_name: "Ada" },
-+        contents: [{ locale: "en", subject: "Welcome, {{first_name}}", text: "Hi {{first_name}}" }],
-+      },
-+    });
-+    expect(created.status).toBe(200);
-+    const dir = join(cli.io.configDir, "templates");
-+    expect(await run(["templates", "pull", "--dir", dir], cli.io)).toBe(0);
-+    expect(readFileSync(join(dir, "welcome", "en.txt"), "utf8")).toBe("Hi {{first_name}}");
-+    // Unchanged files save nothing; an edit is saved and published.
-+    expect(await run(["templates", "push", "--dir", dir], cli.io)).toBe(0);
-+    expect(cli.stdout()).toContain("welcome: unchanged");
-+    writeFileSync(join(dir, "welcome", "en.html"), "<p>Hello {{first_name}}</p>");
-+    expect(await run(["templates", "push", "--dir", dir, "--publish", "--json"], cli.io)).toBe(0);
-+    expect(last()).toMatchObject({ saved: true, revision: 2, published_version: 1 });
++## What's imported
 +
-+    expect(
-+      await run(["templates", "preview", "welcome", "--var", "first_name=Grace", "--json"], cli.io),
-+    ).toBe(0);
-+    expect(last()).toMatchObject({
-+      object: "email_template_render",
-+      version: null,
-+      subject: "Welcome, Grace",
-+      html: "<p>Hello Grace</p>",
-+      text: "Hi Grace",
-+    });
-+  });
++| SendGrid                     | coss.com                                                                     |
++| ---------------------------- | ---------------------------------------------------------------------------- |
++| Authenticated domains        | [Domains](/docs/email/domains) of the organization, to verify with coss.com's DNS records |
++| Dynamic and legacy templates | [Templates](/docs/email/templates), the active version, with the template id as alias |
++| Marketing contacts           | [Contacts](/docs/email/contacts) with their names and custom fields         |
++| Custom fields                | Contact properties: Text, Number and Date become `string`, `number` and `date` |
++| Lists                        | [Audiences](/docs/email/audiences-and-segments) with the same members        |
++| Unsubscribe groups           | [Topics](/docs/email/topics-and-preferences); their members are opted out    |
++| Bounces, invalid emails, spam reports, global unsubscribes | [Suppressions](/docs/email/suppressions), with their dates |
++| Event webhooks, Inbound Parse | Disabled [webhook endpoints](/docs/webhooks) with new secrets               |
 +
-   test("listen forwards the environment's events to a local server, signed, and logs them", async () => {
-     const tenant = await createTestTenant();
-     const { app, dispatch } = createTestApp();
++**Not imported:** segments, Single Sends and automations, reserved contact fields other than the
++names (address, phone and so on), blocks (they're temporary), link branding, subusers, API keys,
++inactive template versions and webhook signing secrets.
++
++Contacts come out of SendGrid's contact export, which SendGrid prepares in the background. The
++import waits for it, which can take a few minutes for large lists. Each list's members come from an
++export of their own.
++
++### Suppressions
++
++| SendGrid list           | coss.com suppression                       |
++| ----------------------- | ------------------------------------------ |
++| Bounces                 | Every email (`*`), reason `bounce`         |
++| Invalid emails          | Every email (`*`), reason `bounce`         |
++| Spam reports            | Every email (`*`), reason `complaint`      |
++| Global unsubscribes     | Every email (`*`), reason `unsubscribe`    |
++| Unsubscribe group members | An opt-out of the group's topic for contacts; for other addresses, a suppression for the topic's category, reason `unsubscribe` |
++
++Global unsubscribes suppress every email, transactional included, as they did in SendGrid.
++
++### Unsubscribe groups
++
++Each unsubscribe group becomes a topic that everyone gets until they opt out (`opt_in` by
++default), shown in the [preference center](/docs/email/topics-and-preferences#the-preference-center).
++Its key is made from its name in lower case (`Weekly digest` becomes `weekly_digest`); the report
++lists each group's key. Where you passed `asm.groupId`, pass the key as the send's `category`.
++
++## Templates
++
++Dynamic templates are Handlebars. The import converts them to coss.com's template language,
++using each version's test data to tell text from numbers and lists from objects:
++
++| Handlebars                                   | coss.com                                               |
++| -------------------------------------------- | ------------------------------------------------------ |
++| `{{name}}`, `{{{html}}}`                     | The same                                               |
++| `{{user.name}}`                              | `{{user_name}}` (the report lists every rename)        |
++| `{{insert name "default=there"}}`            | `{{name}}`, declared with the default `there` (a default applies to every use on coss.com, so a template that also uses `name` without it stays a draft) |
++| `{{#if x}}…{{else if y}}…{{else}}…{{/if}}`   | Nested `{{#if}}` blocks                                |
++| `{{#unless x}}…{{/unless}}`                  | `{{#if x}}{{else}}…{{/if}}`                            |
++| `{{#each items}}{{this.name}}{{/each}}`      | `{{#each items}}{{name}}{{/each}}`, a list of objects  |
++| `../name` and `@root.name` in a loop         | The top-level `{{name}}`                               |
++| `{{!-- comment --}}`                         | Dropped                                                |
++| `{{{unsubscribe}}}`, `<%asm_group_unsubscribe_raw_url%>`, `<%asm_global_unsubscribe_raw_url%>` | `{{{unsubscribe_url}}}` |
++| `{{{unsubscribe_preferences}}}`, `<%asm_preferences_raw_url%>` | `{{{preferences_url}}}`                  |
++| `{{Sender_Address}}`                         | `{{{mailing_add
 ```
 
-**File**: `apps/api/test/contract-types.ts` (modified, +8/-0)
+**File**: `apps/web/next.config.ts` (modified, +1/-0)
 ```diff
-@@ -121,6 +121,8 @@ import type {
-   ReceivedEmailSummary,
-   ReceivedEmailWebhookEvent,
-   ReceivingDomainObject,
-+  RenderEmailTemplateRequest,
-+  RenderedEmailTemplateObject,
-   RescheduleEmailRequest,
-   SendEmailBatchRequest,
-   SendEmailRequest,
-@@ -274,6 +276,7 @@ import type {
-   PollWebhookListenerParams,
-   PublishEmailTemplateParams,
-   RecoverWebhookEndpointParams,
-+  RenderEmailTemplateParams,
-   RescheduleEmailParams,
-   RiskFeedbackParams,
-   RollWebhookEndpointSecretParams,
-@@ -344,6 +347,7 @@ import type {
-   ReceivedEmailSummary as SdkReceivedEmailSummary,
-   ReceivedEmailWebhookEvent as SdkReceivedEmailWebhookEvent,
-   ReceivingDomain as SdkReceivingDomain,
-+  RenderedEmailTemplate as SdkRenderedEmailTemplate,
-   Reputation as SdkReputation,
-   ReputationCheck as SdkReputationCheck,
-   RiskAssessment as SdkRiskAssessment,
-@@ -520,6 +524,10 @@ export type Contract = [
-   Assert<MutuallyAssignable<z.output<typeof EmailTemplateObject>, SdkEmailTemplate>>,
-   Assert<MutuallyAssignable<z.output<typeof EmailTemplateList>, List<SdkEmailTemplate>>>,
-   Assert<MutuallyAssignable<z.output<typeof EmailTemplateVersionObject>, SdkEmailTemplateVersion>>,
-+  Assert<MutuallyAssignable<z.input<typeof RenderEmailTemplateRequest>, RenderEmailTemplateParams>>,
-+  Assert<
-+    MutuallyAssignable<z.output<typeof RenderedEmailTemplateObject>, SdkRenderedEmailTemplate>
-+  >,
-   Assert<
-     MutuallyAssignable<z.output<typeof EmailTemplateVersionList>, List<SdkEmailTemplateVersion>>
-   >,
-```
-
-**File**: `apps/api/test/email-templates.test.ts` (modified, +66/-0)
-```diff
-@@ -7,6 +7,7 @@ import type {
-   EmailTemplateObjectOutput,
-   EmailTemplateVersionListOutput,
-   EmailTemplateVersionObjectOutput,
-+  RenderedEmailTemplateObjectOutput,
- } from "@coss/email/schemas";
- import { createTestTenant, type TestTenant } from "@coss/tenancy/testing";
- import {
-@@ -276,6 +277,71 @@ describe("/v1/email_templates", () => {
-     });
-   });
- 
-+  test("renders the draft or a version without sending", async () => {
-+    const tenant = await createTestTenant();
-+    const { app, dispatch } = createTestApp();
-+    const key = tenant.sandboxKey;
-+    const template = await createTemplate(app, key, { ...TEMPLATE, alias: "welcome" });
-+    const render = (body: object, ref = "welcome") =>
-+      apiRequest(app, "POST", `/v1/email_templates/${ref}/render`, { key, body });
-+
-+    // The draft, with its sample variables.
-+    expect(await json<RenderedEmailTemplateObjectOutput>(await render({}))).toEqual({
-+      object: "email_template_render",
-+      template_id: template.id,
-+      version: null,
-+      locale: "en",
-+      subject: "Welcome, Ada",
-+      html: "<p>Hi Ada</p>",
-+      text: null,
-+    });
-+    expect(
-+      await json<RenderedEmailTemplateObjectOutput>(
-+        await render({ locale: "de-AT", variables: { first_name: "Grace", items: [] } }),
-+      ),
-+    ).toMatchObject({ locale: "de", subject: "Willkommen, Grace", text: "Hallo Grace" });
-+
-+    await json(
-+      await apiRequest(app, "POST", `/v1/email_templates/${template.id}/publish`, {
-+        key,
-+        body: {},
-+      }),
-+    );
-+    await json(
-+      await apiRequest(app, "PUT", `/v1/email_templates/${template.id}/draft`, {
-+        key,
-+        body: { contents: [{ locale: "en", subject: "{{nope}}", text: "x" }] },
-+      }),
-+    );
-+    // A published version still renders; the broken draft is refused like a publish.
-+    expect(
-+      await json<RenderedEmailTemplateObjectOutput>(await render({ version: 1 })),
-+    ).toMatchObject({
-+      version: 1,
-+      subject: "Welcome, Ada",
-+    });
-+    expect(await errorOf(await render({}))).toMatchObject({
-+      code: "template_invalid",
-+      issues: [{ path: "contents.en.subject" }],
-+    });
-+    expect(await errorOf(await render({ version: 1, variables: {} }))).toMatchObject({
-+      code: "invalid_template_variables",
-+      param: "variables.first_name",
-+    });
-+    expect(await errorOf(await render({ version: 9 }))).toMatchObject({
-+      code: "template_version_not_found",
-+      param: "version",
-+    });
-+    expect((await render({}, "missing")).status).toBe(404);
-+
-+    // Nothing was sent.
-+    await dispatch();
-+    const emails = await json<{ data: unknown[] }>(
-+      await apiRequest(app, "GET", "/v1/emails", { key }),
-+    );
-+    expect(emails.data).toEqual([]);
-+  });
-+
-   test("keeps templates in their environment and refuses taken aliases", async () => {
-     const tenant = await createTestTenant();
-     const { app } = createTestApp();
-```
-
-**File**: `apps/api/test/sdk-contract.test.ts` (modified, +15/-0)
-```diff
-@@ -182,6 +182,21 @@ describe("coss SDK against the API", () => {
-     expect(updated.data?.revision).toBe(2);
-     const published = await coss.email.templates.publish("receipt", { revision: 2 });
-     expect(published.data).toMatchObject({ version: 1, revision: 2 });
-+    const rendered = await coss.email.templates.render("receipt", {
-+      version: 1,
-+      locale: "fr-CA",
-+      variables: { first_name: "Ada", items: [] },
-+    });
-+    expect(rendered.error).toBeNull();
-+    expect(rendered.data).toEqual({
-+      object: "email_template_render",
-+      template_id: created.data?.id ?? "",
-+      version: 1,
-+      locale: "fr",
-+      subject: "Votre reçu, Ada",
-+      html: null,
-+      text: "Merci !",
-+    });
- 
-     const sent = await coss.email.send({
-       from: "Acme <billing@acme.com>",
+@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
+     "@coss/companion",
+     "@coss/push",
+     "@coss/sms",
++    "@coss/migrate",
+   ],
+   // A self-contained server (.next/standalone) for the container image. Tracing starts at the
+   // monorepo root so workspace packages and Bun's isolated node_modules (node_modules/.bun) are
 ```
 
 ---
 
-### Incident Patch 2: `ab7b5959` (2026-10-19)
-**Commit Message**: Merge pull request #143 from cosscom/build-a-no-content
+### Incident Patch 2: `8697c52d` (2026-10-19)
+**Commit Message**: Address Codex review (round 18)
 
-Email: content storage, a per-environment no-content-storage mode
-
-**File**: `.changeset/content-storage.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"coss": minor
-+---
-+
-+Content storage: `coss.email.storage` (`get`, `update`) switches an environment to `content_storage: "discard"`, which keeps each email's subject, body, headers, template variables and attachment filenames only until it is sent, fails or is canceled. Emails have `content_storage` (`mode` and `discarded_at`); `EmailContentStorage`, `ContentStorageMode`, `StorageSettings` and `UpdateStorageSettingsParams` are exported.
-```
-
-**File**: `apps/api/openapi.json` (modified, +564/-6)
-```diff
-@@ -513,6 +513,9 @@
-               "null"
-             ],
-             "description": "The broadcast the email is part of; `null` for any other email."
-+          },
-+          "content_storage": {
-+            "$ref": "#/components/schemas/EmailContentStorage"
-           }
-         },
-         "required": [
-@@ -541,7 +544,8 @@
-           "scheduled_at",
-           "batch_id",
-           "template",
--          "broadcast_id"
-+          "broadcast_id",
-+          "content_storage"
-         ],
-         "examples": [
-           {
-@@ -594,7 +598,11 @@
-             "scheduled_at": null,
-             "batch_id": null,
-             "template": null,
--            "broadcast_id": null
-+            "broadcast_id": null,
-+            "content_storage": {
-+              "mode": "store",
-+              "discarded_at": null
-+            }
-           }
-         ]
-       },
-@@ -815,6 +823,38 @@
-           }
-         ]
-       },
-+      "EmailContentStorage": {
-+        "type": "object",
-+        "properties": {
-+          "mode": {
-+            "type": "string",
-+            "enum": [
-+              "store",
-+              "discard"
-+            ],
-+            "description": "The environment's content storage when the email was sent. With `discard`, the subject, `html`, `text`, `headers`, template variables and attachment filenames are cleared once the email is sent, fails or is canceled."
-+          },
-+          "discarded_at": {
-+            "type": [
-+              "string",
-+              "null"
-+            ],
-+            "format": "date-time",
-+            "description": "When the content was cleared; `null` while it is kept. A cleared email has an empty `subject`, `html` and `text` `null` and no `headers`."
-+          }
-+        },
-+        "required": [
-+          "mode",
-+          "discarded_at"
-+        ],
-+        "examples": [
-+          {
-+            "mode": "store",
-+            "discarded_at": null
-+          }
-+        ],
-+        "description": "Whether coss.com keeps the email's content after sending it."
-+      },
-       "SendEmailRequest": {
-         "type": "object",
-         "properties": {
-@@ -1158,7 +1198,11 @@
-                 "scheduled_at": null,
-                 "batch_id": "batch_01k8d0n6x5f3w2e1r9t7y4u6i8",
-                 "template": null,
--                "broadcast_id": null
-+                "broadcast_id": null,
-+                "content_storage": {
-+                  "mode": "store",
-+                  "discarded_at": null
-+                }
-               }
-             ],
-             "created_at": "2026-10-10T12:00:00.000Z"
-@@ -1275,7 +1319,11 @@
-                 "sent_at": "2026-10-10T12:00:01.000Z",
-                 "scheduled_at": null,
-                 "batch_id": null,
--                "template": null
-+                "template": null,
-+                "content_storage": {
-+                  "mode": "store",
-+                  "discarded_at": null
-+                }
-               }
-             ],
-             "has_more": false
-@@ -1436,6 +1484,9 @@
-               "null"
-             ],
-             "description": "The broadcast the email is part of; `null` for any other email."
-+          },
-+          "content_storage": {
-+            "$ref": "#/components/schemas/EmailContentStorage"
-           }
-         },
-         "required": [
-@@ -1460,7 +1511,8 @@
-           "scheduled_at",
-           "batch_id",
-           "template",
--          "broadcast_id"
-+          "broadcast_id",
-+          "content_storage"
-         ],
-         "description": "An email without its content. Retrieve the email for `html`, `text`, `headers` and `attachments`.",
-         "examples": [
-@@ -1508,7 +1560,11 @@
-             "sent_at": "2026-10-10T12:00:01.000Z",
-             "scheduled_at": null,
-             "batch_id": null,
--            "template": null
-+            "template": null,
-+            "content_storage": {
-+              "mode": "store",
-+              "discarded_at": null
-+            }
-           }
-         ]
-       },
-@@ -8280,6 +8336,69 @@
-           }
-         ]
-       },
-+      "StorageSettings": {
-+        "type": "object",
-+        "properties": {
-+          "object": {
-+            "type": "string",
-+            "enum": [
-+              "storage_settings"
-+            ]
-+          },
-+          "content_storage": {
-+            "type": "string",
-+            "enum": [
-+              "store",
-+              "discard"
-+            ],
-+            "description": "`store` (the default) keeps each email's content (subject, body, headers, template variables, attachment filenames) for the email retention period. `discard` keeps it only until the email is sent, fails or is canceled; its metadata (addresses, tags, category, status, recipients, events) is kept as usual."
-+          },
-+          "updated_at": {
-+            "type": [
-+              "string",
-+              "null"
-+            ],
-+            "format": "date-time",
-+            "description": "When the setting last chan
-```
-
-**File**: `apps/api/src/middleware/request-log.ts` (modified, +41/-2)
-```diff
-@@ -1,10 +1,13 @@
-+import { getStorageSettings } from "@coss/email";
- import {
-+  EMAIL_CONTENT_KEYS,
-   type LogWriter,
-   loggedRequestHeaders,
-   loggedResponseHeaders,
-   redactBody,
- } from "@coss/logs";
- import type { RefusedKeyContext } from "@coss/tenancy";
-+import type { Context } from "hono";
- import { createMiddleware } from "hono/factory";
- import type { AppEnv } from "../types.ts";
- 
-@@ -55,6 +58,37 @@ const CAPABILITY_RESPONSES = [/^\/v1\/contacts\/[^/]+\/preference_links$/];
- const STATELESS_LOOKUPS = ["/v1/risk/email/check", "/v1/risk/ip/check"];
- const CONTENT_REQUESTS = ["/v1/risk/content/classify", ...STATELESS_LOOKUPS];
- 
-+/**
-+ * Requests and responses that carry emails' content (sends, batches, reads, cancel, reschedule):
-+ * their subjects, bodies, headers, template variables and attachment filenames are redacted (the
-+ * log would otherwise keep what the email itself doesn't) when an email they answer with was sent
-+ * without content storage (`markEmailContent`, from the email's own snapshot: a read or an
-+ * idempotent replay after switching back to `store`), or when the environment's content storage
-+ * is `discard` now (requests refused before any email exists).
-+ */
-+const EMAIL_CONTENT_PATHS = /^\/v1\/emails(\/|$)/;
-+
-+/** Marks the request as answering with an email sent without content storage, if one is. */
-+export function markEmailContent(
-+  c: Context<AppEnv>,
-+  emails: readonly { content_storage: { mode: string } }[],
-+): void {
-+  if (emails.some((email) => email.content_storage.mode === "discard")) {
-+    c.set("discardsEmailContent", true);
-+  }
-+}
-+
-+async function contentKeysFor(
-+  path: string,
-+  auth: { organizationId: string; environmentId: string },
-+  marked: boolean,
-+): Promise<readonly string[] | undefined> {
-+  if (!EMAIL_CONTENT_PATHS.test(path)) return undefined;
-+  if (marked) return EMAIL_CONTENT_KEYS;
-+  const { contentStorage } = await getStorageSettings(auth);
-+  return contentStorage === "discard" ? EMAIL_CONTENT_KEYS : undefined;
-+}
-+
- function keepsRequestBody(path: string): boolean {
-   return !CONTENT_REQUESTS.includes(path);
- }
-@@ -163,12 +197,17 @@ export function requestLog(writer: LogWriter) {
-     const responseHeaders = loggedResponseHeaders(response.headers);
-     const { requestId, clientIp } = c.var;
-     const search = new URL(c.req.url).search;
-+    const marked = c.get("discardsEmailContent") === true;
- 
-     void (async () => {
-       const [requestJson, responseJson] = await Promise.all([
-         requestText?.then(parseJson, () => undefined),
-         responseCopy ? readJson(responseCopy) : undefined,
-       ]);
-+      const content =
-+        requestJson === undefined && responseJson === undefined
-+          ? undefined
-+          : await contentKeysFor(path, auth, marked);
-       const error = (responseJson as ErrorEnvelope | undefined)?.error;
-       const { resourceType, resourceId } = resourceOf(path, responseJson);
-       writer.write({
-@@ -196,11 +235,11 @@ export function requestLog(writer: LogWriter) {
-           request: {
-             ...(search ? { query: search.slice(1) } : {}),
-             headers: requestHeaders,
--            ...(requestJson === undefined ? {} : { body: redactBody(requestJson) }),
-+            ...(requestJson === undefined ? {} : { body: redactBody(requestJson, { content }) }),
-           },
-           response: {
-             headers: responseHeaders,
--            ...(responseJson === undefined ? {} : { body: redactBody(responseJson) }),
-+            ...(responseJson === undefined ? {} : { body: redactBody(responseJson, { content }) }),
-           },
-           ...(typeof error?.type === "string" ? { error_type: error.type } : {}),
-         },
-```
-
-**File**: `apps/api/src/routes/emails.ts` (modified, +10/-0)
-```diff
-@@ -29,6 +29,7 @@ import { notFound } from "../errors.ts";
- import { requireApiKey } from "../middleware/api-key.ts";
- import { upgradeRequestBody } from "../middleware/api-version.ts";
- import { rateLimit, rateLimitError } from "../middleware/rate-limit.ts";
-+import { markEmailContent } from "../middleware/request-log.ts";
- import type { AppEnv } from "../types.ts";
- import { billingErrorDoc, commonErrors, errorDoc, jsonDoc, requestIdHeader } from "./docs.ts";
- import {
-@@ -419,6 +420,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-         // A matching replay (queued or completed) needs no quota. This lookup cannot create or dispatch a send.
-         const replay = await emailService.replay(input);
-         if (replay) {
-+          markEmailContent(c, [replay]);
-           c.header("Idempotent-Replayed", "true");
-           return c.json(replay, 202);
-         }
-@@ -439,6 +441,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-         throw error;
-       }
-       const { email, replayed } = result;
-+      markEmailContent(c, [email]);
-       // A replay sent nothing new (an SDK retry reuses its Idempotency-Key).
-       if (replayed) {
-         await c.var.rateLimiter.refund(quota);
-@@ -471,6 +474,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-       if (!decision.allowed) {
-         const replay = await emailService.replayBatch(input);
-         if (replay) {
-+          markEmailContent(c, replay.data);
-           c.header("Idempotent-Replayed", "true");
-           return c.json(replay, 202);
-         }
-@@ -490,6 +494,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-         throw error;
-       }
-       const { batch, replayed } = result;
-+      markEmailContent(c, batch.data);
-       if (replayed) {
-         await c.var.rateLimiter.refund(quota);
-         c.header("Idempotent-Replayed", "true");
-@@ -506,6 +511,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-     const { organizationId, environmentId } = c.var.auth;
-     const batch = await getEmailBatch({ organizationId, environmentId, id });
-     if (!batch) throw notFound("No batch with this id exists in this API key's environment.");
-+    markEmailContent(c, batch.data);
-     return c.json(batch, 200);
-   });
- 
-@@ -515,6 +521,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-     // Malformed, unknown, other-environment and other-organization ids are all `null`.
-     const email = await getEmail({ organizationId, environmentId, id });
-     if (!email) throw notFound("No email with this id exists in this API key's environment.");
-+    markEmailContent(c, [email]);
-     return c.json(email, 200);
-   });
- 
-@@ -535,13 +542,15 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-       createdBefore: query.created_before ? new Date(query.created_before) : undefined,
-       before: query.after,
-     });
-+    markEmailContent(c, page.data);
-     return c.json({ object: "list" as const, data: page.data, has_more: page.hasMore }, 200);
-   });
- 
-   router.openapi(cancelEmailRoute, async (c) => {
-     const { id } = c.req.valid("param");
-     const { organizationId, environmentId } = c.var.auth;
-     const email = await emailService.cancel({ organizationId, environmentId, emailId: id });
-+    markEmailContent(c, [email]);
-     await recordApiAudit(c, {
-       action: "email.canceled",
-       target: { type: "email", id: email.id },
-@@ -564,6 +573,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
-       target: { type: "email", id: email.id },
-       metadata: { scheduled_at: email.scheduled_at },
-     });
-+    markEmailContent(c, [email]);
-     return c.json(email, 200);
-   });
- 
-```
-
-**File**: `apps/api/src/routes/storage-settings.ts` (added, +95/-0)
-```diff
-@@ -0,0 +1,95 @@
-+import { getStorageSettings, toStorageSettingsObject, updateStorageSettings } from "@coss/email";
-+import { StorageSettings, UpdateStorageSettingsRequest } from "@coss/email/schemas";
-+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-+import { recordApiAudit } from "../audit.ts";
-+import { requireApiKey } from "../middleware/api-key.ts";
-+import { upgradeRequestBody } from "../middleware/api-version.ts";
-+import { rateLimit } from "../middleware/rate-limit.ts";
-+import type { AppEnv } from "../types.ts";
-+import { commonErrors, errorDoc, jsonDoc } from "./docs.ts";
-+
-+// Like tracking settings: the setting changes what later sends of the environment keep, so it
-+// needs `email:send` rather than a permission of its own (and existing keys need no backfill).
-+const READ = requireApiKey({ email: ["read"] });
-+const WRITE = requireApiKey({ email: ["send"] });
-+
-+const SCOPE_NOTE =
-+  "Settings belong to the API key's own environment: a `coss_test_…` key only ever changes " +
-+  "sandbox settings. Emails keep the setting that applied when they were sent.";
-+
-+export const getStorageSettingsRoute = createRoute({
-+  method: "get",
-+  path: "/storage_settings",
-+  operationId: "getStorageSettings",
-+  tags: ["Content storage"],
-+  summary: "Retrieve storage settings",
-+  description:
-+    "Whether coss.com keeps the content of the environment's emails (`content_storage: " +
-+    '"store"`, the default) or only until each email is sent, fails or is canceled ' +
-+    `(\`"discard"\`). ${SCOPE_NOTE}`,
-+  security: [{ bearerAuth: [] }],
-+  middleware: [READ, rateLimit("api.read")],
-+  responses: {
-+    200: jsonDoc("The environment's storage settings.", StorageSettings),
-+    ...commonErrors,
-+  },
-+});
-+
-+export const updateStorageSettingsRoute = createRoute({
-+  method: "patch",
-+  path: "/storage_settings",
-+  operationId: "updateStorageSettings",
-+  tags: ["Content storage"],
-+  summary: "Update storage settings",
-+  description:
-+    'With `content_storage: "discard"`, emails sent from now on keep their subject, body, ' +
-+    "headers, template variables and attachment filenames only until they are sent, fail or " +
-+    "are canceled (scheduled emails keep them until their time comes); request logs never " +
-+    "keep them. Their metadata (addresses, tags, category, status, recipients, events) is kept " +
-+    `as usual. ${SCOPE_NOTE}`,
-+  security: [{ bearerAuth: [] }],
-+  middleware: [WRITE, rateLimit("api.write"), upgradeRequestBody("PATCH /v1/storage_settings")],
-+  request: {
-+    body: {
-+      required: true,
-+      content: { "application/json": { schema: UpdateStorageSettingsRequest } },
-+    },
-+  },
-+  responses: {
-+    200: jsonDoc("The environment's storage settings.", StorageSettings),
-+    400: errorDoc("The body is not valid JSON (`invalid_json`)."),
-+    413: errorDoc("The request body is larger than 5 MB (`payload_too_large`)."),
-+    415: errorDoc("The body is not sent as `application/json` (`unsupported_media_type`)."),
-+    ...commonErrors,
-+    422: errorDoc("The body failed validation (`validation_error`, see `issues`)."),
-+  },
-+});
-+
-+export function createStorageSettingsRoutes(): OpenAPIHono<AppEnv> {
-+  const router = new OpenAPIHono<AppEnv>();
-+
-+  router.openapi(getStorageSettingsRoute, async (c) => {
-+    const { organizationId, environmentId } = c.var.auth;
-+    const settings = await getStorageSettings({ organizationId, environmentId });
-+    return c.json(toStorageSettingsObject(settings), 200);
-+  });
-+
-+  router.openapi(updateStorageSettingsRoute, async (c) => {
-+    const { organizationId, environmentId } = c.var.auth;
-+    const { content_storage } = c.req.valid("json");
-+    const settings = await updateStorageSettings(
-+      { organizationId, environmentId },
-+      { contentStorage: content_storage },
-+    );
-+    // The key's environment always exists while the key authenticates.
-+    if (!settings) throw new Error(`Environment ${environmentId} not found.`);
-+    await recordApiAudit(c, {
-+      action: "storage_settings.updated",
-+      target: { type: "environment", id: environmentId },
-+      metadata: { content_storage },
-+    });
-+    return c.json(toStorageSettingsObject(settings), 200);
-+  });
-+
-+  return router;
-+}
-```
-
-**File**: `apps/api/src/routes/v1.ts` (modified, +2/-0)
-```diff
-@@ -25,6 +25,7 @@ import { createRiskConfigRoutes } from "./risk-config.ts";
- import { createRiskLimitRoutes } from "./risk-limits.ts";
- import { createRiskLookupRoutes } from "./risk-lookups.ts";
- import { createSegmentRoutes } from "./segments.ts";
-+import { createStorageSettingsRoutes } from "./storage-settings.ts";
- import { createSuppressionRoutes } from "./suppressions.ts";
- import { createTopicRoutes } from "./topics.ts";
- import { createTrackingSettingsRoutes } from "./tracking-settings.ts";
-@@ -69,6 +70,7 @@ export function createV1Router(deps: V1Dependencies): OpenAPIHono<AppEnv> {
-   v1.route("/", createWebhookEventRoutes());
-   v1.route("/", createSuppressionRoutes());
-   v1.route("/", createTrackingSettingsRoutes());
-+  v1.route("/", createStorageSettingsRoutes());
-   v1.route(
-     "/",
-     createContactRoutes({
-```
-
-**File**: `apps/api/src/types.ts` (modified, +5/-0)
-```diff
-@@ -26,5 +26,10 @@ export type AppEnv = {
-      * `requireApiKey`.
-      */
-     apiVersion: string;
-+    /**
-+     * Set by the email routes when they answer with an email sent without content storage: the
-+     * request log then redacts the request's and response's content (`markEmailContent`).
-+     */
-+    discardsEmailContent: boolean;
-   };
- };
-```
-
-**File**: `apps/api/test/app.test.ts` (modified, +5/-1)
-```diff
-@@ -258,6 +258,7 @@ describe("GET /openapi.json", () => {
-       "/v1/segments",
-       "/v1/segments/{id}",
-       "/v1/segments/{id}/contacts",
-+      "/v1/storage_settings",
-       "/v1/suppressions",
-       "/v1/suppressions/check",
-       "/v1/suppressions/export",
-@@ -450,7 +451,8 @@ describe("GET /openapi.json", () => {
-             String(route).includes("webhook") ||
-             String(route).includes("log_drains") ||
-             String(route).includes("/risk/") ||
--            String(route).includes("tracking_settings"),
-+            String(route).includes("tracking_settings") ||
-+            String(route).includes("storage_settings"),
-         ),
-     ).toEqual([
-       ["post /v1/email_templates", "createEmailTemplate"],
-@@ -496,6 +498,8 @@ describe("GET /openapi.json", () => {
-       ["delete /v1/tracking_settings/default", "deleteTrackingDefault"],
-       ["patch /v1/tracking_settings/categories/{category}", "updateTrackingCategory"],
-       ["delete /v1/tracking_settings/categories/{category}", "deleteTrackingCategory"],
-+      ["get /v1/storage_settings", "getStorageSettings"],
-+      ["patch /v1/storage_settings", "updateStorageSettings"],
-       ["post /v1/log_drains", "createLogDrain"],
-       ["get /v1/log_drains", "listLogDrains"],
-       ["get /v1/log_drains/{id}", "getLogDrain"],
-```
-
----
-
-### Incident Patch 3: `997e0172` (2026-10-19)
-**Commit Message**: coss-cli: wait for every write before exiting; fix the merged docs and tests
-
-The compiled binary reported writableLength 0 while a pipe still had output
-queued, so a busy `coss api --paginate | …` lost its tail on exit: every
-write is now tracked until its callback. Code spans split across lines broke
-the CLI docs page's MDX, and the trigger test now awaits complete().
+- claimItem looks up an already recorded item before allocating a name, so a
+  retry no longer reserves a name it never stores (which pushed later
+  objects to suffixed names like foo_2_2).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/site/content/docs/(tools)/cli.mdx` (modified, +14/-13)
+**File**: `packages/migrate/src/items.ts` (modified, +15/-2)
 ```diff
-@@ -159,8 +159,8 @@ coss webhooks retry whep_01k7c8m4q2f3e9v6t5r1n0p8yz whdel_01k7c8m4q2f3e9v6t5r1n0
- `coss webhooks list` shows the environment's endpoints with their URL, state (enabled, failing,
- disabled) and event types. `coss webhooks deliveries <endpoint>` lists an endpoint's deliveries,
- newest first, with the last status code and error; filter with `--status pending|succeeded|failed`
--or `--event <event id>`, and show up to `--limit 100` (default 20). `coss webhooks retry <endpoint>
--<delivery>` sends a finished delivery once more, within seconds. Each takes `--json`.
-+or `--event <event id>`, and show up to `--limit 100` (default 20).
-+`coss webhooks retry <endpoint> <delivery>` sends a finished delivery once more, within seconds. Each takes `--json`.
- 
- ## Send test emails
- 
-@@ -189,8 +189,8 @@ coss emails diagnose --to ada@example.com
- ```
- 
- `coss emails list` shows the environment's emails, newest first, with where each one stands: its
--status until it was handed to the provider, then its recipients' (`delivered`, `2 delivered, 1
--bounced`). Filter by `--to`, `--status`, `--recipient-status`, free text (`-q`), `--category`,
-+status until it was handed to the provider, then its recipients' (`delivered`,
-+`2 delivered, 1 bounced`). Filter by `--to`, `--status`, `--recipient-status`, free text (`-q`), `--category`,
- `--batch <id>` and creation time (`--since`, `--until`); `--limit` sets how many (20 by default,
- read page by page). `--json` prints one email per line.
- 
-@@ -235,19 +235,19 @@ coss hooks portal acme --open
- ```
- 
- - `coss hooks apps list` and `coss hooks apps create <name>` (`--uid`, `--metadata key=value`)
--  manage applications; `coss hooks event-types list` (`--archived`) and `coss hooks event-types
--  create <name>` (`--description`, `--schema`, `--example`, each JSON inline, `@file` or `-` for
-+  manage applications; `coss hooks event-types list` (`--archived`) and
-+  `coss hooks event-types create <name>` (`--description`, `--schema`, `--example`, each JSON inline, `@file` or `-` for
-   stdin) the event types. Lists show 50 (`--limit`, up to 100).
--- `coss hooks endpoints list <app>` shows each endpoint's state; `coss hooks endpoints add <app>
--  --url <url>` (`--types`, `--description`, `--rate-limit`) prints the new endpoint's signing
-+- `coss hooks endpoints list <app>` shows each endpoint's state;
-+  `coss hooks endpoints add <app> --url <url>` (`--types`, `--description`, `--rate-limit`) prints the new endpoint's signing
-   secret, the only time it's shown.
- - `coss hooks send <app> <event-type>` sends a message: the payload is `--data` (a JSON object)
-   with `-F name=value` (JSON values, `@file`) and `-f name=value` (strings) on top, or, with none
-   of them, the event type's first example. `--idempotency-key` sends it once only.
- - `coss hooks deliveries <app>` lists deliveries, newest first, of every endpoint or one
-   (`--endpoint`), or of one message (`--message`), by `--status` (pending, succeeded, failed);
--  `coss hooks attempts <app> <delivery>` shows each HTTP request of one, and `coss hooks retry <app>
--  <delivery>` queues a finished one for another attempt.
-+  `coss hooks attempts <app> <delivery>` shows each HTTP request of one, and
-+  `coss hooks retry <app> <delivery>` queues a finished one for another attempt.
- - `coss hooks portal <app>` prints a link that signs in to the application's
-   [portal](/docs/hooks/portal) (`--open` opens it, `--read-only`, `--expires-in <seconds>`). Anyone
-   with the link is signed in until it expires.
-@@ -276,9 +276,10 @@ coss risk lists add block domain evil.example --expires 30d --note "spam wave"
- - `coss risk assessments` lists assessments by `--decision`, `--event`, `--user` and `--review`
-   (`open` is the review queue); `coss risk feedback <assessment> --outcome legitimate|fraud|abuse`
-   (`--note`) reports what the user turned out to be.
--- `coss risk lists list` (`--list allow|block`, `--type`), `coss risk lists add <allow|block>
--  <email|domain|ip|asn|country|user> <value>` (`--note`, `--expires` as `7d`, `12h` or a time) and
--  `coss risk lists remove <entry>` manage the allow and block lists.
-+- `coss risk lists list` (`--list allow|block`, `--type`),
-+  `coss risk lists add <allow|block> <email|domain|ip|asn|country|user> <value>` (`--note`,
-+  `--expires` as `7d`, `12h` or a time) and `coss risk lists remove <entry>` manage the allow and
-+  block lists.
- 
- ## Receive emails
- 
-```
-
-**File**: `packages/cli/src/cli.ts` (modified, +3/-11)
-```diff
-@@ -1,17 +1,9 @@
- #!/usr/bin/env node
--import { nodeIo } from "./io.ts";
-+import { flushOutput, nodeIo } from "./io.ts";
- import { run } from "./run.ts";
- 
--/** Resolves once everything written to `stream` so far has reached the OS (pipes are async). */
--function flushed(stream: NodeJS.WriteStream): Promise<void> {
--  return new Promise((resolve) => {
--    if (stream.writableLength === 0) return resolve();
--    // Writes complete in order: this one's callback comes after every earlier one's.
--    stream.write("", () => resolve());
--  });
--}
--
- process.exitCode = await run(process.argv.slice(2), nodeIo());
--await Promise.all([flushed(process.stdout), flushed(process.stderr)]);
-+// Pipes are asynchronous: exiting before every write has reached the OS would cut output short.
-+await flushOutput();
- // Commands end their own work; don't wait on keep-alive sockets or stdin.
- process.exit();
-```
-
-**File**: `packages/cli/src/io.ts` (modified, +31/-2)
-```diff
-@@ -171,6 +171,35 @@ function readTerminalLine(secret: boolean): Promise<string> {
-   });
+@@ -47,6 +47,9 @@ export async function claimItem(
+   source: { id: string; name: string },
+   name: () => string | null,
+ ): Promise<MigrationItemRow> {
++  // Looked up first: `name()` reserves a name, which an item that already has one must not do.
++  const recorded = await findItem(row, kind, source.id);
++  if (recorded) return recorded;
+   const [inserted] = await db
+     .insert(migrationItem)
+     .values({
+@@ -62,6 +65,17 @@ export async function claimItem(
+     })
+     .returning();
+   if (inserted) return inserted;
++  // Recorded meanwhile by another attempt.
++  const existing = await findItem(row, kind, source.id);
++  if (!existing) throw new Error(`Migration item ${kind} ${source.id} vanished.`);
++  return existing;
++}
++
++async function findItem(
++  row: Pick<MigrationRow, "id" | "organizationId">,
++  kind: ItemKind,
++  sourceId: string,
++): Promise<MigrationItemRow | undefined> {
+   const [existing] = await db
+     .select()
+     .from(migrationItem)
+@@ -70,11 +84,10 @@ export async function claimItem(
+         eq(migrationItem.organizationId, row.organizationId),
+         eq(migrationItem.migrationId, row.id),
+         eq(migrationItem.kind, kind),
+-        eq(migrationItem.sourceId, source.id),
++        eq(migrationItem.sourceId, sourceId),
+       ),
+     )
+     .limit(1);
+-  if (!existing) throw new Error(`Migration item ${kind} ${source.id} vanished.`);
+   return existing;
  }
  
-+/** Writes not yet handed to the OS: the bin waits for them before it exits. */
-+const pending = new Set<Promise<void>>();
-+
-+/**
-+ * A stream whose every write is tracked until its callback. `writableLength` isn't enough: the
-+ * compiled (Bun) binary reports 0 while a pipe still has output queued, and exiting then cut a
-+ * busy `coss api --paginate | …` short.
-+ */
-+function tracked(stream: NodeJS.WriteStream): OutputStream {
-+  return {
-+    get isTTY() {
-+      return stream.isTTY;
-+    },
-+    write(chunk) {
-+      const written = new Promise<void>((resolve) => {
-+        // Called with an error too (a closed pipe): nothing more will be written either way.
-+        stream.write(chunk, () => resolve());
-+      });
-+      pending.add(written);
-+      void written.then(() => pending.delete(written));
-+    },
-+  };
-+}
-+
-+/** Resolves once every write so far has reached the OS. */
-+export async function flushOutput(): Promise<void> {
-+  while (pending.size > 0) await Promise.all(pending);
-+}
-+
- /** The real process: its environment, streams, network and signals. */
- export function nodeIo(): CliIo {
-   const controller = new AbortController();
-@@ -185,8 +214,8 @@ export function nodeIo(): CliIo {
-   }
-   return {
-     env: process.env,
--    stdout: process.stdout,
--    stderr: process.stderr,
-+    stdout: tracked(process.stdout),
-+    stderr: tracked(process.stderr),
-     stdinIsTTY: process.stdin.isTTY === true,
-     fetch: (input, init) => globalThis.fetch(input, init),
-     now: () => new Date(),
 ```
 
-**File**: `packages/cli/test/trigger.test.ts` (modified, +5/-4)
+**File**: `packages/migrate/test/runner.test.ts` (modified, +26/-0)
 ```diff
-@@ -102,11 +102,12 @@ describe("coss trigger", () => {
-     );
-   });
- 
--  test("completes the event types a sandbox environment can test", () => {
--    const types = complete(COMMANDS, ["trigger", "email.b"]);
-+  test("completes the event types a sandbox environment can test", async () => {
-+    const io = testIo();
-+    const types = await complete(COMMANDS, ["trigger", "email.b"], io);
-     expect(types).toEqual(["email.bounced"]);
--    expect(complete(COMMANDS, ["trigger", "billing."])).toEqual([]);
--    expect(complete(COMMANDS, ["trigger", "risk."])).toEqual([
-+    expect(await complete(COMMANDS, ["trigger", "billing."], io)).toEqual([]);
-+    expect(await complete(COMMANDS, ["trigger", "risk."], io)).toEqual([
-       "risk.assessment.review",
-       "risk.assessment.reviewed",
+@@ -542,6 +542,32 @@ describe("runDueMigrations", () => {
      ]);
+   });
+ 
++  test("a retried item keeps its name and reserves no other", async () => {
++    const tenant = await createTestTenant();
++    const env = envOf(tenant);
++    const data: FakeSourceData = {
++      properties: [
++        { id: "p1", name: "foo", type: "string", fallback: null },
++        { id: "p2", name: "foo_2", type: "string", fallback: null },
++      ],
++    };
++    const row = await connect(tenant);
++    await settle(tenant, depsFor(data));
++    await startAll(tenant, row.id, ["contacts"]);
++    // An attempt that stopped after recording foo, before creating it.
++    await db.insert(schema.migrationItem).values({
++      migrationId: row.id,
++      organizationId: tenant.organization.id,
++      kind: "property",
++      sourceId: "p1",
++      sourceName: "foo",
++      targetName: "foo",
++    });
++    await settle(tenant, depsFor(data));
++    const keys = (await listContactPropertyRows(env)).map((property) => property.key).sort();
++    expect(keys).toEqual(["foo", "foo_2"]);
++  });
++
+   test("finds existing topics even when the environment is at its topic cap", async () => {
+     const tenant = await createTestTenant();
+     const env = envOf(tenant);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #146** (2026-10-19): Release: sign and notarize the CLI's macOS executables (@pumfleet)
-- **PR #145** (2026-10-19): Scoped API keys: full access, sending, read only or custom permissions (@pumfleet)
-- **PR #143** (2026-10-19): Email: content storage, a per-environment no-content-storage mode (@pumfleet)
-- **PR #142** (2026-10-19): Version packages (@github-actions[bot])
-- **PR #141** (2026-10-19): coss-cli: command registry, coss api, and the CLI roadmap (emails, inbox, domains, templates, trigger, webhooks, init, hooks, risk, binaries) (@pumfleet)
-- **PR #140** (2026-10-19): Infra: turn on Domain Connect in production (@pumfleet)
+- **PR #155** (2026-10-19): Import from Resend, SendGrid and Postmark (@pumfleet)
+- **PR #154** (2026-10-19): Production: send SMS through Twilio (@pumfleet)
+- **PR #153** (2026-10-19): Spend management: personal API keys, attributed spend and budgets (@pumfleet)
+- **PR #152** (2026-10-19): SMS: MCP tools, CLI, docs, legal pages, the iOS app and agent docs (@pumfleet)
+- **PR #151** (2026-10-19): SMS: senders (subaccounts, carrier registration, numbers) and the dashboard (@pumfleet)
+- **PR #150** (2026-10-19): SMS: Twilio, the public API, the worker loops and the SDK (@pumfleet)
 
 ---
 
@@ -3141,33 +2357,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render
+## X. Merge pull request #155 from cosscom/migrate-imports
 
 **RULE**:
-When implementing operations in `.changeset/cli-domains-templates.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e13f0e45`: coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c85057e`: Merge pull request #155 from cosscom/migrate-imports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/cli-domains-templates.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-"coss": minor
-"coss-cli": minor
----
-
-`coss.email.templates.render(template, { version, locale, variables })` renders a template's draft (or a published version) as a send would, without sending (`POST /v1/email_templates/{id}/render`). The CLI gets `coss domains list|add|get|verify` (DNS records as a table or zone-file lines with `--format bind`; `verify --wait` follows the domain until it's verified) and templates as code: `coss templates list|pull|push|preview` (a folder per template, `push --watch` and `--publish`, `preview --var … --open`).
+| `packages/migrate` | `@coss/migrate` | Imports from Resend, SendGrid and Postmark (dashboard only): provider sources (`src/sources/*.ts`, throttled `providerClient`, SendGrid's contact exports through `publicDownloader`), the worker's `runDueMigrations` (leased, resumable phases: custom fields, topics, lists, templates, contacts, list members, suppressions, webhook endpoints), template converters (`./templates`, client-safe), purges; `./testing` (`fakeSource`). Domains are created by the dashboard's start action. See `packages/migrate/AGENTS.md`. |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+`db ← logs ← webhooks ← risk` (`risk` also `→ signals, ratelimit, retention, screening` — only screening's DB-free `./classifier`, `./text`, `./runtime`, `./testing`; `email` imports only `@coss/risk/schemas`, for `WEBHOOK_EVENT_TYPES`), `db ← logs ← webhooks ← reputation ← screening ← email`, `webhooks ← sms → billing, reputation, retention, v
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e13f0e45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c85057e` are properly handled with clean fallback behavior.

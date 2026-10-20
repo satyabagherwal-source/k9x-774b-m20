@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:54:34.861Z",
+  "last_updated": "2026-10-20T06:13:26.784Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2158,6 +2158,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nervjs-taro"
+    },
+    {
+      "id": "CD-ERUO",
+      "directive_title": "rules): fill target `**` for named catch-all keys (`/**:name`)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "h3js/h3",
+      "source_commit": "48d650be",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-h3js-h3"
     }
   ]
 }

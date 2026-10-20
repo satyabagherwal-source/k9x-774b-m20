@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T06:07:11.488Z",
-  "total_cycles_completed": 3722,
-  "total_learnings_persisted": 3722,
-  "total_rules_promoted": 2899,
+  "last_updated": "2026-10-20T06:13:26.786Z",
+  "total_cycles_completed": 3724,
+  "total_learnings_persisted": 3724,
+  "total_rules_promoted": 2900,
   "history": [
-    {
-      "timestamp": "2026-10-19T23:02:53.842Z",
-      "repository": "fb55/css-select",
-      "learningId": "learn-github-fb55-css-select",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T23:02:55.112Z",
-      "repository": "sindresorhus/KeyboardShortcuts",
-      "learningId": "learn-github-sindresorhus-keyboardshortcuts",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T23:03:35.023Z",
       "repository": "lingui/js-lingui",
@@ -1403,6 +1389,20 @@
       "repository": "k3s-io/k3s",
       "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:13:22.613Z",
+      "repository": "cosscom/coss",
+      "learningId": "learn-github-cosscom-coss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T06:13:26.786Z",
+      "repository": "h3js/h3",
+      "learningId": "learn-github-h3js-h3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -3745,3 +3745,5 @@
 | `CYCLE-20261020-6NSK` | `2026-10-20T06:07:08.276Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3090` | Yes (`c1a46671...`) |
 | `CYCLE-20261020-6NZ4` | `2026-10-20T06:07:08.512Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3091` | Yes (`479cb9e0...`) |
 | `CYCLE-20261020-6Q9L` | `2026-10-20T06:07:11.481Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3092` | Yes (`44d2710f...`) |
+| `CYCLE-20261020-EOMM` | `2026-10-20T06:13:22.606Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3093` | Yes (`a068ae90...`) |
+| `CYCLE-20261020-ERUG` | `2026-10-20T06:13:26.776Z` | `h3js/h3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/unjs-h3-learnings.md` | Yes (`dc6a1145...`) |

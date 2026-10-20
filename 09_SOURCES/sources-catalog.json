@@ -2033,10 +2033,10 @@
     "repository": "h3js/h3",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/h3",
-    "sourceVersion": "b64166ae",
+    "sourceVersion": "48d650be",
     "license": "MIT",
-    "contentHash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
-    "lastHarvestedAt": "2026-10-18T08:01:01.459Z",
+    "contentHash": "dc6a11455223643f326a2793d880467ea736c9b61d9e79835f3abc968d401a82",
+    "lastHarvestedAt": "2026-10-20T06:13:26.779Z",
     "learningId": "learn-github-h3js-h3"
   },
   "unjs-ufo": {
@@ -2473,10 +2473,10 @@
     "repository": "cosscom/coss",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/coss",
-    "sourceVersion": "674fd511",
+    "sourceVersion": "4c85057e",
     "license": "AGPL-3.0",
-    "contentHash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
-    "lastHarvestedAt": "2026-10-19T19:22:19.072Z",
+    "contentHash": "a068ae9044609689d290ffb7bb088a58bfee217a310d210fb1b46a7193aa81dd",
+    "lastHarvestedAt": "2026-10-20T06:13:22.609Z",
     "learningId": "learn-github-cosscom-coss"
   },
   "sharkdp-bat": {
