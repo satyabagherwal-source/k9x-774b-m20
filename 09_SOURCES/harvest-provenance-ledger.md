@@ -3886,3 +3886,4 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `fed7415c` | Multi-dimensional audit evidence | 2026-10-20T15:50:12.215Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-20T15:56:25.685Z |
 | `learn-github-react-metro` | `https://github.com/react/metro` | `e1dfb482` | Multi-dimensional audit evidence | 2026-10-20T15:56:30.345Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T16:02:28.213Z |

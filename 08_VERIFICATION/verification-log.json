@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-YQL8",
-    "timestamp": "2026-10-19T17:25:09.020Z",
-    "repository": "software-mansion/react-native-screens",
-    "learningId": "learn-github-software-mansion-react-native-screens",
-    "contentHash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-6LWJ",
     "timestamp": "2026-10-19T17:31:16.195Z",
     "repository": "speedyapply/JobSpy",
@@ -7492,6 +7477,21 @@
     "contentHash": "6d08ce967ce9bd8b075304f2d2b83a697ee5861db354cc6487882464c9adc9d5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G9GZ",
+    "timestamp": "2026-10-20T16:02:28.211Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "64af429cf7f1c12e1867fef695160a2f1aa8bf4e97dc83c213105a5e61de5c48",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
