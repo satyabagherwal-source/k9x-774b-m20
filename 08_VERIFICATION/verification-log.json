@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-T2C7",
-    "timestamp": "2026-10-19T16:24:45.079Z",
-    "repository": "davo20019/seo-analysis",
-    "learningId": "learn-github-davo20019-seo-analysis",
-    "contentHash": "47d509313268644b40a60e3c15e9f1d208d19449dfa978800c45e3dd5cc7e598",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-T3DT",
     "timestamp": "2026-10-19T16:24:46.433Z",
     "repository": "exyte/PopupView",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-small-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
     "contentHash": "56f51ec3d357fc360d6431e6c6217540ed220f5fc59129cf46b4c90452bdca55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G7DE",
+    "timestamp": "2026-10-20T14:38:26.642Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "09db5a5671a58acd96b57e15c9aac531a7a29e19761af92b754dcd440319ce14",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

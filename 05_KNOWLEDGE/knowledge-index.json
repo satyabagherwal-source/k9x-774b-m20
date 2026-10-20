@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:32:01.730Z",
+  "last_updated": "2026-10-20T14:38:26.606Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14373,7 +14373,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "3da954c6038818ae34bbf4498340f3b6d5bbf4ecc6d45160b2dcefb209294e15",
+      "content_hash": "09db5a5671a58acd96b57e15c9aac531a7a29e19761af92b754dcd440319ce14",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [
@@ -14401,6 +14401,21 @@
           "number": 1531,
           "title": "Speculative Decoding Draft Model Must Be Quantized to Match Target Hardware Bandwidth",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3227,
+          "title": "MoE Expert Pruning Must Preserve Top-K Activation Density",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3228,
+          "title": "NVFP4 Quantization Requires Kernel-Level Support in Inference Engine",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3229,
+          "title": "Multi-Node MoE Deployment Requires Explicit NCCL Topology Configuration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14421,7 +14436,7 @@
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj"
       ],
-      "verified_at": "2026-10-19T00:54:30.763Z",
+      "verified_at": "2026-10-20T14:38:26.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101819,6 +101834,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:32:01.719Z"
+    },
+    "rule-3227": {
+      "learning_id": "rule-3227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3227,
+      "title": "MoE Expert Pruning Must Preserve Top-K Activation Density",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:38:26.598Z"
+    },
+    "rule-3228": {
+      "learning_id": "rule-3228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3228,
+      "title": "NVFP4 Quantization Requires Kernel-Level Support in Inference Engine",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:38:26.598Z"
+    },
+    "rule-3229": {
+      "learning_id": "rule-3229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3229,
+      "title": "Multi-Node MoE Deployment Requires Explicit NCCL Topology Configuration",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:38:26.598Z"
     }
   },
   "aliases": {

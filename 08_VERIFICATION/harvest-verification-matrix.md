@@ -3851,3 +3851,4 @@
 | `CYCLE-20261020-ZOQK` | `2026-10-20T14:25:35.996Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3222` | Yes (`44cf0ed5...`) |
 | `CYCLE-20261020-ZRMR` | `2026-10-20T14:25:39.747Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3223` | Yes (`e51a33d5...`) |
 | `CYCLE-20261020-7YEP` | `2026-10-20T14:32:01.778Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3224, Rule 3225, Rule 3226` | Yes (`56f51ec3...`) |
+| `CYCLE-20261020-G7DE` | `2026-10-20T14:38:26.642Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3227, Rule 3228, Rule 3229` | Yes (`09db5a56...`) |

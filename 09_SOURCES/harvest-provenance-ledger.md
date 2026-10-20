@@ -3858,3 +3858,4 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `ee327911` | Multi-dimensional audit evidence | 2026-10-20T14:25:36.004Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bc76175c` | Multi-dimensional audit evidence | 2026-10-20T14:25:39.756Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T14:32:01.785Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-20T14:38:26.649Z |

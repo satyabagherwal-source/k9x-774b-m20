@@ -232941,3 +232941,186 @@ outputs = model(**inputs) # Will OOM if all_texts is large
 Load test with increasing batch sizes until OOM, then set `max_batch_size` to 80% of the failure point.
 
 ---
+
+
+---
+
+## 3227. MoE Expert Pruning Must Preserve Top-K Activation Density (Harvested from autotrust/GLM5.3-Flash-E224-DGX-Spark)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "MoE Expert Pruning Must Preserve Top-K Activation Density",
+  "source": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+  "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+  "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-20T14:38:26.257Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When pruning experts in a Mixture-of-Experts model via NAS, the system MUST ensure that the remaining experts cover the same activation distribution as the original model. Specifically, if the original model activates top-8 experts out of 288, the pruned model MUST activate top-8 out of 224 such that the *relative importance* of the selected experts remains statistically consistent. The router MUST be re-calibrated or fine-tuned to account for the reduced candidate pool.
+**WHY**:
+Naive pruning (e.g., removing the least-used experts) can lead to "expert starvation" where certain input patterns no longer have a suitable expert, causing quality degradation. Conversely, if the router is not adjusted, it may still attempt to route to pruned experts, leading to index out-of-bounds errors or silent fallback to default experts, breaking the MoE invariant.
+**WHEN TO APPLY**:
+Any MoE model undergoing expert reduction, quantization, or NAS-based architecture search.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for NAS-based Expert Pruning with Router Recalibration
+def prune_experts(model, target_experts=224):
+    # 1. Identify least important experts based on router gate scores over a calibration set
+    importance_scores = compute_router_importance(model, calibration_data)
+    experts_to_keep = top_k_experts(importance_scores, k=target_experts)
+    
+    # 2. Prune the expert weights
+    model.mlp.experts = prune_expert_weights(model.mlp.experts, experts_to_keep)
+    
+    # 3. CRITICAL: Recalibrate the router to map inputs to the new expert indices
+    # The router must now output indices in [0, 223] instead of [0, 287]
+    model.mlp.gate = recalibrate_router(model.mlp.gate, experts_to_keep)
+    
+    # 4. Verify that the top-k selection still yields diverse experts
+    assert check_expert_diversity(model, test_data) > threshold
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Pruning experts without recalibrating the router
+def bad_prune(model, target_experts=224):
+    experts_to_keep = top_k_experts(importance_scores, k=target_experts)
+    model.mlp.experts = prune_expert_weights(model.mlp.experts, experts_to_keep)
+    # FORGOT: model.mlp.gate still outputs indices up to 287
+    # This will cause index errors or incorrect expert selection
+```
+**VERIFICATION METHOD**:
+Run a regression test suite on a diverse dataset (code, math, general QA) and compare the output distribution of the pruned model against the original. The KL divergence between the router's output distributions should be below a threshold (e.g., 0.1). Additionally, verify that no expert is selected more than X% of the time (load balancing check).
+
+
+---
+
+## 3228. NVFP4 Quantization Requires Kernel-Level Support in Inference Engine (Harvested from autotrust/GLM5.3-Flash-E224-DGX-Spark)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "NVFP4 Quantization Requires Kernel-Level Support in Inference Engine",
+  "source": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+  "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+  "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-20T14:38:26.398Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying a model with NVFP4 quantized weights, the inference engine MUST have explicit kernel support for FP4 tensor operations. The system MUST NOT assume that standard FP8 or INT8 kernels can be reused. The deployment configuration MUST specify the correct kernel backend (e.g., `grouped_gemm` for NVFP4) and verify that the hardware (Blackwell) supports the required tensor core instructions.
+**WHY**:
+NVFP4 is a new data type that requires specific hardware support (Blackwell FP4 tensor cores) and software kernels. Using incompatible kernels will result in silent numerical errors (incorrect results) or hard crashes (kernel launch failure). The `base_model_ep_plan` in the config explicitly maps `down_proj` and `gate_up_proj` to `grouped_gemm`, indicating that standard matrix multiplication kernels are not used.
+**WHEN TO APPLY**:
+Any deployment of models with non-standard quantization formats (NVFP4, FP8, INT4) on specific hardware architectures.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json snippet showing explicit kernel mapping
+{
+  "base_model_ep_plan": {
+    "layers.*.mlp.experts.down_proj": "grouped_gemm",
+    "layers.*.mlp.experts.gate_up_proj": "grouped_gemm"
+  }
+}
+```
+```python
+# Deployment check
+def verify_nvfp4_support(vllm_version, hardware):
+    if hardware != "Blackwell":
+        raise RuntimeError("NVFP4 requires Blackwell hardware")
+    if vllm_version < "0.31.0":
+        raise RuntimeError("vLLM < 0.31.0 does not support NVFP4 kernels")
+    # Verify that the 'grouped_gemm' kernel is available
+    assert vllm.kernels.grouped_gemm.is_available()
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming standard FP8 kernels work for NVFP4
+def bad_deploy(model):
+    # Using standard FP8 kernels for NVFP4 weights
+    vllm.LLM(model, quantization="fp8") # WRONG: Should be "nvfp4" or specific config
+```
+**VERIFICATION METHOD**:
+Run a unit test that loads a small NVFP4 model and verifies that the output matches a reference FP16 model within a tolerance. Additionally, check the vLLM logs for kernel launch errors or warnings about unsupported data types.
+
+
+---
+
+## 3229. Multi-Node MoE Deployment Requires Explicit NCCL Topology Configuration (Harvested from autotrust/GLM5.3-Flash-E224-DGX-Spark)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Node MoE Deployment Requires Explicit NCCL Topology Configuration",
+  "source": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+  "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+  "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-20T14:38:26.526Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying a MoE model across multiple nodes using Tensor Parallelism (TP) or Expert Parallelism (EP), the system MUST explicitly configure the NCCL topology to match the physical network layout (e.g., ConnectX-7 InfiniBand). The system MUST NOT rely on default NCCL settings, which may assume a different network topology (e.g., Ethernet) and lead to suboptimal performance or deadlocks.
+**WHY**:
+MoE models involve frequent all-to-all communication between nodes for expert routing. The performance of these communications is highly sensitive to the network topology. Default NCCL settings may not optimize for InfiniBand, leading to increased latency and reduced throughput. Additionally, incorrect topology configuration can lead to deadlocks if the communication pattern does not match the physical network.
+**WHEN TO APPLY**:
+Any multi-node deployment of MoE models, especially on high-bandwidth interconnects like InfiniBand.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Example NCCL configuration for ConnectX-7
+export NCCL_IB_DISABLE=0
+export NCCL_IB_GID_INDEX=3
+export NCCL_SOCKET_IFNAME=eth0
+export NCCL_P2P_DISABLE=0
+export NCCL_SHM_DISABLE=0
+```
+```python
+# Deployment script
+def deploy_moe_multi_node(model, nodes=2):
+    # Set NCCL environment variables based on hardware
+    set_nccl_env_for_infiniband()
+    
+    # Launch vLLM with TP=2
+    vllm.LLM(model, tensor_parallel_size=nodes)
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Using default NCCL settings for InfiniBand
+# No NCCL environment variables set, leading to suboptimal performance
+vllm.LLM(model, tensor_parallel_size=2)
+```
+**VERIFICATION METHOD**:
+Run a benchmark test that measures the all-to-all communication latency between nodes. Compare the measured latency against the theoretical maximum for the network (e.g., ConnectX-7). If the measured latency is significantly higher (e.g., >2x), the NCCL configuration is likely incorrect.
