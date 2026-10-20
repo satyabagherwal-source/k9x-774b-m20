@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:03:29.488Z",
-  "total_cycles_completed": 3699,
-  "total_learnings_persisted": 3699,
-  "total_rules_promoted": 2869,
+  "last_updated": "2026-10-20T05:12:49.856Z",
+  "total_cycles_completed": 3703,
+  "total_learnings_persisted": 3703,
+  "total_rules_promoted": 2874,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:06:45.347Z",
-      "repository": "Kruszoneq/macUSB",
-      "learningId": "learn-github-kruszoneq-macusb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:06:48.445Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:12:58.319Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:12:59.810Z",
-      "repository": "webrecorder/browsertrix-crawler",
-      "learningId": "learn-github-webrecorder-browsertrix-crawler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:13:02.154Z",
       "repository": "pointfreeco/isowords",
@@ -1403,6 +1375,34 @@
       "repository": "Saffsanity/sill",
       "learningId": "learn-github-saffsanity-sill",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:10:28.337Z",
+      "repository": "vercel/swr",
+      "learningId": "learn-github-vercel-swr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:10:30.611Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:10:36.179Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:12:49.856Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

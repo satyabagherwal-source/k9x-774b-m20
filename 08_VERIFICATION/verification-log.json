@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-MR3I",
-    "timestamp": "2026-10-19T12:07:54.030Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-UKEE",
-    "timestamp": "2026-10-19T12:13:58.598Z",
-    "repository": "datalab-to/indra-ocr",
-    "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "0131cbbbdb3907a685a666b116e7c44ebc53263a48799c9e60850d692c97f7fd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-UKJR",
-    "timestamp": "2026-10-19T12:13:58.791Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-UO4Z",
-    "timestamp": "2026-10-19T12:14:03.443Z",
-    "repository": "Juanpe/About-SwiftUI",
-    "learningId": "learn-github-juanpe-about-swiftui",
-    "contentHash": "932dc95cbcda5c7c4de352f8edcfa293a2f06af084ce1c214dcda2dec1da7c43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-2M1S",
     "timestamp": "2026-10-19T12:20:13.984Z",
     "repository": "deepseek-ai/DeepSeek-V3",
@@ -7492,6 +7432,66 @@
     "contentHash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5SDM",
+    "timestamp": "2026-10-20T05:10:28.330Z",
+    "repository": "vercel/swr",
+    "learningId": "learn-github-vercel-swr",
+    "contentHash": "256f79d4706aed57c763727178c0f5a0a314711edfe5ac5b189785a53a47b253",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5U4S",
+    "timestamp": "2026-10-20T05:10:30.604Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5YFG",
+    "timestamp": "2026-10-20T05:10:36.172Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-8TKO",
+    "timestamp": "2026-10-20T05:12:49.848Z",
+    "repository": "ratatui/ratatui",
+    "learningId": "learn-github-ratatui-ratatui",
+    "contentHash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

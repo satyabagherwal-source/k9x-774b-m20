@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:03:29.435Z",
-  "total_verified_learnings": 1047,
+  "last_updated": "2026-10-20T05:12:49.796Z",
+  "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -37267,14 +37267,24 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "0297560d",
-      "content_hash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
+      "source_version": "c27a3cf1",
+      "content_hash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
         {
           "number": 1854,
           "title": "build(deps): bump crate-ci/typos from 1.50.3 to 1.51.1 (#2829)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3066,
+          "title": "Decoupled Stateful Rendering (Stateful Separation Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3067,
+          "title": "Terminal Raw-Mode Crash Recovery Guarantee (Panic Safety RAII Barrier)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37283,7 +37293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:32:46.105Z",
+      "verified_at": "2026-10-20T05:12:49.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38392,17 +38402,23 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "cdfb3c2f",
-      "content_hash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
+      "source_version": "d5af15a5",
+      "content_hash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1692,
+          "title": "build(deps): bump github/codeql-action/upload-sarif",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:53:03.444Z",
+      "verified_at": "2026-10-20T05:10:30.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45035,20 +45051,35 @@
     "learn-github-vercel-swr": {
       "learning_id": "learn-github-vercel-swr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vercel/swr",
       "repository": "vercel/swr",
       "slug": "vercel-swr",
       "platform": "github",
       "source_url": "https://github.com/vercel/swr",
-      "source_version": "main",
-      "content_hash": "7392e7a087a4fe917f3a40ecf1fec52e22c5be6ae0a5f4fa83e79a3cddb64c9d",
+      "source_version": "8148ef01",
+      "content_hash": "256f79d4706aed57c763727178c0f5a0a314711edfe5ac5b189785a53a47b253",
       "dossier_path": "07_PROJECT_LEARNING/vercel-swr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-swr-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3064,
+          "title": "clean up completed subscription state (#4310)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T05:10:28.259Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vespa-engine-vespa": {
       "learning_id": "learn-github-vespa-engine-vespa",
@@ -46759,8 +46790,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "c37fa95e",
-      "content_hash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
+      "source_version": "b76eff1c",
+      "content_hash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -46773,6 +46804,11 @@
           "number": 2682,
           "title": "[#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCH",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3065,
+          "title": "[PLAT-22745] YBA: Keep openssl_require_fips on when it comes in the deprecated g",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46780,7 +46816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:31:19.275Z",
+      "verified_at": "2026-10-20T05:10:36.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78825,14 +78861,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1692,
       "title": "build(deps): bump github/codeql-action/upload-sarif",
-      "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "ef5b2fc8",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "d5af15a5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T10:28:54.482Z"
+      "verified_at": "2026-10-20T05:10:30.531Z"
     },
     "rule-1693": {
       "learning_id": "rule-1693",
@@ -98554,6 +98590,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T05:03:29.420Z"
+    },
+    "rule-3064": {
+      "learning_id": "rule-3064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3064,
+      "title": "clean up completed subscription state (#4310)",
+      "source_url": "https://github.com/vercel/swr",
+      "source_version": "8148ef01",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:10:28.259Z"
+    },
+    "rule-3065": {
+      "learning_id": "rule-3065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3065,
+      "title": "[PLAT-22745] YBA: Keep openssl_require_fips on when it comes in the deprecated g",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "b76eff1c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:10:36.090Z"
+    },
+    "rule-3066": {
+      "learning_id": "rule-3066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3066,
+      "title": "Decoupled Stateful Rendering (Stateful Separation Invariant)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "c27a3cf1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:12:49.780Z"
+    },
+    "rule-3067": {
+      "learning_id": "rule-3067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3067,
+      "title": "Terminal Raw-Mode Crash Recovery Guarantee (Panic Safety RAII Barrier)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "c27a3cf1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:12:49.780Z"
     }
   },
   "aliases": {

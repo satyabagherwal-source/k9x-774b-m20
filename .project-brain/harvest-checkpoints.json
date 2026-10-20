@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T05:03:29.491Z",
+  "last_updated": "2026-10-20T05:12:49.860Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
-      "verified_at": "2026-10-18T23:32:46.138Z",
+      "content_hash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
+      "verified_at": "2026-10-20T05:12:49.859Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:32:46.138Z"
+      "last_updated": "2026-10-20T05:12:49.859Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
-      "verified_at": "2026-10-19T16:31:19.341Z",
+      "content_hash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
+      "verified_at": "2026-10-20T05:10:36.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:31:19.341Z"
+      "last_updated": "2026-10-20T05:10:36.182Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
-      "verified_at": "2026-10-19T04:53:03.481Z",
+      "content_hash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
+      "verified_at": "2026-10-20T05:10:30.615Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:53:03.481Z"
+      "last_updated": "2026-10-20T05:10:30.615Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -15524,6 +15524,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T04:57:11.529Z"
+    },
+    "vercel/swr": {
+      "repository": "vercel/swr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vercel-swr",
+      "content_hash": "256f79d4706aed57c763727178c0f5a0a314711edfe5ac5b189785a53a47b253",
+      "verified_at": "2026-10-20T05:10:28.340Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T05:10:28.340Z"
     }
   },
   "repos": {

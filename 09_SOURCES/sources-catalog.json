@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "0297560d",
+    "sourceVersion": "c27a3cf1",
     "license": "MIT",
-    "contentHash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
-    "lastHarvestedAt": "2026-10-18T23:32:46.133Z",
+    "contentHash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
+    "lastHarvestedAt": "2026-10-20T05:12:49.851Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "c37fa95e",
+    "sourceVersion": "b76eff1c",
     "license": "NOASSERTION",
-    "contentHash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
-    "lastHarvestedAt": "2026-10-19T16:31:19.334Z",
+    "contentHash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
+    "lastHarvestedAt": "2026-10-20T05:10:36.175Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "cdfb3c2f",
+    "sourceVersion": "d5af15a5",
     "license": "Apache-2.0",
-    "contentHash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
-    "lastHarvestedAt": "2026-10-19T04:53:03.478Z",
+    "contentHash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
+    "lastHarvestedAt": "2026-10-20T05:10:30.607Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -10338,5 +10338,15 @@
     "contentHash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
     "lastHarvestedAt": "2026-10-20T04:57:11.522Z",
     "learningId": "learn-github-expo-expo"
+  },
+  "vercel-swr": {
+    "repository": "vercel/swr",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vercel/swr",
+    "sourceVersion": "8148ef01",
+    "license": "MIT",
+    "contentHash": "256f79d4706aed57c763727178c0f5a0a314711edfe5ac5b189785a53a47b253",
+    "lastHarvestedAt": "2026-10-20T05:10:28.333Z",
+    "learningId": "learn-github-vercel-swr"
   }
 }

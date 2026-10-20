@@ -3729,3 +3729,7 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `77815dba` | Multi-dimensional audit evidence | 2026-10-20T04:57:18.560Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `abe41af7` | Multi-dimensional audit evidence | 2026-10-20T05:03:28.647Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `4d990e9b` | Multi-dimensional audit evidence | 2026-10-20T05:03:29.484Z |
+| `learn-github-vercel-swr` | `https://github.com/vercel/swr` | `8148ef01` | Multi-dimensional audit evidence | 2026-10-20T05:10:28.333Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `d5af15a5` | Multi-dimensional audit evidence | 2026-10-20T05:10:30.607Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `b76eff1c` | Multi-dimensional audit evidence | 2026-10-20T05:10:36.175Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `c27a3cf1` | Multi-dimensional audit evidence | 2026-10-20T05:12:49.851Z |

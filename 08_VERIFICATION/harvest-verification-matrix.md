@@ -3722,3 +3722,7 @@
 | `CYCLE-20261020-OUZI` | `2026-10-20T04:57:18.558Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3061` | Yes (`0e8d50e4...`) |
 | `CYCLE-20261020-WSJP` | `2026-10-20T05:03:28.645Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3062` | Yes (`25844d1a...`) |
 | `CYCLE-20261020-WT6Y` | `2026-10-20T05:03:29.482Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3063` | Yes (`998213a1...`) |
+| `CYCLE-20261020-5SDM` | `2026-10-20T05:10:28.330Z` | `vercel/swr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3064` | Yes (`256f79d4...`) |
+| `CYCLE-20261020-5U4S` | `2026-10-20T05:10:30.604Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`6db4ad2c...`) |
+| `CYCLE-20261020-5YFG` | `2026-10-20T05:10:36.172Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3065` | Yes (`b7f1896b...`) |
+| `CYCLE-20261020-8TKO` | `2026-10-20T05:12:49.848Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3066, Rule 3067` | Yes (`dcffd5b6...`) |
