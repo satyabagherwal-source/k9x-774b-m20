@@ -3726,3 +3726,8 @@
 | `CYCLE-20261020-5U4S` | `2026-10-20T05:10:30.604Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`6db4ad2c...`) |
 | `CYCLE-20261020-5YFG` | `2026-10-20T05:10:36.172Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3065` | Yes (`b7f1896b...`) |
 | `CYCLE-20261020-8TKO` | `2026-10-20T05:12:49.848Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3066, Rule 3067` | Yes (`dcffd5b6...`) |
+| `CYCLE-20261020-GYYW` | `2026-10-20T05:19:10.088Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`2d825c59...`) |
+| `CYCLE-20261020-H5BW` | `2026-10-20T05:19:18.332Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3069` | Yes (`c43da03c...`) |
+| `CYCLE-20261020-KIWL` | `2026-10-20T05:21:55.893Z` | `angular/angular` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3070, Rule 3071, Rule 3072` | Yes (`d7d5627e...`) |
+| `CYCLE-20261020-LR92` | `2026-10-20T05:22:53.366Z` | `scrapinghub/scrapy-poet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3073, Rule 3074, Rule 3075` | Yes (`9cb7ac09...`) |
+| `CYCLE-20261020-LZMX` | `2026-10-20T05:23:04.233Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3076, Rule 3077, Rule 3078` | Yes (`184cc4e9...`) |

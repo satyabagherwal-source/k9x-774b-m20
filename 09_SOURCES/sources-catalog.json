@@ -1943,10 +1943,10 @@
     "repository": "scrapinghub/scrapy-poet",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/scrapy-poet",
-    "sourceVersion": "e87c2d01",
+    "sourceVersion": "f06d684b",
     "license": "BSD-3-Clause",
-    "contentHash": "a16b28250061973926f37475ed3321af72a72d995fd03c05d72ef95a1c4f77ce",
-    "lastHarvestedAt": "2026-10-18T07:28:57.300Z",
+    "contentHash": "9cb7ac09152268d39c07b1df2ed7c28aad5c2c55fec23dbfa6d028f963055449",
+    "lastHarvestedAt": "2026-10-20T05:22:53.369Z",
     "learningId": "learn-github-scrapinghub-scrapy-poet"
   },
   "webdriverio-webdriverio": {
@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "aaf72a4f",
+    "sourceVersion": "eb582ad9",
     "license": "CC0-1.0",
-    "contentHash": "a436164bfc7aaf37819de0f646e2bb36141b2a70c241fdb6be369903bbb05fe5",
-    "lastHarvestedAt": "2026-10-18T21:00:47.560Z",
+    "contentHash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
+    "lastHarvestedAt": "2026-10-20T05:19:10.091Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "48aa83e9",
+    "sourceVersion": "1c304e9a",
     "license": "MIT",
-    "contentHash": "c67e41ece24590fd612d647e07713b54cc665b9a7b64ad5a862d2c22949bfe1a",
-    "lastHarvestedAt": "2026-10-19T14:39:54.631Z",
+    "contentHash": "184cc4e9c29c8f8b51114a6c221061f58cff0d3d337c8ff2493d64bc25c62d9b",
+    "lastHarvestedAt": "2026-10-20T05:23:04.236Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "da88ff86",
+    "sourceVersion": "4645ab9e",
     "license": "Apache-2.0",
-    "contentHash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
-    "lastHarvestedAt": "2026-10-19T16:37:27.549Z",
+    "contentHash": "c43da03c093173acadc7f6620198f98d676f2514a02c1b109805d8a8daa4addf",
+    "lastHarvestedAt": "2026-10-20T05:19:18.335Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "093dd364",
+    "sourceVersion": "fdb84e2e",
     "license": "MIT",
-    "contentHash": "31ae9a46c7d8f49baec8c12aa26fe6966222317e05507ac6ade027968ecd11c9",
-    "lastHarvestedAt": "2026-10-19T18:35:48.143Z",
+    "contentHash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
+    "lastHarvestedAt": "2026-10-20T05:21:55.896Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {

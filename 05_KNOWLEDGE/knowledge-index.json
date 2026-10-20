@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:12:49.796Z",
+  "last_updated": "2026-10-20T05:23:04.182Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -81,8 +81,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "48aa83e9",
-      "content_hash": "c67e41ece24590fd612d647e07713b54cc665b9a7b64ad5a862d2c22949bfe1a",
+      "source_version": "1c304e9a",
+      "content_hash": "184cc4e9c29c8f8b51114a6c221061f58cff0d3d337c8ff2493d64bc25c62d9b",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -95,6 +95,21 @@
           "number": 2632,
           "title": "Test KV account-failover attribution end to end through the agent turn loop",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3076,
+          "title": "Two-Phase Preimage Verification for Multi-File Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3077,
+          "title": "Cache-Relevant Message Projection Hashing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3078,
+          "title": "Decoupled Interrupt Ingestion vs. Turn Execution",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -102,7 +117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:39:54.558Z",
+      "verified_at": "2026-10-20T05:23:04.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -1683,8 +1698,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "093dd364",
-      "content_hash": "31ae9a46c7d8f49baec8c12aa26fe6966222317e05507ac6ade027968ecd11c9",
+      "source_version": "fdb84e2e",
+      "content_hash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1707,6 +1722,21 @@
           "number": 2744,
           "title": "compiler-cli): do not treat declaration files as compilation roots in preprocess",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3070,
+          "title": "Invariant Snapshot Mutation in Synchronous Dispatch Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3071,
+          "title": "AST Visitor Exhaustion and Defensive Panic Prohibition",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3072,
+          "title": "Non-Default Attribute Emission Invariant for Normalized Markdown Renderers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1714,7 +1744,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:35:48.102Z",
+      "verified_at": "2026-10-20T05:21:55.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7548,14 +7578,19 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "aaf72a4f",
-      "content_hash": "a436164bfc7aaf37819de0f646e2bb36141b2a70c241fdb6be369903bbb05fe5",
+      "source_version": "eb582ad9",
+      "content_hash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
         {
           "number": 1691,
           "title": "Add 'Sbu Subscriptions' (#2443)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3068,
+          "title": "[auto] [ci skip] Generate content",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7564,7 +7599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:00:47.517Z",
+      "verified_at": "2026-10-20T05:19:10.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11973,8 +12008,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "da88ff86",
-      "content_hash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
+      "source_version": "4645ab9e",
+      "content_hash": "c43da03c093173acadc7f6620198f98d676f2514a02c1b109805d8a8daa4addf",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -11987,6 +12022,11 @@
           "number": 2686,
           "title": "meta): validate persisted partition bounds before altering regions (#9487)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3069,
+          "title": "mito2): re-check a filled write as sent after a schema change (#9701)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11994,7 +12034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:37:27.480Z",
+      "verified_at": "2026-10-20T05:19:18.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60452,8 +60492,8 @@
       "slug": "scrapinghub-scrapy-poet",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/scrapy-poet",
-      "source_version": "e87c2d01",
-      "content_hash": "a16b28250061973926f37475ed3321af72a72d995fd03c05d72ef95a1c4f77ce",
+      "source_version": "f06d684b",
+      "content_hash": "9cb7ac09152268d39c07b1df2ed7c28aad5c2c55fec23dbfa6d028f963055449",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "promoted_rules": [
@@ -60466,6 +60506,21 @@
           "number": 1654,
           "title": "Polyphonic Async Result Conversion Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3073,
+          "title": "Introspection Gate Invariant for Callback Annotations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3074,
+          "title": "Subprocess Test Harness Process Synchronization Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3075,
+          "title": "Dual-Runtime Awaitable Bridging Invariant (Asyncio to Twisted Reactor)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60473,7 +60528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:28:57.263Z",
+      "verified_at": "2026-10-20T05:22:53.299Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98646,6 +98701,160 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T05:12:49.780Z"
+    },
+    "rule-3068": {
+      "learning_id": "rule-3068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3068,
+      "title": "[auto] [ci skip] Generate content",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "eb582ad9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:19:10.023Z"
+    },
+    "rule-3069": {
+      "learning_id": "rule-3069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3069,
+      "title": "mito2): re-check a filled write as sent after a schema change (#9701)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "4645ab9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:19:18.265Z"
+    },
+    "rule-3070": {
+      "learning_id": "rule-3070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3070,
+      "title": "Invariant Snapshot Mutation in Synchronous Dispatch Pipelines",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "fdb84e2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:21:55.826Z"
+    },
+    "rule-3071": {
+      "learning_id": "rule-3071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3071,
+      "title": "AST Visitor Exhaustion and Defensive Panic Prohibition",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "fdb84e2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:21:55.826Z"
+    },
+    "rule-3072": {
+      "learning_id": "rule-3072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3072,
+      "title": "Non-Default Attribute Emission Invariant for Normalized Markdown Renderers",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "fdb84e2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:21:55.826Z"
+    },
+    "rule-3073": {
+      "learning_id": "rule-3073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3073,
+      "title": "Introspection Gate Invariant for Callback Annotations",
+      "source_url": "https://github.com/scrapinghub/scrapy-poet",
+      "source_version": "f06d684b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:22:53.299Z"
+    },
+    "rule-3074": {
+      "learning_id": "rule-3074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3074,
+      "title": "Subprocess Test Harness Process Synchronization Barrier",
+      "source_url": "https://github.com/scrapinghub/scrapy-poet",
+      "source_version": "f06d684b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:22:53.299Z"
+    },
+    "rule-3075": {
+      "learning_id": "rule-3075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3075,
+      "title": "Dual-Runtime Awaitable Bridging Invariant (Asyncio to Twisted Reactor)",
+      "source_url": "https://github.com/scrapinghub/scrapy-poet",
+      "source_version": "f06d684b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:22:53.299Z"
+    },
+    "rule-3076": {
+      "learning_id": "rule-3076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3076,
+      "title": "Two-Phase Preimage Verification for Multi-File Mutations",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "1c304e9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:23:04.166Z"
+    },
+    "rule-3077": {
+      "learning_id": "rule-3077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3077,
+      "title": "Cache-Relevant Message Projection Hashing",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "1c304e9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:23:04.166Z"
+    },
+    "rule-3078": {
+      "learning_id": "rule-3078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3078,
+      "title": "Decoupled Interrupt Ingestion vs. Turn Execution",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "1c304e9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:23:04.166Z"
     }
   },
   "aliases": {

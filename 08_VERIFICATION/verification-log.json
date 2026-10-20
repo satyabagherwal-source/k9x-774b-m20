@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-2M1S",
-    "timestamp": "2026-10-19T12:20:13.984Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-2Q54",
-    "timestamp": "2026-10-19T12:20:19.288Z",
-    "repository": "Dimillian/IceCubesApp",
-    "learningId": "learn-github-dimillian-icecubesapp",
-    "contentHash": "915b744f052f2855b470bc62c121f84c4bef65cd8a0c5b8c1bc6e861d069326d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-2XPJ",
-    "timestamp": "2026-10-19T12:20:29.095Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "61e0fa41c78b6eb84e2f8eaaad06af6a3ec421f0028dcf1ee601da634712cac3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-APV8",
-    "timestamp": "2026-10-19T12:26:32.180Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "4855a6ab31257fda802d9b91978ffcfa260876eefed6475a4670ca4ee2c51b76",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-AUEP",
-    "timestamp": "2026-10-19T12:26:38.065Z",
-    "repository": "milanvarady/Applite",
-    "learningId": "learn-github-milanvarady-applite",
-    "contentHash": "05f1271aa33a715bb2c41d1468fca2f256d0746a2b100ac64292910f0fdc0878",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-IR6M",
     "timestamp": "2026-10-19T12:32:47.134Z",
     "repository": "momenbasel/PureMac",
@@ -7492,6 +7417,81 @@
     "contentHash": "dcffd5b601b2c8a0a2a5a21d1f24c51c225bbb479fe8b9234bf94f5098bc9885",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-GYYW",
+    "timestamp": "2026-10-20T05:19:10.088Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-H5BW",
+    "timestamp": "2026-10-20T05:19:18.332Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "c43da03c093173acadc7f6620198f98d676f2514a02c1b109805d8a8daa4addf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-KIWL",
+    "timestamp": "2026-10-20T05:21:55.893Z",
+    "repository": "angular/angular",
+    "learningId": "learn-github-angular-angular",
+    "contentHash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LR92",
+    "timestamp": "2026-10-20T05:22:53.366Z",
+    "repository": "scrapinghub/scrapy-poet",
+    "learningId": "learn-github-scrapinghub-scrapy-poet",
+    "contentHash": "9cb7ac09152268d39c07b1df2ed7c28aad5c2c55fec23dbfa6d028f963055449",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-LZMX",
+    "timestamp": "2026-10-20T05:23:04.233Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "184cc4e9c29c8f8b51114a6c221061f58cff0d3d337c8ff2493d64bc25c62d9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

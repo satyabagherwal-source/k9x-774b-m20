@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:12:49.856Z",
-  "total_cycles_completed": 3703,
-  "total_learnings_persisted": 3703,
-  "total_rules_promoted": 2874,
+  "last_updated": "2026-10-20T05:23:04.241Z",
+  "total_cycles_completed": 3708,
+  "total_learnings_persisted": 3708,
+  "total_rules_promoted": 2885,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:13:02.154Z",
-      "repository": "pointfreeco/isowords",
-      "learningId": "learn-github-pointfreeco-isowords",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:19:23.023Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:19:25.487Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:19:27.826Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:20:34.998Z",
-      "repository": "microsoft/fluentui",
-      "learningId": "learn-github-microsoft-fluentui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:26:44.853Z",
       "repository": "buriy/python-readability",
@@ -1403,6 +1368,41 @@
       "repository": "ratatui/ratatui",
       "learningId": "learn-github-ratatui-ratatui",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:19:10.096Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:19:18.339Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:21:55.901Z",
+      "repository": "angular/angular",
+      "learningId": "learn-github-angular-angular",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:22:53.374Z",
+      "repository": "scrapinghub/scrapy-poet",
+      "learningId": "learn-github-scrapinghub-scrapy-poet",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:23:04.241Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

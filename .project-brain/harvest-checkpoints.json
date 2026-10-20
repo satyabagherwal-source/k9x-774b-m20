@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T05:12:49.860Z",
+  "last_updated": "2026-10-20T05:23:04.245Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3051,14 +3051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-scrapy-poet",
-      "content_hash": "a16b28250061973926f37475ed3321af72a72d995fd03c05d72ef95a1c4f77ce",
-      "verified_at": "2026-10-18T07:28:57.304Z",
+      "content_hash": "9cb7ac09152268d39c07b1df2ed7c28aad5c2c55fec23dbfa6d028f963055449",
+      "verified_at": "2026-10-20T05:22:53.377Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:28:57.304Z"
+      "last_updated": "2026-10-20T05:22:53.377Z"
     },
     "webdriverio/webdriverio": {
       "repository": "webdriverio/webdriverio",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "a436164bfc7aaf37819de0f646e2bb36141b2a70c241fdb6be369903bbb05fe5",
-      "verified_at": "2026-10-18T21:00:47.564Z",
+      "content_hash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
+      "verified_at": "2026-10-20T05:19:10.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:00:47.564Z"
+      "last_updated": "2026-10-20T05:19:10.099Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "c67e41ece24590fd612d647e07713b54cc665b9a7b64ad5a862d2c22949bfe1a",
-      "verified_at": "2026-10-19T14:39:54.640Z",
+      "content_hash": "184cc4e9c29c8f8b51114a6c221061f58cff0d3d337c8ff2493d64bc25c62d9b",
+      "verified_at": "2026-10-20T05:23:04.244Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:39:54.640Z"
+      "last_updated": "2026-10-20T05:23:04.244Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
-      "verified_at": "2026-10-19T16:37:27.554Z",
+      "content_hash": "c43da03c093173acadc7f6620198f98d676f2514a02c1b109805d8a8daa4addf",
+      "verified_at": "2026-10-20T05:19:18.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:37:27.554Z"
+      "last_updated": "2026-10-20T05:19:18.342Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -10476,14 +10476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-angular-angular",
-      "content_hash": "31ae9a46c7d8f49baec8c12aa26fe6966222317e05507ac6ade027968ecd11c9",
-      "verified_at": "2026-10-19T18:35:48.147Z",
+      "content_hash": "d7d5627ecb63173746c1aeb93376d7a057936fc943b9ad570cb3366c99e8e215",
+      "verified_at": "2026-10-20T05:21:55.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:35:48.147Z"
+      "last_updated": "2026-10-20T05:21:55.904Z"
     },
     "devspace-sh/devspace": {
       "repository": "devspace-sh/devspace",

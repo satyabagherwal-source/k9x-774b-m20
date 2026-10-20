@@ -3733,3 +3733,8 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `d5af15a5` | Multi-dimensional audit evidence | 2026-10-20T05:10:30.607Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `b76eff1c` | Multi-dimensional audit evidence | 2026-10-20T05:10:36.175Z |
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `c27a3cf1` | Multi-dimensional audit evidence | 2026-10-20T05:12:49.851Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `eb582ad9` | Multi-dimensional audit evidence | 2026-10-20T05:19:10.091Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `4645ab9e` | Multi-dimensional audit evidence | 2026-10-20T05:19:18.335Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `fdb84e2e` | Multi-dimensional audit evidence | 2026-10-20T05:21:55.896Z |
+| `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `f06d684b` | Multi-dimensional audit evidence | 2026-10-20T05:22:53.369Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `1c304e9a` | Multi-dimensional audit evidence | 2026-10-20T05:23:04.236Z |

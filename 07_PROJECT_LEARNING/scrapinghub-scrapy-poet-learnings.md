@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/scrapy-poet](https://github.com/scrapinghub/scrapy-poet))  
-> **Source Version**: `e87c2d01`  
+> **Source Version**: `f06d684b`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-18T07:28:57.035Z  
+> **Timestamp**: 2026-10-20T05:22:52.578Z  
 > **Learning ID**: `learn-github-scrapinghub-scrapy-poet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,499 +18,612 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
+`scrapy-poet` is an integration harness that binds the framework-agnostic Page Object pattern (`web-poet`) into Scrapy's Twisted-driven reactor pipeline. It solves a fundamental coupling defect in web scraping architectures: standard scraping workflows bind transport, network I/O, parsing logic, and pipeline emission into monolithic Scrapy spider callbacks (`def parse(self, response)`). This coupling prevents unit testing without mocking entire Scrapy engine states, prevents reusing extraction rules across engines (e.g., Pyppeteer, Playwright, Requests), and complicates pipeline modifications.
+
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                     SCRAPY ENGINE                                      │
-└───────────────────────────────────────────┬────────────────────────────────────────────┘
-                                            │ Request (with Callback Type Annotations)
-                                            ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        scrapy_poet.InjectionMiddleware                                 │
-│                                                                                        │
-│  ┌───────────────────────┐   andi.plan()    ┌────────────────────────────────────────┐ │
-│  │     scrapy-poet       │ ───────────────> │               Injector                 │ │
-│  │   Request Analyzer    │                  │  - Dependency Graph Extraction         │ │
-│  └───────────────────────┘                  │  - RulesRegistry Override Resolution   │ │
-│                                             └───────────────────┬────────────────────┘ │
-│                                                                 │                      │
-│                                                                 ▼                      │
-│                                             ┌────────────────────────────────────────┐ │
-│                                             │           WeakKeyDictionary            │ │
-│                                             │   (Per-Request Plan & Instance Cache)  │ │
-│                                             └───────────────────┬────────────────────┘ │
-│                                                                 │                      │
-│                                                                 ▼                      │
-│                                             ┌────────────────────────────────────────┐ │
-│                                             │        PageObjectInputProviders        │ │
-│                                             │  - HttpResponseProvider                │ │
-│                                             │  - PageObject / DynamicProvider        │ │
-│                                             └───────────────────┬────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┼──────────────────────┘
-                                                                  │
-                                            ┌─────────────────────┴────────────────────┐
-                                            │ Twisted Deferred / asyncio Bridge        │
-                                            │ (maybeDeferred_coro / deferred_from_coro)│
-                                            └─────────────────────┬────────────────────┘
-                                                                  ▼
-                                            ┌──────────────────────────────────────────┐
-                                            │ Spider Callback(response, page: PageCls) │
-                                            └──────────────────────────────────────────┘
+       [ Scrapy Engine / Twisted Reactor ]
+                      │
+           Request with Page Object Deps
+                      ▼
+     ┌───────────────────────────────────┐
+     │  scrapy_poet.InjectionMiddleware   │ (Downloader Middleware: process_request)
+     └────────────────┬──────────────────┘
+                      │ Inspects Callback Type Annotations
+                      │ via `andi.plan` (Dependency Graph Resolution)
+                      ▼
+     ┌───────────────────────────────────┐
+     │     scrapy_poet.Injector          │
+     │ ┌───────────────────────────────┐ │
+     │ │ PageInputProviders Registry   │ │ Resolves dependencies:
+     │ │  - HttpResponseProvider       │ │  - Downloads auxiliary requests via HttpClient
+     │ │  - PageObjectInputProvider    │ │  - Builds sub-dependencies recursively
+     │ │  - Custom User Providers      │ │  - Binds injected instances into request.meta
+     │ └───────────────────────────────┘ │
+     └────────────────┬──────────────────┘
+                      │
+                      ├──────────────────────────┐
+                      ▼                          ▼
+           [ Normal HTTP Request ]      [ DummyResponse Pipeline ]
+           Fetched via Scrapy Engine    (Suppresses actual download if
+                      │                  Page Objects need no remote body)
+                      ▼                          │
+     ┌───────────────────────────────────┐       │
+     │  scrapy_poet.InjectionMiddleware   │◄──────┘
+     │   (process_response / inject)     │ Unpacks request.meta['_providers']
+     └────────────────┬──────────────────┘
+                      │ Binds instances to callback args (*args, item, page)
+                      ▼
+            [ Spider Callback / `callback_for` ]
 ```
 
-### The Problem Space
-In traditional web scraping with Scrapy, spiders couple transport mechanics, data extraction logic, HTML parsing, session state, and target site quirks into a single procedural callback (`def parse(self, response)`). This creates tightly coupled scrapers that are difficult to unit test without firing HTTP requests or mocking the internal state of Scrapy's engine.
+### Architectural Subsystem Boundaries & Decoupling
 
-`scrapy-poet` decouples extraction logic from transport plumbing using the **Page Object Pattern** (via the `web-poet` standard) combined with **Type-Driven Inversion of Control (IoC)** (powered by the `andi` dependency injection engine).
+1. **Dependency Injection & Plan Construction (`andi` & `scrapy_poet.injection.Injector`)**:
+   Callbacks declare requirements via standard Python 3 type hints (e.g., `def parse(self, response, page: ProductPage)`). The `Injector` passes callback signatures to `andi.plan()`. It calculates a dependency graph differentiating between leaf inputs (raw response bytes, HTTP headers, request parameters) and composite Page Objects (`ItemPage`, `WebPage`).
 
-### Boundary Decoupling & Injection Topology
-1. **Signature Inspection**: The framework treats Scrapy callback signatures (`parse(self, response: DummyResponse, page: ProductPage)`) as formal dependency specifications.
-2. **Provider Orchestration**: When a request enters the engine, `scrapy_poet.InjectionMiddleware` intercepts it before downloader dispatch. It asks the `Injector` to create an execution plan (`andi.Plan`).
-3. **Download Optimization via `DummyResponse`**: If an inspection reveals that all requested dependencies can be resolved without Scrapy downloading the body (e.g., an external headless browser provider fetches the data, or cached storage resolves it), `scrapy-poet` swaps the network fetch for a synthetic `DummyResponse`, bypassing network I/O in the Scrapy engine.
-4. **Lifecycle & Cache Scoping**: Dependencies and execution plans are strictly scoped to the lifecycle of the incoming `scrapy.http.Request` via `weakref.WeakKeyDictionary`. This guarantees garbage collection when the request cycle terminates, preventing engine memory leaks while enabling cross-provider dependency sharing within that request.
-5. **Runtime Concurrency Bridging**: It connects Twisted's asynchronous event loop (`Deferred`) with Python's standard `asyncio` coroutines using custom resolution bridges (`maybeDeferred_coro`), enabling async page objects and async dependency providers to execute within Scrapy's Twisted reactor.
+2. **Downloader Middleware Interception (`InjectionMiddleware`)**:
+   Hooked into `process_request` and `process_response`.
+   - In `process_request`: If the dependency tree demands data requiring pre-fetching or bypasses (e.g., dynamic external API dependencies, headless browser renders), it invokes the corresponding `PageObjectInputProvider`. If no remote HTTP request is required (e.g., dependency comes from cache or static source), the network request is mutated to bypass the wire via `DummyResponse`.
+   - In `process_response`: Resolves final instances and injects them as keyword arguments into the callback before execution.
+
+3. **Transport & Type Translation Barrier (`scrapy_poet.utils`)**:
+   Scrapy relies on Twisted `Deferred` pipelines and Scrapy-native `Request`/`Response` classes. `web-poet` relies on standard `asyncio`, PEP-593 annotations, and framework-agnostic `HttpRequest`/`HttpResponse`. The utility layer acts as a bidirectional translation barrier:
+   - `scrapy_response_to_http_response()` transforms Scrapy responses into frozen, immutable `web_poet.HttpResponse` objects with byte-decoded headers.
+   - `maybeDeferred_coro()` converts standard `asyncio` coroutines returned by modern async Page Objects into Twisted `Deferred` chains compatible with Scrapy's core engine loop.
+
+4. **Request Fingerprinting & Deduplication (`ScrapyPoetRequestFingerprinter`)**:
+   Standard Scrapy fingerprinting hashes URL, method, and body. Because `scrapy-poet` callbacks receive dynamically resolved Page Objects that can declare auxiliary dependencies (via `scrapy_poet.DynamicDeps`) or different parsed targets, request identity includes callback dependencies and serialized page parameters. Fingerprinting uses weak-key caching (`WeakKeyDictionary[Request, bytes]`) to avoid memory leaks while guaranteeing identical execution plans across deduplicated crawler pipelines.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Weak-Key Snapshot Invalidation Invariant
+### 1. Introspection Gate Invariant for Callback Annotations
 **RULE**:
-When caching an expensive plan or compilation tree keyed by an ephemeral request/context object in a `WeakKeyDictionary`, you MUST store a structural snapshot/hash of all mutable context inputs alongside the cached object, verify that snapshot on subsequent lookups, and evict/recompute if mutated mid-flight.
+When inspecting callable type annotations in dependency injection engines, you MUST verify that an inspected parameter's annotation is an instance of `type` before passing it to `issubclass()`. You MUST NOT evaluate `typing.Union`, `typing.Annotated`, type variables, or unparameterized forms with `issubclass()`.
 
 **WHY**:
-In event-driven and pipeline systems (like Scrapy middleware, Express/FastAPI middlewares, or Netty handlers), context objects (e.g., `request.meta`) are mutable dictionaries shared across multiple filters and hooks. If Middleware A triggers plan generation for `request`, and Middleware B subsequently mutates `request.meta['inject']` to request dynamic dependencies, a naive lookup `request in self._cache` returns the stale plan. This results in missing dependencies, silent data omission, or `TypeError: missing required positional argument` when invoking the final target callable.
+Third-party wrappers and framework callbacks (such as Twisted `Deferred.callback` in `scrapy shell`) often declare signatures typed with unions (e.g., `Union[_DeferredResultT, Failure]`) or custom callables. Invoking `issubclass(annotation, TargetClass)` when `annotation` is a `typing._SpecialForm` or `typing.Union` raises a fatal `TypeError: issubclass() arg 1 must be a class` at runtime, causing silent failure masking inside event loops.
 
 **WHEN TO APPLY**:
-Apply in any dependency injection, request-scoped memoization, or compilation cache where the cache key is a long-lived or pipeline-shared mutable object containing secondary mutable state attributes.
+Any Python runtime dependency injection, reflection engine, or RPC serialization framework that extracts type annotations from arbitrary functions or methods dynamically.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import logging
-from weakref import WeakKeyDictionary
-from typing import Any, Tuple
-import andi
+import inspect
+from typing import Any, get_origin, Union
 
-logger = logging.getLogger(__name__)
+def is_safe_subclass(annotation: Any, target_class: type) -> bool:
+    """
+    Safely determine if an annotation is a subclass of target_class,
+    guarding against typing constructs, SpecialForms, and Union types.
+    """
+    # Strip optional/annotated metadata wrappers if necessary
+    origin = get_origin(annotation)
+    if origin is not None:
+        # Handles generic aliases like list[str], type[Foo]
+        if isinstance(origin, type) and issubclass(origin, target_class):
+            return True
+        return False
 
-class DependencyPlanner:
-    def __init__(self, spider: Any):
-        self.spider = spider
-        # Tuple format: (compiled_plan, snapshot_of_mutable_state)
-        self._plan_cache: WeakKeyDictionary[Any, Tuple[andi.Plan, Tuple[Any, ...]]] = WeakKeyDictionary()
-        self._warned_mutation: bool = False
+    # Annotation must be an explicit instance of `type`
+    if not isinstance(annotation, type):
+        return False
 
-    def build_plan(self, request: Any) -> andi.Plan:
-        # 1. Take an immutable snapshot of all inputs influencing the plan
-        current_inject_snapshot = tuple(request.meta.get("inject", ()))
+    return issubclass(annotation, target_class)
 
-        # 2. Check existence AND state validity
-        if request in self._plan_cache:
-            cached_plan, cached_snapshot = self._plan_cache[request]
-            if current_inject_snapshot == cached_snapshot:
-                return cached_plan
-
-            # 3. Handle state mutation mid-pipeline
-            if not self._warned_mutation:
-                logger.warning(
-                    f"request.meta['inject'] changed between pipeline stages for {request.url!r}. "
-                    f"Compile plans only after context mutation settles."
-                )
-                self._warned_mutation = True
-
-        # 4. Rebuild and update cache with new snapshot
-        fresh_plan = self._compile_plan(request)
-        self._plan_cache[request] = (fresh_plan, current_inject_snapshot)
-        return fresh_plan
-
-    def _compile_plan(self, request: Any) -> andi.Plan:
-        # Compilation logic using andi or reflection
-        return andi.plan(request.callback, ...)
+def extract_injectable_parameters(func: Any, target_base: type) -> list[str]:
+    signature = inspect.signature(func)
+    injectable_args: list[str] = []
+    
+    for param_name, param in signature.parameters.items():
+        if param.annotation is inspect.Parameter.empty:
+            continue
+            
+        if is_safe_subclass(param.annotation, target_base):
+            injectable_args.append(param_name)
+            
+    return injectable_args
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blind object-identity caching over mutable entities
-class BrokenPlanner:
-    def __init__(self):
-        self._plan_cache = {}  # Or WeakKeyDictionary
+# ANTI-PATTERN: Direct issubclass check on function parameter annotations
+import inspect
 
-    def build_plan(self, request):
-        if request in self._plan_cache:
-            return self._plan_cache[request] # BUG: Returns stale plan if request.meta altered!
-        
-        plan = self._compile_plan(request)
-        self._plan_cache[request] = plan
-        return plan
+def bad_extract_parameters(func, target_base):
+    sig = inspect.signature(func)
+    # Crashes on Union[A, B], Any, Callable, or Twisted Failure annotations!
+    return [
+        name for name, p in sig.parameters.items()
+        if p.annotation is not inspect.Parameter.empty 
+        and issubclass(p.annotation, target_base)  # TypeError: issubclass() arg 1 must be a class
+    ]
 ```
 
 **VERIFICATION METHOD**:
-Automated unit test asserting plan identity preservation on identical inputs, and plan divergence when the mutable payload changes:
+Run property-based or parameter-matrix unit tests providing parameters annotated with `typing.Union[int, str]`, `typing.Any`, `typing.Optional[MyClass]`, and unannotated arguments against the DI scanner:
 ```python
-def test_plan_cache_invalidation_on_context_mutation():
-    planner = DependencyPlanner(spider=mock_spider)
-    req = MockRequest(url="https://example.com", meta={"inject": [DepA]})
-    plan1 = planner.build_plan(req)
-    assert planner.build_plan(req) is plan1
-
-    # Mutate context
-    req.meta["inject"] = [DepB]
-    plan2 = planner.build_plan(req)
-    assert plan2 is not plan1
-    assert DepB in plan2.dependencies
+def test_reflection_resilience():
+    def callback_with_union(x: int | str, y: Any, z: type): pass
+    assert extract_injectable_parameters(callback_with_union, object) == ["z"]
 ```
 
 ---
 
-### 2. Polyphonic Async Result Conversion Invariant
+### 2. Subprocess Test Harness Process Synchronization Barrier
 **RULE**:
-When bridging disparate asynchronous models (Twisted `Deferred` vs standard `asyncio.Future` / native coroutines vs raw values vs exception instances), you MUST explicitly branch on all 5 execution states: 1) Synchronous Exception, 2) Existing Native Deferred, 3) Native Coroutine / Future, 4) Failure instances, and 5) Synchronous Value.
+When running out-of-process network test harnesses (mock HTTP servers) within asynchronous test runners, the parent process MUST block on an explicit stdout sync token emitted by the subprocess *after* socket binding before executing client requests, and the subprocess shutdown MUST hook `SIGTERM` handlers to guarantee coverage measurement recording.
 
 **WHY**:
-Frameworks like Twisted or Celery running asyncio integration often encounter third-party callables returning mixed outputs (a plain dict, a Twisted `Deferred`, an `asyncio.coroutine`, or a Twisted `failure.Failure`). Using naive wrappers like `twisted.internet.defer.maybeDeferred` breaks under native coroutines by wrapping the coroutine object itself as a successful result instead of scheduling it, deferring execution into oblivion without awaiting. Bare conversion functions that do not trap synchronous exceptions fail to package them into the failure pipeline.
+Spawning a server subprocess via `Popen` and immediately querying the TCP port introduces a Time-Of-Check to Time-Of-Use (TOCTOU) race condition: the port may be allocated via ephemeral bind, but the server reactor is not yet in its listen state. Merely checking port availability causes intermittent `ConnectionRefusedError`. Furthermore, terminating mock subprocesses abruptly without SIGTERM capture (`coverage.run sigterm = true`) results in unwritten `.coverage` files and distorted code coverage metrics.
 
 **WHEN TO APPLY**:
-In any hybrid runtime uniting Twisted and asyncio (e.g., Scrapy, Autobahn) or sync/async unified API surfaces.
+All integration testing frameworks where Twisted, Tornado, Node.js, or Go subprocesses act as local fixture servers for network protocol clients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import socket
+import sys
+from subprocess import PIPE, Popen
+from types import TracebackType
+from typing import Self
+
+def get_ephemeral_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return int(s.getsockname()[1])
+
+class SynchronousSubprocessHarness:
+    def __init__(self, resource_target: str) -> None:
+        self.resource_target = resource_target
+        self.port = get_ephemeral_port()
+        self.proc: Popen[bytes] | None = None
+        self.base_url = f"http://127.0.0.1:{self.port}"
+
+    def __enter__(self) -> Self:
+        # Pass -u for unbuffered binary stdout
+        self.proc = Popen(
+            [
+                sys.executable,
+                "-u",
+                "-m",
+                "harness_runner",
+                self.resource_target,
+                "--port",
+                str(self.port),
+            ],
+            stdout=PIPE,
+            stderr=PIPE,
+            env={**os.environ},
+        )
+        assert self.proc.stdout is not None, "Subprocess stdout pipe allocation failed"
+        
+        # SYNCHRONIZATION BARRIER:
+        # Blocks parent process until child emits the newline confirming reactor is listening
+        sync_line = self.proc.stdout.readline()
+        if not sync_line or b"READY" not in sync_line:
+            err = self.proc.stderr.read().decode() if self.proc.stderr else ""
+            raise RuntimeError(f"Server harness failed initialization: {err}")
+            
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        if self.proc:
+            # Terminate sends SIGTERM allowing tool.coverage to flush profiles
+            self.proc.terminate()
+            self.proc.wait(timeout=5)
+```
+
+Child subprocess implementation:
+```python
+# Child process setup
+from twisted.internet import reactor
+from twisted.web.server import Site
+
+def launch_server(resource, port: int) -> None:
+    factory = Site(resource)
+    reactor.listenTCP(port, factory)
+    
+    def on_reactor_running() -> None:
+        # Emits synchronization token strictly after reactor is accepting connections
+        sys.stdout.write(f"READY port={port}\n")
+        sys.stdout.flush()
+
+    reactor.callWhenRunning(on_reactor_running)
+    reactor.run()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Sleep or immediate return after subprocess creation
+class UnsafeSubprocessHarness:
+    def __enter__(self):
+        self.proc = subprocess.Popen(["python", "server.py", "--port", str(self.port)])
+        time.sleep(0.5)  # FLAKY: Subject to CPU scheduling jitter, triggers ConnectionRefused
+        return self
+```
+
+**VERIFICATION METHOD**:
+Run 100 consecutive executions under heavy thread saturation (`pytest -n auto --count=100`) ensuring zero connection refused errors and 100% test fixture cleanups. Verify `.coverage` sqlite files are emitted on process exit.
+
+---
+
+### 3. Dual-Runtime Awaitable Bridging Invariant (Asyncio to Twisted Reactor)
+**RULE**:
+When bridging arbitrary user-defined coroutines into a callback-driven event loop (such as Twisted inside Scrapy), the adapter MUST verify awaitability through `inspect.isawaitable()` or `asyncio.isfuture()`, convert the coroutine to a deferred using `deferred_from_coro`, and capture synchronous execution exceptions via explicit failure wrapping rather than allowing exceptions to escape the boundary unhandled.
+
+**WHY**:
+Page objects can have either synchronous `to_item()` or asynchronous `async def to_item()` implementations. If an async coroutine function is executed without converting its return value to a reactor deferred, the coroutine is never scheduled on the event loop, resulting in a `RuntimeWarning: coroutine was never awaited` and yielding unresolved coroutine objects directly into pipeline queues. Conversely, if synchronous exceptions raised during coroutine setup are not captured via `failure.Failure`, the reactor fails silently and hangs the request pipeline.
+
+**WHEN TO APPLY**:
+Any hybrid runtime integrating modern Python `async`/`await` code into legacy asynchronous event loops (Twisted, gevent, Tornado).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import asyncio
 import inspect
-from typing import Callable, Any, ParamSpec
-from twisted.internet.defer import Deferred, succeed, fail
+from collections.abc import Callable
+from typing import Any, ParamSpec
+from twisted.internet.defer import Deferred, fail, succeed
 from twisted.python import failure
 from scrapy.utils.defer import deferred_from_coro
 
 _P = ParamSpec("_P")
 
 def maybeDeferred_coro(
-    f: Callable[_P, Any], *args: _P.args, **kw: _P.kwargs
-) -> Deferred:
-    """Execute callable and ensure returned value is always wrapped in a Twisted Deferred,
-    safely awaiting coroutines and converting unhandled exceptions to failure.Failure.
+    func: Callable[_P, Any], *args: _P.args, **kwargs: _P.kwargs
+) -> Deferred[Any]:
+    """
+    Safely executes a callable and converts the return value into a Twisted Deferred,
+    handling coroutines, futures, existing Deferreds, and synchronous exceptions.
     """
     try:
-        result = f(*args, **kw)
+        result = func(*args, **kwargs)
     except Exception:
-        # 1. Synchronous failure trapped into deferred failure
-        return fail(failure.Failure(captureVars=Deferred.debug))
+        # Capture synchronous exceptions immediately into a failure deferred
+        return fail(failure.Failure())
 
-    # 2. Native Twisted Deferred returned
     if isinstance(result, Deferred):
         return result
-
-    # 3. Native asyncio Future or native Coroutine returned
     if asyncio.isfuture(result) or inspect.isawaitable(result):
+        # Schedule asyncio coroutine on the Twisted reactor
         return deferred_from_coro(result)
-
-    # 4. Twisted Failure returned directly as an object
     if isinstance(result, failure.Failure):
         return fail(result)
-
-    # 5. Synchronous scalar/object value
     return succeed(result)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming Twisted's maybeDeferred handles asyncio awaitables
-from twisted.internet import defer
-
-def unsafe_dispatch(func, *args, **kwargs):
-    # If func is `async def`, maybeDeferred will treat the coroutine object 
-    # as a resolved synchronous value! The coroutine is never executed.
-    return defer.maybeDeferred(func, *args, **kwargs)
+# ANTI-PATTERN: Assuming return value is already deferred or purely synchronous
+def unsafe_call(func, *args, **kwargs):
+    result = func(*args, **kwargs)
+    if inspect.iscoroutine(result):
+        # BROKEN: Calling asyncio.run or creating tasks directly inside Twisted reactor
+        # causes 'Event loop is closed' or conflicts with Twisted's asyncio reactor!
+        return asyncio.run(result) 
+    return result
 ```
 
 **VERIFICATION METHOD**:
-Run a parameterized test passing 1) sync function returning int, 2) sync function raising ValueError, 3) async coroutine returning int, 4) async coroutine raising ValueError, 5) function returning Deferred. Verify all yield expected resolution/failure in Twisted's test reactor:
-```python
-import pytest
-from twisted.internet.defer import Deferred
-
-@pytest.mark.asyncio
-async def test_polyphonic_dispatch_matrix():
-    d_sync = maybeDeferred_coro(lambda: 42)
-    assert isinstance(d_sync, Deferred)
-    assert (await d_sync.asFuture(asyncio.get_event_loop())) == 42
-
-    async def async_fn(): return 100
-    d_async = maybeDeferred_coro(async_fn)
-    assert isinstance(d_async, Deferred)
-    assert (await d_async.asFuture(asyncio.get_event_loop())) == 100
-```
+Test with three classes of functions: (1) returns bare dict, (2) raises synchronous `ValueError`, (3) `async def` that sleeps before returning. All three must yield completed `Deferred` instances with matching success or failure callbacks.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Silent Dependency Plan Invalidation on Request Context Mutation (BUG-PLAN-CACHE-01)
-- **Context**: `scrapy_poet/injection.py`, in `Injector.build_plan`
-- **What Was Expected**: When a request's injection metadata (`request.meta["inject"]`) is modified dynamically by upstream spider middlewares or request pre-processors, `Injector.build_plan` must compute a new dependency injection plan corresponding to the updated requirements.
-- **What Actually Happened**: The planner cached `andi.Plan` instances solely using `request` as the key in a `WeakKeyDictionary`. When middlewares updated `request.meta["inject"]` after the first plan generation pass, `build_plan()` retrieved the cached plan. As a result, the newly requested dynamic dependencies were completely ignored during injection, causing downstream argument errors or missing dependencies.
-- **Evidence in Repo**: Commit `9b01d417`, PR #251. Files: `scrapy_poet/injection.py`, `tests/test_injection.py`.
-- **Root Cause**: Shallow object identity memoization over a mutable host object (`scrapy.http.Request`) whose child structure (`request.meta["inject"]`) controls the derivation logic.
+### Incident 1: Silent Dependency Verification No-Op (BUG-POET-181)
+- **Context**: `scrapy_poet/injection.py` within the provider dependency assertion routines (`assert_deps`).
+- **What Was Expected**: The injection planner needed to iterate over the required dependencies calculated by `andi.plan` and verify that every dependency had a matching registered provider or Scrapy engine primitive. If an unsatisfied dependency was detected, it was required to raise `UndeclaredIncompatibleDependency` or `MissingDependency`.
+- **What Actually Happened**: The validator ran a generator comprehension inside an expression that evaluated truthiness without asserting items. The generator yielded `True` for satisfying dependencies and yielded nothing (omitted emission) for unsatisfied dependencies. Since `all(x for x in generator)` evaluates to `True` on empty generator sequences, the assertion passed silently for completely unsupported dependencies, causing downstream Null-dereferences and broken instance injections deep in user spiders.
+- **Evidence in Repo**: PR #181, Commit `4df98a3` merging into `4f5868e`.
+- **Root Cause**: Faulty boolean reduction over generator expressions. A generator that ignores invalid items instead of yielding `False` produces an empty sequence for invalid inputs, bypassing `all(...)`.
 - **Remediation Code Diff**:
 ```python
-@@ -112,6 +112,11 @@ def init_cache(self):
--        # weak_cache only
-+        # Caches the result of build_plan() per request as (plan, inject_snapshot).
-+        self._plan_cache: WeakKeyDictionary[Request, tuple[andi.Plan, tuple]] = (
-+            WeakKeyDictionary()
-+        )
-+        self._warned_inject_changed = False
-...
-     def build_plan(self, request: Request) -> andi.Plan:
--        callback = get_callback(request, self.spider)
--        return andi.plan(callback, ...)
-+        inject = tuple(request.meta.get("inject", []))
-+        if request in self._plan_cache:
-+            cached_plan, cached_inject = self._plan_cache[request]
-+            if inject == cached_inject:
-+                return cached_plan
-+            if not self._warned_inject_changed:
-+                logger.warning(
-+                    f"request.meta['inject'] changed between calls for "
-+                    f"{request.url!r}. Set its final value as early as "
-+                    f"possible, so that e.g. request fingerprints can account "
-+                    f"for it."
-+                )
-+                self._warned_inject_changed = True
-+        plan = self._build_plan(request)
-+        self._plan_cache[request] = (plan, inject)
-+        return plan
+// - assert all(dep in available_providers for dep in dependencies if is_valid(dep))
+// + for dep in dependencies:
+// +     if dep not in available_providers:
+// +         raise UndeclaredIncompatibleDependency(f"Dependency {dep} cannot be provided.")
 ```
-- **Lesson**: Keys in dependency caches cannot be decoupled from their configuration attributes. Whenever the payload of a mutable container dictates cache output, tuple-snapshot the payload inside the cache value and evaluate parity before hit confirmation.
+- **Lesson**: Never use filtered generator expressions within boolean aggregators (`all()` / `any()`) when verifying invariant integrity. Every element must map explicitly to a pass/fail condition or iterate using explicit loops that raise immediately on unknown targets.
 
 ---
 
-### Incident 2: Reactor Freeze on Coroutine Dispatch in Scrapy 2.14 Upgrade (BUG-ASYNC-DISPATCH-02)
-- **Context**: `scrapy_poet/utils/__init__.py` and `scrapy_poet/injection.py`
-- **What Was Expected**: Asynchronous providers and callbacks returning coroutines must seamlessly convert to Twisted `Deferred`s across all supported Scrapy runtime versions (from 2.7 to 2.14+).
-- **What Actually Happened**: Scrapy 2.14 altered its internal deferred utilities. `scrapy_poet` previously relied on Scrapy's internal `maybeDeferred_coro`. Upstream refactoring in Scrapy caused attribute import failures or broken coroutine conversions, freezing execution chains where providers returned native awaitables.
-- **Evidence in Repo**: Commit `69d74361`, PR #232. Files: `scrapy_poet/utils/__init__.py`, `scrapy_poet/injection.py`.
-- **Root Cause**: Leaking downstream framework utility imports across major version upgrades instead of housing a self-contained, battle-hardened bridge implementation in `scrapy_poet.utils`.
+### Incident 2: Shell Crash on Union Parameter Annotations (BUG-POET-140)
+- **Context**: `scrapy_poet/injection.py:317` within `InjectionMiddleware.process_request`.
+- **What Was Expected**: Running `scrapy shell <url>` should work transparently with `InjectionMiddleware` enabled, allowing interactive debugging of spiders using Page Objects.
+- **What Actually Happened**: Executing `fetch(url)` in Scrapy shell raised an unhandled exception:
+  ```text
+  File ".../twisted/python/failure.py", line 475, in raiseException
+      raise self.value.with_traceback(self.tb)
+  TypeError: issubclass() arg 1 must be a class
+  ```
+- **Evidence in Repo**: Issue #140, PR addressing `issubclass(first_parameter.annotation, DummyResponse)`.
+- **Root Cause**: `scrapy shell` constructs requests with `callback=Deferred.callback`. The signature of Twisted's `Deferred.callback` has a type annotation on its first argument (`result`) of `Union[_DeferredResultT, Failure]`. `scrapy-poet` attempted to optimize request fetching by checking if the callback's first parameter was a subclass of `DummyResponse`. It called `issubclass(first_parameter.annotation, DummyResponse)` directly without verifying if `first_parameter.annotation` was an actual class (instance of `type`).
 - **Remediation Code Diff**:
 ```python
-@@ -27,7 +27,7 @@
--from scrapy.utils.defer import deferred_from_coro, maybeDeferred_coro
-+from scrapy.utils.defer import deferred_from_coro
-...
-+from scrapy_poet.utils import is_min_scrapy_version, maybeDeferred_coro
-
-# In scrapy_poet/utils/__init__.py:
-+def maybeDeferred_coro(
-+    f: Callable[_P, Any], *args: _P.args, **kw: _P.kwargs
-+) -> Deferred:
-+    """Copy of defer.maybeDeferred that also converts coroutines to Deferreds."""
-+    try:
-+        result = f(*args, **kw)
-+    except:  # noqa: B001,E722
-+        return fail(failure.Failure(captureVars=Deferred.debug))
-+
-+    if isinstance(result, Deferred):
-+        return result
-+    if asyncio.isfuture(result) or inspect.isawaitable(result):
-+        return deferred_from_coro(result)
-+    if isinstance(result, failure.Failure):
-+        return fail(result)
-+    return succeed(result)
+// - if issubclass(first_parameter.annotation, DummyResponse):
+// + if isinstance(first_parameter.annotation, type) and issubclass(first_parameter.annotation, DummyResponse):
 ```
-- **Lesson**: Do not import private or unstable upstream framework glue utilities across external ecosystems (Twisted <-> asyncio). Maintain a local, strictly typed adapter with comprehensive unit test coverage over all variant return types.
+- **Lesson**: Annotations are dynamic and can be typing constructs (`Union`, `Literal`, `TypeVar`, `Annotated`) rather than runtime classes. Runtime reflection must always validate `isinstance(ann, type)` before calling `issubclass()`.
 
 ---
 
-### Incident 3: `scrapy shell` Crash via Union Type Annotation Subclass Inspection (BUG-SHELL-INTROSPECT-03)
-- **Context**: `scrapy_poet/injection.py`, in `is_scrapy_response_required`
-- **What Was Expected**: Running `scrapy shell <url>` must launch the interactive debugging console without raising injection exceptions.
-- **What Actually Happened**: The command crashed with:
-  `TypeError: issubclass() arg 1 must be a class`.
-  `scrapy shell` replaces the standard spider callback with `twisted.internet.defer.Deferred.callback`. The first argument annotation on this method in modern Twisted/typeshed is `Union[_DeferredResultT, Failure]`. `scrapy-poet` called `issubclass(first_parameter.annotation, DummyResponse)`. When `issubclass()` receives a `typing.Union` object (or `types.UnionType`), Python raises `TypeError`.
-- **Evidence in Repo**: Issue #140 and Issue #92. PR resolving inspection guards.
-- **Root Cause**: Passing raw reflection type annotations (`inspect.Parameter.annotation`) directly to `issubclass()` without verifying `isinstance(annotation, type)` or handling `typing.get_origin()`.
+### Incident 3: Test Fixture Subprocess Termination Metric Erasure (BUG-POET-SIGTERM)
+- **Context**: `scrapy_poet/utils/mockserver.py` and `pyproject.toml`.
+- **What Was Expected**: Test coverage reports must measure the lines executed within test mock servers launched as subprocesses.
+- **What Actually Happened**: The test harness in `MockServer.__exit__` called `self.proc.terminate()` (which sends `SIGTERM`). Python's `coverage` library by default only captures and flushes data on normal process exit (`sys.exit`) or `SIGINT`. Under `SIGTERM`, the mock server terminated immediately, leaving coverage buffers unflushed and generating misleading 0% coverage reports on testing modules.
+- **Evidence in Repo**: Commit `f06d684b`, `pyproject.toml:80`.
+- **Root Cause**: `coverage.py` does not hook `SIGTERM` by default when instrumenting subprocesses via `patch = ["subprocess"]`.
 - **Remediation Code Diff**:
-```python
-# Unsafe Inspection:
-- if issubclass(first_parameter.annotation, DummyResponse):
--     return False
-
-# Hardened Inspection:
-+ annotation = first_parameter.annotation
-+ if isinstance(annotation, type) and issubclass(annotation, DummyResponse):
-+     return False
-+ # Also account for potential None, typing.Union, or special forms
-+ origin = get_origin(annotation)
-+ if origin is not None and isinstance(origin, type) and issubclass(origin, DummyResponse):
-+     return False
+```toml
+@@ -77,6 +77,7 @@ filename = "scrapy_poet/VERSION"
+ 
+ [tool.coverage.run]
+ branch = true
++sigterm = true  # MockServer stops its subprocess with SIGTERM
+ patch = [
+     "subprocess",
+ ]
 ```
-- **Lesson**: Never pass type annotations directly into `issubclass()` or `isinstance()`. An annotation can be a string (from `from __future__ import annotations`), a Union, `Any`, `TypeVar`, or forward reference. Guard with `isinstance(annotation, type)` first.
+- **Lesson**: Subprocess orchestration in test suites must coordinate signal handling with the profiling/coverage runtime via configuration (`sigterm = true`), ensuring flush-on-exit semantics during teardown.
 
 ---
 
-### Incident 4: Robots.txt & Media Pipeline Silent Starvation via False Callback Analysis (BUG-ROBOTS-STARVE-04)
-- **Context**: `scrapy_poet/injection.py` and `RobotsTxtMiddleware` / `FilesPipeline`
-- **What Was Expected**: Engine requests dispatched without explicit callbacks (defaulting to the spider's `parse` method internally) or internal middleware requests (like `robots.txt` fetches or `FilesPipeline` media downloads) must never have their downloads bypassed.
-- **What Actually Happened**: When a spider defined `def parse(self, response: DummyResponse)`, `scrapy-poet` inspected the callback. For internal requests (such as `RobotsTxtMiddleware` fetching `robots.txt`), Scrapy created `Request(url)` without setting a callback. By default, Scrapy set `request.callback = None`, which defaulted resolution to `spider.parse`. The injector inspected `spider.parse`, saw `DummyResponse`, concluded that no HTTP response was required, and bypassed the download. As a result, `robots.txt` and images were never downloaded.
-- **Evidence in Repo**: Issue #48, commit introducing `NO_CALLBACK` and explicit internal request detection.
-- **Root Cause**: Assuming that every request whose target callback defaults to `parse` is actually intended for the user's `parse` logic, failing to distinguish between engine-internal requests and spider-user requests.
+### Incident 4: Request Fingerprint Corruption via Unserializable Page Parameters (BUG-POET-FINGERPRINT)
+- **Context**: `scrapy_poet/_request_fingerprinter.py` in `ScrapyPoetRequestFingerprinter.fingerprint`.
+- **What Was Expected**: Distinct requests having identical URLs but requiring different page object dependency injection plans (or different runtime page parameters) must have distinct fingerprints to prevent Scrapy's deduplication filter (`RFPDupeFilter`) from dropping them. Requests that could not serialize their parameters should gracefully fall back to base fingerprinter output without crashing.
+- **What Actually Happened**: When page objects or custom parameters included complex non-serializable objects (lambdas, active database connections), `serialize_page_params` failed. Prior versions risked either raising serialization exceptions or allowing memory leaks by caching requests in strong references during hash generation.
+- **Evidence in Repo**: Commit `f06d684b`, `_request_fingerprinter.py:92-105`.
+- **Root Cause**: Strong reference retention of `scrapy.Request` inside long-lived fingerprinter instances caused memory leaks. Incomplete serialization handling of dynamic builder dependencies caused inconsistent fingerprint outputs.
 - **Remediation Code Diff**:
 ```python
-# Introduce NO_CALLBACK sentinel awareness:
+@@ -89,13 +92,14 @@ def __init__(self, crawler: Crawler) -> None:
+             ),
+             crawler,
+         )
+-        self._callback_cache: dict[Callable, bytes | None] = {}
++        self._callback_cache: dict[Callable[..., Any], bytes | None] = {}
+         self._request_cache: WeakKeyDictionary[Request, bytes] = WeakKeyDictionary()
+         self._crawler: Crawler = crawler
+         self._saw_unserializable_page_params = False
+
+     @cached_property
+-    def _injector(self):
++    def _injector(self) -> Injector:
++        assert self._crawler.engine
+```
+- **Lesson**: Fingerprint engines must cache using `WeakKeyDictionary` for transient objects like requests, and they must implement structural fallback logging when encountering non-hashable runtime parameters.
+
+---
+
+### Incident 5: Missing Twisted Reactor Redirect Tracking in Secondary Injections (BUG-POET-REDIRECT)
+- **Context**: `scrapy_poet/downloader.py` and `tests/test_downloader.py`.
+- **What Was Expected**: When a Page Object requests an auxiliary resource via `HttpClient.get("/redirect")`, Scrapy's underlying downloader must follow the HTTP redirect chain and resolve the final landing URL in `HttpResponse.url`.
+- **What Actually Happened**: The `scrapy_downloader` translated the `web_poet.HttpRequest` into a `scrapy.Request` with `callback=NO_CALLBACK`. During internal redirect processing within Scrapy's redirect middleware, the response URL updates were not being correctly reflected back to the high-level `web_poet.HttpResponse` wrapper, leaving the original requested URL intact rather than the redirected target URL.
+- **Evidence in Repo**: Commit `9f0e84a9`, additions of `RedirectResource` and `test_additional_requests_redirect`.
+- **Root Cause**: Downloader adapter omitted propagating Scrapy response flags and redirection history during conversion to `web_poet.HttpResponse`.
+- **Remediation Code Diff**:
+```python
+// Test implementation verifying the redirect chain fix:
+@attr.define
+class AdditionalRequestsRedirectPage(WebPage[dict[str, Any]]):
+    http: HttpClient
+
+    async def to_item(self) -> dict[str, Any]:
+        response = await self.http.get(f"{self.response.url}/redirect")
+        return {"url": str(response.url)}
+
+# Verified that response.url matches the landing endpoint:
+assert items == [{"url": f"{server.root_url}/target"}]
+```
+- **Lesson**: Protocol bridges must guarantee that transport-level metadata mutations (redirects, header canonicalization, charset overrides) are mapped bi-directionally into the high-level domain objects.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+
+#### `scrapy.http.Request.callback` Equality vs Identity Traps
+In Scrapy, `Request(url, callback=None)` defaults callback to the spider's `parse` method. However, when building requests that must *never* execute a spider callback (such as internal requests generated by Page Objects), passing `None` causes unintentional execution of `spider.parse`. Scrapy >= 2.8 introduced `NO_CALLBACK`.
+```python
+# CRITICAL TOKEN-LEVEL DISTINCTION
 try:
-    from scrapy.http.request import NO_CALLBACK  # Available Scrapy >= 2.8
+    from scrapy.http.request import NO_CALLBACK
 except ImportError:
     NO_CALLBACK = None
 
-def is_scrapy_response_required(self, request: Request) -> bool:
-    # If the request callback is explicitly NO_CALLBACK or marked as an internal download,
-    # never suppress Scrapy's downloader!
-    if request.callback is NO_CALLBACK:
-        return True
-    
-    # Internal pipeline flag checks
-    if request.meta.get("_scrapy_poet_internal"):
-        return True
-        
-    callback = get_callback(request, self.spider)
-    # Perform strict parameter analysis...
+def http_request_to_scrapy_request(request: HttpRequest, **kwargs: Any) -> Request:
+    return Request(
+        url=str(request.url),
+        method=request.method,
+        headers=request.headers,
+        body=request.body,
+        # INVARIANT: Setting callback=NO_CALLBACK prevents Scrapy from routing this
+        # response to spider.parse if NO_CALLBACK is defined.
+        callback=NO_CALLBACK,
+        **kwargs,
+    )
 ```
-- **Lesson**: Implicit default behavior (e.g., fallback to `self.parse`) is dangerous when middleware inspects callables to modify transport mechanics. Use explicit sentinels (`NO_CALLBACK`) to differentiate between "unspecified callback intended for fallback" and "engine internal operation that must not be intercepted."
+*Hazard*: If `NO_CALLBACK` is `None` (on older Scrapy versions), and the request is returned into the engine pipeline, Scrapy executes `spider.parse` with internal data unless filtered by `InjectionMiddleware`.
 
----
-
-### Incident 5: False-Positive Generator Assertion in Test Shield (BUG-TEST-NOOP-05)
-- **Context**: `tests/test_web_poet_rules.py`, in `assert_deps`
-- **What Was Expected**: The test utility `assert_deps` was intended to validate that built instances exactly matched the expected dependency classes, failing the test suite if an unexpected class or missing dependency occurred.
-- **What Actually Happened**: The assertion was written as a generator expression inside an expression that evaluated to truthy without iterating or evaluating all elements:
-  `assert (isinstance(item, expected) for item, expected in pairs)`
-  In Python, any generator object `(<genexpr>)` evaluates to `True` in a boolean context! The test was a total no-op and passed even when dependencies were completely corrupted or missing.
-- **Evidence in Repo**: Issue #181, commit `4f5868ef`.
-- **Root Cause**: Using a generator expression directly inside `assert` without enclosing it in `all(...)` or consuming it via a list comprehension.
-- **Remediation Code Diff**:
+#### Explicit Generic Invariance with `ItemPage[Any]`
+Type checking Page Objects requiring generic type arguments:
 ```python
-- # Buggy no-op assertion:
-- assert (isinstance(item, expected_cls) for item, expected_cls in zip(items, expected))
+# INCORRECT: In Python 3.11+ strict mode, raw generics trigger validation errors
+def spider_for(injectable: type[ItemPage]): ...
 
-+ # Concrete verification:
-+ assert all(isinstance(item, expected_cls) for item, expected_cls in zip(items, expected))
-+ # Or explicit structural comparison:
-+ assert [type(item) for item in items] == list(expected)
+# CORRECT TOKEN INVARIANT: Explicit parameterization
+def spider_for(
+    injectable: type[ItemPage[Any]],
+    url: str,
+    base_spider: type[scrapy.Spider] | None = None,
+) -> type[scrapy.Spider]: ...
 ```
-- **Lesson**: Linters (`ruff` / `flake8-bugbear` rule `B011` / `B028`) must enforce that generator expressions inside `assert` statements are rejected during CI. A bare generator in an `assert` statement is always a bug.
 
 ---
-
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
-
-### 1. Micro-Syntax & Token-Level Precision
-- **Class Parameter Annotation Inspection**:
-  When using `andi.CustomBuilder`, `result_class_or_fn` can be a function, class, or callable factory. Direct assignment to a typed variable causes static analysis failures under strict mypy:
-  ```python
-  # Unsafe:
-  result_cls: type = cls.result_class_or_fn  # Incompatible types in assignment
-  
-  # Micro-Syntax Invariant:
-  result_cls: type = cast("type", cls.result_class_or_fn)
-  ```
-- **String Annotation Resolution Traps (`from __future__ import annotations`)**:
-  When `from __future__ import annotations` is active, `inspect.signature(fn).parameters[name].annotation` returns a string representation (`"MyPage"`), not the class object. In `scrapy-poet`, annotations MUST be resolved via `typing.get_type_hints(fn)` using the function's global namespace, never read directly from `param.annotation`.
-- **Falsy Metadata Precedence Hazard**:
-  Checking if dynamic injection was declared:
-  ```python
-  # DANGEROUS:
-  inject = request.meta.get("inject") or []  # Fails if inject was passed as an empty tuple/set or custom falsy object
-  
-  # SAFE:
-  inject = tuple(request.meta.get("inject", ()))
-  ```
 
 ### 2. Infinite Loop & Recursion Guards
-- **Mutual Overrides Dependency Resolution Guard**:
-  When users configure `ApplyRule(A, instead_of=B)` and `ApplyRule(B, instead_of=A)`, naive graph traversal enters infinite recursion during dependency resolution.
-  - *Invariant Proof*: The rules registry resolution MUST maintain an `already_visited: set[type]` during class replacement traversal. If `current_cls in already_visited`, immediately terminate traversal and raise a deterministic `CircularDependencyError(f"Cycle detected: {already_visited}")`.
-- **Subprocess Hang Guard in Test Mock Server (`scrapy_poet/utils/mockserver.py`)**:
-  When spawning a Twisted mock server via `Popen`:
-  ```python
-  self.proc = Popen(
-      [sys.executable, "-u", "-m", "scrapy_poet.utils.mockserver", self.resource, "--port", str(self.port)],
-      stdout=PIPE,
-      env={**os.environ, "PYTHONPATH": self.pythonpath},
-  )
-  # BLOCKING GUARD: The unbuffered flag `-u` is mandatory.
-  # Without `-u`, Python buffers the stdout line, causing `readline()` to hang indefinitely
-  # on parent process initialization!
-  self.proc.stdout.readline()
-  ```
 
-### 3. UI & UX Micro-Mechanics (CLI & Developer Interface Guardrails)
-- **Positional Command-Line Option Drift (`scrapy savefixture`)**:
-  In `scrapy_poet/commands.py`, parsing arguments directly via `args[0]`, `args[1]` broke command documentation and failed silently on missing arguments with raw unformatted tracebacks.
-  - *Invariant*: All CLI extensions extending Scrapy's `ScrapyCommand` MUST declare arguments through `add_options(parser)` using standard `argparse` positional specifications with clear `metavar`, ensuring syntax errors are caught before runtime execution:
-  ```python
-  def add_options(self, parser):
-      super().add_options(parser)
-      parser.add_argument("page_object", metavar="<page object class>", help="Import path...")
-      parser.add_argument("url", metavar="<URL>", help="Target URL...")
-      parser.add_argument("spider_name", metavar="[<spider name>]", nargs="?", help="Optional spider...")
-  ```
+#### Cyclic Dependency Plan Invariants
+The dependency resolver builds an instantiation tree via `andi.plan()`. Page objects can inadvertently request themselves or create mutual cycles:
+$A \to B \to A$.
+```python
+def build_plan_safely(
+    target_cls: type,
+    available_providers: set[type],
+    stack: set[type] | None = None,
+) -> andi.Plan:
+    if stack is None:
+        stack = set()
+        
+    # INVARIANT: Termination proof via recursion depth / cycle tracking
+    if target_cls in stack:
+        cycle_path = " -> ".join([cls.__name__ for cls in stack] + [target_cls.__name__])
+        raise CyclicDependencyError(f"Cyclic dependency detected: {cycle_path}")
+        
+    stack.add(target_cls)
+    try:
+        plan = andi.plan(
+            target_cls,
+            is_injected=lambda cls: cls in available_providers,
+            # Strict recursion depth cap
+            full_final_kwargs=False,
+        )
+        return plan
+    finally:
+        stack.remove(target_cls)
+```
 
-### 4. Backend Concurrency & Memory Safety
-- **WeakKeyDictionary Memory Leak Prevention**:
-  `scrapy_poet` caches resolved page objects in `WeakKeyDictionary[Request, dict]`.
-  - *TOCTOU Hazard*: Storing a strong back-reference from the cached instance to the `Request` object destroys `WeakKeyDictionary` garbage collection! If `instance.request = request`, a cyclic strong reference exists: `request -> WeakKeyDictionary -> dict -> instance -> request`. The request is never deallocated, exhausting RAM during long crawl jobs.
-  - *Invariant*: Injected instances stored in request caches MUST NOT retain strong references to the request unless wrapped in `weakref.ref` or cleared during response de-allocation.
-- **Twisted Reactor Main-Thread Concurrency Invariant**:
-  When using `time_machine` or sleep mechanisms inside test harnesses, never invoke blocking OS sleep (`time.sleep`) on the Twisted reactor thread. You must use `twisted.internet.task.deferLater` or `asyncio.sleep` to avoid blocking network packet scheduling across concurrent test spiders.
+#### Callback Generator Recursion Guards
+In `SaveFixtureCommand`, the spider generates items recursively. If an exception triggers retries infinitely:
+```python
+# RECURSION TERMINATION GUARD
+class InjectableSpider(base_spider):
+    name = "injectable"
 
-### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Spider Parameter Null Pointer Defense**:
-  In Scrapy, callbacks can be static methods, external functions, or instance methods. When resolving a method's provider bindings:
-  ```python
-  # DEFECTIVE:
-  callback = getattr(spider, request.callback) # Crashes if request.callback is a callable, None, or string
-  
-  # SAFE EXTRACTION:
-  def get_callback(request: Request, spider: Spider) -> Callable:
-      if request.callback is None:
-          return getattr(spider, "parse")
-      if callable(request.callback):
-          return request.callback
-      return getattr(spider, request.callback)
-  ```
-- **Undeclared Exception Trapping in `PageObjectInputProvider`**:
-  If a provider raises an unhandled exception during async resolution, failure to tag it with the failed dependency class blinds the developer to which graph node failed. Providers MUST wrap internal failures inside `ProviderError` with the explicit dependency type name.
+    async def cb(self, response: DummyResponse, page: injectable):
+        global frozen_time
+        frozen_time = datetime.datetime.now(datetime.UTC).replace(microsecond=0)
+        with time_machine.travel(frozen_time):
+            try:
+                # Force single await evaluation
+                item = await ensure_awaitable(page.to_item())
+            except PageObjectAction as ex:
+                # Capture known action exceptions, terminate recursion immediately
+                saved_exceptions.append(ex)
+                return
+            saved_items.append(item)
+            yield item
+```
 
 ---
 
-## 5. The 9 Deep Learning Dimensions
+### 3. UI & UX Micro-Mechanics (CLI & Test Server Controls)
 
-### Dimension 1: Architecture
-The architecture is structured as a pipeline interceptor decoupled into 4 distinct layers:
-1. **Scrapy Integration Layer** (`_addon.py`, `downloadermiddlewares.py`, `spidermiddlewares.py`): Plugs into Scrapy's lifecycle via modern Addon interfaces (`Addon.update_settings`), dynamically configuring priorities (e.g., `InjectionMiddleware: 543`, `RetryMiddleware: 275`).
-2. **IoC Core** (`injection.py`): Hosts `Injector`. It leverages `andi` to analyze type signatures, queries the `RulesRegistry`, creates an optimal linear construction plan, and executes builders.
-3. **Provider Layer** (`page_input_providers.py`): Self-contained data suppliers (`PageObjectInputProvider`) declaring `provided_classes`.
-4. **Data Normalization Layer** (`utils/__init__.py`): Bidirectional translation between Scrapy primitives (`Request`, `Response`, `HtmlResponse`) and Web-Poet primitives (`HttpRequest`, `HttpResponse`, `HttpResponseHeaders`).
+#### CLI Terminal Rendering & Output Sanitization
+When executing `scrapy savefixture <page_object> <url>`:
+```python
+def run(self, args: list[str], opts: argparse.Namespace) -> None:
+    # Validate arguments before touching the filesystem or invoking crawler
+    type_name = opts.page_object
+    url = opts.url
 
+    cls = load_object(type_name)
+    if not isinstance(cls, type):
+        raise UsageError(f"Error: {type_name} is not a valid class")
+    if not issubclass(cls, ItemPage):
+        raise UsageError(f"Error: {type_name} is not a descendant of ItemPage")
+
+    # Invariant: Fail early if environment contains unbound crawler processes
+    assert self.settings is not None
+    assert self.crawler_process is not None
 ```
-[ Scrapy Engine ] ──(Request)──> [ InjectionMiddleware ]
-                                           │
-                                  andi.plan(Callback)
-                                           ▼
-                                 [ RulesRegistry ] (Domain overrides)
-                                           ▼
-                                [ Input Providers ] (Async fetch / cache)
-                                           ▼
-                                [ Injected Instances ] ──> [ Callback Execution ]
+
+#### Ephemeral Port Allocation & Socket Rebind Guard
+```python
+def get_ephemeral_port() -> int:
+    s = socket.socket()
+    s.bind(("", 0))
+    # Capture port and immediately release so child process can bind
+    port: int = s.getsockname()[1]
+    s.close()
+    return port
 ```
 
-### Dimension 2: Core Abstractions
-- **`PageObjectInputProvider`**: Base class for all data producers. Subclasses declare `provided_classes: ClassVar[Set[Type]]` or implement `is_provided(type_) -> bool`.
-- **`DummyResponse`**: Subclass of `scrapy.http.Response`. Serves as a type-system indicator: when a spider callback type-hints `response: DummyResponse`, the injector detects that Scrapy does not need to download the body via its standard engine pipelines.
-- **`RulesRegistry`**: Maps requested page object contracts (e.g., `ProductPage`) to target implementations (e.g., `AmazonProductPage`) conditioned on URL patterns (`url-matcher`).
-- **`DynamicDeps`**: Marker type indicating that dependency discovery must be deferred until runtime metadata is evaluated.
+---
 
-### Dimension 3: Error Handling
-- **`MalformedProvidedClassesError`**: Raised during crawler boot if a provider declares an invalid `provided_classes` structure (e.g., returning a generator instead of a set or callable).
-- **`UndeclaredProvidedTypeError`**: Raised if a provider returns an instance of a type it did not declare in its capabilities contract.
-- **Retry Translation (`_get_retry_request_from_exception`)**: Catches `web_poet.exceptions.Retry` raised deep within page objects. Translates it into Scrapy's native retry middleware format via `scrapy.downloadermiddlewares.retry.get_retry_request`, maintaining retry counters and backoff schedules.
+### 4. Backend Concurrency & Memory Safety
 
-### Dimension 4: Testing
+#### Weak Caching for Scrapy Requests
+During crawling, millions of `scrapy.http.Request` objects pass through the pipeline. Caching metadata keyed by `Request` instances will exhaust RAM if stored in standard dictionaries.
+```python
+# MEMORY SAFETY INVARIANT: WeakKeyDictionary prevents retaining dereferenced requests
+class ScrapyPoetRequestFingerprinter:
+    def __init__(self, crawler: Crawler) -> None:
+        self._callback_cache: dict[Callable[..., Any], bytes | None] = {}
+        # Requests are discarded by Python GC when finished; weak dictionary clears automatically
+        self._request_cache: WeakKeyDictionary[Request, bytes] = WeakKeyDictionary()
+        self._crawler: Crawler = crawler
+
+    def fingerprint(self, request: Request) -> bytes:
+        if request in self._request_cache:
+            return self._request_cache[request]
+
+        fingerprint: bytes = self._base_request_fingerprinter.fingerprint(request)
+        # Compute and associate
+        self._request_cache[request] = fingerprint
+        return fingerprint
+```
+
+#### Cache Close Idempotency
+`SerializedDataCache` accesses disk-backed SQLite or file storage:
+```python
+class _Cache(abc.ABC):
+    @abc.abstractmethod
+    def __getitem__(self, fingerprint: str) -> Any:
+        pass
+
+    @abc.abstractmethod
+    def __setitem__(self, fingerprint: str, value: Any) -> None:
+        pass
+
+    # INVARIANT: Base classes must provide idempotent, non-raising close hooks
+    def close(self) -> None:
+        pass
+```
+
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+
+#### Encoding Extraction Fallback Chain
+Converting Scrapy responses to `web_poet.HttpResponse` requires safe extraction of internal encodings without crashing on raw binary blobs:
+```python
+def scrapy_response_to_http_response(response: Response) -> HttpResponse:
+    kwargs: dict[str, Any] = {}
+    # Defensive lookup: _encoding may be missing, None, or empty
+    encoding = getattr(response, "_encoding", None)
+    if encoding:
+        kwargs["encoding"] = encoding
+    return HttpResponse(
+        url=response.url,
+        body=response.body,
+        status=response.status,
+        headers=HttpResponseHeaders.from_bytes_dict(response.headers),
+        **kwargs,
+    )
+```
+
+#### Safe Downloader Callback Type Verification
+```python
+def _create_scrapy_downloader(
+    download_func: Callable[[Request], Awaitable
