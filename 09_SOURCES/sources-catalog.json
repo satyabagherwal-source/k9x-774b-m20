@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
-    "lastHarvestedAt": "2026-10-19T07:21:24.184Z",
+    "contentHash": "6d466de483b0bcd9329721d68f6acf00ac705a0a4c3ed4381794591e4d1f523a",
+    "lastHarvestedAt": "2026-10-20T21:07:57.050Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "4cb42676",
+    "sourceVersion": "a4a3063c",
     "license": "NOASSERTION",
-    "contentHash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
-    "lastHarvestedAt": "2026-10-19T12:13:58.794Z",
+    "contentHash": "b648c15c3bb7c43d7635fe1d852fd123606b71f5606afbaf48258c3887933498",
+    "lastHarvestedAt": "2026-10-20T21:07:59.111Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "84489d85",
+    "sourceVersion": "fadced9e",
     "license": "AGPL-3.0",
-    "contentHash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
-    "lastHarvestedAt": "2026-10-19T03:07:54.590Z",
+    "contentHash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
+    "lastHarvestedAt": "2026-10-20T21:08:10.713Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {

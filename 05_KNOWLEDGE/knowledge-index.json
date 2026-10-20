@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T21:01:39.372Z",
+  "last_updated": "2026-10-20T21:08:10.647Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5538,14 +5538,19 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "84489d85",
-      "content_hash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
+      "source_version": "fadced9e",
+      "content_hash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
         {
           "number": 2057,
           "title": "transaction recovery after node removal (#8885)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3382,
+          "title": "Parallelize citus_check_cluster_node_health across source nodes (#8935)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5554,7 +5559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:07:54.538Z",
+      "verified_at": "2026-10-20T21:08:10.634Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19105,7 +19110,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
+      "content_hash": "6d466de483b0bcd9329721d68f6acf00ac705a0a4c3ed4381794591e4d1f523a",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "promoted_rules": [
@@ -19158,7 +19163,7 @@
         "learn-huggingface-hf-google-embeddinggemma-2-mv489kut",
         "learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8"
       ],
-      "verified_at": "2026-10-19T07:21:24.133Z",
+      "verified_at": "2026-10-20T21:07:56.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31232,8 +31237,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "4cb42676",
-      "content_hash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
+      "source_version": "a4a3063c",
+      "content_hash": "b648c15c3bb7c43d7635fe1d852fd123606b71f5606afbaf48258c3887933498",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -31246,6 +31251,11 @@
           "number": 2569,
           "title": "templates): add expected_worktree_path_of_branch() template function (#4502)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3381,
+          "title": "remove): drain the trash with one background process per repository (#4516)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31253,7 +31263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:13:58.737Z",
+      "verified_at": "2026-10-20T21:07:59.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104778,6 +104788,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T21:01:39.359Z"
+    },
+    "rule-3381": {
+      "learning_id": "rule-3381",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3381,
+      "title": "remove): drain the trash with one background process per repository (#4516)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "a4a3063c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:07:59.036Z"
+    },
+    "rule-3382": {
+      "learning_id": "rule-3382",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3382,
+      "title": "Parallelize citus_check_cluster_node_health across source nodes (#8935)",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "fadced9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:08:10.634Z"
     }
   },
   "aliases": {

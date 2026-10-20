@@ -4033,3 +4033,6 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `8c8b17d3` | Multi-dimensional audit evidence | 2026-10-20T21:01:26.961Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `cbc1b435` | Multi-dimensional audit evidence | 2026-10-20T21:01:34.739Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `19f456ac` | Multi-dimensional audit evidence | 2026-10-20T21:01:39.429Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-20T21:07:57.050Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `a4a3063c` | Multi-dimensional audit evidence | 2026-10-20T21:07:59.111Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `fadced9e` | Multi-dimensional audit evidence | 2026-10-20T21:08:10.713Z |

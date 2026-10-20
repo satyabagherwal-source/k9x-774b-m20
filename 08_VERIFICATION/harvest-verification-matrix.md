@@ -4026,3 +4026,6 @@
 | `CYCLE-20261020-4R3I` | `2026-10-20T21:01:26.958Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3378` | Yes (`81abcde6...`) |
 | `CYCLE-20261020-4X3F` | `2026-10-20T21:01:34.731Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3379` | Yes (`57143957...`) |
 | `CYCLE-20261020-50PU` | `2026-10-20T21:01:39.426Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3380` | Yes (`4c1bac80...`) |
+| `CYCLE-20261020-D43B` | `2026-10-20T21:07:57.047Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`6d466de4...`) |
+| `CYCLE-20261020-D5OF` | `2026-10-20T21:07:59.103Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3381` | Yes (`b648c15c...`) |
+| `CYCLE-20261020-DEMO` | `2026-10-20T21:08:10.704Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3382` | Yes (`f9f364bc...`) |

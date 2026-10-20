@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `4cb42676`  
+> **Source Version**: `a4a3063c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:13:58.523Z  
+> **Timestamp**: 2026-10-20T21:07:58.708Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:13:58.511Z  
+> **Harvest Timestamp**: 2026-10-20T21:07:58.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9305 stars
+- **Stars / Engagement**: 9337 stars
 
 ---
 
@@ -373,6 +373,8 @@ use color_print::cformat;
 use path_slash::PathExt as _;
 use worktrunk::git::{BranchRef, CommandError, Repository, resolve_input_path, sha_cache};
 use worktrunk::path::{format_path_for_display, sanitize_for_filename};
+use worktrunk::progress::Progress;
+use worktrunk::remove_dir::remove_dir_with_progress;
 use worktrunk::styling::{
     eprintln, format_heading, format_with_gutter, hint_message, info_message, println,
     success_message, warning_message,
@@ -501,7 +503,7 @@ fn sort_hook_entries(entries: &mut [HookOutputEntry]) {
 /// A top-level entry staged under `wt_trash_dir()`.
 ///
 /// Worktree removal renames directories into `.git/wt/trash/<name>-<timestamp>`
-/// and a background `rm -rf` cleans them up; entries still present here are
+/// and a background trash drain deletes them; entries still present here are
 /// awaiting (or escaped) that sweep.
 struct TrashEntry {
     /// Filename, e.g. `myproject.feature-1234567890`.
@@ -516,7 +518,7 @@ struct TrashEntry {
 /// Only the first level matters — each entry is one staged worktree (a
 /// directory) or a stray file. Sorted by mtime (newest first) with name as
 /// tie-breaker. Individual dirent/metadata failures are skipped: `state get`
-/// is a read-only inspector and can race with the background `rm -rf`, so a
+/// is a read-only inspector and can race with the background trash drain, so a
 /// partial listing is more useful than a hard failure.
 fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
     let trash_dir = repo.wt_trash_dir();
@@ -529,8 +531,7 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
         .filter_map(|entry| {
             let metadata = entry.metadata().ok()?;
             Some(TrashEntry {
-                name: entry.file_name().to_string_lossy().into_owned(),
-                path: entry.path().to
+                n
 ```
 
 ### Core Architecture Module: `src/commands/hook_announcement.rs`
@@ -817,7 +818,7 @@ use color_print::cformat;
 use strum::IntoEnumIterator;
 use worktrunk::HookType;
 use worktrunk::config::{
-    ALIAS_ARGS_KEY, Approvals, CommandConfig, ProjectConfig, UserConfig, binds_cli_var,
+    ALIAS_ARGS_KEY, Approvals, CommandConfig, ProjectConfig, ProjectId, UserConfig, binds_cli_var,
     referenced_vars_for_config,
 };
 use worktrunk::git::Repository;
@@ -1025,9 +1026,9 @@ pub fn run_hook(
         shorthand_vars,
         forwarded_args,
     } = cli;
-    // Derive context from the current environment; `config` isn't in hand here,
-    // so let the repository supply its cached load.
-    let env = CommandEnv::for_action_loading_config()?;
+    // `config` isn't in hand here, so let the repository supply its cached load.
+    let config = Repository::current()?.user_config().clone();
+    let env = CommandEnv::for_selector(config, "@")?;
     let repo = &env.repo;
     let ctx = env.context(yes);
 
@@ -1038,7 +1039,7 @@ pub fn run_hook(
         // "Approve at the Gate": approve project hooks upfront
         // Pass name_filters to only approve the targeted hooks, not all hooks of this type
         let approved = approve_hooks_filtered(&ctx, &[hook_type], name_filters)?;
-        // If declined, return early - the whole point of `w
+        // If declined, return early - t
 ```
 
 ### Core Architecture Module: `src/commands/hook_filter.rs`
@@ -1143,7 +1144,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Context as _;
 use worktrunk::HookType;
-use worktrunk::config::{Approvals, Command, CommandConfig, ProjectConfig, UserConfig};
+use worktrunk::config::{Approvals, Command, CommandConfig, ProjectConfig, ProjectId, UserConfig};
 use worktrunk::git::add_hook_skip_hint;
 
 use super::command_approval::approve_command_batch;
@@ -1188,7 +1189,7 @@ pub struct HookPlanBuilder<'a> {
     entries: Vec<PlanEntry>,
     project_config: Option<&'a ProjectConfig>,
     user: &'a UserConfig,
-    project_id: Option<&'a str>,
+    project_id: Option<&'a ProjectId>,
 }
 
 impl<'a> HookPlanBuilder<'a> {
@@ -1200,7 +1201,7 @@ impl<'a> HookPlanBuilder<'a> {
     pub fn new(
         project_config: Option<&'a ProjectConfig>,
         user: &'a UserConfig,
-        project_id: Option<&'a str>,
+        project_id: Option<&'a ProjectId>,
     ) -> Self {
         Self {
             entries: Vec::new(),
@@ -1300,7 +1301,7 @@ impl HookPlan {
     /// path that has something to approve requires it.
     pub fn approve(
         self,
-        project_id: Option<&str>,
+        project_id: Option<&ProjectId>,
         yes: bool,
     ) -> anyhow::Result<Option<ApprovedHookPlan>> {
         let approvable = self.approvable();
@@ -1324,8 +1325,7 @@ impl HookPlan {
     /// commands are already approved survive, the rest are dropped (user
     /// pipelines always survive). Strictly the AGENTS.md "consult the
     /// approval state read-only and run only the already-approved commands,
-    /// skipping the rest" rule. An absent `project_id` (unresolvable
-    /// iden
+    /// skipping the rest" rule. An absent `project_i
 ```
 
 ### Core Architecture Module: `src/commands/hooks.rs`
@@ -1397,6 +1397,8 @@ impl HookPlan {
 //! running something else. `WORKTRUNK_PROJECT_CONFIG_PATH` overrides the path
 //! (test isolation); user config (`~/.config/worktrunk/config.toml`) is global
 //! and unaffected.
+
+use crate::commands::command_executor::ForegroundStdin;
 
 use std::path::{Path, PathBuf};
 
@@ -1550,8 +1552,7 @@ fn no_matching_commands_error(
     };
     // Only when every filter is a bare source. A list that also names a
     // command asked about that name, and answering about a source instead
-    // would leave the name unmentioned and offer an invocation nobody typed —
-    // so a mixed list falls through to `HookCommandNot
+    // would leave the name unmentioned and offer an invocation nobody typed 
 ```
 
 ### Core Architecture Module: `src/commands/list/model/state.rs`
@@ -2094,352 +2095,642 @@ impl LayoutConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cb42676` (2026-10-19)
-**Commit Message**: feat(templates): add expected_worktree_path_of_branch() template function (#4502)
+### Incident Patch 1: `25d0c44b` (2026-10-20)
+**Commit Message**: fix(remove): drain the trash with one background process per repository (#4516)
 
-**File**: `docs/src/content/docs/hook.md` (modified, +7/-0)
+A prune of many worktrees started one `rm -rf` per staged worktree. On a
+193-worktree prune those processes competed for the disk: together they
+deleted about 1,500 files/s on 3 cores, while a single `rm` alone
+managed 3,000–5,400 files/s on under one core. Read-only directories
+(`dr-xr-xr-x`, as installers leave them) also made `rm -rf` fail, so
+those entries stayed in `.git/wt/trash/` and every later sweep retried
+them.
+
+Removal now starts a hidden `wt _drain-trash`, which holds
+`.git/wt/trash.lock` and deletes every staged entry, including entries
+staged while it runs. A removal or sweep that finds the lock held starts
+nothing, so a prune runs about one deleter. The sweep after `wt remove`
+drains leftovers immediately rather than waiting 24 hours. Priority is
+unchanged (`taskpolicy -b` on macOS).
+
+The drain uses wt's own walker (`src/remove_dir.rs`), which `wt remove
+--foreground` and `wt config state clear` also use:
+
+- On Unix it opens each directory relative to its parent's descriptor
+with `O_NOFOLLOW` and unlinks relative to the holding directory. The old
+path-based walker could follow a directo
+
+**File**: `Cargo.toml` (modified, +3/-2)
 ```diff
-@@ -250,6 +250,7 @@ Templates also support functions for dynamic lookups:
- | Function | Example | Description |
- |----------|---------|-------------|
- | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
-+| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
+@@ -331,8 +331,9 @@ open = { version = "5.3", optional = true }
+ # Gating keeps both out of the Windows dependency graph.
+ nix = { version = "0.31.3", default-features = false, features = ["event", "fs", "poll", "process", "signal"] }
+ signal-hook = "0.4.1"
+-# Safe FIONREAD snapshots bound cancellation drains even with continuous writers.
+-rustix = "1.1.4"
++# Safe FIONREAD snapshots bound cancellation drains even with continuous writers;
++# directory-relative `*at` calls let tree removal never follow a symlink.
++rustix = { version = "1.1.4", features = ["fs"] }
  
- The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
- 
-@@ -260,6 +261,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
- setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
- ```
- 
-+The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
-+
-+```bash
-+wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
-+```
-+
- ## Interactive hooks
- 
- Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
+ [target.'cfg(windows)'.dependencies]
+ # The localized Documents folder that holds PowerShell profiles.
 ```
 
-**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +7/-0)
+**File**: `docs/src/content/docs/faq.md` (modified, +2/-1)
 ```diff
-@@ -244,6 +244,7 @@ Templates also support functions for dynamic lookups:
- | Function | Example | Description |
- |----------|---------|-------------|
- | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
-+| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
+@@ -150,6 +150,7 @@ Worktrunk stores repository state, caches, and logs under `.git/`:
+ | `.git/wt/logs/subprocess.log` | Raw uncapped subprocess stdout/stderr (may be multi-MB) | Running with `-vv` |
+ | `.git/wt/logs/diagnostic.md` | Diagnostic report for issue reporting (leads with the performance profile) | Running with `-vv` |
+ | `.git/wt/trash/<name>-<timestamp>` | Staged worktree contents pending background deletion | `wt remove` |
++| `.git/wt/trash.lock` | Lock for background trash deletion | `wt remove` |
  
- The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
+ None of this is tracked by git or pushed to remotes.
  
-@@ -254,6 +255,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
- setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
- ```
+@@ -215,7 +216,7 @@ A branch checked out in a second worktree is retained regardless, `-D` included.
  
-+The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
-+
-+```bash
-+wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
-+```
-+
- ## Interactive hooks
- 
- Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
+ - `wt merge` / `wt step push` — the target branch's checked-out worktree is updated to the merged commits, so a file those commits delete disappears from it, and an ignored file at a path they track is overwritten — the same result a `git merge` run in that worktree would produce. Uncommitted changes at paths the merge doesn't touch stay in place, staged or not; one at a path it does touch refuses the merge upfront, naming the file
+ - `wt remove` / `wt step prune` — unregister a stale worktree (`⊟` in `wt list`) by deleting its `.git/worktrees/<id>` entry, as `git worktree prune` does, but for that worktree only. Files still in its directory stay. An entry whose index holds staged changes, or with a rebase, merge, or other operation in progress, is kept unless `wt remove --force` names it, since `git worktree repair` can restore it only while the entry exists
+-- `wt remove` — also stops the removed worktree's `git fsmonitor--daemon` (under `core.fsmonitor=true`), and sweeps `.git/wt/trash/` entries older than 24 hours along with fsmonitor daemons whose worktree no longer exists
++- `wt remove` — also stops the removed worktree's `git fsmonitor--daemon` (under `core.fsmonitor=true`), and resumes deleting `.git/wt/trash/` entries an interrupted removal left behind, along with fsmonitor daemons whose worktree no longer exists
+ - `wt config state clear` — clears config keys, caches, markers, hints, variables, logs, and stale trash
+ - `wt config shell install` — replaces an existing fish or Nushell wrapper file whole, and removes one an older version installed at a previous location (fish `conf.d/wt.fish`, Nushell `<config-dir>/vendor/autoload/wt.nu`), printing each removal; [Files created](/shell-integration/#files-created) names the file each shell gets
+ - `wt config shell uninstall` — removes the lines that run `wt config shell init` from bash/zsh/PowerShell rc files, and deletes wrapper and completion files carrying worktrunk's content markers (fish `functions/`, `conf.d/`, and `completions/`; nushell `vendor/autoload`). Every removed line is printed
 ```
 
-**File**: `skills/worktrunk/reference/hook.md` (modified, +7/-0)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/faq.md` (modified, +2/-1)
 ```diff
-@@ -244,6 +244,7 @@ Templates also support functions for dynamic lookups:
- | Function | Example | Description |
- |----------|---------|-------------|
- | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
-+| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
+@@ -146,6 +146,7 @@ Worktrunk stores repository state, caches, and logs under `.git/`:
+ | `.git/wt/logs/subprocess.log` | Raw uncapped subprocess stdout/stderr (may be multi-MB) | Running with `-vv` |
+ | `.git/wt/logs/diagnostic.md` | Diagnostic report for issue reporting (leads with the performance profile) | Running with `-vv` |
+ | `.git/wt/trash/<name>-<timestamp>` | Staged worktree contents pending background deletion | `wt remove` |
++| `.git/wt/trash.lock` | Lock for background trash deletion | `wt remove` |
  
- The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
+ None of this is tracked by git or pushed to remotes.
  
-@@ -254,6 +255,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
- setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
- ```
+@@ -211,7 +212,7 @@ A branch checked out in a second worktree is retained regardless, `-D` included.
  
-+The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
-+
-+```bash
-+wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
-+```
-+
- ## Interactive hooks
- 
- Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
+ - `wt merge` / `wt step push` — the target branch's checked-out worktree is updated to the merged commits, so a file those commits delete disappears from it, and an ignored file at a path they track is overwritten — the same result a `git merge` run in that worktree would produce. Uncommitted changes at paths the merge doesn't touch stay in place, staged or not; one at a path it does touch refuses the merge upfront, naming the file
+ - `wt remove` / `wt step prune` — unregister a stale worktree (`⊟` in `wt list`) by deleting its `.git/worktrees/<id>` entry, as `git worktree prune` does, but for that worktree only. Files still in its directory stay. An entry whose index holds staged changes, or with a rebase, merge, or other operation in progress, is kept unless `wt remove --force` names it, since `git worktree repair` can restore it only while the entry exists
+-- `wt remove` — also stops the removed worktree's `git fsmonitor--daemon` (under `core.fsmonitor=true`), and sweeps `.git/wt/trash/` entries older than 24 hours along with fsmonitor daemons whose worktree no longer exists
++- `wt remove` — also stops the removed worktree's `git fsmonitor--daemon` (under `core.fsmonitor=true`), and resumes deleting `.git/wt/trash/` entries an interrupted removal left behind, along with fsmonitor daemons whose worktree no longer exists
+ - `wt config state clear` — clears config keys, caches, markers, hints, variables, logs, and stale trash
+ - `wt config shell install` — replaces an existing fish or Nushell wrapper file whole, and removes one an older version installed at a previous location (fish `conf.d/wt.fish`, Nushell `<config-dir>/vendor/autoload/wt.nu`), printing each removal; [Files created](https://worktrunk.dev/shell-integration/#files-created) names the file each shell gets
+ - `wt config shell uninstall` — removes the lines that run `wt config shell init` from bash/zsh/PowerShell rc files, and deletes wrapper and completion files carrying worktrunk's content markers (fish `functions/`, `conf.d/`, and `completions/`; nushell `vendor/autoload`). Every removed line is printed
 ```
 
-**File**: `src/cli/mod.rs` (modified, +7/-0)
+**File**: `skills/worktrunk/reference/faq.md` (modified, +2/-1)
 ```diff
-@@ -1874,6 +1874,7 @@ Templates also support functions for dynamic lookups:
- | Function | Example | Description |
- |----------|---------|-------------|
- | `worktree_path_of_branch(branch)` | `{{ worktree_path_of_branch("main") }}` | Look up the path of a branch's worktree |
-+| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
+@@ -146,6 +146,7 @@ Worktrunk stores repository state, caches, and logs under `.git/`:
+ | `.git/wt/logs/subprocess.log` | Raw uncapped subprocess stdout/stderr (may be multi-MB) | Running with `-vv` |
+ | `.git/wt/logs/diagnostic.md` | Diagnostic report for issue reporting (leads with the performance profile) | Running with `-vv` |
+ | `.git/wt/trash/<name>-<timestamp>` | Staged worktree contents pending background deletion | `wt remove` |
++| `.git/wt/trash.lock` | Lock for background trash deletion | `wt remove` |
  
- The `worktree_path_of_branch` function returns the filesystem path of a worktree given a branch name, or an empty string if no worktree exists for that branch. This is useful for referencing files in other worktrees:
+ None of this is tracked by git or pushed to remotes.
  
-@@ -1884,6 +1885,12 @@ The `worktree_path_of_branch` function returns the filesystem path of a worktree
- setup = "cp {{ worktree_path_of_branch('main') }}/config.local {{ worktree_path }}"
- ```
+@@ -211,7 +212,7 @@ A branch checked out in a second worktree is retained regardless, `-D` included.
  
-+The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
-+
-+```bash
-+wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
-+```
-+
- ## Interactive hooks
- 
- Hooks can prompt when run serially in the foreground, as in this `pre-start` hook:
+ - `wt merge` / `wt step push` — the target branch's checked-out worktree is updated to the merged commits, so a file those commits delete disappears from it, and an ignored file at a path they track is overwritten — the same result a `git merge` run in that worktree would produce. Uncommitted changes at paths the merge doesn't touch stay in place, staged or not; one at a path it does touch refuses the merge upfront, naming the file
+ - `wt remove` / `wt step prune` — unregister a stale worktree (`⊟` in `wt list`) by deleting its `.git/worktrees/<id>` entry, as `git worktree prune` does, but for that worktree only. Files still in its directory stay. An entry whose index holds staged changes, or with a rebase, merge, or other operation in progress, is kept unless `wt remove --force` names it, since `git worktree repair` can restore it only while the entry exists
+-- `wt remove` — also stops the removed worktree's `git fsmonitor--daemon` (under `core.fsmonitor=true`), and sweeps `.git/wt/trash/` entries older than 24 hours along with fsmonitor daemons whose worktree no longer exists
++- `wt remove` — also stops the removed worktree's `git fsmonitor--daemon` (under `core.fsmonitor=true`), and resumes deleting `.git/wt/trash/` entries an interrupted removal left behind, along with fsmonitor daemons whose worktree no longer exists
+ - `wt config state clear` — clears config keys, caches, markers, hints, variables, logs, and stale trash
+ - `wt config shell install` — replaces an existing fish or Nushell wrapper file whole, and removes one an older version installed at a previous location (fish `conf.d/wt.fish`, Nushell `<config-dir>/vendor/autoload/wt.nu`), printing each removal; [Files created](https://worktrunk.dev/shell-integration/#files-created) names the file each shell gets
+ - `wt config shell uninstall` — removes the lines that run `wt config shell init` from bash/zsh/PowerShell rc files, and deletes wrapper and completion files carrying worktrunk's content markers (fish `functions/`, `conf.d/`, and `completions/`; nushell `vendor/autoload`). Every removed line is printed
 ```
 
-**File**: `src/commands/worktree/resolve.rs` (modified, +1/-31)
+**File**: `src/cli/mod.rs` (modified, +4/-0)
 ```diff
-@@ -9,7 +9,6 @@ use std::io::IsTerminal;
- use std::path::PathBuf;
+@@ -2710,6 +2710,10 @@ Hooks, aliases and `step.copy-ignored.exclude` accumulate rather than replace, s
+         force_delete: bool,
+     },
  
- use color_print::cformat;
--use normalize_path::NormalizePath;
++    /// Delete the worktrees staged in a trash directory.
++    #[command(name = "_drain-trash", hide = true)]
++    InternalDrainTrash { trash_dir: std::path::PathBuf },
++
+     /// Run a custom `wt-<name>` command found on PATH.
+     ///
+     /// Captured by clap when the first positional argument doesn't match any
+```
+
+**File**: `src/commands/config/state.rs` (modified, +11/-10)
+```diff
+@@ -79,6 +79,8 @@ use color_print::cformat;
  use path_slash::PathExt as _;
- use worktrunk::config::UserConfig;
- use worktrunk::git::Repository;
-@@ -31,36 +30,7 @@ pub fn compute_worktree_path(
-     branch: &str,
-     config: &UserConfig,
- ) -> anyhow::Result<PathBuf> {
--    let repo_root = repo.repo_path()?;
--    let default_branch = repo.default_branch().unwrap_or_default();
--    let is_bare = repo.is_bare()?;
--
--    // Default branch lives at repo root (main worktree), not a templated path.
--    // Exception: bare repos have no main worktree, so all branches use templated paths.
--    if !is_bare && branch == default_branch {
--        return Ok(repo_root.to_path_buf());
--    }
--
--    let repo_name = repo_root
--        .file_name()
--        .ok_or_else(|| {
--            anyhow::anyhow!(
--                "Repository path has no filename: {}",
--                format_path_for_display(repo_root)
--            )
--        })?
--        .to_str()
--        .ok_or_else(|| {
--            anyhow::anyhow!(
--                "Repository path contains invalid UTF-8: {}",
--                format_path_for_display(repo_root)
--            )
--        })?;
--
--    let project = repo.project_identifier().ok();
--    let expanded_path = config.format_path(repo_name, branch, repo, project.as_deref())?;
--
--    Ok(repo_root.join(expanded_path).normalize())
-+    config.expected_worktree_path(repo, branch)
- }
- 
- /// Check if a worktree is at its expected path based on config template.
-```
-
-**File**: `src/config/expansion.rs` (modified, +30/-0)
-```diff
-@@ -956,6 +956,34 @@ pub fn template_environment(repo: &Repository) -> Environment<'static> {
-             .unwrap_or_default()
-     });
- 
-+    // Register expected_worktree_path_of_branch: where `wt switch --create` would put a
-+    // branch's worktree, whether or not one exists there. Rendering the
-+    // `worktree-path` template re-enters this environment, so a template
-+    // that calls the function errors rather than recursing.
-+    let repo_clone = repo.clone();
-+    env.add_function(
-+        "expected_worktree_path_of_branch",
-+        move |branch: String| -> Result<String, minijinja::Error> {
-+            thread_local! {
-+                static IN_EXPECTED_WORKTREE_PATH_OF_BRANCH: std::cell::Cell<bool> =
-+                    const { std::cell::Cell::new(false) };
-+            }
-+            if IN_EXPECTED_WORKTREE_PATH_OF_BRANCH.replace(true) {
-+                return Err(minijinja::Error::new(
-+                    ErrorKind::InvalidOperation,
-+                    "expected_worktree_path_of_branch cannot be used in the worktree-path template",
-+                ));
-+            }
-+            let result = repo_clone
-+                .user_config()
-+                .expected_worktree_path(&repo_clone, &branch);
-+            IN_EXPECTED_WORKTREE_PATH_OF_BRANCH.set(false);
-+            result
-+                .map(|p| to_posix_path(&p.to_string_lossy()))
-+                .map_err(|e| minijinja::Error::new(ErrorKind::InvalidOperation, format!("{e:#}")))
-+        },
-+    );
-+
-     env
- }
- 
-@@ -1133,6 +1161,8 @@ pub fn validate_template(
- /// # Functions
- /// - `worktree_path_of_branch(branch)` — Look up the filesystem path of a branch's worktree
- ///   Returns empty string if branch has no worktree.
-+/// - `expected_worktree_path_of_branch(branch)` — Where `wt switch` expects the branch's worktree,
-+///   from the `worktree-path` template. Returns the path whether or not it exists.
+ use worktrunk::git::{BranchRef, CommandError, Repository, resolve_input_path, sha_cache};
+ use worktrunk::path::{format_path_for_display, sanitize_for_filename};
++use worktrunk::progress::Progress;
++use worktrunk::remove_dir::remove_dir_with_progress;
+ use worktrunk::styling::{
+     eprintln, format_heading, format_with_gutter, hint_message, info_message, println,
+     success_message, warning_message,
+@@ -207,7 +209,7 @@ fn sort_hook_entries(entries: &mut [HookOutputEntry]) {
+ /// A top-level entry staged under `wt_trash_dir()`.
  ///
- /// The `name` parameter appears in error messages to help identify which template failed.
- pub fn expand_template(
-```
-
-**File**: `src/config/user/accessors.rs` (modified, +47/-0)
-```diff
-@@ -4,10 +4,14 @@
- //! project by merging global settings with project-specific overrides.
+ /// Worktree removal renames directories into `.git/wt/trash/<name>-<timestamp>`
+-/// and a background `rm -rf` cleans them up; entries still present here are
++/// and a background trash drain deletes them; entries still present here are
+ /// awaiting (or escaped) that sweep.
+ struct TrashEntry {
+     /// Filename, e.g. `myproject.feature-1234567890`.
+@@ -222,7 +224,7 @@ struct TrashEntry {
+ /// Only the first level matters — each entry is one staged worktree (a
+ /// directory) or a stray file. Sorted by mtime (newest first) with name as
+ /// tie-breaker. Individual dirent/metadata failures are skipped: `state get`
+-/// is a read-only inspector and can race with the background `rm -rf`, so a
++/// is a read-only inspector and can race with the background trash drain, so a
+ /// partial listing is more useful than a hard failure.
+ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
+     let trash_dir = repo.wt_trash_dir();
+@@ -252,7 +254,7 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
+ /// Clear stale entries from the wt/trash directory.
+ ///
+ /// Worktree removal renames directories into `.git/wt/trash/` for instant UX,
+-/// then deletes them in a background process. If the background `rm -rf` fails
++/// then deletes them in a background process. If the background drain fails
+ /// or is killed, entries accumulate. This cleans them up.
+ fn clear_trash(repo: &Repository) -> anyhow::Result<usize> {
+     let trash_dir = repo.wt_trash_dir();
+@@ -263,13 +265,12 @@ fn clear_trash(repo: &Repository) -> anyhow::Result<usize> {
  
- use std::collections::{BTreeMap, HashMap};
-+use std::path::PathBuf;
-+
-+use normalize_path::NormalizePath;
- 
- use crate::config::HooksConfig;
- use crate::config::commands::CommandConfig;
- use crate::config::expansion::expand_template;
-+use crate::path::format_path_for_display;
- use crate::shell_exec::ShellEscapeMode;
- 
- use super::UserConfig;
-@@ -271,4 +275,47 @@ impl UserConfig {
-         )
-         .map(|p| shellexpand::tilde(&p).into_owned())?)
+     let mut cleared = 0;
+     for entry in std::fs::read_dir(&trash_dir)? {
+-        let entry = entry?;
+-        let path = entry.path();
+-        if path.is_dir() {
+-            std::fs::remove_dir_all(&path)?;
+-        } else {
+-            std::fs::remove_file(&path)?;
+-        }
++        let path = entry?.path();
++        anyhow::ensure!(
++            remove_dir_with_progress(&path, &Progress::disabled()),
++            "Failed to remove {}",
++            format_path_for_display(&path)
++        );
+         cleared += 1;
      }
-+
-+    /// Compute the expected worktree path for a branch name.
-+    ///
-+    /// For the default branch, returns the repo root (main worktree location).
-+    /// For other branches, applies the `worktree-path` template from config.
-+    ///
-+    /// Uses cached values from Repository for `default_branch` and `is_bare`.
-+    pub fn expected_worktree_path(
-+        &self,
-+        repo: &crate::git::Repository,
-+        branch: &str,
-+    ) -> anyhow::Result<PathBuf> {
-+        let repo_root = repo.repo_path()?;
-+        let default_branch = repo.default_branch().unwrap_or_default();
-+        let is_bare = repo.is_bare()?;
-+
-+        // Default branch lives at repo root (main worktree), not a templated path.
-+        // Exception: bare repos have no main worktree, so all branches use templated paths.
-+        if !is_bare && branch == default_branch {
-+            return Ok(repo_root.to_path_buf());
+ 
+```
+
+**File**: `src/commands/process.rs` (modified, +45/-150)
+```diff
+@@ -7,7 +7,6 @@ use std::process::Command;
+ use std::process::Stdio;
+ use worktrunk::git::{HookType, Repository};
+ use worktrunk::path::{format_path_for_display, sanitize_for_filename};
+-use worktrunk::utils::epoch_now;
+ 
+ use worktrunk::config::HookSource;
+ 
+@@ -342,102 +341,69 @@ fn spawn_detached_exec_windows(
+ ///
+ /// Steps:
+ ///
+-/// 1. [`sweep_stale_trash`] — delete stale `.git/wt/trash/` entries left by
+-///    an interrupted background removal.
++/// 1. [`sweep_trash`] — restart deletion of `.git/wt/trash/` entries left
++///    by an interrupted background removal.
+ /// 2. [`worktrunk::git::fsmonitor::reap_orphan_fsmonitor_daemons`] — terminate
+ ///    `git fsmonitor--daemon` processes whose worktree no longer exists.
+ ///    Defense-in-depth for daemons orphaned by paths that bypass `wt remove`
+ ///    (plain `git worktree remove`, manual `rm -rf`, a crashed `wt`); the
+ ///    `wt remove` source itself stops the daemon synchronously.
+ pub fn run_internal_sweep(repo: &Repository) {
+     let _span = worktrunk::trace::Span::new("internal-sweep");
+-    sweep_stale_trash(repo);
++    sweep_trash(repo);
+     worktrunk::git::fsmonitor::reap_orphan_fsmonitor_daemons(repo);
+ }
+ 
+-/// How old a `.git/wt/trash/` entry must be before [`sweep_stale_trash`] deletes it.
+-pub const TRASH_STALE_THRESHOLD_SECS: u64 = 24 * 60 * 60;
+-
+-/// Fire-and-forget cleanup of stale entries in `.git/wt/trash/`.
++/// Fire-and-forget restart of trash deletion.
+ ///
+-/// Worktree removal uses a fast path that renames the worktree into
+-/// `.git/wt/trash/<name>-<timestamp>/` and deletes it in a detached background
+-/// process. If that process is interrupted (SIGKILL, reboot, disk full), the
+-/// renamed directory is orphaned. `wt remove` calls this function after its
+-/// primary user-visible output — so the sweep never delays the progress or
+-/// success message — to provide eventual cleanup: entries older than
+-/// [`TRASH_STALE_THRESHOLD_SECS`] are removed by a single detached `rm -rf`.
++/// Worktree removal renames the worktree into
++/// `.git/wt/trash/<name>-<timestamp>/` and starts a detached
++/// [`worktrunk::git::drain_trash`] to delete it. If that process is
++/// interrupted (SIGKILL, reboot, disk full), its entries stay behind. `wt
++/// remove` calls this function after its primary user-visible output — so the
++/// sweep never delays the progress or success message — and starts another
++/// drain when the trash holds anything and no drain is running.
+ ///
+-/// Best effort: directory read failures and spawn failures are logged at debug
+-/// level and otherwise ignored. The sweep is purely additive — the primary
+-/// `wt remove` operation proceeds regardless of outcome.
+-pub fn sweep_stale_trash(repo: &Repository) {
++/// Best effort: spawn failures are logged at debug level and otherwise
++/// ignored. The sweep is purely additive — the primary `wt remove` operation
++/// proceeds regardless of outcome.
++pub fn sweep_trash(repo: &Repository) {
+     let trash_dir = repo.wt_trash_dir();
+-    let stale = collect_stale_trash_entries(&trash_dir, epoch_now(), TRASH_STALE_THRESHOLD_SECS);
+-    if stale.is_empty() {
++    if worktrunk::git::staged_trash_entries(&trash_dir).is_empty()
++        || worktrunk::git::trash_drain_running(&trash_dir)
++    {
+         return;
+     }
+ 
+-    let command = build_remove_paths_command(&stale);
+-
+     // The sweep is repo-wide (not branch-scoped), so it logs to a top-level
+     // shared file alongside `commands.jsonl` and `trace.log`. The branch
+     // argument is ignored for the `Shared` variant.
+-    if let Err(e) = spawn_detached(
+-        repo,
+-        &repo.wt_dir(),
+-        &command,
+-        "",
+-        &HookLog::Shared(InternalOp::TrashSweep),
+-    ) {
++    let spawned = std::env::current_exe()
++        .context("Failed to locate Worktrunk executable")
++        .and_then(|executable| {
++            spawn_detached(
++                repo,
++                &repo.wt_dir(),
++                &build_drain_trash_command(executable, &trash_dir),
++                "",
++                &HookLog::Shared(InternalOp::TrashSweep),
++            )
++        });
++    if let Err(e) = spawned {
+         tracing::debug!(error = %format!("{e:#}"), "Failed to spawn stale trash sweep");
+     }
+ }
+ 
+-/// Shell argv: a fixed script, its `$0`, then native path arguments.
+-/// Paths are never interpolated into shell source.
+-pub fn build_remove_paths_command(
+-    paths: impl IntoIterator<Item = impl AsRef<OsStr>>,
+-) -> Vec<OsString> {
+-    let mut args = vec![
+-        OsString::from(r#"exec rm -rf -- "$@""#),
++/// Shell argv that runs `wt _drain-trash <trash_dir>`: a fixed script, its
++/// `$0`, then native arguments. Paths are never interpolated into shell source.
++pub fn build_drain_trash_command(executable: PathBuf, trash_dir: &Path) -> Vec<OsString> {
++    vec![
++        OsString::from(r#"exec "$@""#),
+         OsString::from("wt"),
+-    ];
+-    args.extend(paths.into_iter().map(|path| path.as_ref().to_os_stri
+```
+
+**File**: `src/commands/remove.rs` (modified, +4/-5)
+```diff
+@@ -363,13 +363,12 @@ fn maybe_reap_result(result: &RemovalPlan, reap_enabled: bool) {
+ ///      `.git/wt/trash/<name>-<timestamp>/` → prune metadata → delete branch
+ ///      → synchronous `remove_dir_all` on the staged directory.
+ ///    - **Background** (default): stop fsmonitor → rename + prune +
+-///      synchronous branch delete → spawn detached `rm -rf` on the staged
+-///      directory. Cross-filesystem or locked worktrees fall back to
++///      synchronous branch delete → spawn a detached drain of the trash
++///      directory (`wt _drain-trash`). Cross-filesystem or locked worktrees fall back to
+ ///      `git worktree remove` in the detached process.
+ /// 4. **Post-remove hooks** run in the background after dispatch.
+-/// 5. **Internal sweep** (fire-and-forget, after primary output): stale
+-///    `.git/wt/trash/` entries older than 24 hours are removed by a detached
+-///    `rm -rf`, and orphaned `git fsmonitor--daemon` processes (worktree gone)
++/// 5. **Internal sweep** (fire-and-forget, after primary output): entries
++///    left in `.git/wt/trash/` start another detached drain, and orphaned `git fsmonitor--daemon` processes (worktree gone)
+ ///    are terminated. Runs last so it never delays the user-visible progress
+ ///    or success message. See [`super::process::run_internal_sweep`].
+ pub fn handle_remove_command(args: RemoveArgs, yes: bool) -> anyhow::Result<()> {
+```
+
+---
+
+### Incident Patch 2: `6826904e` (2026-10-20)
+**Commit Message**: fix(shell_exec): write small command input to a pipe, not a temp file (#4519)
+
+Since v0.80.0, an unusable `TMPDIR` broke every command that passes
+input to a child: background hooks never spawned ("Failed to prepare
+detached input"), `wt step for-each` failed, `wt list` lost the
+working-tree diff of a worktree with untracked files (`git add
+--pathspec-from-file=-` failed), and background `wt remove` exited 1
+after already removing the worktree. #4400 moved this input from a pipe
+to an anonymous temp file, even when it was empty.
+
+The temp file exists so that no writer thread can block on a child that
+doesn't read its input. A pipe meets that requirement when the whole
+input fits in its buffer, so on Unix `buffered_stdin` now writes the
+input into a fresh pipe with a nonblocking writer before spawn and
+closes the writer. Only input larger than the pipe buffer (64 KiB on
+macOS and Linux) falls back to the temp file, and that case still needs
+a usable `TMPDIR`. Windows keeps the temp file.
+
+Verified with the release-review repros: with `TMPDIR=/nonexistent/dir`,
+the post-start hook runs, `for-each` succeeds, `wt list` shows the dirty
+worktree, and `wt remove` exits 0, matching v0.80.0
+
+**File**: `src/commands/picker/pager.rs` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ //! Pager detection and execution.
+ //!
+ //! Handles detection and use of diff pagers (delta, bat, etc.) for preview windows.
+-//! Input is prepared in an anonymous file before spawn. On Unix, one deadline
++//! Input is prepared by `buffered_stdin` before spawn. On Unix, one deadline
+ //! bounds both output consumption and the direct child wait,
+ //! including descendants retaining the pipes. Timeout closes our pipe endpoints
+ //! and kills/reaps only the owned pager; preview falls back to the original text.
+```
+
+**File**: `src/shell_exec.rs` (modified, +17/-4)
+```diff
+@@ -89,9 +89,22 @@ use crate::trace::CommandTrace;
+ pub mod pipe;
+ 
+ /// Prepare complete input before spawning, with no producer that can block.
+-/// The anonymous file is removed when its last handle closes, even on interruption.
+-/// This is seekable stdin, unlike the pipes connecting live pipeline stages.
++///
++/// On Unix, input that fits in a pipe's buffer is written there before spawn,
++/// so it needs no temporary storage and works with an unusable `TMPDIR`.
++/// Larger input, and all input on Windows, goes through an anonymous file,
++/// removed when its last handle closes, even on interruption.
+ pub fn buffered_stdin(bytes: &[u8]) -> std::io::Result<Stdio> {
++    #[cfg(unix)]
++    {
++        let (reader, mut writer) = with_process_creation_guard(std::io::pipe)?;
++        pipe::set_nonblocking(&writer)?;
++        // Writing to a fresh pipe whose reader we hold fails only with
++        // `WouldBlock`, once the input outgrows the buffer.
++        if writer.write_all(bytes).is_ok() {
++            return Ok(reader.into());
 +        }
-+
-+        let repo_name = repo_root
-+            .file_name()
-+            .ok_or_else(|| {
-+                anyhow::anyhow!(
-+                    "Repository path has no filename: {}",
-+                    format_path_for_display(repo_root)
-+                )
-+            })?
-+            .to_str()
-+            .ok_or_else(|| {
-+                anyhow::anyhow!(
-+                    "Repository path contains invalid UTF-8: {}",
-+                    format_path_for_display(repo_root)
-+                )
-+            })?;
-+
-+        let project = repo.project_identifier().ok();
-+        let expanded_path = self.format_path(repo_name, branch, repo, project.as_deref())?;
-+
-+        Ok(repo_root.join(expanded_path).normalize())
 +    }
+     let mut file = tempfile::tempfile()?;
+     file.write_all(bytes)?;
+     file.rewind()?;
+@@ -1221,7 +1234,7 @@ pub struct Cmd {
+     shell_wrap: bool,
+     /// Stdout configuration for stream() (defaults to inherit)
+     stdout_cfg: Option<std::process::Stdio>,
+-    /// Stdin configuration for stream() (defaults to null, or a file for stdin_data)
++    /// Stdin configuration for stream() (defaults to null; stdin_data takes precedence)
+     stdin_cfg: Option<std::process::Stdio>,
+     /// Observe terminal signals and forward PID-targeted cancellation during stream().
+     forward_signals: bool,
+@@ -1705,7 +1718,7 @@ impl Cmd {
+         self
+     }
+ 
+-    /// Set complete input bytes, delivered through an anonymous temporary file.
++    /// Set complete input bytes, prepared by [`buffered_stdin`] before spawn.
+     ///
+     /// The child reads these bytes followed by EOF, without a pipe writer that
+     /// can block on an unread input. This takes precedence over `.stdin(Stdio)`.
+```
+
+**File**: `tests/integration_tests/list.rs` (modified, +5/-3)
+```diff
+@@ -3718,8 +3718,9 @@ fn test_list_does_not_persist_observation_objects(mut repo: TestRepo) {
+ }
+ 
+ /// A broken system temporary-directory setting must not prevent either list
+-/// entry point from rendering. Probe objects fall back to a temporary directory
+-/// in Git's metadata and still disappear when the command exits.
++/// entry point from rendering, nor fail a task. Probe objects fall back to a
++/// temporary directory in Git's metadata and still disappear when the command
++/// exits. The untracked file makes the working-tree diff pass paths on stdin.
+ #[cfg(unix)]
+ #[rstest]
+ fn test_list_survives_unavailable_system_temp_directory(mut repo: TestRepo) {
+@@ -3728,6 +3729,7 @@ fn test_list_survives_unavailable_system_temp_directory(mut repo: TestRepo) {
+     let feature_path = repo.add_worktree("feature");
+     repo.commit("Main diverges");
+     std::fs::write(feature_path.join("file.txt"), "feature\n").unwrap();
++    std::fs::write(feature_path.join("untracked.txt"), "untracked\n").unwrap();
+ 
+     let before = repo.git_output(&["count-objects", "-v"]);
+     let missing_temp = repo.root_path().join("missing-temp");
+@@ -3744,7 +3746,7 @@ fn test_list_survives_unavailable_system_temp_directory(mut repo: TestRepo) {
+             .output()
+             .unwrap();
+         assert!(
+-            output.status.success(),
++            output.status.success() && output.stderr.is_empty(),
+             "{} should fall back from an unavailable TMPDIR; stderr:\n{}",
+             args.join(" "),
+             String::from_utf8_lossy(&output.stderr)
+```
+
+**File**: `tests/integration_tests/remove.rs` (modified, +24/-0)
+```diff
+@@ -345,6 +345,30 @@ fn test_remove_reap_spares_terminal_process(mut repo: TestRepo) {
+     let _ = child.wait();
+ }
+ 
++/// Background removal hands its cleanup to a detached process, which must
++/// spawn without temporary storage when the system temporary directory is
++/// unusable.
++#[cfg(unix)]
++#[rstest]
++fn test_remove_background_with_unavailable_system_temp_directory(mut repo: TestRepo) {
++    let worktree_path = repo.add_worktree("feature");
++    let missing_temp = repo.root_path().join("missing-temp");
++    assert!(!missing_temp.exists());
++
++    let output = repo
++        .wt_command()
++        .args(["remove", "feature", "--yes"])
++        .env("TMPDIR", &missing_temp)
++        .output()
++        .unwrap();
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(
++        output.status.success() && !stderr.contains("Failed"),
++        "remove should succeed with an unavailable TMPDIR; stderr:\n{stderr}"
++    );
++    assert!(!worktree_path.exists());
++}
++
+ #[rstest]
+ fn test_remove_internal_mode(mut repo: TestRepo) {
+     let worktree_path = repo.add_worktree("feature-internal");
+```
+
+---
+
+### Incident Patch 3: `12d33b3e` (2026-10-20)
+**Commit Message**: fix(shell): keep the Nushell wrapper working when its stdout is redirected (#4525)
+
+Since #4400 rewrote the Nushell wrapper around `try … finally`,
+redirecting the stdout of a `wt` command that prints nothing there
+aborts the wrapper. `nu --no-config-file -c 'source init.nu; cd repo; wt
+switch --create y o> /dev/null; print $env.PWD'` prints `repo.y` on
+v0.80.0, but on main it fails with `nu::shell::cant_convert ... can't
+convert nothing to string` at the `try {`, stops the script, and loses
+the cd.
+
+Nushell 0.116 fails to convert a `try … finally` that evaluates to
+nothing under `o>` or `o+e>`. A plain `try`, `| ignore` and `e>` are
+unaffected. The wrapper's `try … finally` now evaluates to a record
+holding the exit code and captured stdout, and the wrapper returns
+stdout or propagates the failure after the block, as v0.80.0 did. A
+failure's stdout still prints inside the block, so a failing cd
+directive can't drop it, and the `finally` still applies the directive
+and removes the temp files on Ctrl-C. Returning `""` from the empty
+branch would also have avoided the error, but it prints a blank line
+when `wt switch` is the last command of a `nu -c` script.
+
+Verified with nu 0.116.0
+
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_nu.snap` (modified, +15/-10)
+```diff
+@@ -104,7 +104,10 @@ export def --env --wrapped wt [...args] {
+     } else {
+         let cd_file = (mktemp --tmpdir)
+         let stdout_file = (mktemp --tmpdir)
+-        try {
++        # The return value comes from outside `try … finally`: under an output
++        # redirect (`o> file`), Nushell fails converting a `try … finally`
++        # that evaluates to nothing ("can't convert nothing to string").
++        let result = (try {
+             let wt_args = ($arg_text | take until {|arg| $arg == "--" })
+             # Before `-x`, `c`, `v`, and `y` are boolean flags clap may cluster with it.
+             let has_execute = ($wt_args | any {|arg| $arg == "--execute" or ($arg | str starts-with "--execute=") or ($arg =~ '^-[cvy]*x') })
+@@ -130,15 +133,9 @@ export def --env --wrapped wt [...args] {
+             })
+ 
+             let output = if $has_execute { "" } else { open $stdout_file --raw }
+-
+-            # Return captured stdout or reproduce the external failure without
+-            # a source trace. Nu itself also works on Windows, where sh is absent.
+-            if $exit_code != 0 {
+-                if ($output | is-not-empty) { print -n $output }
+-                ^$nu.current-exe --no-config-file --no-std-lib -c $"exit ($exit_code)"
+-            } else if ($output | is-not-empty) {
+-                $output
+-            }
++            # A failure's stdout prints now, so a failing directive can't drop it.
++            if $exit_code != 0 and ($output | is-not-empty) { print -n $output }
++            { exit_code: $exit_code, output: $output }
+         } finally {
+             try {
+                 # cd file holds a raw path — no shell parsing needed
+@@ -155,6 +152,14 @@ export def --env --wrapped wt [...args] {
+                     try { ^rm -f $cd_file $stdout_file }
+                 }
+             }
++        })
++
++        # Return captured stdout or reproduce the external failure without
++        # a source trace. Nu itself also works on Windows, where sh is absent.
++        if $result.exit_code != 0 {
++            ^$nu.current-exe --no-config-file --no-std-lib -c $"exit ($result.exit_code)"
++        } else if ($result.output | is-not-empty) {
++            $result.output
+         }
+     }
  }
 ```
 
-**File**: `tests/integration_tests/eval.rs` (modified, +63/-0)
+**File**: `templates/nushell.nu` (modified, +15/-10)
 ```diff
-@@ -203,3 +203,66 @@ fn test_eval_commit_matches_head_sha(repo: TestRepo) {
-         "eval commit should match HEAD SHA"
-     );
+@@ -100,7 +100,10 @@ export def --env --wrapped {{ cmd }} [...args] {
+     } else {
+         let cd_file = (mktemp --tmpdir)
+         let stdout_file = (mktemp --tmpdir)
+-        try {
++        # The return value comes from outside `try … finally`: under an output
++        # redirect (`o> file`), Nushell fails converting a `try … finally`
++        # that evaluates to nothing ("can't convert nothing to string").
++        let result = (try {
+             let wt_args = ($arg_text | take until {|arg| $arg == "--" })
+             # Before `-x`, `c`, `v`, and `y` are boolean flags clap may cluster with it.
+             let has_execute = ($wt_args | any {|arg| $arg == "--execute" or ($arg | str starts-with "--execute=") or ($arg =~ '^-[cvy]*x') })
+@@ -126,15 +129,9 @@ export def --env --wrapped {{ cmd }} [...args] {
+             })
+ 
+             let output = if $has_execute { "" } else { open $stdout_file --raw }
+-
+-            # Return captured stdout or reproduce the external failure without
+-            # a source trace. Nu itself also works on Windows, where sh is absent.
+-            if $exit_code != 0 {
+-                if ($output | is-not-empty) { print -n $output }
+-                ^$nu.current-exe --no-config-file --no-std-lib -c $"exit ($exit_code)"
+-            } else if ($output | is-not-empty) {
+-                $output
+-            }
++            # A failure's stdout prints now, so a failing directive can't drop it.
++            if $exit_code != 0 and ($output | is-not-empty) { print -n $output }
++            { exit_code: $exit_code, output: $output }
+         } finally {
+             try {
+                 # cd file holds a raw path — no shell parsing needed
+@@ -151,6 +148,14 @@ export def --env --wrapped {{ cmd }} [...args] {
+                     try { ^rm -f $cd_file $stdout_file }
+                 }
+             }
++        })
++
++        # Return captured stdout or reproduce the external failure without
++        # a source trace. Nu itself also works on Windows, where sh is absent.
++        if $result.exit_code != 0 {
++            ^$nu.current-exe --no-config-file --no-std-lib -c $"exit ($result.exit_code)"
++        } else if ($result.output | is-not-empty) {
++            $result.output
+         }
+     }
  }
+```
+
+**File**: `tests/integration_tests/shell_wrapper.rs` (modified, +25/-0)
+```diff
+@@ -1303,6 +1303,31 @@ mod unix_tests {
+         assert_eq!(fs::read_dir(tmp.path()).unwrap().count(), 0, "{combined}");
+     }
+ 
++    /// Redirecting the wrapper's stdout must not abort it when the command
++    /// prints nothing there. Under `o>`, Nushell fails to convert a
++    /// `try … finally` that evaluates to nothing, and the script stopped
++    /// after the directory change was lost.
++    #[rstest]
++    fn test_nu_wrapper_redirected_stdout_applies_cd(mut repo: TestRepo) {
++        repo.add_worktree("nu-redirect");
++        let target = canonicalize(repo.worktree_path("nu-redirect")).unwrap();
++        let mut script = String::new();
++        append_wrapper_setup(&mut script, "nu", &repo);
++        script.push_str(&format!(
++            "wt switch nu-redirect o> /dev/null\nprint $\"WT_CD:($env.PWD == {})\"\n",
++            nushell_quote(&target.to_string_lossy()),
++        ));
 +
-+/// `expected_worktree_path_of_branch` renders the `worktree-path` template for a branch
-+/// even when another branch occupies that path, which is where
-+/// `worktree_path_of_branch` comes back empty.
-+#[rstest]
-+fn test_eval_expected_worktree_path_of_branch(repo: TestRepo) {
-+    repo.write_test_config(
-+        "worktree-path = \"{{ repo_path }}/../{{ repo }}.wt.{{ branch | sanitize }}\"\n",
-+    );
-+    let repo_name = repo.root_path().file_name().unwrap().to_str().unwrap();
-+    let occupied = repo
-+        .root_path()
-+        .parent()
-+        .unwrap()
-+        .join(format!("{repo_name}.wt.feature-x"));
-+    repo.run_git(&["worktree", "add", "-b", "other", occupied.to_str().unwrap()]);
++        let config_path = repo.test_config_path().to_string_lossy().to_string();
++        let approvals_path = repo.test_approvals_path().to_string_lossy().to_string();
++        let env_vars = build_test_env_vars(&config_path, &approvals_path);
++        let (combined, exit_code) =
++            exec_in_pty_interactive("nu", &script, repo.root_path(), &env_vars, &[]);
 +
-+    let output = repo
-+        .wt_command()
-+        .args([
-+            "step",
-+            "eval",
-+            "{{ expected_worktree_path_of_branch('feature/x') }}|{{ worktree_path_of_branch('feature/x') }}|{{ expected_worktree_path_of_branch('main') }}",
-+        ])
-+        .output()
-+        .unwrap();
-+    assert!(
-+        output.status.success(),
-+        "stderr: {}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let parts: Vec<&str> = stdout.trim().split('|').collect();
-+    let file_name = |p: &str| p.rsplit(['/', '\\']).next().unwrap().to_string();
-+    assert_eq!(file_name(parts[0]), format!("{repo_name}.wt.feature-x"));
-+    assert_eq!(parts[1], "");
-+    // The default branch lives at the repo root, not a templated path.
-+    assert_eq!(file_name(parts[2]), repo_name);
-+}
++        assert_eq!(exit_code, 0, "Output:\n{combined}");
++        assert!(combined.contains("WT_CD:true"), "Output:\n{combined}");
++    }
 +
-+/// A `worktree-path` template that calls `expected_worktree_path_of_branch` errors
-+/// instead of recursing.
-+#[rstest]
-+fn test_eval_expected_worktree_path_of_branch_in_worktree_path_template(repo: TestRepo) {
-+    repo.write_test_config("worktree-path = \"{{ expected_worktree_path_of_branch(branch) }}\"\n");
-+    let output = repo
-+        .wt_command()
-+        .args([
-+            "step",
-+            "eval",
-+            "{{ expected_worktree_path_of_branch('feature') }}",
-+        ])
-+        .output()
-+        .unwrap();
-+    assert_eq!(output.status.code(), Some(1));
-+    assert!(
-+        String::from_utf8_lossy(&output.stderr).contains(
-+            "expected_worktree_path_of_branch cannot be used in the worktree-path template"
-+        ),
-+        "stderr: {}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+}
+     /// Native signal deaths must cross Nushell's negative-status boundary
+     /// before the wrapper propagates the status, after applying CD and cleanup.
+     #[rstest]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4502** (2026-10-19): feat(templates): add expected_worktree_path_of_branch() template function (@worktrunk-bot)
-- **PR #4498** (2026-10-18): fix: identify detached worktrees by their paths (@max-sixty)
-- **PR #4497** (2026-10-18): fix(switch): return `wt switch -` to the worktree it left, not the first checkout of its branch (@max-sixty)
-- **PR #4496** (2026-10-18): fix: resolve worktree arguments once and pass the resolved worktree through (@max-sixty)
-- **PR #4495** (2026-10-17): Honor resolved paths and forge settings (@max-sixty)
-- **PR #4494** (2026-10-17): docs(statusline): clarify the footer spacing allowance (@max-sixty)
+- **PR #4533** (2026-10-20): fix(signals): stop foreground loops when wt itself receives Ctrl-C (@max-sixty)
+- **PR #4532** (2026-10-20): fix(switch): refuse --path naming the bare repository; drop rm -rf hint for --path (@max-sixty)
+- **PR #4531** (2026-10-20): docs: release 0.81 documentation review fixes (@max-sixty)
+- **PR #4530** (2026-10-20): test(remove): retry the drain when a forked child still holds the trash lock (@worktrunk-bot)
+- **PR #4526** (2026-10-20): fix(config): keep approvals and [projects] entries saved under v0.80.0 identifiers (@max-sixty)
+- **PR #4525** (2026-10-20): fix(shell): keep the Nushell wrapper working when its stdout is redirected (@max-sixty)
 
 ---
 
@@ -2459,34 +2750,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. templates): add expected_worktree_path_of_branch() template function (#4502)
+## X. remove): drain the trash with one background process per repository (#4516)
 
 **RULE**:
-When implementing operations in `docs/src/content/docs/hook.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4cb42676`: templates): add expected_worktree_path_of_branch() template function (#4502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25d0c44b`: remove): drain the trash with one background process per repository (#4516). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/docs/hook.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `expected_worktree_path_of_branch(branch)` | `{{ expected_worktree_path_of_branch("feature") }}` | Where `wt switch` expects the branch's worktree |
-The `expected_worktree_path_of_branch` function returns the path `wt switch --create` would use for a branch, whether or not a worktree exists there. Unlike `worktree_path_of_branch`, it still returns that path after the worktree there has moved to another branch. For example, this switches to the worktree at `feature`'s path, whichever branch it now holds:
-
-```bash
-wt switch "$(wt step eval "{{ expected_worktree_path_of_branch('feature') }}")"
-```
-
+# Safe FIONREAD snapshots bound cancellation drains even with continuous writers;
+# directory-relative `*at` calls let tree removal never follow a symlink.
+rustix = { version = "1.1.4", features = ["fs"] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# Safe FIONREAD snapshots bound cancellation drains even with continuous writers.
+rustix = "1.1.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4cb42676` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25d0c44b` are properly handled with clean fallback behavior.

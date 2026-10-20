@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T21:01:39.438Z",
+  "last_updated": "2026-10-20T21:08:10.722Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -830,14 +830,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
-      "verified_at": "2026-10-19T07:21:24.189Z",
+      "content_hash": "6d466de483b0bcd9329721d68f6acf00ac705a0a4c3ed4381794591e4d1f523a",
+      "verified_at": "2026-10-20T21:07:57.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:21:24.189Z"
+      "last_updated": "2026-10-20T21:07:57.058Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "5de154443bd1f36009ac8a2e54f5c23093bd9aed46444aa7cff274c98aa3e125",
-      "verified_at": "2026-10-19T12:13:58.800Z",
+      "content_hash": "b648c15c3bb7c43d7635fe1d852fd123606b71f5606afbaf48258c3887933498",
+      "verified_at": "2026-10-20T21:07:59.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:13:58.800Z"
+      "last_updated": "2026-10-20T21:07:59.119Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
-      "verified_at": "2026-10-19T03:07:54.595Z",
+      "content_hash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
+      "verified_at": "2026-10-20T21:08:10.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:07:54.595Z"
+      "last_updated": "2026-10-20T21:08:10.721Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",
