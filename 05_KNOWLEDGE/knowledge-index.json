@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T04:19:35.469Z",
-  "total_verified_learnings": 1042,
+  "last_updated": "2026-10-20T04:29:59.839Z",
+  "total_verified_learnings": 1043,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2369,8 +2369,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "f38e80e4",
-      "content_hash": "ffc25779538a444bd0e6c021228aca63979e4b9fc0f9d3d72a9b08810fee03c3",
+      "source_version": "fcff70ab",
+      "content_hash": "8a1735bd08637fee5ca4118d30817b8fcd36cb95cd5613bc700c4e1f23db9619",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2390,7 +2390,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:53:33.181Z",
+      "verified_at": "2026-10-20T04:27:41.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9547,8 +9547,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "77f2b8b1",
-      "content_hash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
+      "source_version": "f6700ad1",
+      "content_hash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -9561,6 +9561,21 @@
           "number": 2615,
           "title": "deps): fix vulnerable dependencies in the review app and demo project (#3615)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3042,
+          "title": "Equivalent Mutation Pruning Invariant for Control Flow Branches",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3043,
+          "title": "Multi-Platform Container Base Image and Tooling Lockfile Pinning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3044,
+          "title": "Agent Tooling Boundary and Context Flood Guard via Shell Token Parsing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9568,7 +9583,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:55:47.671Z",
+      "verified_at": "2026-10-20T04:29:59.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41414,22 +41429,35 @@
     "learn-github-storybookjs-storybook": {
       "learning_id": "learn-github-storybookjs-storybook",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "storybookjs-storybook",
+      "source": "storybookjs/storybook",
+      "repository": "storybookjs/storybook",
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "HEAD",
-      "content_hash": "dc86330b89fd982cbc56fce6fc6b3135428ff5ed04a3f65c96cda902501e9e8d",
+      "source_version": "24b8ddb4",
+      "content_hash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3041,
+          "title": "update yarn.lock for the TypeScript 7 peer range widening",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.719Z"
+      "verified_at": "2026-10-20T04:27:32.673Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-str4d-rage": {
       "learning_id": "learn-github-str4d-rage",
@@ -98076,6 +98104,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T04:19:35.456Z"
+    },
+    "rule-3041": {
+      "learning_id": "rule-3041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3041,
+      "title": "update yarn.lock for the TypeScript 7 peer range widening",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "24b8ddb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:27:32.673Z"
+    },
+    "rule-3042": {
+      "learning_id": "rule-3042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3042,
+      "title": "Equivalent Mutation Pruning Invariant for Control Flow Branches",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "f6700ad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:29:59.828Z"
+    },
+    "rule-3043": {
+      "learning_id": "rule-3043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3043,
+      "title": "Multi-Platform Container Base Image and Tooling Lockfile Pinning",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "f6700ad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:29:59.828Z"
+    },
+    "rule-3044": {
+      "learning_id": "rule-3044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3044,
+      "title": "Agent Tooling Boundary and Context Flood Guard via Shell Token Parsing",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "f6700ad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:29:59.828Z"
     }
   },
   "aliases": {

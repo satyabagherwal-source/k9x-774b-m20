@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "77f2b8b1",
+    "sourceVersion": "f6700ad1",
     "license": "MIT",
-    "contentHash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
-    "lastHarvestedAt": "2026-10-19T13:55:47.727Z",
+    "contentHash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
+    "lastHarvestedAt": "2026-10-20T04:29:59.898Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "f38e80e4",
+    "sourceVersion": "fcff70ab",
     "license": "NOASSERTION",
-    "contentHash": "ffc25779538a444bd0e6c021228aca63979e4b9fc0f9d3d72a9b08810fee03c3",
-    "lastHarvestedAt": "2026-10-19T15:53:33.237Z",
+    "contentHash": "8a1735bd08637fee5ca4118d30817b8fcd36cb95cd5613bc700c4e1f23db9619",
+    "lastHarvestedAt": "2026-10-20T04:27:41.849Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -10288,5 +10288,15 @@
     "contentHash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
     "lastHarvestedAt": "2026-10-20T04:19:35.528Z",
     "learningId": "learn-github-faker-js-faker"
+  },
+  "storybookjs-storybook": {
+    "repository": "storybookjs/storybook",
+    "platform": "github",
+    "sourceUrl": "https://github.com/storybookjs/storybook",
+    "sourceVersion": "24b8ddb4",
+    "license": "MIT",
+    "contentHash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
+    "lastHarvestedAt": "2026-10-20T04:27:32.737Z",
+    "learningId": "learn-github-storybookjs-storybook"
   }
 }

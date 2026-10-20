@@ -3711,3 +3711,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `6491905d` | Multi-dimensional audit evidence | 2026-10-20T04:15:51.385Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `f314e81f` | Multi-dimensional audit evidence | 2026-10-20T04:15:54.875Z |
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `dc60fc2e` | Multi-dimensional audit evidence | 2026-10-20T04:19:35.528Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `24b8ddb4` | Multi-dimensional audit evidence | 2026-10-20T04:27:32.737Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `fcff70ab` | Multi-dimensional audit evidence | 2026-10-20T04:27:41.849Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `f6700ad1` | Multi-dimensional audit evidence | 2026-10-20T04:29:59.898Z |

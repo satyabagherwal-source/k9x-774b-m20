@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:46:41.924Z",
+  "last_updated": "2026-10-20T04:27:41.853Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2125,6 +2125,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-fastapi-fastapi"
+    },
+    {
+      "id": "CD-MS2L",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "arangodb/arangodb",
+      "source_commit": "fcff70ab",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-arangodb-arangodb"
     }
   ]
 }

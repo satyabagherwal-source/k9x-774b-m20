@@ -3704,3 +3704,6 @@
 | `CYCLE-20261020-7JVA` | `2026-10-20T04:15:51.382Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3037` | Yes (`8f9d58ac...`) |
 | `CYCLE-20261020-7MK8` | `2026-10-20T04:15:54.872Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3038` | Yes (`05ef0a0a...`) |
 | `CYCLE-20261020-CCT9` | `2026-10-20T04:19:35.517Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3039, Rule 3040` | Yes (`9430eb5b...`) |
+| `CYCLE-20261020-ML1A` | `2026-10-20T04:27:32.734Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3041` | Yes (`ccc4f811...`) |
+| `CYCLE-20261020-MS2E` | `2026-10-20T04:27:41.846Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | Yes (`8a1735bd...`) |
+| `CYCLE-20261020-PQL4` | `2026-10-20T04:29:59.896Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3042, Rule 3043, Rule 3044` | Yes (`d16332d9...`) |

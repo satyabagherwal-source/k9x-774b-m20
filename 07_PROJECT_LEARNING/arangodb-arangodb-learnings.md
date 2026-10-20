@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `f38e80e4`  
+> **Source Version**: `fcff70ab`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:53:32.978Z  
+> **Timestamp**: 2026-10-20T04:27:41.667Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:53:32.433Z  
+> **Harvest Timestamp**: 2026-10-20T04:27:40.887Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14284 stars
+- **Stars / Engagement**: 14285 stars
 
 ---
 
@@ -1009,205 +1009,238 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f38e80e4` (2026-10-19)
-**Commit Message**: Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kill-permissions
+### Incident Patch 1: `48949ef5` (2026-10-19)
+**Commit Message**: Fix changelog
 
-[COR-1031] Use new AdminMonitorAqlQueries and AdminKillAqlQueries permissions
+**File**: `CHANGELOG` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+   `AdminKillTransactions`. Committing another user's transaction remains
+   reserved to its owner and the superuser.
+ 
+-* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
++* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow
+   for more fine-grained permission setting for aql queries.
+ 
+ * BTS-2481: Fix double-free on SortedCollectExecutor on hitting resource limit.
+```
+
+---
+
+### Incident Patch 2: `93521340` (2026-10-19)
+**Commit Message**: Merge pull request #23417 from arangodb/bugfix/cor-1023-scope-query-properties-update
+
+[COR-1081] scope query properties update
 
 **File**: `CHANGELOG` (modified, +2/-0)
 ```diff
 @@ -1,5 +1,7 @@
  3.12.13 (XXXX-XX-XX)
  --------------------
-+* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
-+  for more fine-grained permission setting for aql queries.
- 
- * BTS-2481: Fix double-free on SortedCollectExecutor on hitting resource limit.
++* COR-1081: Adapt permissions for `PUT /_api/query/properties`.
++
+ * COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
+   for more fine-grained permission setting for aql queries.
  
 ```
 
-**File**: `Documentation/path_permissions.md` (modified, +4/-4)
+**File**: `Documentation/path_permissions.md` (modified, +1/-0)
 ```diff
-@@ -992,14 +992,14 @@ SA/SW/LEG    - API is switchable between SA (superuser needed for everything), S
- | X  |    | X  | POST   | `/_api/log`                                                  | RestLogHandler             | canUseAdmin(AdminWriteReplicatedLog      | AdminWriteReplicatedLog             | (replication2 + cluster only)            |                        |
- | X  |    | X  | DELETE | `/_api/log`                                                  | RestLogHandler             | canUseAdmin(AdminWriteReplicatedLog      | AdminWriteReplicatedLog             | (replication2 + cluster only)            |                        |
- | X  |    | X  | GET    | `/_api/log-internal`                                         | RestLogInternalHandler     | isSuperuser                              | SUPER                               | (replication2 + cluster only)            |                        |
--| X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
--| X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
-+| X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
-+| X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
+@@ -995,6 +995,7 @@ SA/SW/LEG    - API is switchable between SA (superuser needed for everything), S
+ | X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
+ | X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
  | X  |    | X  | GET    | `/_api/query/properties`                                     | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
++| X  |    | X  | PUT    | `/_api/query/properties`                                     | RestQueryHandler           | canUseAdmin(AdminAqlQueries)             | AdminAqlQueries                     |                                          |                        |
  | X  |    | X  | GET    | `/_api/query/registry`                                       | RestQueryHandler           | isSuperuser                              | SUPER                               |                                          |                        |
  | X  |    | X  | GET    | `/_api/query/rules`                                          | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
  | X  |    | X  | POST   | `/_api/query`                                                | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
--| X  |    | X  | DELETE | `/_api/query/{id}`                                           | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
--| X  |    | X  | DELETE | `/_api/query/slow`                                           | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
-+| X  |    | X  | DELETE | `/_api/query/{id}`                                           | RestQueryHandler           | own or canUseAdmin(KillAqlQueries)       | AUTHEN, own/AdminKillAqlQueries     | all DBs: _system + SUPER                 |                        |
-+| X  |    | X  | DELETE | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
- | X  |    | X  | GET    | `/_api/query-cache/entries`                                  | RestQueryCacheHandler      | -                                        | AUTHEN                              |                                          |                        |
- | X  |    | X  | GET    | `/_api/query-cache/properties`                               | RestQueryCacheHandler      | -                                        | AUTHEN                              |                                          |                        |
- | X  |    | X  | PUT    | `/_api/query-cache/properties`                               | RestQueryCacheHandler      | _system + canUseAdmin(AdminQueryCache)   | _system + AdminQueryCache           |                                          |                        |
 ```
 
-**File**: `arangod/Auth/AuthMode.cpp` (modified, +8/-0)
+**File**: `arangod/RestHandler/RestQueryHandler.cpp` (modified, +6/-0)
 ```diff
-@@ -108,6 +108,10 @@ auto describe(auth::perms::AnyAdmin auto const& admin) -> std::string {
-     return "access API call statistics (as admin)";
-   } else if constexpr (std::is_same_v<T, p::AdminAqlQueries>) {
-     return "manage AQL queries (as admin)";
-+  } else if constexpr (std::is_same_v<T, p::AdminMonitorAqlQueries>) {
-+    return "see the AQL queries of other users (as admin)";
-+  } else if constexpr (std::is_same_v<T, p::AdminKillAqlQueries>) {
-+    return "kill the AQL queries of other users (as admin)";
-   } else if constexpr (std::is_same_v<T, p::AdminShutdown>) {
-     return "shut down the server (as admin)";
-   } else if constexpr (std::is_same_v<T, p::AdminReadLogs>) {
-@@ -984,6 +988,10 @@ auto AuthMode::Rbac::check(auth::Permission permission) const -> Result {
-       return rbac::Action::AdminApiCalls;
-     } else if constexpr (std::is_same_v<T, p::AdminAqlQueries>) {
-       return rbac::Action::AdminAqlQueries;
-+    } else if constexpr (std::is_same_v<T, p::AdminMonitorAqlQueries>) {
-+      return rbac::Action::AdminMonitorAqlQueries;
-+    } else if constexpr (std::is_same_v<T, p::AdminKillAqlQueries>) {
-+      return rbac::Action::AdminKillAqlQueries;
-     } else if constexpr (std::is_same_v<T, p::AdminShutdown>) {
-       return rbac::Action::AdminShutdown;
-     } else if constexpr (std::is_same_v<T, p::AdminReadLogs>) {
-```
-
-**File**: `arangod/Auth/Permissions.cpp` (modified, +4/-0)
-```diff
-@@ -109,6 +109,10 @@ std::ostream& operator<<(std::ostream& os, Permission const& permission) {
-           [&](AdminCrashHandler const&) { os << "AdminCrashHandler"; },
-           [&](AdminApiCalls const&) { os << "AdminApiCalls"; },
-           [&](AdminAqlQueries const&) { os << "AdminAqlQueries"; },
-+          [&](AdminMonitorAqlQueries const&) {
-+            os << "AdminMonitorAqlQueries";
-+          },
-+          [&](AdminKillAqlQueries const&) { os << "AdminKillAqlQueries"; },
-           [&](AdminShutdown const&) { os << "AdminShutdown"; },
-           [&](AdminReadLogs const&) { os << "AdminReadLogs"; },
-           [&](AdminSetLogLevel const&) { os << "AdminSetLogLevel"; },
-```
-
-**File**: `arangod/Auth/Permissions.h` (modified, +7/-5)
-```diff
-@@ -92,6 +92,8 @@ struct AdminAuthReload {};
- struct AdminCrashHandler {};
- struct AdminApiCalls {};
- struct AdminAqlQueries {};
-+struct AdminMonitorAqlQueries {};
-+struct AdminKillAqlQueries {};
- struct AdminShutdown {};
- struct AdminReadLogs {};
- struct AdminSetLogLevel {};
-@@ -115,11 +117,11 @@ namespace detail {
- using AdminList = meta::TypeList<
-     AdminReadUsers, AdminMoveShards, AdminMonitoring, AdminMonitoringInternal,
-     AdminAuthReload, AdminCrashHandler, AdminApiCalls, AdminAqlQueries,
--    AdminShutdown, AdminReadLogs, AdminSetLogLevel, AdminOptions,
--    AdminSupervisionState, AdminRemoveServer, AdminClusterInfo,
--    AdminMaintenance, AdminRebalance, AdminLicense, AdminBackup,
--    AdminReadReplicatedLog, AdminWriteReplicatedLog, AdminDump, AdminRestore,
--    AdminWalAccess, AdminReadAgency, AdminQueryCache>;
-+    AdminMonitorAqlQueries, AdminKillAqlQueries, AdminShutdown, AdminReadLogs,
-+    AdminSetLogLevel, AdminOptions, AdminSupervisionState, AdminRemoveServer,
-+    AdminClusterInfo, AdminMaintenance, AdminRebalance, AdminLicense,
-+    AdminBackup, AdminReadReplicatedLog, AdminWriteReplicatedLog, AdminDump,
-+    AdminRestore, AdminWalAccess, AdminReadAgency, AdminQueryCache>;
- }
+@@ -332,6 +332,12 @@ void RestQueryHandler::replaceProperties() {
+     return;
+   }
  
- template<typename T>
-```
-
-**File**: `arangod/Auth/Rbac/Actions.h` (modified, +2/-0)
-```diff
-@@ -70,6 +70,8 @@ enum class Action {
-   AdminWriteAqlFunctions,
-   AdminQueryCache,
-   AdminReadUsers,
-+  AdminMonitorAqlQueries,
-+  AdminKillAqlQueries,
- };
- 
- namespace resources {
-```
-
-**File**: `arangod/Auth/Rbac/ServiceImpl.cpp` (modified, +8/-0)
-```diff
-@@ -68,6 +68,10 @@ auto actionToWireString(Action action) -> std::string_view {
-       return "db:AdminApiCalls";
-     case Action::AdminAqlQueries:
-       return "db:AdminAqlQueries";
-+    case Action::AdminMonitorAqlQueries:
-+      return "db:AdminMonitorAqlQueries";
-+    case Action::AdminKillAqlQueries:
-+      return "db:AdminKillAqlQueries";
-     case Action::AdminShutdown:
-       return "db:AdminShutdown";
-     case Action::AdminReadLogs:
-@@ -181,6 +185,10 @@ auto describe(Action action) -> std::string_view {
-       return "access API call statistics (as admin)";
-     case Action::AdminAqlQueries:
-       return "manage AQL queries (as admin)";
-+    case Action::AdminMonitorAqlQueries:
-+      return "see the AQL queries of other users (as admin)";
-+    case Action::AdminKillAqlQueries:
-+      return "kill the AQL queries of other users (as admin)";
-     case Action::AdminShutdown:
-       return "shut down the server (as admin)";
-     case Action::AdminReadLogs:
-```
-
-**File**: `arangod/Utils/ExecContext.cpp` (modified, +12/-5)
-```diff
-@@ -547,14 +547,21 @@ Result ExecContext::canReadUser(std::string_view userName) const {
-   return can(ReadUser{.name{userName}});
- }
- 
--Result ExecContext::canAccessQuery(std::string_view queryUser) const {
--  using namespace auth::perms;
--  // own queries are always accessible, unless the request was not
--  // authenticated.
-+/// @brief returns true if the AQL query of the given user may be seen or
-+/// removed from the slow query list
-+Result ExecContext::canMonitorQuery(std::string_view queryUser) const {
-+  if (!_authMode.isUnauthenticated() && queryUser == user()) {
-+    return {};
++  if (auto r = ExecContext::current().canChangeQueryProperties(_vocbase.name());
++      r.fail()) {
++    generateError(r);
++    return;
 +  }
-+  return can(auth::perms::AdminMonitorAqlQueries{});
++
+   bool parseSuccess = false;
+   VPackSlice body = this->parseVPackBody(parseSuccess);
+   if (!parseSuccess) {
+```
+
+**File**: `arangod/Utils/ExecContext.cpp` (modified, +13/-0)
+```diff
+@@ -564,6 +564,19 @@ Result ExecContext::canKillQuery(std::string_view queryUser) const {
+   return can(auth::perms::AdminKillAqlQueries{});
+ }
+ 
++/// @brief returns true if the query properties of the given database
++/// may be changed
++Result ExecContext::canChangeQueryProperties(std::string_view db) const {
++  using namespace auth::perms;
++  if (auto r = can(AdminAqlQueries{}); r.fail()) {
++    return r;
++  }
++  if (auto r = checkNotReadOnly(); r.fail()) {
++    return r;
++  }
++  return {};
 +}
 +
-+/// @brief returns true if the AQL query of the given user may be killed
-+Result ExecContext::canKillQuery(std::string_view queryUser) const {
-   if (!_authMode.isUnauthenticated() && queryUser == user()) {
-     return {};
-   }
--  return can(AdminAqlQueries{});
-+  return can(auth::perms::AdminKillAqlQueries{});
+ /// @brief returns true if the given user may be created.
+ Result ExecContext::canCreateUser(std::string_view userName) const {
+   using namespace auth::perms;
+```
+
+**File**: `arangod/Utils/ExecContext.h` (modified, +4/-0)
+```diff
+@@ -250,6 +250,10 @@ class ExecContext {
+   /// @brief returns true if the AQL query of the given user may be killed.
+   [[nodiscard]] Result canKillQuery(std::string_view queryUser) const;
+ 
++  /// @brief returns true if the query properties of the given
++  /// database may be changed
++  [[nodiscard]] Result canChangeQueryProperties(std::string_view db) const;
++
+   /// @brief returns true for each user which can be read
+   // TODO Should this return a std::vector<Result>?
+   // MAX: I do not think so, it is used only once to filter the visible
+```
+
+**File**: `tests/Utils/ExecContextTest.cpp` (modified, +35/-0)
+```diff
+@@ -400,4 +400,39 @@ TEST(ExecContextTest, queryAccess_rbac_denial_is_forwarded) {
+   EXPECT_FALSE(ctx->canKillQuery("bob").ok());
  }
  
- /// @brief returns true if the given user may be created.
++// --- canChangeQueryProperties ---
++
++TEST(ExecContextTest,
++     canChangeQueryProperties_database_write_access_is_not_enough) {
++  auto const cec =
++      makeClassicExecContext("alice", "db", auth::Level::NONE, auth::Level::RW);
++
++  EXPECT_EQ(cec.execContext->canChangeQueryProperties("db").errorNumber(),
++            TRI_ERROR_HTTP_FORBIDDEN);
++}
++
++TEST(ExecContextTest, canChangeQueryProperties_read_access_is_not_enough) {
++  auto const cec =
++      makeClassicExecContext("bob", "db", auth::Level::NONE, auth::Level::RO);
++
++  EXPECT_EQ(cec.execContext->canChangeQueryProperties("db").errorNumber(),
++            TRI_ERROR_HTTP_FORBIDDEN);
++}
++
++TEST(ExecContextTest,
++     canChangeQueryProperties_admin_may_without_database_write_access) {
++  // classic admin = read-write access to the _system database
++  auto const cec =
++      makeClassicExecContext("carol", "db", auth::Level::RW, auth::Level::RO);
++
++  EXPECT_TRUE(cec.execContext->canChangeQueryProperties("db").ok());
++}
++
++TEST(ExecContextTest, canChangeQueryProperties_superuser_may) {
++  auto const ctx = createSharedExecContext(AuthMode{AuthMode::Superuser{}},
++                                           false, VocbasePtr{nullptr});
++
++  EXPECT_TRUE(ctx->canChangeQueryProperties("db").ok());
++}
++
+ }  // namespace arangodb::tests
+```
+
+**File**: `tests/js/client/server_permissions/authorization-questions/queries.js` (modified, +33/-2)
+```diff
+@@ -25,7 +25,7 @@
+ 
+ // Authorization questions asked by GET /_api/query/current, GET /_api/query/slow,
+ // DELETE /_api/query/{id} and DELETE /_api/query/slow when a query of another
+-// user is involved (COR-1023).
++// user is involved, and by PUT /_api/query/properties.
+ //
+ // Handlers: arangod/RestHandler/RestQueryHandler.cpp,
+ //           arangod/VocBase/Methods/Queries.cpp
+@@ -162,12 +162,17 @@ function queryApiAuthzSuite () {
+         users.save(user, password);
+         users.grantDatabase(user, DB, 'ro');
+       });
++      // carol is an admin (read-write access to _system) who may
++      // only read the test database. root is an admin with access everywhere.
++      users.save('carol', password);
++      users.grantDatabase('carol', '_system', 'rw');
++      users.grantDatabase('carol', DB, 'ro');
+       arango.PUT(`${queryApi}/properties`, { slowQueryThreshold: 0.1 });
+     },
+ 
+     tearDownAll: function () {
+       killAllSleepQueriesAsRoot();
+-      ['alice', 'bob'].forEach((user) => {
++      ['alice', 'bob', 'carol'].forEach((user) => {
+         try {
+           users.remove(user);
+         } catch (err) {
+@@ -355,6 +360,32 @@ function queryApiAuthzSuite () {
+ 
+       assertEqual(200, res.code, JSON.stringify(res.parsedBody));
+       assertEqual(0, sleepQueries(arango.GET(`${queryApi}/slow`)).length);
++    },
++
++    // ── PUT /_api/query/properties ───────────────────────────────────────
++
++    testSetQueryPropertiesWithoutDatabaseWriteAccess: function () {
++      const before = arango.GET(`${queryApi}/properties`);
++
++      beginObserve();
++      const res = sendAs('bob', 'PUT', `${queryApi}/properties`, { enabled: false });
++      assertPermissions(baseQuestions.concat(['AdminAqlQueries']),
++                        endObserve());
++
++      assertEqual(403, res.status, JSON.stringify(res.json));
++      assertTrue(res.json.error, JSON.stringify(res.json));
++      assertEqual(before.enabled, arango.GET(`${queryApi}/properties`).enabled);
++    },
++
++    testSetQueryPropertiesAsAdminWithoutDatabaseWriteAccess: function () {
++      beginObserve();
++      const res = sendAs('carol', 'PUT', `${queryApi}/properties`, { maxSlowQueries: 48 });
++      assertPermissions(baseQuestions.concat(['AdminAqlQueries', 'IsReadOnly']),
++                        endObserve());
++
++      assertEqual(200, res.status, JSON.stringify(res.json));
++      assertEqual(48, res.json.maxSlowQueries);
++      arango.PUT(`${queryApi}/properties`, { maxSlowQueries: 64 });
+     }
+   };
+ }
 ```
 
 ---
 
-### Incident Patch 2: `5f6b44a5` (2026-10-19)
-**Commit Message**: Merge pull request #23463 from arangodb/feature/adapt-default-value-for-jwt-renewal-threshold
+### Incident Patch 3: `45eba951` (2026-10-19)
+**Commit Message**: Fix canMonitor
 
-Set jwt-renewal-threshold default to server renewal thresholde
-
-**File**: `client-tools/Shell/ClientFeatureOptions.h` (modified, +1/-1)
+**File**: `arangod/Transaction/Manager.cpp` (modified, +5/-1)
 ```diff
-@@ -39,7 +39,7 @@ struct ClientFeatureOptions {
-   std::string jwtToken;
-   double connectionTimeout{5.0};
-   double requestTimeout{1200.0};
--  double jwtRenewalThreshold{300.0};
-+  double jwtRenewalThreshold{150.0};
-   uint64_t maxPacketSize{1024 * 1024 * 1024};
-   uint64_t compressRequestThreshold{0};
-   uint64_t sslProtocol;
+@@ -1815,7 +1815,11 @@ bool Manager::canUse(ManagedTrx const& trx) const {
+ }
+ 
+ bool Manager::canMonitor(ManagedTrx const& trx) const {
+-  if (trx.db != contextDatabaseName()) {
++  // an empty name means there is no request context, which only the superuser
++  // has (see contextDatabaseName()); it then addresses any database, as an
++  // empty database does in canKill()
++  auto const database = contextDatabaseName();
++  if (!database.empty() && trx.db != database) {
+     return false;
+   }
+   return ExecContext::current().canMonitorTransaction(trx.user).ok();
 ```
 
 #### Recent Merged Pull Requests:
@@ -1236,13 +1269,13 @@ Set jwt-renewal-threshold default to server renewal thresholde
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kil
+## X. Empirical Invariant Guard in CHANGELOG
 
 **RULE**:
 When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f38e80e4`: Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kill-permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48949ef5`: changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
@@ -1250,15 +1283,14 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
-  for more fine-grained permission setting for aql queries.
+* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f38e80e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48949ef5` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T04:19:35.533Z",
-  "total_cycles_completed": 3681,
-  "total_learnings_persisted": 3681,
-  "total_rules_promoted": 2846,
+  "last_updated": "2026-10-20T04:29:59.902Z",
+  "total_cycles_completed": 3684,
+  "total_learnings_persisted": 3684,
+  "total_rules_promoted": 2850,
   "history": [
-    {
-      "timestamp": "2026-10-19T21:30:26.822Z",
-      "repository": "scrapy-plugins/scrapy-splash",
-      "learningId": "learn-github-scrapy-plugins-scrapy-splash",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:30:27.259Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:30:32.298Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T21:38:27.005Z",
       "repository": "scrapy-plugins/scrapy-headless",
@@ -1403,6 +1382,27 @@
       "repository": "faker-js/faker",
       "learningId": "learn-github-faker-js-faker",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:27:32.740Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:27:41.854Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:29:59.902Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-XUMO",
-    "timestamp": "2026-10-19T11:48:32.208Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "d2bb389efc813e4ab89360ec512cb81865e466938281cfba526ec1ddb752309b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XZDI",
-    "timestamp": "2026-10-19T11:48:38.358Z",
-    "repository": "SwiftUIX/SwiftUIX",
-    "learningId": "learn-github-swiftuix-swiftuix",
-    "contentHash": "6bd4dc26274f9a55bf1c215733c181e17b1a270f4c9a9be9a37b57f53c4d8423",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5TVD",
-    "timestamp": "2026-10-19T11:54:44.473Z",
-    "repository": "mui/base-ui",
-    "learningId": "learn-github-mui-base-ui",
-    "contentHash": "7b525dcce5d8d03a27be11f2198aded1eab5584731f2adc877fdb94b58737d08",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-5YFT",
     "timestamp": "2026-10-19T11:54:50.393Z",
     "repository": "MochiDiffusion/MochiDiffusion",
@@ -7492,6 +7447,51 @@
     "contentHash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-ML1A",
+    "timestamp": "2026-10-20T04:27:32.734Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-MS2E",
+    "timestamp": "2026-10-20T04:27:41.846Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "8a1735bd08637fee5ca4118d30817b8fcd36cb95cd5613bc700c4e1f23db9619",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-PQL4",
+    "timestamp": "2026-10-20T04:29:59.896Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "d16332d9ace58ce9b01716f36f97d9bb98696ae3f4baa4f6bd2b06c2c89fb4e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
