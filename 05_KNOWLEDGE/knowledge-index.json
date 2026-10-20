@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T04:36:19.810Z",
-  "total_verified_learnings": 1044,
+  "last_updated": "2026-10-20T04:44:56.821Z",
+  "total_verified_learnings": 1045,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -28709,22 +28709,35 @@
     "learn-github-laurent22-joplin": {
       "learning_id": "learn-github-laurent22-joplin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "laurent22-joplin",
+      "source": "laurent22/joplin",
+      "repository": "laurent22/joplin",
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "HEAD",
-      "content_hash": "64c9c2e2b7f633bff8546cdf93fa54274d53f6989bdc45b12a9d1c9bd1d8ab59",
+      "source_version": "cf57e593",
+      "content_hash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3052,
+          "title": "Trying to fix flaky test failure on CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.972Z"
+      "verified_at": "2026-10-20T04:42:34.522Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lavague-ai-lavague": {
       "learning_id": "learn-github-lavague-ai-lavague",
@@ -53595,16 +53608,32 @@
       "platform": "github",
       "source_url": "https://github.com/cosscom/ui",
       "source_version": "7f7cbd0e",
-      "content_hash": "aa95a82aa355ea087641c0636a43a6091b9781cde5cf503bb0001a3271171a9b",
+      "content_hash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3053,
+          "title": "Invariant Separation of Async Action Triggers from Popover/Modal Destruction Lifecycle",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3054,
+          "title": "Physical-to-Logical Bi-directional Invariance in CSS Transform Translations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3055,
+          "title": "Mutual Exclusivity of Schema-Driven Validation and Native HTML5 ValidityState Checks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:56:23.874Z",
+      "verified_at": "2026-10-20T04:44:56.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59533,8 +59562,8 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "a45f569e",
-      "content_hash": "2fce22d1f90114e4563ea2eacc42a15d5af7d2873c189f6299f7d0ef94e0c5c3",
+      "source_version": "2688cbca",
+      "content_hash": "3da70cb7d23148999bbbbb6a9b0ce46af3a04b52c8584ada472e875d15556101",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
@@ -59552,6 +59581,11 @@
           "number": 1643,
           "title": "Asymmetric Cross-Platform Architecture Endianness Mirroring",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3051,
+          "title": "transform diagnostics at position zero (#6587)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59559,7 +59593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:28:47.868Z",
+      "verified_at": "2026-10-20T04:42:31.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98282,6 +98316,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T04:36:19.791Z"
+    },
+    "rule-3051": {
+      "learning_id": "rule-3051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3051,
+      "title": "transform diagnostics at position zero (#6587)",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "2688cbca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:42:31.524Z"
+    },
+    "rule-3052": {
+      "learning_id": "rule-3052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3052,
+      "title": "Trying to fix flaky test failure on CI",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "cf57e593",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:42:34.522Z"
+    },
+    "rule-3053": {
+      "learning_id": "rule-3053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3053,
+      "title": "Invariant Separation of Async Action Triggers from Popover/Modal Destruction Lifecycle",
+      "source_url": "https://github.com/cosscom/ui",
+      "source_version": "7f7cbd0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:44:56.809Z"
+    },
+    "rule-3054": {
+      "learning_id": "rule-3054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3054,
+      "title": "Physical-to-Logical Bi-directional Invariance in CSS Transform Translations",
+      "source_url": "https://github.com/cosscom/ui",
+      "source_version": "7f7cbd0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:44:56.809Z"
+    },
+    "rule-3055": {
+      "learning_id": "rule-3055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3055,
+      "title": "Mutual Exclusivity of Schema-Driven Validation and Native HTML5 ValidityState Checks",
+      "source_url": "https://github.com/cosscom/ui",
+      "source_version": "7f7cbd0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:44:56.809Z"
     }
   },
   "aliases": {

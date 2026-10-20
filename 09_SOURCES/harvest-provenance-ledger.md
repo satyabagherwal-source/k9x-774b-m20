@@ -3718,3 +3718,6 @@ Every entry in this ledger must capture:
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `1715b17f` | Multi-dimensional audit evidence | 2026-10-20T04:36:09.833Z |
 | `learn-github-enaqx-awesome-react` | `https://github.com/enaqx/awesome-react` | `e6fd973e` | Multi-dimensional audit evidence | 2026-10-20T04:36:18.004Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `cb486aaf` | Multi-dimensional audit evidence | 2026-10-20T04:36:19.860Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `2688cbca` | Multi-dimensional audit evidence | 2026-10-20T04:42:31.587Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `cf57e593` | Multi-dimensional audit evidence | 2026-10-20T04:42:34.585Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `7f7cbd0e` | Multi-dimensional audit evidence | 2026-10-20T04:44:56.869Z |

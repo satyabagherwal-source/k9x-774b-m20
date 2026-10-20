@@ -3711,3 +3711,6 @@
 | `CYCLE-20261020-XO12` | `2026-10-20T04:36:09.830Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3046` | Yes (`a89ec4f7...`) |
 | `CYCLE-20261020-XUC1` | `2026-10-20T04:36:18.001Z` | `enaqx/awesome-react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3047, Rule 3048, Rule 3049` | Yes (`b34124a0...`) |
 | `CYCLE-20261020-XVRL` | `2026-10-20T04:36:19.857Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3050` | Yes (`d51d7a96...`) |
+| `CYCLE-20261020-5ULD` | `2026-10-20T04:42:31.585Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3051` | Yes (`3da70cb7...`) |
+| `CYCLE-20261020-5WWM` | `2026-10-20T04:42:34.582Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3052` | Yes (`9e776325...`) |
+| `CYCLE-20261020-8YOY` | `2026-10-20T04:44:56.866Z` | `cosscom/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3053, Rule 3054, Rule 3055` | Yes (`2d300fa2...`) |

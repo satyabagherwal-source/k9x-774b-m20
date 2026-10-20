@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T04:36:19.865Z",
-  "total_cycles_completed": 3688,
-  "total_learnings_persisted": 3688,
-  "total_rules_promoted": 2856,
+  "last_updated": "2026-10-20T04:44:56.873Z",
+  "total_cycles_completed": 3691,
+  "total_learnings_persisted": 3691,
+  "total_rules_promoted": 2861,
   "history": [
-    {
-      "timestamp": "2026-10-19T21:52:45.197Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:52:46.411Z",
-      "repository": "scrapy-plugins/scrapy-zyte-api",
-      "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:52:49.570Z",
-      "repository": "yannickl/DynamicColor",
-      "learningId": "learn-github-yannickl-dynamiccolor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T21:59:27.256Z",
       "repository": "topgrade-rs/topgrade",
@@ -1403,6 +1382,27 @@
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:42:31.592Z",
+      "repository": "rollup/rollup",
+      "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:42:34.589Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T04:44:56.873Z",
+      "repository": "cosscom/ui",
+      "learningId": "learn-github-cosscom-ui",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

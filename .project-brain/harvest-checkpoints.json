@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T04:36:19.868Z",
+  "last_updated": "2026-10-20T04:44:56.877Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2082,14 +2082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "aa95a82aa355ea087641c0636a43a6091b9781cde5cf503bb0001a3271171a9b",
-      "verified_at": "2026-10-19T17:56:23.937Z",
+      "content_hash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
+      "verified_at": "2026-10-20T04:44:56.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:56:23.937Z"
+      "last_updated": "2026-10-20T04:44:56.876Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -2991,14 +2991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rollup-rollup",
-      "content_hash": "2fce22d1f90114e4563ea2eacc42a15d5af7d2873c189f6299f7d0ef94e0c5c3",
-      "verified_at": "2026-10-18T07:28:47.908Z",
+      "content_hash": "3da70cb7d23148999bbbbb6a9b0ce46af3a04b52c8584ada472e875d15556101",
+      "verified_at": "2026-10-20T04:42:31.595Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:28:47.908Z"
+      "last_updated": "2026-10-20T04:42:31.595Z"
     },
     "rmax/scrapy-redis": {
       "repository": "rmax/scrapy-redis",
@@ -15479,6 +15479,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T04:36:18.011Z"
+    },
+    "laurent22/joplin": {
+      "repository": "laurent22/joplin",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-laurent22-joplin",
+      "content_hash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
+      "verified_at": "2026-10-20T04:42:34.592Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:42:34.592Z"
     }
   },
   "repos": {

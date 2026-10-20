@@ -1335,8 +1335,8 @@
     "sourceUrl": "https://github.com/cosscom/ui",
     "sourceVersion": "7f7cbd0e",
     "license": "AGPL-3.0",
-    "contentHash": "aa95a82aa355ea087641c0636a43a6091b9781cde5cf503bb0001a3271171a9b",
-    "lastHarvestedAt": "2026-10-19T17:56:23.931Z",
+    "contentHash": "2d300fa2c835a9f995a2e1e8d19506397527b158cf39468253cf5827fcc010a0",
+    "lastHarvestedAt": "2026-10-20T04:44:56.869Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "a45f569e",
+    "sourceVersion": "2688cbca",
     "license": "NOASSERTION",
-    "contentHash": "2fce22d1f90114e4563ea2eacc42a15d5af7d2873c189f6299f7d0ef94e0c5c3",
-    "lastHarvestedAt": "2026-10-18T07:28:47.905Z",
+    "contentHash": "3da70cb7d23148999bbbbb6a9b0ce46af3a04b52c8584ada472e875d15556101",
+    "lastHarvestedAt": "2026-10-20T04:42:31.587Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
@@ -10308,5 +10308,15 @@
     "contentHash": "b34124a042c646af5321647228666270bac739d97f08bf43e9cf3999f12898f7",
     "lastHarvestedAt": "2026-10-20T04:36:18.004Z",
     "learningId": "learn-github-enaqx-awesome-react"
+  },
+  "laurent22-joplin": {
+    "repository": "laurent22/joplin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/laurent22/joplin",
+    "sourceVersion": "cf57e593",
+    "license": "NOASSERTION",
+    "contentHash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
+    "lastHarvestedAt": "2026-10-20T04:42:34.585Z",
+    "learningId": "learn-github-laurent22-joplin"
   }
 }
