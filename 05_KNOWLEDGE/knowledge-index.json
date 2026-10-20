@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:21:13.105Z",
-  "total_verified_learnings": 998,
+  "last_updated": "2026-10-20T01:27:31.234Z",
+  "total_verified_learnings": 1000,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1102,22 +1102,35 @@
     "learn-github-alexdrone-render": {
       "learning_id": "learn-github-alexdrone-render",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alexdrone-render",
+      "source": "alexdrone/Render",
+      "repository": "alexdrone/Render",
       "slug": "alexdrone-render",
       "platform": "github",
       "source_url": "https://github.com/alexdrone/Render",
-      "source_version": "HEAD",
-      "content_hash": "cd7dc23476e06c410c612bb3996d1488abc696202e95e5ecb240a9f2a357cfeb",
+      "source_version": "0955baef",
+      "content_hash": "09f8f2299bdbba2d68c31bce690d9451726cda85851b70796a8557c3726a4ee2",
       "dossier_path": "07_PROJECT_LEARNING/alexdrone-render-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alexdrone-render-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2962,
+          "title": "SwiftUI bridge",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.707Z"
+      "verified_at": "2026-10-20T01:27:28.979Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alexellis-k3sup": {
       "learning_id": "learn-github-alexellis-k3sup",
@@ -38125,14 +38138,19 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "9a501c8d",
-      "content_hash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
+      "source_version": "6c1af5fb",
+      "content_hash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
         {
           "number": 2531,
           "title": "hooks): leave git unrewritten in Claude Code managed worktrees",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2960,
+          "title": "Merge pull request #4464 from taekop/fix/recall-content-hash-collision",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -38141,7 +38159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:15:16.607Z",
+      "verified_at": "2026-10-20T01:27:25.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46432,14 +46450,19 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "efdd6a86",
-      "content_hash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
+      "source_version": "392233f8",
+      "content_hash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
         {
           "number": 1968,
           "title": "ensure chart order is preserved in state (#5477)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2963,
+          "title": "test: fix image push unit test flake (#5481)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -46448,7 +46471,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:22:42.621Z",
+      "verified_at": "2026-10-20T01:27:31.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58698,20 +58721,35 @@
     "learn-github-andythefactory-newspaper4k": {
       "learning_id": "learn-github-andythefactory-newspaper4k",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AndyTheFactory/newspaper4k",
       "repository": "AndyTheFactory/newspaper4k",
       "slug": "andythefactory-newspaper4k",
       "platform": "github",
       "source_url": "https://github.com/AndyTheFactory/newspaper4k",
-      "source_version": "main",
-      "content_hash": "b5c2fe103274457cf5686cc9d55b290ff0f23634ae34046433ff75aeacb45483",
+      "source_version": "b53a81fc",
+      "content_hash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
       "dossier_path": "07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2961,
+          "title": "Merge pull request #729 from AndyTheFactory/copilot/fix-top-node-selection",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:27:26.672Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-goose3-goose3": {
       "learning_id": "learn-github-goose3-goose3",
@@ -96142,6 +96180,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:21:13.094Z"
+    },
+    "rule-2960": {
+      "learning_id": "rule-2960",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2960,
+      "title": "Merge pull request #4464 from taekop/fix/recall-content-hash-collision",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "6c1af5fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:27:25.334Z"
+    },
+    "rule-2961": {
+      "learning_id": "rule-2961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2961,
+      "title": "Merge pull request #729 from AndyTheFactory/copilot/fix-top-node-selection",
+      "source_url": "https://github.com/AndyTheFactory/newspaper4k",
+      "source_version": "b53a81fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:27:26.672Z"
+    },
+    "rule-2962": {
+      "learning_id": "rule-2962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2962,
+      "title": "SwiftUI bridge",
+      "source_url": "https://github.com/alexdrone/Render",
+      "source_version": "0955baef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:27:28.979Z"
+    },
+    "rule-2963": {
+      "learning_id": "rule-2963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2963,
+      "title": "test: fix image push unit test flake (#5481)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "392233f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:27:31.222Z"
     }
   },
   "aliases": {

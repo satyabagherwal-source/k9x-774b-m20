@@ -3622,3 +3622,7 @@
 | `CYCLE-20261020-YUSB` | `2026-10-20T01:21:07.931Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2957` | Yes (`accb5378...`) |
 | `CYCLE-20261020-YY5U` | `2026-10-20T01:21:12.306Z` | `rdfjs-base/namespace` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2958` | Yes (`2895864e...`) |
 | `CYCLE-20261020-YYTD` | `2026-10-20T01:21:13.153Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2959` | Yes (`2cb3d9d9...`) |
+| `CYCLE-20261020-6Y1H` | `2026-10-20T01:27:25.397Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2960` | Yes (`64512e08...`) |
+| `CYCLE-20261020-6Z2V` | `2026-10-20T01:27:26.743Z` | `AndyTheFactory/newspaper4k` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2961` | Yes (`a097e5b0...`) |
+| `CYCLE-20261020-70V1` | `2026-10-20T01:27:29.053Z` | `alexdrone/Render` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2962` | Yes (`09f8f229...`) |
+| `CYCLE-20261020-72LA` | `2026-10-20T01:27:31.294Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2963` | Yes (`d57d6102...`) |

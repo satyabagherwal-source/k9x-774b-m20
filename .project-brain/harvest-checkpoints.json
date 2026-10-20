@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:21:13.162Z",
+  "last_updated": "2026-10-20T01:27:31.305Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6814,14 +6814,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
-      "verified_at": "2026-10-19T01:22:42.675Z",
+      "content_hash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
+      "verified_at": "2026-10-20T01:27:31.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:22:42.675Z"
+      "last_updated": "2026-10-20T01:27:31.304Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -11794,14 +11794,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
-      "verified_at": "2026-10-19T11:15:16.670Z",
+      "content_hash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
+      "verified_at": "2026-10-20T01:27:25.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:15:16.670Z"
+      "last_updated": "2026-10-20T01:27:25.410Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
@@ -14787,6 +14787,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:21:13.161Z"
+    },
+    "AndyTheFactory/newspaper4k": {
+      "repository": "AndyTheFactory/newspaper4k",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-andythefactory-newspaper4k",
+      "content_hash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
+      "verified_at": "2026-10-20T01:27:26.753Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:27:26.753Z"
+    },
+    "alexdrone/Render": {
+      "repository": "alexdrone/Render",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alexdrone-render",
+      "content_hash": "09f8f2299bdbba2d68c31bce690d9451726cda85851b70796a8557c3726a4ee2",
+      "verified_at": "2026-10-20T01:27:29.063Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:27:29.063Z"
     }
   },
   "repos": {

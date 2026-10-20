@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "efdd6a86",
+    "sourceVersion": "392233f8",
     "license": "Apache-2.0",
-    "contentHash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
-    "lastHarvestedAt": "2026-10-19T01:22:42.671Z",
+    "contentHash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
+    "lastHarvestedAt": "2026-10-20T01:27:31.297Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "9a501c8d",
+    "sourceVersion": "6c1af5fb",
     "license": "Apache-2.0",
-    "contentHash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
-    "lastHarvestedAt": "2026-10-19T11:15:16.663Z",
+    "contentHash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
+    "lastHarvestedAt": "2026-10-20T01:27:25.400Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
@@ -9828,5 +9828,25 @@
     "contentHash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
     "lastHarvestedAt": "2026-10-20T01:21:13.155Z",
     "learningId": "learn-github-wzh4869-appports"
+  },
+  "andythefactory-newspaper4k": {
+    "repository": "AndyTheFactory/newspaper4k",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AndyTheFactory/newspaper4k",
+    "sourceVersion": "b53a81fc",
+    "license": "MIT",
+    "contentHash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
+    "lastHarvestedAt": "2026-10-20T01:27:26.746Z",
+    "learningId": "learn-github-andythefactory-newspaper4k"
+  },
+  "alexdrone-render": {
+    "repository": "alexdrone/Render",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alexdrone/Render",
+    "sourceVersion": "0955baef",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "09f8f2299bdbba2d68c31bce690d9451726cda85851b70796a8557c3726a4ee2",
+    "lastHarvestedAt": "2026-10-20T01:27:29.056Z",
+    "learningId": "learn-github-alexdrone-render"
   }
 }

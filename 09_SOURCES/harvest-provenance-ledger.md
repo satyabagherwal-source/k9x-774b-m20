@@ -3629,3 +3629,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `502f93ca` | Multi-dimensional audit evidence | 2026-10-20T01:21:07.934Z |
 | `learn-github-rdfjs-base-namespace` | `https://github.com/rdfjs/namespace` | `b7efbf00` | Multi-dimensional audit evidence | 2026-10-20T01:21:12.309Z |
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `8ef2dad3` | Multi-dimensional audit evidence | 2026-10-20T01:21:13.155Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `6c1af5fb` | Multi-dimensional audit evidence | 2026-10-20T01:27:25.400Z |
+| `learn-github-andythefactory-newspaper4k` | `https://github.com/AndyTheFactory/newspaper4k` | `b53a81fc` | Multi-dimensional audit evidence | 2026-10-20T01:27:26.746Z |
+| `learn-github-alexdrone-render` | `https://github.com/alexdrone/Render` | `0955baef` | Multi-dimensional audit evidence | 2026-10-20T01:27:29.056Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `392233f8` | Multi-dimensional audit evidence | 2026-10-20T01:27:31.297Z |

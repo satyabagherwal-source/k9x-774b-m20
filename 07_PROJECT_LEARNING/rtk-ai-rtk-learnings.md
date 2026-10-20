@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `9a501c8d`  
+> **Source Version**: `6c1af5fb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:15:16.380Z  
+> **Timestamp**: 2026-10-20T01:27:25.099Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:15:16.229Z  
+> **Harvest Timestamp**: 2026-10-20T01:27:23.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 83933 stars
+- **Stars / Engagement**: 83987 stars
 
 ---
 
@@ -1725,10 +1725,8 @@ mod tests {
 - **Issue #4632** (2026-10-18): **fix(init): preserve existing file permissions in atomic_write**
   *Symptoms*: ## Summary  Fixes #4631.  When `atomic_write` overwrites an existing file or a symlink target, it creates a temporary file using `tempfile::NamedTempFile::new_in(parent)` before persisting it over the destination. Because `NamedTempFile` defaults to mode `0600` for security, replacing the destination unconditionally resets the file permissions to `0600`, regardless of its previous mode (such as `0644`).  This change queries `fs::metadata(&target)` before creating the tempfile: - If the file exists, its permissions are read and reapplied to `temp_file.as_file().set_permissions(permissions)` before persisting to `target`. - If the file does not exist (`ErrorKind::NotFound`), the default tempfile permissions are kept intact. - Other I/O errors are propagated cleanly. - Symlinks continue to be followed correctly via `resolve_atomic_target`, so permissions of the underlying target are preserved without breaking the symlink.  ## Test plan  - [x] Added unit test `test_atomic_write_preserves_existing_file_permissions` in `src/hooks/init/mod.rs` (fails before fix with `assertion left == right failed: left: 384 (0o600), right: 420 (0o644)`, passes after fix). - [x] Added unit test `test_atomic_write_preserves_symlink_target_permissions` in `src/hooks/init/mod.rs` verifying target permissions and symlink preservation. - [x] `cargo test --lib hooks::init::tests::test_atomic_write` passes (5 passed, 0 failed). - [x] `cargo test --manifest-path proxy/Cargo.toml` passes (274 passed). - [x] 
 
-- **Issue #4578** (2026-10-16): **fix(git): no log cap notice under git's usage on git 2.56**
-  *Symptoms*: ## Summary  git 2.56 answers `-h` with its usage and exit 0; earlier releases exited 129. `rtk git log` took an exit code of 128 or more to mean git refused the walk, so on 2.56 `rtk git log -hp` ran the cap probe after the usage text, the probe got the usage again and read it as commits left over, and `[rtk] capped at 10 commits; pass -n <count> for more` was appended under git's usage.  A `-h` flag, alone or in a cluster, now counts as a walk that never ran. Only a flag token counts: `--grep -h` and `-- -h` still run the walk and still get the notice.  This is what turns `a_clustered_h_is_answered_by_git_once` red on the macOS and Windows runners that moved to git 2.56 (2.55 jobs still pass), so open PRs fail or pass depending on which runner image they land on.  ## Test plan  - [x] New unit test `a_short_h_asks_for_usage_but_a_value_or_pathspec_does_not`; fails with the check disabled - [x] `a_clustered_h_is_answered_by_git_once` run against git 2.56.0 (alpine:edge): fails without the change with the same output as CI, passes with it - [x] `cargo fmt --all --check`, `cargo clippy --all-targets`, `cargo test --all`  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-  **Post-Mortem & Fix Analysis**:
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes `rtk git log` incorrectly appending a cap notice when running on git 2.56+, where `-h` now exits 0 with usage text instead of the previous non-zero exit code. The fix detects a `-h` flag token (not a flag value or pathspec) and treats it as a walk that never ran, suppressing the spurious notice.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
+- **Issue #4622** (2026-10-19): **fix(init): only offer the proxy when rtk-proxy can run, and remove its base URL on uninstall**
+  *Symptoms*: Fixes #4604.  ## Problem  - `rtk init -g` asks *"Set up the RTK proxy …?"* even when the `rtk-proxy` binary isn't installed. That binary ships separately. Saying yes writes `env.ANTHROPIC_BASE_URL = http://127.0.0.1:8080` into Claude Code's `settings.json`, and every session breaks because nothing can start the daemon. - `rtk init -g --uninstall` leaves that `env.ANTHROPIC_BASE_URL` behind, so Claude Code keeps calling a daemon that is gone. It has to be removed by hand.  ## Change  - **`offer_proxy_onramp`** (`src/hooks/init/mod.rs`): the proxy is offered only when the daemon can serve. That means `rtk-proxy` is installed where `rtk llm-proxy start` looks for it (new `llm_proxy::binary_available()`, using the same candidate list as `locate_binary`), or an rtk-proxy already answers on `127.0.0.1:8080` (the existing `is_rtk_proxy_at`). Otherwise init prints one line saying the proxy wasn't offered and where to get it, and leaves `settings.json` alone. The same check covers the "configured, but nothing restarts it" question. - **Uninstall** (`remove_hook_from_settings` in `src/hooks/init/claude.rs`): a new `remove_proxy_env_from_json` removes `env.ANTHROPIC_BASE_URL` when it is exactly the value the on-ramp writes (`http://` + `DEFAULT_BIND`). That's the same value init already treats as "aimed here". Other `env` keys are kept, and the `env` object is dropped only if this leaves it empty. A base URL aimed anywhere else (another proxy or gateway) is left alone. - **Docs:** `docs
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1745,590 +1743,773 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2fdcaa7d` (2026-09-05)
-**Commit Message**: fix(hooks): leave git unrewritten in Claude Code managed worktrees
+### Incident Patch 1: `6c1af5fb` (2026-10-19)
+**Commit Message**: Merge pull request #4464 from taekop/fix/recall-content-hash-collision
 
-Claude Code's worktree-isolation guard evaluates the command after the
-PreToolUse hook has rewritten it, and it can only verify git when it is
-spelled plainly. Every `rtk git …` the hook emitted was therefore refused
-as "cannot be shown not to be git", so no git command could run from a
-worktree-isolated session.
+fix(recall): widen content hash to 64 bits so colliding outputs are kept
 
-The payload carries no isolation flag, but managed worktrees always live
-at `<repo>/.claude/worktrees/<name>`. When the payload cwd has that shape,
-the Claude hook adds `git` to the exclude list so it passes through
-untouched while the rest of the chain is still rewritten. Other hosts
-pass no cwd and are unchanged.
-
-Fixes #3864
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/hooks/decision.rs` (modified, +67/-1)
+**File**: `docs/contributing/TECHNICAL.md` (modified, +1/-1)
 ```diff
-@@ -187,7 +187,45 @@ pub(crate) fn decide_with_params(
- /// which is what the `rtk rewrite` CLI renders. Every hook entry point goes
- /// through here so they cannot drift apart.
- pub(crate) fn decide_for_agent(cmd: &str, verdict: PermissionVerdict) -> HookDecision {
--    suppress_identity(cmd, decide(cmd, verdict))
-+    decide_for_agent_at(cmd, verdict, None)
-+}
-+
-+/// [`decide_for_agent`] for a hook whose payload reports the command's working
-+/// directory: inside a Claude Code managed worktree, `git` is left unrewritten.
-+///
-+/// Claude Code's worktree-isolation guard runs on the command *after* the hook
-+/// has rewritten it, and it only accepts git spelled plainly (or under the few
-+/// launchers it models). A rewritten `rtk git …` is refused outright as
-+/// "cannot be shown not to be git", so no git command could run from an
-+/// isolated session (#3864). The payload carries no isolation flag, but the
-+/// managed worktrees always live at `<repo>/.claude/worktrees/<name>`, so that
-+/// path shape is the signal (see [`in_claude_worktree`]). The rest of a chain
-+/// is still rewritten: `git status && cargo build` → `git status && rtk cargo build`.
-+pub(crate) fn decide_for_agent_at(
-+    cmd: &str,
-+    verdict: PermissionVerdict,
-+    cwd: Option<&str>,
-+) -> HookDecision {
-+    let (mut excluded, transparent_prefixes) = crate::core::config::hook_rewrite_params();
-+    if cwd.is_some_and(in_claude_worktree) {
-+        excluded.push("git".to_string());
-+    }
-+    suppress_identity(
-+        cmd,
-+        decide_with_params(cmd, verdict, &excluded, &transparent_prefixes),
-+    )
-+}
-+
-+/// Whether `cwd` is inside a worktree Claude Code manages
-+/// (`<repo>/.claude/worktrees/<name>`, or deeper).
-+pub(crate) fn in_claude_worktree(cwd: &str) -> bool {
-+    let parts: Vec<&str> = std::path::Path::new(cwd)
-+        .components()
-+        .filter_map(|c| c.as_os_str().to_str())
-+        .collect();
-+    parts
-+        .windows(3)
-+        .any(|w| w[0] == ".claude" && w[1] == "worktrees")
- }
+@@ -290,7 +290,7 @@ Analytics commands (`rtk gain`, `rtk cc-economics`, `rtk session`) query this da
+ On command failure (non-zero exit code) — or when a filter truncates a long list:
  
- /// Turn a rewrite that changed nothing into a [`HookDecision::Defer`].
-@@ -363,6 +401,34 @@ impl AgentPath {
- mod tests {
-     use super::*;
+ 1. Raw unfiltered output is stored in a content-addressed sqlite database (`~/.local/share/rtk/recall.db`, gzip, byte-faithful)
+-2. A hint line is printed: `[full output: rtk recall 3f9c2a81d4e7]` (failures) or `[+N hidden: rtk recall <hash>]` (truncated lists)
++2. A hint line is printed: `[full output: rtk recall 3f9c2a81d4e7b05a]` (failures) or `[+N hidden: rtk recall <hash>]` (truncated lists)
+ 3. LLM agents run `rtk recall <hash>` to get back exactly what was elided instead of re-running the command
  
-+    // --- #3864: Claude Code worktree isolation ---
-+
-+    #[test]
-+    fn in_claude_worktree_matches_only_managed_worktree_paths() {
-+        assert!(in_claude_worktree("/repo/.claude/worktrees/feat-x"));
-+        assert!(in_claude_worktree("/repo/.claude/worktrees/feat-x/src"));
-+        assert!(!in_claude_worktree("/repo"));
-+        assert!(!in_claude_worktree("/repo/.claude/worktrees"));
-+        assert!(!in_claude_worktree("/repo/worktrees/feat-x"));
-+    }
-+
-+    #[test]
-+    fn claude_worktree_leaves_git_plain_but_rewrites_the_rest() {
-+        let wt = Some("/repo/.claude/worktrees/feat-x");
-+        assert_eq!(
-+            decide_for_agent_at("git status", PermissionVerdict::Default, wt),
-+            HookDecision::Defer
-+        );
-+        assert_eq!(
-+            decide_for_agent_at("git status && cargo build", PermissionVerdict::Allow, wt),
-+            HookDecision::AllowRewrite("git status && rtk cargo build".into())
-+        );
-+        assert_eq!(
-+            decide_for_agent_at("git status", PermissionVerdict::Allow, Some("/repo")),
-+            HookDecision::AllowRewrite("rtk git status".into())
-+        );
-+    }
-+
-     /// A rewritable command with no rule matching it is an ask-rewrite, never
-     /// an allow-rewrite (#1155).
-     #[test]
+ The mode is selectable via `rtk config recall <sqlite|tee|disabled>` — `tee` keeps the legacy per-file behavior (`~/.local/share/rtk/tee/{epoch}_{slug}.log`). Recovery never affects command output or exit code. `rtk gain --recalls` reports how often elided output is actually consulted, per filter.
 ```
 
-**File**: `src/hooks/hook_cmd.rs` (modified, +66/-25)
+**File**: `docs/guide/getting-started/configuration.md` (modified, +1/-1)
 ```diff
-@@ -234,18 +234,20 @@ fn heal_legacy_hook_file(path: &std::path::Path) -> bool {
-         .is_ok()
- }
+@@ -105,7 +105,7 @@ When a command fails — or a filter trims a long list — RTK persists the full
  
--/// The decision every hook applies -- [`decision::decide_for_agent`] -- plus the
--/// recall bookkeeping the hook path performs for any command it does not deny.
--fn decide_from_verdict(cmd: &str, verdict: PermissionVerdict) -> HookDecision {
-+/// The decision every hook applies -- [`decision::decide_for_agent_at`] -- plus
-+/// the recall bookkeeping the hook path performs for any command it does not
-+/// deny. `cwd` is the payload's working directory when the host reports one
-+/// (only the Claude Code hook does; see #3864).
-+fn decide_from_verdict(cmd: &str, verdict: PermissionVerdict, cwd: Option<&str>) -> HookDecision {
-     if verdict == PermissionVerdict::Deny {
-         return HookDecision::Deny;
-     }
-     crate::hooks::rewrite_cmd::track_tee_read(cmd);
--    decision::decide_for_agent(cmd, verdict)
-+    decision::decide_for_agent_at(cmd, verdict, cwd)
- }
+ ```
+ FAILED: 2/15 tests
+-[full output: rtk recall 36365b69eda6]
++[full output: rtk recall 36365b69eda6c4f1]
+ ```
  
--fn decide_hook_action(cmd: &str, host: permissions::Host) -> HookDecision {
--    decide_from_verdict(cmd, permissions::check_command_for(cmd, host))
-+fn decide_hook_action(cmd: &str, host: permissions::Host, cwd: Option<&str>) -> HookDecision {
-+    decide_from_verdict(cmd, permissions::check_command_for(cmd, host), cwd)
- }
+ Your AI assistant runs `rtk recall <hash>` exactly as printed in the hint — that is the whole agent interface. For humans inspecting the store: `rtk recall <hash> --full | --from N | --lines N | --grep PAT` and `rtk recall --list`. Storage is byte-faithful (`BLOB` + lossless gzip); the stored input is the captured command text, as with the previous tee files.
+```
+
+**File**: `src/core/retriever.rs` (modified, +45/-3)
+```diff
+@@ -18,7 +18,7 @@ const DEFAULT_MAX_ENTRY_BYTES: usize = 10 * 1024 * 1024;
+ const DEFAULT_MAX_ENTRIES: usize = 200;
+ const DEFAULT_RETENTION_DAYS: u32 = 30;
+ pub const MIN_FAILURE_BYTES: usize = 500;
+-const HASH_HEX_LEN: usize = 12;
++const HASH_HEX_LEN: usize = 16;
+ const DEFAULT_TEE_MAX_FILES: usize = 20;
+ const DEFAULT_TEE_MAX_FILE_SIZE: usize = 1_048_576;
  
- fn handle_vscode(cmd: &str, input: &Value) -> Result<()> {
-@@ -257,7 +259,7 @@ fn handle_vscode(cmd: &str, input: &Value) -> Result<()> {
+@@ -757,7 +757,7 @@ fn list_entries(conn: &Connection) -> Result<i32> {
+     })?;
  
- fn vscode_response(cmd: &str, input: &Value) -> Option<Value> {
-     vscode_response_from_decision(
--        decide_hook_action(cmd, permissions::Host::Claude),
-+        decide_hook_action(cmd, permissions::Host::Claude, None),
-         cmd,
-         input,
-     )
-@@ -303,9 +305,10 @@ fn handle_copilot_cli(cmd: &str, args: &Value) -> Result<()> {
- }
- 
- fn handle_copilot_ide(cmd: &str) -> Result<()> {
--    if let Some(response) =
--        copilot_ide_response_from_decision(decide_hook_action(cmd, permissions::Host::Claude), cmd)
--    {
-+    if let Some(response) = copilot_ide_response_from_decision(
-+        decide_hook_action(cmd, permissions::Host::Claude, None),
-+        cmd,
-+    ) {
-         let _ = writeln!(io::stdout(), "{response}");
-     }
-     Ok(())
-@@ -333,7 +336,7 @@ fn copilot_ide_response_from_decision(decision: HookDecision, cmd: &str) -> Opti
- fn copilot_cli_response(cmd: &str, args: &Value) -> Option<Value> {
-     copilot_cli_response_from_decision(
-         args,
--        decide_hook_action(cmd, permissions::Host::Claude),
-+        decide_hook_action(cmd, permissions::Host::Claude, None),
-         cmd,
-     )
- }
-@@ -387,7 +390,7 @@ pub fn run_gemini() -> Result<()> {
- /// duplicate test copy.
- fn run_gemini_inner(input: &str) -> serde_json::Result<String> {
-     run_gemini_inner_impl(input, |cmd| {
--        decide_hook_action(cmd, permissions::Host::Gemini)
-+        decide_hook_action(cmd, permissions::Host::Gemini, None)
-     })
- }
- 
-@@ -406,6 +409,7 @@ fn run_gemini_inner_with_rules(
-         decide_from_verdict(
+     println!(
+-        "{:<14} {:<26} {:>7} {:>7} {:>9} {:>5} TRUNC",
++        "{:<18} {:<26} {:>7} {:>7} {:>9} {:>5} TRUNC",
+         "HASH", "COMMAND", "LINES", "HIDDEN", "ORIG", "EXIT"
+     );
+     let mut n = 0;
+@@ -771,7 +771,7 @@ fn list_entries(conn: &Connection) -> Result<i32> {
+             command
+         };
+         println!(
+-            "{:<14} {:<26} {:>7} {:>7} {:>9} {:>5} {}",
++            "{:<18} {:<26} {:>7} {:>7} {:>9} {:>5} {}",
+             hash,
              cmd,
-             permissions::check_command_with_rules(cmd, deny, ask, allow),
-+            None,
-         )
-     })
- }
-@@ -496,7 +500,7 @@ fn run_antigravity_inner(input: &str) -> Value {
-         return json!({ "decision": "allow" });
+             total,
+@@ -884,6 +884,48 @@ mod tests {
+         assert_ne!(a, content_hash("cmd", b"output2"));
      }
  
--    match decide_hook_action(cmd, permissions::Host::Antigravity) {
-+    match decide_hook_action(cmd, permissions::Host::Antigravity, None) {
-         HookDecision::Deny => json!({
-             "decision": "deny",
-             "reason": "Blocked by RTK permission rule"
-@@ -556,7 +560,7 @@ fn run_vibe_inner(input: &str) -> Option<String> {
-         return None;
-     }
- 
--    match decide_hook_action(cmd, permissions::Host::Vibe) {
-+    match decide_hook_action(cmd, permissions::Host::Vibe, None) {
-         HookDecision::Deny => {
-             audit_log("deny", cmd, "");
-             Some(r#"{"decision":"deny","reason":"Blocked by RTK permission rule"}"#.to_string())
-@@ -677,7 +681,12 @@ fn process_claude_payload(v: &Value) -> PayloadAction {
-         None => return PayloadAction::Ignore,
-     };
- 
--    process_claude_payload_from_decision(v, cmd, decide_hook_action(cmd, permissions::Host::Claude))
-+    let cwd = v.get("cwd").and_then(Value::as_str);
-+    process_claude_payload_from_decision(
-+        v,
-+        cmd,
-+        decide_hook_action(cmd, permissions::Host::Claude, cwd),
-+    )
- }
- 
- /// Pure core of `process_claude_payload`, taking the hook decision directly so the
-@@ -859,7 +868,7 @@ fn process_trae_payload(v: &Value) -> Option<TraeRewrite> {
-         .pointer("/tool_input/command")
-         .and_then(Value::as_str)
-         .filter(|command| !command.is_empty())?;
--    let rewritten = match decide_hook_action(command, permissions::Host::Trae) {
-+    let rewritten = match decide_hook_action(command, permissions::Host::Trae, None) {
-         HookDecision::AllowRewrite(rewritten) | HookDecision::AskRewrite(rewritten) => rewritten,
-         HookDecision::Deny | HookDecision::Defer => re
-```
-
----
-
-### Incident Patch 2: `83fea350` (2026-10-18)
-**Commit Message**: Merge pull request #4287 from mrhard9090/fix/permissions-unreadable-settings
-
-fix(permissions): fail closed when a settings file cannot be read or parsed
-
-**File**: `src/hooks/permissions.rs` (modified, +139/-4)
-```diff
-@@ -273,21 +273,41 @@ fn check_shell_wrapper_permissions(
- /// 3. `~/.claude/settings.json`
- /// 4. `~/.claude/settings.local.json`
- ///
--/// Missing files and malformed JSON are silently skipped.
-+/// Missing and empty files are skipped. A file that exists but cannot be read
-+/// or parsed may hold deny rules that can no longer be applied, so it fails
-+/// closed: a warning is printed and every command gets at least `Ask`.
- fn load_permission_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
-+    load_permission_rules_from(&get_settings_paths())
-+}
++    #[test]
++    fn test_store_keeps_outputs_sharing_a_48_bit_hash_prefix() {
++        // SHA-256("cmd\0out-25833387") and SHA-256("cmd\0out-36334097") both
++        // start with 4ce95baf880e.
++        let dir = tempfile::tempdir().unwrap();
++        let cfg = temp_cfg(dir.path());
++        let first = store_inner(&cfg, b"out-25833387", "cmd", Some(1), 1).unwrap();
++        let second = store_inner(&cfg, b"out-36334097", "cmd", Some(1), 1).unwrap();
++        assert_eq!(first.hash, "4ce95baf880ee759");
++        assert_eq!(second.hash, "4ce95baf880e306f");
 +
-+fn load_permission_rules_from(paths: &[PathBuf]) -> (Vec<String>, Vec<String>, Vec<String>) {
-     let mut deny_rules = Vec::new();
-     let mut ask_rules = Vec::new();
-     let mut allow_rules = Vec::new();
- 
--    for path in get_settings_paths() {
--        let Ok(content) = std::fs::read_to_string(&path) else {
--            continue;
-+    for path in paths {
-+        let content = match std::fs::read_to_string(path) {
-+            Ok(content) => content,
-+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => continue,
-+            Err(e) => {
-+                eprintln!(
-+                    "[rtk] warning: failed to read permissions from {}: {}",
-+                    path.display(),
-+                    e
-+                );
-+                ask_rules.push("*".to_string());
-+                continue;
-+            }
-         };
-+        if content.trim().is_empty() {
-+            continue;
++        let conn = open(&cfg).unwrap();
++        for (stored, content) in [(&first, b"out-25833387"), (&second, b"out-36334097")] {
++            let row = load_by_hash(&conn, &stored.hash).unwrap().expect("row");
++            assert_eq!(decode(&row).unwrap(), content);
 +        }
-         let Ok(json) = crate::core::utils::from_json_str::<Value>(&content) else {
-             eprintln!(
-                 "[rtk] warning: failed to parse permissions from {}",
-                 path.display()
-             );
-+            ask_rules.push("*".to_string());
-             continue;
-         };
-         let Some(permissions) = json.get("permissions") else {
-@@ -686,6 +706,121 @@ mod tests {
-         );
-     }
- 
-+    fn rules_from_files(files: &[(&str, Option<&str>)]) -> (Vec<String>, Vec<String>, Vec<String>) {
-+        let tmp = tempfile::tempdir().expect("tempdir");
-+        let paths: Vec<PathBuf> = files
-+            .iter()
-+            .map(|(name, content)| {
-+                let path = tmp.path().join(name);
-+                match content {
-+                    Some(content) => std::fs::write(&path, content).expect("write settings"),
-+                    // A directory in place of the file: it exists but cannot be read.
-+                    None => std::fs::create_dir(&path).expect("mkdir settings"),
-+                }
-+                path
-+            })
-+            .collect();
-+        load_permission_rules_from(&paths)
 +    }
 +
 +    #[test]
-+    fn test_valid_settings_file_rules_apply() {
-+        let (deny, ask, allow) = rules_from_files(&[(
-+            "settings.json",
-+            Some(r#"{"permissions":{"deny":["Bash(git push *)"]}}"#),
-+        )]);
-+        assert_eq!(
-+            check_command_with_rules("git push origin main", &deny, &ask, &allow),
-+            PermissionVerdict::Deny
-+        );
-+        assert_eq!(
-+            check_command_with_rules("git status", &deny, &ask, &allow),
-+            PermissionVerdict::Default
-+        );
-+    }
-+
-+    #[test]
-+    fn test_unparseable_settings_file_fails_closed_to_ask() {
-+        let (deny, ask, allow) = rules_from_files(&[
-+            (
-+                "settings.json",
-+                Some(r#"{"permissions":{"deny":["Bash(git push *)"],}}"#),
-+            ),
-+            (
-+                "settings.local.json",
-+                Some(r#"{"permissions":{"allow":["Bash(git status)"]}}"#),
-+            ),
-+        ]);
-+        assert_eq!(
-+            check_command_with_rules("git push origin main", &deny, &ask, &allow),
-+            PermissionVerdict::Ask
-+        );
-+        assert_eq!(
-+            check_command_with_rules("git status", &deny, &ask, &allow),
-+            PermissionVerdict::Ask
-+        );
-+    }
-+
-+    #[test]
-+    fn test_unreadable_settings_file_fails_closed_to_ask() {
-+        let (deny, ask, allow) = rules_from_files(&[("settings.json", None)]);
-+        assert_eq!(
-+            check_command_with_rules("git push origin main", &deny, &ask, &allow),
-+            PermissionVerdict::Ask
-+        );
-+    }
-+
-+    #[test]
-+    fn test_unreadable_settings_file_keeps_other_files_deny_rules() {
-+        let (deny, ask, allow) = rules_from_files(&[
-+            ("settings.json", None),
-+            (
-+                "settings.local.json",
-+                Some(r#"{"permissions":{"deny":["Bash(rm *)"]}}"#),
-+            ),
-+        ]);
-+        assert_eq!(
-+            check_command_with_rules("rm -rf build", &deny, &ask, &allow),
-+            PermissionVerdict::Deny
-+        );
-+    }
-+
-+    #[test]
-+    fn test_unparseable_settings_file_keeps_other_files_deny_rules() {
-+        let (deny, ask, allow) = rules_from_files(&[
-+            (
-+                "settings.json",
-+                Some(r#"{"permissions":{"deny":["Bash(git push *)"],}}"#
-```
-
-**File**: `tests/hook_decision_protocol_test.rs` (modified, +51/-0)
-```diff
-@@ -703,6 +703,57 @@ mod rewrite_host_scoping {
-         );
-     }
- 
-+    /// A settings file that exists but cannot be read or parsed may hold deny
-+    /// rules RTK can no longer apply, so it asks: `git push origin main`, which
-+    /// the unparseable file denies, exits 3 in both cases even for a delegate
-+    /// that relaxes the default ask, with a warning naming the file.
-+    #[test]
-+    fn openclaw_asks_when_a_settings_file_cannot_be_read_or_parsed() {
-+        let unreadable = Sandbox::bare();
-+        let settings = unreadable.project.join(".claude/settings.json");
-+        std::fs::remove_file(&settings).expect("remove settings");
-+        std::fs::create_dir(&settings).expect("a directory in place of settings.json");
-+
-+        let unparseable = Sandbox::bare();
-+        std::fs::write(
-+            unparseable.project.join(".claude/settings.json"),
-+            r#"{"permissions":{"deny":["Bash(git push *)"],}}"#,
++    fn test_12_char_hint_resolves_after_the_same_output_is_stored_again() {
++        // A row stored before the key was widened keeps its 12-char key; the
++        // same output stored again gets the 16-char key that starts with it.
++        let dir = tempfile::tempdir().unwrap();
++        let cfg = temp_cfg(dir.path());
++        let stored = store_inner(&cfg, b"same output", "cmd", Some(1), 1).unwrap();
++        let conn = open(&cfg).unwrap();
++        let old = &stored.hash[..12];
++        conn.execute(
++            "UPDATE recall SET hash = ?1 WHERE hash = ?2",
++            params![old, stored.hash],
 +        )
-+        .expect("write settings");
++        .unwrap();
++        let again = store_inner(&cfg, b"same output", "cmd", Some(1), 1).unwrap();
++        assert_ne!(again.hash, old);
 +
-+        let file = std::path::Path::new("project")
-+            .join(".claude")
-+            .join("settings.json")
-+            .display()
-+            .to_string();
-+        for (sandbox, warning) in [
-+            (
-+                &unreadable,
-+                "[rtk] warning: failed to read permissions from ",
-+            ),
-+            (
-+                &unparseable,
-+                "[rtk] warning: failed to parse permissions from ",
-+            ),
-+        ] {
-+            let (code, stdout, stderr) = sandbox.run_with_env(
-+                &["rewrite", "git push origin main"],
-+                &[("RTK_REWRITE_HOST", "openclaw")],
-+            );
-+            assert_eq!(
-+                (code, stdout.as_str()),
-+                (3, "rtk git push origin main"),
-+                "{warning}: {stderr}"
-+            );
-+            assert!(
-+                stderr
-+                    .lines()
-+                    .any(|line| line.starts_with(warning) && line.contains(&file)),
-+                "{warning}: {stderr}"
-+            );
++        for hint in [old, again.hash.as_str()] {
++            let row = load_by_hash(&conn, hint).unwrap().expect("row");
++            assert_eq!(row.hash, hint);
++            assert_eq!(decode(&row).unwrap(), b"same output");
 +        }
 +    }
 +
-     /// The suite is hermetic against the variable: `run_with_env` scrubs it, so
-     /// exporting `RTK_REWRITE_HOST=openclaw` in a developer's shell cannot turn
-     /// `default_verdict_exits_three_never_zero` red on that machine and green
+     #[test]
+     fn test_grep_match_all_roundtrips_byte_exact() {
+         let input = b"a\nb\nc\n".to_vec();
 ```
 
 ---
 
-### Incident Patch 3: `f16becac` (2026-10-15)
-**Commit Message**: Merge pull request #4203 from Protocol-zero-0/chore/rewrite-exit-code-regression-test
+### Incident Patch 2: `1357969e` (2026-10-19)
+**Commit Message**: Merge upstream/develop into fix/recall-content-hash-collision
 
-test(hook): pin exit codes across rtk rewrite (#3492)
-
-**File**: `tests/rewrite_exit_code_test.rs` (added, +197/-0)
+**File**: `.cargo/config.toml` (added, +6/-0)
 ```diff
-@@ -0,0 +1,197 @@
-+#![cfg(unix)]
-+//! Exit-code faithfulness across hook rewrites (#3492, #2974, #2735).
-+//!
-+//! Agents gate on exit status (`&&` chains, "did the tests pass?"), and hooks
-+//! silently replace the command with whatever `rtk rewrite` returns. So the
-+//! rewritten command must exit with exactly the code the raw command would
-+//! have — compressing the output may never change the status.
+@@ -0,0 +1,6 @@
++# clap's derive-expanded parser overflows the 2 MiB stack cargo gives test
++# threads in a debug build. This raises the floor for every cargo-spawned
++# process, CI and local alike; release builds never needed it (optimized
++# frames, main thread).
++[env]
++RUST_MIN_STACK = "8388608"
+```
+
+**File**: `.claude/agents/code-reviewer.md` (modified, +3/-3)
+```diff
+@@ -27,7 +27,7 @@ src/main.rs (Commands enum + routing)
+ 
+ **Non-negotiable constraints:**
+ - Startup time <10ms (zero async, single-threaded)
+-- Token savings ≥60% per filter
++- Token savings ≥20% per filter
+ - Fallback to raw command if filter fails
+ - Exit codes propagated from underlying commands
+ 
+@@ -74,7 +74,7 @@ Raise alarms immediately when you see:
+ 
+ **Token Savings:**
+ - `count_tokens()` helper in tests
+-- Savings ≥60% for all filters (release blocker)
++- Savings ≥20% for all filters (release blocker)
+ - Output: failures only, summary stats, no verbose metadata
+ - Truncation strategy: consistent across filters
+ 
+@@ -225,7 +225,7 @@ Both paths MUST have tests.
+ 
+ ## Adversarial Questions for RTK
+ 
+-1. **Savings**: If I run `count_tokens(input)` vs `count_tokens(output)` — is savings ≥60%?
++1. **Savings**: If I run `count_tokens(input)` vs `count_tokens(output)` — is savings ≥20%?
+ 2. **Fallback**: If the filter panics, does the user still get their command output?
+ 3. **Startup**: Does this change add any I/O or initialization before the command runs?
+ 4. **Exit code**: If the underlying command returns non-zero, does RTK propagate it?
+```
+
+**File**: `.claude/agents/debugger.md` (modified, +2/-2)
+```diff
+@@ -97,7 +97,7 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test --test shell_escap
+ | Filter crashes | Regex panic on malformed input | Add test with empty/malformed fixture |
+ | Performance regression | Regex recompiled at runtime | Check flamegraph for `Regex::new()` calls |
+ | Shell escaping error | Platform-specific quoting | Test on macOS + Linux + Windows |
+-| Token savings <60% | Weak condensation logic | Review filter algorithm, compare fixtures |
++| Token savings <20% | Weak condensation logic | Review filter algorithm, compare fixtures |
+ | Test failure | Fixture outdated or test assertion wrong | Update fixture from real command output |
+ 
+ **Example hypothesis testing**:
+@@ -214,7 +214,7 @@ Command::new(cmd).args(args).spawn();
+ - [ ] All tests pass (`cargo test --all`)
+ - [ ] Performance benchmarks pass (`hyperfine` <10ms)
+ - [ ] Cross-platform tests pass (macOS + Linux)
+-- [ ] Token savings verified (≥60% in tests)
++- [ ] Token savings verified (≥20% in tests)
+ - [ ] Code formatted (`cargo fmt --all --check`)
+ - [ ] Clippy clean (`cargo clippy --all-targets`)
+ 
+```
+
+**File**: `.claude/agents/rtk-testing-specialist.md` (modified, +8/-8)
+```diff
+@@ -12,7 +12,7 @@ You are a testing expert specializing in RTK's unique testing needs: command out
+ ## Core Responsibilities
+ 
+ - **Snapshot testing**: Use `insta` crate for output validation
+-- **Token accuracy**: Verify 60-90% savings claims with real fixtures
++- **Token accuracy**: Verify the ≥20% savings floor with real fixtures
+ - **Cross-platform**: Test bash/zsh/PowerShell compatibility
+ - **Regression prevention**: Detect performance degradation in CI
+ - **Integration tests**: Real command execution (git, cargo, gh, pnpm, etc.)
+@@ -84,7 +84,7 @@ ls -la src/snapshots/
+ 
+ ### Token Count Validation
+ 
+-All filters **MUST** verify token savings claims (60-90%) in tests:
++All filters **MUST** verify the ≥20% savings floor in tests:
+ 
+ ```rust
+ #[cfg(test)]
+@@ -124,7 +124,7 @@ mod tests {
+ }
+ ```
+ 
+-**Why critical**: RTK promises 60-90% token savings. Tests must verify these claims with real fixtures. If savings drop below 60%, it's a **release blocker**.
++**Why critical**: RTK requires ≥20% savings per filter. Tests must verify these claims with real fixtures. If savings drop below 20%, it's a **release blocker**.
+ 
+ **Creating fixtures**:
+ 
+@@ -242,7 +242,7 @@ cargo test --ignored test_real_git_log
+ 
+ **Coverage goals**:
+ - **100% filter coverage**: Every filter has snapshot test + token accuracy test
+-- **95% token savings verification**: Fixtures with known savings (60-90%)
++- **95% token savings verification**: Fixtures with known savings (≥20%)
+ - **Cross-platform tests**: macOS + Linux (Windows in CI only)
+ 
+ **Coverage verification**:
+@@ -300,8 +300,8 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test
+ - Memory usage must be <5MB
+ - Use `hyperfine` and `time -l` to verify
+ 
+-❌ **DON'T** accept <60% token savings → Fails promise to users
+-- All filters must achieve 60-90% savings
++❌ **DON'T** accept <20% token savings → Fails promise to users
++- All filters must achieve ≥20% savings
+ - Test with real fixtures, not synthetic data
+ - If savings drop, investigate and fix before merge
+ 
+@@ -313,7 +313,7 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test
+ ✅ **DO** verify token savings with real fixtures
+ - Use real command output, not synthetic
+ - Calculate savings: `100.0 - (output_tokens / input_tokens * 100.0)`
+-- Assert `savings >= 60.0`
++- Assert `savings >= 20.0`
+ 
+ ✅ **DO** test shell escaping on all platforms
+ - Use `#[cfg(target_os = "...")]` for platform-specific tests
+@@ -375,7 +375,7 @@ fn test_newcmd_token_savings() {
+     let output_tokens = count_tokens(&output);
+     let savings = 100.0 - (output_tokens as f64 / input_tokens as f64 * 100.0);
+ 
+-    assert!(savings >= 60.0, "Expected ≥60% savings, got {:.1}%", savings);
++    assert!(savings >= 20.0, "Expected ≥20% savings, got {:.1}%", savings);
+ }
+ ```
+ 
+```
+
+**File**: `.claude/agents/rust-rtk.md` (modified, +10/-10)
+```diff
+@@ -89,7 +89,7 @@ pub fn filter_git_log(input: &str) -> String {
+ 
+ ### Token Count Validation (Testing Critical)
+ 
+-All filters **MUST** verify token savings claims (60-90%) in tests:
++All filters **MUST** verify the ≥20% savings floor in tests:
+ 
+ ```rust
+ #[cfg(test)]
+@@ -113,10 +113,10 @@ mod tests {
+ 
+         let savings = 100.0 - (output_tokens as f64 / input_tokens as f64 * 100.0);
+ 
+-        // RTK promise: 60-90% savings
++        // RTK floor: >=20% savings
+         assert!(
+-            savings >= 60.0,
+-            "Git log filter: expected ≥60% savings, got {:.1}%",
++            savings >= 20.0,
++            "Git log filter: expected ≥20% savings, got {:.1}%",
+             savings
+         );
+ 
+@@ -126,7 +126,7 @@ mod tests {
+ }
+ ```
+ 
+-**Why**: Token savings claims (60-90%) must be **verifiable**. Tests with real fixtures prevent regressions. If savings drop below 60%, it's a release blocker.
++**Why**: Token savings (≥20% floor) must be **verifiable**. Tests with real fixtures prevent regressions. If savings drop below 20%, it's a release blocker.
+ 
+ ### Cross-Platform Shell Escaping
+ 
+@@ -235,11 +235,11 @@ mod tests {
+         // Verify format preservation
+         assert!(output.contains("test result:"));
+ 
+-        // Verify token savings ≥60%
++        // Verify token savings ≥20%
+         let input_tokens = count_tokens(input);
+         let output_tokens = count_tokens(&output);
+         let savings = 100.0 - (output_tokens as f64 / input_tokens as f64 * 100.0);
+-        assert!(savings >= 60.0, "Expected ≥60% savings, got {:.1}%", savings);
++        assert!(savings >= 20.0, "Expected ≥20% savings, got {:.1}%", savings);
+     }
+ 
+     #[test]
+@@ -395,7 +395,7 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test  # Linux via Docke
+ 
+ ✅ **DO** provide fallback to raw command on filter failure
+ ✅ **DO** compile fixed, reused regexes once with `LazyLock<Regex>`
+-✅ **DO** verify token savings claims in tests (≥60%)
++✅ **DO** verify token savings claims in tests (≥20%)
+ ✅ **DO** test on macOS + Linux + Windows (via CI or manual)
+ ✅ **DO** run `cargo fmt && cargo clippy --all-targets && cargo test` before commit
+ ✅ **DO** benchmark startup time with `hyperfine` (<10ms target)
+@@ -437,7 +437,7 @@ mod tests {
+         let output = filter_newcmd(input).unwrap();
+ 
+         let savings = calculate_savings(input, &output);
+-        assert!(savings >= 60.0, "Expected ≥60% savings, got {:.1}%", savings);
++        assert!(savings >= 20.0, "Expected ≥20% savings, got {:.1}%", savings);
+     }
+ }
+ ```
+@@ -516,7 +516,7 @@ rtk newcmd args
+ |--------|--------|--------------|
+ | Startup time | <10ms | `hyperfine 'rtk git status'` |
+ | Memory overhead | <5MB | `/usr/bin/time -l rtk git status` |
+-| Token savings | 60-90% | Tests with `count_tokens()` |
++| Token savings | ≥20% floor | Tests with `count_tokens()` |
+ | Binary size | <5MB stripped | `ls -lh target/release/rtk` |
+ 
+ **Performance regressions are release blockers** - always benchmark before/after changes.
+```
+
+**File**: `.claude/agents/system-architect.md` (modified, +1/-1)
+```diff
+@@ -181,5 +181,5 @@ Before adding code to a module, check `utils.rs`:
+ **Will not:**
+ - Implement the full filter logic (→ rust-rtk agent)
+ - Write the actual regex patterns (→ implementation detail)
+-- Make decisions about token savings targets (→ fixed at ≥60%)
++- Make decisions about token savings targets (→ fixed at ≥20%)
+ - Override the <10ms startup constraint (→ non-negotiable)
+```
+
+**File**: `.claude/agents/technical-writer.md` (modified, +5/-5)
+```diff
+@@ -28,7 +28,7 @@ Write for developers using RTK, not for yourself. Prioritize clarity with workin
+ ## Key Actions RTK
+ 
+ 1. **Document CLI Commands**: Clear syntax, flags, examples with real output
+-2. **Evidence Performance Claims**: Benchmark data supporting 60-90% token savings
++2. **Evidence Performance Claims**: Measured token savings (≥20% floor per filter)
+ 3. **Write Installation Procedures**: Platform-specific steps with verification
+ 4. **Explain Hook Integration**: Claude Code setup, command routing mechanics
+ 5. **Guide Filter Development**: Contribution workflow, testing patterns, quality standards
+@@ -73,7 +73,7 @@ commit def5678 Fix bug Y
+ **Methodology**:
+ - Fixtures: Real command output from production environments
+ - Measurement: Whitespace-based tokenization (`count_tokens()`)
+-- Verification: Tests enforce ≥60% savings threshold
++- Verification: Tests enforce ≥20% savings threshold
+ 
+ **Results by Filter**:
+ 
+@@ -97,7 +97,7 @@ Range (min … max):     5.8 ms …   7.1 ms    100 runs
+ # Run token accuracy tests
+ cargo test test_token_savings
+ 
+-# All tests should pass, enforcing ≥60% savings
++# All tests should pass, enforcing ≥20% savings
+ ```
+ ```
+ 
+@@ -254,7 +254,7 @@ mod tests {
+         let output = filter_newcmd(input).unwrap();
+ 
+         let savings = calculate_savings(input, &output);
+-        assert!(savings >= 60.0);
++        assert!(savings >= 20.0);
+     }
+ }
+ ```
+@@ -297,7 +297,7 @@ cargo fmt --all && cargo clippy --all-targets && cargo test --all
+ 
+ ## Filter Quality Standards
+ 
+-- **Token savings**: ≥60% verified in tests
++- **Token savings**: ≥20% verified in tests
+ - **Startup time**: <10ms with `hyperfine`
+ - **Lazy regex**: Fixed, reused patterns use `LazyLock<Regex>`
+ - **Error handling**: Fallback to raw command on failure
+```
+
+**File**: `.claude/commands/tech/codereview.md` (modified, +3/-3)
+```diff
+@@ -84,7 +84,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
+ **Tests**:
+ - `#[cfg(test)] mod tests` embarqué dans chaque module
+ - Fixtures réelles dans `tests/fixtures/<cmd>_raw.txt`
+-- `count_tokens()` pour vérifier savings ≥60%
++- `count_tokens()` pour vérifier savings ≥20%
+ - `assert_snapshot!` (insta) pour output format
+ 
+ **Module**:
+@@ -93,7 +93,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
+ - `strip_ansi()` depuis `utils.rs` — pas re-implémenté
+ 
+ **Filtres**:
+-- Token savings ≥60% obligatoire (release blocker)
++- Token savings ≥20% obligatoire (release blocker)
+ - Fallback: si filter échoue → raw command exécutée
+ - Pas d'output ASCII art, pas de verbose metadata inutile
+ 
+@@ -105,7 +105,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
+ - Pattern regex fixe recompilé dans une fonction
+ - `?` sans `.context()` — erreur sans description
+ - Dépendance async ajoutée (tokio, async-std, futures)
+-- Token savings <60% pour un nouveau filtre
++- Token savings <20% pour un nouveau filtre
+ - Pas de fallback vers commande brute sur échec de filtre
+ - `panic!()` en production (hors tests)
+ - Exit code non propagé sur commande sous-jacente
+```
+
+---
+
+### Incident Patch 3: `2ba99569` (2026-10-19)
+**Commit Message**: Merge pull request #4070 from Raymondriter/fix/gain-interactive-exec-time
+
+fix(gain): exclude zero-input rows from exec time totals
+
+**File**: `docs/usage/TRACKING.md` (modified, +5/-1)
+```diff
+@@ -41,7 +41,11 @@ For each command RTK runs, the database records:
+ 
+ The same database also holds filter parse failures and hook rewrite decisions, which feed `rtk gain` and `rtk session`.
+ 
+-Commands RTK passes through without filtering are tracked at 0% reduction.
++Commands RTK passes through without filtering are tracked at 0% reduction. They still count toward
++`commands` and the token totals, but they are left out of `total_time_ms` and `avg_time_ms` (in the
++summary, the daily/weekly/monthly breakdowns, and the JSON/CSV exports): only commands with captured
++input (`input_tokens > 0`) are timed. A passthrough row filtered nothing, and its duration is the
++wrapped process's lifetime — for an interactive TUI such as `rtk claude`, the whole session.
+ 
+ ## Privacy
+ 
+```
+
+**File**: `src/analytics/cc_economics.rs` (modified, +4/-0)
+```diff
+@@ -929,6 +929,7 @@ mod tests {
+             savings_pct: 50.0,
+             total_time_ms: 0,
+             avg_time_ms: 0,
++            timed_commands: 10,
+         }];
+ 
+         let merged = merge_monthly(Some(cc), rtk);
+@@ -969,6 +970,7 @@ mod tests {
+             savings_pct: 50.0,
+             total_time_ms: 0,
+             avg_time_ms: 0,
++            timed_commands: 10,
+         }];
+ 
+         let merged = merge_monthly(None, rtk);
+@@ -989,6 +991,7 @@ mod tests {
+                 savings_pct: 40.0,
+                 total_time_ms: 0,
+                 avg_time_ms: 0,
++                timed_commands: 5,
+             },
+             MonthStats {
+                 month: "2026-01".to_string(),
+@@ -999,6 +1002,7 @@ mod tests {
+                 savings_pct: 60.0,
+                 total_time_ms: 0,
+                 avg_time_ms: 0,
++                timed_commands: 10,
+             },
+         ];
+ 
+```
+
+**File**: `src/core/display_helpers.rs` (modified, +62/-8)
+```diff
+@@ -3,7 +3,7 @@
+ //! Eliminates duplication in gain.rs and cc_economics.rs by providing
+ //! a unified trait-based system for displaying daily/weekly/monthly data.
+ 
+-use crate::core::tracking::{DayStats, MonthStats, WeekStats};
++use crate::core::tracking::{DayStats, MonthStats, WeekStats, average_time_ms};
+ use crate::core::utils::format_tokens;
+ 
+ /// Format duration in milliseconds to human-readable string
+@@ -48,9 +48,12 @@ pub trait PeriodStats {
+     /// Total execution time in milliseconds
+     fn total_time_ms(&self) -> u64;
+ 
+-    /// Average execution time per command in milliseconds
++    /// Average execution time per timed command in milliseconds
+     fn avg_time_ms(&self) -> u64;
+ 
++    /// Commands whose execution time counts toward `total_time_ms`
++    fn timed_commands(&self) -> usize;
 +
-+mod common;
-+
-+use std::path::{Path, PathBuf};
-+use std::process::Command;
-+
-+struct Sandbox {
-+    _dir: tempfile::TempDir,
-+    root: PathBuf,
+     /// Period column width for alignment
+     fn period_width() -> usize;
+ 
+@@ -112,17 +115,12 @@ pub fn print_period_table<T: PeriodStats>(data: &[T]) {
+     let total_input: usize = data.iter().map(|d| d.input_tokens()).sum();
+     let total_output: usize = data.iter().map(|d| d.output_tokens()).sum();
+     let total_saved: usize = data.iter().map(|d| d.saved_tokens()).sum();
+-    let total_time: u64 = data.iter().map(|d| d.total_time_ms()).sum();
+     let avg_pct = if total_input > 0 {
+         (total_saved as f64 / total_input as f64) * 100.0
+     } else {
+         0.0
+     };
+-    let avg_time = if total_cmds > 0 {
+-        total_time / total_cmds as u64
+-    } else {
+-        0
+-    };
++    let avg_time = total_avg_time_ms(data);
+ 
+     println!("{}", "─".repeat(T::separator_width()));
+     println!(
+@@ -139,6 +137,13 @@ pub fn print_period_table<T: PeriodStats>(data: &[T]) {
+     println!();
+ }
+ 
++/// Mean exec time across all periods, weighted by each period's timed commands.
++fn total_avg_time_ms<T: PeriodStats>(data: &[T]) -> u64 {
++    let total_time: u64 = data.iter().map(|d| d.total_time_ms()).sum();
++    let timed_cmds: usize = data.iter().map(|d| d.timed_commands()).sum();
++    average_time_ms(total_time, timed_cmds)
 +}
 +
-+impl Sandbox {
-+    fn new() -> Self {
-+        let dir = common::temp_git_repo();
-+        let root = dir.path().to_path_buf();
-+        std::fs::write(root.join("a.txt"), "alpha\nbeta\n").expect("write");
-+        for args in [
-+            &["add", "a.txt"][..],
-+            &["commit", "-q", "-m", "add fixture"][..],
-+        ] {
-+            let mut git = Command::new("git");
-+            common::isolate_git(&mut git);
-+            let ok = git
-+                .args(args)
-+                .current_dir(&root)
-+                .status()
-+                .expect("git")
-+                .success();
-+            assert!(ok, "git {args:?} failed");
-+        }
-+        // A tracked change, left unstaged: `git diff --exit-code` reports it and
-+        // `git diff --cached --exit-code` has nothing to report.
-+        std::fs::write(root.join("a.txt"), "alpha\nbeta\ngamma\n").expect("modify");
-+        Sandbox { _dir: dir, root }
+ // ── Trait Implementations ──
+ 
+ impl PeriodStats for DayStats {
+@@ -182,6 +187,10 @@ impl PeriodStats for DayStats {
+         self.avg_time_ms
+     }
+ 
++    fn timed_commands(&self) -> usize {
++        self.timed_commands
 +    }
 +
-+    fn repo(&self) -> PathBuf {
-+        self.root.clone()
+     fn period_width() -> usize {
+         12
+     }
+@@ -242,6 +251,10 @@ impl PeriodStats for WeekStats {
+         self.avg_time_ms
+     }
+ 
++    fn timed_commands(&self) -> usize {
++        self.timed_commands
 +    }
 +
-+    /// Isolate rtk's config, tracking DB and tee output from the developer's machine,
-+    /// and put the freshly built `rtk` first on PATH so rewritten commands resolve it.
-+    fn command(&self, program: &str) -> Command {
-+        let rtk = common::rtk_command();
-+        let bin_dir = Path::new(rtk.get_program())
-+            .parent()
-+            .expect("rtk binary has a parent directory")
-+            .to_path_buf();
-+        let inherited = std::env::var_os("PATH").unwrap_or_default();
-+        let path =
-+            std::env::join_paths(std::iter::once(bin_dir).chain(std::env::split_paths(&inherited)))
-+                .expect("PATH entries join");
-+        let mut cmd = Command::new(program);
-+        common::isolate_rtk(&mut cmd);
-+        cmd.current_dir(self.repo())
-+            .env("PATH", path)
-+            .env("LC_ALL", "C");
-+        cmd
+     fn period_width() -> usize {
+         22
+     }
+@@ -292,6 +305,10 @@ impl PeriodStats for MonthStats {
+         self.avg_time_ms
+     }
+ 
++    fn timed_commands(&self) -> usize {
++        self.timed_commands
 +    }
 +
-+    fn sh_exit(&self, script: &str) -> Option<i32> {
-+        self.command("sh")
-+            .args(["-c", script])
-+            .output()
-+            .expect("sh")
-+            .status
-+            .code()
-+    }
+     fn period_width() -> usize {
+         10
+     }
+@@ -316,6 +333,7 @@ mod tests {
+             savings_pct: 20.0,
+             total_time_ms: 1500,
+             avg_time_ms: 150,
++            timed_commands: 10,
+         };
+ 
+         assert_eq!(day.period(), "2026-01-20");
+@@ -338,6 +356,7 @@ mod tests {
+             savings_pct: 40.0,
+             total_time_ms: 5000,
+             avg_time_ms: 100,
++            timed_commands: 50,
+         };
+ 
+         assert_eq!(week.period(), "01-20 → 01-26");
+@@ -357,6 +376,7 @@ mod tests {
+             savings_pct: 50.0,
+             total_time_ms: 20000,
+             avg_time_ms: 100,
++            timed_commands: 200,
+         };
+ 
+         assert_eq!(month.period(), "2026-01");
+@@ -384,6 +404,7 @@ mod tests {
+                 savings_pct: 20.0,
+                 total_time_ms: 1500,
+                 avg_time_ms: 150,
++                timed_commands: 10,
+             },
+             DayStats {
+                 date: "2026-01-21".to_string(),
+@@ -394,9 +415,42 @@ mod tests {
+                 savings_pct: 30.0,
+                 total_time_ms: 2250,
+                 avg_time_ms: 150,
++                timed_commands: 15,
+             },
+         ];
+         print_period_table(&data);
+         // Should print table with 2 rows + total
+     }
 +
-+    /// `rtk rewrite` prints the rewrite and exits 0 (allow) or 3 (ask); anything
-+    /// else means the hook would run the command unchanged.
-+    fn rewrite(&self, script: &str) -> Option<String> {
-+        let mut cmd = common::rtk_command();
-+        let out = cmd
-+            .current_dir(self.repo())
-+            .env("LC_ALL", "C")
-+            .args(["rewrite", script])
-+            .output()
-+            .expect("rtk rewrite");
-+        let text = String::from_utf8_lossy(&out.stdout).trim().to_string();
-+        match out.status.code() {
-+            Some(0) | Some(3) if !text.is_empty() => Some(text),
-+            _ => None,
-+        }
++    // #4003: the TOTAL row averages over timed commands, like each period's own average.
++    // Day 1 holds two 150 ms filtered commands plus an 11 h zero-input TUI session.
++    #[test]
++    fn test_total_avg_time_ignores_untimed_commands() {
++        let data = vec![
++            DayStats {
++                date: "2026-01-20".to_string(),
++                commands: 3,
++                input_tokens: 1000,
++                output_tokens: 500,
++                saved_tokens: 500,
++                savings_pct: 50.0,
++                total_time_ms: 300,
++                avg_time_ms: 150,
++                timed_commands: 2,
++            },
++            DayStats {
++                date: "2026-01-21".to_string(),
++                commands: 2,
++                input_tokens: 1000,
++                output_tokens: 500,
++                saved_tokens: 500,
++                savings_pct: 50.0,
++                total_time_ms: 300,
++             
+```
+
+**File**: `src/core/tracking.rs` (modified, +119/-36)
+```diff
+@@ -236,9 +236,9 @@ pub struct GainSummary {
+     pub total_saved: usize,
+     /// Average savings percentage across all commands
+     pub avg_savings_pct: f64,
+-    /// Total execution time across all commands (milliseconds)
++    /// Total execution time of the timed commands (milliseconds); see [`DayStats::timed_commands`]
+     pub total_time_ms: u64,
+-    /// Average execution time per command (milliseconds)
++    /// Average execution time per timed command (milliseconds)
+     pub avg_time_ms: u64,
+     /// Top 10 commands by tokens saved: (cmd, count, saved, weighted_rate, avg_time_ms)
+     pub by_command: Vec<(String, usize, usize, f64, u64)>,
+@@ -280,10 +280,16 @@ pub struct DayStats {
+     pub saved_tokens: usize,
+     /// Savings percentage for this day
+     pub savings_pct: f64,
+-    /// Total execution time for this day (milliseconds)
++    /// Total execution time of this day's timed commands (milliseconds)
+     pub total_time_ms: u64,
+-    /// Average execution time per command (milliseconds)
++    /// Average execution time per timed command (milliseconds)
+     pub avg_time_ms: u64,
++    /// Commands whose execution time counts toward `total_time_ms`: those with captured
++    /// input. A zero-input row (passthrough, fallback) filtered nothing, and its duration is
++    /// the wrapped process's lifetime — a whole interactive TUI session for `rtk claude`
++    /// (#4003) — so it would swamp the aggregate. Not exported: CSV/JSON keep their schema.
++    #[serde(skip)]
++    pub timed_commands: usize,
+ }
+ 
+ /// Weekly statistics for token savings and execution metrics.
+@@ -306,10 +312,13 @@ pub struct WeekStats {
+     pub saved_tokens: usize,
+     /// Savings percentage for this week
+     pub savings_pct: f64,
+-    /// Total execution time for this week (milliseconds)
++    /// Total execution time of this week's timed commands (milliseconds)
+     pub total_time_ms: u64,
+-    /// Average execution time per command (milliseconds)
++    /// Average execution time per timed command (milliseconds)
+     pub avg_time_ms: u64,
++    /// Commands whose execution time counts toward `total_time_ms`; see [`DayStats::timed_commands`]
++    #[serde(skip)]
++    pub timed_commands: usize,
+ }
+ 
+ /// Monthly statistics for token savings and execution metrics.
+@@ -329,10 +338,13 @@ pub struct MonthStats {
+     pub saved_tokens: usize,
+     /// Savings percentage for this month
+     pub savings_pct: f64,
+-    /// Total execution time for this month (milliseconds)
++    /// Total execution time of this month's timed commands (milliseconds)
+     pub total_time_ms: u64,
+-    /// Average execution time per command (milliseconds)
++    /// Average execution time per timed command (milliseconds)
+     pub avg_time_ms: u64,
++    /// Commands whose execution time counts toward `total_time_ms`; see [`DayStats::timed_commands`]
++    #[serde(skip)]
++    pub timed_commands: usize,
+ }
+ 
+ /// Type alias for command statistics tuple: (command, count, saved_tokens, weighted_savings_rate, avg_time_ms)
+@@ -347,6 +359,15 @@ pub struct MonthStats {
+ /// unsigned, is clamped to 0.
+ type CommandStats = (String, usize, usize, f64, u64);
+ 
++/// Mean execution time over the timed commands only (see [`DayStats::timed_commands`]).
++pub fn average_time_ms(total_time_ms: u64, timed_commands: usize) -> u64 {
++    if timed_commands > 0 {
++        total_time_ms / timed_commands as u64
++    } else {
++        0
 +    }
 +}
 +
-+/// Asked in the sandbox's own environment, where the Python cases run: a
-+/// version manager's shim can answer for the caller's home and not for it.
-+fn python3_available(sb: &Sandbox) -> bool {
-+    sb.command("python3")
-+        .arg("--version")
-+        .output()
-+        .map(|o| o.status.success())
-+        .unwrap_or(false)
-+}
-+
-+/// Each case puts a recognized tool (the part rtk rewrites) alone, succeeding
-+/// or failing, or ahead of an `&&`, `||` or `;`, so both its own status and the
-+/// list's are checked. The number is the raw command's exit code; `LS_MISSING`
-+/// stands for the one a missing operand gets from the `ls` first on PATH.
-+const CASES: &[(&str, i32)] = &[
-+    ("git status", 0),
-+    ("git log -1 && sh -c 'exit 9'", 9),
-+    ("git log --no-such-flag", 128),
-+    ("git diff --exit-code", 1),
-+    ("git diff --exit-code HEAD && sh -c 'exit 7'", 1),
-+    ("git diff --cached --exit-code && sh -c 'exit 7'", 7),
-+    ("git show no-such-rev && sh -c 'exit 9'", 128),
-+    ("ls /nonexistent-rtk-path", LS_MISSING),
-+    ("ls /nonexistent-rtk-path && sh -c 'exit 13'", LS_MISSING),
-+    ("ls /nonexistent-rtk-path || sh -c 'exit 13'", 13),
-+    ("ls a.txt || sh -c 'exit 13'", 0),
-+    ("ls a.txt && sh -c 'exit 13'", 13),
-+    ("grep -r not-present-anywhere a.txt", 1),
-+    ("grep -r alpha a.txt && sh -c 'exit 14'", 14),
-+    ("wc -l /nonexistent-rtk-path", 1),
-+    ("cat /nonexistent-rtk-path", 1),
-+    ("cat a.txt && sh -c 'exit 11'", 11),
-+    ("head -n 1 a.txt && sh -c 'exit 15'", 15),
-+    ("find . -name a.txt -exec false {} +", 1),
-+    ("git status; sh -c 'exit 12'", 12),
-+];
-+
-+/// Replaced by `cas
+ /// Current tracking-DB schema version, stored in the SQLite `user_version` pragma.
+ ///
+ /// `Tracker::new()` is on the hot path (every `rtk <cmd>` invocation and every
+@@ -1172,6 +1193,7 @@ impl Tracker {
+         let mut total_saved = 0usize;
+         let mut total_time_ms = 0u64;
+         let mut oversized_excluded = 0usize;
++        let mut timed_commands = 0usize;
+ 
+         let mut stmt = self.conn.prepare(
+             "SELECT input_tokens, output_tokens, saved_tokens, exec_time_ms
+@@ -1201,7 +1223,10 @@ impl Tracker {
+             total_input += input;
+             total_output += output;
+             total_saved += saved;
+-            total_time_ms += time_ms;
++            if input > 0 {
++                total_time_ms += time_ms;
++                timed_commands += 1;
++            }
+         }
+ 
+         let avg_savings_pct = if total_input > 0 {
+@@ -1210,11 +1235,7 @@ impl Tracker {
+             0.0
+         };
+ 
+-        let avg_time_ms = if total_commands > 0 {
+-            total_time_ms / total_commands as u64
+-        } else {
+-            0
+-        };
++        let avg_time_ms = average_time_ms(total_time_ms, timed_commands);
+ 
+         let by_command = self.get_by_command(project_path)?; // added: pass project filter
+         let by_day = self.get_by_day(project_path)?; // added: pass project filter
+@@ -1324,7 +1345,8 @@ impl Tracker {
+                 SUM(input_tokens) as input,
+                 SUM(output_tokens) as output,
+                 SUM(saved_tokens) as saved,
+-                SUM(exec_time_ms) as total_time
++     
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4632** (closed): fix(init): preserve existing file permissions in atomic_write (@1932819331hy-debug)
+- **PR #4622** (2026-10-19): fix(init): only offer the proxy when rtk-proxy can run, and remove its base URL on uninstall (@kevin9327)
 - **PR #4578** (2026-10-16): fix(git): no log cap notice under git's usage on git 2.56 (@KuSh)
 - **PR #4575** (2026-10-14): chore(deps): bump googleapis/release-please-action from 4.4.1 to 5.0.0 (@dependabot[bot])
 - **PR #4574** (2026-10-14): chore(deps): bump actions/checkout from 4 to 7 (@dependabot[bot])
 - **PR #4573** (2026-10-14): chore(deps): bump actions/upload-artifact from 4 to 7 (@dependabot[bot])
-- **PR #4566** (2026-10-14): chore(master): release 1.0.1 (@rtk-release-bot[bot])
 
 ---
 
@@ -2348,53 +2529,28 @@ test(hook): pin exit codes across rtk rewrite (#3492)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hooks): leave git unrewritten in Claude Code managed worktrees
+## X. Merge pull request #4464 from taekop/fix/recall-content-hash-collision
 
 **RULE**:
-When implementing operations in `src/hooks/decision.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/contributing/TECHNICAL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2fdcaa7d`: hooks): leave git unrewritten in Claude Code managed worktrees. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c1af5fb`: Merge pull request #4464 from taekop/fix/recall-content-hash-collision. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/hooks/decision.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/contributing/TECHNICAL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    decide_for_agent_at(cmd, verdict, None)
-}
-
-/// [`decide_for_agent`] for a hook whose payload reports the command's working
-/// directory: inside a Claude Code managed worktree, `git` is left unrewritten.
-///
-/// Claude Code's worktree-isolation guard runs on the command *after* the hook
-/// has rewritten it, and it only accepts git spelled plainly (or under the few
-/// launchers it models). A rewritten `rtk git …` is refused outright as
-/// "cannot be shown not to be git", so no git command could run from an
-/// isolated session (#3864). The payload carries no isolation flag, but the
-/// managed worktrees always live at `<repo>/.claude/worktrees/<name>`, so that
-/// path shape is the signal (see [`in_claude_worktree`]). The rest of a chain
-/// is still rewritten: `git status && cargo build` → `git status && rtk cargo build`.
-pub(crate) fn decide_for_agent_at(
-    cmd: &str,
-    verdict: PermissionVerdict,
-    cwd: Option<&str>,
-) -> HookDecision {
-    let (mut excluded, transparent_prefixes) = crate::core::config::hook_rewrite_params();
-    if cwd.is_some_and(in_claude_worktree) {
-        excluded.push("git".to_string());
-    }
-    suppress_identity(
-        cmd,
-        decide
+2. A hint line is printed: `[full output: rtk recall 3f9c2a81d4e7b05a]` (failures) or `[+N hidden: rtk recall <hash>]` (truncated lists)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    suppress_identity(cmd, decide(cmd, verdict))
+2. A hint line is printed: `[full output: rtk recall 3f9c2a81d4e7]` (failures) or `[+N hidden: rtk recall <hash>]` (truncated lists)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2fdcaa7d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c1af5fb` are properly handled with clean fallback behavior.

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:21:13.159Z",
-  "total_cycles_completed": 3599,
-  "total_learnings_persisted": 3599,
-  "total_rules_promoted": 2762,
+  "last_updated": "2026-10-20T01:27:31.301Z",
+  "total_cycles_completed": 3603,
+  "total_learnings_persisted": 3603,
+  "total_rules_promoted": 2766,
   "history": [
-    {
-      "timestamp": "2026-10-19T18:42:23.447Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:42:26.142Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:42:28.590Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:48:45.891Z",
-      "repository": "a4csi/schema-org-validate",
-      "learningId": "learn-github-a4csi-schema-org-validate",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T18:48:48.780Z",
       "repository": "prof18/feed-flow",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T01:21:13.159Z",
       "repository": "wzh4869/AppPorts",
       "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:27:25.405Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:27:26.751Z",
+      "repository": "AndyTheFactory/newspaper4k",
+      "learningId": "learn-github-andythefactory-newspaper4k",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:27:29.061Z",
+      "repository": "alexdrone/Render",
+      "learningId": "learn-github-alexdrone-render",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:27:31.301Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

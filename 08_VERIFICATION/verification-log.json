@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-LS61",
-    "timestamp": "2026-10-19T09:19:11.065Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "0c2141b08dfe8480dd363f65ea36a4b7a98ccf46cef44474986070b8c8f07da7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-LXEF",
-    "timestamp": "2026-10-19T09:19:17.847Z",
-    "repository": "oceanbase/oceanbase",
-    "learningId": "learn-github-oceanbase-oceanbase",
-    "contentHash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6KDB",
-    "timestamp": "2026-10-19T09:35:20.735Z",
-    "repository": "microsoft/react-native-windows",
-    "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6LUA",
-    "timestamp": "2026-10-19T09:35:22.642Z",
-    "repository": "kubeedge/kubeedge",
-    "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-6PKV",
     "timestamp": "2026-10-19T09:35:27.487Z",
     "repository": "paradedb/paradedb",
@@ -7490,6 +7430,66 @@
     "repository": "wzh4869/AppPorts",
     "learningId": "learn-github-wzh4869-appports",
     "contentHash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6Y1H",
+    "timestamp": "2026-10-20T01:27:25.397Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-6Z2V",
+    "timestamp": "2026-10-20T01:27:26.743Z",
+    "repository": "AndyTheFactory/newspaper4k",
+    "learningId": "learn-github-andythefactory-newspaper4k",
+    "contentHash": "a097e5b00c9e2df0d9f0c90e35f161b3a927864101867e595c0303f0a035b26b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-70V1",
+    "timestamp": "2026-10-20T01:27:29.053Z",
+    "repository": "alexdrone/Render",
+    "learningId": "learn-github-alexdrone-render",
+    "contentHash": "09f8f2299bdbba2d68c31bce690d9451726cda85851b70796a8557c3726a4ee2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-72LA",
+    "timestamp": "2026-10-20T01:27:31.294Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "d57d61028b4c35bf89f302da4f20656fc9204cf41ab0dbed4958672fae1cd367",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `efdd6a86`  
+> **Source Version**: `392233f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:22:42.466Z  
+> **Timestamp**: 2026-10-20T01:27:31.000Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:22:42.337Z  
+> **Harvest Timestamp**: 2026-10-20T01:27:30.730Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1459,14 +1459,11 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5482** (2026-10-16): **chore: migrate homebrew tap repo target**
-  *Symptoms*: ## Description  This migrates the homebrew configurations over to the newly created [homebrew-tap](https://github.com/zarf-dev/homebrew-tap) repository in the zarf-dev organization.   This broadens release workflows and requirements to ensure all present and future maintainers can fully exercise the release process with vendor neutrality.   This homebrew tap works currently - `brew install zarf-dev/tap/zarf`. I am preparing a migration PR for the old tap and intend to run an RC release after this merges to exercise the tap token functionality.   Other notes: - see warnings in our release process regarding the `app-id` to `client-id` modification - description is being modified to fix a homebrew audit finding (there are other findings that can be fixed in future PR's) - the old secrets will be removed after this PR is merged  ## Related Issue  No associated issue  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5488** (2026-10-19): **chore(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0**
+  *Symptoms*: Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ossf/scorecard-action/releases">ossf/scorecard-action's releases</a>.</em></p> <blockquote> <h2>v2.5.0</h2> <h2>What's Changed</h2> <p>This release moves the action to Scorecard v5.6.0, the first Scorecard release since its hosted services moved to new infrastructure.</p> <p>For changes to checks and results, and what the infrastructure move means for you, see the <a href="https://github.com/ossf/scorecard/releases/tag/v5.6.0">Scorecard v5.6.0 release notes</a>.</p> <ul> <li>The action's container image is built with Go 1.27.2 on a refreshed distroless base. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The installer (<code>cmd/installer</code>) now creates <code>.github/workflows/scorecard.yml</code>, and still recognizes existing <code>scorecards.yml</code> and <code>scorecards-analysis.yml</code> workflows. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The Scorecard version in results now always matches the Scorecard release the action is built with. by <a href="https://github.com/justaugustus"><code>@​justaug
 
-- **Issue #5479** (2026-10-16): **feat: allow R.C. versions to pass version requirements**
-  *Symptoms*: ## Description  Generally speaking we're probably going to add the major features before the R.C. and so if we want people to ever try out an R.C. or for R.C's to pass tests including a version required package it makes sense to include them. The only downside is if the a version requirement is added after an R.C. the user wouldn't get the notice, but this is niche, and I'd rather have R.C.s be risky and more open  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 49536f854e5454b12eac2e88220e29d3c752e7e5 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6ad277e1ac9bffc12535571b |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5479?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5479?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Coverage Δ | | |---|---|---| | [src/internal/packager/requirements/requirements.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5479?src=pr&el=tree&filepath=src%2Finternal%2Fpackager%2Frequirements%2Frequirements.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2ludGVybmFsL3BhY2thZ2VyL3JlcXVpcmVtZW50cy9yZXF1aXJlbWVudHMuZ28=) | `75.75% <100.00%> (+1.98%)` | :arrow_up: |  ... and [1 file with indirect coverage changes](https://app.codecov
+- **Issue #5487** (2026-10-19): **chore(deps): bump the codeql group with 3 updates**
+  *Symptoms*: Bumps the codeql group with 3 updates: [github/codeql-action/upload-sarif](https://github.com/github/codeql-action), [github/codeql-action/init](https://github.com/github/codeql-action) and [github/codeql-action/analyze](https://github.com/github/codeql-action).  Updates `github/codeql-action/upload-sarif` from 4.38.2 to 4.38.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.38.3</h2> <ul> <li><em>Upcoming breaking change</em>: CodeQL version 2.21.2 and earlier were discontinued on 24 September 2026 alongside GitHub Enterprise Server 3.17, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4188">#4188</a></li> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.2">2.27.2</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4203">#4203</a></li> <li>Fixed a bug where the decision of whether to use a per-language bundle did not account for custom configurations that reference queries outside of compiled CodeQL packs. This issue was caught during internal testing and did not affect any customer repositories. We will resume the roll out of per-language bundles in the coming weeks. <a href
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1483,599 +1480,57 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `efdd6a86` (2026-10-16)
-**Commit Message**: fix: ensure chart order is preserved in state (#5477)
-
-Signed-off-by: Micah Nagel <[REDACTED_EMAIL]>
-
-**File**: `src/pkg/state/state.go` (modified, +14/-2)
-```diff
-@@ -1008,8 +1008,20 @@ func MergeInstalledChartsForComponent(existingCharts, installedCharts []Installe
- 	}
- 
- 	merged := make([]InstalledChart, 0, len(lookup))
--	for _, chart := range lookup {
--		merged = append(merged, chart)
-+	// Use the current deployment order, retaining previously recorded charts afterward.
-+	for _, chart := range installedCharts {
-+		k := key(chart)
-+		if chart, ok := lookup[k]; ok {
-+			merged = append(merged, chart)
-+			delete(lookup, k)
-+		}
-+	}
-+	for _, chart := range existingCharts {
-+		k := key(chart)
-+		if chart, ok := lookup[k]; ok {
-+			merged = append(merged, chart)
-+			delete(lookup, k)
-+		}
- 	}
- 
- 	return merged
-```
-
-**File**: `src/pkg/state/state_test.go` (modified, +63/-0)
-```diff
-@@ -754,6 +754,69 @@ func TestMergeInstalledChartsForComponent(t *testing.T) {
- 	}
- }
- 
-+func TestMergeInstalledChartsForComponentOrder(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		name            string
-+		existingCharts  []InstalledChart
-+		installedCharts []InstalledChart
-+		expectedCharts  []InstalledChart
-+	}{
-+		{
-+			name: "fresh install preserves deployment order",
-+			installedCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "policy"},
-+				{Namespace: "default", ChartName: "runtime"},
-+			},
-+			expectedCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "policy"},
-+				{Namespace: "default", ChartName: "runtime"},
-+			},
-+		},
-+		{
-+			name: "redeployment restores deployment order",
-+			existingCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "runtime"},
-+				{Namespace: "default", ChartName: "policy"},
-+			},
-+			installedCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "policy"},
-+				{Namespace: "default", ChartName: "runtime"},
-+			},
-+			expectedCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "policy"},
-+				{Namespace: "default", ChartName: "runtime"},
-+			},
-+		},
-+		{
-+			name: "old-only charts follow the current deployment",
-+			existingCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "runtime"},
-+				{Namespace: "default", ChartName: "legacy"},
-+				{Namespace: "default", ChartName: "policy"},
-+			},
-+			installedCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "policy"},
-+				{Namespace: "default", ChartName: "runtime"},
-+			},
-+			expectedCharts: []InstalledChart{
-+				{Namespace: "default", ChartName: "policy"},
-+				{Namespace: "default", ChartName: "runtime"},
-+				{Namespace: "default", ChartName: "legacy"},
-+			},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			actual := MergeInstalledChartsForComponent(tt.existingCharts, tt.installedCharts, false)
-+			require.Equal(t, tt.expectedCharts, actual)
-+		})
-+	}
-+}
-+
- func TestRegistryCertSecretData(t *testing.T) {
- 	t.Parallel()
- 
-```
-
----
-
-### Incident Patch 2: `5644019f` (2026-10-16)
-**Commit Message**: feat: allow R.C. versions to pass version requirements (#5479)
+### Incident Patch 1: `46669a61` (2026-10-19)
+**Commit Message**: test: fix image push unit test flake (#5481)
 
 Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `src/internal/packager/requirements/requirements.go` (modified, +8/-1)
+**File**: `src/pkg/images/push_test.go` (modified, +7/-7)
 ```diff
-@@ -6,6 +6,7 @@ package requirements
- 
+@@ -7,6 +7,7 @@ package images
  import (
+ 	"context"
  	"fmt"
-+	"strings"
++	"os"
+ 	"testing"
  
- 	"github.com/Masterminds/semver/v3"
- 	"github.com/zarf-dev/zarf/src/api"
-@@ -80,7 +81,13 @@ func ValidateVersionRequirements(requirements []api.VersionRequirement) error {
- 			return fmt.Errorf("failed to parse required version '%s': %w", req.Version, err)
- 		}
+ 	"github.com/stretchr/testify/require"
+@@ -65,12 +66,11 @@ func TestPush(t *testing.T) {
  
--		if currentVer.LessThan(requiredVer) {
-+		versionToCheck := currentVer
-+		if requiredVer.Prerelease() == "" && strings.HasPrefix(currentVer.Prerelease(), "rc") {
-+			// Release candidates include the features required by their corresponding stable release.
-+			versionToCheck = semver.New(currentVer.Major(), currentVer.Minor(), currentVer.Patch(), "", "")
-+		}
-+
-+		if versionToCheck.LessThan(requiredVer) {
- 			unmetRequirements = append(unmetRequirements, req)
- 		}
- 	}
-```
-
-**File**: `src/internal/packager/requirements/requirements_test.go` (modified, +41/-0)
-```diff
-@@ -129,6 +129,47 @@ func TestValidateVersionRequirements(t *testing.T) {
- 	}
- }
- 
-+func TestValidateVersionRequirements_ReleaseCandidate(t *testing.T) {
-+	originalVersion := config.CLIVersion
-+	t.Cleanup(func() { config.CLIVersion = originalVersion })
-+
-+	tests := []struct {
-+		name        string
-+		cliVersion  string
-+		required    string
-+		expectError bool
-+	}{
-+		{name: "matching release", cliVersion: "v0.88.0-rc1", required: "v0.88.0"},
-+		{name: "dotted release candidate", cliVersion: "v0.88.0-rc.1", required: "v0.88.0"},
-+		{name: "build metadata", cliVersion: "v0.88.0-rc1+build.123", required: "v0.88.0"},
-+		{name: "matching patch release", cliVersion: "v0.88.1-rc1", required: "v0.88.1"},
-+		{name: "older requirement", cliVersion: "v0.88.0-rc1", required: "v0.87.0"},
-+		{name: "newer patch required", cliVersion: "v0.88.0-rc1", required: "v0.88.1", expectError: true},
-+		{name: "newer minor required", cliVersion: "v0.88.0-rc1", required: "v0.89.0", expectError: true},
-+		{name: "newer major required", cliVersion: "v0.88.0-rc1", required: "v1.88.0", expectError: true},
-+		{name: "exact release candidate", cliVersion: "v0.88.0-rc.1", required: "v0.88.0-rc.1"},
-+		{name: "later release candidate", cliVersion: "v0.88.0-rc.2", required: "v0.88.0-rc.1"},
-+		{name: "earlier release candidate", cliVersion: "v0.88.0-rc.1", required: "v0.88.0-rc.2", expectError: true},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			config.CLIVersion = tt.cliVersion
-+			reqs := []api.VersionRequirement{{Version: tt.required, Reason: "required feature"}}
-+			err := ValidateVersionRequirements(reqs)
-+			if tt.expectError {
-+				var requirementErr *VersionRequirementsError
-+				require.ErrorAs(t, err, &requirementErr)
-+				require.Equal(t, tt.required, requirementErr.RequiredVersion)
-+				require.Equal(t, tt.cliVersion, requirementErr.CurrentVersion)
-+				require.Equal(t, reqs, requirementErr.Requirements)
-+			} else {
-+				require.NoError(t, err)
-+			}
-+		})
-+	}
-+}
-+
- func TestVersionRequirementsError_HighestVersion(t *testing.T) {
- 	tests := []struct {
- 		name         string
-```
-
----
-
-### Incident Patch 3: `b3f2f8e8` (2026-10-15)
-**Commit Message**: fix(create)!: isolate and enforce filepaths to layout directory (#5446)
-
-Signed-off-by: Brandt Keller <[REDACTED_EMAIL]>
-
-**File**: `src/api/v1beta1/component.go` (modified, +2/-2)
-```diff
-@@ -109,7 +109,7 @@ type KustomizeManifest struct {
- // Manifest defines raw manifests Zarf will deploy as a helm chart.
- type Manifest struct {
- 	// A name to give this collection of manifests; this will become the name of the dynamically-created helm chart.
--	Name string `json:"name" jsonschema:"maxLength=40"`
-+	Name string `json:"name" jsonschema:"maxLength=40,pattern=^[^/\\\\]*$"`
- 	// The namespace to deploy the manifests to.
- 	Namespace string `json:"namespace,omitempty"`
- 	// List of local K8s YAML files or remote URLs to deploy (in order).
-@@ -127,7 +127,7 @@ type Manifest struct {
- // Chart defines a helm chart to be deployed.
- type Chart struct {
- 	// The name of the chart within Zarf; note that this must be unique and does not need to be the same as the name in the chart repository.
--	Name string `json:"name"`
-+	Name string `json:"name" jsonschema:"pattern=^[^/\\\\]*$"`
- 	// The Helm repository where the chart is stored.
- 	HelmRepository *HelmRepositorySource `json:"helmRepository,omitempty" jsonschema:"oneof_required=helmRepository"`
- 	// The Git repository where the chart is stored.
-```
-
-**File**: `src/internal/api/v1alpha1/validate.go` (modified, +41/-28)
-```diff
-@@ -21,34 +21,36 @@ const (
- 
- // Package errors found during validation.
- const (
--	PkgValidateErrInitNoYOLO              = "sorry, you can't YOLO an init package"
--	PkgValidateErrConstant                = "invalid package constant: %w"
--	PkgValidateErrYOLONoOCI               = "OCI images not allowed in YOLO"
--	PkgValidateErrYOLONoGit               = "git repos not allowed in YOLO"
--	PkgValidateErrYOLONoArch              = "cluster architecture not allowed in YOLO"
--	PkgValidateErrYOLONoDistro            = "cluster distros not allowed in YOLO"
--	PkgValidateErrComponentNameNotUnique  = "component name %q is not unique"
--	PkgValidateErrComponentReqDefault     = "component %q cannot be both required and default"
--	PkgValidateErrComponentReqGrouped     = "component %q cannot be both required and grouped"
--	PkgValidateErrChartNameNotUnique      = "chart name %q is not unique"
--	PkgValidateErrChart                   = "invalid chart definition: %w"
--	PkgValidateErrManifestNameNotUnique   = "manifest name %q is not unique"
--	PkgValidateErrManifest                = "invalid manifest definition: %w"
--	PkgValidateErrGroupMultipleDefaults   = "group %q has multiple defaults (%q, %q)"
--	PkgValidateErrGroupOneComponent       = "group %q only has one component (%q)"
--	PkgValidateErrAction                  = "invalid action: %w"
--	PkgValidateErrActionCmdWait           = "action %q cannot be both a command and wait action"
--	PkgValidateErrActionClusterNetwork    = "a single wait action must contain only one of cluster or network"
--	PkgValidateErrChartName               = "chart %q exceed the maximum length of %d characters"
--	PkgValidateErrChartNamespaceMissing   = "chart %q must include a namespace"
--	PkgValidateErrChartURLOrPath          = "chart %q must have either a url or localPath"
--	PkgValidateErrChartVersion            = "chart %q must include a chart version"
--	PkgValidateErrChartValueExcludePath   = "chart %q excludePath %q must be a descendant of sourcePath %q"
--	PkgValidateErrManifestFileOrKustomize = "manifest %q must have at least one file or kustomization"
--	PkgValidateErrManifestNameLength      = "manifest %q exceed the maximum length of %d characters"
--	PkgValidateErrVariable                = "invalid package variable: %w"
--	PkgValidateErrNoComponents            = "package does not contain any compatible components"
--	PkgValidateErrActionTemplateOnCreate  = "templating is not supported in onCreate actions"
-+	PkgValidateErrInitNoYOLO                = "sorry, you can't YOLO an init package"
-+	PkgValidateErrConstant                  = "invalid package constant: %w"
-+	PkgValidateErrYOLONoOCI                 = "OCI images not allowed in YOLO"
-+	PkgValidateErrYOLONoGit                 = "git repos not allowed in YOLO"
-+	PkgValidateErrYOLONoArch                = "cluster architecture not allowed in YOLO"
-+	PkgValidateErrYOLONoDistro              = "cluster distros not allowed in YOLO"
-+	PkgValidateErrComponentNameNotUnique    = "component name %q is not unique"
-+	PkgValidateErrComponentReqDefault       = "component %q cannot be both required and default"
-+	PkgValidateErrComponentReqGrouped       = "component %q cannot be both required and grouped"
-+	PkgValidateErrChartNameNotUnique        = "chart name %q is not unique"
-+	PkgValidateErrChart                     = "invalid chart definition: %w"
-+	PkgValidateErrManifestNameNotUnique     = "manifest name %q is not unique"
-+	PkgValidateErrManifest                  = "invalid manifest definition: %w"
-+	PkgValidateErrGroupMultipleDefaults     = "group %q has multiple defaults (%q, %q)"
-+	PkgValidateErrGroupOneComponent         = "group %q only has one component (%q)"
-+	PkgValidateErrAction                    = "invalid action: %w"
-+	PkgValidateErrActionCmdWait             = "action %q cannot be both a command and wait action"
-+	PkgValidateErrActionClusterNetwork      = "a single wait action must contain only one of cluster or network"
-+	PkgValidateErrChartName                 = "chart %q exceed the maximum length of %d characters"
-+	PkgValidateErrChartNamespaceMissing     = "chart %q must include a namespace"
-+	PkgValidateErrChartURLOrPath            = "chart %q must have either a url or localPath"
-+	PkgValidateErrChartVersion              = "chart %q must include a chart version"
-+	PkgValidateErrChartValueExcludePath     = "chart %q excludePath %q must be a descendant of sourcePath %q"
-+	PkgValidateErrManifestFileOrKustomize   = "manifest %q must have at least one file or kustomization"
-+	PkgValidateErrManifestNameLength        = "manifest %q exceed the maximum length of %d characters"
-+	PkgValidateErrManifestNamePath          = "manifest %q must not contain path separators"
-+	PkgValidateErrDocumentationKeyPath      = "documentation key %q must not contain path separators"
-+	PkgValidateErrDocumentationKeyTraversal = "documentation key %q must not be a traversal path"
-+	PkgValidateErrNoComponents              = "package does not contain any compatible components"
-+	P
-```
-
-**File**: `src/internal/api/v1alpha1/validate_test.go` (modified, +33/-0)
-```diff
-@@ -153,6 +153,29 @@ func TestZarfPackageValidate(t *testing.T) {
- 	}
- }
- 
-+func TestValidatePackageDocumentationKeys(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		key     string
-+		wantErr string
-+	}{
-+		{key: "nested/document", wantErr: PkgValidateErrDocumentationKeyPath},
-+		{key: `nested\document`, wantErr: PkgValidateErrDocumentationKeyPath},
-+		{key: "..", wantErr: PkgValidateErrDocumentationKeyTraversal},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.key, func(t *testing.T) {
+ 	for _, tc := range testCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			// Push overwrites the index, this code sets it back, this means we can't run these tests in parallel
+-			idx, err := getIndexFromOCILayout(tc.SourceDirectory)
+-			require.NoError(t, err)
+-			defer func() {
+-				require.NoError(t, saveIndexToOCILayout(tc.SourceDirectory, idx))
+-			}()
 +			t.Parallel()
-+			err := ValidatePackage(v1alpha1.ZarfPackage{
-+				Components:    []v1alpha1.ZarfComponent{{Name: "component"}},
-+				Documentation: map[string]string{tt.key: "readme.md"},
-+			})
-+			require.ErrorContains(t, err, fmt.Sprintf(tt.wantErr, tt.key))
-+		})
-+	}
-+}
 +
- func TestValidateManifest(t *testing.T) {
- 	t.Parallel()
- 	longName := strings.Repeat("a", ZarfMaxChartNameLength+1)
-@@ -171,6 +194,16 @@ func TestValidateManifest(t *testing.T) {
- 			manifest:     v1alpha1.ZarfManifest{Name: longName, Files: []string{"a-file"}},
- 			expectedErrs: []string{fmt.Sprintf(PkgValidateErrManifestNameLength, longName, ZarfMaxChartNameLength)},
- 		},
-+		{
-+			name:         "name contains forward path separator",
-+			manifest:     v1alpha1.ZarfManifest{Name: "nested/manifest", Files: []string{"a-file"}},
-+			expectedErrs: []string{fmt.Sprintf(PkgValidateErrManifestNamePath, "nested/manifest")},
-+		},
-+		{
-+			name:         "name contains backslash path separator",
-+			manifest:     v1alpha1.ZarfManifest{Name: `nested\manifest`, Files: []string{"a-file"}},
-+			expectedErrs: []string{fmt.Sprintf(PkgValidateErrManifestNamePath, `nested\manifest`)},
-+		},
- 		{
- 			name:         "no files or kustomize",
- 			manifest:     v1alpha1.ZarfManifest{Name: "nothing-there"},
-```
-
-**File**: `src/internal/api/v1beta1/validate.go` (modified, +34/-20)
-```diff
-@@ -23,26 +23,29 @@ const (
++			// Push rewrites index.json, so each test needs its own copy of the layout.
++			sourceDirectory := t.TempDir()
++			require.NoError(t, os.CopyFS(sourceDirectory, os.DirFS(tc.SourceDirectory)))
+ 			ctx := testutil.TestContext(t)
+ 			address := testutil.SetupInMemoryRegistryDynamic(ctx, t)
+ 			if tc.namespace != "" {
+@@ -91,7 +91,7 @@ func TestPush(t *testing.T) {
+ 			opts := PushOptions{
+ 				PlainHTTP: true,
+ 			}
+-			err = Push(ctx, imageList, tc.SourceDirectory, regInfo, opts)
++			err := Push(ctx, imageList, sourceDirectory, regInfo, opts)
  
- // Package errors found during validation.
- const (
--	PkgValidateErrComponentNameNotUnique  = "component name %q is not unique"
--	PkgValidateErrChartNameNotUnique      = "chart name %q is not unique"
--	PkgValidateErrChart                   = "invalid chart definition: %w"
--	PkgValidateErrManifestNameNotUnique   = "manifest name %q is not unique"
--	PkgValidateErrManifest                = "invalid manifest definition: %w"
--	PkgValidateErrAction                  = "invalid action: %w"
--	PkgValidateErrActionCmdWait           = "action %q cannot be both a command and wait action"
--	PkgValidateErrActionClusterNetwork    = "a single wait action must contain only one of cluster or network"
--	PkgValidateErrActionSetValueOnDeploy  = "setValues is not supported in onCreate actions"
--	PkgValidateErrActionTemplateOnCreate  = "templating is not supported in onCreate actions"
--	PkgValidateErrChartName               = "chart %q exceed the maximum length of %d characters"
--	PkgValidateErrChartNamespaceMissing   = "chart %q must include a namespace"
--	PkgValidateErrManifestFileOrKustomize = "manifest %q must have at least one file or kustomization"
--	PkgValidateErrManifestNameLength      = "manifest %q exceed the maximum length of %d characters"
--	PkgValidateErrNoComponents            = "package does not contain any compatible components"
--	PkgValidateErrGitURLWithRef           = "git URL %q must not contain an embedded ref; use the ref field instead"
--	PkgValidateErrServiceRequiresInit     = "component %q declares service %q, but only ZarfInitConfig packages may declare services"
--	PkgValidateErrServiceNotUnique        = "service %q is declared by multiple components (%q, %q)"
--	PkgValidateErrFileChecksumAlgorithm   = "component %q file %q has unsupported checksum algorithm %q (expected sha256 or sha512)"
--	PkgValidateErrImageConflictingSources = "image %q has conflicting sources %q and %q"
-+	PkgValidateErrComponentNameNotUnique    = "component name %q is not unique"
-+	PkgValidateErrChartNameNotUnique        = "chart name %q is not unique"
-+	PkgValidateErrChart                     = "invalid chart definition: %w"
-+	PkgValidateErrManifestNameNotUnique     = "manifest name %q is not unique"
-+	PkgValidateErrManifest                  = "invalid manifest definition: %w"
-+	PkgValidateErrAction                    = "invalid action: %w"
-+	PkgValidateErrActionCmdWait             = "action %q cannot be both a command and wait action"
-+	PkgValidateErrActionClusterNetwork      = "a single wait action must contain only one of cluster or network"
-+	PkgValidateErrActionSetValueOnDeploy    = "setValues is not supported in onCreate actions"
-+	PkgValidateErrActionTemplateOnCreate    = "templating is not supported in onCreate actions"
-+	PkgValidateErrChartName                 = "chart %q exceed the maximum length of %d characters"
-+	PkgValidateErrChartNamespaceMissing     = "chart %q must include a namespace"
-+	PkgValidateErrManifestFileOrKustomize   = "manifest %q must have at least one file or kustomization"
-+	PkgValidateErrManifestNameLength        = "manifest %q exceed the maximum length of %d characters"
-+	PkgValidateErrManifestNamePath          = "manifest %q must not contain path separators"
-+	PkgValidateErrDocumentationKeyPath      = "documentation key %q must not contain path separators"
-+	PkgValidateErrDocumentationKeyTraversal = "documentation key %q must not be a traversal path"
-+	PkgValidateErrNoComponents              = "package does not contain any compatible components"
-+	PkgValidateErrGitURLWithRef             = "git URL %q must not contain an embedded ref; use the ref field instead"
-+	PkgValidateErrServiceRequiresInit       = "component %q declares service %q, but only ZarfInitConfig packages may declare services"
-+	PkgValidateErrServiceNotUnique          = "service %q is declared by multiple components (%q, %q)"
-+	PkgValidateErrFileChecksumAlgorithm     = "component %q file %q has unsupported checksum algorithm %q (expected sha256 or sha512)"
-+	PkgValidateErrImageConflictingSources   = "image %q has conflicting sources %q and %q"
- )
- 
- // ValidationErrors contains all errors found during package validation.
-@@ -74,6 +77,13 @@ func ValidatePackage(pkg v1beta1.Package) ValidationErrors {
- 	if len(pkg.Components) == 0 {
- 		errs = append(errs, errors.New(PkgValidateErrNoComponents))
- 	}
-+	for key := range pkg.Documentation {
-+		if key == ".." {
-+			errs = append(errs, fmt.Errorf(PkgValidateErrDocumentationKeyTraversal, key))
-+		} else if strings.ContainsAny(key, `/\`) {
-+			errs = append(errs, fmt.Errorf(PkgValidateErrDocumentationKeyPath, key))
-+		}
-+	}
- 	uniqueComponentNames := make(map[string]bool)
- 	serviceComponents := make(map[v1beta1.ServiceName]string)
- 	seenSources := make(map[string]v1beta1.ImageSource)
-@@ -308,6 +318,10 @@ func validateManifest(manifest v1beta1.Manifest) ValidationErrors {
- 		errs = append(errs, fmt.Errorf(PkgValidateErrManifestNameLength, manifest.Name, ZarfMaxChartNam
-```
-
-**File**: `src/internal/api/v1beta1/validate_test.go` (modified, +33/-0)
-```diff
-@@ -186,6 +186,29 @@ func TestValidatePackageFileChecksumAlgorithm(t *testing.T) {
- 	}
- }
- 
-+func TestValidatePackageDocumentationKeys(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		key     string
-+		wantErr string
-+	}{
-+		{key: "nested/document", wantErr: PkgValidateErrDocumentationKeyPath},
-+		{key: `nested\document`, wantErr: PkgValidateErrDocumentationKeyPath},
-+		{key: "..", wantErr: PkgValidateErrDocumentationKeyTraversal},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.key, func(t *testing.T) {
-+			t.Parallel()
-+			errs := ValidatePackage(v1beta1.Package{
-+				Components:    []v1beta1.Component{{Name: "component"}},
-+				Documentation: map[string]string{tt.key: "readme.md"},
-+			})
-+			require.ErrorContains(t, errs, fmt.Sprintf(tt.wantErr, tt.key))
-+		})
-+	}
-+}
-+
- func TestValidateManifest(t *testing.T) {
- 	t.Parallel()
- 	longName := strings.Repeat("a", ZarfMaxChartNameLength+1)
-@@ -209,6 +232,16 @@ func TestValidateManifest(t *testing.T) {
- 			manifest:     v1beta1.Manifest{Name: longName, Files: []string{"a-file"}},
- 			expectedErrs: []string{fmt.Sprintf(PkgValidateErrManifestNameLength, longName, ZarfMaxChartNameLength)},
- 		},
-+		{
-+			name:         "name contains forward path separator",
-+			manifest:     v1beta1.Manifest{Name: "nested/manifest", Files: []string{"a-file"}},
-+			expectedErrs: []string{fmt.Sprintf(PkgValidateErrManifestNamePath, "nested/manifest")},
-+		},
-+		{
-+			name:         "name contains path separator",
-+			manifest:     v1beta1.Manifest{Name: `nested\manifest`, Files: []string{"a-file"}},
-+			expectedErrs: []string{fmt.Sprintf(PkgValidateErrManifestNamePath, `nested\manifest`)},
-+		},
- 		{
- 			name:         "no files or kustomize",
- 			manifest:     v1beta1.Manifest{Name: "nothing-there"},
-```
-
-**File**: `src/internal/packager/helm/common.go` (modified, +10/-3)
-```diff
-@@ -79,8 +79,11 @@ func ChartFromZarfManifest(manifest api.Manifest, manifestPath, packageName, com
- 
- // loadChartFromTarball returns a helm chart from a tarball.
- func loadChartFromTarball(chart api.Chart, paths layout.ChartPaths) (*chartv2.Chart, error) {
--	// Load the loadedChart tarball
--	loadedChart, err := loader.Load(paths.Archive(chart.Name, chart.LegacyVersion))
-+	archivePath, err := paths.ArchivePath(chart.Name, chart.LegacyVersion)
-+	if err != nil {
-+		return nil, err
-+	}
-+	loadedChart, err := loader.Load(archivePath)
- 	if err != nil {
- 		return nil, fmt.Errorf("unable to load helm chart archive: %w", err)
- 	}
-@@ -97,7 +100,11 @@ func parseChartValues(chart api.Chart, paths layout.ChartPaths, valuesOverrides
- 	valueOpts := &values.Options{}
- 
- 	for i := range chart.ValuesFiles {
--		valueOpts.ValueFiles = append(valueOpts.ValueFiles, paths.ValuesFile(chart.Name, chart.LegacyVersion, i))
-+		valuePath, err := paths.ValuesFilePath(chart.Name, chart.LegacyVersion, i)
-+		if err != nil {
-+			return nil, err
-+		}
-+		valueOpts.ValueFiles = append(valueOpts.ValueFiles, valuePath)
- 	}
- 
- 	httpProvider := getter.Provider{
-```
-
-**File**: `src/internal/packager/helm/repo.go` (modified, +13/-4)
-```diff
-@@ -153,7 +153,11 @@ func PackageChartFromLocalFiles(ctx context.Context, chart api.Chart, paths layo
- 
- 	// Handle the chart directory or tarball.
- 	var saved string
--	temp := filepath.Join(filepath.Dir(paths.Archive(chart.Name, chart.LegacyVersion)), "temp")
-+	archivePath, err := paths.ArchivePath(chart.Name, chart.LegacyVersion)
-+	if err != nil {
-+		return err
-+	}
-+	temp := filepath.Join(filepath.Dir(archivePath), "temp")
- 	if _, ok := cl.(loader.DirLoader); ok {
- 		err = buildChartDependencies(ctx, chart, cachePath, parsed.Metadata.Dependencies, remoteOptions)
- 		if err != nil {
-@@ -383,8 +387,11 @@ func DownloadChartFromGitToTemp(ctx context.Context, source api.Repository) (str
- 
- func finalizeChartPackage(ctx context.Context, chart api.Chart, paths layout.ChartPaths, saved string) error {
- 	// Ensure the name is consistent for deployments
--	err := helpers.CreatePathAndCopy(saved, paths.Archive(chart.Name, chart.LegacyVersion))
-+	archivePath, err := paths.ArchivePath(chart.Name, chart.LegacyVersion)
- 	if err != nil {
-+		return err
-+	}
-+	if err := helpers.CreatePathAndCopy(saved, archivePath); err != nil {
- 		return fmt.Errorf("unable to save the final chart tarball: %w", err)
- 	}
- 
-@@ -397,8 +404,10 @@ func finalizeChartPackage(ctx context.Context, chart api.Chart, paths layout.Cha
- 
- func packageValues(ctx context.Context, chart api.Chart, paths layout.ChartPaths) error {
- 	for i, valuesFile := range chart.ValuesFiles {
--		dst := paths.ValuesFile(chart.Name, chart.LegacyVersion, i)
--
-+		dst, err := paths.ValuesFilePath(chart.Name, chart.LegacyVersion, i)
-+		if err != nil {
-+			return err
-+		}
- 		if helpers.IsURL(valuesFile.Path) {
- 			if err := utils.DownloadToFile(ctx, valuesFile.Path, dst); err != nil {
- 				return fmt.Errorf(lang.ErrDownloading, valuesFile.Path, err)
-```
-
-**File**: `src/pkg/lint/schema_test.go` (modified, +42/-0)
-```diff
-@@ -317,6 +317,48 @@ func TestV1Beta1SourceOneOfSchema(t *testing.T) {
- 			}),
- 			valid: false,
- 		},
-+		{
-+			name: "manifest rejects forward path separators",
-+			doc: baseDoc(map[string]any{
-+				"name": "component",
-+				"manifests": []any{map[string]any{
-+					"name":  "nested/manifest",
-+					"files": []any{"manifest.yaml"},
-+				}},
-+			}),
-+			valid: false,
-+		},
-+		{
-+			name: "manifest rejects path separators",
-+			doc: baseDoc(map[string]any{
-+				"name": "component",
-+				"manifests": []any{map[string]any{
-+					"name":  `nested\manifest`,
-+					"files": []any{"manifest.yaml"},
-+				}},
-+			}),
-+			valid: false,
-+		},
-+		{
-+			name: "chart rejects forward path separators",
-+			doc: baseDoc(chartComponent(map[string]any{
-+				"name": "nested/chart",
-+				"local": map[string]any{
-+					"path": "chart",
-+				},
-+			})),
-+			valid: false,
-+		},
-+		{
-+			name: "chart rejects backslash path separators",
-+			doc: baseDoc(chartComponent(map[string]any{
-+				"name": `nested\chart`,
-+				"local": map[string]any{
-+					"path": "chart",
-+				},
-+			})),
-+			valid: false,
-+		},
- 	}
- 
- 	for _, tt := range tests {
+ 			if tc.expectErr {
+ 				require.Error(t, err, tc.expectErr)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5488** (2026-10-19): chore(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
+- **PR #5487** (2026-10-19): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
+- **PR #5486** (2026-10-19): chore(deps): bump the actions-organization group with 3 updates (@dependabot[bot])
+- **PR #5485** (2026-10-19): chore: goreleaser signed commits and dco bot bypass (@brandtkeller)
 - **PR #5482** (2026-10-16): chore: migrate homebrew tap repo target (@brandtkeller)
-- **PR #5479** (2026-10-16): feat: allow R.C. versions to pass version requirements (@AustinAbro321)
-- **PR #5477** (2026-10-16): fix: ensure chart order is preserved in state (@mjnagel)
-- **PR #5475** (2026-10-15): docs: v1beta1 migration page grammar (@AustinAbro321)
-- **PR #5473** (2026-10-16): feat!: remove global cachepath SDK option (@AustinAbro321)
-- **PR #5471** (2026-10-15): feat!: make component services an object (@AustinAbro321)
+- **PR #5481** (2026-10-19): test: fix image push unit test flake (@AustinAbro321)
 
 ---
 
@@ -2095,42 +1550,40 @@ Signed-off-by: Brandt Keller <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ensure chart order is preserved in state (#5477)
+## X. test: fix image push unit test flake (#5481)
 
 **RULE**:
-When implementing operations in `src/pkg/state/state.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/images/push_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `efdd6a86`: ensure chart order is preserved in state (#5477). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46669a61`: test: fix image push unit test flake (#5481). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/state/state.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/images/push_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Use the current deployment order, retaining previously recorded charts afterward.
-	for _, chart := range installedCharts {
-		k := key(chart)
-		if chart, ok := lookup[k]; ok {
-			merged = append(merged, chart)
-			delete(lookup, k)
-		}
-	}
-	for _, chart := range existingCharts {
-		k := key(chart)
-		if chart, ok := lookup[k]; ok {
-			merged = append(merged, chart)
-			delete(lookup, k)
-		}
+	"os"
+			t.Parallel()
+
+			// Push rewrites index.json, so each test needs its own copy of the layout.
+			sourceDirectory := t.TempDir()
+			require.NoError(t, os.CopyFS(sourceDirectory, os.DirFS(tc.SourceDirectory)))
+			err := Push(ctx, imageList, sourceDirectory, regInfo, opts)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	for _, chart := range lookup {
-		merged = append(merged, chart)
+			// Push overwrites the index, this code sets it back, this means we can't run these tests in parallel
+			idx, err := getIndexFromOCILayout(tc.SourceDirectory)
+			require.NoError(t, err)
+			defer func() {
+				require.NoError(t, saveIndexToOCILayout(tc.SourceDirectory, idx))
+			}()
+			err = Push(ctx, imageList, tc.SourceDirectory, regInfo, opts)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `efdd6a86` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46669a61` are properly handled with clean fallback behavior.
