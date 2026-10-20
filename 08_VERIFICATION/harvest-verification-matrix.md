@@ -3956,3 +3956,5 @@
 | `CYCLE-20261020-E7X1` | `2026-10-20T18:20:50.965Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3317` | Yes (`2c62e6de...`) |
 | `CYCLE-20261020-MLCQ` | `2026-10-20T18:27:21.626Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`31840917...`) |
 | `CYCLE-20261020-MUOB` | `2026-10-20T18:27:33.707Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3318` | Yes (`1f188b09...`) |
+| `CYCLE-20261020-UNH4` | `2026-10-20T18:33:37.624Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1183, Rule 3319, Rule 3320` | Yes (`88d67da8...`) |
+| `CYCLE-20261020-WRNQ` | `2026-10-20T18:35:16.358Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3321, Rule 3322, Rule 3323` | Yes (`adbe8f36...`) |

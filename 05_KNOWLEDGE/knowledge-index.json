@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T18:27:33.653Z",
+  "last_updated": "2026-10-20T18:35:16.302Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9983,13 +9983,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "fastapi/fastapi",
       "repository": "fastapi/fastapi",
-      "slug": "tiangolo-fastapi",
+      "slug": "fastapi-fastapi",
       "platform": "github",
-      "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "03002a00",
-      "content_hash": "4b26a9ebe023e01d57404d9894b490d1361cb6528c0edd3d5ecc7911a6a51644",
-      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "f6ce798f",
+      "content_hash": "adbe8f365eaabd637ed6150f49ce66ec3aa063e848114ce4ad37ca8a8ec8ffa1",
+      "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
         {
           "number": 1664,
@@ -10030,6 +10030,21 @@
           "number": 3085,
           "title": "Decouple Multi-Source Data Extraction from Default Injection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3321,
+          "title": "Tri-State Wire Protocol Sentinel Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3322,
+          "title": "Threadpool Capacity Limiter Decoupling for Context Cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3323,
+          "title": "Diagnostic Wire-Key Alignment in Validation Errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10037,7 +10052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:48:12.797Z",
+      "verified_at": "2026-10-20T18:35:16.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23995,7 +24010,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "1c72a561e3c70dc9fdfbafddabced2c7b019ddf2937c3f933fbeb2f541c20d98",
+      "content_hash": "88d67da89eeb4663728e579fd574d7f1866ab997188a427a201a00901c7d0355",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -24074,7 +24089,7 @@
         {
           "number": 1183,
           "title": "Image Token Isolation Rule",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1184,
@@ -24160,6 +24175,16 @@
           "number": 2151,
           "title": "Respecting Maximum Context Length in Tokenization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3319,
+          "title": "Vision‑Encoder Alignment Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3320,
+          "title": "Context‑Length Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24180,7 +24205,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-19T04:53:04.037Z",
+      "verified_at": "2026-10-20T18:33:37.583Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72833,15 +72858,15 @@
       "learning_id": "rule-1183",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1183,
-      "title": "Image Token Isolation Rule (Harvested from TaichuAI/ZDTaichu5.0-9B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Image Token Isolation Rule",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-10-20T18:33:37.583Z"
     },
     "rule-1184": {
       "learning_id": "rule-1184",
@@ -103619,6 +103644,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T18:27:33.634Z"
+    },
+    "rule-3319": {
+      "learning_id": "rule-3319",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3319,
+      "title": "Vision‑Encoder Alignment Rule",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:33:37.583Z"
+    },
+    "rule-3320": {
+      "learning_id": "rule-3320",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3320,
+      "title": "Context‑Length Consistency Rule",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:33:37.583Z"
+    },
+    "rule-3321": {
+      "learning_id": "rule-3321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3321,
+      "title": "Tri-State Wire Protocol Sentinel Allocation",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "f6ce798f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:35:16.293Z"
+    },
+    "rule-3322": {
+      "learning_id": "rule-3322",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3322,
+      "title": "Threadpool Capacity Limiter Decoupling for Context Cleanup",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "f6ce798f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:35:16.293Z"
+    },
+    "rule-3323": {
+      "learning_id": "rule-3323",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3323,
+      "title": "Diagnostic Wire-Key Alignment in Validation Errors",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "f6ce798f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T18:35:16.293Z"
     }
   },
   "aliases": {

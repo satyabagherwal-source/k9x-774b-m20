@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "1c72a561e3c70dc9fdfbafddabced2c7b019ddf2937c3f933fbeb2f541c20d98",
-    "lastHarvestedAt": "2026-10-19T04:53:04.073Z",
+    "contentHash": "88d67da89eeb4663728e579fd574d7f1866ab997188a427a201a00901c7d0355",
+    "lastHarvestedAt": "2026-10-20T18:33:37.631Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -6333,10 +6333,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/fastapi/fastapi",
-    "sourceVersion": "03002a00",
+    "sourceVersion": "f6ce798f",
     "license": "MIT",
-    "contentHash": "14fa38036e60ac35856cc5b793905d43f1328967a01e69b164b4ae67d49587b6",
-    "lastHarvestedAt": "2026-10-20T03:46:41.920Z",
+    "contentHash": "adbe8f365eaabd637ed6150f49ce66ec3aa063e848114ce4ad37ca8a8ec8ffa1",
+    "lastHarvestedAt": "2026-10-20T18:35:16.365Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "ataraxy-labs-sem": {

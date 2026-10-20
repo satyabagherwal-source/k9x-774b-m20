@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T18:27:33.719Z",
-  "total_cycles_completed": 3933,
-  "total_learnings_persisted": 3933,
-  "total_rules_promoted": 3143,
+  "last_updated": "2026-10-20T18:35:16.368Z",
+  "total_cycles_completed": 3935,
+  "total_learnings_persisted": 3935,
+  "total_rules_promoted": 3149,
   "history": [
-    {
-      "timestamp": "2026-10-20T06:49:32.192Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T06:49:32.799Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T06:49:38.200Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1403,6 +1389,20 @@
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:33:37.634Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T18:35:16.368Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

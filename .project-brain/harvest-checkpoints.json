@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T18:27:33.722Z",
+  "last_updated": "2026-10-20T18:35:16.371Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "1c72a561e3c70dc9fdfbafddabced2c7b019ddf2937c3f933fbeb2f541c20d98",
-      "verified_at": "2026-10-19T04:53:04.090Z",
+      "content_hash": "88d67da89eeb4663728e579fd574d7f1866ab997188a427a201a00901c7d0355",
+      "verified_at": "2026-10-20T18:33:37.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:53:04.090Z"
+      "last_updated": "2026-10-20T18:33:37.636Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "4b26a9ebe023e01d57404d9894b490d1361cb6528c0edd3d5ecc7911a6a51644",
-      "verified_at": "2026-10-20T05:48:12.868Z",
+      "content_hash": "adbe8f365eaabd637ed6150f49ce66ec3aa063e848114ce4ad37ca8a8ec8ffa1",
+      "verified_at": "2026-10-20T18:35:16.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:48:12.868Z"
+      "last_updated": "2026-10-20T18:35:16.371Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",

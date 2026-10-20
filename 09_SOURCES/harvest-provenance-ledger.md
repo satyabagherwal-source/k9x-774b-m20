@@ -3963,3 +3963,5 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `f366493a` | Multi-dimensional audit evidence | 2026-10-20T18:20:50.972Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-20T18:27:21.629Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `82fccd26` | Multi-dimensional audit evidence | 2026-10-20T18:27:33.714Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-20T18:33:37.631Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `f6ce798f` | Multi-dimensional audit evidence | 2026-10-20T18:35:16.365Z |
