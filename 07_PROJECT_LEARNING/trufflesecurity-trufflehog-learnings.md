@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `3bba824f`  
+> **Source Version**: `400d35c2`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:47:13.674Z  
+> **Timestamp**: 2026-10-20T16:50:36.860Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:47:13.669Z  
+> **Harvest Timestamp**: 2026-10-20T16:50:36.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28606 stars
+- **Stars / Engagement**: 28609 stars
 
 ---
 
@@ -1140,186 +1140,463 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3bba824f` (2026-10-20)
-**Commit Message**: Mark results whose verification was skipped (#5448)
+### Incident Patch 1: `400d35c2` (2026-10-20)
+**Commit Message**: Clean up Git source logging for per-source debug (#5451)
 
-Add Result.VerificationSkipped so consumers can tell "no verifier ran"
-apart from "the verifier ran and the credential did not verify". The
-engine sets it when verification is disabled for the chunk and detector,
-and on overlap results it emits without verifying. Verdicts (Verified
-and the verification error) are left untouched, and cache-served results
-are not marked since VerificationFromCache already covers them.
+* Clean up Git source logging for per-source debug
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Log through the call's context everywhere and drop context.Background()
+in the GitHub commit lookup. Move lines to the levels in the source
+logging rules and add V(4) lines for skips and fallbacks. Stop logging
+an error that can hold the raw URL and redact separately passed tokens
+from git output. Add debug logging tests with logtest.DebugContext
 
-**File**: `pkg/detectors/detectors.go` (modified, +8/-0)
+* Fix missing source fields in source manager logs
+
+The check for existing job and source fields compared ctx.Value to "",
+but a missing value is nil, so the fields were never added and CLI
+logs had no source_name or job_id. Check for nil instead and move the
+repeated block into one withSourceFields helper. Add a test for both
+the added fields and the caller-set case.
+
+* Redact percent-encoded tokens from git clone output
+
+**File**: `pkg/sources/git/git.go` (modified, +93/-52)
 ```diff
-@@ -116,6 +116,14 @@ type Result struct {
- 	// VerificationFromCache indicates whether this result's verification result came from the verification cache rather
- 	// than an actual remote request.
- 	VerificationFromCache bool
-+	// VerificationSkipped indicates that the engine produced this result without attempting remote verification,
-+	// either because verification was disabled for the result's source or detector, or because the engine withheld
-+	// verification after multiple detectors matched the same secret. It lets consumers that measure verifier activity
-+	// tell "the verifier did not run" apart from "the verifier ran and the credential did not verify". It is purely
-+	// informational: Verified and the verification error keep whatever the detector or engine assigned, so a skipped
-+	// result still reports as unverified (or with an overlap verification error) exactly as it would without this
-+	// field.
-+	VerificationSkipped bool
- 	// Raw contains the raw secret identifier data. Prefer IDs over secrets since it is used for deduping after hashing.
- 	Raw []byte
- 	// RawV2 contains the raw secret identifier that is a combination of both the ID and the secret.
-```
-
-**File**: `pkg/engine/engine.go` (modified, +13/-0)
-```diff
-@@ -1141,6 +1141,10 @@ func (e *Engine) verificationOverlapWorker(ctx context.Context) {
- 						if e.verificationOverlapTracker != nil {
- 							e.verificationOverlapTracker.Add(1)
- 						}
-+						// The overlap error stays the verdict; VerificationSkipped additionally records that no
-+						// verifier ran, so consumers counting verifier outcomes don't read errOverlap as a provider
-+						// failure.
-+						res.VerificationSkipped = true
- 						res.SetVerificationError(errOverlap)
- 						e.processResult(
- 							ctx,
-@@ -1249,6 +1253,15 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
- 			resultsProduced.WithLabelValues(detectorNameStr).Add(float64(len(results)))
- 		}
- 
-+		// With verification disabled for this chunk and detector, results carry whatever verdict the detector assigned
-+		// without contacting the provider (normally unverified). Leave that verdict untouched and only record that the
-+		// verifier never ran. Verifying paths, including cache hits, leave VerificationSkipped false.
-+		if !data.verify {
-+			for i := range results {
-+				results[i].VerificationSkipped = true
-+			}
-+		}
-+
- 		detectorExecutionCount.WithLabelValues(
- 			detectorNameStr,
- 			sourceTypeStr,
-```
-
-**File**: `pkg/engine/engine_test.go` (modified, +135/-7)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"google.golang.org/protobuf/testing/protocmp"
- 	"pgregory.net/rapid"
- 
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/cache/simple"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/config"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/custom_detectors"
-@@ -983,12 +984,13 @@ func TestProcessResult_AllFieldsCopied(t *testing.T) {
- 
- 	// Arrange: Create a Result
- 	result := detectors.Result{
--		DetectorType: detector_typepb.DetectorType(-1),
--		ExtraData:    map[string]string{"key": "value"},
--		Raw:          []byte("something"),
--		RawV2:        []byte("something:else"),
--		Redacted:     "someth***",
--		Verified:     true,
-+		DetectorType:        detector_typepb.DetectorType(-1),
-+		ExtraData:           map[string]string{"key": "value"},
-+		Raw:                 []byte("something"),
-+		RawV2:               []byte("something:else"),
-+		Redacted:            "someth***",
-+		Verified:            true,
-+		VerificationSkipped: true,
+@@ -261,6 +261,23 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
+ 		UseCustomContentWriter: s.useCustomContentWriter,
  	}
- 
- 	// Act
-@@ -1005,6 +1007,7 @@ func TestProcessResult_AllFieldsCopied(t *testing.T) {
- 	assert.Equal(t, []byte("something:else"), r.RawV2)
- 	assert.Equal(t, "someth***", r.Redacted)
- 	assert.True(t, r.Verified)
-+	assert.True(t, r.VerificationSkipped)
- 	assert.Equal(t, detector_typepb.DetectorType(-1), r.DetectorType)
- 	assert.Equal(t, sources.SourceID(1), r.SourceID)
- 	assert.Equal(t, sources.JobID(2), r.JobID)
-@@ -1849,6 +1852,29 @@ func (p passthroughDetector) Keywords() []string                 { return p.keyw
- func (p passthroughDetector) Type() detector_typepb.DetectorType { return p.detectorType }
- func (p passthroughDetector) Description() string                { return "fake detector for testing" }
- 
-+// fixedVerdictDetector reports the same verdict whether or not verification was requested, so tests can confirm the
-+// engine passes verdicts through untouched while recording whether verification was attempted.
-+type fixedVerdictDetector struct {
-+	verified        bool
-+	verificationErr error
-+}
+ 	s.git = NewGit(cfg)
 +
-+func (d fixedVerdictDetector) FromData(_ aCtx.Context, _ bool, data []byte) ([]detectors.Result, error) {
-+	result := detectors.Result{
-+		DetectorType: detector_typepb.DetectorType(-1),
-+		Raw:          data,
-+		Verified:     d.verified,
-+	}
-+	result.SetVerificationError(d.verificationErr)
-+	return []detectors.Result{result}, nil
-+}
-+
-+func (d fixedVerdictDetector) Keywords() []string { return []string{"keyword"} }
-+func (d fixedVerdictDetector) Type() detector_typepb.DetectorType {
-+	return detector_typepb.DetectorType(-1)
-+}
-+func (d fixedVerdictDetector) Description() string { return "fixed verdict detector for testing" }
-+
- type passthroughDecoder struct{}
- 
- func (p passthroughDecoder) FromChunk(chunk *sources.Chunk) *decoders.DecodableChunk {
-@@ -1910,6 +1936,102 @@ func TestEngine_DetectChunk_UsesVerifyFlag(t *testing.T) {
- 	}
++	// log the config choices so support can see how the source was set up
++	// only counts and flags, never URLs or credentials
++	aCtx.Logger().V(1).Info("git source initialized",
++		"repo_count", len(conn.GetRepositories()),
++		"dir_count", len(conn.GetDirectories()),
++		"auth_type", fmt.Sprintf("%T", conn.GetCredential()),
++		"base", conn.GetBase(),
++		"head", conn.GetHead(),
++		"max_depth", conn.GetMaxDepth(),
++		"bare", conn.GetBare(),
++		"skip_binaries", conn.GetSkipBinaries(),
++		"skip_archives", conn.GetSkipArchives(),
++		"has_include_filter", conn.GetIncludePathsFile() != "",
++		"has_exclude_filter", conn.GetExcludePathsFile() != "",
++		"has_exclude_globs", conn.GetExcludeGlobs() != "",
++	)
+ 	return nil
  }
  
-+// TestEngine_DetectChunk_MarksVerificationSkippedWithoutChangingVerdict validates that detectChunk marks results
-+// produced with verification disabled as VerificationSkipped, leaves results produced with verification enabled
-+// unmarked, and in every case preserves the verdict (Verified and the verification error) the detector assigned.
-+func TestEngine_DetectChunk_MarksVerificationSkippedWithoutChangingVerdict(t *testing.T) {
-+	ctx := context.Background()
+@@ -299,7 +316,7 @@ func (s *Source) scanRepos(ctx context.Context, reporter sources.ChunkReporter)
+ 		}
+ 
+ 		if err := s.scanRepo(ctx, repoURI, reporter); err != nil {
+-			ctx.Logger().Info("error scanning repository", "repo", repoURI, "error", err)
++			ctx.Logger().Error(err, "error scanning repository", "repo", repoURI)
+ 			continue
+ 		}
+ 	}
+@@ -361,7 +378,7 @@ func (s *Source) scanDirs(ctx context.Context, reporter sources.ChunkReporter) e
+ 		}
+ 
+ 		if err := s.scanDir(ctx, gitDir, reporter); err != nil {
+-			ctx.Logger().Info("error scanning repository", "repo", gitDir, "error", err)
++			ctx.Logger().Error(err, "error scanning repository", "repo", gitDir)
+ 			continue
+ 		}
+ 	}
+@@ -372,6 +389,7 @@ func (s *Source) scanDirs(ctx context.Context, reporter sources.ChunkReporter) e
+ func (s *Source) scanDir(ctx context.Context, gitDir string, reporter sources.ChunkReporter) error {
+ 	if !s.scanOptions.Bare && strings.HasSuffix(gitDir, "git") {
+ 		// TODO: Figure out why we skip directories ending in "git".
++		ctx.Logger().V(4).Info("skipping directory", "path", gitDir, "reason", "non-bare directory name ends in git")
+ 		return nil
+ 	}
+ 
+@@ -666,39 +684,43 @@ func executeClone(ctx context.Context, params cloneParams) (*git.Repository, err
+ 	gitArgs = append(gitArgs, cloneURL.String(), params.clonePath)
+ 	cloneCmd := exec.CommandContext(ctx, "git", gitArgs...)
+ 
+-	safeURL, secretForRedaction, err := stripPassword(params.gitURL)
++	// the parse error from stripPassword contains the raw URL, which can hold
++	// a password, so only log that stripping failed, not the error itself
++	safeURL, urlPassword, err := stripPassword(params.gitURL)
+ 	if err != nil {
+-		ctx.Logger().V(1).Info("error stripping password from git url", "error", err)
++		ctx.Logger().V(4).Info("could not strip password from git url; repo field left empty")
+ 	}
+-	logger := ctx.Logger().WithValues(
++	ctx = context.WithValues(ctx,
+ 		"subcommand", "git clone",
+ 		"repo", safeURL,
+ 		"path", params.clonePath,
+ 		"args", params.args,
+ 	)
+ 
+-	logger.V(3).Info("executing git clone command")
++	ctx.Logger().V(2).Info("executing git clone command")
+ 	outputBytes, err := cloneCmd.CombinedOutput()
+-	var output string
+-	if secretForRedaction != "" {
+-		output = strings.ReplaceAll(string(outputBytes), secretForRedaction, "<secret>")
+-	} else {
+-		output = string(outputBytes)
+-	}
 +
-+	testCases := []struct {
-+		name        string
-+		verify      bool
-+		detector    fixedVerdictDetector
-+		wantSkipped bool
-+	}{
-+		{name: "verify=false, unverified", verify: false, detector: fixedVerdictDetector{}, wantSkipped: true},
-+		{name: "verify=false, detector reports verified", verify: false, detector: fixedVerdictDetector{verified: true}, wantSkipped: true},
-+		{name: "verify=false, detector reports error", verify: false, detector: fixedVerdictDetector{verificationErr: fmt.Errorf("boom")}, wantSkipped: true},
-+		{name: "verify=true, unverified", verify: true, detector: fixedVerdictDetector{}, wantSkipped: false},
-+		{name: "verify=true, verified", verify: true, detector: fixedVerdictDetector{verified: true}, wantSkipped: false},
-+		{name: "verify=true, error", verify: true, detector: fixedVerdictDetector{verificationErr: fmt.Errorf("boom")}, wantSkipped: false},
++	// hide passwords from the git output before it is logged or returned
++	// the password can be inside the url, or passed in separately and added
++	// to the url above when authInUrl is set
++	userInfoPassword, _ := params.userInfo.Password()
++	output := redactPasswords(string(outputBytes), urlPassword, userInfoPassword)
+ 
+ 	if err != nil {
+ 		err = fmt.Errorf("error executing git clone: %w, %s", err, output)
+ 	}
+-	logger.V(3).Info("git subcommand finished", "output", output)
++	ctx.Logger().V(5).Info("git subcommand finished", "output", output, "duration", time.Since(start).String())
+ 
+ 	if common.IsDone(ctx) {
+ 		return nil, fmt.Errorf("git clone timed out (after %s)", time.Since(start))
+ 	} else if cloneCmd.ProcessState == nil {
+ 		return nil, fmt.Errorf("clone command exited with no output")
+ 	} else if cloneCmd.ProcessState.ExitCode() != 0 {
+-		logger.V(0).Info("git clone failed", "error", err)
+ 		failureReason := ClassifyCloneError(output)
+ 		exitCode := cloneCmd.ProcessState.ExitCode()
++		// the error is returned and logged by the caller; this line only adds
++		// how the failure was classified, which decides if it is retried
++		ctx.Logger().V(4).Info("git clone attempt failed", "failure_reason", failureReason, "exit_code", exitCode)
+ 		metricsInstance.RecordCloneOperation(statusFailure, failureReason, exitCode)
+ 		return nil, fmt.Errorf("could not clone repo: %s, %w", safeURL, err)
+ 	}
+@@ -707,13 +729,29 @@ func executeClone(ctx context.Context, params cloneParams) (*git.Repository, err
+ 	if err != nil {
+ 		return nil, fmt.Errorf("could not open cloned repo: %w", err)
+ 	}
+-	logger.V(1).Info("successfully cloned repo", "time_seconds", time.Since(start).Seconds())
++	ctx.Logger().V(2).Info(
+```
+
+**File**: `pkg/sources/git/git_test.go` (modified, +134/-0)
+```diff
+@@ -13,13 +13,18 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/go-logr/zapr"
+ 	"github.com/kylelemons/godebug/pretty"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/feature"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zapcore"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+@@ -2324,3 +2329,132 @@ func gitHasObject(t *testing.T, repoPath, rev string) bool {
+ 	t.Helper()
+ 	return exec.Command("git", "-C", repoPath, "cat-file", "-e", rev+"^{commit}").Run() == nil
+ }
++
++func TestSource_DebugLogging(t *testing.T) {
++	const testSecret = "TESTSECRET-do-not-log-1234567890"
++
++	repoPath := setupTestRepo(t, "debug-log-repo")
++	addTestFileAndCommit(t, repoPath, "config.txt", "password = "+testSecret)
++
++	conn, err := anypb.New(&sourcespb.Git{
++		Credential: &sourcespb.Git_Unauthenticated{
++			Unauthenticated: &credentialspb.Unauthenticated{},
++		},
++		Repositories: []string{"file://" + repoPath},
++	})
++	assert.NoError(t, err)
++
++	// run the source and drain its chunks, the way the engine does
++	runSource := func(ctx context.Context) {
++		s := Source{}
++		assert.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
++
++		chunksCh := make(chan *sources.Chunk, 64)
++		go func() {
++			for range chunksCh {
++			}
++		}()
++		assert.NoError(t, s.Chunks(ctx, chunksCh))
++		close(chunksCh)
 +	}
 +
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			// Arrange: Create a minimal engine with a passthrough verification cache.
-+			e := &Engine{
-+				results:           make(chan detectors.ResultWithMetadata, 1),
-+				verificationCache: verificationcache.New(nil, &verificationcache.InMemoryMetrics{}),
++	t.Run("debug on", func(t *testing.T) {
++		ctx, logs := logtest.DebugContext()
++		ctx = context.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
++		runSource(ctx)
++
++		// lines from each level we care about show up
++		for _, msg := range []string{
++			"git source initialized",     // V(1)
++			"successfully cloned repo",   // V(2)
++			"scanning commit",            // V(3)
++			"git subcommand finished",    // V(5)
++			"scanning git repo complete", // V(2)
++		} {
++			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
++		}
++
++		// every line came from the context logger, so it carries the source fields,
++		// and none of them contain the secret
++		for _, entry := range logs.All() {
++			fields := entry.ContextMap()
++			assert.Contains(t, fields, "source_name", "line %q", entry.Message)
++			assert.Contains(t, fields, "job_id", "line %q", entry.Message)
++			assert.NotContains(t, entry.Message, testSecret)
++			assert.NotContains(t, fmt.Sprint(fields), testSecret)
++		}
++	})
++
++	t.Run("debug off", func(t *testing.T) {
++		core, logs := observer.New(zapcore.InfoLevel)
++		ctx := context.WithLogger(context.Background(), zapr.NewLogger(zap.New(core)))
++		runSource(ctx)
++
++		assert.Zero(t, logs.FilterMessage("git subcommand finished").Len())
++		assert.Zero(t, logs.FilterMessage("scanning commit").Len())
++	})
++}
++
++func TestCloneRepo_DoesNotLogToken(t *testing.T) {
++	const token = "TESTTOKEN-do-not-log-1234567890"
++
++	ctx, logs := logtest.DebugContext()
++
++	// nothing listens on port 1, so the clone fails fast and is not retried;
++	// the token is passed separately and only added to the URL inside CloneRepo
++	_, _, err := CloneRepoUsingToken(ctx, token, "http://127.0.0.1:1/org/repo.git", "", "x-access-token", true)
++	assert.Error(t, err)
++	assert.NotContains(t, err.Error(), token)
++
++	assert.NotZero(t, logs.FilterMessage("git clone attempt failed").Len())
++	for _, entry := range logs.All() {
++		assert.NotContains(t, entry.Message, token)
++		assert.NotContains(t, fmt.Sprint(entry.ContextMap()), token)
++	}
++}
++
++func TestRedactPasswords(t *testing.T) {
++	tests := []struct {
++		name     string
++		output   string
++		password string
++		want     string
++	}{
++		{
++			name:     "plain token",
++			output:   "fatal: unable to access 'https://user:glpat-abc123@host/r.git/'",
++			password: "glpat-abc123",
++			want:     "fatal: unable to access 'https://user:<secret>@host/r.git/'",
++		},
++		{
++			name:     "base64 token is percent-encoded in the url",
++			output:   "fatal: unable to access 'https://user:abc+%2F=def@host/r.git/'",
++			password: "abc+/=def",
++			want:     "fatal: unable to access 'https://user:<secret>@host/r.git/'",
++		},
++		{
++			name:     "token with @ : and ?",
++			output:   "fatal: unable to access 'https://user:a%40b%3Ac%3Fd@host/r.git/'",
++			password: "a@b:c?d",
++			want:     "fatal: unable to access 'https://user:<secret>@host/r.git/'",
++		},
++		{
++			name:     "plain form printed somewhere else",
++			output:   "token a@b:c?d was rejected",
++			password: "a@b:c?d",
++			want:     "token <secret> was rejected",
++		},
++		{
++			name:     "empty password leaves output alone",
++			output:   "fatal: repository not found",
++			password: "",
++			want:     
+```
+
+**File**: `pkg/sources/source_manager.go` (modified, +23/-36)
+```diff
+@@ -360,18 +360,7 @@ func (s *SourceManager) run(ctx context.Context, source Source, report *JobProgr
+ 	}()
+ 
+ 	report.TrackProgress(source.GetProgress())
+-	if ctx.Value("job_id") == "" {
+-		ctx = context.WithValue(ctx, "job_id", report.JobID)
+-	}
+-	if ctx.Value("source_id") == "" {
+-		ctx = context.WithValue(ctx, "source_id", report.SourceID)
+-	}
+-	if ctx.Value("source_name") == "" {
+-		ctx = context.WithValue(ctx, "source_name", report.SourceName)
+-	}
+-	if ctx.Value("source_type") == "" {
+-		ctx = context.WithValue(ctx, "source_type", source.Type().String())
+-	}
++	ctx = withSourceFields(ctx, source, report)
+ 
+ 	// Check if source units are supported and configured.
+ 	canUseSourceUnits := len(targets) == 0 && s.useSourceUnitsFunc != nil
+@@ -387,6 +376,26 @@ func (s *SourceManager) run(ctx context.Context, source Source, report *JobProgr
+ 	return s.runWithoutUnits(ctx, source, report, targets...)
+ }
+ 
++// withSourceFields adds the job and source fields to the context, so every log
++// line the source writes says which source and job it came from.
++// A caller (like thog) may have added some of them already. We skip those so a
++// field doesn't show up twice. A missing value is nil, not "", so check for nil.
++func withSourceFields(ctx context.Context, source Source, report *JobProgress) context.Context {
++	if ctx.Value("job_id") == nil {
++		ctx = context.WithValue(ctx, "job_id", report.JobID)
++	}
++	if ctx.Value("source_id") == nil {
++		ctx = context.WithValue(ctx, "source_id", report.SourceID)
++	}
++	if ctx.Value("source_name") == nil {
++		ctx = context.WithValue(ctx, "source_name", report.SourceName)
++	}
++	if ctx.Value("source_type") == nil {
++		ctx = context.WithValue(ctx, "source_type", source.Type().String())
++	}
++	return ctx
++}
++
+ // enumerate is a helper method to enumerate a Source.
+ func (s *SourceManager) enumerate(ctx context.Context, source Source, report *JobProgress, reporter UnitReporter) error {
+ 	report.Start(time.Now())
+@@ -399,18 +408,7 @@ func (s *SourceManager) enumerate(ctx context.Context, source Source, report *Jo
+ 	}()
+ 
+ 	report.TrackProgress(source.GetProgress())
+-	if ctx.Value("job_id") == "" {
+-		ctx = context.WithValue(ctx, "job_id", report.JobID)
+-	}
+-	if ctx.Value("source_id") == "" {
+-		ctx = context.WithValue(ctx, "source_id", report.SourceID)
+-	}
+-	if ctx.Value("source_name") == "" {
+-		ctx = context.WithValue(ctx, "source_name", report.SourceName)
+-	}
+-	if ctx.Value("source_type") == "" {
+-		ctx = context.WithValue(ctx, "source_type", source.Type().String())
+-	}
++	ctx = withSourceFields(ctx, source, report)
+ 
+ 	// Check if source units are supported and configured.
+ 	canUseSourceUnits := s.useSourceUnitsFunc != nil
+@@ -435,18 +433,7 @@ func (s *SourceManager) scan(ctx context.Context, source Source, report *JobProg
+ 
+ 	report.ReportUnit(unit)
+ 	report.TrackProgress(source.GetProgress())
+-	if ctx.Value("job_id") == "" {
+-		ctx = context.WithValue(ctx, "job_id", report.JobID)
+-	}
+-	if ctx.Value("source_id") == "" {
+-		ctx = context.WithValue(ctx, "source_id", report.SourceID)
+-	}
+-	if ctx.Value("source_name") == "" {
+-		ctx = context.WithValue(ctx, "source_name", report.SourceName)
+-	}
+-	if ctx.Value("source_type") == "" {
+-		ctx = context.WithValue(ctx, "source_type", source.Type().String())
+-	}
++	ctx = withSourceFields(ctx, source, report)
+ 
+ 	// Check if source units are supported and configured.
+ 	canUseSourceUnits := s.useSourceUnitsFunc != nil
+```
+
+**File**: `pkg/sources/source_manager_test.go` (modified, +56/-0)
+```diff
+@@ -9,10 +9,12 @@ import (
+ 	"time"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ )
+ 
+@@ -598,3 +600,57 @@ func TestSourceManagerSemaphoreAcquireError(t *testing.T) {
+ 		})
+ 	})
+ }
++
++// loggingChunker writes one log line through the context it was given, then
++// chunks like counterChunker.
++type loggingChunker struct{ counterChunker }
++
++func (c *loggingChunker) Chunks(ctx context.Context, ch chan *Chunk, targets ...ChunkingTarget) error {
++	ctx.Logger().Info("chunking from source")
++	return c.counterChunker.Chunks(ctx, ch, targets...)
++}
++
++func TestSourceManagerAddsSourceFieldsToLogs(t *testing.T) {
++	// runSource scans one dummy source and returns the line it logged.
++	runSource := func(t *testing.T, ctx context.Context, logs *observer.ObservedLogs) observer.LoggedEntry {
++		mgr := NewManager(WithBufferedOutput(8))
++		source, err := buildDummy(&loggingChunker{counterChunker{count: 1}})
++		assert.NoError(t, err)
++
++		ref, err := mgr.EnumerateAndScan(ctx, "dummy", source)
++		assert.NoError(t, err)
++		<-ref.Done()
++
++		entries := logs.FilterMessage("chunking from source").All()
++		if !assert.Len(t, entries, 1) {
++			t.FailNow()
++		}
++		return entries[0]
++	}
++
++	t.Run("fields are added", func(t *testing.T) {
++		ctx, logs := logtest.DebugContext()
++		fields := runSource(t, ctx, logs).ContextMap()
++
++		assert.Equal(t, "dummy", fields["source_name"])
++		assert.Contains(t, fields, "job_id")
++		assert.Contains(t, fields, "source_id")
++		assert.Contains(t, fields, "source_type")
++	})
++
++	t.Run("fields set by the caller are kept and not repeated", func(t *testing.T) {
++		ctx, logs := logtest.DebugContext()
++		ctx = context.WithValue(ctx, "source_name", "set by caller")
++		entry := runSource(t, ctx, logs)
++
++		// count the raw fields, since ContextMap would hide a duplicate key
++		count := 0
++		for _, field := range entry.Context {
++			if field.Key == "source_name" {
++				count++
 +			}
-+
-+			// Arrange: Create a detector match. We can't create one directly, so we have to use a minimal A-H core.
-+			ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{tc.detector})
-+			detectorMatches := ahcore.FindDetectorMatches([]byte("keyword"))
-+			require.Len(t, detectorMatches, 1)
-+
-+			// Act
-+			e.detectChunk(ctx, detectableChunk{
-+				detector: detectorMatches[0],
-+				verify:  
++		}
++		assert.Equal(t, 1, count)
++		assert.Equal(t, "set by caller", entry.ContextMap()["source_name"])
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5451** (2026-10-20): Clean up Git source logging for per-source debug (@kashifkhan0771)
 - **PR #5448** (2026-10-20): Mark results whose verification was skipped (@unsmith)
 - **PR #5446** (2026-10-20): Add per-source debug option and hide sensitive data in debug logs (@kashifkhan0771)
 - **PR #5438** (2026-10-19): github: name the missing permission when a comment listing is refused (@unsmith)
 - **PR #5432** (2026-10-16): Add per-logger debug level override for source logging (@kashifkhan0771)
 - **PR #5431** (2026-10-17): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@renovate[bot])
-- **PR #5428** (2026-10-14): Replace deprecated google.CredentialsFromJSON with CredentialsFromJSONWithType (@bryanbeverly)
 
 ---
 
@@ -1339,35 +1616,65 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mark results whose verification was skipped (#5448)
+## X. Clean up Git source logging for per-source debug (#5451)
 
 **RULE**:
-When implementing operations in `pkg/detectors/detectors.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/git/git.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3bba824f`: Mark results whose verification was skipped (#5448). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `400d35c2`: Clean up Git source logging for per-source debug (#5451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/detectors.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/git/git.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// VerificationSkipped indicates that the engine produced this result without attempting remote verification,
-	// either because verification was disabled for the result's source or detector, or because the engine withheld
-	// verification after multiple detectors matched the same secret. It lets consumers that measure verifier activity
-	// tell "the verifier did not run" apart from "the verifier ran and the credential did not verify". It is purely
-	// informational: Verified and the verification error keep whatever the detector or engine assigned, so a skipped
-	// result still reports as unverified (or with an overlap verification error) exactly as it would without this
-	// field.
-	VerificationSkipped bool
+
+	// log the config choices so support can see how the source was set up
+	// only counts and flags, never URLs or credentials
+	aCtx.Logger().V(1).Info("git source initialized",
+		"repo_count", len(conn.GetRepositories()),
+		"dir_count", len(conn.GetDirectories()),
+		"auth_type", fmt.Sprintf("%T", conn.GetCredential()),
+		"base", conn.GetBase(),
+		"head", conn.GetHead(),
+		"max_depth", conn.GetMaxDepth(),
+		"bare", conn.GetBare(),
+		"skip_binaries", conn.GetSkipBinaries(),
+		"skip_archives", conn.GetSkipArchives(),
+		"has_include_filter", conn.GetIncludePathsFile() != "",
+		"has_exclude_filter", conn.GetExcludePathsFile() != "",
+		"has_exclude_globs", conn.GetExcludeGlobs() != "",
+	)
+			ctx.Logger().Error(err, "error scanning repository", "repo", repoURI)
+			ctx.Logger().Error(err, "error scanning repository", "repo", gitDir)
+		ctx.Logger().V(4).Info("skipping directory", "path", gitDir, "reason", "non-bare directory name ends in git")
+	// the parse error from stripPassword contains the raw URL, which can hold
+	// a password, so only log that stripping failed, not the error itself
+	safeURL, urlPassword, err := stripPassword(params.gitURL)
+		ctx.Logger().V(4).Info("could not strip pa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			ctx.Logger().Info("error scanning repository", "repo", repoURI, "error", err)
+			ctx.Logger().Info("error scanning repository", "repo", gitDir, "error", err)
+	safeURL, secretForRedaction, err := stripPassword(params.gitURL)
+		ctx.Logger().V(1).Info("error stripping password from git url", "error", err)
+	logger := ctx.Logger().WithValues(
+	logger.V(3).Info("executing git clone command")
+	var output string
+	if secretForRedaction != "" {
+		output = strings.ReplaceAll(string(outputBytes), secretForRedaction, "<secret>")
+	} else {
+		output = string(outputBytes)
+	}
+	logger.V(3).Info("git subcommand finished", "output", output)
+		logger.V(0).Info("git clone failed", "error", err)
+	logger.V(1).Info("successfully cloned repo", "time_seconds", time.Since(start).Seconds())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3bba824f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `400d35c2` are properly handled with clean fallback behavior.

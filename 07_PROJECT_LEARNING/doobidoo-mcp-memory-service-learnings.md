@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `5a8e9037`  
+> **Source Version**: `9e253c40`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:25:35.032Z  
+> **Timestamp**: 2026-10-20T16:50:40.025Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:25:35.023Z  
+> **Harvest Timestamp**: 2026-10-20T16:50:40.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2023 stars
+- **Stars / Engagement**: 2026 stars
 
 ---
 
@@ -2932,1392 +2932,1059 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b29d353f` (2026-10-19)
-**Commit Message**: fix(web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)
+### Incident Patch 1: `80974bf9` (2026-10-20)
+**Commit Message**: feat: per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)
 
-* fix(web): stop putting the long-lived API key in SSE URLs (#1117)
+* feat: per-agent rate limiting for MCP tool calls (fixes #1096)
 
-EventSource cannot set an Authorization header, so the dashboard authenticated
-every live-update connection as GET /api/events?api_key=<key>. uvicorn's access
-log records the whole request line, so each connection and each automatic
-reconnect wrote the key in cleartext into the log. TLS protects the wire, not
-the log, and the file outlives the session and gets pasted into bug reports.
-Redacting the log hid this without closing it.
+Key callers by the client-sent X-Agent-ID request header, read from
+the transport layer -- never from tool arguments (for memory_search /
+memory_list the agent_id argument is an author filter, not a caller
+identity). Fallback chain: header -> socket peer IP -> one
+per-process bucket. Unlimited by default (MCP_RATE_LIMIT_PER_MINUTE,
+per-tool MCP_RATE_LIMIT_<tool> overrides); 429-equivalent MCP error
+(-32029 / rate_limit_exceeded); fail-open if the limiter itself
+errors.
 
-POST /api/events/ticket now exchanges real credentials (Bearer or X-API-Key
-header) for a ticket that is single-use and expires in 60 seconds, and the
-browser connects with ?ticket=. A pasted log line holds something dead within a
-minute and unusable twice.
+The /mcp FastAPI shim resolves the identity from its own HTTP
+request before its arguments rewrite and passes it explicitly into
+call_tool (the shim runs outside any SDK request context). SDK
+transports (SSE / Streamable HTTP) resolve it from
+request_context.request, like _caller_has_write_scope does.
 
-?api_key= is no longer accepted. A request using it gets a warning naming the
-migration rather than a silent 401, so a stale client is diagnosable. X-API-Key
-as a header is unchanged — headers never reach the access log.
+Also fixes the two CodeQL log-injection findings and the eviction
+finding (evicted key resetting an active window) left open in
+#1402's utils/tool_rate_limit.py, on which the limiter is based.
+Docs note the limiter gives fairness between cooperating agents and
+is not abuse protectio
 
-The ticket store is in-memory only, capped, and compares tokens in constant
-time. A ticket is consumed even when refused, so a probe cannot
-
-**File**: `changelog.d/1117.fixed.md` (added, +21/-0)
+**File**: `changelog.d/1593.added.md` (added, +11/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+- **The dashboard stopped putting the long-lived API key in SSE URLs (#1117).**
-+  `EventSource` cannot set an `Authorization` header, so the web UI authenticated
-+  every live-update connection with `GET /api/events?api_key=<key>`. uvicorn's
-+  access log records the whole request line, so each SSE connection — and every
-+  automatic reconnect — wrote the key in cleartext into
-+  `~/.local/share/mcp-memory/logs/server.log`. TLS does not help there: it
-+  protects the wire, not the log. The file outlives the session and gets pasted
-+  into bug reports. Access-log redaction had already landed, which hid the leak
-+  without closing it.
-+
-+  `POST /api/events/ticket` now exchanges real credentials (Bearer or
-+  `X-API-Key` header) for a ticket that is single-use and expires in 60 seconds,
-+  and the browser connects with `?ticket=…`. A pasted log line now holds
-+  something that is dead within a minute and cannot be replayed. The
-+  `?api_key=` query parameter is **no longer accepted** — requests using it get
-+  a warning naming the migration rather than a silent 401. `X-API-Key` as a
-+  header is unchanged, since headers do not reach the access log.
-+
-+  The OAuth `?token=` query fallback still exists and has the same shape of
-+  exposure; it is left alone here because those tokens are already short-lived
-+  and revocable.
+@@ -0,0 +1,11 @@
++- **Per-agent rate limiting for MCP tool calls (#1593, juliasadler; closes #1096).**
++  Callers are keyed by the client-sent `X-Agent-ID` request header — read from the
++  transport layer, never from tool arguments — falling back to the socket peer IP
++  and then one per-process bucket. Unlimited by default; configure with
++  `MCP_RATE_LIMIT_PER_MINUTE` or per-tool `MCP_RATE_LIMIT_<tool>` overrides.
++  Denied calls get an MCP error (`-32029` / `rate_limit_exceeded`) carrying
++  `retry_after_seconds`. This is fairness between cooperating agents, not abuse
++  protection: a client that rotates the header gets a fresh bucket. The denied
++  call returns a `CallToolResult`, which the SDK's `call_tool` decorator only
++  passes through from `mcp` 1.19.0 on, so the `mcp` floor moves from 1.9.2 to
++  1.19.0.
 ```
 
-**File**: `docs/oauth-setup.md` (modified, +20/-4)
+**File**: `docs/agents/http-generic.md` (modified, +2/-0)
 ```diff
-@@ -199,14 +199,30 @@ memory launch
- curl -H "X-API-Key: your-secret-key" \
-      http://localhost:8000/api/memories
- 
--# Option 2: Query parameter (convenient, less secure - avoid in production)
--curl "http://localhost:8000/api/memories?api_key=your-secret-key"
--
--# Option 3: Bearer token (backward compatible)
-+# Option 2: Bearer token (backward compatible)
- curl -H "Authorization: Bearer your-secret-key" \
-      http://localhost:8000/api/memories
+@@ -263,3 +263,5 @@ await store_memory(content="...", tags=["agent:researcher", "api"])
+ await store_memory(content="...", tags=["api"], agent_id="researcher")
+ # Server appends "agent:researcher" automatically
  ```
- 
-+> **`?api_key=` is no longer accepted.** It used to be a "convenient, less
-+> secure" option; it was worse than that. uvicorn logs the whole request line,
-+> so every request wrote the long-lived key in cleartext into the access log —
-+> under HTTPS too, since TLS protects the wire and not the log. Send the key in
-+> the `X-API-Key` header instead.
-+>
-+> `EventSource` is the one case with an excuse: it cannot set headers. For it,
-+> exchange a real credential for a short-lived ticket and put **that** on the URL:
-+>
-+> ```
-+> curl -X POST -H "X-API-Key: your-secret-key" \
-+>      http://localhost:8000/api/events/ticket
-+> # -> {"ticket": "...", "expires_in_seconds": 60, "param_name": "ticket"}
-+> # then connect to /api/events?ticket=<ticket>
-+> ```
-+>
-+> The ticket is single-use and expires in 60 seconds, so a pasted log line holds
-+> nothing reusable.
 +
- **When to use API Key vs OAuth:**
- - **API Key**: Single-user deployments, scripts, local development
- - **OAuth**: Team collaboration, Claude Code HTTP transport, multi-user access
++The same header also keys the per-caller MCP tool rate limiter (`MCP_RATE_LIMIT_PER_MINUTE`, per-tool `MCP_RATE_LIMIT_<tool>` overrides): `X-Agent-ID` is chosen by the client, so the limiter gives fairness between cooperating agents sharing one server. It is not abuse protection — a client that rotates the header gets a fresh bucket.
 ```
 
-**File**: `src/mcp_memory_service/web/api/events.py` (modified, +49/-4)
+**File**: `pyproject-lite.toml` (modified, +1/-1)
 ```diff
-@@ -2,15 +2,20 @@
- Server-Sent Events endpoints for real-time updates.
- """
- 
--from fastapi import APIRouter, Request, Depends, Query
-+from fastapi import APIRouter, Request, Depends, HTTPException, Query
-+from fastapi import status
- from pydantic import BaseModel
-+import logging
- from typing import List, Optional
- 
-+from mcp_memory_service.compat import _sanitize_log_value
-+
- # OAuth config no longer needed - auth is always enabled
- from ..sse import create_event_stream, sse_manager
-+from ..sse_ticket import sse_tickets
- 
- # OAuth authentication imports
--from ..oauth.middleware import require_read_access, AuthenticationResult
-+from ..oauth.middleware import require_read_access, require_real_credential, AuthenticationResult
- 
- router = APIRouter()
- 
-@@ -31,6 +36,47 @@ class SSEStatsResponse(BaseModel):
-     connections: List[ConnectionInfo]
- 
- 
-+class TicketResponse(BaseModel):
-+    """A single-use SSE ticket."""
-+    ticket: str
-+    expires_in_seconds: float
-+    # Named so the client does not hardcode the TTL and then be surprised.
-+    param_name: str = "ticket"
-+
-+
-+@router.post("/events/ticket")
-+async def issue_event_ticket(
-+    user: AuthenticationResult = Depends(require_real_credential),
-+) -> TicketResponse:
-+    """Exchange real credentials for a short-lived, single-use SSE ticket.
-+
-+    Why this exists (issue #1117): `EventSource` cannot set an Authorization
-+    header, so the dashboard used to carry the long-lived API key in the URL
-+    query (``GET /api/events?api_key=<key>``). uvicorn's access log records the
-+    whole request line, so every SSE connection wrote the key in cleartext into
-+    a file that outlives the session. Redacting the log treats the symptom;
-+    this removes the cause.
-+
-+    The browser calls this **once, over POST**, so the secret travels in a body
-+    TLS already protects and that no access log line contains, and then opens
-+    ``EventSource('/api/events?ticket=<ticket>')``. A leaked log line holds a
-+    token that is single-use and dead within a minute.
-+    """
-+    try:
-+        ticket = sse_tickets.issue(scope="read")
-+    except RuntimeError:
-+        # Saturation is a client problem, not a server fault, and must not
-+        # look like an auth failure.
-+        raise HTTPException(
-+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-+            detail="too many pending SSE tickets; retry shortly",
-+        )
-+    return TicketResponse(
-+        ticket=ticket.token,
-+        expires_in_seconds=sse_tickets.ttl_seconds,
-+    )
-+
-+
- @router.get("/events")
- async def events_endpoint(
-     request: Request,
-@@ -100,8 +146,7 @@ async def get_sse_stats(
-             "connections": connections
-         }
-     except Exception as e:
--        import logging
--        logging.getLogger(__name__).error(f"Error getting SSE stats: {str(e)}")
-+        logging.getLogger(__name__).error(f"Error getting SSE stats: {_sanitize_log_value(str(e))}")
-         # Return safe default stats if there's an error
-         return {
-             "total_connections": 0,
+@@ -42,7 +42,7 @@ maintainers = [
+ license = { text = "Apache-2.0" }
+ dependencies = [
+     "tokenizers==0.20.3",
+-    "mcp>=1.9.2,<2.0.0",
++    "mcp>=1.19.0,<2.0.0",
+     "python-dotenv>=1.0.0",
+     "sqlite-vec>=0.1.0",
+     "build>=0.10.0",
 ```
 
-**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +69/-7)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -380,13 +380,48 @@ async def get_current_user(
-                 logger.debug("Authenticated via X-API-Key header")
-                 return api_key_result
+@@ -47,7 +47,7 @@ dependencies = [
+     "cryptography>=46.0.6",
+     "fastapi>=0.115.5",
+     "httpx>=0.24.0",
+-    "mcp>=1.9.2,<2.0.0",
++    "mcp>=1.19.0,<2.0.0",
+     "numpy>=1.24.0",
+     "psutil>=5.9.0",
+     "PyJWT[crypto]>=2.12.0",
+```
+
+**File**: `src/mcp_memory_service/server_impl.py` (modified, +92/-4)
+```diff
+@@ -88,6 +88,7 @@ def _sanitize_log_value(value: object) -> str:
+ from .dependency_check import get_recommended_timeout
+ from .utils.hashing import generate_content_hash
+ from .utils.agent_context import log_agent_id_resolution, resolve_agent_id
++from .utils.tool_rate_limit import ToolRateLimiter, resolve_caller_identity
+ from .config import (
+     BACKUPS_PATH,
+     SERVER_NAME,
+@@ -333,6 +334,10 @@ def __init__(
+         # Register handlers
+         self.register_handlers()
+         logger.info("Server initialization complete")
++
++        # Per-caller sliding-window limiter for MCP tool calls (#1096).
++        # Unlimited by default; configured via MCP_RATE_LIMIT_* env vars.
++        self._tool_rate_limiter = ToolRateLimiter()
+         
+         # Test handler registration with proper arguments
+         try:
+@@ -1459,7 +1464,9 @@ async def handle_list_tools() -> List[types.Tool]:
+             return await self.list_tools()
+         
+         @self.server.call_tool()
+-        async def handle_call_tool(name: str, arguments: dict | None) -> List[types.TextContent]:
++        async def handle_call_tool(
++            name: str, arguments: dict | None
++        ) -> List[types.TextContent] | types.CallToolResult:
+             return await self.call_tool(name, arguments)
  
--        # Try query parameter as fallback (less secure, but convenient)
--        api_key_param = request.query_params.get("api_key")
--        if api_key_param:
--            api_key_result = authenticate_api_key(api_key_param)
--            if api_key_result.authenticated:
--                logger.debug("Authenticated via api_key query parameter")
--                return api_key_result
-+        # `api_key` as a query parameter used to be accepted here for the same
-+        # reason `token` still is below: EventSource cannot set headers. It is
-+        # gone deliberately (issue #1117). uvicorn logs the whole request line,
-+        # so `?api_key=...` wrote the long-lived key in cleartext into
-+        # ~/.local/share/mcp-memory/logs/server.log on every reconnect — under
-+        # HTTPS too, since TLS protects the wire and not the log. That file
-+        # outlives the session and gets pasted into bug reports.
-+        #
-+        # The replacement is a single-use, short-TTL ticket issued over POST
-+        # (see /api/events/ticket). Kept as a distinct check rather than folded
-+        # into the Bearer fallback so the failure message can name the migration.
-+        if request.query_params.get("api_key"):
-+            logger.warning(
-+                "api_key query parameter is no longer accepted; "
-+                "fetch a short-lived ticket from POST /api/events/ticket "
-+                "and connect with ?ticket= (issue #1117)"
-+            )
+ 
+@@ -1514,6 +1521,53 @@ def _caller_has_write_scope(self) -> bool:
+         scope = request.scope.get("mcp_auth_scope")
+         return scope is None or "write" in scope.split()
+ 
++    def _rate_limit_caller_identity(self, explicit_identity: str | None = None) -> str:
++        """Resolve the rate-limit identity for the current tool call (#1096).
 +
-+    # Ticket redemption sits OUTSIDE the `if API_KEY` block on purpose.
-+    # Greptile caught it: issuance accepts OAuth credentials, so in an
-+    # OAuth-only deployment a client could get a ticket and then 401 on
-+    # redemption. The ticket path must work whenever a ticket can be issued.
-+    ticket_param = request.query_params.get("ticket")
-+    if ticket_param:
-+        from ..sse_ticket import sse_tickets
++        The ``/mcp`` FastAPI shim calls ``call_tool`` outside any SDK request
++        context, so it resolves the identity from its own HTTP request and
++        passes it in explicitly. On the SDK transports (SSE, Streamable
++        HTTP) the identity is resolved here from the per-request ASGI
++        request, exactly like ``_caller_has_write_scope`` does.
 +
-+        # hmac.compare_digest raises TypeError on non-ASCII strings, which
-+        # would surface as 500 instead of 401. Refuse before comparing.
++        Never reads tool arguments: for ``memory_search``/``memory_list``
++        the ``agent_id`` argument is an author filter, not a caller identity.
++        """
++
++        if explicit_identity:
++            return explicit_identity
 +        try:
-+            ticket_param.encode("ascii")
-+        except UnicodeEncodeError:
-+            logger.warning("Rejected an SSE ticket: non-ASCII")
-+        else:
-+            if sse_tickets.redeem(ticket_param, scope="read"):
-+                logger.debug("Authenticated via single-use SSE ticket")
-+                return AuthenticationResult(
-+                    authenticated=True,
-+                    client_id="sse-ticket",
-+                    scope="read",
-+                    auth_method="ticket",
-+                )
-+            logger.warning("Rejected an SSE ticket: expired, used, or unknown")
- 
-     # Try OAuth token as query parameter (EventSource API doesn't support headers)
-     if OAUTH_ENABLED:
-@@ -446,6 +481,33 @@ async def scope_dependency(user: AuthenticationResult = Depends(get_current_user
- 
- 
- # Convenience dependencies for common access patterns
-+async def require_real_credential(user: AuthenticationResult = Depends(get_current_user)) -> AuthenticationResult:
-+    """Require a real credential — Bearer token or API key, **not** an SSE ticket.
++            request = self.server.request_context.request
++        except (LookupError, AttributeError):
++            request = None
++        if request is None:
++            return resolve_caller_identity(None, None)
++        header = request.headers.get("X-Agent-ID")
++        client = request.client
++        host = client.host if client is not None else None
++        return resolve_caller_identity(header, host)
 +
-+    Ticket issuance must be gated on something the ticket cannot itself supply.
-+    Greptile caught this: `POST /api/events/ticket` used `require_read_access`,
-+    which accepts a ticket, so anyone holding one unused ticket could exchange
-+    it for another and repeat — the 60-second TTL bounded nothing.
++    @staticmethod
++    def _rate_limit_error(
++        tool_name: str, decision
++    ) -> types.CallToolResult:
++        """Build the standard MCP tool-error result for a denied call."""
 +
-+    A ticket is a bearer credential minted *from* a real one; letting it mint
-+    more turns a single leak into an indefinite one.
-+    """
-+    if user.auth_method == "ticket":
-+        raise HTTPException(
-+            status_code=status.HTTP_401_UNAUTHORIZED,
-+            detail={
-+                "error": "invalid_token",
-+                "error_description": (
-+                    "An SSE ticket cannot be used to mint another ticket; "
-+                    "authenticate with a Bearer token or an API key."
-+                ),
-+            },
-+            headers={"WWW-Authenticate": _www_authenticate_header()},
++        payload = {
++            "error": {
++                "code": -32029,
++                "type": "rate_limit_exceeded",
++                "message": "MCP tool rate limit exceeded",
++                "tool": tool_name,
++                "limit_per_minute": decision.limit_per_minute,
++                "retry_after_seconds": decision.retry_after_seconds,
++            }
++        }
++        return types.CallToolResult(
++            content=[types.TextContent(type="text", text=json.dumps(payload))],
++            isError=True,
 +        )
-+    user.require_scope("read")
-+    return user
 +
+     async def tool_requires_write(self, name: Optional[str], arguments: Optional[dict] = None) -> bool:
+         """Return True if calling this tool requires the 'write' scope.
+ 
+@@ -1579,12 +1633,44 @@ async def list_tools(self) -> List[types.Tool]:
+             logger.error("Error in list_tools: %s", _sanitize_log_value(e))
+             return []
+ 
+-    async def call_tool(self, name: str, arguments: dict | None) -> List[types.TextContent]:
+-        """Dispatch tool call via routing table (replaces elif chain)."""
++    async def call_tool(
++        self,
++        name: str,
++        arguments: dict | None,
++        *,
++        caller_identity: str | None = None,
++    ) -> List[types.TextContent] | types.CallToolResult:
++        """Dispatch tool call via routing table (replaces elif chain).
 +
- async def require_read_access(user: AuthenticationResult = Depends(get_current_user)) -> AuthenticationResult:
-     """Require read access to the resource."""
-     user.require_scope("read")
++        ``caller_identity`` is the pre-resolved per-caller rate-limit
++        identity. The ``/mcp`` FastAPI shim passes it explicitly (it has no
++        SDK request context); the SDK transports leave it ``None`` so the
++        identity is resolved here from the per-request ASGI request.
++        """
+         logger.info("=== HANDLING TOOL CALL: %s ===", _sanitize_log_value(name))
+         if arguments is None:
+             arguments = {}
+ 
++        # Per-caller sliding-window rate limiting (#1096). Unlimited by
++        # default; configured via MCP_RATE_LIMIT_* env vars. A limiter
++        # failure must not take down the dispatcher: fail open and keep
++        # the error log free of caller identities.
++        try:
++            decision = self._tool_rate_limiter.check
 ```
 
-**File**: `src/mcp_memory_service/web/sse_ticket.py` (added, +144/-0)
+**File**: `src/mcp_memory_service/utils/tool_rate_limit.py` (added, +247/-0)
 ```diff
-@@ -0,0 +1,144 @@
-+"""Short-lived, single-use tickets for EventSource connections.
+@@ -0,0 +1,247 @@
++"""Per-caller sliding-window rate limiting for MCP tool calls.
 +
-+Why this exists (issue doobidoo/mcp-memory-service#1117):
++Identity model (per issue #1096, as approved by the maintainer):
++the caller is keyed by the client-sent ``X-Agent-ID`` request header, read
++from the transport layer -- never from tool arguments (for
++``memory_search``/``memory_list`` the ``agent_id`` argument is an author
++filter, not a caller identity). Fallback chain when the header is absent:
++socket peer IP, then one per-process bucket (stdio is one client per
++process, so that bucket is effectively per-agent there).
 +
-+`EventSource` cannot set an ``Authorization`` header, so the dashboard used to
-+carry the long-lived API key in the URL query instead::
-+
-+    GET /api/events?api_key=<full key> HTTP/1.1
-+
-+uvicorn's access log records the whole request line, so every SSE connection
-+wrote that key in cleartext into the log file. TLS does not help — it protects
-+the wire, not the log. The file then outlives the session and gets pasted into
-+bug reports.
-+
-+Access-log redaction already landed (``web/log_redaction.py``), but that treats
-+the symptom. This module removes the cause: the browser exchanges its real
-+credentials **once, in a POST body**, for a ticket that is worthless a minute
-+later. A leaked log line then contains nothing of value.
-+
-+Design constraints, in order of how badly each one bites:
-+
-+* **Single-use.** A ticket that survives replay is just a shorter-lived key.
-+* **Short TTL.** Long enough for the browser to open the connection and for
-+  EventSource's first reconnect to succeed if the network hiccups; short enough
-+  that a captured URL is useless almost immediately. 60 seconds is the balance
-+  — reconnects beyond that re-fetch a ticket, which is cheap.
-+* **In-memory only.** These are session-scoped credentials. Persisting them
-+  would recreate the exact store of secrets this change is meant to delete.
-+* **Constant-time comparison.** The ticket is a bearer credential; compare it
-+  the way one.
-+* **Bounded.** The table must not grow without limit if a client loops on
-+  ``POST /ticket`` — see ``_MAX_PENDING``.
++``X-Agent-ID`` is chosen by the client, so this limiter gives fairness
++between cooperating agents (e.g. a batch miner vs. interactive agents).
++It is not abuse protection: a client that rotates the header gets a fresh
++bucket.
 +"""
 +
-+from __future__ import annotations
-+
-+import hmac
-+import secrets
-+import threading
++import logging
++import math
++import os
 +import time
-+from dataclasses import dataclass
++from collections import OrderedDict, deque
++from dataclasses import dataclass, field
++from hashlib import sha256
++from threading import Lock
 +
-+# 60s: survives EventSource's first automatic reconnect, expires before a
-+# pasted log line has any useful life.
-+DEFAULT_TTL_SECONDS = 60.0
++# Reuse the canonical log-injection guard (compat imports nothing, so there
++# is no import cycle; db_utils.py, health_check.py and others already import
++# from it): the tool name reaching the warnings below is client-controlled,
++# so newlines/CR/ESC must not reach the log stream (CodeQL py/log-injection).
++from ..compat import _sanitize_log_value
 +
-+# A client that abandons tickets faster than they expire must not pin memory.
-+# 4096 is far above any real dashboard's concurrent-connection count.
-+_MAX_PENDING = 4096
++logger = logging.getLogger(__name__)
++
++DEFAULT_MAX_KEYS = 4096
++_WINDOW_SECONDS = 60.0
++_UNSET = object()
 +
 +
 +@dataclass(frozen=True)
-+class Ticket:
-+    """A single issued ticket and its expiry."""
++class RateLimitDecision:
++    """Result of one rate-limit check.
 +
-+    token: str
-+    expires_at: float
-+    scope: str
-+
-+
-+class TicketStore:
-+    """In-memory store of issued SSE tickets.
-+
-+    Thread-safe: the web app may issue from an async context while a request
-+    handler redeems on a worker thread.
++    ``limit_per_minute`` is ``None`` when the tool is unlimited. When a call is
++    denied, ``retry_after_seconds`` is the minimum whole-second delay before
++    the oldest hit leaves the sliding window.
 +    """
 +
-+    def __init__(self, ttl_seconds: float = DEFAULT_TTL_SECONDS) -> None:
-+        self._ttl = ttl_seconds
-+        self._lock = threading.Lock()
-+        self._pending: dict[str, Ticket] = {}
-+
-+    @property
-+    def ttl_seconds(self) -> float:
-+        return self._ttl
-+
-+    def issue(self, scope: str = "read") -> Ticket:
-+        """Mint a ticket. Raises if the table is saturated.
-+
-+        The lock spans purge, size check and insert — Greptile caught that it
-+        did not, which let two concurrent callers both pass the limit or both
-+        delete the same expired entry. Thread-safety is only real if the
-+        check-then-act is inside the critical section.
-+        """
-+        # 32 bytes = 256 bits. This is a bearer credential — do not skimp.
-+        token = secrets.token_urlsafe(32)
-+        now = time.monotonic()
-+        with self._lock:
-+            self._purge_locked(now)
-+            if len(self._pending) >= _MAX_PENDING:
-+                # Refuse rather than grow unbounded: a client hammering this
-+                # endpoint must not become a memory leak.
-+                raise RuntimeError("too many pending SSE tickets; retry shortly")
-+            ticket = Ticket(token=token, expires_at=now + self._ttl, scope=scope)
-+            self._pending[token] = ticket
-+        return ticket
-+
-+    def redeem(self, token: str, scope: str = "read") -> bool:
-+        """Consume a ticket. True only for an unexpired ticket of the right scope.
-+
-+        Always consumes on a miss too, so a brute-force loop cannot distinguish
-+        "wrong scope" from "already used" by whether the ticket still exists.
-+        """
-+        if not token or not isinstance(token, str):
-+            return False
-+        # hmac.compare_digest raises TypeError on non-ASCII strings; refuse
-+        # before comparing so the caller sees a clean False, not a 500.
-+        try:
-+            token.encode("ascii")
-+        except UnicodeEncodeError:
-+            return False
-+        now = time.monotonic()
-+        with self._lock:
-+            self._purge_locked(now)
-+            # hmac.compare_digest wants bytes; the keys are urlsafe-base64 text.
-+            match = None
-+            for candidate in list(self._pending):
-+                if hmac.compare_digest(candidate, token):
-+                    match = candidate
-+                    break
-+            if match is None:
-+                return False
-+            ticket = self._pending.pop(match)
-+            r
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +128/-56)
-```diff
-@@ -726,6 +726,9 @@ class MemoryDashboard {
-      * Set up Server-Sent Events for real-time updates
-      */
-     setupSSE() {
-+        // Bump first: any in-flight ticket exchange from a previous call is now
-+        // stale and will refuse to open a stream (see _openSSEWithTicket).
-+        this._sseSetupGeneration = (this._sseSetupGeneration || 0) + 1;
-         // Close any existing connection to prevent connection multiplication.
-         // Without this, each failed reconnect spawns a new EventSource while
-         // the old one may still be retrying, leading to exponential 401 spam.
-@@ -741,75 +744,144 @@ class MemoryDashboard {
-         }
- 
-         try {
--            // Build SSE URL with query parameter auth (EventSource API doesn't support custom headers)
-+            // EventSource cannot set an Authorization header. It used to carry
-+            // `?api_key=<long-lived key>`, which uvicorn wrote verbatim into the
-+            // access log on every reconnect (issue #1117) — TLS protects the wire,
-+            // not the log. Now we ask for a single-use ticket over POST: the real
-+            // credential travels in a body no access-log line contains, and the
-+            // ticket is dead within a minute and cannot be replayed.
-             const sseUrl = new URL(`${this.apiBase}/events`, document.baseURI);
-             if (this.authState.apiKey) {
--                sseUrl.searchParams.set('api_key', this.authState.apiKey);
--            } else if (this.authState.oauthToken) {
-+                this._openSSEWithTicket(sseUrl);
-+                return;
-+            }
-+            if (this.authState.oauthToken) {
-+                // OAuth tokens are short-lived and revocable, so a URL carries far
-+                // less risk here. Unchanged by this fix.
-                 sseUrl.searchParams.set('token', this.authState.oauthToken);
-             }
--            this.eventSource = new EventSource(sseUrl.toString());
-+            this._connectSSE(sseUrl);
-+        } catch (error) {
-+            console.error('Failed to establish SSE connection:', error);
-+            this.updateConnectionStatus('disconnected');
-+        }
-+    }
- 
--            this.eventSource.onopen = () => {
--                // Reset backoff on successful connection
--                this._sseReconnectAttempts = 0;
--                this.updateConnectionStatus('connected');
--            };
-+    /**
-+     * Open the EventSource and bind handlers. One connection path so a retry
-+     * cannot leave a second socket behind (see the close() at the top of setupSSE).
-+     */
-+    _connectSSE(sseUrl) {
-+        this.eventSource = new EventSource(sseUrl.toString());
- 
--            this.eventSource.onmessage = (event) => {
--                try {
--                    const data = JSON.parse(event.data);
--                    this.handleRealtimeUpdate(data);
--                } catch (error) {
--                    console.error('Error parsing SSE data:', error);
--                }
--            };
-+        this.eventSource.onopen = () => {
-+            // Reset backoff on successful connection
-+            this._sseReconnectAttempts = 0;
-+            this.updateConnectionStatus('connected');
-+        };
- 
--            // Add specific event listeners for sync progress
--            this.eventSource.addEventListener('sync_progress', (event) => {
--                try {
--                    const data = JSON.parse(event.data);
--                    this.handleSyncProgress(data);
--                } catch (error) {
--                    console.error('Error parsing sync_progress event:', error);
--                }
--            });
-+        this.eventSource.onmessage = (event) => {
-+            try {
-+                const data = JSON.parse(event.data);
-+                this.handleRealtimeUpdate(data);
-+            } catch (error) {
-+                console.error('Error parsing SSE data:', error);
-+            }
-+        };
- 
--            this.eventSource.addEventListener('sync_completed', (event) => {
--                try {
--                    const data = JSON.parse(event.data);
--                    this.handleSyncCompleted(data);
--                } catch (error) {
--                    console.error('Error parsing sync_completed event:', error);
--                }
--            });
-+        // Add specific event listeners for sync progress
-+        this.eventSource.addEventListener('sync_progress', (event) => {
-+            try {
-+                const data = JSON.parse(event.data);
-+                this.handleSyncProgress(data);
-+            } catch (error) {
-+                console.error('Error parsing sync_progress event:', error);
-+            }
-+        });
- 
--            this.eventSource.onerror = (error) => {
--                console.error('SSE connection error:', error);
--                this.updateConnectionStatus('disconnected');
-+        this.eventSource.addEventListener('sync_completed', (event) => {
-+            try {
-+                const d
-```
-
-**File**: `tests/unit/test_sse_ticket.py` (added, +150/-0)
-```diff
-@@ -0,0 +1,150 @@
-+"""Single-use SSE tickets (issue #1117).
-+
-+The bug these tests pin down: `EventSource` cannot set headers, so the web UI
-+authenticated live updates with `GET /api/events?api_key=<long-lived key>`, and
-+uvicorn wrote that URL into the access log on every reconnect. The fix is a
-+ticket issued over POST, so the secret never appears in a URL.
-+
-+What matters and is asserted here:
-+
-+* a ticket can be redeemed **exactly once** — a replayable ticket is just a
-+  shorter-lived key;
-+* it stops working when its TTL expires, even if it was never used;
-+* `?api_key=` is refused, so the leak cannot come back through a stale client;
-+* a ticket is consumed even when it is refused (wrong scope / expired), so a
-+  probe cannot learn from which failures leave the ticket behind.
-+"""
-+
-+from __future__ import annotations
-+
-+import inspect
-+import threading
-+import time
-+
-+import pytest
-+
-+from mcp_memory_service.web.sse_ticket import (
-+    DEFAULT_TTL_SECONDS,
-+    TicketStore,
-+    sse_tickets,
-+)
++    allowed: bool
++    limit_per_minute: int | None = None
++    retry_after_seconds: int = 0
++    should_log: bool = False
 +
 +
-+class TestTicketStore:
-+    def test_issue_returns_a_usable_ticket(self):
-+        store = TicketStore()
-+        t = store.issue()
-+        assert len(t.token) >= 32, "a bearer credential must not be short"
-+        assert store.redeem(t.token) is True
-+
-+    def test_a_ticket_is_single_use(self):
-+        store = TicketStore()
-+        t = store.issue()
-+        assert store.redeem(t.token) is True
-+        assert store.redeem(t.token) is False, "replay must fail — a ticket that survives replay is a shorter-lived key"
-+
-+    def test_expired_ticket_is_refused(self):
-+        # TTL of zero: anything issued is already stale.
-+        store = TicketStore(ttl_seconds=0.0)
-+        t = store.issue()
-+        time.sleep(0.01)
-+        assert store.redeem(t.token) is False
-+
-+    def test_expiry_cleans_the_table(self):
-+        store = TicketStore(ttl_seconds=0.0)
-+        store.issue()
-+        time.sleep(0.01)
-+        assert len(store) == 0, "expired tickets must not accumulate"
-+
-+    def test_scope_mismatch_is_refused_and_consumed(self):
-+        store = TicketStore()
-+        t = store.issue(scope="read")
-+        assert store.redeem(t.token, scope="write") is False
-+        # Consumed on the miss too: a wrong-scope probe must not leave the
-+        # ticket alive for a second attempt with the right scope.
-+        assert store.redeem(t.token, scope="read") is False
-+
-+    def test_unknown_ticket_is_refused(self):
-+        store = TicketStore()
-+        assert store.redeem("not-a-real-ticket") is False
-+
-+    def test_empty_and_non_string_tokens_are_refused(self):
-+        store = TicketStore()
-+        assert store.redeem("") is False
-+        assert store.redeem(None) is False  # type: ignore[arg-type]
-+
-+    def test_saturated_store_refuses_rather_than_growing(self):
-+        store = TicketStore()
-+        # Force the table to its ceiling without minting 4096 secrets.
-+        store._pending.clear()
-+        from mcp_memory_service.web.sse_ticket import _MAX_PENDING, Ticket
-+
-+        now = time.monotonic()
-+        for i in range(_MAX_PENDING):
-+            store._pending[f"k{i}"] = Ticket(token=f"k{i}", expires_at=now + 60, scope="read")
-+        with pytest.raises(RuntimeError):
-+            store.issue()
-+
-+    def test_default_ttl_is_short(self):
-+        # A leaked URL must be worthless almost immediately. If someone raises
-+        # this into minutes, the whole point of the change is gone.
-+        assert DEFAULT_TTL_SECONDS <= 60.0
-+
-+    def test_module_level_store_exists(self):
-+        assert isinstance(sse_tickets, TicketStore)
++@dataclass
++class _Window:
++    hits: deque[float] = field(default_factory=deque)
++    denied_at: float | None = None
 +
 +
-+class TestTicketHardening:
-+    """Regressions Greptile found in review. Each one names the failure."""
++def resolve_caller_identity(header_value: str | None, client_host: str | None) -> str:
++    """Resolve the rate-limit identity for one tool call.
 +
-+    def test_non_ascii_token_is_refused_not_raised(self):
-+        # hmac.compare_digest raises TypeError on non-ASCII, which escaped
-+        # authentication as a 500 instead of a 401.
-+        store = TicketStore()
-+        store.issue()  # a pending ticket must be present for this to matter
-+        assert store.redeem("é") is False
-+        assert store.redeem("\u00e9\u00e9") is False
++    Never reads tool arguments: the header comes from the transport layer
++    (``X-Agent-ID``), read before any argument rewriting. Chain:
++    header -> socket peer IP -> one per-process bucket.
++    """
 +
-+    def test_issue_holds_the_lock_across_check_and_insert(self):
-+        # The purge, size check and insert must be one critical section.
-+        # Before, two concurrent callers could both pass the limit.
-+        src = inspect.getsource(TicketStore.issue)
-+        lock_idx = src.find("self._lock")
-+        purge_idx = src.find("_purge_locked")
-+        insert_idx = src.find("self._pending[token] = ticket")
-+        assert lock_idx != -1 and purge_idx != -1 and insert_idx != -1
-+        assert lock_idx < purge_idx < insert_idx, (
-+            "issue() must acquire the lock before purging and hold it through the insert"
++    if isinstance(header_value, str) and header_value.strip():
++        return f"agent:{header_value.strip()}"
++    if isinstance(client_host, str) and client_host:
++        return f"ip:{client_host}"
++    return "process:default"
++
++
++def _read_limit(env_name: str):
++    """Read a non-negative integer setting.
++
++    ``0`` explicitly means unlimited. Invalid or negative values are ignored
++    and ``_UNSET`` is returned so callers can fall back to the next setting.
++    """
++
++    raw = os.getenv(env_name)
++    if raw is None or not raw.strip():
++        return _UNSET
++    try:
++        value = int(raw)
++    except ValueError:
++        logger.warning(
++            "Ignoring invalid %s=%r; expected a non-negative integer",
++            _sanitize_log_value(env_name),
++            _sanitize_log_value(raw),
 +        )
++        return _UNSET
++    if value < 0:
++        logger.warning(
++            "Ignoring negative %s=%r; expected a non-negative integer",
++            _sanitize_log_value(env_name),
++            _sanitize_log_value(raw),
++        )
++        return _UNSET
++    return value
 +
-+    def test_capacity_is_enforced_under_concurrency(self):
-+        # A direct check of the property the lock is there for: never exceed
-+        # the ceiling, no matter how many callers arrive at once.
-+        from mcp_memory_se
++
++def _env_names(tool_name: str) -> tuple[str, ...]:
++    """Return per-tool env names in precedence order.
++
++    The issue documents lower-case tool names (for example
++    ``MCP_RATE_LIMIT_memory_store``). Accept the upper-case form too because
++    most deployment tooling normalizes environment variable names.
++    """
++
++    return (
++        f"MCP_RATE_LIMIT_{tool_name}",
++        f"MCP_RATE_LIMIT_{tool_name.upper()}",
++    )
++
++
++def resolve_limit(tool_name: str) -> int | None:
++    """Resolve the per-minute limit for a tool.
++
++    A tool-specific setting overrides ``MCP_RATE_LIMIT_PER_MINUTE``. The
++    default is unlimited (``None``) for backward compatibility.
++    """
++
++    for env_name in _env_names(tool_name):
++        value = _read_limit(env_name)
++        if value is not _UNSET:
++            return None if value == 0 else value
++
++    value = _read_limit("MCP_RATE_LIMIT_PER_MINUTE")
++    if value is _UNSET or value == 0:
++        return None
++    return value
++
++
++def _bucket_key(identity: str, tool_name: str) -> str:
++    """Hash the identity and tool so arbitrary ids do not grow the key space."""
++
++    return sha256(f"{identity}\0{tool_name}".encode()).hexdigest()
++
++
++class ToolRateLimiter:
++    """Thread-safe per-identity/per-tool sliding-window limiter.
++
++    State is intentionally process-local. ``max_keys`` caps the number of
++    retained windows; when a new identity arrives past the cap, a window
++    with no live hits is evicted first, so an eviction never 
 ```
 
-**File**: `tests/web/test_middleware.py` (modified, +59/-5)
+**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +32/-7)
 ```diff
-@@ -22,6 +22,7 @@
- import pytest_asyncio
- from fastapi import Request
- from fastapi.testclient import TestClient
-+import importlib
- import os
- 
- @pytest_asyncio.fixture
-@@ -41,7 +42,6 @@ async def temp_storage(temp_db_path):
- @pytest.fixture
- def client(temp_storage):
-     """Create FastAPI test client with initialized storage and auth config."""
--    import importlib
-     from mcp_memory_service import config
-     from mcp_memory_service.web.app import app
- 
-@@ -122,12 +122,52 @@ async def test_x_api_key_header_wrong_key(self, client):
- 
-     @pytest.mark.asyncio
-     async def test_query_parameter_success(self, client):
--        """Test successful authentication with query parameter."""
-+        """`api_key` as a query parameter is refused (issue #1117).
-+
-+        This used to return 200 and is why the key ended up in the access log:
-+        uvicorn logs the whole request line, so `?api_key=<key>` wrote the
-+        long-lived secret in cleartext into the log on every reconnect. The
-+        query-parameter name is kept in the test title deliberately — a reader
-+        looking for "why did query auth stop working" finds the answer here.
-+
-+        Use the `X-API-Key` header, or a single-use ticket from
-+        `POST /api/events/ticket`.
-+        """
-         response = client.get("/api/memories?api_key=test-secret-key-12345")
-+        assert response.status_code == 401, (
-+            "api_key in the query string must no longer authenticate — it is the leak"
-+        )
-+
-+    @pytest.mark.asyncio
-+    async def test_ticket_query_parameter_authenticates(self, client):
-+        """The single-use ticket is the supported query-parameter credential."""
-+        issued = client.post(
-+            "/api/events/ticket",
-+            headers={"X-API-Key": "test-secret-key-12345"},
-+            json={},
-+        )
-+        assert issued.status_code == 200, issued.text
-+        ticket = issued.json()["ticket"]
-+
-+        response = client.get(f"/api/memories?ticket={ticket}")
-         assert response.status_code == 200
-         data = response.json()
-         assert "memories" in data or "total" in data
- 
-+    @pytest.mark.asyncio
-+    async def test_ticket_cannot_be_replayed(self, client):
-+        """A ticket that survives replay is just a shorter-lived key."""
-+        issued = client.post(
-+            "/api/events/ticket",
-+            headers={"X-API-Key": "test-secret-key-12345"},
-+            json={},
-+        )
-+        ticket = issued.json()["ticket"]
-+        assert client.get(f"/api/memories?ticket={ticket}").status_code == 200
-+        assert client.get(f"/api/memories?ticket={ticket}").status_code == 401, (
-+            "second use of the same ticket must fail"
-+        )
-+
-     @pytest.mark.asyncio
-     async def test_query_parameter_wrong_key(self, client):
-         """Test that wrong query parameter returns 401."""
-@@ -259,7 +299,21 @@ async def test_api_only_deployment(self, client):
- 
-     @pytest.mark.asyncio
-     async def test_script_access_with_query_param(self, client):
--        """Test convenient query parameter access for scripts."""
--        # Useful for quick scripts, though less secure
-+        """Script-style query-param access: ticket, not api_key (issue #1117).
-+
-+        The old form here was `?api_key=...`, described as "convenient, though
-+        less secure". It was worse than less secure: the convenience put the
-+        long-lived key into a log file on every request. Scripts should send
-+        `X-API-Key` as a header; only `EventSource` has an excuse to use the
-+        URL, and it gets a short-lived ticket instead.
-+        """
-         response = client.get("/api/memories?api_key=test-secret-key-12345")
--        assert response.status_code == 200
-+        assert response.status_code == 401
-+
-+        issued = client.post(
-+            "/api/events/ticket",
-+            headers={"X-API-Key": "test-secret-key-12345"},
-+            json={},
-+        )
-+        ticket = issued.json()["ticket"]
-+        assert client.get(f"/api/memories?ticket={ticket}").status_code == 200
-```
-
----
-
-### Incident Patch 2: `5a8e9037` (2026-10-19)
-**Commit Message**: fix(mcp): propagate tool exceptions so failures reach the client as isError (#1601) (#1603)
-
-* fix(mcp): propagar excecao de tool para o envelope sair com isError=True (#1601)
-
-O dispatcher de tools capturava qualquer excecao e devolvia o erro como TextContent
-dentro de um resultado bem-sucedido: isError ficava False e automacao (colheita,
-importacao, sondas) contava como gravado o que nunca foi para o banco.
-
-- dispatcher (server_impl.call_tool): loga e re-levanta em vez de formatar texto
-- handle_store_memory / handle_store_session: recusa de escrita levanta, nao retorna
-- testes de integracao no transporte real: recusa -> isError=True; aceite -> False
-
-* changelog: fragmento do fix de isError (#1601)
-
-* fix(mcp): atende achados do Greptile no envelope de erro (#1601)
-
-- content vazio (memory_store) e sessao sem turno util levantam em vez de retornar texto
-- recusa parcial de chunks (failed_chunks > 0) conta como falha de escrita
-- endpoint FastAPI /mcp converte excecao de tool em result com isError=true (antes virava -32603)
-- testes: 6 casos novos + ajuste dos que congelavam o contrato antigo de retorno-texto
-- suite integracao+web: 507 passed (base limpa: 501)
-
-**File**: `changelog.d/1601.fixed.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+- **A failed tool call now answers with `isError: true` instead of a successful
-+  envelope carrying error text (#1601).** The tool dispatcher caught every
-+  exception, formatted it as `{"error": ...}` and returned it as ordinary content,
-+  so `isError` stayed `false` for writes that were actually refused — a duplicate
-+  rejected by semantic dedup, for instance. Automation that trusts `isError`
-+  (harvesters, importers, integration probes) counted those writes as stored while
-+  nothing reached the database. The dispatcher now logs and re-raises, which the
-+  SDK maps to `isError: true`; `memory_store` and `memory_store_session` likewise
-+  raise on a refused write instead of returning the error as text.
-```
-
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +31/-10)
-```diff
-@@ -208,7 +208,8 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
-     metadata = arguments.get("metadata", {})
- 
-     if not content:
--        return [types.TextContent(type="text", text="Error: Content is required")]
-+        # Nothing to store: must not look like success (#1601).
-+        raise ValueError("Content is required")
- 
-     try:
-         # Initialize storage lazily when needed (also initializes memory_service)
-@@ -244,7 +245,19 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
-         # Convert MemoryService result to MCP response format
-         if not result.get("success"):
-             error_msg = result.get("error", "Unknown error")
--            return [types.TextContent(type="text", text=f"Error storing memory: {error_msg}")]
-+            # A refused write is a failure. Return-as-text made the MCP envelope
-+            # report isError=False while nothing was stored, so automation counted
-+            # it as success (#1601). Raise: the SDK answers isError=True.
-+            raise RuntimeError(f"Error storing memory: {error_msg}")
-+
-+        # Partial writes are failures too: some chunks never reached the database,
-+        # so reporting success lets a harvester skip them permanently (#1601).
-+        failed_chunks = result.get("failed_chunks") or 0
-+        if failed_chunks:
-+            raise RuntimeError(
-+                f"Error storing memory: {failed_chunks} of "
-+                f"{result.get('total_chunks', '?')} chunks failed to store"
-+            )
- 
-         if "memories" in result:
-             # Chunked response - multiple memories created
-@@ -377,7 +390,8 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
- 
-     except Exception as e:
-         logger.error("Error storing memory: %s\n%s", _sanitize_log_value(e), traceback.format_exc())
--        return [types.TextContent(type="text", text=f"Error storing memory: {str(e)}")]
-+        # Re-raise: a failed write must reach the caller as isError=True (#1601).
-+        raise
- 
- 
- async def handle_memory_observe(server, arguments: dict) -> List[types.TextContent]:
-@@ -464,7 +478,8 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
-         if content:
-             lines.append(f"[{role}] {content}")
-     if not lines:
--        return [types.TextContent(type="text", text="Error: all turns have empty content")]
-+        # Nothing to store: raise so the envelope reports a failure (#1601).
-+        raise ValueError("all turns have empty content")
- 
-     full_content = "\n".join(lines)
-     base_tags = [f"session:{session_id}"] + extra_tags
-@@ -491,7 +506,10 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
-                 store=store,
-             )
-             if not result.get("success"):
--                return [types.TextContent(type="text", text=f"Error storing session: {result.get('error', 'Unknown error')}")]
-+                # Refused write = failure; raise so the SDK sets isError=True (#1601).
-+                raise RuntimeError(
-+                    f"Error storing session: {result.get('error', 'Unknown error')}"
-+                )
-             memory_hash = result["memory"]["content_hash"]
-             return [types.TextContent(
-                 type="text",
-@@ -516,10 +534,11 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
-             )
-             if not result.get("success"):
-                 error = result.get("error", "Unknown error")
--                return [types.TextContent(
--                    type="text",
--                    text=f"Error storing session chunk {i+1}/{len(chunks)}: {error} (stored {stored}/{len(chunks)} before failure)"
--                )]
-+                # Partial chunk failure is still a failure for the caller: raise (#1601).
-+                raise RuntimeError(
-+                    f"Error storing session chunk {i+1}/{len(chunks)}: {error} "
-+                    f"(stored {stored}/{len(chunks)} before failure)"
-+                )
-             stored += 1
- 
-         return [types.TextContent(
-@@ -528,7 +547,9 @@ async def handle_store_session(server, arguments: dict) -> List[types.TextConten
-         )]
-     except Exception as e:
-         logger.error("Error storing session: %s\n%s", _sanitize_log_value(e), traceback.format_exc())
--        return [types.TextContent(type="text", text=f"Error storing session: {str(e)}")]
-+        # Re-raise: a failed write must reach the client as isError=True (#1601),
-+        # not as a successful envelope carrying error text.
-+        raise
- 
- 
- def _chunk_session_lines(lines: List[str], chunk_size: int) -> List[List[str]]:
-```
-
-**File**: `src/mcp_memory_service/server_impl.py` (modified, +5/-2)
-```diff
-@@ -1629,8 +1629,11 @@ async def call_tool(self, name: str, arguments: dict | None) -> List[types.TextC
-             return [types.TextContent(type="text", text=str(result))]
-         except Exception as e:
-             logger.error("Error in tool %s: %s", _sanitize_log_value(name), _sanitize_log_value(e), exc_info=True)
--            error_response = json.dumps({"error": str(e)})
--            return [types.TextContent(type="text", text=error_response)]
-+            # Propagate instead of returning the error as text: the SDK maps an
-+            # exception to isError=True, which is the only signal automation can
-+            # trust. Returning TextContent made every failed tool look successful
-+            # (#1601), so harvesters advanced their cursors over lost payloads.
-+            raise
- 
-     async def handle_call_tool(self, name: str, arguments: dict | None) -> List[types.TextContent]:
-         """Public alias for call_tool (used by tests)."""
-```
-
-**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +24/-3)
-```diff
-@@ -12,6 +12,7 @@
- 
- from fastapi import APIRouter, Depends, Response, Request
- from fastapi.responses import JSONResponse
-+import mcp.types as types
- from pydantic import BaseModel, ConfigDict
+@@ -17,6 +17,7 @@
  
  from ..._version import __version__
-@@ -124,14 +125,17 @@ def _tool_to_dict(tool) -> Dict[str, Any]:
+ from ...compat import _sanitize_log_value
++from ...utils.tool_rate_limit import resolve_caller_identity
+ from ..oauth.middleware import require_read_access, AuthenticationResult
+ 
+ logger = logging.getLogger(__name__)
+@@ -125,17 +126,30 @@ def _tool_to_dict(tool) -> Dict[str, Any]:
      }
  
  
--def _wrap_tool_result(text_contents) -> Dict[str, Any]:
-+def _wrap_tool_result(text_contents, is_error: bool = False) -> Dict[str, Any]:
-     """Pack a `list[mcp.types.TextContent]` into an MCP `tools/call` result."""
--    return {
-+    result: Dict[str, Any] = {
+-def _wrap_tool_result(text_contents, is_error: bool = False) -> Dict[str, Any]:
+-    """Pack a `list[mcp.types.TextContent]` into an MCP `tools/call` result."""
+-    result: Dict[str, Any] = {
++def _wrap_tool_result(result, is_error: bool = False) -> Dict[str, Any]:
++    """Pack the shared dispatcher result into an MCP `tools/call` result."""
++    if isinstance(result, types.CallToolResult):
++        payload = {
++            "content": [
++                {"type": tc.type, "text": tc.text}
++                for tc in result.content
++            ],
++        }
++        if result.isError:
++            payload["isError"] = True
++        if result.structuredContent is not None:
++            payload["structuredContent"] = result.structuredContent
++        return payload
++
++    payload: Dict[str, Any] = {
          "content": [
              {"type": "text", "text": tc.text}
-             for tc in text_contents
+-            for tc in text_contents
++            for tc in result
          ]
      }
-+    if is_error:
-+        result["isError"] = True
-+    return result
+     if is_error:
+-        result["isError"] = True
+-    return result
++        payload["isError"] = True
++    return payload
  
  
  @router.post("/")
-@@ -234,7 +238,24 @@ async def mcp_endpoint(
-                 if header_agent_id:
-                     arguments["agent_id"] = header_agent_id.strip()
+@@ -232,6 +246,15 @@ async def mcp_endpoint(
+                     status_code=403,
+                 )
  
--            text_contents = await server.call_tool(tool_name, arguments)
-+            # This path bypasses the SDK wrapper, so a tool exception would surface
-+            # as JSON-RPC -32603 (a request error) instead of the tool result with
-+            # isError=true that MCP promises. Convert it here (#1601).
-+            try:
-+                text_contents = await server.call_tool(tool_name, arguments)
-+            except Exception as tool_error:
-+                logger.warning(
-+                    "Tool %s failed: %s",
-+                    _sanitize_log_value(tool_name),
-+                    _sanitize_log_value(tool_error),
-+                )
-+                text_contents = [types.TextContent(type="text", text=str(tool_error))]
-+                response = MCPResponse(
-+                    id=request.id,
-+                    result=_wrap_tool_result(text_contents, is_error=True),
-+                )
-+                return JSONResponse(content=response.model_dump(exclude_none=True))
++            # Resolve the rate-limit identity from the transport BEFORE the
++            # arguments rewrite below: the shim copies X-Agent-ID into
++            # arguments["agent_id"] when the call has none, and the limiter
++            # must never read tool arguments (#1096).
++            caller_identity = resolve_caller_identity(
++                http_request.headers.get("X-Agent-ID"),
++                http_request.client.host if http_request.client else None,
++            )
 +
-             response = MCPResponse(
-                 id=request.id,
-                 result=_wrap_tool_result(text_contents),
+             # Inject X-Agent-ID header if agent_id argument not explicitly provided
+             if not arguments.get("agent_id"):
+                 header_agent_id = http_request.headers.get("X-Agent-ID")
+@@ -242,7 +265,9 @@ async def mcp_endpoint(
+             # as JSON-RPC -32603 (a request error) instead of the tool result with
+             # isError=true that MCP promises. Convert it here (#1601).
+             try:
+-                text_contents = await server.call_tool(tool_name, arguments)
++                text_contents = await server.call_tool(
++                    tool_name, arguments, caller_identity=caller_identity
++                )
+             except Exception as tool_error:
+                 logger.warning(
+                     "Tool %s failed: %s",
 ```
 
-**File**: `tests/integration/test_server_handlers.py` (modified, +12/-34)
+**File**: `tests/server/test_tool_rate_limit.py` (added, +259/-0)
 ```diff
-@@ -65,35 +65,19 @@ async def test_store_memory_chunked(self, unique_content):
- 
-     @pytest.mark.asyncio
-     async def test_store_memory_empty_content(self):
--        """Test storing empty content returns error."""
-+        """Empty content is rejected by raising, so the envelope reports isError (#1601)."""
-         server = MemoryServer()
- 
--        result = await server.handle_store_memory({
--            "content": "",
--            "metadata": {}
--        })
--
--        # Verify error message
--        assert isinstance(result, list)
--        assert len(result) == 1
--        text = result[0].text
--        assert "error" in text.lower()
--        assert "required" in text.lower()
-+        with pytest.raises(ValueError, match="[Cc]ontent is required"):
-+            await server.handle_store_memory({"content": "", "metadata": {}})
- 
-     @pytest.mark.asyncio
-     async def test_store_memory_missing_content(self):
--        """Test storing without content parameter returns error."""
-+        """Missing content is rejected by raising (#1601)."""
-         server = MemoryServer()
- 
--        result = await server.handle_store_memory({
--            "metadata": {"tags": ["test"]}
--        })
--
--        # Verify error message
--        assert isinstance(result, list)
--        assert len(result) == 1
--        text = result[0].text
--        assert "error" in text.lower()
-+        with pytest.raises(ValueError, match="[Cc]ontent is required"):
-+            await server.handle_store_memory({"metadata": {"tags": ["test"]}})
- 
-     @pytest.mark.asyncio
-     async def test_store_memory_with_tags_string(self, unique_content):
-@@ -279,18 +263,12 @@ async def test_error_handling_without_keyerror(self):
-         """Verify fix for issue #198: Errors handled without KeyError."""
-         server = MemoryServer()
- 
--        # Store with empty content (triggers error path)
--        result = await server.handle_store_memory({
--            "content": "",
--            "metadata": {}
--        })
--
--        # Should return error message without KeyError
--        assert isinstance(result, list)
--        assert len(result) == 1
--        assert "error" in result[0].text.lower()
--        # Should NOT be KeyError message
--        assert "'message'" not in result[0].text
-+        # Empty content now raises (isError path); the guarantee under test is that
-+        # the failure never surfaces as a KeyError (#198).
-+        with pytest.raises(ValueError) as excinfo:
-+            await server.handle_store_memory({"content": "", "metadata": {}})
-+        assert not isinstance(excinfo.value, KeyError)
-+        assert "'message'" not in str(excinfo.value)
- 
- 
- class TestGetCacheStats:
-```
-
-**File**: `tests/integration/test_store_error_envelope.py` (added, +120/-0)
-```diff
-@@ -0,0 +1,120 @@
-+"""Envelope de erro do MCP: gravação recusada tem de sair com ``isError=True``.
+@@ -0,0 +1,259 @@
++"""Dispatcher-level per-caller rate limiting (#1096).
 +
-+Defeito (#1601): ``handle_store_memory`` devolvia ``TextContent`` com o texto
-+"Error storing memory: ..." dentro de um resultado bem-sucedido. O ``isError``
-+do envelope ficava ``False``, então automação (colheita, importação, sondas de
-+teste) contava como gravado algo que nunca foi para o banco.
-+
-+O padrão do repo já está documentado no dispatch de ``server_impl``: levantar
-+exceção faz o SDK responder ``isError=True``.
++The limiter keys callers by the client-sent ``X-Agent-ID`` request header,
++read from the transport layer -- never from tool arguments (for
++``memory_search``/``memory_list`` the ``agent_id`` argument is an author
++filter, not a caller identity).
 +"""
 +
-+import uuid
++import json
++from types import SimpleNamespace
++from unittest.mock import PropertyMock
 +
 +import pytest
-+from mcp import ClientSession
-+from mcp.client.streamable_http import streamablehttp_client
++from mcp import types
 +
-+from tests.integration.test_agent_id_streamable_header import StreamableService
++from mcp_memory_service.server import MemoryServer
++from mcp_memory_service.utils.tool_rate_limit import (
++    ToolRateLimiter,
++    resolve_caller_identity,
++    resolve_limit,
++)
++
++
++async def _echo_handler(_server, arguments):
++    return [types.TextContent(type="text", text=json.dumps(arguments))]
 +
 +
 +@pytest.fixture
-+async def service(tmp_path):
-+    svc = StreamableService(str(tmp_path / "store_error.db"))
-+    await svc.start()
-+    try:
-+        yield svc
-+    finally:
-+        await svc.stop()
-+
-+
-+async def _store(mcp_url: str, content: str):
-+    async with streamablehttp_client(mcp_url) as (read, write, _):
-+        async with ClientSession(read, write) as session:
-+            await session.initialize()
-+            return await session.call_tool("memory_store", {"content": content})
-+
-+
-+@pytest.mark.asyncio
-+async def test_refused_write_reports_iserror(service):
-+    """Segunda gravação do mesmo conteúdo é recusada e o envelope diz isError."""
-+    content = f"envelope probe {uuid.uuid4()}"
-+
-+    first = await _store(service.mcp_url, content)
-+    assert not first.isError, "a primeira gravação deveria ser aceita"
-+
-+    second = await _store(service.mcp_url, content)
-+    assert second.isError is True, (
-+        "gravação recusada deve sair com isError=True; "
-+        f"recebido isError={second.isError!r}"
++def dispatcher(monkeypatch):
++    monkeypatch.setattr(
++        "mcp_memory_service.tools.routing.resolve_handler",
++        lambda _name: _echo_handler,
 +    )
-+    text = " ".join(getattr(c, "text", "") for c in second.content)
-+    assert "Error" in text or "Duplicate" in text, "a mensagem do erro deve chegar ao cliente"
++    return MemoryServer()
++
++
++def _clear_env(monkeypatch):
++    for var in (
++        "MCP_RATE_LIMIT_PER_MINUTE",
++        "MCP_RATE_LIMIT_memory_search",
++        "MCP_RATE_LIMIT_MEMORY_SEARCH",
++    ):
++        monkeypatch.delenv(var, raising=False)
++
++
++def _is_rate_limited(result) -> bool:
++    if isinstance(result, types.CallToolResult) and result.isError:
++        try:
++            err = json.loads(result.content[0].text).get("error", {})
++        except Exception:
++            return False
++        return err.get("type") == "rate_limit_exceeded" and err.get("code") == -32029
++    return False
 +
 +
 +@pytest.mark.asyncio
-+async def test_accepted_write_keeps_iserror_false(service):
-+    """Guarda: gravação aceita continua com isError=False."""
-+    result = await _store(service.mcp_url, f"envelope ok {uuid.uuid4()}")
-+    assert not result.isError
-+
-+
-+@pytest.mark.asyncio
-+async def test_empty_content_reports_iserror(service):
-+    """Payload vazio não grava nada, então não pode parecer sucesso (Greptile P1)."""
-+    async with streamablehttp_client(service.mcp_url) as (read, write, _):
-+        async with ClientSession(read, write) as session:
-+            await session.initialize()
-+            result = await session.call_tool("memory_store", {"content": ""})
-+    assert result.isError is True
-+
-+
-+@pytest.mark.asyncio
-+async def test_empty_session_reports_iserror(service):
-+    """Sessão cujos turnos são só espaço não grava nada — e deve falhar (Greptile P1)."""
-+    async with streamablehttp_client(service.mcp_url) as (read, write, _):
-+        async with ClientSession(read, write) as session:
-+            await session.initialize()
-+            result = await session.call_tool(
-+                "memory_store_session",
-+                {"turns": [{"role": "user", "content": "   "}]},
-+            )
-+    assert result.isError is True
-+
-+
-+def test_wrap_tool_result_marks_error():
-+    """O caminho HTTP (sem wrapper do SDK) precisa poder marcar isError (Greptile P1)."""
-+    import mcp.types as types
-+
-+    from mcp_memory_service.web.api.mcp import _wrap_tool_result
-+
-+    ok = _wrap_tool_result([types.TextContent(type="text", text="stored")])
-+    assert "isError" not in ok or ok["isError"] is False
-+
-+    failed = _wrap_tool_result([types.TextContent(type="text", text="boom")], is_error=True)
-+    assert failed["isError"] is True
-+    assert failed["content"][0]["text"] == "boom"
-+
-+
-+@pytest.mark.asyncio
-+async def test_partial_chunks_report_iserror():
-+    """Chunks que falharam não podem sair como sucesso (Greptile P1).
-+
-+    ``MemoryService.store_memory`` devolve ``success: True`` com ``failed_chunks``
-+    positivo quando parte dos chunks não entrou; o handler precisa tratar isso
-+    como falha, senão a colheita pula conteúdo que nunca foi salvo.
-+    """
-+    from mcp_memory_service.server.handlers.memory import handle_store_memory
-+
-+    class _FakeService:
-+        async def store_memory(self, **kwargs):
-+            return {"success": True, "memories": [], "total_chunks": 3, "failed_chunks": 1}
-+
-+    class _FakeServer:
-+        memory_service = _FakeService()
-+
-+        async def _ensure_storage_initialized(self):
-+            return None
-+
-+    with pytest.raises(RuntimeError, match="chunks failed to store"):
-+        await handle_store_memory(_FakeServer(), {"content": "conteudo com chunks"})
-```
-
-**File**: `tests/integration/test_unified_handlers.py` (modified, +23/-16)
-```diff
-@@ -16,6 +16,21 @@
- from mcp_memory_service.server import MemoryServer
- 
- 
-+async def _store_fixture(server, content: str, tags: list[str]) -> None:
-+    """Store a fixture memory, tolerating a semantic-dedup refusal.
-+
-+    These tests exercise delete/list, not the write path. Since #1601 a refused
-+    write raises instead of returning text, so an already-similar fixture would
-+    abort the test for a reason it does not care about. Any other error still
-+    propagates.
-+    """
-+    try:
-+        await server.handle_store_memory({"content": content, "metadata": {"tags": tags}})
-+    except RuntimeError as exc:
-+        if "Duplicate content" not in str(exc):
-+            raise
-+
-+
- class TestHandleMemorySearch:
-     """Tests for unified handle_memory_search handler."""
- 
-@@ -176,14 +191,8 @@ async def test_delete_by_tags_any_match(self, unique_content):
-         server = MemoryServer()
- 
-         # Store memories with different tags
--        await server.handle_store_memory({
--            "content": unique_content("Delete tag any 1"),
--            "metadata": {"tags": ["delete-any-a", "common"]}
--        })
--        await server.handle_store_memory({
--            "content": unique_content("Delete tag any 2"),
--            "metadata": {"tags": ["delete-any-b", "common"]}
--        })
-+        await _store_fixture(server, unique_content("Delete tag any 1"), ["delete-any-a", "common"])
-+        await _store_fixture(server, unique_content("Delete tag any 2"), ["delete-any-b", "common"])
- 
-         # Delete with ANY match (matches either tag)
-         result = await server.handle_memory_delete({
-@@ -269,10 +278,9 @@ async def test_list_with_pagination(self, unique_content):
- 
-         # Store some test memories
-         for i in range(5):
--            await server.handle_store_memory({
--                "content": unique_content(f"List pagination test {i}"),
--                "metadata": {"tags": ["list-pagination-test"]}
--            })
-+            await _store_fixture(
-+                server, unique_content(f"List pagination test {i}"), ["list-pagination-test"]
-+            )
- 
-         # List with pagination
-         result = await server.handle_memory_list({
-@@ -290,10 +298,9 @@ async def test_list_filtered_by_tags(self, unique_content):
-         server = MemoryServer()
- 
-         # Store with specific tag
--        await server.handle_store_memory({
--            "content": unique_content("Tagged memory for list filter"),
--            "metadata": {"tags": ["list-filter-tag"]}
--        })
-+        await _store_fixture(
-+            server, unique_content("Tagged memory for list filter"), ["list-filter-tag"]
++async def test_dispatcher_is_unlimited_by_default(dispatcher, monkeypatch):
++    _clear_env(monkeypatch)
++    for _ in range(50):
++        result = await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
 +        )
- 
-         # List filtered by tag
-         result = await server.handle_memory_list({
++        assert not _is_rate_limited(result)
++
++
++@pytest.mark.asyncio
++async def test_dispatcher_enforces_per_agent_limit(dispatcher, monkeypatch):
++    _clear_env(monkeypatch)
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "2")
++
++    for _ in range(2):
++        result = await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
++        )
++        assert not _is_rate_limited(result)
++    assert _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
++        )
++    )
++
++
++@pytest.mark.asyncio
++async def test_agent_windows_are_isolated(dispatcher, monkeypatch):
++    _clear_env(monkeypatch)
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
++
++    assert not _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
++        )
++    )
++    # agent-a is now at its limit; agent-b must be unaffected.
++    assert _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
++        )
++    )
++    assert not _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:b"
++        )
++    )
++
++
++@pytest.mark.asyncio
++async def test_limiter_never_reads_tool_arguments(dispatcher, monkeypatch):
++    """``arguments["agent_id"]`` is an author filter for search/list.
++
++    Changing it must not change the rate-limit bucket; only the explicit
++    caller identity does.
++    """
++    _clear_env(monkeypatch)
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
++
++    assert not _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search",
++            {"query": "x", "agent_id": "author-x"},
++            caller_identity="agent:real-caller",
++        )
++    )
++    # Same caller, different author filter -> still the same bucket.
++    assert _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search",
++            {"query": "x", "agent_id": "author-y"},
++            caller_identity="agent:real-caller",
++        )
++    )
++    # Different caller, same author filter -> fresh bucket.
++    assert not _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search",
++            {"query": "x", "agent_id": "author-x"},
++            caller_identity="agent:other-caller",
++        )
++    )
++
++
++@pytest.mark.asyncio
++async def test_per_tool_override(dispatcher, monkeypatch):
++    _clear_env(monkeypatch)
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "10")
++    monkeypatch.setenv("MCP_RATE_LIMIT_memory_search", "1")
++
++    assert not _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
++        )
++    )
++    assert _is_rate_limited(
++        await dispatcher.call_tool(
++            "memory_search", {"query": "x"}, caller_identity="agent:a"
++        )
++    )
++
++
++def _mock_sdk_request(monkeypatch, dispatcher, headers, client_host):
++    client = SimpleNamespace(host=c
 ```
 
 ---
 
-### Incident Patch 3: `4cafa14e` (2026-10-19)
-**Commit Message**: fix(oauth): raise and make configurable the OAuth state length limit (#1554)
+### Incident Patch 2: `a8f878a2` (2026-10-20)
+**Commit Message**: fix(storage): keep a versioned memory in its store partition (#1594)
 
-* fix(oauth): raise and make configurable the OAuth state length limit
+* fix(storage): keep a versioned memory in its store partition
 
-Google Gemini custom apps send an opaque state of ~2400 characters,
-which exceeded the hardcoded MAX_STATE_LEN=1024 and caused /oauth/authorize
-to reject the request before the login page was shown.
+* test(storage): cover versioned updates outside the default store
 
-Make MAX_STATE_LEN (and the related scope/redirect caps) read from the
-environment via safe_get_int_env with a raised default of 4096, matching
-the pattern used by other OAuth settings. Operators can now accommodate
-longer clients without patching source.
+* docs(changelog): name the #1594 fragment after the PR number
 
-Fixes #1553
+changelog.d/README.md names fragments <number>.<category>.md, and the
+entry now cites the PR and the author like the other fragments do.
 
-Signed-off-by: Om Patil <[REDACTED_EMAIL]>
+---------
 
-* fix(oauth): address review feedback on state length limit
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-- Restore MAX_SCOPE_LEN default to 1024 (still configurable)
-- Make test_max_state_len_is_env_configurable reload the limits module
-  and assert boundary behaviour with reject_if_too_long
-- Add changelog.d/1554.fixed.md describing the Gemini 400 and the new env vars
-
-* test(oauth): isolate MAX_STATE_LEN tests in fresh processes
-
-Addresses Greptile review comments:
-- Default test now runs with MCP_OAUTH_MAX_STATE_LEN unset in a
-  subprocess so local developer env cannot c
-
-**File**: `changelog.d/1554.fixed.md` (added, +2/-0)
+**File**: `changelog.d/1594.fixed.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+- **Gemini custom apps rejected with HTTP 400 at /oauth/authorize due to OAuth state length limit (#1554, #1553).**
-+  The hard-coded 1024-character cap on the OAuth `state` parameter was too low for some clients (Gemini custom apps send ~2400 characters). `MCP_OAUTH_MAX_STATE_LEN`, `MCP_OAUTH_MAX_SCOPE_LEN` and `MCP_OAUTH_MAX_REDIRECT_URI_LEN` are now configurable via environment variables (defaults: 4096 / 1024 / 2048). These limits are read at process startup; changing them requires a restart.
+@@ -0,0 +1,5 @@
++- **A versioned memory dropped out of its own store (#1594, serhiizghama).**
++  `update_memory_versioned()` wrote the new version into the `default` store
++  whatever store the old one was in, so after `memory_update(versioned=true)` or a
++  harvest evolve the memory dropped out of searches scoped to its own store. The
++  new version now inherits the old row's store.
 ```
 
-**File**: `src/mcp_memory_service/web/oauth/limits.py` (modified, +9/-3)
+**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +7/-3)
 ```diff
-@@ -26,6 +26,8 @@
+@@ -623,7 +623,7 @@ async def update_memory_versioned(
  
- from fastapi import HTTPException, status
+             def _check_exists():
+                 cursor = self.conn.execute(
+-                    "SELECT content_hash, tags, memory_type, version, metadata FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
++                    "SELECT content_hash, tags, memory_type, version, metadata, store FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
+                     (content_hash,),
+                 )
+                 return cursor.fetchone()
+@@ -632,7 +632,7 @@ def _check_exists():
+             if not row:
+                 return False, f"Memory {content_hash} not found", None
  
-+from mcp_memory_service.config.base import safe_get_int_env
-+
- # RFC 7636 §4.1: code_verifier is 43-128 unreserved characters.
- PKCE_CODE_VERIFIER_MIN_LEN = 43
- PKCE_CODE_VERIFIER_MAX_LEN = 128
-@@ -43,9 +45,13 @@
- MAX_CLIENT_SECRET_LEN = 512
- MAX_AUTHORIZATION_CODE_LEN = 512
- MAX_REFRESH_TOKEN_LEN = 1024
--MAX_SCOPE_LEN = 1024
--MAX_STATE_LEN = 1024
--MAX_REDIRECT_URI_LEN = 2048
-+# Configurable upper bounds so operators can accommodate clients with
-+# unusually long opaque parameters (e.g. Google Gemini's ~2400-char OAuth
-+# state) without patching source. Defaults raised from the previous hard
-+# 1024 to give headroom while still bounding abusive input.
-+MAX_SCOPE_LEN = safe_get_int_env("MCP_OAUTH_MAX_SCOPE_LEN", 1024, min_value=256, max_value=8192)
-+MAX_STATE_LEN = safe_get_int_env("MCP_OAUTH_MAX_STATE_LEN", 4096, min_value=256, max_value=16384)
-+MAX_REDIRECT_URI_LEN = safe_get_int_env("MCP_OAUTH_MAX_REDIRECT_URI_LEN", 2048, min_value=256, max_value=8192)
- 
- # Bearer/JWT tokens and API keys arriving via header or query string.
- MAX_JWT_LEN = 8192
-```
-
-**File**: `tests/web/test_oauth_hardening.py` (modified, +88/-0)
-```diff
-@@ -608,3 +608,91 @@ async def test_full_reported_chain_is_broken_end_to_end(gated_dcr):
-                 reg.client_id, stored.client_secret or "anything"
+-            old_hash, old_tags_str, old_type, old_version, old_metadata_str = row
++            old_hash, old_tags_str, old_type, old_version, old_metadata_str, old_store = row
+             resolved_tags = new_tags if new_tags is not None else (
+                 [t for t in old_tags_str.split(",") if t] if old_tags_str else []
              )
-     assert exc.value.status_code == 401
+@@ -657,7 +657,11 @@ def _check_exists():
+                 memory_type=resolved_type,
+                 metadata=inherited_metadata,
+             )
+-            store_ok, store_msg = await self.store(new_memory, skip_semantic_dedup=True)
++            # The new version lives in the old one's store partition, or it drops
++            # out of that store's searches once the old row is superseded.
++            store_ok, store_msg = await self.store(
++                new_memory, skip_semantic_dedup=True, store=old_store or "default"
++            )
+             if not store_ok:
+                 return False, f"Failed to store new version: {store_msg}", None
+ 
+```
+
+**File**: `tests/storage/test_versioned_update_store.py` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++"""A versioned update keeps the memory in its store partition.
 +
-+
-+# ---------------------------------------------------------------------------
-+# OAuth state length (issue #1553 — Google Gemini custom apps)
-+# ---------------------------------------------------------------------------
-+
-+def test_max_state_len_default_accommodates_long_clients():
-+    """Default MAX_STATE_LEN must accept ~2400-char state values used by Gemini.
-+
-+    Runs in a fresh process with MCP_OAUTH_MAX_STATE_LEN unset so local
-+    developer settings cannot cause false failures.
-+    """
-+    import os
-+    import subprocess
-+    import sys
-+
-+    code = """
-+import os
-+os.environ.pop("MCP_OAUTH_MAX_STATE_LEN", None)
-+from fastapi import HTTPException
-+from mcp_memory_service.web.oauth import limits
-+assert limits.MAX_STATE_LEN == 4096, f"got {limits.MAX_STATE_LEN}"
-+limits.reject_if_too_long("s" * 2500, limits.MAX_STATE_LEN, "state")
-+try:
-+    limits.reject_if_too_long("s" * (limits.MAX_STATE_LEN + 1), limits.MAX_STATE_LEN, "state")
-+except HTTPException as e:
-+    assert e.status_code == 400, e.status_code
-+    assert e.detail["error"] == "invalid_request", e.detail
-+    assert e.detail["error_description"] == (
-+        f"state exceeds maximum length of {limits.MAX_STATE_LEN} characters"
-+    ), e.detail
-+else:
-+    raise SystemExit("should have raised")
-+print("ok")
++update_memory_versioned() wrote the new version through store() without a
++store argument, so it always landed in "default". The old row was superseded
++in its own store, and the memory vanished from that store's searches.
 +"""
-+    env = os.environ.copy()
-+    env.pop("MCP_OAUTH_MAX_STATE_LEN", None)
-+    result = subprocess.run(
-+        [sys.executable, "-c", code],
-+        env=env,
-+        capture_output=True,
-+        text=True,
-+        timeout=30,
-+    )
-+    assert result.returncode == 0, f"stdout={result.stdout}\nstderr={result.stderr}"
-+    assert "ok" in result.stdout
 +
-+
-+def test_max_state_len_is_env_configurable():
-+    """Operators can raise the cap via MCP_OAUTH_MAX_STATE_LEN without code changes.
-+
-+    Uses an isolated subprocess so the module is imported with the env var
-+    already set (avoids relying on reload of an already-imported module).
-+    """
-+    import os
-+    import subprocess
-+    import sys
-+
-+    code = """
 +import os
-+os.environ["MCP_OAUTH_MAX_STATE_LEN"] = "8000"
-+from fastapi import HTTPException
-+from mcp_memory_service.web.oauth import limits
-+assert limits.MAX_STATE_LEN == 8000, f"got {limits.MAX_STATE_LEN}"
-+limits.reject_if_too_long("x" * 8000, limits.MAX_STATE_LEN, "state")
-+try:
-+    limits.reject_if_too_long("x" * 8001, limits.MAX_STATE_LEN, "state")
-+except HTTPException as e:
-+    assert e.status_code == 400, e.status_code
-+    assert e.detail["error"] == "invalid_request", e.detail
-+    assert e.detail["error_description"] == (
-+        "state exceeds maximum length of 8000 characters"
-+    ), e.detail
-+else:
-+    raise SystemExit("should have raised")
-+print("ok")
-+"""
-+    env = os.environ.copy()
-+    env["MCP_OAUTH_MAX_STATE_LEN"] = "8000"
-+    result = subprocess.run(
-+        [sys.executable, "-c", code],
-+        env=env,
-+        capture_output=True,
-+        text=True,
-+        timeout=30,
++import shutil
++import tempfile
++
++import pytest
++import pytest_asyncio
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++
++os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1"
++
++
++@pytest_asyncio.fixture
++async def storage():
++    d = tempfile.mkdtemp(prefix="mcp-test-versioned-store-")
++    s = SqliteVecMemoryStorage(os.path.join(d, "test.db"))
++    await s.initialize()
++    yield s
++    await s.close()
++    shutil.rmtree(d, ignore_errors=True)
++
++
++def _store_of(storage, content_hash):
++    row = storage.conn.execute(
++        "SELECT store FROM memories WHERE content_hash = ?", (content_hash,)
++    ).fetchone()
++    return row[0]
++
++
++async def _store(storage, content, store):
++    m = Memory(content=content, content_hash=generate_content_hash(content), tags=["t"])
++    ok, msg = await storage.store(m, skip_semantic_dedup=True, store=store)
++    assert ok, msg
++    return m.content_hash
++
++
++@pytest.mark.asyncio
++async def test_new_version_stays_in_the_old_versions_store(storage):
++    old = await _store(storage, "The staging cluster runs on three nodes.", "work")
++
++    ok, msg, new_hash = await storage.update_memory_versioned(
++        old, "The staging cluster runs on five nodes."
 +    )
-+    assert result.returncode == 0, f"stdout={result.stdout}\nstderr={result.stderr}"
-+    assert "ok" in result.stdout
++
++    assert ok, msg
++    assert _store_of(storage, new_hash) == "work"
++
++
++@pytest.mark.asyncio
++async def test_versioned_memory_is_still_found_in_its_store(storage):
++    old = await _store(storage, "Deploys go out on Tuesdays.", "work")
++    await _store(storage, "Groceries: milk and eggs.", "default")
++
++    ok, msg, new_hash = await storage.update_memory_versioned(old, "Deploys go out on Thursdays.")
++    assert ok, msg
++
++    work = await storage.retrieve("Deploys go out", n_results=5, store="work")
++    assert [r.memory.content_hash for r in work] == [new_hash]
++
++    default = await storage.retrieve("Deploys go out", n_results=5, store="default")
++    assert new_hash not in [r.memory.content_hash for r in default]
+```
+
+---
+
+### Incident Patch 3: `9e253c40` (2026-10-20)
+**Commit Message**: fix(mcp): apply the per-caller rate limit to the FastMCP entry point (#1606) (#1607)
+
+The mcp-memory-server entry point's 8 @mcp.tool functions call
+MemoryService directly and never go through MemoryServer.call_tool,
+where #1593 added the limiter, so MCP_RATE_LIMIT_PER_MINUTE and the
+per-tool overrides had no effect there.
+
+Each tool now runs the same ToolRateLimiter check first. The caller is
+read from the request context (X-Agent-ID, then peer IP, then one
+per-process bucket), never from tool arguments. A denied call raises
+ToolError with the same -32029 rate_limit_exceeded payload, which FastMCP
+returns as isError: true; a limiter failure is logged and the call goes
+ahead.
+
+Fixes #1606
+
+**File**: `changelog.d/1606.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **Rate limiting did not apply to the `mcp-memory-server` entry point (closes #1606).**
++  Its FastMCP tools call `MemoryService` directly and never go through
++  `MemoryServer.call_tool`, where #1593 added the per-caller limiter, so
++  `MCP_RATE_LIMIT_PER_MINUTE` and the per-tool overrides had no effect there. Each of
++  its 8 tools now runs the same check first, with the caller read from `X-Agent-ID`,
++  then the peer IP. A denied call returns `isError: true` with the same
++  `rate_limit_exceeded` payload, and a limiter failure lets the call through. Per-tool
++  overrides use this server's tool names, e.g. `MCP_RATE_LIMIT_store_memory`.
+```
+
+**File**: `docs/agents/http-generic.md` (modified, +1/-1)
+```diff
+@@ -264,4 +264,4 @@ await store_memory(content="...", tags=["api"], agent_id="researcher")
+ # Server appends "agent:researcher" automatically
+ ```
+ 
+-The same header also keys the per-caller MCP tool rate limiter (`MCP_RATE_LIMIT_PER_MINUTE`, per-tool `MCP_RATE_LIMIT_<tool>` overrides): `X-Agent-ID` is chosen by the client, so the limiter gives fairness between cooperating agents sharing one server. It is not abuse protection — a client that rotates the header gets a fresh bucket.
++The same header also keys the per-caller MCP tool rate limiter (`MCP_RATE_LIMIT_PER_MINUTE`, per-tool `MCP_RATE_LIMIT_<tool>` overrides): `X-Agent-ID` is chosen by the client, so the limiter gives fairness between cooperating agents sharing one server. It is not abuse protection — a client that rotates the header gets a fresh bucket. The `mcp-memory-server` (FastMCP) entry point applies the same limits, keyed by its own tool names, so its per-tool overrides read `MCP_RATE_LIMIT_store_memory`, not `MCP_RATE_LIMIT_memory_store`.
+```
+
+**File**: `src/mcp_memory_service/mcp_server.py` (modified, +78/-0)
+```diff
+@@ -15,6 +15,7 @@
+ """
+ 
+ import asyncio
++import json
+ import logging
+ import sys
+ import time
+@@ -44,6 +45,7 @@
+ # This module is kept for future compatibility
+ try:
+     from mcp.server.fastmcp import FastMCP, Context
++    from mcp.server.fastmcp.exceptions import ToolError
+ except ImportError:
+     logger_temp = logging.getLogger(__name__)
+     logger_temp.warning("FastMCP not available in mcp library - mcp_server module cannot be used")
+@@ -58,6 +60,7 @@ def decorator(func):
+     
+     FastMCP = _DummyFastMCP  # type: ignore
+     Context = None  # type: ignore
++    ToolError = RuntimeError  # type: ignore
+ 
+ from mcp.types import ToolAnnotations
+ 
+@@ -74,6 +77,7 @@ def decorator(func):
+ from .services.memory_service import MemoryService
+ from .services.graph_service import GraphService
+ from .storage.graph import GraphStorage
++from .utils.tool_rate_limit import ToolRateLimiter, resolve_caller_identity
+ 
+ # Configure logging
+ logging.basicConfig(level=logging.INFO)  # Default to INFO level
+@@ -344,6 +348,72 @@ class StoreMemoryFailure(TypedDict):
+     chunks_created: NotRequired[int]
+     chunk_hashes: NotRequired[List[str]]
+ 
++# =============================================================================
++# PER-CALLER RATE LIMITING (#1606)
++# =============================================================================
++# The @mcp.tool functions below call MemoryService directly and never go
++# through MemoryServer.call_tool, so they run the same limiter check
++# themselves. Unlimited by default; configured with MCP_RATE_LIMIT_PER_MINUTE
++# and per-tool MCP_RATE_LIMIT_<tool> overrides, keyed by this server's tool
++# names (e.g. MCP_RATE_LIMIT_store_memory).
++
++_tool_rate_limiter = ToolRateLimiter()
++
++
++def _rate_limit_caller_identity(ctx: Context) -> str:
++    """Resolve the rate-limit identity for the current tool call.
++
++    Mirrors ``MemoryServer._rate_limit_caller_identity``: the ``X-Agent-ID``
++    header, then the socket peer IP, then one per-process bucket when there
++    is no HTTP request (stdio). Never reads tool arguments: ``agent_id`` on
++    ``retrieve_memory``/``list_memories`` is an author filter, not the caller.
++    """
++
++    try:
++        request = ctx.request_context.request
++    except (LookupError, AttributeError, ValueError):
++        request = None
++    if request is None:
++        return resolve_caller_identity(None, None)
++    header = request.headers.get("X-Agent-ID")
++    client = request.client
++    host = client.host if client is not None else None
++    return resolve_caller_identity(header, host)
++
++
++def _check_rate_limit(ctx: Context, tool_name: str) -> None:
++    """Raise ``ToolError`` when the caller is over its limit for this tool.
++
++    Fails open, as ``MemoryServer.call_tool`` does: a limiter failure is
++    logged and the call goes ahead. FastMCP turns the raised ``ToolError``
++    into a tool result with ``isError: true``.
++    """
++
++    try:
++        decision = _tool_rate_limiter.check(_rate_limit_caller_identity(ctx), tool_name)
++    except Exception:
++        logger.exception("MCP tool rate limiter failed; allowing request")
++        return
++    if decision.allowed:
++        return
++    if decision.should_log:
++        logger.warning(
++            "MCP tool rate limit exceeded for tool %s",
++            _sanitize_log_value(tool_name),
++        )
++    payload = {
++        "error": {
++            "code": -32029,
++            "type": "rate_limit_exceeded",
++            "message": "MCP tool rate limit exceeded",
++            "tool": tool_name,
++            "limit_per_minute": decision.limit_per_minute,
++            "retry_after_seconds": decision.retry_after_seconds,
++        }
++    }
++    raise ToolError(json.dumps(payload))
++
++
+ # =============================================================================
+ # CORE MEMORY OPERATIONS
+ # =============================================================================
+@@ -413,6 +483,7 @@ async def store_memory(
+     }
+ }
+     """
++    _check_rate_limit(ctx, "store_memory")
+     # Delegate to shared MemoryService business logic
+     memory_service = ctx.request_context.lifespan_context.memory_service
+     # RFC mcp-hostname-stamping: resolve server host when the client omits it and
+@@ -509,6 +580,7 @@ async def retrieve_memory(
+     "n_results": 3
+ }
+     """
++    _check_rate_limit(ctx, "retrieve_memory")
+     # Delegate to shared MemoryService business logic
+     memory_service = ctx.request_context.lifespan_context.memory_service
+     return await memory_service.retrieve_memories(
+@@ -572,6 +644,7 @@ async def search_by_tag(
+     "tags": ["api-documentation"]
+ }
+     """
++    _check_rate_limit(ctx, "search_by_tag")
+     # Delegate to shared MemoryService business logic
+     memory_service = ctx.request_context.lifespan_context.memory_service
+     return await memory_service.search_by_tag(
+@@ -629,6 +702,7 @@ async def delete_memory(
+     "content_hash": "a1b2c3d4e5f6..."
+ }
+     """
++    _check_rate_limit(ctx, "d
+```
+
+**File**: `tests/server/test_fastmcp_rate_limit.py` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++"""Rate limiting on the ``mcp-memory-server`` FastMCP entry point (#1606).
++
++Its ``@mcp.tool`` functions call ``MemoryService`` directly and never go
++through ``MemoryServer.call_tool``, so each one runs the limiter check
++itself. These tests drive ``tools/call`` through the SDK's own request
++handler with a request context holding an HTTP request, the way the
++Streamable HTTP transport does. ``get_cache_stats`` reads module state only,
++so no storage is opened. All but the default-unlimited test fail on ``main``.
++"""
++
++import json
++from types import SimpleNamespace
++
++import pytest
++from mcp import types
++from mcp.server.lowlevel.server import request_ctx
++from mcp.shared.context import RequestContext
++
++from mcp_memory_service import mcp_server
++from mcp_memory_service.utils.tool_rate_limit import ToolRateLimiter
++
++TOOL = "get_cache_stats"
++
++
++@pytest.fixture(autouse=True)
++def fresh_limiter(monkeypatch):
++    """Each test starts with empty windows and no rate-limit settings."""
++    # raising=False: on main the attribute does not exist, and the tests should fail
++    # on what the tools do (calls that should be denied go through), not on setup.
++    monkeypatch.setattr(mcp_server, "_tool_rate_limiter", ToolRateLimiter(), raising=False)
++    for var in (
++        "MCP_RATE_LIMIT_PER_MINUTE",
++        f"MCP_RATE_LIMIT_{TOOL}",
++        f"MCP_RATE_LIMIT_{TOOL.upper()}",
++    ):
++        monkeypatch.delenv(var, raising=False)
++
++
++def _request(agent_id=None, host="127.0.0.1"):
++    headers = {} if agent_id is None else {"X-Agent-ID": agent_id}
++    client = None if host is None else SimpleNamespace(host=host)
++    return SimpleNamespace(headers=headers, client=client)
++
++
++async def _call(agent_id=None, host="127.0.0.1", request=True, tool=TOOL, arguments=None):
++    """Call a tool through the SDK's tools/call handler and return the CallToolResult."""
++    handler = mcp_server.mcp._mcp_server.request_handlers[types.CallToolRequest]
++    token = request_ctx.set(
++        RequestContext(
++            request_id=1,
++            meta=None,
++            session=None,
++            lifespan_context=None,
++            request=_request(agent_id, host) if request else None,
++        )
++    )
++    try:
++        result = await handler(
++            types.CallToolRequest(
++                method="tools/call",
++                params=types.CallToolRequestParams(name=tool, arguments=arguments or {}),
++            )
++        )
++    finally:
++        request_ctx.reset(token)
++    return result.root
++
++
++def _rate_limit_error(result):
++    """The rate-limit payload of a denied call, or None for any other result."""
++    if not result.isError:
++        return None
++    text = result.content[0].text
++    start = text.find("{")
++    if start < 0:
++        return None
++    return json.loads(text[start:])["error"]
++
++
++async def test_unlimited_by_default():
++    for _ in range(5):
++        result = await _call(agent_id="agent-a")
++        assert not result.isError
++
++
++async def test_third_call_from_one_agent_is_denied(monkeypatch):
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "2")
++
++    assert not (await _call(agent_id="agent-a")).isError
++    assert not (await _call(agent_id="agent-a")).isError
++    denied = await _call(agent_id="agent-a")
++
++    error = _rate_limit_error(denied)
++    assert denied.isError
++    assert error["code"] == -32029
++    assert error["type"] == "rate_limit_exceeded"
++    assert error["tool"] == TOOL
++    assert error["limit_per_minute"] == 2
++    assert error["retry_after_seconds"] >= 1
++    # Another agent has its own window.
++    assert not (await _call(agent_id="agent-b")).isError
++
++
++async def test_per_tool_override_uses_this_servers_tool_name(monkeypatch):
++    monkeypatch.setenv(f"MCP_RATE_LIMIT_{TOOL}", "1")
++
++    assert not (await _call(agent_id="agent-a")).isError
++    assert _rate_limit_error(await _call(agent_id="agent-a"))["limit_per_minute"] == 1
++
++
++async def test_without_the_header_the_peer_ip_is_the_caller(monkeypatch):
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
++
++    assert not (await _call(host="10.0.0.1")).isError
++    assert _rate_limit_error(await _call(host="10.0.0.1")) is not None
++    assert not (await _call(host="10.0.0.2")).isError
++
++
++async def test_without_a_request_one_process_bucket(monkeypatch):
++    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
++
++    assert not (await _call(request=False)).isError
++    assert _rate_limit_error(await _call(request=False)) is not None
++
++
++def test_identity_never_comes_from_tool_arguments():
++    """``agent_id`` on retrieve_memory/list_memories is an author filter, not the caller."""
++    ctx = SimpleNamespace(
++        request_context=SimpleNamespace(request=_request(agent_id="real-caller"))
++    )
++    assert mcp_server._rate_limit_caller_identity(ctx) == "agent:real-caller"
++    no_request = SimpleNamespace(request_context=SimpleNamespace(request=None))
++    assert mcp_server._
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1608** (2026-10-20): fix(ci): require assignment on closing issues (@dailyun)
+- **PR #1607** (2026-10-20): fix(mcp): apply the per-caller rate limit to the FastMCP entry point (#1606) (@abuhasanrumi)
+- **PR #1604** (closed): fix(ci): count only a maintainer's assignment as claim confirmation (#1596) (@MbappeWU)
 - **PR #1603** (2026-10-19): fix(mcp): propagate tool exceptions so failures reach the client as isError (#1601) (@filhocf)
 - **PR #1600** (2026-10-19): docs: point docker build at tools/docker/Dockerfile (@doobidoo)
 - **PR #1598** (2026-10-19): fix(mcp): honour X-Agent-ID on the streamable-http transport (#1597) (@filhocf)
-- **PR #1595** (2026-10-19): fix(consolidation): key SQLite memory connections by content hash so decay boosts linked memories (@debashishthakur)
-- **PR #1591** (2026-10-19): docs(sqlite-vec): document store scoping across search modes (@filhocf)
-- **PR #1590** (2026-10-19): fix(services): over-fetch before filtering by tags/memory_type in retrieve_memories (@filhocf)
 
 ---
 
@@ -4337,39 +4004,31 @@ Addresses Greptile review comments:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)
+## X. per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)
 
 **RULE**:
-When implementing operations in `changelog.d/1117.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1593.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b29d353f`: web): stop putting the long-lived API key in SSE URLs (#1117) (#1539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80974bf9`: per-agent rate limiting for MCP tool calls (fixes #1096) (#1593). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1117.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1593.added.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **The dashboard stopped putting the long-lived API key in SSE URLs (#1117).**
-  `EventSource` cannot set an `Authorization` header, so the web UI authenticated
-  every live-update connection with `GET /api/events?api_key=<key>`. uvicorn's
-  access log records the whole request line, so each SSE connection — and every
-  automatic reconnect — wrote the key in cleartext into
-  `~/.local/share/mcp-memory/logs/server.log`. TLS does not help there: it
-  protects the wire, not the log. The file outlives the session and gets pasted
-  into bug reports. Access-log redaction had already landed, which hid the leak
-  without closing it.
-
-  `POST /api/events/ticket` now exchanges real credentials (Bearer or
-  `X-API-Key` header) for a ticket that is single-use and expires in 60 seconds,
-  and the browser connects with `?ticket=…`. A pasted log line now holds
-  something that is dead within a minute and cannot be replayed. The
-  `?api_key=` query parameter is **no longer accepted** — requests using it get
-  a warning naming the migration rather than a silent 401. `X-API-Key` as a
-  header is unchanged, since headers do not reach the access log.
-
-  The OAuth `?token=` query fallback still exists
+- **Per-agent rate limiting for MCP tool calls (#1593, juliasadler; closes #1096).**
+  Callers are keyed by the client-sent `X-Agent-ID` request header — read from the
+  transport layer, never from tool arguments — falling back to the socket peer IP
+  and then one per-process bucket. Unlimited by default; configure with
+  `MCP_RATE_LIMIT_PER_MINUTE` or per-tool `MCP_RATE_LIMIT_<tool>` overrides.
+  Denied calls get an MCP error (`-32029` / `rate_limit_exceeded`) carrying
+  `retry_after_seconds`. This is fairness between cooperating agents, not abuse
+  protection: a client that rotates the header gets a fresh bucket. The denied
+  call returns a `CallToolResult`, which the SDK's `call_tool` decorator only
+  passes through from `mcp` 1.19.0 on, so the `mcp` floor moves from 1.9.2 to
+  1.19.0.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4379,4 +4038,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b29d353f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80974bf9` are properly handled with clean fallback behavior.

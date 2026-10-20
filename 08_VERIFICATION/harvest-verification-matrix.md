@@ -3909,3 +3909,7 @@
 | `CYCLE-20261020-YA6Y` | `2026-10-20T16:44:28.570Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3272` | Yes (`b72db8ca...`) |
 | `CYCLE-20261020-YAUZ` | `2026-10-20T16:44:29.435Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3273, Rule 3274, Rule 3275` | Yes (`c806da9c...`) |
 | `CYCLE-20261020-YBXF` | `2026-10-20T16:44:30.819Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3276` | Yes (`aa5eb044...`) |
+| `CYCLE-20261020-5Y12` | `2026-10-20T16:50:26.054Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`b17d6366...`) |
+| `CYCLE-20261020-5Y7Z` | `2026-10-20T16:50:26.303Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`e594c19f...`) |
+| `CYCLE-20261020-66J1` | `2026-10-20T16:50:37.069Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3277` | Yes (`ca4ebb54...`) |
+| `CYCLE-20261020-68YX` | `2026-10-20T16:50:40.233Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3278` | Yes (`665d20db...`) |

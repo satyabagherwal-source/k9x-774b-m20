@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:44:30.838Z",
+  "last_updated": "2026-10-20T16:50:40.245Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
-      "verified_at": "2026-10-19T03:20:17.651Z",
+      "content_hash": "b17d6366ce3a0563b061ace1726e18249218dd5433e212d3c315ab90ed1c0235",
+      "verified_at": "2026-10-20T16:50:26.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:20:17.651Z"
+      "last_updated": "2026-10-20T16:50:26.062Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "2e43483e8bff0ead0b75ad89399e13f79e336680cdce4ed165578d628607791f",
-      "verified_at": "2026-10-20T00:25:35.390Z",
+      "content_hash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
+      "verified_at": "2026-10-20T16:50:40.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:25:35.390Z"
+      "last_updated": "2026-10-20T16:50:40.245Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
-      "verified_at": "2026-10-20T13:47:13.945Z",
+      "content_hash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
+      "verified_at": "2026-10-20T16:50:37.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:47:13.945Z"
+      "last_updated": "2026-10-20T16:50:37.078Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -8571,14 +8571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
-      "verified_at": "2026-10-20T02:03:14.158Z",
+      "content_hash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
+      "verified_at": "2026-10-20T16:50:26.314Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:03:14.158Z"
+      "last_updated": "2026-10-20T16:50:26.314Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",

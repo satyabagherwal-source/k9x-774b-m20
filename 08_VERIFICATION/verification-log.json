@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-1IKK",
-    "timestamp": "2026-10-19T18:23:17.828Z",
-    "repository": "ShiftHackZ/Stable-Diffusion-KMP",
-    "learningId": "learn-github-shifthackz-stable-diffusion-kmp",
-    "contentHash": "ae1ed764fb7487d67f8c64b6207bb63c5497531d4897faeff9a31ba8e0355d9d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-1PDX",
-    "timestamp": "2026-10-19T18:23:26.661Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9RKD",
-    "timestamp": "2026-10-19T18:29:42.733Z",
-    "repository": "lucide-icons/lucide",
-    "learningId": "learn-github-lucide-icons-lucide",
-    "contentHash": "cd9b63b8f8aede7a87d569ad985fdf1c378960981fa3ed898575af4179288bc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9WCU",
-    "timestamp": "2026-10-19T18:29:48.942Z",
-    "repository": "android/kotlin-multiplatform-samples",
-    "learningId": "learn-github-android-kotlin-multiplatform-samples",
-    "contentHash": "3a76ec1c141829bb1e2a9c7327a7b25b988779abe0bc22cffe15fd2cc2d52908",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-9ZLY",
     "timestamp": "2026-10-19T18:29:53.158Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7430,66 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "aa5eb044677569518da91bf61f0f54499a7fa495263045ad4c97c56f9606e786",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5Y12",
+    "timestamp": "2026-10-20T16:50:26.054Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "b17d6366ce3a0563b061ace1726e18249218dd5433e212d3c315ab90ed1c0235",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-5Y7Z",
+    "timestamp": "2026-10-20T16:50:26.303Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-66J1",
+    "timestamp": "2026-10-20T16:50:37.069Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-68YX",
+    "timestamp": "2026-10-20T16:50:40.233Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

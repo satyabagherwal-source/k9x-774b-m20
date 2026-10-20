@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
-    "lastHarvestedAt": "2026-10-19T03:20:17.645Z",
+    "contentHash": "b17d6366ce3a0563b061ace1726e18249218dd5433e212d3c315ab90ed1c0235",
+    "lastHarvestedAt": "2026-10-20T16:50:26.056Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "5a8e9037",
+    "sourceVersion": "9e253c40",
     "license": "Apache-2.0",
-    "contentHash": "2e43483e8bff0ead0b75ad89399e13f79e336680cdce4ed165578d628607791f",
-    "lastHarvestedAt": "2026-10-20T00:25:35.384Z",
+    "contentHash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
+    "lastHarvestedAt": "2026-10-20T16:50:40.239Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "3bba824f",
+    "sourceVersion": "400d35c2",
     "license": "AGPL-3.0",
-    "contentHash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
-    "lastHarvestedAt": "2026-10-20T13:47:13.939Z",
+    "contentHash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
+    "lastHarvestedAt": "2026-10-20T16:50:37.072Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
-    "lastHarvestedAt": "2026-10-20T02:03:14.151Z",
+    "contentHash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
+    "lastHarvestedAt": "2026-10-20T16:50:26.309Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {

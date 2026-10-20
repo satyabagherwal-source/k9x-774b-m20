@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T16:44:30.755Z",
+  "last_updated": "2026-10-20T16:50:40.201Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7970,8 +7970,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "5a8e9037",
-      "content_hash": "2e43483e8bff0ead0b75ad89399e13f79e336680cdce4ed165578d628607791f",
+      "source_version": "9e253c40",
+      "content_hash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -7989,6 +7989,11 @@
           "number": 2919,
           "title": "web): stop putting the long-lived API key in SSE URLs (#1117) (#1539)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3278,
+          "title": "per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7996,7 +8001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:25:35.317Z",
+      "verified_at": "2026-10-20T16:50:40.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10576,7 +10581,7 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "004f59a1d2456be6ec3f5c1e5e95b40fad53478e55439c7556e37e7c79411aca",
+      "content_hash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
@@ -10591,7 +10596,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:03:14.104Z",
+      "verified_at": "2026-10-20T16:50:26.263Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21412,7 +21417,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
+      "content_hash": "b17d6366ce3a0563b061ace1726e18249218dd5433e212d3c315ab90ed1c0235",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [],
@@ -21434,7 +21439,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-10-19T03:20:17.572Z",
+      "verified_at": "2026-10-20T16:50:26.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45014,8 +45019,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "3bba824f",
-      "content_hash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
+      "source_version": "400d35c2",
+      "content_hash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -45038,6 +45043,11 @@
           "number": 3203,
           "title": "Mark results whose verification was skipped (#5448)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3277,
+          "title": "Clean up Git source logging for per-source debug (#5451)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45045,7 +45055,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:47:13.892Z",
+      "verified_at": "2026-10-20T16:50:37.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85799,7 +85809,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T02:03:14.104Z"
+      "verified_at": "2026-10-20T16:50:26.263Z"
     },
     "rule-2110": {
       "learning_id": "rule-2110",
@@ -102815,6 +102825,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T16:44:30.735Z"
+    },
+    "rule-3277": {
+      "learning_id": "rule-3277",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3277,
+      "title": "Clean up Git source logging for per-source debug (#5451)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "400d35c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:50:37.034Z"
+    },
+    "rule-3278": {
+      "learning_id": "rule-3278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3278,
+      "title": "per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "9e253c40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T16:50:40.194Z"
     }
   },
   "aliases": {

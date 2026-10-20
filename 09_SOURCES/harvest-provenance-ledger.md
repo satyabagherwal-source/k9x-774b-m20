@@ -3916,3 +3916,7 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `3e7bf93e` | Multi-dimensional audit evidence | 2026-10-20T16:44:28.584Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-20T16:44:29.444Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `47743a8b` | Multi-dimensional audit evidence | 2026-10-20T16:44:30.829Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-20T16:50:26.056Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-20T16:50:26.309Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `400d35c2` | Multi-dimensional audit evidence | 2026-10-20T16:50:37.072Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9e253c40` | Multi-dimensional audit evidence | 2026-10-20T16:50:40.239Z |
