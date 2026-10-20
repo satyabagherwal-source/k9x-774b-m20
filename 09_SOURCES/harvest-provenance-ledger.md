@@ -3868,3 +3868,5 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `c8550922` | Multi-dimensional audit evidence | 2026-10-20T14:51:16.594Z |
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T14:57:44.873Z |
 | `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `42254b6c` | Multi-dimensional audit evidence | 2026-10-20T14:57:45.222Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `4baf23f5` | Multi-dimensional audit evidence | 2026-10-20T15:04:00.834Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-20T15:04:00.964Z |

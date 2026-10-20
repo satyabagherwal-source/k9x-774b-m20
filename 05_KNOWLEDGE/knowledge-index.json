@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:57:45.160Z",
+  "last_updated": "2026-10-20T15:04:00.927Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8090,14 +8090,19 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "0225491c",
-      "content_hash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
+      "source_version": "4baf23f5",
+      "content_hash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
         {
           "number": 1848,
           "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp from",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3237,
+          "title": "scheduler): key seed peer hashring by name and check health concurrently (#5068)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8106,7 +8111,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:26:53.594Z",
+      "verified_at": "2026-10-20T15:04:00.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15455,7 +15460,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
+      "content_hash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -15549,6 +15554,21 @@
           "number": 1967,
           "title": "VRAM-Constrained Inference Pipeline Orchestration",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3236,
+          "title": "Latent Space Dimensionality Invariance in DiT Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3237,
+          "title": "Numerical Stability in Flow Matching Loss Computation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3238,
+          "title": "Attention Mechanism Memory Efficiency in High-Resolution DiTs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15569,7 +15589,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-19T01:22:40.223Z",
+      "verified_at": "2026-10-20T15:04:00.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101991,6 +102011,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:57:45.142Z"
+    },
+    "rule-3237": {
+      "learning_id": "rule-3237",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3237,
+      "title": "Numerical Stability in Flow Matching Loss Computation",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:04:00.919Z"
+    },
+    "rule-3236": {
+      "learning_id": "rule-3236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3236,
+      "title": "Latent Space Dimensionality Invariance in DiT Architectures",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:04:00.919Z"
+    },
+    "rule-3238": {
+      "learning_id": "rule-3238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3238,
+      "title": "Attention Mechanism Memory Efficiency in High-Resolution DiTs",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T15:04:00.919Z"
     }
   },
   "aliases": {

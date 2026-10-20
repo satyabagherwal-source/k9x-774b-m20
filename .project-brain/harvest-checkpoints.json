@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T14:57:45.231Z",
+  "last_updated": "2026-10-20T15:04:00.970Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
-      "verified_at": "2026-10-19T01:22:40.277Z",
+      "content_hash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
+      "verified_at": "2026-10-20T15:04:00.970Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:22:40.277Z"
+      "last_updated": "2026-10-20T15:04:00.970Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -5391,14 +5391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflyoss-dragonfly",
-      "content_hash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
-      "verified_at": "2026-10-18T23:26:53.651Z",
+      "content_hash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
+      "verified_at": "2026-10-20T15:04:00.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:26:53.651Z"
+      "last_updated": "2026-10-20T15:04:00.840Z"
     },
     "sigstore/cosign": {
       "repository": "sigstore/cosign",

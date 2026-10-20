@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:57:45.227Z",
-  "total_cycles_completed": 3838,
-  "total_learnings_persisted": 3838,
-  "total_rules_promoted": 3051,
+  "last_updated": "2026-10-20T15:04:00.968Z",
+  "total_cycles_completed": 3840,
+  "total_learnings_persisted": 3840,
+  "total_rules_promoted": 3055,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:34:27.973Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:37:02.830Z",
-      "repository": "parcel-bundler/parcel",
-      "learningId": "learn-github-parcel-bundler-parcel",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:43:02.321Z",
       "repository": "TanStack/query",
@@ -1403,6 +1389,20 @@
       "repository": "elastic/eui",
       "learningId": "learn-github-elastic-eui",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:04:00.837Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T15:04:00.968Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

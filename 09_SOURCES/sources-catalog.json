@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
-    "lastHarvestedAt": "2026-10-19T01:22:40.272Z",
+    "contentHash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
+    "lastHarvestedAt": "2026-10-20T15:04:00.964Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "0225491c",
+    "sourceVersion": "4baf23f5",
     "license": "Apache-2.0",
-    "contentHash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
-    "lastHarvestedAt": "2026-10-18T23:26:53.644Z",
+    "contentHash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
+    "lastHarvestedAt": "2026-10-20T15:04:00.834Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {

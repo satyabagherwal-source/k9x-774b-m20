@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-HA1K",
-    "timestamp": "2026-10-19T16:43:34.808Z",
-    "repository": "carbon-design-system/carbon",
-    "learningId": "learn-github-carbon-design-system-carbon",
-    "contentHash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HFF0",
-    "timestamp": "2026-10-19T16:43:41.772Z",
-    "repository": "touchlab/xcode-kotlin",
-    "learningId": "learn-github-touchlab-xcode-kotlin",
-    "contentHash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-HMBN",
     "timestamp": "2026-10-19T16:43:50.723Z",
     "repository": "ydb-platform/ydb",
@@ -7492,6 +7462,36 @@
     "contentHash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-D35M",
+    "timestamp": "2026-10-20T15:04:00.826Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-D39A",
+    "timestamp": "2026-10-20T15:04:00.958Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

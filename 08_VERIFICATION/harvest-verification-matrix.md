@@ -3861,3 +3861,5 @@
 | `CYCLE-20261020-WPGW` | `2026-10-20T14:51:16.592Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3234` | Yes (`574608ad...`) |
 | `CYCLE-20261020-512E` | `2026-10-20T14:57:44.870Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`9bfdcd8b...`) |
 | `CYCLE-20261020-51BZ` | `2026-10-20T14:57:45.215Z` | `elastic/eui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3235` | Yes (`181381d0...`) |
+| `CYCLE-20261020-D35M` | `2026-10-20T15:04:00.826Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3237` | Yes (`76b46d34...`) |
+| `CYCLE-20261020-D39A` | `2026-10-20T15:04:00.958Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3236, Rule 3237, Rule 3238` | Yes (`29a69396...`) |

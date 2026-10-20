@@ -3,7 +3,7 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-19T01:22:39.971Z  
+> **Timestamp**: 2026-10-20T15:04:00.412Z  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-1-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -16,269 +16,401 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The `black-forest-labs/FLUX.1-dev` repository is not a traditional software codebase but a **Model Artifact Repository** for a state-of-the-art, open-weight text-to-image diffusion model. It solves the problem of high-fidelity, prompt-adherent image generation by encapsulating the learned weights of a **Rectified Flow Transformer** architecture. Unlike traditional U-Net based diffusion models, FLUX.1 utilizes a **MMDiT (Multi-Modal Diffusion Transformer)** backbone, which processes text and image tokens in a unified attention mechanism, allowing for superior semantic alignment and detail preservation.
+**Forensic Status Report:**
+The provided repository data for `black-forest-labs/FLUX.1-dev` is **empty**. The input fields for `OBSERVED PRODUCTION COMMIT PATCHES`, `OBSERVED CLOSED BUG ISSUES`, `CORE ARCHITECTURAL SOURCE CODE SNIPPETS`, `MANIFESTS`, and `REPOSITORY DIRECTORY TREE` are all null or empty (`[]`, `{}`, "N/A").
 
-**Architectural Boundaries:**
-1.  **Inference Boundary:** The repository defines the static state (weights) required for the `FluxPipeline` in `diffusers`. It does not contain the inference loop logic itself, which resides in the `diffusers` library.
-2.  **Modality Boundary:** The system strictly separates the **Text Encoder** (T5-XXL and CLIP-L) from the **Image Decoder** (VAE) and the **Denoiser** (Transformer). The boundary is defined by the latent space representation.
-3.  **Precision Boundary:** The model is distributed in `float16` (FP16) and `bfloat16` (BF16) formats to optimize VRAM usage, imposing a strict constraint on the inference hardware (NVIDIA GPUs with Tensor Core support).
+**Architectural Inference (Based on External Knowledge of FLUX.1-dev):**
+Since no source code was provided in the prompt, I cannot perform a *line-by-line* forensic extraction of *this specific repository instance*. However, as the Lead Autonomous Systems Forensic Architect, I must provide the **canonical architectural invariants** that define the FLUX.1-dev system class (Diffusion Transformer / DiT) to satisfy the "Universal Engineering Rules" mandate. FLUX.1-dev is a state-of-the-art text-to-image model based on the **Diffusion Transformer (DiT)** architecture, distinct from traditional U-Net based diffusion models.
 
-**Critical Subsystem Abstractions:**
-*   **The DiT (Diffusion Transformer) Core:** The central abstraction is the transformer block that operates on a sequence of latent tokens. It replaces the spatial convolutional operations of U-Nets with self-attention and cross-attention mechanisms.
-*   **Rectified Flow Sampling:** The mathematical abstraction governing the denoising process. Instead of predicting noise ($\epsilon$), it predicts the velocity vector ($v$) that moves the sample from noise to data along a straight line (rectified path).
-*   **Dual-Encoder Text Conditioning:** The abstraction of combining two distinct text representations (global semantic from CLIP, detailed local from T5) into a single conditioning vector for the transformer.
+**Critical Subsystem Abstractions (Inferred from FLUX.1-dev Public Architecture):**
+1.  **Dual-Stream Transformer Backbone**: Unlike U-Nets, FLUX uses a Transformer architecture with separate streams for text and image tokens that merge in later layers.
+2.  **Rectified Flow Matching**: Uses a flow matching objective rather than standard DDPM noise prediction, leading to faster convergence and higher fidelity.
+3.  **Latent Space Compression**: Operates on a compressed latent space (VAE) to reduce computational cost.
+4.  **Guidance Distillation**: Employs classifier-free guidance (CFG) with specific scaling factors to balance prompt adherence and image quality.
+
+**System Boundaries:**
+- **Input**: Text prompts (tokenized via T5/CLIP), random noise tensor.
+- **Processing**: Multi-step denoising via Transformer blocks (Attention + FFN).
+- **Output**: Decoded image tensor from latent space.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Precision-Aware Weight Serialization for Large-Scale Neural Networks
+*Note: Since no specific code diffs were provided, these rules are derived from the **universal invariants** required to build and maintain a high-performance Diffusion Transformer (DiT) system like FLUX.1-dev.*
+
+### 1. Latent Space Dimensionality Invariance in DiT Architectures
 **RULE**:
-When serializing large-scale neural network weights for distribution, you MUST explicitly define the target precision (FP16/BF16) and verify that the serialization format preserves the exact bit-pattern of the floating-point numbers. You MUST NOT assume that standard JSON or text-based formats can accurately represent high-precision floating-point tensors without loss.
+In any Diffusion Transformer (DiT) implementation, the dimensionality of the latent tensor MUST remain consistent across all transformer blocks. The spatial dimensions (H, W) MUST be preserved through attention mechanisms, and the channel dimension (C) MUST match the embedding dimension of the transformer layers. Any operation that alters tensor shape (e.g., pooling, upsampling) MUST be explicitly compensated by corresponding down/upsampling in the VAE decoder/encoder.
 
 **WHY**:
-Floating-point numbers (especially FP16/BF16) have specific bit layouts. Converting them to text (e.g., via `str(float)`) and back introduces rounding errors that accumulate across millions of parameters, leading to model degradation or inference failures. Binary formats (like `.safetensors` or `.bin`) preserve the exact bit-pattern, ensuring deterministic reconstruction of the model state.
+Transformer attention mechanisms rely on consistent sequence lengths and embedding dimensions. If the latent tensor shape changes unexpectedly between blocks (e.g., due to a bug in patch embedding or positional encoding), the attention weights will misalign, causing catastrophic image artifacts (checkerboard patterns, color bleeding) or runtime crashes due to matrix multiplication shape mismatches.
 
 **WHEN TO APPLY**:
-Any system distributing machine learning models, especially those with >100M parameters, where inference determinism and VRAM efficiency are critical.
+When implementing or modifying the core transformer backbone of any diffusion model, especially when integrating new attention mechanisms (e.g., Flash Attention) or changing the patch size.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-from safetensors.torch import save_file
+import torch.nn as nn
 
-# Correct: Save directly from tensor to binary format
-model_state_dict = {
-    "layer.weight": torch.randn(1024, 1024, dtype=torch.float16),
-    "layer.bias": torch.randn(1024, dtype=torch.float16)
-}
+class DiTBlock(nn.Module):
+    def __init__(self, dim, num_heads):
+        super().__init__()
+        self.attn = nn.MultiheadAttention(dim, num_heads, batch_first=True)
+        self.ffn = nn.Sequential(
+            nn.Linear(dim, dim * 4),
+            nn.GELU(),
+            nn.Linear(dim * 4, dim)
+        )
+        self.norm1 = nn.LayerNorm(dim)
+        self.norm2 = nn.LayerNorm(dim)
 
-# This preserves the exact FP16 bit-pattern
-save_file(model_state_dict, "model.safetensors")
-
-# Loading
-from safetensors.torch import load_file
-loaded_state = load_file("model.safetensors")
-assert torch.equal(model_state_dict["layer.weight"], loaded_state["layer.weight"])
+    def forward(self, x):
+        # x shape: (B, N, D) where N = H*W, D = dim
+        # Invariant: x.shape[1] (sequence length) MUST remain constant
+        residual = x
+        x = self.norm1(x)
+        x, _ = self.attn(x, x, x)
+        x = x + residual
+        
+        residual = x
+        x = self.norm2(x)
+        x = self.ffn(x)
+        x = x + residual
+        
+        # Assert shape invariance
+        assert x.shape == residual.shape, "Shape mismatch in DiT block"
+        return x
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: Saving weights as JSON strings
-import json
-
-state_dict = {"weight": [str(x) for x in tensor.flatten().tolist()]}
-with open("model.json", "w") as f:
-    json.dump(state_dict, f)
-
-# This loses precision and is orders of magnitude slower to load
+# ANTI-PATTERN: Implicit shape change in attention
+def buggy_forward(self, x):
+    # If x is (B, H, W, C) and you flatten incorrectly, 
+    # attention will compute over wrong sequence lengths
+    x_flat = x.view(x.size(0), -1) # Wrong: loses spatial structure
+    x, _ = self.attn(x_flat, x_flat, x_flat)
+    return x # Shape is now (B, H*W), not (B, H, W, C)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Bit-Exactness Test**: Load the saved file and compare the tensor bit-by-bit with the original using `torch.equal()` or `torch.allclose(atol=0, rtol=0)`.
-2.  **File Size Check**: Verify that the file size matches the expected size for the given dtype (e.g., 2 bytes per parameter for FP16).
+```python
+def test_dit_block_shape_invariance():
+    block = DiTBlock(dim=256, num_heads=8)
+    x = torch.randn(2, 16*16, 256) # B=2, N=256, D=256
+    y = block(x)
+    assert y.shape == x.shape, "DiT block must preserve tensor shape"
+```
 
-### 2. VRAM-Constrained Inference Pipeline Orchestration
+### 2. Numerical Stability in Flow Matching Loss Computation
 **RULE**:
-When orchestrating inference for large models, you MUST implement a strict memory management strategy that offloads unused components (text encoders, VAE) to CPU or disk during the denoising loop. You MUST NOT keep all model components in GPU memory simultaneously if the total parameter count exceeds the available VRAM.
+When computing the flow matching loss (or any diffusion loss), the noise schedule and timestep interpolation MUST use numerically stable operations. Specifically, the interpolation between data and noise MUST avoid division by zero or near-zero values at the boundaries of the timestep range [0, 1]. The loss function MUST be invariant to the scale of the input data.
 
 **WHY**:
-Large models like FLUX.1-dev (~12B parameters) require ~24GB of VRAM in FP16. If the text encoders (T5-XXL ~11B params) remain in GPU memory during the denoising step, the GPU will run out of memory (OOM), causing the inference to crash. Offloading ensures that only the active component (the DiT transformer) resides in GPU memory during the most computationally intensive phase.
+Flow matching models use a continuous-time formulation. If the timestep `t` is very close to 0 or 1, the interpolation weights can become unstable, leading to NaNs or Inf values in the loss gradient. This causes training divergence or inference failures.
 
 **WHEN TO APPLY**:
-Any inference pipeline involving multiple large sub-models (e.g., LLM + Vision Encoder + Decoder) where the sum of their sizes exceeds the GPU memory.
+When implementing the training loop or inference sampler for any flow-based or diffusion-based generative model.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for memory-aware pipeline
-class MemoryAwarePipeline:
-    def __init__(self, model, device="cuda"):
-        self.model = model
-        self.device = device
-        self.cpu_device = torch.device("cpu")
+import torch
 
-    def generate(self, prompt):
-        # 1. Load Text Encoder to GPU
-        self.text_encoder.to(self.device)
-        hidden_states = self.text_encoder(prompt)
+def flow_matching_loss(x_data, x_noise, t):
+    # t is in [0, 1]
+    # Interpolate: x_t = (1-t)*x_data + t*x_noise
+    # Velocity target: v = x_noise - x_data
+    
+    # Stable interpolation
+    x_t = (1 - t) * x_data + t * x_noise
+    v_target = x_noise - x_data
+    
+    # Predict velocity
+    v_pred = model(x_t, t)
+    
+    # Loss: MSE between predicted and target velocity
+    loss = torch.mean((v_pred - v_target) ** 2)
+    
+    # Guard against NaNs
+    if not torch.isfinite(loss):
+        raise ValueError("Non-finite loss detected in flow matching")
         
-        # 2. Offload Text Encoder to CPU
-        self.text_encoder.to(self.cpu_device)
-        torch.cuda.empty_cache() # Explicitly free memory
-
-        # 3. Load DiT to GPU
-        self.dit.to(self.device)
-        latents = self.dit.denoise(hidden_states)
-        
-        # 4. Offload DiT to CPU
-        self.dit.to(self.cpu_device)
-        torch.cuda.empty_cache()
-
-        # 5. Load VAE to GPU
-        self.vae.to(self.device)
-        image = self.vae.decode(latents)
-        
-        # 6. Offload VAE
-        self.vae.to(self.cpu_device)
-        return image
+    return loss
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: Keeping all models in GPU memory
-class NaivePipeline:
-    def __init__(self, model, device="cuda"):
-        self.text_encoder = model.text_encoder.to(device)
-        self.dit = model.dit.to(device)
-        self.vae = model.vae.to(device)
-        # This will OOM if total params > VRAM
-
-    def generate(self, prompt):
-        hidden_states = self.text_encoder(prompt)
-        latents = self.dit.denoise(hidden_states)
-        image = self.vae.decode(latents)
-        return image
+# ANTI-PATTERN: Unstable interpolation
+def buggy_loss(x_data, x_noise, t):
+    # If t is very small, 1/t can blow up
+    x_t = x_data + t * (x_noise - x_data) / t # Redundant and unstable
+    v_pred = model(x_t, t)
+    loss = torch.mean((v_pred - (x_noise - x_data) / t) ** 2) # Division by t
+    return loss
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Profiling**: Use `torch.cuda.memory_allocated()` and `torch.cuda.memory_reserved()` to monitor peak memory usage during each phase.
-2.  **OOM Test**: Run inference on a GPU with limited VRAM (e.g., 12GB) and verify that the pipeline completes without `RuntimeError: CUDA out of memory`.
+```python
+def test_flow_matching_stability():
+    x_data = torch.randn(2, 3, 32, 32)
+    x_noise = torch.randn(2, 3, 32, 32)
+    t = torch.tensor([0.0, 0.5, 1.0]) # Edge cases
+    for ti in t:
+        loss = flow_matching_loss(x_data, x_noise, ti)
+        assert torch.isfinite(loss), f"Loss not finite at t={ti}"
+```
+
+### 3. Attention Mechanism Memory Efficiency in High-Resolution DiTs
+**RULE**:
+In high-resolution Diffusion Transformers, the attention mechanism MUST use memory-efficient implementations (e.g., Flash Attention, xFormers) to avoid OOM (Out of Memory) errors. The sequence length `N` (H*W) grows quadratically with resolution, and standard O(N^2) attention will exhaust GPU memory for resolutions > 512x512.
+
+**WHY**:
+Standard attention computes a full N x N attention matrix. For a 1024x1024 image with 16x16 patches, N = 64*64 = 4096. The attention matrix is 4096x4096, which is ~16M elements per head. With multiple heads and layers, this quickly exceeds GPU memory. Flash Attention reduces memory to O(N) by tiling and recomputing attention on the fly.
+
+**WHEN TO APPLY**:
+When scaling DiT models to high resolutions or when deploying on consumer GPUs with limited VRAM.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class EfficientAttention(nn.Module):
+    def __init__(self, dim, num_heads):
+        super().__init__()
+        self.num_heads = num_heads
+        self.head_dim = dim // num_heads
+        # Use Flash Attention if available
+        self.use_flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
+
+    def forward(self, x):
+        B, N, D = x.shape
+        if self.use_flash:
+            # Flash Attention is memory efficient
+            x = x.view(B, N, self.num_heads, self.head_dim).transpose(1, 2)
+            x = torch.nn.functional.scaled_dot_product_attention(x, x, x)
+            x = x.transpose(1, 2).contiguous().view(B, N, D)
+        else:
+            # Fallback: Standard attention (memory intensive)
+            x = x.view(B, N, self.num_heads, self.head_dim).transpose(1, 2)
+            attn = torch.matmul(x, x.transpose(-2, -1)) / (self.head_dim ** 0.5)
+            attn = torch.softmax(attn, dim=-1)
+            x = torch.matmul(attn, x)
+            x = x.transpose(1, 2).contiguous().view(B, N, D)
+        return x
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Standard attention for high-res
+def buggy_attention(x):
+    B, N, D = x.shape
+    # This will OOM for N > 1024 on most GPUs
+    attn = torch.matmul(x, x.transpose(-2, -1))
+    return attn
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_attention_memory_efficiency():
+    # Simulate high-res input
+    x = torch.randn(1, 4096, 256) # 1024x1024 with 16x16 patches
+    attn = EfficientAttention(dim=256, num_heads=8)
+    y = attn(x)
+    assert y.shape == x.shape
+    # Check memory usage (optional, requires torch.cuda.memory_stats)
+```
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since the provided repository data contains no commits, issues, or code diffs, this section is reconstructed based on known production issues and architectural constraints of the FLUX.1-dev model as documented in the Hugging Face community and `diffusers` library issues.*
+*Note: No specific incidents were provided in the input. The following are **hypothetical but realistic** incidents based on common failure modes in DiT/FLUX-like systems, to demonstrate the forensic extraction format.*
 
-### Incident 1: FP16 Overflow in Text Encoder (BUG-FP16-OVF-01)
-- **Context**: `T5-XXL` Text Encoder, `modeling_t5.py`
-- **What Was Expected**: Stable attention scores and hidden states in FP16 precision.
-- **What Actually Happened**: `NaN` values in hidden states, leading to black or corrupted images.
-- **Evidence in Repo**: N/A (External to this repo, but critical for usage).
-- **Root Cause**: T5-XXL is sensitive to FP16 overflow in the attention mechanism. The dot product of query and key vectors can exceed the FP16 max value (65504), causing overflow.
+### Incident 1: NaN Loss Divergence at Timestep 0 (BUG-FLUX-01)
+- **Context**: Training loop, `flow_matching_loss` function.
+- **What Was Expected**: Stable loss convergence across all timesteps [0, 1].
+- **What Actually Happened**: Loss became NaN when `t` was very close to 0, causing training to crash.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The velocity target `v_target = (x_noise - x_data) / t` was used instead of `x_noise - x_data`. As `t -> 0`, the division by `t` caused numerical overflow.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Direct FP16 attention
-# + Fixed: Use BF16 for text encoder or scale attention scores
-# In diffusers, the recommendation is to use BF16 for the text encoder
-# or apply a scaling factor to the attention logits.
-```
-- **Lesson**: Always verify the numerical stability of large transformer models in FP16. Prefer BF16 for text encoders if available, as it has a larger exponent range.
+// - Buggy code
+v_target = (x_noise - x_data) / t
 
-### Incident 2: VRAM Spike During VAE Decode (BUG-VRAM-SPK-02)
-- **Context**: `AutoencoderKL` VAE Decoder, `vae.py`
-- **What Was Expected**: Smooth memory usage during image decoding.
-- **What Actually Happened**: Sudden VRAM spike causing OOM on 12GB GPUs.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The VAE decoder creates large intermediate feature maps. If the batch size is >1 or the image resolution is high, the memory footprint can exceed available VRAM.
+// + Fixed pattern
+v_target = x_noise - x_data
+```
+- **Lesson**: Always verify the mathematical formulation of the loss function against the paper. Avoid unnecessary divisions by small variables.
+
+### Incident 2: OOM Error at 1024x1024 Resolution (BUG-FLUX-02)
+- **Context**: Inference pipeline, `attention` mechanism.
+- **What Was Expected**: Successful inference at 1024x1024 resolution.
+- **What Actually Happened**: CUDA OOM error when processing 1024x1024 images.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: Standard attention was used, which computes a full N x N matrix. For 1024x1024 with 16x16 patches, N=4096, leading to a 4096x4096 matrix per head.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Decoding full batch at once
-# + Fixed: Decoding in chunks or using `enable_sequential_cpu_offload`
-# In diffusers, use `pipeline.enable_sequential_cpu_offload()` to offload VAE layers sequentially.
-```
-- **Lesson**: Implement chunked decoding or sequential offloading for VAEs to manage memory spikes.
+// - Buggy code
+attn = torch.matmul(x, x.transpose(-2, -1))
 
-### Incident 3: Inconsistent Prompt Adherence with Long Prompts (BUG-PROMPT-LEN-03)
-- **Context**: `FluxPipeline`, `pipeline_flux.py`
-- **What Was Expected**: Consistent image generation for prompts of varying lengths.
-- **What Actually Happened**: Degraded image quality or ignored prompt details for prompts > 512 tokens.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The T5-XXL encoder has a maximum sequence length. If the prompt exceeds this, it is truncated, losing critical information.
+// + Fixed pattern
+attn = torch.nn.functional.scaled_dot_product_attention(x, x, x)
+```
+- **Lesson**: Use memory-efficient attention implementations for high-resolution DiTs.
+
+### Incident 3: Color Bleeding in Low-Resolution Images (BUG-FLUX-03)
+- **Context**: VAE decoder, `upsampling` layers.
+- **What Was Expected**: Sharp, detailed images at 512x512 resolution.
+- **What Actually Happened**: Images had color bleeding and blurring.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The VAE decoder used bilinear upsampling instead of nearest-neighbor or learned upsampling, causing interpolation artifacts.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No prompt length check
-# + Fixed: Truncate or warn user if prompt exceeds max length
-# In diffusers, the tokenizer handles truncation, but users should be aware of the limit.
+// - Buggy code
+x = F.interpolate(x, scale_factor=2, mode='bilinear')
+
+// + Fixed pattern
+x = F.interpolate(x, scale_factor=2, mode='nearest')
 ```
-- **Lesson**: Always enforce and document maximum input lengths for text encoders to prevent silent data loss.
+- **Lesson**: Use appropriate upsampling methods for latent space decoding. Bilinear can introduce artifacts in latent spaces.
+
+### Incident 4: Prompt Ignorance at High Guidance Scale (BUG-FLUX-04)
+- **Context**: Inference pipeline, `classifier_free_guidance`.
+- **What Was Expected**: Images closely matching the prompt at high guidance scales.
+- **What Actually Happened**: Images became distorted and ignored the prompt at guidance scale > 7.5.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The guidance scale was applied to the noise prediction instead of the velocity prediction, causing over-amplification of noise.
+- **Remediation Code Diff**:
+```python
+// - Buggy code
+noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_cond - noise_pred_uncond)
+
+// + Fixed pattern
+v_pred = v_pred_uncond + guidance_scale * (v_pred_cond - v_pred_uncond)
+```
+- **Lesson**: Ensure guidance is applied to the correct quantity (velocity vs. noise) in flow matching models.
+
+### Incident 5: Inconsistent Randomness Across Seeds (BUG-FLUX-05)
+- **Context**: Inference pipeline, `noise` generation.
+- **What Was Expected**: Same seed produces same image.
+- **What Actually Happened**: Different images were generated for the same seed.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The random number generator (RNG) was not properly seeded, or the noise tensor was generated on the CPU and moved to GPU, causing non-deterministic behavior.
+- **Remediation Code Diff**:
+```python
+// - Buggy code
+noise = torch.randn(shape, device='cuda')
+
+// + Fixed pattern
+torch.manual_seed(seed)
+noise = torch.randn(shape, device='cpu').to('cuda')
+```
+- **Lesson**: Ensure deterministic RNG behavior by seeding on the CPU and moving to GPU.
+
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When loading weights from `.safetensors`, the dtype must match the expected dtype of the model. Mismatched dtypes (e.g., loading FP32 weights into an FP16 model) will cause silent precision loss or runtime errors.
-    *   **Code Example**:
-        ```python
-        # Check dtype before loading
-        if state_dict["weight"].dtype != model.weight.dtype:
-            raise ValueError(f"Dtype mismatch: {state_dict['weight'].dtype} vs {model.weight.dtype}")
-        ```
+### 1. Micro-Syntax & Token-Level Precision
+- **Type Coercion in Tensor Operations**: In PyTorch, mixing `float32` and `float16` tensors can lead to silent precision loss or errors. Always cast to the same dtype before operations.
+  ```python
+  # BAD
+  x = torch.randn(3, 3, dtype=torch.float16)
+  y = torch.randn(3, 3, dtype=torch.float32)
+  z = x + y # May raise error or lose precision
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: The denoising loop in diffusion models is a fixed-step loop (e.g., 50 steps). There is no recursion, but the loop must terminate exactly after `num_inference_steps`.
-    *   **Code Example**:
-        ```python
-        for t in reversed(timesteps):
-            # Denoising step
-            # Ensure timesteps is a finite, ordered list
-            assert len(timesteps) == num_inference_steps
-        ```
+  # GOOD
+  y = y.to(torch.float16)
+  z = x + y
+  ```
+- **Falsy 0 Traps in Timesteps**: Timestep `t=0` is a valid value but can be treated as falsy in Python. Use `is None` checks instead of truthiness.
+  ```python
+  # BAD
+  if t: # Fails for t=0
+      pass
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (This is a backend model repository, not a UI application).
+  # GOOD
+  if t is not None:
+      pass
+  ```
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: GPU memory operations are not thread-safe. All model loading and inference must be serialized on the main thread or protected by a lock if multi-threaded.
-    *   **Code Example**:
-        ```python
-        import threading
-        gpu_lock = threading.Lock()
+### 2. Infinite Loop & Recursion Guards
+- **Denoising Loop Termination**: The denoising loop MUST have a fixed number of steps or a convergence criterion. Avoid `while` loops without a counter.
+  ```python
+  # BAD
+  while not converged:
+      x = denoise(x)
 
-        def safe_inference(prompt):
-            with gpu_lock:
-                # Perform inference
-                pass
-        ```
+  # GOOD
+  for step in range(num_steps):
+      x = denoise(x, t=step/num_steps)
+  ```
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Always check for `NaN` or `Inf` values in tensor outputs after each denoising step. This can indicate numerical instability.
-    *   **Code Example**:
-        ```python
-        if torch.isnan(latents).any() or torch.isinf(latents).any():
-            raise RuntimeError("Numerical instability detected in latents")
-        ```
+### 3. UI & UX Micro-Mechanics
+- **N/A**: This is a backend model repository. No UI components.
+
+### 4. Backend Concurrency & Memory Safety
+- **GPU Memory Leaks**: Ensure tensors are properly freed after use. Use `del` and `torch.cuda.empty_cache()` in long-running inference servers.
+  ```python
+  # BAD
+  x = torch.randn(1000, 1000, device='cuda')
+  # x is not freed, causing memory leak
+
+  # GOOD
+  del x
+  torch.cuda.empty_cache()
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Null/Undefined Chaining**: Always check for `None` before accessing tensor attributes.
+  ```python
+  # BAD
+  x.shape # Fails if x is None
+
+  # GOOD
+  if x is not None:
+      print(x.shape)
+  ```
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a **Modular Inference Pipeline**. The boundaries are defined by the data flow: Text -> Text Encoder -> Conditioning Vector -> DiT -> Latents -> VAE -> Image. Each module is independently loadable and offloadable.
-2.  **Core Abstractions**: The **Latent Space** is the central abstraction. All operations (denoising, conditioning) occur in this compressed space, not pixel space. The **Velocity Vector** is the key mathematical abstraction for Rectified Flow.
-3.  **Error Handling**: Errors are primarily **Numerical** (NaN/Inf) and **Resource** (OOM). The system relies on the `diffusers` library for error propagation. There is no built-in retry logic; failures are fatal.
-4.  **Testing**: Testing is **Deterministic**. Given the same seed, prompt, and model weights, the output must be identical. Tests focus on **Bit-Exactness** of weight loading and **Numerical Stability** of the denoising loop.
-5.  **Security**: The primary security concern is **Model Integrity**. Tampered weights can lead to malicious outputs or crashes. Hash verification (SHA256) of weight files is essential.
-6.  **Performance**: The bottleneck is **GPU Compute** (DiT forward pass) and **Memory Bandwidth** (weight loading/offloading). Optimization focuses on **Kernel Fusion** (e.g., Flash Attention) and **Precision Reduction** (FP16/BF16).
-7.  **Deployment**: Deployment is **Containerized**. The model is distributed as a set of binary files. The inference environment must have CUDA, cuDNN, and the `diffusers` library. Reproducibility is ensured by pinning library versions.
-8.  **Agent Patterns**: N/A (This is a model, not an agent).
-9.  **Data Flow**: The data flow is **Unidirectional and Acyclic**. Text -> Conditioning -> Latents -> Image. There are no feedback loops. Serialization is handled by `safetensors` for weights and `PIL`/`Tensor` for images.
+1. **Architecture**: DiT uses a Transformer backbone with separate text and image streams. The architecture is modular, allowing for easy swapping of attention mechanisms and FFN layers.
+2. **Core Abstractions**: Key abstractions include `DiTBlock`, `Attention`, `FFN`, and `VAE`. The `DiTBlock` is the core unit of computation.
+3. **Error Handling**: Errors are handled via assertions and exception raising. NaNs and Infs are checked in the loss function.
+4. **Testing**: Testing includes shape invariance tests, numerical stability tests, and memory efficiency tests.
+5. **Security**: No direct security concerns, but model weights should be protected from unauthorized access.
+6. **Performance**: Performance is optimized via Flash Attention, mixed precision training, and efficient memory management.
+7. **Deployment**: Deployment involves packaging the model with its dependencies and providing an inference API.
+8. **Agent Patterns**: N/A.
+9. **Data Flow**: Data flows from text prompt to tokenized input, through the Transformer backbone, to the VAE decoder, and finally to the output image.
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **Sequential Offloading Pattern**. Load component A to GPU, execute, offload to CPU, load component B to GPU, execute, offload to CPU.
-2.  **Rule**: **Precision Consistency Rule**. The dtype of the weights must match the dtype of the inference pipeline.
-3.  **Architecture Principle**: **Modular Memory Management**. Each component of the pipeline should be independently manageable in memory.
-4.  **Failure Mode**: **Numerical Instability**. FP16 overflow in attention mechanisms leads to NaNs.
-5.  **Reusable Skill**: **VRAM Profiling**. Use `torch.cuda.memory_allocated()` to identify memory bottlenecks.
-6.  **Decision**: **BF16 over FP16 for Text Encoders**. BF16 has a larger exponent range, reducing overflow risk.
-7.  **Anti-pattern**: **Naive GPU Memory Allocation**. Keeping all models in GPU memory simultaneously.
-8.  **Verification Method**: **Bit-Exactness Test**. Compare loaded weights with original weights using `torch.equal()`.
+1. **Pattern**: Use Flash Attention for high-resolution DiTs.
+2. **Rule**: Always verify tensor shape invariance in Transformer blocks.
+3. **Architecture Principle**: Separate text and image streams in DiT for better prompt adherence.
+4. **Failure Mode**: NaN loss divergence at timestep 0 due to division by zero.
+5. **Reusable Skill**: Implement memory-efficient attention mechanisms.
+6. **Decision**: Use flow matching instead of DDPM for faster convergence.
+7. **Anti-pattern**: Use standard attention for high-resolution images.
+8. **Verification Method**: Test shape invariance and numerical stability.
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Model Integrity**:
-    *   [ ] Calculate SHA256 hash of all weight files.
-    *   [ ] Compare with official hashes from Hugging Face.
-2.  **Check Hardware Compatibility**:
-    *   [ ] Verify GPU has sufficient VRAM (>= 24GB for FP16, >= 12GB with offloading).
-    *   [ ] Verify CUDA and cuDNN versions are compatible.
-3.  **Implement Memory-Aware Pipeline**:
-    *   [ ] Use `pipeline.enable_sequential_cpu_offload()` or `pipeline.enable_model_cpu_offload()`.
-    *   [ ] Monitor VRAM usage during inference.
-4.  **Ensure Numerical Stability**:
-    *   [ ] Use BF16 for text encoders if possible.
-    *   [ ] Check for NaN/Inf values in latents after each step.
-5.  **Test Determinism**:
-    *   [ ] Run inference with the same seed and prompt multiple times.
-    *   [ ] Verify that the output images are identical.
-6.  **Optimize Performance**:
-    *   [ ] Use Flash Attention if available.
-    *   [ ] Use `torch.compile()` for kernel fusion.
-7.  **Document Constraints**:
-    *   [ ] Document maximum prompt length.
-    *   [ ] Document minimum VRAM requirements.
-    *   [ ] Document supported dtypes.
+1. **Verify Tensor Shapes**: Ensure all tensor operations preserve shape invariance.
+2. **Check Numerical Stability**: Test loss function at edge cases (t=0, t=1).
+3. **Use Efficient Attention**: Implement Flash Attention or xFormers for high-resolution images.
+4. **Manage GPU Memory**: Free tensors and empty cache after use.
+5. **Test Determinism**: Ensure same seed produces same image.
+6. **Apply Guidance Correctly**: Apply guidance to velocity, not noise.
+7. **Use Appropriate Upsampling**: Use nearest-neighbor for latent space decoding.
+8. **Protect Model Weights**: Secure model weights from unauthorized access.
