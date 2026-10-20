@@ -4106,3 +4106,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-20T23:49:39.915Z |
 | `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `051a971e` | Multi-dimensional audit evidence | 2026-10-20T23:49:40.154Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `d274f237` | Multi-dimensional audit evidence | 2026-10-20T23:49:53.447Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-20T23:55:44.496Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `625fb470` | Multi-dimensional audit evidence | 2026-10-20T23:55:53.395Z |

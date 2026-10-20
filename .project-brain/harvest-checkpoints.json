@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T23:49:53.455Z",
+  "last_updated": "2026-10-20T23:55:53.401Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2257,14 +2257,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "6076fbd316a81d519902df36f7fbc3cbe70bd42e2f8324481a5ff78ab9543264",
-      "verified_at": "2026-10-19T10:54:35.957Z",
+      "content_hash": "70458af936a6c462ca0774e46135f437fc45c73c692ec3f7ca1b006157e4508d",
+      "verified_at": "2026-10-20T23:55:44.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:54:35.957Z"
+      "last_updated": "2026-10-20T23:55:44.501Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "94e8f36f97ba276fedf356a98260703a353b99c752b720a3a5b9746934ef12a0",
-      "verified_at": "2026-10-19T20:28:56.345Z",
+      "content_hash": "65c38e5d40658b6c5d8e3ff9dbe4e91a4bab723e8f95624baa4352b25e3a72c5",
+      "verified_at": "2026-10-20T23:55:53.400Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:28:56.345Z"
+      "last_updated": "2026-10-20T23:55:53.400Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:49:53.451Z",
-  "total_cycles_completed": 4076,
-  "total_learnings_persisted": 4076,
-  "total_rules_promoted": 3275,
+  "last_updated": "2026-10-20T23:55:53.398Z",
+  "total_cycles_completed": 4078,
+  "total_learnings_persisted": 4078,
+  "total_rules_promoted": 3276,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:37:46.818Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T16:37:49.429Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:37:57.201Z",
       "repository": "sigstore/cosign",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-20T23:49:53.451Z",
       "repository": "meilisearch/meilisearch",
       "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:55:44.499Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:55:53.398Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-fishaudio`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:54:35.866Z  
+> **Timestamp**: 2026-10-20T23:55:44.374Z  
 > **Learning ID**: `learn-huggingface-fishaudio-drama-3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/fishaudio/drama-3](https://huggingface.co/fishaudio/drama-3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:54:35.110Z  
+> **Harvest Timestamp**: 2026-10-20T23:55:43.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 11795 downloads | 725 likes
+- **Stars / Engagement**: 13495 downloads | 835 likes
 
 ---
 
