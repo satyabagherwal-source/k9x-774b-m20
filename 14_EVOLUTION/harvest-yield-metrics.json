@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T23:31:42.805Z",
-  "total_cycles_completed": 4070,
-  "total_learnings_persisted": 4070,
-  "total_rules_promoted": 3269,
+  "last_updated": "2026-10-20T23:37:41.993Z",
+  "total_cycles_completed": 4071,
+  "total_learnings_persisted": 4071,
+  "total_rules_promoted": 3272,
   "history": [
-    {
-      "timestamp": "2026-10-20T16:21:38.462Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T16:27:43.470Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1403,6 +1396,13 @@
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T23:37:41.993Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

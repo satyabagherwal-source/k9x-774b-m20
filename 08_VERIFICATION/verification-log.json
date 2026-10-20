@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-7HHT",
-    "timestamp": "2026-10-20T00:31:51.377Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "6fc95b620edb84eff4276ec10636b3a67c621394a883d69b8ccad80ede44d202",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-7IUH",
     "timestamp": "2026-10-20T00:31:53.129Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7477,21 @@
     "contentHash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-POX0",
+    "timestamp": "2026-10-20T23:37:41.988Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "0c12ff8fef8cf0d37fd72d2658cfa6255bbce8c11cb8e0c525c85fde063ca6c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

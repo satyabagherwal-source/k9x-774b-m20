@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T23:31:42.720Z",
+  "last_updated": "2026-10-20T23:37:41.959Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15934,7 +15934,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "169f2e8fceecd60b38e8d11619dc96a758e1b452af6f128a7b0013b6a186a417",
+      "content_hash": "0c12ff8fef8cf0d37fd72d2658cfa6255bbce8c11cb8e0c525c85fde063ca6c7",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -16049,6 +16049,21 @@
           "number": 2498,
           "title": "Large Model Memory Management Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3439,
+          "title": "Rectified Flow Scheduler Invariant for Few-Step Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3440,
+          "title": "Dual-Encoder Text Embedding Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3441,
+          "title": "Guidance-Free Inference Invariant for Distilled Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16069,7 +16084,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-19T10:34:56.039Z",
+      "verified_at": "2026-10-20T23:37:41.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105890,6 +105905,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T23:31:42.704Z"
+    },
+    "rule-3439": {
+      "learning_id": "rule-3439",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3439,
+      "title": "Rectified Flow Scheduler Invariant for Few-Step Inference",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:37:41.953Z"
+    },
+    "rule-3440": {
+      "learning_id": "rule-3440",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3440,
+      "title": "Dual-Encoder Text Embedding Alignment Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:37:41.953Z"
+    },
+    "rule-3441": {
+      "learning_id": "rule-3441",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3441,
+      "title": "Guidance-Free Inference Invariant for Distilled Models",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T23:37:41.953Z"
     }
   },
   "aliases": {
