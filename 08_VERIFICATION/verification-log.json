@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-QDB5",
-    "timestamp": "2026-10-19T12:38:42.401Z",
-    "repository": "nalexn/clean-architecture-swiftui",
-    "learningId": "learn-github-nalexn-clean-architecture-swiftui",
-    "contentHash": "7150802781bd08871c26157661bcf93af507c73adb7e7284a09d8a0104cb87fe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-QH9V",
-    "timestamp": "2026-10-19T12:38:47.539Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YCHK",
-    "timestamp": "2026-10-19T12:44:54.584Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "c7c64ebfba91c3171cf552705bfdc6f9ea0047884ca49e1ec14fcac8e79b35e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-YFD8",
     "timestamp": "2026-10-19T12:44:58.316Z",
     "repository": "siteline/swiftui-introspect",
@@ -7492,6 +7447,51 @@
     "contentHash": "143bd92430f93b3c6cec87a4fe745005044c86fba1f305f9a7f03b5230b601cd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-BQNV",
+    "timestamp": "2026-10-20T05:43:05.659Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "970159d939f4708cfdd9325d39ab199f450a7e0c3ab231393eea72d0ad4171dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-BSXU",
+    "timestamp": "2026-10-20T05:43:08.610Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "a13f9234bdef425e97aa7548f7b5692e791070f211bceeede32cfdf27d4f7db1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-IBP5",
+    "timestamp": "2026-10-20T05:48:12.857Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "4b26a9ebe023e01d57404d9894b490d1361cb6528c0edd3d5ecc7911a6a51644",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

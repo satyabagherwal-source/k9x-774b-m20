@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `9a24224e`  
+> **Source Version**: `6ab624ab`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:15:41.657Z  
+> **Timestamp**: 2026-10-20T05:43:08.300Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:15:41.368Z  
+> **Harvest Timestamp**: 2026-10-20T05:43:06.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5946** (2026-10-20): **refactor(transport): open outbound connections through an OutboundConnector trait**
-  *Symptoms*: ## Problem  The node sets up connections by calling the UDP transport's concrete types directly, so a second transport could not supply its own setup:  - `p2p_protoc.rs` calls `create_connection_handler::<S>`. That returns an `OutboundConnectionHandler<S>`, an `InboundConnectionHandler<S>` and the listen task's `JoinHandle`. The node treats the listen task exiting as fatal. - `p2p_protoc.rs` takes `outbound_conn_handler.expected_inbound_tracker()` (the transport's expected-IP set). `EventListenerState` calls `expect_incoming(addr)` on it from `p2p_protoc.rs` and `connection_lifecycle.rs`. - The handshake driver (`handshake.rs`) accepts with `inbound.next_connection()` and dials with `outbound.connect(pub_key, addr)` inside a 10 s timeout. Both make the driver generic over the socket type.  ## Plan for B2  B2 is large, so it is split into two PRs:  1. **This PR: outbound connect and its handle.** It adds a transport-owned `OutboundConnector` trait. The UDP transport implements it, and the handshake driver dials through an `Arc<dyn OutboundConnector>`. 2. **Next PR: the rest of connection setup.** That covers inbound accept (`next_connection` returning `Box<dyn PeerConnectionApi>`), `expect_inbound` on the handle, and the listen task's liveness, which the node currently reads through the `JoinHandle`. It also replaces `create_connection_handler::<S>` with a constructor that returns the handle, so `HandshakeHandler` and the event loop stop being generic over `S`.  The node's own
+- **Issue #5949** (2026-10-20): **refactor(transport): move inbound accept, transport opening and liveness behind the boundary**
+  *Symptoms*: ## Problem  After #5946, outbound connect went through the boundary, but the rest of connection setup did not:  - The handshake driver accepted connections from an `InboundConnectionHandler<S>`, so it was generic over the UDP socket type. - The event loop called `create_connection_handler::<S>` itself, so it was generic over the socket type too. - The event loop took the UDP `ExpectedInboundTracker` from the outbound handler. - The event loop watched the listen task through a raw `JoinHandle<TransportError>`.  A second transport could not supply any of these.  ## Approach  Three behaviour-neutral commits complete the B2 plan from #5946.  1. **`InboundAcceptor`.**    - `next_connection(&mut self) -> Option<Box<dyn PeerConnectionApi>>`, boxed and cancel-safe. `InboundConnectionHandler<S>` implements it.    - `HandshakeHandler::new` and `run_driver` take a `Box<dyn InboundAcceptor>` and are no longer generic. The accept loop's handling is unchanged: `peer_ready`, matching the node's expectations, and the bounded forward to the event loop. 2. **`TransportHandle`.**    - The handle carries `{ connector, acceptor, expected_inbound, listener }`. `listener` is a future that resolves once with a `ListenerExit`: `Error`, `Panicked` or `Cancelled`, carrying the join error's text.    - `open_udp_transport::<S>` wraps `create_connection_handler` with the same arguments.    - `run_event_listener_with_socket::<S>` keeps its signature for its four callers. It now only opens the transport and
 
-- **Issue #5945** (2026-10-20): **fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime**
-  *Symptoms*: ## Problem  Found while investigating #5942 (the required Fmt check cancelled with every step green, stuck in the runner's post-job "Cleaning up orphan processes"). **This PR does not claim to explain that stall.**  Two things came out of the investigation:  1. **A real supervisor bug.** `nix/freenet-node.sh`'s `terminate()` killed only the pid in `$child`. `run_interruptible` does `"$@" &` then `child=$!`; a SIGTERM landing between those commands runs the trap while `child` is still 0, orphaning the freshly forked restart-pause `sleep` (or the node itself). In production that means a `systemctl stop` in that window leaks the child. Reproduced with a harness sending TERM the instant the pause is announced: the unmodified wrapper leaked a `sleep` 5 times in 400 runs under load, the fixed one 0 times. 2. **Fmt has little headroom.** Normal Fmt runs took 220-263s against `timeout-minutes: 5`. Of that, `deploy-local-gateway_test.sh` spent 48s in real `sleep`s polling stubs that answer instantly.  What is *not* established: the cause of the #5942 stall. The runner's orphan cleanup (`actions/runner`, `src/Runner.Worker/JobExtension.cs`) scans `/proc`, prints `Terminate orphan process: pid ...` for each match and calls `Kill()` without waiting, so a stray `sleep` would cost milliseconds. Both stalled runs printed "Cleaning up orphan processes" and then no "Terminate" line, so the stall happened before any orphan was killed. An earlier revision of this PR claimed the runner waits on 
+- **Issue #5948** (2026-10-20): **fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime**
+  *Symptoms*: ## Problem  `outbound_stream::tests::test_send_stream_without_bandwidth_limit` compared wall-clock durations (unlimited transfer must be 4x faster than a rate-limited one). Under heavy load (load average ~60) the unlimited run took 23.6 ms against 91.3 ms rate-limited, which missed the ratio. The sibling `test_send_stream_with_bandwidth_limit` asserted `elapsed >= 50ms` on `RealTime`, so it had the same wall-clock dependence. Fixes #4163.  ## Approach  Both tests now run through one helper, `run_virtual_stream_transfer`, that uses `VirtualTime`. The helper advances virtual time to the next pending wakeup only when `send_stream` is parked on `time_source.sleep`, so results depend only on token-bucket arithmetic, not on host load or scheduling. It reports the virtual time elapsed and the number of times the sender waited.  - `test_send_stream_without_bandwidth_limit` asserts the mechanism: an unlimited bucket makes zero waits and consumes zero virtual time. A rate-limited control run in the same test must show waits and at least 50 ms of virtual time, so a harness that cannot see sleeps cannot pass vacuously. The ratio and wall-clock comparison are gone (not loosened). - `test_send_stream_with_bandwidth_limit` keeps its fragment decryption/type checks and now asserts virtual elapsed >= 50 ms plus at least one wait.  Test-only change; no production code touched.  ## Testing  - Mutation: forced `token_bucket.reserve(..)` in `send_stream` to wait at least 1 ms (marked `MUTATION_AP
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,136 +1759,129 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `599b13a2` (2026-10-19)
-**Commit Message**: fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)
+### Incident Patch 1: `6e2c2b23` (2026-10-20)
+**Commit Message**: fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5948)
 
-**File**: `nix/freenet-node.sh` (modified, +18/-2)
+**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +148/-188)
 ```diff
-@@ -487,9 +487,25 @@ child=0
+@@ -1196,251 +1196,211 @@ mod tests {
+         Ok(())
+     }
  
- terminate() {
-     trap - TERM INT HUP
-+    # Ask the job table, not `$child`. A signal that lands between `"$@" &` and
-+    # `child=$!` runs this handler while `child` is still 0 (bash runs a trap
-+    # as soon as the `&` command returns, before the next assignment), so
-+    # relying on `$child` alone orphans a freshly forked restart-pause `sleep`
-+    # -- or the node itself -- which then outlives the wrapper. `jobs -p` also
-+    # lists `child` when it IS recorded, so it is only added when it is not.
-+    local pids
-+    pids="$(jobs -p)"
-     if [ "$child" -ne 0 ]; then
--        kill -TERM "$child" 2>/dev/null || true
--        wait "$child" 2>/dev/null || true
-+        case " ${pids//$'\n'/ } " in
-+            *" $child "*) ;;
-+            *) pids="$pids $child" ;;
-+        esac
-+    fi
-+    if [ -n "${pids// /}" ]; then
-+        # shellcheck disable=SC2086  # word splitting of a pid list is the point
-+        kill -TERM $pids 2>/dev/null || true
-+        # shellcheck disable=SC2086
-+        wait $pids 2>/dev/null || true
-     fi
-     exit 0
- }
-```
-
-**File**: `scripts/nix-node-wrapper_test.sh` (modified, +39/-0)
-```diff
-@@ -919,12 +919,30 @@ assert_eq "$([ "$ELAPSED" -lt 30 ] && echo fast || echo "stuck(${ELAPSED}s)")" "
-   "a hung 'freenet update' is bounded by a timeout instead of blocking the supervisor forever"
- assert_eq "$(starts_of)" "2" "the node is restarted after the hung updater is cut short"
- 
-+# Anything the wrapper leaves behind after it is stopped is found by process
-+# group: `set -m` gives each background job its own, with the job's pid as the
-+# group id. (A leaked restart-pause `sleep` outlives the wrapper by minutes.)
-+leftovers_in_group() {
-+  # leftovers_in_group <pgid>: echoes (and kills, by pid) whatever still runs in
-+  # the group, so a leak can never outlive the test that found it.
-+  local pgid="$1" pids
-+  # Fail closed: without pgrep an empty answer would mean "could not look".
-+  command -v pgrep >/dev/null 2>&1 || { echo "pgrep-missing"; return 0; }
-+  pids="$(pgrep -g "$pgid" || true)"
-+  if [ -n "$pids" ]; then
-+    # shellcheck disable=SC2086  # a pid list, split on purpose
-+    kill -KILL $pids 2>/dev/null || true
-+    echo "$pids" | tr '\n' ' '
-+  fi
-+}
+-    #[tokio::test]
+-    async fn test_send_stream_with_bandwidth_limit() -> Result<(), Box<dyn std::error::Error>> {
++    /// Outcome of one [`run_virtual_stream_transfer`] run.
++    struct VirtualTransfer {
++        /// Raw packets the receiver observed, in order.
++        packets: Vec<Arc<[u8]>>,
++        /// Virtual time that elapsed. Time only moves when the driver
++        /// advances it, and the driver only does so when `send_stream` is
++        /// parked on a `time_source.sleep`, so this is exactly the sum of
++        /// the token-bucket waits and independent of host load.
++        virtual_elapsed: Duration,
++        /// Number of times `send_stream` parked on the clock (each is one
++        /// token-bucket or cwnd wait).
++        sleeps: usize,
++    }
 +
- WORK6="$(mktemp -d)"
- STATE6="$WORK6/state"
- SEED6="$WORK6/seed-freenet"
- write_fake_freenet "$SEED6"
- printf '101\n101\n101\n101\n0\n' >"$WORK6/plan"
- : >"$WORK6/log"
-+set -m
- env -u XDG_STATE_HOME \
-   HOME="$WORK6/home" \
-   FAKE_LOG="$WORK6/log" \
-@@ -935,6 +953,7 @@ env -u XDG_STATE_HOME \
-   FREENET_NODE_RESTART_SECS=120 \
-   bash "$WRAPPER" >"$WORK6/stdout" 2>&1 &
- WPID=$!
-+set +m
- # Wait for the wrapper to enter its (120s) restart pause.
- PAUSED=no
- for _ in $(seq 1 100); do
-@@ -957,6 +976,26 @@ done
- wait "$WPID" 2>/dev/null || true
- assert_eq "$STOPPED" "yes" \
-   "SIGTERM to the WRAPPER stops it promptly mid-pause -- bash defers a trap across a foreground sleep, so the pause must be backgrounded and waited on"
-+assert_eq "$(leftovers_in_group "$WPID")" "" \
-+  "...and leaves nothing running behind it (no orphaned restart-pause sleep)"
++    /// Payload size used by [`run_virtual_stream_transfer`].
++    const TRANSFER_LEN: usize = 10_000;
 +
-+# The race that leaks it: a TERM landing between the wrapper forking the pause
-+# (`"$@" &`) and recording its pid (`child=$!`) runs `terminate` while `child` is
-+# still 0. The window is microseconds wide, so no signal-timing test can hit it
-+# on demand (a 400-run stress loop leaked 5 times under load and 0 after the
-+# fix, which is evidence, not a test). Put `terminate` in exactly that state
-+# instead: a live background job the wrapper has not recorded in `child`.
-+TERMINATE_FN="$(sed -n '/^terminate() {/,/^}/p' "$WRAPPER")"
-+assert_eq "$([ -n "$TERMINATE_FN" ] && echo extracted || echo missing)" "extracted" \
-+  "the test can extract terminate() from the wrapper (a rename must not turn the next case vacuous)"
-+STRAY_PID="$(bash -c "$TERMINATE_FN"$'\nchild=0\nsleep 60 >/dev/null 2>&1 &\necho $!\nterminate')"
-+STRAY_STATE=gone
-+if kill -0 "$STRAY_PID" 2>/dev/null; then
-+  STRAY_STATE=ORPHANED
-+  kill -KILL "$STRAY_PID" 2>/dev/null || true
-+fi
-+assert_eq "$STRAY_STATE" "gone" \
-+  "terminate() stops a background job even when its pid never reached \$child (a lost pid race orphans the restart-pause sleep for minutes)"
++    /// Run a single 10KB stream transfer under [`VirtualTime`] with the given
++    /// token bucket (burst capacity, rate bytes/s).
++    ///
++    /// Nothing here reads the wall clock: the driver advances virtual time
++    /// to the next pending wakeup whenever the sender is waiting on it, so
++    /// the result depends only on the token-bucket arithmetic (#4163).
++    async fn run_virtual_stream_transfer(
++        burst_capacity: usize,
++        rate_bytes_per_sec: usize,
++    ) -> Result<VirtualTransfer, Box<dyn std::error::Error>> {
+         let (outbound_sender, mut outbound_receiver) = mpsc::channel(100);
+         let destination_addr = SocketAddr::from((Ipv4Addr::LOCALHOST, 1234));
+         let key = Aes128Gcm::new_from_slice(&[0u8; 16])?;
+-        let last_packet_id = Arc::new(AtomicU32::new(0));
+-        let stream_id = StreamId::next();
+-
+-        // Create a large message (10KB)
+-        let message = vec![0u8; 10_000];
  
- echo
- echo "passed: $PASS, failed: $FAIL"
-```
-
-**File**: `scripts/release-agent/deploy-local-gateway_test.sh` (modified, +7/-0)
-```diff
-@@ -83,6 +83,13 @@ chmod +x "$TMP/bin/sudo"
- # foreign process overwrite this.
- echo "0::/system.slice/freenet-gateway.service" > "$TMP/cgroup-content"
+-        // Set bandwidth limit to 100KB/s (100,000 bytes/second)
+-        let bandwidth_limit = 100_000;
++        let message = vec![0u8; TRANSFER_LEN];
  
-+# `sleep` stub: deploy-local-gateway.sh sleeps 1-3s between service-state polls
-+# and its stubs answer instantly, so the real sleeps only add up (48s of the Fmt
-+# job's ~4 min, which has a 5 min limit, #5942). Nothing here measures elapsed
-+# time, only exit codes and output.
-+printf '#!/bin/bash\nexit 0\n' > "$TMP/bin/sleep"
-+chmod +x "$TMP/bin/sleep"
-+
- # `lsof` stub: binary is never busy.
- printf '#!/bin/bash\nexit 1\n' > "$TMP/bin/lsof"
- chmod +x "$TMP/bin/lsof"
+-        // Use real time for integration testing with bandwidth limiting
+-        let time_source = RealTime::new();
++        let time_source = VirtualTime::new();
+         let sent_tracker = Arc::new(parking_lot::Mutex::new(
+             SentPacketTracker::new_with_time_source(time_source.clone()),
+         ));
+ 
+-        // Initialize congestion controller and TokenBucket for test
+         // Use large cwnd since unit tests don't simulate ACKs to reduce flightsize
+-        // Use small burst capacity (1KB) to ensure rate limiting is observable
+         let congestion_controller = CongestionControlConfig::from_ledbat_config(LedbatConfig {
+             initial_cwnd: 1_000_000,
+             min_cwnd: 1_000_000,
+             max_cwnd: 1_000_000_000,
+             ..Default::default()
+         })
+-        .build_arc();
++        .build_arc_with_time_source(time_source.clone());
+         let token_bucket = Arc::new(TokenBucket::new_with_time_source(
+-            1_000, // 1KB burst - ensures rate limiting kicks in
+-            bandwidth_limit,
++            burst_capacity,
++            rate_bytes_per_sec,
+             time_source.clone(),
+         ));
+ 
+-        // Expected: 100KB/s with token bucket rate limiting
+-        // Should throttle appropriately
+-
+-        let start_time = tokio::time::Instant::now();
+-
+-        // Clone sender for receiver task termination
+-        let sender_clone: mpsc::Sender<(SocketAddr, Arc<[u8]>)> = outbound_sender.clone();
+-        let key_clone = key.clone();
+-
+         // Spawn receiver task to collect packets
+         let receiver_task = GlobalExecutor::spawn(async move {
+-            let mut packet_count = 0;
+-            let mut total_bytes = 0;
++            let mut packets = Vec::new();
+             while let Some((addr, packet)) = outbound_receiver.recv().await {
+                 assert_eq!(addr, destination_addr);
+-                packet_count += 1;
+-                total_bytes += packet.len();
+-
+-                // Decrypt and verify it's a stream fragment
+-                let packet_data = PacketData::<_, MAX_PACKET_SIZE>::from_buf(&packet);
+-                let decrypted = packet_data.try_decrypt_sym(&key_clone).unwrap();
+-                let msg = SymmetricMessage::deser(decrypted.data()).unwrap();
+-                match msg.payload {
+-                    SymmetricMessagePayload::StreamFragment { .. } => {
+-                        // Expected
+-                    }
+-                    SymmetricMessagePayload::AckConnection { .. }
+-                    | SymmetricMessagePayload::AckConnectionV2 { .. }
+-                    | SymmetricMessagePayload::ShortMessage { .. }
+-                    | SymmetricMessagePayload::NoOp
+-                    | SymmetricMessagePayload::Ping { .. }
+-                    | SymmetricMessagePayload::Pong { .. } => panic!("Expected stream fragment"),
+-                }
++                packets.push(packet);
+             }
+-        
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5949** (2026-10-20): refactor(transport): move inbound accept, transport opening and liveness behind the boundary (@sanity)
+- **PR #5948** (2026-10-20): fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime (@sanity)
 - **PR #5946** (2026-10-20): refactor(transport): open outbound connections through an OutboundConnector trait (@sanity)
 - **PR #5945** (2026-10-20): fix(nix): reap backgrounded children on terminate; ci: cut Fmt runtime (@sanity)
 - **PR #5944** (2026-10-19): feat(telemetry): report inbound stream refusals and evictions in transport_snapshot (@sanity)
 - **PR #5943** (2026-10-19): refactor(transport): classify transport errors and close reasons without UDP details (@sanity)
-- **PR #5941** (2026-10-19): refactor(transport): narrow the transport API boundary (@sanity)
-- **PR #5939** (2026-10-19): fix(ci): make release.yml dry_run side-effect free (@sanity)
 
 ---
 
@@ -1908,46 +1901,80 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)
+## X. test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5
 
 **RULE**:
-When implementing operations in `nix/freenet-node.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/transport/peer_connection/outbound_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `599b13a2`: nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e2c2b23`: test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nix/freenet-node.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/peer_connection/outbound_stream.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # Ask the job table, not `$child`. A signal that lands between `"$@" &` and
-    # `child=$!` runs this handler while `child` is still 0 (bash runs a trap
-    # as soon as the `&` command returns, before the next assignment), so
-    # relying on `$child` alone orphans a freshly forked restart-pause `sleep`
-    # -- or the node itself -- which then outlives the wrapper. `jobs -p` also
-    # lists `child` when it IS recorded, so it is only added when it is not.
-    local pids
-    pids="$(jobs -p)"
-        case " ${pids//$'\n'/ } " in
-            *" $child "*) ;;
-            *) pids="$pids $child" ;;
-        esac
-    fi
-    if [ -n "${pids// /}" ]; then
-        # shellcheck disable=SC2086  # word splitting of a pid list is the point
-        kill -TERM $pids 2>/dev/null || true
-        # shellcheck disable=SC2086
-        wait $pids 2>/dev/null || true
+    /// Outcome of one [`run_virtual_stream_transfer`] run.
+    struct VirtualTransfer {
+        /// Raw packets the receiver observed, in order.
+        packets: Vec<Arc<[u8]>>,
+        /// Virtual time that elapsed. Time only moves when the driver
+        /// advances it, and the driver only does so when `send_stream` is
+        /// parked on a `time_source.sleep`, so this is exactly the sum of
+        /// the token-bucket waits and independent of host load.
+        virtual_elapsed: Duration,
+        /// Number of times `send_stream` parked on the clock (each is one
+        /// token-bucket or cwnd wait).
+        sleeps: usize,
+    }
+
+    /// Payload size used by [`run_virtual_stream_transfer`].
+    const TRANSFER_LEN: usize = 10_000;
+
+    /// Run a single 10KB stream transfer under [`VirtualTime`] with the given
+    /// token bucket (burst capacity, rate bytes/s).
+    ///
+    /// Nothing here reads the wall clock: the driver advances virtual time
+    /// to the next pending wakeup whenever the sender is waiting on it, so
+    /// the result depends only on the token-bucket arithmetic (#4163).
+    async fn run_virtual_stream_transfer(
+        burst_capacity: usize,
+        rate_by
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        kill -TERM "$child" 2>/dev/null || true
-        wait "$child" 2>/dev/null || true
+    #[tokio::test]
+    async fn test_send_stream_with_bandwidth_limit() -> Result<(), Box<dyn std::error::Error>> {
+        let last_packet_id = Arc::new(AtomicU32::new(0));
+        let stream_id = StreamId::next();
+
+        // Create a large message (10KB)
+        let message = vec![0u8; 10_000];
+        // Set bandwidth limit to 100KB/s (100,000 bytes/second)
+        let bandwidth_limit = 100_000;
+        // Use real time for integration testing with bandwidth limiting
+        let time_source = RealTime::new();
+        // Initialize congestion controller and TokenBucket for test
+        // Use small burst capacity (1KB) to ensure rate limiting is observable
+        .build_arc();
+            1_000, // 1KB burst - ensures rate limiting kicks in
+            bandwidth_limit,
+        // Expected: 100KB/s with token bucket rate limiting
+        // Should throttle appropriately
+
+        let start_time = tokio::time::Instant::now();
+
+        // Clone sender for receiver task termination
+        let sender_clone: mpsc::Sender<(SocketAddr, Arc<[u8]>)> = outbound_sender.clone();
+        let key_clone = key.clone();
+
+            let mut packet_count = 0;
+            let mut total_bytes = 0;
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `599b13a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e2c2b23` are properly handled with clean fallback behavior.

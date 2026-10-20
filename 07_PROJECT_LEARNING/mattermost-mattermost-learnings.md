@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `f38678d0`  
+> **Source Version**: `3cef243d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:20:15.421Z  
+> **Timestamp**: 2026-10-20T05:43:05.369Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:20:15.272Z  
+> **Harvest Timestamp**: 2026-10-20T05:43:03.644Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39373 stars
+- **Stars / Engagement**: 39384 stars
 
 ---
 
@@ -1592,1273 +1592,1270 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b32c6f0` (2026-10-15)
-**Commit Message**: MM-70921: Fix rich text editor parity with posted messages (#38852)
+### Incident Patch 1: `03f584b7` (2026-10-19)
+**Commit Message**: test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL (#38918)
 
-* MM-70921: Fix rich text editor parity with posted messages
+* test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL
 
-* MM-70921: Address review feedback on image markdown and autocomplete alignment
+Centralizes the demo plugin id/URL/version into a single constant
+(lib/src/constant.ts) instead of three separate hardcoded copies, and
+replaces the old setupDemoPlugin(adminClient, pw) helper — called
+redundantly at the top of nearly every demo plugin spec — with a
+pw.ensureDemoPlugin({activate}) fixture.
 
-* Fix pasted image embedding and add mentions to the composer
+The setup project now installs and configures the plugin once for the
+whole run via pw.ensureDemoPlugin({activate: false}); individual specs
+activate it themselves via the (default activate: true) fixture call,
+which is now a cheap no-op once the plugin is already installed and
+active — patching PluginSettings/reinstalling on every call was found
+to make the plugin supervisor reload repeatedly and eventually get
+stuck inactive after enough consecutive specs.
 
-* dditional bugs 9 and 10
+Also bumps the demo plugin to v0.12.1 (fixing a previously-skipped
+test), removes now-unnecessary test.setTimeout calls and magic-number
+assertion timeouts now that activation is fast, and reformats demo
+plugin spec comments to the repo's "# step / * assertion" convention.
 
-* PR comments
+Co-Au
 
-* fix link construction settings
-
-* coderabbitai
-
-* Fix code block highlight
-
----------
-
-Co-authored-by: Nevyana Angelova <[REDACTED_EMAIL]>
-Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
-
-**File**: `e2e-tests/playwright/specs/functional/channels/wysiwyg_editor/autocomplete.spec.ts` (modified, +1/-1)
+**File**: `e2e-tests/playwright/lib/src/constant.ts` (modified, +5/-0)
 ```diff
-@@ -66,7 +66,7 @@ test.describe('WYSIWYG editor - autocomplete suggestions', TAGS, () => {
+@@ -7,6 +7,11 @@ export const callsPluginId = 'com.mattermost.calls';
+ export const npsPluginId = 'com.mattermost.nps';
+ export const playbooksPluginId = 'playbooks';
  
-         await expect(editor.suggestionList()).toBeVisible();
-         await editor.press('Enter');
--        await expect(editor.input).toContainText(`~${linked.name}`);
-+        await expect(editor.input.locator('.mention-link')).toHaveText(`~${linked.display_name}`);
-     });
- 
-     /**
++// Not prepackaged — installed from this URL by tests that exercise it.
++export const demoPluginId = 'com.mattermost.demo-plugin';
++export const demoPluginVersion = '0.12.1';
++export const demoPluginUrl = `https://github.com/mattermost/mattermost-plugin-demo/releases/download/v${demoPluginVersion}/mattermost-plugin-demo-v${demoPluginVersion}.tar.gz`;
++
+ // License SKU short names — mirrored from webapp/channels/src/utils/constants.tsx LicenseSkus
+ export const LicenseSkus = {
+     E10: 'E10',
 ```
 
-**File**: `webapp/channels/src/components/advanced_text_editor/advanced_text_editor.tsx` (modified, +2/-54)
+**File**: `e2e-tests/playwright/lib/src/index.ts` (modified, +10/-2)
 ```diff
-@@ -1,7 +1,6 @@
+@@ -26,7 +26,7 @@ export {setupFileServer} from './file_server';
+ export {decomposeKorean, koreanTestPhrase, typeHangulCharacterWithIme, typeHangulWithIme} from './ime';
+ export {type SizeObservation, type SizeWatcher, watchElementSize} from './layout_shift';
+ export {duration, getRandomId, wait, newTestPassword} from './util';
+-export {LicenseSkus, appsPluginId, callsPluginId, playbooksPluginId} from './constant';
++export {LicenseSkus, appsPluginId, callsPluginId, demoPluginId, demoPluginUrl, playbooksPluginId} from './constant';
+ 
+ export {
+     getAdminClient,
+@@ -61,11 +61,19 @@ export {
+     ensureMmctl,
+     upgradeServerImage,
+     saveUpgradePhaseLogs,
++    ensureDemoPlugin,
+     installAndEnablePlugin,
+     getPluginStatus,
+     isPluginActive,
+ } from './server';
+-export type {InbucketEmail, LdapUser, KeycloakUser, MmctlResult, UpgradeLogPhase} from './server';
++export type {
++    EnsureDemoPluginOptions,
++    InbucketEmail,
++    LdapUser,
++    KeycloakUser,
++    MmctlResult,
++    UpgradeLogPhase,
++} from './server';
+ 
+ export {startStack, stopStack, withStackLock} from './containers';
+ 
+```
+
+**File**: `e2e-tests/playwright/lib/src/server/index.ts` (modified, +2/-0)
+```diff
+@@ -50,10 +50,12 @@ export {
+ export {
+     defaultEnabledPluginIds,
+     disableUnexpectedPlugins,
++    ensureDemoPlugin,
+     installAndEnablePlugin,
+     isPluginActive,
+     getPluginStatus,
+ } from './plugin';
++export type {EnsureDemoPluginOptions} from './plugin';
+ export {isWebhookTestServerReachable, setupWebhookTestServer} from './webhook_server';
+ export {
+     generateLdapUser,
+```
+
+**File**: `e2e-tests/playwright/lib/src/server/plugin.ts` (modified, +113/-1)
+```diff
+@@ -1,10 +1,23 @@
  // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
  // See LICENSE.txt for license information.
  
--import type {Editor} from '@tiptap/react';
- import classNames from 'classnames';
- import React, {lazy, useCallback, useEffect, useMemo, useRef, useState} from 'react';
- import {FormattedMessage, useIntl} from 'react-intl';
-@@ -29,6 +28,7 @@ import {connectionErrorCount} from 'selectors/views/system';
- import LocalStorageStore from 'stores/local_storage_store';
++import {ClientError} from '@mattermost/client';
+ import type {Client4} from '@mattermost/client';
+ import type {PluginManifest} from '@mattermost/types/plugins';
++import {expect} from '@playwright/test';
  
- import PostBoxIndicator from 'components/advanced_text_editor/post_box_indicator/post_box_indicator';
-+import {applyWysiwygFormatting} from 'components/advanced_text_editor/wysiwyg_editor/apply_wysiwyg_formatting';
- import WysiwygEditor from 'components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor';
- import type {WysiwygEditorHandle} from 'components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor';
- import {makeAsyncComponent} from 'components/async_load';
-@@ -335,58 +335,6 @@ const AdvancedTextEditor = ({
-         storedDrafts.current[draftToChange.rootId || draftToChange.channelId] = draftToChange;
-     }, [dispatch, isInEditMode, storageKey]);
+-import {aiPluginId, callsPluginId, npsPluginId, playbooksPluginId} from '@/constant';
++import {getAdminClient} from './init';
++
++import {duration} from '@/util';
++import {
++    aiPluginId,
++    callsPluginId,
++    demoPluginId,
++    demoPluginUrl,
++    demoPluginVersion,
++    npsPluginId,
++    playbooksPluginId,
++} from '@/constant';
  
--    const applyWysiwygFormatting = useCallback((editor: Editor, mode: MarkdownMode) => {
--        const isInlineMark = mode === 'bold' || mode === 'italic' || mode === 'strike';
--        if (isInlineMark && editor.state.selection.empty) {
--            const $from = editor.state.selection.$from;
--            const text = $from.parent.textContent;
--            const offset = $from.parentOffset;
--            if (text && offset >= 0) {
--                const isWordChar = (/\S/);
--                let start = offset;
--                while (start > 0 && isWordChar.test(text[start - 1])) {
--                    start--;
--                }
--                let end = offset;
--                while (end < text.length && isWordChar.test(text[end])) {
--                    end++;
--                }
--                if (start < end) {
--                    const parentStart = $from.pos - offset;
--                    editor.chain().focus().setTextSelection({from: parentStart + start, to: parentStart + end}).run();
--                }
--            }
--        }
--
--        const chain = editor.chain().focus();
--        switch (mode) {
--        case 'bold':
--            chain.toggleBold().run();
--            break;
--        case 'italic':
--            chain.toggleItalic().run();
--            break;
--        case 'strike':
--            chain.toggleStrike().run();
--            break;
--        case 'heading':
--            chain.toggleHeading({level: 3}).run();
--            break;
--        case 'code':
--            chain.toggleCodeBlock().run();
--            break;
--        case 'quote':
--            chain.toggleBlockquote().run();
--            break;
--        case 'ul':
--            chain.toggleBulletList().run();
--            break;
--        case 'ol':
--            chain.toggleOrderedList().run();
--            break;
--        }
--    }, []);
--
-     const applyFormatting = useCallback((mode: MarkdownMode) => {
-         if (showPreview) {
-             return;
-@@ -427,7 +375,7 @@ const AdvancedTextEditor = ({
-                 Utils.setSelectionRange(textbox, res.selectionStart, res.selectionEnd);
-             }
-         });
--    }, [showPreview, wysiwygEnabled, handleDraftChange, applyWysiwygFormatting]);
-+    }, [showPreview, wysiwygEnabled, handleDraftChange]);
+ /** The prepackaged plugins model.Config.SetDefaults() enables, so active on a fresh install. */
+ export const defaultEnabledPluginIds = [aiPluginId, callsPluginId, npsPluginId, playbooksPluginId];
+@@ -42,6 +55,11 @@ export async function getPluginStatus(
+     };
+ }
  
-     const toggleAdvanceTextEditor = useCallback(() => {
-         dispatch(savePreferences(currentUserId, [{
-```
-
-**File**: `webapp/channels/src/components/advanced_text_editor/wysiwyg_editor/apply_wysiwyg_formatting.test.ts` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
++async function getInstalledPluginVersion(client: Client4, pluginId: string): Promise<string | undefined> {
++    const plugins = await client.getPlugins();
++    return [...plugins.active, ...plugins.inactive].find((plugin: PluginManifest) => plugin.id === pluginId)?.version;
++}
 +
-+import {Editor} from '@tiptap/core';
-+import {Markdown} from '@tiptap/markdown';
-+import StarterKit from '@tiptap/starter-kit';
+ /**
+  * Installs and enables a plugin with smart status checking
+  * - If already active: does nothing
+@@ -72,3 +90,97 @@ export async function installAndEnablePlugin(
+     await client.installPluginFromUrl(pluginUrl, force);
+     await client.enablePlugin(pluginId);
+ }
 +
-+import {applyWysiwygFormatting} from './apply_wysiwyg_formatting';
-+
-+const createEditor = (markdown: string) => new Editor({
-+    extensions: [StarterKit, Markdown],
-+    content: markdown,
-+    contentType: 'markdown',
-+});
-+
-+const typeText = (editor: Editor, text: string) => {
-+    editor.view.dispatch(editor.state.tr.insertText(text));
-+};
-+
-+describe('applyWysiwygFormatting', () => {
-+    let editor: Editor;
-+
-+    beforeAll(() => {
-+        document.elementFromPoint = () => null;
-+    });
-+
-+    afterEach(() => {
-+        editor?.destroy();
-+    });
-+
-+    it('turns bold on for the next text in an empty editor', () => {
-+        editor = createEditor('');
-+        editor.commands.clearContent();
-+        editor.commands.setTextSelection(1);
-+
-+        applyWysiwygFormatting(editor, 'bold');
-+        typeText(editor, 'hi');
-+
-+        expect(editor.getHTML()).toBe('<p><strong>hi</strong></p>');
-+    });
-+
-+    it('turns bold off at the end of a bold word without touching the word', () => {
-+        editor = createEditor('**hi**');
-+        editor.commands.setTextSelection(3);
-+
-+        applyWysiwygFormatting(editor, 'bold');
-+        typeText(editor, ' there');
-+
-+        expect(editor.getHTML()).toBe('<p><strong>hi</strong> there</p>');
-+    });
-+
-+    it('turns bold on at the end of a word without bolding the word', () => {
-+        editor = createEditor('hi');
-+        editor.commands.setTextSelection(3);
-+
-+        applyWysiwygFormatting(editor, 'bold');
-+        typeText(editor, ' there');
-+
-+        expect(editor.getHTML()).toBe('<p>hi<strong> there</strong></p>');
-+    });
-+
-+    it('bolds the whole word when the caret is inside it and keeps the caret in place', () => {
-+        editor = createEditor('hello world');
-+        editor.commands.setTextSelection(3);
-+
-+        applyWysiwygFormatting(editor, 'bold');
-+
-+        expect(editor.getHTML()).toBe('<p><strong>hello</strong> world</p>');
-+        expect(editor.state.selection.empty).toBe(true);
-+        expect(editor.state.selection.from).toBe(3);
-+    });
-+
-+    it('bolds the selection when there is one', () => {
-+        editor = createEditor('hello world');
-+        editor.commands.setTextSelection({from: 7, to: 12});
-+
-+        applyWysiwygFormatting(editor, 'bold');
-+
-+        expect(editor.getHTML()).toBe('<p>hello <strong>world</strong></p>');
-+    });
-+});
-```
-
-**File**: `webapp/channels/src/components/advanced_text_editor/wysiwyg_editor/apply_wysiwyg_formatting.ts` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
-+
-+import type {Editor} from '@tiptap/core';
-+
-+import type {MarkdownMode} from 'utils/markdown/apply_markdown';
-+
-+const isWordChar = (/\S/);
-+
-+export const applyWysiwygFormatting = (editor: Editor, mode: MarkdownMode) => {
-+    const isInlineMark = mode === 'bold' || mode === 'italic' || mode === 'strike';
-+    let caret: number | undefined;
-+    if (isInlineMark && editor.state.selection.empty) {
-+        const $from = editor.state.selection.$from;
-+        const text = $from.parent.textBetween(0, $from.parent.content.size, undefined, ' ');
-+        const offset = $from.parentOffset;
-+        if (isWordChar.test(text[offset - 1] ?? '') && isWordChar.test(text[offset] ?? '')) {
-+            let start = offset;
-+            while (start > 0 && isWordChar.test(text[start - 1])) {
-+                start--;
-+            }
-+            let end = offset;
-+            while (end < text.length && isWordChar.test(text[end])) {
-+                end++;
-+            }
-+            const parentStart = $from.pos - offset;
-+            caret = $from.pos;
-+            editor.chain().focus().setTextSelection({from: parentStart + start, to: parentStart + end}).run();
++/**
++ * installPluginFromUrl can fail with "Unable to restart plugin on upgrade" when activation
++ * races (server thinks plugin is still active). Retry once after disable + brief settle.
++ */
++async function installAndEnableDemoPluginWithRetry(adminClient: Client4): Promise<void> {
++    try {
++        await installAndEnablePlugin(adminClient, demoPluginUrl, demoPluginId);
++    } catch (err) {
++        const msg = err instanceof ClientError ? err.message : String(err);
++        if (!msg.includes('Unable to restart plugin on upgrade')) {
++            throw err;
 +        }
++        try {
++            await adminClient.disablePlugin(demoPluginId);
++        } catch {
++            // Already inactive or transitional — continue.
++        }
++        await new Promise((r) => setTimeout(r, 2000));
++        await installAndEnablePlugin(adminClient, demoPluginUrl, demoPluginId);
 +    }
++}
 +
-+    const chain = editor.chain().focus();
-+    switch (mode) {
-+    case 'bold':
-+        chain.toggleBold().run();
-+        break;
-+    case 'italic':
-+        chain.toggleItalic().run();
-+        break;
-+    case 'strike':
-+        chain.toggleStrike().run();
-+        break;
-+    case 'heading':
-+        chain.toggleHeading({level: 3}).run();
-+        break;
-+    case 'code':
-+        chain.toggleCodeBlock().run();
-+        break;
-+    case 'quote':
-+        chain.toggleBlockquote().run();
-+        break;
-+    case 'ul':
-+        chain.toggleBulletList().run();
-+        break;
-+    case 'ol':
-+        chain.toggleOrderedList().run();
-+        break;
-+    }
-+
-+    if (caret !== undefined) {
-+        editor.commands.setTextSelection(caret);
-+    }
++export type EnsureDemoPluginOptions = {
++    /** Enable the plugin after installing/configuring it. Defaults to true. */
++    activate?: boolean;
 +};
++
++/**
++ * Installs and configures the demo plugin, activating it by default. Pass `{activate: false}`
++ * to ensure it's installed and configured without enabling it (e.g. from the `setup` project,
++ * which installs once for the whole run but leaves activation to each spec via the default).
++ *
++ * Safe to call repeatedly or from multiple specs: nothing else in the suite patches
++ * PluginSettings, so there's no concurrent writer that could reset or clobber this config.
++ * Calling patchConfig/install/enable when nothing actually needs to change makes the plugin
++ * supervisor reload on every call — with dozens of specs each calling this, that repeated
++ * reload churn was observed to eventually leave the plugin stuck inactive. So every check
++ * below is a no-op read until something is actually found to be missing or stale.
++ */
++export async function ensureDemoPlugin(options: EnsureDemoPluginOptions = {}): Promise<void> {
++    const {activate = true} = options;
++    const {adminClient} = await getAdminClient();
++
++    const status = await getPluginStatus(adminClient, demoPluginId);
++    const installedVersion = status.isInstalled
++        ? await getInstalledPluginVersion(adminClient, demoPluginId)
++        : undefined;
++    const isStale = status.isInstalled && installedVersion !== demoPluginVersion;
++
++    // Already installed at the right version, and either activation isn't requested or it's
++    // already active — nothing to do.
++    if (status.isInstalled && !isStale && (!activate || status.isActive)) {
++        return;
++    }
++
++    // No PluginStates here — patchConfig replaces that map wholesale. Enablement goes through
++    // installAndEnablePlugin's enablePlugin call, which the server applies to this id alone.
++    // EnableUploads is likewise absent: SERVER_ENV_BASELINE owns it and the API 403s on change.
++    await adminClient.patchConfig({
++        FileSettings: {EnablePublicLink: true},
++        ServiceSettings: {EnableGifPicker: true},
++        PluginSettings: {
++            Enable: true,
++            AllowInsecureDownloadURL: true,
++            Plugins: {
++                [demoPluginId]: {
++                    username: 'demouser',
++                    channelname: 'demo_plugin',
++                    lastname: 'User',
++                },
++            },
++        },
++    });
++
++    // Not installed, or a long-lived reused dev/CI server has a stale version from a previous
++    // sessio
 ```
 
-**File**: `webapp/channels/src/components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor.scss` (modified, +27/-194)
+**File**: `e2e-tests/playwright/lib/src/test_fixture.ts` (modified, +3/-0)
 ```diff
-@@ -70,20 +70,8 @@
-             }
-         }
+@@ -36,6 +36,7 @@ import {
+     elasticsearchServerConfig,
+     enableAIBridgeTestMode,
+     ensureAzurite,
++    ensureDemoPlugin,
+     ensureElasticsearch,
+     ensureFeatureFlag,
+     ensureDefaultServerEnv,
+@@ -195,6 +196,7 @@ export class PlaywrightExtended {
+     readonly createMockAIAgent;
+     readonly rewriteCompletion;
+     readonly recapCompletion;
++    readonly ensureDemoPlugin;
+     readonly installAndEnablePlugin;
+     readonly isPluginActive;
  
--        h1,
--        h2,
--        h3,
--        h4,
--        h5,
--        h6 {
--            margin: 4px 0;
-+        .markdown__heading {
-             color: var(--center-channel-color);
--            font-weight: 700;
--            line-height: 1.5;
--
--            &:first-child {
--                margin: 0 0 4px;
--            }
+@@ -324,6 +326,7 @@ export class PlaywrightExtended {
+         this.rewriteCompletion = rewriteCompletion;
+         this.recapCompletion = recapCompletion;
+         this.isOutsideRemoteUserHour = isOutsideRemoteUserHour;
++        this.ensureDemoPlugin = ensureDemoPlugin;
+         this.installAndEnablePlugin = installAndEnablePlugin;
+         this.isPluginActive = isPluginActive;
  
-             + p:last-child:empty,
-             + p:last-child:has(> br:only-child),
-@@ -94,36 +82,6 @@
-             }
-         }
- 
--        h1,
--        h2,
--        h3 {
--            font-family: Metropolis, sans-serif;
--        }
--
--        h1 {
--            font-size: 28px;
--        }
--
--        h2 {
--            font-size: 25px;
--        }
--
--        h3 {
--            font-size: 22px;
--        }
--
--        h4 {
--            font-size: 19px;
--        }
--
--        h5 {
--            font-size: 15px;
--        }
--
--        h6 {
--            font-size: 14px;
--        }
--
-         strong {
-             font-weight: 600;
-         }
-@@ -136,153 +94,48 @@
-             text-decoration: line-through;
-         }
- 
--        ul,
--        ol {
--            padding-left: 24px;
--            margin: 4px 0;
--
--            &:last-child {
--                margin-bottom: 0;
--            }
--        }
--
--        ul {
--            list-style-type: disc;
-+        li ul {
-+            padding: 0 0 0 20px;
-+            margin: 0;
-+            font-size: 1em;
-         }
- 
--        ol {
--            list-style-type: decimal;
-+        p + p {
-+            margin: 0.5em 0 0;
-         }
- 
--        li {
--            margin: 2px 0;
--
--            p {
--                margin: 0;
--            }
-+        ul + p,
-+        ol + p,
-+        p + ul,
-+        p + ol {
-+            margin-top: 0.6em;
-         }
- 
--        code {
--            padding: 2px 5px;
--            border: 1px solid rgba(var(--center-channel-color-rgb), 0.12);
--            border-radius: 3px;
--            background: rgba(var(--center-channel-color-rgb), 0.04);
--            color: var(--center-channel-color);
--            font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
--            font-size: 12px;
-+        li p {
-+            margin: 0;
-         }
- 
--        pre {
--            padding: 10px 12px;
--            border: 1px solid rgba(var(--center-channel-color-rgb), 0.12);
--            border-radius: 4px;
--            margin: 6px 0;
--            background: rgba(var(--center-channel-color-rgb), 0.04);
-+        pre.hljs {
-+            padding: 8.5px;
-+            border: 1px solid rgba(var(--center-channel-color-rgb), 0.2);
-+            border-radius: 0.25em;
-+            margin: 5px 0;
-+            font-size: 13px;
- 
-             code {
-                 padding: 0;
--                border: none;
--                border-radius: 0;
-                 background: transparent;
-                 font-size: 13px;
--                line-height: 1.5;
-                 white-space: pre-wrap;
--
--                .hljs-comment,
--                .hljs-quote {
--                    color: rgba(var(--center-channel-color-rgb), 0.5);
--                    font-style: italic;
--                }
--
--                .hljs-keyword,
--                .hljs-selector-tag,
--                .hljs-subst {
--                    color: #d73a49;
--                    font-weight: 600;
--                }
--
--                .hljs-literal,
--                .hljs-number,
--                .hljs-variable,
--                .hljs-template-variable,
--                .hljs-tag .hljs-attr {
--                    color: #005cc5;
--                }
--
--                .hljs-string,
--                .hljs-doctag {
--                    color: #032f62;
--                }
--
--                .hljs-title,
--                .hljs-section,
--                .hljs-selector-id {
--                    color: #6f42c1;
--                    font-weight: 600;
--                }
--
--                .hljs-type,
--                .hljs-class .hljs-title {
--                    color: #6f42c1;
--                }
--
--                .hljs-tag,
--                .hljs-name,
--                .hljs-attribute {
--                    color: #22863a;
--                }
--
--                .hljs-regexp,
--                .hljs-link {
--                    color: #032f62;
--                }
--
--                .hljs-symbol,
--                .hljs-bullet {
--                    color: #e36209;
--                }
--
--                .hljs-built_in,
--                .hljs-builtin-name {
--                    color: #005cc5;
--                }
--
--                .hljs-meta {
--                    color: rgba(var(--center-channel-color-rgb), 0.5);
--                    font-weight: 600;
--                }
--
--                .hljs-deletion {
--                    background: #ffeef0;
--                    color: #b31d28;
--                }
--
--                .hljs-addition {
--                    background: #f0fff4;
--                    color: #22863a;
-
 ```
 
-**File**: `webapp/channels/src/components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor.test.tsx` (modified, +83/-1)
+**File**: `e2e-tests/playwright/specs/functional/plugins/demo_plugin/helpers.ts` (modified, +4/-78)
 ```diff
-@@ -15,6 +15,8 @@ const mockConstructorError: {current: Error | null} = {current: null};
- const mockChainCalls: {current: string[]} = {current: []};
- const mockSetNodeThrows: {current: boolean} = {current: false};
- const mockRunReturnsFalse: {current: boolean} = {current: false};
-+const mockMarkdownFailure: {current: 'parse' | 'insert' | null} = {current: null};
-+const mockInsertedContent: {current: unknown[]} = {current: []};
+@@ -4,19 +4,11 @@
+ import path from 'node:path';
  
- jest.mock('@tiptap/react', () => {
-     const ReactMock = require('react') as typeof import('react');
-@@ -25,11 +27,19 @@ jest.mock('@tiptap/react', () => {
-             const base: any = {
-                 isDestroyed: false,
-                 isEmpty: true,
-+                isActive: () => false,
-                 commands: {
-                     clearContent: () => undefined,
-                     focus: () => undefined,
-                     blur: () => undefined,
--                    insertContent: () => undefined,
-+                    insertContent: (content: unknown) => {
-+                        if (mockMarkdownFailure.current === 'insert' && mockInsertedContent.current.length === 0) {
-+                            mockInsertedContent.current.push('rejected');
-+                            throw new RangeError('Invalid content for node listItem');
-+                        }
-+                        mockInsertedContent.current.push(content);
-+                        return true;
-+                    },
-                 },
+ import type {Page} from '@playwright/test';
+-import type {Client4} from '@mattermost/client';
+-import {ClientError} from '@mattermost/client';
  
-                 // Mirrors the real library: an update is emitted unless the caller opts out.
-@@ -67,6 +77,16 @@ jest.mock('@tiptap/react', () => {
-             const hasMarkdownExt = (config?.extensions ?? []).some((e: any) => (e.name || e.config?.name) === 'markdown');
-             if (hasMarkdownExt) {
-                 base.getMarkdown = () => 'hi';
-+                base.schema = {nodes: {}};
-+                base.markdown = {
-+                    parse: (md: string) => {
-+                        if (mockMarkdownFailure.current === 'parse') {
-+                            throw new Error('Unsupported markdown');
-+                        }
-+                        return {type: 'doc', content: [{type: 'paragraph', content: [{type: 'text', text: md}]}]};
-+                    },
-+                    serialize: () => 'hi',
-+                };
-             }
+ import {expect} from '@mattermost/playwright-lib';
  
-             // Tiptap emits contentError synchronously inside the Editor
-@@ -411,6 +431,68 @@ describe('WysiwygEditor', () => {
-         expect(result).toBe(true);
+ const assetPath = path.resolve(__dirname, '../../../../asset');
+ 
+-const DEMO_PLUGIN_ID = 'com.mattermost.demo-plugin';
+-const DEMO_PLUGIN_URL =
+-    'https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.11.0/mattermost-plugin-demo-v0.11.0.tar.gz';
+-
+-export {DEMO_PLUGIN_ID, DEMO_PLUGIN_URL};
+-
+ // Repeated in all Root Modal tests — avoids duplicating the long trigger string
+ const ROOT_MODAL_TRIGGER_TEXT = 'You have triggered the root component of the demo plugin.';
+ 
+@@ -44,10 +36,6 @@ export async function closeRootModal(page: Page): Promise<void> {
+     await expect(page.getByText(ROOT_MODAL_TRIGGER_TEXT)).not.toBeVisible();
+ }
+ 
+-/**
+- * Run `send` (typically fill slash command + click Send) while waiting for
+- * POST /api/v4/commands/execute so the server finishes the slash handler before assertions.
+- */
+ /**
+  * Upload a file via the UI attachment menu when the demo plugin is active.
+  * The demo plugin intercepts the attachment button and shows a submenu — this
+@@ -75,6 +63,10 @@ export async function uploadFileViaYourComputer(
+     await uploadResponsePromise;
+ }
+ 
++/**
++ * Run `send` (typically fill slash command + click Send) while waiting for
++ * POST /api/v4/commands/execute so the server finishes the slash handler before assertions.
++ */
+ export async function sendDemoSlashCommand(page: Page, send: () => Promise<void>) {
+     // Accept any response status (including 5xx) so the 45 s timeout does not fire when the
+     // plugin is transiently inactive and the server returns HTTP 500.  The caller is responsible
+@@ -85,69 +77,3 @@ export async function sendDemoSlashCommand(page: Page, send: () => Promise<void>
+     );
+     await Promise.all([send(), responsePromise]);
+ }
+-
+-/**
+- * installPluginFromUrl can fail with "Unable to restart plugin on upgrade" when activation
+- * races (server thinks plugin is still active). Retry once after disable + brief settle.
+- */
+-async function installAndEnableDemoPlugin(
+-    adminClient: Client4,
+-    pw: {
+-        installAndEnablePlugin: (client: Client4, pluginUrl: string, pluginId: string) => Promise<void>;
+-        isPluginActive: (client: Client4, pluginId: string) => Promise<boolean>;
+-    },
+-) {
+-    try {
+-        await pw.installAndEnablePlugin(adminClient, DEMO_PLUGIN_URL, DEMO_PLUGIN_ID);
+-    } catch (err) {
+-        const msg = err instanceof ClientError ? err.message : String(err);
+-        if (!msg.includes('Unable to restart plugin on upgrade')) {
+-            throw err;
+-        }
+-        try {
+-            await adminClient.disablePlugin(DEMO_PLUGIN_ID);
+-        } catch {
+-            // Already inactive or transitional — continue.
+-        }
+-        await new Promise((r) => setTimeout(r, 2000));
+-        await pw.installAndEnablePlugin(adminClient, DEMO_PLUGIN_URL, DEMO_PLUGIN_ID);
+-    }
+-}
+-
+-export async function setupDemoPlugin(
+-    adminClient: Client4,
+-    pw: {
+-        ensureInternalSiteUrl: () => Promise<void>;
+-        installAndEnablePlugin: (client: Client4, pluginUrl: string, pluginId: string) => Promise<void>;
+-        isPluginActive: (client: Client4, pluginId: string) => Promise<boolean>;
+-    },
+-) {
+-    // Plugin callbacks go through SiteURL; restore the internal one.
+-    await pw.ensureInternalSiteUrl();
+-
+-    // No PluginStates here — patchConfig replaces that map wholesale. Enablement goes through
+-    // installAndEnablePlugin's enablePlugin call, which the server applies to this id alone.
+-    // EnableUploads is likewise absent: SERVER_ENV_BASELINE owns it and the API 403s on change.
+-    await adminClient.patchConfig({
+-        FileSettings: {EnablePublicLink: true},
+-        ServiceSettings: {EnableGifPicker: true},
+-        PluginSettings: {
+-            Enable: true,
+-            AllowInsecureDownloadURL: true,
+-            Plugins: {
+-                'com.mattermost.demo-plugin': {
+-                    username: 'demouser',
+-                    channelname: 'demo_plugin',
+-                    lastname: 'User',
+-                },
+-            },
+-        },
+-    });
+-
+-    if (!(await pw.isPluginActive(adminClient, DEMO_PLUGIN_ID))) {
+-        await installAndEnableDemoPlugin(adminClient, pw);
+-    }
+-
+-    // Activation is asynchronous server-side, so poll rather than assert immediately.
+-    await expect.poll(() => pw.isPluginActive(adminClient, DEMO_PLUGIN_ID), {timeout: 30_000}).toBe(true);
+-}
+```
+
+**File**: `e2e-tests/playwright/specs/functional/plugins/demo_plugin/server/slash_commands/demo_dialog.spec.ts` (modified, +79/-160)
+```diff
+@@ -3,55 +3,34 @@
+ 
+ import {expect, test} from '@mattermost/playwright-lib';
+ 
+-import {sendDemoSlashCommand, setupDemoPlugin} from '../../helpers';
++import {sendDemoSlashCommand} from '../../helpers';
+ 
+ test('should open /dialog and post submit confirmation on submit', async ({pw}) => {
+-    // Plugin installation can take up to 60 s; extend the test timeout to avoid
+-    // a premature timeout before the dialog even opens.
+-    test.setTimeout(120000);
++    // # Setup
++    const {user, team} = await pw.initSetup();
++    await pw.ensureDemoPlugin();
+ 
+-    // 1. Setup
+-    const {adminClient, user, team} = await pw.initSetup();
+-    await setupDemoPlugin(adminClient, pw);
+-
+-    // 2. Login
++    // # Login
+     const {channelsPage} = await pw.testBrowser.login(user);
+     await channelsPage.goto();
+     await channelsPage.toBeVisible();
+ 
+-    // 3. Navigate to Demo Plugin channel
++    // # Navigate to Demo Plugin channel
+     await channelsPage.goto(team.name, 'town-square');
+     await channelsPage.toBeVisible();
+ 
+-    // 4. Send /dialog command (with one retry if the dialog doesn't appear).
+-    // Under CI load the plugin's slash-command handler can be slow to respond;
+-    // a single re-send recovers transient timeouts without masking real failures.
+-    // Re-apply guard: concurrent initSetup() resets PluginSettings (Plugins: {}) which
+-    // clears the demo plugin config; re-running setupDemoPlugin is fast when the plugin
+-    // is already active (alreadyActive guard skips reinstall).
+-    await setupDemoPlugin(adminClient, pw);
++    // # Send /dialog command
+     const dialog = channelsPage.page.getByRole('dialog');
+-    for (let attempt = 0; attempt < 4; attempt++) {
+-        await sendDemoSlashCommand(channelsPage.page, async () => {
+-            await channelsPage.centerView.postCreate.input.fill('/dialog');
+-            await channelsPage.centerView.postCreate.sendMessage();
+-        });
+-        try {
+-            // 5. Confirm dialog opens with title "Test Title"
+-            await expect(dialog).toBeVisible({timeout: 45000});
+-            break; // dialog appeared — proceed
+-        } catch (err) {
+-            if (attempt === 3) {
+-                throw err; // exhausted retries — let the error surface naturally
+-            }
+-            await setupDemoPlugin(adminClient, pw);
+-            await channelsPage.page.waitForTimeout(2000);
+-            // attempt timed out — retry the slash command
+-        }
+-    }
++    await sendDemoSlashCommand(channelsPage.page, async () => {
++        await channelsPage.centerView.postCreate.input.fill('/dialog');
++        await channelsPage.centerView.postCreate.sendMessage();
++    });
++    await expect(dialog).toBeVisible();
++
++    // * Verify dialog opens with title "Test Title"
+     await expect(dialog.getByRole('heading', {level: 1})).toContainText('Test Title');
+ 
+-    // 6. Fill required fields
++    // # Fill required fields
+     // Display Name already has default "default text" — overwrite
+     await dialog.getByTestId('realnameinput').fill('Test Input');
+ 
+@@ -73,219 +52,159 @@ test('should open /dialog and post submit confirmation on submit', async ({pw})
+     // Radio Option Selector — required
+     await dialog.getByRole('radio', {name: 'Option1'}).click();
+ 
+-    // 7. Submit the dialog
++    // # Submit the dialog
+     await dialog.getByRole('button', {name: 'Submit'}).click();
+-    await expect(dialog).not.toBeVisible();
+ 
+-    // 8. Verify the submit post appears in the channel
++    // * Verify the dialog closed and the submit post appears in the channel
+     // Note: "Interative" is a typo in the demo plugin — not a test error
++    await expect(dialog).not.toBeVisible();
+     await expect(
+         channelsPage.centerView.container.locator('p').filter({hasText: 'submitted an Interative Dialog'}),
+     ).toBeVisible();
+ });
+ 
+ test('should post cancellation notification when /dialog is cancelled', async ({pw}) => {
+-    test.setTimeout(120000);
++    // # Setup
++    const {user, team} = await pw.initSetup();
++    await pw.ensureDemoPlugin();
+ 
+-    // 1. Setup
+-    const {adminClient, user, team} = await pw.initSetup();
+-    await setupDemoPlugin(adminClient, pw);
+-
+-    // 2. Login
++    // # Login
+     const {channelsPage} = await pw.testBrowser.login(user);
+     await channelsPage.goto();
+     await channelsPage.toBeVisible();
+ 
+-    // 3. Navigate to Demo Plugin channel
++    // # Navigate to Demo Plugin channel
+     await channelsPage.goto(team.name, 'town-square');
+     await channelsPage.toBeVisible();
+ 
+-    // 4. Send /dialog command (with one retry if the dialog doesn't appear).
+-    // Re-apply guard: concurrent initSetup() resets PluginSettings.
+-    await setupDemoPlugin(adminClient, pw);
+-    await channelsPage.page.waitForTimeout(6000);
++    // # Send /dialog command
+     const dialog = channelsPage.page.getByRole('dialog');
+-    for (let attempt = 0; attempt < 4; attempt++) {
+-        await sendDemoSlashCommand(channelsPa
+```
+
+**File**: `e2e-tests/playwright/specs/functional/plugins/demo_plugin/server/slash_commands/demo_dialog_date.spec.ts` (modified, +18/-39)
+```diff
+@@ -3,67 +3,46 @@
+ 
+ import {expect, test} from '@mattermost/playwright-lib';
+ 
+-import {setupDemoPlugin} from '../../helpers';
++import {sendDemoSlashCommand} from '../../helpers';
+ 
+ test('should open /dialog date and post submit confirmation after selecting dates', async ({pw}) => {
+-    // Plugin installation can take up to 60 s; extend the test timeout to avoid
+-    // a premature timeout before the dialog even opens.
+-    test.setTimeout(120000);
++    // # Setup
++    const {user, team} = await pw.initSetup();
++    await pw.ensureDemoPlugin();
+ 
+-    // 1. Setup
+-    const {adminClient, user, team} = await pw.initSetup();
+-    await setupDemoPlugin(adminClient, pw);
+-
+-    // 2. Login
++    // # Login
+     const {channelsPage} = await pw.testBrowser.login(user);
+     await channelsPage.goto();
+     await channelsPage.toBeVisible();
+ 
+-    // 3. Navigate to Town Square
++    // # Navigate to Town Square
+     await channelsPage.goto(team.name, 'town-square');
+     await channelsPage.toBeVisible();
+ 
+-    // 4. Send /dialog date command (retry if the dialog doesn't appear — plugin races are common under PW_WORKERS=8).
++    // # Send /dialog date command
+     const dialog = channelsPage.page.getByRole('dialog');
+-    for (let attempt = 0; attempt < 3; attempt++) {
++    await sendDemoSlashCommand(channelsPage.page, async () => {
+         await channelsPage.centerView.postCreate.input.fill('/dialog date');
+         await channelsPage.centerView.postCreate.sendMessage();
+-        try {
+-            await expect(dialog).toBeVisible({timeout: 45000});
+-            break;
+-        } catch (err) {
+-            if (attempt === 2) {
+-                throw err;
+-            }
+-            try {
+-                await adminClient.enablePlugin('com.mattermost.demo-plugin');
+-            } catch {
+-                // Already enabled or transient error — ignore.
+-            }
+-            await expect
+-                .poll(() => pw.isPluginActive(adminClient, 'com.mattermost.demo-plugin'), {
+-                    timeout: 45_000,
+-                    intervals: [2000],
+-                })
+-                .toBe(true);
+-            await new Promise((resolve) => setTimeout(resolve, 6000));
+-        }
+-    }
++    });
++    await expect(dialog).toBeVisible();
++
++    // * Verify dialog opens with title "Date & DateTime Test Dialog"
+     await expect(dialog.getByRole('heading', {level: 1})).toContainText('Date & DateTime Test Dialog');
+ 
+-    // 6. Verify field labels and Event Title default value
++    // * Verify field labels and Event Title default value
+     await expect(dialog.getByText('Meeting Date *', {exact: true})).toBeVisible();
+     await expect(dialog.getByText('Meeting Date & Time *', {exact: true})).toBeVisible();
+     await expect(dialog.getByText('Event Title *', {exact: true})).toBeVisible();
+     await expect(dialog.getByRole('textbox', {name: 'Event Title *'})).toHaveValue('Team Meeting');
+ 
+-    // 7. Select a date using the Meeting Date picker
++    // # Select a date using the Meeting Date picker
+     await dialog.getByRole('button', {name: /Select a meeting date/i}).click();
+     await expect(channelsPage.page.getByRole('grid')).toBeVisible();
+     // Click day 20 — reliably available in any month
+     await channelsPage.page.getByRole('grid').getByText('20', {exact: true}).click();
+ 
+-    // 8. Select date and time using the Meeting Date & Time picker.
++    // # Select a date and time using the Meeting Date & Time picker.
+     // The datetime field renders via DateTimeInput which wraps its date part in
+     // <div class="dateTime__date"> — a class unique to DateTimeInput and absent
+     // from the date-only "Meeting Date" field (AppsFormDateField → DatePicker directly).
+@@ -82,11 +61,11 @@ test('should open /dialog date and post submit confirmation after selecting date
+         .click();
+     await channelsPage.page.getByRole('menuitem', {name: '3:00 PM'}).click();
+ 
+-    // 9. Submit — button is labelled "Create Event"
++    // # Submit — button is labelled "Create Event"
+     await dialog.getByRole('button', {name: 'Create Event'}).click();
+-    await expect(dialog).not.toBeVisible();
+ 
+-    // 10. Verify submit post appears in the channel
++    // * Verify the dialog closes and submit post appears in the channel
++    await expect(dialog).not.toBeVisible();
+     await expect(
+         channelsPage.centerView.container.locator('p').filter({hasText: 'submitted a Date Dialog'}),
+     ).toBeVisible();
+```
+
+---
+
+### Incident Patch 2: `aeccde2d` (2026-10-19)
+**Commit Message**: [MM-69961] Fix login being blocked for all users when Guest Access is disabled while Magic Link stays enabled (#38749)
+
+* MM-69961: don't block all logins when guest access is disabled
+
+The login page gated its POST /users/login/type pre-check on
+EnableGuestMagicLink alone, while the server also requires guest accounts
+to be enabled and licensed. With magic links on and Guest Access off the
+endpoint answered 404 with an empty body under a JSON content type, so
+the client's response.json() threw "Received invalid response from the
+server.", the password field never rendered and every login method was
+blocked.
+
+Mirror the server's availability conditions in the login page so the
+pre-check is only attempted when it can succeed, and have getLoginType
+return a JSON error body instead of a bare 404. The nil license is now
+guarded too; it previously panicked on an unlicensed server.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* MM-69961: close coverage gaps found by mutation testing
+
+Mutation testing showed three production paths the new tests did not pin:
+the server gate's EnableGuestMagicLink and license feature conditions, and
+the redundant isLicensed term on the client. The c
+
+**File**: `server/channels/api4/user.go` (modified, +3/-2)
+```diff
+@@ -2434,10 +2434,11 @@ func getLoginType(c *Context, w http.ResponseWriter, r *http.Request) {
+ 	// For the time being, we only support getting the login type when
+ 	// guest magic link is enabled. We can consider adding support for other
+ 	// login methods in the future, and this check may be removed.
++	license := c.App.Channels().License()
+ 	if !*c.App.Config().GuestAccountsSettings.EnableGuestMagicLink ||
+ 		!*c.App.Config().GuestAccountsSettings.Enable ||
+-		!*c.App.Channels().License().Features.GuestAccounts {
+-		w.WriteHeader(http.StatusNotFound)
++		license == nil || !*license.Features.GuestAccounts {
++		c.Err = model.NewAppError("getLoginType", "api.user.login.guest_magic_link.disabled.error", nil, "", http.StatusNotFound)
+ 		return
+ 	}
+ 
+```
+
+**File**: `server/channels/api4/user_test.go` (modified, +89/-0)
+```diff
+@@ -5556,6 +5556,95 @@ func TestLoginWithGuestMagicLinkTokenRejectsDeactivatedUser(t *testing.T) {
+ 	})
+ }
+ 
++func TestGetLoginType(t *testing.T) {
++	mainHelper.Parallel(t)
++	th := Setup(t).InitBasic(t)
++
++	_, err := th.Client.Logout(context.Background())
++	require.NoError(t, err)
++
++	// The webapp decodes every response body as JSON whatever the status code is, so a body
++	// it chokes on surfaces as "Received invalid response from the server." instead of the
++	// real error. Go through the raw client to assert on the body the webapp actually sees.
++	postLoginType := func(t *testing.T, loginID string) (int, map[string]any) {
++		t.Helper()
++		req, err := http.NewRequest(http.MethodPost, th.Client.APIURL+"/users/login/type", strings.NewReader(model.MapToJSON(map[string]string{"login_id": loginID})))
++		require.NoError(t, err)
++		req.Header.Set("Content-Type", "application/json")
++
++		resp, err := th.Client.HTTPClient.Do(req)
++		require.NoError(t, err)
++		defer closeBody(resp)
++
++		var body map[string]any
++		require.NoError(t, json.NewDecoder(resp.Body).Decode(&body), "response body must be valid JSON")
++
++		return resp.StatusCode, body
++	}
++
++	// The webapp renders body["message"], so the translated string is part of the contract
++	// and not just the error id.
++	assertMagicLinkUnavailable := func(t *testing.T, loginID string) {
++		t.Helper()
++		status, body := postLoginType(t, loginID)
++		assert.Equal(t, http.StatusNotFound, status)
++		assert.Equal(t, "api.user.login.guest_magic_link.disabled.error", body["id"])
++		assert.Equal(t, "Login with magic link is disabled.", body["message"])
++	}
++
++	t.Run("returns an empty login type for a password account when guest magic link is available", func(t *testing.T) {
++		th.App.Srv().SetLicense(model.NewTestLicense("guest_accounts"))
++		th.App.UpdateConfig(func(cfg *model.Config) {
++			*cfg.GuestAccountsSettings.Enable = true
++			*cfg.GuestAccountsSettings.EnableGuestMagicLink = true
++		})
++
++		status, body := postLoginType(t, th.BasicUser.Email)
++		assert.Equal(t, http.StatusOK, status)
++		assert.Equal(t, "", body["auth_service"])
++	})
++
++	t.Run("returns a JSON error when guest accounts are disabled", func(t *testing.T) {
++		th.App.Srv().SetLicense(model.NewTestLicense("guest_accounts"))
++		th.App.UpdateConfig(func(cfg *model.Config) {
++			*cfg.GuestAccountsSettings.Enable = false
++			*cfg.GuestAccountsSettings.EnableGuestMagicLink = true
++		})
++
++		assertMagicLinkUnavailable(t, th.BasicUser.Email)
++	})
++
++	t.Run("returns a JSON error when guest magic link is disabled", func(t *testing.T) {
++		th.App.Srv().SetLicense(model.NewTestLicense("guest_accounts"))
++		th.App.UpdateConfig(func(cfg *model.Config) {
++			*cfg.GuestAccountsSettings.Enable = true
++			*cfg.GuestAccountsSettings.EnableGuestMagicLink = false
++		})
++
++		assertMagicLinkUnavailable(t, th.BasicUser.Email)
++	})
++
++	t.Run("returns a JSON error when the license does not include guest accounts", func(t *testing.T) {
++		th.App.Srv().SetLicense(model.NewTestLicenseWithFalseDefaults("guest_accounts"))
++		th.App.UpdateConfig(func(cfg *model.Config) {
++			*cfg.GuestAccountsSettings.Enable = true
++			*cfg.GuestAccountsSettings.EnableGuestMagicLink = true
++		})
++
++		assertMagicLinkUnavailable(t, th.BasicUser.Email)
++	})
++
++	t.Run("returns a JSON error when the server is unlicensed", func(t *testing.T) {
++		th.App.Srv().SetLicense(nil)
++		th.App.UpdateConfig(func(cfg *model.Config) {
++			*cfg.GuestAccountsSettings.Enable = true
++			*cfg.GuestAccountsSettings.EnableGuestMagicLink = true
++		})
++
++		assertMagicLinkUnavailable(t, th.BasicUser.Email)
++	})
++}
++
+ func TestLoginCookies(t *testing.T) {
+ 	mainHelper.Parallel(t)
+ 	t.Run("should return cookies with X-Requested-With header", func(t *testing.T) {
+```
+
+**File**: `webapp/channels/src/actions/views/login.test.ts` (modified, +47/-0)
+```diff
+@@ -6,6 +6,7 @@ import nock from 'nock';
+ import {Client4} from 'mattermost-redux/client';
+ 
+ import {
++    getUserLoginType,
+     login,
+     loginById,
+ } from 'actions/views/login';
+@@ -69,4 +70,50 @@ describe('actions/views/login', () => {
+             expect(Object.keys(result)[0]).toEqual('error');
+         });
+     });
++
++    describe('getUserLoginType', () => {
++        test('should return the login type reported by the server', async () => {
++            const store = configureStore();
++
++            TestHelper.initBasic(Client4);
++            nock(Client4.getBaseRoute()).
++                post('/users/login/type').
++                reply(200, {auth_service: 'magic_link'});
++
++            const result = await store.dispatch(getUserLoginType('user@example.com'));
++
++            expect(result).toEqual({data: {auth_service: 'magic_link', is_deactivated: false}});
++        });
++
++        test('should surface the server message when the endpoint is unavailable', async () => {
++            const store = configureStore();
++
++            TestHelper.initBasic(Client4);
++            nock(Client4.getBaseRoute()).
++                post('/users/login/type').
++                reply(404, {
++                    id: 'api.user.login.guest_magic_link.disabled.error',
++                    message: 'Login with magic link is disabled.',
++                    status_code: 404,
++                });
++
++            const result = await store.dispatch(getUserLoginType('user@example.com'));
++
++            expect(result.error?.message).toEqual('Login with magic link is disabled.');
++            expect(result.error?.server_error_id).toEqual('api.user.login.guest_magic_link.disabled.error');
++        });
++
++        test('should report an invalid response when the server sends an empty body as JSON', async () => {
++            const store = configureStore();
++
++            TestHelper.initBasic(Client4);
++            nock(Client4.getBaseRoute()).
++                post('/users/login/type').
++                reply(404, '', {'Content-Type': 'application/json'});
++
++            const result = await store.dispatch(getUserLoginType('user@example.com'));
++
++            expect(result.error?.message).toEqual('Received invalid response from the server.');
++        });
++    });
+ });
+```
+
+**File**: `webapp/channels/src/components/login/login.test.tsx` (modified, +119/-125)
+```diff
+@@ -2,10 +2,12 @@
+ // See LICENSE.txt for license information.
+ 
+ import {createMemoryHistory} from 'history';
++import nock from 'nock';
+ import React from 'react';
+ 
+ import {isDesktopApp} from '@mattermost/shared/utils/user_agent';
+ 
++import {Client4} from 'mattermost-redux/client';
+ import {RequestStatus} from 'mattermost-redux/constants';
+ 
+ import * as loginActions from 'actions/views/login';
+@@ -14,7 +16,8 @@ import LocalStorageStore from 'stores/local_storage_store';
+ import Login from 'components/login/login';
+ 
+ import mergeObjects from 'packages/mattermost-redux/test/merge_objects';
+-import {renderWithContext, screen, userEvent} from 'tests/react_testing_utils';
++import TestHelper from 'packages/mattermost-redux/test/test_helper';
++import {renderWithContext, screen, userEvent, waitFor} from 'tests/react_testing_utils';
+ import Constants, {WindowSizes} from 'utils/constants';
+ import DesktopApp from 'utils/desktop_api';
+ import {showNotification} from 'utils/notifications';
+@@ -113,6 +116,12 @@ describe('components/login/Login', () => {
+         LocalStorageStore.setWasLoggedIn(false);
      });
  
-+    describe('handlePaste and the text/html flavour', () => {
-+        const paste = (text: string, html: string) => {
-+            renderWithContext(<WysiwygEditor {...baseProps}/>);
-+            return mockCapturedConfig.current?.editorProps?.handlePaste?.({} as any, {
-+                preventDefault: jest.fn(),
-+                clipboardData: {getData: (type: string) => (type === 'text/plain' ? text : html)},
-+            } as any);
-+        };
-+
-+        test('parses markdown even when the clipboard also carries HTML', () => {
-+            expect(paste('# heading', '<meta charset="utf-8"><span># heading</span>')).toBe(true);
-+        });
-+
-+        test('defers to ProseMirror when the HTML came from another editor', () => {
-+            expect(paste('# heading', '<div data-pm-slice="1 1 []"><h1>heading</h1></div>')).toBe(false);
-+        });
-+
-+        test('defers to ProseMirror when the text is not markdown', () => {
-+            expect(paste('just words', '<b>just words</b>')).toBe(false);
-+        });
-+
-+        test.each(['parse', 'insert'] as const)('pastes the markdown as plain text when the %s step fails', (failure) => {
-+            mockMarkdownFailure.current = failure;
-+            mockInsertedContent.current = [];
-+            try {
-+                expect(paste('# title\n\n- [ ] todo', '<b>ignored</b>')).toBe(true);
-+                expect(mockInsertedContent.current[mockInsertedContent.current.length - 1]).toEqual([
-+                    {type: 'paragraph', content: [{type: 'text', text: '# title'}]},
-+                    {type: 'paragraph', content: []},
-+                    {type: 'paragraph', content: [{type: 'text', text: '- [ ] todo'}]},
-+                ]);
-+            } finally {
-+                mockMarkdownFailure.current = null;
-+            }
-+        });
++    afterEach(() => {
++        // Spied login actions would otherwise leak into the tests that call the real thunks over HTTP
++        jest.restoreAllMocks();
++        nock.cleanAll();
 +    });
 +
-+    describe('handlePaste with clipboard files', () => {
-+        const paste = (text: string, files: File[]) => {
-+            renderWithContext(<WysiwygEditor {...baseProps}/>);
-+            return mockCapturedConfig.current?.editorProps?.handlePaste?.({} as any, {
-+                preventDefault: jest.fn(),
-+                clipboardData: {
-+                    getData: (type: string) => (type === 'text/plain' ? text : '<img src="blob:image">'),
-+                    files,
-+                },
-+            } as any);
-+        };
-+
-+        test('swallows image-only pastes so the image is attached, not embedded', () => {
-+            expect(
-```
-
-**File**: `webapp/channels/src/components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor.tsx` (modified, +157/-25)
-```diff
-@@ -22,21 +22,47 @@ import emojiRegex from 'emoji-regex';
- import isPlainObject from 'lodash/isPlainObject';
- import {common, createLowlight} from 'lowlight';
- import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from 'react';
--import {useDispatch} from 'react-redux';
-+import {useDispatch, useSelector} from 'react-redux';
-+
-+import {getConfig} from 'mattermost-redux/selectors/entities/general';
+     it('should match snapshot', () => {
+         renderWithContext(
+             <Login/>,
+@@ -429,12 +438,28 @@ describe('components/login/Login', () => {
+     });
  
- import {editLatestPost} from 'actions/views/create_comment';
- 
- import {useDebounce} from 'hooks/useDebounce';
- import {useLatest} from 'hooks/useLatest';
-+import {canHighlight} from 'utils/syntax_highlighting';
- 
--import {serializeToMarkdown} from './wysiwyg_markdown';
-+import WysiwygImage from './wysiwyg_image';
-+import {insertMarkdown, plainTextContent, serializeToMarkdown} from './wysiwyg_markdown';
-+import WysiwygMention from './wysiwyg_mention';
- import WysiwygSuggestionList from './wysiwyg_suggestion_list';
- 
- import './wysiwyg_editor.scss';
- 
--const lowlight = createLowlight(common);
-+const commonLowlight = createLowlight(common);
-+
-+// Posts only colour code blocks that name a language.
-+const lowlight = {...commonLowlight, highlightAuto: (code: string) => commonLowlight.highlight('plaintext', code)};
-+
-+const VSCODE_LANGUAGES: Record<string, string> = {
-+    javascriptreact: 'javascript',
-+    typescriptreact: 'typescript',
-+    shellscript: 'bash',
-+    jsonc: 'json',
-+};
-+
-+const getVSCodeLanguage = (data?: string): string | undefined => {
-+    let mode: string | undefined;
-+    try {
-+        mode = JSON.parse(data || '{}').mode;
-+    } catch {
-+        return undefined;
-+    }
-+    const language = mode && mode !== 'markdown' ? VSCODE_LANGUAGES[mode] ?? mode : undefined;
-+    return language && canHighlight(language) ? language : undefined;
-+};
- 
--const MARKDOWN_PASTE_PATTERNS = /(?:^#{1,6}\s|^[*-]\s|^\d+\.\s|^>\s|\*\*\S.*?\S\*\*|\b__\S.*?\S__\b|~~\S.*?\S~~|`[^`\n]+`|^\|.*\|$|\[[^\]]+\]\([^)]+\))/m;
-+const MARKDOWN_PASTE_PATTERNS = /(?:^```|^~~~|^#{1,6}\s|^[*-]\s|^\d+\.\s|^>\s|\*\*\S.*?\S\*\*|\b__\S.*?\S__\b|~~\S.*?\S~~|`[^`\n]+`|^\|.*\|$|\[[^\]]+\]\([^)]+\))/m;
- 
- function buildEmojiDecorations(doc: PMNode): DecorationSet {
-     const decorations: Decoration[] = [];
-@@ -62,6 +88,44 @@ function buildEmojiDecorations(doc: PMNode): DecorationSet {
-     return DecorationSet.create(doc, decorations);
- }
- 
-+function buildOrderedListDecorations(doc: PMNode): DecorationSet {
-+    const decorations: Decoration[] = [];
-+
-+    doc.descendants((node, pos) => {
-+        if (node.type.name !== 'orderedList') {
-+            return;
-+        }
-+        const start = node.attrs.start ?? 1;
-+        const digits = ((start + node.childCount) - 1).toString().length;
-+        decorations.push(Decoration.node(pos, pos + node.nodeSize, {
-+            style: `counter-reset: list ${start - 1}; padding-left: ${digits + 1.5}ch`,
-+        }));
-+    });
-+
-+    return DecorationSet.create(doc, decorations);
-+}
-+
-+const OrderedListMarkerWidth = Extension.create({
-+    name: 'orderedListMarkerWidth',
-+    addProseMirrorPlugins() {
-+        const key = new PluginKey('orderedListMarkerWidth');
-+        return [
-+            new Plugin({
-+                key,
-+                state: {
-+                    init: (_, {doc}) => buildOrderedListDecorations(doc),
-+                    apply: (tr, old) => (tr.docChanged ? buildOrderedListDecorations(tr.doc) : old),
-+                },
-+                props: {
-+                    decorations(state) {
-+                        return key.getState(state);
+     describe('EnableGuestMagicLink', () => {
++        // The server only answers the login type pre-check while guest accounts are licensed and enabled
++        const magicLinkState = mergeObjects(baseState, {
++            entities: {
++                general: {
++                    config: {
++                        EnableSignInWithEmail: 'true',
++                        EnableGuestAccounts: 'true',
++                        EnableGuestMagicLink: 'true',
++                    },
++                    license: {
++                        IsLicensed: 'true',
++                        GuestAccounts: 'true',
 +                    },
 +                },
-+            }),
-+        ];
-+    },
-+});
-+
- const EmojiDecorations = Extension.create({
-     name: 'emojiDecorations',
-     addProseMirrorPlugins() {
-@@ -160,6 +224,7 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
-     // swap would desync the paste and update handlers from the actual editor.
-     const jsonMode = useRef(contentType === 'json').current;
-     const dispatch = useDispatch();
-+    const hasImageProxy = useSelector(getConfig).HasImageProxy === 'true';
-     const channelIdRef = useLatest(channelId);
-     const rootIdRef = useLatest(rootId);
- 
-@@ -176,33 +241,38 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
- 
-     const editorRef = useRef<Editor | null>(null);
- 
--    const debouncedOnChange = useDebounce((md: string) => {
--        onChangeRef.current(md);
--    }, SERIALIZE_DEBOUNCE_MS);
-+    const pendingChangeRef = useRef<(() => void) | null>(null);
-+    const flushPendingChange = useCallback(() => {
-+        const pendingChange = pendingChangeRef.current;
-+        pendingChangeRef.current = null;
-+        pendingChange?.();
-+    }, []);
-+    const debouncedFlushPendingChange = useDebounce(flushPendingChange, SERIALIZE_DEBOUNCE_MS);
- 
-     const handleSuggestionSubmit = useCallback(() => {
-         onSubmitRef.current();
-     }, [onSubmitRef]);
- 
-     const handleUpdate = useCallback(({editor}: {editor: Edito
-```
-
-**File**: `webapp/channels/src/components/advanced_text_editor/wysiwyg_editor/wysiwyg_editor_interactions.test.tsx` (added, +257/-0)
-```diff
-@@ -0,0 +1,257 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
-+
-+import {act} from '@testing-library/react';
-+import type {Editor} from '@tiptap/react';
-+import React from 'react';
-+
-+import {renderWithContext} from 'tests/react_testing_utils';
-+
-+import WysiwygEditor from './wysiwyg_editor';
-+import type {WysiwygEditorHandle} from './wysiwyg_editor';
-+import {serializeToMarkdown} from './wysiwyg_markdown';
-+
-+const press = (editor: Editor, key: string, init: KeyboardEventInit = {}) => act(() => {
-+    const event = new KeyboardEvent('keydown', {key, cancelable: true, ...init});
-+    editor.view.someProp('handleKeyDown', (handler) => handler(editor.view, event));
-+});
-+
-+const typeText = (editor: Editor, text: string) => act(() => {
-+    editor.view.dispatch(editor.state.tr.insertText(text));
-+});
-+
-+const pasteText = (editor: Editor, text: string, data: Record<string, string> = {}) => {
-+    const clipboard: Record<string, string> = {'text/plain': text, ...data};
-+    const event = {
-+        preventDefault: jest.fn(),
-+        clipboardData: {getData: (type: string) => clipboard[type] ?? '', files: []},
-+    } as unknown as ClipboardEvent;
-+
-+    let handled = false;
-+    act(() => {
-+        handled = Boolean(editor.view.someProp('handlePaste', (handlePaste) => handlePaste(editor.view, event, editor.state.doc.slice(0))));
-+    });
-+    return handled;
-+};
-+
-+const endOfText = (editor: Editor, text: string) => {
-+    let pos = -1;
-+    editor.state.doc.descendants((node, nodePos) => {
-+        if (node.isText && node.text === text) {
-+            pos = nodePos + text.length;
-+        }
-+    });
-+    return pos;
-+};
-+
-+const baseProps = {
-+    onChange: jest.fn(),
-+    onSubmit: jest.fn(),
-+};
-+
-+describe('WysiwygEditor interactions', () => {
-+    beforeAll(() => {
-+        document.elementFromPoint = () => null;
-+    });
-+
-+    const renderEditor = (value: string, channelId = 'c1') => {
-+        const ref = React.createRef<WysiwygEditorHandle>();
-+        const utils = renderWithContext(
-+            <WysiwygEditor
-+                ref={ref}
-+                {...baseProps}
-+                value={value}
-+                channelId={channelId}
-+            />,
-+        );
-+        return {...utils, ref, editor: ref.current!.getEditor()!};
-+    };
-+
-+    describe('Shift+Enter inside a quote', () => {
-+        test('starts a new quoted line', () => {
-+            const {editor} = renderEditor('> my quote');
-+            act(() => {
-+                editor.commands.setTextSelection(endOfText(editor, 'my quote'));
-+            });
-+
-+            press(editor, 'Enter', {shiftKey: true});
-+            typeText(editor, 'line two');
-+
-+            expect(editor.getHTML()).toContain('<blockquote><p>my quote</p><p>line two</p></blockquote>');
++            },
 +        });
 +
-+        test('leaves the quote when pressed on an empty quoted line', () => {
-+            const {editor} = renderEditor('> my quote');
-+            act(() => {
-+                editor.commands.setTextSelection(endOfText(editor, 'my quote'));
-+            });
-+
-+            press(editor, 'Enter', {shiftKey: true});
-+            press(editor, 'Enter', {shiftKey: true});
-+            typeText(editor, 'below');
-+
-+            expect(editor.getHTML()).toContain('<blockquote><p>my quote</p></blockquote><p>below</p>');
-+        });
-+    });
-+
-+    test('pastes a full markdown sample with lists, task items and headings', () => {
-+        const {editor} = renderEditor('');
-+        const markdown = '1. first\n2. second\n\n## Tables\n\nhello *world*\n\n- [ ] todo\n- [x] done\n\n| a | b |\n| - | - |\n| 1 | 2 |';
-+
-+        expect(pasteText(editor, markdown)).toBe(true);
-+        expect(editor.getHTML()).toContain('<h2 class="markdown__heading">Tables</h2>');
-+        expect(editor.getHTML()).toContain('<p>hello <em>world</em></p>');
-+        expect(editor.getHTML()).toContain('<p>[ ] todo</p>');
-+    });
-+
-+    describe('code blocks', () => {
-+        test('a code block without a language stays plain and is sent without one', () => {
-+            const {editor} = renderEditor('');
-+            act(() => {
-+                editor.chain().setTextSelection(1).setCodeBlock().run();
-+            });
-+            typeText(editor, 'const a = 1;');
-+
-+            expect(editor.view.dom.querySelector('[class^="hljs-"]')).toBeNull();
-+            expect(serializeToMarkdown(editor)).toMatch(/^```\nconst a = 1;\n```/);
-+        });
-+
-+        test('pasting a fenced block creates a highlighted code block with its language', () => {
-+            const {editor} = renderEditor('');
-+
-+            expect(pasteText(editor, '```js\nconst a = 1;\n```')).toBe(true);
-+            expect(editor.getJSON().content?.[0]).toMatchObject({type: 'codeBlock', attrs: {language: 'js'}});
-+            expect(editor.view.dom.querySelector('.hljs-keyword')).not.toBeNull();
-+        });
-+
-+        test('pasting from VS Code into a code bloc
-```
-
----
-
-### Incident Patch 2: `20aadca1` (2026-10-16)
-**Commit Message**: Fix flaky TestGetAdvancedLogs (#39198)
-
-* Fix flaky TestGetAdvancedLogs
-
-The path-validation subtest called UpdateConfig on a live TestHelper
-PlatformService, which reconfigured the logger onto valid.log. initLogging
-then appended the FileLocation-outside-root warning into that file before
-GetAdvancedLogs read it, so the exact-bytes assertion raced. Drive
-GetAdvancedLogs through an isolated PlatformService instead (same
-production entry point and assertions).
-
-Tests-only change. Verified with `go test -run '^TestGetAdvancedLogs$' -race
--count=100` locally.
-
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-
-* Address PR feedback: 0 answered, 6 resolved, 0 declined
-
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-
-**File**: `server/channels/app/platform/log_test.go` (modified, +109/-101)
-```diff
-@@ -12,6 +12,7 @@ import (
+         it('should show password field when EnableGuestMagicLink is false', async () => {
+-            const state = mergeObjects(baseState, {
++            const state = mergeObjects(magicLinkState, {
+                 entities: {
+                     general: {
+                         config: {
+-                            EnableSignInWithEmail: 'true',
+                             EnableGuestMagicLink: 'false',
+                         },
+                     },
+@@ -451,38 +476,16 @@ describe('components/login/Login', () => {
+         });
  
- 	"github.com/mattermost/mattermost/server/public/model"
- 	"github.com/mattermost/mattermost/server/public/shared/mlog"
-+	"github.com/mattermost/mattermost/server/public/shared/request"
- 	"github.com/mattermost/mattermost/server/v8/channels/testlib"
- 	"github.com/mattermost/mattermost/server/v8/config"
- 	"github.com/stretchr/testify/assert"
-@@ -207,6 +208,13 @@ func TestGetAdvancedLogs(t *testing.T) {
- 		dir, err := os.MkdirTemp("", "logs")
- 		require.NoError(t, err)
- 		t.Cleanup(func() {
-+			// Drop the file targets before removing dir so a late record cannot recreate std.log (MM-62438).
-+			th.Service.UpdateConfig(func(c *model.Config) {
-+				c.LogSettings.AdvancedLoggingJSON = nil
-+			})
-+			require.NoError(t, th.Service.Logger().Flush())
-+			th.Service.SetLogRootPathOverride("")
-+
- 			err = os.RemoveAll(dir)
- 			require.NoError(t, err)
- 		})
-@@ -294,131 +302,131 @@ func TestGetAdvancedLogs(t *testing.T) {
- 		require.NotNil(t, stdFile)
- 		testlib.AssertLog(t, bytes.NewBuffer(stdFile.Body), mlog.LvlError.Name, "Some Error")
- 	})
--	// Disable AdvancedLoggingJSON
--	th.Service.UpdateConfig(func(c *model.Config) {
--		c.LogSettings.AdvancedLoggingJSON = nil
--	})
-+
- 	t.Run("No logs returned when AdvancedLoggingJSON is empty", func(t *testing.T) {
- 		// Confirm no logs get returned
- 		fileDatas, err := th.Service.GetAdvancedLogs(th.Context)
- 		require.NoError(t, err)
- 		require.Len(t, fileDatas, 0)
- 	})
-+}
- 
--	t.Run("path validation prevents reading files outside log directory", func(t *testing.T) {
--		// Create a temporary directory to use as the log root
--		logDir, err := os.MkdirTemp("", "logs")
--		require.NoError(t, err)
--		t.Cleanup(func() {
--			err = os.RemoveAll(logDir)
--			require.NoError(t, err)
--		})
+         it('should hide password field initially when EnableGuestMagicLink is true', async () => {
+-            const state = mergeObjects(baseState, {
+-                entities: {
+-                    general: {
+-                        config: {
+-                            EnableSignInWithEmail: 'true',
+-                            EnableGuestMagicLink: 'true',
+-                        },
+-                    },
+-                },
+-            });
 -
--		// Override log root path to restrict log file access to logDir
--		th.Service.SetLogRootPathOverride(logDir)
-+func TestGetAdvancedLogsPathValidation(t *testing.T) {
-+	mainHelper.Parallel(t)
+             renderWithContext(
+                 <Login/>,
+-                state,
++                magicLinkState,
+             );
  
--		// Create a file outside the log directory that should not be accessible
--		outsideDir, err := os.MkdirTemp("", "outside")
-+	// Isolated service so the live logger never targets these files (MM-62438).
-+	logDir, err := os.MkdirTemp("", "logs")
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		err = os.RemoveAll(logDir)
- 		require.NoError(t, err)
--		t.Cleanup(func() {
--			err = os.RemoveAll(outsideDir)
--			require.NoError(t, err)
--		})
-+	})
+             // Password field should not be visible initially
+             expect(screen.queryByLabelText('Password')).not.toBeInTheDocument();
+         });
  
--		secretFile := path.Join(outsideDir, "secret.txt")
--		err = os.WriteFile(secretFile, []byte("secret data"), 0644)
-+	outsideDir, err := os.MkdirTemp("", "outside")
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		err = os.RemoveAll(outsideDir)
- 		require.NoError(t, err)
-+	})
+         it('should show GuestMagicLinkCard when user login type is guest_magic_link', async () => {
+-            const state = mergeObjects(baseState, {
+-                entities: {
+-                    general: {
+-                        config: {
+-                            EnableSignInWithEmail: 'true',
+-                            EnableGuestMagicLink: 'true',
+-                        },
+-                    },
+-                },
+-            });
+-
+             // Mock the getUserLoginType to return 'magic_link'
+             const mockGetUserLoginType = jest.fn().mockReturnValue(async () => ({
+                 data: {
+@@ -494,7 +497,7 @@ describe('components/login/Login', () => {
  
--		// Create a valid log file inside the log directory
--		validLog := path.Join(logDir, "valid.log")
--		err = os.WriteFile(validLog, []byte("valid log data"), 0644)
--		require.NoError(t, err)
-+	ps := newLogPathTestService(t, logDir, func(*model.Config) {})
-+	rctx := request.TestContext(t)
+             renderWithContext(
+                 <Login/>,
+-                state,
++                magicLinkState,
+             );
  
--		// Test 1: Attempt to read file outside log directory using absolute path
--		optOutside := map[string]string{
--			"filename": secretFile,
--		}
--		dataOutside, err := json.Marshal(optOutside)
--		require.NoError(t, err)
-+	setAdvancedLoggingJSON := func(data json.RawMessage) {
-+		cfg := ps.Config().Clone()
-+		cfg.LogSettings.AdvancedLoggingJSON = data
-+		_, _, setErr := ps.configStore.Set(cfg)
-+		require.NoError(t, setErr)
-+		require.JSONEq(t, string(data), string(ps.Config().LogSettings.AdvancedLoggingJSON))
-+	}
+             const emailInput = screen.getByLabelText('Email');
+@@ -509,17 +512,6 @@ describe('components/login/Login', () => {
+         });
  
--		logCfgOutside := mlog.LoggerConfiguration{
--			"malicious": mlog.TargetCfg{
--				Type:    "file",
--				Format:  "json",
--				Levels:  []mlog.Level{mlog.LvlError},
--				Options: dataOutside,
--			},
--		}
--		logCfgDataOutside, err := json.Marshal(logCfgOutside)
--		require.NoError(t, err)
-+	secretFile := path.Join(outsideDir, "secret.txt")
-+	err = os.WriteFile(secretFile, []byte("secret data"), 0644)
-+	require.NoError(t, err)
+         it('should show password field when user login type requires password', async () => {
+-            const state = mergeObjects(baseState, {
+-                entities: {
+-                    general: {
+-                        config: {
+-                            EnableSignInWithEmail: 'true',
+-                            EnableGuestMagicLink: 'true',
+-                        },
+-                    },
+-                },
+-            });
+-
+             // Mock the getUserLoginType to return empty string (requires password)
+           
+```
+
+**File**: `webapp/channels/src/components/login/login.tsx` (modified, +5/-2)
+```diff
+@@ -80,6 +80,7 @@ const Login = ({onCustomizeHeader}: LoginProps) => {
+     const {
+         EnableLdap,
+         EnableSaml,
++        EnableGuestAccounts,
+         EnableGuestMagicLink,
+         EnableSignInWithEmail,
+         EnableSignInWithUsername,
+@@ -104,7 +105,7 @@ const Login = ({onCustomizeHeader}: LoginProps) => {
+         ForgotPasswordLink,
+         PasswordEnableForgotLink,
+     } = useSelector(getConfig);
+-    const {IsLicensed} = useSelector(getLicense);
++    const {IsLicensed, GuestAccounts} = useSelector(getLicense);
+     const initializing = useSelector((state: GlobalState) => state.requests.users.logout.status === RequestStatus.SUCCESS || !state.storage.initialized);
+     const currentUser = useSelector(getCurrentUser);
+     const experimentalPrimaryTeam = useSelector((state: GlobalState) => (ExperimentalPrimaryTeam ? getTeamByName(state, ExperimentalPrimaryTeam) : undefined));
+@@ -128,7 +129,9 @@ const Login = ({onCustomizeHeader}: LoginProps) => {
+     const [requiresPassword, setRequiresPassword] = useState(false);
  
--		th.Service.UpdateConfig(func(c *model.Config) {
--			c.LogSettings.AdvancedLoggingJSON = logCfgDataOutside
--		})
-+	// Create a valid log file inside the log directory
-+	validLog := path.Join(logDir, "valid.log")
-+	err = os.WriteFile(validLog, []byte("valid log data"), 0644)
-+	require.NoError(t, err)
- 
--		fileDatas, err := th.Service.GetAdvancedLogs(th.Context)
--		// Should return error indicating path is outside allowed directory
--		require.Error(t, err)
--		require.Contains(t, err.Error(), "outside allowed logging directory")
--		require.Len(t, fileDatas, 0)
-+	// Test 1: Attempt to read file outside log directory using absolute path
-+	optOutside := map[string]string{
-+		"filename": secretFile,
-+	}
-+	dataOutside, err := json.Marshal(optOutside)
-+	require.NoError(t, err)
- 
--		// Test 2: Attempt path traversal attack
--		traversalPath := path.Join(logDir, "..", "..", "etc", "passwd")
--		optTraversal := map[string]string{
--			"filename": traversalPath,
--		}
--		dataTraversal, err := json.Marshal(optTraversal)
--		require.NoError(t, err)
-+	logCfgOutside := 
+     const enableCustomBrand = EnableCustomBrand === 'true';
+-    const enableGuestMagicLink = EnableGuestMagicLink === 'true';
++
++    // The server only answers the login type pre-check while guest accounts are licensed and enabled
++    const enableGuestMagicLink = GuestAccounts === 'true' && EnableGuestAccounts === 'true' && EnableGuestMagicLink === 'true';
+     const enableLdap = EnableLdap === 'true';
+     const enableOpenServer = EnableOpenServer === 'true';
+     const enableUserCreation = EnableUserCreation === 'true';
 ```
 
 ---
 
-### Incident Patch 3: `0d4385d1` (2026-10-16)
-**Commit Message**: Fix Brazilian Portuguese gaps and hardcoded English web labels (#39113)
+### Incident Patch 3: `06f070f3` (2026-10-19)
+**Commit Message**: [MM-70052] Fix group search returning nothing when the term starts with "@" (#38748)
 
-* Fix Brazilian Portuguese gaps and hardcoded English web labels
+* Fix group search ignoring results when the term starts with "@"
 
-* Fix localization review findings and test translated controls
+The group search queries matched the raw term against UserGroups.Name and
+UserGroups.DisplayName, so a mention such as "@developers" never matched a
+stored group name. The channel "Add people" dialog searches by mention, so
+its request returned nothing and the dialog kept rendering the locally
+cached group, which loses its member IDs once the User Groups list is
+browsed. That left the "Add N people" shortcut with an empty tooltip and no
+members to add.
 
-* Use dedicated labels for add-groups-to-team and emoji icon
+Strip a single leading "@" when building the search pattern, matching how
+user search and the webapp's own group filtering already treat mentions.
 
-* Describe new accessibility strings for translators
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-* Match pt-BR Cloud seat-limit prefix to the self-serve sentence
+* chore: match max login attempts e2e to current login error banner
 
-* Hide decorative icon in channel members Add button from screen readers
+The Playwright full suite failed on max_login_attempts.spec.ts because it
+asserted the old exact invalid-credentials and lockout strings. Use the
+login page helper (which already matches both banner variants) and a
+prefix check for the lock message.
 
-* Get intl through injectIntl in class components with translated labels
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-* Polish pt-BR wording for guest upgrade, Google setup and desktop platform
+* Revert unrelate
 
-* Describe call options strings for translators
-
-* Translate the new and corrected source strings into all locales (#38945)
-
-Squash of mattermost/mattermost#38945 (58fdc140bb) applied on this branch.
-Where this branch already had pt-BR translations for the same keys, they are
-kept, except admin.customProfileAttributes.linkedNonText (English changed) and
-admin.global_attributes.confirm.delete.orphaned_owners_body (adds pt-BR's
-"many" plural category). The call_options descriptions now come from source.
-
-* Translate the new accessibility labels into all locales
-
----------
-
-Co-authored
-
-**File**: `webapp/channels/src/components/add_groups_to_channel_modal/add_groups_to_channel_modal.tsx` (modified, +1/-1)
+**File**: `e2e-tests/playwright/specs/functional/channels/custom_groups/custom_group_management.spec.ts` (modified, +71/-0)
 ```diff
-@@ -218,7 +218,7 @@ export class AddGroupsToChannelModal extends React.PureComponent<Props, State> {
-                 <div className='more-modal__actions'>
-                     <button
-                         className='more-modal__actions--round'
--                        aria-label='Add groups to channel'
-+                        aria-label={this.props.intl.formatMessage({id: 'accessibility.add_groups_to_channel', defaultMessage: 'Add groups to channel'})}
-                     >
-                         <i className='icon icon-plus'/>
-                     </button>
-```
-
-**File**: `webapp/channels/src/components/add_groups_to_team_modal/add_groups_to_team_modal.tsx` (modified, +1/-1)
-```diff
-@@ -230,7 +230,7 @@ export class AddGroupsToTeamModal extends React.PureComponent<Props, State> {
-                 <div className='more-modal__actions'>
-                     <button
-                         className='more-modal__actions--round'
--                        aria-label='Add groups to team'
-+                        aria-label={this.props.intl.formatMessage({id: 'accessibility.add_groups_to_team', defaultMessage: 'Add groups to team'})}
-                     >
-                         <i className='icon icon-plus'/>
-                     </button>
-```
-
-**File**: `webapp/channels/src/components/add_users_to_team_modal/add_users_to_team_modal.tsx` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ export class AddUsersToTeamModal extends React.PureComponent<Props, State> {
-                     <div className='more-modal__actions'>
-                         <button
-                             className='more-modal__actions--round'
--                            aria-label='Add users to team'
-+                            aria-label={this.props.intl.formatMessage({id: 'accessibility.add_users_to_team', defaultMessage: 'Add users to team'})}
-                         >
-                             <i
-                                 className='icon icon-plus'
-```
-
-**File**: `webapp/channels/src/components/admin_console/data_grid/data_grid.tsx` (modified, +6/-5)
-```diff
-@@ -4,7 +4,8 @@
- import classNames from 'classnames';
- import React from 'react';
- import type {CSSProperties, JSX} from 'react';
--import {FormattedMessage} from 'react-intl';
-+import {FormattedMessage, injectIntl} from 'react-intl';
-+import type {WrappedComponentProps} from 'react-intl';
- 
- import type {FilterOptions} from 'components/admin_console/filter/filter';
- import NextIcon from 'components/widgets/icons/fa_next_icon';
-@@ -65,7 +66,7 @@ type Props = {
- 
-     className?: string;
-     disabled?: boolean;
--};
-+} & WrappedComponentProps;
- 
- type State = {
-     visibleColumns: Column[];
-@@ -269,7 +270,7 @@ class DataGrid extends React.PureComponent<Props, State> {
-                             />
-                         </span>
-                         <button
--                            aria-label='Previous page'
-+                            aria-label={this.props.intl.formatMessage({id: 'admin.accessibility.previous_page', defaultMessage: 'Previous page'})}
-                             type='button'
-                             className={'btn btn-quaternary btn-icon btn-sm ml-2 prev ' + (firstPage ? 'disabled' : '')}
-                             onClick={prevPageFn}
-@@ -278,7 +279,7 @@ class DataGrid extends React.PureComponent<Props, State> {
-                             <PreviousIcon/>
-                         </button>
-                         <button
--                            aria-label='Next page'
-+                            aria-label={this.props.intl.formatMessage({id: 'admin.accessibility.next_page', defaultMessage: 'Next page'})}
-                             type='button'
-                             className={'btn btn-quaternary btn-icon btn-sm next ' + (lastPage ? 'disabled' : '')}
-                             onClick={nextPageFn}
-@@ -310,4 +311,4 @@ class DataGrid extends React.PureComponent<Props, State> {
-     }
- }
- 
--export default DataGrid;
-+export default injectIntl(DataGrid);
-```
-
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/custom_policy_form/custom_policy_form.tsx` (modified, +7/-4)
-```diff
-@@ -2,7 +2,8 @@
- // See LICENSE.txt for license information.
- 
- import React, {type JSX} from 'react';
--import {defineMessages, FormattedMessage} from 'react-intl';
-+import {defineMessages, FormattedMessage, injectIntl} from 'react-intl';
-+import type {WrappedComponentProps} from 'react-intl';
- 
- import {buttonClassNames} from '@mattermost/shared/components/button';
- import type {ChannelWithTeamData} from '@mattermost/types/channels';
-@@ -49,7 +50,7 @@ type Props = {
-         removeDataRetentionCustomPolicyChannels: (id: string, policy: string[]) => Promise<ActionResult>;
-         setNavigationBlocked: (blocked: boolean) => void;
-     };
--};
-+} & WrappedComponentProps;
- 
- type State = {
-     policyName: string | undefined;
-@@ -70,7 +71,7 @@ type State = {
-     formErrorText: React.ReactNode;
- };
- 
--export default class CustomPolicyForm extends React.PureComponent<Props, State> {
-+class CustomPolicyForm extends React.PureComponent<Props, State> {
-     constructor(props: Props) {
-         super(props);
-         this.state = {
-@@ -384,7 +385,7 @@ export default class CustomPolicyForm extends React.PureComponent<Props, State>
-                                 >
-                                     <Input
-                                         name='policyName'
--                                        aria-label='Policy name'
-+                                        aria-label={this.props.intl.formatMessage(messages.policyName)}
-                                         type='text'
-                                         value={this.state.policyName}
-                                         onChange={(e) => {
-@@ -576,3 +577,5 @@ const messages = defineMessages({
-         defaultMessage: 'Policy name',
-     },
+@@ -78,3 +78,74 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
+     await channelsPage.centerView.waitUntilLastPostContains('added to the channel');
+     await channelsPage.centerView.waitUntilLastPostContains(member.username);
  });
 +
-+export default injectIntl(CustomPolicyForm);
++/**
++ * @objective Verify a custom group searched by its mention in the "Add people" dialog lists its members
++ * and adds all of them to the channel, even after the User Groups list has been opened.
++ */
++test('MM-70052 adds every member of a custom group searched by its mention', {tag: '@channels'}, async ({pw}) => {
++    const {user, team, userClient, adminClient} = await pw.initSetup();
++
++    // # Create a custom group made up of team members other than the logged in user
++    const members = await adminClient.createUsers(team.id, 3, 'member');
++    const groupName = `group${pw.random.id()}`.toLowerCase();
++    const group = await userClient.createGroupWithUserIds({
++        name: groupName,
++        display_name: `Group ${pw.random.id()}`,
++        source: 'custom',
++        allow_reference: true,
++        user_ids: members.map((member) => member.id),
++    });
++
++    const {page, channelsPage} = await pw.testBrowser.login(user);
++    await channelsPage.goto(team.name, 'town-square');
++    await channelsPage.toBeVisible();
++
++    // # Create a channel that none of the group's members belong to
++    const channelName = `Group Channel ${pw.random.id()}`;
++    await channelsPage.newChannel(channelName, 'O');
++    await channelsPage.centerView.header.toHaveTitle(channelName);
++
++    // # Browse the User Groups list, which refreshes the locally cached groups
++    await channelsPage.globalHeader.openUserGroups();
++    await channelsPage.userGroupsModal.toBeVisible();
++    await expect(channelsPage.userGroupsModal.getGroup(group.display_name)).toBeVisible();
++    await page.keyboard.press('Escape');
++    await expect(channelsPage.userGroupsModal.container).not.toBeVisible();
++
++    // # Open the Add people dialog for the channel
++    const channelMenu = await channelsPage.openChannelMenu();
++    await channelMenu.members.click();
++    await channelsPage.sidebarRight.toBeVisible();
++    await channelsPage.sidebarRight.addMembersButton.click();
++    const addPeopleToChannelModal = channelsPage.getAddPeopleToChannelModal();
++    await addPeopleToChannelModal.toBeVisible();
++
++    // # Search for the group by its mention
++    await addPeopleToChannelModal.search(`@${groupName}`);
++
++    // * Verify the group is offered with its current member count
++    const addGroupMembers = addPeopleToChannelModal.container.getByText(`Add ${members.length} people`);
++    await expect(addGroupMembers).toBeVisible();
++
++    // # Hover the shortcut. Its tooltip renders in a portal outside the dialog, where the open modal
++    // # keeps it out of the accessibility tree, so match on its class rather than its role.
++    await addGroupMembers.hover();
++
++    // * Verify the tooltip names every member of the group
++    const tooltip = page.locator('.tooltipContainer').filter({hasText: members[0].username});
++    for (const member of members) {
++        await expect(tooltip).toContainText(member.username);
++    }
++
++    // # Select the whole group and add it to the channel
++    await addGroupMembers.click();
++    await addPeopleToChannelModal.container.getByRole('button', {name: 'Add'}).click();
++
++    // * Verify every member of the group joined the channel
++    await channelsPage.centerView.waitUntilLastPostContains('added to the channel');
++    await expect(channelsPage.sidebarRight.container).toContainText(`${members.length + 1} members`);
++    for (const member of members) {
++        await expect(channelsPage.sidebarRight.container).toContainText(member.username);
++    }
++});
 ```
 
-**File**: `webapp/channels/src/components/admin_console/ip_filtering/edit_section/edit_section_edit_table_row.tsx` (modified, +2/-2)
+**File**: `server/channels/api4/group_test.go` (modified, +10/-0)
 ```diff
-@@ -47,7 +47,7 @@ const EditTableRow = ({
-                         >
-                             <div
-                                 className='edit'
--                                aria-label='Edit'
-+                                aria-label={formatMessage({id: 'admin.ip_filtering.edit', defaultMessage: 'Edit'})}
-                                 role='button'
-                                 onClick={() => setEditFilter(allowedIPRange)}
-                             >
-@@ -59,7 +59,7 @@ const EditTableRow = ({
-                         >
-                             <div
-                                 className='delete'
--                                aria-label='Delete'
-+                                aria-label={formatMessage({id: 'admin.ip_filtering.delete', defaultMessage: 'Delete'})}
-                                 role='button'
-                                 onClick={() => handleConfirmDeleteFilter(allowedIPRange)}
-                             >
+@@ -2009,6 +2009,16 @@ func TestGetGroups(t *testing.T) {
+ 		assert.Len(t, groups, 3)
+ 	})
+ 
++	t.Run("search with Q parameter written as a mention", func(t *testing.T) {
++		opts := baseOpts
++		opts.Q = "@" + *groupWithRef.Name
++		groups, resp, err := th.SystemAdminClient.GetGroups(context.Background(), opts)
++		require.NoError(t, err)
++		CheckOKStatus(t, resp)
++		require.Len(t, groups, 1)
++		assert.Equal(t, groupWithRef.Id, groups[0].Id)
++	})
++
+ 	t.Run("test FilterAllowReference for non-admin user", func(t *testing.T) {
+ 		opts := baseOpts
+ 		opts.FilterAllowReference = true
 ```
 
-**File**: `webapp/channels/src/components/admin_console/system_properties/user_properties_orphaned_delete_button.tsx` (modified, +3/-1)
+**File**: `server/channels/store/sqlstore/group_store.go` (modified, +10/-3)
 ```diff
-@@ -2,6 +2,7 @@
- // See LICENSE.txt for license information.
+@@ -1306,6 +1306,13 @@ func (s *SqlGroupStore) ChannelMembersToRemove(channelID *string) ([]*model.Chan
+ 	return channelMembers, nil
+ }
  
- import React from 'react';
-+import {useIntl} from 'react-intl';
++// groupSearchPattern builds the LIKE pattern used to match a group search term against a group's
++// name or display name. A leading "@" is stripped so that searching by mention, which is how groups
++// are referenced throughout the product, matches the same groups as searching by bare name.
++func groupSearchPattern(q string) string {
++	return fmt.Sprintf("%%%s%%", sanitizeSearchTerm(strings.TrimPrefix(q, "@"), "\\"))
++}
++
+ func (s *SqlGroupStore) groupsBySyncableBaseQuery(st model.GroupSyncableType, t selectType, syncableID string, opts model.GroupSearchOpts) sq.SelectBuilder {
+ 	var query sq.SelectBuilder
+ 	switch t {
+@@ -1351,7 +1358,7 @@ func (s *SqlGroupStore) groupsBySyncableBaseQuery(st model.GroupSyncableType, t
+ 	}
  
- import {TrashCanOutlineIcon} from '@mattermost/compass-icons/components';
- import type {UserPropertyField} from '@mattermost/types/properties_user';
-@@ -17,6 +18,7 @@ type Props = {
- };
+ 	if opts.Q != "" {
+-		pattern := fmt.Sprintf("%%%s%%", sanitizeSearchTerm(opts.Q, "\\"))
++		pattern := groupSearchPattern(opts.Q)
+ 		operatorKeyword := "ILIKE"
+ 		query = query.Where(fmt.Sprintf("(UserGroups.Name %[1]s ? OR UserGroups.DisplayName %[1]s ?)", operatorKeyword), pattern, pattern)
+ 	}
+@@ -1411,7 +1418,7 @@ func (s *SqlGroupStore) getGroupsAssociatedToChannelsByTeam(teamID string, opts
+ 	}
  
- const OrphanedFieldDeleteButton: React.FC<Props> = ({field, deleteField}) => {
-+    const {formatMessage} = useIntl();
-     const {promptDelete} = useUserPropertyFieldDelete();
+ 	if opts.Q != "" {
+-		pattern := fmt.Sprintf("%%%s%%", sanitizeSearchTerm(opts.Q, "\\"))
++		pattern := groupSearchPattern(opts.Q)
+ 		operatorKeyword := "ILIKE"
+ 		query = query.Where(fmt.Sprintf("(UserGroups.Name %[1]s ? OR UserGroups.DisplayName %[1]s ?)", operatorKeyword), pattern, pattern)
+ 	}
+@@ -1562,7 +1569,7 @@ func (s *SqlGroupStore) GetGroups(page, perPage int, opts model.GroupSearchOpts,
+ 	}
  
-     const handleDelete = () => {
-@@ -33,7 +35,7 @@ const OrphanedFieldDeleteButton: React.FC<Props> = ({field, deleteField}) => {
-             onClick={handleDelete}
-             disabled={field.delete_at !== 0}
-             data-testid={`orphaned-field-delete-${field.id}`}
--            aria-label='Delete orphaned field'
-+            aria-label={formatMessage({id: 'admin.accessibility.delete_orphaned_field', defaultMessage: 'Delete orphaned field'})}
-         >
-             <TrashCanOutlineIcon
-                 size={18}
+ 	if opts.Q != "" {
+-		pattern := fmt.Sprintf("%%%s%%", sanitizeSearchTerm(opts.Q, "\\"))
++		pattern := groupSearchPattern(opts.Q)
+ 		operatorKeyword := "ILIKE"
+ 		groupsQuery = groupsQuery.Where(fmt.Sprintf("(UserGroups.Name %[1]s ? OR UserGroups.DisplayName %[1]s ?)", operatorKeyword), pattern, pattern)
+ 	}
 ```
 
-**File**: `webapp/channels/src/components/admin_console/system_roles/system_role/add_users_to_role_modal/add_users_to_role_modal.tsx` (modified, +1/-1)
+**File**: `server/channels/store/sqlstore/group_store_test.go` (modified, +28/-0)
 ```diff
-@@ -138,7 +138,7 @@ export class AddUsersToRoleModal extends React.PureComponent<Props, State> {
-                 <div className='more-modal__actions'>
-                     <button
-                         className='more-modal__actions--round'
--                        aria-label='Add users to role'
-+                        aria-label={this.props.intl.formatMessage({id: 'admin.accessibility.add_users_to_role', defaultMessage: 'Add users to role'})}
-                     >
-                         <i
-                             className='icon icon-plus'
+@@ -6,9 +6,37 @@ package sqlstore
+ import (
+ 	"testing"
+ 
++	"github.com/stretchr/testify/require"
++
+ 	"github.com/mattermost/mattermost/server/v8/channels/store/storetest"
+ )
+ 
+ func TestGroupStore(t *testing.T) {
+ 	StoreTest(t, storetest.TestGroupStore)
+ }
++
++func TestGroupSearchPattern(t *testing.T) {
++	if enableFullyParallelTests {
++		t.Parallel()
++	}
++
++	testCases := []struct {
++		name     string
++		term     string
++		expected string
++	}{
++		{"bare term", "designteam", "%designteam%"},
++		{"mention", "@designteam", "%designteam%"},
++		{"only the leading mention marker is dropped", "@@designteam", "%@designteam%"},
++		{"an interior marker is kept", "sales@emea", "%sales@emea%"},
++		{"leading marker dropped, interior kept", "@sales@emea", "%sales@emea%"},
++		{"lone marker matches everything", "@", "%%"},
++		{"wildcards are still escaped", "@50%_off", "%50\\%\\_off%"},
++	}
++
++	for _, tc := range testCases {
++		t.Run(tc.name, func(t *testing.T) {
++			require.Equal(t, tc.expected, groupSearchPattern(tc.term))
++		})
++	}
++}
+```
+
+**File**: `server/channels/store/storetest/group_store.go` (modified, +39/-0)
+```diff
+@@ -3088,6 +3088,15 @@ func testGetGroupsByChannel(t *testing.T, rctx request.CTX, ss store.Store) {
+ 			Result:     []*model.GroupWithSchemeAdmin{group1WSA},
+ 			TotalCount: new(int64(1)),
+ 		},
++		{
++			Name:       "Get group matching name prefixed with a mention",
++			ChannelId:  channel1.Id,
++			Opts:       model.GroupSearchOpts{Q: "@" + *group1.Name},
++			Page:       0,
++			PerPage:    100,
++			Result:     []*model.GroupWithSchemeAdmin{group1WSA},
++			TotalCount: new(int64(1)),
++		},
+ 		{
+ 			Name:       "Get group matching display name",
+ 			ChannelId:  channel1.Id,
+@@ -3327,6 +3336,14 @@ func testGetGroupsAssociatedToChannelsByTeam(t *testing.T, rctx request.CTX, ss
+ 			PerPage: 100,
+ 			Result:  map[string][]*model.GroupWithSchemeAdmin{channel1.Id: {group1WSA}},
+ 		},
++		{
++			Name:    "Get group matching name prefixed with a mention",
++			TeamId:  team1.Id,
++			Opts:    model.GroupSearchOpts{Q: "@" + *group1.Name},
++			Page:    0,
++			PerPage: 100,
++			Result:  map[string][]*model.GroupWithSchemeAdmin{channel1.Id: {group1WSA}},
++		},
+ 		{
+ 			Name:    "Get group matching display name",
+ 			TeamId:  team1.Id,
+@@ -3577,6 +3594,15 @@ func testGetGroupsByTeam(t *testing.T, rctx request.CTX, ss store.Store) {
+ 			Result:     []*model.GroupWithSchemeAdmin{group1WSA},
+ 			TotalCount: new(int64(1)),
+ 		},
++		{
++			Name:       "Get group matching name prefixed with a mention",
++			TeamId:     team1.Id,
++			Opts:       model.GroupSearchOpts{Q: "@" + *group1.Name},
++			Page:       0,
++			PerPage:    100,
++			Result:     []*model.GroupWithSchemeAdmin{group1WSA},
++			TotalCount: new(int64(1)),
++		},
+ 		{
+ 			Name:       "Get group matching display name",
+ 			TeamId:     team1.Id,
+@@ -3930,6 +3956,9 @@ func testGetGroups(t *testing.T, rctx request.CTX, ss store.Store) {
+ 			Page:    0,
+ 			PerPage: 100,
+ 			Resultf: func(groups []*model.Group) bool {
++				if len(groups) == 0 {
++					return false
++				}
+ 				for _, g := range groups {
+ 					if !strings.Contains(*g.Name, group2NameSubstring) && !strings.Contains(g.DisplayName, group2NameSubstring) {
+ 						return false
+@@ -3939,6 +3968,16 @@ func testGetGroups(t *testing.T, rctx request.CTX, ss store.Store) {
+ 			},
+ 			Restrictions: nil,
+ 		},
++		{
++			Name:    "Get group matching name prefixed with a mention",
++			Opts:    model.GroupSearchOpts{Q: "@" + group2NameSubstring},
++			Page:    0,
++			PerPage: 100,
++			Resultf: func(groups []*model.Group) bool {
++				return len(groups) == 1 && groups[0].Id == group2.Id
++			},
++			Restrictions: nil,
++		},
+ 		{
+ 			Name:    "Get group matching display name",
+ 			Opts:    model.GroupSearchOpts{Q: uid + "-GrOuP-3"},
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39239** (2026-10-18): [MM-71096] Apply incoming DeleteAt when receiving synced reactions (@cursor[bot])
-- **PR #39234** (closed): [MM-71181] Build secure connection invite before saving the remote cluster (@cursor[bot])
-- **PR #39233** (2026-10-17): [MM-71181] Clean up the saved secure connection when invite creation fails (@cursor[bot])
-- **PR #39232** (2026-10-17): [MM-71191] Translate /secure-connection accept transport, response and remote rejection errors (@cursor[bot])
-- **PR #39231** (closed): Migrate System Console policy/localization panels to Compass AdminPanel (@matthewbirtch)
-- **PR #39230** (closed): Migrate System Console policy/localization panels to Compass AdminPanel (@matthewbirtch)
+- **PR #39273** (closed): Fix e2e failures on the backstage theme branch (@matthewbirtch)
+- **PR #39263** (closed): [release-11.7] MM-69944: Group websocket event cleanup (@BenCookie95)
+- **PR #39262** (closed): [release-11.9] MM-69944: Group websocket event cleanup (@BenCookie95)
+- **PR #39261** (closed): [release-11.10] MM-69944: Group websocket event cleanup (@BenCookie95)
+- **PR #39260** (2026-10-19): Docs: interactive dialog checkbox elements and per-channel join/leave messages (@sbishel)
+- **PR #39257** (closed): Cherry pick #38861 to release-12.1 (@mattermost-code)
 
 ---
 
@@ -2878,28 +2875,32 @@ Co-authored
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MM-70921: Fix rich text editor parity with posted messages (#38852)
+## X. test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL (#38918)
 
 **RULE**:
-When implementing operations in `e2e-tests/playwright/specs/functional/channels/wysiwyg_editor/autocomplete.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e-tests/playwright/lib/src/constant.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b32c6f0`: MM-70921: Fix rich text editor parity with posted messages (#38852). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03f584b7`: test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL (#38918). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/playwright/specs/functional/channels/wysiwyg_editor/autocomplete.spec.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/playwright/lib/src/constant.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        await expect(editor.input.locator('.mention-link')).toHaveText(`~${linked.display_name}`);
+// Not prepackaged — installed from this URL by tests that exercise it.
+export const demoPluginId = 'com.mattermost.demo-plugin';
+export const demoPluginVersion = '0.12.1';
+export const demoPluginUrl = `https://github.com/mattermost/mattermost-plugin-demo/releases/download/v${demoPluginVersion}/mattermost-plugin-demo-v${demoPluginVersion}.tar.gz`;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        await expect(editor.input).toContainText(`~${linked.name}`);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b32c6f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03f584b7` are properly handled with clean fallback behavior.

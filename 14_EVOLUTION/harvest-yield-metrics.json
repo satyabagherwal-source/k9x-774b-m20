@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T05:35:37.431Z",
-  "total_cycles_completed": 3711,
-  "total_learnings_persisted": 3711,
-  "total_rules_promoted": 2887,
+  "last_updated": "2026-10-20T05:48:12.865Z",
+  "total_cycles_completed": 3714,
+  "total_learnings_persisted": 3714,
+  "total_rules_promoted": 2892,
   "history": [
-    {
-      "timestamp": "2026-10-19T22:32:57.285Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:32:57.918Z",
-      "repository": "mazzzystar/Queryable",
-      "learningId": "learn-github-mazzzystar-queryable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T22:41:18.155Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T22:41:20.292Z",
       "repository": "html5lib/html5lib-python",
@@ -1403,6 +1382,27 @@
       "repository": "open-policy-agent/opa",
       "learningId": "learn-github-open-policy-agent-opa",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:43:05.666Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:43:08.618Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T05:48:12.865Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

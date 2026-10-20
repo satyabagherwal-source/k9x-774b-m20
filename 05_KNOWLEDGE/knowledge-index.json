@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T05:35:37.370Z",
+  "last_updated": "2026-10-20T05:48:12.811Z",
   "total_verified_learnings": 1048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9761,13 +9761,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "fastapi/fastapi",
       "repository": "fastapi/fastapi",
-      "slug": "fastapi-fastapi",
+      "slug": "tiangolo-fastapi",
       "platform": "github",
-      "source_url": "https://github.com/fastapi/fastapi",
+      "source_url": "https://github.com/tiangolo/fastapi",
       "source_version": "03002a00",
-      "content_hash": "14fa38036e60ac35856cc5b793905d43f1328967a01e69b164b4ae67d49587b6",
-      "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
+      "content_hash": "4b26a9ebe023e01d57404d9894b490d1361cb6528c0edd3d5ecc7911a6a51644",
+      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "promoted_rules": [
         {
           "number": 1664,
@@ -9793,6 +9793,21 @@
           "number": 2693,
           "title": "🐛 Fix default handling for request parameters and models (#16527)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3083,
+          "title": "Dedicated Limiter for Threadpool Resource Teardown",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3084,
+          "title": "Upstream Protocol Parameter Abstraction for Dual-Protocol Handlers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3085,
+          "title": "Decouple Multi-Source Data Extraction from Default Injection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9800,7 +9815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:46:41.875Z",
+      "verified_at": "2026-10-20T05:48:12.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10411,8 +10426,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "9a24224e",
-      "content_hash": "b5f87a6c2e86b37d74aeeee42de847cdffe2063e85dd2bf39fa710430089883c",
+      "source_version": "6ab624ab",
+      "content_hash": "a13f9234bdef425e97aa7548f7b5692e791070f211bceeede32cfdf27d4f7db1",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -10455,6 +10470,11 @@
           "number": 2992,
           "title": "nix): reap backgrounded children on terminate; ci: cut Fmt runtime (#5945)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3082,
+          "title": "test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10462,7 +10482,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:15:41.858Z",
+      "verified_at": "2026-10-20T05:43:08.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30267,14 +30287,19 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "f38678d0",
-      "content_hash": "2d7425afae84fced008aa376d17b4bd6369125afa44628d07d94f4c930551f3c",
+      "source_version": "3cef243d",
+      "content_hash": "970159d939f4708cfdd9325d39ab199f450a7e0c3ab231393eea72d0ad4171dd",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
         {
           "number": 1715,
           "title": "MM-70921: Fix rich text editor parity with posted messages (#38852)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3081,
+          "title": "test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL (#38918)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30283,7 +30308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:20:15.569Z",
+      "verified_at": "2026-10-20T05:43:05.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98893,6 +98918,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T05:29:23.149Z"
+    },
+    "rule-3081": {
+      "learning_id": "rule-3081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3081,
+      "title": "test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL (#38918)",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "3cef243d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:43:05.600Z"
+    },
+    "rule-3082": {
+      "learning_id": "rule-3082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3082,
+      "title": "test): make send_stream bandwidth-limit tests deterministic with VirtualTime (#5",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "6ab624ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:43:08.550Z"
+    },
+    "rule-3083": {
+      "learning_id": "rule-3083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3083,
+      "title": "Dedicated Limiter for Threadpool Resource Teardown",
+      "source_url": "https://github.com/tiangolo/fastapi",
+      "source_version": "03002a00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:48:12.797Z"
+    },
+    "rule-3084": {
+      "learning_id": "rule-3084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3084,
+      "title": "Upstream Protocol Parameter Abstraction for Dual-Protocol Handlers",
+      "source_url": "https://github.com/tiangolo/fastapi",
+      "source_version": "03002a00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:48:12.797Z"
+    },
+    "rule-3085": {
+      "learning_id": "rule-3085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3085,
+      "title": "Decouple Multi-Source Data Extraction from Default Injection",
+      "source_url": "https://github.com/tiangolo/fastapi",
+      "source_version": "03002a00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T05:48:12.797Z"
     }
   },
   "aliases": {

@@ -1983,10 +1983,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/tiangolo/fastapi",
-    "sourceVersion": "b23d78f2",
+    "sourceVersion": "03002a00",
     "license": "MIT",
-    "contentHash": "19d5105b2527652df2f72e80745ab15c2570ebd7d24a03e690e7b6d5df809104",
-    "lastHarvestedAt": "2026-10-18T07:39:13.270Z",
+    "contentHash": "4b26a9ebe023e01d57404d9894b490d1361cb6528c0edd3d5ecc7911a6a51644",
+    "lastHarvestedAt": "2026-10-20T05:48:12.860Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "pallets-flask": {
@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "f38678d0",
+    "sourceVersion": "3cef243d",
     "license": "NOASSERTION",
-    "contentHash": "2d7425afae84fced008aa376d17b4bd6369125afa44628d07d94f4c930551f3c",
-    "lastHarvestedAt": "2026-10-18T21:20:15.613Z",
+    "contentHash": "970159d939f4708cfdd9325d39ab199f450a7e0c3ab231393eea72d0ad4171dd",
+    "lastHarvestedAt": "2026-10-20T05:43:05.662Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "9a24224e",
+    "sourceVersion": "6ab624ab",
     "license": "NOASSERTION",
-    "contentHash": "b5f87a6c2e86b37d74aeeee42de847cdffe2063e85dd2bf39fa710430089883c",
-    "lastHarvestedAt": "2026-10-20T02:15:41.917Z",
+    "contentHash": "a13f9234bdef425e97aa7548f7b5692e791070f211bceeede32cfdf27d4f7db1",
+    "lastHarvestedAt": "2026-10-20T05:43:08.613Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

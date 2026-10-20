@@ -3741,3 +3741,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `a88c81ae` | Multi-dimensional audit evidence | 2026-10-20T05:29:11.902Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `b5ec3065` | Multi-dimensional audit evidence | 2026-10-20T05:29:23.224Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `1c309002` | Multi-dimensional audit evidence | 2026-10-20T05:35:37.425Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `3cef243d` | Multi-dimensional audit evidence | 2026-10-20T05:43:05.662Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6ab624ab` | Multi-dimensional audit evidence | 2026-10-20T05:43:08.613Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `03002a00` | Multi-dimensional audit evidence | 2026-10-20T05:48:12.860Z |
