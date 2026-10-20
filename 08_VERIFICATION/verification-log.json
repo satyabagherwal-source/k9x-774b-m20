@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-CRFG",
-    "timestamp": "2026-10-19T16:12:04.444Z",
-    "repository": "hartemyaakoub/seo-toolkit",
-    "learningId": "learn-github-hartemyaakoub-seo-toolkit",
-    "contentHash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CTEK",
-    "timestamp": "2026-10-19T16:12:07.004Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-CW7C",
     "timestamp": "2026-10-19T16:12:10.632Z",
     "repository": "Checkmarx/kics",
@@ -7492,6 +7462,36 @@
     "contentHash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-OBG1",
+    "timestamp": "2026-10-20T14:16:45.553Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-OKYB",
+    "timestamp": "2026-10-20T14:16:57.875Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

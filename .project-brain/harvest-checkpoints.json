@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T14:10:21.239Z",
+  "last_updated": "2026-10-20T14:16:57.890Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
-      "verified_at": "2026-10-19T00:35:06.768Z",
+      "content_hash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
+      "verified_at": "2026-10-20T14:16:57.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:35:06.768Z"
+      "last_updated": "2026-10-20T14:16:57.890Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
-      "verified_at": "2026-10-20T03:36:22.346Z",
+      "content_hash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
+      "verified_at": "2026-10-20T14:16:45.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:36:22.346Z"
+      "last_updated": "2026-10-20T14:16:45.568Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",

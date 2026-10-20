@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T14:10:21.162Z",
+  "last_updated": "2026-10-20T14:16:57.808Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46344,18 +46344,23 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "9b99a239",
-      "content_hash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "f92429aa",
+      "content_hash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
           "title": "⬆️): Update to Skia m157 (#4268)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3215,
+          "title": "🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardw",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46363,7 +46368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:36:22.270Z",
+      "verified_at": "2026-10-20T14:16:45.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55279,7 +55284,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
+      "content_hash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -55327,6 +55332,16 @@
           "number": 1927,
           "title": "Memory-Bounded Weight Loading for Large DiT Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3216,
+          "title": "Repository Integrity & Dependency Pinning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3217,
+          "title": "Memory Management & Tensor Device Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55334,7 +55349,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:35:06.714Z",
+      "verified_at": "2026-10-20T14:16:57.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101591,6 +101606,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T14:10:21.149Z"
+    },
+    "rule-3215": {
+      "learning_id": "rule-3215",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3215,
+      "title": "🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardw",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "f92429aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:16:45.479Z"
+    },
+    "rule-3216": {
+      "learning_id": "rule-3216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3216,
+      "title": "Repository Integrity & Dependency Pinning Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:16:57.789Z"
+    },
+    "rule-3217": {
+      "learning_id": "rule-3217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3217,
+      "title": "Memory Management & Tensor Device Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T14:16:57.789Z"
     }
   },
   "aliases": {

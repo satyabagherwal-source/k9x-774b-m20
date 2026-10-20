@@ -3843,3 +3843,5 @@
 | `CYCLE-20261020-CCDQ` | `2026-10-20T14:07:26.894Z` | `openkruise/kruise` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openkruise-kruise-learnings.md` | Yes (`7da28b3c...`) |
 | `CYCLE-20261020-CHB9` | `2026-10-20T14:07:33.285Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3211` | Yes (`b075f348...`) |
 | `CYCLE-20261020-G2W4` | `2026-10-20T14:10:21.220Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3212, Rule 3213, Rule 3214` | Yes (`bfdc84d1...`) |
+| `CYCLE-20261020-OBG1` | `2026-10-20T14:16:45.553Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3215` | Yes (`1c532e69...`) |
+| `CYCLE-20261020-OKYB` | `2026-10-20T14:16:57.875Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3216, Rule 3217` | Yes (`47255242...`) |

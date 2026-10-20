@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `23001a3d`  
+> **Source Version**: `f92429aa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:03:16.682Z  
+> **Timestamp**: 2026-10-20T14:16:45.105Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:03:16.672Z  
+> **Harvest Timestamp**: 2026-10-20T14:16:44.423Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8736 stars
+- **Stars / Engagement**: 8744 stars
 
 ---
 
@@ -1059,6 +1059,20 @@ inline AdapterDescription describeAdapter(const wgpu::Adapter &adapter) {
   return result;
 }
 
+// Dawn's own SwiftShader test (gpu_info::IsGoogleSwiftshader): Google's
+// vendor ID with SwiftShader's device ID. The Android emulator exposes the
+// host's SwiftShader through gfxstream, which keeps the IDs and the name, so
+// either identifies it.
+inline bool isSwiftShader(const wgpu::Adapter &adapter) {
+  wgpu::AdapterInfo info;
+  adapter.GetInfo(&info);
+  constexpr uint32_t kVendorIDGoogle = 0x1AE0;
+  constexpr uint32_t kDeviceIDSwiftShader = 0xC0DE;
+  return (info.vendorID == kVendorIDGoogle &&
+          info.deviceID == kDeviceIDSwiftShader) ||
+         toString(info.device).find("SwiftShader") != std::string::npos;
+}
+
 // The backend Skia renders with: Metal on Apple, Vulkan on Android.
 #ifdef __APPLE__
 constexpr auto kPlatformBackendType = wgpu::BackendType::Metal;
@@ -1156,19 +1170,7 @@ struct DeviceLostListener {
   std::string creationFailure;
 };
 
-// Create a Dawn device from the given adapter with the requested features.
-// Features not supported by the adapter are silently skipped. The device's
-// loss is reported to `listener` (see DeviceLostListener), or only logged
-// without one (a secondary device). Neither takes the process down: a lost
-// device fails its later operations, which the callers handle.
-inline wgpu::Device
-requestDevice(dawn::native::Adapter &nativeAdapter,
-              const std::vector<wgpu::FeatureName> &requestedFeatures,
-              DeviceLostListener *listener) {
-  wgpu::Adapter adapter = nativeAdapter.Get();
-
-  // Filter to only features the adapter supports.
-  // Dawn's Vulkan backend accepts at 
+// Create a Dawn device from the given adapter with the re
 ```
 
 ### Core Architecture Module: `packages/skia/cpp/rnskia/RNSkWorker.h`
@@ -1510,313 +1512,321 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `589da8e7` (2026-10-18)
-**Commit Message**: fix(⬆️): Update to Skia m157 (#4268)
+### Incident Patch 1: `f92429aa` (2026-10-20)
+**Commit Message**: fix(🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardwareBuffer (#4293)
 
-* chore(⬆️): upgrade to Skia m157
+Since the example moved to react-native-webgpu 0.17.0 (#4271), every
+main-based PR fails build-test-android: the first surface.screen() of the
+e2e run fails with "GPUDevice::importExternalTexture(): the import failed"
+and every later test fails with "Unsupported data type". Logcat has the
+cause: "React Native Skia lost its GPU device. Reason: Required texture
+memory size (2359296) is larger than the AHardwareBuffer allocation size
+(0)" from Dawn's SharedTextureMemoryVk.cpp.
 
-Move externals/skia to the tip of chrome/m157 (b94213a11b). Drop the Tint
-LoopRange patch, which the Dawn commit m157 pins carries (500f8c97a),
-refresh the Mac Catalyst Metal patch for the Dawn changes around it, and
-let build-skia build a single Apple target (apple-ios-arm64-iphonesimulator).
-The binaries workflow falls back to the chrome/ branch containing the
-submodule commit when no branch ends at it any more.
+react-native-webgpu 0.15.0 made drawElementImageToTexture import the
+HardwareRenderer's AHardwareBuffer into Dawn on Android 13+ instead of
+reading it back to a software bitmap. The API 35 emulator (gfxstream guest
+driver on a SwiftShader host) reports an allocation size of 0 for that
+buffer, Dawn's size validation rejects the import as an internal error,
+and Dawn turns that into a device loss, so the rest of the run has no GPU.
+Main looked green because the emulator step is skipped on pushes.
 
-* fix(🏗️): allow the Recorder.h header pair Skia m157 ships
+Dawn skips this check on the Samsung, Qualcomm and Huawei drivers that
+misreport the size (ignore_imported_ahardwareb
 
-include/cpu/Recorder.h (skcpu::Recorder) is included by Graphite's
-include/gpu/graphite/Recorder.h since m157, so the duplicate basename check
-in copy-skia-headers now lists the pairs Skia includes by full path.
-
-* :wrench:
-
-* chore(🏗️): destructure the platform match in build-skia
-
-* fix(📦): depend on the Skia Graphite and Dawn 157.0.0 binaries
-
-Pin react-native-skia-graphite-android, -apple-ios, -apple-tvos,
--apple-macos and react-native-webgpu-dawn to 157.0.0, built from this
-branch by the binaries workflow (run 39145513059). Restore the example's
-Podfile.lock from main (an earlier pod install on stale node_modules had
-rewritten it) 
-
-**File**: `.github/workflows/build-binaries.yml` (modified, +8/-0)
+**File**: `packages/skia/cpp/rnskia/RNDawnUtils.h` (modified, +30/-2)
 ```diff
-@@ -56,6 +56,10 @@ jobs:
-       # The branch the submodule commit is on, without its chrome/ prefix:
-       # m154 right after a milestone bump, or the Chromium release branch
-       # (m154_8037_58) once chrome/m154 has moved past the pinned commit.
-+      # When no branch ends at the commit any more (chrome/m154 moved on
-+      # before a release branch was cut from it), the first chrome/ branch
-+      # that contains it still names the milestone, which is all the version
-+      # derives from.
-       - name: Determine Skia branch
-         id: skia
-         run: |
-@@ -67,8 +71,12 @@ jobs:
-             if [ -z "$branch" ]; then
-               branch=$(git -C externals/skia describe --all --exact-match 2>/dev/null || true)
-             fi
-+            if [ -z "$branch" ]; then
-+              branch=$(git -C externals/skia branch -r --contains HEAD --list 'origin/chrome/m*' | sed 's/^[* ]*//' | sort | head -n 1)
-+            fi
-           fi
-           branch=${branch#remotes/origin/chrome/}
-+          branch=${branch#origin/chrome/}
-           branch=${branch#chrome/}
-           if [ -z "$branch" ]; then
-             echo "::error::Could not determine the Skia branch of externals/skia"
-```
-
-**File**: `.gitmodules` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [submodule "externals/skia"]
- 	path = externals/skia
- 	url = https://chromium.googlesource.com/skia/
--	branch = chrome/m154
-+	branch = chrome/m157
- [submodule "externals/depot_tools"]
- 	path = externals/depot_tools
- 	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
-```
-
-**File**: `apps/docs/docs/webgpu.md` (modified, +2/-1)
-```diff
-@@ -40,7 +40,8 @@ Both packages follow Chrome/Skia milestones. Pick one row and install versions f
+@@ -155,6 +155,20 @@ inline AdapterDescription describeAdapter(const wgpu::Adapter &adapter) {
+   return result;
+ }
  
- | Milestone | react-native-skia | Dawn | react-native-webgpu |
- | --- | --- | --- | --- |
--| m154a | 3.4.0 and later | `react-native-webgpu-dawn` 154.3.0 | 0.13.1 and later, or 0.12.1 |
-+| m157 | 3.6.4 and later | `react-native-webgpu-dawn` 157.0.0 | 0.16.2 and later |
-+| m154a | 3.4.0 to 3.6.3 | `react-native-webgpu-dawn` 154.3.0 | 0.13.1 and later, or 0.12.1 |
- | m154a | 3.1.0 to 3.3.0 | `react-native-webgpu-dawn` 154.2.0 | 0.13.0, or 0.12.1 |
- | m154a | 3.0.6 to 3.0.8 | `dawn-chrome-m154a`, vendored | 0.12.1, or 0.13.0 and later with react-native-skia 3.0.8 |
- | m154 | 3.0.0 to 3.0.5 | `dawn-chrome-m154`, vendored | 0.10.0 to 0.11.2 |
-```
-
-**File**: `externals/skia` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 2466dcf3937437e217e7f284afe0e1aae15891ce
-+Subproject commit b94213a11b3a2edadfae89f0c57a7f4ab72772c9
-```
-
-**File**: `package.json` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@
-   "packageManager": "yarn@3.6.4",
-   "resolutions": {
-     "@webgpu/types": "^0.1.69",
-+    "react-native-webgpu-dawn": "157.0.0",
-     "react-native-reanimated@4.6.0": "patch:react-native-reanimated@npm%3A4.6.0#./.yarn/patches/react-native-reanimated-npm-4.6.0-f4226872a0.patch"
-   },
-   "devDependencies": {
-```
-
-**File**: `packages/skia/CONTRIBUTING.md` (modified, +1/-0)
-```diff
-@@ -71,6 +71,7 @@ Make sure `$ANDROID_NDK` and `$ANDROID_HOME` are set (see [Building](#building))
-    cd packages/skia
-    yarn clean-skia
-    yarn build-skia          # all platforms, or scope it: yarn build-skia apple-ios android
-+                            # or a single target: yarn build-skia apple-ios-arm64-iphonesimulator
-    yarn copy-skia-headers   # build-skia also runs this at the end
-    ```
-    `build-skia` runs `tools/git-sync-deps` first, which fetches third-party deps from `*.googlesource.com`. This can fail with HTTP 429 ("Short term server-time rate limit exceeded"). Re-run it with backoff until it succeeds before retrying the build:
-```
-
-**File**: `packages/skia/package.json` (modified, +5/-5)
-```diff
-@@ -142,11 +142,11 @@
-   },
-   "dependencies": {
-     "canvaskit-wasm": "0.41.1",
--    "react-native-skia-graphite-android": "154.3.0",
--    "react-native-skia-graphite-apple-ios": "154.3.0",
--    "react-native-skia-graphite-apple-macos": "154.3.0",
--    "react-native-skia-graphite-apple-tvos": "154.3.0",
--    "react-native-webgpu-dawn": "154.3.0",
-+    "react-native-skia-graphite-android": "157.0.0",
-+    "react-native-skia-graphite-apple-ios": "157.0.0",
-+    "react-native-skia-graphite-apple-macos": "157.0.0",
-+    "react-native-skia-graphite-apple-tvos": "157.0.0",
-+    "react-native-webgpu-dawn": "157.0.0",
-     "react-reconciler": "0.31.0"
-   },
-   "eslintIgnore": [
-```
-
-**File**: `packages/skia/scripts/build-skia.ts` (modified, +8/-3)
-```diff
-@@ -232,13 +232,18 @@ const buildXCFramework = (platformName: ApplePlatformName) => {
-     if (validPlatforms.includes(spec)) {
-       buildTargets.push({ platform: spec as PlatformName });
-     } else if (spec.includes("-")) {
--      // Handle platform-target format (e.g., android-arm, android-arm64)
--      const [platform, target] = spec.split("-", 2);
--      if (!validPlatforms.includes(platform)) {
-+      // Handle platform-target format (android-arm64,
-+      // apple-ios-arm64-iphonesimulator): the platform is the longest
-+      // platform name the spec starts with, the rest is the target.
-+      const [platform] = validPlatforms
-+        .filter((name) => spec.startsWith(`${name}-`))
-+        .sort((a, b) => b.length - a.length);
-+      if (!platform) {
-         console.error(`❌ Invalid platform or target: ${spec}`);
-         console.error(`Valid platforms are: ${validPlatforms.join(", ")}`);
-         exit(1);
-       }
-+      const target = spec.slice(platform.length + 1);
- 
-       const platformConfig = configurations[platform as PlatformName];
-       if (!(target in platformConfig.targets)) {
-```
-
----
-
-### Incident Patch 2: `6e6800dc` (2026-10-18)
-**Commit Message**: fix(🐛): patch Graphite runtime effects whose locals reuse main's parameter names (#4196)
-
-Graphite writes a runtime effect's main(float2 xy) as a function of
-float2 pos, but keeps the effect's own local names. A local named pos
-(or inColor/destColor) in main then fails to compile, and the failed
-pipeline crashes QueueManager::addRecording, which dereferences the null
-pipeline while diagnosing the failure. In a nested scope the local
-compiles but shadows the coordinates and renders wrong pixels.
-
-The Skia patch mangles such locals in the pipeline-stage code generator
-and skips null pipelines in the diagnostic visitor, so any other
-pipeline failure rejects the recording instead of crashing.
-
-Co-authored-by: William Candillon <[REDACTED_EMAIL]>
-
-**File**: `packages/skia/scripts/build-skia.ts` (modified, +7/-0)
-```diff
-@@ -491,6 +491,13 @@ const buildXCFramework = (platformName: ApplePlatformName) => {
-     // Catalyst uses the macOS SDK with an iOS ABI and deployment target.
-     const catalystPatch = path.join(__dirname, "skia-catalyst.patch");
-     $(`git apply ${catalystPatch}`);
-+    // A runtime effect local named like main's parameters ("pos") broke
-+    // Graphite's SkSL, and the failed pipeline then crashed insertRecording.
-+    const runtimeEffectPatch = path.join(
-+      __dirname,
-+      "skia-graphite-runtime-effect-names.patch"
-+    );
-+    $(`git apply ${runtimeEffectPatch}`);
-     // The GN build compiles the same Dawn checkout as build-dawn.ts.
-     // Without this, Mac Catalyst compilation will be failed.
-     applyDawnPatches();
-```
-
-**File**: `packages/skia/scripts/skia-graphite-runtime-effect-names.patch` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+diff --git a/src/gpu/graphite/QueueManager.cpp b/src/gpu/graphite/QueueManager.cpp
-+index c3c2ca1..87c666d 100644
-+--- a/src/gpu/graphite/QueueManager.cpp
-++++ b/src/gpu/graphite/QueueManager.cpp
-+@@ -203,6 +203,12 @@ InsertStatus QueueManager::addRecording(const InsertRecordingInfo& info, Context
-+         std::string failureMsg;
-+         const bool validPipelines = info.fRecording->priv().taskList()->visitPipelines(
-+                 [&failureMsg](const GraphicsPipeline* pipeline) {
-++                    // A handle has no pipeline when its creation failed outright (reported when
-++                    // the handle was resolved) or when the commands failed before the handle was
-++                    // resolved. Neither is an async compilation failure.
-++                    if (!pipeline) {
-++                        return true;
-++                    }
-+                     if (auto failure = pipeline->didAsyncCompilationFail()) {
-+                         failureMsg = *failure;
-+                         return false;
-+diff --git a/src/sksl/codegen/SkSLPipelineStageCodeGenerator.cpp b/src/sksl/codegen/SkSLPipelineStageCodeGenerator.cpp
-+index 6768e80..2ac7479 100644
-+--- a/src/sksl/codegen/SkSLPipelineStageCodeGenerator.cpp
-++++ b/src/sksl/codegen/SkSLPipelineStageCodeGenerator.cpp
-+@@ -102,6 +102,9 @@ private:
-+     // Handles arrays correctly, eg: `float x[2]`
-+     std::string typedVariable(const Type& type, std::string_view name);
-+ 
-++    // Whether `name` is one of the names the caller substitutes for main's parameters.
-++    bool isCallerName(std::string_view name) const;
-++
-+     void writeVarDeclaration(const VarDeclaration& var);
-+     void writeGlobalVarDeclaration(const GlobalVarDeclaration& g);
-+     void writeStructDefinition(const StructDefinition& s);
-+@@ -758,9 +761,26 @@ std::string PipelineStageCodeGenerator::typedVariable(const Type& type, std::str
-+     return decl;
-+ }
-+ 
-++bool PipelineStageCodeGenerator::isCallerName(std::string_view name) const {
-++    for (const char* callerName : {fSampleCoords, fInputColor, fDestColor}) {
-++        if (callerName && name == callerName) {
-++            return true;
-++        }
-++    }
-++    return false;
-++}
-++
-+ void PipelineStageCodeGenerator::writeVarDeclaration(const VarDeclaration& var) {
-+-    this->write(this->modifierString(var.var()->modifierFlags()));
-+-    this->write(this->typedVariable(var.var()->type(), var.var()->name()));
-++    const Variable* variable = var.var();
-++    std::string name(variable->name());
-++    // References to main's parameters are written as the caller's names (see
-++    // writeVariableReference), so a local of the same name would redeclare or shadow them.
-++    if (this->isCallerName(name)) {
-++        name = fCallbacks->getMangledName(name.c_str());
-++        fVariableNames.set(variable, name);
-++    }
-++    this->write(this->modifierString(variable->modifierFlags()));
-++    this->write(this->typedVariable(variable->type(), name));
-+     if (var.value()) {
-+         this->write(" = ");
-+         this->writeExpression(*var.value(), Precedence::kExpression);
-```
-
----
-
-### Incident Patch 3: `392466e8` (2026-10-18)
-**Commit Message**: fix(🤖): keep Dawn robustness on for Android (#4267)
-
-With disable_robustness, Qualcomm's shader compiler (libllvm-qgl,
-CreateQGLCProgram) segfaults inside vkCreateGraphicsPipelines while Dawn
-builds some Graphite render pipelines: 10 of 10 cold launches on a Galaxy
-Z Fold5 (Adreno 740, driver 3df4c357f0, Android 16), 0 crashes with
-robustness on. It is not yet known whether the driver or the SPIR-V Tint
-emits without robustness is at fault, so leave the toggle off on Android
-altogether, as #4177 did for MSAARenderToSingleSampled.
-
-Co-authored-by: William Candillon <[REDACTED_EMAIL]>
-
-**File**: `packages/skia/cpp/rnskia/RNDawnUtils.h` (modified, +9/-0)
-```diff
-@@ -293,7 +293,16 @@ requestDevice(dawn::native::Adapter &nativeAdapter,
- #endif
-       "disable_lazy_clear_for_mapped_at_creation_buffer",
-       "allow_unsafe_apis",
-+#if !defined(__ANDROID__)
-+      // Not on Android: with robustness disabled, Qualcomm's shader compiler
-+      // (libllvm-qgl, CreateQGLCProgram) segfaults inside
-+      // vkCreateGraphicsPipelines while Dawn builds some Graphite render
-+      // pipelines (Adreno 740, driver 3df4c357f0). It is not yet known whether
-+      // the driver or the SPIR-V Tint emits without robustness is at fault.
-+      // Robustness only adds bounds checks to shader buffer and texture
-+      // accesses; Chrome ships WebGPU with it on.
++// Dawn's own SwiftShader test (gpu_info::IsGoogleSwiftshader): Google's
++// vendor ID with SwiftShader's device ID. The Android emulator exposes the
++// host's SwiftShader through gfxstream, which keeps the IDs and the name, so
++// either identifies it.
++inline bool isSwiftShader(const wgpu::Adapter &adapter) {
++  wgpu::AdapterInfo info;
++  adapter.GetInfo(&info);
++  constexpr uint32_t kVendorIDGoogle = 0x1AE0;
++  constexpr uint32_t kDeviceIDSwiftShader = 0xC0DE;
++  return (info.vendorID == kVendorIDGoogle &&
++          info.deviceID == kDeviceIDSwiftShader) ||
++         toString(info.device).find("SwiftShader") != std::string::npos;
++}
++
+ // The backend Skia renders with: Metal on Apple, Vulkan on Android.
+ #ifdef __APPLE__
+ constexpr auto kPlatformBackendType = wgpu::BackendType::Metal;
+@@ -304,9 +318,23 @@ requestDevice(dawn::native::Adapter &nativeAdapter,
        "disable_robustness",
-+#endif
+ #endif
    };
++  std::vector<const char *> toggles(std::begin(kToggles), std::end(kToggles));
++#ifdef __ANDROID__
++  // Dawn checks an imported AHardwareBuffer's allocation size against the
++  // VkImage it binds to, and the Android emulator's SwiftShader driver reports
++  // that size as 0 for every buffer. The first import (react-native-webgpu's
++  // view snapshots draw into an imported AHardwareBuffer on Android 13+) then
++  // fails as an internal error, which Dawn turns into a device loss: nothing
++  // renders for the rest of the process. Dawn itself skips the check on the
++  // Samsung, Qualcomm and Huawei drivers that misreport the size; do the same
++  // for SwiftShader. Real devices keep the check.
++  if (isSwiftShader(adapter)) {
++    toggles.push_back("ignore_imported_ahardwarebuffer_vulkan_image_size");
++  }
++#endif
    wgpu::DawnTogglesDescriptor togglesDesc;
-   togglesDesc.enabledToggleCount = std::size(kToggles);
+-  togglesDesc.enabledToggleCount = std::size(kToggles);
+-  togglesDesc.enabledToggles = kToggles;
++  togglesDesc.enabledToggleCount = toggles.size();
++  togglesDesc.enabledToggles = toggles.data();
+ #if defined(TARGET_OS_SIMULATOR) && TARGET_OS_SIMULATOR
+   // The iOS Simulator only advertises MTLFeatureSet_iOS_GPUFamily2, so Dawn
+   // defaults disable_base_instance/disable_base_vertex on and then rejects
+```
+
+---
+
+### Incident Patch 2: `64008ac4` (2026-10-20)
+**Commit Message**: fix(🤖): reduce peak compiler memory of the Android build (#4285)
+
+**File**: `packages/skia/android/CMakeLists.txt` (modified, +0/-1)
+```diff
+@@ -63,7 +63,6 @@ add_library(
+         "${PROJECT_SOURCE_DIR}/../cpp/jsi/JSICache.cpp"
+         "${PROJECT_SOURCE_DIR}/../cpp/jsi/JsiPromises.cpp"
+         "${PROJECT_SOURCE_DIR}/../cpp/jsi/Promise.cpp"
+-        "${PROJECT_SOURCE_DIR}/../cpp/jsi/ViewProperty.cpp"
+ 
+         "${PROJECT_SOURCE_DIR}/../cpp/rnskia/RNSkManager.cpp"
+         "${PROJECT_SOURCE_DIR}/../cpp/rnskia/RNSkGraphiteProducer.cpp"
+```
+
+**File**: `packages/skia/cpp/jsi/ViewProperty.cpp` (removed, +0/-23)
+```diff
+@@ -1,23 +0,0 @@
+-// The recorder headers depend on the include order established by
+-// JsiSkApi.h, so the probe lives here rather than in ViewProperty.h (which
+-// every platform view includes on its own).
+-#include "api/JsiSkApi.h"
+-
+-#include "jsi/ViewProperty.h"
+-
+-#include "api/JsiSkPicture.h"
+-#include "api/recorder/JsiRecorder.h"
+-
+-namespace RNJsi {
+-
+-ViewProperty::ViewProperty(jsi::Runtime &runtime, const jsi::Value &value) {
+-  if (auto picture =
+-          RNSkia::tryGetJsiObject<RNSkia::JsiSkPicture>(runtime, value)) {
+-    _value = picture->getObject();
+-  } else if (auto recorder =
+-                 RNSkia::tryGetJsiObject<RNSkia::JsiRecorder>(runtime, value)) {
+-    _value = recorder->getObject();
+-  }
+-}
+-
+-} // namespace RNJsi
+```
+
+**File**: `packages/skia/cpp/jsi/ViewProperty.h` (modified, +2/-3)
+```diff
+@@ -26,9 +26,8 @@ class ViewProperty {
+   /**
+    * Probes the JS value for the native objects a view can display (a picture
+    * or a recorder); anything else yields an empty property. Defined in
+-   * ViewProperty.cpp: the recorder headers depend on the include order
+-   * established by JsiSkApi.h, which this header (included by every platform
+-   * view) must not pull in.
++   * RNSkManager.cpp so that this header (included by every platform view)
++   * does not pull in the recorder headers.
+    */
+   ViewProperty(jsi::Runtime &runtime, const jsi::Value &value);
+ 
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkManager.cpp` (modified, +21/-0)
+```diff
+@@ -10,7 +10,10 @@
+ #include "RNSkJsiViewApi.h"
+ #include "RNSkView.h"
+ #include "api/JsiSkApi.h"
++#include "api/JsiSkPicture.h"
++#include "api/recorder/JsiRecorder.h"
+ #include "jsi/BoxedNativeObject.h"
++#include "jsi/ViewProperty.h"
+ 
+ namespace RNSkia {
+ namespace jsi = facebook::jsi;
+@@ -83,3 +86,21 @@ void RNSkManager::installBindings() {
+   // implementation detail only.
+ }
+ } // namespace RNSkia
++
++namespace RNJsi {
++
++// Probing for a recorder needs the complete recorder types. Parsing the
++// recorder headers costs about 1.5 GB of compiler memory, so the probe lives
++// in this translation unit, which parses them already. A separate translation
++// unit would compile in parallel and add to the peak memory of the build.
++ViewProperty::ViewProperty(jsi::Runtime &runtime, const jsi::Value &value) {
++  if (auto picture =
++          RNSkia::tryGetJsiObject<RNSkia::JsiSkPicture>(runtime, value)) {
++    _value = picture->getObject();
++  } else if (auto recorder =
++                 RNSkia::tryGetJsiObject<RNSkia::JsiRecorder>(runtime, value)) {
++    _value = recorder->getObject();
++  }
++}
++
++} // namespace RNJsi
+```
+
+---
+
+### Incident Patch 3: `9b99a239` (2026-10-19)
+**Commit Message**: fix(🍏): present at the display's full rate on ProMotion devices (#4273)
+
+**File**: `apps/docs/docs/canvas/canvas.md` (modified, +9/-0)
+```diff
+@@ -130,6 +130,15 @@ On the Web, the drawing is recorded into a picture on the JS thread and painted
+ 
+ If you need to produce the frames yourself, from the thread of your choice, use the [Graphite View](/docs/canvas/graphite).
+ 
++## High refresh rate displays
++
++The view presents at the rate of the display it is on, 120 Hz on a ProMotion iPhone or iPad.
++Reanimated values and worklets run at the display's rate, so a canvas animated with them shows every frame the display can.
++
++An app created from an Expo or React Native template before React Native 0.82 may still carry iOS's 60 Hz cap for iPhone: [Reanimated's performance guide](https://docs.swmansion.com/react-native-reanimated/docs/guides/performance/#-enable-120-fps) covers the `Info.plist` opt-in.
++
++React Native's `requestAnimationFrame` on the JS thread runs at 60 Hz on iOS, so frames recorded from it, as in a [Graphite View](/docs/canvas/graphite) fed from the JS thread, are presented at that rate.
++
+ ## Android rendering options
+ 
+ On iOS, the canvas draws into a `CAMetalLayer` and behaves like any other view.
+```
+
+**File**: `apps/docs/docs/canvas/graphite.md` (modified, +2/-1)
+```diff
+@@ -42,7 +42,7 @@ A recording is immutable: you can submit the same one again later without record
+ ## Threading model
+ 
+ Recording happens on the thread that calls `beginRecording()`, presenting on the main thread: on the display link (`CADisplayLink` on iOS, the `Choreographer` for an Android `SurfaceView`), or, for an Android `TextureView`, once its window has drawn the previous frame.
+-The context can be captured into a worklet, so a frame loop can run on the Reanimated UI runtime without touching the JS thread:
++The context can be captured into a worklet, so a frame loop can run on the Reanimated UI runtime, at the display's rate, without touching the JS thread:
+ 
+ ```tsx
+ import { useEffect, useRef } from "react";
+@@ -79,6 +79,7 @@ A few rules follow from this model:
+ - Recordings are presented in submission order and never dropped. A later frame may sample a texture an earlier frame uploaded, so when the main thread falls behind, the queued frames are replayed in order and only the last one stays visible. This holds for a frame submitted before the native view exists, whether or not you keep the context: the view owns its recording state natively for as long as it is mounted, and `getContext()` hands out a context to it at any time. A recording made for another size than the surface has by the time it is presented (recorded before the view had a surface, or the view was resized since) still shows, at the cost of an extra copy for that frame.
+ - The producer clears the canvas. A recording draws on top of what the view shows, which also lets you record only the parts that changed.
+ - GPU-backed images (offscreen surface snapshots, native buffers, video frames, [WebGPU textures](/docs/webgpu)) can be drawn from any runtime. Their content is uploaded when they are created, so create them before the frame that uses them.
++- A loop on the Reanimated UI runtime or on a worklet runtime runs at the display's rate. On iOS, React Native's `requestAnimationFrame` on the JS thread runs at 60 Hz, so a view fed from it presents at that rate (see [High refresh rate displays](/docs/canvas/overview#high-refresh-rate-displays)).
+ 
+ ## Snapshots
+ 
+```
+
+**File**: `apps/example/ios/Podfile` (modified, +14/-0)
+```diff
+@@ -42,9 +42,23 @@ raise_pod_deployment_targets = ->(installer) do
+   end
+ end
+ 
++# react-native-test-app generates the app's Info.plist from its own template
++# and takes no extra keys from app.json. Without this one iOS caps every
++# display link at 60 Hz on iPhone, so a ProMotion iPhone would never show the
++# canvases above 60 fps (see the docs, "High refresh rate displays").
++opt_in_promotion = ->(_installer) do
++  plist_path = "#{ws_dir}/node_modules/.generated/ios/Info.plist"
++  return unless File.exist?(plist_path)
++
++  info = Xcodeproj::Plist.read_from_path(plist_path)
++  info['CADisableMinimumFrameDurationOnPhone'] = true
++  Xcodeproj::Plist.write_to_path(info, plist_path)
++end
++
+ example_post_install = ->(installer) do
+   fix_fmt_consteval.call(installer)
+   raise_pod_deployment_targets.call(installer)
++  opt_in_promotion.call(installer)
+   installer.pods_project.targets.each do |target|
+     next unless ['react-native-skia', 'react-native-webgpu'].include?(target.name)
+ 
+```
+
+**File**: `packages/skia/apple/SkiaView.mm` (modified, +31/-0)
+```diff
+@@ -57,6 +57,9 @@ @implementation SkiaView {
+   bool _canPresent;
+ #if !TARGET_OS_OSX
+   CADisplayLink *_displayLink;
++  // Whether the display link asked for the display's full rate yet (see
++  // requestFullFrameRate).
++  bool _fullFrameRateRequested;
+ #else
+   bool _presentAgainScheduled;
+ #endif
+@@ -70,6 +73,8 @@ - (instancetype)initWithFrame:(CGRect)frame {
+     _canPresent = !appIsBackgrounded();
+ #if TARGET_OS_OSX
+     _presentAgainScheduled = false;
++#else
++    _fullFrameRateRequested = false;
+ #endif
+     static const auto defaultProps = std::make_shared<const SkiaViewProps>();
+     _props = defaultProps;
+@@ -208,6 +213,7 @@ - (void)scheduleFrame {
+     [_displayLink addToRunLoop:[NSRunLoop mainRunLoop]
+                        forMode:NSRunLoopCommonModes];
+   }
++  [self requestFullFrameRate];
+   _displayLink.paused = NO;
+ #else
+   if (_view != nullptr && _view->presentFrame()) {
+@@ -217,6 +223,31 @@ - (void)scheduleFrame {
+ }
+ 
+ #if !TARGET_OS_OSX
++// A display link fires at 60 Hz until it asks for more, also while the
++// display already runs at 120 Hz for another link (Reanimated asks for 120):
++// a 120 Hz producer would then be presented every other frame. Ask for the
++// display's full rate once the view knows its screen. On iPhone this needs
++// CADisableMinimumFrameDurationOnPhone in the app's Info.plist too, else iOS
++// caps every link at 60 Hz. The link is paused while nothing is queued, so an
++// idle view does not keep the display at its full rate.
++- (void)requestFullFrameRate {
++#if !TARGET_OS_VISION
++  if (_fullFrameRateRequested) {
++    return;
++  }
++  UIScreen *screen = self.window.screen;
++  if (screen == nil) {
++    return;
++  }
++  _fullFrameRateRequested = true;
++  const float maxFps = (float)screen.maximumFramesPerSecond;
++  if (maxFps > 60) {
++    _displayLink.preferredFrameRateRange =
++        CAFrameRateRangeMake(60, maxFps, maxFps);
++  }
++#endif
++}
++
+ - (void)onFrame:(CADisplayLink *)link {
+   if (_view == nullptr || !_view->presentFrame()) {
+     link.paused = YES;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4270** (2026-10-18): chore(📚): fix the WebGPU compatibility table (@wcandillon)
-- **PR #4268** (2026-10-18): fix(⬆️): Update to Skia m157 (@wcandillon)
-- **PR #4267** (2026-10-18): fix(🤖): keep Dawn robustness on for Android (@kimchouard)
-- **PR #4265** (2026-10-18): chore(🤖): give the example app its own Android application id (@wcandillon)
-- **PR #4264** (2026-10-18): feat(🤖): name the Android backing view explicitly (@wcandillon)
-- **PR #4263** (2026-10-17): fix(🗿): keep the render pool one frame ahead of the display (@wcandillon)
+- **PR #4293** (2026-10-20): fix(🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardwareBuffer (@wcandillon)
+- **PR #4287** (2026-10-20): fix(🎨): 2.x: saveLayer's bounds dangled for a plain-object rect, so layers drew empty on devices (backport of #4063) (@cankoe)
+- **PR #4285** (2026-10-20): fix(🤖): reduce peak compiler memory of the Android build (@alanjhughes)
+- **PR #4284** (2026-10-20): fix(🤖): reduce peak compiler memory of the Android build 2.x (@alanjhughes)
+- **PR #4281** (2026-10-20): chore(deps): bump anthropics/claude-code-action from 1.0.249 to 1.0.252 (@dependabot[bot])
+- **PR #4280** (2026-10-20): chore(deps): bump actions/setup-java from 6.0.1 to 6.1.0 (@dependabot[bot])
 
 ---
 
@@ -1836,35 +1846,51 @@ Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ⬆️): Update to Skia m157 (#4268)
+## X. 🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardw
 
 **RULE**:
-When implementing operations in `.github/workflows/build-binaries.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/skia/cpp/rnskia/RNDawnUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `589da8e7`: ⬆️): Update to Skia m157 (#4268). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f92429aa`: 🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardwareBuffer (#4293). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-binaries.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/rnskia/RNDawnUtils.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      # When no branch ends at the commit any more (chrome/m154 moved on
-      # before a release branch was cut from it), the first chrome/ branch
-      # that contains it still names the milestone, which is all the version
-      # derives from.
-            if [ -z "$branch" ]; then
-              branch=$(git -C externals/skia branch -r --contains HEAD --list 'origin/chrome/m*' | sed 's/^[* ]*//' | sort | head -n 1)
-            fi
-          branch=${branch#origin/chrome/}
+// Dawn's own SwiftShader test (gpu_info::IsGoogleSwiftshader): Google's
+// vendor ID with SwiftShader's device ID. The Android emulator exposes the
+// host's SwiftShader through gfxstream, which keeps the IDs and the name, so
+// either identifies it.
+inline bool isSwiftShader(const wgpu::Adapter &adapter) {
+  wgpu::AdapterInfo info;
+  adapter.GetInfo(&info);
+  constexpr uint32_t kVendorIDGoogle = 0x1AE0;
+  constexpr uint32_t kDeviceIDSwiftShader = 0xC0DE;
+  return (info.vendorID == kVendorIDGoogle &&
+          info.deviceID == kDeviceIDSwiftShader) ||
+         toString(info.device).find("SwiftShader") != std::string::npos;
+}
+
+  std::vector<const char *> toggles(std::begin(kToggles), std::end(kToggles));
+#ifdef __ANDROID__
+  // Dawn checks an imported AHardwareBuffer's allocation size against the
+  // VkImage it binds to, and the Android emulator's SwiftShader driver reports
+  // that size as 0 for every buffer. The first import (react-native-webgpu's
+  // view snapshots draw into an imported AHardwareBuffer on Android 13+) then
+  // fails as an internal error, which Dawn turns into a device loss: nothing
+  // renders for the rest of the process. Dawn itself skips the check on the
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  togglesDesc.enabledToggleCount = std::size(kToggles);
+  togglesDesc.enabledToggles = kToggles;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `589da8e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f92429aa` are properly handled with clean fallback behavior.

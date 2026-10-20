@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T14:10:21.234Z",
-  "total_cycles_completed": 3820,
-  "total_learnings_persisted": 3820,
-  "total_rules_promoted": 3030,
+  "last_updated": "2026-10-20T14:16:57.887Z",
+  "total_cycles_completed": 3822,
+  "total_learnings_persisted": 3822,
+  "total_rules_promoted": 3033,
   "history": [
-    {
-      "timestamp": "2026-10-20T02:09:31.324Z",
-      "repository": "pointfreeco/sqlite-data",
-      "learningId": "learn-github-pointfreeco-sqlite-data",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T02:09:31.633Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T02:15:30.751Z",
       "repository": "vikejs/vike",
@@ -1403,6 +1389,20 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:16:45.565Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T14:16:57.887Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -3850,3 +3850,5 @@ Every entry in this ledger must capture:
 | `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `4fdf516e` | Multi-dimensional audit evidence | 2026-10-20T14:07:26.897Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `90d7dd75` | Multi-dimensional audit evidence | 2026-10-20T14:07:33.294Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-20T14:10:21.229Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `f92429aa` | Multi-dimensional audit evidence | 2026-10-20T14:16:45.560Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-20T14:16:57.883Z |

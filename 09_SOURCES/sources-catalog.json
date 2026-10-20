@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "249254fa920d24db2f74fb802fae5a6cc459c199d2dee43ab870974c65b828ba",
-    "lastHarvestedAt": "2026-10-19T00:35:06.764Z",
+    "contentHash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
+    "lastHarvestedAt": "2026-10-20T14:16:57.883Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "23001a3d",
+    "sourceVersion": "f92429aa",
     "license": "MIT",
-    "contentHash": "de9d957f09305a183505ac8932844d7a74ba4e387d02905c69826497bf181c9b",
-    "lastHarvestedAt": "2026-10-19T02:03:16.904Z",
+    "contentHash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
+    "lastHarvestedAt": "2026-10-20T14:16:45.560Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
