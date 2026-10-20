@@ -10258,5 +10258,25 @@
     "contentHash": "6110152ce11b7cc330f46e894d07dadc75de696895d8991ca4579b7342a1f67b",
     "lastHarvestedAt": "2026-10-20T03:59:28.371Z",
     "learningId": "learn-github-justjavac-free-programming-books-zh_cn"
+  },
+  "dubzzz-fast-check": {
+    "repository": "dubzzz/fast-check",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dubzzz/fast-check",
+    "sourceVersion": "71e70142",
+    "license": "MIT",
+    "contentHash": "5caf3fdb8f76c497e465211d260faedb748695bb35234d765ef66510ad476669",
+    "lastHarvestedAt": "2026-10-20T04:05:28.738Z",
+    "learningId": "learn-github-dubzzz-fast-check"
+  },
+  "react-react-native": {
+    "repository": "react/react-native",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react/react-native",
+    "sourceVersion": "2fd8fd66",
+    "license": "MIT",
+    "contentHash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
+    "lastHarvestedAt": "2026-10-20T04:05:30.640Z",
+    "learningId": "learn-github-react-react-native"
   }
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-I423",
-    "timestamp": "2026-10-19T11:36:17.931Z",
-    "repository": "lapce/lapce",
-    "learningId": "learn-github-lapce-lapce",
-    "contentHash": "b18183a19c66b49013f16df58fb98d49c3b34d89a6f28823dfb3ce82d35cda5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-I5EB",
-    "timestamp": "2026-10-19T11:36:19.667Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "ffe1125495a650d113616e22f8856014674d2aeb010155161bed52e9b0088b4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-PKYX",
     "timestamp": "2026-10-19T11:42:06.441Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7462,36 @@
     "contentHash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-U7FK",
+    "timestamp": "2026-10-20T04:05:28.736Z",
+    "repository": "dubzzz/fast-check",
+    "learningId": "learn-github-dubzzz-fast-check",
+    "contentHash": "5caf3fdb8f76c497e465211d260faedb748695bb35234d765ef66510ad476669",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-U8WE",
+    "timestamp": "2026-10-20T04:05:30.638Z",
+    "repository": "react/react-native",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

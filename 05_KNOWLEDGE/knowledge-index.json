@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:59:37.605Z",
-  "total_verified_learnings": 1039,
+  "last_updated": "2026-10-20T04:05:30.593Z",
+  "total_verified_learnings": 1041,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -37619,22 +37619,35 @@
     "learn-github-react-react-native": {
       "learning_id": "learn-github-react-react-native",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-react-native",
+      "source": "react/react-native",
+      "repository": "react/react-native",
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "HEAD",
-      "content_hash": "1c229d4714a6500cc47143105d7cb16362ff802b5c9f536b77bdf3171e9958d1",
+      "source_version": "2fd8fd66",
+      "content_hash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3035,
+          "title": "race in UiThreadUtil main handler lazy initialization (#58963)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.226Z"
+      "verified_at": "2026-10-20T04:05:30.584Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react95-io-react95": {
       "learning_id": "learn-github-react95-io-react95",
@@ -60024,22 +60037,36 @@
     "learn-github-dubzzz-fast-check": {
       "learning_id": "learn-github-dubzzz-fast-check",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dubzzz/fast-check",
       "repository": "dubzzz/fast-check",
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "main",
-      "content_hash": "628d1775e65fa4d62564dc31b967882036186932376a3fcf8106e4666c2a4539",
+      "source_version": "71e70142",
+      "content_hash": "5caf3fdb8f76c497e465211d260faedb748695bb35234d765ef66510ad476669",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
-        "Rule 1633"
+        "Rule 1633",
+        {
+          "number": 3034,
+          "title": "⬆️ Lock file maintenance (#7457)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T04:05:28.683Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-faker-js-faker": {
       "learning_id": "learn-github-faker-js-faker",
@@ -97914,6 +97941,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:59:28.323Z"
+    },
+    "rule-3034": {
+      "learning_id": "rule-3034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3034,
+      "title": "⬆️ Lock file maintenance (#7457)",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "71e70142",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:05:28.683Z"
+    },
+    "rule-3035": {
+      "learning_id": "rule-3035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3035,
+      "title": "race in UiThreadUtil main handler lazy initialization (#58963)",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "2fd8fd66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:05:30.584Z"
     }
   },
   "aliases": {

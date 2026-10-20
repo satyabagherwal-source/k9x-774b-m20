@@ -3705,3 +3705,5 @@ Every entry in this ledger must capture:
 | `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `cb21a4eb` | Multi-dimensional audit evidence | 2026-10-20T03:59:27.276Z |
 | `learn-github-justjavac-free-programming-books-zh_cn` | `https://github.com/justjavac/free-programming-books-zh_CN` | `cc1108ac` | Multi-dimensional audit evidence | 2026-10-20T03:59:28.371Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4fd67614` | Multi-dimensional audit evidence | 2026-10-20T03:59:37.645Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `71e70142` | Multi-dimensional audit evidence | 2026-10-20T04:05:28.738Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `2fd8fd66` | Multi-dimensional audit evidence | 2026-10-20T04:05:30.640Z |

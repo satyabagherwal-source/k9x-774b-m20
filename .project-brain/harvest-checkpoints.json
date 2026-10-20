@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T03:59:37.654Z",
+  "last_updated": "2026-10-20T04:05:30.645Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15403,6 +15403,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T03:59:28.376Z"
+    },
+    "dubzzz/fast-check": {
+      "repository": "dubzzz/fast-check",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dubzzz-fast-check",
+      "content_hash": "5caf3fdb8f76c497e465211d260faedb748695bb35234d765ef66510ad476669",
+      "verified_at": "2026-10-20T04:05:28.742Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:05:28.742Z"
+    },
+    "react/react-native": {
+      "repository": "react/react-native",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-react-native",
+      "content_hash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
+      "verified_at": "2026-10-20T04:05:30.645Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:05:30.645Z"
     }
   },
   "repos": {
