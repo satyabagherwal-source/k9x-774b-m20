@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `365cb0e4`  
+> **Source Version**: `d5ca4c76`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:03:04.215Z  
+> **Timestamp**: 2026-10-20T22:58:14.258Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:03:04.207Z  
+> **Harvest Timestamp**: 2026-10-20T22:58:14.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1626,88 +1626,628 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d880a81` (2026-10-19)
-**Commit Message**: [MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925)
+### Incident Patch 1: `9e9bbdc2` (2026-10-20)
+**Commit Message**: [MOD-14594] Prevent integer overflow in geometry allocators (#11941)
 
-Reject zero-capacity legacy document tables
+* Throw bad_alloc on size overflow in geometry allocators
 
-**File**: `src/doc_table.c` (modified, +6/-0)
+Allocator<T>::allocate computed n * sizeof(T) unchecked, so a wrapped size
+would return an undersized block. It now throws std::bad_alloc when n exceeds
+SIZE_MAX / sizeof(T), per the standard allocator contract (failure throws,
+never returns null). allocate drops noexcept in all three allocators so the
+exception can propagate; tracked byte counts are untouched on failure.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Drop redundant comment on allocator overflow guard
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/geometry/allocator/allocator.hpp` (modified, +7/-2)
 ```diff
-@@ -459,6 +459,12 @@ int DocTable_LegacyRdbLoad(DocTable *t, RedisModuleIO *rdb, int encver) {
-     t->maxSize = MIN(RSGlobalConfig.maxDocTableSize, t->maxDocId);
-   }
+@@ -10,6 +10,8 @@
  
-+  if (t->size > 1 && t->maxSize == 0) {
-+    RedisModule_LogIOError(rdb, "warning",
-+                           "DocTable_LegacyRdbLoad: non-empty table has zero capacity");
-+    return REDISMODULE_ERR;
-+  }
-+
-   if (t->maxDocId > t->maxSize) {
-     /**
-      * If the maximum doc id is greater than the maximum cap size
-```
-
-**File**: `tests/cpptests/test_cpp_rdb.cpp` (modified, +42/-0)
-```diff
-@@ -1594,6 +1594,48 @@ TEST_F(RdbMockTest, testLegacyRealPayloadStillConsumed) {
-   }
+ #include "rmalloc.h"
+ #include <cstddef>
++#include <limits>
++#include <new>
+ 
+ namespace RediSearch {
+ namespace Allocator {
+@@ -21,7 +23,7 @@ struct Allocator {
+   template <class U>
+   explicit inline constexpr Allocator(Allocator<U> const&) noexcept;
+ 
+-  [[nodiscard]] static inline auto allocate(std::size_t n) noexcept -> value_type*;
++  [[nodiscard]] static inline auto allocate(std::size_t n) -> value_type*;
+   static inline void deallocate(value_type* p, std::size_t n) noexcept;
+ };
+ 
+@@ -31,7 +33,10 @@ inline constexpr Allocator<T>::Allocator(Allocator<U> const&) noexcept {
  }
  
-+TEST_F(RdbMockTest, testLegacyDocTableRejectsZeroCapacity) {
-+  for (int encver :
-+       {INDEX_MIN_COMPACTED_DOCTABLE_VERSION - 1, INDEX_MIN_COMPACTED_DOCTABLE_VERSION}) {
-+    for (bool empty : {false, true}) {
-+      SCOPED_TRACE(::testing::Message() << "encver=" << encver << " empty=" << empty);
-+      RedisModuleIO *io = RMCK_CreateRdbIO();
-+      ASSERT_NE(io, nullptr);
-+      DocTable table = NewDocTable(4, 4);
-+      RMCK_SaveUnsigned(io, empty ? 1 : 2);  // Size includes the unused document ID zero.
-+      // Older encodings derive capacity from maxDocId, so zero exercises that path too.
-+      RMCK_SaveUnsigned(io, !empty && encver >= INDEX_MIN_COMPACTED_DOCTABLE_VERSION ? 1 : 0);
-+      if (encver >= INDEX_MIN_COMPACTED_DOCTABLE_VERSION) {
-+        RMCK_SaveUnsigned(io, 0);
-+      }
-+      const size_t headerEnd = io->buffer.size();
-+      if (!empty) {
-+        RMCK_SaveStringBuffer(io, "doc", 3);
-+        if (encver >= INDEX_MIN_COMPACTED_DOCTABLE_VERSION) {
-+          RMCK_SaveUnsigned(io, 1);
-+        }
-+        RMCK_SaveUnsigned(io, Document_DefaultFlags);
-+        RMCK_SaveUnsigned(io, 1);
-+        RMCK_SaveUnsigned(io, 1);
-+        RMCK_SaveDouble(io, 0.5);
-+      }
-+      io->read_pos = 0;
-+      auto originalLoadFloat = RedisModule_LoadFloat;
-+      RedisModule_LoadFloat = [](RedisModuleIO *rdb) {
-+        return static_cast<float>(RMCK_LoadDouble(rdb));
-+      };
-+      int result = DocTable_LegacyRdbLoad(&table, io, encver);
-+      RedisModule_LoadFloat = originalLoadFloat;
-+      EXPECT_EQ(result, empty ? REDISMODULE_OK : REDISMODULE_ERR);
-+      EXPECT_EQ(io->read_pos, headerEnd);
-+      EXPECT_EQ(table.cap, 4);
-+      EXPECT_EQ(table.buckets[0].root, nullptr);
-+      DocTable_Free(&table);
-+      RMCK_FreeRdbIO(io);
+ template <class T>
+-inline auto Allocator<T>::allocate(std::size_t n) noexcept -> value_type* {
++inline auto Allocator<T>::allocate(std::size_t n) -> value_type* {
++  if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type)) {
++    throw std::bad_alloc{};
++  }
+   auto alloc_size = n * sizeof(value_type);
+   auto p = static_cast<value_type*>(rm_malloc(alloc_size));
+   return p;
+```
+
+**File**: `src/geometry/allocator/stateful_allocator.hpp` (modified, +2/-2)
+```diff
+@@ -27,7 +27,7 @@ struct StatefulAllocator {
+   template <class U>
+   explicit inline constexpr StatefulAllocator(StatefulAllocator<U> const&) noexcept;
+ 
+-  [[nodiscard]] inline auto allocate(std::size_t n) noexcept -> value_type*;
++  [[nodiscard]] inline auto allocate(std::size_t n) -> value_type*;
+   inline void deallocate(value_type* p, std::size_t n) noexcept;
+ 
+   [[nodiscard]] inline constexpr std::size_t report() const noexcept;
+@@ -39,7 +39,7 @@ inline constexpr StatefulAllocator<T>::StatefulAllocator(StatefulAllocator<U> co
+ }
+ 
+ template <class T>
+-inline auto StatefulAllocator<T>::allocate(std::size_t n) noexcept -> value_type* {
++inline auto StatefulAllocator<T>::allocate(std::size_t n) -> value_type* {
+   auto p = Allocator<T>::allocate(n);
+   if (p) {
+     allocated_ += n * sizeof(value_type);
+```
+
+**File**: `src/geometry/allocator/tracking_allocator.hpp` (modified, +2/-2)
+```diff
+@@ -27,7 +27,7 @@ struct TrackingAllocator {
+   template <class U>
+   explicit inline constexpr TrackingAllocator(TrackingAllocator<U> const& other) noexcept;
+ 
+-  [[nodiscard]] inline auto allocate(std::size_t n) noexcept -> value_type*;
++  [[nodiscard]] inline auto allocate(std::size_t n) -> value_type*;
+   inline void deallocate(value_type* p, std::size_t n) noexcept;
+ 
+   [[nodiscard]] inline constexpr std::size_t report() const noexcept;
+@@ -45,7 +45,7 @@ inline constexpr TrackingAllocator<T>::TrackingAllocator(TrackingAllocator<U> co
+ }
+ 
+ template <class T>
+-inline auto TrackingAllocator<T>::allocate(std::size_t n) noexcept -> value_type* {
++inline auto TrackingAllocator<T>::allocate(std::size_t n) -> value_type* {
+   auto p = Allocator<T>::allocate(n);
+   if (p) {
+     allocated_ += n * sizeof(value_type);
+```
+
+**File**: `tests/cpptests/test_cpp_geometry_allocator.cpp` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++/*
++ * Copyright (c) 2006-Present, Redis Ltd.
++ * All rights reserved.
++ *
++ * Licensed under your choice of the Redis Source Available License 2.0
++ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
++ * GNU Affero General Public License v3 (AGPLv3).
++ */
++
++#include "gtest/gtest.h"
++#include "redismock/redismock.h"
++
++#include "geometry/allocator/allocator.hpp"
++#include "geometry/allocator/stateful_allocator.hpp"
++#include "geometry/allocator/tracking_allocator.hpp"
++
++#include <cstdint>
++#include <limits>
++#include <new>
++
++using namespace RediSearch::Allocator;
++
++namespace {
++using Elem = std::uint64_t;
++// Smallest element count for which n * sizeof(Elem) overflows size_t.
++constexpr std::size_t kOverflowCount = std::numeric_limits<std::size_t>::max() / sizeof(Elem) + 1;
++}  // namespace
++
++TEST(GeometryAllocatorTest, OverflowThrows) {
++  EXPECT_THROW((void)Allocator<Elem>::allocate(kOverflowCount), std::bad_alloc);
++}
++
++TEST(GeometryAllocatorTest, StatefulOverflowThrowsAndKeepsCount) {
++  StatefulAllocator<Elem> alloc;
++  EXPECT_THROW((void)alloc.allocate(kOverflowCount), std::bad_alloc);
++  EXPECT_EQ(alloc.report(), 0u);
++}
++
++TEST(GeometryAllocatorTest, TrackingOverflowThrowsAndKeepsCount) {
++  std::size_t tracked = 0;
++  TrackingAllocator<Elem> alloc{tracked};
++  EXPECT_THROW((void)alloc.allocate(kOverflowCount), std::bad_alloc);
++  EXPECT_EQ(tracked, 0u);
++}
++
++TEST(GeometryAllocatorTest, NormalAllocationIsTracked) {
++  std::size_t tracked = 0;
++  TrackingAllocator<Elem> alloc{tracked};
++  Elem* p = alloc.allocate(4);
++  ASSERT_NE(p, nullptr);
++  EXPECT_EQ(tracked, 4 * sizeof(Elem));
++  alloc.deallocate(p, 4);
++  EXPECT_EQ(tracked, 0u);
++}
+```
+
+---
+
+### Incident Patch 2: `2bfde4a7` (2026-10-20)
+**Commit Message**: Fix suggestion and dictionary commands reading past input that ends in a truncated UTF-8 sequence (#11902)
+
+* Add a test that the rune decoders stay within the supplied length
+
+FT.SUGGET hands strToSingleCodepointFoldedRunes a Redis string's exact
+byte length, and FT.SUGADD/SUGDEL do the same with strToRunes. The test
+decodes "ab" plus a trailing 2-, 3- or 4-byte lead through each helper
+twice, once followed by zeros and once by the rest of U+1F600, and
+requires the same runes: a decoder that reads past the length sees the
+difference.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Keep the rune decoders within the supplied byte length
+
+nu_utf8_read sizes a sequence from its lead byte alone, and libnu's
+bounded-string loops only check the limit before each call. A prefix
+ending in 0xF0 makes FT.SUGGET's decoder read three bytes past the
+argument; Redis's terminator covers only the first of them.
+
+Decode a sequence that the end cuts short from a zero-padded copy, and
+use that reader in strToSingleCodepointFoldedRunes (FT.SUGGET), strToRunes
+(FT.SUGADD, FT.SUGDEL, dictionaries and indexed terms) and strToLowerRunes
+(FT.SPELLCHECK). The missing bytes read as 0, which is what th
+
+**File**: `src/trie/rune_util.c` (modified, +60/-34)
+```diff
+@@ -18,6 +18,22 @@
+ #include "libnu/strings.h"
+ #include "libnu/utf8.h"
+ 
++/* nu_utf8_read sizes a sequence from its lead byte alone and has no end bound,
++ * so a lead byte among the last three bytes makes it read past the buffer.
++ * Such a sequence is decoded from a zero-padded copy instead. The bytes past
++ * `end` read as 0, as the first of them does in a NUL-terminated string, so
++ * every sequence that fits decodes exactly as before. */
++static const char *utf8ReadBounded(const char *p, const char *end, uint32_t *codepoint) {
++  size_t avail = end - p;
++  if (avail >= 4) {
++    return nu_utf8_read(p, codepoint);
++  }
++  char padded[4] = {0};
++  memcpy(padded, p, avail);
++  size_t consumed = nu_utf8_read(padded, codepoint) - padded;
++  return consumed < avail ? p + consumed : end;
++}
++
+ static uint32_t __fold(uint32_t runelike) {
+   uint32_t lowered = 0;
+   const char *map = 0;
+@@ -66,60 +82,70 @@ char *runesToStr(const rune *in, size_t len, size_t *utflen) {
+   return ret;
+ }
+ 
+-rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len) {
++/* Lowers `str` up to its first decoded NUL, writing at most `cap` runes to
++ * `out`, and returns the lowered length. Once that length exceeds
++ * MAX_RUNE_STR_LEN it stops early and returns a value above the limit, so a
++ * caller that rejects such strings never walks the rest. Sizing and filling
++ * both go through here so the buffer always fits what is written to it. */
++static size_t lowerRunes(const char *str, const char *end, rune *out, size_t cap) {
++  size_t n = 0;
++  for (const char *p = str; p < end && n <= MAX_RUNE_STR_LEN;) {
++    uint32_t codepoint;
++    p = utf8ReadBounded(p, end, &codepoint);
++    if (codepoint == 0) {
++      break;
++    }
++    const char *map = nu_tolower(codepoint);
++    if (map == NULL) {
++      if (n < cap) out[n] = codepoint;
++      n++;
++      continue;
++    }
++    uint32_t mu;
++    while ((map = nu_casemap_read(map, &mu)), mu != 0) {
++      if (n < cap) out[n] = mu;
++      n++;
++    }
++  }
++  return n;
++}
+ 
+-  // determine the length of the folded string
+-  ssize_t rlen = nu_strtransformnlen(str, utf8_len, nu_utf8_read,
+-                                     nu_tolower, nu_casemap_read);
++rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len) {
++  const char *end = str + utf8_len;
++  size_t rlen = lowerRunes(str, end, NULL, 0);
+   if (rlen > MAX_RUNE_STR_LEN) {
+     *unicode_len = 0;
+     return NULL;
+   }
+ 
+   rune *ret = rm_calloc(rlen + 1, sizeof(rune));
+-  const char *encoded_char = str;
+-  uint32_t codepoint;
+-  unsigned i = 0;
+-  while (encoded_char < str + utf8_len) {
+-    // Read unicode codepoint from utf8 string
+-    encoded_char = nu_utf8_read(encoded_char, &codepoint);
+-    // Transform unicode codepoint to lower case
+-    const char *map = nu_tolower(codepoint);
+-
+-    // Read the transformed codepoint and store it in the unicode buffer
+-    if (map != NULL) {
+-      uint32_t mu;
+-      while (1) {
+-        map = nu_casemap_read(map, &mu);
+-        if (mu == 0) {
+-          break;
+-        }
+-        ret[i++] = mu;
+-      }
+-    } else {
+-        ret[i++] = codepoint;
+-    }
+-  }
++  lowerRunes(str, end, ret, rlen);
+   *unicode_len = rlen;
+ 
+   return ret;
+ }
+ 
+ rune *strToSingleCodepointFoldedRunes(const char *str, size_t utf8_len, size_t *len) {
+ 
+-  ssize_t rlen = nu_strnlen(str, utf8_len, nu_utf8_read);
++  const char *end = str + utf8_len;
++  ssize_t rlen = 0;
++  for (const char *p = str; p < end; rlen++) {
++    uint32_t codepoint;
++    p = utf8ReadBounded(p, end, &codepoint);
++    if (codepoint == 0) {
++      break;
++    }
++  }
+   if (rlen > MAX_RUNE_STR_LEN) {
+     if (len) *len = 0;
+     return NULL;
+   }
+ 
+-  uint32_t decoded[rlen + 1];
+-  decoded[rlen] = 0;
+-  nu_readnstr(str, utf8_len, decoded, nu_utf8_read);
+-
+   rune *ret = rm_calloc(rlen + 1, sizeof(rune));
++  const char *p = str;
+   for (int i = 0; i < rlen; i++) {
+-    uint32_t runelike = decoded[i];
++    uint32_t runelike;
++    p = utf8ReadBounded(p, end, &runelike);
+     ret[i] = (rune)__fold(runelike);
+   }
+   if (len) *len = rlen;
+@@ -132,7 +158,7 @@ size_t strToRunes(const char *src, size_t slen, rune *out, size_t outcap) {
+   size_t nout = 0;
+   while (src < end) {
+     uint32_t cp;
+-    src = nu_utf8_read(src, &cp);
++    src = utf8ReadBounded(src, end, &cp);
+     if (cp == 0) {
+       break;
+     }
+```
+
+**File**: `src/trie/rune_util.h` (modified, +9/-4)
+```diff
+@@ -55,11 +55,15 @@ char *runesToStr(const rune *in, size_t len, size_t *utflen);
+ 
+ /* This function reads a UTF-8 encoded string, transforms it to lowercase,
+  * and returns a dynamically allocated array of runes (32-bit integers).
++ * Decoding stops early at an embedded NUL. Returns NULL for a result longer
++ * than MAX_RUNE_STR_LEN runes.
+  * Parameters:
+- * - str: The input UTF-8 encoded string.
+- * - utf8_len: The length of the input string in bytes.
++ * - str: The input UTF-8 encoded buffer (need not be NUL-terminated; nothing
++ *   past `utf8_len` bytes is read).
++ * - utf8_len: The length of the input buffer in bytes.
+  * - unicode_len: A pointer to a size_t variable where the length of the
+- *   resulting array of runes will be stored. Must be non-NULL.
++ *   resulting array of runes will be stored. Must be non-NULL; it is set to 0
++ *   when NULL is returned.
+  */
+ rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len);
+ 
+@@ -74,7 +78,8 @@ rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len);
+ rune *strToSingleCodepointFoldedRunes(const char *str, size_t utf8_len, size_t *len);
+ 
+ /* Decode `slen` bytes of UTF-8 from `src` into the caller-supplied `out`,
+- * writing at most `outcap` runes and never NUL-terminating. Decoding stops
++ * writing at most `outcap` runes and never NUL-terminating. `src` need not be
++ * NUL-terminated; nothing past `slen` bytes is read. Decoding stops
+  * early at an embedded NUL. Returns the input's full rune count, which exceeds
+  * `outcap` when the output was truncated. */
+ size_t strToRunes(const char *src, size_t slen, rune *out, size_t outcap);
+```
+
+**File**: `tests/cpptests/test_cpp_trie.cpp` (modified, +90/-0)
+```diff
+@@ -27,8 +27,12 @@
+ #include <set>
+ #include <vector>
+ #include <algorithm>
++#include <utility>
+ #include <climits>
+ 
++#include <sys/mman.h>
++#include <unistd.h>
++
+ class TrieTest : public ::testing::Test {};
+ 
+ static bool trieInsert(Trie *t, const char *s, size_t n) {
+@@ -1423,6 +1427,92 @@ TEST_F(TrieTest, testSearchTrimDropsTail) {
+   TrieType_Free(t);
+ }
+ 
++// FT.SUGGET hands strToSingleCodepointFoldedRunes a Redis string's exact byte
++// length, and FT.SUGADD/SUGDEL do the same with strToRunes. A multi-byte lead
++// byte at the end must not make a decoder read past that length, so the result
++// cannot depend on the bytes that follow it.
++TEST_F(TrieTest, testRuneDecodeStaysWithinLength) {
++  typedef std::vector<rune> (*Decoder)(const char *, size_t);
++  const std::pair<const char *, Decoder> decoders[] = {
++      {"strToSingleCodepointFoldedRunes",
++       [](const char *s, size_t n) {
++         size_t rlen = 0;
++         rune *r = strToSingleCodepointFoldedRunes(s, n, &rlen);
++         std::vector<rune> out(r, r + rlen);
++         rm_free(r);
++         return out;
++       }},
++      {"strToRunes",
++       [](const char *s, size_t n) {
++         std::vector<rune> out(n);
++         out.resize(std::min(strToRunes(s, n, out.data(), n), n));
++         return out;
++       }},
++      {"strToLowerRunes",
++       [](const char *s, size_t n) {
++         size_t rlen = 0;
++         rune *r = strToLowerRunes(s, n, &rlen);
++         std::vector<rune> out(r, r + rlen);
++         rm_free(r);
++         return out;
++       }},
++  };
++
++  // The leads of a 2-, 3- and 4-byte sequence, each cut off after "ab".
++  for (char lead : {'\xC3', '\xE4', '\xF0'}) {
++    const std::string input = std::string("ab") + lead;
++    // The same input followed by zeros, or by the rest of U+1F600.
++    const std::string zeroed = input + std::string(3, '\0');
++    const std::string continued = input + "\x9F\x98\x80";
++    for (const auto &[name, decode] : decoders) {
++      EXPECT_EQ(decode(zeroed.data(), input.size()), decode(continued.data(), input.size()))
++          << name << " read past the supplied length (trailing lead byte 0x" << std::hex
++          << (int)(unsigned char)lead << ")";
 +    }
 +  }
 +}
 +
- TEST_F(RdbMockTest, testLegacyDocTableReservesPayloadSlot) {
-   RedisModuleIO *io = RMCK_CreateRdbIO();
-   ASSERT_NE(io, nullptr);
++// Lowering ends at the first decoded NUL, whether a literal 0 byte or an
++// overlong encoding of one.
++TEST_F(TrieTest, testLowerRunesStopsAtNul) {
++  const std::pair<std::string, std::vector<rune>> cases[] = {
++      {std::string("\0AB", 3), {}},
++      {std::string("a\0BCD", 5), {'a'}},
++      {std::string("Ab\xC0\x80") + "CD", {'a', 'b'}},
++  };
++  for (const auto &[input, expected] : cases) {
++    size_t rlen = 0;
++    rune *r = strToLowerRunes(input.data(), input.size(), &rlen);
++    ASSERT_TRUE(r != nullptr);
++    EXPECT_EQ(expected, std::vector<rune>(r, r + rlen)) << "input size " << input.size();
++    EXPECT_EQ(0, r[rlen]) << "input size " << input.size();
++    rm_free(r);
++  }
++}
++
++// A string longer than MAX_RUNE_STR_LEN runes is rejected without being walked
++// to its end. The bytes past the limit sit in an inaccessible page, so reading
++// them faults.
++TEST_F(TrieTest, testLowerRunesStopsCountingPastLimit) {
++  const long pageSize = sysconf(_SC_PAGESIZE);
++  ASSERT_GT(pageSize, 0);
++  const size_t page = pageSize;
++  const size_t n = MAX_RUNE_STR_LEN + 1;
++  const size_t region = ((n + page - 1) / page + 1) * page;
++  char *base =
++      (char *)mmap(nullptr, region, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++  ASSERT_NE(MAP_FAILED, (void *)base);
++  char *guard = base + region - page;
++  ASSERT_EQ(0, mprotect(guard, page, PROT_NONE));
++  char *str = guard - n;
++  memset(str, 'a', n);
++
++  size_t rlen = 1;
++  EXPECT_EQ(nullptr, strToLowerRunes(str, n + page, &rlen));
++  EXPECT_EQ(0, rlen);
++  munmap(base, region);
++}
++
+ namespace {
+ // Big enough for every allocation a search over a two-entry trie writes to.
+ constexpr size_t kServedAllocBytes = 64 * 1024;
+```
+
+---
+
+### Incident Patch 3: `359a32a8` (2026-10-20)
+**Commit Message**: [MOD-19639] Prevent crashes from unsupported RDB index storage flags (#11944)
+
+Reject numeric storage flags in persisted index specifications
+
+**File**: `src/spec.c` (modified, +9/-0)
+```diff
+@@ -3366,6 +3366,10 @@ IndexSpec *IndexSpec_RdbLoad(RedisModuleIO *rdb, int encver, bool useSst, QueryE
+   RedisModule_Free(rawName);
+ 
+   flags = (IndexFlags)LoadUnsigned_IOError(rdb, goto cleanup_name);
++  if (flags & Index_StoreNumeric) {
++    QueryError_SetError(status, QUERY_ERROR_CODE_PARSE_ARGS, "Invalid index storage flags");
++    goto cleanup_name;
++  }
+   if (encver < INDEX_MIN_NOFREQ_VERSION) {
+     flags |= Index_StoreFreqs;
+   }
+@@ -3598,6 +3602,11 @@ void *IndexSpec_LegacyRdbLoad(RedisModuleIO *rdb, int encver) {
+   sp->obfuscatedName = IndexSpec_FormatObfuscatedName(sp->specName);
+   RedisModule_Free(legacyName);
+   sp->flags = (IndexFlags)RedisModule_LoadUnsigned(rdb);
++  if (sp->flags & Index_StoreNumeric) {
++    RedisModule_LogIOError(rdb, "warning", "RDB Load: Invalid index storage flags");
++    StrongRef_Release(spec_ref);
++    return NULL;
++  }
+   if (encver < INDEX_MIN_NOFREQ_VERSION) {
+     sp->flags |= Index_StoreFreqs;
+   }
+```
+
+**File**: `tests/cpptests/test_cpp_rdb.cpp` (modified, +95/-0)
+```diff
+@@ -9,6 +9,9 @@
+ 
+ #include "gtest/gtest.h"
+ #include "gtest/internal/gtest-port.h"  // For CaptureStderr/GetCapturedStderr
++extern "C" {
++#include "util/dict.h"
++}
+ #include "common.h"
+ #include "redismock/redismock.h"
+ #include "synonym_map.h"
+@@ -24,6 +27,7 @@ extern "C" {
+ #include "spec.h"
+ #include "vector_index.h"
+ #include "indexes.h"
++#include "indexer.h"
+ #include "query_error_ffi.h"
+ #include "rules.h"
+ #include "alias.h"
+@@ -38,6 +42,7 @@ extern "C" {
+ extern int Indexes_RdbLoad(RedisModuleIO *rdb, int encver, int when);
+ extern void Spec_AddToDict(RefManager *rm);  // Helper to add spec to global dict
+ extern RedisSearchDiskAPI *disk;
++extern dict *legacySpecDict;
+ }
+ 
+ 
+@@ -283,6 +288,96 @@ TEST_F(RdbMockTest, testIndexSpecRdbLoadNormalizesInvalidStorageFlags) {
+     EXPECT_FALSE(loadedSpec->flags & Index_StoreFieldFlags);
+ }
+ 
++TEST_F(RdbMockTest, testIndexSpecRdbLoadRejectsNumericStorageFlag) {
++  const char *args[] = {"SCHEMA", "title", "TEXT", "price", "NUMERIC"};
++  QueryError status = QueryError_Default();
++  StrongRef originalRef =
++      IndexSpec_ParseC(nullptr, "storage_flags", args, std::size(args), &status);
++  ASSERT_FALSE(QueryError_HasError(&status)) << QueryError_GetUserError(&status);
++  auto *original = static_cast<IndexSpec *>(StrongRef_Get(originalRef));
++  ASSERT_NE(original, nullptr);
++  std::unique_ptr<IndexSpec, std::function<void(IndexSpec *)>> originalPtr(
++      original, [](IndexSpec *spec) { Indexes_RemoveSpecFromGlobals(spec->own_ref, false); });
++
++  // Numeric fields are valid; only a numeric encoding on the whole spec is unsupported.
++  for (unsigned storage = 0; storage < 8; ++storage) {
++    const uint64_t flags = Index_StoreByteOffsets | ((storage & 1) ? Index_StoreTermOffsets : 0) |
++                           ((storage & 2) ? Index_StoreFieldFlags : 0) |
++                           ((storage & 4) ? Index_StoreFreqs : 0);
++    for (bool numericStorage : {false, true}) {
++      SCOPED_TRACE(::testing::Message() << "flags=" << flags << " numeric=" << numericStorage);
++      original->flags = static_cast<IndexFlags>(flags | (numericStorage ? Index_StoreNumeric : 0));
++      std::unique_ptr<RedisModuleIO, decltype(&RMCK_FreeRdbIO)> io(RMCK_CreateRdbIO(),
++                                                                   RMCK_FreeRdbIO);
++      IndexSpec_RdbSave(io.get(), original, 0);
++      ASSERT_EQ(RMCK_IsIOError(io.get()), 0);
++      io->read_pos = 0;
++      char *name = RMCK_LoadStringBuffer(io.get(), nullptr);
++      rm_free(name);
++      RMCK_LoadUnsigned(io.get());
++      const size_t flagsEnd = io->read_pos;
++      io->read_pos = 0;
++
++      IndexSpec *loaded = IndexSpec_RdbLoad(io.get(), INDEX_CURRENT_VERSION, false, &status);
++      if (numericStorage) {
++        EXPECT_EQ(loaded, nullptr);
++        EXPECT_TRUE(QueryError_HasError(&status));
++        EXPECT_EQ(io->read_pos, flagsEnd);
++      } else {
++        ASSERT_NE(loaded, nullptr) << QueryError_GetUserError(&status);
++        EXPECT_FALSE(QueryError_HasError(&status));
++        EXPECT_EQ(loaded->flags, flags);
++        EXPECT_EQ(loaded->numFields, 2);
++        EXPECT_EQ(loaded->fields[1].types, INDEXFLD_T_NUMERIC);
++        EXPECT_EQ(io->read_pos, io->buffer.size());
++      }
++      if (loaded) {
++        IndexSpec_RdbLoadDiscard(loaded->own_ref);
++      }
++      EXPECT_EQ(RMCK_IsIOError(io.get()), 0);
++      QueryError_ClearError(&status);
++    }
++  }
++}
++
++TEST_F(RdbMockTest, testLegacyIndexSpecRdbLoadRejectsNumericStorageFlag) {
++  const auto originalGetKeyName = RedisModule_GetKeyNameFromIO;
++  const bool originalLoading = g_isLoading;
++  dict *originalRules = legacySpecRules;
++  dict *originalSpecs = legacySpecDict;
++  RedisModule_GetKeyNameFromIO = [](RedisModuleIO *) -> const RedisModuleString * {
++    return nullptr;
++  };
++  g_isLoading = true;
++  legacySpecRules = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
++  legacySpecDict = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
++
++  for (int encver = LEGACY_INDEX_MIN_VERSION; encver <= LEGACY_INDEX_MAX_VERSION; ++encver) {
++    for (bool numericStorage : {false, true}) {
++      SCOPED_TRACE(::testing::Message() << "encver=" << encver << " numeric=" << numericStorage);
++      std::unique_ptr<RedisModuleIO, decltype(&RMCK_FreeRdbIO)> io(RMCK_CreateRdbIO(),
++                                                                   RMCK_FreeRdbIO);
++      RMCK_SaveStringBuffer(io.get(), "legacy_storage_flags", sizeof("legacy_storage_flags"));
++      RMCK_SaveUnsigned(io.get(), INDEX_DEFAULT_FLAGS | (numericStorage ? Index_StoreNumeric : 0));
++      const size_t flagsEnd = io->buffer.size();
++      // A later, distinct validation failure keeps the control safe on unfixed code and proves
++      // valid storage flags reach the schema, while numeric storage must stop before it.
++      RMCK_SaveUnsigned(io.get(), SPEC_MAX_FIELDS + 1);
++
++      EXPECT_EQ(IndexSpec_LegacyRdbLoad(io.get(), encver), nullptr);
++      EXPECT_EQ(io->read_pos, numericStor
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11926** (2026-10-19): [8.8-rse] [MOD-19928] Open every staged spec exactly once at SST load end (@redisearch-backport-pull-request[bot])
-- **PR #11925** (2026-10-19): [MOD-19638] Prevent crashes when loading malformed legacy indexes (@GuyAv46)
-- **PR #11924** (2026-10-19): [MOD-19632] Reject unsafe vector dimensions (@GuyAv46)
-- **PR #11922** (2026-10-19): [MOD-19928] Open every staged spec exactly once at SST load end (@GuyAv46)
-- **PR #11916** (2026-10-19): [8.8-rse] [MOD-19838] Fix growing num_docs and missing results on Flex after a full sync or hot restart (@redisearch-backport-pull-request[bot])
-- **PR #11915** (2026-10-19): [MOD-18989] Make search-min-maintenance-workers a module config only (@kei-nan)
+- **PR #11948** (closed): [MOD-19994] Keep C++ exceptions from escaping the geometry C API (@ofiryanai)
+- **PR #11946** (2026-10-20): [MOD-20014] clear docIDmetadata on restore commands on disk (@JoanFM)
+- **PR #11944** (2026-10-20): [MOD-19639] Prevent crashes from unsupported RDB index storage flags (@dor-forer)
+- **PR #11942** (closed): add tests to see how doc ID meta behaves under dump restore (@JoanFM)
+- **PR #11941** (2026-10-20): [MOD-14594] Prevent integer overflow in geometry allocators (@ofiryanai)
+- **PR #11939** (2026-10-20): [MOD-19840] Fix flaky test_hybrid_knn_implicit_filter_matches_wildcard (@Itzikvaknin)
 
 ---
 
@@ -1727,33 +2267,35 @@ Reject zero-capacity legacy document tables
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925)
+## X. [MOD-14594] Prevent integer overflow in geometry allocators (#11941)
 
 **RULE**:
-When implementing operations in `src/doc_table.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/geometry/allocator/allocator.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d880a81`: [MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e9bbdc2`: [MOD-14594] Prevent integer overflow in geometry allocators (#11941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/doc_table.c`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/geometry/allocator/allocator.hpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  if (t->size > 1 && t->maxSize == 0) {
-    RedisModule_LogIOError(rdb, "warning",
-                           "DocTable_LegacyRdbLoad: non-empty table has zero capacity");
-    return REDISMODULE_ERR;
+#include <limits>
+#include <new>
+  [[nodiscard]] static inline auto allocate(std::size_t n) -> value_type*;
+inline auto Allocator<T>::allocate(std::size_t n) -> value_type* {
+  if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type)) {
+    throw std::bad_alloc{};
   }
-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  [[nodiscard]] static inline auto allocate(std::size_t n) noexcept -> value_type*;
+inline auto Allocator<T>::allocate(std::size_t n) noexcept -> value_type* {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d880a81` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e9bbdc2` are properly handled with clean fallback behavior.

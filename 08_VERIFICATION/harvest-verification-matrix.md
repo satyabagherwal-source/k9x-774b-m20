@@ -4076,3 +4076,5 @@
 | `CYCLE-20261020-2L7U` | `2026-10-20T22:51:44.490Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3420` | Yes (`457fe2ba...`) |
 | `CYCLE-20261020-2UQA` | `2026-10-20T22:51:56.818Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3421` | Yes (`169137a0...`) |
 | `CYCLE-20261020-2WR4` | `2026-10-20T22:51:59.440Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3422, Rule 3423, Rule 3424` | Yes (`9dcf5063...`) |
+| `CYCLE-20261020-AMUU` | `2026-10-20T22:57:59.862Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`d0788052...`) |
+| `CYCLE-20261020-AY6H` | `2026-10-20T22:58:14.537Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3425` | Yes (`837cdfb3...`) |

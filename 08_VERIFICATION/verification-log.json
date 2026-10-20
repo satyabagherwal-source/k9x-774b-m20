@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-AL7B",
-    "timestamp": "2026-10-20T00:06:16.535Z",
-    "repository": "jasonjmcghee/rem",
-    "learningId": "learn-github-jasonjmcghee-rem",
-    "contentHash": "835614dce0ec57b36e86552f13bcac6c48a222e818d68e9eda632041c083cdba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-IWKL",
-    "timestamp": "2026-10-20T00:12:44.517Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "f3ab91fd9bc4f96a8e59135e6cb678f220dba6dd263c1a0d933c824e32b3118f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-IWUZ",
     "timestamp": "2026-10-20T00:12:44.891Z",
     "repository": "psf/requests",
@@ -7492,6 +7462,36 @@
     "contentHash": "9dcf5063e2a86b6e05c831a10a02dbab1a33b99dc1088236dc3b1360588ef090",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-AMUU",
+    "timestamp": "2026-10-20T22:57:59.862Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-AY6H",
+    "timestamp": "2026-10-20T22:58:14.537Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

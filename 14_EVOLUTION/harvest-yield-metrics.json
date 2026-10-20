@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T22:51:59.449Z",
-  "total_cycles_completed": 4053,
-  "total_learnings_persisted": 4053,
-  "total_rules_promoted": 3255,
+  "last_updated": "2026-10-20T22:58:14.547Z",
+  "total_cycles_completed": 4055,
+  "total_learnings_persisted": 4055,
+  "total_rules_promoted": 3256,
   "history": [
-    {
-      "timestamp": "2026-10-20T15:50:12.219Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T15:56:25.690Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T15:56:30.368Z",
       "repository": "react/metro",
@@ -1403,6 +1389,20 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:57:59.868Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T22:58:14.547Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

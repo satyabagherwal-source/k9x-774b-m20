@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T22:51:59.452Z",
+  "last_updated": "2026-10-20T22:58:14.551Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1055,14 +1055,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "content_hash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
-      "verified_at": "2026-10-19T09:54:44.319Z",
+      "content_hash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
+      "verified_at": "2026-10-20T22:57:59.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:54:44.319Z"
+      "last_updated": "2026-10-20T22:57:59.871Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "a3106678083498c9358f4f2ef88afc99430444144267123ce3234c6c28b1feda",
-      "verified_at": "2026-10-19T18:03:04.490Z",
+      "content_hash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
+      "verified_at": "2026-10-20T22:58:14.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:03:04.490Z"
+      "last_updated": "2026-10-20T22:58:14.550Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

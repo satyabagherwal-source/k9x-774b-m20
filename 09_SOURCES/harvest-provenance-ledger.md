@@ -4083,3 +4083,5 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `ba84b33d` | Multi-dimensional audit evidence | 2026-10-20T22:51:44.496Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `90540b38` | Multi-dimensional audit evidence | 2026-10-20T22:51:56.824Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-20T22:51:59.446Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-20T22:57:59.865Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `d5ca4c76` | Multi-dimensional audit evidence | 2026-10-20T22:58:14.543Z |

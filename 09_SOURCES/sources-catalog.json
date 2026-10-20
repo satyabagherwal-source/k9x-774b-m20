@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
-    "lastHarvestedAt": "2026-10-19T09:54:44.313Z",
+    "contentHash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
+    "lastHarvestedAt": "2026-10-20T22:57:59.865Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "365cb0e4",
+    "sourceVersion": "d5ca4c76",
     "license": "NOASSERTION",
-    "contentHash": "a3106678083498c9358f4f2ef88afc99430444144267123ce3234c6c28b1feda",
-    "lastHarvestedAt": "2026-10-19T18:03:04.483Z",
+    "contentHash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
+    "lastHarvestedAt": "2026-10-20T22:58:14.543Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {

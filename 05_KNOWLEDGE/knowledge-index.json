@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T22:51:59.410Z",
+  "last_updated": "2026-10-20T22:58:14.477Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21260,7 +21260,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "21b756bcdc2b83ef7e6b6383ee10469eb9578d3558271534a0b6774afaf609d1",
+      "content_hash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "promoted_rules": [
@@ -21334,7 +21334,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
       ],
-      "verified_at": "2026-10-19T09:54:44.233Z",
+      "verified_at": "2026-10-20T22:57:59.815Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39303,8 +39303,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "365cb0e4",
-      "content_hash": "a3106678083498c9358f4f2ef88afc99430444144267123ce3234c6c28b1feda",
+      "source_version": "d5ca4c76",
+      "content_hash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -39317,6 +39317,11 @@
           "number": 2724,
           "title": "[MOD-19638] Prevent crashes when loading malformed legacy indexes (#11925)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3425,
+          "title": "[MOD-14594] Prevent integer overflow in geometry allocators (#11941)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39324,7 +39329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:03:04.427Z",
+      "verified_at": "2026-10-20T22:58:14.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -105624,6 +105629,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T22:51:59.403Z"
+    },
+    "rule-3425": {
+      "learning_id": "rule-3425",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3425,
+      "title": "[MOD-14594] Prevent integer overflow in geometry allocators (#11941)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "d5ca4c76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T22:58:14.468Z"
     }
   },
   "aliases": {
