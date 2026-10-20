@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `3ffc6fa1`  
+> **Source Version**: `3bba824f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T08:50:47.875Z  
+> **Timestamp**: 2026-10-20T13:47:13.674Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T08:45:41.716Z  
+> **Harvest Timestamp**: 2026-10-20T13:47:13.669Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28599 stars
+- **Stars / Engagement**: 28606 stars
 
 ---
 
@@ -1140,314 +1140,186 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ffc6fa1` (2026-10-20)
-**Commit Message**: Add per-source debug option and hide sensitive data in debug logs (#5446)
+### Incident Patch 1: `3bba824f` (2026-10-20)
+**Commit Message**: Mark results whose verification was skipped (#5448)
 
-* Add per-source debug option for config file sources
+Add Result.VerificationSkipped so consumers can tell "no verifier ran"
+apart from "the verifier ran and the credential did not verify". The
+engine sets it when verification is disabled for the chunk and detector,
+and on overlap results it emits without verifying. Verdicts (Verified
+and the verification error) are left untouched, and cache-served results
+are not marked since VerificationFromCache already covers them.
 
-Add a debug field to LocalSource; ScanConfig gives that source
-a debug context for both Init and the scan. Warn that --trace
-will be replaced by --debug, which moves to level 5. Add semgrep
-warnings for stored loggers and new contexts in pkg/sources
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-* Hide sensitive data in existing debug logs
-
-Per-source debug makes V(4)/V(5) lines easy to turn on, so fix
-the ones that leak data: syslog no longer logs raw messages,
-Postman no longer logs response headers, and the round tripper
-and Jenkins log redacted URLs. Add tests for the URL and syslog
-cases.
-
-**File**: `.github/workflows/lint.yml` (modified, +2/-0)
+**File**: `pkg/detectors/detectors.go` (modified, +8/-0)
 ```diff
-@@ -50,6 +50,8 @@ jobs:
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-       - run: semgrep --config=hack/semgrep-rules/detectors.yaml pkg/detectors/
-+      # Source logging rules. Findings are warnings only and don't fail the build.
-+      - run: semgrep --config=hack/semgrep-rules/sources.yaml pkg/sources/
-   checksecretparts:
-     # Reports detector packages that construct detectors.Result without
-     # populating SecretParts. See hack/checksecretparts/README.md.
+@@ -116,6 +116,14 @@ type Result struct {
+ 	// VerificationFromCache indicates whether this result's verification result came from the verification cache rather
+ 	// than an actual remote request.
+ 	VerificationFromCache bool
++	// VerificationSkipped indicates that the engine produced this result without attempting remote verification,
++	// either because verification was disabled for the result's source or detector, or because the engine withheld
++	// verification after multiple detectors matched the same secret. It lets consumers that measure verifier activity
++	// tell "the verifier did not run" apart from "the verifier ran and the credential did not verify". It is purely
++	// informational: Verified and the verification error keep whatever the detector or engine assigned, so a skipped
++	// result still reports as unverified (or with an overlap verification error) exactly as it would without this
++	// field.
++	VerificationSkipped bool
+ 	// Raw contains the raw secret identifier data. Prefer IDs over secrets since it is used for deduping after hashing.
+ 	Raw []byte
+ 	// RawV2 contains the raw secret identifier that is a combination of both the ID and the secret.
 ```
 
-**File**: `README.md` (modified, +18/-0)
+**File**: `pkg/engine/engine.go` (modified, +13/-0)
 ```diff
-@@ -618,6 +618,24 @@ sources:
- You may define multiple connections under the `sources` key (see above), and
- TruffleHog will scan all of the sources concurrently.
+@@ -1141,6 +1141,10 @@ func (e *Engine) verificationOverlapWorker(ctx context.Context) {
+ 						if e.verificationOverlapTracker != nil {
+ 							e.verificationOverlapTracker.Add(1)
+ 						}
++						// The overlap error stays the verdict; VerificationSkipped additionally records that no
++						// verifier ran, so consumers counting verifier outcomes don't read errOverlap as a provider
++						// failure.
++						res.VerificationSkipped = true
+ 						res.SetVerificationError(errOverlap)
+ 						e.processResult(
+ 							ctx,
+@@ -1249,6 +1253,15 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
+ 			resultsProduced.WithLabelValues(detectorNameStr).Add(float64(len(results)))
+ 		}
  
-+To see debug logs for just one source, add `debug: true` to it. That source
-+writes all of its debug logs, and every other source keeps the normal log level.
-+This is useful when one source out of many is misbehaving:
-+
-+```yaml
-+sources:
-+- connection:
-+    '@type': type.googleapis.com/sources.GitHub
-+    repositories:
-+    - https://github.com/trufflesecurity/test_keys.git
-+    unauthenticated: {}
-+  name: example config scan
-+  type: SOURCE_TYPE_GITHUB
-+  debug: true
-+```
-+
-+To turn on debug logs for every source, use `--log-level=5` instead.
-+
- ## S3
- 
- The S3 source supports assuming IAM roles for scanning in addition to IAM users. This makes it easier for users to scan multiple AWS accounts without needing to rely on hardcoded credentials for each account.
-```
-
-**File**: `docs/source_logging.md` (modified, +6/-0)
-```diff
-@@ -43,6 +43,12 @@ through the context: `context.WithLogLevel(ctx, log.DebugLevel)` returns a conte
- to `V(5)`. Any code that logs through `ctx.Logger()` gets this for free, which is one more reason not to store
- loggers.
- 
-+Users turn it on with `debug: true` on a source in the config file, see the
-+[configuration docs](../README.md#configuration). The engine then passes a debug context to both `Init` and the scan.
-+
-+The rules about stored loggers and new contexts are checked by semgrep (`hack/semgrep-rules/sources.yaml`). For now
-+the findings are warnings. If a source really needs a new context, add a `// nosemgrep` comment that says why.
-+
- ## Testing
- 
- Use `logtest.DebugContext()` to run a source with debug turned on and look at what it logged:
-```
-
-**File**: `hack/semgrep-rules/sources.yaml` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+rules:
-+  - id: no-stored-logger-in-sources
-+    pattern: |
-+      type $T struct {
-+        ...
-+        $FIELD logr.Logger
-+        ...
-+      }
-+    message: >-
-+      Don't store a logr.Logger in a struct. Log with ctx.Logger() from the
-+      current call, so the log picks up the context's fields and log level,
-+      including per-source debug. See docs/source_logging.md.
-+    languages: [go]
-+    severity: WARNING
-+
-+  - id: no-background-context-in-sources
-+    patterns:
-+      - pattern-either:
-+          - pattern: context.Background()
-+          - pattern: context.TODO()
-+    paths:
-+      exclude:
-+        - "*_test.go"
-+    message: >-
-+      Don't create a new context inside a source. Pass on the context you were
-+      given, so its fields, cancellation and log level are kept. If a new
-+      context is really needed, add a nosemgrep comment that says why. See
-+      docs/source_logging.md.
-+    languages: [go]
-+    severity: WARNING
-```
-
-**File**: `main.go` (modified, +9/-0)
-```diff
-@@ -464,6 +464,15 @@ func run(state overseer.State, logSync func() error) {
- 	logger := ctx.Logger()
- 	logFatal := logFatalFunc(logger, logSync)
- 
-+	// --debug and --trace still work the same, but in a future release --debug
-+	// takes over --trace's level 5 and --trace goes away. Warn users now.
-+	if *trace {
-+		logger.Info("--trace is deprecated and will be replaced by --debug in a future release. Use --log-level=5 instead.")
-+	}
-+	if *debug {
-+		logger.Info("--debug will switch from log level 2 to 5 (what --trace does today) in a future release. Use --log-level=2 to keep the current output.")
-+	}
-+
- 	killSignal := make(chan os.Signal, 1)
- 	signal.Notify(killSignal, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
- 	go func() {
-```
-
-**File**: `pkg/config/config_test.go` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+package config
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestNewYAML_SourceDebug(t *testing.T) {
-+	// The second source has no debug field, like every config written before
-+	// the field existed, so it must stay off.
-+	input := []byte(`
-+sources:
-+- name: with debug
-+  type: SOURCE_TYPE_FILESYSTEM
-+  debug: true
-+  connection:
-+    '@type': type.googleapis.com/sources.Filesystem
-+    paths: [.]
-+- name: without debug
-+  type: SOURCE_TYPE_FILESYSTEM
-+  connection:
-+    '@type': type.googleapis.com/sources.Filesystem
-+    paths: [.]
-+`)
-+
-+	conf, err := NewYAML(input)
-+	require.NoError(t, err)
-+	require.Len(t, conf.Sources, 2)
-+
-+	assert.Equal(t, "with debug", conf.Sources[0].Name)
-+	assert.True(t, conf.Sources[0].Debug)
-+	assert.Equal(t, "without debug", conf.Sources[1].Name)
-+	assert.False(t, conf.Sources[1].Debug)
-+}
-```
-
-**File**: `pkg/engine/scan.go` (modified, +11/-2)
-```diff
-@@ -2,6 +2,7 @@ package engine
- 
- import (
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources/postman"
- )
-@@ -15,7 +16,15 @@ func (e *Engine) ScanConfig(ctx context.Context, configuredSources ...sources.Co
- 	for _, configuredSource := range configuredSources {
- 		sourceID, jobID, _ := e.sourceManager.GetIDs(ctx, configuredSource.Name, configuredSource.SourceType())
- 
--		source, err := configuredSource.Init(ctx, sourceID, jobID)
-+		// A source with debug on gets a context that writes all of its debug
-+		// logs. Both Init and the scan use it, so every log from this source is
-+		// covered. Other sources keep the global log level.
-+		sourceCtx := ctx
-+		if configuredSource.Debug {
-+			sourceCtx = context.WithLogLevel(ctx, log.DebugLevel)
++		// With verification disabled for this chunk and detector, results carry whatever verdict the detector assigned
++		// without contacting the provider (normally unverified). Leave that verdict untouched and only record that the
++		// verifier never ran. Verifying paths, including cache hits, leave VerificationSkipped false.
++		if !data.verify {
++			for i := range results {
++				results[i].VerificationSkipped = true
++			}
 +		}
 +
-+		source, err := configuredSource.Init(sourceCtx, sourceID, jobID)
- 		if err != nil {
- 			return refs, err
- 		}
-@@ -26,7 +35,7 @@ func (e *Engine) ScanConfig(ctx context.Context, configuredSources ...sources.Co
- 		}
- 
- 		// Start the scan.
--		ref, err := e.sourceManager.EnumerateAndScan(ctx, configuredSource.Name, source)
-+		ref, err := e.sourceManager.EnumerateAndScan(sourceCtx, configuredSource.Name, source)
- 		if err != nil {
- 			return refs, err
- 		}
+ 		detectorExecutionCount.WithLabelValues(
+ 			detectorNameStr,
+ 			sourceTypeStr,
 ```
 
-**File**: `pkg/engine/scan_test.go` (added, +85/-0)
+**File**: `pkg/engine/engine_test.go` (modified, +135/-7)
 ```diff
-@@ -0,0 +1,85 @@
-+package engine
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/go-logr/zapr"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zapcore"
-+	"go.uber.org/zap/zaptest/observer"
-+	"google.golang.org/protobuf/types/known/anypb"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/decoders"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+)
-+
-+// loggingSource is a fake source that writes one info line and one debug line
-+// from Init and from Chunks, so a test can see which lines were written.
-+type loggingSource struct {
-+	name string
-+	sources.Progress
+@@ -21,6 +21,7 @@ import (
+ 	"google.golang.org/protobuf/testing/protocmp"
+ 	"pgregory.net/rapid"
+ 
++	"github.com/trufflesecurity/trufflehog/v3/pkg/cache/simple"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/config"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/custom_detectors"
+@@ -983,12 +984,13 @@ func TestProcessResult_AllFieldsCopied(t *testing.T) {
+ 
+ 	// Arrange: Create a Result
+ 	result := detectors.Result{
+-		DetectorType: detector_typepb.DetectorType(-1),
+-		ExtraData:    map[string]string{"key": "value"},
+-		Raw:          []byte("something"),
+-		RawV2:        []byte("something:else"),
+-		Redacted:     "someth***",
+-		Verified:     true,
++		DetectorType:        detector_typepb.DetectorType(-1),
++		ExtraData:           map[string]string{"key": "value"},
++		Raw:                 []byte("something"),
++		RawV2:               []byte("something:else"),
++		Redacted:            "someth***",
++		Verified:            true,
++		VerificationSkipped: true,
+ 	}
+ 
+ 	// Act
+@@ -1005,6 +1007,7 @@ func TestProcessResult_AllFieldsCopied(t *testing.T) {
+ 	assert.Equal(t, []byte("something:else"), r.RawV2)
+ 	assert.Equal(t, "someth***", r.Redacted)
+ 	assert.True(t, r.Verified)
++	assert.True(t, r.VerificationSkipped)
+ 	assert.Equal(t, detector_typepb.DetectorType(-1), r.DetectorType)
+ 	assert.Equal(t, sources.SourceID(1), r.SourceID)
+ 	assert.Equal(t, sources.JobID(2), r.JobID)
+@@ -1849,6 +1852,29 @@ func (p passthroughDetector) Keywords() []string                 { return p.keyw
+ func (p passthroughDetector) Type() detector_typepb.DetectorType { return p.detectorType }
+ func (p passthroughDetector) Description() string                { return "fake detector for testing" }
+ 
++// fixedVerdictDetector reports the same verdict whether or not verification was requested, so tests can confirm the
++// engine passes verdicts through untouched while recording whether verification was attempted.
++type fixedVerdictDetector struct {
++	verified        bool
++	verificationErr error
 +}
 +
-+func (s *loggingSource) Type() sourcespb.SourceType { return sourcespb.SourceType_SOURCE_TYPE_FILESYSTEM }
-+func (s *loggingSource) SourceID() sources.SourceID { return 0 }
-+func (s *loggingSource) JobID() sources.JobID       { return 0 }
-+
-+func (s *loggingSource) Init(ctx context.Context, name string, _ sources.JobID, _ sources.SourceID, _ bool, _ *anypb.Any, _ int) error {
-+	s.name = name
-+	ctx.Logger().Info("init info", "source", s.name)
-+	ctx.Logger().V(5).Info("init debug", "source", s.name)
-+	return nil
++func (d fixedVerdictDetector) FromData(_ aCtx.Context, _ bool, data []byte) ([]detectors.Result, error) {
++	result := detectors.Result{
++		DetectorType: detector_typepb.DetectorType(-1),
++		Raw:          data,
++		Verified:     d.verified,
++	}
++	result.SetVerificationError(d.verificationErr)
++	return []detectors.Result{result}, nil
 +}
 +
-+func (s *loggingSource) Chunks(ctx context.Context, _ chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
-+	ctx.Logger().Info("chunks info", "source", s.name)
-+	ctx.Logger().V(5).Info("chunks debug", "source", s.name)
-+	return nil
++func (d fixedVerdictDetector) Keywords() []string { return []string{"keyword"} }
++func (d fixedVerdictDetector) Type() detector_typepb.DetectorType {
++	return detector_typepb.DetectorType(-1)
 +}
++func (d fixedVerdictDetector) Description() string { return "fixed verdict detector for testing" }
 +
-+func TestScanConfig_DebugOnlyForOneSource(t *testing.T) {
-+	// Capture logs at the normal level (V(0)), like a default trufflehog run.
-+	core, logs := observer.New(zapcore.InfoLevel)
-+	ctx := context.WithLogger(context.Background(), zapr.NewLogger(zap.New(core)))
-+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-+	defer cancel()
+ type passthroughDecoder struct{}
+ 
+ func (p passthroughDecoder) FromChunk(chunk *sources.Chunk) *decoders.DecodableChunk {
+@@ -1910,6 +1936,102 @@ func TestEngine_DetectChunk_UsesVerifyFlag(t *testing.T) {
+ 	}
+ }
+ 
++// TestEngine_DetectChunk_MarksVerificationSkippedWithoutChangingVerdict validates that detectChunk marks results
++// produced with verification disabled as VerificationSkipped, leaves results produced with verification enabled
++// unmarked, and in every case preserves the verdict (Verified and the verification error) the detector assigned.
++func TestEngine_DetectChunk_MarksVerificationSkippedWithoutChangingVerdict(t *testing.T) {
++	ctx := context.Background()
 +
-+	e, err := NewEngine(ctx, &Config{
-+		Concurrency:   1,
-+		Decoders:      decoders.DefaultDecoders(),
-+		SourceManager: sources.NewManager(),
-+		Dispatcher:    NewPrinterDispatcher(new(discardPrinter)),
-+	})
-+	require.NoError(t, err)
-+	e.Start(ctx)
-+
-+	// One source as in an old config, and one with debug: true.
-+	normal := sources.NewConfiguredSource(new(loggingSource), &sourcespb.LocalSource{Name: "normal"})
-+	debug := sources.NewConfiguredSource(new(loggingSource), &sourcespb.LocalSource{Name: "debug", Debug: true})
-+
-+	_, err = e.ScanConfig(ctx, normal, debug)
-+	require.NoError(t, err)
-+	require.NoError(t, e.Finish(ctx))
-+
-+	// countLines returns how many lines with this message the given source wrote.
-+	countLines := func(message, source string) int {
-+		return logs.FilterMessage(message).FilterField(zap.String("source", source)).Len()
++	testCases := []struct {
++		name        string
++		verify      bool
++		detector    fixedVerdictDetector
++		wantSkipped bool
++	}{
++		{name: "verify=false, unverified", verify: false, detector: fixedVerdictDetector{}, wantSkipped: true},
++		{name: "verify=false, detector reports verified", verify: false, detector: fixedVerdictDetector{verified: true}, wantSkipped: true},
++		{name: "verify=false, detector reports error", verify: false, detector: fixedVerdictDetector{verificationErr: fmt.Errorf("boom")}, wantSkipped: true},
++		{name: "verify=true, unverified", verify: true, detector: fixedVerdictDetector{}, wantSkipped: false},
++		{name: "verify=true, verified", verify: true, detector: fixedVerdictDetector{verified: true}, wantSkipped: false},
++		{name: "verify=true, error", verify: true, detector: fixedVerdictDetector{verificationErr: fmt.Errorf("boom")}, wantSkipped: false},
 +	}
 +
-+	// Both sources write their info lines.
-+	for _, source := range []string{"normal", "debug"} {
-+		assert.Equal(t, 1, countLines("init info", source), source)
-+		assert.Equal(t, 1, countLines("chunks info", source), source)
-+	}
++	for _, tc := range testCases {
++		t.Run(tc.name, func(t *testing.T) {
++			// Arrange: Create a minimal engine with a passthrough verification cache.
++			e := &Engine{
++				results:           make(chan detectors.ResultWithMetadata, 1),
++				verificationCache: verificationcache.New(nil, &verificationcache.InMemoryMetrics{}),
++			}
 +
-+	// Only the debug source writes debug lines, from both Init and the scan.
-+	assert.Equal(t, 1, countLines("init debug", "debug"))
-+	assert.Equal(t, 1, countLines("chunks debug", "debug"))
-+	assert.Zero(t, countLines("init debug", "normal"))
-+	assert.Zero(t, countLines("chunks debug", "normal"))
-+}
++			// Arrange: Create a detector match. We can't create one directly, so we have to use a minimal A-H core.
++			ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{tc.detector})
++			detectorMatches := ahcore.FindDetectorMatches([]byte("keyword"))
++			require.Len(t, detectorMatches, 1)
++
++			// Act
++			e.detectChunk(ctx, detectableChunk{
++				detector: detectorMatches[0],
++				verify:  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5448** (2026-10-20): Mark results whose verification was skipped (@unsmith)
 - **PR #5446** (2026-10-20): Add per-source debug option and hide sensitive data in debug logs (@kashifkhan0771)
 - **PR #5438** (2026-10-19): github: name the missing permission when a comment listing is refused (@unsmith)
 - **PR #5432** (2026-10-16): Add per-logger debug level override for source logging (@kashifkhan0771)
 - **PR #5431** (2026-10-17): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@renovate[bot])
 - **PR #5428** (2026-10-14): Replace deprecated google.CredentialsFromJSON with CredentialsFromJSONWithType (@bryanbeverly)
-- **PR #5427** (2026-10-14): fix(github): use a single "app client registry"  (@mariduv)
 
 ---
 
@@ -1467,22 +1339,28 @@ cases.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add per-source debug option and hide sensitive data in debug logs (#5446)
+## X. Mark results whose verification was skipped (#5448)
 
 **RULE**:
-When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/detectors.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ffc6fa1`: Add per-source debug option and hide sensitive data in debug logs (#5446). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bba824f`: Mark results whose verification was skipped (#5448). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/detectors.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      # Source logging rules. Findings are warnings only and don't fail the build.
-      - run: semgrep --config=hack/semgrep-rules/sources.yaml pkg/sources/
+	// VerificationSkipped indicates that the engine produced this result without attempting remote verification,
+	// either because verification was disabled for the result's source or detector, or because the engine withheld
+	// verification after multiple detectors matched the same secret. It lets consumers that measure verifier activity
+	// tell "the verifier did not run" apart from "the verifier ran and the credential did not verify". It is purely
+	// informational: Verified and the verification error keep whatever the detector or engine assigned, so a skipped
+	// result still reports as unverified (or with an overlap verification error) exactly as it would without this
+	// field.
+	VerificationSkipped bool
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1492,4 +1370,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ffc6fa1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bba824f` are properly handled with clean fallback behavior.

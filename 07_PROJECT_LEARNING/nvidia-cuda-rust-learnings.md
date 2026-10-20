@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `a25a5857`  
+> **Source Version**: `1e2b536b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:22:19.550Z  
+> **Timestamp**: 2026-10-20T13:47:02.768Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:22:19.542Z  
+> **Harvest Timestamp**: 2026-10-20T13:47:02.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3743 stars
+- **Stars / Engagement**: 3749 stars
 
 ---
 
@@ -2145,11 +2145,11 @@ impl<T> DeviceBuffer<T> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1556** (2026-10-20): **fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it**
+  *Symptoms*: ## What this adds  A `.tilelib` written by `cargo oxide tilelib` now loads on the CUDA 13.5 assembler.  ```text before: 13.5 tileiras rejects the implementation descriptor: "concrete shape cache rank (1) does not match symbolic shape rank (0)" after:  the descriptor parses, and a Tile C++ kernel calls the three exports through the library ```  ## What we fixed  - The 13.5 assembler keeps a full-rank symbolic shape on `preview$fragment`, one integer expression per dimension. The compiler trunk switched on 2026-09-08 to holding only the dynamic dimensions, and the writer produced that trunk form for every version. - The fragment type now encodes per version: full rank below 13.6, dynamic-only from 13.6 on. Nothing else in the descriptors changes.  <details> <summary>Implementation</summary>  - `oxide-tilebc`'s type table carries the bytecode version, and the fragment arm branches on it. - The 13.5 golden in the writer tests now holds a one-element symbolic tuple.  </details>  ## Verification  Checked at `514be3a18`:  - ✅ oxide-tilebc 15 unit tests, clippy with warnings as errors, rustdoc. - ✅ CUDA 13.5.40 release toolkit, RTX 5090: `cargo oxide tilelib tilelib_relu --arch sm_120` builds the library, its disassembler reads both descriptors, and `cpp/tile_caller.cu` passes 3 of 3 through it. - ✅ The 13.6 development build still reads the dynamic-only form: the same library built at 13.6 passes 3 of 3 there too.  ## Caveats  - The version switch keys on 13.6 because that is where 
+
 - **Issue #1510** (2026-10-19): **fix(cargo-oxide): pin release-like codegen in Cargo profiles**
   *Symptoms*: ## What this adds  Release-like `cargo oxide` routes used to force `opt-level=3`, `debug-assertions=off` and (with `--debug-assertions`) `overflow-checks=off` through `CARGO_ENCODED_RUSTFLAGS`. Cargo hashes rustflags into every crate's fingerprint, while `cargo oxide test -- --release` added none, so the first switch between build and test in each direction rebuilt the whole dependency graph and left two copies of every artifact. The pins now travel in the Cargo profile (`CARGO_PROFILE_RELEASE_*`, `CARGO_PROFILE_DEV_*`, and `--config profile.<name>.*` for a selected custom profile), which Cargo compares by value, so both commands share every compiled crate.  ```text cargo oxide test -- --release        # compiles the dependency graph (72 crates) cargo oxide build -- --release  Before: Compiling cuda-core ... 72 crates recompiled, 13 s, second artifact set After:  1 crate recompiled (the application), 71 reused, 0.4 s, PTX unchanged ```  ```bash cargo oxide build -- --release                 # pins via CARGO_PROFILE_RELEASE_* cargo oxide build -- --profile release-lto     # pins via --config profile.release-lto.* ```  ## What we fixed  - Build and `test -- --release` passthrough commands hand rustc the same `CARGO_ENCODED_RUSTFLAGS`; the pins move to Cargo profile settings at the single site every release-like route uses (example build/run/pipeline/debug, emit-ltoir, tilelib, interop device crates, sanitize host binary, passthrough build). - `overflow-checks=off` is pinned exp
-
-- **Issue #1509** (2026-10-19): **fix(cuda-oxide): keep host-written constant memory through LTO**
-  *Symptoms*: ## What this adds  `#[constant]` statics are filled by the host after module load through `cuModuleGetGlobal`. The device IR exported them as plain zero-filled globals, so whole-program LTO on the libNVVM and nvJitLink routes treated the zero image as the value, folded every read, and deleted the symbol. The global is now rendered `externally_initialized` and rooted in `@llvm.used`, which is what clang emits for CUDA `__constant__` variables.  ```text Before (cargo oxide run constant_memory --materialize-cubin --arch sm_120; same with --emit-nvvm-ir):   @..._COEFFS = addrspace(4) global [16 x i8] <16 zero bytes>, align 4   @llvm.used  = appending global [1 x ptr] [ptr @apply]   SASS: no COEFFS symbol, no .nv.constant3, kernel stores RZ   Error: DriverError(500, "named symbol not found")  After:   @..._COEFFS = addrspace(4) externally_initialized global [16 x i8] <16 zero bytes>, align 4   @llvm.used  = appending global [2 x ptr] [ptr @apply, ptr addrspacecast (ptr addrspace(4) @..._COEFFS to ptr)]   SASS: STB_GLOBAL COEFFS, .nv.constant3 (16 bytes), LDC c[0x3][...]   Launch A: OK (256 elements match polynomial)   Launch B: OK (256 elements match polynomial)   SUCCESS: #[constant] static populated from host, reflected on device. ```  ```rust #[cuda_module] mod kernels {     #[constant]     static COEFFS: ConstantMemory<[f32; 4]> = ConstantMemory::UNINIT;      #[kernel]     pub fn apply(mut out: DisjointSlice<f32>) {         let [c0, c1, c2, c3] = COEFFS.get();         // out[i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2166,1286 +2166,151 @@ impl<T> DeviceBuffer<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b606fdd` (2026-10-19)
-**Commit Message**: fix(cuda-device): run mbarrier init on one linear thread (#1349)
+### Incident Patch 1: `1e2b536b` (2026-10-20)
+**Commit Message**: fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (#1556)
 
-ManagedBarrier::init_by and inval_by elected the acting thread with threadIdx.x == selector, which names one thread only in a 1D block: in a (32, 4, 1) block selector 0 ran mbarrier.init on four threads and selector 127 on none, so the launch failed with error 719. Elect by the block-linear thread id through the shared helper from #1351, document the all-threads protocol and the block-uniform selector, and add a (32, 4, 1) regression to future_apis.
+## What this adds
 
-Signed-off-by: YeonwooSung <[REDACTED_EMAIL]>
-Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
+A `.tilelib` written by `cargo oxide tilelib` now loads on the CUDA 13.5
+assembler.
 
-**File**: `cuda-oxide/crates/cuda-device/src/barrier.rs` (modified, +52/-35)
-```diff
-@@ -254,29 +254,29 @@ impl BarrierToken {
- ///
- /// # Thread Requirements
- ///
--/// | Operation       | Thread Requirement        |
--/// |-----------------|---------------------------|
--/// | `from_static()` | Single thread (thread 0)  |
--/// | `init()`        | Single thread (thread 0)  |
--/// | `arrive()`      | All participating threads |
--/// | `wait()`        | All participating threads |
--/// | `inval()`       | Single thread (thread 0)  |
-+/// | Operation       | Thread Requirement                     |
-+/// |-----------------|----------------------------------------|
-+/// | `from_static()` | All threads call                       |
-+/// | `init()`        | All threads call; linear thread 0 acts |
-+/// | `arrive()`      | All participating threads              |
-+/// | `wait()`        | All participating threads              |
-+/// | `inval()`       | All threads call; linear thread 0 acts |
- ///
- /// # Example
- ///
- /// ```rust,ignore
--/// // Thread 0: Create and initialize
-+/// // All threads: create the handle and initialize. Linear thread 0, that is
-+/// // thread (0, 0, 0), runs mbarrier.init; init() then fences and
-+/// // synchronizes the block, so every thread holds a Ready handle.
- /// let bar = ManagedBarrier::<Uninit, TmaBarrier>::from_static(&raw mut BAR);
- /// let bar = unsafe { bar.init(128) };  // Now Ready
--/// fence_proxy_async_shared_cta();
--/// sync_threads();
- ///
- /// // All threads: arrive and wait
- /// let token = bar.arrive();
- /// bar.wait(token);
- ///
--/// // Thread 0: Cleanup
--/// sync_threads();
-+/// // All threads: clean up. inval() synchronizes the block, then linear
-+/// // thread 0 runs mbarrier.inval.
- /// unsafe { bar.inval(); }
- /// ```
- pub struct ManagedBarrier<State, Kind, const ID: usize = 0> {
-@@ -301,21 +301,24 @@ impl<Kind, const ID: usize> ManagedBarrier<Uninit, Kind, ID> {
-     ///
-     /// # Thread Requirements
-     ///
--    /// **Single-thread**: Only call from the initialization thread (thread 0).
-+    /// **All threads**: this is a plain constructor with no device effect. Every
-+    /// thread wraps the same static, and `init()` then elects linear thread 0 to
-+    /// run `mbarrier.init`. Do not wrap `init()` in a thread-0 branch: it
-+    /// synchronizes the whole block, and a block-wide sync inside a branch that
-+    /// only some threads take is undefined, in practice a hang.
-     ///
-     /// # Example
-     ///
-     /// ```rust,ignore
-     /// static mut BAR0: Barrier = Barrier::UNINIT;
-     /// static mut BAR1: Barrier = Barrier::UNINIT;
-     ///
--    /// if tid == 0 {
--    ///     let bar0 = ManagedBarrier::<Uninit, TmaBarrier>::from_static(&raw mut BAR0);
--    ///     let bar1 = ManagedBarrier::<Uninit, GeneralBarrier>::from_static(&raw mut BAR1);
-+    /// // All threads: wrap and initialize; init() elects linear thread 0.
-+    /// let bar0 = ManagedBarrier::<Uninit, TmaBarrier>::from_static(&raw mut BAR0);
-+    /// let bar1 = ManagedBarrier::<Uninit, GeneralBarrier>::from_static(&raw mut BAR1);
-     ///
--    ///     let bar0 = unsafe { bar0.init(32) };
--    ///     let bar1 = unsafe { bar1.init(32) };
--    /// }
-+    /// let bar0 = unsafe { bar0.init(32) };
-+    /// let bar1 = unsafe { bar1.init(32) };
-     /// ```
-     pub fn from_static(ptr: *mut Barrier) -> Self {
-         ManagedBarrier {
-@@ -327,8 +330,9 @@ impl<Kind, const ID: usize> ManagedBarrier<Uninit, Kind, ID> {
- 
-     /// Initialize the barrier with an expected arrival count.
-     ///
--    /// **All threads in the block should call this.** Only thread 0 performs
--    /// the actual initialization; all threads synchronize and receive a `Ready` handle.
-+    /// **All threads in the block should call this.** Only linear thread 0,
-+    /// that is thread (0, 0, 0), performs the actual initialization; all threads
-+    /// synchronize and receive a `Ready` handle.
-     ///
-     /// This is a convenience wrapper for `init_by(count, 0)`.
-     ///
-@@ -347,7 +351,7 @@ impl<Kind, const ID: usize> ManagedBarrier<Uninit, Kind, ID> {
-     /// ```rust,ignore
-     /// static mut BAR: Barrier = Barrier::UNINIT;
-     ///
--    /// // ALL threads call init - only thread 0 actually initializes
-+    /// // ALL threads call init - only linear thread 0 actually initializes
-     /// let bar = ManagedBarrier::<Uninit, TmaBarrier>::from_static(&raw mut BAR);
-     /// let bar = unsafe { bar.init(128) };  // All threads get Ready handle
-     /// ```
-@@ -358,8 +362,8 @@ impl<Kind, const ID: usize> ManagedBarrier<Uninit, Kind, ID> {
- 
-     /// Initialize the barrier with a specific thread performing initialization.
-     ///
--    /// **All threads in the block should call this.** Only the thread with
--    /// `threadIdx.x == init_thread` performs the actual initialization;
-+    /// **All threads in the block should call this.** Only the thread whose
-+    /// linear id equals `init_thread` performs the actual initialization;
-     /// all threads synchronize and receive a `Ready` handle.
-     ///
-     /// # Block-Sc
+```text
+before: 13.5 tileiras rejects the implementation descriptor: "concrete shape cache rank (1) does not match symbolic shape rank (0)"
+after:  the descriptor parses, and a Tile C++ kernel calls the three exports through the library
 ```
 
-**File**: `cuda-oxide/crates/cuda-device/src/thread.rs` (modified, +36/-0)
+## What we fixed
+
+- The 13.5 assembler keeps a full-rank symbolic shape on
+`preview$fragment`, one integer expression per dimension. The compiler
+trunk switched on 2026-09-08 to holding only the dynamic dimensions, and
+the writer produced that trunk form for every version.
+- The fragment type now encodes per version: full rank below 13.6,
+dynamic-only from 13.6 on. Nothing else in the descriptors changes.
+
+<details>
+<summary>Implementation</summary>
+
+- `oxide-tilebc`'s type table carries the bytecode version, and the
+fragment arm branches on it.
+- The 13.5 golden in the writer tests now holds a one-element symbolic
+tuple.
+
+</details>
+
+## Verification
+
+Checked at `514be3a18`:
+
+- ✅ oxide-tilebc 15 unit tests, clippy with warnings as errors, rustdoc.
+-
+
+**File**: `cuda-oxide/crates/oxide-tilebc/src/lib.rs` (modified, +4/-2)
 ```diff
-@@ -1415,6 +1415,24 @@ const fn validate_unroll_factor(factor: u32) {
- mod tests {
-     use super::block_linear_thread_id;
+@@ -249,15 +249,17 @@ mod tests {
+         expected.resize(24, 0xCB);
+         assert_eq!(section(&bytes, 2), expected);
  
-+    /// Number of threads in a `(dx, dy, dz)` block whose block-linear id is
-+    /// `selected`. `ManagedBarrier::init_by` and `inval_by` make this
-+    /// comparison on the device, one thread at a time.
-+    fn threads_selected_by(block_dim: (u32, u32, u32), selected: u32) -> u32 {
-+        let (dx, dy, dz) = block_dim;
-+        let mut hits = 0;
-+        for tz in 0..dz {
-+            for ty in 0..dy {
-+                for tx in 0..dx {
-+                    if block_linear_thread_id(tx, ty, tz, dx, dy) == selected {
-+                        hits += 1;
-+                    }
-+                }
-+            }
-+        }
-+        hits
-+    }
-+
-     #[test]
-     fn a_1d_block_numbers_threads_by_x() {
-         for tx in 0..256 {
-@@ -1452,4 +1470,22 @@ mod tests {
-         // One step along z skips a whole x-y plane.
-         assert_eq!(block_linear_thread_id(0, 0, 1, dx, dy), dx * dy);
-     }
-+
-+    #[test]
-+    fn every_in_range_id_selects_one_thread() {
-+        for block_dim in [(64, 1, 1), (32, 4, 1), (8, 4, 2), (16, 2, 2), (24, 3, 1)] {
-+            let (dx, dy, dz) = block_dim;
-+            let threads = dx * dy * dz;
-+            for selected in 0..threads {
-+                assert_eq!(
-+                    threads_selected_by(block_dim, selected),
-+                    1,
-+                    "block {block_dim:?} id {selected}"
-+                );
-+            }
-+            // An id at or past the thread count selects nobody, which is why
-+            // init_by and inval_by require the selector to be in range.
-+            assert_eq!(threads_selected_by(block_dim, threads), 0);
-+        }
-+    }
- }
+-        // The fragment type entry: tagged empty symbolic shape, static shape
++        // The fragment type entry at 13.5: tagged symbolic shape holding one
++        // integer per dimension (the 13.5 assembler requires full rank), static shape
+         // [1], element f32 (index 0), local, (1):(1), (128, 1, 1):(1, 0, 0),
+         // alignment 1.
+         let types = section(&bytes, 5);
+         let entries = &types[4 + 4 * 3..];
+         assert_eq!(
+             &entries[1..],
+             &[
+-                0xD2, 0x01, 0xD8, 0x01, 0x00, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, //
++                0xD2, 0x01, 0xD8, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00,
++                0x00, //
+                 0xD9, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 0xD1, 0x01, 0x02, //
+                 0xD9, 0x01, 0x03, 0xD1, 0x01, 0x80, 0x02, 0xD1, 0x01, 0x02, 0xD1, 0x01,
+                 0x02, //
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/future_apis/README.md` (modified, +5/-0)
+**File**: `cuda-oxide/crates/oxide-tilebc/src/writer.rs` (modified, +33/-6)
 ```diff
-@@ -16,6 +16,7 @@ Tests new type-safe abstractions: `CuSimd<T, N>` for SIMD values and `ManagedBar
- 1. **test_managed_barrier**: Single barrier typestate flow
- 2. **test_multi_barrier**: Multiple barriers (TMA + General)
- 3. **test_double_buffered_barriers**: Ping-pong pattern with two barriers
-+4. **test_managed_barrier_2d**: One barrier in a (32, 4, 1) block; every thread calls `init_by` and `inval_by`, and linear thread 127, that is thread (31, 3, 0), runs the instructions
- 
- ## Key Concepts Demonstrated
- 
-@@ -153,6 +154,10 @@ cargo oxide run future_apis
-   All 32 threads completed 3 iterations
- ✓ Double-buffered PASSED
- 
-+--- Test 6: ManagedBarrier in a (32, 4, 1) block ---
-+  All 128 threads wrote 42 in a (32, 4, 1) block
-+✓ ManagedBarrier 2D PASSED
-+
- === ALL FUTURE APIS TESTS COMPLETED ===
- ```
- 
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/future_apis/src/main.rs` (modified, +102/-0)
-```diff
-@@ -11,11 +11,20 @@
- //!
- //! Run: cargo oxide run future_apis
- 
-+use cuda_device::cooperative_groups::{ThreadGroup, this_thread_block};
- use cuda_device::cusimd::CuSimd;
- use cuda_device::{Barrier, GeneralBarrier, ManagedBarrier, TmaBarrier, Uninit};
- use cuda_device::{DisjointSlice, kernel, thread};
- use cuda_host::cuda_module;
- 
-+/// Block of the 2D barrier test: 4 rows of 32 threads, one warp per row.
-+const BLOCK_2D_WIDTH: usize = 32;
-+const BLOCK_2D_HEIGHT: usize = 4;
-+const BLOCK_2D_THREADS: u32 = (BLOCK_2D_WIDTH * BLOCK_2D_HEIGHT) as u32;
-+/// Block-linear id of thread (31, 3, 0), the last thread of the block, so the
-+/// x and y terms of the id both count. No thread has `threadIdx.x` equal to it.
-+const BARRIER_2D_THREAD: u32 = BLOCK_2D_THREADS - 1;
-+
- // =============================================================================
- // CUSIMD KERNELS
- // =============================================================================
-@@ -231,6 +240,63 @@ mod kernels {
-             *output_elem = sum; // Should be 3
-         }
-     }
-+
-+    /// Test kernel for `ManagedBarrier` in a 2D block of (32, 4, 1) threads.
-+    ///
-+    /// Every thread calls `init_by` and `inval_by`, as their contract asks:
-+    /// both synchronize the whole block. The selector is the block-linear id
-+    /// of thread (31, 3, 0), the last thread of the block, so the x and y
-+    /// terms of the id both count. No thread has `threadIdx.x` equal to it,
-+    /// so an election by `threadIdx.x` alone initializes nothing and the
-+    /// launch fails with error 719.
-+    ///
-+    /// Thread 0 first fills the barrier word with all-ones. The store is a
-+    /// determinism aid, not the detector: a missing init then faults on this
-+    /// word instead of depending on what shared memory held at launch.
-+    ///
-+    /// Each thread writes 42 at its row-major 2D index when that index equals
-+    /// its block rank, so the host also checks that `thread_rank()` numbers
-+    /// the block x fastest, the same numbering the barrier election uses.
-+    #[kernel]
-+    pub fn test_managed_barrier_2d(
-+        mut output: DisjointSlice<u32, thread::Index2D<BLOCK_2D_WIDTH>>,
-+    ) {
-+        static mut BAR: Barrier = Barrier::UNINIT;
-+
-+        let rank = this_thread_block().thread_rank() as usize;
-+
-+        // Determinism aid, not the detector: see the kernel docs above
-+        if rank == 0 {
-+            // SAFETY: BAR is this block's own shared memory, one 8-byte aligned
-+            // u64 that nothing in this launch has made an mbarrier object yet;
-+            // the sync below orders the store before init_by.
-+            unsafe { *(&raw mut BAR as *mut u64) = u64::MAX };
-+        }
-+        thread::sync_threads();
-+
-+        // ALL threads create the Uninit handle (wraps the same shared static)
-+        let bar = ManagedBarrier::<Uninit, GeneralBarrier>::from_static(&raw mut BAR);
-+
-+        // ALL threads call init_by - only linear thread 127 runs mbarrier.init
-+        // init_by includes: fence + sync_threads; all threads get a Ready handle
-+        let bar = unsafe { bar.init_by(BLOCK_2D_THREADS, BARRIER_2D_THREAD) };
-+
-+        // All threads arrive and wait
-+        let token = bar.arrive();
-+        bar.wait(token);
-+
-+        // ALL threads call inval_by - it synchronizes the block, then only
-+        // linear thread 127 runs mbarrier.inval, then synchronizes again
-+        let _dead = unsafe { bar.inval_by(BARRIER_2D_THREAD) };
-+
-+        // Write results - 42 when the row-major index is the block rank
-+        if let Some(idx) = thread::index_2d::<BLOCK_2D_WIDTH>() {
-+            let value = if idx.get() == rank { 42 } else { 1 };
-+            if let Some(output_elem) = output.get_mut(idx) {
-+                *output_elem = value;
-+            }
-+        }
-+    }
+@@ -70,15 +70,27 @@ enum Type {
  }
  
- // =============================================================================
-@@ -433,6 +499,42 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
-         }
-     }
+ /// Interning tables, filled in first-use order.
+-#[derive(Default)]
+ struct Tables {
++    /// The version the module is written at; the fragment type's symbolic
++    /// shape is encoded differently before 13.6.
++    version: BytecodeVersion,
+     strings: Vec<String>,
+     string_index: HashMap<String, u64>,
+     types: Vec<Type>,
+     type_index: HashMap<Type, u64>,
+ }
  
-+    // ====================================================================
-+    // Test 6: ManagedBarrier in a 2D block
-+    // ====================================================================
-+    println!("--- Test 6: ManagedBarrier in a ({BLOCK_2D_WIDTH}, {BLOCK_2D_HEIGHT}, 1) block ---");
-+    {
-+        const N: usize = BLOCK_2D_WIDTH * BLOCK_2D_HEIGHT;
-+        let mut output_dev = DeviceBuffer::<u32>::zeroed(&stream, N)?;
-+
-+        let cfg = LaunchConfig {
-+            grid_dim: (1, 1, 1),
-+            block_dim: (BLOCK_2D_WIDTH as u32, BLOCK_2D_HEIGHT as u32, 1),
-+            shared_mem_bytes: 0,
-+        };
-+
-+        // SAFETY: launch shape/resources match the kernel; buffers cover its accesses.
-+        unsafe { module.test_managed_barrier_2d((stream).as_ref(), cfg, &mut output_dev) }?;
-+        stream.synchronize()?;
-+
-+        let output: Vec<u32> = output_dev.to_host_vec(&stream)?;
-+
-+        // Every thread writes 42 once it passed the barrier and its block
-+      
-```
-
-**File**: `cuda-oxide/cuda-oxide-book/advanced/images/mbarrier-thread-election.svg` (added, +750/-0)
-```diff
-@@ -0,0 +1,750 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 697" width="1240" height="697" role="img" aria-label="ManagedBarrier thread election. Left, a (32, 4, 1) block drawn as 32 by 4 cells with thread (0, 0, 0), the x equals 0 column and thread (31, 3, 0) marked, the init_by call of the future_apis regression, and the all-threads contract. Middle, main compared threadIdx.x with the selector: selector 0 lights four cells, selector 127 lights none and the launch fails with error 719. Right, the fix compares the block-linear id x + 32 * (y + 4 * z): selector 0 lights one cell, 127 lights (31, 3), 128 of 128 threads correct with sanitizers clean, through the shared helper from #1351. Bottom, the PTX election on both trees: a predicate on %tid.x alone against one on the linear id.">
-+<style>
-+  :root, svg {
-+  --bg: #f4f6f8; --fg: #1a232e; --muted: #5d6b7a; --line: #9aa7b4; --panel: #ffffff;
-+  --meta: #0e7c72; --meta-fill: #d9f3ef; --code: #b4560a; --code-fill: #fdebd2;
-+  --rust: #7a3fb3; --rust-fill: #efe4fb;
-+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-+ }
-+  @media (prefers-color-scheme: dark) { :root, svg {
-+  --bg: #0f151b; --fg: #e4ebf2; --muted: #9fb0c0; --line: #4d5b6a; --panel: #171f28;
-+  --meta: #5fe3d2; --meta-fill: #0f3a37; --code: #f6b544; --code-fill: #3b2a0c;
-+  --rust: #c9a0f0; --rust-fill: #2b1b3f;
-+ } }
-+</style>
-+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--fg)"/></marker></defs>
-+
-+<rect x="0" y="0" width="1240" height="697" style="fill: var(--bg)"/>
-+<text x="40" y="34" text-anchor="start" xml:space="preserve" style="font: 600 17px var(--sans); fill: var(--fg); white-space: pre">ManagedBarrier: one thread runs mbarrier.init, chosen by its block-linear id</text>
-+<text x="40" y="56" text-anchor="start" xml:space="preserve" style="font: 400 12.5px var(--sans); fill: var(--muted); white-space: pre">All threads call init_by(count, id) and inval_by(id); one thread acts. Main chose it by threadIdx.x alone, which names one thread only in a 1D block; #1349 uses the block-linear id.</text>
-+<text x="40" y="82" text-anchor="start" xml:space="preserve" style="font: 600 11px var(--sans); fill: var(--muted); white-space: pre">THE BLOCK  (future_apis, test_managed_barrier_2d)</text>
-+<text x="500" y="82" text-anchor="start" xml:space="preserve" style="font: 600 11px var(--sans); fill: var(--muted); white-space: pre">MAIN  (threadIdx_x() == selector)</text>
-+<text x="860" y="82" text-anchor="start" xml:space="preserve" style="font: 600 11px var(--sans); fill: var(--muted); white-space: pre">FIXED  (block_linear_thread_id_here() == selector)</text>
-+<rect x="40" y="94" width="440" height="149.0" rx="6" style="fill: var(--panel); stroke: var(--line); stroke-width: 1.2"/>
-+<text x="52" y="114" text-anchor="start" xml:space="preserve" style="font: 600 12px var(--sans); fill: var(--fg); white-space: pre">block_dim = (32, 4, 1): 128 threads, one warp per row</text>
-+<text x="54" y="130" text-anchor="start" xml:space="preserve" style="font: 400 9.5px var(--sans); fill: var(--muted); white-space: pre">y</text>
-+<text x="68" y="130" text-anchor="start" xml:space="preserve" style="font: 400 9.5px var(--sans); fill: var(--muted); white-space: pre">threadIdx.x = 0</text>
-+<text x="451.0" y="130" text-anchor="end" xml:space="preserve" style="font: 400 9.5px var(--sans); fill: var(--muted); white-space: pre">31</text>
-+<rect x="68.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--rust); stroke: none; stroke-width: 1.0"/>
-+<rect x="80.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="92.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="104.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="116.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="128.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="140.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="152.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="164.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="176.0" y="138.0" width="11.0" height="11.0" rx="1.5" style="fill: var(--panel); stroke: var(--line); stroke-width: 0.6"/>
-+<rect x="188.0" y="138.0" width="11.0" height="11
-```
-
-**File**: `cuda-oxide/cuda-oxide-book/advanced/tensor-memory-accelerator.md` (modified, +12/-0)
-```diff
-@@ -188,6 +188,18 @@ The lifecycle is: `Uninit` → `init()` → `Ready` → `arrive()` / `wait()` 
- `inval()` → `Invalidated`. The type system prevents calling `wait` on an
- uninitialized barrier or `arrive` on an invalidated one.
- 
-+```{figure} images/mbarrier-thread-election.svg
-+:align: center
-+:width: 100%
-+
-+Which thread runs `mbarrier.init`. Every thread calls `init_by(count, id)` and `inval_by(id)`,
-+and the thread whose block-linear id (`x + blockDim.x * (y + blockDim.y * z)`, the numbering
-+`thread_rank()` uses) equals `id` runs the instruction; `init()` and `inval()` pass 0, thread
-+(0, 0, 0). Comparing `threadIdx.x` alone named one thread only in a 1D block: in a (32, 4, 1)
-+block selector 0 ran the instruction on four threads and selector 127 on none, so the launch
-+failed with error 719.
-+```
-+
- ### Key barrier rules
- 
- | Rule                                                  | Why                                                                            |
-```
-
----
-
-### Incident Patch 2: `f6507e7b` (2026-10-19)
-**Commit Message**: fix(cargo-oxide): pin release-like codegen in Cargo profiles (#1510)
-
-Move cargo oxide's opt-level, debug-assertions, overflow-checks and debuginfo pins from rustflags into Cargo profile settings (CARGO_PROFILE_RELEASE_* and CARGO_PROFILE_DEV_*, and --config profile.<name>.* for a selected custom profile), so build and test share one dependency build instead of forking the fingerprint. The trailing -C re-pin still wins over incoming rustflags. Real-Cargo tests cover the reuse and a dashed custom profile; the README states what outranks the pins.
-
-Closes #1508.
-
-Signed-off-by: Alex Khal <[REDACTED_EMAIL]>
-Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
-
-**File**: `cuda-oxide/crates/cargo-oxide/README.md` (modified, +26/-5)
-```diff
-@@ -257,10 +257,25 @@ cargo oxide build tcgen05        # sm_100a only, but PTX generation works anywhe
- cargo oxide build debug --debug-assertions
- ```
- 
--`--debug-assertions` keeps the normal release-like `-Copt-level=3` policy but
--switches to `-Cdebug-assertions=on`. It also explicitly sets
--`-Coverflow-checks=off`: rustc otherwise enables overflow checks with debug
--assertions, which adds distinct MIR checks and trap paths. The option applies
-+Builds pin a release-like codegen policy: `opt-level = 3`,
-+`debug-assertions = off` and `overflow-checks = off` (overflow checks add
-+distinct MIR checks and trap paths). The pins travel in the Cargo profile, so
-+a build whose pins match the release defaults shares every compiled crate
-+with `cargo oxide test -- --release`. Two carriers deliver them: the `release`
-+and `dev` profiles take `CARGO_PROFILE_RELEASE_*` and `CARGO_PROFILE_DEV_*`
-+environment settings, and a profile you select with `--profile` takes
-+`--config profile.<name>.<key>=<value>` arguments placed before your own
-+Cargo arguments. When `RUSTFLAGS`, `CARGO_ENCODED_RUSTFLAGS` or the project's
-+`extra-rustflags` set one of these options, cargo-oxide also appends the
-+pinned `-C` flag after them, so the pin still wins there. Three channels
-+outrank the pins: `[profile.*.package.*]` overrides, `--config profile.*`
-+arguments, and manifest `[profile.*.rustflags]` or
-+`[profile.*.package.*.rustflags]` lists, which cargo-oxide never sees. Host
-+units (build scripts, proc-macros) follow Cargo's `build-override` settings.
-+
-+`--debug-assertions` keeps `opt-level = 3` and `overflow-checks = off` but
-+switches to `debug-assertions = on` (rustc would otherwise enable overflow
-+checks with it). The option applies
- to regular builds, passthrough builds, and metadata-declared interop device
- crates. It is independent of `--device-debug`, which controls emitted device
- debug information and CUDA finalization optimization.
-@@ -533,7 +548,13 @@ Do not put `RUSTFLAGS` or `CARGO_ENCODED_RUSTFLAGS` in the `[env]` table; use
- inherited user flags, explicit `--device-cfg` values, and its required compiler
- flags in boundary-preserving `CARGO_ENCODED_RUSTFLAGS`. Required compiler flags
- are applied last so inherited settings cannot replace the cuda-oxide backend or
--disable its correctness-critical codegen options.
-+disable its correctness-critical codegen options. Pinned profile options
-+(opt-level, debug assertions, overflow checks, debug info) travel in the Cargo
-+profile, as `CARGO_PROFILE_RELEASE_*` and `CARGO_PROFILE_DEV_*` settings for
-+the base profiles and as `--config profile.<name>.*` arguments for a selected
-+`--profile`. They appear here only when `RUSTFLAGS`, `CARGO_ENCODED_RUSTFLAGS`
-+or `extra-rustflags` set the same option. Manifest `[profile.*.rustflags]`
-+lists never pass through here and outrank the pins.
- 
- ## Architecture
- 
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/build_run.rs` (modified, +2/-1)
-```diff
-@@ -118,7 +118,8 @@ pub fn codegen_run(
-         println!();
-     }
-     println!("This is the proper cargo workflow:");
--    println!("  CARGO_ENCODED_RUSTFLAGS=<cuda-oxide flags> cargo run");
-+    println!("  CARGO_ENCODED_RUSTFLAGS=<cuda-oxide flags> CARGO_PROFILE_*=<pins> cargo run");
-+    println!("  (a custom --profile takes the pins as --config profile.<name>.<key>=<value>)");
-     println!();
- 
-     touch_main_rs(&example_dir);
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/codegen_env.rs` (modified, +205/-25)
-```diff
-@@ -20,11 +20,11 @@ pub(super) const ENCODED_RUSTFLAGS_SEPARATOR: char = '\u{1f}';
- pub(super) const FULL_DEBUG_GET_MUT_OUTLINE_CFG: &str =
-     "cuda_oxide_internal_outline_disjoint_get_mut_v1";
- 
--/// Profile-related rustc flags owned by cuda-oxide.
-+/// Profile-related codegen settings owned by cuda-oxide.
- ///
- /// Backend selection and MIR/symbol invariants are always applied separately.
--/// `CargoSelected` deliberately adds no optimization, assertion, or debug-info
--/// flags so Cargo's chosen profile remains authoritative.
-+/// `CargoSelected` deliberately pins no optimization, assertion, or debug-info
-+/// setting so Cargo's chosen profile remains authoritative.
- #[derive(Clone, Copy, Debug, Eq, PartialEq)]
- pub(super) enum CodegenProfilePolicy {
-     CargoSelected,
-@@ -41,6 +41,197 @@ impl CodegenProfilePolicy {
-             Self::ReleaseLike
-         }
-     }
-+
-+    /// The codegen options this policy pins, in rustc flag order.
-+    pub(super) fn pinned_options(self) -> &'static [PinnedOption] {
-+        const OPT_LEVEL: PinnedOption = PinnedOption::new("opt-level", "3", "opt-level", "3");
-+        const NO_ASSERTIONS: PinnedOption =
-+            PinnedOption::new("debug-assertions", "off", "debug-assertions", "false");
-+        const ASSERTIONS: PinnedOption =
-+            PinnedOption::new("debug-assertions", "on", "debug-assertions", "true");
-+        // Overflow-check MIR changes code shape enough to break pattern-sensitive
-+        // device lowerings, so it is off in every release-like policy. Pinned
-+        // explicitly: rustc derives it from debug assertions, and Cargo's dev
-+        // profile (passthrough builds without `--release`) would turn it on.
-+        const NO_OVERFLOW_CHECKS: PinnedOption =
-+            PinnedOption::new("overflow-checks", "off", "overflow-checks", "false");
-+        const DEBUGINFO: PinnedOption = PinnedOption::new("debuginfo", "2", "debug", "2");
-+        match self {
-+            Self::CargoSelected => &[],
-+            Self::ReleaseLike => &[OPT_LEVEL, NO_ASSERTIONS, NO_OVERFLOW_CHECKS],
-+            Self::ReleaseLikeWithDebugAssertions => &[OPT_LEVEL, ASSERTIONS, NO_OVERFLOW_CHECKS],
-+            Self::ReleaseLikeWithDebugInfo => {
-+                &[OPT_LEVEL, NO_ASSERTIONS, NO_OVERFLOW_CHECKS, DEBUGINFO]
-+            }
-+        }
-+    }
-+}
-+
-+/// One rustc codegen option a release-like policy requires, with its Cargo
-+/// profile key.
-+///
-+/// The Cargo profile is the primary carrier: Cargo fingerprints resolved
-+/// profile values, not where they came from, so a release-like `build` whose
-+/// pins equal the release defaults shares every artifact with a plain
-+/// `cargo test --release`. A `-C` flag in RUSTFLAGS would change every crate's
-+/// cache key and rebuild the whole graph between the two. The rustc flag is
-+/// emitted only when incoming rustflags set the same option, since rustflags
-+/// follow profile flags on the rustc command line and would otherwise win.
-+///
-+/// Two carriers deliver the pins. The base profiles `release` and `dev` take
-+/// them from the environment (`CARGO_PROFILE_RELEASE_*` and
-+/// `CARGO_PROFILE_DEV_*`, see [`apply_profile_pins`]). Any other profile
-+/// selected with `--profile` takes them as
-+/// `--config profile.<name>.<key>=<value>` arguments (see
-+/// [`profile_config_args`]), because the environment key for such a name can
-+/// collide with a base profile's table: Cargo reads
-+/// `CARGO_PROFILE_RELEASE_LTO_OPT_LEVEL` as `profile.release.lto` and rejects
-+/// it.
-+///
-+/// Limits of the profile route: `[profile.<name>.package.<pkg>]` overrides,
-+/// `--config profile.*` arguments and manifest `[profile.<name>.rustflags]` or
-+/// `[profile.<name>.package.<pkg>.rustflags]` lists outrank the pins. The
-+/// trailing `-C` flag covers RUSTFLAGS, `CARGO_ENCODED_RUSTFLAGS` and the
-+/// project's `extra-rustflags` only; cargo-oxide never sees manifest
-+/// rustflags. Host units (build scripts, proc-macros) follow Cargo's
-+/// `build-override` defaults.
-+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-+pub(super) struct PinnedOption {
-+    /// rustc `-C` option name.
-+    name: &'static str,
-+    /// Value in rustc's `-C name=value` form.
-+    rustc_value: &'static str,
-+    /// Cargo profile key as a manifest writes it (`opt-level`, `debug`).
-+    cargo_key: &'static str,
-+    /// Value in Cargo's profile form.
-+    cargo_value: &'static str,
-+}
-+
-+impl PinnedOption {
-+    const fn new(
-+        name: &'static str,
-+        rustc_value: &'static str,
-+        cargo_key: &'static str,
-+        cargo_value: &'static str,
-+    ) -> Self {
+ impl Tables {
++    fn new(version: BytecodeVersion) -> Self {
 +        Self {
-+            name,
-+            rustc_value,
-+            cargo_key,
-+            cargo_value,
++            version,
++            strings: Default::default(),
++            string_index: Default::default(),
++            types: Default::default(),
++            type_index: Default::default(),
 +        }
 +    }
 +
-+    pub(super) fn rustc_flag(self) -> String {
-+        format!("-C{}={}", self.name, self.rustc_value)
-+    }
-+
-+    /// `CARGO_PROFILE_<PROFILE>_<KEY>`. Cargo derives the environment key from
-+    /// the manifest key by uppercasing it and replacing `-` wit
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/passthrough.rs` (modified, +9/-7)
-```diff
-@@ -225,11 +225,19 @@ pub(super) fn cargo_passthrough_command_with_env(
-         target_arch,
-         &materialization,
-     );
-+    let policy = cargo_subcommand.codegen_profile(opts.debug_assertions);
-     let mut cmd = Command::new("cargo");
-     cmd.arg(cargo_subcommand.as_str());
-     if let Some(features) = opts.features {
-         cmd.args(["--features", features]);
-     }
-+    // A profile other than `release` or `dev` may set a pinned key itself and
-+    // cannot take the environment carrier, so it receives the pins as
-+    // `--config` arguments. They go before the user's arguments: a later user
-+    // `--config` for the same key still wins.
-+    if let Some(profile) = selected_cargo_profile(cargo_args) {
-+        cmd.args(profile_config_args(policy, profile));
-+    }
-     cmd.args(cargo_args).current_dir(&ctx.workspace_root);
- 
-     // Project configuration provides defaults. Explicit wrapper flags and
-@@ -242,13 +250,7 @@ pub(super) fn cargo_passthrough_command_with_env(
-         opts.unchecked_indexing,
-         opts.device_debug,
-     );
--    apply_codegen_configuration(
--        &mut cmd,
--        ctx,
--        cargo_subcommand.codegen_profile(opts.debug_assertions),
--        opts.device_cfgs,
--        &fingerprint,
--    )?;
-+    apply_codegen_configuration(&mut cmd, ctx, policy, opts.device_cfgs, &fingerprint)?;
- 
-     if let Some(cargo_target_dir) = opts.cargo_target_dir {
-         cmd.env("CARGO_TARGET_DIR", cargo_target_dir);
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/pipeline_debug.rs` (modified, +4/-3)
-```diff
-@@ -68,9 +68,11 @@ pub fn codegen_show_pipeline(
+     fn string(&mut self, text: &str) -> u64 {
+         if let Some(&index) = self.string_index.get(text) {
+             return index;
+@@ -177,13 +189,28 @@ fn write_type(w: &mut Writer, tables: &mut Tables, ty: &Type) {
+                 w.varint(tables.ty(result));
+             }
          }
-     }
-     println!();
-+    println!("Required settings (Cargo profile; also rustflags if yours override them):");
-+    println!("  opt-level=3                 MIR optimization");
-+    println!("  debug-assertions=off        Remove debug checks");
-+    println!("  overflow-checks=off         Keep MIR free of overflow trap paths");
-     println!("Required flags (applied via CARGO_ENCODED_RUSTFLAGS):");
--    println!("  -C opt-level=3              MIR optimization");
--    println!("  -C debug-assertions=off     Remove debug checks");
-     println!("  -Z mir-enable-passes=-JumpThreading");
-     println!("                              Prevent barrier duplication");
-     println!("  -Z always-encode-mir        Emit MIR for all reachable device deps");
-@@ -227,7 +229,6 @@ pub fn codegen_debug(
-         &[],
-         &fingerprint,
-     );
--    cmd.env("CARGO_PROFILE_RELEASE_DEBUG", "2");
-     apply_output_mode(&mut cmd, false, target_arch, &materialization);
-     apply_device_arch_hint(&mut cmd, target_arch, detected_device_arch.as_deref());
-     apply_ld_library_path(&mut cmd, ctx);
-```
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/tests.rs` (modified, +594/-32)
-```diff
-@@ -69,6 +69,16 @@ fn is_sha256(value: &str) -> bool {
-             .all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
- }
- 
-+fn strings(args: &[&str]) -> Vec<String> {
-+    args.iter().map(|arg| arg.to_string()).collect()
-+}
-+
-+fn command_args(cmd: &Command) -> Vec<String> {
-+    cmd.get_args()
-+        .map(|arg| arg.to_string_lossy().into_owned())
-+        .collect()
-+}
-+
- /// `cargo_passthrough_command` with an empty ambient
- /// `CUDA_OXIDE_MATERIALIZE_CUBIN`.
- ///
-@@ -86,18 +96,19 @@ fn passthrough_command_for_test(
-     cargo_passthrough_command_with_env(ctx, cargo_subcommand, opts, cargo_args, None)
- }
- 
-+/// Run one passthrough command on a scratch workspace and report which units
-+/// Cargo reused, by target name. A test harness carries a ` (test)` suffix so
-+/// it never shadows the library it was built from.
- fn cargo_artifact_freshness(
-     ctx: &Context,
-+    cargo_subcommand: CargoPassthroughSubcommand,
-     opts: &CargoPassthroughOptions<'_>,
-+    cargo_args: &[&str],
-     materializer_provenance: Option<&str>,
- ) -> BTreeMap<String, bool> {
--    let mut cmd = passthrough_command_for_test(
--        ctx,
--        CargoPassthroughSubcommand::Build,
--        opts,
--        &["--message-format=json-render-diagnostics".to_string()],
--    )
--    .unwrap();
-+    let mut args = strings(&["--message-format=json-render-diagnostics"]);
-+    args.extend(strings(cargo_args));
-+    let mut cmd = passthrough_command_for_test(ctx, cargo_subcommand, opts, &args).unwrap();
-     if let Some(provenance) = materializer_provenance {
-         // Exercise a non-canonical spelling accepted by the backend. The
-         // macro must still track exact provenance rather than keying that
-@@ -118,10 +129,13 @@ fn cargo_artifact_freshness(
-         .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
-         .filter(|message| message["reason"] == "compiler-artifact")
-         .filter_map(|message| {
--            Some((
--                message["target"]["name"].as_str()?.to_string(),
--                message["fresh"].as_bool()?,
--            ))
-+            let name = message["target"]["name"].as_str()?;
-+            let key = if message["profile"]["test"].as_bool()? {
-+                format!("{name} (test)")
-+            } else {
-+                name.to_string()
-+            };
-+            Some((key, message["fresh"].as_bool()?))
-         })
-         .collect()
- }
-@@ -1216,15 +1230,23 @@ fn interop_build_keeps_debug_assertions_and_device_debug_independent() {
-             append_full_debug_rustflags(&mut encoded, &cmd, None);
-             let flags = decoded_rustflags(&encoded);
- 
--            assert!(flags.contains(&"-Copt-level=3"));
--            assert!(flags.contains(&if assertions {
-+            let pins: Vec<String> = options
-+                .codegen_profile()
-+                .pinned_options()
-+                .iter()
-+                .map(|pin| pin.rustc_flag())
-+                .collect();
-+            let assertions_flag = if assertions {
-                 "-Cdebug-assertions=on"
-             } else {
-                 "-Cdebug-assertions=off"
--            }));
--            if assertions {
--                assert!(flags.contains(&"-Coverflow-checks=off"));
--            }
-+            };
-+            assert_eq!(
-+                pins,
-+                ["-Copt-level=3", assertions_flag, "-Coverflow-checks=off"]
-+            );
-+            // Without incoming overrides the pins stay in the Cargo profile.
-+            assert!(!flags.iter().any(|flag| pins.iter().any(|pin| pin == flag)));
-             assert_eq!(has_full_debug_cfg(&flags), debug == DeviceDebug::Full);
-             for required in FULL_DEBUG_MIR_RUSTFLAGS {
-                 assert_eq!(flags.contains(required), debug == DeviceDebug::Full);
-@@ -2003,12 +2025,12 @@ fn build_passthrough_retains_release_profile_and_required_flags() {
-     assert_eq!(flags[0], "-Lnative=/nix/store/cuda-cudart/lib");
-     assert!(flags.contains(&"-Copt-level=0"));
-     assert!(flags.contains(&"-Zcodegen-backend=llvm"));
-+    // Only the overridden option is re-pinned; debug-assertions stays in the profile.
-     assert_eq!(
--        &flags[flags.len() - 6..],
-+        &flags[flags.len() - 5..],
-         [
-             "-Zcodegen-backend=/tmp/librustc_codegen_cuda.so",
-             "-Copt-level=3",
--            "-Cdebug-assertions=off",
-             "-Zmir-enable-passes=-JumpThreading",
-             "-Zalways-encode-mir",
-             "-Csymbol-mangling-version=v0",
-@@ -2069,8 +2091,9 @@ fn encoded_rustflags_preserve_configured_flag_boundaries_and_spaces() {
-             .any(|pair| pair == ["--cfg", "model=\"alpha beta\""])
-     );
-     assert_eq!(&flags[2..4], ["-L", "native=/nix/store/cuda-cudart/lib"]);
-+    // Backend, then the three required -Z/-C invariants (no incoming pin overrides).
-     assert_eq!(
--        flags[flags.len() - 6],
-+        flags[flags.len() - 4],
-         "-Zcodegen-backend=/tmp/backend path/librustc_codegen_c
-```
-
----
-
-### Incident Patch 3: `e1ce6255` (2026-10-19)
-**Commit Message**: fix(mir-importer): preserve emitted diverging device calls (#1364)
-
-A direct call to an emitted #[device] fn -> ! was lowered to trap;, so the callee's side effects before diverging were lost. Emit the call followed by unreachable, as rustc's own backend does; panic entry points, panic-only -> ! bodies and calls through function pointers still trap. The function_item_call check covers all three call sites plus a retained-trap control.
-
-Signed-off-by: Yunus Mutlu <[REDACTED_EMAIL]>
-Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
-
-**File**: `cuda-oxide/crates/mir-importer/src/pipeline.rs` (modified, +9/-4)
-```diff
-@@ -494,11 +494,16 @@ pub fn run_pipeline(
-     config: &PipelineConfig,
-     known_defs: crate::translator::facts::KnownDefs,
- ) -> Result<CompilationResult, PipelineError> {
--    // Install the driver-resolved lang-item ids for this run. Set (not
--    // merged) every entry: the ids are only valid inside the caller's
--    // `rustc_internal::run` context, so a stale set from a previous run on
--    // this thread must never survive.
-+    // Install the driver-resolved lang-item ids and emitted-function identities
-+    // for this run. Replace (rather than merge) both thread-local sets so
-+    // stale state from a previous run on this thread cannot survive.
-     crate::translator::facts::set_known_defs(known_defs);
-+    crate::translator::facts::set_emitted_functions(
-+        functions
-+            .iter()
-+            .map(|func| func.instance.mangled_name().to_string())
-+            .collect(),
-+    );
- 
-     prepare_output_dir(&config.output_dir)?;
- 
-```
-
-**File**: `cuda-oxide/crates/mir-importer/src/translator/facts.rs` (modified, +51/-0)
-```diff
-@@ -85,6 +85,12 @@ thread_local! {
-             index_mut_trait: None,
-         })
-     };
-+    // Exact monomorphized Rust functions that this pipeline run will emit.
-+    //
-+    // Store rustc's linkage identity rather than the legalised module symbol:
-+    // call classification must not depend on Legaliser ordering or spelling.
-+    static EMITTED_FUNCTIONS: std::cell::RefCell<std::collections::BTreeSet<String>> =
-+        const { std::cell::RefCell::new(std::collections::BTreeSet::new()) };
- }
- 
- /// Installs the driver-resolved lang-item ids for this pipeline run,
-@@ -99,6 +105,28 @@ pub(crate) fn known_defs() -> KnownDefs {
-     KNOWN_DEFS.with(|cell| cell.get())
- }
- 
-+/// Replace the emitted-function set for the current pipeline run.
-+///
-+/// Like [`set_known_defs`], this replaces rather than extends previous
-+/// thread-local state so one rustc invocation cannot leak into the next.
-+pub(crate) fn set_emitted_functions(names: std::collections::BTreeSet<String>) {
-+    EMITTED_FUNCTIONS.with(|set| *set.borrow_mut() = names);
-+}
-+
-+/// Whether this exact monomorphized Rust instance will have a `mir.func`
-+/// definition in the module being translated.
-+pub(crate) fn is_emitted_function(instance: &mir::mono::Instance) -> bool {
-+    is_emitted_name(&instance.mangled_name())
-+}
-+
-+/// Whether `mangled_name`, rustc's linkage identity of one monomorphized
-+/// function, is in the current run's emitted-function set. The name-based
-+/// form lets the set's replace-not-merge contract be tested without a rustc
-+/// session.
-+pub(crate) fn is_emitted_name(mangled_name: &str) -> bool {
-+    EMITTED_FUNCTIONS.with(|set| set.borrow().contains(mangled_name))
-+}
-+
- /// Validate the source reference and the fully specialized read-only storage
- /// contract using rustc's type system. MIR locals have erased regions, so the
- /// outer lifetime is read from the declaration before instantiation instead.
-@@ -1104,4 +1132,27 @@ pub fn reference_validity(
-             assert!(fact.pointee_alignment.is_power_of_two());
-         }
-     }
-+
-+    /// `set_emitted_functions` replaces the previous run's set instead of
-+    /// merging into it. A name left over from an earlier rustc invocation on
-+    /// the same thread would keep a diverging call to a function this run
-+    /// never emits, and the module would reference an undefined symbol.
-+    #[test]
-+    fn emitted_function_set_is_replaced_per_run() {
-+        let first_run = std::collections::BTreeSet::from(["first_run_die".to_string()]);
-+        set_emitted_functions(first_run);
-+        assert!(is_emitted_name("first_run_die"));
-+        assert!(!is_emitted_name("second_run_spin"));
-+
-+        let second_run = std::collections::BTreeSet::from(["second_run_spin".to_string()]);
-+        set_emitted_functions(second_run);
-+        assert!(is_emitted_name("second_run_spin"));
-+        assert!(
-+            !is_emitted_name("first_run_die"),
-+            "an entry from the previous run must not survive the replacement"
-+        );
-+
-+        set_emitted_functions(std::collections::BTreeSet::new());
-+        assert!(!is_emitted_name("second_run_spin"));
-+    }
- }
-```
-
-**File**: `cuda-oxide/crates/mir-importer/src/translator/terminator/helpers.rs` (modified, +35/-22)
-```diff
-@@ -316,10 +316,10 @@ pub fn bundle_generated_u32_results_as_array(
- /// 1. Translate all MIR arguments to Pliron IR values
- /// 2. At a foreign ABI boundary, adapt pointer address spaces to the exact
- ///    declared parameter types without changing pointer kind or mutability
--/// 3. Prepare the call destination using the current projection state
-+/// 3. For returning calls, prepare the destination using the current projection state
- /// 4. Create a `mir.call` operation carrying the callee's name attribute
--/// 5. Store the result through the prepared destination
--/// 6. Emit a zero-operand goto to the call's success target
-+/// 5. For returning calls, store the result and goto the success target
-+/// 6. For diverging calls, emit `mir.unreachable` after the call
- ///
- /// Reference arguments (`&mut local`) are handed the local's alloca slot
- /// pointer directly, so callee writes through the reference are observed by
-@@ -383,16 +383,21 @@ pub fn emit_function_call(
-         }
-     }
- 
--    let (prepared_destination, prepared_last_op) = prepare_destination_write(
--        ctx,
--        body,
--        destination,
--        value_map,
--        block_ptr,
--        last_op,
--        loc.clone(),
--    )?;
--    last_op = prepared_last_op;
-+    let prepared_destination = if target.is_some() {
-+        let (prepared, prepared_last_op) = prepare_destination_write(
-+            ctx,
-+            body,
-+            destination,
-+            value_map,
-+            block_ptr,
-+            last_op,
-+            loc.clone(),
-+        )?;
-+        last_op = prepared_last_op;
-+        Some(prepared)
-+    } else {
-+        None
-+    };
- 
-     use pliron::builtin::attributes::StringAttr;
- 
-@@ -423,26 +428,34 @@ pub fn emit_function_call(
-         call_op
-     };
- 
-+    if target.is_none() {
-+        return Ok(super::emit_unreachable_after(
-+            ctx,
-+            block_ptr,
-+            Some(call_op),
-+            loc,
-+        ));
-+    }
-+
-     let result_value = call_op.deref(ctx).get_result(0);
- 
-     let goto_prev = finish_destination_write(
-         ctx,
--        prepared_destination,
-+        prepared_destination.expect("returning call prepared its destination"),
-         result_value,
-         value_map,
-         block_ptr,
-         call_op,
-         loc.clone(),
-     )?;
- 
--    if let Some(target_idx) = target {
--        Ok(emit_goto(ctx, *target_idx, goto_prev, block_map, loc))
--    } else {
--        input_err!(
--            loc.clone(),
--            TranslationErr::unsupported("Call terminator without target not supported".to_string(),)
--        )
--    }
-+    Ok(emit_goto(
-+        ctx,
-+        target.expect("returning call has a success target"),
-+        goto_prev,
-+        block_map,
-+        loc,
-+    ))
- }
- 
- /// Adapt a foreign-call pointer argument only when the address space is the
-```
-
-**File**: `cuda-oxide/crates/mir-importer/src/translator/terminator/mod.rs` (modified, +39/-17)
-```diff
-@@ -1254,25 +1254,47 @@ fn translate_call(
-         return Ok(result);
-     }
- 
--    // Handle diverging calls (calls that never return, like unwrap_failed, panic, etc.)
--    // These have no target block because the function never returns.
-+    // `Call { target: None }` means there is no normal successor. rustc
-+    // clears the target when the destination type is visibly uninhabited:
-+    // `!`, `core::convert::Infallible`, an empty enum. That does not mean the
-+    // callee can be erased. An emitted Rust function with such a return type
-+    // may do observable work before it diverges. When the resolved instance
-+    // is in this pipeline run's emitted-function set, keep the call and let
-+    // `emit_function_call` end the block with `mir.unreachable`, which is
-+    // what rustc's own backend emits for a call without a destination.
-     //
--    // The callee is dropped and replaced by an immediate trap. That applies
--    // to every `-> !` callee reaching this point, including a user
--    // `#[device]` fn that legitimately diverges (e.g. `loop {}`); full Rust
--    // fidelity would emit the call for resolvable callees the way
--    // `translate_function_item_call` does. Dropping the call is a
--    // pre-existing semantic: the trap only makes it safe, where the bare
--    // `unreachable` previously emitted here was UB that let `opt` delete
--    // the whole panic path.
--    //
--    // Panic entry points additionally never get here with any statements
--    // translated ahead of them: `block::translate_block` recognizes the same
--    // shape via [`is_dropped_panic_call`] and emits the trap directly.
-+    // Every other diverging call keeps the pre-existing trap fallback. That
-+    // covers callees the collector skipped, such as core helpers without MIR
-+    // and local `-> !` bodies that are nothing but a panic, and a call
-+    // through a function pointer, whose `func` operand is not a constant and
-+    // so resolves no instance. Panic entry points never reach this arm: for
-+    // a callee whose path matches `is_panic_entry_path`,
-+    // `block::translate_block` lowers the whole block to the trap through
-+    // `is_dropped_panic_call` before any call is classified. Keep this arm
-+    // before the unsupported-intrinsic and libm checks below so the trapped
-+    // cases take the same path as before.
-     if target_usize.is_none() {
--        // This is a diverging call (returns !) - emit trap + unreachable
--        // Examples: unwrap_failed(), panic!(), abort()
--        return Ok(emit_trap_unreachable_after(ctx, block_ptr, prev_op, loc));
-+        let resolved_instance = match func {
-+            mir::Operand::Constant(constant)
-+                if *constant.const_.kind() == ConstantKind::ZeroSized =>
-+            {
-+                match constant.const_.ty().kind() {
-+                    rustc_public::ty::TyKind::RigidTy(rustc_public::ty::RigidTy::FnDef(
-+                        fn_def,
-+                        substs,
-+                    )) => rustc_public::mir::mono::Instance::resolve(fn_def, &substs).ok(),
-+                    _ => None,
+-        // Tagged empty symbolic shape (the shape is static), the static
+-        // shape, element type, memory space, both layouts tagged, then the
+-        // alignment as a tagged symbolic integer, always 1.
++        // Tagged symbolic shape, the static shape, element type, memory
++        // space, both layouts tagged, then the alignment as a tagged symbolic
++        // integer, always 1.
++        //
++        // The symbolic shape's contents depend on the version. The 13.5
++        // assembler keeps one integer-valued expression per dimension and
++        // rejects a rank mismatch ("concrete shape cache rank 1 does not
++        // match symbolic shape rank 0"). The compiler trunk switched on
++        // 2026-09-08 to holding only the dynamic dimensions, so a static
++        // shape writes an empty tuple from 13.6 on.
+         Type::Fragment(fragment) => {
+             w.varint(TAG_FRAGMENT);
+             w.varint(ATTR_SYMBOLIC_TUPLE);
+-            w.varint(0);
++            if tables.version < BytecodeVersion::new(13, 6) {
++                w.varint(fragment.shape.len() as u64);
++                for &dim in &fragment.shape {
++                    w.varint(ATTR_SYMBOLIC_INT);
++                    w.signed_varint(dim);
 +                }
++            } else {
++                w.varint(0);
 +            }
-+            _ => None,
-+        };
-+
-+        if !resolved_instance
-+            .as_ref()
-+            .is_some_and(crate::translator::facts::is_emitted_function)
-+        {
-+            return Ok(emit_trap_unreachable_after(ctx, block_ptr, prev_op, loc));
-+        }
+             w.le_var_size_i64(&fragment.shape);
+             w.varint(tables.ty(&Type::Scalar(fragment.element)));
+             w.varint(fragment.memory_space.value());
+@@ -335,7 +362,7 @@ fn write_module(
+     if version < BytecodeVersion::PREVIEW_FIRST {
+         return Err(Error::Version(version));
      }
- 
-     // A call to a rustc intrinsic that no dispatch arm above recognized can
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/function_item_call/README.md` (modified, +17/-0)
-```diff
-@@ -7,3 +7,20 @@ Rust lowers `apply_once(plus_seven, x)` through a callable trait method such as
- function-item body, and MIR import must emit a direct call name that matches the
- collector/export naming policy. Otherwise the generated device IR references a
- callee symbol that was never emitted.
-+
-+The diverging-call regression also covers an ordinary direct `#[device]`
-+function returning `!`. Its body performs an observable store before looping
-+forever. A MIR `Call` with no normal successor must therefore keep the call and
-+end the caller block with `unreachable`; replacing the call itself with a trap
-+would erase the store.
-+
-+`verify-code-shape.sh` checks that contract in the pre-optimization LLVM IR,
-+before the middle-end can inline the diverging helper. It covers the three
-+call sites in `diverging_callable` that used to lower to a trap: two through
-+`apply_never` (a function item and a closure) and the direct call to
-+`write_then_diverge`. Each kept call must be followed by `unreachable`. When
-+the build also wrote PTX, the kernel entry must keep the sentinel store or a
-+call to the helper. The control is `panic_only`, a `-> !` function whose body
-+is nothing but a panic: the collector does not emit it, so its call site must
-+still lower to the device trap, in the IR and in the PTX. The divergent
-+branches are not launched; the host run exercises only the returning path.
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/function_item_call/src/main.rs` (modified, +46/-5)
-```diff
-@@ -10,8 +10,11 @@
- //! back to the concrete function body instead of emitting a dangling trait-shim
- //! callee symbol. The regression also covers `Fn`/`FnMut`, references,
- //! multiple and nested-tuple arguments, tuple returns, and type/const-generic
--//! function items. Diverging function items and closures also verify that a
--//! direct Rust call returning `!` ends its MIR block with `unreachable`.
-+//! function items. Diverging function items, closures, and an ordinary direct
-+//! `-> !` device helper also verify that a non-returning Rust call is emitted
-+//! before its MIR block ends with `unreachable`. `panic_only` is the control:
-+//! its `-> !` body is nothing but a panic, so the collector never emits it and
-+//! its call site must still lower to the device trap.
- //! `call_once_decoy` proves that an ordinary function whose name contains
- //! trait-like text is not mistaken for a callable-trait shim.
- 
-@@ -57,6 +60,30 @@ fn spin_forever(_value: u32) -> ! {
-     loop {}
- }
- 
-+// Unlike `spin_forever`, this is reached by an ordinary direct MIR `Call`.
-+// The store makes replacing that call with an immediate trap observably wrong.
-+#[allow(clippy::empty_loop)]
-+#[inline(never)]
-+#[device]
-+unsafe fn write_then_diverge(ptr: *mut u32) -> ! {
-+    unsafe {
-+        ptr.write(0x1111_1111);
-+    }
-+    loop {}
-+}
-+
-+// Control for the retained trap. A `-> !` body that is nothing but a panic is
-+// a placeholder to the collector, so this function is never emitted and its
-+// call site must keep the device trap. `#[inline(never)]` keeps the call in
-+// the kernel's MIR, so the importer classifies this callee rather than the
-+// panic entry point inside it. The name must not contain a `panicking` module
-+// segment: that would trap the whole block before the call is classified.
-+#[inline(never)]
-+#[device]
-+fn panic_only() -> ! {
-+    panic!("not collected")
-+}
-+
- #[device]
- fn apply_once<F: FnOnce(u32) -> u32>(f: F, x: u32) -> u32 {
-     f(x)
-@@ -133,9 +160,10 @@ mod kernels {
-         }
-     }
- 
--    /// Compile both diverging callable paths without entering them on-device.
--    /// A Rust call returning `!` has no successor block, so the importer must
--    /// emit the direct call followed by `mir.unreachable`.
-+    /// Compile the diverging call paths without entering them on-device.
-+    /// A Rust call returning `!` has no successor block. When the callee's
-+    /// body is emitted, the importer must keep the direct call followed by
-+    /// `mir.unreachable`; when it is not, the call site keeps the device trap.
-     #[kernel]
-     pub fn diverging_callable(flag: u32, mut out: DisjointSlice<u32>) {
-         let idx = thread::index_1d();
-@@ -148,6 +176,19 @@ mod kernels {
-             #[allow(clippy::empty_loop)]
-             apply_never(|_| loop {}, flag);
-         }
-+        if flag == 3 {
-+            // The importer must preserve this ordinary direct call. The callee
-+            // stores first and then diverges, so replacing it with a trap loses
-+            // an observable side effect.
-+            unsafe {
-+                write_then_diverge(out.as_mut_ptr());
-+            }
-+        }
-+        if flag == 4 {
-+            // Retained-trap control: the callee's body is only a panic, so the
-+            // collector does not emit it and this call site must still trap.
-+            panic_only();
-+        }
-         if let Some(slot) = out.get_mut(idx) {
-             *slot = 0xd1ce;
-         }
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/function_item_call/verify-code-shape.sh` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+#!/usr/bin/env bash
-+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+# SPDX-License-Identifier: Apache-2.0
-+
-+set -euo pipefail
-+
-+root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+llvm="${root}/function_item_call.ll"
-+ptx="${root}/function_item_call.ptx"
-+
-+test -s "${llvm}"
-+
-+extract_llvm_function() {
-+    local needle="$1"
-+    awk -v needle="${needle}" '
-+        /^define / && index($0, needle) != 0 { in_function = 1 }
-+        in_function { print }
-+        in_function && /^}/ { exit }
-+    ' "${llvm}"
-+}
-+
-+kernel="$(extract_llvm_function '@diverging_callable(')"
-+test -n "${kernel}"
-+
-+# A kept diverging call must be followed by LLVM `unreachable` on the next
-+# line. A `--device-debug` build appends `, !dbg !N` to that line, so the
-+# match stops at the keyword. Monomorphized callees carry a mangled suffix
-+# after the Rust name (`apply_neverNvB2_12spin_foreverEB2_`), so the pattern
-+# allows symbol text on both sides of the name.
-+expect_kept_diverging_calls() {
-+    local callee="$1"
-+    local expected="$2"
-+    local pattern="call void @[^ (]*${callee}[^ (]*\\("
-+    local found
-+    found="$(grep -Ec "${pattern}" <<<"${kernel}" || true)"
-+    if [[ "${found}" -ne "${expected}" ]]; then
-+        echo "diverging_callable must keep ${expected} direct call(s) to ${callee}, found ${found}" >&2
-+        exit 1
-+    fi
-+    local line next
-+    while IFS= read -r line; do
-+        next="$(sed -n "$((line + 1))p" <<<"${kernel}")"
-+        if ! grep -Eq '^[[:space:]]*unreachable(,|[[:space:]]*$)' <<<"${next}"; then
-+            echo "the direct diverging call to ${callee} at kernel line ${line} is not followed by LLVM unreachable" >&2
-+            exit 1
-+        fi
-+    done < <(grep -nE "${pattern}" <<<"${kernel}" | cut -d: -f1)
-+}
-+
-+# The three call sites the importer used to replace with a trap: two through
-+# the generic `apply_never` (a function item and a closure) and the ordinary
-+# direct call to the store-then-loop helper.
-+expect_kept_diverging_calls 'apply_never' 2
-+expect_kept_diverging_calls 'write_then_diverge' 1
-+
-+# Retained-trap control. `panic_only` has a body that is nothing but a panic,
-+# which the collector does not emit, so its call site must still lower to the
-+# device trap and the callee must not be called.
-+trap_count="$(grep -Ec 'asm sideeffect "trap;"' <<<"${kernel}" || true)"
-+if [[ "${trap_count}" -ne 1 ]]; then
-+    echo "diverging_callable must keep one trap for the panic-only callee, found ${trap_count}" >&2
-+    exit 1
-+fi
-+if grep -Eq 'call void @[^ (]*panic_only[^ (]*\(' <<<"${kernel}"; then
-+    echo "the panic-only callee must not be called: the collector does not emit its body" >&2
-+    exit 1
-+fi
-+
-+helper="$(extract_llvm_function 'write_then_diverge')"
-+test -n "${helper}"
-+if ! grep -Eq 'store i32 286331153, ptr ' <<<"${helper}"; then
-+    echo "write_then_diverge lost its observable sentinel store" >&2
-+    exit 1
-+fi
-+
-+# The direct llc route also writes PTX; the NVVM route writes only `.ll` and
-+# `.target`. Check the PTX only when it exists and is at least as new as the
-+# IR, so a leftover from an older build is never checked. In the kernel entry
-+# the sentinel store must survive `opt` and `llc` (the helper is normally
-+# inlined) or the helper must still be called, and the panic-only control
-+# must keep its trap.
-+if [[ -s "${ptx}" && ! "${ptx}" -ot "${llvm}" ]]; then
-+    extract_ptx_function() {
-+        local pattern="$1"
-+        awk -v pattern="${pattern}" '
-+            /^\.(visible )?\.(entry|func) / && $0 ~ pattern && $0 ~ /\($/ { in_function = 1 }
-+            in_function { print }
-+            in_function && /^}/ { exit }
-+        ' "${ptx}"
-+    }
-+    entry="$(extract_ptx_function '[.]entry diverging_callable[(]')"
-+    test -n "${entry}"
-+    if ! grep -Eq 'st\.global\.b32[[:space:]]+\[[^]]+\], 286331153|call\.uni[[:space:]].*write_then_diverge' <<<"${entry}"; then
-+        echo "the diverging_callable PTX entry neither stores the sentinel nor calls write_then_diverge" >&2
-+        exit 1
-+    fi
-+    ptx_trap_count="$(grep -Ec '^[[:space:]]*trap;' <<<"${entry}" || true)"
-+    if [[ "${ptx_trap_count}" -ne 1 ]]; then
-+        echo "the diverging_callable PTX entry must keep one trap for the panic-only callee, found ${ptx_trap_count}" >&2
-+        exit 1
-+    fi
-+fi
-+
-+echo "function_item_call code shape: PASS"
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/src/collector.rs` (modified, +7/-7)
-```diff
-@@ -2695,10 +2695,9 @@ impl<'tcx> DeviceCollector<'tcx> {
-     ///    "Symbol ... not found" error.
-     ///
-     /// Functions that are declared diverging (return type `!`) are left
--    /// alone: their call sites have no target block, so the translator
--    /// already lowers them to LLVM `unreachable` (note: NOT a trap;
--    /// the optimizer may delete paths that provably reach it, a known
--    /// gap tracked separately).
-+    /// alone. If their body is emitted, the importer preserves the call and
-+    /// terminates its caller with `unreachable`; if collection deliberately
-+    /// omits the body, the importer retains the existing device-trap fallback.
-     fn check_unreachable_callee(
-         &self,
-         resolved: Instance<'tcx>,
-@@ -2778,8 +2777,9 @@ impl<'tcx> DeviceCollector<'tcx> {
- 
-         // No stub marker: leave non-local functions to the existing silent
-         // skip (this is what keeps the real `cuda_device` intrinsic
--        // placeholders and `core`'s cold panic wrappers working), and leave
--        // declared-diverging functions to the translator's `unreachable` lowering.
-+        // placeholders and `core`'s cold panic wrappers working). Declared-
-+        // diverging functions that are omitted here retain the translator's
-+        // device-trap fallback rather than producing an undefined call.
-         if !def_id.is_local() || mir.return_ty().is_never() {
-             return;
-         }
-@@ -2808,7 +2808,7 @@ impl<'tcx> DeviceCollector<'tcx> {
-             .with_help(
-                 "annotate device helpers with `#[device]`; if the panic is \
-                  intentional, declare the function as diverging (`-> !`) so the \
--                 call lowers to LLVM `unreachable`",
-+                 device pipeline can treat the path as non-returning",
-             )
-             .emit()
-     }
+-    let mut tables = Tables::default();
++    let mut tables = Tables::new(version);
+     let mut functions = Writer::new();
+     functions.varint(entries as u64);
+     write_entries(&mut functions, &mut tables);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1556** (2026-10-20): fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (@nihalpasham)
+- **PR #1555** (2026-10-20): docs(cuda-oxide): take the tile-library chapter out of the book until the toolkit ships (@nihalpasham)
+- **PR #1553** (2026-10-19): feat(cutile): add NVFP4 MoE batch-size benchmark (@elibol)
 - **PR #1551** (2026-10-19): docs(book): show how an inline request reaches the GPU (@nihalpasham)
 - **PR #1549** (2026-10-19): test(drop_glue): keep destructor MIR with -Zinline-mir=no, not #[inline(never)] (@nihalpasham)
 - **PR #1545** (2026-10-19): Tile libraries: call Rust device functions from Tile kernels (@nihalpasham)
-- **PR #1542** (closed): Tile libraries: call Rust device functions from Tile kernels (@nihalpasham)
-- **PR #1535** (2026-10-18): cuda-oxide: add public FP16 GEMM comparison reference (@nihalpasham)
-- **PR #1534** (2026-10-18): cuda-oxide: migrate CuTeIR printing to upstream Pliron MLIR interop (@nihalpasham)
 
 ---
 
@@ -3465,67 +2330,32 @@ Signed-off-by: nihalpasham <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cuda-device): run mbarrier init on one linear thread (#1349)
+## X. oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/cuda-device/src/barrier.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/oxide-tilebc/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b606fdd`: cuda-device): run mbarrier init on one linear thread (#1349). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e2b536b`: oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (#1556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-device/src/barrier.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/oxide-tilebc/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// | Operation       | Thread Requirement                     |
-/// |-----------------|----------------------------------------|
-/// | `from_static()` | All threads call                       |
-/// | `init()`        | All threads call; linear thread 0 acts |
-/// | `arrive()`      | All participating threads              |
-/// | `wait()`        | All participating threads              |
-/// | `inval()`       | All threads call; linear thread 0 acts |
-/// // All threads: create the handle and initialize. Linear thread 0, that is
-/// // thread (0, 0, 0), runs mbarrier.init; init() then fences and
-/// // synchronizes the block, so every thread holds a Ready handle.
-/// // All threads: clean up. inval() synchronizes the block, then linear
-/// // thread 0 runs mbarrier.inval.
-    /// **All threads**: this is a plain constructor with no device effect. Every
-    /// thread wraps the same static, and `init()` then elects linear thread 0 to
-    /// run `mbarrier.init`. Do not wrap `init()` in a thread-0 branch: it
-    /// synchronizes the whole block, and a block-wide sync inside a branch that
-    /// only some threads take is undefined, in practice a hang.
-    /// // All threads: wrap and 
+        // The fragment type entry at 13.5: tagged symbolic shape holding one
+        // integer per dimension (the 13.5 assembler requires full rank), static shape
+                0xD2, 0x01, 0xD8, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00,
+                0x00, //
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// | Operation       | Thread Requirement        |
-/// |-----------------|---------------------------|
-/// | `from_static()` | Single thread (thread 0)  |
-/// | `init()`        | Single thread (thread 0)  |
-/// | `arrive()`      | All participating threads |
-/// | `wait()`        | All participating threads |
-/// | `inval()`       | Single thread (thread 0)  |
-/// // Thread 0: Create and initialize
-/// fence_proxy_async_shared_cta();
-/// sync_threads();
-/// // Thread 0: Cleanup
-/// sync_threads();
-    /// **Single-thread**: Only call from the initialization thread (thread 0).
-    /// if tid == 0 {
-    ///     let bar0 = ManagedBarrier::<Uninit, TmaBarrier>::from_static(&raw mut BAR0);
-    ///     let bar1 = ManagedBarrier::<Uninit, GeneralBarrier>::from_static(&raw mut BAR1);
-    ///     let bar0 = unsafe { bar0.init(32) };
-    ///     let bar1 = unsafe { bar1.init(32) };
-    /// }
-    /// **All threads in the block should call this.** Only thread 0 performs
-    /// the actual initialization; all threads synchronize and receive a `Ready` handle.
-    /// // ALL threads call init - only thread 0 actually initializes
-    /// **All threads in the block should call this.** Only the thr
+        // The fragment type entry: tagged empty symbolic shape, static shape
+                0xD2, 0x01, 0xD8, 0x01, 0x00, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, //
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b606fdd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e2b536b` are properly handled with clean fallback behavior.

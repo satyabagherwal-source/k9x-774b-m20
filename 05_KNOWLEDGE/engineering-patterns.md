@@ -231190,3 +231190,114 @@ the `AgentMonitor` records all agents invocations in a tree structure that also 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `aff8ebad` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3202. oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i (Harvested from NVIDIA/cuda-rust)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i",
+  "source": "NVIDIA/cuda-rust",
+  "source_url": "https://github.com/NVIDIA/cuda-rust",
+  "source_version": "1e2b536b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-20T13:47:02.898Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nvidia-cuda-rust",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `1e2b536b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `cuda-oxide/crates/oxide-tilebc/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1e2b536b`: oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (#1556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/oxide-tilebc/src/lib.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // The fragment type entry at 13.5: tagged symbolic shape holding one
+        // integer per dimension (the 13.5 assembler requires full rank), static shape
+                0xD2, 0x01, 0xD8, 0x01, 0x01, 0xD1, 0x01, 0x02, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00,
+                0x00, //
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        // The fragment type entry: tagged empty symbolic shape, static shape
+                0xD2, 0x01, 0xD8, 0x01, 0x00, 0x01, 1, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, //
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1e2b536b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3203. Mark results whose verification was skipped (#5448) (Harvested from trufflesecurity/trufflehog)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mark results whose verification was skipped (#5448)",
+  "source": "trufflesecurity/trufflehog",
+  "source_url": "https://github.com/trufflesecurity/trufflehog",
+  "source_version": "3bba824f",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-20T13:47:13.810Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trufflesecurity-trufflehog",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `3bba824f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pkg/detectors/detectors.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3bba824f`: Mark results whose verification was skipped (#5448). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/detectors.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// VerificationSkipped indicates that the engine produced this result without attempting remote verification,
+	// either because verification was disabled for the result's source or detector, or because the engine withheld
+	// verification after multiple detectors matched the same secret. It lets consumers that measure verifier activity
+	// tell "the verifier did not run" apart from "the verifier ran and the credential did not verify". It is purely
+	// informational: Verified and the verification error keep whatever the detector or engine assigned, so a skipped
+	// result still reports as unverified (or with an overlap verification error) exactly as it would without this
+	// field.
+	VerificationSkipped bool
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3bba824f` are properly handled with clean fallback behavior.

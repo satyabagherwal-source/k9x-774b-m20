@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T13:40:48.830Z",
+  "last_updated": "2026-10-20T13:47:13.946Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "2a11d60adc25fdb6d822f4ea917a4c7e9186173a3391212f17a25eede8782b2d",
-      "verified_at": "2026-10-19T00:10:28.561Z",
+      "content_hash": "9e5cedd78a5a425b9fa83b586a77d9683a4b47a41f67415ffb17fa3b9e56fba1",
+      "verified_at": "2026-10-20T13:47:02.654Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:10:28.561Z"
+      "last_updated": "2026-10-20T13:47:02.654Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
-      "verified_at": "2026-10-20T08:50:48.206Z",
+      "content_hash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
+      "verified_at": "2026-10-20T13:47:13.945Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T08:50:48.206Z"
+      "last_updated": "2026-10-20T13:47:13.945Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
-      "verified_at": "2026-10-19T19:22:19.907Z",
+      "content_hash": "a87554702a1e646a85151013f7408ba57cc922a8adea721d57f091b0873d8118",
+      "verified_at": "2026-10-20T13:47:03.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:22:19.907Z"
+      "last_updated": "2026-10-20T13:47:03.031Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

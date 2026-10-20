@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "2a11d60adc25fdb6d822f4ea917a4c7e9186173a3391212f17a25eede8782b2d",
-    "lastHarvestedAt": "2026-10-19T00:10:28.556Z",
+    "contentHash": "9e5cedd78a5a425b9fa83b586a77d9683a4b47a41f67415ffb17fa3b9e56fba1",
+    "lastHarvestedAt": "2026-10-20T13:47:02.647Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "3ffc6fa1",
+    "sourceVersion": "3bba824f",
     "license": "AGPL-3.0",
-    "contentHash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
-    "lastHarvestedAt": "2026-10-20T08:50:48.198Z",
+    "contentHash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
+    "lastHarvestedAt": "2026-10-20T13:47:13.939Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "a25a5857",
+    "sourceVersion": "1e2b536b",
     "license": "Apache-2.0",
-    "contentHash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
-    "lastHarvestedAt": "2026-10-19T19:22:19.901Z",
+    "contentHash": "a87554702a1e646a85151013f7408ba57cc922a8adea721d57f091b0873d8118",
+    "lastHarvestedAt": "2026-10-20T13:47:03.024Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

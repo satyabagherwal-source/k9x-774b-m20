@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T13:40:48.761Z",
+  "last_updated": "2026-10-20T13:47:13.900Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17823,7 +17823,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "2a11d60adc25fdb6d822f4ea917a4c7e9186173a3391212f17a25eede8782b2d",
+      "content_hash": "9e5cedd78a5a425b9fa83b586a77d9683a4b47a41f67415ffb17fa3b9e56fba1",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -18208,7 +18208,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-19T00:10:28.506Z",
+      "verified_at": "2026-10-20T13:47:02.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34331,8 +34331,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "a25a5857",
-      "content_hash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
+      "source_version": "1e2b536b",
+      "content_hash": "a87554702a1e646a85151013f7408ba57cc922a8adea721d57f091b0873d8118",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -34355,6 +34355,11 @@
           "number": 2768,
           "title": "cuda-device): run mbarrier init on one linear thread (#1349)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3202,
+          "title": "oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34362,7 +34367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:22:19.829Z",
+      "verified_at": "2026-10-20T13:47:02.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44680,8 +44685,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "3ffc6fa1",
-      "content_hash": "5e9983001535ae631abfef228e33c1785b40c03c76bc51ba7d69e5e140c81296",
+      "source_version": "3bba824f",
+      "content_hash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -44699,6 +44704,11 @@
           "number": 3123,
           "title": "Add per-source debug option and hide sensitive data in debug logs (#5446)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3203,
+          "title": "Mark results whose verification was skipped (#5448)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44706,7 +44716,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T08:50:48.132Z",
+      "verified_at": "2026-10-20T13:47:13.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101344,6 +101354,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T13:40:48.744Z"
+    },
+    "rule-3202": {
+      "learning_id": "rule-3202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3202,
+      "title": "oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads i",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "1e2b536b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:47:02.970Z"
+    },
+    "rule-3203": {
+      "learning_id": "rule-3203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3203,
+      "title": "Mark results whose verification was skipped (#5448)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "3bba824f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T13:47:13.892Z"
     }
   },
   "aliases": {

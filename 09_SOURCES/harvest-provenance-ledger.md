@@ -3836,3 +3836,6 @@ Every entry in this ledger must capture:
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `c4497e96` | Multi-dimensional audit evidence | 2026-10-20T13:40:40.543Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `eaf3fc8d` | Multi-dimensional audit evidence | 2026-10-20T13:40:45.570Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `aff8ebad` | Multi-dimensional audit evidence | 2026-10-20T13:40:48.822Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-20T13:47:02.647Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `1e2b536b` | Multi-dimensional audit evidence | 2026-10-20T13:47:03.024Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `3bba824f` | Multi-dimensional audit evidence | 2026-10-20T13:47:13.939Z |

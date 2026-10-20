@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T13:40:48.827Z",
-  "total_cycles_completed": 3806,
-  "total_learnings_persisted": 3806,
-  "total_rules_promoted": 3015,
+  "last_updated": "2026-10-20T13:47:13.943Z",
+  "total_cycles_completed": 3809,
+  "total_learnings_persisted": 3809,
+  "total_rules_promoted": 3017,
   "history": [
-    {
-      "timestamp": "2026-10-20T01:40:09.218Z",
-      "repository": "mozilla/readability",
-      "learningId": "learn-github-mozilla-readability",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:40:11.552Z",
-      "repository": "dodo-reach/hermes-desktop",
-      "learningId": "learn-github-dodo-reach-hermes-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T01:40:18.392Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T01:46:08.470Z",
       "repository": "miso-belica/jusText",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T13:40:48.827Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:47:02.651Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:47:03.028Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T13:47:13.943Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
