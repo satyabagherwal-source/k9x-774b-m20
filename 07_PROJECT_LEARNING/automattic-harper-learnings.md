@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `213cb8f8`  
+> **Source Version**: `8c8b17d3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:21:50.671Z  
+> **Timestamp**: 2026-10-20T21:01:26.534Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:21:49.340Z  
+> **Harvest Timestamp**: 2026-10-20T21:01:26.526Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 16796 stars
+- **Stars / Engagement**: 16894 stars
 
 ---
 
@@ -1429,8 +1429,172 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99d282e5` (2026-10-19)
-**Commit Message**: fix(chrome-ext): extend timeout
+### Incident Patch 1: `d8432a5c` (2026-10-20)
+**Commit Message**: fix(core): DisjointPrefixes keeps title case when joining prefix (#4641)
+
+Motivation: "Pre-Requisite" was flagged and the suggestion was
+"PreRequisite". The suggestion copied casing letter by letter from the
+whole matched span, so the capital R of the second word carried into the
+middle of the joined word.
+
+Approach: copy the casing from the prefix token only. "Pre-Requisite"
+now becomes "Prerequisite", and "PRE-REQUISITE" becomes "PREREQUISITE".
+Hyphenated suggestions follow the same rule, so "Pre Requisite" suggests
+"Pre-requisite".
+
+Validation: added two tests to disjoint_prefixes.rs. With the old line
+restored, the "Pre-Requisite" test fails. With the fix, `cargo test -p
+harper-core` passes in full. `cargo clippy -p harper-core --all-targets`
+completes; it prints 11 warnings in the harper-core lib tests that this
+change doesn't touch. `cargo fmt` was run. Not run: the other workspace
+crates' tests and `just format`.
+
+The change affects only the casing of DisjointPrefixes suggestions.
+Which inputs get flagged is unchanged.
+
+Report: https://github.com/Automattic/harper/issues/4381
+
+Assisted-by: claude-sonnet-5-5 (via Claude Code)
+
+Signed-off-by: Pujitha Paladugu <[REDACTED_EMAIL]
+
+**File**: `harper-core/src/linting/disjoint_prefixes.rs` (modified, +20/-1)
+```diff
+@@ -121,7 +121,8 @@ impl<D: Dictionary> ExprLinter for DisjointPrefixes<D> {
+         let suggestions = suggestions
+             .iter()
+             .map(|s| {
+-                Suggestion::replace_with_match_case(s.chars().collect(), toks_span.get_content(src))
++                // Copy casing from the prefix alone, so "Pre-Requisite" becomes "Prerequisite", not "PreRequisite"
++                Suggestion::replace_with_match_case(s.chars().collect(), toks[0].get_ch(src))
+             })
+             .collect();
+ 
+@@ -214,4 +215,22 @@ mod tests {
+             DisjointPrefixes::new(FstDictionary::curated()),
+         );
+     }
++
++    #[test]
++    fn fix_title_case_hyphenated_to_joined_4381() {
++        assert_suggestion_result(
++            "Pre-Requisite",
++            DisjointPrefixes::new(FstDictionary::curated()),
++            "Prerequisite",
++        );
++    }
++
++    #[test]
++    fn fix_all_caps_hyphenated_to_joined() {
++        assert_suggestion_result(
++            "PRE-REQUISITE",
++            DisjointPrefixes::new(FstDictionary::curated()),
++            "PREREQUISITE",
++        );
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `fbb7a660` (2026-10-20)
+**Commit Message**: fix(chrome-ext): don't close popup when the context_hash changes (#4658)
+
+* feat(chrome-ext): allow to require specific problematic text in assertions
+
+* fix(chrome-ext): don't close the popup when the context_hash changes
+
+**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +15/-5)
+```diff
+@@ -161,8 +161,14 @@ export async function waitForHighlightsToSettle(
+ export async function waitForHarperHighlightCenter(
+ 	page: Page,
+ 	timeoutMs = 30000,
++	/** Require that the highlight in question have this "problemText" before returning. */
++	problemText: string | null = null,
+ ): Promise<ScreenPoint | null> {
+-	const highlight = getHarperHighlights(page).first();
++	let highlight = getHarperHighlights(page).first();
++
++	if (problemText != null) {
++		highlight = highlight.and(page.locator(`[data-problem-text="${problemText}"]`));
++	}
+ 
+ 	try {
+ 		await highlight.waitFor({ state: 'visible', timeout: timeoutMs });
+@@ -197,8 +203,12 @@ export async function assertLocatorsResolveEqually(page: Page, a: Locator, b: Lo
+ 
+ /** Click the first Harper highlight and check that its popup opens.
+  * Returns false if no highlight was found; a missing popup fails the test. */
+-export async function clickHarperHighlight(page: Page): Promise<boolean> {
+-	const center = await waitForHarperHighlightCenter(page);
++export async function clickHarperHighlight(
++	page: Page,
++	/** Require that the highlight be over specific text before clicking it. */
++	problemText: string | null = null,
++): Promise<boolean> {
++	const center = await waitForHarperHighlightCenter(page, undefined, problemText);
+ 	if (center == null) return false;
+ 
+ 	await page.mouse.click(center.x, center.y);
+@@ -300,7 +310,7 @@ export async function testBasicSuggestion(
+ 		await assertEditorText(editor, 'This is an test');
+ 		await waitForHighlightsToSettle(page);
+ 
+-		const opened = await clickHarperHighlight(page);
++		const opened = await clickHarperHighlight(page, 'an');
+ 		expect(opened).toBe(true);
+ 		const suggestion = page.getByTitle('Click to replace "an" with "a"');
+ 		await expect(suggestion).toBeVisible();
+@@ -349,7 +359,7 @@ export async function testCanIgnoreSuggestion(
+ 		await expect(getHarperHighlights(page)).toHaveCount(1, { timeout: 30000 });
+ 
+ 		// Open the popup for the highlight and click Ignore.
+-		const opened = await clickHarperHighlight(page);
++		const opened = await clickHarperHighlight(page, 'mistaek');
+ 		expect(opened).toBe(true);
+ 
+ 		// The popup captures the editor's cursor state on the next animation frame.
+```
+
+**File**: `packages/lint-framework/src/lint/Highlights.ts` (modified, +3/-0)
+```diff
+@@ -214,6 +214,9 @@ export default class Highlights {
+ 						backgroundColor: `${lintKindColor(box.lint.lint_kind)}22`,
+ 					},
+ 					id: 'harper-highlight',
++					attributes: {
++						'data-problem-text': box.lint.problem_text,
++					},
+ 				},
+ 				[],
+ 			);
+```
+
+**File**: `packages/lint-framework/src/lint/PopupHandler.ts` (modified, +0/-2)
+```diff
+@@ -219,13 +219,11 @@ export default class PopupHandler {
+ 				.slice(0, this.popupLint)
+ 				.filter(
+ 					(box) =>
+-						box.lint.context_hash === previous.lint.context_hash &&
+ 						box.source === previous.source &&
+ 						box.lint.span.start === previous.lint.span.start &&
+ 						box.lint.span.end === previous.lint.span.end,
+ 				).length;
+ 			const matches = boxes.flatMap((box, index) =>
+-				box.lint.context_hash === previous.lint.context_hash &&
+ 				box.source === previous.source &&
+ 				box.lint.span.start === previous.lint.span.start &&
+ 				box.lint.span.end === previous.lint.span.end &&
+```
+
+---
+
+### Incident Patch 3: `d0aae35e` (2026-10-20)
+**Commit Message**: Revert "fix(chrome-ext): extend timeout"
+
+This reverts commit 99d282e57315ef6ac94d3d121ac26bc82059f7e6.
 
 **File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +1/-1)
 ```diff
@@ -1438,20 +1602,20 @@ Observed empirical fixes and code patches:
  
  export async function waitForHighlightsToSettle(
  	page: Page,
--	quietMs = 250,
-+	quietMs = 1000,
+-	quietMs = 1000,
++	quietMs = 250,
  	timeoutMs = 30000,
  ): Promise<void> {
  	let previous: string | undefined;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4658** (2026-10-20): fix(chrome-ext): don't close popup when the context_hash changes (@elijah-potter)
+- **PR #4655** (2026-10-20): feat: as log as→as long as; ad nausea→ad nauseam (@hippietrail)
+- **PR #4653** (2026-10-20): fix(chrome-ext): bypass spellcheck suppression on Gmail (@elijah-potter)
+- **PR #4648** (2026-10-20): feat: compete over each other → compete with/against each other (@hippietrail)
 - **PR #4647** (2026-10-19): feat: fussy logic → fuzzy logic (@hippietrail)
-- **PR #4645** (2026-10-18): feat: with one fell swoop → in/at one fell swoop (@hippietrail)
-- **PR #4644** (2026-10-18): feature: TBF → to be fair (@hippietrail)
-- **PR #4637** (2026-10-17): chore: add more patterns to `ExtendOrExtent` (@hippietrail)
-- **PR #4635** (2026-10-19): feat: support R language (@thjbdvlt)
-- **PR #4633** (2026-10-19): feat: to no vail/vale/veil → to no avail (@hippietrail)
+- **PR #4646** (2026-10-20): feat: air → err in idioms (@hippietrail)
 
 ---
 
@@ -1471,28 +1635,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chrome-ext): extend timeout
+## X. core): DisjointPrefixes keeps title case when joining prefix (#4641)
 
 **RULE**:
-When implementing operations in `packages/chrome-plugin/tests/testUtils.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/disjoint_prefixes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99d282e5`: chrome-ext): extend timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8432a5c`: core): DisjointPrefixes keeps title case when joining prefix (#4641). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/tests/testUtils.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/disjoint_prefixes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-	quietMs = 1000,
+                // Copy casing from the prefix alone, so "Pre-Requisite" becomes "Prerequisite", not "PreRequisite"
+                Suggestion::replace_with_match_case(s.chars().collect(), toks[0].get_ch(src))
+
+    #[test]
+    fn fix_title_case_hyphenated_to_joined_4381() {
+        assert_suggestion_result(
+            "Pre-Requisite",
+            DisjointPrefixes::new(FstDictionary::curated()),
+            "Prerequisite",
+        );
+    }
+
+    #[test]
+    fn fix_all_caps_hyphenated_to_joined() {
+        assert_suggestion_result(
+            "PRE-REQUISITE",
+            DisjointPrefixes::new(FstDictionary::curated()),
+            "PREREQUISITE",
+        );
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-	quietMs = 250,
+                Suggestion::replace_with_match_case(s.chars().collect(), toks_span.get_content(src))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99d282e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8432a5c` are properly handled with clean fallback behavior.

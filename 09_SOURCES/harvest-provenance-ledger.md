@@ -4029,3 +4029,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-20T20:54:20.359Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `a1d08d8b` | Multi-dimensional audit evidence | 2026-10-20T20:54:20.533Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `1123cc50` | Multi-dimensional audit evidence | 2026-10-20T20:54:33.187Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-20T21:01:25.346Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `8c8b17d3` | Multi-dimensional audit evidence | 2026-10-20T21:01:26.961Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `cbc1b435` | Multi-dimensional audit evidence | 2026-10-20T21:01:34.739Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `19f456ac` | Multi-dimensional audit evidence | 2026-10-20T21:01:39.429Z |

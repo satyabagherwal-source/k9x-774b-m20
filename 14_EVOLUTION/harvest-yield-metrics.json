@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T20:54:33.192Z",
-  "total_cycles_completed": 3999,
-  "total_learnings_persisted": 3999,
-  "total_rules_promoted": 3205,
+  "last_updated": "2026-10-20T21:01:39.434Z",
+  "total_cycles_completed": 4003,
+  "total_learnings_persisted": 4003,
+  "total_rules_promoted": 3208,
   "history": [
-    {
-      "timestamp": "2026-10-20T13:33:40.427Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:33:47.877Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:40:32.677Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T13:40:35.625Z",
-      "repository": "lingui/js-lingui",
-      "learningId": "learn-github-lingui-js-lingui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T13:40:40.548Z",
       "repository": "BuilderIO/builder",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T20:54:33.192Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:01:25.351Z",
+      "repository": "Comfy-Org/z_image_turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:01:26.966Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:01:34.744Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T21:01:39.434Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `48f7cb00`  
+> **Source Version**: `19f456ac`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:01:34.002Z  
+> **Timestamp**: 2026-10-20T21:01:39.005Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:01:33.992Z  
+> **Harvest Timestamp**: 2026-10-20T21:01:38.996Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12817 stars
+- **Stars / Engagement**: 12815 stars
 
 ---
 
@@ -1803,8 +1803,8 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 - **Issue #2474** (2026-10-14): **Preserve configured client hostname verification with Netty 4.2**
   *Symptoms*: Netty 4.2 defaults client builders to HTTPS endpoint identification. ZooKeeper’s existing trust-manager/engine policy honors `zookeeper.ssl.hostnameVerification`, but the new builder default rejects a trusted mismatched SAN even when that setting is false.  Clear only the client builder’s endpoint-identification default, leaving the existing configured ZooKeeper verifier and server mutual-TLS policy in control. Extend the existing DNS/IP × FIPS mismatch cases to test both enabled and disabled hostname verification. The call also compiles with the current Netty 4.1.138 pin; this PR does not upgrade Netty.  ### How to reproduce  Run `SSLHostnameVerificationTest#testClientHostnameVerificationWithMismatchNames` with runtime Netty 4.2.19. Before the production fix, all four `hostnameVerification=false` cases fail; the four enabled-policy cases retain rejection. With the fix, all eight pass.  Using a Maven wrapper against this checkout after compiling/installing its source at the normal pin:  ```bash /path/to/mvnw -f pom.xml -pl zookeeper-server -Dnetty.version=4.2.19.Final \   -Dsurefire-forkcount=1 \   -Dtest=SSLHostnameVerificationTest#testClientHostnameVerificationWithMismatchNames \   dependency:properties surefire:test ```  Repeat with `-Dzookeeper.ssl.sslProvider=OPENSSL` for the native provider.  ### Validation  - JDK 25: patched real client/server mismatch matrix passes 8/8 with JDK TLS and 8/8 with Netty tcnative BoringSSL/OpenSSL. Unmodified production-source controls fa
 
-- **Issue #2470** (2026-10-05): **ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers (addendum)**
-  *Symptoms*: Fixes testCreateSSLContext_ChaCha20Cipher unit test failure. It uses another approach to test the cipher suites in use.
+- **Issue #2473** (2026-10-20): **ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal**
+  *Symptoms*: ### Problem  JAAS login, logout and Kerberos ticket renewal are missing from the audit log.  ### Fix  Add `login`, `logout` and `ticketRenewal` events through the existing audit provider, enabled by `zookeeper.audit.enable`. These record local JAAS operations; incoming client and learner SASL authentication failures are outside this patch's scope.  - Events contain `user`, `operation` and `result`. Identity comes from the subject's Kerberos principal or DIGEST username, with configured JAAS identity and OS user as fallbacks. Failed renewals retain the last authenticated identity. - Each failed renewal attempt is audited, including retries. Skipped renewals emit nothing. Re-login also records its JAAS logout; stopping the refresh thread alone does not. - `RuntimeException` and `LinkageError` from the audit logger leave the JAAS result unchanged. Initialization failures are retained so later calls can report the original cause. - Servers validate audit initialization before starting autopurge or server services, including embedded servers. If auditing a failed start also fails, the server keeps its intended exit code. - The logger is fixed per JVM. Disabled client logins leave it uninitialized. An embedded server accepts the selected logger class and rejects a conflicting one.  The audit docs describe this behavior and mark the feature new in 3.10.0.  ### Tests  Tests cover identity selection, event ordering, renewal retries and skips, disabled auditing, logger failures, and co
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1821,335 +1821,329 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80f83861` (2026-09-15)
-**Commit Message**: Add new CVEs to Security page related to 3.8.7 and 3.9.6
+### Incident Patch 1: `19f456ac` (2026-10-20)
+**Commit Message**: ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal
 
-**File**: `zookeeper-website/app/pages/_landing/security/content.md` (modified, +122/-0)
-```diff
-@@ -60,6 +60,11 @@ The following are **not** in scope for private disclosure:
- 
- ## Vulnerability reports
- 
-+- [CVE-2026-84501](#cve-2026-84501)
-+- [CVE-2026-84439](#cve-2026-84439)
-+- [CVE-2026-79993](#cve-2026-79993)
-+- [CVE-2026-59969](#cve-2026-59969)
-+- [CVE-2026-59739](#cve-2026-59739)
- - [CVE-2026-24308](#cve-2026-24308)
- - [CVE-2026-24281](#cve-2026-24281)
- - [CVE-2025-58457](#cve-2025-58457)
-@@ -71,6 +76,123 @@ The following are **not** in scope for private disclosure:
- - [CVE-2017-5637](#cve-2017-5637)
- - [CVE-2016-5017](#cve-2016-5017)
- 
-+--
-+
-+### CVE-2026-84501
-+
-+**Operational log forgery via newline injection in EnsembleAuthenticationProvider**
-+
-+**Severity:** moderate
-+
-+**Affected versions:**
-+
-+- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.9.0 through 3.9.5
-+- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.8.0 through 3.8.6
-+
-+**Description:**
-+
-+An unauthenticated attacker can inject arbitrary fake log lines into Apache ZooKeeper's operational log by sending a crafted add_auth("ensemble", ...) request containing newline characters (\n). When the ensemble name doesn't match, EnsembleAuthenticationProvider.handleAuthentication() logs the raw, unsanitized name via LOG.warn(). Because SLF4J's {} placeholder preserves embedded newlines, the attacker can forge complete log entries — with arbitrary timestamps, log levels, class names, and messages — that are visually indistinguishable from genuine ZooKeeper log output.
-+
-+Users are recommended to upgrade to version 3.8.7 or 3.9.6, which fixes the issue.
-+
-+**Credit:** Youlong Chen Institute of Computing Technology <chenyoulong20g@ict.ac.cn> (finder)
-+
-+**References:** https://www.cve.org/CVERecord?id=CVE-2026-84501
-+
-+---
-+
-+### CVE-2026-84439
-+
-+**Audit log injection via unsanitized output from multiple sources**
-+
-+**Severity:** important
-+
-+**Affected versions:**
-+
-+- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.9.0 through 3.9.5
-+- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.8.0 through 3.8.6
-+
-+**Description:**
-+
-+When audit logging is enabled (zookeeper.audit.enable=true), an unauthenticated attacker can inject arbitrary fields into Apache ZooKeeper's audit log by sending a digest authentication request with tab characters (\t) embedded in the username. Because the audit log uses tab-separated key=value format, the injected tabs are parsed as legitimate field separators, allowing the attacker to spoof audit results (e.g., injecting result=success), forge operation types, and corrupt forensic evidence.
-+
-+A log injection vulnerability in Apache ZooKeeper allows a client that can call setACL to inject forged key-value fields into zookeeper_audit.log. When audit logging is enabled, the server serializes attacker-controlled digest ACL ids into the acl= audit field without escaping tab characters. Because audit events are emitted as tab-separated key=value records, a crafted ACL id can make one successful setAcl event appear to contain forged fields such as operation=delete and znode=/forged. This undermines the integrity of downstream audit parsing, alerting, and incident response.
-+
-+Users are recommended to upgrade to version 3.9.6 or 3.8.7, which fixes the issue.
-+
-+**Credit:** Youlong Chen Institute of Computing Technology <chenyoulong20g@ict.ac.cn> (reporter)
-+
-+**References:** https://www.cve.org/CVERecord?id=CVE-2026-84439
-+
-+---
-+
-+### CVE-2026-79993
-+
-+**Missing ACL check on deleteContainer opcode allows unauthorized deletion of any empty persistent/container znode**
-+
-+**Severity:** critical
-+
-+**Affected versions:**
-+
-+- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.9.0 through 3.9.5
-+- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.8.0 through 3.8.6
-+
-+**Description:**
-+
-+The `deleteContainer` opcode (0x14/20) is processed without verifying the caller's ACL permissions, allowing any authenticated client to delete specific znodes in the data tree regardless of the ACL restrictions on the znode or its parent. This opcode is considered internal-only and the official client doesn't have API for it, but a client that can open a plain TCP session on the ZooKeeper client port (2181 by default) - with NO authentication and NO ACL permissions - can delete any empty persistent znode (including regular persistent nodes, container nodes, and TTL nodes) by issuing the raw protocol OpCode deleteContainer (20). The deleteContainer request path completely skips both the session check and the DELETE ACL check that are enforced by the regular delete (OpCode 2) path. This is an authorization bypass / ACL enforcement bug.
-+
-+Users are recommended to upgrade to version 3.9.6 or 3.8.7, which fixes the issue.
-+
-+**Credit:** K <sec-reports@outlook.com> (reporter), z f <tinkerzf@gmail.com> (reporter), 布豪 <1958304602@qq.com> (finder)
-+
-+**References:** https://www.cve.org/CVERecord?id=CVE-2026-79993
-+
-+---
-+
-+### CVE-2026-59969
-+
-+**Improper validation of certificate with host mismatch in FIPS mode**
-+
-+**Severity:** 
-```
-
----
-
-### Incident Patch 2: `ccef53ed` (2026-08-31)
-**Commit Message**: ZOOKEEPER-5083: Upgrade Jackson-databind to 2.22.2 to fix known security vulnerabilities
-
-Reviewers: anmolnar
-Author: PDavid
-Closes #2447 from PDavid/ZOOKEEPER-5083-jackson-upgrade
-
-**File**: `pom.xml` (modified, +1/-1)
-```diff
-@@ -550,7 +550,7 @@
-     <jetty.version>12.1.12</jetty.version>
-     <!-- Servlet API version required by Jetty EE10 (see ee10.jakarta.servlet.api.version in jetty-ee10) -->
-     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
--    <jackson.version>2.18.8</jackson.version>
-+    <jackson.version>2.22.2</jackson.version>
-     <jline.version>3.30.14</jline.version>
-     <snappy.version>1.1.10.5</snappy.version>
-     <kerby.version>2.0.0</kerby.version>
-```
-
----
-
-### Incident Patch 3: `ec016b6a` (2026-09-29)
-**Commit Message**: ZOOKEEPER-4946: Fix Login renewal thread not exiting on shutdown
-
-Reviewers: kezhuw
+Reviewers: anmolnar, anmolnar, kezhuw
 Author: ikxeno
-Closes #2446 from ikxeno/ZOOKEEPER-4946
+Closes #2473 from ikxeno/ZOOKEEPER-4922
 
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java` (modified, +12/-2)
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java` (modified, +109/-38)
 ```diff
-@@ -69,6 +69,11 @@ public class Login {
-     private static final long MIN_TIME_BEFORE_RELOGIN = Long.getLong(
-       MIN_TIME_BEFORE_RELOGIN_CONFIG_KEY, DEFAULT_MIN_TIME_BEFORE_RELOGIN);
+@@ -37,6 +37,9 @@
+ import javax.security.auth.login.Configuration;
+ import javax.security.auth.login.LoginContext;
+ import javax.security.auth.login.LoginException;
++import org.apache.zookeeper.audit.AuditConstants;
++import org.apache.zookeeper.audit.AuditEvent.Result;
++import org.apache.zookeeper.audit.ZKAuditProvider;
+ import org.apache.zookeeper.client.ZKClientConfig;
+ import org.apache.zookeeper.common.Time;
+ import org.apache.zookeeper.common.ZKConfig;
+@@ -81,7 +84,8 @@ public class Login {
  
-+    private static final long DEFAULT_SHUTDOWN_TIMEOUT = 5 * 1000L;
-+    public static final String SHUTDOWN_TIMEOUT_CONFIG_KEY = "zookeeper.kerberos.shutdownTimeoutMs";
-+    private static final long SHUTDOWN_TIMEOUT = Math.max(0L,
-+            Long.getLong(SHUTDOWN_TIMEOUT_CONFIG_KEY, DEFAULT_SHUTDOWN_TIMEOUT));
+     private LoginContext login = null;
+     private String loginContextName = null;
+-    private String principal = null;
++    private final String principal;
++    private volatile String auditPrincipal = SYSTEM_USER;
+ 
+     // Initialize 'lastLogin' to do a login at first time
+     private long lastLogin = Time.currentElapsedTime() - MIN_TIME_BEFORE_RELOGIN;
+@@ -106,24 +110,11 @@ public class Login {
+     public Login(final String loginContextName, Supplier<CallbackHandler> callbackHandlerSupplier, final ZKConfig zkConfig) throws LoginException {
+         this.zkConfig = zkConfig;
+         this.callbackHandlerSupplier = callbackHandlerSupplier;
++        principal = readLoginConfiguration(loginContextName);
+         login = login(loginContextName);
+         this.loginContextName = loginContextName;
+         subject = login.getSubject();
+         isKrbTicket = !subject.getPrivateCredentials(KerberosTicket.class).isEmpty();
+-        AppConfigurationEntry[] entries = Configuration.getConfiguration().getAppConfigurationEntry(loginContextName);
+-        for (AppConfigurationEntry entry : entries) {
+-            // there will only be a single entry, so this for() loop will only be iterated through once.
+-            if (entry.getOptions().get("useTicketCache") != null) {
+-                String val = (String) entry.getOptions().get("useTicketCache");
+-                if (val.equals("true")) {
+-                    isUsingTicketCache = true;
+-                }
+-            }
+-            if (entry.getOptions().get("principal") != null) {
+-                principal = (String) entry.getOptions().get("principal");
+-            }
+-            break;
+-        }
+ 
+         if (!isKrbTicket) {
+             // if no TGT, do not bother with ticket management.
+@@ -228,6 +219,7 @@ public void run() {
+                                 Shell.execCommand(cmd, kinitArgs);
+                                 break;
+                             } catch (Exception e) {
++                                audit(getAuditUser(subject), AuditConstants.OP_TICKET_RENEWAL, Result.FAILURE);
+                                 if (retry > 0) {
+                                     --retry;
+                                     // sleep for 10 seconds
+@@ -330,17 +322,86 @@ public String getLoginContextName() {
+     }
+ 
+     private synchronized LoginContext login(final String loginContextName) throws LoginException {
++        try {
++            if (loginContextName == null) {
++                throw new LoginException("loginContext name (JAAS file section header) was null. "
++                                         + "Please check your java.security.login.auth.config (="
++                                         + System.getProperty("java.security.login.auth.config")
++                                         + ") and your "
++                                         + getLoginContextMessage());
++            }
++            LoginContext loginContext = new LoginContext(loginContextName, newCallbackHandler());
++            loginContext.login();
++            // Retain the authenticated identity even if a later logout clears the subject.
++            auditPrincipal = getAuditUser(loginContext.getSubject());
++            audit(auditPrincipal, AuditConstants.OP_LOGIN, Result.SUCCESS);
++            LOG.info("{} successfully logged in.", loginContextName);
++            return loginContext;
++        } catch (LoginException e) {
++            audit(auditPrincipal, AuditConstants.OP_LOGIN, Result.FAILURE);
++            throw e;
++        }
++    }
 +
-     private Subject subject = null;
-     private Thread t = null;
-     private boolean isKrbTicket = false;
-@@ -132,7 +137,7 @@ public Login(final String loginContextName, Supplier<CallbackHandler> callbackHa
-         t = new Thread(new Runnable() {
-             public void run() {
-                 LOG.info("TGT refresh thread started.");
--                while (true) {  // renewal thread's main loop. if it exits from here, thread will exit.
-+                while (!Thread.currentThread().isInterrupted()) {  // renewal thread's main loop. if it exits from here, thread will exit.
-                     KerberosTicket tgt = getTGT();
-                     long now = Time.currentWallTime();
-                     long nextRefresh;
-@@ -262,6 +267,7 @@ public void run() {
-                                     }
-                                 } else {
-                                     LOG.error("Could not refresh TGT for principal: {}.", principal, le);
-+                                    break;
-                                 }
-                             }
-                         }
-@@ -297,9 +303,13 @@ public void shutdown() {
-         if ((t != null) && (t.isAlive())) {
-             t.interrupt();
-             try {
--                t.join();
-+                t.join(SHUTDOWN_TIMEOUT);
-+                if (t.isAlive()) {
-+                    LOG.warn("TGT renewal thread did not exit within {} ms", SHUTDOWN_TIMEOUT);
++    private String readLoginConfiguration(String loginContextName) {
+         if (loginContextName == null) {
+-            throw new LoginException("loginContext name (JAAS file section header) was null. "
+-                                     + "Please check your java.security.login.auth.config (="
+-                                     + System.getProperty("java.security.login.auth.config")
+-                                     + ") and your "
+-                                     + getLoginContextMessage());
++            return null;
++        }
++        // LoginContext falls back to "other" when the named configuration is absent.
++        Configuration configuration = Configuration.getConfiguration();
++        AppConfigurationEntry[] entries = configuration.getAppConfigurationEntry(loginContextName);
++        if (entries == null) {
++            entries = configuration.getAppConfigurationEntry("other");
++        }
++        if (en
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/audit/AuditConstants.java` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ private AuditConstants() {
+ 
+     static final String OP_START = "serverStart";
+     static final String OP_STOP = "serverStop";
++    public static final String OP_LOGIN = "login";
++    public static final String OP_LOGOUT = "logout";
++    public static final String OP_TICKET_RENEWAL = "ticketRenewal";
+     public static final String OP_CREATE = "create";
+     public static final String OP_DELETE = "delete";
+     public static final String OP_SETDATA = "setData";
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/audit/ZKAuditProvider.java` (modified, +80/-24)
+```diff
+@@ -25,29 +25,60 @@
+ import org.slf4j.LoggerFactory;
+ 
+ public class ZKAuditProvider {
+-    static final String AUDIT_ENABLE = "zookeeper.audit.enable";
++    /**
++     * System property that enables audit logging.
++     */
++    public static final String AUDIT_ENABLE = "zookeeper.audit.enable";
+     static final String AUDIT_IMPL_CLASS = "zookeeper.audit.impl.class";
+     private static final Logger LOG = LoggerFactory.getLogger(ZKAuditProvider.class);
+-    // By default audit logging is disabled
+-    private static boolean auditEnabled;
+-    private static AuditLogger auditLogger;
+-
+-    static {
+-        auditEnabled = Boolean.getBoolean(AUDIT_ENABLE);
+-        if (auditEnabled) {
+-            //initialise only when audit logging is enabled
+-            auditLogger = getAuditLogger();
+-            LOG.info("ZooKeeper audit is enabled.");
+-        } else {
+-            LOG.info("ZooKeeper audit is disabled.");
++    private static String selectedAuditLoggerClass;
++
++    // Parsing server configuration must not initialize the audit logger.
++    private static class AuditState {
++        private static final boolean auditEnabled;
++        private static final AuditLogger auditLogger;
++        private static final RuntimeException initializationFailure;
++
++        static {
++            String loggerClass = null;
++            synchronized (ZKAuditProvider.class) {
++                auditEnabled = Boolean.getBoolean(AUDIT_ENABLE);
++                if (auditEnabled) {
++                    loggerClass = System.getProperty(AUDIT_IMPL_CLASS, Slf4jAuditLogger.class.getName());
++                    selectedAuditLoggerClass = loggerClass;
 +                }
-             } catch (InterruptedException e) {
-                 LOG.warn("error while waiting for Login thread to shutdown.", e);
-+                Thread.currentThread().interrupt();
-             }
++            }
++            AuditLogger logger = null;
++            RuntimeException failure = null;
++            if (auditEnabled) {
++                try {
++                    logger = getAuditLogger(loggerClass);
++                    LOG.info("ZooKeeper audit is enabled.");
++                } catch (RuntimeException | LinkageError e) {
++                    failure = new IllegalStateException("Couldn't initialize audit logger " + loggerClass, e);
++                }
++            } else {
++                LOG.info("ZooKeeper audit is disabled.");
++            }
++            auditLogger = logger;
++            initializationFailure = failure;
          }
      }
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/Shell.java` (modified, +2/-0)
-```diff
-@@ -235,6 +235,7 @@ public void run() {
-                 errThread.join();
-             } catch (InterruptedException ie) {
-                 LOG.warn("Interrupted while reading the error stream", ie);
-+                Thread.currentThread().interrupt();
-             }
-             completed.set(true);
-             //the timeout thread handling
-@@ -243,6 +244,7 @@ public void run() {
-                 throw new ExitCodeException(exitCode, errMsg.toString());
-             }
-         } catch (InterruptedException ie) {
-+            Thread.currentThread().interrupt();
-             throw new IOException(ie.toString());
-         } finally {
-             if ((timeOutTimer != null) && !timedOut.get()) {
-```
-
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/KerberosTicketRenewalTest.java` (modified, +87/-1)
-```diff
-@@ -24,6 +24,7 @@
- import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertNotNull;
- import static org.junit.jupiter.api.Assertions.assertTimeout;
-+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- import java.io.File;
- import java.io.FileWriter;
-@@ -34,11 +35,13 @@
- import java.util.concurrent.CountDownLatch;
- import java.util.concurrent.TimeUnit;
- import java.util.concurrent.atomic.AtomicBoolean;
-+import java.util.concurrent.atomic.AtomicInteger;
- import java.util.function.Supplier;
- import javax.security.auth.login.Configuration;
- import javax.security.auth.login.LoginException;
- import org.apache.commons.io.FileUtils;
- import org.apache.commons.io.FilenameUtils;
-+import org.apache.zookeeper.common.Time;
- import org.apache.zookeeper.common.ZKConfig;
- import org.apache.zookeeper.server.quorum.auth.KerberosTestUtils;
- import org.apache.zookeeper.server.quorum.auth.MiniKdc;
-@@ -72,6 +75,7 @@ public static void setupClass() throws Exception {
-     // by default, we should wait at least 1 minute between subsequent TGT renewals.
-     // changing it to 500ms.
-     System.setProperty(Login.MIN_TIME_BEFORE_RELOGIN_CONFIG_KEY, "500");
-+    System.setProperty(Login.SHUTDOWN_TIMEOUT_CONFIG_KEY, "200");
  
-     testTempDir = ClientBase.createTmpDir();
-     startMiniKdcAndAddPrincipal();
-@@ -99,6 +103,7 @@ public static void setupClass() throws Exception {
-   @AfterAll
-   public static void tearDownClass() {
-     System.clearProperty(Login.MIN_TIME_BEFORE_RELOGIN_CONFIG_KEY);
-+    System.clearProperty(Login.SHUTDOWN_TIMEOUT_CONFIG_KEY);
-     System.clearProperty("java.security.auth.login.config");
-     stopMiniKdc();
-     if (testTempDir != null) {
-@@ -125,6 +130,12 @@ private static class TestableKerberosLogin extends Login {
+-    private static AuditLogger getAuditLogger() {
+-        String auditLoggerClass = System.getProperty(AUDIT_IMPL_CLASS);
+-        if (auditLoggerClass == null) {
+-            auditLoggerClass = Slf4jAuditLogger.class.getName();
++    /**
++     * Configures the audit logger class without initializing the logger.
++     *
++     * @throws IllegalArgumentException if another audit logger class has already been selected
++     */
++    public static synchronized void configureAuditLogger(String loggerClass) {
++        if (selectedAuditLoggerClass != null && !selectedAuditLoggerClass.equals(loggerClass)) {
++            throw new IllegalArgumentException("Audit logger is already selected as " + selectedAuditLoggerClass
++                + "; cannot configure " + loggerClass + ". Set " + AUDIT_IMPL_CLASS + " before using the audit provider.");
+         }
++        System.setProperty(AUDIT_IMPL_CLASS, loggerClass);
++    }
++
++    private static AuditLogger getAuditLogger(String auditLoggerClass) {
+         try {
+             Constructor<?> clientCxnConstructor = Class.forName(auditLoggerClass)
+                     .getDeclaredConstructor();
+@@ -60,15 +91,29 @@ private static AuditLogger getAuditLogger() {
+     }
  
-     private AtomicBoolean refreshFailed = new AtomicBoolean(false);
-     private CountDownLatch continueRefreshThread = new CountDownLatch(1);
-+    private volatile boolean hangUninterruptibly = false;
-+    private final CountDownLatch hungThreadLatch = new CountDownLatch(1);
-+    private volatile boolean attemptEveryReLogin = false;
-+    private final CountDownLatch retrySleeps = new CountDownLatch(2);
-+    private final AtomicInteger reLoginAttempts = new AtomicInteger();
-+    private volatile int attemptsAtSecondRetrySleep;
- 
-     public TestableKerberosLogin() throws LoginException {
-       super(JAAS_CONFIG_SECTION, () -> {
-@@ -136,10 +147,52 @@ public TestableKerberosLogin() throws LoginException {
-     protected void sleepBeforeRetryFailedRefresh() throws InterruptedException {
-       LOG.info("sleep started due to failed refresh");
-       refreshFailed.set(true);
--      continueRefreshThread.await(20, TimeUnit.SECONDS);
-+      if (retrySleeps.getCount() == 1) {
-+        attemptsAtSecondRetrySleep = reLoginAttempts.get();
-+      }
-+      retrySleeps.countDown();
-+      if (hangUninterruptibly) {
-+        while (hungThreadLatch.getCount() > 0) {
-+          try {
-+            hungThreadLatch.await();
-+          } catch (InterruptedException ignored) {
-+          }
+     /**
+-     * @return true if audit log is enabled
++     * Initializes the audit state and reports any logger initialization failure.
++     *
++     * @throws IllegalStateException if the audit logger could not be initialized
++     */
++    public static void checkAuditState() {
++        if (AuditState.initializationFailure != null) {
++            throw AuditState.initializationFailure;
 +        }
-+      } else if (!attemptEveryReLogin) {
-+        continueRefreshThread.await(20, TimeUnit.SECONDS);
-+      }
-       LOG.info("sleep due to failed refresh finished");
++    }
++
++    /**
++     * @return true if audit logging is configured as enabled
+      */
+     public static boolean isAuditEnabled() {
+-        return auditEnabled;
++        return AuditState.auditEnabled;
      }
  
-+    @Override
-+    protected synchronized void logout() throws LoginException {
-+      reLoginAttempts.incrementAndGet();
-+      super.logout();
-+    }
-+
-+    @Override
-+    public long getLastLogin() {
-+      return attemptEveryReLogin ? Time.currentElapsedTime() - TimeUnit.HOURS.toMillis(1) : super.getLastLogin();
-+    }
-+
-+    public void attemptEveryReLogin() {
-+      attemptEveryReLogin = true;
-+    }
-+
-+    public void assertRenewalLoopCameRoundAgain(Duration timeout) throws InterruptedException {
-+      assertTrue(retrySleeps.await(timeout.toMillis(), TimeUnit.MILLISECONDS),
-+          "renewal thread never left the reLogin retry loop");
-+      assertTrue(attemptsAtSecondRetrySleep >= 3, "some reLogin attempts were skipped");
-+    }
-+
-+    public void hangUninterruptiblyOnFailedRefresh() {
-+      hangUninterruptibly = true;
-+    }
-+
-+    public void releaseHungThread() {
-+      hungThreadLatch.countDown();
-+    }
-+
-     public void assertRefreshFailsEventually(Duration timeout) {
-       assertEventually(timeout, () -> refreshFailed.get());
+     public static void log(String user, String operation, String znode, String acl,
+                            String createMode, String session, String ip, Result result) {
+-        auditLogger.logAuditEvent(createLogEvent(user, operation, znode, acl, createMode, session, ip, result));
++        if (isAuditEnabled()) {
++            checkAuditState();
++            AuditState.auditLogger.logAuditEvent(createLogEvent(user, operation, znode, acl, createMode, session, ip, result));
++        }
      }
-@@ -200,6 +253,39 @@ public void shouldRecoverIfKerberosNotAvailableForSomeTime() throws Exception {
-   }
  
+     /**
+@@ -111,15 +156,26 @@ public static void addZKStartStopAuditLog() {
  
-+  @Test
-+  public void shouldNotBlockForeverWhenRenewalThreadDoesNotExit() throws Exception {
-+    login = new TestableKerberosLogin();
-+    login.hangUninterruptiblyOnFailedRefresh();
-+    login.startThreadIfNeeded();
-+
-+    stopMiniKdc();
-+    login.assertRefreshFailsEventually(Duration.ofSeconds(15));
-+
-+    try {
-+      assertTimeoutPreemptively(Duration.ofSeconds(10), () -> login.shutdown());
-+    } finally {
-+      startMiniKdcAndAddPrinci
+     /**
+      * Add audit log for server start fail.
++     * Audit errors must not prevent the server from exiting with its intended code.
+      */
+     public static void addServerStartFailureAuditLog() {
+-        if (isAuditEnabled()
 ```
 
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/ShellTest.java` (added, +76/-0)
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ZooKeeperServerMain.java` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,76 @@
+@@ -119,6 +119,8 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
+      * @throws AdminServerException
+      */
+     public void runFromConfig(ServerConfig config) throws IOException, AdminServerException {
++        // Validate auditing before starting metrics, transaction storage, or listeners.
++        ZKAuditProvider.checkAuditState();
+         LOG.info("Starting server");
+         FileTxnSnapLog txnLog = null;
+         try {
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/embedded/ZooKeeperServerEmbeddedImpl.java` (modified, +3/-0)
+```diff
+@@ -10,6 +10,7 @@
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.TimeoutException;
+ import javax.security.sasl.SaslException;
++import org.apache.zookeeper.audit.ZKAuditProvider;
+ import org.apache.zookeeper.server.DatadirCleanupManager;
+ import org.apache.zookeeper.server.ExitCode;
+ import org.apache.zookeeper.server.ServerConfig;
+@@ -85,6 +86,8 @@ public void start() throws Exception {
+ 
+     @Override
+     public void start(long startupTimeout) throws Exception {
++        // Validate before scheduling purge or starting the server thread.
++        ZKAuditProvider.checkAuditState();
+         switch (exitHandler) {
+             case EXIT:
+                 ServiceUtils.setSystemExitProcedure(ServiceUtils.SYSTEM_EXIT);
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/quorum/QuorumPeerConfig.java` (modified, +3/-0)
+```diff
+@@ -38,6 +38,7 @@
+ import java.util.Map.Entry;
+ import java.util.Properties;
+ import org.apache.yetus.audience.InterfaceAudience;
++import org.apache.zookeeper.audit.ZKAuditProvider;
+ import org.apache.zookeeper.common.AtomicFileWritingIdiom;
+ import org.apache.zookeeper.common.AtomicFileWritingIdiom.OutputStreamStatement;
+ import org.apache.zookeeper.common.AtomicFileWritingIdiom.WriterStatement;
+@@ -379,6 +380,8 @@ public void parseProperties(Properties zkProp) throws IOException, ConfigExcepti
+                 multiAddressReachabilityCheckEnabled = parseBoolean(key, value);
+             } else if (key.equals("oraclePath")) {
+                 oraclePath = value;
++            } else if (key.equals("audit.impl.class")) {
++                ZKAuditProvider.configureAuditLogger(value);
+             } else {
+                 System.setProperty("zookeeper." + key, value);
+             }
+```
+
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/quorum/QuorumPeerMain.java` (modified, +4/-0)
+```diff
+@@ -123,6 +123,8 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
+         QuorumPeerConfig config = new QuorumPeerConfig();
+         if (args.length == 1) {
+             config.parse(args[0]);
++            // The purge task can access server data before runFromConfig is called.
++            ZKAuditProvider.checkAuditState();
+         }
+ 
+         // Start and schedule the purge task
+@@ -143,6 +145,8 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
+     }
+ 
+     public void runFromConfig(QuorumPeerConfig config) throws IOException, AdminServerException {
++        // Validate auditing before starting metrics, transaction storage, or listeners.
++        ZKAuditProvider.checkAuditState();
+         try {
+             ManagedUtil.registerLog4jMBeans();
+         } catch (JMException e) {
+```
+
+**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/LoginAuditConcurrentInitializationTest.java` (added, +131/-0)
+```diff
+@@ -0,0 +1,131 @@
 +/*
 + * Licensed to the Apache Software Foundation (ASF) under one
 + * or more contributor license agreements.  See the NOTICE file
@@ -2170,108 +2164,215 @@ Closes #2446 from ikxeno/ZOOKEEPER-4946
 +
 +package org.apache.zookeeper;
 +
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertFalse;
 +import static org.junit.jupiter.api.Assertions.assertNotNull;
 +import static org.junit.jupiter.api.Assertions.assertNull;
++import static org.junit.jupiter.api.Assertions.assertThrows;
 +import static org.junit.jupiter.api.Assertions.assertTrue;
-+import java.io.IOException;
++import java.nio.file.Path;
++import java.util.Map;
++import java.util.Properties;
 +import java.util.concurrent.CountDownLatch;
 +import java.util.concurrent.TimeUnit;
-+import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
++import javax.security.auth.login.AppConfigurationEntry;
++import javax.security.auth.login.Configuration;
++import org.apache.zookeeper.audit.AuditEvent;
++import org.apache.zookeeper.audit.AuditLogger;
++import org.apache.zookeeper.audit.Slf4jAuditLogger;
++import org.apache.zookeeper.audit.ZKAuditProvider;
++import org.apache.zookeeper.common.ConfigException;
++import org.apache.zookeeper.common.ZKConfig;
++import org.apache.zookeeper.server.auth.DigestLoginModule;
++import org.apache.zookeeper.server.embedded.ZooKeeperServerEmbedded;
 +import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.api.condition.DisabledOnOs;
-+import org.junit.jupiter.api.condition.OS;
++import org.junit.jupiter.api.io.TempDir;
 +
-+public class ShellTest {
++// Surefire runs this class in a fresh JVM so audit initialization can be blocked.
++public class LoginAuditConcurrentInitializationTest extends ZKTestCase {
++
++    @TempDir
++    Path tempDir;
 +
 +    @Test
-+    @DisabledOnOs(OS.WINDOWS)
-+    public void shouldRestoreInterruptStatusWhenInterruptedWhileWaitingForProcess() throws Exception {
-+        CountDownLatch started = new CountDownLatch(1);
-+        CountDownLatch finished = new CountDownLatch(1);
-+        AtomicBoolean interruptedAfterwards = new AtomicBoolean(false);
-+        AtomicReference<IOException> expectedFailure = new AtomicReference<>();
-+        AtomicReference<Throwable> unexpectedFailure = new AtomicReference<>();
-+
-+        Thread runner = new Thread(() -> {
-+            started.countDown();
-+            try {
-+                Shell.execCommand("sh", "-c", "exec >/dev/null 2>&1; sleep 2");
-+            } catch (IOException e) {
-+                expectedFailure.set(e);
-+            } catch (Throwable t) {
-+                unexpectedFailure.set(t);
-+            } finally {
-+                interruptedAfterwards.set(Thread.currentThread().isInterrupted());
-+                finished.countDown();
++    public void testConfigurationRejectsConflictWhileAuditLoggerInitializes() throws Exception {
++        Configuration previousConfiguration = Configuration.getConfiguration();
++        System.setProperty(ZKAuditProvider.AUDIT_ENABLE, "true");
++        System.setProperty("zookeeper.audit.impl.class", BlockingAuditLogger.class.getName());
++        AtomicReference<Login> clientLogin = new AtomicReference<>();
++        AtomicReference<Throwable> clientFailure = new AtomicReference<>();
++        Configuration.setConfiguration(new Configuration() {
++            @Override
++            public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
++                return new AppConfigurationEntry[]{new AppConfigurationEntry(
++                    DigestLoginModule.class.getName(), AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
++                    Map.of("username", "audit-test", "password", "test-password"))};
 +            }
 +        });
-+        runner.start();
-+
-+        assertTrue(started.await(10, TimeUnit.SECONDS), "runner thread did not start");
-+
-+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-+        while (runner.getState() != Thread.State.WAITING) {
-+            assertTrue(System.nanoTime() < deadline, "runner thread never reached Process.waitFor()");
-+            Thread.onSpinWait();
-+        }
-+        runner.interrupt();
-+
-+        assertTrue(finished.await(30, TimeUnit.SECONDS), "execCommand did not return");
-+        runner.join();
-+
-+        assertNull(unexpectedFailure.get(), "unexpected failure in runner thread");
-+        assertNotNull(expectedFailure.get(), "execCommand was expected to fail with an IOException");
-+        assertTrue(interruptedAfterwards.get(), "execCommand cleared the interrupt status");
-+    }
-+
-+}
++        Thread client = new Thread(() -> {
++            try {
++                clientLogin.set(new Login("Client", () -> callbacks -> { }, new ZKConfig()));
++            } catch (Throwable e) {
++                clientFailure.set(e);
++            }
++        });
++        try {
++            client.start();
++            assertTrue(BlockingAuditLogger.initializeEntered.await(5, TimeUnit.SECONDS));
++            Properties config = new Properties();
++            config.setProperty("audit.enable", "true");
++            config.setProperty("audit.impl.class", Slf4jAuditLogger.class.getName());
++            config.setProperty("tickTime", "2000");
++            ConfigException failure = assertThrows(ConfigException.class, () -> {
++                try (ZooKeeperServerEmbedded server = ZooKeeperServerEmbedded.builder()
++                        .baseDir(tempDir).configuration(config).build()) {
++                    assertNotNull(server);
++                }
++            });
++            assertTrue(failure.getCause() instanceof IllegalArgumentException);
++            assertTrue(failure.getCause().getMessage().contains(BlockingAuditLogger.class.getName()));
++            assertTrue(failure.getCause().getMessage().contains(Slf4jAuditLogger.class.getName()));
++            assertEquals(BlockingAuditLogger.class.getName(), System.getProperty("zookeeper.audit.impl.class"));
++        } finally {
++            BlockingAuditLogger.initializeRelease.countDown();
++            client.join(TimeUnit.SECONDS.toMillis(5));
++            try {
++                if (clientLogin.get() != null) {
++                    clientLogin.get().shutdown();
++                    clientLogin.get().logout();
++                }
++            } finally {
++                Configurat
 ```
 
-**File**: `zookeeper-website/app/pages/_docs/docs/_mdx/admin-ops/administrators-guide/configuration-parameters.mdx` (modified, +8/-0)
+---
+
+### Incident Patch 2: `5f770628` (2026-10-20)
+**Commit Message**: ZOOKEEPER-4391: Allow custom JVM heap sizing besides "-Xmx"
+
+Reviewers: kezhuw
+Author: jprieto-temporal
+Closes #2460 from jprieto-temporal/jprieto/syyxuxtpmnum
+
+**File**: `bin/zkEnv.sh` (modified, +8/-2)
 ```diff
-@@ -1411,6 +1411,14 @@ the integrity of IP-based access controls.
-   It is essentially the quorum equivalent of the _zookeeper.sasl.client.canonicalize.hostname_ property for clients.
-   The default value is **false** for backwards compatibility.
+@@ -136,8 +136,14 @@ export CLASSPATH
  
-+- _kerberos.shutdownTimeoutMs_
-+  (Java system property: **zookeeper.kerberos.shutdownTimeoutMs**)
-+  **New in 3.10.0:**
-+  The time in milliseconds ZooKeeper waits for the Kerberos TGT renewal thread to exit while shutting down.
-+  If the thread is still alive after that, ZooKeeper logs a warning and completes the shutdown.
-+  Set it to 0 to wait without a timeout, which is how ZooKeeper behaved before this setting existed.
-+  Default: 5000
-+
- - _multiAddress.enabled_ :
-   (Java system property: **zookeeper.multiAddress.enabled**)
-   **New in 3.6.0:**
+ # default heap for zookeeper server
+ ZK_SERVER_HEAP="${ZK_SERVER_HEAP:-1000}"
+-export SERVER_JVMFLAGS="-Xmx${ZK_SERVER_HEAP}m $SERVER_JVMFLAGS"
++if [[ $ZK_SERVER_HEAP != omit ]]; then
++  SERVER_JVMFLAGS="-Xmx${ZK_SERVER_HEAP}m $SERVER_JVMFLAGS"
++fi
++export SERVER_JVMFLAGS
+ 
+ # default heap for zookeeper client
+ ZK_CLIENT_HEAP="${ZK_CLIENT_HEAP:-256}"
+-export CLIENT_JVMFLAGS="-Xmx${ZK_CLIENT_HEAP}m $CLIENT_JVMFLAGS"
++if [[ $ZK_CLIENT_HEAP != omit ]]; then
++  CLIENT_JVMFLAGS="-Xmx${ZK_CLIENT_HEAP}m $CLIENT_JVMFLAGS"
++fi
++export CLIENT_JVMFLAGS
 ```
 
-**File**: `zookeeper-website/app/pages/_docs/docs/_mdx/developer/programmers-guide/bindings.mdx` (modified, +7/-0)
+**File**: `conf/java.env` (added, +31/-0)
 ```diff
-@@ -105,6 +105,13 @@ and [SASL authentication for ZooKeeper](https://cwiki.apache.org/confluence/disp
- - _zookeeper.server.realm_ :
-   Realm part of the server principal. By default it is the client principal realm.
- 
-+- _zookeeper.kerberos.shutdownTimeoutMs_ :
-+  **New in 3.10.0:**
-+  The time in milliseconds a client waits for the Kerberos TGT renewal thread to exit while closing.
-+  If the thread is still alive after that, the client logs a warning and completes the close.
-+  Set it to 0 to wait without a timeout, which is how the client behaved before this setting existed.
-+  Default: 5000
+@@ -0,0 +1,31 @@
++#!/usr/bin/env bash
++#
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#   https://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++#
 +
- - _zookeeper.disableAutoWatchReset_ :
-   This switch controls whether automatic watch resetting is enabled. Clients automatically
-   reset watches during session reconnect by default, this option allows the client to turn off
++# ZooKeeper defaults to a 1000 MiB server heap and a 256 MiB client heap.
++# Set either heap to a positive integer to choose a different size in MiB.
++# ZK_SERVER_HEAP=1000
++# ZK_CLIENT_HEAP=256
++
++# Set a heap to "omit" to skip ZooKeeper's generated -Xmx option. The matching
++# JVMFLAGS variable can still provide -Xmx or any other heap-related JVM options.
++# ZK_SERVER_HEAP=omit
++# SERVER_JVMFLAGS="-XX:InitialRAMPercentage=25 -XX:MaxRAMPercentage=75"
++# ZK_CLIENT_HEAP=omit
++# CLIENT_JVMFLAGS="-XX:MaxRAMPercentage=25"
+```
+
+**File**: `zookeeper-website/app/pages/_docs/docs/_mdx/admin-ops/tools.mdx` (modified, +40/-1)
+```diff
+@@ -56,9 +56,48 @@ See [ZooKeeper CLI](/admin-ops/cli).
+ 
+ ### zkEnv.sh
+ 
+-Sets environment variables for the ZooKeeper server. Key variables:
++Sets environment variables for ZooKeeper scripts. Values can be provided in
++the environment or in `conf/java.env`, whose values take precedence. Key
++variables:
+ 
+ - `ZOO_LOG_DIR` — the directory where logs are stored.
++- `ZK_SERVER_HEAP` — configures the server maximum heap in MiB.
++- `SERVER_JVMFLAGS` — additional JVM options for the server.
++- `ZK_CLIENT_HEAP` — configures the client maximum heap in MiB.
++- `CLIENT_JVMFLAGS` — additional JVM options for clients.
++
++Heap settings produce the following JVM options:
++
++| Heap setting     | Server result                    | Client result                    |
++| ---------------- | -------------------------------- | -------------------------------- |
++| Unset            | `-Xmx1000m`                      | `-Xmx256m`                       |
++| Positive integer | `-Xmx<number>m`                  | `-Xmx<number>m`                  |
++| `omit`           | No `-Xmx` generated by ZooKeeper | No `-Xmx` generated by ZooKeeper |
++
++Unless the heap setting is `omit`, ZooKeeper prepends the generated `-Xmx`
++option to any options provided in the corresponding `*_JVMFLAGS` variable.
++
++The server and client settings are independent. Setting either heap variable to
++`omit` skips only the `-Xmx` option ZooKeeper would otherwise generate from the
++corresponding heap setting. It does not remove or override options in the corresponding
++`*_JVMFLAGS` variable, including an explicitly supplied `-Xmx` option.
++
++Use `omit` when heap-related JVM options should be configured manually. For
++example, a containerized server can use a percentage of the available memory:
++
++```bash
++ZK_SERVER_HEAP=omit \
++SERVER_JVMFLAGS="-XX:InitialRAMPercentage=25 -XX:MaxRAMPercentage=75" \
++./zkServer.sh start
++```
++
++It can also be used to provide an `-Xmx` value directly:
++
++```bash
++ZK_SERVER_HEAP=omit \
++SERVER_JVMFLAGS="-Xmx2g" \
++./zkServer.sh start
++```
+ 
+ ### zkCleanup.sh
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2474** (closed): Preserve configured client hostname verification with Netty 4.2 (@xiangfu0)
+- **PR #2473** (2026-10-20): ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal (@ikxeno)
 - **PR #2470** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers (addendum) (@meszibalu)
 - **PR #2469** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers… (@meszibalu)
 - **PR #2468** (2026-10-05): ZOOKEEPER-5099: Upgrade jackson-databind to 2.22.3 (@PDavid)
 - **PR #2467** (2026-10-05): ZOOKEEPER-5098: Upgrade netty to 4.1.138 (@PDavid)
-- **PR #2466** (2026-10-02): ZOOKEEPER-5100: Fixed formatting of configuration-parameters.mdx to fix website build (@PDavid)
 
 ---
 
@@ -2291,52 +2392,65 @@ Closes #2446 from ikxeno/ZOOKEEPER-4946
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add new CVEs to Security page related to 3.8.7 and 3.9.6
+## X. ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal
 
 **RULE**:
-When implementing operations in `zookeeper-website/app/pages/_landing/security/content.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80f83861`: Add new CVEs to Security page related to 3.8.7 and 3.9.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `19f456ac`: ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-website/app/pages/_landing/security/content.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- [CVE-2026-84501](#cve-2026-84501)
-- [CVE-2026-84439](#cve-2026-84439)
-- [CVE-2026-79993](#cve-2026-79993)
-- [CVE-2026-59969](#cve-2026-59969)
-- [CVE-2026-59739](#cve-2026-59739)
---
-
-### CVE-2026-84501
-
-**Operational log forgery via newline injection in EnsembleAuthenticationProvider**
-
-**Severity:** moderate
-
-**Affected versions:**
-
-- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.9.0 through 3.9.5
-- Apache ZooKeeper (org.apache.zookeeper:zookeeper) 3.8.0 through 3.8.6
-
-**Description:**
-
-An unauthenticated attacker can inject arbitrary fake log lines into Apache ZooKeeper's operational log by sending a crafted add_auth("ensemble", ...) request containing newline characters (\n). When the ensemble name doesn't match, EnsembleAuthenticationProvider.handleAuthentication() logs the raw, unsanitized name via LOG.warn(). Because SLF4J's {} placeholder preserves embedded newlines, the attacker can forge complete log entries — with arbitrary timestamps, log levels, class names, and messages — that are visually indistinguishable from genuine ZooKeeper log output.
-
-Users are recommended to upgrade to version 3.8.7 or 3.9.6, which fixes the issue.
-
-**Credit:** Youlong Chen Institute of
+import org.apache.zookeeper.audit.AuditConstants;
+import org.apache.zookeeper.audit.AuditEvent.Result;
+import org.apache.zookeeper.audit.ZKAuditProvider;
+    private final String principal;
+    private volatile String auditPrincipal = SYSTEM_USER;
+        principal = readLoginConfiguration(loginContextName);
+                                audit(getAuditUser(subject), AuditConstants.OP_TICKET_RENEWAL, Result.FAILURE);
+        try {
+            if (loginContextName == null) {
+                throw new LoginException("loginContext name (JAAS file section header) was null. "
+                                         + "Please check your java.security.login.auth.config (="
+                                         + System.getProperty("java.security.login.auth.config")
+                                         + ") and your "
+                                         + getLoginContextMessage());
+            }
+            LoginContext loginContext = new LoginContext(loginContextName, newCallbackHandler());
+            loginContext.login();
+            // Retain the authenticated identity even if a later logout clears the subject.
+            auditPrincipal = getAuditUser(loginContext.getSub
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    private String principal = null;
+        AppConfigurationEntry[] entries = Configuration.getConfiguration().getAppConfigurationEntry(loginContextName);
+        for (AppConfigurationEntry entry : entries) {
+            // there will only be a single entry, so this for() loop will only be iterated through once.
+            if (entry.getOptions().get("useTicketCache") != null) {
+                String val = (String) entry.getOptions().get("useTicketCache");
+                if (val.equals("true")) {
+                    isUsingTicketCache = true;
+                }
+            }
+            if (entry.getOptions().get("principal") != null) {
+                principal = (String) entry.getOptions().get("principal");
+            }
+            break;
+        }
+            throw new LoginException("loginContext name (JAAS file section header) was null. "
+                                     + "Please check your java.security.login.auth.config (="
+                                     + System.getProperty("java.security.login.auth.config")
+                                     + ") and your "
+                                     + getLoginContextMessage());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80f83861` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `19f456ac` are properly handled with clean fallback behavior.

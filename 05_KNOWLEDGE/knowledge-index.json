@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T20:54:33.134Z",
+  "last_updated": "2026-10-20T21:01:39.372Z",
   "total_verified_learnings": 1056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2059,14 +2059,19 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "48f7cb00",
-      "content_hash": "d919aecb72c3fc8f054fc499a6b5e320d0079229ac74d1177d788b139b135869",
+      "source_version": "19f456ac",
+      "content_hash": "4c1bac803e8d00ab313dae186e68310e4f576c23e7ebba3a5903c6535f510bf8",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
         {
           "number": 2051,
           "title": "Add new CVEs to Security page related to 3.8.7 and 3.9.6",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3380,
+          "title": "ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2075,7 +2080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:01:34.214Z",
+      "verified_at": "2026-10-20T21:01:39.359Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3284,8 +3289,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "213cb8f8",
-      "content_hash": "b150d4002d63ad935a95c53ecc46b8ae93c0b007e4534f7bcda47e500f905649",
+      "source_version": "8c8b17d3",
+      "content_hash": "81abcde60547e1d03b7cd35ca07208cb17f3108579ec15e890fcd920e2d484b8",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3303,6 +3308,11 @@
           "number": 2993,
           "title": "chrome-ext): extend timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3378,
+          "title": "core): DisjointPrefixes keeps title case when joining prefix (#4641)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3310,7 +3320,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:21:51.001Z",
+      "verified_at": "2026-10-20T21:01:26.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35763,8 +35773,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "1c309002",
-      "content_hash": "143bd92430f93b3c6cec87a4fe745005044c86fba1f305f9a7f03b5230b601cd",
+      "source_version": "cbc1b435",
+      "content_hash": "5714395710075b7a29ccc3d6c0a5bacf78186b69696e5cd6e02a09da1364c4c8",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -35777,6 +35787,11 @@
           "number": 2713,
           "title": "docs: Update builtin availability in other interpreters (#9399)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3379,
+          "title": "build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (#9417)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35784,7 +35799,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:35:37.354Z",
+      "verified_at": "2026-10-20T21:01:34.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89036,7 +89051,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
+      "content_hash": "644d4d9161213d55023bb82df3c8b76e5208e084757228cb0cf3f7a8164206db",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [
@@ -89056,7 +89071,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:21:36.114Z",
+      "verified_at": "2026-10-20T21:01:25.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104721,6 +104736,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T20:54:33.124Z"
+    },
+    "rule-3378": {
+      "learning_id": "rule-3378",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3378,
+      "title": "core): DisjointPrefixes keeps title case when joining prefix (#4641)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "8c8b17d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:01:26.891Z"
+    },
+    "rule-3379": {
+      "learning_id": "rule-3379",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3379,
+      "title": "build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (#9417)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "cbc1b435",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:01:34.664Z"
+    },
+    "rule-3380": {
+      "learning_id": "rule-3380",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3380,
+      "title": "ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "19f456ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T21:01:39.359Z"
     }
   },
   "aliases": {
