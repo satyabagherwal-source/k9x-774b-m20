@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-M67W",
-    "timestamp": "2026-10-19T14:27:25.052Z",
-    "repository": "RustCrypto/hashes",
-    "learningId": "learn-github-rustcrypto-hashes",
-    "contentHash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-TVKC",
-    "timestamp": "2026-10-19T14:33:24.492Z",
-    "repository": "React95/React95",
-    "learningId": "learn-github-react95-react95",
-    "contentHash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-TVN3",
-    "timestamp": "2026-10-19T14:33:24.591Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "3f00594b3cf30c429e83a844b07f452789ac58f9f564510b1ffeb18cea5b1db4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-U01W",
     "timestamp": "2026-10-19T14:33:30.308Z",
     "repository": "vinceglb/FileKit",
@@ -7492,6 +7447,51 @@
     "contentHash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-DKMU",
+    "timestamp": "2026-10-20T11:48:26.166Z",
+    "repository": "CrawlCove/xml-sitemap-validator",
+    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+    "contentHash": "a5e1e3e98213c98d43dc1dc78ed34685738775934d5e823aa9c92c15a28f6c98",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-G429",
+    "timestamp": "2026-10-20T11:50:24.657Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "d1d3664557955c392f970a5acdb7c5f46b1b23891372ee3ba86b23db550debfc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-H5KL",
+    "timestamp": "2026-10-20T11:51:13.269Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

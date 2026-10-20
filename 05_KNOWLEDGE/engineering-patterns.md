@@ -226944,3 +226944,533 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f8f6db89` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3149. Variable Binding Mutability Invariant for Synthesized Closure Destructuring (Harvested from software-mansion/react-native-reanimated)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Variable Binding Mutability Invariant for Synthesized Closure Destructuring",
+  "source": "software-mansion/react-native-reanimated",
+  "source_url": "https://github.com/software-mansion/react-native-reanimated",
+  "source_version": "1d2b2132",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T11:50:24.322Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-software-mansion-react-native-reanimated",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated) (Revision: `1d2b2132`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an AST transformation pass synthesizes a lexical scope unpacker (e.g., destructuring captured closure variables from an external carrier object or array), the synthesized binding declaration MUST use mutable variable declarations (`let` or `var`) rather than immutable declarations (`const`), unless static analysis mathematically proves zero reassignment of every captured identifier across all execution paths.
+
+**WHY**:
+JavaScript/Hermes engines throw an unrecoverable runtime syntax/evaluation error (`invalid assignment left-hand side` or `TypeError: Assignment to constant variable`) if user code rebinds or reassigns an outer variable within a serialized execution unit. When a closure unpacker binds extracted carrier values via `const [x] = this.__closure;`, any subsequent assignment `x = newValue` inside the function fails immediately at runtime on native engines (specifically Hermes under unbundled/bundleless evaluation modes).
+
+**WHEN TO APPLY**:
+Apply in any compiler, AST visitor, transpiler, Babel/Oxc plugin, or code-generator that extracts captured lexical environments and injects prelude unpacking statements into standalone function scopes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified Rust OXC AST transformer implementation
+// Path: packages/react-native-worklets/plugin-oxc/src/worklet_string_code.rs
+use oxc_ast::ast::{BindingPattern, Expression, Statement, VariableDeclarationKind};
+use oxc_span::SPAN;
+
+pub fn let_declaration<'a>(
+    builder: AstBuilder<'a>,
+    pattern: BindingPattern<'a>,
+    init: Expression<'a>,
+) -> oxc_allocator::Box<'a, oxc_ast::ast::VariableDeclaration<'a>> {
+    let declarator = builder.variable_declarator(SPAN, VariableDeclarationKind::Let, pattern, NONE, Some(init), false);
+    let declarations = builder.vec1(declarator);
+    builder.alloc_variable_declaration(SPAN, VariableDeclarationKind::Let, declarations, false)
+}
+
+fn prepend_closure<'a>(builder: AstBuilder<'a>, closure_variables: &[String]) -> Statement<'a> {
+    let array_pattern = closure_binding_pattern(builder, closure_variables);
+    let this_closure = builder.expression_member(
+        SPAN,
+        builder.expression_this(SPAN),
+        builder.identifier_name(SPAN, "__closure"),
+        false,
+    );
+    // MUST use let_decl to allow worklets to reassign captured state locally
+    Statement::VariableDeclaration(let_declaration(builder, array_pattern, this_closure))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Emitting `const` for unpack sequences destroys reassignment semantics
+function getClosurePlugin(closureVariables: Array<Identifier>): PluginItem {
+  // CRITICAL FAILURE: Emits `const [foo] = this.__closure;`
+  // If user writes `foo = 42;`, Hermes engine crashes with "invalid assignment left-hand side"
+  const closureDeclaration = variableDeclaration('const', [
+    variableDeclarator(
+      arrayPattern(closureVariables.map((variable) => identifier(variable.name))),
+      memberExpression(thisExpression(), identifier('__closure'))
+    )
+  ]);
+  return { visitor: { /* ... */ } };
+}
+```
+
+**VERIFICATION METHOD**:
+Run automated AST snapshot and execution testing verifying reassignment within closures:
+```typescript
+test('allows assigning to a captured variable without Hermes engine crash', () => {
+  const input = `
+    let x = 0;
+    function foo() {
+      'worklet';
+      if (x > 1) {
+        x = 0;
+      }
+    }
+  `;
+  const result = runPlugin(input, { bundleMode: false });
+  expect(result.code).toContain('let[x]=this.__closure;');
+  expect(() => evaluateInHermesSandbox(result.code)).not.toThrow();
+});
+```
+
+---
+
+
+---
+
+## 3150. Hard Depth Limit on Recursive Object Stringifiers & Serializers (Harvested from software-mansion/react-native-reanimated)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hard Depth Limit on Recursive Object Stringifiers & Serializers",
+  "source": "software-mansion/react-native-reanimated",
+  "source_url": "https://github.com/software-mansion/react-native-reanimated",
+  "source_version": "1d2b2132",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T11:50:24.487Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-software-mansion-react-native-reanimated",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated) (Revision: `1d2b2132`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any structural serializer, debug formatter, or AST configuration stringifier traversing arbitrary user configuration trees MUST maintain an explicit recursion depth counter and throw a deterministic depth exhaustion error when a constant threshold (e.g., `depth > 10`) is exceeded, prior to invoking child recursion passes.
+
+**WHY**:
+Complex UI styling specifications (such as CSS keyframes, animation matrices, and transition configs) frequently contain accidental circular structures, self-referential styling nodes, or deeply nested utility compositions. Without a hard depth guard, recursive formatters trigger uncatchable JavaScript engine stack overflows (`RangeError: Maximum call stack size exceeded`), corrupting the dev-server process or worker thread.
+
+**WHEN TO APPLY**:
+Apply to any custom JSON stringifier, styling code generator, snapshot serializer, or dynamic code-display formatter handling nested runtime objects.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified deep stringifier with explicit bounded depth guard
+// Path: apps/common-app/src/apps/css/utils/code.ts
+export const MAX_RECURSION_DEPTH = 10;
+
+export const stringifyConfigObject = (
+  inputObject: Record<string, unknown>,
+  dense = false,
+  depth = 0
+): string => {
+  if (depth > MAX_RECURSION_DEPTH) {
+    throw new Error(`Serialization halted: Object nesting is too deep (depth > ${MAX_RECURSION_DEPTH}). Potential circular dependency.`);
+  }
+
+  const object = isObjectRecord(inputObject.cssRules)
+    ? (inputObject.cssRules as Record<string, unknown>)
+    : inputObject;
+
+  const currentTab = '  '.repeat(depth);
+  const keys = Object.keys(object);
+
+  return `{\n${keys
+    .map((key) => {
+      const value = object[key];
+      const formattedKey = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key) ? key : `"${key}"`;
+      const nextTab = '  '.repeat(depth + 1);
+
+      const formattedVal = isObjectRecord(value)
+        ? stringifyConfigObject(value as Record<string, unknown>, dense, depth + 1)
+        : formatLeafValue(value, nextTab, dense);
+
+      return `${nextTab}${formattedKey}: ${formattedVal}`;
+    })
+    .join(',\n')}\n${currentTab}}`;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Naked recursion without depth tracking or cycle detection
+function dangerousStringify(obj: Record<string, any>): string {
+  // CRITICAL FAILURE: Circular references or deeply nested configs cause fatal stack overflow
+  return "{" + Object.entries(obj).map(([k, v]) => {
+    return typeof v === 'object' && v !== null 
+      ? `${k}: ${dangerousStringify(v)}` 
+      : `${k}: ${JSON.stringify(v)}`;
+  }).join(',') + "}";
+}
+```
+
+**VERIFICATION METHOD**:
+Execute unit tests passing cyclic and deeply nested mocks:
+```typescript
+test('stringifyConfigObject throws deterministic error on deep or cyclic nesting', () => {
+  const deeplyNested: Record<string, unknown> = {};
+  let current = deeplyNested;
+  for (let i = 0; i < 15; i++) {
+    current.next = {};
+    current = current.next as Record<string, unknown>;
+  }
+  expect(() => stringifyConfigObject(deeplyNested)).toThrow('Object nesting is too deep');
+});
+```
+
+---
+
+
+---
+
+## 3151. Invariant Separation of Disjoint Sub-Languages in Multi-Format Virtual Documents (Harvested from kucherenko/jscpd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Separation of Disjoint Sub-Languages in Multi-Format Virtual Documents",
+  "source": "kucherenko/jscpd",
+  "source_url": "https://github.com/kucherenko/jscpd",
+  "source_version": "854df3d4",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T11:51:12.753Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kucherenko-jscpd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kucherenko/jscpd](https://github.com/kucherenko/jscpd) (Revision: `854df3d4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing, hashing, or scanning container documents (such as Markdown, Vue SFCs, Svelte, Astro, or HTML with inline scripts) into distinct sub-document streams for cross-language duplication or static analysis, the engine **MUST NOT** assign identical document-source identifiers to non-contiguous blocks or let sub-document token spans merge across host-language boundaries. Every extracted language partition **MUST** be tokenized with an isolated virtual identifier (e.g., `source_id:format`) and matched against the candidate pool with explicit line-offset recalculation rules.
+
+**WHY**:
+Sharing a single document identifier across discrete fences or scripts causes the gap-merging engine (Type-3 clone detection) to treat the intervening unparsed host-language lines as "unmatched gap code" between two halves of a clone. This creates bogus Type-3 clones spanning completely unrelated functions across distinct code fences. Furthermore, it causes line counters to credit intermediate host prose or template markup as "duplicated code lines," corrupting downstream CI thresholds and causing tokenizers that mask overlapping ranges to panic.
+
+**WHEN TO APPLY**:
+Any static analyzer, linter, language server protocol (LSP), or MCP agent subsystem handling composite documents with multiple embedded programming languages.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified pattern from cpd/src/mcp/project.rs & cpd-core/src/detect.rs
+pub fn prepare_snippet_blocks(
+    snippet_id: &str,
+    format: &str,
+    code: &str,
+    options: &TokenizeOptions,
+    consistent: bool,
+) -> Vec<PreparedSource> {
+    let mut blocks: Vec<PreparedSource> = Vec::new();
+    let is_sfc = is_component(format);
+    
+    if is_sfc {
+        // A component can be treated as a whole file for format-level cross checks
+        let whole_tokens = tokenize_to_detection(format, code, options);
+        blocks.push(snippet_source(
+            snippet_id.to_string(),
+            format,
+            &whole_tokens,
+            consistent,
+            false,
+        ));
+    }
+
+    // Split discrete blocks into isolated, distinct source entities
+    let maps = tokenize_to_detection_maps(format, code, options);
+    for (idx, map) in maps.into_iter().enumerate() {
+        let is_embedded = map.format != format;
+        // MUST assign unique virtual source_id per sub-format block to prevent
+        // sliding window gap-merging across disjoint fence boundaries
+        let sub_id = if is_embedded || is_sfc {
+            format!("{snippet_id}:{}:{idx}", map.format)
+        } else {
+            snippet_id.to_string()
+        };
+        
+        blocks.push(snippet_source(
+            sub_id,
+            &map.format,
+            &map.tokens,
+            consistent,
+            is_embedded,
+        ));
+    }
+    blocks
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Reusing the same source_id for all sub-blocks in a file.
+// Causes gap merges across disjoint code blocks and corrupts line offset spans.
+let mut blocks = Vec::new();
+for map in tokenize_to_detection_maps(format, code, &options) {
+    // BUG: Assigning bare SNIPPET_ID causes the detector to merge matches 
+    // from block A and block B across whatever arbitrary host prose separates them!
+    blocks.push(snippet_source(
+        SNIPPET_ID.to_string(),
+        &map.format,
+        &map.tokens,
+        consistent,
+        false,
+    ));
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce an automated integration test asserting that two identical functions placed inside separate code fences in a Markdown document are never merged into a single `Similar` (Type-3) clone with gap lines:
+```rust
+#[test]
+fn fences_do_not_merge_across_markdown_prose_gaps() {
+    let markdown = "# Title\n```js\nfunction a() { x(); }\n```\nMiddle Prose\n```js\nfunction b() { y(); }\n```";
+    let clones = detect_in_document(markdown, "markdown");
+    for clone in clones {
+        assert_ne!(
+            clone.similarity_method,
+            Some(SimilarityMethod::Gap),
+            "Fences must not bridge across markdown prose gaps"
+        );
+    }
+}
+```
+
+---
+
+
+---
+
+## 3152. Precomputed Constant-Time Rolling Hash Invariant for Sliding Windows (Harvested from kucherenko/jscpd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Precomputed Constant-Time Rolling Hash Invariant for Sliding Windows",
+  "source": "kucherenko/jscpd",
+  "source_url": "https://github.com/kucherenko/jscpd",
+  "source_version": "854df3d4",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T11:51:12.919Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kucherenko-jscpd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kucherenko/jscpd](https://github.com/kucherenko/jscpd) (Revision: `854df3d4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing a Rabin-Karp or polynomial rolling hash over sequential tokens or bytes, the scale factor for the outgoing item ($\text{BASE}^{W-1} \pmod{2^{64}}$ where $W$ is window width) **MUST** be precomputed exactly **once** before entering the sliding-window loop. The inner step of the rolling loop **MUST NOT** invoke a variable exponentiation loop or dynamic power computation. Wrapping arithmetic (`wrapping_sub`, `wrapping_mul`, `wrapping_add`) **MUST** be used unconditionally to eliminate integer overflow trap penalties and maintain strict platform-agnostic determinism.
+
+**WHY**:
+Computing $\text{BASE}^{W-1}$ inside the sliding-window step converts an $O(N)$ sliding token traversal into an $O(N \times W)$ degradation, which degrades CPU instruction pipelining and stalls on high-throughput token pipelines. Unchecked math panics in debug builds and introduces unpredictable undefined behavior or branch mispredictions in release configurations.
+
+**WHEN TO APPLY**:
+All sliding-window algorithms, Rabin-Karp substring searches, n-gram extractors, and cyclic redundancy calculations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified pattern from cpd-core/src/hash.rs
+pub const HASH_BASE: u64 = 0x9e3779b97f4a7c15;
+
+#[inline(always)]
+pub fn base_pow(n: usize) -> u64 {
+    let mut result = 1u64;
+    for _ in 0..n {
+        result = result.wrapping_mul(HASH_BASE);
+    }
+    result
+}
+
+#[inline(always)]
+pub fn roll(current: u64, outgoing: u64, incoming: u64, window_power: u64) -> u64 {
+    // new_hash = (current - outgoing * window_power) * BASE + incoming
+    current
+        .wrapping_sub(outgoing.wrapping_mul(window_power))
+        .wrapping_mul(HASH_BASE)
+        .wrapping_add(incoming)
+}
+
+// Caller invariant:
+pub fn scan_window(hashes: &[u64], window_size: usize) {
+    if hashes.len() < window_size || window_size == 0 {
+        return;
+    }
+    // Precompute window_power ONCE per window_size outside hot loop
+    let window_power = base_pow(window_size - 1);
+    let mut current_hash = hash_window(&hashes[..window_size]);
+
+    for i in window_size..hashes.len() {
+        let outgoing = hashes[i - window_size];
+        let incoming = hashes[i];
+        current_hash = roll(current_hash, outgoing, incoming, window_power);
+        // Process current_hash...
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Recalculating base_pow or using checked math inside the hot loop.
+for i in window_size..hashes.len() {
+    let outgoing = hashes[i - window_size];
+    let incoming = hashes[i];
+    // SEVERE PERFORMANCE DEGRADATION: O(W) loop per single token advance!
+    let window_power = base_pow(window_size - 1); 
+    // FATAL: Checked arithmetic panics in debug mode when rolling hash overflows u64!
+    current_hash = (current_hash - outgoing * window_power) * HASH_BASE + incoming;
+}
+```
+
+**VERIFICATION METHOD**:
+Run property-based validation ensuring that single-token rolled hashing yields identical outputs to naive full-window hash recomputations across randomized token sequences:
+```rust
+#[test]
+fn rolling_hash_identically_matches_naive_recompute_fuzz() {
+    let tokens: Vec<u64> = (0..500).map(|x| (x * 31337) ^ 0xdeadbeef).collect();
+    let window_size = 20;
+    let window_power = base_pow(window_size - 1);
+    let mut rolled = hash_window(&tokens[..window_size]);
+    
+    for i in window_size..tokens.len() {
+        rolled = roll(rolled, tokens[i - window_size], tokens[i], window_power);
+        let naive = hash_window(&tokens[i - window_size + 1..=i]);
+        assert_eq!(rolled, naive, "Rolled hash must match naive slice evaluation at index {i}");
+    }
+}
+```
+
+---
+
+
+---
+
+## 3153. Bidirectional Order-Independent Snippet Fingerprinting with Line-Ending Normalization (Harvested from kucherenko/jscpd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bidirectional Order-Independent Snippet Fingerprinting with Line-Ending Normalization",
+  "source": "kucherenko/jscpd",
+  "source_url": "https://github.com/kucherenko/jscpd",
+  "source_version": "854df3d4",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T11:51:13.104Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kucherenko-jscpd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kucherenko/jscpd](https://github.com/kucherenko/jscpd) (Revision: `854df3d4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When fingerprinting, baselining, or computing cryptographic/non-cryptographic hashes over pairs of code fragments $(A, B)$ to assert equivalence or record historical ignore baselines, the engine **MUST**:
+1. Strip all Carriage Return (`\r`) tokens before serializing byte sequences.
+2. Lexicographically sort candidate fragments such that $\text{order}(A, B) = \text{order}(B, A)$.
+3. Intersperse a non-textual null byte delimiter (`0x00`) strictly between the concatenated fragment streams.
+
+**WHY**:
+Without stripping `\r`, baseline comparison across git checkouts on Windows (`core.autocrlf=true`) vs Linux/macOS (`core.autocrlf=input`) causes false positives where all historical clones appear as "new." Without lexicographical ordering, non-deterministic file discovery order (e.g. from parallel directory traversals via `ignore::WalkBuilder` or `rayon`) flips the identity $(A, B)$ into $(B, A)$, breaking historical suppressions. Without a null separator, concatenated boundary collisions occur: `("ab", "c")` produces the exact same hash as `("a", "bc")`.
+
+**WHEN TO APPLY**:
+Code clone suppression stores, AST subtree comparison caches, baseline diffing engines, and git pre-commit hooks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified pattern from cpd-core/src/hash.rs
+pub fn snippet_pair_hash(a: &str, b: &str) -> u64 {
+    let a_clean = strip_cr(a);
+    let b_clean = strip_cr(b);
+    // 1. Enforce lexicographical symmetry
+    let (first, second) = if a_clean <= b_clean {
+        (&a_clean, &b_clean)
+    } else {
+        (&b_clean, &a_clean)
+    };
+    // 2. Pre-allocate buffer containing both fragments + unambiguous delimiter
+    let mut buf = Vec::with_capacity(first.len() + second.len() + 1);
+    buf.extend_from_slice(first.as_bytes());
+    buf.push(0); // Separator prevents collision of ("ab","c") with ("a","bc")
+    buf.extend_from_slice(second.as_bytes());
+    
+    // 3. Hardware-accelerated non-cryptographic hash
+    xxhash_rust::xxh3::xxh3_64(&buf)
+}
+
+fn strip_cr(s: &str) -> std::borrow::Cow<'_, str> {
+    if s.contains('\r') {
+        std::borrow::Cow::Owned(s.replace('\r', ""))
+    } else {
+        std::borrow::Cow::Borrowed(s)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Direct hashing without line-ending strip, symmetric sort, or separator.
+pub fn bad_pair_hash(a: &str, b: &str) -> u64 {
+    // Collides ("ab", "c") and ("a", "bc")!
+    // Fails across Windows/Linux git checkouts!
+    // Fails when parallel walker swaps file scan order!
+    let concatenated = format!("{a}{b}");
+    xxhash_rust::xxh3::xxh3_64(concatenated.as_bytes())
+}
+```
+
+**VERIFICATION METHOD**:
+```rust
+#[test]
+fn verify_pair_hash_invariants() {
+    // Invariant 1: Order invariance
+    assert_eq!(snippet_pair_hash("alpha", "beta"), snippet_pair_hash("beta", "alpha"));
+    // Invariant 2: CRLF vs LF invariance
+    assert_eq!(snippet_pair_hash("alpha\r\nline2\r\n", "beta\n"), snippet_pair_hash("alpha\nline2\n", "beta\r\n"));
+    // Invariant 3: Collision resistance across split boundaries
+    assert_ne!(snippet_pair_hash("ab", "c"), snippet_pair_hash("a", "bc"));
+}
+```
+
+---

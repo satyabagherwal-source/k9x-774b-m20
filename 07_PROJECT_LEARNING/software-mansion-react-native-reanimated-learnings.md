@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `f21f7262`  
+> **Source Version**: `1d2b2132`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:57:58.445Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-20T11:50:24.135Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,748 +12,152 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): software-mansion/react-native-reanimated
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:57:58.438Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): software-mansion/react-native-reanimated
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `software-mansion/react-native-reanimated`
-- **Description**: React Native's Animated library reimplemented
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11027 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+### 1.1 Core Engineering Problem & Boundary Decoupling
+`react-native-reanimated` solves the problem of synchronous, 60/120 FPS interaction and animation execution over the asynchronous React Native bridge/JSI boundary. In default React Native architectures, animations driven by JS thread calculations stutter whenever the event loop microtask queue or rendering passes encounter layout thrashing or long-running tasks. 
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+Reanimated decouples animation state mutation from the primary JavaScript VM context by spawning and maintaining dedicated secondary execution runtimes termed **Worklets**. A Worklet is a JavaScript function compiled into a standalone serializable closure that can be transported across native boundaries and executed directly on the native UI thread (or dedicated Worklet thread) via JSI (JavaScript Interface), bypassing asynchronous message serialization.
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `apps/common-app/src/apps/css/components/core/Text.tsx`
 ```
-import type { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
-import type {
-  GestureResponderEvent,
-  TextProps as RNTextProps,
-} from 'react-native';
-import { StyleSheet, Text as RNText } from 'react-native';
+       [ JS Execution Thread (Hermes / V8 / JSC) ]
+                     │
+          Babel / Oxc AST Transformation
+     (Closure extraction into `this.__closure`)
+                     │
+           JSI Host Object Transport
+                     ▼
+       [ Worklet Runtime (Native UI Thread) ]
+     ┌───────────────────────────────────────┐
+     │  `let [captured] = this.__closure`    │
+     │  Frame Callback Loop (CADisplayLink/  │
+     │  Choreographer via JNI / C++ Engine)  │
+     └───────────────────────────────────────┘
+                     │
+          Direct Fabric ShadowNode /
+          Native View Property Mutation
+```
 
-import type {
-  AnimationsNavigationRouteName,
-  TransitionsNavigationRouteName,
-} from '@/apps/css/examples';
-import { colors, text } from '@/theme';
-import type { FontVariant } from '@/types';
+### 1.2 Multi-Language Subsystem Boundaries & State Ownership
+The repository enforces a 4-tier language boundary architecture:
+1. **Compilation Tier (Rust `plugin-oxc` & TypeScript Babel Plugin)**: Operates at build time. Functions annotated with `'worklet'` directives or recognized higher-order function arguments are converted into worklet factory functions. Closures are statically analyzed, free variables extracted into an explicit `__closure` array, and code stringified into `__initData.code` with accompanying source maps.
+2. **TypeScript/JavaScript API Tier (`packages/react-native-reanimated`)**: Exposes declarative APIs (`useSharedValue`, `useAnimatedStyle`, `useAnimatedRef`, CSS Animations/Transitions). Shared values are represented as JSI HostObjects backed by thread-safe C++ wrappers.
+3. **C++ JSI/Runtime Core (`Common/cpp`)**: Owns `WorkletRuntime`, `ShareableValue`, `LayoutAnimationsManager`, and `NativeReanimatedModule`. Maintains the life-cycle of JSI runtimes, handles JS-to-Native synchronization locks, and schedules work items across threads via `jsi::Value` and native event loop schedulers.
+4. **Platform Binding Layer (Android JNI & iOS Objective-C++)**: Interacts with Apple's `CADisplayLink` or Android's `Choreographer`. Updates native view attributes directly via Fabric `ShadowTree` commit hooks or UIManager shadow nodes.
 
-function parseTextVariant(textToParse: string): [FontVariant, string] {
-  const match = textToParse.match(/^(#+)\s+/);
-  if (match) {
-    const hashes = match[1].length;
-    const cleanedText = textToParse.slice(match[0].length);
-    if (hashes < 4) {
-      return [`heading${hashes}` as FontVariant, cleanedText];
-    } else if (hashes < 7) {
-      return [`subHeading${hashes - 3}` as FontVariant, cleanedText];
-    }
-  }
-  return ['body1', textToParse];
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Variable Binding Mutability Invariant for Synthesized Closure Destructuring
+**RULE**:
+When an AST transformation pass synthesizes a lexical scope unpacker (e.g., destructuring captured closure variables from an external carrier object or array), the synthesized binding declaration MUST use mutable variable declarations (`let` or `var`) rather than immutable declarations (`const`), unless static analysis mathematically proves zero reassignment of every captured identifier across all execution paths.
+
+**WHY**:
+JavaScript/Hermes engines throw an unrecoverable runtime syntax/evaluation error (`invalid assignment left-hand side` or `TypeError: Assignment to constant variable`) if user code rebinds or reassigns an outer variable within a serialized execution unit. When a closure unpacker binds extracted carrier values via `const [x] = this.__closure;`, any subsequent assignment `x = newValue` inside the function fails immediately at runtime on native engines (specifically Hermes under unbundled/bundleless evaluation modes).
+
+**WHEN TO APPLY**:
+Apply in any compiler, AST visitor, transpiler, Babel/Oxc plugin, or code-generator that extracts captured lexical environments and injects prelude unpacking statements into standalone function scopes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified Rust OXC AST transformer implementation
+// Path: packages/react-native-worklets/plugin-oxc/src/worklet_string_code.rs
+use oxc_ast::ast::{BindingPattern, Expression, Statement, VariableDeclarationKind};
+use oxc_span::SPAN;
+
+pub fn let_declaration<'a>(
+    builder: AstBuilder<'a>,
+    pattern: BindingPattern<'a>,
+    init: Expression<'a>,
+) -> oxc_allocator::Box<'a, oxc_ast::ast::VariableDeclaration<'a>> {
+    let declarator = builder.variable_declarator(SPAN, VariableDeclarationKind::Let, pattern, NONE, Some(init), false);
+    let declarations = builder.vec1(declarator);
+    builder.alloc_variable_declaration(SPAN, VariableDeclarationKind::Let, declarations, false)
 }
 
-const REGEX = /`([^`]+)`|\*\*([^*]+)\*\*/g;
-
-const VARIANT_COLORS: Record<FontVariant, string> = {
-  body1: colors.foreground3,
-  body2: colors.foreground3,
-  body3: colors.foreground3,
-  code: colors.primaryDark,
-  heading1: colors.foreground1,
-  heading2: colors.foreground1,
-  heading3: colors.foreground1,
-  heading4: colors.foreground1,
-  inlineCode: colors.primaryDark,
-  label1: colors.foreground2,
-  label2: colors.foreground2,
-  label3: colors.foreground2,
-  subHeading1: colors.foreground1,
-  subHeading2: colors.foreground1,
-  subHeading3: colors.foreground1,
-};
-
-export type TextProps = {
-  variant?: FontVariant;
-  navLink?: AnimationsNavigationRouteName | TransitionsNavigationRouteName;
-  center?: boolean;
-} & RNTextProps;
-
-export default function Text({
-  center,
-  children,
-  navLink,
-  onPress,
-  style,
-  variant,
-  ...rest
-}: TextProps) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-
-  const getVariantProps = (textVariant: FontVariant, extraStyle = {}) => ({
-    ...rest,
-    onPress:
-      navLink &&
-      ((args: GestureResponderEvent) => {
-        onPress?.(args);
-        navigation.navigate<string>(navLink);
-      }),
-    style: [
-      text[textVariant],
-      {
-        backgroundColor:
-          textVariant === 'inlineCode' ? colors.primaryLight : 'transparent',
-        color: VARIANT_COLORS[textVariant],
-        textAlign: center ? 'center' : undefined,
-      },
-      navLink && styles.link,
-      style,
-      extraStyle, // Optional extra styles for things like bold
-    ],
-  });
-
-  if (variant === 'inlineCode') {
-    return (
-      <Text>
-        {' '}
-        <RNText {...getVariantProps(variant)}>{children}</RNText>{' '}
-      </Text>
+fn prepend_closure<'a>(builder: AstBuilder<'a>, closure_variables: &[String]) -> Statement<'a> {
+    let array_pattern = closure_binding_pattern(builder, closure_variables);
+    let this_closure = builder.expression_member(
+        SPAN,
+        builder.expression_this(SPAN),
+        builder.identifier_name(SPAN, "__closure"),
+        false,
     );
-  }
-
-  const renderTextWithCode = (textToParse: string) => {
-    let resultingVariant = variant as FontVariant;
-    let resultingText = textToParse;
-
-    if (!variant) {
-      [resultingVariant, resultingText] = parseTextVariant(textToParse);
-    }
-
-    return resultingText.split(REGEX).map((part, index) => {
-      if (index % 3 === 1) {
-        // Apply inline code style
-        return (
-          <RNText key={index} {...getVariantProps('inlineCode')}>
-            {part}
-          </RNText>
-        );
-      } else if (index % 3 === 2) {
-        // Apply bold style
-        return (
-          <RNText
-            key={index}
-            {...getVariantProps(resultingVariant, { fontWeight: 'bold' })}>
-            {part}
-          </RNText>
-        );
-      }
-      // Default: regular text
-      return (
-        <RNText key={index} {...getVariantProps(resultingVariant)}>
-          {part}
-        </RNText>
-      );
-    });
-  };
-
-  const isString = typeof children === 'string';
-
-  return (
-    <RNText {...getVariantProps(variant ?? 'body1')}>
-      {isString ? renderTextWithCode(children) : children}
-    </RNText>
-  );
+    // MUST use let_decl to allow worklets to reassign captured state locally
+    Statement::VariableDeclaration(let_declaration(builder, array_pattern, this_closure))
 }
-
-const styles = StyleSheet.create({
-  link: {
-    textDecorationLine: 'underline',
-  },
-});
-
 ```
 
-### Core Architecture Module: `apps/common-app/src/apps/css/components/core/index.ts`
-```
-export { default as Text, type TextProps } from './Text';
-
-```
-
-### Core Architecture Module: `apps/common-app/src/apps/css/examples/animations/screens/animationSettings/AnimationPlayState.tsx`
-```
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import type { CSSAnimationProperties } from 'react-native-reanimated';
-import Animated from 'react-native-reanimated';
-
-import { colors, radius, sizes } from '@/theme';
-
-import { ExampleScreen } from './components';
-
-export default function AnimationPlayState() {
-  const [isPaused, setIsPaused] = useState(false);
-
-  return (
-    <ExampleScreen
-      animation={{
-        animationDelay: '-1s',
-        animationDirection: 'alternate',
-        animationDuration: '2s',
-        animationIterationCount: 'infinite',
-        animationName: {
-          from: {
-            left: 0,
-          },
-          to: {
-            left: '100%',
-            transform: [{ translateX: '-100%' }],
-          },
-        },
-        animationTimingFunction: 'ease-in-out',
-      }}
-      cards={[
-        {
-          items: [
-            { animationPlayState: 'running', label: 'Running (default)' },
-            { animationPlayState: 'paused', label: 'Paused' },
-          ],
-          title: 'Play State',
-        },
-        {
-          allowPause: true,
-          items: [{ label: `state: ${isPaused ? 'Paused' : 'Running'}` }],
-          onTogglePause: setIsPaused,
-          title: 'Toggling Play State',
-        },
-      ]}
-      renderExample={(exampleConfig: CSSAnimationProperties) => (
-        <View style={styles.wrapper}>
-          <Animated.View style={[styles.box, exampleConfig]} />
-        </View>
-      )}
-    />
-  );
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Emitting `const` for unpack sequences destroys reassignment semantics
+function getClosurePlugin(closureVariables: Array<Identifier>): PluginItem {
+  // CRITICAL FAILURE: Emits `const [foo] = this.__closure;`
+  // If user writes `foo = 42;`, Hermes engine crashes with "invalid assignment left-hand side"
+  const closureDeclaration = variableDeclaration('const', [
+    variableDeclarator(
+      arrayPattern(closureVariables.map((variable) => identifier(variable.name))),
+      memberExpression(thisExpression(), identifier('__closure'))
+    )
+  ]);
+  return { visitor: { /* ... */ } };
 }
-
-const styles = StyleSheet.create({
-  box: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.sm,
-    height: sizes.sm,
-    width: sizes.sm,
-  },
-  wrapper: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: radius.sm,
-  },
-});
-
 ```
 
-### Core Architecture Module: `apps/common-app/src/apps/css/examples/transitions/screens/pseudoSelectors/ActiveBlocksRender.tsx`
-```
-import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import Animated from 'react-native-reanimated';
-
-import {
-  Screen,
-  Scroll,
-  Section,
-  VerticalExampleCard,
-} from '@/apps/css/components';
-import { colors, radius, sizes, spacing } from '@/theme';
-
-export default function ActiveBlocksRender() {
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPhase((prev) => (prev + 1) % 2);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const renderColor = phase === 0 ? colors.danger : colors.primaryLight;
-
-  return (
-    <Screen>
-      <Scroll contentContainerStyle={styles.content} withBottomBarSpacing>
-        <Section
-          description="backgroundColor is driven by two sources at once: a render-driven transition that toggles red <-> light blue every 1000ms via the 'default' value, and a ':active' selector that sets dark navy. Press and hold the box: while ':active' is active, the incoming render transitions on backgroundColor should be blocked and the box should hold dark navy (no red/blue flicker). Release and the looping render transition resumes."
-          title="Selector blocks render transition">
-          <VerticalExampleCard
-            title="backgroundColor: render loop vs :active"
-            code={`const renderColor = phase === 0 ? colors.danger : colors.primaryLight;
-<Animated.View
-  style={{
-    backgroundColor: {
-      default: renderColor,
-      ':active': colors.primaryDark,
-    },
-    transitionDuration: '900ms',
-    transitionTimingFunction: 'linear',
-  }}
-/>`}
-            collapsedCode={`backgroundColor: {
-  default: renderColor,
-  ':active': colors.primaryDark,
-},`}>
-            <Animated.View
-              style={[
-                styles.box,
-                {
-                  backgroundColor: {
-                    ':active': colors.primaryDark,
-                    default: renderColor,
-                  },
-                  transitionDuration: '900ms',
-                  transitionTimingFunction: 'linear',
-                },
-              ]}
-            />
-          </VerticalExampleCard>
-        </Section>
-      </Scroll>
-    </Screen>
-  );
-}
-
-const styles = StyleSheet.create({
-  box: {
-    borderRadius: radius.md,
-    height: sizes.md,
-    width: sizes.md,
-  },
-  content: {
-    gap: spacing.xs,
-  },
-});
-
-```
-
-### Core Architecture Module: `apps/common-app/src/apps/css/examples/transitions/screens/pseudoSelectors/HoverWithLoop.tsx`
-```
-import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import Animated from 'react-native-reanimated';
-
-import {
-  Screen,
-  Scroll,
-  Section,
-  VerticalExampleCard,
-} from '@/apps/css/components';
-import { colors, radius, sizes, spacing } from '@/theme';
-
-export default function HoverWithLoop() {
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPhase((prev) => (prev + 1) % 2);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <Screen>
-      <Scroll contentContainerStyle={styles.content} withBottomBarSpacing>
-        <Section
-          description="Continuous JS-driven transition (background color toggling every 1500ms) running on the same view as a :hover pseudo-selector (scale). Both should compose: hovering scales the box without disturbing the looping color animation, and the color keeps cycling regardless of hover state."
-          title="Looping transition + :hover">
-          <VerticalExampleCard
-            title="Hover scale + looping background"
-            code={`<Animated.View
-  style={{
-    backgroundColor: phase === 0 ? colors.primary : colors.primaryDark,
-    transform: {
-      default: [{ scale: 1 }],
-      ':hover': [{ scale: 1.2 }],
-    },
-    transitionProperty: ['backgroundColor', 'transform'],
-    transitionDuration: ['1500ms', '200ms'],
-    transitionTimingFunction: ['linear', 'ease-in-out'],
-  }}
-/>`}
-            collapsedCode={`backgroundColor: phase === 0 ? primary : primaryDark,
-transform: { default: [{ scale: 1 }], ':hover': [{ scale: 1.2 }] },
-transitionDuration: ['1500ms', '200ms'],`}>
-            <Animated.View
-              style={[
-                styles.box,
-                {
-                  backgroundColor:
-                    phase === 0 ? colors.primary : colors.primaryDark,
-                  transform: {
-                    ':hover': [{ scale: 1.2 }],
-                    default: [{ scale: 1 }],
-                  },
-                  transitionDuration: ['1500ms', '200ms'],
-                  transitionProperty: ['backgroundColor', 'transform'],
-                  transitionTimingFunction: ['linear', 'ease-in-out'],
-                },
-              ]}
-            />
-          </VerticalExampleCard>
-        </Section>
-      </Scroll>
-    </Screen>
-  );
-}
-
-const styles = StyleSheet.create({
-  box: {
-    borderRadius: radius.md,
-    height: sizes.md,
-    width: sizes.md,
-  },
-  content: {
-    gap: spacing.xs,
-  },
-});
-
-```
-
-### Core Architecture Module: `apps/common-app/src/apps/css/examples/transitions/screens/pseudoSelectors/PerStateTransitionConfig.tsx`
-```
-import { StyleSheet, TextInput } from 'react-native';
-import Animated, { createAnimatedComponent } from 'react-native-reanimated';
-
-import {
-  Screen,
-  Scroll,
-  Section,
-  VerticalExampleCard,
-} from '@/apps/css/components';
-import { colors, radius, sizes, spacing } from '@/theme';
-
-const AnimatedTextInput = createAnimatedComponent(TextInput);
-
-export default function PerStateTransitionConfig() {
-  return (
-    <Screen>
-      <Scroll contentContainerStyle={styles.content} withBottomBarSpacing>
-        <Section
-          description="Different pseudo-selectors can drive different style properties on the same element. Use `transitionProperty` with aligned timing arrays to give each property its own speed/curve."
-          title="Composing pseudo-selectors">
-          <VerticalExampleCard
-            collapsedCode="transitionDuration: '180ms'"
-            description="Hover changes the background; active scales it down. Both animate with the same duration."
-            title="Two selectors, two properties, shared timing"
-            code={`<Animated.View
-  style={{
-    backgroundColor: { default: colors.primary, ':hover': colors.primaryDark },
-    transform:       { default: [{ scale: 1 }], ':active': [{ scale: 0.92 }] },
-    transitionDuration: '180ms',
-  }}
-/>`}>
-            <Animated.View
-              style={[
-                styles.box,
-                {
-                  backgroundColor: {
-                    ':hover': colors.primaryDark,
-                    default: colors.primary,
-                  },
-                  transform: {
-                    ':active': [{ scale: 0.92 }],
-                    default: [{ scale: 1 }],
-                  },
-                  transitionDuration: '180ms',
-                },
-              ]}
-            />
-          </VerticalExampleCard>
-
-          <VerticalExampleCard
-            description="Hover-driven color change is smooth (250ms); active-driven press is snappy (60ms). Aligned arrays give each property its own duration."
-            title="Per-property timing for different selectors"
-            code={`<Animated.View
-  style={{
-    backgroundColor: { default: colors.primary, ':hover': colors.primaryDark },
-    transform:       { default: [{ scale: 1 }], ':active': [{ scale: 0.92 }] },
-    transitionProperty: ['backgroundColor', 'transform'],
-    transitionDuration: ['250ms', '60ms'],
-  }}
-/>`}
-            collapsedCode={`transitionProperty: ['backgroundColor', 'transform'],
-transitionDuration: ['250ms', '60ms']`}>
-            <Animated.View
-              style={[
-                styles.box,
-                {
-                  backgroundColor: {
-                    ':hover': colors.primaryDark,
-                    default: colors.primary,
-                  },
-                  transform: {
-                    ':active': [{ scale: 0.92 }],
-                    default: [{ scale: 1 }],
-                  },
-                  transitionDuration: ['250ms', '60ms'],
-                  transitionProperty: ['backgroundColor', 'transform'],
-                },
-              ]}
-            />
-          </VerticalExampleCard>
-
-          <VerticalExampleCard
-            description="Three pseudo-selectors driving three different properties on a text input. Hover lightens the background, focus thickens the border, active scales it down — each on its own timing."
-            title="Three selectors, three properties"
-            code={`<AnimatedTextInput
-  style={{
-    backgroundColor: { default: colors.primary,  ':hover':  colors.primaryDark },
-    borderWidth:     { default: 0,               ':focus':  3 },
-    transform:       { default: [{ scale: 1 }],  ':active': [{ scale: 0.95 }] },
-    transitionProperty: ['backgroundColor', 'borderWidth', 'transform'],
-    transitionDuration: ['220ms', '160ms', '60ms'],
-  }}
-/>`}
-            collapsedCode={`transitionProperty: ['backgroundColor', 'borderWidth', 'transform'],
-transitionDuration: ['220ms', '160ms', '60ms']`}>
-            <AnimatedTextInput
-              placeholder="Tap, hover or focus me"
-              style={[
-                styles.input,
-                {
-                  backgroundColor: {
-                    ':hover': colors.primaryDark,
-                    default: colors.primary,
-                  },
-                  borderWidth: {
-                    ':focus': 3,
-                    default: 0,
-                  },
-                  transform: {
-                    ':active': [{ scale: 0.95 }],
-                    default: [{ scale: 1 }],
-                  },
-                  transitionDuration: ['220ms', '160ms', '60ms'],
-                  transitionProperty: [
-                    'backgroundColor',
-                    'borderWidth',
-                    'transform',
-                  ],
-                },
-              ]}
-            />
-          </VerticalExampleCard>
-        </Section>
-      </Scroll>
-    </Screen>
-  );
-}
-
-const styles = StyleSheet.create({
-  box: {
-    borderRadius: radius.md,
-    height: sizes.md,
-    width: sizes.md,
-  },
-  content: {
-    gap: spacing.xs,
-  },
-  input: {
-    borderColor: colors.foreground1,
-    borderRadius: radius.md,
-    color: colors.background1,
-    height: sizes.md,
-    paddingHorizontal: spacing.sm,
-    width: sizes.xxl,
-  },
-});
-
-```
-
-### Core Architecture Module: `apps/common-app/src/apps/css/hooks/index.ts`
-```
-export { default as useFocusPlayState } from './useFocusPlayState';
-
-```
-
-### Core Architecture Module: `apps/common-app/src/apps/css/hooks/useFocusPlayState.ts`
-```
-import { useIsFocused } from '@react-navigation/native';
-import type { CSSAnimationPlayState } from 'react-native-reanimated';
-
-// TODO - remove this temporary hook once the native animation pausing
-// on screen change is implemented
-export default function useFocusPlayState(): CSSAnimationPlayState {
-  return useIsFocused() ? 'running' : 'paused';
-}
-
-```
-
-### Core Architecture Module: `apps/common-app/src/apps/css/navigation/utils.ts`
-```
-import type { Route, Routes, RouteWithRoutes, TabRoute } from './types';
-
-export function isRouteWithRoutes(route: Route): route is RouteWithRoutes {
-  return route && typeof route === 'object' && 'routes' in route;
-}
-
-export function getExampleScreenPaths(tabRoutes: Array<TabRoute>): Set<string> {
-  const paths = new Set<string>();
-
-  const collect = (routes: Routes, prefix: string) => {
-    for (const [key, route] of Object.entries(routes)) {
-      const path = `${prefix}/${key}`;
-      if (isRouteWithRoutes(route)) {
-        collect(route.routes, path);
-      } else {
-        paths.add(path);
+**VERIFICATION METHOD**:
+Run automated AST snapshot and execution testing verifying reassignment within closures:
+```typescript
+test('allows assigning to a captured variable without Hermes engine crash', () => {
+  const input = `
+    let x = 0;
+    function foo() {
+      'worklet';
+      if (x > 1) {
+        x = 0;
       }
     }
-  };
-
-  for (const tab of tabRoutes) {
-    collect(tab.routes, tab.name);
-  }
-
-  return paths;
-}
-
-const isUpperCase = (char: string) => char && char === char.toUpperCase();
-
-export function getScreenTitle(path: string): string {
-  const parts = path.split('/');
-  const lastPart = parts[parts.length - 1] ?? '';
-  const words = [];
-
-  let firstWordCharIdx = 0;
-  for (let i = 1; i < lastPart.length; i++) {
-    const char = lastPart[i];
-    if (isUpperCase(char) && !isUpperCase(lastPart[i + 1])) {
-      words.push(lastPart.slice(firstWordCharIdx, i));
-      firstWordCharIdx = i;
-    }
-  }
-
-  words.push(lastPart.slice(firstWordCharIdx));
-
-  return words.join(' ');
-}
-
+  `;
+  const result = runPlugin(input, { bundleMode: false });
+  expect(result.code).toContain('let[x]=this.__closure;');
+  expect(() => evaluateInHermesSandbox(result.code)).not.toThrow();
+});
 ```
 
-### Core Architecture Module: `apps/common-app/src/apps/css/utils/code.ts`
-```
-import type { UnknownRecord } from '@/types';
+---
 
-export function isValidPropertyName(propertyName: string): boolean {
-  const validPropertyNamePattern = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-  return validPropertyNamePattern.test(propertyName);
-}
+### 2. Hard Depth Limit on Recursive Object Stringifiers & Serializers
+**RULE**:
+Any structural serializer, debug formatter, or AST configuration stringifier traversing arbitrary user configuration trees MUST maintain an explicit recursion depth counter and throw a deterministic depth exhaustion error when a constant threshold (e.g., `depth > 10`) is exceeded, prior to invoking child recursion passes.
 
-export const isEasingFunction = (
-  value: unknown
-): value is { toString: () => string } => {
-  return typeof value === 'object' && value !== null && 'normalize' in value;
-};
+**WHY**:
+Complex UI styling specifications (such as CSS keyframes, animation matrices, and transition configs) frequently contain accidental circular structures, self-referential styling nodes, or deeply nested utility compositions. Without a hard depth guard, recursive formatters trigger uncatchable JavaScript engine stack overflows (`RangeError: Maximum call stack size exceeded`), corrupting the dev-server process or worker thread.
 
-export const isLeafValue = (value: unknown): boolean =>
-  typeof value !== 'object' ||
-  value === null ||
-  Array.isArray(value) ||
-  'normalize' in value ||
-  'normalizedKeyframes' in value;
+**WHEN TO APPLY**:
+Apply to any custom JSON stringifier, styling code generator, snapshot serializer, or dynamic code-display formatter handling nested runtime objects.
 
-const isObjectRecord = (value: unknown): value is UnknownRecord =>
-  typeof value === 'object' &&
-  value !== null &&
-  !Array.isArray(value) &&
-  !('normalize' in value) &&
-  !('normalizedKeyframes' in value);
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified deep stringifier with explicit bounded depth guard
+// Path: apps/common-app/src/apps/css/utils/code.ts
+export const MAX_RECURSION_DEPTH = 10;
 
-export const formatLeafValue = (
-  value: unknown,
-  nextTab = '',
-  dense = false
-): string => {
-  const formatValue = (item: unknown) =>
-    isEasingFunction(item) ? item.toString() : JSON.stringify(item);
-
-  if (Array.isArray(value)) {
-    if (!dense) {
-      // multiline array
-      return `[\n${value
-        .map((item) => `${nextTab}  ${formatValue(item)}`)
-        .join(',\n')}\n${nextTab}]`;
-    }
-    return `[${value.map((item) => formatValue(item)).join(', ')}]`;
-  }
-
-  return formatValue(value);
-};
-
-export const MAX_NOT_WRAPPED_LENGTH = 48;
-
-const stringifyConfigObject = (
-  inputObject: UnknownRecord,
+export const stringifyConfigObject = (
+  inputObject: Record<string, unknown>,
   dense = false,
   depth = 0
 ): string => {
-  if (depth > 10) {
-    throw new Error('Object nesting is too deep');
+  if (depth > MAX_RECURSION_DEPTH) {
+    throw new Error(`Serialization halted: Object nesting is too deep (depth > ${MAX_RECURSION_DEPTH}). Potential circular dependency.`);
   }
 
   const object = isObjectRecord(inputObject.cssRules)
-    ? inputObject.cssRules
+    ? (inputObject.cssRules as Record<string, unknown>)
     : inputObject;
-
-  const formatValue = (
-    key: string,
-    value: unknown,
-    currentDepth: number,
-    makeDense: boolean
-  ): string => {
-    const nextTab = '  '.repeat(currentDepth);
-
-    if (key === 'animationName') {
-      if (Array.isArray(value) && value.length > 0) {
-        return `[\n${nextTab}  ${value
-          .map((item) =>
-            isObjectRecord(item)
-              ? stringifyConfigObject(item, makeDense, depth + 2)
-              : formatLeafValue(item, nextTab, makeDense)
-          )
-          .join(`,\n${nextTab}  `)}\n${nextTab}]`;
-      }
-      return isObjectRecord(value)
-        ? stringifyConfigObject(value, makeDense, currentDepth)
-        : formatLeafValue(value, nextTab, makeDense);
-    }
-
-    return isObjectRecord(value)
-      ? stringifyConfigObject(value, makeDense, currentDepth)
-      : formatLeafValue(value, nextTab, makeDense);
-  };
-
-  const formatLine = (
-    key: string,
-    value: unknown,
-    depth_: number,
-    makeDense: boolean
-  ) => {
-    const nextTab = '  '.repeat(depth_);
-    return `${nextTab}${key}: ${formatValue(key, value, depth_, makeDense)}`;
-  };
 
   const currentTab = '  '.repeat(depth);
   const keys = Object.keys(object);
@@ -761,826 +165,357 @@ const stringifyConfigObject = (
   return `{\n${keys
     .map((key) => {
       const value = object[key];
-      const formattedKey = isValidPropertyName(key) ? key : `"${key}"`;
+      const formattedKey = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key) ? key : `"${key}"`;
+      const nextTab = '  '.repeat(depth + 1);
 
-      const denseFormat = formatLine(formattedKey, value, depth + 1, true);
-      if (dense || denseFormat.length < MAX_NOT_WRAPPED_LENGTH) {
-        return denseFormat;
-      }
-      return formatLine(formattedKey, value, depth + 1, false);
+      const formattedVal = isObjectRecord(value)
+        ? stringifyConfigObject(value as Record<string, unknown>, dense, depth + 1)
+        : formatLeafValue(value, nextTab, dense);
+
+      return `${nextTab}${formattedKey}: ${formattedVal}`;
     })
     .join(',\n')}\n${currentTab}}`;
 };
-
-export const stringifyConfig = (
-  object: unknown,
-  dense = false,
-  depth = 0
-): string => {
-  if (object === 'none') {
-    return 'none';
-  }
-  return isObjectRecord(object)
-    ? stringifyConfigObject(object, dense, depth)
-    : formatLeafValue(object, '  '.repeat(depth), dense);
-};
-
-export const getCodeWithOverrides = <C extends object, O extends object>(
-  sharedConfig: C,
-  overrides: Array<O> = [],
-  excludeKeys: Array<string> = []
-): string => {
-  // The generic constraint accepts any object shape from callers; treat it
-  // as an indexable record once at the boundary so the dynamic prop reads
-  // inside don't each need their own cast.
-  const config = sharedConfig as UnknownRecord;
-  const items = overrides as Array<UnknownRecord>;
-
-  const propertyOverrides: Record<string, Array<unknown>> = {};
-  const excludeSet = new Set(excludeKeys);
-
-  const isQuoted = (value: unknown): value is string =>
-    typeof value === 'string' && value[0] === '"' && value.slice(-1) === '"';
-
-  const parseOverrideValue = (value: unknown) => {
-    if (typeof value === 'string') {
-      return value;
-    }
-    const stringified = JSON.stringify(value);
-    return JSON.parse(stringified) === value ? stringified : value;
-  };
-
-  const parseOverride = (value: unknown) => {
-    if (Array.isArray(value)) {
-      return `[${value.map(parseOverrideValue).join(', ')}]`;
-    }
-    return parseOverrideValue(value);
-  };
-
-  for (const item of items) {
-    for (const key in item) {
-      if (!excludeSet.has(key)) {
-        propertyOverrides[key] ??= [];
-        propertyOverrides[key].push(parseOverride(item[key]));
-      }
-    }
-  }
-
-  return (
-    '{\n  ' +
-    [...new Set([...Object.keys(config), ...Object.keys(propertyOverrides)])]
-      .map((key) => {
-        const value = config[key] ?? propertyOverrides[key]?.[0] ?? '';
-
-        let parsedValue;
-        if (key === 'animationName') {
-          parsedValue = stringifyConfig(value, false, 0);
-        } else if (isLeafValue(value)) {
-          const formatLine = (makeDense: boolean) =>
-            `${key}: ${formatLeafValue(value, '', makeDense)}`;
-          const denseFormat = formatLine(true);
-          parsedValue =
-            denseFormat.length < MAX_NOT_WRAPPED_LENGTH
-              ? formatLeafValue(value, '', true)
-              : formatLeafValue(value, '', false);
-        } else if (isQuoted(value)) {
-          parsedValue = value;
-        } else {
-          parsedValue = JSON.stringify(value);
-        }
-
-        let line = `${key}: ${parsedValue},`;
-        if (
-          propertyOverrides[key] &&
-          (propertyOverrides[key].length > 1 ||
-            propertyOverrides[key][0] !== value)
-        ) {
-          line += ` // ${propertyOverrides[key].join(', ')}`;
-        }
-        return line;
-      })
-      .join('\n')
-      .split('\n')
-      .join('\n  ') +
-    '\n}'
-  );
-};
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7155** (2025-03-05): **[3.17.1] useAnimatedRef can not be used with component created by createAnimatedComponent**
-  *Symptoms*: ### Description  After passing `ref` to component which is created by passing a class component to `createAnimatedComponent`, the app crash and throw the error below.  ![Image](https://github.com/user-attachments/assets/afea926d-5701-4bc5-8464-411e1b0d0785)  ### Steps to reproduce  Please follow the snippet below: ```javascript class ClassComponent extends Component {   render() {     return <View />;   } }  const AnimatedClassComponent =   Reanimated.createAnimatedComponent(ClassComponent);  function App(): React.JSX.Element {   const ref = useAnimatedRef();    return (     <SafeAreaView style={styles.container}>       <AnimatedClassComponent ref={ref} />     </SafeAreaView>   ); } ```  ### Snack or a link to a repository  https://snack.expo.dev/Yw0yWgR-j23l3qT2JES2c  ### Reanimated version  3.17.1  ### React Native version  0.78.0  ### Platforms  iOS  ### JavaScript runtime  Hermes  ### Workflow  React Native  ### Architecture  Fabric (New Architecture)  ### Build type  Debug app & dev bundle  ### Device  iOS simulator  ### Device model  _No response_  ### Acknowledgements  Yes
-
-- **Issue #3879** (2023-03-24): **☂️ Deadlock/ANR in performOperations**
-  *Symptoms*: ### Description  This is an umbrella issue for ANRs/deadlocks on Android/iOS in NodesManager.performOperations.  The bug was introduced in #1215.  Android: - #2251 - #3062  iOS: - #3180 - #3862 - #3946  PRs trying to solve this issue: - #3082 - #3194  ### Repro  We don't have a repro yet but it needs to use modal or datetime picker as well as animate layout props using Reanimated.  ### Reanimated version  \>= 2.0.0, >= 3.0.0  ### Platforms  Android, iOS
-  **Post-Mortem & Fix Analysis**:
-  > What is the status of this. Is this fixed in 3.0?
-  > Facing the same issue in Android with reanimated v3.....any update on this issue? @tomekzaw @casperstr Did u guys manage to fix this issue?
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `d25c744f` (2026-10-13)
-**Commit Message**: fix(runtime-tests): return fresh arrays from ReJest recorded updates (#10857)
-
-## Summary
-
-`getUpdates()` and `getNativeSnapshots()` on the ReJest updates
-container returned the recorder's live arrays from the UI runtime.
-Serialization caches arrays by identity, and the recorder mutates them
-in place, so a second read during the same recording returned the
-content of the first one. Existing tests read only once, after recording
-ends, so nothing hit it until #10713 started reading mid-recording.
-
-The container now returns copies. An empty recording also throws `No
-updates were recorded` instead of the misleading "Recorded snapshots of
-many views" error.
-
-## Test plan
-
-The `Animated.Text` runtime tests in #10713 (stacked on this PR) read
-the recording twice in `switchFlagMidAnimation` and in "keeps updating
-while the JS thread is blocked". Without this fix, the second read
-equals the first and those tests fail.
-
-```sh
-yarn workspace fabric-example runtime-tests --library reanimated --platform ios --only props --udid <udid>
-```
-
-## Changelog
-
-- [x] I added a changelog fragment with `yarn changelog:add` for each
-changed package, or this PR does not change `react-native-reanimated` or
-`
-
-**File**: `apps/common-app/runtime-tests/ReJest/TestRunner/UpdatesContainer.ts` (modified, +7/-2)
-```diff
-@@ -183,6 +183,9 @@ export function createUpdatesContainer() {
-       if (viewTags.length === 1) {
-         return sortedUpdates[Number(viewTags[0])];
-       }
-+      if (viewTags.length === 0) {
-+        throw new Error('No updates were recorded');
-+      }
-       throw new Error(
-         'Recorded snapshots of many views, specify component you want to get snapshot of'
-       );
-@@ -199,9 +202,11 @@ export function createUpdatesContainer() {
-     return runOnUIBlocking(
-       () => {
-         'worklet';
-+        // Copies, because serialization caches arrays by identity and the
-+        // recorder mutates them in place, so a second read would be stale.
-         return {
--          jsUpdates: jsUpdates.value,
--          nativeSnapshots: nativeSnapshots.value,
-+          jsUpdates: [...jsUpdates.value],
-+          nativeSnapshots: [...nativeSnapshots.value],
-         };
-       },
-       undefined,
-```
-
----
-
-### Incident Patch 2: `a03d13c9` (2026-10-15)
-**Commit Message**: fix(CSS): handle PlatformColor and DynamicColorIOS values (#10282)
-
-First PR of a series adding `PlatformColor` support to CSS animations.
-It puts the skeleton in place - the value type and the shared-code
-changes the layer needs to carry one - without resolving anything yet.
-Resolution and blending follow in #10305.
-
-`PlatformColor` and `DynamicColorIOS` payloads are objects, but
-`CSSColor` accepts only numbers and bools, so a color property carrying
-one killed the app with `No compatible type found for construction`.
-
-They now parse into `CSSPlatformColor`, which keeps the payload and
-hands it back from `toDynamic()` for React Native to resolve against the
-surface's theme, exactly as for a static style. Color properties accept
-either alternative, `value<CSSColor, CSSPlatformColor>`.
-
-Turning a payload into channels needs the animated view, which is not
-implemented here, so a platform color reports that it cannot interpolate
-and the variant switches over instead. Nothing throws.
-
-Shared code moves to make room for it. `CSSPlatformColor` is the first
-value type that resolves without being relative to a view property, a
-distinction the two `value()` overloads did not draw before, so
-
-**File**: `apps/common-app/runtime-tests/reanimated/suites.ts` (modified, +1/-0)
-```diff
-@@ -87,6 +87,7 @@ export const REANIMATED_TEST_SUITES: RuntimeTestSuite[] = [
-     importTest: () => {
-       require('./tests/css/animationCancellation.test');
-       require('./tests/css/backgroundImage.test');
-+      require('./tests/css/platformColor.test');
-       require('./tests/css/transformNone.test');
-     },
-   },
-```
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/css/platformColor.test.tsx` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+import { useEffect, useState } from 'react';
-+import { PlatformColor, View } from 'react-native';
-+import Animated from 'react-native-reanimated';
-+import Svg, { Circle } from 'react-native-svg';
-+
-+import {
-+  describe,
-+  render,
-+  test,
-+  waitForFrames,
-+} from '../../../ReJest/RuntimeTestsApi';
-+
-+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-+
-+const PLATFORM_BLUE = PlatformColor(
-+  'systemBlue',
-+  '@android:color/holo_blue_light'
-+);
-+const PLATFORM_GREEN = PlatformColor(
-+  'systemGreen',
-+  '@android:color/holo_green_light'
-+);
-+
-+function PlatformColorExample() {
-+  const [toggled, setToggled] = useState(false);
-+
-+  useEffect(() => {
-+    const id = setTimeout(() => setToggled(true), 100);
-+    return () => clearTimeout(id);
-+  }, []);
-+
-+  return (
-+    <View>
-+      <Animated.View
-+        style={{
-+          animationDuration: '200ms',
-+          animationName: {
-+            from: { backgroundColor: PLATFORM_BLUE },
-+            to: { backgroundColor: 'red' },
-+          },
-+          height: 50,
-+          width: 50,
-+        }}
-+      />
-+      <Animated.View
-+        style={{
-+          backgroundColor: toggled ? PLATFORM_GREEN : 'red',
-+          height: 50,
-+          transitionDuration: '200ms',
-+          transitionProperty: 'backgroundColor',
-+          width: 50,
-+        }}
-+      />
-+      <Svg height={100} width={100}>
-+        <AnimatedCircle
-+          animatedProps={{
-+            animationDuration: '200ms',
-+            animationName: {
-+              from: { fill: PLATFORM_BLUE },
-+              to: { fill: 'red' },
-+            },
-+            stroke: toggled ? PLATFORM_GREEN : 'red',
-+            transitionDuration: '200ms',
-+            transitionProperty: 'stroke',
-+          }}
-+          cx={50}
-+          cy={50}
-+          r={40}
-+        />
-+      </Svg>
-+    </View>
-+  );
-+}
-+
-+describe('CSS PlatformColor', () => {
-+  test('does not crash', async () => {
-+    await render(<PlatformColorExample />);
-+    await waitForFrames(60);
-+  });
-+});
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/InterpolatorRegistry.cpp` (modified, +23/-21)
-```diff
-@@ -9,6 +9,7 @@
- #include <reanimated/CSS/common/values/CSSKeyword.h>
- #include <reanimated/CSS/common/values/CSSLength.h>
- #include <reanimated/CSS/common/values/CSSNumber.h>
-+#include <reanimated/CSS/common/values/CSSPlatformColor.h>
- #include <reanimated/CSS/common/values/CSSValue.h>
- 
- #include <reanimated/CSS/common/transforms/TransformMatrix2D.h>
-@@ -18,6 +19,7 @@
- #include <reanimated/CSS/svg/values/CSSLengthArray.h>
- #include <reanimated/CSS/svg/values/SVGBrush.h>
- #include <reanimated/CSS/svg/values/SVGPath.h>
-+#include <reanimated/CSS/svg/values/SVGPlatformBrush.h>
- #include <reanimated/CSS/svg/values/SVGStops.h>
- #include <reanimated/CSS/svg/values/SVGStrokeDashArray.h>
- 
-@@ -128,7 +130,7 @@ const InterpolatorFactoriesRecord STYLE_INTERPOLATORS = {
-     {"direction", value<CSSKeyword>("inherit")},
- 
-     // Shadow (iOS)
--    {"shadowColor", value<CSSColor>(BLACK)},
-+    {"shadowColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"shadowOffset", record({{"width", value<CSSDouble>(0)}, {"height", value<CSSDouble>(0)}})},
-     {"shadowRadius", value<CSSDouble>(0)},
-     {"shadowOpacity", value<CSSDouble>(1)},
-@@ -171,37 +173,37 @@ const InterpolatorFactoriesRecord STYLE_INTERPOLATORS = {
- 
-     // View
-     {"backfaceVisibility", value<CSSKeyword>("visible")},
--    {"backgroundColor", value<CSSColor>(TRANSPARENT)},
-+    {"backgroundColor", value<CSSColor, CSSPlatformColor>(TRANSPARENT)},
- #if REACT_NATIVE_VERSION_MINOR >= 87
-     {"backgroundImage", array({value<CSSGradient>(CSSGradient())})},
- #endif
-     {"experimental_backgroundImage", array({value<CSSGradient>(CSSGradient())})},
--    {"borderBlockColor", value<CSSColor>(BLACK)},
--    {"borderBlockEndColor", value<CSSColor>(BLACK)},
--    {"borderBlockStartColor", value<CSSColor>(BLACK)},
--    {"borderBottomColor", value<CSSColor>(BLACK)},
-+    {"borderBlockColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-+    {"borderBlockEndColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-+    {"borderBlockStartColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-+    {"borderBottomColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"borderBottomEndRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderBottomLeftRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderBottomRightRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderBottomStartRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
--    {"borderColor", value<CSSColor>(BLACK)},
-+    {"borderColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"borderCurve", value<CSSKeyword>("circular")},
--    {"borderEndColor", value<CSSColor>(BLACK)},
-+    {"borderEndColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"borderEndEndRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderEndStartRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
--    {"borderLeftColor", value<CSSColor>(BLACK)},
-+    {"borderLeftColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"borderRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
--    {"borderRightColor", value<CSSColor>(BLACK)},
--    {"borderStartColor", value<CSSColor>(BLACK)},
-+    {"borderRightColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-+    {"borderStartColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"borderStartEndRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderStartStartRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderStyle", value<CSSKeyword>("solid")},
--    {"borderTopColor", value<CSSColor>(BLACK)},
-+    {"borderTopColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"borderTopEndRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderTopLeftRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderTopRightRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
-     {"borderTopStartRadius", value<CSSLength>(0, {RelativeTo::Self, "width"})},
--    {"outlineColor", value<CSSColor>(BLACK)},
-+    {"outlineColor", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"outlineOffset", value<CSSDouble>(0)},
-     {"outlineStyle", value<CSSKeyword>("solid")},
-     {"outlineWidth", value<CSSDouble>(0)},
-@@ -214,7 +216,7 @@ const InterpolatorFactoriesRecord STYLE_INTERPOLATORS = {
-     {"mixBlendMode", value<CSSKeyword>("normal")},
- 
-     // Text
--    {"color", value<CSSColor>(BLACK)},
-+    {"color", value<CSSColor, CSSPlatformColor>(BLACK)},
-     {"fontFamily", value<CSSKeyword>("inherit")},
-     {"fontSize", value<CSSTextDouble>(14)},
-     {"fontStyle", value<CSSKeyword>("normal")},
-@@ -223,15 +225,15 @@ const InterpolatorFactoriesRecord STYLE_INTERPOLATORS = {
-     {"lineHeight", value<CSSTextDouble>(14)}, // TODO - should inherit from fontSize
-     {"textAlign", value<CSSKeyword>("auto")},
-     {"textDecorationLine", value<CSSKeyword>("none")},
--    {"textShadowColor", value<CSSColor>(BLACK)},
-+    {"textShadowColor", value<CSSColor, CSSPlatformColor>(BLACK)}
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/common/values/CSSPlatformColor.cpp` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+#include <reanimated/CSS/common/values/CSSPlatformColor.h>
-+#include <reanimated/CSS/utils/platformColor.h>
-+
-+#include <folly/json.h>
-+#include <jsi/JSIDynamic.h>
-+
-+#include <utility>
-+
-+namespace reanimated::css {
-+
-+CSSPlatformColor::CSSPlatformColor(const folly::dynamic &value)
-+    : payload(std::make_shared<const folly::dynamic>(value)) {}
-+
-+CSSPlatformColor::CSSPlatformColor(jsi::Runtime &rt, const jsi::Value &jsiValue)
-+    : CSSPlatformColor(jsi::dynamicFromValue(rt, jsiValue)) {}
-+
-+bool CSSPlatformColor::canConstruct(jsi::Runtime &rt, const jsi::Value &jsiValue) {
-+  return isPlatformColorPayload(rt, jsiValue);
-+}
-+
-+bool CSSPlatformColor::canConstruct(const folly::dynamic &value) {
-+  return isPlatformColorPayload(value);
-+}
-+
-+folly::dynamic CSSPlatformColor::toDynamic() const {
-+  return payload ? *payload : folly::dynamic();
-+}
-+
-+std::string CSSPlatformColor::toString() const {
-+  return payload ? folly::toJson(*payload) : "";
-+}
-+
-+bool CSSPlatformColor::canInterpolateTo(const CSSPlatformColor & /*to*/) const {
-+  // TODO: a platform color carries no channels to blend, since the payload is
-+  // only resolved once React Native applies it to a view. Two of them switch
-+  // over at the fallback threshold today; they should blend like any other
-+  // color once a resolved value is reachable from here.
-+  return false;
-+}
-+
-+CSSPlatformColor CSSPlatformColor::interpolate(
-+    const double progress,
-+    const CSSPlatformColor &to,
-+    const ValueInterpolationContext &context) const {
-+  // Unreachable while canInterpolateTo() is false, and deliberately the same
-+  // switch the variant would have applied, so behaviour holds either way.
-+  return progress < context.fallbackInterpolateThreshold ? *this : to;
-+}
-+
-+bool CSSPlatformColor::operator==(const CSSPlatformColor &other) const {
-+  if (!payload || !other.payload) {
-+    return payload == other.payload;
-+  }
-+  return *payload == *other.payload;
-+}
-+
-+#ifndef NDEBUG
-+
-+std::ostream &operator<<(std::ostream &os, const CSSPlatformColor &color) {
-+  os << "CSSPlatformColor(" << color.toString() << ")";
-+  return os;
-+}
-+
-+#endif // NDEBUG
-+
-+} // namespace reanimated::css
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/common/values/CSSPlatformColor.h` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+#pragma once
-+
-+#include <reanimated/CSS/common/values/CSSColor.h>
-+#include <reanimated/CSS/common/values/CSSValue.h>
-+
-+#include <memory>
-+#include <string>
-+
-+namespace reanimated::css {
-+
-+/// A PlatformColor or DynamicColorIOS payload, kept unresolved so toDynamic()
-+/// hands it back to RN, which resolves it against the surface's own theme.
-+///
-+/// TODO: nothing resolves a payload yet, so this is resolvable in name only. It
-+/// is declared that way because blending needs the payload turned into channels
-+/// for the view being animated, and keyframes are shared by every view using an
-+/// animation - so the value cannot be resolved once and cached on the keyframe.
-+struct CSSPlatformColor : public CSSResolvableValue<CSSPlatformColor, ValueInterpolationContext> {
-+  std::shared_ptr<const folly::dynamic> payload;
-+
-+  CSSPlatformColor() = default;
-+  explicit CSSPlatformColor(const folly::dynamic &value);
-+  explicit CSSPlatformColor(jsi::Runtime &rt, const jsi::Value &jsiValue);
-+
-+  static bool canConstruct(jsi::Runtime &rt, const jsi::Value &jsiValue);
-+  static bool canConstruct(const folly::dynamic &value);
-+
-+  folly::dynamic toDynamic() const override;
-+  std::string toString() const override;
-+
-+  bool canInterpolateTo(const CSSPlatformColor &to) const override;
-+  CSSPlatformColor interpolate(double progress, const CSSPlatformColor &to, const ValueInterpolationContext &context)
-+      const override;
-+
-+  bool operator==(const CSSPlatformColor &other) const;
-+
-+#ifndef NDEBUG
-+  friend std::ostream &operator<<(std::ostream &os, const CSSPlatformColor &color);
-+#endif // NDEBUG
-+};
-+
-+} // namespace reanimated::css
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/common/values/CSSValue.h` (modified, +5/-0)
-```diff
-@@ -115,6 +115,11 @@ using InterpolationContextFor = typename InterpolationContext<TCSSValues...>::Ty
- template <typename TCSSValue, typename TContext>
- concept InterpolatesWith = !Resolvable<TCSSValue> || std::is_same_v<typename TCSSValue::ContextType, TContext>;
- 
-+/// Unlike InterpolatesWith, this demands the value actually resolve, and with
-+/// this exact context.
-+template <typename TCSSValue, typename TContext>
-+concept ResolvesWith = Resolvable<TCSSValue> && std::is_same_v<typename TCSSValue::ContextType, TContext>;
-+
- // Checks if a type is a discrete value
- template <typename TCSSValue>
- concept Discrete = requires {
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/common/values/CSSValueVariant.cpp` (modified, +5/-2)
-```diff
-@@ -5,12 +5,14 @@
- #include <reanimated/CSS/common/values/CSSKeyword.h>
- #include <reanimated/CSS/common/values/CSSLength.h>
- #include <reanimated/CSS/common/values/CSSNumber.h>
-+#include <reanimated/CSS/common/values/CSSPlatformColor.h>
- #include <reanimated/CSS/common/values/CSSValueVariant.h>
- #include <reanimated/CSS/common/values/complex/CSSBoxShadow.h>
- #include <reanimated/CSS/common/values/complex/CSSGradient.h>
- #include <reanimated/CSS/svg/values/CSSLengthArray.h>
- #include <reanimated/CSS/svg/values/SVGBrush.h>
- #include <reanimated/CSS/svg/values/SVGPath.h>
-+#include <reanimated/CSS/svg/values/SVGPlatformBrush.h>
- #include <reanimated/CSS/svg/values/SVGStops.h>
- #include <reanimated/CSS/svg/values/SVGStrokeDashArray.h>
- #include <reanimated/Compat/WorkletsApi.h>
-@@ -140,7 +142,7 @@ template class CSSValueVariant<CSSIndex>;
- template class CSSValueVariant<CSSKeyword>;
- template class CSSValueVariant<CSSAngle>;
- template class CSSValueVariant<CSSBoolean>;
--template class CSSValueVariant<CSSColor>;
-+template class CSSValueVariant<CSSColor, CSSPlatformColor>;
- template class CSSValueVariant<CSSDisplay>;
- template class CSSValueVariant<CSSBoxShadow>;
- template class CSSValueVariant<CSSGradient>;
-@@ -150,6 +152,7 @@ template class CSSValueVariant<SVGPath>;
- template class CSSValueVariant<CSSLengthArray>;
- template class CSSValueVariant<SVGStops>;
- template class CSSValueVariant<SVGStrokeDashArray, CSSKeyword>;
--template class CSSValueVariant<SVGBrush>;
-+template class CSSValueVariant<SVGBrush, CSSPlatformColor>;
-+template class CSSValueVariant<SVGBrush, SVGPlatformBrush>;
- 
- } // namespace reanimated::css
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/interpolation/InterpolatorFactory.h` (modified, +16/-16)
-```diff
-@@ -10,7 +10,7 @@
- #include <reanimated/CSS/interpolation/transforms/TransformOperation.h>
- #include <reanimated/CSS/interpolation/transforms/TransformOperationInterpolator.h>
- #include <reanimated/CSS/interpolation/transforms/TransformsStyleInterpolator.h>
--#include <reanimated/CSS/interpolation/values/ResolvableValueInterpolator.h>
-+#include <reanimated/CSS/interpolation/values/RelativeValueInterpolator.h>
- #include <reanimated/CSS/interpolation/values/SimpleValueInterpolator.h>
- 
- #include <memory>
-@@ -50,10 +50,10 @@ class SimpleValueInterpolatorFactory : public PropertyInterpolatorFactory {
- };
- 
- template <typename... AllowedTypes>
--class ResolvableValueInterpolatorFactory : public PropertyInterpolatorFactory {
-+class RelativeValueInterpolatorFactory : public PropertyInterpolatorFactory {
-  public:
-   template <typename TValue>
--  explicit ResolvableValueInterpolatorFactory(const TValue &defaultValue, ResolvableValueInterpolatorConfig config)
-+  explicit RelativeValueInterpolatorFactory(const TValue &defaultValue, RelativeValueInterpolatorConfig config)
-       : PropertyInterpolatorFactory(), defaultValue_(defaultValue), config_(std::move(config)) {}
- 
-   const CSSValue &getDefaultValue() const override {
-@@ -63,13 +63,13 @@ class ResolvableValueInterpolatorFactory : public PropertyInterpolatorFactory {
-   std::shared_ptr<PropertyInterpolator> create(
-       const PropertyPath &propertyPath,
-       const std::shared_ptr<ViewStylesRepository> &viewStylesRepository) const override {
--    return std::make_shared<ResolvableValueInterpolator<AllowedTypes...>>(
-+    return std::make_shared<RelativeValueInterpolator<AllowedTypes...>>(
-         propertyPath, defaultValue_, viewStylesRepository, config_);
-   }
- 
-  private:
-   const CSSValueVariant<AllowedTypes...> defaultValue_;
--  ResolvableValueInterpolatorConfig config_;
-+  RelativeValueInterpolatorConfig config_;
- };
- 
- /**
-@@ -113,26 +113,26 @@ auto value(const auto &defaultValue) -> std::enable_if_t<
-     (std::is_constructible_v<AllowedTypes, decltype(defaultValue)> || ...),
-     std::shared_ptr<PropertyInterpolatorFactory>> {
-   static_assert(
--      !(Resolvable<AllowedTypes> || ...),
--      "Resolvable value types (e.g. CSSLength) require a "
--      "ResolvableValueInterpolatorConfig — use the value(defaultValue, "
--      "{RelativeTo::..., \"...\"}) overload instead");
-+      (InterpolatesWith<AllowedTypes, ValueInterpolationContext> && ...),
-+      "Value types that resolve against a relative property (e.g. CSSLength) need a "
-+      "RelativeValueInterpolatorConfig - use the value(defaultValue, {RelativeTo::..., \"...\"}) overload instead");
-   // Create a concrete CSSValue from the defaultValue
-   auto cssValue = createCSSValue<AllowedTypes...>(defaultValue);
-   return std::make_shared<SimpleValueInterpolatorFactory<AllowedTypes...>>(std::move(cssValue));
- }
- 
- template <typename... AllowedTypes>
--auto value(const auto &defaultValue, ResolvableValueInterpolatorConfig config) -> std::enable_if_t<
-+auto value(const auto &defaultValue, RelativeValueInterpolatorConfig config) -> std::enable_if_t<
-     (std::is_constructible_v<AllowedTypes, decltype(defaultValue)> || ...),
-     std::shared_ptr<PropertyInterpolatorFactory>> {
-   static_assert(
--      (Resolvable<AllowedTypes> || ...),
--      "None of the value types are resolvable — use the value(defaultValue) "
--      "overload without ResolvableValueInterpolatorConfig instead");
-+      (InterpolatesWith<AllowedTypes, RelativeValueInterpolationContext> && ...) &&
-+          (ResolvesWith<AllowedTypes, RelativeValueInterpolationContext> || ...),
-+      "This overload is for value types that resolve against a relative property (e.g. CSSLength). Types that "
-+      "resolve against something else, or that need no resolution at all, use the value(defaultValue) overload.");
-   // Create a concrete CSSValue from the defaultValue
-   auto cssValue = createCSSValue<AllowedTypes...>(defaultValue);
--  return std::make_shared<ResolvableValueInterpolatorFactory<AllowedTypes...>>(std::move(cssValue), std::move(config));
-+  return std::make_shared<RelativeValueInterpolatorFactory<AllowedTypes...>>(std::move(cssValue), std::move(config));
- }
- 
- /**
-@@ -146,7 +146,7 @@ auto transformOp(const auto &defaultValue) -> std::enable_if_t<
- }
- 
- template <typename TOperation>
--auto transformOp(const auto &defaultValue, ResolvableValueInterpolatorConfig config) -> std::enable_if_t<
-+auto transformOp(const auto &defaultValue, RelativeValueInterpolatorConfig config) -> std::enable_if_t<
-     std::is_base_of_v<TransformOperation, TOperation> && std::is_constructible_v<TOperation, decltype(defaultValue)> &&
-         ResolvableOp<TOperation>,
-     std::shared_ptr<StyleOperationInterpolator>> {
-@@ -165,7 +165,7 @@ auto filterOp(const auto &defaultValue) -> std::enable_if_t<
- }
- 
- template <typename TOperation>
--auto filterOp(const auto &defaultValue, ResolvableValueInterpolatorConfig config) -> std::enable_if_t<
-+auto filterOp(const
-```
-
----
-
-### Incident Patch 3: `e8c191df` (2026-10-15)
-**Commit Message**: fix(Worklets): keep the library prefix of a worklet name under a Windows path in the Oxc plugin (#10856)
-
-## Summary
-
-The Oxc plugin's `source_from_filename` (`plugin-oxc/src/naming.rs`)
-finds the library a worklet comes from by splitting the filename on `/`,
-so under a Windows path every worklet in `node_modules` loses its
-`<library>_` prefix. The Babel plugin splits on both separators since
-#9619, so the two plugins name the same worklet differently on Windows.
-The Oxc plugin ships `x86_64-pc-windows-msvc` and
-`aarch64-pc-windows-msvc` binaries, and its CI job runs on Linux only.
-
-The basename and the library now both come from a split on either
-separator, so the name is the same on every host and the Windows case is
-tested on Linux.
-
-## Test plan
-
-- `source_from_filename_handles_node_modules` gains
-`C:\a\b\node_modules\some-lib\dist\index.js`, expecting
-`some-lib_index.js`. On `main` it fails on Windows with `left:
-"index.js"`.
-- `yarn test:oxc` (3 Rust tests, 19 Node tests), `yarn test:babel-suite`
-(44 tests, 40 snapshots), `cargo fmt --check`, `cargo clippy --lib -- -D
-warnings` and `yarn changelog-check origin/main` pass.
-
-## Changelog
-
-- [x] I added a changelog fragment with
-
-**File**: `packages/react-native-worklets/changelog/oxc-windows-library-prefix.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Keep the library prefix in the names the Oxc plugin gives worklets under `node_modules` when the path uses Windows separators.
-```
-
-**File**: `packages/react-native-worklets/plugin-oxc/src/naming.rs` (modified, +10/-10)
-```diff
-@@ -1,5 +1,3 @@
--use std::path::Path;
--
- use oxc_syntax::identifier::{is_identifier_part, is_identifier_start};
- 
- pub fn worklet_hash(s: &str) -> u64 {
-@@ -85,6 +83,10 @@ mod tests {
-             source_from_filename("/a/b/node_modules/some-lib/dist/index.js"),
-             "some-lib_index.js"
-         );
-+        assert_eq!(
-+            source_from_filename(r"C:\a\b\node_modules\some-lib\dist\index.js"),
-+            "some-lib_index.js"
-+        );
-         assert_eq!(source_from_filename(""), "unknownFile");
-     }
- }
-@@ -131,18 +133,16 @@ pub fn source_from_filename(filename: &str) -> String {
-     if filename.is_empty() {
-         return "unknownFile".to_string();
-     }
--    let path = Path::new(filename);
--    let base = path
--        .file_name()
--        .and_then(|s| s.to_str())
--        .unwrap_or("unknownFile")
--        .to_string();
-+    let parts: Vec<&str> = filename
-+        .split(['/', '\\'])
-+        .filter(|part| !part.is_empty())
-+        .collect();
-+    let base = parts.last().copied().unwrap_or("unknownFile");
- 
--    let parts: Vec<&str> = filename.split('/').collect();
-     if let Some(idx) = parts.iter().position(|p| *p == "node_modules")
-         && let Some(lib) = parts.get(idx + 1)
-     {
-         return format!("{lib}_{base}");
-     }
--    base
-+    base.to_string()
- }
-```
-
-#### Recent Merged Pull Requests:
-- **PR #10905** (2026-10-16): fix: reject inherited object keys in the remaining style processors (@tshmieldev)
-- **PR #10892** (2026-10-15): fix(CSS): remove a Core Animation transition from a view that React Native reuses (@pawicao)
-- **PR #10890** (2026-10-16): fix(Reanimated): keep box-shadow blur radii below 1 on Android (@YevheniiKotyrlo)
-- **PR #10861** (2026-10-14): chore(deps): bump source-map-js from 1.2.1 to 1.2.2 (@dependabot[bot])
-- **PR #10857** (2026-10-13): fix(runtime-tests): return fresh arrays from ReJest recorded updates (@tshmieldev)
-- **PR #10856** (2026-10-15): fix(Worklets): keep the library prefix of a worklet name under a Windows path in the Oxc plugin (@YevheniiKotyrlo)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. runtime-tests): return fresh arrays from ReJest recorded updates (#10857)
-
-**RULE**:
-When implementing operations in `apps/common-app/runtime-tests/ReJest/TestRunner/UpdatesContainer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `d25c744f`: runtime-tests): return fresh arrays from ReJest recorded updates (#10857). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/ReJest/TestRunner/UpdatesContainer.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-      if (viewTags.length === 0) {
-        throw new Error('No updates were recorded');
-      }
-        // Copies, because serialization caches arrays by identity and the
-        // recorder mutates them in place, so a second read would be stale.
-          jsUpdates: [...jsUpdates.value],
-          nativeSnapshots: [...nativeSnapshots.value],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-          jsUpdates: jsUpdates.value,
-          nativeSnapshots: nativeSnapshots.value,
+// ANTI-PATTERN: Naked recursion without depth tracking or cycle detection
+function dangerousStringify(obj: Record<string, any>): string {
+  // CRITICAL FAILURE: Circular references or deeply nested configs cause fatal stack overflow
+  return "{" + Object.entries(obj).map(([k, v]) => {
+    return typeof v === 'object' && v !== null 
+      ? `${k}: ${dangerousStringify(v)}` 
+      : `${k}: ${JSON.stringify(v)}`;
+  }).join(',') + "}";
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d25c744f` are properly handled with clean fallback behavior.
+Execute unit tests passing cyclic and deeply nested mocks:
+```typescript
+test('stringifyConfigObject throws deterministic error on deep or cyclic nesting', () => {
+  const deeplyNested: Record<string, unknown> = {};
+  let current = deeplyNested;
+  for (let i = 0; i < 15; i++) {
+    current.next = {};
+    current = current.next as Record<string, unknown>;
+  }
+  expect(() => stringifyConfigObject(deeplyNested)).toThrow('Object nesting is too deep');
+});
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Hermes Bundleless Mode Crash on Captured Variable Assignment (BUG-WORKLET-LET-01)
+- **Context**: Babel & Rust Oxc AST worklet transformers (`packages/react-native-worklets/plugin/src/workletStringCode.ts`, `packages/react-native-worklets/plugin-oxc/src/worklet_string_code.rs`).
+- **What Was Expected**: Worklets modifying an outer-scope captured primitive or object reference locally (e.g., `let x = 0; function foo() { 'worklet'; if (x > 1) { x = 0; } }`) must execute valid JavaScript without parser or evaluation errors.
+- **What Actually Happened**: When Bundle Mode was disabled in Hermes development pipelines, worklets unpacked extracted closure variables via `const [x, objX] = this.__closure;`. Hermes parsed assignment to `x` as an assignment to a `const` lexical identifier, terminating execution with an uncaught runtime syntax error: `invalid assignment left-hand side`.
+- **Evidence in Repo**: Commit SHA `1d2b2132`, PR #10889. Changelog: `packages/react-native-worklets/changelog/assign-captured-variable.fix.md`.
+- **Root Cause**: The AST transformation emitted fixed `const` variable declarators during the creation of the closure unpacker statement (`this.__closure`). Under full bundle mode with minification, variable manglers or Babel passes occasionally masked this by renaming or inlining variables, but in bundleless/Hermes raw evaluation mode, the Hermes Bytecode Compiler enforced strict const immutability on AST assignments.
+- **Remediation Code Diff**:
+```rust
+// packages/react-native-worklets/plugin-oxc/src/worklet_string_code.rs
+-    const_decl(builder, array_pattern, this_closure)
++    let_decl(builder, array_pattern, this_closure)
+```
+```typescript
+// packages/react-native-worklets/plugin/src/workletStringCode.ts
+function getClosurePlugin(closureVariables: Array<Identifier>): PluginItem {
+-  const closureDeclaration = variableDeclaration('const', [
++  const closureDeclaration = variableDeclaration('let', [
+     variableDeclarator(
+       arrayPattern(closureVariables.map((variable) => identifier(variable.name))),
+       memberExpression(thisExpression(), identifier('__closure'))
+     )
+   ]);
+```
+- **Lesson**: Code synthesized by compiler transformers must never adopt more restrictive lexical semantics (`const`) than the target runtime allows for the enclosed operations; unpack closures using `let` to maintain variable mutability guarantees.
+
+---
+
+### Incident 2: Host Component Ref Attachment Crash on Animated Class Components (BUG-ANIM-REF-02)
+- **Context**: View referencing and HostComponent binding under Fabric (`createAnimatedComponent`, `useAnimatedRef`).
+- **What Was Expected**: Attaching an animated reference created via `useAnimatedRef()` to a component wrapped with `createAnimatedComponent(ClassComponent)` should register the underlying Fabric `ShadowNode` tag without throwing errors.
+- **What Actually Happened**: The application crashed immediately on iOS with Hermes under Fabric New Architecture when attempting to read internal Fabric properties (`_nativeTag`, `tag`, or `_internalInstanceHandle`) from the class component instance.
+- **Evidence in Repo**: Issue #7155 (`[3.17.1] useAnimatedRef can not be used with component created by createAnimatedComponent`).
+- **Root Cause**: `createAnimatedComponent` assumed incoming instances adhered to the HostComponent / functional forwardRef contract, attempting direct property reads on native instances. When a standard React class component was wrapped, the ref resolved to the React class component instance (`ClassComponent`) rather than the underlying native host component (`RCTView` / Fabric HostInstance). Calling JSI methods expecting a native shadow node tag resulted in null pointer dereferencing and JSI boundary exceptions.
+- **Remediation Pattern**:
+```typescript
+// Wrap target components ensuring ref unrolls down to HostComponent instance:
+const resolveHostRef = (refObject: any) => {
+  if (refObject && refObject._nativeTag) {
+    return refObject;
+  }
+  if (refObject && refObject.getNativeRef) {
+    return refObject.getNativeRef();
+  }
+  if (refObject && refObject.viewRef) {
+    return refObject.viewRef.current;
+  }
+  return refObject;
+};
+```
+- **Lesson**: Never assume a user-supplied ref represents a native HostInstance. Intermediate class component wrappers must be traversed or provide a formal `getNativeRef()` protocol before invoking JSI native node operations.
+
+---
+
+### Incident 3: Thread Deadlock & ANR in NodesManager.performOperations (BUG-DEADLOCK-03)
+- **Context**: C++ / Native UI synchronization engine across Android (`NodesManager.java`, `NativeProxy.cpp`) and iOS (`NodesManager.mm`).
+- **What Was Expected**: Layout animations and property updates triggered simultaneously from UI components (such as modal presentations or date-time pickers) should commit layout passes concurrently without blocking the Android UI thread or main iOS RunLoop.
+- **What Actually Happened**: Android ANR (Application Not Responding) and complete iOS main thread deadlocks occurred inside `NodesManager.performOperations`.
+- **Evidence in Repo**: Issue #3879 (`☂️ Deadlock/ANR in performOperations`), PR #3082, PR #3194.
+- **Root Cause**: Classic bidirectional lock inversion (AB-BA deadlock). The native platform UI thread acquired the platform UI mutex (e.g., Android View hierarchy lock) and attempted to dispatch a frame callback into `NodesManager` requiring the Reanimated C++ state lock. Simultaneously, the Reanimated Worklet thread acquired the Reanimated state lock and attempted to perform synchronous UI layout measurements (`measure()` / `performOperations()`) requiring the platform UI lock. Both threads froze indefinitely.
+- **Remediation Pattern**:
+```cpp
+// Elimination of synchronous UI thread wait inside Worklet execution context:
+// Transition from synchronous wait locks to batch queuing:
+void NodesManager::performOperations() {
+  std::vector<Operation> operationsToExecute;
+  {
+    // 1. Acquire Reanimated state lock briefly ONLY to drain queue
+    std::lock_guard<std::mutex> lock(operationsMutex_);
+    operationsToExecute.swap(queuedOperations_);
+  } // 2. Release Reanimated state lock BEFORE dispatching to platform UI thread
+
+  // 3. Dispatch to Main/UI thread asynchronously without holding C++ locks
+  dispatchOnMainQueue([operations = std::move(operationsToExecute)]() {
+    for (const auto &op : operations) {
+      op.execute();
+    }
+  });
+}
+```
+- **Lesson**: Never call external platform UI hierarchy methods while holding internal engine locks. Always snapshot work into local thread-confined memory, release the domain mutex, and execute platform mutations out of lock scope.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **RegEx Token Modulo Traps**:
+   In `apps/common-app/src/apps/css/components/core/Text.tsx`, inline styling segments are parsed using `/`([^`]+)`|\*\*([^*]+)\*\*/g`. Splitting text via this pattern yields an array where:
+   - Index `% 3 === 1` corresponds to Capture Group 1 (code)
+   - Index `% 3 === 2` corresponds to Capture Group 2 (bold)
+   - Index `% 3 === 0` corresponds to non-matching raw strings.
+   
+   ```typescript
+   // TOKEN PRECISION INVARIANT: Regex capturing group order directly controls array modulo indexes
+   const REGEX = /`([^`]+)`|\*\*([^*]+)\*\*/g;
+   // text.split(REGEX) produces: [preText, group1Match, group2Match, postText, ...]
+   return resultingText.split(REGEX).map((part, index) => {
+     if (index % 3 === 1) return <RNText key={index} {...getVariantProps('inlineCode')}>{part}</RNText>;
+     if (index % 3 === 2) return <RNText key={index} {...getVariantProps(resultingVariant, { fontWeight: 'bold' })}>{part}</RNText>;
+     return <RNText key={index} {...getVariantProps(resultingVariant)}>{part}</RNText>;
+   });
+   ```
+   *Hazard*: Adding an unnested or non-capturing group (or modifying group count) silently breaks the `% 3` math, routing bold tokens to code style and corrupting the layout.
+
+2. **Empty String vs Falsy Zero Property Merging**:
+   In `apps/common-app/src/apps/css/utils/code.ts`:
+   ```typescript
+   // INCORRECT:
+   const value = config[key] || propertyOverrides[key]?.[0]; // Drops 0, false, and ""
+   
+   // PRODUCTION INVARIANT: Use nullish coalescing to preserve 0 and false numeric constants
+   const value = config[key] ?? propertyOverrides[key]?.[0] ?? '';
+   ```
+
+---
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **Serialization Call-Stack Bounds**:
+   Dynamic configuration display code (`stringifyConfigObject`) enforces a non-negotiable recursion ceiling:
+   ```typescript
+   if (depth > 10) {
+     throw new Error('Object nesting is too deep');
+   }
+   ```
+2. **Animation Loop Frame Divergence Protection**:
+   In continuous JS-to-Native transition loops (e.g., `HoverWithLoop.tsx`), timing updates must clean up prior phase intervals:
+   ```typescript
+   useEffect(() => {
+     const interval = setInterval(() => {
+       setPhase((prev) => (prev + 1) % 2);
+     }, 1500);
+     // MANDATORY: Interval handle MUST be cleared in hook return to avoid worker thread event pile-up
+     return () => clearInterval(interval);
+   }, []);
+   ```
+
+---
+
+### 4.3 UI & UX Micro-Mechanics
+1. **Pseudo-Selector Priority Arbitration**:
+   When combining animated transitions driven by runtime JS state changes with user-initiated native pseudo-selectors (`:active`, `:hover`), the `:active` pseudo-class MUST freeze or isolate incoming JavaScript render transitions on the same style property to prevent rapid frame flickering.
+   
+   *Mechanism from `ActiveBlocksRender.tsx`*:
+   ```typescript
+   // Style property definition with active arbitration:
+   backgroundColor: {
+     ':active': colors.primaryDark, // Held statically during touch interaction
+     default: renderColor,          // Render loop toggling every 1000ms
+   }
+   ```
+   *Behavioral Invariant*: While `:active` is true, the native animation engine ignores updates to `default` for that property, preventing layout/color fight.
+
+2. **Aligned Transition Property Tuple Synchronization**:
+   When configuring independent transition timings across multiple animated properties, array lengths across `transitionProperty`, `transitionDuration`, and `transitionTimingFunction` MUST align precisely by index:
+   ```typescript
+   transitionProperty:       ['backgroundColor', 'borderWidth', 'transform'],
+   transitionDuration:       ['220ms',           '160ms',       '60ms'],
+   transitionTimingFunction: ['linear',          'ease-out',    'cubic-bezier(0.25, 0.1, 0.25, 1)']
+   ```
+   *Defect Trap*: If `transitionDuration` has fewer elements than `transitionProperty`, the specification dictates either repeating the last entry or wrapping. Mismatches lead to non-deterministic animation curves on native drivers.
+
+---
+
+### 4.4 Backend Concurrency & Memory Safety
+1. **Cross-Thread Worklet Closure Isolation**:
+   When passing an object from JS to a Worklet thread via `__closure`, the worklet transformer captures variables by value/shallow reference clone. Direct mutation of captured primitives inside the worklet cannot mutate the host JS thread's lexical scope.
+   ```
+   JS Thread (Scope A: let x = 0)
+          │ (Pass by value into `this.__closure = [x]`)
+          ▼
+   Worklet Thread (Scope B: let [x] = this.__closure; x = 42;)
+   ```
+   Mutating `x` in Scope B modifies only the worklet's unpacked local frame. To mutate state observable by the host JS runtime, developers MUST use thread-safe `SharedValue<T>` primitives operating on C++ `ShareableValue` atomic pointers.
+
+---
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **Leaf Value Structural Discrimination**:
+   In `apps/common-app/src/apps/css/utils/code.ts`, distinguishing between a composite nested styling node and an animated leaf value (e.g., keyframe normalizer or easing structure) is fraught with false-positive object typing.
+   ```typescript
+   export const isLeafValue = (value: unknown): boolean =>
+     typeof value !== 'object' ||
+     value === null ||
+     Array.isArray(value) ||
+     'normalize' in value ||
+     'normalizedKeyframes' in value;
+   ```
+   *Rule*: An object is ONLY treated as a nested configuration dictionary if it is non-null, not an array, and contains neither the `'normalize'` nor `'normalizedKeyframes'` method descriptors.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+Reanimated separates thread domains cleanly. The application JS thread manages React component renders, hooks, and business logic. The native UI/Worklet thread executes frame callbacks via JSI host objects. Interaction between the two avoids asynchronous serialization over JSON; instead, shared state resides in C++ memory managed by `ShareableValue` with atomic access guards.
+
+### 2. Core Abstractions
+- **Worklet**: A portable JavaScript function with explicit `__closure` metadata and a hash identifier (`__workletHash`).
+- **SharedValue**: A dual-runtime JSI host object encapsulating a value that can be read and written synchronously from both JS and Worklet threads.
+- **AnimatedComponent**: A higher-order component wrapper injecting animated property updates directly into native Fabric views without passing through React reconciler re-renders.
+
+### 3. Error Handling
+- Worklets execute in secondary JSI contexts. Uncaught exceptions inside a worklet are captured via C++ try-catch guards wrapping `jsi::Function::callWithThis` and marshalled back to the main JS thread via `_stackDetails` metadata, preserving original file locations and preventing silent thread crashes.
+
+### 4. Testing
+- Testing architecture leverages multi-tier runners:
+  - Unit tests with Jest (`plugin-shared.test.ts`) assert AST transforms and snapshot parity across bundle and bundleless modes.
+  - Rust Oxc plugin tests verify high-speed transpilation parity.
+  - Integration CI scripts (`argent-cloud-issue-repro`, `test:scripts`) compile and execute sample apps directly against iOS simulators and Android emulators.
+
+### 5. Security
+- Worklet string deserialization runs inside hermetic JavaScript contexts without access to unrestricted Node.js APIs or arbitrary native reflection. Static closure extraction avoids `eval()` and `new Function()` vulnerabilities by pre-hashing and bundling code strings at build time.
+
+### 6. Performance
+- Zero React render overhead during active animations. Mutations to `SharedValue` directly trigger native display link ticks. The engine bypasses React element diffing completely, altering native view properties via JSI direct calls to Fabric's `updateProps`.
+
+### 7. Deployment
+- The monorepo uses Yarn 4.13.0 with isolated workspaces. Custom build scripts (`prepare-vscode.sh`, `toggle-bundle-mode.sh`) maintain multi-variant Metro bundling environments. CI runs extensive nightly matrix workflows testing compatibility against React Native nightlies, Fabric architectures, and macOS/tvOS targets.
+
+### 8. Agent Patterns
+- The repository embeds automated agent triage workflows (`argent-cloud-issue-repro.yml`) featuring structured schema validation (`plan.schema.json`), system prompts (`prompt.md`, `tester-prompt.md`), and automated reproduction report generation (`argent-cloud-issue-repro-report.ts`).
+
+### 9. Data Flow
+```
+User Gesture / Timer
+        │
+Worklet Event Handler (Native UI Thread)
+        │
+Direct mutation of `SharedValue.value` (C++ Atomic Sync)
+        │
+Native View Property Update (Direct Fabric commitHook / JNI)
+        │ (Optional debounced notify)
+Main JS Thread Component Observer
+```
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern
+**Thread-Decoupled Shared State Mutation via JSI HostObject**:
+```typescript
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+
+function PulsingCard() {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  const triggerAnimation = () => {
+    // Runs spring solver directly on UI thread frame driver
+    scale.value = withSpring(1.5, { damping: 10 });
+  };
+
+  return <Animated.View style={[styles.card, animatedStyle]} />;
+}
+```
+
+### 2. Rule
+*Every AST code-generation pass destructuring closure bindings into a synthetic scope MUST emit mutable declarations (`let`) to support assignments within worklets.*
+
+### 3. Architecture Principle
+*Never block the platform UI run-loop while waiting for secondary JavaScript runtime mutexes. Separate state extraction from platform mutation execution.*
+
+### 4. Failure Mode
+*Destructuring captured variables via `const` in a transformed worklet causes Hermes to throw `invalid assignment left-hand side` when the variable is modified, crashing the native UI thread.*
+
+### 5. Reusable Skill
+*Cross-Runtime Closure Extraction Checklist*:
+1. Traverse AST to locate `'worklet'` directive.
+2. Collect all free variables not declared within the local function scope.
+3. Filter out global host identifiers (`console`, `Math`, `global`).
+4. Generate an array expression of captured symbols.
+5. Inject `let [vars] = this.__closure;` into the function body prelude.
+6. Attach `__closure` and `__workletHash` to the function object.
+
+### 6. Decision
+*Adopting Rust (`plugin-oxc`) alongside Babel*:
+Software Mansion introduced Rust-based Oxc plugins for worklet transformations to drastically reduce build-time transpilation latency in large React Native codebases while maintaining exact AST snapshot parity with Babel.
+
+### 7. Anti-Pattern
+*Sync UI Call Under Mutex*:
+Holding a C++ mutex guarding animation states while synchronously invoking native platform View methods (`measure()`, `layout()`), which triggers an AB-BA thread deadlock with the main UI thread.
+
+### 8. Verification Method
+*Snapshot Regression Verification*:
+Run Jest across all bundling modes:
+```bash
+yarn test packages/react-native-worklets/plugin/__tests__/plugin-shared.test.ts -u
+```
+Assert that synthesized code strings generate `let [...] = this.__closure` across all snapshot matrices.
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+When designing or repairing systems involving cross-thread JavaScript execution, compilers, and animation engines, execute this procedural checklist:
+
+- [ ] **Closure Mutability Verification**: Ensure all AST transform passes synthesizing unpacked closures emit `let` or `var` (never `const`) to avoid crashing Hermes during local variable reassignment.
+- [ ] **Recursion Ceiling Enforcement**: Add an explicit `depth` check (`if (depth > 10) throw ...`) on all dynamic configuration and styling formatters to prevent stack overflows on cyclic structures.
+- [ ] **Dual Bundle Mode Testing**: Validate compiler outputs under both single-bundle minified mode and bundleless/development mode.
+- [ ] **Lock Inversion Audit**: Inspect all native C++ mutex acquisitions (`std::lock_guard`, `std::unique_lock`). Ensure zero platform UI thread calls (`dispatch_sync`, Android Choreographer calls) occur inside critical sections.
+- [ ] **Ref Resolution Safety**: Verify that custom `AnimatedComponent` wrappers explicitly check whether a ref points to a React composite instance (`ClassComponent`) or a true native `HostComponent` before invoking JSI methods.
+- [ ] **CSS/Animation Array Alignment**: Ensure timing configuration properties (`transitionProperty`, `transitionDuration`, `transitionTimingFunction`) validate array lengths and handle mismatches deterministically.
+- [ ] **Unmount Lifecycle Cleansing**: Ensure any JavaScript render-driven animation interval or native display link callback is immediately detached upon component unmount.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:39:14.942Z",
+  "last_updated": "2026-10-20T11:51:13.211Z",
   "total_verified_learnings": 1053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28538,8 +28538,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "a69362a9",
-      "content_hash": "e5212e59101eae29a95454f4e8bf59c254936b425f2cb6ed5f84eb2a4ad01077",
+      "source_version": "854df3d4",
+      "content_hash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -28552,6 +28552,21 @@
           "number": 2715,
           "title": "razor): read a view in the order of its text",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3151,
+          "title": "Invariant Separation of Disjoint Sub-Languages in Multi-Format Virtual Documents",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3152,
+          "title": "Precomputed Constant-Time Rolling Hash Invariant for Sliding Windows",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3153,
+          "title": "Bidirectional Order-Independent Snippet Fingerprinting with Line-Ending Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28559,7 +28574,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:43:51.348Z",
+      "verified_at": "2026-10-20T11:51:13.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41133,14 +41148,24 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "f21f7262",
-      "content_hash": "1a6eb56a3f0b394a9876ef83fb6168b04f04746f9ac498fba3ed5c4733d60d4d",
+      "source_version": "1d2b2132",
+      "content_hash": "d1d3664557955c392f970a5acdb7c5f46b1b23891372ee3ba86b23db550debfc",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
         {
           "number": 1885,
           "title": "runtime-tests): return fresh arrays from ReJest recorded updates (#10857)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3149,
+          "title": "Variable Binding Mutability Invariant for Synthesized Closure Destructuring",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3150,
+          "title": "Hard Depth Limit on Recursive Object Stringifiers & Serializers",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41149,7 +41174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:57:58.603Z",
+      "verified_at": "2026-10-20T11:50:24.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80656,14 +80681,14 @@
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
       "source_version": "caa1d0b5",
-      "content_hash": "5fa2c7f66608e5091fc5e32a6bde3365ac0ddbd9f4ab0a662a7c2679116bb0b2",
+      "content_hash": "a5e1e3e98213c98d43dc1dc78ed34685738775934d5e823aa9c92c15a28f6c98",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "promoted_rules": [
         {
           "number": 1788,
           "title": "repository renamed to CrawlCove/xml-sitemap-validator; point links, install comm",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -80671,7 +80696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:35:36.106Z",
+      "verified_at": "2026-10-20T11:48:26.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80692,7 +80717,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T22:35:36.106Z"
+      "verified_at": "2026-10-20T11:48:26.108Z"
     },
     "rule-1789": {
       "learning_id": "rule-1789",
@@ -100305,6 +100330,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:39:14.934Z"
+    },
+    "rule-3149": {
+      "learning_id": "rule-3149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3149,
+      "title": "Variable Binding Mutability Invariant for Synthesized Closure Destructuring",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "1d2b2132",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:50:24.580Z"
+    },
+    "rule-3150": {
+      "learning_id": "rule-3150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3150,
+      "title": "Hard Depth Limit on Recursive Object Stringifiers & Serializers",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "1d2b2132",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:50:24.580Z"
+    },
+    "rule-3151": {
+      "learning_id": "rule-3151",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3151,
+      "title": "Invariant Separation of Disjoint Sub-Languages in Multi-Format Virtual Documents",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "854df3d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:51:13.199Z"
+    },
+    "rule-3152": {
+      "learning_id": "rule-3152",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3152,
+      "title": "Precomputed Constant-Time Rolling Hash Invariant for Sliding Windows",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "854df3d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:51:13.199Z"
+    },
+    "rule-3153": {
+      "learning_id": "rule-3153",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3153,
+      "title": "Bidirectional Order-Independent Snippet Fingerprinting with Line-Ending Normalization",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "854df3d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:51:13.199Z"
     }
   },
   "aliases": {

@@ -3796,3 +3796,6 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3f58efbb` | Multi-dimensional audit evidence | 2026-10-20T11:33:11.752Z |
 | `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `63245304` | Multi-dimensional audit evidence | 2026-10-20T11:39:09.867Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `f8f6db89` | Multi-dimensional audit evidence | 2026-10-20T11:39:14.976Z |
+| `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-20T11:48:26.169Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1d2b2132` | Multi-dimensional audit evidence | 2026-10-20T11:50:24.664Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `854df3d4` | Multi-dimensional audit evidence | 2026-10-20T11:51:13.275Z |

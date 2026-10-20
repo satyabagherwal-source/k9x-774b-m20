@@ -1855,8 +1855,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
     "sourceVersion": "caa1d0b5",
     "license": "MIT",
-    "contentHash": "5fa2c7f66608e5091fc5e32a6bde3365ac0ddbd9f4ab0a662a7c2679116bb0b2",
-    "lastHarvestedAt": "2026-10-18T22:35:36.149Z",
+    "contentHash": "a5e1e3e98213c98d43dc1dc78ed34685738775934d5e823aa9c92c15a28f6c98",
+    "lastHarvestedAt": "2026-10-20T11:48:26.169Z",
     "learningId": "learn-github-crawlcove-xml-sitemap-validator"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "f21f7262",
+    "sourceVersion": "1d2b2132",
     "license": "MIT",
-    "contentHash": "1a6eb56a3f0b394a9876ef83fb6168b04f04746f9ac498fba3ed5c4733d60d4d",
-    "lastHarvestedAt": "2026-10-18T23:57:58.650Z",
+    "contentHash": "d1d3664557955c392f970a5acdb7c5f46b1b23891372ee3ba86b23db550debfc",
+    "lastHarvestedAt": "2026-10-20T11:50:24.664Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "a69362a9",
+    "sourceVersion": "854df3d4",
     "license": "MIT",
-    "contentHash": "e5212e59101eae29a95454f4e8bf59c254936b425f2cb6ed5f84eb2a4ad01077",
-    "lastHarvestedAt": "2026-10-19T17:43:51.409Z",
+    "contentHash": "d6b91c1c6bbae84b34e38c0fa545050bc0afdedf7209419786da175a508ccf73",
+    "lastHarvestedAt": "2026-10-20T11:51:13.275Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {

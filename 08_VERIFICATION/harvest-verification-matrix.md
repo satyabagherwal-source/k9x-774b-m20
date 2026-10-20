@@ -3789,3 +3789,6 @@
 | `CYCLE-20261020-TZ2A` | `2026-10-20T11:33:11.746Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3147` | Yes (`3fec38bc...`) |
 | `CYCLE-20261020-1NE1` | `2026-10-20T11:39:09.865Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1781` | Yes (`92f5f71d...`) |
 | `CYCLE-20261020-1RBX` | `2026-10-20T11:39:14.973Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3148` | Yes (`2e49b680...`) |
+| `CYCLE-20261020-DKMU` | `2026-10-20T11:48:26.166Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1788` | Yes (`a5e1e3e9...`) |
+| `CYCLE-20261020-G429` | `2026-10-20T11:50:24.657Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3149, Rule 3150` | Yes (`d1d36645...`) |
+| `CYCLE-20261020-H5KL` | `2026-10-20T11:51:13.269Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3151, Rule 3152, Rule 3153` | Yes (`d6b91c1c...`) |
