@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T04:44:56.877Z",
+  "last_updated": "2026-10-20T04:50:55.831Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "c49adfb1b1015b3a9bd9137e80ce9eac0eda5d0ebc16a6f3de899c2cbfaf6ee7",
-      "verified_at": "2026-10-18T07:28:49.888Z",
+      "content_hash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
+      "verified_at": "2026-10-20T04:50:55.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:28:49.888Z"
+      "last_updated": "2026-10-20T04:50:55.830Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -10146,14 +10146,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vuetifyjs-vuetify",
-      "content_hash": "a7f52116b1c45fd26342f25937376fd9df073204d2c4123bdea03a3f4416dbd7",
-      "verified_at": "2026-10-19T18:03:58.685Z",
+      "content_hash": "443b98f697f5a47817ad097aef785dbb5350212e76be9838c02c168546b1441b",
+      "verified_at": "2026-10-20T04:50:47.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:03:58.685Z"
+      "last_updated": "2026-10-20T04:50:47.309Z"
     },
     "PaulJuliusMartinez/jless": {
       "repository": "PaulJuliusMartinez/jless",
@@ -15494,6 +15494,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T04:42:34.592Z"
+    },
+    "appwrite/appwrite": {
+      "repository": "appwrite/appwrite",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-appwrite-appwrite",
+      "content_hash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
+      "verified_at": "2026-10-20T04:50:55.188Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T04:50:55.188Z"
     }
   },
   "repos": {

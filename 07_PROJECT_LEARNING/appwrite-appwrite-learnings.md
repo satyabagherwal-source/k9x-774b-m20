@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
+> **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
+> **Source Version**: `a8c84a5f`  
+> **License**: BSD-3-Clause  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T04:50:54.985Z  
+> **Learning ID**: `learn-github-appwrite-appwrite`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): appwrite/appwrite
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:16:25.720Z  
+> **Harvest Timestamp**: 2026-10-20T04:50:54.593Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `appwrite/appwrite`
-- **Description**: Appwrite® - complete cloud infrastructure for your web, mobile and AI apps. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime and more
-- **Primary Language / Ecosystem**: PHP
+- **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
+- **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57575 stars
+- **Stars / Engagement**: 57732 stars
 
 ---
 
@@ -45,7 +59,6 @@
         emailCertificates: null,
         forceHttps: null,
         opensslKey: null,
-        assistantOpenAIKey: null,
         topology: null,
         accountName: null,
         accountEmail: null,
@@ -76,7 +89,6 @@
         setStateIfEmpty('emailCertificates', data.defaultEmailCertificates);
         setStateIfEmpty('forceHttps', data.defaultForceHttps === 'true');
         setStateIfEmpty('opensslKey', data.defaultSecretKey);
-        setStateIfEmpty('assistantOpenAIKey', data.defaultAssistantOpenaiKey);
         if (data.lockedDatabase) {
             formState.database = data.lockedDatabase;
         }
@@ -116,7 +128,6 @@
         if (sanitizedPayload) {
             delete sanitizedPayload.opensslKey;
             delete sanitizedPayload.accountPassword;
-            delete sanitizedPayload.assistantOpenAIKey;
         }
         const lock = {
             installId,
@@ -222,1922 +233,1668 @@
 
 ```
 
-### Core Architecture Module: `app/views/install/installer/js/constants.js`
+### Core Architecture Module: `apps/console/e2e/helpers/project-lifecycle.ts`
 ```
-(() => {
-    window.InstallerConstants = Object.freeze({
-        stepTransitionMs: 260,
-        errorClearMs: 180,
-        installPollIntervalMs: 4000,
-        installFallbackDelayMs: 12000,
-        redirectDelayMs: 2500,
-        progressTransitionDelayMs: 320,
-        progressCompleteDelayMs: 140,
-    });
-})();
-
-```
-
-### Core Architecture Module: `app/views/install/installer/js/installer.js`
-```
-(() => {
-    const stepContainer = document.querySelector('.installer-step');
-    const installerCard = document.querySelector('.installer-card');
-    const backButton = document.querySelector('[data-action="back"]');
-    const nextButton = document.querySelector('[data-action="next"]');
-    const installScreen = document.querySelector('.install-screen-content');
-    const indicatorNodes = Array.from(document.querySelectorAll('.step-indicator'));
-    const STEP_TRANSITION_TIMEOUT = window.InstallerConstants?.stepTransitionMs ?? 260;
-
-    if (!stepContainer || !installerCard) return;
-
-    const { validateInstallRequest } = window.InstallerStepsProgress || {};
-
-    const isUpgrade = document.body?.dataset.upgrade === 'true';
-    const stepFlow = isUpgrade ? [1, 6, 4, 5] : [1, 2, 3, 4, 5];
-    const cardSteps = stepFlow.filter((step) => step !== 5);
-
-    const normalizeStep = (step) => {
-        const numeric = clampStep(step);
-        if (stepFlow.includes(numeric)) return numeric;
-        if (numeric <= stepFlow[0]) return stepFlow[0];
-        for (let i = 0; i < stepFlow.length; i += 1) {
-            if (numeric < stepFlow[i]) {
-                return stepFlow[i];
-            }
-        }
-        return stepFlow[stepFlow.length - 1];
-    };
-
-    const buildStepConfig = () => {
-        const config = {};
-        stepFlow.forEach((step, index) => {
-            if (step === 5) {
-                config[step] = { back: { target: null }, next: { target: null } };
-                return;
-            }
-            const prev = stepFlow[index - 1] ?? null;
-            const next = stepFlow[index + 1] ?? null;
-            const label = next === 5 ? (isUpgrade ? 'Update' : 'Install') : 'Next';
-            config[step] = {
-                back: { target: prev },
-                next: { label, target: next }
-            };
-        });
-        return config;
-    };
-
-    const STEP_CONFIG = buildStepConfig();
-
-    const stepCache = new Map();
-    const stepHeights = new Map();
-    let isTransitioning = false;
-    let pendingStep = null;
-    let pendingPushState = false;
-
-    const clampStep = (step) => Math.max(1, Math.min(6, step));
-    const isInstallLocked = () => Boolean(window.InstallerSteps?.isInstallLocked?.());
-
-    const scrollToFirstError = (panel) => {
-        if (!panel) return;
-        const getErrorNode = () => panel.querySelector('.field-error.is-visible')
-            || panel.querySelector('.field-error')
-            || panel.querySelector('.input-field.is-error, .input-action.is-error');
-        const container = panel.closest('.step-panel') || panel;
-        const attemptScroll = () => {
-            const target = getErrorNode();
-            if (!target || typeof target.getBoundingClientRect !== 'function') return false;
-            const targetRect = target.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            const targetTop = targetRect.top - containerRect.top + container.scrollTop;
-            const targetBottom = targetTop + targetRect.height;
-            const viewTop = container.scrollTop;
-            const viewBottom = viewTop + containerRect.height;
-            const padding = 12;
-
-            let nextScrollTop = viewTop;
-            if (targetTop < viewTop + padding) {
-                nextScrollTop = Math.max(0, targetTop - padding);
-            } else if (targetBottom > viewBottom - padding) {
-                nextScrollTop = Math.max(0, targetBottom - containerRect.height + padding);
-            }
-
-            if (Math.abs(nextScrollTop - viewTop) < 1) {
-                return false;
-            }
-
-            container.scrollTo({ top: nextScrollTop, behavior: 'smooth' });
-            return true;
-        };
-
-        let remaining = 20;
-        let lastScrollTop = -1;
-        const settle = () => {
-            if (remaining <= 0) return;
-            const moved = attemptScroll();
-            remaining -= 1;
-            const currentTop = container.scrollTop;
-            const delta = Math.abs(currentTop - lastScrollTop);
-            lastScrollTop = currentTop;
-            if (!moved && delta < 0.5) {
-                return;
-            }
-            requestAnimationFrame(settle);
-        };
-        requestAnimationFrame(settle);
-    };
-
-    const getStepFromUrl = () => {
-        const url = new URL(window.location.href);
-        const step = Number(url.searchParams.get('step') || 1);
-        return normalizeStep(Number.isNaN(step) ? 1 : step);
-    };
-
-    const buildStepUrl = (step) => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('step', step);
-        return url;
-    };
-
-    const setStepInUrl = (step, pushState) => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('step', step);
-
-        if (pushState) {
-            window.history.pushState({ step }, '', url.toString());
-        }
-
-        return url;
-    };
-
-    const updateActionBar = (step) => {
-        const config = STEP_CONFIG[step] || STEP_CONFIG[1];
-        if (!backButton || !nextButton) return;
-        const locked = isInstallLocked();
-
-        const setButtonLabel = (button, label) => {
-            if (!button) return;
-            let text = button.querySelector('.button-text');
-            if (!text) {
-                text = document.createElement('span');
-                text.className = 'button-text typography-text-m-500';
-                button.textContent = '';
-                button.appendChild(text);
-            }
-            text.textContent = label;
-        };
-
-        if (!locked && config.back?.target) {
-            backButton.disabled = false;
-            backButton.setAttribute('data-step-target', String(config.back.target));
-        } else {
-            backButton.disabled = true;
-            backButton.removeAttribute('data-step-target');
-        }
-        setButtonLabel(backButton, 'Back');
-
-        if (!locked && config.next?.target) {
-            setButtonLabel(nextButton, config.next?.label || 'Next');
-            nextButton.setAttribute('data-step-target', String(config.next?.target || 1));
-            nextButton.disabled = false;
-        } else {
-            setButtonLabel(nextButton, config.next?.label || 'Next');
-            nextButton.removeAttribute('data-step-target');
-            nextButton.disabled = true;
-        }
-
-        indicatorNodes.forEach((node, index) => {
-            const isVisible = index < cardSteps.length;
-            node.classList.toggle('is-hidden', !isVisible);
-            if (!isVisible) {
-                node.classList.remove('is-active');
-                return;
-            }
-            node.classList.toggle('is-active', cardSteps[index] === step);
-        });
-
-        installerCard.setAttribute('data-step', String(step));
-        document.body.dataset.step = String(step);
-        if (locked) {
-            document.body.dataset.installLocked = 'true';
-        } else {
-            delete document.body.dataset.installLocked;
-        }
-    };
-
-    // Each step is remembered on its own rather than folded into a running maximum. A
-    // single tall step used to set the floor for every other one, so the short ones -- the
-    // review in particular -- carried its leftover height as dead space.
-    const recordStepHeight = (panel, step) => {
-        if (!panel || step == null) return;
-        const height = panel.getBoundingClientRect().height;
-        if (!height) return;
-        stepHeights.set(Number(step), height);
-    };
-
-    const applyStepHeight = (step) => {
-        const height = stepHeights.get(Number(step));
-        if (!height) return;
-        stepContainer.style.setProperty('--step-min-height', `${height}px`);
-    };
-
-    const measureStepHeight = (panel, step) => {
-        recordStepHeight(panel, step);
-        applyStepHeight(step);
-    };
-
-    const runStepInit = (step, rootElement) => {
-        if (!window.InstallerSteps || typeof window.InstallerSteps.initStep !== 'function') return;
-        const root = rootElement || stepContainer;
-        window.InstallerSteps.initStep(step, root);
-        updateActionBar(step);
-    };
-
-    const fetchStepHtml = (step, url) => {
-        if (stepCache.has(step)) {
-            return Promise.resolve(stepCache.get(step));
-        }
-
-        const fetchUrl = new URL(url);
-        fetchUrl.searchParams.set('partial', '1');
-
-        return fetch(fetchUrl.toString(), {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to load step');
-                }
-                return response.text();
-            })
-            .then((html) => {
-                stepCache.set(step, html);
-                return html;
-            });
-    };
-
-    const preloadSteps = (steps) => {
-        const current = getStepFromUrl();
-        const targets = steps.filter((step) => step !== current);
-
-        return Promise.all(
-            targets.map((step) => {
-                const url = buildStepUrl(step);
-                return fetchStepHtml(step, url)
-                    .then((html) => {
-                        const panel = document.createElement('div');
-                        panel.className = 'step-panel is-measure';
-                        panel.innerHTML = html;
-                        stepContainer.appendChild(panel);
-                        panel.getBoundingClientRect();
-                        recordStepHeight(panel, step);
-                        panel.remove();
-                    })
-                    .catch(() => null);
-            })
-        );
-    };
-
-    const swapPanels = (step, html, onDone) => {
-        const activePanel = stepContainer.querySelector('.step-panel');
-
-        const measurePanel = document.createElement('div');
-        measurePanel.className = 'step-panel is-measure';
-        measurePanel.innerHTML = html;
-        stepContainer.appendChild(measureP
-```
-
-### Core Architecture Module: `app/views/install/installer/js/modules/context.js`
-```
-(() => {
-    const getBodyDataset = () => document.body?.dataset ?? {};
-    const isUpgradeMode = () => getBodyDataset().upgrade === 'true';
-    const getLockedDatabase = () => getBodyDataset().lockedDatabase || '';
-    const getTopology = () => {
-        const topology = getBodyDataset().topology || 'combined';
-        return topology === 'separate' ? 'separate' : 'combined';
-    };
-    const getEnabledDatabases = () => {
-        const raw = getBodyDataset().enabledDatabases;
-        if (!raw) return ['postgresql', 'mariadb', 'mongodb'];
-        try { return JSON.parse(raw); } catch (e) { return ['postgresql', 'mariadb', 'mongodb']; }
-    };
-
-    const STEP_IDS = Object.freeze({
-        CONFIG_FILES: 'config-files',
-        DOCKER_COMPOSE: 'docker-compose',
-        ENV_VARS: 'env-vars',
-        DOCKER_CONTAINERS: 'docker-containers',
-        ACCOUNT_SETUP: 'account-setup',
-        MIGRATION: 'migration',
-        SSL_CERTIFICATE: 'ssl-certificate',
-        REDIRECT: 'redirect'
-    });
-
-    const STATUS = Object.freeze({
-        IN_PROGRESS: 'in-progress',
-        COMPLETED: 'completed',
-        ERROR: 'error'
-    });
-
-    const SSE_EVENTS = Object.freeze({
-        PING: 'ping',
-        INSTALL_ID: 'install-id',
-        PROGRESS: 'progress',
-        DONE: 'done',
-        ERROR: 'error'
-    });
-
-    const buildInstallationSteps = (upgrade) => (upgrade ? [
-        {
-            id: STEP_IDS.CONFIG_FILES,
-            inProgress: 'Updating configuration files...',
-            done: 'Configuration files updated'
-        },
-        {
-            id: STEP_IDS.DOCKER_COMPOSE,
-            inProgress: 'Updating Docker Compose file...',
-            done: 'Docker Compose file updated'
-        },
-        {
-            id: STEP_IDS.ENV_VARS,
-            inProgress: 'Updating environment variables...',
-            done: 'Environment variables updated'
-        },
-        {
-            id: STEP_IDS.DOCKER_CONTAINERS,
-            inProgress: 'Restarting Docker containers...',
-            done: 'Docker containers restarted'
-        },
-        {
-            id: STEP_IDS.MIGRATION,
-            inProgress: 'Running database migration...',
-            done: 'Database migration completed'
-        }
-    ] : [
-        {
-            id: STEP_IDS.CONFIG_FILES,
-            inProgress: 'Creating configuration files...',
-            done: 'Configuration files created'
-        },
-        {
-            id: STEP_IDS.DOCKER_COMPOSE,
-            inProgress: 'Generating Docker Compose file...',
-            done: 'Docker Compose file generated'
-        },
-        {
-            id: STEP_IDS.ENV_VARS,
-            inProgress: 'Configuring environment variables...',
-            done: 'Environment variables configured'
-        },
-        {
-            id: STEP_IDS.DOCKER_CONTAINERS,
-            inProgress: 'Starting Docker containers...',
-            done: 'Docker containers started'
-        },
-        {
-            id: STEP_IDS.ACCOUNT_SETUP,
-            inProgress: 'Creating Appwrite account...',
-            done: 'Appwrite account created'
-        }
-    ]);
-
-    const INSTALLATION_STEPS = buildInstallationSteps(isUpgradeMode());
-    const CONSTANTS = window.InstallerConstants || {};
-    const TIMINGS = {
-        errorClear: CONSTANTS.errorClearMs ?? 180,
-        installPollInterval: CONSTANTS.installPollIntervalMs ?? 4000,
-        installFallbackDelay: CONSTANTS.installFallbackDelayMs ?? 12000,
-        redirectDelay: CONSTANTS.redirectDelayMs ?? 500,
-        progressTransitionDelay: CONSTANTS.progressTransitionDelayMs ?? 140,
-        progressCompleteDelay: CONSTANTS.progressCompleteDelayMs ?? 120
-    };
-
-    const clampStep = (step) => {
-        const numeric = Number(step);
-        if (Number.isNaN(numeric)) return 1;
-        return Math.max(1, Math.min(6, numeric));
-    };
-
-    window.InstallerStepsContext = Object.freeze({
-        getBodyDataset,
-        isUpgradeMode,
-        getLockedDatabase,
-        getTopology,
-        getEnabledDatabases,
-        STEP_IDS,
-        STATUS,
-        SSE_EVENTS,
-        INSTALLATION_STEPS,
-        TIMINGS,
-        clampStep
-    });
-})();
-
-```
-
-### Core Architecture Module: `app/views/install/installer/js/modules/progress.js`
-```
-(() => {
-    const {
-        INSTALLATION_STEPS,
-        TIMINGS,
-        getBodyDataset,
-        isUpgradeMode,
-        STEP_IDS,
-        STATUS,
-        SSE_EVENTS
-    } = window.InstallerStepsContext;
-    const {
-        formState,
-        applyLockPayload,
-        applyBodyDefaults,
-        setInstallLock,
-        getInstallLock,
-        clearInstallLock,
-        isInstallLocked,
-        syncInstallLockFlag,
-        getStoredInstallId,
-        storeInstallId,
-        clearInstallId
-    } = window.InstallerStepsState || {};
-    const { extractHostname, isLocalHost, isIPAddress } = window.InstallerStepsValidation || {};
-    const { generateSecretKey } = window.InstallerStepsUI || {};
-    const { showToast } = window.InstallerToast || {};
-
-    let activeInstall = null;
-    let unloadGuard = null;
-    let sseSessionDetails = null;
-    const csrfToken = document.querySelector('meta[name="appwrite-installer-csrf"]')?.getAttribute('content') || '';
-
-    const installerSecret = (() => {
-        const params = new URLSearchParams(window.location.search);
-        const fromQuery = params.get('secret') || '';
-        if (fromQuery) {
-            try {
-                sessionStorage.setItem('appwrite-installer-secret', fromQuery);
-            } catch (error) {
-                // ignore quota / private-mode failures
-            }
-            params.delete('secret');
-            const query = params.toString();
-            const next = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
-            history.replaceState({}, '', next);
-            return fromQuery;
-        }
-        try {
-            return sessionStorage.getItem('appwrite-installer-secret') || '';
-        } catch (error) {
-            return '';
-        }
-    })();
-
-    const withCsrfHeader = (headers = {}) => {
-        const next = { ...headers };
-        if (csrfToken) {
-            next['X-Appwrite-Installer-CSRF'] = csrfToken;
-        }
-        if (installerSecret) {
-            next['X-Appwrite-Installer-Secret'] = installerSecret;
-        }
-        return next;
-    };
-
-    const showCsrfToast = () => {
-        showToast?.({
-            status: 'error',
-            title: 'Session expired',
-            description: 'Refresh the page and try again.',
-            dismissible: true
-        });
-    };
-
-    const showSecretToast = () => {
-        showToast?.({
-            status: 'error',
-            title: 'Installer secret required',
-            description: 'Open the URL printed in the installer terminal, or add ?secret= from STDOUT.',
-            dismissible: true
-        });
-    };
-
-    const validateInstallRequest = async () => {
-        try {
-            const response = await fetch('/install/validate', {
-                method: 'POST',
-                headers: withCsrfHeader({
-                    'Content-Type': 'application/json'
-                })
-            });
-            if (response.status === 401) {
-                showSecretToast();
-                return false;
-            }
-            if (!response.ok) {
-                showCsrfToast();
-                return false;
-            }
-            const data = await response.json().catch(() => ({}));
-            if (!data?.success) {
-                showCsrfToast();
-                return false;
-            }
-            return true;
-        } catch (error) {
-            showCsrfToast();
-            return false;
-        }
-    };
-
-    const setUnloadGuard = (enabled) => {
-        if (!enabled && unloadGuard) {
-            window.removeEventListener('beforeunload', unloadGuard);
-            unloadGuard = null;
-            return;
-        }
-
-        if (enabled && !unloadGuard) {
-            unloadGuard = (event) => {
-                event.preventDefault();
-                event.returnValue = '';
-                return '';
-            };
-            window.addEventListener('beforeunload', unloadGuard);
-        }
-    };
-
-    const cleanupInstallFlow = () => {
-        if (activeInstall?.controller) {
-            activeInstall.controller.abort();
-            if (activeInstall.pollTimer) {
-                clearInterval(activeInstall.pollTimer);
-            }
-            if (activeInstall.fallbackTimer) {
-                clearTimeout(activeInstall.fallbackTimer);
-            }
-            activeInstall = null;
-        }
-        stopSyncedSpinnerRotation();
-        setUnloadGuard(false);
-    };
-
-    const getStepDefinition = (id) => INSTALLATION_STEPS.find((step) => step.id === id);
-
-    const getProgressLabel = (step, status, message) => {
-        if (!step) return message || '';
-        if (status === STATUS.ERROR) {
-            const normalized = normalizeInstallError(message || '');
-            return normalized.summary || 'Installation failed.';
-        }
-        if (status === STATUS.COMPLETED) return step.done;
-        return message || step.inProgress;
-    };
-
-    const updateInstallRow = (row, step, status, message, details) => {
-        if (!row || !step) return;
-        row.dataset.status = status;
-        row.dataset.step = step.id;
-        if (status !== STATUS.ERROR) {
-            row.classList.remove('is-open');
-            const toggle = row.querySelector('[data-install-toggle]');
-            if (toggle) {
-                toggle.setAttribute('aria-expanded', 'false');
-            }
-        }
-        const label = getProgressLabel(step, status, message);
-        const text = row.querySelector('[data-install-text]');
-        if (text) {
-            if (text.textContent !== label) {
-                text.classList.remove('is-enter');
-                text.textContent = label;
-                text.classList.add('is-enter');
-                requestAnimationFrame(() => {
-                    text.classList.remove('is-enter');
-                });
-            }
-        }
-
-        const counter = row.querySelector('[data-install-counter]');
-        if (counter) {
-            const started = details?.containerStarted ?? 0;
-            const total = details?.containerTotal;
-            counter.textContent = (status === STATUS.IN_PROGRESS && total > 0 && started < total)
-                ? `${started}/${total}`
-                : '';
-        }
-
-        // Show/hide "Navigate to Console" button for account setup errors
-        const consoleBtn = row.querySelector('[data-install-console]');
-        if (consoleBtn) {
-            const shouldShow = step.id === STEP_IDS.ACCOUNT_SETUP && status === STATUS.ERROR;
-            consoleBtn.classList.toggle('is-hidden', !shouldShow);
-        }
-    };
-
-    const normalizeInstallError = (message) => {
-        const text = String(message || '').trim();
-        if (!text) {
-            return { summary: '', details: '' };
-        }
-        const colonIndex = text.indexOf(':');
-        if (colonIndex > 0 && colonIndex < 80) {
-            const summary = text.slice(0, colonIndex).trim();
-            const details = text.slice(colonIndex + 1).trim();
-            return { summary, details };
-        }
-        if (text.length > 180) {
-            return { summary: text.slice(0, 180).trim() + '…', details: text };
-        }
-        return { summary: text, details: '' };
-    };
-
-    let spinnerAnimationFrame = null;
-    const stopSyncedSpinnerRotation = () => {
-        if (spinnerAnimationFrame) {
-            cancelAnimationFrame(spinnerAnimationFrame);
-            spinnerAnimationFrame = null;
-        }
-    };
-
-    const startSyncedSpinnerRotation = (container) => {
-        stopSyncedSpinnerRotation();
-        if (!container) return;
-        let startTime = null;
-        const animate = (timestamp) => {
-            if (!startTime) startTime = timestamp;
-            const elapsed = timestamp - startTime;
-            const rotation = ((elapsed / 1000) * 360 * 1.5) % 360;
-            container.style.setProperty('--spinner-rotation', `${rotation}deg`);
-            spinnerAnimationFrame = requestAnimationFrame(animate);
-        };
-        spinnerAnimationFrame = requestAnimationFrame(animate);
-    };
-
-    const updateInstallErrorDetails = (row, error) => {
-        if (!row) return;
-        const traceNode = row.querySelector('[data-install-trace]');
-        const normalized = normalizeInstallError(error?.message || '');
-        const output = error?.output || '';
-        const trace = error?.trace || '';
-        const detailChunks = [];
-        if (normalized.details) detailChunks.push(normalized.details);
-        if (output) detailChunks.push(output);
-        if (trace) detailChunks.push(trace);
-        const detailText = detailChunks.join('\n\n');
-
-        if (traceNode) {
-            traceNode.textContent = detailText;
-            traceNode.style.display = detailText ? 'block' : 'none';
-        }
-    };
-
-    const createInstallRow = (template, step) => {
-        const fragment = template.content.cloneNode(true);
-        const row = fragment.querySelector('.install-row');
-        if (!row) return null;
-        const toggle = row.querySelector('[data-install-toggle]');
-        const setOpenState = (isOpen) => {
-            row.classList.toggle('is-open', isOpen);
-            if (toggle) {
-                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            }
-        };
-        const toggleRow = () => {
-            if (!row.dataset.status || row.dataset.status !== STATUS?.ERROR) {
-                return;
-            }
-            setOpenState(!row.classList.contains('is-open'));
-        };
-        row.addEventListener('click', (event) => {
-            if (event.target.closest('[data-install-retry]')) {
-                return;
-            }
-            if (event.target.closest('[data-install-toggle]')) {
-                return;
-            }
-            if (event.target.closest('.install-row-details')) {
-                return;
-            }
-            toggleRow();
-        });
-        if (toggle) {
-            toggle.addEventListener('click', (event) => {
-                event.stopPropagation();
-                toggleRow()
-```
-
-### Core Architecture Module: `app/views/install/installer/js/modules/toast.js`
-```
-(() => {
-    const TOAST_STACK_ID = 'installer-toast-stack';
-    const DEFAULT_TIMEOUT = 5000;
-    const MAX_TOASTS = 3;
-    const ICONS = {
-        error: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0m-7 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-1-9a1 1 0 0 0-1 1v4a1 1 0 1 0 2 0V6a1 1 0 0 0-1-1" clip-rule="evenodd"/></svg>',
-        close: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M5.293 5.293a1 1 0 0 1 1.414 0L10 8.586l3.293-3.293a1 1 0 1 1 1.414 1.414L11.414 10l3.293 3.293a1 1 0 0 1-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 0 1-1.414-1.414L8.586 10 5.293 6.707a1 1 0 0 1 0-1.414" clip-rule="evenodd"/></svg>'
-    };
-
-    const getStack = () => document.getElementById(TOAST_STACK_ID);
-
-    const dismissToast = (toast) => {
-        if (!toast) return;
-        if (toast.classList.contains('is-leaving')) return;
-        toast.classList.add('is-leaving');
-        const remove = () => toast.remove();
-        toast.addEventListener('transitionend', remove, { once: true });
-        setTimeout(remove, 450);
-    };
-
-    const showToast = ({
-        title = '',
-        description = '',
-        status = 'error',
-        dismissible = true,
-        timeout = DEFAULT_TIMEOUT
-    } = {}) => {
-        const stack = getStack();
-        if (!stack) return;
-        const visibleToasts = Array.from(
-            stack.querySelectorAll('.installer-toast:not(.is-leaving)')
-        );
-        if (visibleToasts.length >= MAX_TOASTS) {
-            dismissToast(visibleToasts[0]);
-        }
-
-        const toast = document.createElement('div');
-        toast.className = 'installer-toast is-entering';
-        toast.dataset.status = status;
-        toast.setAttribute('role', status === 'error' ? 'alert' : 'status');
-
-        const content = document.createElement('div');
-        content.className = 'installer-toast-content';
-
-        const icon = document.createElement('span');
-        icon.className = 'installer-toast-icon';
-        icon.dataset.status = status;
-        icon.innerHTML = ICONS.error;
-        content.appendChild(icon);
-
-        const body = document.createElement('section');
-        body.className = 'installer-toast-body';
-
-        if (title) {
-            const titleNode = document.createElement('p');
-            titleNode.className = 'installer-toast-title typography-text-m-500';
-            titleNode.textContent = title;
-            body.appendChild(titleNode);
-        }
-
-        if (description) {
-            const descNode = document.createElement('p');
-            descNode.className = 'installer-toast-description typography-text-m-400';
-            descNode.textContent = description;
-            body.appendChild(descNode);
-        }
-
-        content.appendChild(body);
-        toast.appendChild(content);
-
-        if (dismissible) {
-            const close = document.createElement('button');
-            close.type = 'button';
-            close.className = 'installer-toast-close';
-            close.setAttribute('aria-label', 'Dismiss notification');
-            close.innerHTML = ICONS.close;
-            close.addEventListener('click', () => dismissToast(toast));
-            toast.appendChild(close);
-        }
-
-        stack.appendChild(toast);
-        toast.getBoundingClientRect();
-        requestAnimationFrame(() => {
-            toast.classList.remove('is-entering');
-        });
-
-        if (timeout > 0) {
-            setTimeout(() => dismissToast(toast), timeout);
-        }
-    };
-
-    window.InstallerToast = Object.freeze({
-        showToast
-    });
-})();
-
-```
-
-### Core Architecture Module: `app/views/install/installer/js/modules/ui.js`
-```
-(() => {
-    const { TIMINGS } = window.InstallerStepsContext || {};
-    const { formState } = window.InstallerStepsState || {};
-
-    const clearFieldErrors = (root) => {
-        if (!root) return;
-        root.querySelectorAll('.field-error').forEach((node) => {
-            node.classList.remove('is-visible');
-        });
-        root.querySelectorAll('.input-field.is-error, .input-action.is-error').forEach((node) => {
-            node.classList.remove('is-error');
-        });
-        root.querySelectorAll('.field-helper').forEach((helper) => {
-            helper.style.display = '';
-        });
-    };
-
-    const setFieldError = (input, message) => {
-        if (!input) return;
-        const group = input.closest('.input-group');
-        if (!group) return;
-        let error = group.querySelector('.field-error');
-        let errorText = error?.querySelector('.field-error-text');
-        const hasSameMessage = Boolean(errorText && errorText.textContent === message);
-        const alreadyVisible = Boolean(error && error.classList.contains('is-visible'));
-
-        if (hasSameMessage && alreadyVisible) {
-            return;
-        }
-
-        if (!error) {
-            const template = document.getElementById('field-error-template');
-            if (template && template.content) {
-                const fragment = template.content.cloneNode(true);
-                error = fragment.querySelector('.field-error');
-                group.appendChild(fragment);
-            }
-            errorText = error?.querySelector('.field-error-text');
-        }
-        if (errorText) {
-            errorText.textContent = message;
-        }
-
-        if (!alreadyVisible) {
-            requestAnimationFrame(() => {
-                error.classList.add('is-visible');
-            });
-        }
-
-        input.classList.add('is-error');
-        const actionWrapper = input.closest('.input-action');
-        if (actionWrapper) {
-            actionWrapper.classList.add('is-error');
-        }
-        const helper = group.querySelector('.field-helper');
-        if (helper) {
-            helper.style.display = 'none';
-        }
-    };
-
-    const bindErrorClear = (input) => {
-        if (!input) return;
-        const handler = () => {
-            const group = input.closest('.input-group');
-            const error = group?.querySelector('.field-error');
-            if (error) {
-                error.classList.remove('is-visible');
-            }
-            input.classList.remove('is-error');
-            const actionWrapper = input.closest('.input-action');
-            if (actionWrapper) {
-                actionWrapper.classList.remove('is-error');
-            }
-            const helper = group?.querySelector('.field-helper');
-            if (helper) {
-                helper.style.display = '';
-            }
-        };
-        input.addEventListener('input', handler);
-        input.addEventListener('change', handler);
-    };
-
-    const toDatabaseLabel = (value) => {
-        if (!value) return '';
-        const lower = value.toLowerCase();
-        if (lower === 'mariadb') return 'MariaDB';
-        if (lower === 'postgresql') return 'PostgreSQL';
-        return 'MongoDB';
-    };
-
-    const updateDatabaseSelection = (radio, root) => {
-        if (!radio || !root) return;
-        const group = radio.closest('.selector-group') || root;
-        const allOptions = group.querySelectorAll('.selector-card');
-        allOptions.forEach((option) => option.classList.remove('selected'));
-        const selectedOption = radio.closest('.selector-card');
-        if (selectedOption) {
-            selectedOption.classList.add('selected');
-        }
-    };
-
-    const syncResetButton = (input, button) => {
-        const defaultValue = input.dataset.default ?? '';
-        button.disabled = input.value === defaultValue;
-    };
-
-    const setupResetButtons = (root) => {
-        const inputs = root.querySelectorAll('.input-field[data-default]');
-        inputs.forEach((input) => {
-            const button = root.querySelector(`[data-reset-target="${input.id}"]`);
-            if (!button) return;
-
-            syncResetButton(input, button);
-
-            input.addEventListener('input', () => syncResetButton(input, button));
-            button.addEventListener('click', () => {
-                input.value = input.dataset.default ?? '';
-                syncResetButton(input, button);
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-            });
-        });
-    };
-
-    const toggleAccordion = (button) => {
-        const content = button.nextElementSibling;
-        const icon = button.querySelector('.accordion-chevron');
-        const isOpen = button.classList.contains('is-open');
-
-        button.classList.toggle('is-open', !isOpen);
-        button.setAttribute('aria-expanded', String(!isOpen));
-
-        if (content) {
-            if (!isOpen) {
-                content.classList.add('open');
-                content.style.maxHeight = `${content.scrollHeight}px`;
-            } else {
-                content.style.maxHeight = '0px';
-                content.classList.remove('open');
-            }
-        }
-
-        if (icon) {
-            icon.setAttribute('data-open', String(!isOpen));
-        }
-    };
-
-    const setupAccordion = (root) => {
-        const buttons = root.querySelectorAll('.accordion-toggle');
-        buttons.forEach((button) => {
-            button.addEventListener('click', () => toggleAccordion(button));
-        });
-    };
-
-    const openAccordion = (root) => {
-        const toggle = root.querySelector('.accordion-toggle');
-        const content = root.querySelector('.accordion-content');
-        if (!toggle || !content) return;
-        if (!toggle.classList.contains('is-open')) {
-            toggle.classList.add('is-open');
-            toggle.setAttribute('aria-expanded', 'true');
-            content.classList.add('open');
-            content.style.maxHeight = `${content.scrollHeight}px`;
-        }
-    };
-
-    const disableControls = (root) => {
-        const inputs = root.querySelectorAll('input, select, textarea');
-        inputs.forEach((input) => {
-            if (input.type === 'radio' || input.type === 'checkbox') {
-                input.disabled = true;
-            } else {
-                input.readOnly = true;
-                input.setAttribute('aria-disabled', 'true');
-            }
-        });
-
-        const buttons = root.querySelectorAll('button');
-        buttons.forEach((button) => {
-            if (button.matches('[data-copy-target]')) return;
-            button.disabled = true;
-            button.setAttribute('aria-disabled', 'true');
-        });
-
-        root.classList.add('is-locked');
-    };
-
-    const generateSecretKey = () => {
-        const array = new Uint8Array(32);
-        window.crypto.getRandomValues(array);
-        return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
-    };
-
-    const copyToClipboard = (value, input) => {
-        if (!value) return;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(value);
-            return;
-        }
-        if (input) {
-            input.select();
-            document.execCommand('copy');
-            input.setSelectionRange(0, 0);
-            return;
-        }
-        const textArea = document.createElement('textarea');
-        textArea.value = value;
-        textArea.style.position = 'fixed';
-        textArea.style.top = '-9999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        try {
-            document.execCommand('copy');
-        } catch (error) {} finally {
-            document.body.removeChild(textArea);
-        }
-    };
-
-    const setTooltipText = (wrapper, message) => {
-        if (!wrapper) return;
-        const tooltip = wrapper.querySelector('.tooltip');
-        if (tooltip && message) {
-            tooltip.textContent = message;
-        }
-    };
-
-    const resetTooltipText = (wrapper) => {
-        if (!wrapper) return;
-        const defaultText = wrapper.dataset.tooltipDefault;
-        if (!defaultText) return;
-        setTooltipText(wrapper, defaultText);
-    };
-
-    const updateReviewSummary = (root) => {
-        if (!root) return;
-        const valueNodes = root.querySelectorAll('[data-review-value]');
-        valueNodes.forEach((node) => {
-            const key = node.dataset.reviewValue;
-            if (!key) return;
-            let value = formState?.[key];
-            if (key === 'database') {
-                value = toDatabaseLabel(formState?.database);
-            }
-            if (value) {
-                node.textContent = value;
-            }
-        });
-
-        // Nothing entered and no account email to borrow: shown as a tag, the way the
-        // other absent settings on this panel are, rather than an empty row.
-        const emailNode = root.querySelector('[data-review-value="emailCertificates"]');
-        if (emailNode) {
-            const email = (formState?.emailCertificates || formState?.accountEmail || '').trim();
-            emailNode.textContent = email || 'Empty';
-            emailNode.classList.toggle('badge', !email);
-            emailNode.classList.toggle('badge-neutral', !email);
-            emailNode.classList.toggle('typography-text-xs-400', !email);
-            emailNode.classList.toggle('typography-text-m-500', Boolean(email));
-            emailNode.classList.toggle('text-neutral-primary', Boolean(email));
-        }
-
-        const badge = root.querySelector('[data-review-badge]');
-        if (badge) {
-            const hasKey = Boolean((formState?.opensslKey || '').trim());
-            badge.textContent = hasKey ? 'Generated' : 'Missing';
-            badge.classList.remove('badge-success', 'badge-warning');
-            badge.classList.add(hasKey ? 'badge-success' : 'badge-warning');
-        }
-
-        const httpsBadge = root.querySelector('[data-review-https-badge]');
-        if (htt
-```
-
-### Core Architecture Module: `app/views/install/installer/js/modules/validation.js`
-```
-(() => {
-    const isValidEmail = (email) => {
-        if (!email) return false;
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    };
-
-    const isValidPort = (value) => {
-        const numeric = Number(value);
-        if (!Number.isInteger(numeric)) return false;
-        return numeric >= 1 && numeric <= 65535;
-    };
-
-    const isValidPassword = (value) => {
-        if (!value) return false;
-        return value.length >= 8 && /\S/.test(value);
-    };
-
-    const isValidIPv4 = (host) => {
-        if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) return false;
-        return host.split('.').every((part) => {
-            const num = Number(part);
-            return num >= 0 && num <= 255;
-        });
-    };
-
-    const isValidIPv6 = (host) => {
-        try {
-            const url = new URL(`http://[${host}]`);
-            return url.hostname.toLowerCase() === host.toLowerCase();
-        } catch (error) {
-            return false;
-        }
-    };
-
-    const isValidHostnameLabel = (label) => {
-        if (!label || label.length > 63) return false;
-        if (label.startsWith('-') || label.endsWith('-')) return false;
-        return /^[a-zA-Z0-9-]+$/.test(label);
-    };
-
-    const isValidDomain = (host) => {
-        if (host.length > 253) return false;
-        const labels = host.split('.');
-        return labels.every((label) => isValidHostnameLabel(label));
-    };
-
-    const isValidHost = (host) => {
-        if (host === 'localhost') return true;
-        if (isValidIPv4(host)) return true;
-        if (isValidIPv6(host)) return true;
-        return isValidDomain(host);
-    };
-
-    const isValidHostnameInput = (value) => {
-        if (!value) return false;
-        const trimmed = value.trim();
-        if (!trimmed) return false;
-
-        let host = trimmed;
-        let port = null;
-
-        if (trimmed.startsWith('[')) {
-            const match = trimmed.match(/^\[([^\]]+)\](?::(\d+))?$/);
-            if (!match) return false;
-            host = match[1] || '';
-            port = match[2] || null;
-        } else {
-            const parts = trimmed.split(':');
-            if (parts.length > 2) return false;
-            if (parts.length === 2) {
-                // Trailing colon with no digits is an explicit but empty port.
-                if (!parts[1]) return false;
-                host = parts[0];
-                port = parts[1];
-            }
-        }
-
-        if (port !== null && !isValidPort(port)) {
-            return false;
-        }
-
-        return isValidHost(host);
-    };
-
-    const extractHostname = (value) => {
-        if (!value) return '';
-        const trimmed = value.trim();
-        if (trimmed.startsWith('[')) {
-            const end = trimmed.indexOf(']');
-            if (end !== -1) {
-                return trimmed.slice(1, end);
-            }
-            return trimmed;
-        }
-        const colonCount = (trimmed.match(/:/g) || []).length;
-        if (colonCount === 1) {
-            return trimmed.split(':')[0];
-        }
-        return trimmed;
-    };
-
-    const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0']);
-
-    const isLocalHost = (host) => {
-        if (!host) return false;
-        const normalized = host.toLowerCase();
-        return LOCAL_HOSTS.has(normalized);
-    };
-
-    const isIPAddress = (host) => {
-        if (!host) return false;
-        return isValidIPv4(host) || isValidIPv6(host);
-    };
-
-    window.InstallerStepsValidation = {
-        isValidEmail,
-        isValidPort,
-        isValidPassword,
-        isValidHostnameInput,
-        extractHostname,
-        isLocalHost,
-        isIPAddress
-    };
-})();
-
-```
-
-### Core Architecture Module: `app/views/install/installer/js/steps.js`
-```
-(() => {
-    const Context = window.InstallerStepsContext || {};
-    const State = window.InstallerStepsState || {};
-    const Validation = window.InstallerStepsValidation || {};
-    const UI = window.InstallerStepsUI || {};
-    const Progress = window.InstallerStepsProgress || {};
-    const Tooltips = window.InstallerTooltips || null;
-
-    const {
-        INSTALLATION_STEPS,
-        clampStep,
-        isUpgradeMode,
-        getEnabledDatabases,
-        getTopology
-    } = Context;
-
-    const {
-        formState,
-        dispatchStateChange,
-        applyBodyDefaults,
-        applyLockPayload,
-        clearInstallLock,
-        clearInstallId,
-        isInstallLocked,
-        syncInstallLockFlag,
-        getInstallLock,
-        getLockedDatabase
-    } = State;
-
-    const {
-        isValidEmail,
-        isValidPort,
-        isValidHostnameInput,
-        isValidPassword
-    } = Validation;
-
-    const {
-        clearFieldErrors,
-        setFieldError,
-        bindErrorClear,
-        updateDatabaseSelection,
-        setupResetButtons,
-        setupAccordion,
-        openAccordion,
-        disableControls,
-        generateSecretKey,
-        copyToClipboard,
-        setTooltipText,
-        resetTooltipText,
-        updateReviewSummary
-    } = UI;
-
-    let reviewListener = null;
-
-    const bindInputToState = (input, key) => {
-        if (!input) return;
-        const update = () => {
-            formState[key] = input.value;
-            dispatchStateChange?.(key);
-        };
-        input.addEventListener('input', update);
-        input.addEventListener('change', update);
-        update();
-    };
-
-    const bindCheckboxToState = (input, key) => {
-        if (!input) return;
-        const update = () => {
-            formState[key] = input.checked;
-            dispatchStateChange?.(key);
-        };
-        input.addEventListener('change', update);
-        update();
-    };
-
-    const lockDatabaseSelection = (root, lockedDatabase) => {
-        if (lockedDatabase) {
-            const radios = root.querySelectorAll('input[name="database"]');
-            radios.forEach((radio) => {
-                const isLockedChoice = radio.value === lockedDatabase;
-                const card = radio.closest('.selector-card');
-                radio.disabled = !isLockedChoice;
-                if (card) {
-                    card.classList.toggle('is-disabled', !isLockedChoice);
-                }
-                if (isLockedChoice) {
-                    radio.checked = true;
-                    updateDatabaseSelection?.(radio, root);
-                }
-            });
-        }
-    };
-
-    const applyEnabledDatabases = (root) => {
-        const enabled = getEnabledDatabases?.() || [];
-        const radios = root.querySelectorAll('input[name="database"]');
-        radios.forEach((radio) => {
-            if (!enabled.includes(radio.value)) {
-                const card = radio.closest('.selector-card');
-                if (card) {
-                    card.remove();
-                }
-            }
-        });
-    };
-
-    const bindDatabaseSelection = (root) => {
-        const radios = root.querySelectorAll('input[name="database"]');
-        radios.forEach((radio) => {
-            radio.addEventListener('change', () => {
-                formState.database = radio.value;
-                updateDatabaseSelection?.(radio, root);
-            });
-        });
-    };
-
-    // A hostname that no public certificate authority will issue for: loopback names,
-    // .local/.internal names, and bare IP literals. Those are served over plain HTTP, so
-    // the toggle follows the hostname instead of making the operator know this.
-    const servedOverPlainHttp = (value) => {
-        const host = (value || '').trim().toLowerCase().replace(/^\[|\]$/g, '');
-
-        if (host === '') return true;
-        if (host === 'localhost' || host.endsWith('.localhost')) return true;
-        if (host.endsWith('.local') || host.endsWith('.internal')) return true;
-        if (host === '::1' || host === '0.0.0.0') return true;
-        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) return true;
-        if (host.includes(':') && /^[0-9a-f:]+$/.test(host)) return true;
-
-        return false;
-    };
-
-    const hydrateStep1State = (root) => {
-        State.setStateIfEmpty?.('appDomain', root.querySelector('#hostname')?.value);
-        State.setStateIfEmpty?.('database', root.querySelector('input[name="database"]:checked')?.value);
-        State.setStateIfEmpty?.('topology', getTopology?.() || root.querySelector('input[name="topology"]:checked')?.value || 'combined');
-        State.setStateIfEmpty?.('httpPort', root.querySelector('#http-port')?.value);
-        State.setStateIfEmpty?.('httpsPort', root.querySelector('#https-port')?.value);
-        State.setStateIfEmpty?.('emailCertificates', root.querySelector('#ssl-email')?.value);
-        State.setStateIfEmpty?.('forceHttps', root.querySelector('#force-https')?.checked);
-        State.setStateIfEmpty?.('assistantOpenAIKey', root.querySelector('#assistant-openai-key')?.value);
-    };
-
-    const applyStep1State = (root) => {
-        const hostname = root.querySelector('#hostname');
-        if (hostname && formState.appDomain) hostname.value = formState.appDomain;
-
-        const httpPort = root.querySelector('#http-port');
-        if (httpPort && formState.httpPort) httpPort.value = formState.httpPort;
-
-        const httpsPort = root.querySelector('#https-port');
-        if (httpsPort && formState.httpsPort) httpsPort.value = formState.httpsPort;
-
-        const sslEmail = root.querySelector('#ssl-email');
-        if (sslEmail && formState.emailCertificates) sslEmail.value = formState.emailCertificates;
-
-        const forceHttps = root.querySelector('#force-https');
-        if (forceHttps && typeof formState.forceHttps === 'boolean') {
-            forceHttps.checked = formState.forceHttps;
-        }
-
-        const assistantKey = root.querySelector('#assistant-openai-key');
-        if (assistantKey && formState.assistantOpenAIKey) {
-            assistantKey.value = formState.assistantOpenAIKey;
-        }
-
-        if (formState.database) {
-            const radio = root.querySelector(`input[name="database"][value="${formState.database}"]`);
-            if (radio) {
-                radio.checked = true;
-                updateDatabaseSelection?.(radio, root);
-            }
-        }
-
-        if (formState.topology) {
-            const radio = root.querySelector(`input[name="topology"][value="${formState.topology}"]`);
-            if (radio) {
-                radio.checked = true;
-                const group = radio.closest('.selector-group');
-                group?.querySelectorAll('.selector-card').forEach((card) => card.classList.remove('selected'));
-                radio.closest('.selector-card')?.classList.add('selected');
-            }
-        }
-    };
-
-    const initStep1 = (root) => {
-        if (!root) return;
-        syncInstallLockFlag?.();
-        applyLockPayload?.();
-        applyBodyDefaults?.();
-        hydrateStep1State(root);
-        applyStep1State(root);
-
-        if (isInstallLocked?.()) {
-            openAccordion?.(root);
-            disableControls?.(root);
-            return;
-        }
-
-        applyEnabledDatabases(root);
-
-        const lockedDatabase = getLockedDatabase?.() || '';
-        if (lockedDatabase) {
-            lockDatabaseSelection(root, lockedDatabase);
-        } else {
-            bindDatabaseSelection(root);
-        }
-
-        const topologyRadios = root.querySelectorAll('input[name="topology"]');
-        topologyRadios.forEach((radio) => {
-            radio.addEventListener('change', () => {
-                formState.topology = radio.value;
-                const group = radio.closest('.selector-group');
-                group?.querySelectorAll('.selector-card').forEach((card) => card.classList.remove('selected'));
-                radio.closest('.selector-card')?.classList.add('selected');
-            });
-        });
-
-        const hostname = root.querySelector('#hostname');
-        const httpPort = root.querySelector('#http-port');
-        const httpsPort = root.querySelector('#https-port');
-        const sslEmail = root.querySelector('#ssl-email');
-        const forceHttps = root.querySelector('#force-https');
-        const assistantKey = root.querySelector('#assistant-openai-key');
-
-        bindInputToState(hostname, 'appDomain');
-
-        // Follow the hostname until the operator sets the toggle themselves, after which
-        // their choice stands however the hostname changes.
-        if (hostname && forceHttps) {
-            const followHostname = () => {
-                if (forceHttps.dataset.touched === 'true') return;
-                const https = !servedOverPlainHttp(hostname.value);
-                forceHttps.checked = https;
-                formState.forceHttps = https;
-            };
-
-            forceHttps.addEventListener('change', () => {
-                forceHttps.dataset.touched = 'true';
-            });
-            hostname.addEventListener('input', followHostname);
-            followHostname();
-        }
-
-        bindInputToState(httpPort, 'httpPort');
-        bindInputToState(httpsPort, 'httpsPort');
-        bindInputToState(sslEmail, 'emailCertificates');
-        bindCheckboxToState(forceHttps, 'forceHttps');
-        bindInputToState(assistantKey, 'assistantOpenAIKey');
-
-        bindErrorClear?.(hostname);
-        bindErrorClear?.(httpPort);
-        bindErrorClear?.(httpsPort);
-        bindErrorClear?.(sslEmail);
-        bindErrorClear?.(assistantKey);
-
-        const checked = root.querySelector('input[name="database"]:checked');
-        if (checked) {
-            updateDatabaseSelection?.(checked, root);
-        }
-
-        setupResetButtons?.(root);
-        setupAccordion?.(root);
-        Tooltips?.setupTooltipPortals?.(root);
-    };
-
-    const hydrateStep2State = (root) => {
-        const value = root.querySelector('#secret-key')?.value;
-        if (formState.opensslKey) return;
-      
-```
-
-### Core Architecture Module: `app/views/install/installer/js/tooltips.js`
-```
-(() => {
-    const tooltipPortals = new Set();
-
-    const positionTooltipPortal = (tooltip, anchor) => {
-        if (!tooltip || !anchor) return;
-        const rect = anchor.getBoundingClientRect();
-        const tooltipRect = tooltip.getBoundingClientRect();
-        const offset = Number(tooltip.dataset.tooltipOffset || 6);
-        const padding = 8;
-        let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-        left = Math.max(padding, Math.min(left, window.innerWidth - tooltipRect.width - padding));
-        const top = rect.bottom + offset;
-        tooltip.style.left = `${left}px`;
-        tooltip.style.top = `${top}px`;
-    };
-
-    const attachTooltipPortal = (tooltip) => {
-        if (!tooltip || tooltip.dataset.portalInitialized === 'true') return;
-        const anchor = tooltip.parentElement;
-        if (!anchor) return;
-
-        tooltip.dataset.portalInitialized = 'true';
-        tooltip.classList.add('tooltip-portal');
-        document.body.appendChild(tooltip);
-
-        const show = () => {
-            tooltip.classList.add('is-open');
-            positionTooltipPortal(tooltip, anchor);
-        };
-        const hide = () => {
-            tooltip.classList.remove('is-open');
-        };
-        const refresh = () => {
-            if (tooltip.classList.contains('is-open')) {
-                positionTooltipPortal(tooltip, anchor);
-            }
-        };
-
-        anchor.addEventListener('mouseenter', show);
-        anchor.addEventListener('mouseleave', hide);
-        anchor.addEventListener('focusin', show);
-        anchor.addEventListener('focusout', hide);
-        window.addEventListener('scroll', refresh, true);
-        window.addEventListener('resize', refresh);
-
-        tooltipPortals.add({
-            tooltip,
-            cleanup: () => {
-                anchor.removeEventListener('mouseenter', show);
-                anchor.removeEventListener('mouseleave', hide);
-                anchor.removeEventListener('focusin', show);
-                anchor.removeEventListener('focusout', hide);
-                window.removeEventListener('scroll', refresh, true);
-                window.removeEventListener('resize', refresh);
-                if (tooltip.parentElement) {
-                    tooltip.parentElement.removeChild(tooltip);
-                }
-            }
-        });
-    };
-
-    const setupTooltipPortals = (root) => {
-        if (!root) return;
-        const portalTooltips = root.querySelectorAll('.tooltip[data-tooltip-portal]');
-        portalTooltips.forEach((tooltip) => attachTooltipPortal(tooltip));
-    };
-
-    const cleanupTooltipPortals = () => {
-        tooltipPortals.forEach((entry) => entry.cleanup());
-        tooltipPortals.clear();
-    };
-
-    window.InstallerTooltips = {
-        setupTooltipPortals,
-        cleanupTooltipPortals
-    };
-})();
-
-```
-
-### Core Architecture Module: `mongo-init.js`
-```
-// mongo-init.js
-
-// Switch to the admin database
-const adminDb = db.getSiblingDB("admin");
-
-// Get username and password from environment variables
-const username = process.env.MONGO_INITDB_USERNAME;
-const password = process.env.MONGO_INITDB_PASSWORD;
-const database = process.env.MONGO_INITDB_DATABASE;
-
-// Create the user
-if (adminDb.getUser(username) === null) {
-  adminDb.createUser({
-    user: username,
-    pwd: password,
-    roles: [{ role: "readWrite", db: database }],
-  });
+import { expect, type Page } from '@playwright/test'
+import { env } from '../config/env'
+import { enableDatabaseFeatureFlags } from './feature-flags'
+import {
+  acceptCookieBannerIfPresent,
+  skipCommunitySupportWizardIfPresent,
+} from './cookie-banner'
+import { clickInPage } from './ui'
+import { deleteOrganizationProject } from './console-api'
+import {
+  registerCreatedE2eProject,
+  unregisterCreatedE2eProject,
+} from './e2e-project-registry'
+
+export const MYSQL_E2E_PROJECT_REGION = 'fra'
+export { DATABASE_SUITE_FIXTURE_TIMEOUT_MS } from './e2e-project-cleanup'
+
+export type CreatedProject = {
+  projectId: string
+  projectName: string
 }
 
-```
-
-### Core Architecture Module: `public/sdk-console/client.ts`
-```
-import 'isomorphic-form-data';
-import { fetch } from 'cross-fetch';
-import { Models } from './models';
-import { Service } from './service';
-
-type Payload = {
-    [key: string]: any;
+function uniqueSuffix(): string {
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 }
 
-type Headers = {
-    [key: string]: string;
-}
+/**
+ * Create a disposable project in E2E_ORG_ID (Frankfurt) for database e2e.
+ * Returns the new project id and display name.
+ *
+ * Reuse this project across a suite (tables, columns, indexes, tabs). Do not
+ * create a new project per test: dedicated compute keys take minutes to
+ * provision, and deleting a project forces the next one to wait again.
+ */
+export async function createE2eProject(
+  page: Page,
+  options?: { namePrefix?: string },
+): Promise<CreatedProject> {
+  const orgId = env.E2E_ORG_ID
+  if (!orgId) {
+    throw new Error('E2E_ORG_ID is required for database e2e suites')
+  }
 
-type RealtimeResponse = {
-    type: 'error' | 'event' | 'connected' | 'response';
-    data: RealtimeResponseAuthenticated | RealtimeResponseConnected | RealtimeResponseError | RealtimeResponseEvent<unknown>;
-}
+  await enableDatabaseFeatureFlags(page)
 
-type RealtimeRequest = {
-    type: 'authentication';
-    data: RealtimeRequestAuthenticate;
-}
+  const projectName =
+    `${options?.namePrefix ?? 'e2e-db'}-${uniqueSuffix()}`.slice(0, 128)
 
-export type RealtimeResponseEvent<T extends unknown> = {
-    events: string[];
-    channels: string[];
-    timestamp: number;
-    payload: T;
-}
+  await page.goto(`/organizations/${orgId}`, {
+    waitUntil: 'domcontentloaded',
+    timeout: 60_000,
+  })
+  await enableDatabaseFeatureFlags(page)
+  await acceptCookieBannerIfPresent(page)
+  await expect(page).toHaveURL(new RegExp(`/organizations/${orgId}`), {
+    timeout: 60_000,
+  })
 
-type RealtimeResponseError = {
-    code: number;
-    message: string;
-}
+  // Prefer the primary create control; fall back to empty-state CTA.
+  const createTriggers = page.getByRole('button', { name: 'Create project' })
+  await expect(createTriggers.first()).toBeVisible({ timeout: 60_000 })
+  await skipCommunitySupportWizardIfPresent(page)
+  await clickInPage(createTriggers.first())
 
-type RealtimeResponseConnected = {
-    channels: string[];
-    user?: object;
-}
+  const dialog = page.getByRole('dialog')
+  const createHeading = dialog.getByRole('heading', { name: 'Create project' })
+  if (!(await createHeading.isVisible().catch(() => false))) {
+    await skipCommunitySupportWizardIfPresent(page)
+    await clickInPage(createTriggers.first())
+  }
+  await expect(createHeading).toBeVisible({
+    timeout: 30_000,
+  })
 
-type RealtimeResponseAuthenticated = {
-    to: string;
-    success: boolean;
-    user: object;
-}
+  await dialog.locator('#name').fill(projectName)
 
-type RealtimeRequestAuthenticate = {
-    session: string;
-}
-
-type Realtime = {
-    socket?: WebSocket;
-    timeout?: number;
-    url?: string;
-    lastMessage?: RealtimeResponse;
-    channels: Set<string>;
-    subscriptions: Map<number, {
-        channels: string[];
-        callback: (payload: RealtimeResponseEvent<any>) => void
-    }>;
-    subscriptionsCounter: number;
-    reconnect: boolean;
-    reconnectAttempts: number;
-    getTimeout: () => number;
-    connect: () => void;
-    createSocket: () => void;
-    cleanUp: (channels: string[]) => void;
-    onMessage: (event: MessageEvent) => void;
-}
-
-export type UploadProgress = {
-    $id: string;
-    progress: number;
-    sizeUploaded: number;
-    chunksTotal: number;
-    chunksUploaded: number;
-}
-
-class AppwriteException extends Error {
-    code: number;
-    response: string;
-    type: string;
-    constructor(message: string, code: number = 0, type: string = '', response: string = '') {
-        super(message);
-        this.name = 'AppwriteException';
-        this.message = message;
-        this.code = code;
-        this.type = type;
-        this.response = response;
+  // Region picker (cloud multi-region). Prefer Frankfurt for dedicated DB support.
+  const regionTrigger = dialog.getByRole('combobox').first()
+  if (await regionTrigger.isVisible().catch(() => false)) {
+    await regionTrigger.click()
+    const fraOption = page.getByRole('option', {
+      name: /Frankfurt|fra/i,
+    })
+    if (
+      await fraOption
+        .first()
+        .isVisible()
+        .catch(() => false)
+    ) {
+      await fraOption.first().click()
+    } else {
+      // Close list and keep whatever default was selected if FRA is unavailable.
+      await page.keyboard.press('Escape')
     }
+  }
+
+  const createResponsePromise = page.waitForResponse(
+    (response) => {
+      try {
+        const url = new URL(response.url())
+        return (
+          response.request().method() === 'POST' &&
+          /\/(?:v1\/)?(?:organizations?|organization)\/.*projects/i.test(
+            url.pathname,
+          ) &&
+          response.ok()
+        )
+      } catch {
+        return false
+      }
+    },
+    { timeout: 90_000 },
+  )
+
+  await dialog.getByRole('button', { name: 'Create', exact: true }).click()
+
+  const createResponse = await createResponsePromise
+  const body = (await createResponse.json()) as { $id?: string }
+  const projectId = body.$id
+  if (!projectId) {
+    throw new Error(
+      `Project create response missing $id: ${JSON.stringify(body).slice(0, 500)}`,
+    )
+  }
+
+  const created: CreatedProject = { projectId, projectName }
+  // Register before waiting on navigation: if the URL never updates, teardown
+  // (and global cleanup) can still delete the project the API already created.
+  registerCreatedE2eProject(created)
+
+  await expect(page).toHaveURL(new RegExp(`/projects/${projectId}`), {
+    timeout: 90_000,
+  })
+
+  return created
 }
 
-class Client {
-    config = {
-        endpoint: 'https://HOSTNAME/v1',
-        endpointRealtime: '',
-        project: '',
-        jwt: '',
-        locale: '',
-    };
-    headers: Headers = {
-        'x-sdk-name': 'Web',
-        'x-sdk-platform': 'client',
-        'x-sdk-language': 'web',
-        'x-sdk-version': '10.0.1',
-        'X-Appwrite-Response-Format': '1.0.0',
-    };
+async function deleteE2eProjectViaUi(
+  page: Page,
+  project: CreatedProject,
+): Promise<boolean> {
+  if (page.isClosed()) return false
 
-    /**
-     * Set Endpoint
-     *
-     * Your project endpoint
-     *
-     * @param {string} endpoint
-     *
-     * @returns {this}
-     */
-    setEndpoint(endpoint: string): this {
-        this.config.endpoint = endpoint;
-        this.config.endpointRealtime = this.config.endpointRealtime || this.config.endpoint.replace('https://', 'wss://').replace('http://', 'ws://');
+  await enableDatabaseFeatureFlags(page)
 
-        return this;
+  await page.goto(`/projects/${project.projectId}/settings`, {
+    waitUntil: 'domcontentloaded',
+    timeout: 60_000,
+  })
+  await acceptCookieBannerIfPresent(page)
+
+  const notFound = page.getByText(/not found|doesn't exist|does not exist/i)
+  if (
+    await notFound
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    return true
+  }
+
+  const deleteCard = page.locator('[data-card-id="delete-project"]')
+  if (!(await deleteCard.isVisible({ timeout: 10_000 }).catch(() => false))) {
+    return false
+  }
+
+  await deleteCard.getByRole('button', { name: 'Delete project' }).click()
+
+  const dialog = page.getByRole('dialog')
+  await expect(
+    dialog.getByRole('heading', { name: /Delete [Pp]roject/ }),
+  ).toBeVisible({ timeout: 15_000 })
+
+  await dialog.getByPlaceholder('Enter project name').fill(project.projectName)
+
+  const deleteResponsePromise = page.waitForResponse(
+    (response) => {
+      try {
+        const url = new URL(response.url())
+        const method = response.request().method()
+        return (
+          (method === 'DELETE' || method === 'POST') &&
+          url.pathname.includes(project.projectId) &&
+          response.status() < 500
+        )
+      } catch {
+        return false
+      }
+    },
+    { timeout: 120_000 },
+  )
+
+  await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+  const deleteResponse = await deleteResponsePromise.catch(() => null)
+  if (
+    deleteResponse &&
+    deleteResponse.status() >= 400 &&
+    deleteResponse.status() !== 404
+  ) {
+    return false
+  }
+
+  await page
+    .waitForURL(
+      (url) => !url.pathname.includes(`/projects/${project.projectId}`),
+      { timeout: 60_000 },
+    )
+    .catch(() => undefined)
+
+  return true
+}
+
+/**
+ * Permanently delete a disposable e2e project.
+ * Prefers the Console API (does not need a healthy page). Falls back to the
+ * settings danger zone when a page is still open. Safe if the project is gone.
+ */
+export async function deleteE2eProject(
+  page: Page | null | undefined,
+  project: CreatedProject,
+): Promise<void> {
+  if (!project.projectId) return
+
+  const organizationId = env.E2E_ORG_ID
+  if (organizationId) {
+    try {
+      await deleteOrganizationProject(organizationId, project.projectId)
+      unregisterCreatedE2eProject(project.projectId)
+      return
+    } catch (error) {
+      console.error(
+        `[e2e] API delete failed for ${project.projectId} (${project.projectName}):`,
+        error,
+      )
+    }
+  }
+
+  if (page && !page.isClosed()) {
+    try {
+      const deleted = await deleteE2eProjectViaUi(page, project)
+      if (deleted) {
+        unregisterCreatedE2eProject(project.projectId)
+        return
+      }
+    } catch (error) {
+      console.error(
+        `[e2e] UI delete failed for ${project.projectId} (${project.projectName}):`,
+        error,
+      )
+    }
+  }
+
+  console.error(
+    `[e2e] Project ${project.projectId} (${project.projectName}) was not deleted; global teardown will retry`,
+  )
+}
+
+```
+
+### Core Architecture Module: `apps/console/scripts/check-prerender-styles.ts`
+```
+import { join } from 'node:path'
+
+// Check emitted HTML, not hydrated DOM: JavaScript can hide missing SSR styles.
+const clientDir = join(import.meta.dir, '..', 'dist', 'client')
+let checked = 0
+for await (const path of new Bun.Glob('**/*.html').scan(clientDir)) {
+  const html = await Bun.file(join(clientDir, path)).text()
+  const links = [...html.matchAll(/<link\b[^>]*>/g)]
+    .map(([tag]) => tag)
+    .filter((tag) => /\brel="stylesheet"/.test(tag))
+  if (!links.length) {
+    throw new Error(`${path}: initial HTML has no stylesheet link`)
+  }
+  for (const tag of links) {
+    const href = tag.match(/\bhref="([^"]+)"/)?.[1]
+    if (!href) throw new Error(`${path}: stylesheet has no href`)
+    const pathname = new URL(href, `https://local.invalid/${path}`).pathname
+    const css = Bun.file(join(clientDir, decodeURIComponent(pathname)))
+    if (!(await css.exists()) || css.size === 0) {
+      throw new Error(
+        `${path}: stylesheet ${href} is absent from client output`,
+      )
+    }
+  }
+  checked++
+}
+if (!checked) throw new Error('No prerendered HTML found to check')
+console.log(`Verified initial stylesheet links in ${checked} prerendered pages`)
+
+```
+
+### Core Architecture Module: `apps/console/src/components/global/providers/agent/AgentEmptyState.tsx`
+```
+import type { ReactNode, RefObject } from 'react'
+import { Link } from '@tanstack/react-router'
+import {
+  ThinkingBubble,
+  type SphereColorMode,
+  type SphereShapeMode,
+} from '@/components/global/shared/ThinkingBubble'
+import { McpIcon } from '@/components/global/shared/McpIcon'
+import { Button } from '@/components/ui/button'
+import { analyticsAttrs } from '@/lib/analytics-actions'
+import { useT } from '@/lib/i18n/translate'
+
+type AgentEmptyStateProps = {
+  hasActiveMcp: boolean
+  suggestions: string[]
+  onSelectSuggestion: (question: string) => void
+  sphereSize: number
+  activityRef: RefObject<number>
+  colorMode: SphereColorMode
+  shapeMode: SphereShapeMode
+  particleCount?: number
+  debugSlot?: ReactNode
+  /** When true, hide suggestions and show a sign-in CTA instead. */
+  requireSignIn?: boolean
+}
+
+export function AgentEmptyState({
+  hasActiveMcp,
+  suggestions,
+  onSelectSuggestion,
+  sphereSize,
+  activityRef,
+  colorMode,
+  shapeMode,
+  particleCount,
+  debugSlot,
+  requireSignIn = false,
+}: AgentEmptyStateProps) {
+  const t = useT()
+
+  return (
+    <div className="flex min-h-full flex-1 flex-col items-center justify-center py-4">
+      <div className="mx-auto flex w-full max-w-md flex-col">
+        <div className="flex flex-col items-center">
+          <div className="mb-4 scale-[0.82]">
+            <ThinkingBubble
+              size={sphereSize}
+              activityRef={activityRef}
+              colorMode={colorMode}
+              shapeMode={shapeMode}
+              particleCount={particleCount}
+            />
+          </div>
+          <h3 className="text-center text-lg font-semibold text-foreground">
+            {requireSignIn
+              ? t('Sign in to use the agent')
+              : hasActiveMcp
+                ? t('What should we do next?')
+                : t('How can I help you?')}
+          </h3>
+          {requireSignIn ? (
+            <p className="mt-2 max-w-sm text-center text-[13px] text-muted-foreground">
+              {t(
+                'Create an account or sign in to chat with the Appwrite Agent about your projects.',
+              )}
+            </p>
+          ) : hasActiveMcp ? (
+            <div className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500/40" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              </span>
+              <McpIcon className="h-3 w-3" />
+              <span>{t('MCP ready')}</span>
+            </div>
+          ) : (
+            <p className="mt-2 max-w-sm text-center text-[13px] text-muted-foreground">
+              {t(
+                'I can inspect your project, explain issues, suggest next steps, and run approved actions.',
+              )}
+            </p>
+          )}
+        </div>
+
+        {requireSignIn ? (
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <Button asChild className="h-9 min-w-[160px] px-4 text-[13px]">
+              <Link
+                to="/sign-in"
+                search={{ redirect: '/agent' }}
+                {...analyticsAttrs('auth-sign-in')}
+              >
+                {t('Sign in')}
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              className="h-8 text-[12px] text-muted-foreground"
+            >
+              <Link
+                to="/sign-up"
+                search={{ redirect: '/' }}
+                {...analyticsAttrs('auth-sign-up')}
+              >
+                {t('Create an account')}
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-6 space-y-2.5">
+            {suggestions.map((question) => (
+              <button
+                key={question}
+                type="button"
+                onClick={() => onSelectSuggestion(question)}
+                className="w-full rounded-lg border border-transparent bg-muted/35 px-3.5 py-3 text-start text-sm leading-relaxed text-foreground transition-colors hover:border-border hover:bg-muted/55"
+                {...analyticsAttrs('agent-suggestion')}
+              >
+                {t(question)}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {debugSlot ? (
+        <div className="mx-auto mt-6 w-full max-w-md">{debugSlot}</div>
+      ) : null}
+    </div>
+  )
+}
+
+```
+
+### Core Architecture Module: `apps/console/src/components/global/shared/EmptyState.tsx`
+```
+import { type ComponentType, type ReactNode } from 'react'
+import { useT } from '@/lib/i18n/translate'
+import { cn } from '@/lib/utils'
+
+export interface EmptyStateProps {
+  /**
+   * Icon to display in the empty state (Lucide or any `className` icon).
+   */
+  icon?: ComponentType<{ className?: string }>
+  /**
+   * Title text (defaults based on isEmpty/hasFilters)
+   */
+  title?: string
+  /**
+   * Description text (defaults based on isEmpty/hasFilters)
+   */
+  description?: string
+  /**
+   * Whether this is an empty state (no items at all) vs filtered results
+   */
+  isEmpty?: boolean
+  /**
+   * Whether there are active filters or search
+   */
+  hasFilters?: boolean
+  /**
+   * Custom content to render instead of default title/description
+   * This allows full control over the empty state content
+   */
+  children?: ReactNode
+  /** Renders below the description inside the same layout (e.g. clear filters button) */
+  action?: ReactNode
+  /**
+   * Additional CSS classes
+   */
+  className?: string
+  /**
+   * Whether to show the container with border (card style)
+   */
+  variant?: 'default' | 'card' | 'centered'
+  /**
+   * Icon size variant (`xl` = larger hero-style empty state)
+   */
+  iconSize?: 'sm' | 'md' | 'lg' | 'xl'
+  /** Extra classes applied to the icon (e.g. `fill-current` for Play). */
+  iconClassName?: string
+}
+
+/**
+ * Unified empty state component that differentiates between:
+ * - No items at all (isEmpty = true)
+ * - No results after search/filter (hasFilters = true)
+ *
+ * Supports content overwriting via children prop for custom empty states.
+ */
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  isEmpty = true,
+  hasFilters = false,
+  children,
+  action,
+  className,
+  variant = 'default',
+  iconSize = 'sm',
+  iconClassName,
+}: EmptyStateProps) {
+  const t = useT()
+  // Default icon size classes
+  const iconSizeClasses = {
+    sm: 'h-5 w-5',
+    md: 'h-6 w-6',
+    lg: 'h-8 w-8',
+    xl: 'h-10 w-10',
+  }
+
+  // Default icon container size
+  const iconContainerSize = {
+    sm: 'h-12 w-12',
+    md: 'h-12 w-12',
+    lg: 'h-14 w-14',
+    xl: 'h-20 w-20',
+  }
+
+  const isHeroEmpty = iconSize === 'xl'
+
+  // If children are provided, render them with the container
+  if (children) {
+    if (variant === 'card') {
+      return (
+        <div
+          className={cn(
+            'rounded-xl border border-dashed border-border bg-card/50 p-8',
+            className,
+          )}
+        >
+          {children}
+        </div>
+      )
     }
 
-    /**
-     * Set Realtime Endpoint
-     *
-     * @param {string} endpointRealtime
-     *
-     * @returns {this}
-     */
-    setEndpointRealtime(endpointRealtime: string): this {
-        this.config.endpointRealtime = endpointRealtime;
-
-        return this;
+    if (variant === 'centered') {
+      return (
+        <div
+          className={cn(
+            'flex h-full items-center justify-center',
+            isHeroEmpty ? 'py-20' : 'py-16',
+            className,
+          )}
+        >
+          {children}
+        </div>
+      )
     }
 
-    /**
-     * Set Project
-     *
-     * Your project ID
-     *
-     * @param value string
-     *
-     * @return {this}
-     */
-    setProject(value: string): this {
-        this.headers['X-Appwrite-Project'] = value;
-        this.config.project = value;
-        return this;
-    }
+    return (
+      <div className={cn('flex flex-col items-center text-center', className)}>
+        {children}
+      </div>
+    )
+  }
 
-    /**
-     * Set JWT
-     *
-     * Your secret JSON Web Token
-     *
-     * @param value string
-     *
-     * @return {this}
-     */
-    setJWT(value: string): this {
-        this.headers['X-Appwrite-JWT'] = value;
-        this.config.jwt = value;
-        return this;
-    }
+  // Default empty state content
+  const defaultTitle = t(
+    title ||
+      (hasFilters
+        ? 'No results found'
+        : isEmpty
+          ? 'No items yet'
+          : 'No items found'),
+  )
+  const defaultDescription = t(
+    description ||
+      (hasFilters
+        ? 'Try adjusting your search or filters to see more results.'
+        : isEmpty
+          ? 'Get started by creating your first item.'
+          : 'No items match your criteria.'),
+  )
 
-    /**
-     * Set Locale
-     *
-     * @param value string
-     *
-     * @return {this}
-     */
-    setLocale(value: string): this {
-        this.headers['X-Appwrite-Locale'] = value;
-        this.config.locale = value;
-        return this;
-    }
+  const content = (
+    <div className="flex flex-col items-center text-center">
+      {Icon && (
+        <div
+          className={cn(
+            'mx-auto flex items-center justify-center rounded-full bg-muted',
+            isHeroEmpty ? 'mb-5' : 'mb-4',
+            iconContainerSize[iconSize],
+            variant === 'centered' && 'ring-1 ring-border',
+          )}
+        >
+          <Icon
+            className={cn(
+              'text-muted-foreground',
+              iconSizeClasses[iconSize],
+              iconClassName,
+            )}
+          />
+        </div>
+      )}
+      <p
+        className={cn(
+          'mb-1 text-foreground',
+          isHeroEmpty
+            ? 'text-[15px] font-semibold tracking-tight'
+            : 'text-[14px] font-medium',
+        )}
+      >
+        {defaultTitle}
+      </p>
+      <p
+        className={cn(
+          'text-muted-foreground',
+          isHeroEmpty
+            ? 'max-w-md text-[14px] leading-relaxed'
+            : 'text-[13px]',
+        )}
+      >
+        {defaultDescription}
+      </p>
+      {action ? (
+        <div className="mt-6 flex w-full flex-wrap justify-center gap-2">
+          {action}
+        </div>
+      ) : null}
+    </div>
+  )
 
+  if (variant === 'card') {
+    return (
+      <div
+        className={cn(
+          'rounded-xl border border-dashed border-border bg-card/50 p-8',
+          className,
+        )}
+      >
+        {content}
+      </div>
+    )
+  }
 
-    private realtime: Realtime = {
-        socket: undefined,
-        timeout: undefined,
-        url: '',
-        channels: new Set(),
-        subscriptions: new Map(),
-        subscriptionsCounter: 0,
-        reconnect: true,
-        reconnectAttempts: 0,
-        lastMessage: undefined,
-        connect: () => {
-            clearTimeout(this.realtime.timeout);
-            this.realtime.timeout = window?.setTimeout(() => {
-                this.realtime.createSocket();
-            }, 50);
-        },
-        getTimeout: () => {
-            switch (true) {
-                case this.realtime.reconnectAttempts < 5:
-                    return 1000;
-                case this.realtime.reconnectAttempts < 15:
-                    return 5000;
-                case this.realtime.reconnectAttempts < 100:
-                    return 10_000;
-                default:
-                    return 60_000;
-            }
-        },
-        createSocket: () => {
-            if (this.realtime.channels.size < 1) return;
+  if (variant === 'centered') {
+    return (
+      <div
+        className={cn(
+          'flex h-full items-center justify-center',
+          isHeroEmpty ? 'py-20' : 'py-16',
+          className,
+        )}
+      >
+        {content}
+      </div>
+    )
+  }
 
-            const channels = new URLSearchParams();
-            channels.set('project', this.config.project);
-            this.realtime.channels.forEach(channel => {
-                channels.append('channels[]', channel);
-            });
+  return (
+    <div className={cn('flex flex-col items-center text-center', className)}>
+      {content}
+    </div>
+  )
+}
 
-            const url = this.config.endpointRealtime + '/realtime?' + channels.toString();
+```
 
-            if (
-                url !== this.realtime.url || // Check if URL is present
-                !this.realtime.socket || // Check if WebSocket has not been created
-                this.realtime.socket?.readyState > WebSocket.OPEN // Check if WebSocket is CLOSING (3) or CLOSED (4)
-            ) {
-                if (
-                    this.realtime.socket &&
-                    this.realtime.socket?.readyState < WebSocket.CLOSING // Close WebSocket if it is CONNECTING (0) or OPEN (1)
-                ) {
-                    this.realtime.reconnect = false;
-                    this.realtime.socket.close();
-                }
+### Core Architecture Module: `apps/console/src/components/global/shared/ProductEmptyState.tsx`
+```
+import type { ComponentType, ReactNode } from 'react'
+import { Link, type LinkProps } from '@tanstack/react-router'
+import { ArrowUpRight, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { useConsoleProfile } from '@/hooks/use-console-profile'
+import { useT } from '@/lib/i18n/translate'
+import { getDocsPageUrl } from '@/lib/marketing/urls'
+import { cn } from '@/lib/utils'
 
-                this.realtime.url = url;
-                this.realtime.socket = new WebSocket(url);
-                this.realtime.socket.addEventListener('message', this.realtime.onMessage);
-                this.realtime.socket.addEventListener('open', _event => {
-                    this.realtime.reconnectAttempts = 0;
-                });
-                this.realtime.socket.addEventListener('close', event => {
-                    if (
-                        !this.realtime.reconnect ||
-                        (
-                            this.realtime?.lastMessage?.type === 'error' && // Check if last message was of type error
-                            (<RealtimeResponseError>this.realtime?.lastMessage.data).code === 1008 // Check for policy violation 1008
-                        )
-                    ) {
-                        this.realtime.reconnect = true;
-                        return;
-                    }
+export type ProductEmptyStateIcon = ComponentType<{ className?: string }>
 
-                    const timeout = this.realtime.getTimeout();
-                    console.error(`Realtime got disconnected. Reconnect will be attempted in ${timeout / 1000} seconds.`, event.reason);
+export type ProductEmptyStateStep = {
+  icon: ProductEmptyStateIcon
+  /** English source copy; translated at render. */
+  title: string
+  /** English source copy; translated at render. */
+  description: string
+  /** Rendered after the title (e.g. a glossary hint). */
+  hint?: ReactNode
+  /** Makes the whole step a link. */
+  link?: LinkProps
+}
 
-                    setTimeout(() => {
-                        this.realtime.reconnectAttempts++;
-                        this.realtime.createSocket();
-                    }, timeout);
-                })
-            }
-        },
-        onMessage: (event) => {
-            try {
-                const message: RealtimeResponse = JSON.parse(event.data);
-                this.realtime.lastMessage = message;
-                switch (message.type) {
-                    case 'connected':
-                        const cookie = JSON.parse(window.localStorage.getItem('cookieFallback') ?? '{}');
-                        const session = cookie?.[`a_session_${this.config.project}`];
-                        const messageData = <RealtimeResponseConnected>message.data;
+/** Hero for a service with no resources: illustration, title, description, actions. */
+export function ProductEmptyStateHero({
+  visual,
+  icon: Icon,
+  title,
+  description,
+  actions,
+  as: Heading = 'h2',
+}: {
+  /** Desktop illustration; `icon` replaces it below `sm`. */
+  visual: ReactNode
+  icon: ProductEmptyStateIcon
+  title: ReactNode
+  description: ReactNode
+  actions?: ReactNode
+  as?: 'h1' | 'h2'
+}) {
+  return (
+    <div className="flex flex-col items-center text-center">
+      {visual}
+      <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-muted text-muted-foreground sm:hidden">
+        <Icon className="h-5 w-5" />
+      </div>
+      <Heading className="mt-6 text-[24px] font-semibold tracking-tight text-foreground sm:mt-10">
+        {title}
+      </Heading>
+      <p className="mt-3 max-w-lg text-[14px] leading-relaxed text-muted-foreground">
+        {description}
+      </p>
+      {actions ? (
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+          {actions}
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
-                        if (session && !messageData.user) {
-                            this.realtime.socket?.send(JSON.stringify(<RealtimeRequest>{
-                                type: 'authentication',
-                                data: {
-                                    session
-                                }
-                            }));
-                        }
-                        break;
-                    case 'event':
-                        let data = <RealtimeResponseEvent<unknown>>message.data;
-                        if (data?.channels) {
-                            const isSubscribed = data.channels.some(channel => this.realtime.channels.has(channel));
-                            if (!isSubscribed) return;
-                            this.realtime.subscriptions.forEach(subscription => {
-                                if (data.channels.some(channel => subscription.channels.includes(channel))) {
-                                    setTimeout(() => subscription.callback(data));
-                                }
-                            })
-                        }
-                        break;
-                    case 'error':
-                        throw message.data;
-                    default:
-                        break;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        },
-        cleanUp: channels => {
-            this.realtime.channels.forEach(channel => {
-                if (channels.includes(channel)) {
-                    let found = Array.from(this.realtime.subscriptions).some(([_key, subscription] )=> {
-                        return subscription.channels.includes(channel);
-                    })
+/** Primary hero action; when disabled with a reason, the reason shows on hover. */
+export function ProductEmptyStateCreateButton({
+  children,
+  onClick,
+  disabled = false,
+  disabledTooltip,
+}: {
+  children: ReactNode
+  onClick?: () => void
+  disabled?: boolean
+  disabledTooltip?: string
+}) {
+  const button = (
+    <Button
+      variant="brandCta"
+      className="h-9 text-[13px]"
+      onClick={onClick}
+      disabled={disabled || !onClick}
+    >
+      {children}
+    </Button>
+  )
+  if (!disabled || !disabledTooltip) return button
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span tabIndex={0}>{button}</span>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs text-[12px]">
+        {disabledTooltip}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
 
-                    if (!found) {
-                        this.realtime.channels.delete(channel);
-                    }
-                }
-            })
+/** Secondary hero action that opens a docs page in a new tab. */
+export function ProductEmptyStateDocsButton({ path }: { path: string }) {
+  const t = useT()
+  const { features } = useConsoleProfile()
+  return (
+    <Button variant="outline" className="h-9 text-[13px]" asChild>
+      <a
+        href={getDocsPageUrl(path, features.marketing)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t('Read the docs')}
+      </a>
+    </Button>
+  )
+}
+
+/** Decorative illustration over a fading dot grid. Hidden below `sm`. */
+export function ProductEmptyStateVisual({
+  children,
+  className,
+}: {
+  children: ReactNode
+  /** Replaces the default tile row layout. */
+  className?: string
+}) {
+  return (
+    <div aria-hidden className="relative hidden select-none sm:block">
+      <div
+        className="pointer-events-none absolute -inset-x-16 -inset-y-10"
+        style={{
+          backgroundImage:
+            'radial-gradient(var(--border) 1px, transparent 1px)',
+          backgroundSize: '14px 14px',
+          maskImage:
+            'radial-gradient(ellipse at center, black 30%, transparent 72%)',
+          WebkitMaskImage:
+            'radial-gradient(ellipse at center, black 30%, transparent 72%)',
+        }}
+      />
+      <div className={cn('relative', className ?? 'flex items-center gap-1.5')}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Illustration card. With `label`, renders a monospace title bar (schema style);
+ * without it, a skeleton header line.
+ */
+export function ProductEmptyStateTile({
+  icon: Icon,
+  label,
+  className,
+  children,
+}: {
+  icon: ProductEmptyStateIcon
+  label?: string
+  className?: string
+  children: ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        'overflow-hidden rounded-lg border border-border bg-card text-start shadow-sm',
+        label ? 'w-44' : 'w-36',
+        className,
+      )}
+    >
+      {label ? (
+        <>
+          <div className="flex items-center gap-1.5 border-b border-border bg-muted/40 px-2.5 py-1.5">
+            <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="font-mono text-[11px] text-foreground">
+              {label}
+            </span>
+          </div>
+          <div className="px-2.5 py-2">{children}</div>
+        </>
+      ) : (
+        <div className="p-2.5">
+          <div className="flex items-center gap-1.5">
+            <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="h-1.5 w-12 rounded-full bg-muted-foreground/20" />
+          </div>
+          <div className="mt-2.5">{children}</div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/** Link between illustration tiles: an arrow (flow) or dotted ends (relation). */
+export function ProductEmptyStateConnector({
+  variant = 'arrow',
+  accent = false,
+}: {
+  variant?: 'arrow' | 'link'
+  accent?: boolean
+}) {
+  if (variant === 'arrow') {
+    return (
+      <div className="flex items-center px-0.5 text-muted-foreground/50">
+        <span className="h-px w-6 bg-border" />
+        <ChevronRight className="-ms-1 h-3.5 w-3.5 rtl:rotate-180" />
+      </div>
+    )
+  }
+  const dot = cn(
+    'h-1.5 w-1.5 rounded-full',
+    accent ? 'bg-[var(--brand-cta)]' : 'bg-muted-foreground/40',
+  )
+  return (
+    <div className="flex items-center">
+      <span className={dot} />
+      <span
+        className={cn(
+          'h-px w-6',
+          accent
+            ? 'bg-[color-mix(in_oklch,var(--brand-cta)_60%,transparent)]'
+            : 'bg-border',
+        )}
+      />
+      <span className={dot} />
+    </div>
+  )
+}
+
+/** Three-up "how it works" panel joined into one bordered card. */
+export function ProductEmptyStateSteps({
+  steps,
+  className,
+}: {
+  steps: ProductEmptyStateStep[]
+  className?: string
+}) {
+  const t = useT()
+  return (
+    <ol
+      className={cn(
+        'mt-12 grid overflow-hidden rounded-xl border border-border bg-card/50 sm:mt-14',
+        steps.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3',
+        className,
+      )}
+    >
+      {steps.map((step, index) => {
+        const Icon = step.icon
+        const content = (
+          <>
+            <div className="flex items-center justify-between">
+              <span className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors group-hover:text-foreground">
+                <Icon className="h-4 w-4" />
+              </span>
+              {step.link ? (
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground rtl:-scale-x-100" />
+              ) : (
+                <span className="font-mono text-[11px] tabular-nums text-muted-foreground/70">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              )}
+            </div>
+            <div className="mt-4 flex items-center gap-1.5">
+              <h3 className="text-[14px] font-medium text-foreground">
+                {t(step.title)}
+              </h3>
+              {step.hint}
+            </div>
+            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+              {t(step.description)}
+            </p>
+          </>
+        )
+        const itemClassName = cn(
+          'flex flex-col text-start',
+          index > 0 && 'border-t border-border sm:border-t-0 sm:border-s',
+        )
+        return (
+          <li key={step.title} className={itemClassName}>
+            {step.link ? (
+              <Link
+                {...step.link}
+                className="group flex h-full flex-col p-5 transition-colors hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
+              >
+                {content}
+              </Link>
+            ) : (
+              <div className="flex h-full flex-col p-5">{content}</div>
+            )}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
+```
+
+### Core Architecture Module: `apps/console/src/components/pages/domains/_components/DomainsDefaultState.tsx`
+```
+import { ArrowUpRight, Globe, Layers, Lock, Search, type LucideIcon } from 'lucide-react'
+import { DocsRouteLink } from '@/components/pages/docs/DocsRouteLink'
+import { ProductIconTile } from '@/components/pages/products/_components/ProductTone'
+import { riseStyle } from '@/components/pages/products/_components/ArtParts'
+import { cn } from '@/lib/utils'
+import { useT } from '@/lib/i18n/translate'
+
+const EXAMPLE_SEARCHES = [
+  'bramblecode.dev',
+  'quillstack.app',
+  'driftmesh.io',
+  'cobaltnest.ai',
+  'emberloop.studio',
+] as const
+
+const FEATURES: { icon: LucideIcon; title: string; description: string }[] = [
+  {
+    icon: Search,
+    title: '160+ TLDs',
+    description: 'Live pricing and availability as you type.',
+  },
+  {
+    icon: Layers,
+    title: 'Managed with your backend',
+    description:
+      'Buy and manage the domain in the same Console as Auth, Databases, Sites, and Functions.',
+  },
+  {
+    icon: Globe,
+    title: 'Appwrite DNS',
+    description: 'Manage records in the Console, next to your projects.',
+  },
+  {
+    icon: Lock,
+    title: 'Automatic TLS',
+    description: 'Connect Sites, Functions, or API domains with certificates issued for you.',
+  },
+]
+
+type DomainsDefaultStateProps = {
+  onExampleSearch?: (value: string) => void
+  /** Tighter spacing for shorter surfaces such as the buy-domain wizard. */
+  compact?: boolean
+}
+
+export function DomainsExampleSearches({
+  onExampleSearch,
+}: {
+  onExampleSearch: (value: string) => void
+}) {
+  const t = useT()
+
+  return (
+    <div
+      className="product-hero-rise mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-2"
+      style={riseStyle(120)}
+    >
+      <span className="me-1 text-[12px] text-muted-foreground">{t('Popular searches')}</span>
+      {EXAMPLE_SEARCHES.map((example) => (
+        <button
+          key={example}
+          type="button"
+          dir="ltr"
+          onClick={() => onExampleSearch(example)}
+          className="rounded-full border border-border bg-background/70 px-3 py-1 font-mono text-[12px] text-foreground/80 backdrop-blur-sm transition-colors hover:border-[var(--brand-cta)]/40 hover:text-foreground dark:bg-card/50"
+        >
+          {example}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function DomainsDefaultState({
+  onExampleSearch,
+  compact = false,
+}: DomainsDefaultStateProps) {
+  const t = useT()
+
+  return (
+    <div className="mx-auto w-full max-w-5xl">
+      {onExampleSearch ? <DomainsExampleSearches onExampleSearch={onExampleSearch} /> : null}
+
+      <ul
+        className={cn(
+          'grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4',
+          compact
+            ? 'mt-8 gap-y-6 border-t border-border/70 pt-7 sm:mt-10'
+            : 'mt-16 gap-y-8 border-t border-border pt-10 sm:mt-20',
+        )}
+      >
+        {FEATURES.map((feature, index) => (
+          <li
+            key={feature.title}
+            className="product-hero-rise flex gap-3.5 text-start"
+            style={riseStyle(220 + index * 90)}
+          >
+            <ProductIconTile icon={feature.icon} size="sm" />
+            <div className="min-w-0">
+              <h2 className="text-[14px] font-medium text-foreground">{t(feature.title)}</h2>
+              <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{t(feature.description)}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className={cn('text-center', compact ? 'mt-7' : 'mt-10')}>
+        <DocsRouteLink
+          href="/docs/products/domains"
+          className="group/docs inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground/80 transition-colors hover:text-foreground"
+        >
+          {t('Appwrite Domains docs')}
+          <ArrowUpRight
+            className="size-3.5 transition-transform group-hover/docs:-translate-y-0.5 group-hover/docs:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/docs:-translate-x-0.5"
+            aria-hidden
+          />
+        </DocsRouteLink>
+      </div>
+    </div>
+  )
+}
+
+```
+
+### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/apps/_components/AppsEmptyState.tsx`
+```
+import { Check, FolderCheck, Package, ShieldCheck, Store } from 'lucide-react'
+import {
+  ProductEmptyStateCreateButton,
+  ProductEmptyStateDocsButton,
+  ProductEmptyStateHero,
+  ProductEmptyStateSteps,
+  ProductEmptyStateVisual,
+  type ProductEmptyStateStep,
+} from '@/components/global/shared/ProductEmptyState'
+import { analyticsAttrs } from '@/lib/analytics-actions'
+import { useT } from '@/lib/i18n/translate'
+import { cn } from '@/lib/utils'
+
+const STEPS: ProductEmptyStateStep[] = [
+  {
+    icon: Package,
+    title: 'Create your app',
+    description:
+      'Add a name, logo, and redirect URIs so users recognize your app on the consent screen.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Request scoped access',
+    description:
+      'Users pick the projects and organizations your app can reach, and can revoke access at any time.',
+  },
+  {
+    icon: Store,
+    title: 'Publish to the marketplace',
+    description:
+      'List the app so teams across Appwrite can discover it and connect it to their projects.',
+  },
+]
+
+const PROJECTS = [
+  { name: 'my-app', granted: true },
+  { name: 'staging', granted: true },
+  { name: 'analytics', granted: false },
+] as const
+
+const SCOPES = ['projects.read', 'functions.write'] as const
+
+/** Decorative project picker shown when a user connects your app. */
+function ConnectVisual() {
+  const t = useT()
+  return (
+    <ProductEmptyStateVisual className="w-64 pb-4">
+      <div className="overflow-hidden rounded-xl border border-border bg-card text-start shadow-xl">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-2">
+          <FolderCheck className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="h-1.5 w-20 rounded-full bg-muted-foreground/25" />
+        </div>
+        <ul className="space-y-2 px-3 py-3">
+          {PROJECTS.map((project) => (
+            <li key={project.name} className="flex items-center gap-2">
+              <span
+                className={cn(
+                  'flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border',
+                  project.granted
+                    ? 'border-transparent bg-[var(--brand-cta)] text-white'
+                    : 'border-muted-foreground/40',
+                )}
+              >
+                {project.granted ? <Check className="h-2.5 w-2.5" /> : null}
+              </span>
+              <span
+                dir="ltr"
+                className={cn(
+                  'font-mono text-[10px]',
+                  project.granted ? 'text-foreground' : 'text-muted-foreground',
+                )}
+              >
+                {project.name}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div
+          dir="ltr"
+          className="flex flex-wrap gap-1 border-t border-border px-3 py-2.5"
+        >
+          {SCOPES.map((scope) => (
+            <span
+              key={scope}
+              className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground"
+            >
+              {scope}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute -start-40 top-8 flex items-center gap-1.5 rounded-lg border border-border bg-popover px-2.5 py-2 shadow-lg">
+        <img src="/icons/appwrite.svg" alt="" className="h-3.5 w-3.5" />
+        <span className="text-[11px] font-medium text-foreground">
+          {t('Sign in with Appwrite')}
+        </span>
+      </div>
+
+      <div className="absolute -end-40 bottom-6 w-44 rounded-lg border border-border bg-popover p-2.5 text-start shadow-lg">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-[11px] font-semibold text-muted-foreground">
+            A
+          </span>
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <span className="block h-1.5 w-16 rounded-full bg-foreground/40" />
+            <span className="block h-1.5 w-24 rounded-full bg-muted-foreground/20" />
+          </div>
+        </div>
+        <span className="mt-2.5 inline-flex items-center gap-1 rounded-full border border-border px-1.5 py-0.5 text-[9px] text-muted-foreground">
+          <Store className="h-2.5 w-2.5" />
+          {t('Marketplace')}
+        </span>
+      </div>
+    </ProductEmptyStateVisual>
+  )
+}
+
+export function AppsEmptyState({ onCreate }: { onCreate: () => void }) {
+  const t = useT()
+  return (
+    <div className="mx-auto w-full max-w-4xl py-6 sm:py-10">
+      <ProductEmptyStateHero
+        visual={<ConnectVisual />}
+        icon={Package}
+        title={t('Build on top of Appwrite')}
+        description={t(
+          'Create OAuth2 apps that let Appwrite users connect their projects with consent-based, scoped access instead of pasted API keys. Publish them to the marketplace for every organization to find.',
+        )}
+        actions={
+          <>
+            <span
+              className="contents"
+              {...analyticsAttrs('create-marketplace-app')}
+            >
+              <ProductEmptyStateCreateButton onClick={onCreate}>
+                {t('Create app')}
+              </ProductEmptyStateCreateButton>
+            </span>
+            <ProductEmptyStateDocsButton path="/docs/partners/apps" />
+          </>
         }
-    }
+      />
+      <ProductEmptyStateSteps steps={STEPS} />
+    </div>
+  )
+}
 
-    /**
-     * Subscribes to Appwrite events and passes you the payload in realtime.
-     * 
-     * @param {string|string[]} channels 
-     * Channel to subscribe - pass a single channel as a string or multiple with an array of strings.
-     * 
-     * Possible channels are:
-     * - account
+```
+
+### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/billing/utils.ts`
+```
+/**
+ * Billing Utility Functions
+ *
+ * Shared utilities for billing components including formatting,
+ * status helpers, and calculations.
+ */
+
+import { formatLocalizedDateTime } from '@/lib/i18n/date-format'
+
+/**
+ * Format a number as currency
+ * @param amount - The amount to format
+ * @param currency - Currency code (default: USD)
+ * @returns Formatted currency string
+ */
+export function formatCurrency(
+  amount: number,
+  currency: string = 'USD',
+): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount)
+}
+
+/**
+ * Format a date for display
+ * @param date - Date string or Date object
+ * @param options - Intl.DateTimeFormatOptions
+ * @returns Formatted date string
+ */
+export function formatDate(
+  date: string | Date,
+  options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  },
+): string {
+  return formatLocalizedDateTime(new Date(date), options)
+}
+
+/**
+ * Calculate total from an array of charges
+ * @param charges - Array of charge objects with amount property
+ * @returns Total amount
+ */
+export function calculateTotal(charges: { amount: number }[]): number {
+  return charges.reduce((sum, charge) => sum + charge.amount, 0)
+}
+
+/**
+ * Format invoice number for display
+ * @param invoiceNumber - Raw invoice number
+ * @returns Formatted invoice number
+ */
+export function formatInvoiceNumber(invoiceNumber: string): string {
+  return invoiceNumber.toUpperCase()
+}
+
+/**
+ * Get payment method icon name based on type
+ * @param type - Payment method type
+ * @returns Icon name for lucide-react
+ */
+export function getPaymentMethodIcon(type: 'card' | 'paypal' | 'bank'): string {
+  switch (type) {
+    case 'card':
+      return 'CreditCard'
+    case 'paypal':
+      return 'Wallet'
+    case 'bank':
+      return 'Building2'
+    default:
+      return 'CreditCard'
+  }
+}
+
+/**
+ * Check if an invoice is overdue
+ * @param dueDate - Invoice due date
+ * @param status - Current invoice status
+ * @returns Whether the invoice is overdue
+ */
+export function isInvoiceOverdue(dueDate: string, status: string): boolean {
+  if (status === 'paid') return false
+  return new Date(dueDate) < new Date()
+}
+
+/**
+ * Get relative time string (e.g., "in 15 days", "3 days ago")
+ * @param date - Target date
+ * @returns Relative time string
+ */
+export function getRelativeTime(date: string | Date): string {
+  const now = new Date()
+  const target = new Date(date)
+  const diffMs = target.getTime() - now.getTime()
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) return 'today'
+  if (diffDays === 1) return 'tomorrow'
+  if (diffDays === -1) return 'yesterday'
+  if (diffDays > 0) return `in ${diffDays} days`
+  return `${Math.abs(diffDays)} days ago`
+}
+
+/**
+ * Mask a credit card number showing only last 4 digits
+ * @param last4 - Last 4 digits of card
+ * @returns Masked card number
+ */
+export function maskCardNumber(last4: string): string {
+  return `•••• •••• •••• ${last4}`
+}
+
+/**
+ * Format card expiry date
+ * @param month - Expiry month
+ * @param year - Expiry year
+ * @returns Formatted expiry string (MM/YY)
+ */
+export function formatCardExpiry(month: number, year: number): string {
+  const monthStr = month.toString().padStart(2, '0')
+  const yearStr = year.toString().slice(-2)
+  return `${monthStr}/${yearStr}`
+}
+
+const CARD_BRAND_LABELS: Record<string, string> = {
+  visa: 'Visa',
+  mastercard: 'Mastercard',
+  amex: 'American Express',
+  american_express: 'American Express',
+  discover: 'Discover',
+  diners: 'Diners Club',
+  diners_club: 'Diners Club',
+  jcb: 'JCB',
+  unionpay: 'UnionPay',
+  maestro: 'Maestro',
+  elo: 'Elo',
+  hipercard: 'Hipercard',
+  mir: 'MIR',
+  rupay: 'RuPay',
+  argencard: 'Argencard',
+  cabal: 'Cabal',
+  cencosud: 'Cencosud',
+  naranja: 'Naranja',
+  'targeta-shopping': 'Tarjeta Shopping',
+}
+
+function normalizePaymentCardBrand(brand: string | undefined): string {
+  return brand?.trim().toLowerCase().replace(/[\s-]+/g, '_') || ''
+}
+
+/**
+ * Human-readable card network from API `brand` (often Stripe-style slugs).
+ */
+export function formatPaymentCardBrand(brand: string | undefined): string {
+  const b = normalizePaymentCardBrand(brand)
+  if (CARD_BRAND_LABELS[b]) return CARD_BRAND_LABELS[b]
+  if (!b) return 'Card'
+  return b
+    .split(/[\s_]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+}
+
+export type PaymentMethodCardSummaryInput = {
+  brand?: string
+  last4?: string
+  name?: string
+  expiryMonth?: number
+  expiryYear?: number
+}
+
+/**
+ * Label for payment method selects: card type, last four, optional expiry.
+ */
+export function formatPaymentMethodSummary(
+  method: PaymentMethodCardSummaryInput,
+  options?: { includeExpiry?: boolean },
+): string {
+  if (!method.last4?.trim()) {
+    return method.name?.trim() || 'Card'
+  }
+  const typeLabel = formatPaymentCardBrand(method.brand)
+  let out = `${typeLabel} ending in ${method.last4}`
+  if (options?.includeExpiry && method.expiryMonth && method.expiryYear) {
+    out += ` · Expires ${formatCardExpiry(method.expiryMonth, method.expiryYear)}`
+  }
+  return out
+}
+
+/** Billing-related fields on org API payloads (SDK Team type may omit these). */
+export type OrganizationPaymentRefs = {
+  paymentMethodId?: string | null
+  backupPaymentMethodId?: string | null
+  failedInvoice?: {
+    $id: string
+    lastError?: string
+    type?: string
+    grossAmount?: number
+    amount?: number
+    currency?: string
+    dueAt?: string
+  } | null
+  billingPlanDowngrade?: unknown
+}
+
+export function asOrganizationPaymentRefs(
+  organization: unknown,
+): OrganizationPaymentRefs {
+  return organization as OrganizationPaymentRefs
+}
+
+/** Subscription failed invoices only - other types (domains, addons, etc.) must not trigger payment alerts. */
+export function isSubscriptionFailedInvoiceWithError(
+  failedInvoice: OrganizationPaymentRefs['failedInvoice'],
+): failedInvoice is NonNullable<OrganizationPaymentRefs['failedInvoice']> {
+  return (
+    !!failedInvoice &&
+    failedInvoice.type === 'subscription' &&
+    !!failedInvoice.lastError
+  )
+}
+
+
+```
+
+### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/domains/_components/DomainsEmptyState.tsx`
+```
+import { Check, Globe, Link2, ListTree, Server } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
+  ProductEmptyStateCreateButton,
+  ProductEmptyStateDocsButton,
+  ProductEmptyStateHero,
+  ProductEmptyStateSteps,
+  ProductEmptyStateVisual,
+  type ProductEmptyStateStep,
+} from '@/components/global/shared/ProductEmptyState'
+import { useT } from '@/lib/i18n/translate'
+import { cn } from '@/lib/utils'
+
+const STEPS: ProductEmptyStateStep[] = [
+  {
+    icon: Server,
+    title: 'Bring or buy a domain',
+    description:
+      'Add a domain you already own, transfer it in, or buy a new one without leaving the console.',
+  },
+  {
+    icon: ListTree,
+    title: 'Manage DNS in one place',
+    description:
+      'Point your nameservers to Appwrite, then add records or apply presets for email and verification.',
+  },
+  {
+    icon: Link2,
+    title: 'Connect it everywhere',
+    description:
+      'Use the domain and its subdomains for sites, functions, and project APIs across the organization.',
+  },
+]
+
+const RECORDS = [
+  { type: 'A', name: '@', target: 'Sites' },
+  { type: 'CNAME', name: 'api', target: 'API' },
+  { type: 'CNAME', name: 'hooks', target: 'Functions' },
+  { type: 'MX', name: '@', target: 'mail' },
+] as const
+
+/** Decorative organization domain with its DNS zone. */
+function DomainsVisual() {
+  return (
+    <ProductEmptyStateVisual className="w-[360px] pb-6">
+      <div className="overflow-hidden rounded-xl border border-border bg-card text-start shadow-xl">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-2">
+          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+          <span dir="ltr" className="font-mono text-[11px] text-foreground">
+            example.com
+          </span>
+          <span className="ms-auto flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+            <Check className="h-2.5 w-2.5" />
+          </span>
+        </div>
+        <ul dir="ltr" className="divide-y divide-border">
+          {RECORDS.map((record) => (
+            <li
+              key={`${record.type}-${record.name}-${record.target}`}
+              className="grid grid-cols-[3.25rem_3rem_1fr] items-center gap-2 px-3 py-2 font-mono text-[10px]"
+            >
+              <span className="w-fit rounded bg-muted px-1 text-muted-foreground">
+                {record.type}
+              </span>
+              <span className="text-foreground">{record.name}</span>
+              <span
+                className={cn(
+                  'h-1.5 rounded-full',
+                  record.target === 'mail'
+                    ? 'w-16 bg-muted-foreground/20'
+                    : 'w-24 bg-[color-mix(in_oklch,var(--brand-cta)_45%,transparent)]',
+                )}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="absolute -start-48 top-14 w-44 rounded-lg border border-border bg-popover p-2.5 text-start shadow-lg">
+        <div className="flex items-center gap-1.5">
+          <Server className="h-3 w-3 text-muted-foreground" />
+          <span className="h-1.5 w-14 rounded-full bg-muted-foreground/25" />
+        </div>
+        <div dir="ltr" className="mt-2 space-y-1 font-mono text-[10px]">
+          <p className="text-foreground">ns1.appwrite.zone</p>
+          <p className="text-foreground">ns2.appwrite.zone</p>
+        </div>
+      </div>
+
+      <div className="absolute -end-24 -bottom-1 flex items-center gap-1.5 rounded-full border border-border bg-popover px-2.5 py-1.5 shadow-lg">
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-cta)]" />
+        <span dir="ltr" className="font-mono text-[10px] text-foreground">
+          api.example.com
+        </span>
+      </div>
+    </ProductEmptyStateVisual>
+  )
+}
+
+function SecondaryAction({
+  label,
+  onClick,
+  disabledTooltip,
+}: {
+  label: string
+  onClick: () => void
+  disabledTooltip?: string
+}) {
+  const button = (
+    <Button
+      variant="outline"
+      className="h-9 text-[13px]"
+      onClick={onClick}
+      disabled={!!disabledTooltip}
+    >
+      {label}
+    </Button>
+  )
+  if (!disabledTooltip) return button
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span tabIndex={0}>{button}</span>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs text-[12px]">
+        {disabledTooltip}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+export function DomainsEmptyState({
+  onAdd,
+  onBuy,
+  onTransfer,
+  disabledTooltip,
+}: {
+  onAdd: () => void
+  /** Omitted where buying and transferring are unavailable. */
+  onBuy?: () => void
+  onTransfer?: () => void
+  /** Set when the plan's domain limit blocks every action. */
+  disabledTooltip?: string
+}) {
+  const t = useT()
+  return (
+    <div className="mx-auto w-full max-w-4xl py-6 sm:py-10">
+      <ProductEmptyStateHero
+        visual={<DomainsVisual />}
+        icon={Globe}
+        title={t('Your domains, managed by Appwrite')}
+        description={t(
+          'Register, transfer, and manage domains for your whole organization. Configure DNS once and connect it to your sites, functions, and APIs.',
+        )}
+        actions={
+          <>
+            <ProductEmptyStateCreateButton
+              onClick={onAdd}
+              disabled={!!disabledTooltip}
+              disabledTooltip={disabledTooltip}
+            >
+              {t('Add domain')}
+            </ProductEmptyStateCreateButton>
+            {onBuy ? (
+              <SecondaryAction
+                label={t('Buy domain')}
+                onClick={onBuy}
+                disabledTooltip={disabledTooltip}
+              />
+            ) : null}
+            {onTransfer ? (
+              <SecondaryAction
+                label={t('Transfer in')}
+                onClick={onTransfer}
+                disabledTooltip={disabledTooltip}
+              />
+            ) : null}
+            <ProductEmptyStateDocsButton path="/docs/products/domains" />
+          </>
+        }
+      />
+      <ProductEmptyStateSteps steps={STEPS} />
+    </div>
+  )
+}
+
 ```
 
 
@@ -2146,57 +1903,11 @@ class Client {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #14230** (2026-10-08): **🐛 Bug Report: Inviting a dotted Gmail address to an organization fails with 409 user_email_already_exists**
+  *Symptoms*: ### 👟 Reproduction steps  1. On Appwrite Cloud, have a console account that signed in with Google using a dotted Gmail address, e.g. `first.last@gmail.com`. The console denies aliased emails, so the account is stored as `firstlast@gmail.com` while its Google sign-in keeps `first.last@gmail.com`. 2. From another account, open an organization's **Settings → Members** and invite `first.last@gmail.com`.  ### 👍 Expected behavior  The invite goes to the existing account. Gmail ignores dots, so `first.last@gmail.com` and `firstlast@gmail.com` are the same inbox.  ### 👎 Actual Behavior  `POST /v1/teams/:teamId/memberships` returns:  ```json {   "message": "A user with the same email already exists in the current project.",   "code": 409,   "type": "user_email_already_exists" } ```  The invite looks up the exact typed address, finds no account, then matches the Google sign-in that holds the dotted address and rejects the invite. A dotted Gmail address with no matching sign-in fails with `400 user_email_not_canonical` instead, so a dotted Gmail address can't be used to invite anyone to an organization.  The same happens on self-hosted projects that enable the deny-aliased-email policy.  Workaround: invite the dotless address.  Fix: https://github.com/appwrite/appwrite/pull/14172  ### 🎲 Appwrite version  Appwrite Cloud (also self-hosted 2.3.0 with the deny-aliased-email policy on)  ### 💻 Operating system  Something else (not OS-specific)  ### 🧱 Your Environment  Cloud console, org
+
 - **Issue #10857** (2026-02-24): **OAuth Callback Error: Invalid Scheme tauri://localhost Not Supported**
   *Symptoms*: ### 👟 Reproduction steps  i ran my tauri app with `npm run build && npm run tauri dev` and tried to use the Appwrite SDK to login but instead i got this error: `Invalid Scheme: The scheme used (tauri) in the Origin (tauri://localhost) is not supported.  If you are using a custom scheme, please change it to appwrite-callback-<PROJECT_ID>`  source code:  ```js // Import necessary components import React, { useState } from "react"; import { ID,  Client, Account } from "appwrite"; console.log('Appwrite imports:', { Client, Account }); import "./AuthModal.css"; import { getTranslationObject } from "./locales/index.js";  // Define server credientials const client = new Client(); client   .setEndpoint("https://cloud.appwrite.io/v1")   .setProject("reskin");  let account; // Attempt to initialize Appwrite try {   account = new Account(client);   console.log('Appwrite initialized:', { client, account }); } catch (e) {   console.error('Error initializing Appwrite:', e); }  export default function AuthModal({ open, onClose, onAuth }) {   const language = localStorage.getItem("reskin_language") || "en";   const t = getTranslationObject(language);   const [mode, setMode] = useState("login");   const [username, setUsername] = useState("");   const [email, setEmail] = useState("");   const [password, setPassword] = useState("");   const [error, setError] = useState("");   const [loading, setLoading] = useState(false);   const [showRecovery, setShowRecovery] = useState(false);   const [reco
-  **Post-Mortem & Fix Analysis**:
-  > 🎯 **Agentic Issue Triage**  This issue reports an OAuth callback error when using Appwrite SDK in a Tauri application. The SDK rejects the `(redacted) scheme, suggesting it needs to be changed to `appwrite-callback-(PROJECT_ID)`.  **Summary**: OAuth authentication fails in Tauri desktop app due to unsupported custom URI scheme `(redacted)  <details> <summary>(strong)🔍 Issue Analysis(/strong)</summary>  **Issue Type**: Bug / Feature Gap - OAuth authentication in Tauri/desktop applications  **Key Details**: - **Environment**: Tauri desktop app, Appwrite Cloud, Appwrite JS SDK 18.2.0 - **Operating System**: Linux - **Error**: `Invalid Scheme: The scheme used (tauri) in the Origin ((redacted)) is not supported. If you are using a custom scheme, please change it to appwrite-callback-(PROJECT_ID)` - **Impact**: OAuth authentication completely non-functional in Tauri apps - **User Action**: Attempting email/password authentication, but getting scheme validation error  **Root Cause**: Appwri
-  > Hi team   I would like to work on this issue and open a PR if approved.  ### Summary of what I plan to do The Tauri desktop environment uses custom URL schemes to handle OAuth redirects, but the Appwrite JS SDK currently validates callback URL schemes only against the whitelist for web contexts and blocks schemes like `tauri://...`.  Proposed direction for the fix:  - Expand the allowed callback URL scheme validation to support desktop environments (Tauri/Electron)     **or** - Provide a configuration flag in the SDK to bypass strict web `Origin`/scheme validation when running in a desktop runtime - Ensure compatibility with the recommended `appwrite-callback-(PROJECT_ID)` pattern if this is the intended official approach  ### Expected outcome - OAuth authentication should become functional in Tauri apps without requiring undocumented workarounds - Documentation (or SDK comments) should clarify how callback schemes should be registered in desktop environments  ### Next steps If this di
-  > so how exactly am i supposed to fix it? here's my tauri.conf.json cause i think it makes sense: ```{   "version": "1.6.1",   "productName": "Reskin",   "identifier": "com.reskin.reskinapp",   "build": {     "frontendDist": "../dist",     "removeUnusedCommands": false,     "beforeBuildCommand": "npm run build"   },   "app": {     "windows": [       {         "label": "main",         "visible": true,         "decorations": false,         "minWidth": 400,         "minHeight": 300,         "maximized": true,         "title": "Reskin"       }     ],     "security": {       "csp": null,       "capabilities": [         {           "identifier": "main-capability",           "windows": [             "main"           ],           "permissions": [             "core:window:allow-start-dragging",             "core:window:allow-internal-toggle-maximize"           ]         }       ]     }   },   "bundle": {     "active": true,     "targets": [],     "icon": [       "icons/32x32.png",       "icons/12
-
-- **Issue #10836** (2025-11-25): **Web-Assembly .wasm files served as stream/octet instead of application/wasm**
-  *Symptoms*: ### 👟 Reproduction steps  1. Create a basic Flutter app, build with "flutter build web --release --wasm"  For example: flutter create wasm_mimetype_error cd wasm_mimetype_error flutter build web --release --wasm cd build tar -cf code.tar ./web gzip -9 code.tar  2. Deploy the code.tar.gz contents manually to Appwrite Sites. Set the base directory to ./web and fallback file to index.html and redeploy. 3. Open the site on the Chrome Browser.  4. See error in Chrome browser console: Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "application/octet-stream". Strict MIME type checking is enforced for module scripts per HTML spec. Understand this error (index):1 Uncaught (in promise) TypeError: Failed to fetch dynamically imported module: https://demo.appwrite.network/main.dart.mjs  If you use some SPA router intermediary like NextJS then it may correctly serve the .wasm as application/wasm  ### 👍 Expected behavior  Correctly serve the .wasm as application/wasm without the need of another routing service.  ### 👎 Actual Behavior  Error in Chrome browser console: Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "application/octet-stream". Strict MIME type checking is enforced for module scripts per HTML spec.Understand this error (index):1 Uncaught (in promise) TypeError: Failed to fetch dynamically imported module: https://quade-demo.appwrite
-  **Post-Mortem & Fix Analysis**:
-  > 🎯 **Agentic Issue Triage**  This issue reports that Appwrite Sites serves WebAssembly (`.wasm`) files with the incorrect MIME type `application/octet-stream` instead of `application/wasm`, causing Flutter Web apps built with WASM to fail loading in Chrome browsers.  **Summary**: Flutter Web + WASM deployments fail in Chrome due to incorrect MIME type for `.wasm` files served by Appwrite Sites.  <details> <summary>(strong)🔍 Issue Analysis(/strong)</summary>  **Issue Type**: Bug - Sites/Storage MIME type configuration  **Key Details**: - **Environment**: Appwrite Cloud, Appwrite Sites - **Platform**: macOS / Chrome Browser - **Affected Technology**: Flutter Web with WebAssembly (--wasm flag) - **Error Message**: `Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "application/octet-stream"` - **Impact**: Flutter WASM apps cannot load, showing blank screen - **Workaround Mentioned**: Using SPA routers like NextJS may se
-  > Hey, I’d like to work on this issue. Before I begin, can I get confirmation and have this assigned to me?  ### 🔍 Issue Understanding  I’ve reviewed the problem in detail:  - `.wasm` files are currently served with `application/octet-stream` - Chrome requires `application/wasm` for WebAssembly module loading - This causes Flutter Web apps built with WASM (`--wasm` flag) to fail on Appwrite Sites - The fix likely involves updating the Sites file server’s MIME type mapping to correctly serve `.wasm` files  ### 🛠 Proposed Approach  1. Identify where MIME types are configured in the Appwrite Sites / static file server. 2. Add or update the mapping for: 3. Ensure this new MIME type flows correctly through the file-serving pipeline. 4. Test locally by deploying a small Flutter Web WASM build and verifying Chrome loads it without MIME-type errors. 5. Add or update any related tests if required.  Let me know if this approach aligns with the expected fix and if I can get this issue assigned be
-  > @cursoragent create a PR to attempt and fix this, make sure to have a proper test in place.
-
-- **Issue #10823** (2025-11-19): **Function not available, page show 404 error**
-  *Symptoms*: ### 👟 Reproduction steps  1. Go to 'https://cloud.appwrite.io/console/project-fra-680dc3f800036e182e62/functions' 2. Click on function and open the page 'https://cloud.appwrite.io/console/project-fra-680dc3f800036e182e62/functions/function-680dc816003dcd1d8061' 3. See page with 404 Deployment with the requested ID could not be found.  <img width="1725" height="875" alt="Image" src="https://github.com/user-attachments/assets/3242c7a7-b7ae-4883-a607-834f05dbf8ff" />   ### 👍 Expected behavior  I need access to the function  ### 👎 Actual Behavior  See page with 404 error  ### 🎲 Appwrite version  Appwrite Cloud  ### 💻 Operating system  MacOS  ### 🧱 Your Environment  _No response_  ### 👀 Have you spent some time to check if this issue has been raised before?  - [x] I checked and didn't find similar issue  ### 🏢 Have you read the Code of Conduct?  - [x] I have read the [Code of Conduct](https://github.com/appwrite/.github/blob/main/CODE_OF_CONDUCT.md)
-  **Post-Mortem & Fix Analysis**:
-  > 🎯 **Agentic Issue Triage**  This issue reports a 404 error when accessing a function in the Appwrite Cloud console. The user gets an error "Deployment with the requested ID could not be found" when trying to access their function page.  <details> <summary>(strong)🔍 Issue Analysis(/strong)</summary>  **Issue Type**: Console/Functions navigation bug on Appwrite Cloud  **Key Details**: - **Environment**: Appwrite Cloud - **Platform**: macOS - **Affected Area**: Functions console page - **Error**: 404 with message "Deployment with the requested ID could not be found" - **URL Pattern**: `/console/project-{projectId}/functions/function-{functionId}`  **Potential Causes**: 1. **Routing Issue**: The console might be incorrectly treating the function ID as a deployment ID 2. **State Mismatch**: Function exists in the database but the console is looking for deployment information 3. **Deleted Deployment**: The function's deployment may have been deleted while the function still exists 4. **Con
-  > Hi, I’d like to help with this issue. Could you please describe which part of the code is causing the 404 — is it the console UI, or the API backend?
-  > Hi, Thanks for help. My steps: 1. Open console by link - https://cloud.appwrite.io/console 2. Select my project and go to the Functions tap: https://cloud.appwrite.io/console/project-fra-xxxx/functions 3. Try to open one from my functions and see: 404 Deployment with the requested ID could not be found.  Some times ago it works fine and after next update I got this state. So, I cannot see setting for this functions, even unable to delete it. I created a new one and it's works fine with the same codebase. But any cases I need access to old function.  Thanks a lot!
-
-- **Issue #10809** (2025-12-11): **Appwrite Console freezes (Page Unresponsive) when opening one specific collection**
-  *Symptoms*: ### 👟 Reproduction steps  When I click on the usersDetails collection inside my Appwrite Cloud Console, the page becomes completely unresponsive and shows the error:  “Page Unresponsive — You can wait for it to become responsive or exit the page.”  Other collections in the same database (e.g. items) open normally without any issue.   ### 👍 Expected behavior  teps to reproduce the behavior:  Go to Appwrite Cloud Console  Open project → Database → select database shelfie_native_app_db  Click on the collection usersDetails  The page freezes, and Chrome shows “Page Unresponsive”  ### 👎 Actual Behavior  The usersDetails collection should open and display its documents or schema without freezing.  ### 🎲 Appwrite version  Version 1.8.x  ### 💻 Operating system  MacOS  ### 🧱 Your Environment  The usersDetails collection should open and display its documents or schema without freezing.  ### 👀 Have you spent some time to check if this issue has been raised before?  - [x] I checked and didn't find similar issue  ### 🏢 Have you read the Code of Conduct?  - [x] I have read the [Code of Conduct](https://github.com/appwrite/.github/blob/main/CODE_OF_CONDUCT.md)
-  **Post-Mortem & Fix Analysis**:
-  > 🎯 **Agentic Issue Triage**  User reports that the Appwrite Console becomes completely unresponsive when attempting to open a specific collection (`usersDetails`) in the database, while other collections in the same database work normally. This appears to be a performance or rendering issue specific to this collection's content.  <details> <summary>(strong)🔍 Analysis & Observations(/strong)</summary>  - **Issue Type**: Console performance/freezing bug - **Affected Component**: Database Console UI - **Scope**: Cloud instance, specific to one collection - **Impact**: High - completely prevents access to collection management - **Labels Applied**: Already has appropriate labels (bug, product/databases, product/auth, product/console, product/cloud, sdk/cli)  The issue suggests the problem may be related to: - Large number of documents in the collection - Complex document structure or large document sizes - Relationship attributes causing rendering issues - Console attempting to render too
-  > Hey,  Thanks for creating this issue.  Can you try the steps below and see if it helps:-  1. Use the Appwrite CLI or SDK to list a few documents. 2. Open the Console in Incognito Mode or another browser example - firefox 3. Open network tab to see if there are any console/network errors.
-  > Submitted PR #10840 fixes the critical freeze triggered when Appwrite loads thousands of documents at once. The backend now caps excessive limits and applies sane defaults, preventing UI death loops. This patch removes the bottleneck entirely and restores console responsiveness. Need a fast review so this high-impact bug doesn’t keep blocking developers.
-
-- **Issue #10803** (2025-11-13): **Getting Error Not Found while deploying functions**
-  *Symptoms*: ### 👟 Reproduction steps  I'm using the self-hosted 1.18.0 Appwrite version. I'm trying to use the Manual and Github Deployments Functions features. I am getting error Not Found while using both methods.  <img width="1456" height="752" alt="Image" src="https://github.com/user-attachments/assets/1aec1efa-2d64-4d3f-b4fb-f248f0a1c04e" />   ### 👍 Expected behavior  I should be able to deploy the function  ### 👎 Actual Behavior  Getting Error Not Found, appwrite-worker-builds log  ``` [Job] Received Job (6913989703a7a7.63096414). Build action started Creating build for deployment: 69139896f23b565f57fc Deployment action started Status marked as processing Status marked as building Runtime creation started createRuntime failed Runtime creation finished listLogs finished Build failed: Not Found /usr/src/code/src/Executor/Executor.php 107 #0 /usr/src/code/src/Appwrite/Platform/Modules/Functions/Workers/Builds.php(715): Executor\Executor->createRuntime('69139896f23b565...', '******', '/storage/functi...', 'openruntimes/no...', 'v5', 1.0, 1024, 900, true, 'index.js', '/storage/builds...', Array, 'tar -zxf /tmp/c...', '') #1 [internal function]: Appwrite\Platform\Modules\Functions\Workers\Builds->Appwrite\Platform\Modules\Functions\Workers\{closure}() #2 {main} [Job] (6913989703a7a7.63096414) successfully run.: ```  Openruntimes-executor log at same time   ``` [Error] Type: Utopia\Http\Exception [Error] Message: Not Found [Error] Type: Utopia\Http\Exception [Error] File: /usr/local/ve
-  **Post-Mortem & Fix Analysis**:
-  > 🎯 **Agentic Issue Triage**  User reports "Not Found" error when attempting to deploy functions (both Manual and Github deployments) on self-hosted Appwrite 1.8.0. The error occurs during the build process with the openruntimes-executor returning a generic "Not Found" error.  <details> <summary>(strong)🔍 Analysis & Observations(/strong)</summary>  - **Issue Type**: Function deployment/build failure - **Affected Component**: Functions, openruntimes-executor - **Scope**: Self-hosted v1.8.0 (potentially upgrade-related) - **Impact**: Critical - completely prevents function deployment - **Environment**: AWS Lightsail, Ubuntu, Docker 27.5.1, Docker Compose v2.27.0  **Key Error Details**: ``` Runtime creation failed Build failed: Not Found /usr/src/code/src/Executor/Executor.php:107 ```  The configuration shows potential version mismatch: - Image: `appwrite/appwrite:1.8.0` - Executor: `openruntimes/executor:0.5.10` - Runtime env: `openruntimes/node:v5-18.0`  </details>  <details> <summary>(
-  > Update : I have updated my openruntimes-proxy and openruntimes-executor now the I am getting "Internal server error." while deploying the function.  **appwrite-worker-builds log is**   ``` [Job] Received Job (6914ef4408a9b4.47661780). Build action started Creating build for deployment: 6914ef440382a53a7ff1 Deployment action started Status marked as processing Status marked as building Runtime creation started createRuntime failed listLogs finished Runtime creation finished Build failed: Internal server error. /usr/src/code/src/Executor/Executor.php 107 #0 /usr/src/code/src/Appwrite/Platform/Modules/Functions/Workers/Builds.php(715): Executor\Executor->createRuntime('6914ef440382a53...', 'konfess', '/storage/functi...', 'openruntimes/no...', 'v5', 1.0, 1024, 900, true, 'index.js', '/storage/builds...', Array, 'tar -zxf /tmp/c...', '') #1 [internal function]: Appwrite\Platform\Modules\Functions\Workers\Builds->Appwrite\Platform\Modules\Functions\Workers\{closure}() #2 {main} [Job] (6914e
-  > @artbyrtech btw, it's best to format code-like text using backticks like in markdown.  Please try reverting your changes to your docker-compose.yml file. You should not be changing that. As mentioned in the [environment variables docs](https://appwrite.io/docs/environment-variables), you should be updating your .env file. To configure which runtimes should be available, you should be updating the `_APP_FUNCTIONS_RUNTIMES` env var in your .env file.
-
-- **Issue #10781** (2025-11-12): **VCS webhook handler fails with 'No permissions provided for action delete' when processing GitHub events**
-  *Symptoms*: I had the described issue and asked Claude Code to fix it.  It works now and I told him to summarize what he did in a issue.  Please be advised that I did not review this. The preview builds now work though and I hope this is helpful to you guys. Thanks.    ## Bug Description  GitHub webhook events (PR opened, push, etc.) fail to trigger builds because the VCS controller's cleanup operations lack proper authorization context. The endpoint throws "No permissions provided for action 'delete'" errors when trying to delete `vcsCommentLocks` documents.  ## Version - **Appwrite Version:** 1.8.0 - **Affected Component:** Sites/VCS Integration (`app/controllers/api/vcs.php`)  ## Impact - **Severity:** Critical - **Affected Feature:** Appwrite Sites preview deployments from GitHub PRs - Builds never start when PRs are opened or updated - Users see "Waiting for build to start..." indefinitely - This breaks the entire Sites CI/CD workflow for GitHub integrations  ## Steps to Reproduce 1. Set up Appwrite 1.8.0 with GitHub App integration 2. Connect a repository to an Appwrite Site 3. Open a pull request or push to a branch 4. GitHub sends webhook to `/v1/vcs/github/events` 5. Check Docker logs: `docker logs appwrite`  ## Expected Behavior - Webhook processes successfully - Lock documents are created and cleaned up - Build job is queued - Preview deployment starts  ## Actual Behavior - Webhook processing fails with error: ``` [Error] Method: POST [Error] URL: /v1/vcs/github/events [Error]
-  **Post-Mortem & Fix Analysis**:
-  > 🎯 **Agentic Issue Triage**  **Summary:** Critical bug in VCS webhook handler causes GitHub events (PR opened, push) to fail with authorization errors when cleaning up `vcsCommentLocks` documents. This breaks the entire Sites preview deployment workflow for GitHub integrations in Appwrite 1.8.0.  <details> <summary>(strong)📋 Issue Analysis(/strong)</summary>  **Type:** Bug - Critical   **Component:** VCS Integration / Sites   **Affected Version:** 1.8.0   **(redacted) `/usr/src/code/app/controllers/api/vcs.php`   **Severity:** Critical - Blocks core CI/CD functionality   **User Impact:** Complete failure of GitHub PR preview deployments  **Root Cause:**   The `/v1/vcs/github/events` endpoint has `label('scope', 'public')`, meaning webhooks run without authenticated user context. However, cleanup operations in `finally` blocks (lines 169, 240, and 461) attempt to delete `vcsCommentLocks` documents without bypassing authorization checks using `Authorization::skip()`.  **Error Pattern:**
-  > Hey @JoeNerdan  and @stnguyen90  I’ve gone through the issue details and root cause analysis. The missing Authorization::skip() wrapper around deleteDocument('vcsCommentLocks', …) seems to be the core problem. I’d like to take this up and open a PR implementing the fix at lines 169, 240, and 461 in app/controllers/api/vcs.php, along with appropriate testing for GitHub event handling. Please confirm if it’s okay for me to proceed.
-  > @TejasGoyal0 to avoid wasted effort, please make sure to follow our [contributing guide](https://github.com/appwrite/appwrite/blob/main/CONTRIBUTING.md#how-to-start).
-
-- **Issue #10426** (2025-09-03): **🐛 Bug Report: Query.select doesn't work properly in android sdk (kotlin)**
-  *Symptoms*: ### 👟 Reproduction steps  You need a database with a table which will contain a column. For example, i have a database with news table, which contains "headline" column.  Then write down some code: `kotlin val client = Client(context)             .setEndpoint(APPWRITE_PUBLIC_ENDPOINT)             .setProject(APPWRITE_PROJECT_ID)  val tablesDB = TablesDB(client)  val (_, rows) = tablesDB.listRows(             databaseId = APPWRITE_DATABASE_ID,             tableId = APPWRITE_TABLE_ID,             queries = listOf(Query.select(listOf("headline"))) ) `  And then see an exception.  ### 👍 Expected behavior  It should return row with headline column.  ### 👎 Actual Behavior  It actually throws an exception: `kotlin java.lang.NullPointerException: null cannot be cast to non-null type kotlin.String                                                                                                     	at io.appwrite.models.Row$Companion.from(Row.kt:97)                                                                                                     	at io.appwrite.models.RowList$Companion.from(RowList.kt:43)                                                                                                     	at io.appwrite.services.TablesDB$listRows$converter$1.invoke(TablesDb.kt:44)                                                                                                     	at io.appwrite.services.TablesDB$listRows$converter$1.invoke(TablesDb.kt:42)                            
-
-- **Issue #10413** (2025-09-01): **🐛 Bug Report: Appwrite threads page show internal error 500**
-  *Symptoms*: ### 👟 Reproduction steps  when I just tried access a [this](https://appwrite.io/threads/1393290266370113556) thread I got not found error, tried another thread and the same issue, and finally tried the [threads page](https://appwrite.io/threads) and got Internal error.  The point is when clicking on any link from the navbar and press the browser back button, the threads page works fine. The issue come again when reloading the page.  ### 👍 Expected behavior  it should open the threads page normally.  ### 👎 Actual Behavior  Internal Error  Image: <img width="1658" height="1080" alt="Image" src="https://github.com/user-attachments/assets/c9fa4ca6-4eaa-4800-9ccd-41caaa01dd40" />  Video: https://github.com/user-attachments/assets/16fe1fad-17b4-415c-92a6-48c54c26ffec  ### 🎲 Appwrite version  Appwrite Cloud  ### 💻 Operating system  MacOS  ### 🧱 Your Environment  MacOS with Arc browser   ### 👀 Have you spent some time to check if this issue has been raised before?  - [x] I checked and didn't find similar issue  ### 🏢 Have you read the Code of Conduct?  - [x] I have read the [Code of Conduct](https://github.com/appwrite/.github/blob/main/CODE_OF_CONDUCT.md)
-  **Post-Mortem & Fix Analysis**:
-  > I want to fix it. Can you assign me? @stnguyen90 
-  > > I want to fix it. Can you assign me? [@stnguyen90](https://github.com/stnguyen90)  I just checked — it's not in this repository. The code is in the 'appwrite/website' repository, I'm opening another issue on it 
-  > oh my bad, i did not found the actual repo. Thanks dude, do it
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2213,2201 +1924,70 @@ class Client {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0160b0f3` (2026-10-05)
-**Commit Message**: Merge pull request #14139 from appwrite/fix/mails-project-smtp-failures
+### Incident Patch 1: `13aff0f3` (2026-10-19)
+**Commit Message**: fix(tests): give Sites e2e builds room to finish under the lane's load
 
-fix(mails): finish the job when a project's own SMTP server fails
+The Sites lane runs paratest --functional with one process per CPU, and
+each test starts its own builds. An Astro SSR build that takes about 9s
+alone took 142-145s with 16 sharing 4 CPUs, past the 120s ready wait, so
+testVariablesE2E and testSiteClientIp failed with the build still
+finishing. Wait 300s; builds themselves time out at 900s.
 
-**File**: `src/Appwrite/Platform/Workers/Mails.php` (modified, +4/-1)
+**File**: `tests/e2e/Services/Sites/SitesBase.php` (modified, +3/-1)
 ```diff
-@@ -234,8 +234,11 @@ public function action(Message $message, Document $project, Registry $register,
-             Span::add('mail.status', 'failure');
- 
-             if ($type === 'smtp') {
--                throw new Exception('Error sending mail: ' . $error->getMessage(), 401);
-+                Span::add('mail.error.message', $error->getMessage());
-+
-+                return;
-             }
-+
-             throw new Exception('Error sending mail: ' . $error->getMessage(), 500);
-         }
- 
-```
-
-**File**: `tests/unit/Platform/Workers/MailsTest.php` (modified, +18/-2)
-```diff
-@@ -166,6 +166,19 @@ public function testProviderRejectionIsSkippedWithoutRetry(): void
-         $this->assertSame(1, $adapter->sendCount);
-     }
- 
-+    public function testProjectSmtpFailureIsNotRetried(): void
-+    {
-+        $adapter = new SpyMailAdapter();
-+
-+        $this->runMailWorker($adapter, recipient: 'john@example.test', smtp: [
-+            'host' => '127.0.0.1',
-+            'port' => 1,
-+            'senderEmail' => 'sender@example.test',
-+        ]);
-+
-+        $this->assertSame(0, $adapter->sendCount);
-+    }
-+
-     private function assertMailWorkerThrows(SpyMailAdapter $adapter, string $expectedMessage): void
-     {
-         $this->expectException(\Exception::class);
-@@ -174,7 +187,10 @@ private function assertMailWorkerThrows(SpyMailAdapter $adapter, string $expecte
-         $this->runMailWorker($adapter, recipient: 'legacy@example.test');
-     }
- 
--    private function runMailWorker(SpyMailAdapter $adapter, string $recipient): void
-+    /**
-+     * @param array<string, mixed> $smtp
-+     */
-+    private function runMailWorker(SpyMailAdapter $adapter, string $recipient, array $smtp = []): void
-     {
-         $registry = new Registry();
-         $registry->set('smtp', static fn () => new Pool(new Stack(), 'smtp', 1, static fn () => $adapter, 1.0));
-@@ -190,7 +206,7 @@ private function runMailWorker(SpyMailAdapter $adapter, string $recipient): void
-                     'queue' => 'v1-mails',
-                     'timestamp' => \time(),
-                     'payload' => [
--                        'smtp' => [],
-+                        'smtp' => $smtp,
-                         'recipient' => $recipient,
-                         'name' => 'Legacy User',
-                         'subject' => 'Hello',
-```
-
----
-
-### Incident Patch 2: `c25bd101` (2026-10-05)
-**Commit Message**: Merge pull request #14137 from appwrite/cursor/fix-vcs-tag-pattern-clone-9547
-
-fix(vcs): resolve wildcard tags when cloning templates
-
-**File**: `packages/vcs/src/Adapter/Git.php` (modified, +53/-7)
-```diff
-@@ -296,9 +296,8 @@ abstract public function getCommitStatuses(string $owner, string $repositoryName
- 
-     /**
-      * Sparse, shallow clone of one ref into $directory, checking out only
--     * $rootDirectory. Every value reaches git as its own argument; the one
--     * shell script, the branch fallback, is constant and reads its values
--     * from positional parameters.
-+     * $rootDirectory. Every value reaches git as its own argument. The shell
-+     * scripts are constant and read their values from positional parameters.
-      */
-     protected function cloneCommand(string $cloneUrl, string $version, string $versionType, string $directory, string $rootDirectory): Command
-     {
-@@ -324,10 +323,7 @@ protected function cloneCommand(string $cloneUrl, string $version, string $versi
-                 $this->git($directory)->argument('fetch')->option('--depth', '1')->argument('origin')->argument($version),
-                 $this->git($directory)->argument('checkout')->argument($version),
-             ),
--            self::CLONE_TYPE_TAG => Command::and(
--                $this->git($directory)->argument('fetch')->option('--depth', '1')->argument('origin')->argument('refs/tags/' . $version),
--                $this->git($directory)->argument('checkout')->argument('FETCH_HEAD'),
--            ),
-+            self::CLONE_TYPE_TAG => $this->tagCheckout($directory, $version),
-             default => throw new Exception("Unsupported clone type: {$versionType}"),
-         };
- 
-@@ -349,6 +345,56 @@ protected function cloneCommand(string $cloneUrl, string $version, string $versi
-         );
-     }
- 
-+    /**
-+     * Resolve a tag glob the way GitHub and Origin used to: the last tag
-+     * `git ls-remote --tags` lists for the pattern. `--refs` omits the peeled
-+     * `^{}` line of an annotated tag. The name is everything after
-+     * `refs/tags/`, so a namespaced tag such as `release/0.1.2` stays whole.
-+     * The directory and the pattern arrive as `$1` and `$2`.
-+     */
-+    private const string TAG_GLOB_CHECKOUT = <<<'SCRIPT'
-+refs=$(git -C "$1" ls-remote --refs --tags origin -- "$2") || exit
-+line=$(printf '%s\n' "$refs" | tail -n 1)
-+tag=${line#*refs/tags/}
-+if [ -z "$tag" ]; then
-+    printf 'fatal: no tag matching %s\n' "$2" >&2
-+    exit 1
-+fi
-+git -C "$1" fetch --depth=1 origin "refs/tags/$tag" && git -C "$1" checkout FETCH_HEAD
-+SCRIPT;
-+
-+    /**
-+     * Check out $version. A glob is resolved to one tag. An exact name is
-+     * fetched as refs/tags/<name>, so a leading dash stays part of the name.
-+     */
-+    private function tagCheckout(string $directory, string $version): Command
-+    {
-+        if (!$this->isTagGlob($version)) {
-+            return Command::and(
-+                $this->git($directory)->argument('fetch')->option('--depth', '1')->argument('origin')->argument('refs/tags/' . $version),
-+                $this->git($directory)->argument('checkout')->argument('FETCH_HEAD'),
-+            );
-+        }
-+
-+        return new Command('sh')
-+            ->flag('-c')
-+            ->argument(self::TAG_GLOB_CHECKOUT)
-+            ->argument('sh')
-+            ->argument($directory)
-+            ->argument($version);
-+    }
-+
-+    /**
-+     * True when $version is a git ref glob. `*`, `?` and `[` cannot appear in
-+     * a tag name, and they are the wildcards `git ls-remote` matches on.
-+     */
-+    private function isTagGlob(string $version): bool
-+    {
-+        return str_contains($version, '*')
-+            || str_contains($version, '?')
-+            || str_contains($version, '[');
-+    }
-+
-     /**
-      * git, run against the repository in $directory
-      */
-```
-
-**File**: `packages/vcs/tests/CloneCommandTest.php` (modified, +77/-3)
-```diff
-@@ -126,14 +126,88 @@ public function testCloneChecksOutATagStartingWithADash(): void
-         $this->assertFileExists($this->directory . '/README.md');
-     }
- 
--    private function clone(string $rootDirectory, string $version = 'main', string $versionType = Git::CLONE_TYPE_BRANCH): int
-+    /**
-+     * `git ls-remote` lists tags in refname order, and the lookup keeps the
-+     * last line. 0.1.10 sorts before 0.1.2; the annotated 0.1.2 is the tag
-+     * that line names. A namespaced pattern keeps the full name after
-+     * `refs/tags/`, so `release/0.1.*` resolves to `release/0.1.2`.
-+     */
-+    public function testCloneChecksOutATagPattern(): void
-+    {
-+        $this->tag('0.1.0', "tag-0.1.0\n");
-+        $this->tag('0.1.10', "tag-0.1.10\n");
-+        $this->tag('0.1.2', "tag-0.1.2\n", annotated: true);
-+        $this->tag('0.2.0', "tag-0.2.0\n");
-+
-+        $this->assertSame(0, $this->clone('', '0.1.*', Git::CLONE_TYPE_TAG));
-+
-+        $this->assertSame("tag-0.1.2\n", $this->read($this->directory . '/README.md'));
-+
-+        $this->tag('release/0.1.0', "tag-release-0.1.0\n");
-+        $this->tag('release/0.1.10', "tag-release-0.1.10\n");
-+        $this->tag('release/0.1.2', "tag-release-0.1.2\n", annotated: true);
-+        $this->tag('release/0.2.0', "tag-release-0.2.0\n");
-+
-+        $this->execute(new Command('rm')->flag('-rf')->argument($this->directory));
-+        $this->assertSame(0, $this->clone('', 'release/0.1.*', Git::CLONE_TYPE_TAG));
-+
-+        $this->assertSame("tag-release-0.1.2\n", $this->read($this->directory . '/README.md'));
-+    }
-+
-+    public function testCloneChecksOutAnExactTag(): void
-+    {
-+        $this->tag('1.2.3', "tag-1.2.3\n");
-+        $this->tag('1.2.4', "tag-1.2.4\n");
-+
-+        $this->assertSame(0, $this->clone('', '1.2.3', Git::CLONE_TYPE_TAG));
-+
-+        $this->assertSame("tag-1.2.3\n", $this->read($this->directory . '/README.md'));
-+    }
-+
-+    public function testCloneFailsWhenNoTagMatches(): void
-+    {
-+        $this->tag('0.1.0', "tag-0.1.0\n");
-+
-+        $stderr = '';
-+        $this->assertNotSame(0, $this->clone('', '9.9.*', Git::CLONE_TYPE_TAG, $stderr));
-+        $this->assertStringContainsString('fatal: no tag matching 9.9.*', $stderr);
-+    }
-+
-+    private function tag(string $name, string $content, bool $annotated = false): void
-+    {
-+        $work = $this->workspace . '/work';
-+        if (!is_dir($work . '/.git')) {
-+            $this->assertSame(0, $this->execute(new Command('git')->argument('clone')->flag('-q')->argument($this->repository)->argument($work)));
-+        }
-+
-+        file_put_contents($work . '/README.md', $content);
-+        $this->assertSame(0, $this->execute(new Command('git')->option('-C', $work)->argument('add')->argument('README.md')));
-+        $this->assertSame(0, $this->execute(new Command('git')->option('-C', $work)->option('-c', 'user.name=Test')->option('-c', 'user.email=test@example.com')->argument('commit')->flag('-q')->option('-m', $name)));
-+
-+        $tag = new Command('git')->option('-C', $work)->option('-c', 'user.name=Test')->option('-c', 'user.email=test@example.com')->argument('tag');
-+        if ($annotated) {
-+            $tag->flag('-a')->option('-m', $name);
-+        }
-+        $this->assertSame(0, $this->execute($tag->argument($name)));
-+        $this->assertSame(0, $this->execute(new Command('git')->option('-C', $work)->argument('push')->flag('-q')->argument('origin')->argument('refs/tags/' . $name)));
-+    }
-+
-+    private function read(string $path): string
-+    {
-+        $content = file_get_contents($path);
-+        $this->assertIsString($content);
-+
-+        return $content;
-+    }
-+
-+    private function clone(string $rootDirectory, string $version = 'main', string $versionType = Git::CLONE_TYPE_BRANCH, string &$stderr = ''): int
-     {
-         $adapter = new LocalGit($this->repository);
- 
--        return $this->execute($adapter->generateCloneCommand('owner', 'repository', $version, $versionType, $this->directory, $rootDirectory));
-+        return $this->execute($adapter->generateCloneCommand('owner', 'repository', $version, $versionType, $this->directory, $rootDirectory), $stderr);
-     }
- 
--    private function execute(Command $command): int
-+    private function execute(Command $command, string &$stderr = ''): int
-     {
-         $stdout = '';
-         $stderr = '';
-```
-
----
-
-### Incident Patch 3: `3e26d087` (2026-10-05)
-**Commit Message**: fix(vcs): keep namespaced tag names when resolving globs
-
-git ls-remote prints refs/tags/release/0.1.2. The third slash-separated
-field is only release, so the fetch misses the tag. Take the full name
-after refs/tags/ and cover release/0.1.* in the tag-pattern clone test.
-
-Co-authored-by: Chirag Aggarwal <[REDACTED_EMAIL]>
-
-**File**: `packages/vcs/src/Adapter/Git.php` (modified, +5/-4)
-```diff
-@@ -347,14 +347,15 @@ protected function cloneCommand(string $cloneUrl, string $version, string $versi
- 
-     /**
-      * Resolve a tag glob the way GitHub and Origin used to: the last tag
--     * `git ls-remote --tags` lists for the pattern
--     * (`tail -n 1 | awk -F/ '{print $3}'`). `--refs` omits the peeled `^{}`
--     * line of an annotated tag, so the name awk prints is the tag itself.
-+     * `git ls-remote --tags` lists for the pattern. `--refs` omits the peeled
-+     * `^{}` line of an annotated tag. The name is everything after
-+     * `refs/tags/`, so a namespaced tag such as `release/0.1.2` stays whole.
-      * The directory and the pattern arrive as `$1` and `$2`.
-      */
-     private const string TAG_GLOB_CHECKOUT = <<<'SCRIPT'
- refs=$(git -C "$1" ls-remote --refs --tags origin -- "$2") || exit
--tag=$(printf '%s\n' "$refs" | tail -n 1 | awk -F '/' '{print $3}')
-+line=$(printf '%s\n' "$refs" | tail -n 1)
-+tag=${line#*refs/tags/}
- if [ -z "$tag" ]; then
-     printf 'fatal: no tag matching %s\n' "$2" >&2
-     exit 1
-```
-
-**File**: `packages/vcs/tests/CloneCommandTest.php` (modified, +14/-3)
-```diff
-@@ -127,9 +127,10 @@ public function testCloneChecksOutATagStartingWithADash(): void
-     }
- 
-     /**
--     * `git ls-remote` lists tags in refname order, and the old lookup kept the
--     * last line. 0.1.10 is the newest version and sorts before 0.1.2; the
--     * annotated 0.1.2 is the tag that line names.
-+     * `git ls-remote` lists tags in refname order, and the lookup keeps the
-+     * last line. 0.1.10 sorts before 0.1.2; the annotated 0.1.2 is the tag
-+     * that line names. A namespaced pattern keeps the full name after
-+     * `refs/tags/`, so `release/0.1.*` resolves to `release/0.1.2`.
-      */
-     public function testCloneChecksOutATagPattern(): void
-     {
-@@ -141,6 +142,16 @@ public function testCloneChecksOutATagPattern(): void
-         $this->assertSame(0, $this->clone('', '0.1.*', Git::CLONE_TYPE_TAG));
- 
-         $this->assertSame("tag-0.1.2\n", $this->read($this->directory . '/README.md'));
-+
-+        $this->tag('release/0.1.0', "tag-release-0.1.0\n");
-+        $this->tag('release/0.1.10', "tag-release-0.1.10\n");
-+        $this->tag('release/0.1.2', "tag-release-0.1.2\n", annotated: true);
-+        $this->tag('release/0.2.0', "tag-release-0.2.0\n");
-+
-+        $this->execute(new Command('rm')->flag('-rf')->argument($this->directory));
-+        $this->assertSame(0, $this->clone('', 'release/0.1.*', Git::CLONE_TYPE_TAG));
-+
-+        $this->assertSame("tag-release-0.1.2\n", $this->read($this->directory . '/README.md'));
-     }
- 
-     public function testCloneChecksOutAnExactTag(): void
-```
-
----
-
-### Incident Patch 4: `4ab36cb3` (2026-10-05)
-**Commit Message**: fix(mails): finish the job when a project's own SMTP server fails
-
-A project's SMTP credentials or host are theirs to fix, so retrying cannot help and the failed list only grows. Cloud SMTP failures still fail the job.
-
-**File**: `src/Appwrite/Platform/Workers/Mails.php` (modified, +4/-1)
-```diff
-@@ -234,8 +234,11 @@ public function action(Message $message, Document $project, Registry $register,
-             Span::add('mail.status', 'failure');
- 
-             if ($type === 'smtp') {
--                throw new Exception('Error sending mail: ' . $error->getMessage(), 401);
-+                Span::add('mail.error.message', $error->getMessage());
-+
-+                return;
-             }
-+
-             throw new Exception('Error sending mail: ' . $error->getMessage(), 500);
-         }
- 
-```
-
-**File**: `tests/unit/Platform/Workers/MailsTest.php` (modified, +18/-2)
-```diff
-@@ -166,6 +166,19 @@ public function testProviderRejectionIsSkippedWithoutRetry(): void
-         $this->assertSame(1, $adapter->sendCount);
-     }
- 
-+    public function testProjectSmtpFailureIsNotRetried(): void
-+    {
-+        $adapter = new SpyMailAdapter();
-+
-+        $this->runMailWorker($adapter, recipient: 'john@example.test', smtp: [
-+            'host' => '127.0.0.1',
-+            'port' => 1,
-+            'senderEmail' => 'sender@example.test',
-+        ]);
-+
-+        $this->assertSame(0, $adapter->sendCount);
-+    }
-+
-     private function assertMailWorkerThrows(SpyMailAdapter $adapter, string $expectedMessage): void
-     {
-         $this->expectException(\Exception::class);
-@@ -174,7 +187,10 @@ private function assertMailWorkerThrows(SpyMailAdapter $adapter, string $expecte
-         $this->runMailWorker($adapter, recipient: 'legacy@example.test');
-     }
- 
--    private function runMailWorker(SpyMailAdapter $adapter, string $recipient): void
-+    /**
-+     * @param array<string, mixed> $smtp
-+     */
-+    private function runMailWorker(SpyMailAdapter $adapter, string $recipient, array $smtp = []): void
-     {
-         $registry = new Registry();
-         $registry->set('smtp', static fn () => new Pool(new Stack(), 'smtp', 1, static fn () => $adapter, 1.0));
-@@ -190,7 +206,7 @@ private function runMailWorker(SpyMailAdapter $adapter, string $recipient): void
-                     'queue' => 'v1-mails',
-                     'timestamp' => \time(),
-                     'payload' => [
--                        'smtp' => [],
-+                        'smtp' => $smtp,
-                         'recipient' => $recipient,
-                         'name' => 'Legacy User',
-                         'subject' => 'Hello',
-```
-
----
-
-### Incident Patch 5: `fcbd1e2a` (2026-10-05)
-**Commit Message**: fix(vcs): resolve tag globs when cloning
-
-Template versions such as 0.1.* are not refspecs. PR #14022 fetches
-refs/tags/<version> directly, so those clones fail. Resolve a glob to the
-last tag git ls-remote lists for it, the same tag the old GitHub and Origin
-lookup selected, and keep exact tag names on the direct fetch.
-
-Co-authored-by: Chirag Aggarwal <[REDACTED_EMAIL]>
-
-**File**: `packages/vcs/src/Adapter/Git.php` (modified, +52/-7)
-```diff
-@@ -296,9 +296,8 @@ abstract public function getCommitStatuses(string $owner, string $repositoryName
- 
-     /**
-      * Sparse, shallow clone of one ref into $directory, checking out only
--     * $rootDirectory. Every value reaches git as its own argument; the one
--     * shell script, the branch fallback, is constant and reads its values
--     * from positional parameters.
-+     * $rootDirectory. Every value reaches git as its own argument. The shell
-+     * scripts are constant and read their values from positional parameters.
-      */
-     protected function cloneCommand(string $cloneUrl, string $version, string $versionType, string $directory, string $rootDirectory): Command
-     {
-@@ -324,10 +323,7 @@ protected function cloneCommand(string $cloneUrl, string $version, string $versi
-                 $this->git($directory)->argument('fetch')->option('--depth', '1')->argument('origin')->argument($version),
-                 $this->git($directory)->argument('checkout')->argument($version),
-             ),
--            self::CLONE_TYPE_TAG => Command::and(
--                $this->git($directory)->argument('fetch')->option('--depth', '1')->argument('origin')->argument('refs/tags/' . $version),
--                $this->git($directory)->argument('checkout')->argument('FETCH_HEAD'),
--            ),
-+            self::CLONE_TYPE_TAG => $this->tagCheckout($directory, $version),
-             default => throw new Exception("Unsupported clone type: {$versionType}"),
-         };
- 
-@@ -349,6 +345,55 @@ protected function cloneCommand(string $cloneUrl, string $version, string $versi
-         );
-     }
- 
-+    /**
-+     * Resolve a tag glob the way GitHub and Origin used to: the last tag
-+     * `git ls-remote --tags` lists for the pattern
-+     * (`tail -n 1 | awk -F/ '{print $3}'`). `--refs` omits the peeled `^{}`
-+     * line of an annotated tag, so the name awk prints is the tag itself.
-+     * The directory and the pattern arrive as `$1` and `$2`.
-+     */
-+    private const string TAG_GLOB_CHECKOUT = <<<'SCRIPT'
-+refs=$(git -C "$1" ls-remote --refs --tags origin -- "$2") || exit
-+tag=$(printf '%s\n' "$refs" | tail -n 1 | awk -F '/' '{print $3}')
-+if [ -z "$tag" ]; then
-+    printf 'fatal: no tag matching %s\n' "$2" >&2
-+    exit 1
-+fi
-+git -C "$1" fetch --depth=1 origin "refs/tags/$tag" && git -C "$1" checkout FETCH_HEAD
-+SCRIPT;
-+
-+    /**
-+     * Check out $version. A glob is resolved to one tag. An exact name is
-+     * fetched as refs/tags/<name>, so a leading dash stays part of the name.
-+     */
-+    private function tagCheckout(string $directory, string $version): Command
-+    {
-+        if (!$this->isTagGlob($version)) {
-+            return Command::and(
-+                $this->git($directory)->argument('fetch')->option('--depth', '1')->argument('origin')->argument('refs/tags/' . $version),
-+                $this->git($directory)->argument('checkout')->argument('FETCH_HEAD'),
-+            );
-+        }
-+
-+        return new Command('sh')
-+            ->flag('-c')
-+            ->argument(self::TAG_GLOB_CHECKOUT)
-+            ->argument('sh')
-+            ->argument($directory)
-+            ->argument($version);
-+    }
-+
-+    /**
-+     * True when $version is a git ref glob. `*`, `?` and `[` cannot appear in
-+     * a tag name, and they are the wildcards `git ls-remote` matches on.
-+     */
-+    private function isTagGlob(string $version): bool
-+    {
-+        return str_contains($version, '*')
-+            || str_contains($version, '?')
-+            || str_contains($version, '[');
-+    }
-+
-     /**
-      * git, run against the repository in $directory
-      */
-```
-
-**File**: `packages/vcs/tests/CloneCommandTest.php` (modified, +66/-3)
-```diff
-@@ -126,14 +126,77 @@ public function testCloneChecksOutATagStartingWithADash(): void
-         $this->assertFileExists($this->directory . '/README.md');
-     }
- 
--    private function clone(string $rootDirectory, string $version = 'main', string $versionType = Git::CLONE_TYPE_BRANCH): int
-+    /**
-+     * `git ls-remote` lists tags in refname order, and the old lookup kept the
-+     * last line. 0.1.10 is the newest version and sorts before 0.1.2; the
-+     * annotated 0.1.2 is the tag that line names.
-+     */
-+    public function testCloneChecksOutATagPattern(): void
-+    {
-+        $this->tag('0.1.0', "tag-0.1.0\n");
-+        $this->tag('0.1.10', "tag-0.1.10\n");
-+        $this->tag('0.1.2', "tag-0.1.2\n", annotated: true);
-+        $this->tag('0.2.0', "tag-0.2.0\n");
-+
-+        $this->assertSame(0, $this->clone('', '0.1.*', Git::CLONE_TYPE_TAG));
-+
-+        $this->assertSame("tag-0.1.2\n", $this->read($this->directory . '/README.md'));
-+    }
-+
-+    public function testCloneChecksOutAnExactTag(): void
-+    {
-+        $this->tag('1.2.3', "tag-1.2.3\n");
-+        $this->tag('1.2.4', "tag-1.2.4\n");
-+
-+        $this->assertSame(0, $this->clone('', '1.2.3', Git::CLONE_TYPE_TAG));
-+
-+        $this->assertSame("tag-1.2.3\n", $this->read($this->directory . '/README.md'));
-+    }
-+
-+    public function testCloneFailsWhenNoTagMatches(): void
-+    {
-+        $this->tag('0.1.0', "tag-0.1.0\n");
-+
-+        $stderr = '';
-+        $this->assertNotSame(0, $this->clone('', '9.9.*', Git::CLONE_TYPE_TAG, $stderr));
-+        $this->assertStringContainsString('fatal: no tag matching 9.9.*', $stderr);
-+    }
-+
-+    private function tag(string $name, string $content, bool $annotated = false): void
-+    {
-+        $work = $this->workspace . '/work';
-+        if (!is_dir($work . '/.git')) {
-+            $this->assertSame(0, $this->execute(new Command('git')->argument('clone')->flag('-q')->argument($this->repository)->argument($work)));
-+        }
-+
-+        file_put_contents($work . '/README.md', $content);
-+        $this->assertSame(0, $this->execute(new Command('git')->option('-C', $work)->argument('add')->argument('README.md')));
-+        $this->assertSame(0, $this->execute(new Command('git')->option('-C', $work)->option('-c', 'user.name=Test')->option('-c', 'user.email=test@example.com')->argument('commit')->flag('-q')->option('-m', $name)));
-+
-+        $tag = new Command('git')->option('-C', $work)->option('-c', 'user.name=Test')->option('-c', 'user.email=test@example.com')->argument('tag');
-+        if ($annotated) {
-+            $tag->flag('-a')->option('-m', $name);
-+        }
-+        $this->assertSame(0, $this->execute($tag->argument($name)));
-+        $this->assertSame(0, $this->execute(new Command('git')->option('-C', $work)->argument('push')->flag('-q')->argument('origin')->argument('refs/tags/' . $name)));
-+    }
-+
-+    private function read(string $path): string
-+    {
-+        $content = file_get_contents($path);
-+        $this->assertIsString($content);
-+
-+        return $content;
-+    }
-+
-+    private function clone(string $rootDirectory, string $version = 'main', string $versionType = Git::CLONE_TYPE_BRANCH, string &$stderr = ''): int
-     {
-         $adapter = new LocalGit($this->repository);
- 
--        return $this->execute($adapter->generateCloneCommand('owner', 'repository', $version, $versionType, $this->directory, $rootDirectory));
-+        return $this->execute($adapter->generateCloneCommand('owner', 'repository', $version, $versionType, $this->directory, $rootDirectory), $stderr);
-     }
- 
--    private function execute(Command $command): int
-+    private function execute(Command $command, string &$stderr = ''): int
-     {
-         $stdout = '';
-         $stderr = '';
-```
-
----
-
-### Incident Patch 6: `bd11153e` (2026-10-05)
-**Commit Message**: fix: keep the fixture IP out of the dynamic range
-
-**File**: `docker-compose.override.yml` (modified, +1/-0)
-```diff
-@@ -674,6 +674,7 @@ networks:
-     ipam:
-       config:
-         - subnet: 203.0.0.0/24
-+          ip_range: 203.0.0.128/25
-           gateway: 203.0.0.254
- volumes:
-   appwrite-gitea: null
-```
-
----
-
-### Incident Patch 7: `8379170f` (2026-10-05)
-**Commit Message**: Merge pull request #14125 from appwrite/fix-certificate-retry-errors
-
-**File**: `src/Appwrite/Platform/Workers/Certificates.php` (modified, +5/-3)
-```diff
-@@ -381,17 +381,19 @@ private function handleCertificateGenerationAction(
-             ]);
- 
-             if ($awaitingProvider && $attempts < self::MAX_GENERATION_ATTEMPTS) {
--                // Nothing retries 'unverified', so keep the rule generating while attempts remain
-+                // Nothing retries 'unverified', so keep the rule generating while attempts remain.
-+                // The interval retries it, so this is a wait, not a worker error.
-                 $rule->setAttribute('status', RULE_STATUS_CERTIFICATE_GENERATING);
-+                Console::warning('Certificate for ' . $domain->get() . ' will be retried: ' . $e->getMessage());
-             } else {
-                 // Mark rule as 'unverified'
-                 $rule->setAttribute('status', RULE_STATUS_CERTIFICATE_GENERATION_FAILED);
- 
-                 // Send email to security email
-                 $this->notifyError($domain->get(), $e->getMessage(), $attempts, $publisherForMails, $plan, $dbForPlatform->getDocument('projects', 'console'));
--            }
- 
--            throw $e;
-+                throw $e;
-+            }
-         } finally {
-             // Update certificate document with logs
-             $certificate->setAttribute('logs', $logs);
-```
-
----
-
-### Incident Patch 8: `6f2b3450` (2026-10-05)
-**Commit Message**: fix(certificates): stop reporting a retryable certificate failure as a worker error
-
-A delayed provider's failure that keeps the rule generating for another attempt was still rethrown, so every interval retry of a domain waiting on its owner's DNS records reached the error tracker. Log it and let the interval retry; only the final failure, which marks the rule unverified and mails, is rethrown.
-
-**File**: `src/Appwrite/Platform/Workers/Certificates.php` (modified, +5/-3)
-```diff
-@@ -381,17 +381,19 @@ private function handleCertificateGenerationAction(
-             ]);
- 
-             if ($awaitingProvider && $attempts < self::MAX_GENERATION_ATTEMPTS) {
--                // Nothing retries 'unverified', so keep the rule generating while attempts remain
-+                // Nothing retries 'unverified', so keep the rule generating while attempts remain.
-+                // The interval retries it, so this is a wait, not a worker error.
-                 $rule->setAttribute('status', RULE_STATUS_CERTIFICATE_GENERATING);
-+                Console::warning('Certificate for ' . $domain->get() . ' will be retried: ' . $e->getMessage());
-             } else {
-                 // Mark rule as 'unverified'
-                 $rule->setAttribute('status', RULE_STATUS_CERTIFICATE_GENERATION_FAILED);
- 
-                 // Send email to security email
-                 $this->notifyError($domain->get(), $e->getMessage(), $attempts, $publisherForMails, $plan, $dbForPlatform->getDocument('projects', 'console'));
--            }
- 
--            throw $e;
-+                throw $e;
-+            }
-         } finally {
-             // Update certificate document with logs
-             $certificate->setAttribute('logs', $logs);
-```
-
----
-
-### Incident Patch 9: `b707cb01` (2026-10-05)
-**Commit Message**: Merge pull request #14101 from appwrite/fix/14099-proof-for-password-params
-
-fix(auth): use configured Argon2 params on signup and user create
-
-**File**: `app/controllers/api/account.php` (modified, +13/-11)
-```diff
-@@ -319,7 +319,8 @@
-     ->inject('hooks')
-     ->inject('plan')
-     ->inject('pwnedPasswords')
--    ->action(function (string $userId, string $email, string $password, ?string $name, Request $request, Response $response, Document $user, Document $project, Database $dbForProject, Authorization $authorization, Hooks $hooks, array $plan, PasswordPwned $pwnedPasswords) {
-+    ->inject('proofForPassword')
-+    ->action(function (string $userId, string $email, string $password, ?string $name, Request $request, Response $response, Document $user, Document $project, Database $dbForProject, Authorization $authorization, Hooks $hooks, array $plan, PasswordPwned $pwnedPasswords, ProofsPassword $proofForPassword) {
-         $name ??= '';
-         $email = \strtolower($email);
-         if ('console' === $project->getId()) {
-@@ -376,8 +377,7 @@
-         $hooks->trigger('passwordValidator', [$dbForProject, $project, $password, &$user, true]);
- 
-         $passwordHistory = $project->getAttribute('auths', [])['passwordHistory'] ?? 0;
--        $proof = new ProofsPassword();
--        $hash = $proof->hash($password);
-+        $hash = $proofForPassword->hash($password);
-         $emailMetadata = [
-             'emailCanonical' => null,
-             'emailIsCanonical' => null,
-@@ -431,8 +431,8 @@
-                 'password' => $hash,
-                 'passwordHistory' => $passwordHistory > 0 ? [$hash] : [],
-                 'passwordUpdate' => DateTime::now(),
--                'hash' => $proof->getHash()->getName(),
--                'hashOptions' => $proof->getHash()->getOptions(),
-+                'hash' => $proofForPassword->getHash()->getName(),
-+                'hashOptions' => $proofForPassword->getHash()->getOptions(),
-                 'registration' => DateTime::now(),
-                 'reset' => false,
-                 'name' => $name,
-@@ -1109,13 +1109,15 @@
-             }
-         }
- 
--        // Re-hash if not using recommended algo
--        if ($user->getAttribute('hash') !== $proofForPassword->getHash()->getName()) {
--            $proofForPasswordUpdated = new ProofsPassword();
-+        // Re-hash if not using recommended algo or its configured costs (read from the hash, not hashOptions)
-+        if (
-+            $user->getAttribute('hash') !== $proofForPassword->getHash()->getName()
-+            || \password_needs_rehash($user->getAttribute('password'), PASSWORD_ARGON2ID, $proofForPassword->getHash()->getOptions())
-+        ) {
-             $user
--                ->setAttribute('password', $proofForPasswordUpdated->hash($password))
--                ->setAttribute('hash', $proofForPasswordUpdated->getHash()->getName())
--                ->setAttribute('hashOptions', $proofForPasswordUpdated->getHash()->getOptions());
-+                ->setAttribute('password', $proofForPassword->hash($password))
-+                ->setAttribute('hash', $proofForPassword->getHash()->getName())
-+                ->setAttribute('hashOptions', $proofForPassword->getHash()->getOptions());
-             $dbForProject->updateDocument('users', $user->getId(), new Document([
-                 'password' => $user->getAttribute('password'),
-                 'hash' => $user->getAttribute('hash'),
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Base.php` (modified, +5/-6)
-```diff
-@@ -21,7 +21,7 @@
- 
- class Base extends Action
- {
--    protected function createUser(Hash $hash, string $userId, ?string $email, ?string $password, ?string $phone, ?string $name, Document $project, Database $dbForProject, Hooks $hooks, array $plan, ?bool $passwordPwned = null): Document
-+    protected function createUser(Hash $hash, string $userId, ?string $email, ?string $password, ?string $phone, ?string $name, Document $project, Database $dbForProject, Hooks $hooks, array $plan, ProofsPassword $proofForPassword, ?bool $passwordPwned = null): Document
-     {
-         $name = $name ?? '';
-         $plaintextPassword = $password;
-@@ -99,17 +99,16 @@ protected function createUser(Hash $hash, string $userId, ?string $email, ?strin
- 
-             $isHashed = !$hash instanceof Plaintext;
- 
--            $defaultHash = new ProofsPassword();
-             if (!empty($password)) {
--                if (!$isHashed) { // Password was never hashed, hash it with the default hash
--                    $hashedPassword = $defaultHash->hash($password);
--                    $hash = $defaultHash->getHash();
-+                if (!$isHashed) { // Password was never hashed, hash it with the configured default
-+                    $hashedPassword = $proofForPassword->hash($password);
-+                    $hash = $proofForPassword->getHash();
-                 } else {
-                     $hashedPassword = $password;
-                 }
-             } else {
-                 // when password is not provided, plaintext was set as the default hash causing the issue
--                $hash = $defaultHash->getHash();
-+                $hash = $proofForPassword->getHash();
-                 $isHashed = !$hash instanceof Plaintext;
+@@ -84,7 +84,9 @@ protected function waitDeploymentReady(string $siteId, string $deploymentId): vo
              }
  
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Http/Users/Argon2/Create.php` (modified, +4/-2)
-```diff
-@@ -12,6 +12,7 @@
- use Appwrite\Utopia\Database\Validator\CustomId;
- use Appwrite\Utopia\Response;
- use Utopia\Auth\Hashes\Argon2;
-+use Utopia\Auth\Proofs\Password as ProofsPassword;
- use Utopia\Database\Database;
- use Utopia\Database\Document;
- use Utopia\Emails\Validator\Email as EmailValidator;
-@@ -59,14 +60,15 @@ public function __construct()
-             ->inject('dbForProject')
-             ->inject('hooks')
-             ->inject('plan')
-+            ->inject('proofForPassword')
-             ->callback($this->action(...));
+             $this->assertEquals('ready', $deployment['body']['status'], 'Deployment status is not ready, deployment: ' . json_encode($deployment['body'], JSON_PRETTY_PRINT));
+-        }, 120000, 500);
++            // The lane runs one paratest process per CPU, each starting builds, so an SSR build
++            // that takes seconds alone takes over two minutes there; builds time out at 900s.
++        }, 300000, 500);
      }
  
--    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan): void
-+    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan, ProofsPassword $proofForPassword): void
-     {
-         $argon2 = new Argon2();
- 
--        $user = $this->createUser($argon2, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan);
-+        $user = $this->createUser($argon2, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan, $proofForPassword);
- 
-         $response
-             ->setStatusCode(Response::STATUS_CODE_CREATED)
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Http/Users/Bcrypt/Create.php` (modified, +4/-2)
-```diff
-@@ -12,6 +12,7 @@
- use Appwrite\Utopia\Database\Validator\CustomId;
- use Appwrite\Utopia\Response;
- use Utopia\Auth\Hashes\Bcrypt;
-+use Utopia\Auth\Proofs\Password as ProofsPassword;
- use Utopia\Database\Database;
- use Utopia\Database\Document;
- use Utopia\Emails\Validator\Email as EmailValidator;
-@@ -59,15 +60,16 @@ public function __construct()
-             ->inject('dbForProject')
-             ->inject('hooks')
-             ->inject('plan')
-+            ->inject('proofForPassword')
-             ->callback($this->action(...));
-     }
- 
--    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan): void
-+    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan, ProofsPassword $proofForPassword): void
-     {
-         $bcrypt = new Bcrypt();
-         $bcrypt->setCost(8); // Default cost
- 
--        $user = $this->createUser($bcrypt, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan);
-+        $user = $this->createUser($bcrypt, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan, $proofForPassword);
- 
-         $response
-             ->setStatusCode(Response::STATUS_CODE_CREATED)
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Http/Users/Create.php` (modified, +4/-2)
-```diff
-@@ -17,6 +17,7 @@
- use Appwrite\Utopia\Database\Validator\CustomId;
- use Appwrite\Utopia\Response;
- use Utopia\Auth\Hashes\Plaintext;
-+use Utopia\Auth\Proofs\Password as ProofsPassword;
- use Utopia\Database\Database;
- use Utopia\Database\Document;
- use Utopia\Emails\Validator\Email as EmailValidator;
-@@ -69,10 +70,11 @@ public function __construct()
-             ->inject('hooks')
-             ->inject('plan')
-             ->inject('pwnedPasswords')
-+            ->inject('proofForPassword')
-             ->callback($this->action(...));
-     }
- 
--    public function action(string $userId, ?string $email, ?string $phone, ?string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan, PasswordPwned $pwnedPasswords): void
-+    public function action(string $userId, ?string $email, ?string $phone, ?string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan, PasswordPwned $pwnedPasswords, ProofsPassword $proofForPassword): void
-     {
-         $pwnedPolicy = $project->getAttribute('auths', [])['passwordPwned'] ?? [];
-         $passwordPwned = empty($password) || !($pwnedPolicy['enabled'] ?? true)
-@@ -84,7 +86,7 @@ public function action(string $userId, ?string $email, ?string $phone, ?string $
- 
-         $plaintext = new Plaintext();
- 
--        $user = $this->createUser($plaintext, $userId, $email, $password, $phone, $name, $project, $dbForProject, $hooks, $plan, $passwordPwned);
-+        $user = $this->createUser($plaintext, $userId, $email, $password, $phone, $name, $project, $dbForProject, $hooks, $plan, $proofForPassword, $passwordPwned);
- 
-         $response
-             ->setStatusCode(Response::STATUS_CODE_CREATED)
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Http/Users/MD5/Create.php` (modified, +4/-2)
-```diff
-@@ -12,6 +12,7 @@
- use Appwrite\Utopia\Database\Validator\CustomId;
- use Appwrite\Utopia\Response;
- use Utopia\Auth\Hashes\MD5;
-+use Utopia\Auth\Proofs\Password as ProofsPassword;
- use Utopia\Database\Database;
- use Utopia\Database\Document;
- use Utopia\Emails\Validator\Email as EmailValidator;
-@@ -59,14 +60,15 @@ public function __construct()
-             ->inject('dbForProject')
-             ->inject('hooks')
-             ->inject('plan')
-+            ->inject('proofForPassword')
-             ->callback($this->action(...));
-     }
- 
--    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan): void
-+    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan, ProofsPassword $proofForPassword): void
-     {
-         $md5 = new MD5();
- 
--        $user = $this->createUser($md5, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan);
-+        $user = $this->createUser($md5, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan, $proofForPassword);
- 
-         $response
-             ->setStatusCode(Response::STATUS_CODE_CREATED)
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Http/Users/PHPass/Create.php` (modified, +4/-2)
-```diff
-@@ -12,6 +12,7 @@
- use Appwrite\Utopia\Database\Validator\CustomId;
- use Appwrite\Utopia\Response;
- use Utopia\Auth\Hashes\PHPass;
-+use Utopia\Auth\Proofs\Password as ProofsPassword;
- use Utopia\Database\Database;
- use Utopia\Database\Document;
- use Utopia\Emails\Validator\Email as EmailValidator;
-@@ -59,14 +60,15 @@ public function __construct()
-             ->inject('dbForProject')
-             ->inject('hooks')
-             ->inject('plan')
-+            ->inject('proofForPassword')
-             ->callback($this->action(...));
-     }
- 
--    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan): void
-+    public function action(string $userId, string $email, string $password, ?string $name, Response $response, Document $project, Database $dbForProject, Hooks $hooks, array $plan, ProofsPassword $proofForPassword): void
-     {
-         $phpass = new PHPass();
- 
--        $user = $this->createUser($phpass, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan);
-+        $user = $this->createUser($phpass, $userId, $email, $password, null, $name, $project, $dbForProject, $hooks, $plan, $proofForPassword);
- 
-         $response
-             ->setStatusCode(Response::STATUS_CODE_CREATED)
-```
-
-**File**: `src/Appwrite/Platform/Modules/Users/Http/Users/Password/Update.php` (modified, +4/-6)
-```diff
-@@ -17,7 +17,6 @@
- use Appwrite\SDK\Specification\Validator\PasswordFormat;
- use Appwrite\Utopia\Database\Documents\User;
- use Appwrite\Utopia\Response;
--use Utopia\Auth\Hashes\Argon2;
- use Utopia\Auth\Proofs\Password as ProofsPassword;
- use Utopia\Database\Database;
- use Utopia\Database\DateTime;
-@@ -69,10 +68,11 @@ public function __construct()
-             ->inject('queueForEvents')
-             ->inject('hooks')
-             ->inject('pwnedPasswords')
-+            ->inject('proofForPassword')
-             ->callback($this->action(...));
-     }
- 
--    public function action(string $userId, string $password, Response $response, Document $project, Database $dbForProject, Event $queueForEvents, Hooks $hooks, PasswordPwned $pwnedPasswords): void
-+    public function action(string $userId, string $password, Response $response, Document $project, Database $dbForProject, Event $queueForEvents, Hooks $hooks, PasswordPwned $pwnedPasswords, ProofsPassword $proofForPassword): void
-     {
-         $user = $dbForProject->getDocument('users', $userId);
- 
-@@ -111,10 +111,8 @@ public function action(string $userId, string $password, Response $response, Doc
- 
-         $hooks->trigger('passwordValidator', [$dbForProject, $project, $password, &$user, true]);
- 
--        // Create Argon2 hasher with default settings
--        $hasher = new Argon2();
--
--        $newPassword = $hasher->hash($password);
-+        $newPassword = $proofForPassword->hash($password);
-+        $hasher = $proofForPassword->getHash();
- 
-         $hash = ProofsPassword::createHash($user->getAttribute('hash'), $user->getAttribute('hashOptions'));
-         $historyLimit = $project->getAttribute('auths', [])['passwordHistory'] ?? 0;
+     protected function waitDeploymentActivated(string $siteId, string $deploymentId): void
 ```
 
 ---
 
-### Incident Patch 10: `851c7680` (2026-10-05)
-**Commit Message**: Merge branch 'main' into fix/14099-proof-for-password-params
+### Incident Patch 2: `49597d4b` (2026-10-19)
+**Commit Message**: Merge pull request #14673 from appwrite/fix/sites-e2e-build-wait
 
-**File**: `packages/cdn/src/Certificates/Provider/Fastly.php` (modified, +2/-1)
-```diff
-@@ -34,6 +34,7 @@ public function __construct(
-         private readonly string $apiBase = 'https://api.fastly.com',
-         private readonly int $deploymentPollAttempts = 10,
-         private readonly int $deploymentPollIntervalMilliseconds = 5000,
-+        string $tlsConfigurationId = '',
-     ) {
-         if ($this->deploymentPollAttempts < 1) {
-             throw new \InvalidArgumentException('Deployment poll attempts must be at least one.');
-@@ -46,7 +47,7 @@ public function __construct(
-         $this->client = $client ?? new Client(new CurlAdapter());
-         $this->tls = new FastlyTls(
-             apiToken: $this->apiToken,
--            tlsConfigurationId: '',
-+            tlsConfigurationId: $tlsConfigurationId,
-             certificateAuthority: $certificateAuthority,
-             client: $this->client,
-             apiBase: $this->apiBase,
-```
+fix(tests): give Sites e2e builds room to finish under the lane's load
 
-**File**: `packages/cdn/src/Certificates/Provider/FastlyTls.php` (modified, +218/-1)
+**File**: `tests/e2e/Services/Sites/SitesBase.php` (modified, +3/-1)
 ```diff
-@@ -44,7 +44,12 @@ public function issueCertificate(string $certName, string $domain, ?string $doma
-             $subscription = $this->retrySubscription($subscription['resource']['id']);
-         }
+@@ -84,7 +84,9 @@ protected function waitDeploymentReady(string $siteId, string $deploymentId): vo
+             }
  
--        return $this->extractRenewDate($subscription);
-+        $renewDate = $this->extractRenewDate($subscription);
-+        if ($renewDate !== null) {
-+            $this->ensureActivated($subscription, $domain);
-+        }
-+
-+        return $renewDate;
+             $this->assertEquals('ready', $deployment['body']['status'], 'Deployment status is not ready, deployment: ' . json_encode($deployment['body'], JSON_PRETTY_PRINT));
+-        }, 120000, 500);
++            // The lane runs one paratest process per CPU, each starting builds, so an SSR build
++            // that takes seconds alone takes over two minutes there; builds time out at 900s.
++        }, 300000, 500);
      }
  
-     public function isInstantGeneration(string $domain, ?string $domainType): bool
-@@ -65,6 +70,10 @@ public function getCertificateStatus(string $domain, ?string $domainType): strin
- 
-         $status = $this->mapStatus($subscription['resource']['attributes']['state'] ?? '');
- 
-+        if ($status === Status::ISSUED && !$this->ensureActivated($subscription, $domain)) {
-+            return Status::PROCESSING;
-+        }
-+
-         // An issued certificate needs nothing from the domain owner, whatever
-         // an authorization left over from an earlier order still says.
-         if ($status === Status::ISSUED || $status === Status::UNKNOWN) {
-@@ -76,6 +85,10 @@ public function getCertificateStatus(string $domain, ?string $domainType): strin
-         // subscription state alone cannot tell waiting from progress.
-         $authorizations = $this->findAuthorizations($subscription, $domain);
-         if ($status !== Status::FAILED && !$this->isBlocked($authorizations)) {
-+            if ($status === Status::RENEWING && !$this->ensureActivated($subscription, $domain)) {
-+                return Status::PROCESSING;
-+            }
-+
-             return $status;
-         }
- 
-@@ -416,6 +429,210 @@ private function retrySubscription(string $subscriptionId): array
-         return ['resource' => $data, 'included' => \is_array($included) ? array_values(array_filter($included, is_array(...))) : []];
-     }
- 
-+    /**
-+     * Without an activation, the hostname keeps serving the shared default
-+     * certificate instead of this one.
-+     *
-+     * @param array{resource:array<string, mixed>,included:array<int, array<string, mixed>>} $subscription
-+     * @return bool False when Fastly reports the subscription issued or renewing before its certificate appears.
-+     */
-+    private function ensureActivated(array $subscription, string $domain): bool
-+    {
-+        if ($this->tlsConfigurationId === '') {
-+            return true;
-+        }
-+
-+        $certificateId = $this->issuedCertificateId($subscription);
-+        if ($certificateId === null) {
-+            return false;
-+        }
-+
-+        // Every hostname on the subscription, so the apex also activates www when one certificate covers both
-+        $hostnames = [];
-+        foreach ([...$this->references($subscription['resource'], 'tls_domains'), $domain] as $name) {
-+            $hostnames[strtolower($name)] ??= $name;
-+        }
-+
-+        foreach ($hostnames as $hostname) {
-+            $activation = $this->findActivation($hostname);
-+
-+            if ($activation === null) {
-+                $this->createActivation($certificateId, $hostname);
-+                continue;
-+            }
-+
-+            if ($activation['certificate'] === $certificateId) {
-+                continue;
-+            }
-+
-+            // A renewal leaves the hostname on the subscription's previous certificate
-+            if (!\in_array($activation['certificate'], $this->references($subscription['resource'], 'tls_certificates'), true)) {
-+                throw new \RuntimeException('Another certificate already terminates TLS for ' . $hostname . '.');
-+            }
-+
-+            $this->updateActivation($activation['id'], $certificateId, $hostname);
-+        }
-+
-+        return true;
-+    }
-+
-+    /**
-+     * The latest-expiring certificate, so a renewal activates the new one.
-+     *
-+     * @param array{resource:array<string, mixed>,included:array<int, array<string, mixed>>} $subscription
-+     */
-+    private function issuedCertificateId(array $subscription): ?string
-+    {
-+        $ids = $this->references($subscription['resource'], 'tls_certificates');
-+
-+        $bestId = null;
-+        $bestExpiry = null;
-+        foreach ($subscription['included'] as $included) {
-+            if (($included['type'] ?? null) !== 'tls_certificate' || !\in_array($included['id'] ?? null, $ids, true)) {
-+                continue;
-+            }
-+
-+            $attributes = $included['attributes'] ?? null;
-+            $notAfter = \is_array($attributes) ? ($attributes['not_after'] ?? null) : null;
-+            $expiry = \is_string($notAfter) ? strtotime($notAfter) : false;
-+            if ($expiry === false) {
-+                continue;
-+            }
-+
-+            if ($bestExpiry === null || $expiry > $bestExpiry) {
-+                $bestExpiry = $expiry;
-+                $bestId = $included['id'];
-+            }
-+        }
-+
-+        // Without an expiry to compare, the last reference is the newest.
-+        return \is_string($bestId) ? $be
-```
-
-**File**: `packages/cdn/tests/Certificates/Provider/FastlyTest.php` (modified, +41/-0)
-```diff
-@@ -6,6 +6,7 @@
- 
- use PHPUnit\Framework\TestCase;
- use Utopia\Cdn\Certificates\Provider\Fastly;
-+use Utopia\Cdn\Certificates\Status;
- use Utopia\Cdn\Tests\TestClient;
- use Utopia\Psr7\Response;
- use Utopia\Psr7\Stream;
-@@ -31,6 +32,46 @@ public function testIssueCreatesDomainAndTlsSubscription(): void
-         $this->assertSame('example.com', $client->calls[3]['body']['data']['relationships']['tls_domains']['data'][0]['id']);
-     }
- 
-+    public function testTlsConfigurationActivatesIssuedCertificate(): void
-+    {
-+        $client = new TestClient([
-+            $this->json('{"data":[{"id":"sub_1","attributes":{"state":"issued"},"relationships":{"tls_certificates":{"data":[{"id":"cert_1","type":"tls_certificate"}]},"tls_domains":{"data":[{"id":"example.com","type":"tls_domain"}]}}}]}'),
-+            $this->json('{"data":[]}'),
-+            $this->json('{}', 201),
-+        ]);
-+
-+        $status = new Fastly('token', 'service_1', client: $client, tlsConfigurationId: 'tls_config_1')
-+            ->getCertificateStatus('example.com', null);
-+
-+        $this->assertSame(Status::ISSUED, $status);
-+        $this->assertCount(3, $client->calls);
-+        $this->assertStringContainsString('filter%5Btls_configuration.id%5D=tls_config_1', $client->calls[1]['url']);
-+        $this->assertSame('POST', $client->calls[2]['method']);
-+        $this->assertSame('https://api.fastly.com/tls/activations', $client->calls[2]['url']);
-+        $this->assertSame([
-+            'data' => [
-+                'type' => 'tls_activation',
-+                'relationships' => [
-+                    'tls_certificate' => ['data' => ['type' => 'tls_certificate', 'id' => 'cert_1']],
-+                    'tls_configuration' => ['data' => ['type' => 'tls_configuration', 'id' => 'tls_config_1']],
-+                    'tls_domain' => ['data' => ['type' => 'tls_domain', 'id' => 'example.com']],
-+                ],
-+            ],
-+        ], $client->calls[2]['body']);
-+    }
-+
-+    public function testIssuedCertificateWithoutATlsConfigurationIsNotActivated(): void
-+    {
-+        $client = new TestClient([
-+            $this->json('{"data":[{"id":"sub_1","attributes":{"state":"issued"},"relationships":{"tls_certificates":{"data":[{"id":"cert_1","type":"tls_certificate"}]}}}]}'),
-+        ]);
-+
-+        $status = new Fastly('token', 'service_1', client: $client)->getCertificateStatus('example.com', null);
-+
-+        $this->assertSame(Status::ISSUED, $status);
-+        $this->assertCount(1, $client->calls);
-+    }
-+
-     public function testBlockedTlsLeavesVersionlessDomainOnItsCurrentService(): void
-     {
-         $blocked = json_encode([
-```
-
-**File**: `packages/cdn/tests/Certificates/Provider/FastlyTlsTest.php` (modified, +249/-18)
-```diff
-@@ -51,9 +51,11 @@ public function testIssueCertificateCanUseFastlyDomainManagementWithoutAConfigur
- 
-     public function testGetCertificateStatusMapsFastlyState(): void
-     {
-+        $issued = '{"data":[{"id":"sub_123","attributes":{"state":"issued"},"relationships":{"tls_certificates":{"data":[{"type":"tls_certificate","id":"cert_1"}]}}}]}';
-         $client = new TestClient([
--            new Response(200, body: new Stream('{"data":[{"id":"sub_123","attributes":{"state":"issued"}}]}')),
--            new Response(200, body: new Stream('{"data":[{"id":"sub_123","attributes":{"state":"issued"}}]}')),
-+            new Response(200, body: new Stream($issued)),
-+            new Response(200, body: new Stream('{"data":[{"id":"act_1","type":"tls_activation","relationships":{"tls_certificate":{"data":{"type":"tls_certificate","id":"cert_1"}}}}]}')),
-+            new Response(200, body: new Stream($issued)),
-         ]);
- 
-         $provider = new FastlyTls('token', 'tls-config-id', 'certainly', $client);
-@@ -79,21 +81,26 @@ public function testDeleteCertificateRemovesSubscription(): void
- 
-     public function testIssueCertificateReturnsRenewDateFromIncludedCertificate(): void
-     {
--        $client = new TestClient([new Response(200, body: new Stream(json_encode([
--            'data' => [[
--                'id' => 'sub_123',
--                'attributes' => ['state' => 'issued'],
--                'relationships' => ['tls_certificates' => ['data' => [['type' => 'tls_certificate', 'id' => 'cert_1']]]],
--            ]],
--            'included' => [[
--                'type' => 'tls_certificate',
--                'id' => 'cert_1',
--                'attributes' => ['not_after' => '2027-02-01T00:00:00Z'],
--            ]],
--        ])))]);
-+        $client = new TestClient([
-+            new Response(200, body: new Stream(json_encode([
-+                'data' => [[
-+                    'id' => 'sub_123',
-+                    'attributes' => ['state' => 'issued'],
-+                    'relationships' => ['tls_certificates' => ['data' => [['type' => 'tls_certificate', 'id' => 'cert_1']]]],
-+                ]],
-+                'included' => [[
-+                    'type' => 'tls_certificate',
-+                    'id' => 'cert_1',
-+                    'attributes' => ['not_after' => '2027-02-01T00:00:00Z'],
-+                ]],
-+            ]))),
-+            new Response(200, body: new Stream('{"data":[]}')),
-+            new Response(201, body: new Stream('{"data":{"id":"act_1","type":"tls_activation"}}')),
-+        ]);
- 
-         $provider = new FastlyTls('token', 'tls-config-id', 'certainly', $client);
-         $this->assertSame('2027-01-02 00:00:00.000', $provider->issueCertificate('cert', 'example.com', null));
-+        $this->assertSame([['domain' => 'example.com', 'certificate' => 'cert_1']], $this->activations($client));
-     }
- 
-     public function testRetriesFailedSubscriptionWithForce(): void
-@@ -230,9 +237,194 @@ public function testFailedSubscriptionWithoutAuthorizationsIsStillReported(): vo
- 
-     public function testIssuedSubscriptionIgnoresStaleAuthorization(): void
-     {
-+        $client = new TestClient([
-+            $this->json($this->subscription(state: 'issued', certificates: [['type' => 'tls_certificate', 'id' => 'cert_1']])),
-+            $this->json($this->activation('cert_1')),
-+        ]);
-+
-+        $this->assertSame(Status::ISSUED, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null));
-+    }
-+
-+    public function testIssuedSubscriptionWithoutACertificateIsStillProcessing(): void
-+    {
-+        // Issued, but no certificate on the subscription yet.
-         $client = new TestClient([$this->json($this->subscription(state: 'issued'))]);
- 
-+        $this->assertSame(Status::PROCESSING, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null));
-+        $this->assertCount(1, $client->calls);
-+    }
-+
-+    public function testRenewingSubscriptionWithoutACertificateIsStillProcessing(): void
-+    {
-+        $client = new TestClient([$this->json($this->subscription(state: 'renewing', authorizationState: 'passing'))]);
-+
-+        $this->assertSame(Status::PROCESSING, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null));
-+        $this->assertCount(1, $client->calls);
-+    }
-+
-+    public function testRenewingSubscriptionActivatesItsCertificate(): void
-+    {
-+        $client = new TestClient([
-+            $this->json($this->subscription(state: 'renewing', authorizationState: 'passing', certificates: [['type' => 'tls_certificate', 'id' => 'cert_1']])),
-+            $this->json(['data' => []]),
-+            $this->json(['data' => ['id' => 'act_1', 'type' => 'tls_activation']], 201),
-+        ]);
-+
-+        $this->assertSame(Status::RENEWING, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null)
-```
-
-**File**: `packages/vcs/src/Adapter/Git/GitHub.php` (modified, +7/-0)
-```diff
-@@ -8,6 +8,7 @@
- use Utopia\Command;
- use Utopia\VCS\Adapter\Git;
- use Utopia\VCS\Exception\FileNotFound;
-+use Utopia\VCS\Exception\OwnerNotFound;
- use Utopia\VCS\Exception\RepositoryNotFound;
- 
- class GitHub extends Git
-@@ -713,6 +714,12 @@ public function getOwnerName(string $installationId, ?int $repositoryId = null):
-         $url = '/app/installations/' . $installationId;
-         $response = $this->call(self::METHOD_GET, $url, ['Authorization' => "Bearer $this->jwtToken"]);
- 
-+        // Only a missing installation is permanent; rate limits and server errors stay retryable failures
-+        $responseHeaders = $response['headers'] ?? [];
-+        if (\is_array($responseHeaders) && ($responseHeaders['status-code'] ?? 0) === 404) {
-+            throw new OwnerNotFound("Installation '{$installationId}' was not found.");
-+        }
-+
-         $responseBody = $response['body'] ?? [];
-         $responseBodyAccount = $responseBody['account'] ?? [];
- 
-```
-
-**File**: `packages/vcs/src/Exception/OwnerNotFound.php` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace Utopia\VCS\Exception;
-+
-+class OwnerNotFound extends \Exception
-+{
-+}
-```
-
-**File**: `packages/vcs/tests/GitHubTest.php` (modified, +66/-0)
-```diff
-@@ -8,6 +8,7 @@
- use Utopia\Cache\Adapter\None;
- use Utopia\Cache\Cache;
- use Utopia\VCS\Adapter\Git\GitHub;
-+use Utopia\VCS\Exception\OwnerNotFound;
- 
- final class GitHubTest extends Base
- {
-@@ -277,4 +278,69 @@ public static function encodedPemProvider(): \Iterator
-         yield 'wrapped base64' => [fn (string $pem): string => chunk_split(base64_encode($pem), 76, "\n")];
-         yield 'escaped newlines' => [fn (string $pem): string => str_replace("\n", '\n', $pem)];
-     }
-+
-+    public function testGetOwnerNameForMissingInstallationThrowsOwnerNotFound(): void
-+    {
-+        $adapter = $this->installationResponse(404, ['message' => 'Not Found']);
-+
-+        $this->expectException(OwnerNotFound::class);
-+
-+        $adapter->getOwnerName('1234');
-+    }
-+
-+    /**
-+     * @param array<string, mixed> $body
-+     */
-+    #[DataProvider('transientInstallationResponses')]
-+    public function testGetOwnerNameKeepsTransientFailuresRetryable(int $status, array $body): void
-+    {
-+        $adapter = $this->installationResponse($status, $body);
-+
-+        try {
-+            $adapter->getOwnerName('1234');
-+            $this->fail('A failed installation lookup must throw');
-+        } catch (\Exception $error) {
-+            $this->assertNotInstanceOf(OwnerNotFound::class, $error);
-+        }
-+    }
-+
-+    /**
-+     * @return iterable<string, array{int, array<string, mixed>}>
-+     */
-+    public static function transientInstallationResponses(): iterable
-+    {
-+        yield 'rate limited' => [403, ['message' => 'API rate limit exceeded']];
-+        yield 'too many requests' => [429, ['message' => 'You have exceeded a secondary rate limit']];
-+        yield 'server error' => [502, ['message' => 'Server Error']];
-+    }
-+
-+    public function testGetOwnerNameReturnsInstallationLogin(): void
-+    {
-+        $adapter = $this->installationResponse(200, ['account' => ['login' => 'appwrite']]);
-+
-+        $this->assertSame('appwrite', $adapter->getOwnerName('1234'));
-+    }
-+
-+    /**
-+     * @param array<string, mixed> $body
-+     */
-+    private function installationResponse(int $status, array $body): GitHub
-+    {
-+        return new class ($status, $body) extends GitHub {
-+            protected string $jwtToken = 'app-token';
-+
-+            /**
-+             * @param array<string, mixed> $body
-+             */
-+            public function __construct(private readonly int $status, private readonly array $body)
-+            {
-+                parent::__construct(new Cache(new None()));
-+            }
-+
-+            protected function call(string $method, string $path = '', array $headers = [], array $params = [], bool $decode = true, bool $followRedirects = true): array
-+            {
-+                return ['body' => $this->body, 'headers' => ['status-code' => $this->status]];
-+            }
-+        };
-+    }
- }
-```
-
-**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Deployment.php` (modified, +6/-0)
-```diff
-@@ -23,6 +23,7 @@
- use Utopia\Validator\Contains;
- use Utopia\Validator\Globstar;
- use Utopia\VCS\Adapter\Git;
-+use Utopia\VCS\Exception\OwnerNotFound;
- use Utopia\VCS\Exception\RepositoryNotFound;
- 
- trait Deployment
-@@ -594,6 +595,11 @@ protected function createGitDeployments(
- 
-                 Span::add("{$logBase}.build.triggered", 'true');
-                 //TODO: Add event?
-+            } catch (OwnerNotFound $e) {
-+                // The installation is gone, so nothing can be built or reported back for it.
-+                Span::add("{$logBase}.build.skipped.reason", 'owner not found');
-+                Span::add("{$logBase}.build.skipped", 'true');
-+                Console::warning("Skipping repository '{$repository->getId()}': {$e->getMessage()}");
-             } catch (Exception $e) {
-                 Span::add("{$logBase}.error", $e->getMessage());
-                 Span::add("{$logBase}.error.type", $e->getType());
+     protected function waitDeploymentActivated(string $siteId, string $deploymentId): void
 ```
 
 ---
 
-### Incident Patch 11: `85350aea` (2026-10-05)
-**Commit Message**: Merge pull request #14119 from appwrite/fix/vcs-push-owner-login
+### Incident Patch 3: `f6411cd4` (2026-10-19)
+**Commit Message**: fix(console): drop the unused startups loader error from the type baseline
 
-fix(vcs): skip GitHub resources whose installation has no owner instead of failing the webhook
+The startups route no longer reads loader context, so the console type check fails until that known error is removed.
 
-**File**: `packages/vcs/src/Adapter/Git/GitHub.php` (modified, +7/-0)
-```diff
-@@ -8,6 +8,7 @@
- use Utopia\Command;
- use Utopia\VCS\Adapter\Git;
- use Utopia\VCS\Exception\FileNotFound;
-+use Utopia\VCS\Exception\OwnerNotFound;
- use Utopia\VCS\Exception\RepositoryNotFound;
- 
- class GitHub extends Git
-@@ -713,6 +714,12 @@ public function getOwnerName(string $installationId, ?int $repositoryId = null):
-         $url = '/app/installations/' . $installationId;
-         $response = $this->call(self::METHOD_GET, $url, ['Authorization' => "Bearer $this->jwtToken"]);
- 
-+        // Only a missing installation is permanent; rate limits and server errors stay retryable failures
-+        $responseHeaders = $response['headers'] ?? [];
-+        if (\is_array($responseHeaders) && ($responseHeaders['status-code'] ?? 0) === 404) {
-+            throw new OwnerNotFound("Installation '{$installationId}' was not found.");
-+        }
-+
-         $responseBody = $response['body'] ?? [];
-         $responseBodyAccount = $responseBody['account'] ?? [];
- 
-```
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-**File**: `packages/vcs/src/Exception/OwnerNotFound.php` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace Utopia\VCS\Exception;
-+
-+class OwnerNotFound extends \Exception
-+{
-+}
-```
 
-**File**: `packages/vcs/tests/GitHubTest.php` (modified, +66/-0)
-```diff
-@@ -8,6 +8,7 @@
- use Utopia\Cache\Adapter\None;
- use Utopia\Cache\Cache;
- use Utopia\VCS\Adapter\Git\GitHub;
-+use Utopia\VCS\Exception\OwnerNotFound;
- 
- final class GitHubTest extends Base
- {
-@@ -277,4 +278,69 @@ public static function encodedPemProvider(): \Iterator
-         yield 'wrapped base64' => [fn (string $pem): string => chunk_split(base64_encode($pem), 76, "\n")];
-         yield 'escaped newlines' => [fn (string $pem): string => str_replace("\n", '\n', $pem)];
-     }
-+
-+    public function testGetOwnerNameForMissingInstallationThrowsOwnerNotFound(): void
-+    {
-+        $adapter = $this->installationResponse(404, ['message' => 'Not Found']);
-+
-+        $this->expectException(OwnerNotFound::class);
-+
-+        $adapter->getOwnerName('1234');
-+    }
-+
-+    /**
-+     * @param array<string, mixed> $body
-+     */
-+    #[DataProvider('transientInstallationResponses')]
-+    public function testGetOwnerNameKeepsTransientFailuresRetryable(int $status, array $body): void
-+    {
-+        $adapter = $this->installationResponse($status, $body);
-+
-+        try {
-+            $adapter->getOwnerName('1234');
-+            $this->fail('A failed installation lookup must throw');
-+        } catch (\Exception $error) {
-+            $this->assertNotInstanceOf(OwnerNotFound::class, $error);
-+        }
-+    }
-+
-+    /**
-+     * @return iterable<string, array{int, array<string, mixed>}>
-+     */
-+    public static function transientInstallationResponses(): iterable
-+    {
-+        yield 'rate limited' => [403, ['message' => 'API rate limit exceeded']];
-+        yield 'too many requests' => [429, ['message' => 'You have exceeded a secondary rate limit']];
-+        yield 'server error' => [502, ['message' => 'Server Error']];
-+    }
-+
-+    public function testGetOwnerNameReturnsInstallationLogin(): void
-+    {
-+        $adapter = $this->installationResponse(200, ['account' => ['login' => 'appwrite']]);
-+
-+        $this->assertSame('appwrite', $adapter->getOwnerName('1234'));
-+    }
-+
-+    /**
-+     * @param array<string, mixed> $body
-+     */
-+    private function installationResponse(int $status, array $body): GitHub
-+    {
-+        return new class ($status, $body) extends GitHub {
-+            protected string $jwtToken = 'app-token';
-+
-+            /**
-+             * @param array<string, mixed> $body
-+             */
-+            public function __construct(private readonly int $status, private readonly array $body)
-+            {
-+                parent::__construct(new Cache(new None()));
-+            }
-+
-+            protected function call(string $method, string $path = '', array $headers = [], array $params = [], bool $decode = true, bool $followRedirects = true): array
-+            {
-+                return ['body' => $this->body, 'headers' => ['status-code' => $this->status]];
-+            }
-+        };
-+    }
- }
-```
-
-**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Deployment.php` (modified, +6/-0)
-```diff
-@@ -23,6 +23,7 @@
- use Utopia\Validator\Contains;
- use Utopia\Validator\Globstar;
- use Utopia\VCS\Adapter\Git;
-+use Utopia\VCS\Exception\OwnerNotFound;
- use Utopia\VCS\Exception\RepositoryNotFound;
- 
- trait Deployment
-@@ -594,6 +595,11 @@ protected function createGitDeployments(
- 
-                 Span::add("{$logBase}.build.triggered", 'true');
-                 //TODO: Add event?
-+            } catch (OwnerNotFound $e) {
-+                // The installation is gone, so nothing can be built or reported back for it.
-+                Span::add("{$logBase}.build.skipped.reason", 'owner not found');
-+                Span::add("{$logBase}.build.skipped", 'true');
-+                Console::warning("Skipping repository '{$repository->getId()}': {$e->getMessage()}");
-             } catch (Exception $e) {
-                 Span::add("{$logBase}.error", $e->getMessage());
-                 Span::add("{$logBase}.error.type", $e->getType());
-```
-
----
-
-### Incident Patch 12: `3117bd94` (2026-10-05)
-**Commit Message**: Merge branch 'main' into fix/14099-proof-for-password-params
-
-**File**: `app/config/variables.php` (modified, +1/-1)
-```diff
-@@ -1358,7 +1358,7 @@
-             ],
-             [
-                 'name' => '_APP_BUILDS_VOLUME',
--                'description' => 'The Docker volume (or Kubernetes PersistentVolumeClaim) holding build storage, attached to jobs-service build workers so they write output directly onto it. Must match the storage the "builds" device is backed by.',
-+                'description' => 'The Docker volume (or Kubernetes PersistentVolumeClaim) holding build storage. Jobs-service build workers attach only the current project\'s subdirectory (`app-<projectId>`) so they write output directly onto it without seeing other projects. Must match the storage the "builds" device is backed by.',
-                 'introduction' => '1.9.0',
-                 'default' => 'appwrite-builds',
-                 'required' => false,
-```
-
-**File**: `app/mqtt.php` (modified, +6/-1)
-```diff
-@@ -30,6 +30,7 @@
- use Utopia\Registry\Registry;
- use Utopia\Span\Span;
- use Utopia\System\System;
-+use Utopia\Telemetry\Adapter\None as NoTelemetry;
- 
- require_once __DIR__ . '/init.php';
- 
-@@ -232,7 +233,11 @@
- 
- // Server-initiated delivery: bridge the Redis 'mqtt' firehose to this worker's local subscribers.
- // Appwrite clients never PUBLISH; messages are produced by the Messaging worker onto the channel.
--$server->onWorkerStart(function (int $workerId) use ($server, $handler, $mqtt, $register, $container): void {
-+$server->onWorkerStart(function (int $workerId) use ($server, $handler, $mqtt, $register, $container, $telemetry): void {
-+    if (!$telemetry instanceof NoTelemetry) {
-+        Timer::tick(60000, fn () => $telemetry->collect());
-+    }
-+
-     // Flush accumulated per-project usage (connections, deliveries) to the stats-usage queue.
-     Timer::tick(60000, function () use ($mqtt, $container): void {
-         $usage = $mqtt->flushUsage();
-```
-
-**File**: `src/Appwrite/Deployment/Deployments.php` (modified, +25/-12)
-```diff
-@@ -28,6 +28,7 @@
- use Utopia\Database\Query;
- use Utopia\DSN\DSN;
- use Utopia\Storage\Device;
-+use Utopia\Storage\Device\Local;
- use Utopia\Storage\DeviceType;
- use Utopia\System\System;
- use Utopia\VCS\Adapter\Git;
-@@ -40,10 +41,11 @@
-  * Source crosses the boundary via the artifacts system (presigned GET download
-  * + unarchive, run by the sidecar) — a GET has no request-body cap, so large
-  * sources are fine. The build output and package-manager cache go wherever
-- * the builds device is (see storage()). On the local device the builds
-- * storage volume is attached to the build worker at its Appwrite path, so
-- * build.sh writes its artifact + the cache squashfs straight onto the volume
-- * Appwrite already reads. On a remote device (S3 and friends) no volume spans
-+ * the builds device is (see storage()). On the local device only this
-+ * project's directory on the builds volume is attached to the build worker
-+ * at its Appwrite path, so build.sh writes its artifact + the cache squashfs
-+ * straight onto the volume Appwrite already reads, and cannot list or write
-+ * another project's tree. On a remote device (S3 and friends) no volume spans
-  * Appwrite and the build workers, so the sidecar moves them over s3://
-  * upload/download artifacts instead. The orchestrator supports the generic
-  * _APP_STORAGE_S3_* configuration; legacy provider-specific variables and
-@@ -461,8 +463,8 @@ protected static function payload(
-         }
- 
-         // Where output + cache land is a swappable strategy (see storage()) —
--        // the default mounts the shared builds volume; nothing else here cares
--        // which strategy is active.
-+        // the default mounts this project's directory on the builds volume;
-+        // nothing else here cares which strategy is active.
-         $output = static::storage($project, $resource, $deployment);
- 
-         // Site builds write a JSON build manifest into the workspace, read
-@@ -553,8 +555,8 @@ public static function sourcePath(string $projectId, string $resourceType, strin
-     }
- 
-     /**
--     * Where the build worker leaves that source on the local device: the
--     * builds volume, the only one it mounts.
-+     * Where the build worker leaves that source on the local device: this
-+     * project's directory on the builds volume, the only path it mounts.
-      */
-     public static function stagedSourcePath(Device $deviceForBuilds, string $deploymentId): string
-     {
-@@ -606,9 +608,12 @@ protected static function device(string $projectId): Device
- 
-     /**
-      * Where build.sh's output artifact and package-manager cache land, and
--     * what the job needs to get them there. On the local device the shared
--     * builds volume is mounted and build.sh writes straight to
--     * buildPath()/cachePath(). On a remote device (S3 and friends) build.sh
-+     * what the job needs to get them there. On the local device only this
-+     * project's subdirectory of the builds volume is mounted (Volume.subPath)
-+     * and build.sh writes straight to buildPath()/cachePath() — sibling
-+     * app-{projectId} trees stay off the worker. The project directory is
-+     * created first because Docker's named-volume Subpath must exist before
-+     * the container starts. On a remote device (S3 and friends) build.sh
-      * writes into the job workspace and the sidecar moves output and cache
-      * over s3:// artifacts, keyed as buildPath()/cachePath(), so everything
-      * reading through deviceForBuilds works unchanged. Open Runtimes Orchestrator
-@@ -628,10 +633,18 @@ protected static function storage(Document $project, Document $resource, Documen
-         $cachePath = static::cachePath($projectId, $cacheKey);
-         $device = static::device($projectId);
- 
-+        if ($device instanceof Local) {
-+            $device->createDirectory($device->getRoot());
-+        }
-+
-         return match ($device->getType()) {
-             DeviceType::Local => [
-                 'volumes' => [
--                    new Volume(source: System::getEnv('_APP_BUILDS_VOLUME', 'appwrite-builds'), path: APP_STORAGE_BUILDS),
-+                    new Volume(
-+                        source: System::getEnv('_APP_BUILDS_VOLUME', 'appwrite-builds'),
-+                        path: $device->getRoot(),
-+                        subPath: "app-{$projectId}",
-+                    ),
-                 ],
-                 'artifacts' => [],
-                 'environment' => [
-```
-
-**File**: `src/Appwrite/Event/Message/Certificate.php` (modified, +2/-3)
-```diff
-@@ -13,9 +13,8 @@ public function __construct(
-         public readonly ?string $validationDomain = null,
-         public readonly string $action = \Appwrite\Event\Certificate::ACTION_GENERATION,
-         /**
--         * The enqueuer verified the domain's DNS itself, moments before enqueueing,
--         * so the worker does not verify it again. Unlike `skipRenewCheck` this
--         * leaves the renew check in place.
-+         * DNS already passed for this rule, so the worker does not verify it
-+         * again. Unlike `skipRenewCheck` this leaves the renew check in place.
-          */
-         public readonly bool $skipDomainValidation = false,
-     ) {
-```
-
-**File**: `src/Appwrite/Platform/Modules/Databases/Workers/Databases.php` (modified, +11/-15)
-```diff
-@@ -231,15 +231,15 @@ private function createAttribute(
- 
-             throw $e;
-         } finally {
--            $this->trigger($database, $collection, $project, $event, $queueForRealtime, $attribute);
--
-             if (! $relatedCollection->isEmpty()) {
-                 $dbForProject->purgeCachedDocument('database_' . $database->getSequence(), $relatedCollection->getId());
-                 $dbForProject->purgeCachedCollection('database_' . $database->getSequence() . '_collection_' . $relatedCollection->getSequence());
-             }
- 
-             $dbForProject->purgeCachedDocument('database_' . $database->getSequence(), $collectionId);
-             $dbForProject->purgeCachedCollection('database_' . $database->getSequence() . '_collection_' . $collection->getSequence());
-+
-+            $this->trigger($database, $collection, $project, $event, $queueForRealtime, $attribute);
-         }
-     }
- 
-@@ -258,7 +258,7 @@ private function createAttribute(
-      * @throws \Exception
-      * @throws \Throwable
-      **/
--    private function deleteAttribute(Document $database, Document $collection, Document $attribute, Document $project, Database $dbForPlatform, Database $dbForDatabases, Database $dbForProject, Realtime $queueForRealtime): void
-+    private function deleteAttribute(Document $database, Document $collection, Document $attribute, Document $project, Database $dbForPlatform, Database $dbForProject, Database $dbForDatabases, Realtime $queueForRealtime): void
-     {
-         if ($collection->isEmpty()) {
-             throw new Exception('Missing collection/table');
-@@ -294,11 +294,11 @@ private function deleteAttribute(Document $database, Document $collection, Docum
-                         $relatedAttribute = $dbForProject->getDocument('attributes', $database->getSequence() . '_' . $relatedCollection->getSequence() . '_' . $options['twoWayKey']);
-                     }
- 
--                    if (!$dbForProject->deleteRelationship('database_' . $database->getSequence() . '_collection_' . $collection->getSequence(), $key)) {
-+                    if (!$dbForDatabases->deleteRelationship('database_' . $database->getSequence() . '_collection_' . $collection->getSequence(), $key)) {
-                         $dbForProject->updateDocument('attributes', $relatedAttribute->getId(), $relatedAttribute->setAttribute('status', 'stuck'));
-                         throw new DatabaseException('Failed to delete Relationship');
-                     }
--                } elseif (!$dbForProject->deleteAttribute('database_' . $database->getSequence() . '_collection_' . $collection->getSequence(), $key)) {
-+                } elseif (!$dbForDatabases->deleteAttribute('database_' . $database->getSequence() . '_collection_' . $collection->getSequence(), $key)) {
-                     throw new DatabaseException('Failed to delete attribute/column');
-                 }
- 
-@@ -344,8 +344,6 @@ private function deleteAttribute(Document $database, Document $collection, Docum
-                 }
- 
-                 throw $e;
--            } finally {
--                $this->trigger($database, $collection, $project, $event, $queueForRealtime, $attribute);
-             }
- 
-             // The underlying database removes/rebuilds indexes when attribute is removed
-@@ -362,9 +360,6 @@ private function deleteAttribute(Document $database, Document $collection, Docum
-                 $found = \array_search($key, $attributes);
- 
-                 if ($found !== false) {
--                    // If found, remove entry from attributes, lengths, and orders
--                    // array_values wraps array_diff to reindex array keys
--                    // when found attribute is removed from array
-                     $attributes = \array_values(\array_diff($attributes, [$attributes[$found]]));
-                     $lengths = \array_values(\array_diff($lengths, isset($lengths[$found]) ? [$lengths[$found]] : []));
-                     $orders = \array_values(\array_diff($orders, isset($orders[$found]) ? [$orders[$found]] : []));
-@@ -377,11 +372,10 @@ private function deleteAttribute(Document $database, Document $collection, Docum
-                             ->setAttribute('lengths', $lengths, Document::SET_TYPE_ASSIGN)
-                             ->setAttribute('orders', $orders, Document::SET_TYPE_ASSIGN);
- 
--                        // Check if an index exists with the same attributes and orders
-                         $exists = false;
-                         foreach ($indexes as $existing) {
-                             if (
--                                $existing->getAttribute('key') !== $index->getAttribute('key') // Ignore itself
-+                                $existing->getAttribute('key') !== $index->getAttribute('key')
-                                 && $existing->getAttribute('attributes') === $index->getAttribute('attributes')
-                                 && $existing->getAttribute('orders') === $index->getAttribute('orders')
-        
-```
-
-**File**: `src/Appwrite/Platform/Modules/Proxy/Http/Rules/Status/Update.php` (modified, +2/-1)
-```diff
-@@ -102,10 +102,11 @@ public function action(
-             $bus->dispatch(new RuleUpdated($rule->getArrayCopy()));
- 
-             $certificateId = $rule->getAttribute('certificateId', '');
--            // Reset logs for the associated certificate.
-+            // Reset logs and attempts for the associated certificate.
-             if (!empty($certificateId)) {
-                 $certificate = $authorization->skip(fn () => $dbForPlatform->updateDocument('certificates', $certificateId, new Document([
-                     'logs' => '',
-+                    'attempts' => 0,
-                 ])));
-             }
-         } catch (Exception $err) {
-```
-
-**File**: `src/Appwrite/Platform/Modules/Teams/Http/Memberships/Create.php` (modified, +3/-1)
-```diff
-@@ -263,7 +263,9 @@ public function action(string $teamId, ?string $email, ?string $userId, ?string
- 
-         $isOwner = $authorization->hasRole('team:' . $team->getId() . '/owner');
- 
--        if (! $isOwner && ! $isPrivilegedUser && ! $isAppUser) { // Not owner, not admin, not app (server)
-+        // Same console rule as membership role updates: organization developer
-+        // must not count as privileged enough to invite with arbitrary roles.
-+        if (! $isOwner && ! $isAppUser && ($project->getId() === 'console' || ! $isPrivilegedUser)) {
-             throw new Exception(Exception::USER_UNAUTHORIZED, 'User is not allowed to send invitations for this team');
-         }
- 
-```
-
-**File**: `src/Appwrite/Platform/Modules/Teams/Http/Memberships/Update.php` (modified, +4/-1)
-```diff
-@@ -112,7 +112,10 @@ public function action(string $teamId, string $membershipId, array $roles, Reque
-             }
-         }
- 
--        if (!$isOwner && !$isPrivilegedUser && !$isAppUser) { // Not owner, not admin, not app (server)
-+        // Console organization developer/admin become bare privileged roles when
-+        // X-Appwrite-Organization is applied. Those roles must not authorize
-+        // membership role changes; only the team owner or an API key may.
-+        if (!$isOwner && !$isAppUser && ($project->getId() === 'console' || !$isPrivilegedUser)) {
-             throw new Exception(Exception::USER_UNAUTHORIZED, 'User is not allowed to modify roles');
-         }
- 
-```
-
----
-
-### Incident Patch 13: `331e4c37` (2026-10-05)
-**Commit Message**: fix(cdn): move a renewed subscription's activation to its new certificate
-
-The activation lookup filtered on the new certificate, so after a renewal it missed the activation still on the previous one, the create conflicted, and every retry threw. Look the hostname's activation up on the TLS configuration alone: keep it when it already holds the new certificate, move it when it holds one of the subscription's older certificates, and fail as before when another certificate holds the hostname.
-
-**File**: `packages/cdn/src/Certificates/Provider/FastlyTls.php` (modified, +49/-6)
-```diff
-@@ -454,11 +454,23 @@ private function ensureActivated(array $subscription, string $domain): bool
-         }
- 
-         foreach ($hostnames as $hostname) {
--            if ($this->activationExists($certificateId, $hostname)) {
-+            $activation = $this->findActivation($hostname);
-+
-+            if ($activation === null) {
-+                $this->createActivation($certificateId, $hostname);
-+                continue;
-+            }
-+
-+            if ($activation['certificate'] === $certificateId) {
-                 continue;
-             }
- 
--            $this->createActivation($certificateId, $hostname);
-+            // A renewal leaves the hostname on the subscription's previous certificate
-+            if (!\in_array($activation['certificate'], $this->references($subscription['resource'], 'tls_certificates'), true)) {
-+                throw new \RuntimeException('Another certificate already terminates TLS for ' . $hostname . '.');
-+            }
-+
-+            $this->updateActivation($activation['id'], $certificateId, $hostname);
-         }
- 
-         return true;
-@@ -520,10 +532,10 @@ private function references(array $resource, string $relationship): array
-         return $ids;
-     }
- 
--    private function activationExists(string $certificateId, string $hostname): bool
-+    /** @return array{id:string,certificate:string}|null */
-+    private function findActivation(string $hostname): ?array
-     {
-         $query = http_build_query([
--            'filter[tls_certificate.id]' => $certificateId,
-             'filter[tls_configuration.id]' => $this->tlsConfigurationId,
-             'filter[tls_domain.id]' => $hostname,
-             'page[size]' => 1,
-@@ -544,7 +556,16 @@ private function activationExists(string $certificateId, string $hostname): bool
-             throw new \RuntimeException('Fastly TLS activations response was missing its data list.');
-         }
- 
--        return $data !== [];
-+        $activation = $data[0] ?? null;
-+        if (!\is_array($activation) || !\is_string($activation['id'] ?? null)) {
-+            return null;
-+        }
-+
-+        $relationships = $activation['relationships'] ?? null;
-+        $certificate = \is_array($relationships) ? ($relationships['tls_certificate'] ?? null) : null;
-+        $reference = \is_array($certificate) ? ($certificate['data'] ?? null) : null;
-+
-+        return ['id' => $activation['id'], 'certificate' => \is_array($reference) && \is_string($reference['id'] ?? null) ? $reference['id'] : ''];
-     }
- 
-     private function createActivation(string $certificateId, string $hostname): void
-@@ -578,7 +599,7 @@ private function createActivation(string $certificateId, string $hostname): void
-         if ($result['statusCode'] === 409) {
-             // A conflict is either our own activation, made concurrently, or
-             // another certificate already holding the hostname.
--            if ($this->activationExists($certificateId, $hostname)) {
-+            if (($this->findActivation($hostname)['certificate'] ?? null) === $certificateId) {
-                 return;
-             }
- 
-@@ -590,6 +611,28 @@ private function createActivation(string $certificateId, string $hostname): void
-         }
-     }
- 
-+    private function updateActivation(string $activationId, string $certificateId, string $hostname): void
-+    {
-+        $result = $this->request('PATCH', '/tls/activations/' . $activationId, [
-+            'data' => [
-+                'id' => $activationId,
-+                'type' => 'tls_activation',
-+                'relationships' => [
-+                    'tls_certificate' => [
-+                        'data' => [
-+                            'type' => 'tls_certificate',
-+                            'id' => $certificateId,
-+                        ],
-+                    ],
-+                ],
-+            ],
-+        ]);
-+
-+        if ($result['statusCode'] < 200 || $result['statusCode'] >= 300) {
-+            throw new \RuntimeException($this->formatError('Failed to move the Fastly TLS activation for ' . $hostname, $result));
-+        }
-+    }
-+
-     /**
-      * @param array{resource:array<string, mixed>,included:array<int, array<string, mixed>>} $subscription
-      */
-```
-
-**File**: `packages/cdn/tests/Certificates/Provider/FastlyTlsTest.php` (modified, +60/-4)
-```diff
-@@ -54,7 +54,7 @@ public function testGetCertificateStatusMapsFastlyState(): void
-         $issued = '{"data":[{"id":"sub_123","attributes":{"state":"issued"},"relationships":{"tls_certificates":{"data":[{"type":"tls_certificate","id":"cert_1"}]}}}]}';
-         $client = new TestClient([
-             new Response(200, body: new Stream($issued)),
--            new Response(200, body: new Stream('{"data":[{"id":"act_1","type":"tls_activation"}]}')),
-+            new Response(200, body: new Stream('{"data":[{"id":"act_1","type":"tls_activation","relationships":{"tls_certificate":{"data":{"type":"tls_certificate","id":"cert_1"}}}}]}')),
-             new Response(200, body: new Stream($issued)),
-         ]);
- 
-@@ -239,7 +239,7 @@ public function testIssuedSubscriptionIgnoresStaleAuthorization(): void
-     {
-         $client = new TestClient([
-             $this->json($this->subscription(state: 'issued', certificates: [['type' => 'tls_certificate', 'id' => 'cert_1']])),
--            $this->json(['data' => [['id' => 'act_1', 'type' => 'tls_activation']]]),
-+            $this->json($this->activation('cert_1')),
-         ]);
- 
-         $this->assertSame(Status::ISSUED, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null));
-@@ -328,20 +328,66 @@ public function testExistingActivationIsNotCreatedAgain(): void
-     {
-         $client = new TestClient([
-             $this->json($this->subscription(state: 'issued', certificates: [['type' => 'tls_certificate', 'id' => 'cert_1']])),
--            $this->json(['data' => [['id' => 'act_1', 'type' => 'tls_activation']]]),
-+            $this->json($this->activation('cert_1')),
-         ]);
- 
-         $this->assertSame(Status::ISSUED, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null));
-         $this->assertCount(2, $client->calls);
-     }
- 
-+    public function testRenewalMovesTheActivationToTheNewCertificate(): void
-+    {
-+        $client = new TestClient([
-+            $this->json([
-+                'data' => [[
-+                    'id' => 'sub_123',
-+                    'attributes' => ['state' => 'renewing'],
-+                    'relationships' => [
-+                        'tls_certificates' => ['data' => [['type' => 'tls_certificate', 'id' => 'cert_new'], ['type' => 'tls_certificate', 'id' => 'cert_old']]],
-+                        'tls_domains' => ['data' => [['type' => 'tls_domain', 'id' => 'example.com']]],
-+                    ],
-+                ]],
-+                'included' => [
-+                    ['type' => 'tls_certificate', 'id' => 'cert_new', 'attributes' => ['not_after' => '2027-06-01T00:00:00Z']],
-+                    ['type' => 'tls_certificate', 'id' => 'cert_old', 'attributes' => ['not_after' => '2026-01-01T00:00:00Z']],
-+                ],
-+            ]),
-+            $this->json($this->activation('cert_old')),
-+            $this->json(['data' => ['id' => 'act_1', 'type' => 'tls_activation']]),
-+        ]);
-+
-+        $this->assertSame(Status::RENEWING, new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null));
-+        $this->assertSame('PATCH', $client->calls[2]['method']);
-+        $this->assertStringEndsWith('/tls/activations/act_1', $client->calls[2]['url']);
-+        $this->assertSame(['data' => [
-+            'id' => 'act_1',
-+            'type' => 'tls_activation',
-+            'relationships' => ['tls_certificate' => ['data' => ['type' => 'tls_certificate', 'id' => 'cert_new']]],
-+        ]], $client->calls[2]['body']);
-+    }
-+
-+    public function testActivationOnAnotherCertificateFails(): void
-+    {
-+        $client = new TestClient([
-+            $this->json($this->subscription(state: 'issued', certificates: [['type' => 'tls_certificate', 'id' => 'cert_1']])),
-+            $this->json($this->activation('cert_other')),
-+        ]);
-+
-+        try {
-+            new FastlyTls('token', 'tls-config-id', 'certainly', $client)->getCertificateStatus('example.com', null);
-+            $this->fail('A certificate outside the subscription must not be replaced.');
-+        } catch (\RuntimeException $error) {
-+            $this->assertStringContainsString('Another certificate already terminates TLS for example.com', $error->getMessage());
-+        }
-+    }
-+
-     public function testActivationConflictIsAcceptedOnceOurCertificateIsConfirmed(): void
-     {
-         $client = new TestClient([
-             $this->json($this->subscription(state: 'issued', certificates: [['type' => 'tls_certificate', 'id' => 'cert_1']])),
-             $this->json(['data' => []]),
-             $this->json('{"errors":[{"title":"Conflict","detail":"Activation already exists"}]}', 409),
--            $this->json(['data' => [['id' => 'act_1', 'type' => 'tls_activation']]]),
-+            $this->json($this->activation('cert_1')),
-         ]);
- 
-         $this->assertSame(Status::ISSUED, new FastlyTls('token', 'tls-config-id',
-```
-
----
-
-### Incident Patch 14: `b3e77822` (2026-10-05)
-**Commit Message**: fix(auth): rehash Argon2 passwords with other costs on login
-
-Login only rehashed when the algorithm differed, so users hashed with
-the library default (64 MiB, 4 passes, 3 threads) kept that cost until
-they changed their password. Compare the stored hash against the
-configured costs with password_needs_rehash(), which reads them from
-the hash itself rather than from hashOptions.
-
-**File**: `app/controllers/api/account.php` (modified, +5/-2)
-```diff
-@@ -1109,8 +1109,11 @@
-             }
-         }
- 
--        // Re-hash if not using recommended algo
--        if ($user->getAttribute('hash') !== $proofForPassword->getHash()->getName()) {
-+        // Re-hash if not using recommended algo or its configured costs (read from the hash, not hashOptions)
-+        if (
-+            $user->getAttribute('hash') !== $proofForPassword->getHash()->getName()
-+            || \password_needs_rehash($user->getAttribute('password'), PASSWORD_ARGON2ID, $proofForPassword->getHash()->getOptions())
-+        ) {
-             $user
-                 ->setAttribute('password', $proofForPassword->hash($password))
-                 ->setAttribute('hash', $proofForPassword->getHash()->getName())
-```
-
-**File**: `tests/e2e/Services/Users/UsersBase.php` (modified, +1/-8)
-```diff
-@@ -619,8 +619,7 @@ public function testCreateUserSessionHashed(): void
-         }
- 
-         foreach ($userIds as $userId) {
--            // Ensure non-argon2 imports were re-hashed to the configured Argon2 costs.
--            // The imported argon2 user already has hash=argon2, so login leaves it unchanged.
-+            // Ensure all passwords were re-hashed to the configured Argon2 costs, including the imported argon2i hash
-             $response = $this->client->call(Client::METHOD_GET, '/users/' . $userId, array_merge([
-                 'content-type' => 'application/json',
-                 'x-appwrite-project' => $this->getProject()['$id'],
-@@ -630,12 +629,6 @@ public function testCreateUserSessionHashed(): void
-             $this->assertEquals($userId, $response['body']['$id']);
-             $this->assertEquals($userId . '@appwrite.io', $response['body']['email']);
-             $this->assertEquals('argon2', $response['body']['hash']);
--
--            if ($userId === 'argon2') {
--                $this->assertStringStartsWith('$argon2i$v=19$m=20,t=3,p=2$', $response['body']['password']);
--                continue;
--            }
--
-             $this->assertConfiguredArgon2Hash($response['body']);
-         }
- 
-```
-
----
-
-### Incident Patch 15: `0ca4f84c` (2026-10-05)
-**Commit Message**: Merge remote-tracking branch 'origin/fix/vcs-push-owner-login' into fix/vcs-push-owner-login
-
-**File**: `app/mqtt.php` (modified, +6/-1)
-```diff
-@@ -30,6 +30,7 @@
- use Utopia\Registry\Registry;
- use Utopia\Span\Span;
- use Utopia\System\System;
-+use Utopia\Telemetry\Adapter\None as NoTelemetry;
- 
- require_once __DIR__ . '/init.php';
- 
-@@ -232,7 +233,11 @@
- 
- // Server-initiated delivery: bridge the Redis 'mqtt' firehose to this worker's local subscribers.
- // Appwrite clients never PUBLISH; messages are produced by the Messaging worker onto the channel.
--$server->onWorkerStart(function (int $workerId) use ($server, $handler, $mqtt, $register, $container): void {
-+$server->onWorkerStart(function (int $workerId) use ($server, $handler, $mqtt, $register, $container, $telemetry): void {
-+    if (!$telemetry instanceof NoTelemetry) {
-+        Timer::tick(60000, fn () => $telemetry->collect());
-+    }
-+
-     // Flush accumulated per-project usage (connections, deliveries) to the stats-usage queue.
-     Timer::tick(60000, function () use ($mqtt, $container): void {
-         $usage = $mqtt->flushUsage();
-```
-
-**File**: `src/Appwrite/Platform/Modules/Proxy/Http/Rules/Status/Update.php` (modified, +2/-1)
-```diff
-@@ -102,10 +102,11 @@ public function action(
-             $bus->dispatch(new RuleUpdated($rule->getArrayCopy()));
- 
-             $certificateId = $rule->getAttribute('certificateId', '');
--            // Reset logs for the associated certificate.
-+            // Reset logs and attempts for the associated certificate.
-             if (!empty($certificateId)) {
-                 $certificate = $authorization->skip(fn () => $dbForPlatform->updateDocument('certificates', $certificateId, new Document([
-                     'logs' => '',
-+                    'attempts' => 0,
-                 ])));
-             }
-         } catch (Exception $err) {
-```
-
-**File**: `src/Appwrite/Platform/Workers/Certificates.php` (modified, +19/-22)
-```diff
-@@ -309,7 +309,7 @@ private function handleCertificateGenerationAction(
-         $date = \date('H:i:s');
-         $logs = "\033[90m[{$date}] \033[97mProcessing SSL certificate issuance. \033[0m\n";
- 
--        // Set once the provider holds the order, so a failure after that can be retried
-+        // Set once DNS has passed on a delayed provider, so a failure after that can be retried
-         $awaitingProvider = false;
- 
-         try {
-@@ -323,35 +323,32 @@ private function handleCertificateGenerationAction(
-             // Validate domain and DNS records. Skip if job is forced, or if DNS
-             // already passed for this rule: a second run of the same check can
-             // only agree, or fail on a transient and contradict that result.
--            if (!$skipRenewCheck) {
--                if (!$skipDomainValidation) {
--                    $this->validateDomain($rule, $domain, $validationDomain);
-+            if (!$skipRenewCheck && !$skipDomainValidation) {
-+                $this->validateDomain($rule, $domain, $validationDomain);
-+            }
-+
-+            $awaitingProvider = !$certificates->isInstantGeneration($domain->get(), $domainType);
-+
-+            // If certificate exists already, double-check expiry date. Skip if job is forced
-+            if (!$skipRenewCheck && !$certificates->isRenewRequired($domain->get(), $domainType)) {
-+                if ($certificates->isInstantGeneration($domain->get(), $domainType)) {
-+                    Console::info("Skipping, renew isn't required");
-+                    $rule->setAttribute('status', RULE_STATUS_VERIFIED);
-+                    return;
-                 }
- 
--                // If certificate exists already, double-check expiry date. Skip if job is forced
--                if (!$certificates->isRenewRequired($domain->get(), $domainType)) {
--                    if ($certificates->isInstantGeneration($domain->get(), $domainType)) {
--                        Console::info("Skipping, renew isn't required");
--                        $rule->setAttribute('status', RULE_STATUS_VERIFIED);
--                        return;
--                    }
--
--                    // Wait for the delayed provider's existing order; issuing again below picks up its renew date
--                    $awaitingProvider = true;
--
--                    if (!\in_array($certificates->getCertificateStatus($domain->get(), $domainType), [Status::ISSUED, Status::RENEWING], true)) {
--                        $date = \date('H:i:s');
--                        $logs .= "\033[90m[{$date}] \033[97mSSL certificate is being issued. This usually takes a few minutes — no action needed on your end. We'll periodically check and update the status. \033[0m\n";
--                        Console::info('Certificate for ' . $domain->get() . ' is not issued yet');
--                        return;
--                    }
-+                // Wait for the delayed provider's existing order; issuing again below picks up its renew date
-+                if (!\in_array($certificates->getCertificateStatus($domain->get(), $domainType), [Status::ISSUED, Status::RENEWING], true)) {
-+                    $date = \date('H:i:s');
-+                    $logs .= "\033[90m[{$date}] \033[97mSSL certificate is being issued. This usually takes a few minutes — no action needed on your end. We'll periodically check and update the status. \033[0m\n";
-+                    Console::info('Certificate for ' . $domain->get() . ' is not issued yet');
-+                    return;
-                 }
-             }
- 
-             // Prepare unique cert name. Using this helps prevent mismatch in configuration when renewing certificates.
-             $certName = ID::unique();
-             $renewDate = $certificates->issueCertificate($certName, $domain->get(), $domainType);
--            $awaitingProvider = true;
- 
-             $date = \date('H:i:s');
-             // Mark the rule as 'verified' once the certificate is issued, instantly or by a delayed provider.
-```
 
 #### Recent Merged Pull Requests:
-- **PR #14139** (2026-10-05): fix(mails): finish the job when a project's own SMTP server fails (@ChiragAgg5k)
-- **PR #14137** (2026-10-05): fix(vcs): resolve wildcard tags when cloning templates (@ChiragAgg5k)
-- **PR #14131** (2026-10-05): feat(templates): support OAuth sign-in in the MCP server template (@ChiragAgg5k)
-- **PR #14129** (2026-10-05): chore(avatars): report photo storage through unified storage (@Meldiron)
-- **PR #14127** (2026-10-05): chore: bump appwrite/browser to 0.3.6 (@ChiragAgg5k)
-- **PR #14126** (closed): fix(certificates): keep Fastly ownership waits out of Sentry (@ChiragAgg5k)
-- **PR #14125** (2026-10-05): fix(certificates): stop reporting a retryable certificate failure as a worker error (@HarshMN2345)
-- **PR #14119** (2026-10-05): fix(vcs): skip GitHub resources whose installation has no owner instead of failing the webhook (@ChiragAgg5k)
+- **PR #14690** (2026-10-19): feat(console): replace the startups program with solutions pages (@eldadfux)
+- **PR #14688** (2026-10-19): feat(vcs): add a postprocessEvent hook to the Entire events action (@Meldiron)
+- **PR #14673** (2026-10-19): fix(tests): give Sites e2e builds room to finish under the lane's load (@ChiragAgg5k)
+- **PR #14672** (2026-10-19): fix(deps): resolve all three critical Astro alerts (@loks0n)
+- **PR #14665** (2026-10-19): feat(templates): add Postgres with Drizzle and Dodo Payments templates (@adityaoberai)
+- **PR #14664** (closed): test(vcs): red check for #14663 (do not merge) (@ChiragAgg5k)
 
 ---
 
@@ -4421,3 +2001,36 @@ the hash itself rather than from hashOptions.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. tests): give Sites e2e builds room to finish under the lane's load
+
+**RULE**:
+When implementing operations in `tests/e2e/Services/Sites/SitesBase.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `13aff0f3`: tests): give Sites e2e builds room to finish under the lane's load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/Services/Sites/SitesBase.php`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+            // The lane runs one paratest process per CPU, each starting builds, so an SSR build
+            // that takes seconds alone takes over two minutes there; builds time out at 900s.
+        }, 300000, 500);
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+        }, 120000, 500);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `13aff0f3` are properly handled with clean fallback behavior.

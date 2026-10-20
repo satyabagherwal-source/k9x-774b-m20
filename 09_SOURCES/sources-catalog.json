@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "884f743e",
+    "sourceVersion": "6ecfc6ba",
     "license": "MIT",
-    "contentHash": "c49adfb1b1015b3a9bd9137e80ce9eac0eda5d0ebc16a6f3de899c2cbfaf6ee7",
-    "lastHarvestedAt": "2026-10-18T07:28:49.885Z",
+    "contentHash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
+    "lastHarvestedAt": "2026-10-20T04:50:55.825Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -6723,10 +6723,10 @@
     "repository": "vuetifyjs/vuetify",
     "platform": "github",
     "sourceUrl": "https://github.com/vuetifyjs/vuetify",
-    "sourceVersion": "56225014",
+    "sourceVersion": "620f4a66",
     "license": "NOASSERTION",
-    "contentHash": "a7f52116b1c45fd26342f25937376fd9df073204d2c4123bdea03a3f4416dbd7",
-    "lastHarvestedAt": "2026-10-19T18:03:58.678Z",
+    "contentHash": "443b98f697f5a47817ad097aef785dbb5350212e76be9838c02c168546b1441b",
+    "lastHarvestedAt": "2026-10-20T04:50:47.304Z",
     "learningId": "learn-github-vuetifyjs-vuetify"
   },
   "pauljuliusmartinez-jless": {
@@ -10318,5 +10318,15 @@
     "contentHash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
     "lastHarvestedAt": "2026-10-20T04:42:34.585Z",
     "learningId": "learn-github-laurent22-joplin"
+  },
+  "appwrite-appwrite": {
+    "repository": "appwrite/appwrite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/appwrite/appwrite",
+    "sourceVersion": "a8c84a5f",
+    "license": "BSD-3-Clause",
+    "contentHash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
+    "lastHarvestedAt": "2026-10-20T04:50:55.182Z",
+    "learningId": "learn-github-appwrite-appwrite"
   }
 }

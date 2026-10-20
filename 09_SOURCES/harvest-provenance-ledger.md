@@ -3721,3 +3721,6 @@ Every entry in this ledger must capture:
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `2688cbca` | Multi-dimensional audit evidence | 2026-10-20T04:42:31.587Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `cf57e593` | Multi-dimensional audit evidence | 2026-10-20T04:42:34.585Z |
 | `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `7f7cbd0e` | Multi-dimensional audit evidence | 2026-10-20T04:44:56.869Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `620f4a66` | Multi-dimensional audit evidence | 2026-10-20T04:50:47.304Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `a8c84a5f` | Multi-dimensional audit evidence | 2026-10-20T04:50:55.182Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `6ecfc6ba` | Multi-dimensional audit evidence | 2026-10-20T04:50:55.825Z |

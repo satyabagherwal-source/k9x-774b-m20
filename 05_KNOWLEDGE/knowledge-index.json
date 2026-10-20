@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T04:44:56.821Z",
-  "total_verified_learnings": 1045,
+  "last_updated": "2026-10-20T04:50:55.786Z",
+  "total_verified_learnings": 1046,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2246,22 +2246,35 @@
     "learn-github-appwrite-appwrite": {
       "learning_id": "learn-github-appwrite-appwrite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "appwrite-appwrite",
+      "source": "appwrite/appwrite",
+      "repository": "appwrite/appwrite",
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "HEAD",
-      "content_hash": "4c28d019ed98100074228f664e47726bbfea2ab427af15d1dab515d5a3eeac87",
+      "source_version": "a8c84a5f",
+      "content_hash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3057,
+          "title": "tests): give Sites e2e builds room to finish under the lane's load",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.857Z"
+      "verified_at": "2026-10-20T04:50:55.138Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apsl-react-native-keyboard-aware-scroll-view": {
       "learning_id": "learn-github-apsl-react-native-keyboard-aware-scroll-view",
@@ -45423,8 +45436,8 @@
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "56225014",
-      "content_hash": "a7f52116b1c45fd26342f25937376fd9df073204d2c4123bdea03a3f4416dbd7",
+      "source_version": "620f4a66",
+      "content_hash": "443b98f697f5a47817ad097aef785dbb5350212e76be9838c02c168546b1441b",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "promoted_rules": [
@@ -45447,6 +45460,11 @@
           "number": 2727,
           "title": "Allocation-Free Numeric Identifiers for Chronological Invariant Checks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3056,
+          "title": "VAlert): add `timeout` prop and countdown indicator (#23280)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45454,7 +45472,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:03:58.620Z",
+      "verified_at": "2026-10-20T04:50:47.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59836,8 +59854,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "884f743e",
-      "content_hash": "c49adfb1b1015b3a9bd9137e80ce9eac0eda5d0ebc16a6f3de899c2cbfaf6ee7",
+      "source_version": "6ecfc6ba",
+      "content_hash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -59855,6 +59873,11 @@
           "number": 1649,
           "title": "Fail-Fast Invariant for Unretryable Command Preconditions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3058,
+          "title": "drop requests that arrive after the NetworkProxy is disposed (#34977)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59862,7 +59885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:28:49.847Z",
+      "verified_at": "2026-10-20T04:50:55.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98386,6 +98409,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T04:44:56.809Z"
+    },
+    "rule-3056": {
+      "learning_id": "rule-3056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3056,
+      "title": "VAlert): add `timeout` prop and countdown indicator (#23280)",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "620f4a66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:50:47.262Z"
+    },
+    "rule-3057": {
+      "learning_id": "rule-3057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3057,
+      "title": "tests): give Sites e2e builds room to finish under the lane's load",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "a8c84a5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:50:55.138Z"
+    },
+    "rule-3058": {
+      "learning_id": "rule-3058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3058,
+      "title": "drop requests that arrive after the NetworkProxy is disposed (#34977)",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "6ecfc6ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T04:50:55.778Z"
     }
   },
   "aliases": {
