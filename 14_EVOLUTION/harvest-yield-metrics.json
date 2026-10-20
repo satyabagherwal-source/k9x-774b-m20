@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:11:57.939Z",
-  "total_cycles_completed": 3595,
-  "total_learnings_persisted": 3595,
-  "total_rules_promoted": 2759,
+  "last_updated": "2026-10-20T01:21:13.159Z",
+  "total_cycles_completed": 3599,
+  "total_learnings_persisted": 3599,
+  "total_rules_promoted": 2762,
   "history": [
-    {
-      "timestamp": "2026-10-19T18:36:01.187Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:36:04.245Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:36:07.761Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T18:42:20.878Z",
-      "repository": "matthews-wong/structured-data-validator",
-      "learningId": "learn-github-matthews-wong-structured-data-validator",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T18:42:23.447Z",
       "repository": "SimonSchubert/Kai",
@@ -1403,6 +1375,34 @@
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:21:06.747Z",
+      "repository": "React95/React95",
+      "learningId": "learn-github-react95-react95",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:21:07.937Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:21:12.313Z",
+      "repository": "rdfjs-base/namespace",
+      "learningId": "learn-github-rdfjs-base-namespace",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T01:21:13.159Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

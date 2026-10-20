@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T01:11:57.879Z",
-  "total_verified_learnings": 996,
+  "last_updated": "2026-10-20T01:21:13.105Z",
+  "total_verified_learnings": 998,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2895,8 +2895,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "83e4aeed",
-      "content_hash": "0070cf610d1064310473243fd8ccf632bd2164344a974d8a8a5bf455f9ec9028",
+      "source_version": "502f93ca",
+      "content_hash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -2914,6 +2914,11 @@
           "number": 2525,
           "title": "Canonical Marker Coalescence Invariant for AST Interning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2957,
+          "title": "Update Rust crate uuid to v1.26.1 (#22707)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2921,7 +2926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:09:07.603Z",
+      "verified_at": "2026-10-20T01:21:07.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37387,8 +37392,8 @@
       "slug": "react95-react95",
       "platform": "github",
       "source_url": "https://github.com/React95/React95",
-      "source_version": "ecdb9cad",
-      "content_hash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
+      "source_version": "ebf98e93",
+      "content_hash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
       "dossier_path": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "promoted_rules": [
@@ -37408,7 +37413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:33:24.439Z",
+      "verified_at": "2026-10-20T01:21:06.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45525,22 +45530,35 @@
     "learn-github-wzh4869-appports": {
       "learning_id": "learn-github-wzh4869-appports",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wzh4869-appports",
+      "source": "wzh4869/AppPorts",
+      "repository": "wzh4869/AppPorts",
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "HEAD",
-      "content_hash": "c8db653452ffa2ce9d6504b0aa0bd60e846298a94aa8d11fae3481e547d686e8",
+      "source_version": "8ef2dad3",
+      "content_hash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2959,
+          "title": "clear update protection locks on any app location change",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.349Z"
+      "verified_at": "2026-10-20T01:21:13.094Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-xampprocky-tokei": {
       "learning_id": "learn-github-xampprocky-tokei",
@@ -96049,6 +96067,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T01:11:48.185Z"
+    },
+    "rule-2957": {
+      "learning_id": "rule-2957",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2957,
+      "title": "Update Rust crate uuid to v1.26.1 (#22707)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "502f93ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:21:07.884Z"
+    },
+    "learn-github-rdfjs-base-namespace": {
+      "learning_id": "learn-github-rdfjs-base-namespace",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rdfjs-base/namespace",
+      "repository": "rdfjs-base/namespace",
+      "slug": "rdfjs-namespace",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/namespace",
+      "source_version": "b7efbf00",
+      "content_hash": "2895864e341f4a369edee39c20b37dc9bb058d129731d61e7b1569c3f11edb43",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-namespace-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-namespace-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2958,
+          "title": "build(deps-dev): bump mocha from 11.8.0 to 12.0.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T01:21:12.264Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2958": {
+      "learning_id": "rule-2958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2958,
+      "title": "build(deps-dev): bump mocha from 11.8.0 to 12.0.0",
+      "source_url": "https://github.com/rdfjs/namespace",
+      "source_version": "b7efbf00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:21:12.264Z"
+    },
+    "rule-2959": {
+      "learning_id": "rule-2959",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2959,
+      "title": "clear update protection locks on any app location change",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "8ef2dad3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T01:21:13.094Z"
     }
   },
   "aliases": {

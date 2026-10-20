@@ -3618,3 +3618,7 @@
 | `CYCLE-20261020-MUXT` | `2026-10-20T01:11:48.257Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2956` | Yes (`19d150f3...`) |
 | `CYCLE-20261020-MWQW` | `2026-10-20T01:11:50.600Z` | `aheze/Popovers` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aheze-popovers-learnings.md` | Yes (`06000cbe...`) |
 | `CYCLE-20261020-N2EI` | `2026-10-20T01:11:57.930Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`ae8c89fe...`) |
+| `CYCLE-20261020-YTV7` | `2026-10-20T01:21:06.739Z` | `React95/React95` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/react95-react95-learnings.md` | Yes (`e489a9af...`) |
+| `CYCLE-20261020-YUSB` | `2026-10-20T01:21:07.931Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2957` | Yes (`accb5378...`) |
+| `CYCLE-20261020-YY5U` | `2026-10-20T01:21:12.306Z` | `rdfjs-base/namespace` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2958` | Yes (`2895864e...`) |
+| `CYCLE-20261020-YYTD` | `2026-10-20T01:21:13.153Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2959` | Yes (`2cb3d9d9...`) |

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
+> **Source**: github ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
+> **Source Version**: `8ef2dad3`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T01:21:12.900Z  
+> **Learning ID**: `learn-github-wzh4869-appports`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): wzh4869/AppPorts
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:29:40.411Z  
+> **Harvest Timestamp**: 2026-10-20T01:21:12.894Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: 📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2107 stars
+- **Stars / Engagement**: 2133 stars
 
 ---
 
@@ -70,17 +84,34 @@ struct AppListScanState {
 import Combine
 import Foundation
 
+extension Notification.Name {
+    static let appPortsRecordsDidChange = Notification.Name("AppPorts.recordsDidChange")
+}
+
 /// 跨页面、跨窗口保留文件操作的生命周期，阻止重建视图或重复启动迁移。
 @MainActor
 final class AppOperationState: ObservableObject {
     static let shared = AppOperationState()
 
     @Published private var activeOperation: UUID?
+    @Published private(set) var recordsRevision: UInt64 = 0
+    private var recordObserver: AnyCancellable?
+    private var terminationReply: (() -> Void)?
+    private var cancellation: (() -> Void)?
+
+    init(notificationCenter: NotificationCenter = .default) {
+        recordObserver = notificationCenter.publisher(for: .appPortsRecordsDidChange)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self, !self.isBusy else { return }
+                self.recordsRevision &+= 1
+            }
+    }
 
     var isBusy: Bool { activeOperation != nil }
 
     func begin() -> UUID? {
-        guard activeOperation == nil else { return nil }
+        guard activeOperation == nil, terminationReply == nil else { return nil }
         let token = UUID()
         activeOperation = token
         return token
@@ -89,6 +120,37 @@ final class AppOperationState: ObservableObject {
     func finish(_ token: UUID) {
         guard activeOperation == token else { return }
         activeOperation = nil
+        cancellation = nil
+        // Publish once at the end of a foreground operation, not on every
+        // journal phase. Idle windows also observe background store changes.
+        recordsRevision &+= 1
+        let reply = terminationReply
+        terminationReply = nil
+        reply?()
+    }
+
+    func registerCancellation(for token: UUID, _ cancel: @escaping () -> Void) {
+        guard activeOperation == token else { return }
+        cancellation = cancel
+    }
+
+    /// Keep every UI mutation's task reachable during a normal Quit. The
+    /// caller still finishes its token after accounting for the operation.
+    @discardableResult
+    func startTask(for token: UUID, operation: @escaping @MainActor () async -> Void) -> Task<Void, Never>? {
+        guard activeOperation == token else { return nil }
+        let task = Task { @MainActor in await operation() }
+        registerCancellation(for: token) { task.cancel() }
+        return task
+    }
+
+    /// The operation keeps ownership until its current filesystem boundary is
+    /// accounted for. A forced quit remains recoverable from its own journal.
+    func finishBeforeTerminating(_ reply: @escaping () -> Void) -> Bool {
+        guard isBusy else { return false }
+        terminationReply = reply
+        cancellation?()
+        return true
     }
 }
 
@@ -416,6 +478,13 @@ actor AppScanner {
         /// 保留本地入口结构，仅统计 symlink 或 wrapper 自身占用。
         case localPortal
     }
+
+    enum ExternalGrouping: Sendable {
+        /// The main list shows one preferred candidate for each application identity.
+        case applicationIdentity
+        /// Storage checks must see each copy, including copies with the same bundle identifier.
+        case filePath
+    }
     
     // MARK: - 公共 API
     
@@ -595,12 +664,7 @@ actor AppScanner {
                     }
 
                     if appCount == 1, let bundleURL = appsInFolder.first {
-                        let status = statusForLocalApp(
-                            baseStatus: baseStatus,
-                            localBundleURL: bundleURL,
-                            fallbackName: bundleURL.lastPathComponent,
-                            externalComparisonIndex: externalComparisonIndex
-               
+                        let status = statu
 ```
 
 ### Core Architecture Module: `AppPorts/Utils/ContainerRemountLoop.swift`
@@ -770,6 +834,207 @@ enum ContainerRemountLoop {
 
 ```
 
+### Core Architecture Module: `AppPorts/Utils/ContainerVolumeMigrator+Recovery.swift`
+```
+import Darwin
+import Foundation
+import CoreData
+
+extension ContainerVolumeMigrator {
+    enum AutomaticRecoveryError: LocalizedError, CustomNSError {
+        case restored(operation: Error, retainedDetails: String?)
+        case incomplete(operation: Error, recovery: Error)
+        case timedOut
+
+        static var errorDomain: String { "AppPorts.AutomaticRecovery" }
+        var errorCode: Int {
+            switch self {
+            case .restored: return 1
+            case .incomplete: return 2
+            case .timedOut: return 3
+            }
+        }
+        var errorUserInfo: [String: Any] {
+            var result: [String: Any] = [NSLocalizedDescriptionKey: errorDescription ?? ""]
+            switch self {
+            case .restored(let operation, _):
+                result[NSUnderlyingErrorKey] = operation as NSError
+            case .incomplete(let operation, let recovery):
+                result[NSUnderlyingErrorKey] = operation as NSError
+                result[NSDetailedErrorsKey] = [recovery as NSError]
+            case .timedOut: break
+            }
+            return result
+        }
+
+        var errorDescription: String? {
+            switch self {
+            case .restored(let operation, let details):
+                return ["本次操作未完成，已撤回本次变更，原数据已保留，可以直接重试。".localized,
+                        operation.localizedDescription, details].compactMap { $0 }.joined(separator: "\n\n")
+            case .incomplete(let operation, let recovery):
+                return ["本次操作未完成，数据已保留。AppPorts 会在条件恢复后继续处理，也可以重试。".localized,
+                        operation.localizedDescription, recovery.localizedDescription].joined(separator: "\n\n")
+            case .timedOut:
+                return "自动恢复暂未完成，已保留恢复记录；再次操作时会继续检查实际数据位置。".localized
+            }
+        }
+    }
+
+    enum AutomaticRecoveryResult: Sendable {
+        case completed
+        case rolledBack(retainedDetails: String?)
+    }
+
+    func pendingMountTransfer(at path: String, direction: DataTransferRecord.Direction) throws -> DataTransferRecord? {
+        let pending = try store.transfers().filter {
+            $0.mode == .mount && $0.direction == direction && $0.originalPath == path
+                && !$0.isDataSwitchComplete && $0.rollbackCompletedAt == nil
+        }
+        guard pending.count <= 1 else { throw DataOperationSafety.Failure.conflict(path) }
+        return pending.first
+    }
+
+    /// Called while the outer operation still owns its process-wide lock. A
+    /// cancellation stops copying, but must not cancel the work that restores
+    /// an application entry. Disk commands have individual recovery deadlines.
+    func recoverWithIndependentBudget(_ transfer: DataTransferRecord,
+                                      finishPreparedRestore: Bool = true,
+                                      timeoutNanoseconds: UInt64 = 0) async throws -> AutomaticRecoveryResult {
+        let transfer = try store.adoptLegacyRestoreOwnership(transfer)
+        let progress = DataTransferSession.progress
+        // Disk commands have their own deadlines. A dataset-sized verification
+        // must not restart forever because it exceeds a fixed 10/90s budget.
+        if timeoutNanoseconds == 0 {
+            return try await Task.detached(priority: .userInitiated) {
+                try await DataTransferSession.$progress.withValue(progress) {
+                    try await DataTransferSession.run {
+                        progress?.begin(.recovering)
+                        return try await self.recoverMountOperation(transfer, finishPreparedRestore: finishPreparedRestore)
+                    }
+                }
+            }.value
+        }
+        return try await Task.detached(priority: .userInitiated) {
+            try await DataTransferSession.$progress.withValue(progress) {
+                progress?.begin(.recovering)
+                return try await withThrowingTaskGroup(of: AutomaticRecoveryResult.self) { group in
+                    group.addTask { try await self.recoverMountOperation(transfer, finishPreparedRestore: finishPreparedRestore) }
+                    group.addTask {
+                        try await Task.sleep(nanoseconds: timeoutNanoseconds)
+                        throw AutomaticRecoveryError.timedOut
+                    }
+                    defer { group.cancelAll() }
+                    return try await group.next()!
+                }
+            }
+        }.value
+    }
+
+    func recoverFailedMountOperation(at path: String, direction: DataTransferRecord.Direction,
+                                     operation error: Error) async throws -> DataTransferRecord {
+        guard let transfer = try pendingMountTransfer(at: path, direction: direction) else { throw error }
+        let result: AutomaticRecoveryResult
+        do {
+            result = try await recoverWithIndependentBudget(transfer,
+                finishPreparedRestore: !Self.operationWasCancelled(error))
+        } catch let recovery {
+            throw AutomaticRecoveryError.incomplete(operation: error, recovery: recovery)
+        }
+        switch result {
+        case .completed:
+            guard let completed = try store.transfer(operationID: transfer.operationID), completed.isDataSwitchComplete else {
+                throw AutomaticRecoveryError.incomplete(operation: error,
+                    recovery: DataOperationSafety.Failure.inspection(path))
+            }
+            return completed
+        case .rolledBack(let details):
+            throw AutomaticRecoveryError.restored(operation: error, retainedDetails: details)
+        }
+    }
+
+    static func operationWasCancelled(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+        if case MigrationError.ownershipRollbackFailed(_, let operation, _) = error {
+            return operationWasCancelled(operation)
+        }
+        if case MigrationError.copyFailed(let operation) = error { return operationWasCancelled(operation) }
+        if case DiskUtility.Failure.administratorPromptCancelled = error { return true }
+        let cocoa = error as NSError
+        return cocoa.domain == NSCocoaErrorDomain && cocoa.code == NSUserCancelledError
+    }
+
+    private func requireRecoveryJournal(_ expected: DataTransferRecord) throws {
+        try Task.checkCancellation()
+        guard try store.transfer(operationID: expected.operationID) == expected,
+              !(try store.transfers()).contains(where: { $0.priorOperationID == expected.operationID }) else {
+            throw RecoveryJournalChanged(operation: DataOperationSafety.Failure.conflict(expected.originalPath))
+        }
+    }
+
+    private func finishVerifiedRecovery(_ transfer: DataTransferRecord) async throws {
+        guard transfer.isVerifiedSwitchRecoverable, let encoded = transfer.baseline else {
+            throw DataOperationSafety.Failure.inspection(transfer.originalPath)
+        }
+        var state = VerifiedMountResume(transfer: transfer, transfers: try store.transfers(),
+            mounts: try store.recordsStrict(), links: try store.managedLinks(), cleanups: try store.pendingCleanups())
+        try requireVerifiedResumeLedger(state)
+        try requireVerifiedResumeTopology(state)
+        let baseline = try PropertyListDecoder().decode(TreeCopySnapshot.self, from: encoded)
+        do {
+            if transfer.direction == .migrate { try await resumeVerifiedMountMigration(&state, baseline: baseline) }
+            else { try await resumeVerifiedMountRestore(&state, baseline: baseline) }
+        } catch {
+            do { try requireVerifiedResumeLedger(state) }
+            catch { throw RecoveryJournalChanged(operation: error) }
+            throw error
+        }
+        synchronizeAgent(store)
+    }
+
+    private func recoverMountOperation(_ expected: DataTransferRecord,
+                                       finishPreparedRestore: Bool) async throws -> AutomaticRecoveryResult {
+        try requireRecoveryJournal(expected)
+        if expected.isDataSwitchComplete { return .completed }
+        if expected.rollbackCompletedAt != nil {
+            return try await cleanupRolledBackOperation(expected)
+        }
+        let local = URL(fileURLWithPath: expected.originalPath)
+        if expected.direction == .migrate, isMountPoint(local) {
+            // A live destination can contain newer data. Never replace it with
+            // the old local backup merely because the final journal write failed.
+            try await finishVerifiedRecovery(expected)
+            return .completed
+        }
+        if expected.direction == .migrate, expected.isVerifiedSwitchRecoverable, expected.backupIdentity != nil {
+            do {
+                try await finishVerifiedRecovery(expected)
+                return .completed
+            } catch {
+                try Task.checkCancellation()
+                guard !RecoveryJournalChanged.isContained(in: error), !isMountPoint(local) else { throw error }
+                // The final mount can fail repeatedly (busy/permissions). If
+                // the candidate never became active, restore the local entry.
+                // rollBackMountMigration proves its contents before doing so.
+            }
+        }
+        if expected.direction == .restore, !isMountPoint(local), !isSymbolicLink(at: local),
+           let identity = try? DataPathIdentity.capture(local),
+           expected.destinationIdentity.map({ identity.matchesFilesystemObject($0) }) == true {
+            try await finishVerifiedRecovery(expected)
+            return .completed
+        }
+        if expected.direction == .restore, expected.isVerifiedSwitchRecoverable, finishPreparedRestore {
+            do {
+                try await finishVerifiedRecovery(expected)
+                return .completed
+            } catch {
+                try Task.checkCancellation()
+                guard !RecoveryJournalChanged.isContained(in: error) else { throw error }
+                // The source is still authoritative. A move/mount failure must
+                //
+```
+
 ### Core Architecture Module: `AppPorts/Utils/ContainerVolumeMigrator.swift`
 ```
 //
@@ -789,8 +1054,8 @@ import Foundation
 /// 把它挂载到容器内的原目录上。路径不离开容器，应用签名与 entitlements 不做任何修改。
 ///
 /// ## 操作流程
-/// - **迁移**：建卷 → 临时挂载并复制 → 卸载 → 原目录改名为安全备份 → 在原路径挂载 → 写记录 → 保留原件待验证
-/// - **还原**：确保已挂载 → 复制到暂存目录 → 卸载 → 暂存目录改回原路径 → 保留外置卷待验证
+/// - **迁移**：建卷 → 复制并核验 → 切换原路径 → 持久化记录 → 自动清理已核验的旧数据
+/// - **还原**：定位当前卷 → 复制最新数据并核验 → 切回原路径 → 自动清理旧卷
 /// - **挂载 / 卸载**：只处理已有记录。未挂载期间挂载点保持 000 权限，
 ///   应用在盘不在时只会看到空目录，不会把新数据写进本地形成分叉。
 actor ContainerVolumeMigrator {
@@ -816,6 +1081,9 @@ actor ContainerVolumeMigrator {
         case restoreIncomplete(staging: URL, underlying: Error)
         case restoreRecordRecovery(staging: URL, underlying: Error)
         case ownershipRollbackFailed(URL, operation: Error, rollback: Error)
+        case cleanupRecordLocalUnavailable(URL)
+        case cleanupRecordStillMounted(URL)
+        case cleanupRecordStagingExists(URL)
 
         var errorDescription: String? {
             switch self {
@@ -836,7 +1104,7 @@ actor ContainerVolumeMigrator {
             case .mountVerificationFailed(let url):
                 return String(format: "挂载后校验失败，该路径不是挂载点：%@".localized, url.path)
             case .mountPointConflict(let url, let details):
-                return String(format: "挂载点出现并发变化，已保留两端数据，请检查后恢复：%@\n%@".localized, url.path, details)
+                return ["数据入口无法安全切换，现有数据已保留。".localized, url.path, details].joined(separator: "\n")
             case .mountPointNotEmpty(let url):
                 return String(format: "挂载点目录不为空，为避免覆盖数据已停止操作：%@".localized, url.path)
             case .unmountFailed(let url, let output):
@@ -854,10 +1122,8 @@ actor ContainerVolumeMigrator {
             case .switchFailed(let error):
                 return String(format: "切换挂载点失败，数据已紧急还原：%@".localized, error.localizedDescription)
             case .rollbackIncomplete(let backup, let volumeName, let volumeUUID, let error):
-                return String(
-                    format: "挂载迁移未完成，原数据保留在「%@」，未覆盖当前路径。外置卷「%@」（%@）也已保留。请检查挂载点后再恢复。%@".localized,
-                    backup.path, volumeName, volumeUUID, error.localizedDescription
-                )
+                return ["数据入口无法安全切换，现有数据已保留。".localized,
+                    backup.path, volumeName, volumeUUID, error.localizedDescription].joined(separator: "\n")
             case .restoreIncomplete(let staging, let error):
                 return String(
                     format: "还原没有完成：外置卷上的数据和迁移记录保持不变，已复制到本机的副本保留在「%@」。%@".localized,
@@ -865,13 +1131,17 @@ actor ContainerVolumeMigrator {
                     error.localizedDescription
                 )
             case .restoreRecordRecovery(let staging, let error):
-                return String(
-                    format: "还原未完成，已复制的本地数据保留在「%@」，外置卷也已保留。请检查迁移记录和挂载状态后重试。%@".localized,
-                    staging.path, error.localizedDescription
-                )
+                return ["数据入口无法安全切换，现有数据已保留。".localized,
+                    staging.path, error.localizedDescription].joined(separator: "\n")
             case .ownershipRollbackFailed(let url, let operation, let rollback):
-                return String(format: "还原失败，且无法恢复卷的原挂载选项；数据已保留，请检查挂载状态：%@\n%@\n%@".localized,
-                              url.path, operation.localizedDescription, rollback.localizedDescription)
+                return ["自动恢复暂未完成，已保留恢复记录；再次操作时会继续检查实际数据位置。".localized,
+                    url.path, operation.localizedDescription, rollback.localizedDescription].joined(separator: "\n")
+            case .cleanupRecordLocalUnavailable(let url):
+                return "未确认本地还原目录，未移除记录：".localized + url.path
+            case .cleanupRecordStillMounted(let url):
+                return ["数据入口无法安全切换，现有数据已保留。".localized, url.path].joined(separator: "\n")
+            case .cleanupRecordStagingExists(let url):
+                return ["暂存对象归属无法确认，已保留。".localized, url.path].joined(separator: "\n")
             }
         }
     }
@@ -879,6 +1149,7 @@ actor ContainerVolumeMigrator {
     struct MigrationResult: Sendable {
         let record: ContainerMountRecord
         let cleanupWarning: CleanupWarning?
+        let operationID: UUID
     }
 
     /// 主操作已完成，副本或记录清理尚未完成；调用方须按部分成功呈现。
@@ -886,23 +1157,18 @@ actor ContainerVolumeMigrator {
         let cleanup: ContainerCleanupRecord
         let details: String
         var needsRecordUpdateOnly = false
+        var transferOperationID: UUID? = nil
 
         var message: String {
-            if needsRecordUpdateOnly {
-                return String(format: "数据操作和副本清理已完成，但清理记录尚未更新。请稍后重试。%@".localized, details)
+            if transferOperationID != nil {
+                let format = cleanup.kind == .restoredVolume
+                    ? "数据已还原到本地，但旧副本尚未全部清理。%@".localized
+                    : "迁移已完成，但旧副本尚未全部清理。%@".localized
+                return String(format: format, "\n" + details)
             }
-            switch cleanup.kind {
-            case .migrationBackup:
-                return String(
-                    format: "挂载迁移已完成，但本地安全备份仍保留在「%@」。可稍后重试清理；当前挂载数据不受影响。%@".localized,
-                    cleanup.localPath, details
-                )
-            case .restoredVolume:
-                return String(
-                    format: "数据已还原到「%@」，但外置卷「%@」（%@）的清理尚未完成。该卷不会再自动挂载，请稍后重试清理。%@".localized,
-                    cleanup.localPath, cleanup.mountRecord.volumeName, cleanup.mountRecord.volumeUUID, details
-                )
-            }
+            return (["旧版操作的安全收尾尚未完成，数据已保留。AppPorts 会继续检查；当前未完成的原因：".localized,
+                     cleanup.localPath, "APFS · " + cleanup.mountRecord.volumeName + " · " + cleanup.mountRecord.volumeUUID]
+                + [cleanup.restoreStagingPath, details.isEmpty ? nil : details].compactMap { $0 }).joined(separator: "\n")
         }
     }
 
@@ -944,7 +1210,7 @@ actor ContainerVolumeMigrator {
     /// 两次挂载尝试之间的间隔，给自动挂载留出落地时间。
     private static let mountRetrySettleNanoseconds: UInt64 = 500_000_000
     /// 卷根目录上由系统创建、不属于应用数据的条目，还原时不带回本地。
-    private static let volumeSystemArtifacts: Set<String> = [
+    static let volumeSystemArtifacts: Set<String> = [
         volumeMarkerFileName, neverIndexFileName, ".fseventsd", ".Spotlight-V100", ".Trashes", ".TemporaryItems",
         ".DocumentRevisions-V100", ".PKInstallSandboxManager", ".PKInstallSandboxManager-SystemSoftware"
     ]
@@ -965,34 +1231,33 @@ actor ContainerVolumeMigrator {
     }
 
     private let fileManager = FileManager.default
-    private let disk: DiskUtility
-    private let store: ContainerMountStore
-    private let isMountPoint: @Sendable (URL) -> Bool
+    // Shared with the actor's automatic-recovery extension.
+    let disk: DiskUtility
+    let store: ContainerMountStore
+    let isMountPoint: @Sendable (URL) -> Bool
     private let mountedVolumePath: @Sendable (URL) -> String?
     private let mountedVolumeUUID: @Sendable (URL) -> String?
     /// 读卷根迁移标记里的 Volume UUID。挂载前用它确认 `/Volumes/<卷名>` 上挂的就是我们要的卷，
     /// 测试注入假实现，避免真去读磁盘。
     private let volumeUUIDMarker: @Sendable (URL) -> String?
     /// 记录增删后同步登录代理的安装状态；测试注入空实现，避免动真实 LaunchAgents。
-    private let synchronizeAgent: @Sendable (ContainerMountStore) -> Void
+    let synchronizeAgent: @Sendable (ContainerMountStore) -> Void
     /// 路径所在卷的可用空间；返回 nil 表示查不到，此时不拦截。测试注入固定值。
     private let availableCapacity: @Sendable (URL) -> Int64?
     /// 挂载点的挂载标志，用来发现早期版本挂上、仍会显示在 Finder 里的卷。测试注入固定值。
-    private let mountFlags: @Sendable (URL) -> UInt32?
-    private let stagingMountRootURL: URL
-    private let safety: DataOperationSafety
+    let mountFlags: @Sendable (URL) -> UInt32?
+    let stagingMountRootURL: URL
+    let safety: DataOperationSafety
     private let makeMountPointLease: @Sendable (URL) throws -> any MountPointLeasing
+    private let synchronizeCleanupParent: @Sendable (URL) throws -> Void
+    private var completingPaths: Set<String> = []
+    private var runningCleanups: Set<UUID> = []
 
     init(
         disk: DiskUtility = DiskUtility(),
         store: ContainerMountStore = .shared,
         stagingMountRootURL: URL? = nil,
-        isMountPoint: @escaping @Sendable (URL) -> Bool = { DiskUtility.isMountPoint($0) },
-        mountedVolumePath: @escaping @Sendable (URL) -> String? = { DiskUtility.mountedVolumePath(containing: $0) },
-        mountedVolumeUUID: @escaping @Sendable (URL) -> String? = { DiskUtility.mountedVolumeUUID(at: $0) },
-        volumeUUIDMarker: @escaping @Sendable (URL) -> String? = { ContainerVolumeMigrator.readVolumeMarkerUUID(at: $0) },
-        synchronizeAgent: @escaping @Sendable (ContainerMountStore) -> Void = { ContainerMountAgentInstaller.installIfNeeded(store: $0) },
-        availableCapacity: @escaping @Sendable (U
+        isMountPoint: @escaping @Sendable (URL) -> Bool = { DiskUtility.isMo
 ```
 
 ### Core Architecture Module: `AppPorts/Utils/CustomDirScanner.swift`
@@ -1116,14 +1381,37 @@ actor CustomDirScanner {
 import Darwin
 import Foundation
 
-/// Data-tree operations retain verified originals until explicit cleanup.
+/// Low-level data-tree operations retain originals; complete user flows clean
+/// their verified copies after the successful switch has been committed.
 /// UI flags never authorize execution; every entry point evaluates real paths and durable topology.
 actor DataDirMover {
+    struct CompletionResult: Sendable {
+        /// The data switch succeeded. A warning refers only to retained-copy cleanup.
+        let cleanupWarning: String?
+    }
+
+    enum CompletionError: LocalizedError {
+        case previousRestoreNeedsCleanup(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .previousRestoreNeedsCleanup(let details):
+                return String(format: "上次还原的旧副本尚未清理，新的迁移尚未开始。AppPorts 会继续完成清理，条件恢复后可直接重试。%@".localized, "\n" + details)
+            }
+        }
+    }
+
     private let fileManager = FileManager.default
     private let homeDir: URL
     private let store: ContainerMountStore
     private let safety: DataOperationSafety
+    private let mountMigrator: ContainerVolumeMigrator?
     private let failSymlinkCreation: Bool
+    private let synchronizeDirectory: @Sendable (URL, Bool) throws -> Void
+    private var runningMigrations: Set<UUID> = []
+    private var runningRestores: Set<UUID> = []
+    private var runningCleanups: Set<UUID> = []
+    private var completingPaths: Set<String> = []
     private let managedLinkMarkerFileName = ".appports-link-metadata.plist"
     private let managedLinkMetadataSidecarSuffix = ".appports-link-metadata.plist"
     private let managedLinkIdentifier = "com.shimoko.AppPorts"
@@ -1139,16 +1427,52 @@ actor DataDirMover {
 
     init(homeDir: URL = URL(fileURLWithPath: NSHomeDirectory()),
          failSymlinkCreation: Bool = false, failSourceBackupCleanup: Bool = false,
-         store: ContainerMountStore = .shared, runner: any ShellCommandRunning = ProcessCommandRunner()) {
+         store: ContainerMountStore = .shared, runner: any ShellCommandRunning = ProcessCommandRunner(),
+         mountMigrator: ContainerVolumeMigrator? = nil,
+         synchronizeDirectory: @escaping @Sendable (URL, Bool) throws -> Void = {
+             try DurableFileIO.syncDirectory(at: $0, resolvingAlias: $1)
+         }) {
         self.homeDir = homeDir.standardizedFileURL
         self.store = store
         self.safety = DataOperationSafety(homeDirectory: homeDir, store: store, runner: runner)
+        self.mountMigrator = mountMigrator
         self.failSymlinkCreation = failSymlinkCreation
+        self.synchronizeDirectory = synchronizeDirectory
         // Kept source-compatible with older callers. Success now always retains the original.
         _ = failSourceBackupCleanup
     }
 
+    /// Complete the ordinary user flow while keeping cleanup failures separate
+    /// from a successful data switch. The caller holds the shared operation lock.
+    func migrateAndComplete(item: DataDirItem, to externalBaseURL: URL,
+                            progressHandler: FileCopier.ProgressHandler?) async throws -> CompletionResult {
+        let path = item.path.standardizedFileURL.path
+        guard completingPaths.insert(path).inserted else { throw DataOperationSafety.Failure.occupied(path) }
+        defer { completingPaths.remove(path) }
+        try await completePreviousRestoreIfNeeded(item: item, externalBaseURL: externalBaseURL, progressHandler: progressHandler)
+        let operationID = try await migrateRetainingOriginal(item: item, to: externalBaseURL, progressHandler: progressHandler)
+        return await completeSuccessfulTransfer(operationID: operationID, direction: .migrate, progressHandler: progressHandler)
+    }
+
+    func restoreAndComplete(item: DataDirItem,
+                            progressHandler: FileCopier.ProgressHandler?) async throws -> CompletionResult {
+        try await completeInterruptedMigrationBeforeRestore(at: item.path, progressHandler: progressHandler)
+        let path = item.path.standardizedFileURL.path
+        guard completingPaths.insert(path).inserted else { throw DataOperationSafety.Failure.occupied(path) }
+        defer { completingPaths.remove(path) }
+        let operationID = try await restoreRetainingOriginal(item: item, progressHandler: progressHandler)
+        return await completeSuccessfulTransfer(operationID: operationID, direction: .restore,
+            progressHandler: progressHandler, requireUnchangedActive: false)
+    }
+
+    /// Low-level recovery callers may deliberately retain the verified original.
     func migrate(item: DataDirItem, to externalBaseURL: URL, progressHandler: FileCopier.ProgressHandler?) async throws {
+        _ = try await migrateRetainingOriginal(item: item, to: externalBaseURL, progressHandler: progressHandler)
+    }
+
+    private func migrateRetainingOriginal(item: DataDirItem, to externalBaseURL: URL,
+                                          progressHandler: FileCopier.ProgressHandler?, reusingOperationID: UUID? = nil) async throws -> UUID {
+        await progressHandler?(.working(.preparing))
         let source = item.path.standardizedFileURL
         let destination = externalBaseURL.appendingPathComponent(source.lastPathComponent).standardizedFileURL
         try requirePolicy(source)
@@ -1156,27 +1480,43 @@ actor DataDirMover {
         guard !DiskUtility.isMountPoint(source) else { throw DataOperationSafety.Failure.conflict(source.path) }
         guard try !entryExists(destination) else { throw DataDirError.destinationExists(destination) }
         try requireMarker(at: source, for: source, type: item.type, allowOwned: false)
-        try await safety.requireNewMigration(at: source, destination: destination, bundleIdentifier: item.associatedBundleIdentifier)
-        let id = UUID()
+        let restored = try completedRestoreLineage(at: source)
+        try await safety.requireNewMigration(at: source, destination: destination,
+            bundleIdentifier: item.associatedBundleIdentifier, ownedTransferIDs: Set(restored.map(\.operationID)))
+        // Reject known permission failures before reserving a recovery record.
+        // Directory creation still happens only after the durable intent below.
+        let destinationVolumeUUID = try preflightWritePermission(at: externalBaseURL)
+        let id = reusingOperationID ?? UUID()
+        let candidate = externalBaseURL.appendingPathComponent(".appports-copy-\(id.uuidString)").standardizedFileURL
         let backup = source.deletingLastPathComponent().appendingPathComponent(".appports-migration-backup-\(source.lastPathComponent)-\(id)")
         var transfer = DataTransferRecord(operationID: id, mode: .symlink, direction: .migrate, sourceID: item.id,
             appName: item.associatedAppName ?? item.name, bundleIdentifier: item.associatedBundleIdentifier,
             dataDirType: item.type.rawValue, originalPath: source.path, activePath: source.path,
             destinationPath: destination.path, backupPath: backup.path,
-            sourceIdentity: try DataPathIdentity.capture(source))
+            sourceIdentity: try DataPathIdentity.capture(source), destinationVolumeUUID: destinationVolumeUUID,
+            priorOperationID: restored.last?.operationID)
+        transfer.preparationPath = candidate.path
         try store.beginTransfer(transfer)
+        runningMigrations.insert(id)
+        defer { runningMigrations.remove(id) }
         do {
             try checkWritePermission(at: externalBaseURL)
+            if let destinationVolumeUUID {
+                try requireDestinationVolume(at: externalBaseURL, expected: destinationVolumeUUID)
+            }
             transfer.phase = .copying
             try store.updateTransfer(transfer)
-            let baseline = try await copy(from: source, to: destination, final: destination, progress: progressHandler)
+            let baseline = try await copy(from: source, to: candidate, final: destination, operationID: id, progress: progressHandler)
+            transfer = try store.transfer(operationID: id) ?? transfer
             try requireMarker(at: source, for: source, type: item.type, allowOwned: false)
-            try installMarker(source: source, destination: destination, type: item.type, baseline: baseline)
-            transfer.destinationIdentity = try DataPathIdentity.capture(destination)
             transfer.baseline = try PropertyListEncoder().encode(baseline)
             transfer.phase = .verified
             try store.updateTransfer(transfer)
-            await progressHandler?(.init(copiedBytes: baseline.logicalBytes, totalBytes: baseline.logicalBytes, currentFile: "正在切换本地入口...".localized))
+            try moveTree(candidate, to: destination)
+            try syncDirectory(at: destination.deletingLastPathComponent())
+            try installMarker(source: source, destination: destination, type: item.type, baseline: baseline)
+            try syncTree(at: destination)
+            await progressHandler?(.init(copiedBytes: baseline.logicalBytes, totalBytes: baseline.logicalBytes, currentFile: "正在切换本地入口...".localized, showsByteProgress: false, stage: .switching))
             try await safety.requireNoKnownWriters(at: source, bundleIdentifier: item.associatedBundleIdentifier)
             try requireIdentity(source, transfer.sourceIdentity)
             try requireMarker(at: source, for: source, type: item.type, allowOwned: false)
@@ -1184,681 +1524,18 @@ actor DataDirMover {
             try TreeCopySession.verifyCopy(at: destination, against: baseline)
             transfer.phase = .switching
             try store.updateTransfer(transfer)
-            try DataTreeRelocator.move(source, to: backup)
+            try moveTree(source, to: backup)
+            try syncDirectory(at: source.deletingLastPathComponent())
             transfer.backupIdentity = try DataPathIdentity.capture(backup)
             try requireIdentity(backup, transfer.sourceIdentity)
             try store.updateTransfer(transfer)
-            await progressHandler?(.init(copiedBytes: baseline.logicalBytes, totalBytes: baseline.logicalBytes, currentFile: "正在创建符号链接...".localized))
+            await progressHandler?(.init(copiedBytes: baseline.logicalBytes, totalBytes: baseline.logicalBytes, currentFile: "正在创建符号链接...".localized, showsByteProgress: false, stage: .switching))
             try requireMarker(at: backup, for: source, type: item.type, allowOwned: false)
             try TreeCopySession.verifyUnchanged(at: backup, against: baseline)
             do { try createSymbolicLink(at: source, withDestinationURL: destination) }
             catch {
                 // The backup is still complete; never overwrite a competing entry during rollback.
-                if try !entryExists(source) { try DataTreeRelocator.move(backup, to: source) }
-                throw DataDirError.symlinkFailed(error)
-            }
-            transfer.activePath = destination.path
-            try requireMarker(at: backup, for: source, type: item.type, allowOwned: false)
-            try TreeCopySession.verifyUnchanged(at: backup, against: baseline)
-            try TreeCopySession.verifyCopy(at: destination, against: baseline)
-            try store.commitMigration(record: nil, transfer: transfer)
-            invalidateSizeCache(for: source)
-            invalidateSizeCache(for: destination)
-        } catch { try recordFailure(&transfer, error: error) }
-    }
-
-    func restore(item: DataDirItem, progressHandler: FileCopier.ProgressHandler?) async throws {
-        let local = item.path.standardizedFileURL
-        let indexed = try store.managedLink(forOriginalPath: local.path)
-        let existingTransfers = try store.transfers()
-        if !isSymbolicLink(at: local), indexed == nil,
-           let completed = existingTransfers.last(where: { $0.direction == .restore && $0.originalPath == local.path && [.awaitingUserVerification, .cleanupRequested].contains($0.phase) }),
-           let identity = completed.destinationIdentity, let current = try? DataPathIdentity.capture(local), identity.matchesFilesystemObject(current) { return }
-        let linkIdentity: DataPathIdentity?
-        let external: URL
-        if isSymbolicLink(at: local) {
-            linkIdentity = try DataPathIdentity.capture(local)
-            external = local.resolvingSymlinksInPath()
-        } else if let indexed, try !entryExists(local) {
-            linkIdentity = nil
-            external = URL(fileURLWithPath: indexed.destinationPath)
-        } else { throw DataDirError.notASymlink(local) }
-        guard fileManager.fileExists(atPath: external.path), !isSymbolicLink(at: external) else { throw DataDirError.externalNotFound(external) }
-        let sourceIdentity = try DataPathIdentity.capture(external)
-        if let indexed {
-            guard DataPathTopology.relationship(indexed.destinationPath, external.path) == .same,
-                  indexed.destinationIdentity.matchesFilesystemObject(sourceIdentity) else { throw DataOperationSafety.Failure.conflict(external.path) }
-        }
-        try requireMarker(at: external, for: local, type: item.type, allowOwned: true)
-        let prior = indexed?.operationID ?? existingTransfers.last(where: {
-            $0.direction == .migrate && $0.originalPath == local.path && $0.destinationIdentity?.matchesFilesystemObject(sourceIdentity) == true
-        })?.operationID
-        let ownedIDs = prior.map { transferAncestors(of: $0, transfers: existingTransfers) } ?? []
-        try safety.requireNoOverlap(at: local, ownedTransferIDs: ownedIDs, ownedLinkPath: indexed?.originalPath)
-        try safety.requireNoOverlap(at: external, ownedTransferIDs: ownedIDs, ownedLinkPath: indexed?.originalPath)
-        try requireLocalRestoreParent(local)
-        try await safety.requireNoKnownWriters(at: external, bundleIdentifier: item.associatedBundleIdentifier ?? indexed?.bundleIdentifier)
-        let id = UUID()
-        let staging = local.deletingLastPathComponent().appendingPathComponent(".appports-restore-\(id)")
-        let copyURL = staging.appendingPathComponent("data")
-        var transfer = DataTransferRecord(operationID: id, mode: .symlink, direction: .restore, sourceID: item.id,
-            appName: item.associatedAppName ?? item.name, bundleIdentifier: item.associatedBundleIdentifier ?? indexed?.bundleIdentifier,
-            dataDirType: item.type.rawValue, originalPath: local.path, activePath: external.path, destinationPath: local.path,
-            backupPath: external.path, stagingPath: staging.path, sourceIdentity: sourceIdentity,
-            backupIdentity: sourceIdentity, priorOperationID: prior)
-        try store.beginTransfer(transfer)
-        do {
-            try fileManager.createDirectory(at: staging, withIntermediateDirectories: true)
-            transfer.phase = .copying
-            try store.updateTransfer(transfer)
-            let baseline = try await copy(from: external, to: copyURL, final: local, progress: progressHandler)
-            transfer.destinationIdentity = try DataPathIdentity.capture(copyURL)
-            transfer.baseline = try PropertyListEncoder().encode(baseline)
-            transfer.phase = .verified
-            try store.updateTransfer(transfer)
-            try await safety.requireNoKnownWriters(at: external, bundleIdentifier: transfer.bundleIdentifier)
-            try requireIdentity(external, sourceIdentity)
-            try requireMarker(at: external, for: local, type: item.type, allowOwned: true)
-            
-```
-
-### Core Architecture Module: `AppPorts/Utils/DataDirScanner.swift`
-```
-//
-//  DataDirScanner.swift
-//  AppPorts
-//
-//  Created by shimoko.com on 2026/3/4.
-//
-
-import Foundation
-
-// MARK: - 已知 dotFolder 描述结构
-
-/// 内置已知工具目录的描述信息
-private struct KnownDotFolder {
-    let name: String
-    let relativePath: String       // 相对于 ~ 的路径，如 ".npm" 或 ".cache/torch"
-    let priority: DataDirPriority
-    let description: String
-    let isMigratable: Bool
-    let nonMigratableReason: String?
-
-    init(name: String, relativePath: String,
-         priority: DataDirPriority = .recommended,
-         description: String,
-         isMigratable: Bool = true,
-         nonMigratableReason: String? = nil) {
-        self.name = name
-        self.relativePath = relativePath
-        self.priority = priority
-        self.description = description
-        self.isMigratable = isMigratable
-        self.nonMigratableReason = nonMigratableReason
-    }
-}
-
-private struct AppMatchProfile {
-    let exactMatches: Set<String>
-    let containsMatches: [String]
-    let shortPrefixMatches: [String]
-}
-
-private struct AppDataSearchConfig {
-    let localBaseURL: URL
-    let type: DataDirType
-    let priority: DataDirPriority
-    let description: String
-}
-
-// MARK: - 数据目录扫描器
-
-/// 扫描应用关联数据目录和已知工具 dotFolder
-///
-/// 使用 Actor 模型在后台线程安全地执行扫描，不阻塞 UI。
-///
-/// ## 功能
-/// 1. 根据 AppItem（BundleID + AppName）扫描 ~/Library/ 关联目录
-/// 2. 扫描内置已知 dotFolder 列表（~/.npm、~/.m2 等）
-/// 3. 检测每个目录当前状态（本地 / 已链接 / 现有软链 / 未找到）
-///
-/// ## 使用示例
-/// ```swift
-/// let scanner = DataDirScanner()
-/// // 扫描工具目录
-/// let dotItems = await scanner.scanKnownDotFolders()
-/// // 扫描应用关联目录
-/// let libItems = await scanner.scanLibraryDirs(for: someApp)
-/// ```
-
-// MARK: - 快速目录大小计算（非 actor 隔离，支持并发）
-
-/// 目录大小缓存，减少重复遍历
-private let directorySizeCache: NSCache<NSString, NSNumber> = {
-    let c = NSCache<NSString, NSNumber>()
-    c.countLimit = 200
-    return c
-}()
-
-/// 缓存键带上当前挂载状态。挂载点被挂上或卸下时目录内容会整体替换，
-/// 状态一变就等于缓存失效，不会把卸载前那份旧大小继续报给界面。
-private func sizeCacheKey(for path: String, isMountPoint: Bool) -> NSString {
-    "\(path)|\(isMountPoint ? "mount" : "plain")" as NSString
-}
-
-/// 子目录内容变更也会改变所有父目录的总大小，两种挂载状态的缓存都要失效。
-func invalidateSizeCache(for url: URL) {
-    var path = url.standardizedFileURL.path
-    while !path.isEmpty {
-        directorySizeCache.removeObject(forKey: sizeCacheKey(for: path, isMountPoint: true))
-        directorySizeCache.removeObject(forKey: sizeCacheKey(for: path, isMountPoint: false))
-        guard path != "/" else { break }
-        path = (path as NSString).deletingLastPathComponent
-    }
-}
-
-/// 清除全部大小缓存
-func clearSizeCache() {
-    directorySizeCache.removeAllObjects()
-}
-
-/// 非隔离的快速目录大小计算，支持 TaskGroup 并发调用。
-///
-/// 优先级：内存缓存 → FileManager.enumerator
-/// 注意：不对目录使用 Spotlight（kMDItemFSSize 对目录不可靠，PearCleaner 也跳过了）
-func fastDirectorySize(
-    at url: URL,
-    fileManager: FileManager = .default,
-    isMountPoint: (URL) -> Bool = { DiskUtility.isMountPoint($0) }
-) -> Int64 {
-    measureDirectorySize(at: url, fileManager: fileManager, isMountPoint: isMountPoint).bytes
-}
-
-/// 界面需要同时知道大小和读取是否完整，不能把读取失败当成 0 字节。
-func measureDirectorySize(
-    at url: URL,
-    fileManager: FileManager = .default,
-    useCache: Bool = true,
-    isMountPoint: (URL) -> Bool = { DiskUtility.isMountPoint($0) }
-) -> DirectorySizeResult {
-    let cacheKey = sizeCacheKey(for: url.standardizedFileURL.path, isMountPoint: isMountPoint(url))
-    if useCache, let cached = directorySizeCache.object(forKey: cacheKey) {
-        return DirectorySizeResult(bytes: cached.int64Value)
-    }
-    directorySizeCache.removeObject(forKey: cacheKey)
-
-    let resourceKeys: [URLResourceKey] = [.isRegularFileKey, .fileSizeKey, .isSymbolicLinkKey, .isDirectoryKey]
-    let values: URLResourceValues
-    do {
-        values = try url.resourceValues(forKeys: Set(resourceKeys))
-    } catch {
-        return DirectorySizeResult(readIssues: [DataDirReadIssue(url: url, error: error)])
-    }
-
-    // 单文件：直接返回大小
-    if values.isRegularFile == true {
-        let size = Int64(values.fileSize ?? 0)
-        directorySizeCache.setObject(NSNumber(value: size), forKey: cacheKey)
-        return DirectorySizeResult(bytes: size)
-    }
-
-    guard values.isDirectory == true else { return DirectorySizeResult() }
-
-    // 枚举器遍历（单次批量遍历，替代手动递归的 contentsOfDirectory）
-    var result = DirectorySizeResult()
-    guard let enumerator = fileManager.enumerator(
-        at: url,
-        includingPropertiesForKeys: [.isRegularFileKey, .fileSizeKey, .isSymbolicLinkKey],
-        options: [],
-        errorHandler: { failedURL, error in
-            result.readIssues.append(DataDirReadIssue(url: failedURL, error: error))
-            return true
-        }
-    ) else {
-        return DirectorySizeResult(readIssues: [DataDirReadIssue(url: url, error: CocoaError(.fileReadUnknown))])
-    }
-
-    for case let fileURL as URL in enumerator {
-        do {
-            let attrs = try fileURL.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey, .isSymbolicLinkKey])
-            guard attrs.isSymbolicLink != true, attrs.isRegularFile == true,
-                  let fileSize = attrs.fileSize else { continue }
-            result.bytes += Int64(fileSize)
-        } catch {
-            result.readIssues.append(DataDirReadIssue(url: fileURL, error: error))
-        }
-    }
-    // 0 不写缓存：未挂载的挂载点就是一个空目录，算出来同样是 0；缓存下来会让卷挂好之后
-    // 一直显示「0 字节」。空目录重新遍历的代价可以忽略，所以每次重算更安全。
-    if result.isComplete && result.bytes > 0 {
-        directorySizeCache.setObject(NSNumber(value: result.bytes), forKey: cacheKey)
-    }
-    return result
-}
-
-// MARK: - 数据目录扫描器
-
-actor DataDirScanner {
-
-    private let fileManager = FileManager.default
-    private let homeDir: URL
-    private let managedLinkMarkerFileName = ".appports-link-metadata.plist"
-    private let managedLinkMetadataSidecarSuffix = ".appports-link-metadata.plist"
-    private let managedLinkIdentifier = "com.shimoko.AppPorts"
-    private let managedLinkSchemaVersion = 1
-    private let mountStore: ContainerMountStore
-    private let isMountPoint: @Sendable (URL) -> Bool
-    private let isVolumeOnline: @Sendable (String) -> Bool
-    private let isSandboxedApplication: @Sendable (URL) -> Bool
-    /// 本轮扫描开始时读取一次的挂载记录，避免逐路径重复读文件。
-    private var mountRecordsByPath: [String: ContainerMountRecord] = [:]
-    private var recoveryInspection: ContainerMountStore.Inspection?
-    private var readIssues: [DataDirReadIssue] = []
-
-    private struct ManagedLinkMetadata: Codable, Sendable {
-        let schemaVersion: Int
-        let managedBy: String
-        let sourcePath: String
-        let destinationPath: String
-        let dataDirType: String
-    }
-
-    init(
-        homeDir: URL = URL(fileURLWithPath: NSHomeDirectory()),
-        mountStore: ContainerMountStore = .shared,
-        isMountPoint: @escaping @Sendable (URL) -> Bool = { DiskUtility.isMountPoint($0) },
-        isVolumeOnline: @escaping @Sendable (String) -> Bool = { DiskUtility.isVolumeOnline($0) },
-        isSandboxedApplication: @escaping @Sendable (URL) -> Bool = { DataDirScanner.isSandboxedRealApplication($0) }
-    ) {
-        self.homeDir = homeDir.standardizedFileURL
-        self.mountStore = mountStore
-        self.isMountPoint = isMountPoint
-        self.isVolumeOnline = isVolumeOnline
-        self.isSandboxedApplication = isSandboxedApplication
-    }
-
-    /// 解析入口到真实应用后读取 entitlements；找不到真实应用时按非沙盒处理，
-    /// 后续的重签名与挂载入口会各自再做校验。
-    static func isSandboxedRealApplication(_ appURL: URL) -> Bool {
-        guard let realURL = try? CodeSigner.resolveAppURL(at: appURL) else { return false }
-        return CodeSigner.isSandboxed(at: realURL)
-    }
-
-    /// 关联应用是否为沙盒应用。沙盒应用迁移数据后不能重签名。
-    /// 容器目录本身是否需要挂载迁移不看这个值：见 `scanLibraryDirs` 中的统一规则。
-    func isSandboxed(_ app: AppItem) -> Bool {
-        guard !app.isFolder else { return false }
-        return isSandboxedApplication(app.displayURL)
-    }
-
-    // MARK: - 内置已知 dotFolder 列表
-
-    private let knownDotFolders: [KnownDotFolder] = [
-        // ── 开发工具 / 包管理 ────────────────────────────────────
-        KnownDotFolder(
-            name: "npm 缓存",
-            relativePath: ".npm",
-            priority: .recommended,
-            description: "Node.js 包管理器本地缓存"
-        ),
-        KnownDotFolder(
-            name: "Maven 仓库",
-            relativePath: ".m2",
-            priority: .recommended,
-            description: "Java Maven 依赖仓库"
-        ),
-        KnownDotFolder(
-            name: "Gradle 缓存",
-            relativePath: ".gradle",
-            priority: .recommended,
-            description: "Gradle 构建缓存、Wrapper 和依赖数据"
-        ),
-        KnownDotFolder(
-            name: "Android 开发数据",
-            relativePath: ".android",
-            priority: .recommended,
-            description: "Android、ADB 和模拟器配置与缓存数据"
-        ),
-        KnownDotFolder(
-            name: "Flutter/Dart 缓存",
-            relativePath: ".pub-cache",
-            priority: .recommended,
-            description: "Dart 和 Flutter Pub 包缓存"
-        ),
-        KnownDotFolder(
-            name: "Bun 运行时",
-            relativePath: ".bun",
-            priority: .recommended,
-            description: "Bun JavaScript 运行时及缓存"
-        ),
-        KnownDotFolder(
-            name: "Conda 环境",
-            relativePath: ".conda",
-            priority: .recommended,
-            description: "Anaconda/Miniconda 环境数据"
-        ),
-        KnownDotFolder(
-            name: "Nexus 数据",
-            relativePath: ".nexus",
-            priority: .optional,
-            description: "Nexus 代理缓存"
-        ),
-        KnownDotFolder(
-            name: "Composer 包",
-            relativePath: ".composer",
-            priority: .optional,
-            description: "PHP Composer 全局包"
-        ),
-
-        // ── AI / ML 工具 ─────────────────────────────────────────
-        KnownDotFolder(
-            name: "Ollama 模型",
-            relativePath: ".ollama",
-            priority: .recommended,
-            description: "Ollama 本地大语言模型存储"
-        ),
-        KnownDotFolder(
-            name: "PyTorch 模型缓存",
-            relativePath: ".cache/torch",
-            priority: .recommended,
-            description: "PyTorch 预训练模型
-```
-
-### Core Architecture Module: `AppPorts/Utils/DataTreeRelocator.swift`
-```
-import Darwin
-import Foundation
-
-/// Moves a real tree root without replacing an entry or changing its identity or permissions.
-/// Open directory descriptors anchor both names during the exclusive, same-volume rename.
-enum DataTreeRelocator {
-    static func move(_ source: URL, to destination: URL) throws {
-        let sourceParent = source.deletingLastPathComponent().resolvingSymlinksInPath()
-        let destinationParent = destination.deletingLastPathComponent().resolvingSymlinksInPath()
-        let sourceFD = open(sourceParent.path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
-        guard sourceFD >= 0 else { throw posixFailure() }
-        defer { close(sourceFD) }
-        let destinationFD = open(destinationParent.path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
-        guard destinationFD >= 0 else { throw posixFailure() }
-        defer { close(destinationFD) }
-        var sourceParentInfo = stat(), destinationParentInfo = stat(), original = stat()
-        guard fstat(sourceFD, &sourceParentInfo) == 0,
-              fstat(destinationFD, &destinationParentInfo) == 0,
-              fstatat(sourceFD, source.lastPathComponent, &original, AT_SYMLINK_NOFOLLOW) == 0 else { throw posixFailure() }
-        let kind = original.st_mode & S_IFMT
-        guard kind == S_IFDIR || kind == S_IFREG else { throw POSIXError(.EINVAL) }
-        guard original.st_dev == sourceParentInfo.st_dev,
-              original.st_dev == destinationParentInfo.st_dev else { throw POSIXError(.EXDEV) }
-        guard original.st_flags & UInt32(UF_IMMUTABLE | SF_IMMUTABLE | UF_APPEND | SF_APPEND) == 0 else { throw POSIXError(.EPERM) }
-        let rootFD = openat(sourceFD, source.lastPathComponent, O_RDONLY | O_NONBLOCK | O_NOFOLLOW | O_CLOEXEC)
-        guard rootFD >= 0 else { throw posixFailure() }
-        defer { close(rootFD) }
-        var opened = stat()
-        guard fstat(rootFD, &opened) == 0 else { throw posixFailure() }
-        guard sameObject(original, opened) else { throw POSIXError(.ESTALE) }
-        let originalMode = original.st_mode & 0o7777
-        let needsWrite = kind == S_IFDIR && originalMode & 0o200 == 0
-            && !sameObject(sourceParentInfo, destinationParentInfo)
-        if needsWrite, fchmod(rootFD, originalMode | 0o200) != 0 { throw posixFailure() }
-        do {
-            try requireParent(sourceParent, matches: sourceParentInfo)
-            try requireParent(destinationParent, matches: destinationParentInfo)
-            var current = stat()
-            guard fstatat(sourceFD, source.lastPathComponent, &current, AT_SYMLINK_NOFOLLOW) == 0 else { throw posixFailure() }
-            guard sameObject(current, original) else { throw POSIXError(.ESTALE) }
-            guard renameatx_np(sourceFD, source.lastPathComponent, destinationFD, destination.lastPathComponent, UInt32(RENAME_EXCL)) == 0 else { throw posixFailure() }
-            guard fstatat(destinationFD, destination.lastPathComponent, &current, AT_SYMLINK_NOFOLLOW) == 0 else { throw posixFailure() }
-            guard sameObject(current, original) else { throw POSIXError(.ESTALE) }
-            try requireParent(destinationParent, matches: destinationParentInfo)
-        } catch {
-            if needsWrite { try restoreMode(originalMode, descriptor: rootFD) }
-            throw error
-        }
-        if needsWrite { try restoreMode(originalMode, descriptor: rootFD) }
-        var final = stat()
-        guard fstatat(destinationFD, destination.lastPathComponent, &final, AT_SYMLINK_NOFOLLOW) == 0 else { throw posixFailure() }
-        guard sameObject(final, original), final.st_mode & 0o7777 == originalMode else { throw POSIXError(.ESTALE) }
-    }
-
-    private static func restoreMode(_ mode: mode_t, descriptor: Int32) throws {
-        guard fchmod(descriptor, mode) == 0 else { throw posixFailure() }
-        var restored = stat()
-        guard fstat(descriptor, &restored) == 0 else { throw posixFailure() }
-        guard restored.st_mode & 0o7777 == mode else { throw POSIXError(.EPERM) }
-    }
-
-    private static func requireParent(_ url: URL, matches expected: stat) throws {
-        var current = stat()
-        guard lstat(url.path, &current) == 0 else { throw posixFailure() }
-        guard current.st_mode & S_IFMT == S_IFDIR, sameObject(current, expected) else { throw POSIXError(.ESTALE) }
-    }
-
-    private static func sameObject(_ lhs: stat, _ rhs: stat) -> Bool {
-        lhs.st_dev == rhs.st_dev && lhs.st_ino == rhs.st_ino && lhs.st_mode & S_IFMT == rhs.st_mode & S_IFMT
-    }
-
-    private static func posixFailure() -> POSIXError { POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO) }
-}
-
-```
-
-### Core Architecture Module: `AppPorts/Utils/DiskUtility.swift`
-```
-//
-//  DiskUtility.swift
-//  AppPorts
-//
-
-import Darwin
-import Foundation
-
-// MARK: - 外部命令执行
-
-struct ShellCommandResult: Sendable {
-    let status: Int32
-    let standardOutput: Data
-    let standardError: Data
-    let timedOut: Bool
-
-    var stdoutText: String { String(decoding: standardOutput, as: UTF8.self) }
-    var stderrText: String { String(decoding: standardError, as: UTF8.self) }
-    var combinedText: String {
-        (stdoutText + "\n" + stderrText).trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-}
-
-/// 可注入的命令执行器；测试用假执行器记录调用顺序并伪造输出。
-protocol ShellCommandRunning: Sendable {
-    func run(executable: String, arguments: [String], timeout: TimeInterval) async throws -> ShellCommandResult
-}
-
-/// 用 Process 执行外部命令。超时后终止进程，避免 diskutil 挂死时整个操作卡住。
-struct ProcessCommandRunner: ShellCommandRunning {
-    func run(executable: String, arguments: [String], timeout: TimeInterval) async throws -> ShellCommandResult {
-        // Include dispatch queueing and process launch in the caller's time budget.
-        let deadline = ProcessInfo.processInfo.systemUptime + max(0, timeout)
-        let cancellation = CancellationState()
-        return try await withTaskCancellationHandler(operation: {
-            try Task.checkCancellation()
-            return try await withCheckedThrowingContinuation { continuation in
-                DispatchQueue.global(qos: .utility).async {
-                    do { continuation.resume(returning: try Self.execute(executable: executable,
-                        arguments: arguments, deadline: deadline, cancellation: cancellation)) }
-                    catch { continuation.resume(throwing: error) }
-                }
-            }
-        }, onCancel: { cancellation.cancel() })
-    }
-
-    /// Nonblocking pipe reads let one deadline cover the child AND inherited pipes.
-    /// This worker never blocks Foundation's process termination callback queue.
-    private static func execute(executable: String, arguments: [String], deadline: TimeInterval,
-                                cancellation: CancellationState) throws -> ShellCommandResult {
-        if cancellation.isCancelled { throw CancellationError() }
-        guard ProcessInfo.processInfo.systemUptime < deadline else {
-            return ShellCommandResult(status: -1, standardOutput: Data(), standardError: Data(), timedOut: true)
-        }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: executable)
-        process.arguments = arguments
-        process.standardInput = FileHandle.nullDevice
-        let output = Pipe(), error = Pipe()
-        process.standardOutput = output
-        process.standardError = error
-        let handles = [output.fileHandleForReading, error.fileHandleForReading]
-        defer { handles.forEach { try? $0.close() } }
-        let fds = handles.map(\.fileDescriptor)
-        // A blocking read would bypass the deadline. Validate this before spawning a child.
-        for fd in fds {
-            let flags = fcntl(fd, F_GETFL)
-            guard flags >= 0, fcntl(fd, F_SETFL, flags | O_NONBLOCK) == 0 else {
-                throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
-            }
-        }
-        try process.run()
-        try? output.fileHandleForWriting.close()
-        try? error.fileHandleForWriting.close()
-        var streams = [Data(), Data()]
-        var ended = [false, false]
-        var buffer = [UInt8](repeating: 0, count: 65_536)
-        var stoppingAt: TimeInterval?
-        var timedOut = false
-        while true {
-            // Bound each drain so an endlessly writing child cannot hide the deadline.
-            for index in fds.indices where !ended[index] {
-                for _ in 0..<16 {
-                    let count = Darwin.read(fds[index], &buffer, buffer.count)
-                    if count > 0 { streams[index].append(contentsOf: buffer.prefix(count)) }
-                    else if count == 0 { ended[index] = true; break }
-                    else if errno == EINTR { continue }
-                    else { break }
-                }
-            }
-            let now = ProcessInfo.processInfo.systemUptime
-            // Check the full budget even when a slow launch has already exited by this poll.
-            if stoppingAt == nil, now >= deadline || cancellation.isCancelled {
-                timedOut = now >= deadline
-                stoppingAt = now
-                if process.isRunning { process.terminate() }
-            }
-            if !process.isRunning && ended.allSatisfy({ $0 }) { break }
-            if let stoppingAt {
-                if !process.isRunning { break }
-                if now - stoppingAt >= 0.25 { _ = kill(process.processIdentifier, SIGKILL) }
-                if now - stoppingAt >= 1 { break }
-            }
-            var descriptors = fds.enumerated().map { index, fd in
-                pollfd(fd: ended[index] ? -1 : fd, events: Int16(POLLIN), revents: 0)
-            }
-            _ = poll(&descriptors, nfds_t(descriptors.count), 20)
-            // EOF pipes report immediately even while the child is still alive.
-            if ended.contains(true) { Thread.sleep(forTimeInterval: 0.005) }
-        }
-        if cancellation.isCancelled { throw CancellationError() }
-        return ShellCommandResult(status: process.isRunning ? -1 : process.terminationStatus,
-            standardOutput: streams[0], standardError: streams[1], timedOut: timedOut)
-    }
-
-    private final class CancellationState: @unchecked Sendable {
-        private let lock = NSLock()
-        private var cancelled = false
-        var isCancelled: Bool { lock.lock(); defer { lock.unlock() }; return cancelled }
-        func cancel() { lock.lock(); defer { lock.unlock() }; cancelled = true }
-    }
-}
-
-// MARK: - diskutil 封装
-
-/// `diskutil` 与 `statfs` 封装，供容器数据挂载迁移使用。
-///
-/// 所有 diskutil 调用都带超时；查询类命令统一用 `-plist` 解析，避免依赖人类可读输出。
-struct DiskUtility: Sendable {
-    struct VolumeInfo: Equatable, Sendable {
-        let deviceIdentifier: String
-        let volumeUUID: String?
-        let volumeName: String?
-        let filesystemType: String?
-        let apfsContainerReference: String?
-        let mountPoint: String?
-        var isEncrypted: Bool = false
-
-        var isAPFS: Bool {
-            filesystemType?.lowercased() == "apfs"
-        }
-    }
-
-    enum Failure: LocalizedError {
-        case commandFailed(command: String, output: String)
-        case timedOut(command: String)
-        case unexpectedOutput(command: String, output: String)
-        case administratorPromptCancelled(command: String)
-        case privilegeRequired(command: String)
-
-        var errorDescription: String? {
-            switch self {
-            case .commandFailed(let command, let output):
-                return String(format: "磁盘命令执行失败（%@）：%@".localized, command, output)
-            case .timedOut(let command):
-                return String(format: "磁盘命令超时（%@）".localized, command)
-            case .unexpectedOutput(let command, let output):
-                return String(format: "无法解析磁盘命令输出（%@）：%@".localized, command, output)
-            case .administratorPromptCancelled(let command):
-                return String(format: "用户取消了管理员授权，无法执行磁盘命令（%@）".localized, command)
-            case .privilegeRequired(let command):
-                return String(format: "此系统版本要求管理员权限才能执行磁盘命令，当前环境无法弹出授权框（%@）".localized, command)
-            }
-        }
-    }
-
-    /// 以管理员权限执行命令；返回 nil 表示当前环境无法弹出授权框（如后台代理）。
-    typealias AdministratorRunner = @Sendable (_ executable: String, _ arguments: [String]) throws -> ShellCommandResult
-
-    static let diskutilPath = "/usr/sbin/diskutil"
-    static let mountPath = "/sbin/mount"
-
-    private let runner: ShellCommandRunning
-    private let commandTimeout: TimeInterval
-    private let administratorRunner: AdministratorRunner?
-
-    /// - Parameter administratorRunner: 旧系统（macOS 12 等）的 DiskArbitration 不允许普通用户把卷挂到
-    ///   自定义路径（`kDAReturnNotPrivileged`）。遇到这类失败时用它重试；传 nil 表示不能提权（后台代理）。
-    init(
-        runner: ShellCommandRunning = ProcessCommandRunner(),
-        commandTimeout: TimeInterval = 180,
-        administratorRunner: AdministratorRunner? = { try DiskUtility.runWithAdministratorPrivileges(executable: $0, arguments: $1) }
-    ) {
-        self.runner = runner
-        self.commandTimeout = commandTimeout
-        self.administratorRunner = administratorRunner
-    }
-
-    /// 通过 AppleScript 弹出系统密码框执行命令。同一进程内的授权会被系统缓存约 5 分钟，
-    /// 一次迁移中的多条 diskutil 命令通常只提示一次。
-    static func runWithAdministratorPrivileges(executable: String, arguments: [String]) throws -> ShellCommandResult {
-        let command = ([executable] + arguments).map(shellQuoted).joined(separator: " ")
-        let script = "do shell script \(AppMigrationService.appleScriptStringLiteral(command)) with administrator privileges"
-        var errorInfo: NSDictionary?
-        let output = NSAppleScript(source: script)?.executeAndReturnError(&errorInfo)
-        if let errorInfo {
-            let number = errorInfo[NSAppleScript.errorNumber] as? Int ?? -1
-            let message = errorInfo[NSAppleScript.errorMessage] as? String ?? "unknown AppleScript error"
-            if number == -128 {
-                throw Failure.administratorPromptCancelled(command: command)
-            }
-            return ShellCommandResult(status: 1, standardOutput: Data(), standardError: Data("\(message) (AppleScript error \(number))".utf8), timedOut: false)
-        }
-        return ShellCommandResult(status: 0, standardOutput: Data((output?.stringValue ?? "").utf8), standardError: Data(), timedOut: false)
-    }
-
-    private static func shellQuoted(_ value: String) -> String {
-        "'" + value.replacingOccurrences(of: "'", with: "'\\''") + "'"
-    }
-
-    /// DiskArbitration 拒绝普通用户操作时的典型输出。
-    static func indicatesPrivilegeFailure(_ output: String) -> Bool {
-        output.contains("kDAReturnNotPrivileged")
-            || output.localizedCaseInsensitiveContains("not allowed by the invoking user")
-            || output.localizedCaseInsensitiveContains("Not
+                if try !entryExists(source) { try moveTree(backup, to: sou
 ```
 
 
@@ -1867,54 +1544,11 @@ struct DiskUtility: Sendable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #57** (2026-09-16): **[BUG] 有没有可能把APP打包之后，迁移后再解包?千万个小文件会卡住**
-  *Symptoms*: ### 问题描述 / Problem  可能也跟我的网络有问题，我在迁移一个APP的时候就发现它特别的慢，显然应该就是无数个小文件在迁移的时候会各种验证导致的吧? 所以，迁移的时候能否先打包？打包之后等于是迁移一个文件呀，完了再解包。我不知道这种有没有可能性?  ### 复现步骤 / Steps to Reproduce  .  ### 设备系统版本 / OS Version  27  ### 软件版本 / App Version  1.7.1  ### 诊断信息确认 / Diagnostics  - [ ] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  _No response_  ### 外置存储设备类型 / External Storage Type  - [x] NAS - [ ] 移动硬盘 / Portable External Drive - [ ] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > 感谢反馈，新版本对 nas 迁移做了优化，因测试环境的不同，可能会出现其他的问题，建议试用前备份好数据 请查阅：https://github.com/wzh4869/AppPorts/releases 此 issues 将关闭，如有相关的进一步问题可再次打开
+- **Issue #77** (2026-10-18): **[BUG] 1.9.0升级1.9.1后 微信迁回本地失败**
+  *Symptoms*: ### 问题描述 / Problem  1.9.0升级1.9.1后 微信迁回本地失败,只要是图标中带锁的应用都迁入本地失败。  ### 复现步骤 / Steps to Reproduce  无  ### 设备系统版本 / OS Version  macOS 27.0.1  ### 软件版本 / App Version  1.9.1  ### 诊断信息确认 / Diagnostics    - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20261017-033531.zip](https://github.com/user-attachments/files/33570648/AppPorts-Diagnostic-20261017-033531.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  <img width="1700" height="1280" alt="Image" src="https://github.com/user-attachments/assets/6fa20fd5-f7cb-4b80-808a-82f67f1c0d0d" />  <img width="60" height="409" alt="Image" src="https://github.com/user-attachments/assets/b242cd87-7204-4c8d-8a43-40cc69629159" />  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
 
-- **Issue #56** (2026-08-12): **[BUG] 移动后无法正常打开，提示损坏，可以补充相关说明，如果无法解决建议禁止移动这类应用**
-  *Symptoms*: ### 问题描述 / Problem  <img width="260" height="220" alt="Image" src="https://github.com/user-attachments/assets/72bc7246-003a-4c3c-8f8f-a7321e62b7e6" />  ### 复现步骤 / Steps to Reproduce  1、移动figma 2、打开figma  ### 设备系统版本 / OS Version  15.7  ### 软件版本 / App Version  当前最新  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  _No response_  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [x] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > 有试过重签名吗
-  > 如有试过重签名幸苦发一下日志包，也可以发在这个地址里 a@shimoko.com 幸苦了💗
-
-- **Issue #51** (2026-06-23): **[BUG] Adobe, Apple Office, 飞书等软件存在不同程度问题**
-  *Symptoms*: ### 问题描述 / Problem  1. Adobe Photoshop 迁移后图标在启动台里消失 2. pages，keynote和 numbers 等软件在启动台中点击一次均无法打开，需要再次在启动台中点击才会打开 3. 飞书显示损坏，签名也无法成功，原因不明，未进行更多尝试  ### 复现步骤 / Steps to Reproduce  如上所述  ### 设备系统版本 / OS Version  26.5.1  ### 软件版本 / App Version  latest  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  软件已卸载，只是想起来反映一下  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  ORICO 底座+致钛7100 plus  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > 没有看到日志或诊断包，幸苦补充提交以定位。 如多个问题同时存在请提交多个issues 和关键复现步骤哈，此 issues 将关闭💗
-
-- **Issue #50** (2026-06-24): **[BUG] appstore 安装在外置硬盘的软件链接回应用程序文件夹内，后续更新打开方式出现上个版本信息，没有刷新**
-  *Symptoms*: ### 问题描述 / Problem  <img width="785" height="276" alt="Image" src="https://github.com/user-attachments/assets/9824abeb-74ec-4775-911a-527a5db8a4bd" />  就如上面显示的，重新取消链接后重新链接又可以了；然后不知道为啥还冒出来 libreofficedev，实际上没装；想删掉还得安装一遍这个软件然后利用工具卸载；  ### 复现步骤 / Steps to Reproduce  1、appstore 打开安装到外置硬盘，AppPorts 链接回本地 2、外置硬盘的软件更新 3、相关文件的打开方式出现多个版本  ### 设备系统版本 / OS Version  mac26.5/mac27  ### 软件版本 / App Version  1.6.1  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20260618-104730.zip](https://github.com/user-attachments/files/29074756/AppPorts-Diagnostic-20260618-104730.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > 感谢反馈！新版本已解决该问题[releases](https://github.com/wzh4869/AppPorts/releases/tag/1.7.1)  关于libreofficedev 问题，烦请使用新版本的 AppPorts 进行二次复现，如问题依然存在幸苦再新开一个 issues🙏 此 issues 将关闭，如此问题有更多反馈请继续留言💗
-
-- **Issue #48** (2026-06-24): **[BUG] 无法检测到JetBrains Toolbox中下载的软件**
-  *Symptoms*: ### 问题描述 / Problem  如题，比如在toolbox中下载的idea、pycharm等无法被软件检测到导致无法迁移  ### 复现步骤 / Steps to Reproduce  - 在toolbox里下载pycharm - 打开app ports，无法检测到pycharm  ### 设备系统版本 / OS Version  macOS 26.5.1  ### 软件版本 / App Version  1.7.0  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  应该不需要吧  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > 并且在重启电脑后无法恢复迁移软件的窗口
-  > 感谢，这周复现💗
-  > 感谢反馈！新版本已解决该问题[releases](https://github.com/wzh4869/AppPorts/releases/tag/1.7.1)  此 issues 将关闭，如此问题有更多反馈请继续留言💗
-
-- **Issue #47** (2026-06-24): **[BUG] 在【应用数据】项目扫描TraeSOLO CN（或者TraeCN）的目录时AppPorts应用程序卡死**
-  *Symptoms*: ### 问题描述 / Problem  <img width="1800" height="1564" alt="Image" src="https://github.com/user-attachments/assets/e68857f6-78ab-410e-ba17-c221b6d5796c" />  <img width="442" height="660" alt="Image" src="https://github.com/user-attachments/assets/05f6263e-91ec-40c4-af32-5e7156f5c48f" />  [AppPorts崩溃日志.txt](https://github.com/user-attachments/files/28676176/AppPorts.txt)  <img width="1800" height="1564" alt="Image" src="https://github.com/user-attachments/assets/866112c7-759d-41f2-b532-be5d7081b582" />  <img width="1800" height="1564" alt="Image" src="https://github.com/user-attachments/assets/6ce97199-d9e3-4a05-9282-7810d2292d28" />  <img width="1800" height="1564" alt="Image" src="https://github.com/user-attachments/assets/c5dcf782-7dfd-4a60-99a1-63936e4520ca" />  其他IDE均可打开，但是唯独字节跳动旗下的Trae系列无法正常打开。  <img width="1800" height="1564" alt="Image" src="https://github.com/user-attachments/assets/9159c199-7f49-44f6-80f2-fe7979cab468" />  <img width="2134" height="1434" alt="Image" src="https://github.com/user-attachments/assets/23358a67-7264-464d-a9ea-f8888f5a3081" />  <img width="2134" height="1434" alt="Image" src="https://github.com/user-attachments/assets/e105efc0-865e-4858-985d-d008603466de" />  ### 复现步骤 / Steps to Reproduce  在数据目录，应用数据选中Trae CN或者Trae SOLO CN稳定触发本Bug，其他VSCodium类似物都没有出现卡死情况。Trae国际版未使用故没有测试  [AppPorts-Diagnostic-20260607-130213.zip](https://github.com/user-attachments/files/28676215/AppPorts-Diagnostic-20260607-130213.zip)  ### 设备系统版本 / OS Version  macOS 26.6 (Buil
-  **Post-Mortem & Fix Analysis**:
-  > 我也遇到了 转外置的时候很快  迁移回来 一个多小时了才百分之三 
-  > > 我也遇到了 转外置的时候很快 迁移回来 一个多小时了才百分之三  我甚至无法查看，更别说迁移了，估计是Trae里面写了屎山代码。
-  > 收到，感谢反馈，可能是兼容性问题，trae 的更新使得 AppPorts 没有同步适配，下周前我定位问题解决💗
-
-- **Issue #44** (2026-05-26): **[BUG] 微信数据迁移后打开提示目录无法识别消息丢失**
-  *Symptoms*: ### 问题描述 / Problem  <img width="586" height="254" alt="Image" src="https://github.com/user-attachments/assets/957ee915-2614-431a-83a7-b9635c6e67b6" />  容器子目录迁移后，打开微信看不到聊天信息了，回迁后恢复。  ### 复现步骤 / Steps to Reproduce  1. 容器子目录点击迁移 2. 打开微信，聊天信息丢失 3. 回迁，聊天信息恢复  ### 设备系统版本 / OS Version  macOS 15.5 (24F74)  ### 软件版本 / App Version  v1.6.2  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20260525-144907.zip](https://github.com/user-attachments/files/28209418/AppPorts-Diagnostic-20260525-144907.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [x] 移动硬盘 / Portable External Drive - [ ] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > 看了一下日志，好像没有对微信进行重签名，微信没有重签名会出现打开微信后报错，请尝试进行重签名操作，重签名后如依然无法使用请继续告知💗 关于重签名请参阅：https://docs-appports.shimoko.com/datamigrae/resign.html 
-  > [1.7.0](https://github.com/wzh4869/AppPorts/releases/tag/1.7.0) 中数据迁移策略添加重签名确认：迁移应用容器内数据前，AppPorts 现在会询问是否在迁移完成后自动对关联应用执行 Ad-hoc 重签名。用户可以选择「同意重签名」或「不同意，仅迁移」，用于降低容器数据迁移后应用无法识别数据、提示异常或启动异常的风险。 感谢你的反馈和耐心💗  <img width="1363" height="894" alt="Image" src="https://github.com/user-attachments/assets/70d662fb-c4ec-4c6e-acdc-26dd59dbcdab" />
-  > 此issues将关闭，如有更多与此 issues 相关的问题可再次打开哈
-
-- **Issue #43** (2026-05-26): **[BUG]  Help screens within the app are not displayed in English even when the main app interface set to English**
-  *Symptoms*: ### 问题描述 / Problem  1. That includes startup screens  2. Screen that pops up during startup talking about 15.1+ native ext location support for large apps  3. And others   Below are the screenshots for 1 occurrence out of a few I found  <img width="912" height="788" alt="Image" src="https://github.com/user-attachments/assets/46397056-f8a5-4867-baf7-f0f9f261f9c6" />  <img width="423" height="390" alt="Image" src="https://github.com/user-attachments/assets/0f73cb97-63c7-4f56-97fe-8e43cb02b69c" />  ### 复现步骤 / Steps to Reproduce  1. Install the app 2. Change the interface to English 3. Open ANY help window (by pressing "?") 4. The help window wont be in English  ### 设备系统版本 / OS Version  macOS 25.6  ### 软件版本 / App Version  1.6.2  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  _No response_  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [x] 移动硬盘 / Portable External Drive - [ ] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > Thank you so much for the issues! Because there's a lot of text to translate, it's easy to miss some spots. I will fully improve the multi-language translations in the next release. Currently, I am working on the Liquid Glass adaptation for macOS 26 and CLI support, so it might take a bit more time. Thanks for your patience!
-  > 1.7.0 has improved English translations. If there are any other omissions, please continue to provide feedback. Thank you for your patience ！      [1.7.0](https://github.com/wzh4869/AppPorts/releases/tag/1.7.0) This issue will be closed, but can be reopened if you needed.
-  > <img width="1363" height="894" alt="Image" src="https://github.com/user-attachments/assets/038ff2de-f0eb-4b99-ad9c-5ed10707eb28" />
+- **Issue #67** (2026-10-15): **[BUG] 在macOS 26执行迁移后，部分App图标显示异常，重复显示**
+  *Symptoms*: ### 问题描述 / Problem  部分App迁移后图标显示异常，如图  <img width="94" height="95" alt="Image" src="https://github.com/user-attachments/assets/88046496-1801-445c-b9cf-56871624a06d" />  <img width="890" height="623" alt="Image" src="https://github.com/user-attachments/assets/0f30cf8a-0629-4f14-a47a-5b6d9f70bc08" />  <img width="890" height="623" alt="Image" src="https://github.com/user-attachments/assets/b6d359c0-0b27-42d3-b71f-46934e11f310" />  <img width="890" height="623" alt="Image" src="https://github.com/user-attachments/assets/683bd84c-6cf0-4f6e-a262-d3d7aef56ac0" />  <img width="1012" height="764" alt="Image" src="https://github.com/user-attachments/assets/c7417b8d-aad7-47af-9b81-c7df495fce07" />  <img width="1069" height="1017" alt="Image" src="https://github.com/user-attachments/assets/0272ba7c-ffbc-4c89-9bd9-852a4df72b20" />  ### 复现步骤 / Steps to Reproduce  1，迁移App 2，打开Spotlight  ### 设备系统版本 / OS Version  macOS Tahoe 26.6.2 (25G83) x86_64  ### 软件版本 / App Version  1.9.0 (22)  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20261005-140721.zip](https://github.com/user-attachments/files/33044661/AppPorts-Diagnostic-20261005-140721.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [ ] 移动硬盘盒 / Drive Enclosure - [x] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  内置硬盘：WD10EZEX  ### 截图（可选） / Screenshots (Optio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1931,2114 +1565,478 @@ struct DiskUtility: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb1a0956` (2026-10-05)
-**Commit Message**: fix(ui): synchronize custom directories across windows
+### Incident Patch 1: `66d8f7cd` (2026-10-18)
+**Commit Message**: fix: clear update protection locks on any app location change
 
-**File**: `AppPorts/ContentView.swift` (modified, +9/-0)
-```diff
-@@ -372,6 +372,13 @@ struct ContentView: View {
-                 }
-             }
-         }
-+        .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
-+            let latest = UserDefaults.standard.stringArray(forKey: "customLocalScanPaths") ?? []
-+            guard isVisible, latest != customLocalScanPaths else { return }
-+            customLocalScanPaths = latest
-+            startMonitoringLocal()
-+            scanBothAppsAtomic()
-+        }
-         .onDisappear {
-             monitorRescanDebouncer.cancel()
-             isVisible = false
-@@ -1592,6 +1599,7 @@ struct ContentView: View {
-         panel.message = "选择要额外扫描的应用目录".localized
-         guard panel.runModal() == .OK, let url = panel.url else { return }
-         let path = url.path
-+        customLocalScanPaths = UserDefaults.standard.stringArray(forKey: "customLocalScanPaths") ?? []
-         guard !customLocalScanPaths.contains(path) else { return }
-         customLocalScanPaths.append(path)
-         UserDefaults.standard.set(customLocalScanPaths, forKey: "customLocalScanPaths")
-@@ -1600,6 +1608,7 @@ struct ContentView: View {
-     }
- 
-     func removeCustomLocalScanPath(_ path: String) {
-+        customLocalScanPaths = UserDefaults.standard.stringArray(forKey: "customLocalScanPaths") ?? []
-         customLocalScanPaths.removeAll { $0 == path }
-         UserDefaults.standard.set(customLocalScanPaths, forKey: "customLocalScanPaths")
-         startMonitoringLocal()
-```
+1.9.0 locked every self-updating external copy with `chflags -R uchg` and
+recorded nothing, so 1.9.1 saw those bits as a user's own lock and failed
+closed before copying. Restoring such an app reported "无法完整保留此项目的
+内容或权限" and left a journal that repeated the same error forever.
 
-**File**: `AppPorts/Views/CustomDirsView.swift` (modified, +37/-33)
+Every attempt to prove which bits AppPorts wrote blocks real restores: an
+app that was updated or repaired after being locked keeps some flags and
+loses others, so a tree can end up locked only at its root or only in
+places. A location change now records and clears the immutable bit over the
+whole tree, whatever shape it has. The record is still written before any
+flag changes so an interruption can reapply exactly those bits; only
+`UF_IMMUTABLE` is attributed, every other flag still fails closed.
+
+Also records a replaced target's baseline before any content moves, and
+persists it, so a resume can never face a record whose only outcome is the
+refusal on the next attempt.
+
+**File**: `AppPorts/Models/AppTransferRecord.swift` (modified, +23/-0)
 ```diff
-@@ -26,7 +26,8 @@ enum CustomDirRecoveryEligibility {
- @MainActor
- struct CustomDirsView: View {
-     @ObservedObject private var operationState = AppOperationState.shared
--    @State private var configs: [CustomDirConfig] = CustomDirConfigStore.load()
-+    @ObservedObject private var configStore = CustomDirConfigStore.shared
-+    private var configs: [CustomDirConfig] { configStore.configs }
-     @State private var pairs: [CustomDirPair] = []
-     @State private var selectedLocalIDs: Set<String> = []
-     @State private var selectedExternalIDs: Set<String> = []
-@@ -121,6 +122,7 @@ struct CustomDirsView: View {
-             isVisible = true
-             refresh()
-         }
-+        .onChange(of: configStore.configs) { _ in refresh() }
-         .onDisappear {
-             isVisible = false
-             invalidateRefresh()
-@@ -271,23 +273,8 @@ struct CustomDirsView: View {
-     }
- 
-     private func addConfig(_ config: CustomDirConfig) -> String? {
--        guard !configs.contains(where: { $0.localURL == config.localURL }) else {
--            return "该目录已在目录迁移列表中".localized
--        }
--
--        do {
--            try CustomDirValidator.validate(
--                localURL: config.localURL,
--                externalBaseURL: config.externalBaseURL,
--                existingConfigs: configs
--            )
--        } catch {
--            return error.localizedDescription
--        }
--
--        configs.append(config)
--        saveConfigs()
--        return nil
-+        do { try configStore.insert(config); return nil }
-+        catch { return error.localizedDescription }
-     }
- 
-     private func addAndMigrateConfig(_ config: CustomDirConfig) -> String? {
-@@ -311,18 +298,14 @@ struct CustomDirsView: View {
- 
-     private func removeConfig(_ config: CustomDirConfig) {
-         guard !operationState.isBusy else { return }
--        configs.removeAll { $0.id == config.id }
-+        do { try configStore.remove(id: config.id) }
-+        catch { errorMessage = error.localizedDescription; showError = true; return }
-         pairs.removeAll { $0.config.id == config.id }
-         selectedLocalIDs.remove("\(config.id.uuidString)-\(CustomDirEntryKind.local.rawValue)")
-         selectedExternalIDs.remove("\(config.id.uuidString)-\(CustomDirEntryKind.external.rawValue)")
--        saveConfigs()
-         refresh()
-     }
- 
--    private func saveConfigs() {
--        CustomDirConfigStore.save(configs)
--    }
--
-     private func refresh() {
-         guard isVisible else { return }
-         do {
-@@ -547,20 +530,41 @@ private final class CustomDirLocalOpenPanelDelegate: NSObject, NSOpenSavePanelDe
+@@ -108,6 +108,29 @@ struct AppTransferRecord: Codable, Identifiable, Sendable {
      }
  }
  
--private enum CustomDirConfigStore {
-+/// All windows share one published snapshot. Mutations reload the persisted state,
-+/// so even a second client cannot overwrite another client's completed edit.
-+@MainActor
-+final class CustomDirConfigStore: ObservableObject {
-+    static let shared = CustomDirConfigStore()
-     private static let key = "customDirConfigs"
-+    private let defaults: UserDefaults
-+    @Published private(set) var configs: [CustomDirConfig]
- 
--    static func load() -> [CustomDirConfig] {
--        guard let data = UserDefaults.standard.data(forKey: key),
--              let configs = try? JSONDecoder().decode([CustomDirConfig].self, from: data) else {
--            return []
++/// Resume verifies against recorded manifests. A journal whose manifest was lost
++/// (v1.9.1 removed manifests before its record) can never be verified again, so
++/// every caller must hear that instead of a raw file error. Reported as one
++/// actionable message; the caller decides whether to retry or end the record.
++enum AppTransferJournalIntegrity {
++    static func missingManifests(for record: AppTransferRecord, store: AppTransferStore) -> Bool {
++        var required = record.hasCandidateBaseline ? ["candidate"] : []
++        if record.hasSourceBaseline { required.append("source") }
++        if record.hasExistingDestinationBaseline { required.append("existing") }
++        for item in record.cleanupItems where !item.completed { required.append(item.baselineName) }
++        // Legacy portals embed their baseline in the record itself, so they never
++        // require a manifest file and must not be reported as missing here.
++        return Set(required).contains { (try? store.baseline($0, operationID: record.operationID)) == nil }
++    }
++
++    static func requireVerifiedManifests(for record: AppTransferRecord, store: AppTransferStore) throws {
++        guard missingManifests(for: record, store: store) else { return }
++        throw AppTransferTransaction.failure("这条记录缺少校验清单，无法再次验证副本。".localized
++            + "\n" + "已保留的内容需要你确认；可以结束这条记录并保留所有副本，再重新发起操作。".localized,
++            at: URL(fileURLWithPath: record.activeDestinationPath))
++    }
++}
++
+ struct AppTransferActivation: Codable, Equatable, Sendable {
+     let operationID: UUID
+     let path: String
+```
+
+**File**: `AppPorts/Services/AppTransferStore.swift` (modified, +108/-6)
+```diff
+@@ -151,16 +151,49 @@ final class AppTransferStore: @unchecked Sendable {
+     func remove(_ id: UUID) throws {
+         lock.lock(); defer { lock.unlock() }
+         try recheckWriterAdmission()
+-        // Delete manifests first. A record is only removed after all effects
+-        // have completed; a retry of its final bookkeeping does not need them.
+-        for url in try FileManager.default.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
+-        where url.lastPathComponent.hasPrefix(id.uuidString + "-") && url.pathExtension == "manifest" {
+-            try FileManager.default.removeItem(at: url)
 -        }
-+    init(defaults: UserDefaults = .standard) {
-+        self.defaults = defaults
-+        configs = Self.load(defaults)
++        // The record is the authority. Removing it first makes a retry of this
++        // bookkeeping harmless: leftover manifests are ignored by every reader,
++        // while a record that outlived its manifests could never be verified or
++        // completed again and would keep blocking its paths forever.
+         let url = recordURL(id)
+         if try Self.exists(url) { try FileManager.default.removeItem(at: url) }
++        try removeManifests(id)
++        try DurableFileIO.syncDirectory(at: directoryURL)
++        NotificationCenter.default.post(name: .appPortsRecordsDidChange, object: nil)
 +    }
 +
-+    private static func load(_ defaults: UserDefaults) -> [CustomDirConfig] {
-+        guard let data = defaults.data(forKey: key),
-+              let configs = try? JSONDecoder().decode([CustomDirConfig].self, from: data) else { return [] }
-         return configs
++    /// Archive only bookkeeping: the journal and its manifests leave the live
++    /// directory, so the operation stops owning its paths. Applications,
++    /// retained copies and staging objects are deliberately left untouched and
++    /// remain the user's to inspect. Callers decide when work is unrecoverable.
++    @discardableResult
++    func archive(_ id: UUID) throws -> URL? {
++        lock.lock(); defer { lock.unlock() }
++        try recheckWriterAdmission()
++        let recordURL = recordURL(id)
++        let recordExists = try Self.exists(recordURL)
++        let manifests = try manifestURLs(id)
++        guard recordExists || !manifests.isEmpty else { return nil }
++        let archive = directoryURL.appendingPathComponent("archived", isDirectory: true)
++        try FileManager.default.createDirectory(at: archive, withIntermediateDirectories: true)
++        for url in [recordURL] + manifests where try Self.exists(url) {
++            try FileManager.default.moveItem(at: url, to: archive.appendingPathComponent(url.lastPathComponent))
++        }
++        try DurableFileIO.syncDirectory(at: archive)
+         try DurableFileIO.syncDirectory(at: directoryURL)
+         NotificationCenter.default.post(name: .appPortsRecordsDidChange, object: nil)
++        return archive
++    }
++
++    private func manifestURLs(_ id: UUID) throws -> [URL] {
++        guard try Self.exists(directoryURL) else { return [] }
++        return try FileManager.default.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
++            .filter { $0.lastPathComponent.hasPrefix(id.uuidString + "-") && $0.pathExtension == "manifest" }
++            .sorted { $0.path < $1.path }
++    }
++
++    private func removeManifests(_ id: UUID) throws {
++        for url in try manifestURLs(id) { try FileManager.default.removeItem(at: url) }
      }
  
--    static func save(_ configs: [CustomDirConfig]) {
--        guard let data = try? JSONEncoder().encode(configs) else { return }
--        UserDefaults.standard.set(data, forKey: key)
-+    func insert(_ config: CustomDirConfig, homeURL: URL = FileManager.default.homeDirectoryForCurrentUser) throws {
-+        var current = Self.load(defaults)
-+        try CustomDirValidator.validate(localURL: config.localURL, externalBaseURL: config.externalBaseURL,
-+                                        existingConfigs: current, homeURL: homeURL)
-+        current.append(config)
-+        try save(current)
-+    }
-+
-+    func remove(id: UUID) throws {
-+        try save(Self.load(defaults).filter { $0.id != id })
-+    }
-+
-+    private func save(_ current: [CustomDirConfig]) throws {
-+        defaults.set(try JSONEncoder().encode(current), forKey: Self.key)
-+        configs = current
-     }
- }
- 
-```
-
----
-
-### Incident Patch 2: `3ef50358` (2026-10-05)
-**Commit Message**: fix(ui): isolate scan debounce state per window
-
-**File**: `AppPorts/ContentView.swift` (modified, +8/-3)
-```diff
-@@ -270,7 +270,7 @@ struct ContentView: View {
-     @State private var externalMonitor: FolderMonitor?
- 
-     // Monitor 防抖：合并两个 monitor 的扫描请求
--    private static let monitorRescanDebouncer = RescanDebouncer()
-+    @State private var monitorRescanDebouncer = RescanDebouncer()
- 
-     // Track previous external drive URL for logging
-     @State private var previousExternalDriveURL: URL?
-@@ -373,6 +373,7 @@ struct ContentView: View {
-             }
-         }
-         .onDisappear {
-+            monitorRescanDebouncer.cancel()
-             isVisible = false
-             localScanState.invalidate()
-             externalScanState.invalidate()
-@@ -2752,7 +2753,7 @@ struct ContentView: View {
- 
-     /// 统一防抖：合并两个 monitor 的扫描请求，避免列表连续跳两下
-     private func scheduleMonitorRescan(local: Bool) {
--        Self.monitorRescanDebouncer.schedule { [self] in
-+        monitorRescanDebouncer.schedule { [self] in
-             Task { @MainActor in
-                 AppLogger.shared.logContext("Monitor 防抖触发扫描", details: [("trigger", local ? "local" : "external")], level: "TRACE")
-                 self.scanBothAppsAtomic()
-@@ -3052,10 +3053,14 @@ struct ContentView: View {
- }
- 
- /// 统一防抖器：合并 FolderMonitor 的扫描请求，避免列表连续跳动
--private class RescanDebouncer {
-+final class RescanDebouncer {
-     private var work: DispatchWorkItem?
-     private let queue = DispatchQueue(label: "com.shimoko.AppPorts.rescanDebounce")
- 
-+    func cancel() {
-+        queue.async { self.work?.cancel(); self.work = nil }
-+    }
-+
-     func schedule(action: @escaping () -> Void) {
-         queue.async {
-             self.work?.cancel()
-```
-
----
-
-### Incident Patch 3: `6a63bef4` (2026-10-05)
-**Commit Message**: fix(portals): preserve iOS application metadata
-
-**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +10/-6)
-```diff
-@@ -1658,10 +1658,15 @@ struct AppMigrationService {
- 
-         // 4. 从 iTunesMetadata.plist 生成 Info.plist（位于 Wrapper/ 目录内）
-         let iTunesPlist = wrapperDir.appendingPathComponent("iTunesMetadata.plist")
--        if let metadata = NSDictionary(contentsOf: iTunesPlist) as? [String: Any] {
--            let bundleID = metadata["softwareVersionBundleId"] as? String ?? "com.appports.stub"
-+        let metadata = (NSDictionary(contentsOf: iTunesPlist) as? [String: Any]) ?? [:]
-+        let identityMetadata = applicationMetadata(at: externalURL)
-+        guard let bundleID = (identityMetadata?["CFBundleIdentifier"] as? String)
-+                ?? (metadata["softwareVersionBundleId"] as? String), !bundleID.isEmpty else {
-+            throw AppMoverError.generalError(CocoaError(.fileReadCorruptFile))
-+        }
-+        do {
-             let appName = metadata["title"] as? String ?? localURL.deletingPathExtension().lastPathComponent
--            let version = metadata["bundleShortVersionString"] as? String ?? "1.0"
-+            let version = identityMetadata?["CFBundleShortVersionString"] as? String ?? metadata["bundleShortVersionString"] as? String ?? "1.0"
- 
-             let plist: [String: Any] = [
-                 "CFBundleExecutable": "launcher",
-@@ -1675,9 +1680,8 @@ struct AppMigrationService {
-                 "CFBundleIconFile": "AppIcon",
-                 "LSMinimumSystemVersion": "12.0"
-             ]
--            if let newData = try? PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0) {
--                try newData.write(to: localContents.appendingPathComponent("Info.plist"))
--            }
-+            let newData = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
-+            try newData.write(to: localContents.appendingPathComponent("Info.plist"))
-         }
- 
-         // 5. 写入 PkgInfo
-```
-
-**File**: `AppPortsTests/AppMigrationServiceTests.swift` (modified, +2/-0)
-```diff
-@@ -263,6 +263,8 @@ final class AppMigrationServiceTests: XCTestCase {
-         )
- 
-         try assertStubPortal(localAppURL, pointsTo: externalAppURL)
-+        let info = localAppURL.appendingPathComponent("Contents/Info.plist")
-+        XCTAssertTrue(fileManager.fileExists(atPath: info.path), "A successful iOS portal must have metadata")
-     }
- 
-     func testDeleteLinkRejectsRealLocalAppBundle() throws {
-```
-
----
-
-### Incident Patch 4: `792df6a7` (2026-10-05)
-**Commit Message**: fix(portals): validate targets before refreshing launchers
-
-**File**: `AppPorts/ContentView.swift` (modified, +2/-2)
-```diff
-@@ -1292,7 +1292,7 @@ struct ContentView: View {
-                     if localApp.usesFolderOperation {
-                         // 文件夹镜像：重新同步内部 Stub 与符号链接（旧版整体 symlink 文件夹会被安全跳过）
-                         service.refreshFolderMirror(at: localApp.path, from: externalApp.path)
--                    } else if localApp.version != externalApp.version {
-+                    } else {
-                         service.refreshStubPortal(at: localApp.path, from: externalApp.path)
-                     }
-                 }
-@@ -2822,7 +2822,7 @@ struct ContentView: View {
-                 if localApp.usesFolderOperation {
-                     // 文件夹镜像：重新同步内部 Stub 与符号链接（旧版整体 symlink 文件夹会被安全跳过）
-                     service.refreshFolderMirror(at: localApp.path, from: externalApp.path)
--                } else if localApp.version != externalApp.version {
-+                } else {
-                     service.refreshStubPortal(at: localApp.path, from: externalApp.path)
-                 }
-             }
-```
-
-**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +56/-60)
-```diff
-@@ -1227,6 +1227,26 @@ struct AppMigrationService {
-         return nil
-     }
- 
-+    private func samePortalTarget(_ stored: String, _ expected: URL) -> Bool {
-+        guard stored.hasPrefix("/") else { return false }
-+        let url = URL(fileURLWithPath: stored).standardizedFileURL
-+        return url.lastPathComponent == expected.lastPathComponent
-+            && DiskUtility.pathsMatch(url.deletingLastPathComponent().path, expected.deletingLastPathComponent().path)
-+    }
-+
-+    private func hasRealStubStorage(at url: URL) -> Bool {
-+        for path in ["", "Contents", "Contents/MacOS", "Contents/Resources"] {
-+            let candidate = path.isEmpty ? url : url.appendingPathComponent(path)
-+            guard let attributes = try? fileManager.attributesOfItem(atPath: candidate.path),
-+                  attributes[.type] as? FileAttributeType == .typeDirectory else { return false }
-+        }
-+        for path in ["Contents/Info.plist", "Contents/MacOS/launcher"] {
-+            guard let attributes = try? fileManager.attributesOfItem(atPath: url.appendingPathComponent(path).path),
-+                  attributes[.type] as? FileAttributeType == .typeRegular else { return false }
-+        }
-+        return true
-+    }
-+
-     private func externalTargetReplacementReason(for appToMove: AppItem, destinationURL: URL) -> String? {
-         if appToMove.status == AppStatus.pendingMoveOut {
-             // A scanner status is not authority to delete the name-based destination.
-@@ -1349,14 +1369,18 @@ struct AppMigrationService {
-             let pathFile = localContentsURL.appendingPathComponent("Resources/real_app_path.txt")
-             if let raw = try? String(contentsOf: pathFile, encoding: .utf8) {
-                 let realPath = raw.trimmingCharacters(in: .whitespacesAndNewlines)
--                if !realPath.isEmpty && realPath == standardizedExternalURL.path {
-+                if !realPath.isEmpty && samePortalTarget(realPath, standardizedExternalURL) {
-                     return .stubPortal
-                 }
-             }
-             // 旧版 bash launcher：检查脚本内容
-             if let script = try? String(contentsOf: launcherPath, encoding: .utf8),
--               script.contains(standardizedExternalURL.path) {
--                return .stubPortal
-+               let assignment = script.components(separatedBy: .newlines)
-+                    .map({ $0.trimmingCharacters(in: .whitespaces) }).first(where: { $0.hasPrefix("REAL_APP=") }),
-+               assignment.hasPrefix("REAL_APP='"), assignment.hasSuffix("'") {
-+                let path = String(assignment.dropFirst("REAL_APP='".count).dropLast())
-+                    .replacingOccurrences(of: "'\\''", with: "'")
-+                if samePortalTarget(path, standardizedExternalURL) { return .stubPortal }
-             }
-         }
- 
-@@ -1556,72 +1580,40 @@ struct AppMigrationService {
-     /// 仅对带标记文件的真实镜像文件夹生效，旧版整体符号链接文件夹会被安全跳过。
-     func refreshFolderMirror(at localFolderURL: URL, from externalFolderURL: URL) {
-         let fm = fileManager
--
--        // 仅处理 AppPorts 镜像文件夹（标记存在），其余（旧 symlink 文件夹、用户真实文件夹）跳过
--        let markerURL = localFolderURL.appendingPathComponent(Self.folderPortalMarkerName)
--        guard fm.fileExists(atPath: markerURL.path),
--              let externalEntries = try? fm.contentsOfDirectory(
--                  at: externalFolderURL,
--                  includingPropertiesForKeys: nil,
--                  options: .skipsHiddenFiles
--              ) else {
--            return
--        }
--
--        let externalNames = Set(externalEntries.map { $0.lastPathComponent })
-+        guard (try? fm.attributesOfItem(atPath: localFolderURL.path)[.type]) as? FileAttributeType == .typeDirectory,
-+              let recorded = Self.folderMirrorExternalURL(at: localFolderURL, fileManager: fm),
-+              recorded.resolvingSymlinksInPath() == externalFolderURL.resolvingSymlinksInPath(),
-+              let externalEntries = try? fm.contentsOfDirectory(at: externalFolderURL,
-+                  includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return }
-+        let externalNames = Set(externalEntries.map(\.lastPathComponent))
-         var didChange = false
--
--        // 1. 新增 / 刷新外部存在的条目
-         for entry in externalEntries {
--            let localEntry = localFolderURL.appendingPathComponent(entry.lastPathComponent)
--            if entry.pathExtension == "app" {
--                if fm.fileExists(atPath: localEntry.path),
--                   localPortalKind(at: localEntry, linkedTo: entry) == .stubPortal {
--                    // 现有内部 Stub：同步版本/图标
--                    refreshStubPortal(at: localEntry, from: entry)
--                } else {
--                    // 外部新增 app（或本地缺失/损坏）：重建 Stub
--                    try? fm.removeItem(at: localEntry)
--                    do {
--                        try createStubPortal(at: localEntry, pointingTo: entry)
--                        didChange = true
--                    } catch {
--         
-```
-
-**File**: `AppPortsTests/AppMigrationServiceTests.swift` (modified, +32/-0)
-```diff
-@@ -985,6 +985,38 @@ final class AppMigrationServiceTests: XCTestCase {
-         XCTAssertEqual(try String(contentsOf: target.appendingPathComponent("Contents/Resources/payload.txt")), "unrelated-original")
-     }
- 
-+    func testRefreshNeverWritesThroughLegacyPortalOrUsesDifferentTarget() throws {
-+        let w = try makeWorkspace()
-+        defer { cleanupWorkspace(w.rootURL) }
-+        let real = w.externalRootURL.appendingPathComponent("Foo.app")
-+        let other = w.rootURL.appendingPathComponent("Other/Foo.app")
-+        let local = w.localAppsURL.appendingPathComponent("Foo.app")
-+        try createAppBundle(at: real)
-+        try createAppBundle(at: other)
-+        try updateReviewPlist(other, values: ["CFBundleShortVersionString": "2.0"])
-+        let original = try Data(contentsOf: real.appendingPathComponent("Contents/Info.plist"))
-+        try fileManager.createSymbolicLink(at: local, withDestinationURL: real)
-+        AppMigrationService(dockShortcutUpdater: { _, _ in 0 }).refreshStubPortal(at: local, from: other)
-+        XCTAssertEqual(try Data(contentsOf: real.appendingPathComponent("Contents/Info.plist")), original)
-+    }
-+
-+    func testFolderRefreshPreservesLocalRealFilesAndReplacementApps() throws {
-+        let w = try makeWorkspace()
-+        defer { cleanupWorkspace(w.rootURL) }
-+        let local = w.localAppsURL.appendingPathComponent("Suite")
-+        let external = w.externalRootURL.appendingPathComponent("Suite")
-+        try createAppBundle(at: local.appendingPathComponent("Foo.app"), payload: "local-official-update")
-+        try createAppBundle(at: external.appendingPathComponent("Foo.app"))
-+        let marker: [String: Any] = ["externalPath": external.path, "createdBy": "AppPorts", "kind": "folderMirror", "version": 1]
-+        try PropertyListSerialization.data(fromPropertyList: marker, format: .xml, options: 0)
-+            .write(to: local.appendingPathComponent(AppMigrationService.folderPortalMarkerName))
-+        let note = local.appendingPathComponent("my-notes.txt")
-+        try Data("keep me".utf8).write(to: note)
-+        AppMigrationService(dockShortcutUpdater: { _, _ in 0 }).refreshFolderMirror(at: local, from: external)
-+        XCTAssertTrue(fileManager.fileExists(atPath: note.path))
-+        XCTAssertEqual(try String(contentsOf: local.appendingPathComponent("Foo.app/Contents/Resources/payload.txt")), "local-official-update")
-+    }
-+
-     func testRestoreRejectsRunningAppBeforeChangingEitherCopy() async throws {
-         let w = try makeWorkspace()
-         defer { cleanupWorkspace(w.rootURL) }
-```
-
----
-
-### Incident Patch 5: `0d49bc64` (2026-10-05)
-**Commit Message**: fix(apps): verify identity and version before replacing targets
-
-**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +28/-1)
-```diff
-@@ -1216,9 +1216,36 @@ struct AppMigrationService {
-         }
-     }
- 
-+    private func applicationMetadata(at url: URL) -> [String: Any]? {
-+        guard case .success(let identity) = AppIdentityResolver.resolve(at: url) else { return nil }
-+        for path in ["Contents/Info.plist", "Info.plist"] {
-+            if let data = try? Data(contentsOf: identity.identityBundleURL.appendingPathComponent(path)),
-+               let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] {
-+                return plist
-+            }
-+        }
-+        return nil
-+    }
-+
-     private func externalTargetReplacementReason(for appToMove: AppItem, destinationURL: URL) -> String? {
-         if appToMove.status == AppStatus.pendingMoveOut {
--            return "pending_move_out"
-+            // A scanner status is not authority to delete the name-based destination.
-+            guard let source = applicationMetadata(at: appToMove.path),
-+                  let target = applicationMetadata(at: destinationURL),
-+                  let sourceID = source["CFBundleIdentifier"] as? String,
-+                  let targetID = target["CFBundleIdentifier"] as? String,
-+                  !sourceID.isEmpty, sourceID == targetID else { return nil }
-+            for key in ["CFBundleShortVersionString", "CFBundleVersion"] {
-+                guard let newer = source[key] as? String, let older = target[key] as? String,
-+                      !newer.isEmpty, !older.isEmpty,
-+                      newer.allSatisfy({ $0.isNumber || $0 == "." }),
-+                      older.allSatisfy({ $0.isNumber || $0 == "." }) else { return nil }
-+                let comparison = newer.compare(older, options: .numeric)
-+                if comparison != .orderedSame {
-+                    return comparison == .orderedDescending ? "pending_move_out" : nil
-+                }
-+            }
-+            return nil
-         }
- 
-         guard let portalKind = localPortalKind(at: destinationURL) else {
-```
-
-**File**: `AppPortsTests/AppMigrationServiceTests.swift` (modified, +25/-0)
-```diff
-@@ -339,6 +339,7 @@ final class AppMigrationServiceTests: XCTestCase {
-         let externalAppURL = workspace.externalRootURL.appendingPathComponent("Replace.app")
-         try createAppBundle(at: localAppURL, payload: "new-local")
-         try createAppBundle(at: externalAppURL, payload: "old-external")
-+        try updateReviewPlist(localAppURL, values: ["CFBundleShortVersionString": "2.0"])
- 
-         try await AppMigrationService(dockShortcutUpdater: { _, _ in 0 }).moveAndLink(
-             appToMove: AppItem(name: "Replace.app", path: localAppURL, status: AppStatus.pendingMoveOut),
-@@ -967,6 +968,23 @@ final class AppMigrationServiceTests: XCTestCase {
-         XCTAssertFalse(fileManager.fileExists(atPath: externalAppURL.path))
-     }
- 
-+    func testPendingMoveOutRejectsDifferentDestinationIdentity() async throws {
-+        let w = try makeWorkspace()
-+        defer { cleanupWorkspace(w.rootURL) }
-+        let local = w.localAppsURL.appendingPathComponent("Foo.app")
-+        let target = w.externalRootURL.appendingPathComponent("Foo.app")
-+        try createAppBundle(at: local, payload: "new-local")
-+        try createAppBundle(at: target, payload: "unrelated-original")
-+        try updateReviewPlist(target, values: ["CFBundleIdentifier": "com.other.app"])
-+        do {
-+            try await AppMigrationService(dockShortcutUpdater: { _, _ in 0 }).moveAndLink(
-+                appToMove: AppItem(name: "Foo.app", path: local, status: AppStatus.pendingMoveOut),
-+                destinationURL: target, isRunning: false, progressHandler: nil)
-+            XCTFail("A display status must not authorize replacing a different application")
-+        } catch {}
-+        XCTAssertEqual(try String(contentsOf: target.appendingPathComponent("Contents/Resources/payload.txt")), "unrelated-original")
-+    }
-+
-     func testRestoreRejectsRunningAppBeforeChangingEitherCopy() async throws {
-         let w = try makeWorkspace()
-         defer { cleanupWorkspace(w.rootURL) }
-@@ -1005,6 +1023,13 @@ final class AppMigrationServiceTests: XCTestCase {
-         }
-     }
- 
-+    private func updateReviewPlist(_ app: URL, values: [String: String]) throws {
-+        let url = app.appendingPathComponent("Contents/Info.plist")
-+        var plist = try XCTUnwrap(PropertyListSerialization.propertyList(from: Data(contentsOf: url), format: nil) as? [String: Any])
-+        for (key, value) in values { plist[key] = value }
-+        try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: url)
-+    }
-+
-     private func makeWorkspace() throws -> (rootURL: URL, localAppsURL: URL, externalRootURL: URL) {
-         let rootURL = fileManager.temporaryDirectory.appendingPathComponent("AppPortsTests-\(UUID().uuidString)")
-         let localAppsURL = rootURL.appendingPathComponent("Applications")
-```
-
----
-
-### Incident Patch 6: `aa33e819` (2026-10-05)
-**Commit Message**: fix(apps): recheck running applications during restore
-
-**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +25/-0)
-```diff
-@@ -6,6 +6,7 @@
- //
- 
- import Foundation
-+import AppKit
- 
- struct AppMigrationService {
-     typealias FinderRemover = (URL) throws -> Void
-@@ -43,17 +44,24 @@ struct AppMigrationService {
-     private let fileManager: FileManager
-     private let portalCreationOverride: PortalCreationOverride?
-     private let dockShortcutUpdater: DockShortcutUpdater
-+    private let runningApplications: () -> [AppRunningState.RunningApplication]
- 
-     init(
-         fileManager: FileManager = .default,
-         portalCreationOverride: PortalCreationOverride? = nil,
-         dockShortcutUpdater: @escaping DockShortcutUpdater = { source, destination in
-             try DockShortcutService.shared.redirectShortcuts(from: source, to: destination)
-+        },
-+        runningApplications: @escaping () -> [AppRunningState.RunningApplication] = {
-+            NSWorkspace.shared.runningApplications.map {
-+                .init(bundleURL: $0.bundleURL, bundleIdentifier: $0.bundleIdentifier)
-+            }
-         }
-     ) {
-         self.fileManager = fileManager
-         self.portalCreationOverride = portalCreationOverride
-         self.dockShortcutUpdater = dockShortcutUpdater
-+        self.runningApplications = runningApplications
-     }
- 
-     static func checkWritePermission(at localURL: URL, fileManager: FileManager = .default) throws {
-@@ -626,6 +634,7 @@ struct AppMigrationService {
-         localDestinationURL: URL,
-         progressHandler: FileCopier.ProgressHandler?
-     ) async throws -> RestoreResult {
-+        try requireNotRunning(app)
-         let operationID = AppLogger.shared.makeOperationID(prefix: "app-restore")
-         let startedAt = Date()
-         var operationResult = "failed"
-@@ -794,6 +803,10 @@ struct AppMigrationService {
-             destPath: localDestinationURL.path
-         )
- 
-+        // A process may have started while the copy was in progress. Keep both
-+        // complete copies if so; never delete resources from a live application.
-+        try requireNotRunning(app)
-+
-         // 本地副本完整后即可切回；外部副本清理失败也不应让 Dock 继续打开旧副本。
-         var dockSynchronized = synchronizeDockShortcuts(
-             from: app.path, to: localDestinationURL, operationID: operationID
-@@ -1191,6 +1204,18 @@ struct AppMigrationService {
-         return URL(fileURLWithPath: rawPath, relativeTo: url.deletingLastPathComponent()).standardizedFileURL
-     }
- 
-+    private func requireNotRunning(_ app: AppItem) throws {
-+        var urls = [app.path]
-+        if app.usesFolderOperation {
-+            urls += try fileManager.contentsOfDirectory(at: app.path, includingPropertiesForKeys: nil)
-+                .filter { $0.pathExtension.lowercased() == "app" }
-+        }
-+        let snapshot = runningApplications()
-+        guard !urls.contains(where: { AppRunningState.isRunning(appURL: $0, applications: snapshot) }) else {
-+            throw AppMoverError.appIsRunning
-+        }
-+    }
-+
-     private func externalTargetReplacementReason(for appToMove: AppItem, destinationURL: URL) -> String? {
-         if appToMove.status == AppStatus.pendingMoveOut {
-             return "pending_move_out"
-```
-
-**File**: `AppPortsTests/AppMigrationServiceTests.swift` (modified, +38/-0)
-```diff
-@@ -967,6 +967,44 @@ final class AppMigrationServiceTests: XCTestCase {
-         XCTAssertFalse(fileManager.fileExists(atPath: externalAppURL.path))
-     }
- 
-+    func testRestoreRejectsRunningAppBeforeChangingEitherCopy() async throws {
-+        let w = try makeWorkspace()
-+        defer { cleanupWorkspace(w.rootURL) }
-+        let external = w.externalRootURL.appendingPathComponent("Live.app")
-+        let local = w.localAppsURL.appendingPathComponent("Live.app")
-+        try createAppBundle(at: external, payload: "live-app")
-+        let service = AppMigrationService(dockShortcutUpdater: { _, _ in 0 },
-+            runningApplications: { [.init(bundleURL: external, bundleIdentifier: nil)] })
-+        do {
-+            _ = try await service.moveBack(app: AppItem(name: "Live.app", path: external, status: "外部"),
-+                                          localDestinationURL: local, progressHandler: nil)
-+            XCTFail("Running source must be rejected")
-+        } catch AppMoverError.appIsRunning {} catch { XCTFail("Unexpected error: \(error)") }
-+        XCTAssertEqual(try String(contentsOf: external.appendingPathComponent("Contents/Resources/payload.txt")), "live-app")
-+        XCTAssertFalse(fileManager.fileExists(atPath: local.path))
-+    }
-+
-+    func testRestoreRetainsSourceWhenAppStartsDuringCopy() async throws {
-+        let w = try makeWorkspace()
-+        defer { cleanupWorkspace(w.rootURL) }
-+        let external = w.externalRootURL.appendingPathComponent("Live.app")
-+        let local = w.localAppsURL.appendingPathComponent("Live.app")
-+        try createAppBundle(at: external, payload: "live-app")
-+        var calls = 0
-+        let service = AppMigrationService(dockShortcutUpdater: { _, _ in 0 }, runningApplications: {
-+            calls += 1
-+            return calls > 1 ? [.init(bundleURL: external, bundleIdentifier: nil)] : []
-+        })
-+        do {
-+            _ = try await service.moveBack(app: AppItem(name: "Live.app", path: external, status: "外部"),
-+                                          localDestinationURL: local, progressHandler: nil)
-+            XCTFail("Late start must preserve the source")
-+        } catch AppMoverError.appIsRunning {} catch { XCTFail("Unexpected error: \(error)") }
-+        for app in [external, local] {
-+            XCTAssertEqual(try String(contentsOf: app.appendingPathComponent("Contents/Resources/payload.txt")), "live-app")
-+        }
-+    }
-+
-     private func makeWorkspace() throws -> (rootURL: URL, localAppsURL: URL, externalRootURL: URL) {
-         let rootURL = fileManager.temporaryDirectory.appendingPathComponent("AppPortsTests-\(UUID().uuidString)")
-         let localAppsURL = rootURL.appendingPathComponent("Applications")
-```
-
----
-
-### Incident Patch 7: `53e30131` (2026-10-05)
-**Commit Message**: fix(restore): resume verified private recovery mounts
-
-**File**: `AppPorts/Models/DataTransferRecord.swift` (modified, +2/-0)
-```diff
-@@ -86,6 +86,8 @@ struct DataTransferRecord: Codable, Equatable, Identifiable, Sendable {
-     var legacyRootOwnership: TreeCopySnapshot.Ownership? = nil
-     /// Original noowners flags; absent if the source already uses owners or is restored offline.
-     var legacyMountFlags: UInt32? = nil
-+    /// Identity of our private empty mount point, recorded before the mount attempt.
-+    var recoveryMountPointIdentity: DataPathIdentity? = nil
-     var recoverableReason: String?
- 
-     init(operationID: UUID = UUID(), mode: Mode, direction: Direction, sourceID: String? = nil,
-```
-
-**File**: `AppPorts/Services/ContainerMountStore.swift` (modified, +2/-0)
-```diff
-@@ -498,6 +498,8 @@ final class ContainerMountStore: @unchecked Sendable {
-               old.destinationIdentity == nil || old.destinationIdentity == transfer.destinationIdentity,
-               old.backupIdentity == nil || old.backupIdentity == transfer.backupIdentity,
-               old.baseline == nil || old.baseline == transfer.baseline,
-+              old.recoveryMountPointIdentity == transfer.recoveryMountPointIdentity
-+                || (old.isUnstartedMountRestore && transfer.isUnstartedMountRestore && old.recoveryMountPointIdentity == nil),
-               old.legacyRootOwnership == transfer.legacyRootOwnership
-                 || (old.isUnstartedMountRestore && transfer.isUnstartedMountRestore && old.legacyRootOwnership == nil),
-               old.legacyMountFlags == transfer.legacyMountFlags
-```
-
-**File**: `AppPorts/Utils/ContainerVolumeMigrator.swift` (modified, +33/-7)
-```diff
-@@ -529,7 +529,7 @@ actor ContainerVolumeMigrator {
-                 && $0.priorOperationID == prior?.operationID
-         }
-         guard resumable.count <= 1 else { throw DataOperationSafety.Failure.conflict(mountPoint.path) }
--        if let pending = resumable.first { try validateUnstartedRestorePaths(pending, record: record) }
-+        if let pending = resumable.first { try await validateUnstartedRestorePaths(pending, record: record) }
-         var ownedIDs = Set(prior.map { [$0.operationID] } ?? [])
-         if let pending = resumable.first { ownedIDs.insert(pending.operationID) }
-         try safety.requireNoOverlap(at: mountPoint, ownedMount: record, ownedTransferIDs: ownedIDs)
-@@ -598,7 +598,20 @@ actor ContainerVolumeMigrator {
-                     try await safety.requireNoKnownWriters(at: current, bundleIdentifier: record.bundleIdentifier)
-                 }
-                 try fileManager.createDirectory(at: recovery.deletingLastPathComponent(), withIntermediateDirectories: true)
--                try await mountVolume(record.volumeUUID, at: recovery, operationID: operationID, knownMountPoint: hint)
-+                if transfer.recoveryMountPointIdentity == nil {
-+                    // Creation must be exclusive; a pre-existing directory is not our intent.
-+                    try fileManager.createDirectory(at: recovery, withIntermediateDirectories: false)
-+                    transfer.recoveryMountPointIdentity = try DataPathIdentity.capture(recovery)
-+                    try store.updateTransfer(transfer)
-+                }
-+                if isMountPoint(recovery) {
-+                    // A prior attempt may have mounted successfully before its postcheck failed.
-+                    // Inspect the retained volume directly; a new lease would inspect its payload.
-+                    try await requireExpectedVolume(record.volumeUUID, at: recovery)
-+                    try await safety.requireNoKnownWriters(at: recovery, bundleIdentifier: record.bundleIdentifier)
-+                } else {
-+                    try await mountVolume(record.volumeUUID, at: recovery, operationID: operationID, knownMountPoint: hint)
-+                }
-                 source = recovery
-             }
-             try requireOwners(at: source)
-@@ -944,7 +957,7 @@ actor ContainerVolumeMigrator {
-         return (DiskUtility.pathsMatch(current, mountPoint.path) ? .reportedByDiskUtil : .notMounted, info)
-     }
- 
--    private func validateUnstartedRestorePaths(_ transfer: DataTransferRecord, record: ContainerMountRecord) throws {
-+    private func validateUnstartedRestorePaths(_ transfer: DataTransferRecord, record: ContainerMountRecord) async throws {
-         let root = record.mountPointURL
-         let staging = root.deletingLastPathComponent().appendingPathComponent(".appports-restore-staging-\(transfer.operationID.uuidString)")
-         let recovery = stagingMountRootURL.appendingPathComponent("recovery-\(transfer.operationID.uuidString)")
-@@ -953,10 +966,23 @@ actor ContainerVolumeMigrator {
-               transfer.stagingPath == staging.path, transfer.backupPath == recovery.path else {
-             throw DataOperationSafety.Failure.conflict(root.path)
-         }
--        for path in [staging, recovery] {
--            var info = stat()
--            guard lstat(path.path, &info) != 0, errno == ENOENT else {
--                throw DataOperationSafety.Failure.conflict(path.path)
-+        var info = stat()
-+        guard lstat(staging.path, &info) != 0, errno == ENOENT else {
-+            throw DataOperationSafety.Failure.conflict(staging.path)
-+        }
-+        if let expected = transfer.recoveryMountPointIdentity {
-+            if isMountPoint(recovery) {
-+                try await requireExpectedVolume(record.volumeUUID, at: recovery)
-+            } else {
-+                guard lstat(recovery.path, &info) == 0, info.st_mode & S_IFMT == S_IFDIR,
-+                      try DataPathIdentity.capture(recovery).matchesFilesystemObject(expected) else {
-+                    throw DataOperationSafety.Failure.conflict(recovery.path)
-+                }
-+                // mountVolume's descriptor-backed lease checks emptiness before any mount.
-+            }
-+        } else {
-+            guard lstat(recovery.path, &info) != 0, errno == ENOENT else {
-+                throw DataOperationSafety.Failure.conflict(recovery.path)
-             }
-         }
-     }
-```
-
-**File**: `AppPortsTests/ContainerVolumeMigratorTests.swift` (modified, +66/-0)
-```diff
-@@ -590,6 +590,72 @@ struct ContainerVolumeMigratorTests {
-             sourceIdentity: DataPathIdentity(volumeUUID: record.volumeUUID), phase: .needsRecovery)
-     }
- 
-+    @Test("A failed offline mount can be retried after reloading its durable intent")
-+    func failedOfflineRestoreCanRetry() async throws {
-+        let workspace = try Workspace()
-+        defer { workspace.cleanup() }
-+        let source = try workspace.makeContainerDirectory(named: "OfflineRetry")
-+        let record = workspace.record(mountPoint: source)
-+        try workspace.store.upsert(record)
-+        let runner = FakeDiskCommandRunner(onlineVolumes: [record.volumeUUID])
-+        runner.hideContentsOnUnmount()
-+        defer { runner.stashedVolumeContents.forEach { try? FileManager.default.removeItem(at: $0) } }
-+        // Materialize a fake volume so unmount/remount keeps its payload, just as APFS does.
-+        try FileManager.default.removeItem(at: source.appendingPathComponent("payload.txt"))
-+        try await workspace.makeMigrator(runner: runner).mount(record: record)
-+        try Data("payload".utf8).write(to: source.appendingPathComponent("payload.txt"))
-+        try await workspace.makeMigrator(runner: runner).unmount(record: record)
-+        runner.failWhen(prefix: ["mount"])
-+        await #expect(throws: (any Error).self) {
-+            try await workspace.makeMigrator(runner: runner).restore(record: record, estimatedTotalBytes: 0, progressHandler: nil)
-+        }
-+        let pending = try #require(try workspace.store.transfers().first)
-+        runner.clearFailure()
-+        let cold = ContainerMountStore(fileURL: workspace.rootURL.appendingPathComponent("container-mounts.plist"))
-+        _ = try await workspace.makeMigrator(runner: runner, storeOverride: cold)
-+            .restore(record: record, estimatedTotalBytes: 0, progressHandler: nil)
-+        let completed = try #require(try cold.transfers().first)
-+        #expect(completed.operationID == pending.operationID)
-+        #expect(completed.phase == .awaitingUserVerification)
-+        #expect(try String(contentsOf: source.appendingPathComponent("payload.txt")) == "payload")
-+    }
-+
-+    @Test("An already mounted recovery volume survives a cold restore retry")
-+    func mountedOfflineRestoreCanRetry() async throws {
-+        let workspace = try Workspace()
-+        defer { workspace.cleanup() }
-+        let source = try workspace.makeContainerDirectory(named: "MountedOfflineRetry")
-+        let record = workspace.record(mountPoint: source)
-+        try workspace.store.upsert(record)
-+        let runner = FakeDiskCommandRunner(onlineVolumes: [record.volumeUUID])
-+        runner.hideContentsOnUnmount()
-+        defer { runner.stashedVolumeContents.forEach { try? FileManager.default.removeItem(at: $0) } }
-+        try FileManager.default.removeItem(at: source.appendingPathComponent("payload.txt"))
-+        try await workspace.makeMigrator(runner: runner).mount(record: record)
-+        try Data("payload".utf8).write(to: source.appendingPathComponent("payload.txt"))
-+        try await workspace.makeMigrator(runner: runner).unmount(record: record)
-+        // The mount succeeds, but its ownership postcheck fails before source identity is saved.
-+        let failing = workspace.makeMigrator(runner: runner,
-+            mountFlags: { _ in UInt32(MNT_IGNORE_OWNERSHIP) })
-+        await #expect(throws: (any Error).self) {
-+            try await failing.restore(record: record, estimatedTotalBytes: 0, progressHandler: nil)
-+        }
-+        let pending = try #require(try workspace.store.transfers().first)
-+        #expect(pending.isUnstartedMountRestore)
-+        let recovery = URL(fileURLWithPath: try #require(pending.backupPath))
-+        #expect(runner.isMounted(recovery))
-+        #expect(try String(contentsOf: recovery.appendingPathComponent("payload.txt")) == "payload")
-+        let mountCount = runner.commands(prefix: ["mount"]).count
-+        let cold = ContainerMountStore(fileURL: workspace.rootURL.appendingPathComponent("container-mounts.plist"))
-+        _ = try await workspace.makeMigrator(runner: runner, storeOverride: cold)
-+            .restore(record: record, estimatedTotalBytes: 0, progressHandler: nil)
-+        let completed = try #require(try cold.transfers().first)
-+        #expect(completed.operationID == pending.operationID)
-+        #expect(completed.phase == .awaitingUserVerification)
-+        #expect(runner.commands(prefix: ["mount"]).count == mountCount)
-+        #expect(try String(contentsOf: source.appendingPathComponent("payload.txt")) == "payload")
-+    }
-+
-     @Test("An unstarted restore reuses its operation ID without discarding evidence")
-     func restoreResumesUnstartedIntent() async throws {
-         let workspace = try Workspace()
-```
-
----
-
-### Incident Patch 8: `89b65590` (2026-10-05)
-**Commit Message**: fix(data): preserve historical types when relinking directories
-
-**File**: `AppPorts/Utils/DataDirMover.swift` (modified, +20/-3)
-```diff
-@@ -182,7 +182,7 @@ actor DataDirMover {
-             guard try !entryExists(local) else { throw DataDirError.destinationExists(local) }
-             adoptedEntry = nil
-         }
--        let type = inferType(for: local) ?? .custom
-+        let type = try managedType(for: local, external: external, indexedType: old?.dataDirType)
-         try requireMarker(at: external, for: local, type: type, allowOwned: true)
-         let history = try store.transfers()
-         let owned = old.map { transferAncestors(of: $0.operationID, transfers: history) } ?? []
-@@ -234,8 +234,9 @@ actor DataDirMover {
-         guard isSymbolicLink(at: local), DataPathTopology.relationship(local.path, source.path) == .same else { throw DataDirError.invalidSymlink(local) }
-         if DataPathTopology.relationship(source.path, destination.path) == .same { return }
-         guard try !entryExists(destination) else { throw DataDirError.destinationExists(destination) }
--        try requireMarker(at: source, for: local, type: inferType(for: local) ?? .custom, allowOwned: true)
-         let old = try store.managedLink(forOriginalPath: local.path)
-+        let type = try managedType(for: local, external: source, indexedType: old?.dataDirType)
-+        try requireMarker(at: source, for: local, type: type, allowOwned: true)
-         let sourceIdentity = try DataPathIdentity.capture(source)
-         if let old { try requireIdentity(source, old.destinationIdentity) }
-         let history = try store.transfers()
-@@ -249,7 +250,6 @@ actor DataDirMover {
-         let id = UUID()
-         let staging = local.deletingLastPathComponent().appendingPathComponent(".appports-normalize-\(id)")
-         let linkIdentity = try DataPathIdentity.capture(local)
--        let type = inferType(for: local) ?? .custom
-         var transfer = DataTransferRecord(operationID: id, mode: .symlink, direction: .migrate, sourceID: local.path,
-             appName: old?.appName ?? local.lastPathComponent, bundleIdentifier: old?.bundleIdentifier ?? inferredBundleIdentifier(local),
-             dataDirType: type.rawValue, originalPath: local.path, activePath: source.path, destinationPath: destination.path,
-@@ -543,6 +543,23 @@ actor DataDirMover {
-             .appendingPathComponent(".\(standardizedURL.lastPathComponent)\(managedLinkMetadataSidecarSuffix)")
-     }
- 
-+    /// Type is part of a validated historical record, not a classification of its path.
-+    private func managedType(for local: URL, external: URL, indexedType: String?) throws -> DataDirType {
-+        if let indexedType, let type = DataDirType(rawValue: indexedType) { return type }
-+        let marker = markerURL(for: external)
-+        if try entryExists(marker) {
-+            guard !isSymbolicLink(at: marker),
-+                  let data = try? Data(contentsOf: marker),
-+                  let metadata = try? PropertyListDecoder().decode(ManagedLinkMetadata.self, from: data),
-+                  let type = DataDirType(rawValue: metadata.dataDirType) else {
-+                throw DataDirError.metadataWriteFailed(DataOperationSafety.Failure.conflict(marker.path))
-+            }
-+            try requireMarker(at: external, for: local, type: type, allowOwned: true)
-+            return type
-+        }
-+        return inferType(for: local) ?? .custom
-+    }
-+
-     private func inferType(for localPath: URL) -> DataDirType? {
-         let path = localPath.standardizedFileURL.path
-         let libraryRoot = homeDir.appendingPathComponent("Library")
-```
-
-**File**: `AppPortsTests/DataDirMoverTests.swift` (modified, +16/-0)
-```diff
-@@ -22,6 +22,22 @@ final class DataDirMoverTests: XCTestCase {
-         try super.tearDownWithError()
-     }
- 
-+    func testCustomDirectoryTypeSurvivesDisconnectAndRelink() async throws {
-+        for path in [".review-custom", "Library/Application Support/ReviewCustom"] {
-+            let w = try makeWorkspace()
-+            defer { cleanupWorkspace(w.rootURL) }
-+            let local = w.homeURL.appendingPathComponent(path)
-+            try createDirectoryWithPayload(at: local, payload: "custom-data")
-+            let item = DataDirItem(name: "Custom", path: local, type: .custom, priority: .optional, description: "")
-+            let mover = makeMover(homeDir: w.homeURL)
-+            try await mover.migrate(item: item, to: w.externalRootURL, progressHandler: nil)
-+            let external = local.resolvingSymlinksInPath()
-+            try await mover.deleteLink(localPath: local)
-+            try await mover.createLink(localPath: local, externalPath: external)
-+            try assertSymlink(local, pointsTo: external)
-+        }
-+    }
-+
-     func testMigrateAndRestoreRoundTripForApplicationSupportDirectory() async throws {
-         let workspace = try makeWorkspace()
-         defer { cleanupWorkspace(workspace.rootURL) }
-```
-
----
-
-### Incident Patch 9: `856c6589` (2026-10-05)
-**Commit Message**: fix(copy): preserve and verify directory ACLs
-
-**File**: `AppPorts/Utils/FileCopier.swift` (modified, +31/-0)
-```diff
-@@ -365,6 +365,7 @@ actor FileCopier {
-             }
-             Self.copyDirectoryExtendedAttributes(from: directory.source, to: directory.destination, removeQuarantine: removeQuarantine)
-             try fileManager.setAttributes(directory.attributes, ofItemAtPath: directory.destination.path)
-+            try Self.copyDirectoryACL(from: directory.source, to: directory.destination)
-             await reportProgressIfNeeded(name: directory.source.lastPathComponent, state: &state, progressHandler: progressHandler)
-         }
-         if let firstGroupRestoreError {
-@@ -522,6 +523,36 @@ actor FileCopier {
-         }
-     }
- 
-+    nonisolated private static func copyDirectoryACL(from source: URL, to destination: URL) throws {
-+        var sourceACL = acl_get_file(source.path, ACL_TYPE_EXTENDED)
-+        if sourceACL == nil {
-+            if errno == ENOTSUP { return }
-+            // Darwin uses ENOENT for a present directory with no extended ACL.
-+            guard errno == ENOENT, FileManager.default.fileExists(atPath: source.path) else {
-+                throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
-+            }
-+            sourceACL = acl_init(0)
-+        }
-+        guard let acl = sourceACL else { throw POSIXError(.ENOMEM) }
-+        defer { acl_free(UnsafeMutableRawPointer(acl)) }
-+        var entry: acl_entry_t?
-+        let hasEntries = acl_get_entry(acl, ACL_FIRST_ENTRY.rawValue, &entry) == 0
-+        guard acl_set_file(destination.path, ACL_TYPE_EXTENDED, acl) == 0 else {
-+            if !hasEntries, errno == ENOTSUP { return }
-+            throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
-+        }
-+        guard let actual = acl_get_file(destination.path, ACL_TYPE_EXTENDED) else {
-+            if !hasEntries, errno == ENOENT, FileManager.default.fileExists(atPath: destination.path) { return }
-+            throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
-+        }
-+        defer { acl_free(UnsafeMutableRawPointer(actual)) }
-+        guard let expectedText = acl_to_text(acl, nil), let actualText = acl_to_text(actual, nil) else {
-+            throw POSIXError(.EIO)
-+        }
-+        defer { acl_free(expectedText); acl_free(actualText) }
-+        guard String(cString: expectedText) == String(cString: actualText) else { throw POSIXError(.EIO) }
-+    }
-+
-     nonisolated private static func isManagedLinkMetadataFile(_ fileName: String) -> Bool {
-         fileName == ".appports-link-metadata.plist"
-             || (fileName.hasPrefix(".") && fileName.hasSuffix(".appports-link-metadata.plist"))
-```
-
-**File**: `AppPortsTests/FileCopierTests.swift` (modified, +23/-0)
-```diff
-@@ -5,6 +5,29 @@ import XCTest
- final class FileCopierTests: XCTestCase {
-     private let fileManager = FileManager.default
- 
-+    func testDirectoryACLIsPreserved() async throws {
-+        let w = try makeWorkspace()
-+        defer { cleanup(w.root) }
-+        let command = Process()
-+        command.executableURL = URL(fileURLWithPath: "/bin/chmod")
-+        command.arguments = ["+a", "everyone allow read,readattr,readextattr,readsecurity", w.source.path]
-+        try command.run()
-+        command.waitUntilExit()
-+        XCTAssertEqual(command.terminationStatus, 0)
-+        func aclText(_ url: URL) throws -> String {
-+            guard let acl = acl_get_file(url.path, ACL_TYPE_EXTENDED) else { return "" }
-+            defer { acl_free(UnsafeMutableRawPointer(acl)) }
-+            guard let text = acl_to_text(acl, nil) else { return "" }
-+            defer { acl_free(text) }
-+            return String(cString: text)
-+        }
-+        let original = try aclText(w.source)
-+        XCTAssertFalse(original.isEmpty)
-+        _ = try await FileCopier().copyDirectory(from: w.source, to: w.destination, progressHandler: nil)
-+        XCTAssertEqual(try aclText(w.destination), original)
-+        XCTAssertEqual(try aclText(w.source), original)
-+    }
-+
-     func testCopiesManySmallFilesWithRootAndNestedDirectoryMetadata() async throws {
-         let workspace = try makeWorkspace()
-         defer { cleanup(workspace.root) }
-```
-
----
-
-### Incident Patch 10: `ff8452a6` (2026-10-05)
-**Commit Message**: fix(process): bound command deadlines and cancellation
-
-**File**: `AppPorts/Utils/DiskUtility.swift` (modified, +79/-65)
-```diff
-@@ -29,81 +29,95 @@ protocol ShellCommandRunning: Sendable {
- /// 用 Process 执行外部命令。超时后终止进程，避免 diskutil 挂死时整个操作卡住。
- struct ProcessCommandRunner: ShellCommandRunning {
-     func run(executable: String, arguments: [String], timeout: TimeInterval) async throws -> ShellCommandResult {
--        try await withCheckedThrowingContinuation { continuation in
--            let process = Process()
--            process.executableURL = URL(fileURLWithPath: executable)
--            process.arguments = arguments
--            process.standardInput = FileHandle.nullDevice
--            let outputPipe = Pipe()
--            let errorPipe = Pipe()
--            process.standardOutput = outputPipe
--            process.standardError = errorPipe
--
--            let collector = OutputCollector()
--            let readers = DispatchGroup()
--            readers.enter()
--            DispatchQueue.global(qos: .utility).async {
--                collector.setStandardOutput(outputPipe.fileHandleForReading.readDataToEndOfFile())
--                readers.leave()
--            }
--            readers.enter()
--            DispatchQueue.global(qos: .utility).async {
--                collector.setStandardError(errorPipe.fileHandleForReading.readDataToEndOfFile())
--                readers.leave()
-+        // Include dispatch queueing and process launch in the caller's time budget.
-+        let deadline = ProcessInfo.processInfo.systemUptime + max(0, timeout)
-+        let cancellation = CancellationState()
-+        return try await withTaskCancellationHandler(operation: {
-+            try Task.checkCancellation()
-+            return try await withCheckedThrowingContinuation { continuation in
-+                DispatchQueue.global(qos: .utility).async {
-+                    do { continuation.resume(returning: try Self.execute(executable: executable,
-+                        arguments: arguments, deadline: deadline, cancellation: cancellation)) }
-+                    catch { continuation.resume(throwing: error) }
-+                }
-             }
-+        }, onCancel: { cancellation.cancel() })
-+    }
- 
--            process.terminationHandler = { finished in
--                // 等两个管道读完再返回结果，但不阻塞系统的高优先级退出回调线程。
--                let status = finished.terminationStatus
--                readers.notify(queue: .global(qos: .utility)) {
--                    continuation.resume(returning: collector.result(status: status))
-+    /// Nonblocking pipe reads let one deadline cover the child AND inherited pipes.
-+    /// This worker never blocks Foundation's process termination callback queue.
-+    private static func execute(executable: String, arguments: [String], deadline: TimeInterval,
-+                                cancellation: CancellationState) throws -> ShellCommandResult {
-+        if cancellation.isCancelled { throw CancellationError() }
-+        guard ProcessInfo.processInfo.systemUptime < deadline else {
-+            return ShellCommandResult(status: -1, standardOutput: Data(), standardError: Data(), timedOut: true)
-+        }
-+        let process = Process()
-+        process.executableURL = URL(fileURLWithPath: executable)
-+        process.arguments = arguments
-+        process.standardInput = FileHandle.nullDevice
-+        let output = Pipe(), error = Pipe()
-+        process.standardOutput = output
-+        process.standardError = error
-+        let handles = [output.fileHandleForReading, error.fileHandleForReading]
-+        defer { handles.forEach { try? $0.close() } }
-+        let fds = handles.map(\.fileDescriptor)
-+        // A blocking read would bypass the deadline. Validate this before spawning a child.
-+        for fd in fds {
-+            let flags = fcntl(fd, F_GETFL)
-+            guard flags >= 0, fcntl(fd, F_SETFL, flags | O_NONBLOCK) == 0 else {
-+                throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
-+            }
-+        }
-+        try process.run()
-+        try? output.fileHandleForWriting.close()
-+        try? error.fileHandleForWriting.close()
-+        var streams = [Data(), Data()]
-+        var ended = [false, false]
-+        var buffer = [UInt8](repeating: 0, count: 65_536)
-+        var stoppingAt: TimeInterval?
-+        var timedOut = false
-+        while true {
-+            // Bound each drain so an endlessly writing child cannot hide the deadline.
-+            for index in fds.indices where !ended[index] {
-+                for _ in 0..<16 {
-+                    let count = Darwin.read(fds[index], &buffer, buffer.count)
-+                    if count > 0 { streams[index].append(contentsOf: buffer.prefix(count)) }
-+                    else if count == 0 { ended[index] = true; break }
-+                    else if errno == EINTR { continue }
-+                    else { break }
-                 }
-             }
--
--            do {
--                try process.run()
--            } catch {
--                process.terminationHandler = nil
--                // 释放写端，让两个读取任务立即结束。
--                try? outputPipe.fileHandleFo
-```
-
-**File**: `AppPortsTests/ProcessCommandRunnerTests.swift` (modified, +52/-0)
-```diff
-@@ -4,6 +4,58 @@ import Testing
- 
- @Suite("Process command completion")
- struct ProcessCommandRunnerTests {
-+    @Test("Deadline includes ignored termination and inherited pipes", arguments: [
-+        "trap '' TERM; /bin/sleep 2", "(/bin/sleep 2; printf tail) & exit 7"
-+    ])
-+    func boundedDeadline(command: String) async throws {
-+        let start = Date()
-+        let result = try await ProcessCommandRunner().run(executable: "/bin/sh", arguments: ["-c", command], timeout: 0.1)
-+        #expect(result.timedOut)
-+        #expect(Date().timeIntervalSince(start) < 1.5)
-+    }
-+
-+    @Test("Concurrent deadlines remain bounded while children retain pipe writers")
-+    func concurrentDeadlines() async throws {
-+        try await withThrowingTaskGroup(of: Void.self) { group in
-+            for index in 0..<16 {
-+                group.addTask {
-+                    let command = index.isMultiple(of: 2)
-+                        ? "trap '' TERM; /bin/sleep 2"
-+                        : "(/bin/sleep 2; printf tail) & exit 7"
-+                    let start = ProcessInfo.processInfo.systemUptime
-+                    let result = try await ProcessCommandRunner().run(
-+                        executable: "/bin/sh", arguments: ["-c", command], timeout: 0.1)
-+                    #expect(result.timedOut)
-+                    #expect(ProcessInfo.processInfo.systemUptime - start < 1.5)
-+                }
-+            }
-+            try await group.waitForAll()
-+        }
-+    }
-+
-+    @Test("An expired deadline does not launch the command")
-+    func expiredDeadlineSkipsLaunch() async throws {
-+        let marker = FileManager.default.temporaryDirectory.appendingPathComponent("process-deadline-\(UUID())")
-+        defer { try? FileManager.default.removeItem(at: marker) }
-+        let result = try await ProcessCommandRunner().run(executable: "/bin/sh",
-+            arguments: ["-c", "printf launched > \"$1\"", "runner-test", marker.path], timeout: 0)
-+        #expect(result.timedOut)
-+        #expect(!FileManager.default.fileExists(atPath: marker.path))
-+    }
-+
-+    @Test("Cancellation interrupts a child that ignores termination")
-+    func cancellationIsBounded() async throws {
-+        let task = Task {
-+            try await ProcessCommandRunner().run(executable: "/bin/sh",
-+                arguments: ["-c", "trap '' TERM; /bin/sleep 2"], timeout: 10)
-+        }
-+        try await Task.sleep(nanoseconds: 100_000_000)
-+        let start = ProcessInfo.processInfo.systemUptime
-+        task.cancel()
-+        await #expect(throws: CancellationError.self) { try await task.value }
-+        #expect(ProcessInfo.processInfo.systemUptime - start < 1.5)
-+    }
-+
-     @Test("Keeps stdout, stderr and the original exit status", arguments: [0, 23])
-     func preservesOutputAndStatus(status: Int) async throws {
-         let result = try await ProcessCommandRunner().run(
-```
-
----
-
-### Incident Patch 11: `fdd03a11` (2026-10-05)
-**Commit Message**: fix(sponsors): update sponsor list with new entry for zed
-
-**File**: `README.md` (modified, +4/-2)
-```diff
-@@ -3,7 +3,7 @@
- <img src="assets/appports-banner-en.png" alt="AppPorts — macOS App & Data Migration" width="100%">
- 
- **Move big apps out. Make room for what matters.**
--
-+   
- Move apps and data to an external drive. Open them as usual.
- 
- 
-@@ -173,8 +173,10 @@ AppPorts is completely free, open source and free of ads. It is maintained by a
- Thanks to the following sponsors (this list is kept in sync with `sponsors.json` in the repository root):
- 
- - **师杀** · [space.bilibili.com/396481888](https://space.bilibili.com/396481888)
--- **符华**
-+- **zed**
- - **VC**
-+- **符华**
-+
- 
- ## Advanced Storage Management
- 
-```
-
-**File**: `README_CN.md` (modified, +2/-1)
-```diff
-@@ -173,8 +173,9 @@ AppPorts 完全免费、开源、无广告，项目由个人在业余时间维
- 感谢以下赞助者（此列表与仓库根目录的 `sponsors.json` 同步）：
- 
- - **师杀** · [space.bilibili.com/396481888](https://space.bilibili.com/396481888)
--- **符华**
-+- **zed**
- - **VC**
-+- **符华**
-  
- ## 🔗 进阶存储管理
- 
-```
-
-**File**: `sponsors.json` (modified, +6/-0)
-```diff
-@@ -21,6 +21,12 @@
-       "link": "",
-       "amount": 8.80,
-       "date": "2026-09-30"
-+    },
-+    {
-+      "name": "zed",
-+      "link": "",
-+      "amount": 50,
-+      "date": "2026-10-5"
-     }
-   ]
- }
-```
-
----
-
-### Incident Patch 12: `5b7b67c4` (2026-10-02)
-**Commit Message**: fix(migration): preserve ownership compatibility across upgrades
-
-**File**: `AppPorts/Models/ContainerMountModels.swift` (modified, +10/-1)
-```diff
-@@ -18,6 +18,10 @@ import Foundation
- struct ContainerMountRecord: Codable, Equatable, Identifiable, Sendable {
-     static let currentSchemaVersion = 1
- 
-+    enum OwnershipPolicy: String, Codable, Sendable {
-+        case owners
-+    }
-+
-     /// 以挂载点路径作为稳定 ID
-     var id: String { mountPointPath }
- 
-@@ -37,6 +41,9 @@ struct ContainerMountRecord: Codable, Equatable, Identifiable, Sendable {
-     /// 迁移时用户选择的外部存储根目录（记录来源，不参与挂载）
-     let externalRootPath: String
-     let createdAt: Date
-+    /// Missing in historical records: use the volume's persistent system setting.
-+    /// New verified migrations require real ownership, even after backup cleanup.
-+    var ownershipPolicy: OwnershipPolicy?
- 
-     init(
-         appName: String,
-@@ -46,7 +53,8 @@ struct ContainerMountRecord: Codable, Equatable, Identifiable, Sendable {
-         volumeUUID: String,
-         volumeName: String,
-         externalRootPath: String,
--        createdAt: Date = Date()
-+        createdAt: Date = Date(),
-+        ownershipPolicy: OwnershipPolicy? = nil
-     ) {
-         self.schemaVersion = Self.currentSchemaVersion
-         self.appName = appName
-@@ -57,6 +65,7 @@ struct ContainerMountRecord: Codable, Equatable, Identifiable, Sendable {
-         self.volumeName = volumeName
-         self.externalRootPath = externalRootPath
-         self.createdAt = createdAt
-+        self.ownershipPolicy = ownershipPolicy
-     }
- 
-     var mountPointURL: URL {
-```
-
-**File**: `AppPorts/Models/DataTransferRecord.swift` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ struct DataTransferRecord: Codable, Equatable, Identifiable, Sendable {
-     var baseline: Data?
-     /// Preserve the effective legacy root owner without rewriting the retained source manifest.
-     var legacyRootOwnership: TreeCopySnapshot.Ownership? = nil
--    /// Original online flags, recorded before ownership is enabled; absent for an offline restore.
-+    /// Original noowners flags; absent if the source already uses owners or is restored offline.
-     var legacyMountFlags: UInt32? = nil
-     var recoverableReason: String?
- 
-```
-
-**File**: `AppPorts/Services/ContainerMountStore.swift` (modified, +22/-3)
-```diff
-@@ -55,7 +55,7 @@ final class ContainerMountStore: @unchecked Sendable {
-         init(from decoder: Decoder) throws {
-             let values = try decoder.container(keyedBy: CodingKeys.self)
-             schemaVersion = try values.decode(Int.self, forKey: .schemaVersion)
--            guard schemaVersion == 2 || schemaVersion == 3 else { throw StoreError.unsupportedSchema(schemaVersion) }
-+            guard (2...4).contains(schemaVersion) else { throw StoreError.unsupportedSchema(schemaVersion) }
-             mounts = try values.decode([ContainerMountRecord].self, forKey: .mounts)
-             cleanups = try values.decode([ContainerCleanupRecord].self, forKey: .cleanups)
-             transfers = schemaVersion == 2 ? [] : try values.decode([DataTransferRecord].self, forKey: .transfers)
-@@ -341,6 +341,15 @@ final class ContainerMountStore: @unchecked Sendable {
-             guard deletionConfirmed else { throw StoreError.deletionNotConfirmed }
-             guard let transfer = current.transfers.first(where: { $0.operationID == operationID }) else { return }
-             guard transfer.phase == .cleanupRequested else { throw StoreError.invalidState("Cleanup must be explicitly requested") }
-+            // Earlier safety builds kept the owners contract only in the
-+            // verified migration. Persist it atomically before removing that proof.
-+            if transfer.mode == .mount, transfer.direction == .migrate, transfer.baseline != nil,
-+               let uuid = transfer.createdVolumeUUID,
-+               let index = current.mounts.firstIndex(where: {
-+                   $0.mountPointPath == transfer.originalPath && self.sameUUID($0.volumeUUID, uuid)
-+               }) {
-+                current.mounts[index].ownershipPolicy = .owners
-+            }
-             current.transfers.removeAll { $0.operationID == operationID }
-         }
-     }
-@@ -359,7 +368,14 @@ final class ContainerMountStore: @unchecked Sendable {
-         defer { _ = flock(writer, LOCK_UN); _ = close(writer) }
-         var document = try load()
-         try body(&document)
--        document.schemaVersion = 3
-+        // Older schema-3 writers drop unknown transfer fields while preserving
-+        // the opaque baseline. Protect ownership-aware records before any such
-+        // writer can erase the exception required to interpret that baseline.
-+        let needsOwnershipSchema = document.transfers.contains {
-+            $0.legacyRootOwnership != nil || $0.legacyMountFlags != nil
-+        } || document.mounts.contains { $0.ownershipPolicy != nil }
-+            || document.cleanups.contains { $0.mountRecord.ownershipPolicy != nil }
-+        document.schemaVersion = max(document.schemaVersion, needsOwnershipSchema ? 4 : 3)
-         // Removing a mount also resolves its remount-only block; transfer recovery remains independent.
-         let activeVolumes = Set(document.mounts.map { $0.volumeUUID.uppercased() })
-         document.remountInterventions = document.remountInterventions.filter { activeVolumes.contains($0.key) }
-@@ -443,7 +459,10 @@ final class ContainerMountStore: @unchecked Sendable {
-             guard sameUUID(document.mounts[index].volumeUUID, mount.volumeUUID) else {
-                 throw StoreError.conflict("A different volume already owns this mount point")
-             }
--            document.mounts[index] = mount
-+            var replacement = mount
-+            // A stale caller must not erase the persisted ownership contract.
-+            replacement.ownershipPolicy = document.mounts[index].ownershipPolicy ?? mount.ownershipPolicy
-+            document.mounts[index] = replacement
-         } else { document.mounts.append(mount) }
-     }
-     private func putLink(_ link: ManagedDataLinkRecord, into document: inout Document, replacingFor transfer: DataTransferRecord? = nil) throws {
-```
-
-**File**: `AppPorts/Utils/ContainerVolumeMigrator.swift` (modified, +24/-16)
-```diff
-@@ -341,7 +341,8 @@ actor ContainerVolumeMigrator {
-             try TreeCopySession.verifyUnchanged(at: backup, against: baseline)
-             let record = ContainerMountRecord(appName: appName, bundleIdentifier: bundleIdentifier,
-                 dataDirType: item.type.rawValue, mountPointPath: source.path, volumeUUID: uuid,
--                volumeName: volumeName, externalRootPath: externalRootURL.standardizedFileURL.path)
-+                volumeName: volumeName, externalRootPath: externalRootURL.standardizedFileURL.path,
-+                ownershipPolicy: .owners)
-             try store.commitMigration(record: record, transfer: transfer)
-             synchronizeAgent(store)
-             invalidateSizeCache(for: source)
-@@ -364,23 +365,26 @@ actor ContainerVolumeMigrator {
-         let mountPoint = record.mountPointURL
-         try safety.requirePolicy(at: mountPoint)
-         guard try store.recordsStrict().contains(record) else { throw DataOperationSafety.Failure.conflict(mountPoint.path) }
-+        let related = try store.transfers().filter {
-+            $0.mode == .mount && $0.direction == .migrate && $0.createdVolumeUUID == record.volumeUUID
-+                && $0.originalPath == record.mountPointPath && [.awaitingUserVerification, .cleanupRequested].contains($0.phase)
-+        }
-+        let requiresOwnership = record.ownershipPolicy == .owners || related.contains { $0.baseline != nil }
-         if isMountPoint(mountPoint) {
-             try await requireExpectedVolume(record.volumeUUID, at: mountPoint)
-             if try store.remountIntervention(forVolumeUUID: record.volumeUUID) != nil {
-                 throw DataOperationSafety.Failure.conflict(mountPoint.path)
-             }
-+            if requiresOwnership { try requireOwners(at: mountPoint) }
-             return
-         }
--        let related = try store.transfers().filter {
--            $0.mode == .mount && $0.direction == .migrate && $0.createdVolumeUUID == record.volumeUUID
--                && $0.originalPath == record.mountPointPath && [.awaitingUserVerification, .cleanupRequested].contains($0.phase)
--        }
-         try safety.requireNoOverlap(at: mountPoint, ownedMount: record,
-                                     ownedTransferIDs: Set(related.map(\.operationID)))
-         try safety.requireNoManagedFileSystemAncestor(at: mountPoint)
-         let operationID = AppLogger.shared.makeOperationID(prefix: "container-mount")
-         let hint = try await knownMountPoint(for: record, operationID: operationID)
--        try await mountVolume(record.volumeUUID, at: mountPoint, operationID: operationID, knownMountPoint: hint)
-+        try await mountVolume(record.volumeUUID, at: mountPoint, operationID: operationID, knownMountPoint: hint,
-+                              requireOwnership: requiresOwnership)
-         try store.setRemountIntervention(volumeUUID: record.volumeUUID, reason: nil)
-         invalidateSizeCache(for: mountPoint)
-         AppLogger.shared.logContext(
-@@ -548,7 +552,9 @@ actor ContainerVolumeMigrator {
-                 guard lstat(mountPoint.path, &info) == 0, info.st_uid == geteuid(), info.st_gid == getegid() else {
-                     throw TreeCopyError.unsupportedMetadata(mountPoint.path)
-                 }
--                projectedOwner = .init(uid: info.st_uid, gid: info.st_gid)
-+                if record.ownershipPolicy == nil, prior == nil {
-+                    projectedOwner = .init(uid: info.st_uid, gid: info.st_gid)
-+                }
-             }
-         }
-         let id = resumable.first?.operationID ?? UUID()
-@@ -596,10 +602,11 @@ actor ContainerVolumeMigrator {
-                 source = recovery
-             }
-             try requireOwners(at: source)
--            // Offline legacy volumes have no prior verified manifest. A root-owned
--            // APFS volume root was an implementation artifact of the old creator.
--            // Only that root receives the current user's former effective ownership.
--            if !originallyOnline, prior == nil, transfer.legacyRootOwnership == nil {
-+            // A legacy volume can already use owners after a normal remount.
-+            // Without a prior verified manifest, the old creator's root-owned
-+            // volume root needs the same destination projection online or offline.
-+            // Descendants and the retained source keep their actual ownership.
-+            if record.ownershipPolicy == nil, prior == nil, transfer.legacyRootOwnership == nil {
-                 var info = stat()
-                 guard lstat(source.path, &info) == 0 else { throw DataOperationSafety.Failure.inspection(source.path) }
-                 if info.st_uid == 0 {
-@@ -825,7 +832,8 @@ actor ContainerVolumeMigrator {
-         at mountPoint: URL,
-         operationID: String,
-         knownMountPoint: KnownMountPoint = .unknown,
--        allowRelocation: Bool = true
-+        allowRelocation: Bool = true,
-+        requireOwnership: Bool = true
-     ) async throws {
-    
-```
-
-**File**: `AppPortsTests/ContainerVolumeMigratorTests.swift` (modified, +66/-6)
-```diff
-@@ -317,6 +317,66 @@ final class FakeDiskCommandRunner: ShellCommandRunning, @unchecked Sendable {
- 
- @Suite("Container volume migration", .serialized)
- struct ContainerVolumeMigratorTests {
-+    @Test("Legacy remount follows the volume setting; modern remount requires owners", arguments: [false, true])
-+    func remountOwnershipPolicy(modern: Bool) async throws {
-+        let workspace = try Workspace()
-+        defer { workspace.cleanup() }
-+        let runner = FakeDiskCommandRunner(onlineVolumes: ["OWNERSHIP-UUID"])
-+        let source = try workspace.makeContainerDirectory(named: "Policy")
-+        try FileManager.default.removeItem(at: source.appendingPathComponent("payload.txt"))
-+        var record = workspace.record(mountPoint: source, volumeUUID: "OWNERSHIP-UUID")
-+        record.ownershipPolicy = modern ? .owners : nil
-+        try workspace.store.upsert(record)
-+        let migrator = workspace.makeMigrator(runner: runner)
-+        try await migrator.mount(record: record)
-+        let options = modern ? ["-mountOptions", "owners"] : []
-+        #expect(runner.commands(prefix: ["mount"]) == [["mount", "nobrowse", "-mountPoint", source.path] + options + [record.volumeUUID]])
-+
-+        let noowners = workspace.makeMigrator(runner: runner, mountFlags: { _ in UInt32(MNT_IGNORE_OWNERSHIP) })
-+        if modern {
-+            await #expect(throws: (any Error).self) { try await noowners.mount(record: record) }
-+        } else {
-+            try await noowners.mount(record: record)
-+        }
-+        #expect(runner.commands(prefix: ["-u"]).isEmpty)
-+    }
-+
-+    @Test("Verified older migration keeps its owners policy after transfer cleanup and stale writes")
-+    func ownershipSurvivesTransferCleanup() async throws {
-+        let workspace = try Workspace()
-+        defer { workspace.cleanup() }
-+        let runner = FakeDiskCommandRunner()
-+        let migrator = workspace.makeMigrator(runner: runner)
-+        let source = try workspace.makeContainerDirectory(named: "Policy")
-+        let result = try await migrator.migrate(item: workspace.item(for: source), externalRootURL: workspace.externalRootURL,
-+            appName: "Chat", bundleIdentifier: "com.example.chat", progressHandler: nil)
-+        #expect(result.record.ownershipPolicy == .owners)
-+        let file = workspace.rootURL.appendingPathComponent("container-mounts.plist")
-+        var document = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: file), format: nil) as? [String: Any])
-+        var mounts = try #require(document["mounts"] as? [[String: Any]])
-+        mounts[0].removeValue(forKey: "ownershipPolicy")
-+        document["mounts"] = mounts
-+        document["schemaVersion"] = 3
-+        let legacyBytes = try PropertyListSerialization.data(fromPropertyList: document, format: .binary, options: 0)
-+        try legacyBytes.write(to: file)
-+        let old = try #require(try workspace.store.recordsStrict().first)
-+        #expect(old.ownershipPolicy == nil)
-+        #expect(try Data(contentsOf: file) == legacyBytes)
-+        let noowners = workspace.makeMigrator(runner: runner, mountFlags: { _ in UInt32(MNT_IGNORE_OWNERSHIP) })
-+        await #expect(throws: (any Error).self) { try await noowners.mount(record: old) }
-+        let transfer = try #require(try workspace.store.transfers().first)
-+        try workspace.store.requestCleanup(operationID: transfer.operationID)
-+        try workspace.store.finishTransfer(operationID: transfer.operationID, deletionConfirmed: true)
-+        try workspace.store.upsert(old)
-+        let reopened = ContainerMountStore(fileURL: file)
-+        let current = try #require(try reopened.recordsStrict().first)
-+        #expect(current.ownershipPolicy == .owners)
-+        #expect(try reopened.transfers().isEmpty)
-+        let saved = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: file), format: nil) as? [String: Any])
-+        #expect(saved["schemaVersion"] as? Int == 4)
-+        await #expect(throws: (any Error).self) { try await noowners.mount(record: current) }
-+    }
-+
-     @Test("Migration creates a volume, copies data, mounts it in place, and records it")
-     func migrationHappyPath() async throws {
-         let workspace = try Workspace()
-@@ -1148,7 +1208,7 @@ struct ContainerVolumeMigratorTests {
-         #expect(states["ONLINE-UUID"] == .mounted)
-         #expect(states["OFFLINE-UUID"] == .unavailable)
-         #expect(states["MOUNTED-UUID"] == .alreadyMounted)
--        #expect(runner.commands(prefix: ["mount"]) == [["mount", "nobrowse", "-mountPoint", online.path, "-mountOptions", "owners", "ONLINE-UUID"]])
-+        #expect(runner.commands(prefix: ["mount"]) == [["mount", "nobrowse", "-mountPoint", online.path, "ONLINE-UUID"]])
-         // 每个记录只查一次 diskutil（在线 + 挂载点合并）；离线的那个查一次就放弃。
-         #expect(runner.commands(prefix: ["info"]).count == 2)
-         #expect(runner.commands(prefix: ["info"]).allSatisfy { $0.last != "MOUNTED-UUID" })
-@
-```
-
-**File**: `AppPortsTests/DataTransferStoreTests.swift` (modified, +46/-0)
-```diff
-@@ -4,6 +4,52 @@ import Testing
- @testable import AppPorts
- 
- struct DataTransferStoreTests {
-+    @Test("Ownership-aware records require schema 4 before an old writer can discard their meaning", arguments: [false, true])
-+    func ownershipMetadataProtectsAgainstOlderWriters(online: Bool) throws {
-+        let fixture = try Fixture()
-+        defer { fixture.remove() }
-+        let mount = fixture.mount("A")
-+        try fixture.store.upsert(mount)
-+        func document() throws -> [String: Any] {
-+            try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: fixture.file), format: nil) as? [String: Any])
-+        }
-+        #expect(try document()["schemaVersion"] as? Int == 3)
-+        var transfer = fixture.restore(mount)
-+        try fixture.store.beginTransfer(transfer)
-+        let before = try Data(contentsOf: fixture.file)
-+        transfer.legacyRootOwnership = .init(uid: geteuid(), gid: getegid())
-+        transfer.legacyMountFlags = online ? UInt32(MNT_IGNORE_OWNERSHIP) : nil
-+        let rejecting = ContainerMountStore(fileURL: fixture.file, writeData: { _, _ in throw CocoaError(.fileWriteNoPermission) })
-+        #expect(throws: (any Error).self) { try rejecting.updateTransfer(transfer) }
-+        #expect(try Data(contentsOf: fixture.file) == before)
-+        try fixture.store.updateTransfer(transfer)
-+        #expect(try document()["schemaVersion"] as? Int == 4)
-+        let protected = try Data(contentsOf: fixture.file)
-+        #expect(throws: (any Error).self) { try PropertyListDecoder().decode(Schema3Reader.self, from: protected) }
-+        #expect(try ContainerMountStore(fileURL: fixture.file).transfer(operationID: transfer.operationID) == transfer)
-+        // The preceding build wrote these fields as schema 3. Read it without changing bytes,
-+        // then promote atomically on the next mutation instead of dropping the optional fields.
-+        var priorBuild = try document()
-+        priorBuild["schemaVersion"] = 3
-+        let oldBytes = try PropertyListSerialization.data(fromPropertyList: priorBuild, format: .binary, options: 0)
-+        try oldBytes.write(to: fixture.file)
-+        let reopened = ContainerMountStore(fileURL: fixture.file)
-+        #expect(try reopened.transfer(operationID: transfer.operationID) == transfer)
-+        #expect(try Data(contentsOf: fixture.file) == oldBytes)
-+        try reopened.upsert(fixture.mount("Other", volume: "VOLUME-B"))
-+        #expect(try document()["schemaVersion"] as? Int == 4)
-+        #expect(try reopened.transfer(operationID: transfer.operationID) == transfer)
-+    }
-+
-+    private struct Schema3Reader: Decodable {
-+        enum Keys: String, CodingKey { case schemaVersion }
-+        init(from decoder: Decoder) throws {
-+            let values = try decoder.container(keyedBy: Keys.self)
-+            let schema = try values.decode(Int.self, forKey: .schemaVersion)
-+            guard schema == 2 || schema == 3 else { throw ContainerMountStore.StoreError.unsupportedSchema(schema) }
-+        }
-+    }
-+
-     @Test("A different volume cannot silently replace the same recorded source")
-     func rejectsConflictingMountIdentity() throws {
-         let fixture = try Fixture()
-```
-
----
-
-### Incident Patch 13: `7d3061c1` (2026-10-02)
-**Commit Message**: test(scanner): require resolved identity for offline containers
-
-**File**: `AppPortsTests/AppIdentityScannerTests.swift` (modified, +7/-2)
-```diff
-@@ -100,20 +100,25 @@ final class AppIdentityScannerTests: XCTestCase {
-         XCTAssertTrue(result.contains { $0.path.standardizedFileURL.path == nativeData.standardizedFileURL.path })
-     }
- 
--    func testOfflineNameFallbackSurvivesAndResolvesAfterTargetReturns() async throws {
-+    func testOfflineNameFallbackPreservesSupportButRequiresResolvedContainerIdentity() async throws {
-         let f = try IdentityFixture()
-         defer { f.cleanup() }
-         let target = f.root.appendingPathComponent("External/wpsoffice.app")
-         let portal = try f.stub("Apps/wpsoffice.app", id: "com.kingsoft.wpsoffice.mac", target: target)
-         let data = try f.container("com.kingsoft.wpsoffice.mac")
-+        let support = try f.directory("Home/Library/Application Support/wpsoffice")
-         let scanner = f.scanner()
-         let offline = await scanner.scanLibraryDirsWithDiagnostics(for: f.app(portal))
--        XCTAssertTrue(offline.items.contains { $0.path.standardizedFileURL.path == data.standardizedFileURL.path }, "Existing long-name fallback must survive")
-+        XCTAssertTrue(offline.items.contains { $0.path.standardizedFileURL.path == support.standardizedFileURL.path },
-+                      "Non-container name fallback remains available while the real app is offline")
-+        XCTAssertFalse(offline.items.contains { $0.path.standardizedFileURL.path == data.standardizedFileURL.path },
-+                       "An ordinary sandbox container requires a resolved application identity")
-         XCTAssertEqual(offline.identityIssue?.reason, .realAppUnavailable)
-         XCTAssertTrue(offline.readIssues.isEmpty, "Identity failure is not a directory permission error")
-         _ = try f.native("External/wpsoffice.app", id: "com.kingsoft.wpsoffice.mac")
-         let online = await scanner.scanLibraryDirsWithDiagnostics(for: f.app(portal))
-         XCTAssertTrue(online.items.contains { $0.path.standardizedFileURL.path == data.standardizedFileURL.path })
-+        XCTAssertTrue(online.items.contains { $0.path.standardizedFileURL.path == support.standardizedFileURL.path })
-         XCTAssertNil(online.identityIssue)
-     }
- 
-```
-
----
-
-### Incident Patch 14: `a6ffc90d` (2026-10-02)
-**Commit Message**: fix(data): restore legacy APFS volumes with verified ownership
-
-**File**: `AppPorts/Localizable.xcstrings` (modified, +274/-0)
-```diff
-@@ -130140,6 +130140,280 @@
-           }
-         }
-       }
-+    },
-+    "此卷仍在忽略文件所有权，无法验证权限；已停止操作并保留原件：%@" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "This volume still ignores file ownership, so permissions cannot be verified. The operation stopped and originals were preserved: %@"
-+          }
-+        },
-+        "zh-Hant" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "此卷仍在忽略檔案擁有權，無法驗證權限；已停止操作並保留原件：%@"
-+          }
-+        },
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Dieses Volume ignoriert weiterhin Dateieigentümer. Berechtigungen können nicht geprüft werden. Der Vorgang wurde gestoppt, Originale bleiben erhalten: %@"
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Este volumen sigue ignorando la propiedad de los archivos; no se pueden verificar los permisos. La operación se detuvo y los originales se conservaron: %@"
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Ce volume ignore toujours la propriété des fichiers ; les autorisations ne peuvent pas être vérifiées. L’opération s’est arrêtée et les originaux sont conservés : %@"
-+          }
-+        },
-+        "pt" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Este volume ainda ignora a propriedade dos arquivos; não é possível verificar as permissões. A operação foi interrompida e os originais foram preservados: %@"
-+          }
-+        },
-+        "it" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Questo volume ignora ancora la proprietà dei file; non è possibile verificare i permessi. L’operazione è stata interrotta e gli originali sono conservati: %@"
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "このボリュームはファイルの所有権を無視しているため、アクセス権を検証できません。操作を停止し、元のデータを保持しました：%@"
-+          }
-+        },
-+        "ko" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "이 볼륨은 파일 소유권을 무시하고 있어 권한을 검증할 수 없습니다. 작업을 중단하고 원본을 보존했습니다: %@"
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Этот том по-прежнему игнорирует владельцев файлов, поэтому проверить права невозможно. Операция остановлена, оригиналы сохранены: %@"
-+          }
-+        },
-+        "nl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Dit volume negeert nog steeds bestandseigendom; rechten kunnen niet worden geverifieerd. De bewerking is gestopt en de originelen zijn bewaard: %@"
-+          }
-+        },
-+        "pl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Ten wolumin nadal ignoruje właścicieli plików, więc nie można zweryfikować uprawnień. Operacja została zatrzymana, a oryginały zachowane: %@"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Volume ini masih mengabaikan kepemilikan berkas, sehingga izin tidak dapat diverifikasi. Operasi dihentikan dan data asli dipertahankan: %@"
-+          }
-+        },
-+        "tr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Bu birim hâlâ dosya sahipliğini yok sayıyor; izinler doğrulanamıyor. İşlem durduruldu ve asıllar korundu: %@"
-+          }
-+        },
-+        "vi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Ổ đĩa này vẫn bỏ qua quyền sở hữu tệp nên không thể xác minh quyền truy cập. Thao tác đã dừng và bản gốc được giữ lại: %@"
-+          }
-+        },
-+        "eo" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Ĉi tiu volumo ankoraŭ ignoras dosierposedon, do permesoj ne povas esti kontrolitaj. La operacio haltis kaj la originaloj estas konservitaj: %@"
-+          }
-+        },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "यह वॉल्यूम अब भी फ़ाइल स्वामित्व को अनदेखा करता है, इसलिए अनुमतियाँ सत्यापित नहीं की जा सकतीं। कार्रवाई रोक दी गई है और मूल डेटा सुरक्षित है: %@"
-+          }
-+        },
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "لا يزال هذا القسم يتجاهل ملكية الملفات، لذا يتعذر التحقق من الأذونات. أُوقفت العملية وحُفظت النسخ الأصلية: %@"
-+          }
-+        },
-+        "th" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "โวลุ่มนี้ยังคงละเลยความเป็นเจ้าของไฟล์ จึงตรวจ
-```
-
-**File**: `AppPorts/Models/DataTransferErrorPresentation.swift` (modified, +3/-1)
-```diff
-@@ -5,8 +5,10 @@ extension TreeCopyError: LocalizedError {
-         switch self {
-         case .unsafeLayout(let path), .mountBoundary(let path), .hardlinkOutsideSelection(let path), .relativeLinkChangesTarget(let path):
-             return String(format: "数据目录包含不支持的路径关系，已停止操作并保留原件：%@".localized, path)
--        case .unsupportedNode(let path), .unsupportedMetadata(let path), .ownershipDisabled(let path):
-+        case .unsupportedNode(let path), .unsupportedMetadata(let path):
-             return String(format: "无法完整保留此项目的内容或权限，已停止操作并保留原件：%@".localized, path)
-+        case .ownershipDisabled(let path):
-+            return String(format: "此卷仍在忽略文件所有权，无法验证权限；已停止操作并保留原件：%@".localized, path)
-         case .sourceChanged(let path), .verificationFailed(let path):
-             return String(format: "数据在操作期间发生变化或校验不一致，已保留副本，请检查后重试：%@".localized, path)
-         case .destinationExists(let path):
-```
-
-**File**: `AppPorts/Models/DataTransferRecord.swift` (modified, +12/-0)
-```diff
-@@ -82,6 +82,10 @@ struct DataTransferRecord: Codable, Equatable, Identifiable, Sendable {
-     let policyVersion: Int
-     var phase: Phase
-     var baseline: Data?
-+    /// Preserve the effective legacy root owner without rewriting the retained source manifest.
-+    var legacyRootOwnership: TreeCopySnapshot.Ownership? = nil
-+    /// Original online flags, recorded before ownership is enabled; absent for an offline restore.
-+    var legacyMountFlags: UInt32? = nil
-     var recoverableReason: String?
- 
-     init(operationID: UUID = UUID(), mode: Mode, direction: Direction, sourceID: String? = nil,
-@@ -116,6 +120,14 @@ struct DataTransferRecord: Codable, Equatable, Identifiable, Sendable {
-         self.recoverableReason = recoverableReason
-     }
- 
-+    var isUnstartedMountRestore: Bool {
-+        mode == .mount && direction == .restore && [.preparing, .needsRecovery].contains(phase)
-+            && sourceIdentity.isVolumeOnly && destinationIdentity == nil && backupIdentity == nil
-+            && baseline == nil && createdVolumeUUID == nil
-+            && activePath == originalPath && destinationPath == originalPath
-+            && backupPath != nil && stagingPath != nil
-+    }
-+
-     var topologyEntries: [DataPathTopology.Entry] {
-         let origin: DataPathTopology.Origin = [.awaitingUserVerification, .cleanupRequested].contains(phase) ? .retained : .transfer
-         return [originalPath, activePath, destinationPath, backupPath, stagingPath].compactMap { $0 }.map {
-```
-
-**File**: `AppPorts/Services/ContainerMountStore.swift` (modified, +70/-1)
-```diff
-@@ -219,6 +219,32 @@ final class ContainerMountStore: @unchecked Sendable {
-         }
-     }
- 
-+    /// Resume only an unchanged intent for which no copying could have begun.
-+    /// Caller additionally verifies expected path templates, absence and current volume.
-+    func resumeUnstartedMountRestore(_ expected: DataTransferRecord, record: ContainerMountRecord) throws -> DataTransferRecord {
-+        var resumed = expected
-+        try mutate { current in
-+            guard let index = current.transfers.firstIndex(where: { $0.operationID == expected.operationID }),
-+                  current.transfers[index] == expected, expected.isUnstartedMountRestore,
-+                  current.mounts.contains(record), expected.originalPath == record.mountPointPath,
-+                  self.sameUUID(expected.sourceIdentity.volumeUUID, record.volumeUUID),
-+                  expected.appName == record.appName, expected.bundleIdentifier == record.bundleIdentifier,
-+                  expected.dataDirType == record.dataDirType else { throw StoreError.conflict("Restore intent changed or already started") }
-+            if let priorID = expected.priorOperationID {
-+                guard current.transfers.contains(where: {
-+                    $0.operationID == priorID && $0.mode == .mount && $0.direction == .migrate
-+                        && $0.originalPath == expected.originalPath
-+                        && self.sameUUID($0.createdVolumeUUID, record.volumeUUID)
-+                        && [.awaitingUserVerification, .cleanupRequested].contains($0.phase)
-+                }) else { throw StoreError.conflict("Restore migration lineage changed") }
-+            }
-+            resumed.phase = .preparing
-+            resumed.recoverableReason = nil
-+            current.transfers[index] = resumed
-+        }
-+        return resumed
-+    }
-+
-     /// A created volume UUID can be filled once immediately after creation, never replaced.
-     func updateTransfer(_ transfer: DataTransferRecord) throws {
-         try mutate { current in try self.replaceTransfer(transfer, in: &current) }
-@@ -452,7 +478,11 @@ final class ContainerMountStore: @unchecked Sendable {
-               old.createdVolumeUUID == nil || sameUUID(old.createdVolumeUUID, transfer.createdVolumeUUID),
-               old.destinationIdentity == nil || old.destinationIdentity == transfer.destinationIdentity,
-               old.backupIdentity == nil || old.backupIdentity == transfer.backupIdentity,
--              old.baseline == nil || old.baseline == transfer.baseline else {
-+              old.baseline == nil || old.baseline == transfer.baseline,
-+              old.legacyRootOwnership == transfer.legacyRootOwnership
-+                || (old.isUnstartedMountRestore && transfer.isUnstartedMountRestore && old.legacyRootOwnership == nil),
-+              old.legacyMountFlags == transfer.legacyMountFlags
-+                || (old.isUnstartedMountRestore && transfer.isUnstartedMountRestore && old.legacyMountFlags == nil) else {
-             throw StoreError.conflict("Transfer identity or verified baseline changed")
-         }
-         guard permits(old.phase, transfer.phase) else { throw StoreError.invalidState("Invalid transfer phase transition") }
-@@ -488,6 +518,44 @@ final class ContainerMountStore: @unchecked Sendable {
-     }
-     private func validPath(_ path: String) -> Bool { path.hasPrefix("/") && URL(fileURLWithPath: path).standardizedFileURL.path != "/" && !path.contains("\0") }
- 
-+    /// Ordinary records need only the exception marker, not a second in-memory copy of every entry.
-+    private struct LegacyOwnershipMarker: Decodable {
-+        let restoredRootOwnership: TreeCopySnapshot.Ownership?
-+    }
-+
-+    /// The destination-only ownership exception must never leak into source or cleanup metadata.
-+    private func validateLegacyOwnership(_ transfer: DataTransferRecord) throws {
-+        let marker = transfer.baseline.flatMap { try? PropertyListDecoder().decode(LegacyOwnershipMarker.self, from: $0) }
-+        // An intent has no manifest yet; once copying succeeds, both records must agree.
-+        if transfer.baseline != nil, marker?.restoredRootOwnership != transfer.legacyRootOwnership {
-+            throw StoreError.invalidState("Legacy restored-root ownership does not match the verified baseline")
-+        }
-+        guard transfer.legacyRootOwnership != nil || transfer.legacyMountFlags != nil else { return }
-+        try validateLegacyOwnershipIntent(transfer)
-+        if let encoded = transfer.baseline {
-+            guard let snapshot = try? PropertyListDecoder().decode(TreeCopySnapshot.self, from: encoded),
-+                  let root = snapshot.entries.first, root.path.isEmpty, root.kind == .directory,
-+                  snapshot.entries.filter({ $0.path.isEmpty }).count == 1,
-+                  let owner = transfer.legacyRootOwnership,
-+                  root.uid == 0 || root.uid == owner.uid,
-+                  root.identity.inode == transfer.sourceIdenti
-```
-
-**File**: `AppPorts/Utils/ContainerVolumeMigrator.swift` (modified, +108/-9)
-```diff
-@@ -41,6 +41,7 @@ actor ContainerVolumeMigrator {
-         /// 还原时本地副本已复制好，但没能换到原路径。外置卷和记录保持不变。
-         case restoreIncomplete(staging: URL, underlying: Error)
-         case restoreRecordRecovery(staging: URL, underlying: Error)
-+        case ownershipRollbackFailed(URL, operation: Error, rollback: Error)
- 
-         var errorDescription: String? {
-             switch self {
-@@ -94,6 +95,9 @@ actor ContainerVolumeMigrator {
-                     format: "还原未完成，已复制的本地数据保留在「%@」，外置卷也已保留。请检查迁移记录和挂载状态后重试。%@".localized,
-                     staging.path, error.localizedDescription
-                 )
-+            case .ownershipRollbackFailed(let url, let operation, let rollback):
-+                return String(format: "还原失败，且无法恢复卷的原挂载选项；数据已保留，请检查挂载状态：%@\n%@\n%@".localized,
-+                              url.path, operation.localizedDescription, rollback.localizedDescription)
-             }
-         }
-     }
-@@ -510,31 +514,76 @@ actor ContainerVolumeMigrator {
-         let mountPoint = record.mountPointURL
-         // Exact history ownership is required. A stale UI value cannot authorize recovery.
-         guard try store.recordsStrict().contains(record) else { throw MigrationError.alreadyManaged(mountPoint) }
--        let prior = try store.transfers().first {
-+        let transfers = try store.transfers()
-+        let prior = transfers.first {
-             $0.mode == .mount && $0.direction == .migrate && $0.originalPath == record.mountPointPath
-                 && $0.createdVolumeUUID == record.volumeUUID && [.awaitingUserVerification, .cleanupRequested].contains($0.phase)
-         }
--        let ownedIDs = Set(prior.map { [$0.operationID] } ?? [])
-+        let resumable = transfers.filter {
-+            $0.isUnstartedMountRestore && $0.originalPath == record.mountPointPath
-+                && $0.sourceIdentity.volumeUUID?.caseInsensitiveCompare(record.volumeUUID) == .orderedSame
-+                && $0.priorOperationID == prior?.operationID
-+        }
-+        guard resumable.count <= 1 else { throw DataOperationSafety.Failure.conflict(mountPoint.path) }
-+        if let pending = resumable.first { try validateUnstartedRestorePaths(pending, record: record) }
-+        var ownedIDs = Set(prior.map { [$0.operationID] } ?? [])
-+        if let pending = resumable.first { ownedIDs.insert(pending.operationID) }
-         try safety.requireNoOverlap(at: mountPoint, ownedMount: record, ownedTransferIDs: ownedIDs)
-         try safety.requireLocalRestoreParent(at: mountPoint, isMountPoint: isMountPoint)
-         if estimatedTotalBytes > 0, let available = availableCapacity(mountPoint.deletingLastPathComponent()) {
-             let required = Self.requiredFreeBytes(forDataBytes: estimatedTotalBytes)
-             guard available >= required else { throw MigrationError.insufficientSpace(required: required, available: available) }
-         }
--        let id = UUID()
-+        // Online inspection is read-only and must finish before creating an intent.
-+        let originallyOnline = isMountPoint(mountPoint)
-+        var originalFlags: UInt32?
-+        var projectedOwner: TreeCopySnapshot.Ownership?
-+        if originallyOnline {
-+            try await requireExpectedVolume(record.volumeUUID, at: mountPoint)
-+            try await safety.requireNoKnownWriters(at: mountPoint, bundleIdentifier: record.bundleIdentifier)
-+            guard let flags = mountFlags(mountPoint) else { throw DataOperationSafety.Failure.inspection(mountPoint.path) }
-+            originalFlags = flags
-+            if flags & UInt32(MNT_IGNORE_OWNERSHIP) != 0 {
-+                var info = stat()
-+                guard lstat(mountPoint.path, &info) == 0, info.st_uid == geteuid(), info.st_gid == getegid() else {
-+                    throw TreeCopyError.unsupportedMetadata(mountPoint.path)
-+                }
-+                projectedOwner = .init(uid: info.st_uid, gid: info.st_gid)
-+            }
-+        }
-+        let id = resumable.first?.operationID ?? UUID()
-         let staging = mountPoint.deletingLastPathComponent().appendingPathComponent(".appports-restore-staging-\(id.uuidString)")
-         let recovery = stagingMountRootURL.appendingPathComponent("recovery-\(id.uuidString)")
-         var transfer = DataTransferRecord(operationID: id, mode: .mount, direction: .restore,
-             sourceID: prior?.sourceID, appName: record.appName, bundleIdentifier: record.bundleIdentifier,
-             dataDirType: record.dataDirType, originalPath: mountPoint.path, activePath: mountPoint.path,
-             destinationPath: mountPoint.path, backupPath: recovery.path, stagingPath: staging.path,
-             sourceIdentity: DataPathIdentity(volumeUUID: record.volumeUUID), priorOperationID: prior?.operationID)
--        try store.beginTransfer(transfer)
-+        if let pending = resumable.first {
-+            transfer = try store.resumeUnstartedMountRestore(pending, record: record)
-+        } else {
-+            try store.beginTransfer(transfer)
-+        }
-+        if let
-```
-
-**File**: `AppPorts/Utils/DiskUtility.swift` (modified, +12/-0)
-```diff
-@@ -295,6 +295,18 @@ struct DiskUtility: Sendable {
-         _ = try await run(["mount", "nobrowse", "-mountPoint", mountPoint.path] + options + [volume])
-     }
- 
-+    /// Explicit restore only. Keep Finder/safety flags while enabling real ownership.
-+    func setOwnershipForRestore(mountPoint: URL, originalFlags: UInt32, enabled: Bool) async throws {
-+        let flags = enabled ? originalFlags & ~UInt32(MNT_IGNORE_OWNERSHIP) : originalFlags
-+        var options = Self.updateOptions(addingNobrowseTo: flags)
-+        if enabled { options += ",owners" }
-+        let result = try await runner.run(executable: Self.mountPath,
-+            arguments: ["-u", "-o", options, mountPoint.path], timeout: commandTimeout)
-+        guard result.status == 0, !result.timedOut else {
-+            throw Failure.commandFailed(command: "mount ownership update", output: result.combinedText)
-+        }
-+    }
-+
-     /// 给早期版本挂上、没带 `nobrowse` 的卷补上这个选项，不用卸载。
-     ///
-     /// `mount -u` 会按给出的选项重设标志，只写 `nobrowse` 会把 `noowners` 等冲掉
-```
-
-**File**: `AppPorts/Utils/TreeCopySession.swift` (modified, +28/-8)
-```diff
-@@ -8,12 +8,19 @@ import Foundation
- /// identities for checking a retained original. The caller must retain that
- /// original: no userspace copy can rule out a write after this method returns.
- actor TreeCopySession {
-+    // macOS owns this provenance tag. It may inject it into a new local root,
-+    // and xattr removal can return success without removing it. Do not copy or
-+    // erase the OS tag; retain it in manifests for diagnostics, but exclude it
-+    // from portable metadata equality (including manifests from older builds).
-+    nonisolated private static let systemProvenanceAttribute = "com.apple.provenance"
-+
-     func copy(
-         from source: URL,
-         to destination: URL,
-         excludingRootEntries: Set<String> = [],
-         finalDestination: URL? = nil,
-         logicalSourceRoot: URL? = nil,
-+        legacyRootOwnership: TreeCopySnapshot.Ownership? = nil,
-         progressHandler: FileCopier.ProgressHandler? = nil
-     ) async throws -> TreeCopySnapshot {
-         try Task.checkCancellation()
-@@ -23,8 +30,15 @@ actor TreeCopySession {
-         guard !Self.contains(source.path, destination.path), !Self.contains(destination.path, source.path) else {
-             throw TreeCopyError.unsafeLayout(destination.path)
-         }
--        let baseline = try Self.snapshot(at: source, excludingRootEntries: excludingRootEntries,
-+        var baseline = try Self.snapshot(at: source, excludingRootEntries: excludingRootEntries,
-                                          finalDestination: finalDestination, logicalSourceRoot: logicalSourceRoot)
-+        if let legacyRootOwnership {
-+            guard legacyRootOwnership.uid == geteuid(), legacyRootOwnership.gid == getegid(),
-+                  let root = baseline.entries.first, root.path.isEmpty, root.kind == .directory,
-+                  root.uid == 0 || root.uid == legacyRootOwnership.uid,
-+                  DiskUtility.isMountPoint(source) else { throw TreeCopyError.unsupportedMetadata(source.path) }
-+            baseline.restoredRootOwnership = legacyRootOwnership
-+        }
-         try Self.requireOwnership(at: destination.deletingLastPathComponent())
-         let context = CopyContext(snapshot: baseline, source: source, destination: destination, progress: progressHandler)
-         await progressHandler?(FileCopier.Progress(copiedBytes: 0, totalBytes: baseline.logicalBytes, currentFile: source.lastPathComponent))
-@@ -58,7 +72,7 @@ actor TreeCopySession {
-     /// Checks semantic equality, including hardlink relationships, without
-     /// comparing source and destination device/inode numbers.
-     nonisolated static func verifyCopy(at root: URL, against snapshot: TreeCopySnapshot) throws {
--        try compare(scan(canonicalRoot(root), exclusions: snapshot.excludedRootEntries), snapshot, identities: false)
-+        try compare(scan(canonicalRoot(root), exclusions: snapshot.excludedRootEntries), snapshot, identities: false, destinationOwnership: true)
-     }
- 
-     /// Checks a retained original even after its root has been renamed. ctime
-@@ -204,7 +218,7 @@ actor TreeCopySession {
- 
-         init(snapshot: TreeCopySnapshot, source: URL, destination: URL, progress: FileCopier.ProgressHandler?) {
-             self.snapshot = snapshot
--            entries = Dictionary(uniqueKeysWithValues: snapshot.entries.map { ($0.path, $0) })
-+            entries = Dictionary(uniqueKeysWithValues: snapshot.entries.map { ($0.path, snapshot.destinationEntry($0)) })
-             children = Dictionary(grouping: snapshot.entries.filter { !$0.path.isEmpty }.map(\.path)) {
-                 ($0 as NSString).deletingLastPathComponent
-             }
-@@ -350,10 +364,10 @@ actor TreeCopySession {
-         try setACL(nil, fd: fd, path: entry.path)
-         guard fchown(fd, entry.uid, entry.gid) == 0 else { throw posix(entry.path) }
-         let current = try extendedAttributes(fd: fd, path: entry.path)
--        for name in current.keys where entry.extendedAttributes[name] == nil {
-+        for name in current.keys where name != systemProvenanceAttribute && entry.extendedAttributes[name] == nil {
-             guard fremovexattr(fd, name, 0) == 0 else { throw posix(entry.path) }
-         }
--        for (name, data) in entry.extendedAttributes {
-+        for (name, data) in entry.extendedAttributes where name != systemProvenanceAttribute {
-             guard data.withUnsafeBytes({ fsetxattr(fd, name, $0.baseAddress, $0.count, 0, 0) }) == 0 else { throw posix(entry.path) }
-         }
-         guard fchmod(fd, entry.mode) == 0 else { throw posix(entry.path) }
-@@ -539,21 +553,27 @@ actor TreeCopySession {
-         return (fd, components.last!)
-     }
- 
--    nonisolated private static func compare(_ actual: TreeCopySnapshot, _ expected: TreeCopySnapshot, identities: Bool) throws {
-+    nonisolated private static func compare(_ actual: TreeCopySnapshot, _ expected: TreeCopySnapshot, identities: Bool, destinationOwnership: Bool = false) throws {
-         guard actual.entries.m
-```
-
-**File**: `AppPorts/Utils/TreeCopySnapshot.swift` (modified, +18/-0)
-```diff
-@@ -3,6 +3,11 @@ import Foundation
- /// A content and metadata manifest. Paths are relative to the selected root.
- /// Source identities support checking a retained original after a rename.
- struct TreeCopySnapshot: Codable, Equatable, Sendable {
-+    struct Ownership: Codable, Equatable, Sendable {
-+        let uid: UInt32
-+        let gid: UInt32
-+    }
-+
-     struct Identity: Codable, Equatable, Hashable, Sendable {
-         let device: Int32
-         let inode: UInt64
-@@ -32,6 +37,19 @@ struct TreeCopySnapshot: Codable, Equatable, Sendable {
-         let hardlinkGroup: String?
-     }
- 
-+    /// Only legacy mount restores may preserve the formerly projected root owner.
-+    /// entries always retain the actual source ownership for unchanged/cleanup checks.
-+    var restoredRootOwnership: Ownership? = nil
-+
-+    func destinationEntry(_ entry: Entry) -> Entry {
-+        guard entry.path.isEmpty, let owner = restoredRootOwnership else { return entry }
-+        return Entry(path: entry.path, kind: entry.kind, identity: entry.identity, mode: entry.mode,
-+                     uid: owner.uid, gid: owner.gid, flags: entry.flags, birthTime: entry.birthTime,
-+                     modificationTime: entry.modificationTime, extendedAttributes: entry.extendedAttributes,
-+                     acl: entry.acl, size: entry.size, digest: entry.digest, linkTarget: entry.linkTarget,
-+                     hardlinkGroup: entry.hardlinkGroup)
-+    }
-+
+     private func prepareDirectory() throws {
+@@ -202,6 +235,29 @@ struct AppUpdateProtectionRelocation: Codable, Equatable, Sendable {
+     let path: String
+     let identity: DataPathIdentity
      let entries: [Entry]
-     let excludedRootEntries: Set<String>
-     var logicalBytes: Int64 { entries.filter { $0.kind == .file }.reduce(0) { $0 + $1.size } }
++    /// Old records written before 1.9.1 decode without this field and mean
++    /// `.managed`. Only adoption of a v1.9.0 `chflags -R uchg` tree sets it.
++    var adoptedLegacyLock: Bool? = nil
++
++    /// Why AppPorts believes it may revoke the immutable bits listed above.
++    var origin: AppUpdateProtectionOrigin { adoptedLegacyLock == true ? .adoptedV1_9_0 : .managed }
++}
++
++/// `managed` records name bits AppPorts set itself. `adoptedV1_9_0` records name
++/// bits v1.9.0 set with `chflags -R uchg` and never recorded; the transfer still
++/// only ever clears the immutable bit, never other flags.
++enum AppUpdateProtectionOrigin: Equatable, Sendable {
++    case managed
++    case adoptedV1_9_0
++}
++
++/// What the caller knows about the object it is about to move. Kept only for
++/// logging: locking is AppPorts' own bookkeeping, so a move always clears it.
++struct AppUpdateProtectionAdoption: Sendable {
++    /// A local entry AppPorts created still resolves to this exact object.
++    let managedLocalEntry: URL?
++    /// The incoming source is provably the same application.
++    let sameApplicationSource: URL?
+ }
+ 
+ struct AppUpdateProtectionRecordIssue: Identifiable, Sendable {
+@@ -371,6 +427,52 @@ final class AppUpdateProtectionStore {
+         return true
+     }
+ 
++    /// The update lock is AppPorts' own protection, and 1.9.0 wrote it with
++    /// `chflags -R uchg` without recording anything. Every attempt to tell those
++    /// bits from a user's own lock ends up blocking ordinary restores, because a
++    /// bundle that was updated or repaired after 1.9.0 locked it keeps some flags
++    /// and loses others. So a move clears the im
+```
+
+**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +54/-5)
+```diff
+@@ -94,6 +94,9 @@ final class AppTransferTransaction {
+             if pending.sourcePath == source.path && pending.destinationPath == destination.path {
+                 if !pending.isSwitchComplete
+                     || (pending.successorActivation == nil && (try? observeActivation(pending)) == true) {
++                    // A resume would fail on its first manifest read with a raw
++                    // file error; report the actionable reason instead.
++                    try AppTransferJournalIntegrity.requireVerifiedManifests(for: pending, store: store)
+                     return try await resume(pending.operationID, progress: progress)
+                 }
+             }
+@@ -183,7 +186,27 @@ final class AppTransferTransaction {
+         let journal = Journal(record, store: store)
+         do {
+             try checkpoint(.intentSaved, journal)
++            // Suspend only the protection bits first: a locked tree cannot be
++            // walked for a baseline, so this must precede every read. The tokens
++            // for it are already durable in the record.
+             try suspendPreparationProtection(journal)
++            // With flags suspended, everything that reads the tree happens now.
++            // The replaced target's baseline in particular must be durable before
++            // any content moves: a resume cannot tell its authorized contents from
++            // later writes to the same inode, so it would have to refuse, and
++            // refusing with a copy already in flight strands both sides.
++            if existing {
++                do {
++                    try store.writeBaseline(try captureBaseline(destination), named: "existing", operationID: id)
++                } catch {
++                    // Nothing was copied yet: end this intent instead of leaving a
++                    // record whose only outcome is the refusal on the next attempt.
++                    throw Self.failure("无法记录替换目标的初始状态，本次操作尚未开始，未改动任何一方：".localized
++                        + error.localizedDescription, at: destination)
++                }
++                journal.record.hasExistingDestinationBaseline = true
++                try journal.save()
++            }
+             for relative in record.applicationPaths {
+                 let url = relative.isEmpty ? source : source.appendingPathComponent(relative)
+                 let valid = try signatureIsValid(at: url)
+@@ -192,10 +215,6 @@ final class AppTransferTransaction {
+                 }
+                 journal.record.signatureChecks[relative] = valid
+             }
+-            if existing {
+-                try store.writeBaseline(try captureBaseline(destination), named: "existing", operationID: id)
+-                journal.record.hasExistingDestinationBaseline = true
+-            }
+             try journal.save()
+             return try await continueTransfer(journal, progress: progress)
+         } catch { return try handle(error, journal: journal) }
+@@ -253,6 +272,7 @@ final class AppTransferTransaction {
+ 
+     func resume(_ id: UUID, progress: FileCopier.ProgressHandler?) async throws -> AppTransferResult {
+         let journal = Journal(try store.record(id), store: store)
++        try AppTransferJournalIntegrity.requireVerifiedManifests(for: journal.record, store: store)
+         if journal.record.phase == .cancelled { return try reconcileCancelled(journal) }
+         do { return try await continueTransfer(journal, progress: progress) }
+         catch { return try handle(error, journal: journal) }
+@@ -451,6 +471,7 @@ final class AppTransferTransaction {
+     }
+ 
+     private func captureProtectionRecovery(for record: AppTransferRecord) throws -> AppTransferProtectionRecovery {
++        try adoptLegacyLockIfNeeded(for: record)
+         let source = URL(fileURLWithPath: record.sourcePath)
+         try requireIdentity(record.sourceIdentity, at: source)
+         let sourceToken = try protection.captureForExchange(at: source)
+@@ -467,8 +488,36 @@ final class AppTransferTransaction {
+         return recovery
+     }
+ 
++    /// v1.9.0 locked external copies with `chflags -R uchg` and recorded nothing,
++    /// so 1.9.1 saw those bits as somebody else's and the verified copier failed
++    /// closed on them. Only a restore needs this: a migration reads the local app,
++    /// which AppPorts never locks. Record the whole tree's immutable bits first,
++    /// then clear them through the normal suspension path.
++    private func adoptLegacyLockIfNeeded(for record: AppTransferRecord) throws {
++        guard record.direction == .restore else { return }
++        let source = URL(fileURLWithPath: record.sourcePath)
++        // The root is not a reliable indicator: an app that was updated after
++        // being locked can have an unlocked root with locked children. Record the
++        // whole tree whenever anything in it is still locked.
++        let destination = URL(fileURLWithPath: record.destinationPath)
++        _ = try protection.adoptLegacyLock(so
 ```
 
 ---
 
-### Incident Patch 15: `4e1d484d` (2026-10-02)
-**Commit Message**: fix: default directory details to compact height
+### Incident Patch 2: `1c6eae1f` (2026-10-18)
+**Commit Message**: fix: copy transparently compressed files as their logical content
 
-**File**: `AppPorts/Views/Components/AppDataDirectoryBrowser.swift` (modified, +1/-1)
+macOS compresses installed files on its own (`UF_COMPRESSED`), notably App
+Store executables and idle binaries. The verified copier read physical
+extents with SEEK_DATA/SEEK_HOLE, but for a compressed file those describe
+the compressed stream and SEEK_DATA returns ENXIO, so the whole file looked
+like a hole. The copy then held compressed bytes, verification failed, and a
+single such file blocked migrating an entire application — a 572 MB app
+failed over one GPU helper.
+
+`UF_COMPRESSED` is now accepted and such sources skip the extent fast path,
+reading sequentially so the kernel decodes them like any ordinary read. The
+flag itself is not replayed, so the destination holds the logical bytes.
+Every other flag still fails closed. Verified against a real 572 MB app:
+the copied helper's hash matches the original and it stays executable.
+
+**File**: `AppPorts/Utils/FileDataCopyStream.swift` (modified, +8/-1)
 ```diff
-@@ -13,7 +13,7 @@ struct AppDataDirectoryBrowser<Actions: View>: View {
-     @State private var selectedItemID: String?
-     @State private var collapsedDirectoryIDs: Set<String> = []
-     @State private var collapsedGroups: Set<DataDirType> = []
--    @State private var informationPanelHeight: CGFloat = 160
-+    @State private var informationPanelHeight: CGFloat = DirectoryPanelLayout.minimumInformationHeight
-     @State private var informationResizeStartHeight: CGFloat?
-     @State private var isInformationHandleHovered = false
-     @FocusState private var isOutlineFocused: Bool
+@@ -20,13 +20,20 @@ struct FileDataCopyStream {
+     private var finished = false
+     private(set) var usesExtentFallback = false
+ 
++    /// A transparently compressed file (UF_COMPRESSED) stores a compressed
++    /// data stream, and SEEK_DATA/SEEK_HOLE describe those physical extents.
++    /// Reading them positionally hands back compressed bytes, so the logical
++    /// content never arrives and verification fails. Such files take the plain
++    /// sequential path, which decodes on read like any ordinary read(2).
+     init(from source: Int32, to destination: Int32, size: Int64, path: String,
+-         extentSeek: @escaping ExtentSeek = { lseek($0, $1, $2) }) {
++         extentSeek: @escaping ExtentSeek = { lseek($0, $1, $2) },
++         isCompressed: Bool = false) {
+         self.source = source
+         self.destination = destination
+         self.size = size
+         self.path = path
+         self.extentSeek = extentSeek
++        usesExtentFallback = isCompressed
+         buffer = [UInt8](repeating: 0, count: max(1, min(Self.bufferByteCount, Int(clamping: size))))
+     }
+ 
+```
+
+**File**: `AppPorts/Utils/TreeCopySession.swift` (modified, +16/-4)
+```diff
+@@ -755,6 +755,9 @@ actor TreeCopySession {
+         try assertStable(before, try status(fd), path: path)
+         DataTransferSession.current?.didReadContent(bytes: (kind == .file ? before.st_size : 0) + (resourceFork?.size ?? 0))
+         return TreeCopySnapshot.Entry(path: path, kind: kind, identity: identity(before), mode: before.st_mode & 0o7777,
++                                      // `UF_COMPRESSED` is storage detail, not content: the
++                                      // destination is written uncompressed, so replaying it
++                                      // would both fail to apply and break verification.
+                                       uid: before.st_uid, gid: before.st_gid, flags: before.st_flags & UInt32(UF_HIDDEN | UF_NODUMP),
+                                       birthTime: timestamp(before.st_birthtimespec), modificationTime: timestamp(before.st_mtimespec),
+                                       extendedAttributes: attributes, resourceFork: resourceFork, acl: acl, size: kind == .file ? before.st_size : 0,
+@@ -861,7 +864,12 @@ actor TreeCopySession {
+     nonisolated private static func copyData(from source: Int32, to destination: Int32, size: Int64, path: String,
+                                            extentSeek: @escaping ExtentSeek,
+                                            progress: @Sendable (Int64) async -> Void) async throws {
+-        var stream = FileDataCopyStream(from: source, to: destination, size: size, path: path, extentSeek: extentSeek)
++        // Pass the source's compression state so the stream decodes instead of
++        // copying physical extents (see FileDataCopyStream.init).
++        var info = stat()
++        let compressed = fstat(source, &info) == 0 && info.st_flags & UInt32(UF_COMPRESSED) != 0
++        var stream = FileDataCopyStream(from: source, to: destination, size: size, path: path,
++                                        extentSeek: extentSeek, isCompressed: compressed)
+         while let offset = try stream.copyNextChunk() {
+             // Preserve the verified data copier's existing progress behavior:
+             // fallback files yield between chunks; native extents report once
+@@ -1078,9 +1086,13 @@ actor TreeCopySession {
+     nonisolated private static func validateFlags(_ value: stat, path: String) throws {
+         // Validate before opening: opening a dataless item can hydrate it, and
+         // opening an unsupported compression representation can alter flags.
+-        // Compressed files fail closed until logical resource-fork handling is
+-        // independently verified. Physical compression is not copied blindly.
+-        let supported = UInt32(UF_HIDDEN | UF_NODUMP)
++        // `UF_COMPRESSED` is accepted: macOS compresses installed files on its
++        // own (App Store executables, idle binaries), and a decmpfs stream is
++        // decoded by an ordinary read. The data stream below reads such files
++        // sequentially instead of trusting physical extents, and the flag is not
++        // replayed, so the copy is stored as its logical bytes. Every other flag
++        // still fails closed.
++        let supported = UInt32(UF_HIDDEN | UF_NODUMP | UF_COMPRESSED)
+         guard value.st_flags & ~supported == 0 else { throw TreeCopyError.unsupportedMetadata(path) }
+     }
+     nonisolated private static func contains(_ root: String, _ path: String) -> Bool { path == root || path.hasPrefix(root == "/" ? "/" : root + "/") }
+```
+
+---
+
+### Incident Patch 3: `534d9b70` (2026-10-18)
+**Commit Message**: fix: retire unrecoverable transfer journals instead of asking the user
+
+A journal whose manifest is gone, whose external object was replaced, or
+whose attempt already ended can never advance, yet it keeps its paths
+blocked and maintenance retried it on every launch. The first attempt at
+this surfaced a panel asking the user to choose between retry, cancel and
+end — but a committed transfer can neither be cancelled nor safely ended,
+so the panel offered two buttons that could only fail.
+
+Both outcomes are AppPorts' own bookkeeping and neither needs information
+only the user has. Maintenance now retries everything that can still
+advance, then archives the rest to `app-transfers/archived/`, moving only
+the record and its manifests; every application, retained copy and staging
+object stays where it is. A committed transfer is never retired, because
+its remaining work is deleting a copy under its own verified manifest.
+
+`remove` now deletes the record before its manifests: the record is the
+authority, and the old order left records that could never be verified or
+completed again.
+
+**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +114/-5)
+```diff
+@@ -114,6 +114,15 @@ struct AppMigrationService {
+         return operationLock
+     }
+ 
++    /// The object at a path is still the recorded filesystem object. Used after
++    /// adoption, where reading and rewriting protection facts must not span a
++    /// replacement or a remount.
++    private func requireIdentity(_ expected: DataPathIdentity, at url: URL) throws {
++        guard try expected.matchesFilesystemObject(DataPathIdentity.capture(url)) else {
++            throw AppTransferTransaction.failure("路径对应的对象或磁盘已改变，已保留内容。".localized, at: url)
++        }
++    }
++
+     private func recheckWriterAdmission() throws {
+         if let writerAdmissionCheck { try writerAdmissionCheck() }
+         else { try transferStore.recheckWriterAdmission() }
+@@ -256,12 +265,16 @@ struct AppMigrationService {
+             throw Exclusion.failure("无法确认真实应用身份，未更改存储位置。".localized)
+         }
+         let protection = AppUpdateProtectionStore(transferStore: transferStore)
++        // The lock is AppPorts' own, and older versions never recorded it. Record
++        // what is locked here so the relocation can suspend and restore exactly
++        // those bits; a tree with no lock simply has nothing to record.
++        let identityBeforeAdoption = try DataPathIdentity.capture(source)
++        _ = try protection.adoptLegacyLock(source, evidence: .init(
++            managedLocalEntry: localURLs.sorted(by: { $0.path < $1.path })
++                .first { localPortalKind(at: $0, linkedTo: source) != nil },
++            sameApplicationSource: nil))
++        try requireIdentity(identityBeforeAdoption, at: source)
+         let protectionRelocation = try protection.captureForExchange(at: source)
+-        let sourceFlags = try SignatureSnapshot.info(at: source).st_flags
+-        if sourceFlags & UInt32(UF_IMMUTABLE) != 0,
+-           protectionRelocation?.entries.contains(where: { $0.relativePath.isEmpty }) != true {
+-            throw AppTransferTransaction.failure("应用更新保护来源无法确认。".localized, at: source)
+-        }
+         let signatureRelocation = try signatureFactStore.captureRelocation(from: source, transferStore: transferStore)
+         var portals: [Exclusion.Journal.Portal] = []
+         var kinds: [URL: LocalPortalKind] = [:]
+@@ -503,6 +516,12 @@ struct AppMigrationService {
+         } else { confirmedReplacement = nil }
+         let mayReplace = externalTargetReplacementReason(for: appToMove, destinationURL: destinationURL) != nil
+             || confirmedReplacement != nil
++        // Re-migrating over a v1.9.0-locked external copy needs the same adoption
++        // as a restore: without a provenance record the replacement's copy step
++        // fails closed on the very lock this app already carries.
++        if confirmedReplacement != nil {
++            try adoptLegacyLockOnReplacement(of: appToMove.path, at: destinationURL)
++        }
+         let kind: LocalPortalKind = portalCreationOverride != nil ? .wholeAppSymlink
+             : appToMove.usesFolderOperation ? .folderMirror : preferredPortalKind(for: appToMove.path)
+         let result = try await transferTransaction().start(app: appToMove, destination: destinationURL, direction: .migrate,
+@@ -515,6 +534,18 @@ struct AppMigrationService {
+         return result
+     }
+ 
++    /// A retained external copy still carries AppPorts' update lock and is about
++    /// to be replaced by a verified copy of the same application. Record what is
++    /// locked so the replacement's removal step can proceed.
++    private func adoptLegacyLockOnReplacement(of sourceURL: URL, at destinationURL: URL) throws {
++        guard (try? SignatureSnapshot.info(at: destinationURL).st_flags & UInt32(UF_IMMUTABLE)) ?? 0 != 0 else { return }
++        let protection = AppUpdateProtectionStore(transferStore: transferStore)
++        let identity = try DataPathIdentity.capture(destinationURL)
++        _ = try protection.adoptLegacyLock(destinationURL, evidence: .init(managedLocalEntry: nil,
++            sameApplicationSource: sourceURL))
++        try requireIdentity(identity, at: destinationURL)
++    }
++
+     private func needsUpdateProtection(_ app: AppItem) -> Bool {
+         if !app.usesFolderOperation { return needsUchgLock(at: app.path) }
+         return ((try? fileManager.contentsOfDirectory(at: app.path, includingPropertiesForKeys: nil)) ?? [])
+@@ -562,6 +593,84 @@ struct AppMigrationService {
+         return try transferTransaction().cancel(operationID)
+     }
+ 
++    /// What maintenance should do with one journal. A record that can still
++    /// advance is retried; one whose facts already contradict the disk cannot
++    /// advance, so it is retired automatically.
++    enum TransferRetryDisposition: Sendable {
++        case retry
++        /// Retrying cannot change the outcome. The caller retires the record
++        /// itself — it is never handed to the user as a task.
++        case terminal(String)
++
++        var isTerminal: Bool {
++            if case .terminal = self { return true }
++   
+```
+
+**File**: `AppPorts/Services/OperationMaintenance.swift` (modified, +6/-0)
+```diff
+@@ -43,12 +43,18 @@ actor OperationMaintenance {
+         do {
+             let inventory = try applications.pendingTransferInspection()
+             warnings += inventory.issues.map(\.message)
++            // Retry everything that can still advance, then close out whatever
++            // provably cannot. Both are AppPorts' own bookkeeping: a stuck record
++            // keeps its paths blocked, so leaving it for the user would hand them
++            // a state they cannot act on and an app they cannot operate.
+             for record in inventory.records {
++                guard !applications.retryDisposition(for: record).isTerminal else { continue }
+                 do {
+                     let result = try await applications.retryTransfer(operationID: record.operationID)
+                     if let message = result.pendingMessage { warnings.append(message) }
+                 } catch { warnings.append(record.appName + ": " + error.localizedDescription) }
+             }
++            warnings += applications.retireUnrecoverableTransfers()
+         } catch { warnings.append(error.localizedDescription) }
+         // Signature work acquires its own locks, after data/app locks release.
+         warnings += await CodeSigner().performAutomaticMaintenance()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58** (2026-08-27): docs: fix broken star history chart in README (@Dessalines39394)
-- **PR #55** (2026-07-02): feat: 体积会话缓存 + 弹窗本地化修复（中文→本地化、补全俄语）+ 受保护应用迁移预警 (@niazlv)
-- **PR #54** (2026-07-01): Add custom directory migration and safer rollback (@admintertar)
-- **PR #39** (closed): Update bug report instructions for diagnostic logs (@wzh4869)
-- **PR #38** (closed): Install Vercel Web Analytics with latest docs (@vercel[bot])
-- **PR #37** (2026-05-09): Develop (@wzh4869)
-- **PR #34** (2026-04-29): Develop (@wzh4869)
-- **PR #26** (2026-03-15): 测试 (@wzh4869)
+- **PR #85** (2026-10-19): feat: warn when restoring a bundle that was already degraded on its volume (@wzh4869)
+- **PR #84** (closed): feat: warn when restoring a bundle that was already degraded on its volume (@wzh4869)
+- **PR #83** (2026-10-19): feat: relax app bundle migration to a product-integrity copy profile (@wzh4869)
+- **PR #76** (2026-10-14): docs: add Agent Notes guide and Codex skill discovery (@wzh4869)
+- **PR #75** (2026-10-14): docs: vendor Agent Notes skill and migrate decision records (@wzh4869)
+- **PR #74** (2026-10-08): docs: resolve GitBook cross-space links and anchors (@wzh4869)
 
 ---
 
@@ -4052,3 +2050,50 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. clear update protection locks on any app location change
+
+**RULE**:
+When implementing operations in `AppPorts/Models/AppTransferRecord.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `66d8f7cd`: clear update protection locks on any app location change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AppPorts/Models/AppTransferRecord.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+/// Resume verifies against recorded manifests. A journal whose manifest was lost
+/// (v1.9.1 removed manifests before its record) can never be verified again, so
+/// every caller must hear that instead of a raw file error. Reported as one
+/// actionable message; the caller decides whether to retry or end the record.
+enum AppTransferJournalIntegrity {
+    static func missingManifests(for record: AppTransferRecord, store: AppTransferStore) -> Bool {
+        var required = record.hasCandidateBaseline ? ["candidate"] : []
+        if record.hasSourceBaseline { required.append("source") }
+        if record.hasExistingDestinationBaseline { required.append("existing") }
+        for item in record.cleanupItems where !item.completed { required.append(item.baselineName) }
+        // Legacy portals embed their baseline in the record itself, so they never
+        // require a manifest file and must not be reported as missing here.
+        return Set(required).contains { (try? store.baseline($0, operationID: record.operationID)) == nil }
+    }
+
+    static func requireVerifiedManifests(for record: AppTransferRecord, store: AppTransferStore) throws {
+        guard missingManifests(for: record, st
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `66d8f7cd` are properly handled with clean fallback behavior.

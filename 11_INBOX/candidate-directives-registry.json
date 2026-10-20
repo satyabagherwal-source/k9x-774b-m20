@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T01:11:57.938Z",
+  "last_updated": "2026-10-20T01:21:06.745Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2048,6 +2048,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
       "learning_id": "learn-github-pixeltable-pixeltable"
+    },
+    {
+      "id": "CD-YTVD",
+      "directive_title": "release): publish :floppy_disk: :tada: [skip ci]",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "React95/React95",
+      "source_commit": "ebf98e93",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-react95-react95"
     }
   ]
 }

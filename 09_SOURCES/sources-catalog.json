@@ -5333,10 +5333,10 @@
     "repository": "React95/React95",
     "platform": "github",
     "sourceUrl": "https://github.com/React95/React95",
-    "sourceVersion": "ecdb9cad",
+    "sourceVersion": "ebf98e93",
     "license": "NOASSERTION",
-    "contentHash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
-    "lastHarvestedAt": "2026-10-19T14:33:24.495Z",
+    "contentHash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
+    "lastHarvestedAt": "2026-10-20T01:21:06.742Z",
     "learningId": "learn-github-react95-react95"
   },
   "embassy-rs-embassy": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "83e4aeed",
+    "sourceVersion": "502f93ca",
     "license": "Apache-2.0",
-    "contentHash": "0070cf610d1064310473243fd8ccf632bd2164344a974d8a8a5bf455f9ec9028",
-    "lastHarvestedAt": "2026-10-19T11:09:07.658Z",
+    "contentHash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
+    "lastHarvestedAt": "2026-10-20T01:21:07.934Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -9808,5 +9808,25 @@
     "contentHash": "06000cbe3b2e834a0cadb89534e9edcfa1d40af89f37ce89c2afafee6d0bd777",
     "lastHarvestedAt": "2026-10-20T01:11:50.603Z",
     "learningId": "learn-github-aheze-popovers"
+  },
+  "rdfjs-namespace": {
+    "repository": "rdfjs-base/namespace",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rdfjs/namespace",
+    "sourceVersion": "b7efbf00",
+    "license": "MIT",
+    "contentHash": "2895864e341f4a369edee39c20b37dc9bb058d129731d61e7b1569c3f11edb43",
+    "lastHarvestedAt": "2026-10-20T01:21:12.309Z",
+    "learningId": "learn-github-rdfjs-base-namespace"
+  },
+  "wzh4869-appports": {
+    "repository": "wzh4869/AppPorts",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wzh4869/AppPorts",
+    "sourceVersion": "8ef2dad3",
+    "license": "Apache-2.0",
+    "contentHash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
+    "lastHarvestedAt": "2026-10-20T01:21:13.155Z",
+    "learningId": "learn-github-wzh4869-appports"
   }
 }

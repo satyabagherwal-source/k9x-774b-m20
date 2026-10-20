@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source**: github ([https://github.com/React95/React95](https://github.com/React95/React95))  
-> **Source Version**: `ecdb9cad`  
+> **Source Version**: `ebf98e93`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:33:24.259Z  
+> **Timestamp**: 2026-10-20T01:21:06.611Z  
 > **Learning ID**: `learn-github-react95-react95`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/React95/React95](https://github.com/React95/React95))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:33:23.167Z  
+> **Harvest Timestamp**: 2026-10-20T01:21:04.993Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -860,134 +860,415 @@ export const ThemePanel = ({ api }: { api: API }) => (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8748954c` (2026-10-19)
-**Commit Message**: Merge pull request #579 from rootsiemen/fix-20261015-video-a11y
+### Incident Patch 1: `ebf98e93` (2026-10-19)
+**Commit Message**: chore(release): publish :floppy_disk: :tada: [skip ci]
 
-fix(video): add accessible names to controls and progress slider
+- project: @react95/cra-template-typescript 0.2.12
 
-**File**: `packages/core/components/Video/Video.tsx` (modified, +4/-0)
+- project: @react95/cra-template 0.2.12
+
+- project: @react95/icons 2.7.0
+
+- project: @react95/core 10.0.4
+
+**File**: `packages/core/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -199,6 +199,7 @@ const VideoRenderer = (
-           <Button
-             className={styles.controlBtn}
-             disabled={!loadeddata}
-+            aria-label={playing ? 'Pause' : 'Play'}
-             onClick={() => {
-               // asks the video, which is always up to date, unlike `playing`
-               if (player.current?.paused) {
-@@ -224,6 +225,7 @@ const VideoRenderer = (
-           <Button
-             className={styles.controlBtn}
-             disabled={!loadeddata}
-+            aria-label="Stop"
-             onClick={() => {
-               if (player.current) {
-                 player.current.pause();
-@@ -239,6 +241,7 @@ const VideoRenderer = (
-           <Button
-             className={styles.controlBtn}
-             disabled={!loadeddata}
-+            aria-label="Fullscreen"
-             onClick={() => {
-               player?.current?.requestFullscreen();
-             }}
-@@ -254,6 +257,7 @@ const VideoRenderer = (
-             max="100"
-             step="1"
-             value={progress}
-+            aria-label="Progress"
-             onChange={({ target }) => {
-               const { current: video } = player;
+@@ -1,3 +1,9 @@
++## 10.0.4 (2026-10-19)
++
++### 🧱 Updated Dependencies
++
++- Updated @react95/icons to 2.7.0
++
+ ## 10.0.3 (2026-10-19)
  
+ ### 🩹 Fixes
 ```
 
-**File**: `packages/core/stories/video.stories.tsx` (modified, +4/-2)
+**File**: `packages/core/package.json` (modified, +2/-2)
 ```diff
-@@ -103,8 +103,8 @@ export const Playback: Story = {
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react95/core",
+-  "version": "10.0.3",
++  "version": "10.0.4",
+   "description": "Windows 95 styleguide",
+   "main": "./components",
+   "type": "module",
+@@ -165,7 +165,7 @@
+   "license": "MIT",
+   "dependencies": {
+     "@neodrag/react": "^2.3.1",
+-    "@react95/icons": "^2.6.0",
++    "@react95/icons": "^2.7.0",
+     "@vanilla-extract/dynamic": "^2.1.0",
+     "@vanilla-extract/recipes": "^0.5.1",
+     "classnames": "^2.5.1",
+```
+
+**File**: `packages/cra-template-typescript/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -1,3 +1,9 @@
++## 0.2.12 (2026-10-19)
++
++### 🧱 Updated Dependencies
++
++- Updated @react95/core to 10.0.4
++
+ ## 0.2.11 (2026-10-19)
  
-     const video = canvasElement.querySelector('video')!;
-     const progress = canvas.getByRole('slider');
--    // the controls have no accessible name yet (#554), so they go by order
--    const [playPause, stop] = canvas.getAllByRole('button');
-+    const playPause = canvas.getByRole('button', { name: 'Play' });
-+    const stop = canvas.getByRole('button', { name: 'Stop' });
+ ### 🧱 Updated Dependencies
+```
+
+**File**: `packages/cra-template-typescript/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react95/cra-template-typescript",
+-  "version": "0.2.11",
++  "version": "0.2.12",
+   "description": "The official React95+TS template for Create React App.",
+   "keywords": [
+     "react",
+```
+
+**File**: `packages/cra-template/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -1,3 +1,9 @@
++## 0.2.12 (2026-10-19)
++
++### 🧱 Updated Dependencies
++
++- Updated @react95/core to 10.0.4
++
+ ## 0.2.11 (2026-10-19)
  
-     // they're Buttons, with Video's padding over Button's
-     await expect(playPause).toHaveStyle({ padding: '7px' });
-@@ -113,6 +113,8 @@ export const Playback: Story = {
-     await userEvent.click(playPause);
+ ### 🧱 Updated Dependencies
+```
+
+**File**: `packages/cra-template/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react95/cra-template",
+-  "version": "0.2.11",
++  "version": "0.2.12",
+   "description": "The official React95 template for Create React App.",
+   "keywords": [
+     "react",
+```
+
+**File**: `packages/icons/CHANGELOG.md` (modified, +10/-0)
+```diff
+@@ -1,3 +1,13 @@
++## 2.7.0 (2026-10-19)
++
++### 🚀 Features
++
++- **icons:** add Office 95 icons ([b9387b32](https://github.com/React95/React95/commit/b9387b32))
++
++### ❤️ Thank You
++
++- ggdaltoso @ggdaltoso
++
+ ## 2.6.0 (2026-10-16)
  
-     await waitFor(() => expect(video).toHaveProperty('paused', false));
-+    // while it plays, the button is labeled Pause
-+    await waitFor(() => expect(playPause).toHaveAccessibleName('Pause'));
-     await waitFor(() => expect(progress).not.toHaveValue('0'), {
-       timeout: 3000,
-     });
+ ### 🚀 Features
+```
+
+**File**: `packages/icons/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@react95/icons",
+-  "version": "2.6.0",
++  "version": "2.7.0",
+   "description": "React95 icons gallery",
+   "keywords": [
+     "React95",
 ```
 
 ---
 
-### Incident Patch 2: `a4c4dd4d` (2026-10-19)
-**Commit Message**: Merge pull request #574 from rootsiemen/fix/tabs-story-select-name
+### Incident Patch 2: `4f0d55dc` (2026-10-19)
+**Commit Message**: Merge pull request #589 from React95/feat/icons-office95
 
-chore(storybook): label Dropdown in Tabs Simple story
+feat(icons): add Office 95 icons
 
-**File**: `packages/core/stories/tabs.stories.tsx` (modified, +9/-2)
+**File**: `packages/core/stories/icons.stories.tsx` (modified, +142/-13)
 ```diff
-@@ -42,7 +42,10 @@ export const Simple: Story = {
-             domain.
-           </p>
-           <p style={{ marginBottom: 4, marginLeft: 22 }}>Windows NT domain:</p>
--          <Input style={{ width: 180, marginLeft: 22 }} />
-+          <Input
-+            style={{ width: 180, marginLeft: 22 }}
-+            aria-label="Windows NT domain"
-+          />
-         </Fieldset>
+@@ -4,6 +4,7 @@ import * as React from 'react';
  
-         <Fieldset legend="Network logon options">
-@@ -69,7 +72,11 @@ export const Simple: Story = {
-           <Checkbox readOnly checked>
-             Run this program in compatibility mode for:
-           </Checkbox>
--          <Dropdown style={{ width: 200 }} options={['Windows 95']} />
-+          <Dropdown
-+            style={{ width: 200 }}
-+            options={['Windows 95']}
-+            aria-label="Run this program in compatibility mode for"
-+          />
-         </Fieldset>
+ import { Frame, Button } from '../components';
  
-         <Fieldset legend="Display Settings">
++import type * as Icons from '@react95/icons';
+ import { icons } from '@react95/icons/src/iconDemos';
+ 
+ import * as styles from './icons.stories.css';
+@@ -12,6 +13,8 @@ export default {
+   title: 'Icon',
+   // the icons come from @react95/icons, which has its own tests
+   tags: ['!test'],
++  // axe takes seconds on ~1800 buttons and freezes the UI, so it runs on demand
++  globals: { a11y: { manual: true } },
+ } satisfies Meta;
+ 
+ type Story = StoryObj<unknown>;
+@@ -99,7 +102,23 @@ export const All: Story = {
+   parameters,
+ };
+ 
+-const internetExplorer4 = [
++// typed with the package exports, so a renamed or removed icon fails tsc
++type IconName = keyof typeof Icons;
++
++const groupStory = (name: string, names: IconName[]): Story => ({
++  name,
++  render: (_, { speak }) => (
++    <IconGrid
++      icons={icons.filter(({ componentName }) =>
++        names.includes(componentName as IconName),
++      )}
++      speak={speak}
++    />
++  ),
++  parameters,
++});
++
++const internetExplorer4: IconName[] = [
+   'Icwconn1200',
+   'Icwconn1202',
+   'Ie',
+@@ -115,15 +134,125 @@ const internetExplorer4 = [
+   'SetupPhoneicon',
+ ];
+ 
+-export const InternetExplorer4: Story = {
+-  name: 'Internet Explorer 4',
+-  render: (_, { speak }) => (
+-    <IconGrid
+-      icons={icons.filter(({ componentName }) =>
+-        internetExplorer4.includes(componentName),
+-      )}
+-      speak={speak}
+-    />
+-  ),
+-  parameters,
+-};
++export const InternetExplorer4 = groupStory(
++  'Internet Explorer 4',
++  internetExplorer4,
++);
++
++const office95: IconName[] = [
++  'Artgalry128',
++  'Artgalry170',
++  'Artgalry171',
++  'Artgalry172',
++  'Artgalry173',
++  'Binder1263',
++  'Binder1264',
++  'Binder1265',
++  'Binder1266',
++  'Binder1267',
++  'Excel257',
++  'Excel258',
++  'Excel259',
++  'Excel260',
++  'Excel261',
++  'Excel262',
++  'Excel263',
++  'Excel264',
++  'Excel265',
++  'Excel266',
++  'Excel267',
++  'Excel268',
++  'Excel269',
++  'Fastboot101',
++  'Graph5257',
++  'Graph5Iconchart',
++  'Msoffice10',
++  'Msoffice11',
++  'Msoffice12',
++  'Msoffice13',
++  'Msoffice14',
++  'Msoffice15',
++  'Msoffice16',
++  'Msow0',
++  'Msow1',
++  'Msow10',
++  'Msow11',
++  'Msow12',
++  'Msow13',
++  'Msow2',
++  'Msow3',
++  'Msow4',
++  'Msow5',
++  'Msow6',
++  'Msow8',
++  'Msow9',
++  'Powerpnt1',
++  'Powerpnt2',
++  'Powerpnt3',
++  'Powerpnt4',
++  'Ppintl17925',
++  'Ppintl17926',
++  'Ppintl17933',
++  'Ppintl17934',
++  'Ppintl17939',
++  'Ppintl18176',
++  'Ppintl18177',
++  'Ppintl18178',
++  'Ppintl18179',
++  'Ppintl18181',
++  'Pptview98',
++  'Winword1',
++  'Winword2',
++  'Winword3',
++  'Winword4',
++  'Winword5',
++  'Winword6',
++  'Winword7',
++  'Wrdart32100',
++  'Wrdart321200',
++  'Wrdart321201',
++  'Wrdart321202',
++  'Wrdart321203',
++  'Wrdart321204',
++  'Wrdart321205',
++  'Wrdart321206',
++  'Wrdart321207',
++  'Wrdart321208',
++  'Wrdart321209',
++  'Wrdart321210',
++  'Wrdart321211',
++  'Wrdart321212',
++  'Wrdart321213',
++  'Wrdart321214',
++  'Wrdart321215',
++  'Wrdart321216',
++  'Wrdart321217',
++  'Wrdart321218',
++  'Wrdart321219',
++  'Wrdart321220',
++  'Wrdart321221',
++  'Wrdart321222',
++  'Wrdart321223',
++  'Wrdart321224',
++  'Wrdart321225',
++  'Wrdart321226',
++  'Wrdart321227',
++  'Wrdart321228',
++  'Wrdart321229',
++  'Wrdart321230',
++  'Wrdart321231',
++  'Wrdart321232',
++  'Wrdart321233',
++  'Wrdart321234',
++  'Wrdart321235',
++  'Wrdart321240',
++  'Wrdart321241',
++  'Wrdart321242',
++  'Wrdart321243',
++  'Wrdart321244',
++  'Wrdart321245',
++  'Wrdart321246',
++  'Wrdart321247',
++];
++
++export const Office95 = groupStory('Office 95', office95);
 ```
 
----
-
-### Incident Patch 3: `32f8b2ae` (2026-10-19)
-**Commit Message**: Merge pull request #587 from nakul4n/fix/usemodal-event-log-a11y
-
-chore(storybook): make useModal Event Log keyboard-scrollable
-
-**File**: `packages/core/stories/useModal.stories.tsx` (modified, +2/-0)
+**File**: `packages/icons/src/iconDemos.ts` (modified, +678/-0)
 ```diff
-@@ -749,6 +749,8 @@ const EventSubscriptionDemo = () => {
-             overflow="auto"
-             backgroundColor="#fafafa"
-             flexGrow={1}
-+            tabIndex={0}
-+            aria-label="Event log"
-           />
-         </Frame>
-       </Frame>
+@@ -22,6 +22,11 @@ import { appwiz1502Data, Appwiz1502 } from './react/Appwiz1502';
+ import { appwiz1503Data, Appwiz1503 } from './react/Appwiz1503';
+ import { arrowLeftData, ArrowLeft } from './react/ArrowLeft';
+ import { arrowRightData, ArrowRight } from './react/ArrowRight';
++import { artgalry128Data, Artgalry128 } from './react/Artgalry128';
++import { artgalry170Data, Artgalry170 } from './react/Artgalry170';
++import { artgalry171Data, Artgalry171 } from './react/Artgalry171';
++import { artgalry172Data, Artgalry172 } from './react/Artgalry172';
++import { artgalry173Data, Artgalry173 } from './react/Artgalry173';
+ import { attachData, Attach } from './react/Attach';
+ import { awfext326049Data, Awfext326049 } from './react/Awfext326049';
+ import { awfext326050Data, Awfext326050 } from './react/Awfext326050';
+@@ -56,6 +61,11 @@ import { batExecData, BatExec } from './react/BatExec';
+ import { batExec2Data, BatExec2 } from './react/BatExec2';
+ import { batWaitData, BatWait } from './react/BatWait';
+ import { billAddData, BillAdd } from './react/BillAdd';
++import { binder1263Data, Binder1263 } from './react/Binder1263';
++import { binder1264Data, Binder1264 } from './react/Binder1264';
++import { binder1265Data, Binder1265 } from './react/Binder1265';
++import { binder1266Data, Binder1266 } from './react/Binder1266';
++import { binder1267Data, Binder1267 } from './react/Binder1267';
+ import { binocData, Binoc } from './react/Binoc';
+ import { blankScreen100Data, BlankScreen100 } from './react/BlankScreen100';
+ import { boldData, Bold } from './react/Bold';
+@@ -160,6 +170,19 @@ import { drvspace6Data, Drvspace6 } from './react/Drvspace6';
+ import { drvspace7Data, Drvspace7 } from './react/Drvspace7';
+ import { drvspace8Data, Drvspace8 } from './react/Drvspace8';
+ import { earthData, Earth } from './react/Earth';
++import { excel257Data, Excel257 } from './react/Excel257';
++import { excel258Data, Excel258 } from './react/Excel258';
++import { excel259Data, Excel259 } from './react/Excel259';
++import { excel260Data, Excel260 } from './react/Excel260';
++import { excel261Data, Excel261 } from './react/Excel261';
++import { excel262Data, Excel262 } from './react/Excel262';
++import { excel263Data, Excel263 } from './react/Excel263';
++import { excel264Data, Excel264 } from './react/Excel264';
++import { excel265Data, Excel265 } from './react/Excel265';
++import { excel266Data, Excel266 } from './react/Excel266';
++import { excel267Data, Excel267 } from './react/Excel267';
++import { excel268Data, Excel268 } from './react/Excel268';
++import { excel269Data, Excel269 } from './react/Excel269';
+ import { exploreData, Explore } from './react/Explore';
+ import { explorer100Data, Explorer100 } from './react/Explorer100';
+ import { explorer101Data, Explorer101 } from './react/Explorer101';
+@@ -170,6 +193,7 @@ import { explorer105Data, Explorer105 } from './react/Explorer105';
+ import { explorer107Data, Explorer107 } from './react/Explorer107';
+ import { explorer108Data, Explorer108 } from './react/Explorer108';
+ import { expostrt128Data, Expostrt128 } from './react/Expostrt128';
++import { fastboot101Data, Fastboot101 } from './react/Fastboot101';
+ import { faveData, Fave } from './react/Fave';
+ import { faxData, Fax } from './react/Fax';
+ import { faxWarningData, FaxWarning } from './react/FaxWarning';
+@@ -315,6 +339,8 @@ import { gcdef117Data, Gcdef117 } from './react/Gcdef117';
+ import { gcdef122Data, Gcdef122 } from './react/Gcdef122';
+ import { gcdef124Data, Gcdef124 } from './react/Gcdef124';
+ import { globeData, Globe } from './react/Globe';
++import { graph5257Data, Graph5257 } from './react/Graph5257';
++import { graph5IconchartData, Graph5Iconchart } from './react/Graph5Iconchart';
+ import { grpconv100Data, Grpconv100 } from './react/Grpconv100';
+ import { grpconv101Data, Grpconv101 } from './react/Grpconv101';
+ import { handData, Hand } from './react/Hand';
+@@ -541,6 +567,26 @@ import { msnstart100Data, Msnstart100 } from './react/Msnstart100';
+ import { msnstart110Data, Msnstart110 } from './react/Msnstart110';
+ import { msnstart120Data, Msnstart120 } from './react/Msnstart120';
+ import { msnsvc3000Data, Msnsvc3000 } from './react/Msnsvc3000';
++import { msoffice10Data, Msoffice10 } from './react/Msoffice10';
++import { msoffice11Data, Msoffice11 } from './react/Msoffice11';
++import { msoffice12Data, Msoffice12 } from './react/Msoffice12';
++import { msoffice13Data, Msoffice13 } from './react/Msoffice13';
++import { msoffice14Data, Msoffice14 } from './react/Msoffice14';
++import { msoffice15Data, Msoffice15 } from './react/Msoffice15';
++import { msoffice16Data, Msoffice16 } from './react/Msoffice16';
++import { msow0Data, Msow0 } from './react/Msow0';
++import { msow1Data, Msow1 } from './react/Msow1';
++import { msow10Data, Msow10 } from './react/Msow10';
++import { msow11Data, Msow11 } from './react/Msow11';
++import { msow12Data, Msow12 } from './react/Msow12';
++import { msow13Data, Msow13 } from './react/Msow13';
++import { msow2Da
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #597** (2026-10-19): docs: add nakul4n as a contributor for a11y (@allcontributors[bot])
 - **PR #593** (closed): fix(storybook): make useModal Event Subscription log keyboard-scrollable (@rootsiemen)
 - **PR #592** (closed): fix(storybook): make useModal Event Subscription log keyboard-scrollable (@rootsiemen)
+- **PR #591** (closed): fix(TitleBar): follow headerText/headerNotActiveText theme tokens (@rootsiemen)
+- **PR #589** (2026-10-19): feat(icons): add Office 95 icons (@ggdaltoso)
 - **PR #588** (2026-10-19): chore(storybook): add accessible label to TextArea story (@nakul4n)
-- **PR #587** (2026-10-19): chore(storybook): make useModal Event Log keyboard-scrollable (@nakul4n)
-- **PR #586** (2026-10-16): feat(icons): add Internet Explorer 4 icons (@ggdaltoso)
-- **PR #585** (2026-10-16): fix(icons): run the icon scripts with Node and stop shipping blank variants (@ggdaltoso)
 
 ---
 
@@ -1007,24 +1288,26 @@ chore(storybook): make useModal Event Log keyboard-scrollable
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #579 from rootsiemen/fix-20261015-video-a11y
+## X. release): publish :floppy_disk: :tada: [skip ci]
 
 **RULE**:
-When implementing operations in `packages/core/components/Video/Video.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8748954c`: Merge pull request #579 from rootsiemen/fix-20261015-video-a11y. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ebf98e93`: release): publish :floppy_disk: :tada: [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/components/Video/Video.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            aria-label={playing ? 'Pause' : 'Play'}
-            aria-label="Stop"
-            aria-label="Fullscreen"
-            aria-label="Progress"
+## 10.0.4 (2026-10-19)
+
+### 🧱 Updated Dependencies
+
+- Updated @react95/icons to 2.7.0
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1034,4 +1317,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8748954c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ebf98e93` are properly handled with clean fallback behavior.

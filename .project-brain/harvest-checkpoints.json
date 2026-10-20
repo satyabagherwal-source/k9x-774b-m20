@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T01:11:57.942Z",
+  "last_updated": "2026-10-20T01:21:13.162Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8119,14 +8119,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react95-react95",
-      "content_hash": "afb64b642e9715f396cc4072caf05a13a40f2eccadd6e07860e755db15efb25c",
-      "verified_at": "2026-10-19T14:33:24.501Z",
+      "content_hash": "e489a9afff9164d9c4996561d4a9077682de64cde5a32261326dda0468e565cf",
+      "verified_at": "2026-10-20T01:21:06.749Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:33:24.501Z"
+      "last_updated": "2026-10-20T01:21:06.749Z"
     },
     "embassy-rs/embassy": {
       "repository": "embassy-rs/embassy",
@@ -11764,14 +11764,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "0070cf610d1064310473243fd8ccf632bd2164344a974d8a8a5bf455f9ec9028",
-      "verified_at": "2026-10-19T11:09:07.664Z",
+      "content_hash": "accb53788a38b6191710e1f08407fe1ecd31686f47ae0121eb18b78d6349bbea",
+      "verified_at": "2026-10-20T01:21:07.940Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:09:07.664Z"
+      "last_updated": "2026-10-20T01:21:07.940Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
@@ -14757,6 +14757,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T01:11:50.609Z"
+    },
+    "rdfjs-base/namespace": {
+      "repository": "rdfjs-base/namespace",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rdfjs-base-namespace",
+      "content_hash": "2895864e341f4a369edee39c20b37dc9bb058d129731d61e7b1569c3f11edb43",
+      "verified_at": "2026-10-20T01:21:12.316Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:21:12.316Z"
+    },
+    "wzh4869/AppPorts": {
+      "repository": "wzh4869/AppPorts",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wzh4869-appports",
+      "content_hash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
+      "verified_at": "2026-10-20T01:21:13.161Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T01:21:13.161Z"
     }
   },
   "repos": {

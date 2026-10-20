@@ -3625,3 +3625,7 @@ Every entry in this ledger must capture:
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `b69c22fb` | Multi-dimensional audit evidence | 2026-10-20T01:11:48.260Z |
 | `learn-github-aheze-popovers` | `https://github.com/aheze/Popovers` | `576b4d3e` | Multi-dimensional audit evidence | 2026-10-20T01:11:50.603Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `031953b6` | Multi-dimensional audit evidence | 2026-10-20T01:11:57.933Z |
+| `learn-github-react95-react95` | `https://github.com/React95/React95` | `ebf98e93` | Multi-dimensional audit evidence | 2026-10-20T01:21:06.742Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `502f93ca` | Multi-dimensional audit evidence | 2026-10-20T01:21:07.934Z |
+| `learn-github-rdfjs-base-namespace` | `https://github.com/rdfjs/namespace` | `b7efbf00` | Multi-dimensional audit evidence | 2026-10-20T01:21:12.309Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `8ef2dad3` | Multi-dimensional audit evidence | 2026-10-20T01:21:13.155Z |
