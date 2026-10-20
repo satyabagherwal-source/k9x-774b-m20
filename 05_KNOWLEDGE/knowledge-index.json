@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:07:00.714Z",
-  "total_verified_learnings": 1028,
+  "last_updated": "2026-10-20T03:13:18.398Z",
+  "total_verified_learnings": 1030,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5255,8 +5255,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "835550fb",
-      "content_hash": "dd5f115f0dd12a88b14b3f2db18761bd5849972a2b8a63007a2786eb3fb9627e",
+      "source_version": "cc23e63f",
+      "content_hash": "b72463d4d10eb2a8cebe298855aaa92f76fa25875c7ce11f2633d009bf9797d1",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5294,6 +5294,11 @@
           "number": 2723,
           "title": "CODEOWNERS: Fix vendor metrics ownership",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3018,
+          "title": "Revert \"workflows: Upgrade to RHEL 9\"",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5301,7 +5306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:03:03.201Z",
+      "verified_at": "2026-10-20T03:13:18.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36143,22 +36148,35 @@
     "learn-github-planetable-planet": {
       "learning_id": "learn-github-planetable-planet",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "planetable-planet",
+      "source": "Planetable/Planet",
+      "repository": "Planetable/Planet",
       "slug": "planetable-planet",
       "platform": "github",
       "source_url": "https://github.com/Planetable/Planet",
-      "source_version": "HEAD",
-      "content_hash": "a2b6f191ad68cba0619a2be93d548659e5d0db7e3af944a54fd11853d123b986",
+      "source_version": "0fd2b7fe",
+      "content_hash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
       "dossier_path": "07_PROJECT_LEARNING/planetable-planet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/planetable-planet-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3017,
+          "title": "macOS 12 crash from dangling unowned planet references",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.066Z"
+      "verified_at": "2026-10-20T03:13:13.779Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pointfreeco-isowords": {
       "learning_id": "learn-github-pointfreeco-isowords",
@@ -59705,20 +59723,35 @@
     "learn-github-devexpress-testcafe": {
       "learning_id": "learn-github-devexpress-testcafe",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "DevExpress/testcafe",
       "repository": "DevExpress/testcafe",
       "slug": "devexpress-testcafe",
       "platform": "github",
       "source_url": "https://github.com/DevExpress/testcafe",
-      "source_version": "main",
-      "content_hash": "5b529c217d94ee1dbe3487e8035642fd1ac64258aba04f0f126eabb135d1623f",
+      "source_version": "4ae235c8",
+      "content_hash": "0a162a59fcb8a139c08dc541ea92aeb724774258583a114a354f80787c578879",
       "dossier_path": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3016,
+          "title": "build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:13:11.790Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mswjs-msw": {
       "learning_id": "learn-github-mswjs-msw",
@@ -97471,6 +97504,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:07:00.704Z"
+    },
+    "rule-3016": {
+      "learning_id": "rule-3016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3016,
+      "title": "build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)",
+      "source_url": "https://github.com/DevExpress/testcafe",
+      "source_version": "4ae235c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:13:11.790Z"
+    },
+    "rule-3017": {
+      "learning_id": "rule-3017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3017,
+      "title": "macOS 12 crash from dangling unowned planet references",
+      "source_url": "https://github.com/Planetable/Planet",
+      "source_version": "0fd2b7fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:13:13.779Z"
+    },
+    "rule-3018": {
+      "learning_id": "rule-3018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3018,
+      "title": "Revert \"workflows: Upgrade to RHEL 9\"",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "cc23e63f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:13:18.385Z"
     }
   },
   "aliases": {

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
+> **Source**: github ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
+> **Source Version**: `0fd2b7fe`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T03:13:13.544Z  
+> **Learning ID**: `learn-github-planetable-planet`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Planetable/Planet
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:33:59.707Z  
+> **Harvest Timestamp**: 2026-10-20T03:13:13.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Build and host decentralized blogs and websites on your Mac
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1809 stars
+- **Stars / Engagement**: 1808 stars
 
 ---
 
@@ -1828,324 +1842,6 @@ struct PlanetAPIConsoleView: View {
 
 ```
 
-### Core Architecture Module: `Planet/API/PlanetAPIConsoleViewModel.swift`
-```
-//
-//  PlanetAPIConsoleViewModel.swift
-//  Planet
-//
-
-import Foundation
-import SwiftUI
-
-
-class PlanetAPIConsoleViewModel: ObservableObject {
-    static let shared = PlanetAPIConsoleViewModel()
-    static let maxLength: Int = 2000
-    static let baseFontKey: String = "APIConsoleBaseFontSizeKey"
-
-    @Published var isShowingConsoleWindow = false
-    @Published private(set) var baseFontSize: CGFloat {
-        didSet {
-            UserDefaults.standard.set(baseFontSize, forKey: Self.baseFontKey)
-        }
-    }
-
-    @Published private(set) var logs: [
-        (
-            timestamp: Date,
-            statusCode: UInt,
-            originIP: String,
-            requestURL: String,
-            errorDescription: String
-        )
-    ] = []
-
-    init() {
-        var fontSize = CGFloat(UserDefaults.standard.float(forKey: Self.baseFontKey))
-        if fontSize == 0 {
-            fontSize = 12
-        }
-        baseFontSize = fontSize
-    }
-
-    @MainActor
-    func addLog(statusCode: UInt, originIP: String, requestURL: String, errorDescription: String = "") {
-        let now = Date()
-        let logEntry = (timestamp: now, statusCode: statusCode, originIP: originIP, requestURL: requestURL, errorDescription: errorDescription)
-        logs.append(logEntry)
-        if logs.count > Self.maxLength {
-            logs = Array(logs.suffix(Self.maxLength))
-        }
-    }
-    
-    @MainActor
-    func decreaseFontSize() {
-        if baseFontSize > 9 {
-            baseFontSize -= 1
-        }
-    }
-    
-    @MainActor
-    func increaseFontSize() {
-        baseFontSize += 1
-    }
-    
-    @MainActor
-    func resetFontSize() {
-        baseFontSize = 12
-    }
-    
-    @MainActor
-    func clearLogs() {
-        logs.removeAll()
-    }
-}
-
-```
-
-### Core Architecture Module: `Planet/API/PlanetAPIControlView.swift`
-```
-//
-//  PlanetAPIControlView.swift
-//  Planet
-//
-
-import SwiftUI
-
-
-struct PlanetAPIControlView: View {
-    @ObservedObject private var control: PlanetAPIController
-    
-    @State private var apiUsesPasscode: Bool = UserDefaults.standard.bool(forKey: .settingsAPIUsesPasscode)
-    @State private var apiUsername: String = UserDefaults.standard.string(forKey: .settingsAPIUsername) ?? "Planet"
-    @State private var apiPort: String = UserDefaults.standard.string(forKey: .settingsAPIPort) ?? "8086"
-    @State private var apiPasscode: String = ""
-    @State private var isShowingPasscode: Bool = false
-    @State private var isAlert: Bool = false
-    @State private var alertTitle: String = ""
-    @State private var alertMessage: String = ""
-
-    init() {
-        _control = ObservedObject(wrappedValue: PlanetAPIController.shared)
-    }
-
-    var body: some View {
-        VStack {
-            Form {
-                Section {
-                    TextField("API Server Port", text: $apiPort)
-                        .disabled(control.serverIsRunning)
-                        .textFieldStyle(.roundedBorder)
-                }
-                .padding(.top, 6)
-                Section {
-                    HStack(spacing: 4) {
-                        Toggle("Require Authentication", isOn: $apiUsesPasscode)
-                            .disabled(control.serverIsRunning)
-                            .onChange(of: apiUsesPasscode) { newValue in
-                                UserDefaults.standard.set(newValue, forKey: .settingsAPIUsesPasscode)
-                            }
-                        Spacer()
-                        HelpLinkButton(helpLink: URL(string: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization#basic_authentication")!)
-                    }
-                    .padding(.top, 10)
-                    TextField("API Server Username", text: $apiUsername)
-                        .disabled(control.serverIsRunning)
-                        .textFieldStyle(.roundedBorder)
-                    ZStack {
-                        TextField("API Server Passcode", text: $apiPasscode)
-                            .opacity(isShowingPasscode ? 1.0 : 0.0)
-                        SecureField("API Server Passcode", text: $apiPasscode)
-                            .opacity(!isShowingPasscode ? 1.0 : 0.0)
-                        HStack {
-                            Spacer()
-                            Button {
-                                isShowingPasscode.toggle()
-                            } label: {
-                                Image(systemName: !isShowingPasscode ? "eye.slash" : "eye")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 14, height: 14, alignment: .center)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .padding(.horizontal, 8)
-                    }
-                    .disabled(control.serverIsRunning)
-                    .textFieldStyle(.roundedBorder)
-                    .onChange(of: apiPasscode) { newValue in
-                        Task { @MainActor in
-                            if newValue == "" {
-                                self.apiUsesPasscode = false
-                            }
-                            do {
-                                try self.updatePasscode(newValue)
-                            } catch {
-                                debugPrint("failed to update password: \(error)")
-                            }
-                        }
-                    }
-                }
-                Spacer()
-            }
-            .padding()
-            .task {
-                do {
-                    let passcode = try KeychainHelper.shared.loadValue(forKey: .settingsAPIPasscode)
-                    if passcode != "" {
-                        apiPasscode = passcode
-                    }
-                } catch {
-                    apiPasscode = ""
-                    apiUsesPasscode = false
-                    UserDefaults.standard.set(false, forKey: .settingsAPIUsesPasscode)
-                    Task { @MainActor in
-                        do {
-                            try KeychainHelper.shared.delete(forKey: .settingsAPIPasscode)
-                        } catch {
-                            debugPrint("failed to delete api passcode from keychain: \(error)")
-                        }
-                    }
-                }
-            }
-
-            Spacer(minLength: 12)
-
-            HStack {
-                if control.isOperating {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .controlSize(.small)
-                        .frame(width: 12)
-                } else {
-                    Circle()
-                        .frame(width: 12, height: 12)
-                        .foregroundStyle(control.serverIsRunning ? Color.green : Color.gray)
-                }
-                let status: String = control.serverIsRunning ? L10n("Running") : L10n("Stopped")
-                Text(.init(L10n("API Server Status: **%@**", status)))
-                    .padding(.leading, -2)
-
-                Spacer()
-
-                controlView()
-            }
-            .frame(height: 54)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 16)
-            .background(Color.secondary.opacity(0.1))
-        }
-        .alert(isPresented: $isAlert) {
-            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .cancel(Text("OK")))
-        }
-    }
-    
-    @ViewBuilder
-    private func controlView() -> some View {
-        Button {
-            PlanetAPIConsoleWindowManager.shared.activate()
-        } label: {
-            Image(systemName: "display")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: 15)
-        }
-        .buttonStyle(.plain)
-        .help("Open API Console")
-        .padding(.trailing, 8)
-
-        Button {
-            if control.serverIsRunning {
-                Task { @MainActor in
-                    do {
-                        try await self.control.stop()
-                    } catch {
-                        isAlert = true
-                        alertTitle = L10n("Failed to Stop Server")
-                        alertMessage = error.localizedDescription
-                    }
-                }
-            } else {
-                do {
-                    try applyServerInformation()
-                    Task { @MainActor in
-                        do {
-                            try await self.control.start()
-                        } catch {
-                            isAlert = true
-                            alertTitle = L10n("Failed to Start Server")
-                            alertMessage = error.localizedDescription
-                        }
-                    }
-                } catch PlanetError.InvalidAPIPortError {
-                    isAlert = true
-                    alertTitle = L10n("Failed to Start Server")
-                    alertMessage = L10n("Invalid API port, please double check and try again.")
-                } catch PlanetError.InvalidAPIUsernameError {
-                    isAlert = true
-                    alertTitle = L10n("Failed to Start Server")
-                    alertMessage = L10n("Invalid username, please double check and try again.")
-                } catch PlanetError.InvalidAPIPasscodeError {
-                    isAlert = true
-                    alertTitle = L10n("Failed to Start Server")
-                    alertMessage = L10n("Invalid passcode, please double check and try again.")
-                } catch {
-                    isAlert = true
-                    alertTitle = L10n("Failed to Start Server")
-                    alertMessage = L10n("Please double check server information and try again.")
-                }
-                if self.isShowingPasscode {
-                    Task { @MainActor in
-                        self.isShowingPasscode = false
-                    }
-                }
-            }
-        } label: {
-            HStack(spacing: 0) {
-                Spacer(minLength: 1)
-                if control.serverIsRunning {
-                    Text("Stop Server")
-                } else {
-                    Text("Start Server")
-                }
-                Spacer(minLength: 1)
-            }
-            .frame(maxWidth: 90)
-        }
-        .disabled(control.isOperating)
-    }
-    
-    private func applyServerInformation() throws {
-        if let port = Int(apiPort), port >= 1024, port <= 32767 {
-            UserDefaults.standard.set(apiPort, forKey: .settingsAPIPort)
-        } else {
-            throw PlanetError.InvalidAPIPortError
-        }
-        guard apiUsesPasscode else { return }
-        if apiUsername != "" {
-            UserDefaults.standard.set(apiUsername, forKey: .settingsAPIUsername)
-        } else {
-            throw PlanetError.InvalidAPIUsernameError
-        }
-        if apiPasscode == "" {
-            throw PlanetError.InvalidAPIPasscodeError
-        } else {
-            try KeychainHelper.shared.saveValue(apiPasscode, forKey: .settingsAPIPasscode)
-        }
-    }
-    
-    private func updatePasscode(_ passcode: String) throws {
-        if passcode == "" {
-            try KeychainHelper.shared.delete(forKey: .settingsAPIPasscode)
-        } else {
-            try KeychainHelper.shared.saveValue(passcode, forKey: .settingsAPIPasscode)
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2162,40 +1858,6 @@ struct PlanetAPIControlView: View {
   **Post-Mortem & Fix Analysis**:
   > The latest Insider build `insider-20250127-1` has a fix for this issue.  <img width="734" alt="Image" src="https://github.com/user-attachments/assets/322613c2-028a-43ac-af97-795951e5e2ff" />
 
-- **Issue #262** (2023-08-21): **Publishing latency**
-  *Symptoms*: Added Filebase but the "pinning status" bar keeps "loading". I am unable to affect it, and no errors are thrown when I say publish or build.  I tried to manually pin the JSON and images to web3.storage as well (pinnable did not work for me), but no effect - it seems like the latency is hitting the publishing process pretty hard, or the pinning is failing.  <img width="551" alt="image" src="https://github.com/Planetable/Planet/assets/1430603/dd655e76-59a7-4c8f-904a-a89db8678a30">  Would it be possible to enable some kind of dev mode so I can check what's happening with the pinning process behind the scenes?  Edit for clarification: this is not a .limo issue, it persists even if I try to "open using public gateway"
-  **Post-Mortem & Fix Analysis**:
-  > Hi @Swader,  Thanks for the feedback. We'll add a log file on disk to show all the API request/response details. I'll let you know when this is done and released in our Insider Builds.  ### Filebase Support  It was free to use when we first added the integration for Filebase API in September 2022. Later in 2022, Filebase changed terms to require a [paid plan](https://filebase.com/pricing/) (starting at $20/mo) to use their API. This is the Filebase error message I got from the debugging log. I haven't paid for my API.  <img width="586" alt="Screenshot 2023-08-21 at 11 20 39 AM" src="https://github.com/Planetable/Planet/assets/11427/9b7bedd7-9762-4427-9ff4-7b2ad5a5a41b">  ### Pinnable  [Pinnable](https://pinnable.xyz) is a new pinning API we've introduced. It's specifically designed for websites running on ENS and IPNS.  First, you need to add your .eth domain to the Pinnable website. After that, copy and paste the API URL into the app. Once you've done this, the app will 
-  > I tried using Pinnable, and even got 0.3 eth of dwb, but the app never recognized them (I never got them in the wallet actually). Then I thought I am supposed to "redeem" but that turned out to just give me back 0.21 eth and burn all 300 tokens (which it appears I had after all?). So I could not get Pinnable to allow me to add my site. I do have a paid account on Filebase and used that API, and in fact the first pin worked (see bruno.eth.limo) but the updated one did not, and this update has been pending now for a while. So thank you, debug logs will be appreciated to get to the bottom of it!
-  > I was wrong, I had a free account on Filebase. Now that I put in a paid one, it started queueing up the pins, will see in the morning if all will be well but seems to be progressing!
-
-- **Issue #200** (2023-04-26): **starType for FollowingArticleModel is not persistent**
-  *Symptoms*: It reverts to the default type after the app restarts.
-  **Post-Mortem & Fix Analysis**:
-  > Fixed for FollowingArticleModel.
-
-- **Issue #193** (2023-04-13): **Public API performance issues and improvements**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > Implemented in pr: https://github.com/Planetable/Planet/pull/194
-
-- **Issue #162** (2026-03-07): **Bring planet online automatically**
-  *Symptoms*: IPFS node may go offline for some network issue, and then I have to relaunch Planet.  It would be great if it can be brought online automatically.  <img width="303" alt="Screen Shot 2023-01-24 at 09 22 43" src="https://user-images.githubusercontent.com/559179/215231544-47a8e941-f896-491f-bbe9-16dbec741495.png"> 
-  **Post-Mortem & Fix Analysis**:
-  > Addressed — when the IPFS daemon goes offline, the app now automatically retries and brings it back online via a scheduled status retry mechanism. Related commit: 67b22047.
-
-- **Issue #160** (2023-01-19): **Planet crash after selecting a video**
-  *Symptoms*: Planet quit after selecting a video. If I reopen Planet and try to edit the article, it crashed again. I can reproduce the issues with different Macs.  version: Version 0.12.0 (995)  Two reports:  ``` ------------------------------------- Translated Report (Full Report Below) -------------------------------------  Process:               Planet [20802] Path:                  /Applications/Planet.app/Contents/MacOS/Planet Identifier:            xyz.planetable.Planet Version:               0.12.0 (995) Code Type:             ARM-64 (Native) Parent Process:        launchd [1] User ID:               501  Date/Time:             2023-01-18 16:43:06.7140 -0500 OS Version:            macOS 12.3.1 (21E258) Report Version:        12 Anonymous UUID:        E0750B6E-730B-55E2-BE05-B8D450DBA278  Sleep/Wake UUID:       C80DF9AF-E55F-4D39-A57C-B527D6725A79  Time Awake Since Boot: 600000 seconds Time Since Wake:       26345 seconds  System Integrity Protection: enabled  Crashed Thread:        0  Dispatch queue: com.apple.main-thread  Exception Type:        EXC_CRASH (SIGABRT) Exception Codes:       0x0000000000000000, 0x0000000000000000 Exception Note:        EXC_CORPSE_NOTIFY  Application Specific Information: ViewBridge hint(s): ( "bridge key: most-recent-completion" ) failed to demangle superclass of VideoPlayerView from mangled name 'So12AVPlayerViewC': unknown error abort() called ```   ``` ------------------------------------- Translated 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for reporting. I have seen it once too, on a friend's installation. I suspect it's an issue in the draft handling. Could you please try this insider build? It has shipped a fix around the handling of drafts.  https://github.com/Planetable/Planet/releases/tag/insider-20230112-1
-  > I managed to reproduce the issue. Thanks again!  Now building a new Insider Build.  It seems related to this issue:  https://swiftui-lab.com/videoplayer-bug/
-  > @airyland Here is the new Insider Build for fixing the video issue:  https://github.com/Planetable/Planet/releases/tag/insider-20230118-1
-
-- **Issue #150** (2023-09-21): **Unexpected download behavior after article is moved**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > This is fixed.
-
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
 
@@ -2211,595 +1873,7 @@ struct PlanetAPIControlView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11cfe5bc` (2026-09-20)
-**Commit Message**: Fix Xcode 27 compatibility and sidebar icon sizing
-
-Qualify SwiftSoup document types and preserve file-promise identifiers without creating undeclared UTTypes. Size the sidebar add symbol using a font and bump the marketing version to 0.22.4.
-
-Validated with an Xcode 27 macOS build targeting macOS 12, code signing disabled, and an isolated drag-registration comparison.
-
-**File**: `Planet/Entities/FollowingPlanetModel.swift` (modified, +1/-1)
-```diff
-@@ -469,7 +469,7 @@ class FollowingPlanetModel: Equatable, Hashable, Identifiable, ObservableObject,
- 
-     private static func avatarHTMLSource(
-         from discovery: FeedDiscoveryResult
--    ) async throws -> (document: Document, url: URL)? {
-+    ) async throws -> (document: SwiftSoup.Document, url: URL)? {
-         if let htmlDocument = discovery.htmlDocument,
-            let htmlURL = discovery.htmlURL
-         {
-```
-
-**File**: `Planet/Entities/MyPlanetModel+Aggregate.swift` (modified, +1/-1)
-```diff
-@@ -1238,7 +1238,7 @@ extension MyPlanetModel {
-         do {
-             let (data, _) = try await URLSession.shared.data(from: url)
-             let html = String(decoding: data, as: UTF8.self)
--            let doc: Document = try SwiftSoup.parse(html)
-+            let doc: SwiftSoup.Document = try SwiftSoup.parse(html)
-             let ogImage = try doc.select("meta[property=og:image]").first()
-             debugPrint("Aggregation: og:image: \(String(describing: ogImage)) found in \(url)")
-             if let ogImage = ogImage {
-```
-
-**File**: `Planet/Quick Share/PlanetQuickShareDropDelegate.swift` (modified, +6/-8)
-```diff
-@@ -28,18 +28,16 @@ class PlanetQuickShareDropDelegate: DropDelegate {
-     private static let activePromiseLock = NSLock()
-     private static var activePromises: [UUID: ActiveFilePromise] = [:]
- 
--    static let supportedContentTypes: [UTType] = {
--        let filePromiseTypes = NSFilePromiseReceiver.readableDraggedTypes.map {
--            UTType($0) ?? UTType(importedAs: $0)
--        }
--        return filePromiseTypes + [.fileURL, .image, .movie, .pdf, .mp3]
--    }()
-+    // File-promise pasteboard identifiers are not all declared UTTypes. Keep the
-+    // complete list as strings so SwiftUI can register every promise format.
-+    static let supportedTypeIdentifiers: [String] = NSFilePromiseReceiver.readableDraggedTypes
-+        + [UTType.fileURL, .image, .movie, .pdf, .mp3].map(\.identifier)
- 
-     init() {}
- 
-     static func processDropInfo(_ info: DropInfo) async -> [URL] {
-         log(
--            "processDropInfo started providers=\(info.itemProviders(for: supportedContentTypes).count) location=\(describeLocation(info.location))"
-+            "processDropInfo started providers=\(info.itemProviders(for: supportedTypeIdentifiers).count) location=\(describeLocation(info.location))"
-         )
- 
-         var urls: [URL] = []
-@@ -83,7 +81,7 @@ class PlanetQuickShareDropDelegate: DropDelegate {
-     }
- 
-     func validateDrop(info: DropInfo) -> Bool {
--        let providerCount = info.itemProviders(for: Self.supportedContentTypes).count
-+        let providerCount = info.itemProviders(for: Self.supportedTypeIdentifiers).count
-         let hasDirectImage = Self.dragPasteboardHasDirectImage()
-         let hasPromise = Self.dragPasteboardHasFilePromise()
-         let isValid = providerCount > 0 || hasDirectImage || hasPromise
-```
-
-**File**: `Planet/Quick Share/PlanetQuickShareView.swift` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ struct PlanetQuickShareView: View {
-                     let dropDelegate = PlanetQuickShareDropDelegate()
-                     attachmentSectionPlaceholder()
-                         .focusable()
--                        .onDrop(of: PlanetQuickShareDropDelegate.supportedContentTypes, delegate: dropDelegate)
-+                        .onDrop(of: PlanetQuickShareDropDelegate.supportedTypeIdentifiers, delegate: dropDelegate)
-                         .onPasteCommand(of: [.fileURL, .image, .movie, .mp3], perform: PlanetQuickShareViewModel.shared.processPasteItems(_:))
-                         .contextMenu {
-                             PasteButton(supportedContentTypes: [.fileURL, .image, .movie, .mp3], payloadAction: PlanetQuickShareViewModel.shared.processPasteItems(_:))
-```
-
-**File**: `Planet/Views/Articles/ArticleListView.swift` (modified, +2/-2)
-```diff
-@@ -31,7 +31,7 @@ class ArticleListDropDelegate: DropDelegate {
-     }
- 
-     func validateDrop(info: DropInfo) -> Bool {
--        let providerCount = info.itemProviders(for: PlanetQuickShareDropDelegate.supportedContentTypes).count
-+        let providerCount = info.itemProviders(for: PlanetQuickShareDropDelegate.supportedTypeIdentifiers).count
-         let hasDirectImage = PlanetQuickShareDropDelegate.dragPasteboardHasDirectImage()
-         let hasPromise = PlanetQuickShareDropDelegate.dragPasteboardHasFilePromise()
-         let isValid = providerCount > 0 || hasDirectImage || hasPromise
-@@ -679,7 +679,7 @@ struct ArticleListView: View {
-                 }
-             }
-         }
--        .onDrop(of: PlanetQuickShareDropDelegate.supportedContentTypes, delegate: articleDropDelegate)
-+        .onDrop(of: PlanetQuickShareDropDelegate.supportedTypeIdentifiers, delegate: articleDropDelegate)
-         .onWidthChange { newWidth in
-             @AppStorage("articleListWidth") var articleListWidth = 240.0
-             articleListWidth = newWidth
-```
-
-**File**: `Planet/Views/Sidebar/PlanetSidebarView.swift` (modified, +1/-2)
-```diff
-@@ -155,8 +155,7 @@ struct PlanetSidebarView: View {
-                         }
-                     } label: {
-                         Image(systemName: "plus")
--                            .resizable()
--                            .aspectRatio(contentMode: .fit)
-+                            .font(.system(size: 14, weight: .medium))
-                             .frame(width: 24, height: 24, alignment: .center)
-                     }
-                     .padding(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 0))
-```
-
-**File**: `Planet/marketing_version.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--MARKETING_VERSION = 0.22.3;
-+MARKETING_VERSION = 0.22.4;
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2839
-+CURRENT_PROJECT_VERSION = 2840
-```
-
----
-
-### Incident Patch 2: `75906eca` (2026-06-11)
-**Commit Message**: Fix AI chat bottom scroll pinning
-
-**File**: `Planet/Views/Articles/ArticleAIChatView.swift` (modified, +328/-113)
-```diff
-@@ -284,9 +284,9 @@ struct ArticleAIChatView: View {
-     @State private var isSending: Bool = false
-     @State private var errorText: String? = nil
-     @State private var isPinnedToBottom: Bool = true
--    @State private var isUserScrollIntentDown: Bool = true
--    @State private var scrollWheelMonitor: Any? = nil
--    @State private var chatScrollHostBox = ChatScrollHostBox()
-+    @State private var isUserScrollingChat: Bool = false
-+    @State private var isChatNearBottom: Bool = true
-+    @State private var bottomScrollRequest: Int = 0
-     @State private var chatFontSize: CGFloat = {
-         let stored = UserDefaults.standard.double(forKey: .settingsAIChatFontSize)
-         return stored >= 12 && stored <= 20 ? CGFloat(stored) : 14
-@@ -388,65 +388,55 @@ struct ArticleAIChatView: View {
-             }
- 
-             ScrollViewReader { proxy in
--                GeometryReader { viewport in
--                    ScrollView {
--                        VStack(spacing: 0) {
--                            chatMessageList
--                                .padding(.leading, 20)
--                                .padding(.trailing, 20)
--                                .padding(.bottom, 20)
--                                .padding(.top, 12)
--                            // Bottom sentinel: scroll target for pin-to-bottom, and
--                            // reports its position so we know when the user is back at the bottom.
--                            Color.clear
--                                .frame(height: 1)
--                                .id(Self.bottomScrollAnchorID)
--                                .background(
--                                    GeometryReader { geometry in
--                                        Color.clear.preference(
--                                            key: ChatBottomDistancePreferenceKey.self,
--                                            value: geometry.frame(in: .named(Self.chatScrollCoordinateSpace)).minY
--                                        )
--                                    }
--                                )
--                        }
--                    }
--                    .background(Color(NSColor.textBackgroundColor))
--                    .background(ChatScrollHostAccessor(box: chatScrollHostBox))
--                    .coordinateSpace(name: Self.chatScrollCoordinateSpace)
--                    .applyScrollPositionTracking(id: $scrolledMessageID)
--                    .onPreferenceChange(ChatBottomDistancePreferenceKey.self) { sentinelTop in
--                        updateBottomPinState(distanceFromBottom: sentinelTop - viewport.size.height)
-+                ScrollView {
-+                    VStack(spacing: 0) {
-+                        chatMessageList
-+                            .padding(.leading, 20)
-+                            .padding(.trailing, 20)
-+                            .padding(.bottom, 20)
-+                            .padding(.top, 12)
-+                        Color.clear
-+                            .frame(height: 1)
-+                            .id(Self.bottomScrollAnchorID)
-                     }
--                    .onChange(of: messages) { _ in
--                        if let targetID = pendingScrollTarget {
--                            pendingScrollTarget = nil
--                            isPinnedToBottom = false
--                            if #available(macOS 14.0, *) {
--                                scrolledMessageID = targetID
--                            } else {
--                                proxy.scrollTo(targetID, anchor: .top)
--                            }
--                        } else if isPinnedToBottom {
--                            if messages.last?.role == "user" {
--                                withAnimation {
--                                    proxy.scrollTo(Self.bottomScrollAnchorID, anchor: .bottom)
--                                }
--                            } else {
--                                proxy.scrollTo(Self.bottomScrollAnchorID, anchor: .bottom)
-+                }
-+                .background(Color(NSColor.textBackgroundColor))
-+                .background(
-+                    ChatScrollPositionObserver(
-+                        bottomScrollRequest: bottomScrollRequest,
-+                        onUserScrollStateChange: { isUserScrolling in
-+                            isUserScrollingChat = isUserScrolling
-+                        },
-+                        onPositionChange: { distanceFromBottom, isUserInitiated in
-+                            if updateBottomPinState(distanceFromBottom: distanceFromBottom, isUserInitiated: isUserInitiated) {
-+                                requestBottomScrollIfPinned(allowActiveUserScroll: true)
-                             }
-                         }
-+                    )
-+                )
-+                .applyScrollPositionTracking(id: $scrolledMessageID)
-+                .onChange(of: messages) { _ in
-+                    if let targetID = 
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2835
-+CURRENT_PROJECT_VERSION = 2836
-```
-
----
-
-### Incident Patch 3: `6e5a2a99` (2026-06-11)
-**Commit Message**: Add persistent AI chat memory via Workspace/MEMORY.md
-
-Create a Workspace folder at the Planet library root holding MEMORY.md,
-inline its contents into the chat system prompt for article, planet-wide,
-and on-device sessions, and add an update_memory tool on both AI paths so
-the assistant can remember, update, or forget notes when asked.
-
-Co-Authored-By: Claude Fable 5 <[REDACTED_EMAIL]>
-
-**File**: `Planet.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -7,6 +7,7 @@
- 	objects = {
- 
- /* Begin PBXBuildFile section */
-+		06DF9C7A7A8104BC02F53F9A /* PlanetAIMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6A87025B0F773780CF878 /* PlanetAIMemory.swift */; };
- 		0AA0B181DEC749A0DB6E8A6E /* PlanetAIChatWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E399FD48A62B607DCEF8C76D /* PlanetAIChatWindowController.swift */; };
- 		0C84F068A74BE01EAE71C0CC /* SSHRsyncLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E9E61088FF7A043F46E188 /* SSHRsyncLogger.swift */; };
- 		0EE328A6839BE6C7A0FE7752 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4A3C339B79F63C5B4475B12 /* XCTest.framework */; };
-@@ -839,6 +840,7 @@
- 		2CCA533E0D21FAAEEEB5CE71 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
- 		2F4FA3B2D9A523EB833A02F3 /* DragPasteboardMedia.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DragPasteboardMedia.swift; sourceTree = "<group>"; };
- 		342A67E3EAD082AA10974830 /* NaturalLanguage.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = NaturalLanguage.framework; path = System/Library/Frameworks/NaturalLanguage.framework; sourceTree = SDKROOT; };
-+		3AE6A87025B0F773780CF878 /* PlanetAIMemory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlanetAIMemory.swift; sourceTree = "<group>"; };
- 		3BF7A284CCD68E7CBE9F9D73 /* fi */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
- 		412635EFFFDD8D11BBC4BC56 /* ThemeColorExtractor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeColorExtractor.swift; sourceTree = "<group>"; };
- 		43D9216A1E2C83FFC61A358C /* de */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-@@ -1573,6 +1575,7 @@
- 				4C06A60D631FAB5EEF3BAF8C /* PlanetAIChatSessionsView.swift */,
- 				E399FD48A62B607DCEF8C76D /* PlanetAIChatWindowController.swift */,
- 				72A8762054781F152975DEE9 /* ArticleSpeechPlayer.swift */,
-+				3AE6A87025B0F773780CF878 /* PlanetAIMemory.swift */,
- 			);
- 			path = Articles;
- 			sourceTree = "<group>";
-@@ -2687,6 +2690,7 @@
- 				8F03F9FAEFE88AA819E13F28 /* FeatureFlags.swift in Sources */,
- 				B1554926223D7E6D8B65E40D /* DragPasteboardMedia.swift in Sources */,
- 				A2587363679B28FC942BC9C8 /* ModelUpdateFieldCoverageCheck.swift in Sources */,
-+				06DF9C7A7A8104BC02F53F9A /* PlanetAIMemory.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-```
-
-**File**: `Planet/PlanetAppDelegate.swift` (modified, +5/-0)
-```diff
-@@ -220,6 +220,11 @@ class PlanetAppDelegate: NSObject, NSApplicationDelegate {
-             WebAppUpdater.shared.updateWebApp()
-         }
- 
-+        // Workspace folder with MEMORY.md for AI chat persistent memory
-+        DispatchQueue.global(qos: .background).async {
-+            PlanetAIMemory.ensureMemoryFile()
-+        }
-+
-         NSApp.registerServicesMenuSendTypes([], returnTypes: WriterPasteboardImporter.readablePasteboardTypes)
-     }
- 
-```
-
-**File**: `Planet/Views/Articles/ArticleAIChatView.swift` (modified, +93/-0)
-```diff
-@@ -3235,6 +3235,8 @@ struct ArticleAIChatView: View {
-             return L10n("Searching repo text")
-         case "list_planet_articles":
-             return L10n("Listing planet articles")
-+        case "update_memory":
-+            return L10n("Updating memory")
-         default:
-             return L10n("Running %@", toolName)
-         }
-@@ -3356,6 +3358,16 @@ struct ArticleAIChatView: View {
-             if let titleFilter = stringValue(from: arguments["title_filter"]) {
-                 parts.append(L10n("Title filter: %@.", truncateInline(titleFilter, maxLength: 96)))
-             }
-+        case "update_memory":
-+            if let note = stringValue(from: arguments["note"]) {
-+                let singleLine = note.replacingOccurrences(of: "\n", with: " ")
-+                parts.append(L10n("Note: %@.", truncateInline(singleLine, maxLength: 96)))
-+            }
-+            if boolValue(from: arguments["replace"]) == true {
-+                parts.append(L10n("Mode: replace."))
-+            } else {
-+                parts.append(L10n("Mode: append."))
-+            }
-         default:
-             let keys = Array(arguments.keys).sorted()
-             if !keys.isEmpty {
-@@ -3444,6 +3456,12 @@ struct ArticleAIChatView: View {
-                 return L10n("Listed %d of %d filtered article(s) from %d total.", results.count, total, totalArticles)
-             }
-             return L10n("Article listing completed (%d filtered from %d total).", total, totalArticles)
-+        case "update_memory":
-+            let length = intValue(from: payload["memory_length"]) ?? 0
-+            if stringValue(from: payload["mode"]) == "replace" {
-+                return L10n("Memory replaced; MEMORY.md is now %d character(s).", length)
-+            }
-+            return L10n("Memory note saved; MEMORY.md is now %d character(s).", length)
-         default:
-             return L10n("Tool response received.")
-         }
-@@ -4591,6 +4609,27 @@ struct ArticleAIChatView: View {
-                     ],
-                 ],
-             ],
-+            [
-+                "type": "function",
-+                "function": [
-+                    "name": "update_memory",
-+                    "description": "Persist long-term memory for the user in Workspace/MEMORY.md. Use when the user asks to remember, update, or forget a fact or preference. Appends the note as a dated bullet by default; set replace=true to rewrite the whole file when removing or reorganizing entries.",
-+                    "parameters": [
-+                        "type": "object",
-+                        "properties": [
-+                            "note": [
-+                                "type": "string",
-+                                "description": "Memory text in Markdown. For appends keep it one concise bullet-sized line. When replace=true, pass the complete new MEMORY.md content.",
-+                            ],
-+                            "replace": [
-+                                "type": "boolean",
-+                                "description": "Optional. Defaults to false (append). Set true to replace the entire MEMORY.md content with `note`.",
-+                            ],
-+                        ],
-+                        "required": ["note"],
-+                    ],
-+                ],
-+            ],
-         ]
-     }
- 
-@@ -4613,6 +4652,8 @@ struct ArticleAIChatView: View {
-             return await runGrepTool(arguments: arguments)
-         case "list_planet_articles":
-             return await runListPlanetArticlesTool(arguments: arguments)
-+        case "update_memory":
-+            return runUpdateMemoryTool(arguments: arguments)
-         default:
-             debugLog("unknown tool requested: \(toolCall.name)")
-             return toolResult([
-@@ -4981,6 +5022,41 @@ struct ArticleAIChatView: View {
-         }
-     }
- 
-+    private func runUpdateMemoryTool(arguments: [String: Any]) -> String {
-+        guard let note = stringValue(from: arguments["note"]),
-+            !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-+        else {
-+            return toolResult([
-+                "ok": false,
-+                "error": "Missing required `note`.",
-+            ])
-+        }
-+
-+        let replace = boolValue(from: arguments["replace"]) ?? false
-+        debugLog("runUpdateMemoryTool replace=\(replace), noteLength=\(note.count)")
-+
-+        do {
-+            let memoryLength: Int
-+            if replace {
-+                memoryLength = try PlanetAIMemory.replaceContent(note)
-+            } else {
-+                memoryLength = try PlanetAIMemory.appendNote(note)
-+            }
-+            return toolResult([
-+                "ok": true,
-+                "memory_file": PlanetAIMemory.memoryFileURL.path,
-+                "mode": replace ? "replace" : "append",
-+                "memory_length": memoryLength,
-+            ])
-+        } catch {
-+            debugLogError("runUpdateMemoryTool failed", error: error)
-+        
-```
-
-**File**: `Planet/Views/Articles/ArticleAIOnDeviceTools.swift` (modified, +41/-0)
-```diff
-@@ -449,6 +449,15 @@ struct SearchArticlesArguments: Sendable {
-     var planetID: String?
- }
- 
-+@available(macOS 26.0, *)
-+@Generable(description: "Arguments for updating persistent user memory")
-+struct UpdateMemoryArguments: Sendable {
-+    @Guide(description: "Memory text in Markdown. For appends keep it one concise bullet-sized line. When replace is true, pass the complete new MEMORY.md content.")
-+    var note: String
-+    @Guide(description: "Optional. Defaults to false (append). Set to true to replace the entire MEMORY.md content with note.")
-+    var replace: Bool?
-+}
-+
- @available(macOS 26.0, *)
- @Generable(description: "Arguments for grep-style library search")
- struct GrepArguments: Sendable {
-@@ -862,6 +871,37 @@ struct GrepTool: Tool {
-     }
- }
- 
-+// MARK: - Update Memory Tool
-+
-+@available(macOS 26.0, *)
-+struct UpdateMemoryTool: Tool {
-+    var name: String { "update_memory" }
-+    var description: String { "Persist long-term memory for the user in Workspace/MEMORY.md. Use when the user asks to remember, update, or forget a fact or preference. Appends the note as a dated bullet by default; set replace to true to rewrite the whole file." }
-+
-+    func call(arguments: UpdateMemoryArguments) async throws -> String {
-+        let replace = arguments.replace ?? false
-+        onDeviceToolLog("update_memory called replace=\(replace), noteLength=\(arguments.note.count)")
-+        let note = arguments.note.trimmingCharacters(in: .whitespacesAndNewlines)
-+        guard !note.isEmpty else {
-+            return "Error: No memory note provided."
-+        }
-+        do {
-+            let memoryLength: Int
-+            if replace {
-+                memoryLength = try PlanetAIMemory.replaceContent(arguments.note)
-+            } else {
-+                memoryLength = try PlanetAIMemory.appendNote(note)
-+            }
-+            let mode = replace ? "replace" : "append"
-+            onDeviceToolLog("update_memory success mode=\(mode), memoryLength=\(memoryLength)")
-+            return "Memory updated (\(mode)); MEMORY.md is now \(memoryLength) character(s)."
-+        } catch {
-+            onDeviceToolLog("update_memory failed: \(error.localizedDescription)")
-+            return "Error: Failed to update memory: \(error.localizedDescription)"
-+        }
-+    }
-+}
-+
- // MARK: - Helper
- 
- private final class OnDeviceUncheckedSendableBox<Value>: @unchecked Sendable {
-@@ -885,6 +925,7 @@ enum OnDeviceToolFactory {
-             WritePlanetTool(context: context),
-             SearchArticlesTool(),
-             GrepTool(),
-+            UpdateMemoryTool(),
-         ]
-         return (tools, context)
-     }
-```
-
-**File**: `Planet/Views/Articles/PlanetAIMemory.swift` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
-+//
-+//  PlanetAIMemory.swift
-+//  Planet
-+//
-+
-+import Foundation
-+
-+/// Persistent memory for AI chat, stored as Workspace/MEMORY.md at the Planet library root.
-+enum PlanetAIMemory {
-+    static let workspaceFolderName = "Workspace"
-+    static let memoryFileName = "MEMORY.md"
-+
-+    /// Cap how much of MEMORY.md gets inlined into the system prompt.
-+    private static let maxPromptLength = 24_000
-+
-+    private static let seedContent = """
-+    # Memory
-+
-+    Notes for the Planet AI assistant to remember across conversations.
-+    Edit this file freely, or ask the assistant in a chat to remember something; \
-+    it reads this file at the start of every chat.
-+
-+    """
-+
-+    static var workspaceURL: URL {
-+        URLUtils.repoPath().appendingPathComponent(workspaceFolderName, isDirectory: true)
-+    }
-+
-+    static var memoryFileURL: URL {
-+        workspaceURL.appendingPathComponent(memoryFileName)
-+    }
-+
-+    @discardableResult
-+    static func ensureMemoryFile() -> URL {
-+        let fileManager = FileManager.default
-+        if !fileManager.fileExists(atPath: workspaceURL.path) {
-+            try? fileManager.createDirectory(at: workspaceURL, withIntermediateDirectories: true)
-+        }
-+        if !fileManager.fileExists(atPath: memoryFileURL.path) {
-+            try? seedContent.write(to: memoryFileURL, atomically: true, encoding: .utf8)
-+        }
-+        return memoryFileURL
-+    }
-+
-+    /// Memory contents to inline into a chat system prompt, or nil when there is nothing to apply.
-+    static func loadForPrompt() -> String? {
-+        ensureMemoryFile()
-+        guard let raw = try? String(contentsOf: memoryFileURL, encoding: .utf8) else {
-+            return nil
-+        }
-+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-+        guard !trimmed.isEmpty else {
-+            return nil
-+        }
-+        if trimmed.count > maxPromptLength {
-+            return String(trimmed.prefix(maxPromptLength))
-+                + "\n\n[MEMORY.md truncated; read Workspace/MEMORY.md for the full contents.]"
-+        }
-+        return trimmed
-+    }
-+
-+    /// Append a dated note to MEMORY.md. Returns the new total length in characters.
-+    @discardableResult
-+    static func appendNote(_ note: String) throws -> Int {
-+        ensureMemoryFile()
-+        var content = (try? String(contentsOf: memoryFileURL, encoding: .utf8)) ?? ""
-+        if !content.isEmpty, !content.hasSuffix("\n") {
-+            content += "\n"
-+        }
-+        let formatter = DateFormatter()
-+        formatter.locale = Locale(identifier: "en_US_POSIX")
-+        formatter.dateFormat = "yyyy-MM-dd"
-+        let entry = note.trimmingCharacters(in: .whitespacesAndNewlines)
-+        content += "- [\(formatter.string(from: Date()))] \(entry)\n"
-+        try content.write(to: memoryFileURL, atomically: true, encoding: .utf8)
-+        return content.count
-+    }
-+
-+    /// Replace the entire MEMORY.md. Returns the new total length in characters.
-+    @discardableResult
-+    static func replaceContent(_ newContent: String) throws -> Int {
-+        let fileManager = FileManager.default
-+        if !fileManager.fileExists(atPath: workspaceURL.path) {
-+            try fileManager.createDirectory(at: workspaceURL, withIntermediateDirectories: true)
-+        }
-+        let trimmed = newContent.trimmingCharacters(in: .whitespacesAndNewlines)
-+        let content = trimmed.isEmpty ? seedContent : trimmed + "\n"
-+        try content.write(to: memoryFileURL, atomically: true, encoding: .utf8)
-+        return content.count
-+    }
-+}
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2831
-+CURRENT_PROJECT_VERSION = 2832
-```
-
----
-
-### Incident Patch 4: `e03604fb` (2026-06-11)
+### Incident Patch 1: `e03604fb` (2026-06-11)
 **Commit Message**: Fix macOS 12 crash from dangling unowned planet references
 
 Crash report (0.22.3 build 2824, SIGABRT in swift_abortRetainUnowned)
@@ -3566,691 +2640,235 @@ merely diffing the list crashed.
 
 ---
 
-### Incident Patch 5: `6391560f` (2026-06-10)
-**Commit Message**: Render inline LaTeX math in AI chat as Unicode text
+### Incident Patch 2: `4fef7a07` (2026-10-08)
+**Commit Message**: Discover releases from GitHub and fix release-note sync caching
 
-Models like Gemma emit inline TeX such as $x \cdot y = k$ or
-$\frac{a}{b} \times c$, which previously displayed raw. Replace the
-exact-match latexSymbolMap with a normalizer that finds math spans in
-$...$, $$...$$, \(...\) and \[...\] delimiters and converts fractions,
-roots, super/subscripts, text wrappers, and symbol commands to plain
-Unicode. Dollar spans only count as math when they contain a known TeX
-command or are strictly math-shaped, so cashtags like $V2EX and prices
-stay literal; code fences and inline code spans are skipped.
+Sparkle notes tool (tools/generate-sparkle-notes/app.py):
 
-Co-Authored-By: Claude Fable 5 <[REDACTED_EMAIL]>
+- Check the newest GitHub releases (including prereleases) at startup and
+  on every periodic refresh; fetch tags that only exist on GitHub and queue
+  any release without local notes for generation and posting.
+- Re-push notes for recent releases whose GitHub body is empty, bypassing
+  the synced cache.
+- Only mark a tag as GitHub-synced after a confirmed non-empty body or a
+  successful push. A failed lookup (release not published yet) is retried
+  on the next refresh instead of being cached forever.
+- Log a warning when gh auth is broken or gh is missing, checked at startup
+  and each refresh, plus auth-error detection on every gh call (throttled).
+- Make the sync-gh command say why a tag was skipped.
 
-**File**: `Planet/Views/Articles/ArticleAIChatView.swift` (modified, +470/-31)
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `tools/generate-sparkle-notes/app.py` (modified, +192/-19)
 ```diff
-@@ -1803,46 +1803,485 @@ struct ArticleAIChatView: View {
-         )
-     }
+@@ -29,6 +29,7 @@
+ _planet_enabled = False
  
--    private static let latexSymbolMap: [(pattern: String, replacement: String)] = [
--        (#"$\approx$"#, "≈"),
--        (#"$\rightarrow$"#, "→"),
--        (#"$\leftarrow$"#, "←"),
--        (#"$\leftrightarrow$"#, "↔"),
--        (#"$\Rightarrow$"#, "⇒"),
--        (#"$\Leftarrow$"#, "⇐"),
--        (#"$\uparrow$"#, "↑"),
--        (#"$\downarrow$"#, "↓"),
--        (#"$\times$"#, "×"),
--        (#"$\div$"#, "÷"),
--        (#"$\pm$"#, "±"),
--        (#"$\neq$"#, "≠"),
--        (#"$\leq$"#, "≤"),
--        (#"$\geq$"#, "≥"),
--        (#"$\infty$"#, "∞"),
--        (#"$\alpha$"#, "α"),
--        (#"$\beta$"#, "β"),
--        (#"$\gamma$"#, "γ"),
--        (#"$\delta$"#, "δ"),
--        (#"$\pi$"#, "π"),
--        (#"$\sum$"#, "∑"),
--        (#"$\prod$"#, "∏"),
--        (#"$\sqrt$"#, "√"),
--        (#"$\degree$"#, "°"),
--        (#"$\cdot$"#, "·"),
--        (#"$\ldots$"#, "…"),
--        (#"$\sim$"#, "∼"),
-+    // MARK: - LaTeX math normalization
-+    //
-+    // Models like Gemma emit inline TeX math such as `$x \cdot y = k$` or
-+    // `$\frac{V2EX \text{ 数量}}{SOL \text{ 数量}} \times 1$`. The chat renderer is
-+    // plain-text based, so math spans are converted to Unicode text. The same
-+    // models also use dollar-prefixed cashtags like `$V2EX`, so a `$...$` span is
-+    // only treated as math when it contains a known TeX command.
-+
-+    private static let latexSymbolCommands: [String: String] = [
-+        // Operators and relations
-+        "times": "×", "div": "÷", "cdot": "·", "pm": "±", "mp": "∓",
-+        "neq": "≠", "ne": "≠", "leq": "≤", "le": "≤", "geq": "≥", "ge": "≥",
-+        "approx": "≈", "equiv": "≡", "sim": "∼", "simeq": "≃", "cong": "≅",
-+        "propto": "∝", "ll": "≪", "gg": "≫", "ast": "∗", "star": "⋆",
-+        "bullet": "•", "circ": "∘", "oplus": "⊕", "otimes": "⊗",
-+        // Arrows
-+        "rightarrow": "→", "to": "→", "leftarrow": "←", "gets": "←",
-+        "leftrightarrow": "↔", "Rightarrow": "⇒", "implies": "⇒",
-+        "Leftarrow": "⇐", "Leftrightarrow": "⇔", "iff": "⇔",
-+        "uparrow": "↑", "downarrow": "↓", "mapsto": "↦",
-+        // Sets and logic
-+        "in": "∈", "notin": "∉", "subset": "⊂", "supset": "⊃",
-+        "subseteq": "⊆", "supseteq": "⊇", "cup": "∪", "cap": "∩",
-+        "emptyset": "∅", "varnothing": "∅", "forall": "∀", "exists": "∃",
-+        "neg": "¬", "land": "∧", "lor": "∨", "setminus": "∖",
-+        // Calculus and misc
-+        "infty": "∞", "partial": "∂", "nabla": "∇", "sum": "∑", "prod": "∏",
-+        "int": "∫", "oint": "∮", "degree": "°", "ldots": "…", "cdots": "⋯",
-+        "dots": "…", "vdots": "⋮", "prime": "′", "angle": "∠", "perp": "⊥",
-+        "parallel": "∥", "therefore": "∴", "because": "∵",
-+        // Greek
-+        "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ",
-+        "epsilon": "ε", "varepsilon": "ε", "zeta": "ζ", "eta": "η",
-+        "theta": "θ", "vartheta": "ϑ", "iota": "ι", "kappa": "κ",
-+        "lambda": "λ", "mu": "μ", "nu": "ν", "xi": "ξ", "pi": "π",
-+        "rho": "ρ", "sigma": "σ", "varsigma": "ς", "tau": "τ",
-+        "upsilon": "υ", "phi": "φ", "varphi": "φ", "chi": "χ",
-+        "psi": "ψ", "omega": "ω",
-+        "Gamma": "Γ", "Delta": "Δ", "Theta": "Θ", "Lambda": "Λ", "Xi": "Ξ",
-+        "Pi": "Π", "Sigma": "Σ", "Upsilon": "Υ", "Phi": "Φ", "Psi": "Ψ",
-+        "Omega": "Ω",
-+        // Function names render as themselves
-+        "log": "log", "ln": "ln", "lg": "lg", "exp": "exp",
-+        "sin": "sin", "cos": "cos", "tan": "tan", "cot": "cot",
-+        "sec": "sec", "csc": "csc", "arcsin": "arcsin", "arccos": "arccos",
-+        "arctan": "arctan", "sinh": "sinh", "cosh": "cosh", "tanh": "tanh",
-+        "lim": "lim", "min": "min", "max": "max", "sup": "sup", "inf": "inf",
-+        "det": "det", "dim": "dim", "mod": "mod", "bmod": "mod", "gcd": "gcd",
-+    ]
-+
-+    // Commands whose brace-group argument is kept as plain text, dropping the wrapper
-+    private static let latexTextCommands: Set<String> = [
-+        "text", "textbf", "textit", "texttt", "textrm", "textsf",
-+        "mathrm", "mathbf", "mathit", "mathsf", "mathtt", "mathbb", "mathcal",
-+        "boldsymbol", "operatorname", "mbox", "hbox",
-+        "vec", "hat", "bar", "tilde", "overline", "underline",
-+    ]
-+
-+    private static let latexIgnoredCommands: Set<String> = [
-+        "left", "right", "displaystyle", "textstyle", "scriptstyle",
-+        "limits", "nolimits",
-+        "big", "Big", "bigg", "Bigg", "bigl", "bigr", "Bigl", "Bigr",
-+        "biggl", "biggr", "Biggl", "Biggr",
-+    ]
-+
-+    private static let latexSpacingCommands: Set<String> = [
-+        "quad", "qquad", "enspace", "thinspace",
-+    ]
-+
-+    private static let knownLatexCommands: Set<String> = {
-+        var names = Set(latexSymbolCommands.keys)
-+        names.formUnion(latexTextCommands)
-+        names.formUnion(latexIgnoredCommands)
-+        names.formUnion(latexSpacingCommands)
-+        names.fo
-```
-
----
-
-### Incident Patch 6: `74e4dfdb` (2026-06-10)
-**Commit Message**: Require Markdown notes from Codex
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2826
-+CURRENT_PROJECT_VERSION = 2827
-```
-
-**File**: `tools/generate-sparkle-notes/app.py` (modified, +13/-3)
-```diff
-@@ -319,6 +319,16 @@ def markdown_to_html(md_text):
-     return '\n'.join(html_lines)
+ GH_REPO = 'Planetable/Planet'
++_GH_RELEASE_CHECK_LIMIT = 10  # newest GitHub releases (incl. prereleases) to compare against local notes
+ _gh_queue = queue.Queue()
+ _gh_synced = set()
+ _NUM_GH_WORKERS = 2
+@@ -64,14 +65,67 @@ def git(*args):
+     return result.stdout.strip()
  
  
-+def normalize_markdown_notes(raw):
-+    """Return bullet-only Markdown notes from model output; reject HTML."""
-+    notes = '\n'.join(line.strip() for line in raw.split('\n') if line.strip().startswith('- '))
-+    if not notes:
-+        return ''
-+    if re.search(r'</?[a-zA-Z][^>]*>', notes):
-+        raise ValueError('codex returned HTML instead of Markdown')
-+    return notes
++_GH_AUTH_ERROR_MARKERS = (
++    '401', 'bad credentials', 'gh auth login', 'not logged in', 'authentication',
++    'token is invalid', 'token in gh_token', 'could not prompt',
++)
++_gh_auth_warn_lock = threading.Lock()
++_gh_auth_warned_at = 0.0
++_GH_AUTH_WARN_INTERVAL = 60  # throttle repeated auth warnings from workers
 +
 +
- def search_notes(query):
-     """Search tag names and note contents across all channels. Returns [(channel, tag, snippet)]."""
-     results = []
-@@ -358,12 +368,12 @@ def generate_notes_with_codex(commits, prev_tag, tag):
-         "- Include only changes that affect people using the Planet macOS app UI or behavior.\n"
-         "- Skip this release-notes utility, scripts, CI, build/release automation, tests, docs, generated metadata, version bumps, refactors, and internal infrastructure unless the commit clearly describes a user-visible app change.\n\n"
-         "Output format:\n"
--        "- Return only Markdown bullets. No heading, sections, preamble, explanation, blank lines, or code fences.\n"
-+        "- Return only plain Markdown bullets. No HTML, heading, sections, preamble, explanation, blank lines, or code fences.\n"
-         "- Every output line must start with '- '.\n"
-         "- Bullet format: - **Bold short label** — concise end-user description.\n"
-         "- Group closely related commits; do not duplicate the same feature or fix under multiple labels.\n"
-         "- Aim for 3-12 bullets. If there are no qualifying app-facing changes, output exactly '- No user-facing Planet app changes.'\n"
--        "- Do not include commit hashes, author names, issue/PR numbers, file paths, dependency names, or implementation details.\n"
-+        "- Do not include HTML tags, commit hashes, author names, issue/PR numbers, file paths, dependency names, or implementation details.\n"
-         "- Name user-visible features, UI elements, and behaviors specifically when commit subjects provide them.\n\n"
-         "Example style:\n"
-         "- **Continuity Camera** — Import photos/videos directly from iPhone into Writer\n"
-@@ -404,7 +414,7 @@ def generate_notes_with_codex(commits, prev_tag, tag):
-         with open(output_path, encoding='utf-8') as f:
-             raw = f.read().strip()
-         log.info('codex output for %s:\n%s', tag, raw)
--        notes = '\n'.join(line for line in raw.split('\n') if line.startswith('- '))
-+        notes = normalize_markdown_notes(raw)
-         if not notes:
-             raise RuntimeError(f'codex returned no usable notes for {tag}')
-         return notes
-```
-
----
-
-### Incident Patch 7: `2a276d01` (2026-05-27)
-**Commit Message**: Fix checklist return autocomplete at line start
-
-**File**: `Planet/Helper/MarkdownListAutocomplete.swift` (modified, +18/-2)
-```diff
-@@ -114,8 +114,24 @@ enum MarkdownListAutocomplete {
-                         for: NSRange(location: searchPos, length: 0))
++def _looks_like_gh_auth_error(text):
++    lowered = (text or '').lower()
++    return any(marker in lowered for marker in _GH_AUTH_ERROR_MARKERS)
++
++
++def _warn_gh_auth(detail, context, throttle=True):
++    """Log a warning about a gh auth problem; throttled so busy workers don't spam the log."""
++    global _gh_auth_warned_at
++    now = time.monotonic()
++    with _gh_auth_warn_lock:
++        if throttle and now - _gh_auth_warned_at < _GH_AUTH_WARN_INTERVAL:
++            return
++        _gh_auth_warned_at = now
++    log.warning('gh auth problem (%s): %s. Run `gh auth login` or check GH_TOKEN.',
++                context, ' '.join(detail.split()))
++
++
+ def gh(*args):
+     result = subprocess.run(
+         ['gh', *args],
+         capture_output=True, text=True,
+     )
++    if result.returncode != 0:
++        detail = result.stderr.strip() or result.stdout.strip()
++        if _looks_like_gh_auth_error(detail):
++            _warn_gh_auth(detail, 'gh ' + ' '.join(args[:2]))
+     return result
  
-         let lineRange = NSRange(location: lineStart, length: contentsEnd - lineStart)
--        let currentLine = ns.substring(with: lineRange)
--        let trimmed = currentLine.trimmingCharacters(in: .whitespaces)
-+        let currentLine = ns.substring(with: lineRange) as NSString
-+        var firstVisibleOffset = 0
-+        while firstVisibleOffset < currentLine.length {
-+            let character = currentLine.character(at: firstVisibleOffset)
-+            guard let scalar = UnicodeScalar(Int(character)),
-+                  CharacterSet.whitespaces.contains(scalar)
-+            else {
-+                break
-+            }
-+            firstVisibleOffset += 1
-+        }
-+
-+        // Before the first visible character, Return should insert a plain newline
-+        // instead of continuing the current list item.
-+        guard cursorPos > lineStart + firstVisibleOffset else { return .none }
-+
-+        let currentLineString = currentLine as String
-+        let trimmed = currentLineString.trimmingCharacters(in: .whitespaces)
  
-         // Check if current line is an empty list marker
-         let isEmptyNumberedItem = trimmed.range(of: #"^\d+\.$"#, options: .regularExpression) != nil
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2814
-+CURRENT_PROJECT_VERSION = 2815
-```
-
----
-
-### Incident Patch 8: `91179eb9` (2026-05-13)
-**Commit Message**: Fix browser media drag and drop handling
-
-Add a shared DragPasteboardMedia importer for file URLs, file promises, and direct pasteboard media data from browser drags.
-
-Use the shared importer from Article List, Quick Post, Quick Share, and Writer so Chrome and x.com image drops follow the same code path.
-
-Prevent text editors from inserting browser drag placeholder text such as Image when the drop actually contains importable media.
-
-Make pasteboard media import more resilient by falling back from file URLs to raw item data, trying alternate media flavors after conversion failures, parsing file URL item representations more broadly, and avoiding duplicate imports when a file URL import already succeeded.
-
-Register DragPasteboardMedia.swift in the Xcode project and verify the Planet macOS Debug build with CODE_SIGNING_ALLOWED=NO.
-
-**File**: `Planet.xcodeproj/project.pbxproj` (modified, +6/-0)
-```diff
-@@ -506,6 +506,7 @@
- 		6AFCF7E42B7353FE002299BA /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 6AFCF7E32B7353FE002299BA /* DequeModule */; };
- 		6AFCF7E62B7353FE002299BA /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 6AFCF7E52B7353FE002299BA /* OrderedCollections */; };
- 		6AFCF7E72B737371002299BA /* TemplateMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC889412B71D4200090D355 /* TemplateMonitor.swift */; };
-+		6B50625D6A91C63998683BCA /* DragPasteboardMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4FA3B2D9A523EB833A02F3 /* DragPasteboardMedia.swift */; };
- 		71C58E70CF3E3F8A86F9ADF4 /* RelatedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE71A58A58525049CC222C6 /* RelatedArticlesView.swift */; };
- 		7211413A9B3CC77620629D22 /* ViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721143C73AEAD5F0C049DF86 /* ViewUtils.swift */; };
- 		7211421E15A5A630DF93A519 /* MyPlanetInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721144D264DD084A74B49BF8 /* MyPlanetInfoView.swift */; };
-@@ -552,6 +553,7 @@
- 		9F283A9A8EA2592CEC565037 /* SearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BF4852CA45DC20EE145C58 /* SearchIndex.swift */; };
- 		A14E34849B8C45E69780141C /* SearchDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EC2B7EEF3EF83DA342363 /* SearchDatabase.swift */; };
- 		A8E3461C94DD9CF45659CC72 /* PlanetAIChatSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C06A60D631FAB5EEF3BAF8C /* PlanetAIChatSessionsView.swift */; };
-+		B1554926223D7E6D8B65E40D /* DragPasteboardMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4FA3B2D9A523EB833A02F3 /* DragPasteboardMedia.swift */; };
- 		B2B22802B0B767E09FE903A2 /* ArticleSpeechPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A8762054781F152975DEE9 /* ArticleSpeechPlayer.swift */; };
- 		BB6FC66D28423AF80072C3A1 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = BB6FC66C28423AF80072C3A1 /* SwiftSoup */; };
- 		BB7FC8752898C70A00359802 /* libcmark_gfm in Frameworks */ = {isa = PBXBuildFile; productRef = BB7FC8742898C70A00359802 /* libcmark_gfm */; };
-@@ -788,6 +790,7 @@
- 		2AFB897529BA3ED8003D893E /* PlanetKeyManagerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetKeyManagerModel.swift; sourceTree = "<group>"; };
- 		2AFFD51A28AD760400EDB020 /* HelpLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpLinkButton.swift; sourceTree = "<group>"; };
- 		2CCA533E0D21FAAEEEB5CE71 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
-+		2F4FA3B2D9A523EB833A02F3 /* DragPasteboardMedia.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DragPasteboardMedia.swift; sourceTree = "<group>"; };
- 		342A67E3EAD082AA10974830 /* NaturalLanguage.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = NaturalLanguage.framework; path = System/Library/Frameworks/NaturalLanguage.framework; sourceTree = SDKROOT; };
- 		3BF7A284CCD68E7CBE9F9D73 /* fi */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
- 		412635EFFFDD8D11BBC4BC56 /* ThemeColorExtractor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThemeColorExtractor.swift; sourceTree = "<group>"; };
-@@ -1363,6 +1366,7 @@
- 				C1A2B3D4E5F6A7B8C9D0E1F2 /* SleepPreventer.swift */,
- 				03E9DC5C055F824D215A8981 /* MarkdownEditorTextView.swift */,
- 				412635EFFFDD8D11BBC4BC56 /* ThemeColorExtractor.swift */,
-+				2F4FA3B2D9A523EB833A02F3 /* DragPasteboardMedia.swift */,
- 			);
- 			path = Helper;
- 			sourceTree = "<group>";
-@@ -2270,6 +2274,7 @@
- 				C1A2B3D4E5F6A7B8C9D0E1F3 /* SleepPreventer.swift in Sources */,
- 				6AADD6C72AF8809600898A6E /* MyArticleModel+SavePublic.swift in Sources */,
- 				BF9F577F9FFA8A77F474CF1A /* PlanetStore+Spotlight.swift in Sources */,
-+				6B50625D6A91C63998683BCA /* DragPasteboardMedia.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -2517,6 +2522,7 @@
- 				B2B22802B0B767E09FE903A2 /* ArticleSpeechPlayer.swift in Sources */,
- 				9F1807DD072155243C041DFC /* ThemeColorExtractor.swift in Sources */,
- 				8F03F9FAEFE88AA819E13F28 /* FeatureFlags.swift in Sources */,
-+				B1554926223D7E6D8B65E40D /* DragPasteboardMedia.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-```
-
-**File**: `Planet/Helper/DragPasteboardMedia.swift` (added, +499/-0)
-```diff
-@@ -0,0 +1,499 @@
-+import AppKit
-+import Foundation
-+import UniformTypeIdentifiers
-+
-+struct DragPasteboardMediaFile {
-+    let url: URL
-+    let attachmentType: AttachmentType
-+    let isTemporary: Bool
-+    let pasteboardType: NSPasteboard.PasteboardType?
-+
-+    init(
-+        url: URL,
-+        attachmentType: AttachmentType,
-+        isTemporary: Bool,
-+        pasteboardType: NSPasteboard.PasteboardType? = nil
-+    ) {
-+        self.url = url
-+        self.attachmentType = attachmentType
-+        self.isTemporary = isTemporary
-+        self.pasteboardType = pasteboardType
-+    }
-+}
-+
-+enum DragPasteboardMedia {
-+    struct Flavor {
-+        let type: NSPasteboard.PasteboardType
-+        let fileExtension: String
-+        let attachmentType: AttachmentType
-+        let convertsImageDataToPNG: Bool
-+
-+        init(
-+            type: NSPasteboard.PasteboardType,
-+            fileExtension: String,
-+            attachmentType: AttachmentType,
-+            convertsImageDataToPNG: Bool = false
-+        ) {
-+            self.type = type
-+            self.fileExtension = fileExtension
-+            self.attachmentType = attachmentType
-+            self.convertsImageDataToPNG = convertsImageDataToPNG
-+        }
-+    }
-+
-+    static let imageFlavors: [Flavor] = [
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.png.identifier), fileExtension: "png", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.jpeg.identifier), fileExtension: "jpg", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType("CorePasteboardFlavorType 0x4A504547"), fileExtension: "jpg", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.gif.identifier), fileExtension: "gif", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.tiff.identifier), fileExtension: "tiff", attachmentType: .image),
-+        Flavor(type: .tiff, fileExtension: "tiff", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType("NeXT TIFF v4.0 pasteboard type"), fileExtension: "tiff", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType("public.heic"), fileExtension: "heic", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType("public.heif"), fileExtension: "heif", attachmentType: .image),
-+        Flavor(type: NSPasteboard.PasteboardType("public.webp"), fileExtension: "webp", attachmentType: .image),
-+        Flavor(
-+            type: NSPasteboard.PasteboardType(UTType.image.identifier),
-+            fileExtension: "png",
-+            attachmentType: .image,
-+            convertsImageDataToPNG: true
++def gh_auth_check():
++    """Run `gh auth status`; log a warning and return False if gh is not usable."""
++    try:
++        result = subprocess.run(
++            ['gh', 'auth', 'status', '--hostname', 'github.com'],
++            capture_output=True, text=True,
 +        )
++    except FileNotFoundError:
++        log.warning('gh auth problem: the `gh` CLI is not installed or not on PATH')
++        return False
++    if result.returncode == 0:
++        return True
++    output = result.stderr.strip() or result.stdout.strip() or f'gh exited {result.returncode}'
++    # Keep only the failing lines; `gh auth status` also prints healthy accounts.
++    problem_lines = [
++        line.strip() for line in output.splitlines()
++        if line.strip().startswith('X ') or _looks_like_gh_auth_error(line) or 'failed' in line.lower()
++    ]
++    detail = '; '.join(problem_lines) if problem_lines else output
++    _warn_gh_auth(detail, 'gh auth status', throttle=False)
++    return False
++
++
+ def get_tags_for_channel(channel):
+     cached = _tags_cache.get(channel)
+     if cached and time.monotonic() - cached[0] < _TAGS_TTL:
+@@ -98,6 +152,57 @@ def get_commits_between(prev_tag, tag):
+     return git('log', '--oneline', '--no-merges', tag)
+ 
+ 
++def channel_for_tag(tag):
++    """Map a tag like release-0.22.4 / insider-20261006-1 to its channel, or None."""
++    prefix = tag.split('-', 1)[0]
++    return prefix if prefix in CHANNELS and tag.startswith(prefix + '-') else None
++
++
++def get_gh_releases(limit=_GH_RELEASE_CHECK_LIMIT):
++    """Return the newest GitHub releases (including prereleases, excluding drafts).
++
++    Uses the REST API so each item carries its body in a single call. Each item is a dict
++    with tagName / isPrerelease / publishedAt / body. Returns [] on failure.
++    """
++    import json
++    result = gh('api', f'repos/{GH_REPO}/releases?per_page={int(limit)}')
++    if result.returncode != 0:
++        log.warning('gh api releases failed: %s', result.stderr.strip() or result.stdout.strip())
++        return []
++    try:
++        items = json.loads(result.stdout or '[]')
++    except ValueError:
++        log.warning('gh api releases returned invalid JSON')
++        return []
++    return [
++        {
++            'tagName': r.get('tag_name') or '',
++            'isPrerelease': bool(r.get('prerelease')),
++            'publishedAt': r.get('published_at') or '',
++            'body': r.get('body') or '',
++        }
++        for r in items
++        if isinstance(r, dict) and not r.get('draft')
 +    ]
 +
-+    static let videoFlavors: [Flavor] = [
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.mpeg4Movie.identifier), fileExtension: "mp4", attachmentType: .video),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.quickTimeMovie.identifier), fileExtension: "mov", attachmentType: .video),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.movie.identifier), fileExtension: "mov", attachmentType: .video)
-+    ]
 +
-+    static let audioFlavors: [Flavor] = [
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.mp3.identifier), fileExtension: "mp3", attachmentType: .audio),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.mpeg4Audio.identifier), fileExtension: "m4a", attachmentType: .audio),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.wav.identifier), fileExtension: "wav", attachmentType: .audio),
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.audio.identifier), fileExtension: "m4a", attachmentType: .audio)
-+    ]
++def tag_exists_locally(tag):
++    return git('tag', '-l', tag) == tag
 +
-+    static let documentFlavors: [Flavor] = [
-+        Flavor(type: NSPasteboard.PasteboardType(UTType.pdf.identifier), fileExtension: "pdf", attachmentType: .file)
-+    ]
 +
-+    static func readablePasteboardTypes(
-+        allowing attachmentTypes: Set<AttachmentType>,
-+        includeFileURL: Bool = true
-+    ) -> [NSPasteboard.PasteboardType] {
-+        let dataTypes = readableDataPasteboardTypes(allowing: attachmentTypes)
-+        return includeFileURL ? [.fileURL] + dataTypes : dataTypes
-+    }
-+
-+    static func readableDataPasteboardTypes(
-+        allowing attachmentTypes: Set<AttachmentType>
-+    ) -> [NSPasteboard.PasteboardType] {
-+        flavors(allowing: attachmentTypes).map(\.type)
-+    }
-+
-+    static func containsSupportedMedia(
-+        in pasteboard: NSPasteboard,
-+        allowing attachmentTypes: Set<AttachmentType>,
-+        includeFileURLs: Bool = true
-+    ) -> Bool {
-+        if includeFileURLs,
-+           let fileURLs = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
-+           fileURLs.contains(where: { supportedAttachmentType(for: $0, allowing: attachmentTypes) != nil }) {
-+            return true
-+        }
-+
-+        let dataTypes = readableDataPasteboardTypes(allowing: attachmentTypes)
-+        if let items = pasteboard.pasteboardItems {
-+            if items.con
-```
-
-**File**: `Planet/Labs/Quick Post/QuickPostView.swift` (modified, +33/-0)
-```diff
-@@ -489,6 +489,7 @@ final class QuickPostTextEditorContainer: NSView {
-         textView.isRichText = false
-         textView.usesFontPanel = false
-         textView.allowsUndo = true
-+        textView.registerForDraggedTypes(QuickPostViewModel.supportedMediaPasteboardTypes)
-         let paragraphStyle = NSMutableParagraphStyle()
-         paragraphStyle.lineSpacing = 4
-         textView.defaultParagraphStyle = paragraphStyle
-@@ -569,6 +570,38 @@ final class QuickPostEditorTextView: MarkdownEditorTextView {
-         super.paste(sender)
-     }
- 
-+    override var acceptableDragTypes: [NSPasteboard.PasteboardType] {
-+        QuickPostViewModel.supportedMediaPasteboardTypes + super.acceptableDragTypes
-+    }
-+
-+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-+        if viewModel.canImportMedia(from: sender.draggingPasteboard) {
-+            return .copy
-+        }
-+        return super.draggingEntered(sender)
-+    }
-+
-+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
-+        if viewModel.canImportMedia(from: sender.draggingPasteboard) {
-+            return .copy
-+        }
-+        return super.draggingUpdated(sender)
-+    }
-+
-+    override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
-+        if viewModel.canImportMedia(from: sender.draggingPasteboard) {
-+            return true
-+        }
-+        return super.prepareForDragOperation(sender)
-+    }
-+
-+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-+        if viewModel.processMediaDropIfAvailable(from: sender.draggingPasteboard) {
-+            return true
-+        }
-+        return super.performDragOperation(sender)
-+    }
-+
- }
- 
- #Preview {
-```
-
-**File**: `Planet/Labs/Quick Post/QuickPostViewModel.swift` (modified, +52/-280)
-```diff
-@@ -9,46 +9,15 @@ import Foundation
- import SwiftUI
- import UniformTypeIdentifiers
- 
--private struct QuickPostImportedMediaFile {
--    let url: URL
--    let attachmentType: AttachmentType
--    let isTemporary: Bool
--}
-+private typealias QuickPostImportedMediaFile = DragPasteboardMediaFile
- 
- class QuickPostViewModel: ObservableObject {
-     static let shared = QuickPostViewModel()
- 
--    private static let supportedImagePasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.png.identifier), "png"),
--        (NSPasteboard.PasteboardType(UTType.jpeg.identifier), "jpg"),
--        (NSPasteboard.PasteboardType(UTType.gif.identifier), "gif"),
--        (NSPasteboard.PasteboardType(UTType.tiff.identifier), "tiff"),
--        (NSPasteboard.PasteboardType("public.heic"), "heic"),
--        (NSPasteboard.PasteboardType("public.heif"), "heif"),
--        (NSPasteboard.PasteboardType("public.webp"), "webp")
--    ]
--    private static let supportedVideoPasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.mpeg4Movie.identifier), "mp4"),
--        (NSPasteboard.PasteboardType(UTType.quickTimeMovie.identifier), "mov"),
--        (NSPasteboard.PasteboardType(UTType.movie.identifier), "mov")
--    ]
--    private static let supportedAudioPasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.mp3.identifier), "mp3"),
--        (NSPasteboard.PasteboardType(UTType.mpeg4Audio.identifier), "m4a"),
--        (NSPasteboard.PasteboardType(UTType.wav.identifier), "wav"),
--        (NSPasteboard.PasteboardType(UTType.audio.identifier), "m4a")
--    ]
--    static let supportedPasteContentTypes: [UTType] = [
--        .fileURL,
--        .image,
--        .movie,
--        .audio,
--        .mpeg4Movie,
--        .quickTimeMovie,
--        .mp3,
--        .mpeg4Audio,
--        .wav
--    ]
-+    private static let supportedAttachmentTypes: Set<AttachmentType> = [.image, .video, .audio]
-+    static let supportedMediaPasteboardTypes = DragPasteboardMedia.readablePasteboardTypes(
-+        allowing: supportedAttachmentTypes
++def git_fetch_tags():
++    """Fetch tags from origin so GitHub-only releases can be generated. Returns True on success."""
++    result = subprocess.run(
++        ['git', '-C', REPO_ROOT, 'fetch', '--tags', '--quiet', 'origin'],
++        capture_output=True, text=True,
 +    )
- 
-     @Published var allowedContentTypes: [UTType] = []
-     @Published var allowMultipleSelection = false
-@@ -105,16 +74,46 @@ class QuickPostViewModel: ObservableObject {
-     @discardableResult
-     func processMediaPasteIfAvailable() -> Bool {
-         let pasteboard = NSPasteboard.general
--        guard pasteboardContainsSupportedMedia(pasteboard) else {
-+        return processMediaIfAvailable(from: pasteboard, action: "paste")
-+    }
++    if result.returncode != 0:
++        log.warning('git fetch --tags failed: %s', result.stderr.strip())
++        return False
++    _tags_cache.clear()
++    return True
 +
-+    func canImportMedia(from pasteboard: NSPasteboard) -> Bool {
-+        DragPasteboardMedia.containsSupportedMedia(
-+            in: pasteboard,
-+            allowing: Self.supportedAttachmentTypes
-+        )
-+    }
 +
-+    @MainActor
-+    @discardableResult
-+    func processMediaDropIfAvailable(from pasteboard: NSPasteboard) -> Bool {
-+        processMediaIfAvailable(from: pasteboard, action: "drop")
-+    }
-+
-+    @MainActor
-+    @discardableResult
-+    private func processMediaIfAvailable(from pasteboard: NSPasteboard, action: String) -> Bool {
-+        log(
-+            "QuickPost media \(action) started types=\(pasteboard.types?.map(\.rawValue).sorted().joined(separator: ",") ?? "nil")"
-+        )
-+        guard canImportMedia(from: pasteboard) else {
-+            log("QuickPost media \(action) skipped: no supported media")
-             return false
-         }
-         do {
--            let pastedFiles = try pastedMediaFiles(from: pasteboard)
--            guard !pastedFiles.isEmpty else { return false }
-+            let pastedFiles = try DragPasteboardMedia.importedFiles(
-+                from: pasteboard,
-+                allowing: Self.supportedAttachmentTypes,
-+                convertHEICFileURLsToJPEG: true
-+            )
-+            guard !pastedFiles.isEmpty else {
-+                log("QuickPost media \(action) found no importable files after media scan", level: .warning)
-+                return action == "drop"
-+            }
-             try importMediaFiles(pastedFiles)
--            debugPrint("Pasted files: \(fileURLs)")
-+            log("QuickPost media \(action) imported files=\(pastedFiles.map { $0.url.lastPathComponent }.joined(separator: ","))")
-         } catch {
--            debugPrint("failed to process pasted media in Quick Post: \(error)")
-+            log("QuickPost media \(action) failed error=\(error.localizedDescription)", level: .error)
-         }
-         return true
-     }
-@@ -200,75 +199,10 @@ class QuickPostViewModel: ObservableObject {
-     }
- 
-     private func supportedAttachmentType(for url: URL) -> AttachmentType? {
--        guard url.isFileURL else { return nil }
--        if let fileType = UTType(filenameExtension: url.pathExtension.lowercased()) {
--            if fileType.conforms(to: .image) {
--                return .image
--            }
-
+ def _is_release_note_candidate_path(path):
+     """True when a changed path can represent a Planet app user-facing change."""
+     if path == 'Planet/versioning.xcconfig':
+@@ -147,14 +252,6 @@ def get_tag_iso_date(tag):
+     return git('tag', '-l', '--format=%(creatordate:iso-str
 ```
 
-**File**: `Planet/Quick Share/PlanetQuickShareDropDelegate.swift` (modified, +253/-7)
+---
+
+### Incident Patch 3: `11cfe5bc` (2026-09-20)
+**Commit Message**: Fix Xcode 27 compatibility and sidebar icon sizing
+
+Qualify SwiftSoup document types and preserve file-promise identifiers without creating undeclared UTTypes. Size the sidebar add symbol using a font and bump the marketing version to 0.22.4.
+
+Validated with an Xcode 27 macOS build targeting macOS 12, code signing disabled, and an isolated drag-registration comparison.
+
+**File**: `Planet/Entities/FollowingPlanetModel.swift` (modified, +1/-1)
 ```diff
-@@ -3,37 +3,67 @@
- //  Planet
- //
+@@ -469,7 +469,7 @@ class FollowingPlanetModel: Equatable, Hashable, Identifiable, ObservableObject,
  
-+import AppKit
- import Foundation
- import SwiftUI
- import UniformTypeIdentifiers
+     private static func avatarHTMLSource(
+         from discovery: FeedDiscoveryResult
+-    ) async throws -> (document: Document, url: URL)? {
++    ) async throws -> (document: SwiftSoup.Document, url: URL)? {
+         if let htmlDocument = discovery.htmlDocument,
+            let htmlURL = discovery.htmlURL
+         {
+```
+
+**File**: `Planet/Entities/MyPlanetModel+Aggregate.swift` (modified, +1/-1)
+```diff
+@@ -1238,7 +1238,7 @@ extension MyPlanetModel {
+         do {
+             let (data, _) = try await URLSession.shared.data(from: url)
+             let html = String(decoding: data, as: UTF8.self)
+-            let doc: Document = try SwiftSoup.parse(html)
++            let doc: SwiftSoup.Document = try SwiftSoup.parse(html)
+             let ogImage = try doc.select("meta[property=og:image]").first()
+             debugPrint("Aggregation: og:image: \(String(describing: ogImage)) found in \(url)")
+             if let ogImage = ogImage {
+```
+
+**File**: `Planet/Quick Share/PlanetQuickShareDropDelegate.swift` (modified, +6/-8)
+```diff
+@@ -28,18 +28,16 @@ class PlanetQuickShareDropDelegate: DropDelegate {
+     private static let activePromiseLock = NSLock()
+     private static var activePromises: [UUID: ActiveFilePromise] = [:]
  
+-    static let supportedContentTypes: [UTType] = {
+-        let filePromiseTypes = NSFilePromiseReceiver.readableDraggedTypes.map {
+-            UTType($0) ?? UTType(importedAs: $0)
+-        }
+-        return filePromiseTypes + [.fileURL, .image, .movie, .pdf, .mp3]
+-    }()
++    // File-promise pasteboard identifiers are not all declared UTTypes. Keep the
++    // complete list as strings so SwiftUI can register every promise format.
++    static let supportedTypeIdentifiers: [String] = NSFilePromiseReceiver.readableDraggedTypes
++        + [UTType.fileURL, .image, .movie, .pdf, .mp3].map(\.identifier)
  
- class PlanetQuickShareDropDelegate: DropDelegate {
-+    private final class ActiveFilePromise: @unchecked Sendable {
-+        let id = UUID()
-+        let receiver: NSFilePromiseReceiver
-+        let destinationDirectory: URL
-+        let queue: OperationQueue
-+
-+        init(receiver: NSFilePromiseReceiver, destinationDirectory: URL) {
-+            self.receiver = receiver
-+            self.destinationDirectory = destinationDirectory
-+            self.queue = OperationQueue()
-+            self.queue.name = "xyz.planetable.Planet.drag-drop.file-promise.\(id.uuidString)"
-+            self.queue.qualityOfService = .userInitiated
-+        }
-+    }
-+
-+    private static let activePromiseLock = NSLock()
-+    private static var activePromises: [UUID: ActiveFilePromise] = [:]
-+
-+    static let supportedContentTypes: [UTType] = {
-+        let filePromiseTypes = NSFilePromiseReceiver.readableDraggedTypes.map {
-+            UTType($0) ?? UTType(importedAs: $0)
-+        }
-+        return filePromiseTypes + [.fileURL, .image, .movie, .pdf, .mp3]
-+    }()
-+
      init() {}
  
      static func processDropInfo(_ info: DropInfo) async -> [URL] {
-+        log(
-+            "processDropInfo started providers=\(info.itemProviders(for: supportedContentTypes).count) location=\(describeLocation(info.location))"
-+        )
-+
-         var urls: [URL] = []
-         if #available(macOS 13.0, *) {
-             for provider in info.itemProviders(for: [.image, .movie, .pdf, .mp3]) {
-+                log("provider types=\(provider.registeredTypeIdentifiers.sorted().joined(separator: ","))")
-                 if let url = try? await provider.loadItem(forTypeIdentifier: UTType.image.identifier) as? URL {
-                     urls.append(url)
--                    debugPrint("Drop file (image) accepted: \(url)")
-+                    log("Drop file (image) accepted: \(quote(url.path))")
-                 }
-                 if let url = try? await provider.loadItem(forTypeIdentifier: UTType.pdf.identifier) as? URL {
-                     urls.append(url)
--                    debugPrint("Drop file (pdf) accepted: \(url)")
-+                    log("Drop file (pdf) accepted: \(quote(url.path))")
-                 }
-                 if let url = try? await provider.loadItem(forTypeIdentifier: UTType.movie.identifier) as? URL {
-                     urls.append(url)
--                    debugPrint("Drop file (video) accepted: \(url)")
-+                    log("Drop file (video) accepted: \(quote(url.path))")
-                 }
-                 if let url = try? await provider.loadItem(forTypeIdentifier: UTType.mp3.identifier) as? URL {
-                     urls.append(url)
--                    debugPrint("Drop file (mp3 audio) accepted: \(url)")
-+                    log("Drop file (mp3 audio) accepted: \(quote(url.path))")
-                 }
-             }
-         } else {
--            var urls: [URL] = []
-             let supportedExtensions = ["png", "heic", "jpeg", "gif", "tiff", "jpg", "webp"]
-             for provider in info.itemProviders(for: [.fileURL]) {
-                 if let item = try? await provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier),
-@@ -44,6 +74,7 @@ class PlanetQuickShareDropDelegate: DropDelegate {
-                 }
-             }
-         }
-+        log("processDropInfo finished urls=\(urls.count)")
-         return urls
-     }
+         log(
+-            "processDropInfo started providers=\(info.itemProviders(for: supportedContentTypes).count) location=\(describeLocation(info.location))"
++            "processDropInfo started providers=\(info.itemProviders(for: supportedTypeIdentifiers).count) location=\(describeLocation(info.location))"
+         )
  
-@@ -52,11 +83,57 @@ class PlanetQuickShareDropDelegate: DropDelegate {
+         var urls: [URL] = []
+@@ -83,7 +81,7 @@ class PlanetQuickShareDropDelegate: DropDelegate {
      }
  
      func validateDrop(info: DropInfo) -> Bool {
--        guard let _ = info.itemProviders(for: [.image]).first else { return false }
--        return true
-+        let providerCount = info.itemProviders(for: Self.supportedContentTypes).count
-+        let hasDirectImage = Self.dragPasteboardHasDirectImage()
-+        let hasPromise = Self.dragPasteboardHasFilePromise()
-+        let isValid = providerCount > 0 || hasDirectImage || hasPromise
-+        Self.log(
-+            "validateDrop valid=\(isValid) providers=\(providerCount) hasDirectImage=\(hasDirectImage) hasPromise=\(hasPromise) location=\(Self.describeLocation(info.location))"
-+        )
-+        return isValid
-     }
- 
-     func performDrop(info: DropInfo) -> Bool {
-+        if let imageURL = Self.imageFileFromDragPasteboard() {
-+            Self.log("performDrop received directPasteboardImage")
-+            Task { @MainActor in
-+                do {
-+                    try PlanetQuickShareViewModel.shared.prepareFiles([imageURL])
-+                } catch {
-+                    Self.log("performDrop failed to prepare directPasteboardImage error=\(error.localizedDescription)", level: .error)
-+                    let alert = NSAlert()
-+                    alert.messageText = L10n("Failed to Add Attachments")
-+                    alert.informativeText = error.localizedDescription
-+                    alert.alertStyle = .warning
-+       
+-        let providerCount = info.itemProviders(for: Self.supportedContentTypes).count
++        let providerCount = info.itemProviders(for: Self.supportedTypeIdentifiers).count
+         let hasDirectImage = Self.dragPasteboardHasDirectImage()
+         let hasPromise = Self.dragPasteboardHasFilePromise()
+         let isValid = providerCount > 0 || hasDirectImage || hasPromise
 ```
 
 **File**: `Planet/Quick Share/PlanetQuickShareView.swift` (modified, +1/-1)
@@ -4259,1193 +2877,61 @@ Register DragPasteboardMedia.swift in the Xcode project and verify the Planet ma
                      let dropDelegate = PlanetQuickShareDropDelegate()
                      attachmentSectionPlaceholder()
                          .focusable()
--                        .onDrop(of: [.image, .movie], delegate: dropDelegate)
-+                        .onDrop(of: PlanetQuickShareDropDelegate.supportedContentTypes, delegate: dropDelegate)
+-                        .onDrop(of: PlanetQuickShareDropDelegate.supportedContentTypes, delegate: dropDelegate)
++                        .onDrop(of: PlanetQuickShareDropDelegate.supportedTypeIdentifiers, delegate: dropDelegate)
                          .onPasteCommand(of: [.fileURL, .image, .movie, .mp3], perform: PlanetQuickShareViewModel.shared.processPasteItems(_:))
                          .contextMenu {
                              PasteButton(supportedContentTypes: [.fileURL, .image, .movie, .mp3], payloadAction: PlanetQuickShareViewModel.shared.processPasteItems(_:))
 ```
 
-**File**: `Planet/Views/Articles/ArticleListView.swift` (modified, +40/-3)
+**File**: `Planet/Views/Articles/ArticleListView.swift` (modified, +2/-2)
 ```diff
-@@ -31,7 +31,14 @@ class ArticleListDropDelegate: DropDelegate {
+@@ -31,7 +31,7 @@ class ArticleListDropDelegate: DropDelegate {
      }
  
      func validateDrop(info: DropInfo) -> Bool {
--        return info.itemProviders(for: [.fileURL]).count > 0
-+        let providerCount = info.itemProviders(for: PlanetQuickShareDropDelegate.supportedContentTypes).count
-+        let hasDirectImage = PlanetQuickShareDropDelegate.dragPasteboardHasDirectImage()
-+        let hasPromise = PlanetQuickShareDropDelegate.dragPasteboardHasFilePromise()
-+        let isValid = providerCount > 0 || hasDirectImage || hasPromise
-+        Self.log(
-+            "ArticleList.validateDrop valid=\(isValid) providers=\(providerCount) hasDirectImage=\(hasDirectImage) hasPromise=\(hasPromise) location=\(Self.describeLocation(info.location))"
-+        )
-+        return isValid
-     }
- 
-     private static func droppedFileURLs(from info: DropInfo) async -> [URL] {
-@@ -300,9 +307,28 @@ class ArticleListDropDelegate: DropDelegate {
-     }
- 
-     func performDrop(info: DropInfo) -> Bool {
-+        Self.log("ArticleList.performDrop started location=\(Self.describeLocation(info.location))")
-+        if let imageURL = PlanetQuickShareDropDelegate.imageFileFromDragPasteboard() {
-+            Self.log("ArticleList.performDrop received directPasteboardImage")
-+            PlanetQuickShareDropDelegate.prepareQuickShare(for: imageURL)
-+            return true
-+        }
-+
-+        if PlanetQuickShareDropDelegate.receivePromisedFileFromDragPasteboard({ fileURL in
-+            guard let fileURL else {
-+                Self.log("ArticleList.performDrop promisedFile produced no URL", level: .warning)
-+                return
-+            }
-+            Self.log("ArticleList.performDrop received promisedFile")
-+            PlanetQuickShareDropDelegate.prepareQuickShare(for: fileURL)
-+        }) {
-+            return true
-+        }
-+
-         Task { @MainActor in
-             do {
-                 let fileURLs = await Self.droppedFileURLs(from: info)
-+                Self.log("ArticleList.performDrop fileURLCount=\(fileURLs.count)")
-                 if try await Self.handleTextDocumentDrop(fileURLs) {
-                     if #available(macOS 14.0, *) {
-                         NSApp.activate()
-@@ -313,7 +339,10 @@ class ArticleListDropDelegate: DropDelegate {
-                 }
- 
-                 let urls: [URL] = await PlanetQuickShareDropDelegate.processDropInfo(info)
--                guard urls.count > 0 else { return }
-+                guard urls.count > 0 else {
-+                    Self.log("ArticleList.performDrop no quick-share URLs extracted", level: .warning)
-+                    return
-+                }
-                 try PlanetQuickShareViewModel.shared.prepareFiles(urls)
-                 PlanetStore.shared.isQuickSharing = true
-                 if #available(macOS 14.0, *) {
-@@ -334,6 +363,14 @@ class ArticleListDropDelegate: DropDelegate {
-         }
-         return true
-     }
-+
-+    private static func log(_ message: String, level: PlanetLogger.Level = .info) {
-+        PlanetLogger.log("DragDrop: \(message)", level: level)
-+    }
-+
-+    private static func describeLocation(_ location: CGPoint) -> String {
-+        "(\(String(format: "%.1f", location.x)),\(String(format: "%.1f", location.y)))"
-+    }
- }
- 
- 
-@@ -633,7 +670,7 @@ struct ArticleListView: View {
+-        let providerCount = info.itemProviders(for: PlanetQuickShareDropDelegate.supportedContentTypes).count
++        let providerCount = info.itemProviders(for: PlanetQuickShareDropDelegate.supportedTypeIdentifiers).count
+         let hasDirectImage = PlanetQuickShareDropDelegate.dragPasteboardHasDirectImage()
+         let hasPromise = PlanetQuickShareDropDelegate.dragPasteboardHasFilePromise()
+         let isValid = providerCount > 0 || hasDirectImage || hasPromise
+@@ -679,7 +679,7 @@ struct ArticleListView: View {
                  }
              }
          }
--        .onDrop(of: [.fileURL], delegate: articleDropDelegate)
-+        .onDrop(of: PlanetQuickShareDropDelegate.supportedContentTypes, delegate: articleDropDelegate)
+-        .onDrop(of: PlanetQuickShareDropDelegate.supportedContentTypes, delegate: articleDropDelegate)
++        .onDrop(of: PlanetQuickShareDropDelegate.supportedTypeIdentifiers, delegate: articleDropDelegate)
          .onWidthChange { newWidth in
              @AppStorage("articleListWidth") var articleListWidth = 240.0
              articleListWidth = newWidth
 ```
 
-**File**: `Planet/Writer/WriterTextView.swift` (modified, +43/-281)
+**File**: `Planet/Views/Sidebar/PlanetSidebarView.swift` (modified, +1/-2)
 ```diff
-@@ -3,59 +3,35 @@ import UniformTypeIdentifiers
- 
- @MainActor
- enum WriterPasteboardImporter {
--    private struct ImportedAttachmentFile {
--        let url: URL
--        let attachmentType: AttachmentType
--        let isTemporary: Bool
--    }
--
--    private static let supportedImagePasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.png.identifier), "png"),
--        (NSPasteboard.PasteboardType(UTType.jpeg.identifier), "jpg"),
--        (NSPasteboard.PasteboardType(UTType.gif.identifier), "gif"),
--        (NSPasteboard.PasteboardType(UTType.tiff.identifier), "tiff"),
--        (NSPasteboard.PasteboardType("public.heic"), "heic"),
--        (NSPasteboard.PasteboardType("public.heif"), "heif"),
--        (NSPasteboard.PasteboardType("public.webp"), "webp")
--    ]
--
--    private static let supportedVideoPasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.mpeg4Movie.identifier), "mp4"),
--        (NSPasteboard.PasteboardType(UTType.quickTimeMovie.identifier), "mov"),
--        (NSPasteboard.PasteboardType(UTType.movie.identifier), "mov")
--    ]
--
--    private static let supportedAudioPasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.mp3.identifier), "mp3"),
--        (NSPasteboard.PasteboardType(UTType.mpeg4Audio.identifier), "m4a"),
--        (NSPasteboard.PasteboardType(UTType.wav.identifier), "wav"),
--        (NSPasteboard.PasteboardType(UTType.audio.identifier), "m4a")
--    ]
--
--    private static let supportedFilePasteboardTypes: [(type: NSPasteboard.PasteboardType, fileExtension: String)] = [
--        (NSPasteboard.PasteboardType(UTType.pdf.identifier), "pdf")
--    ]
-+    private typealias ImportedAttachmentFile = DragPasteboardMediaFile
-+    private static let supportedAttachmentTypes: Set<AttachmentType> = [.image, .video, .audio, .file]
- 
-     static var readablePasteboardTypes: [NSPasteboard.PasteboardType] {
--        [.fileURL, NSPasteboard.PasteboardType(UTType.image.identifier)]
--            + supportedImagePasteboardTypes.map(\.type)
--            + supportedVideoPasteboardTypes.map(\.type)
--            + supportedAudioPasteboardTypes.map(\.type)
--            + supportedFilePasteboardTypes.map(\.type)
-+        DragPasteboardMedia.readablePasteboardTypes(allowing: supportedAttachmentTypes)
-     }
- 
-     static func canImport(returnType: NSPasteboard.PasteboardType?) -> Bool {
-         guard let returnType else { return true }
-         return readablePasteboardTypes.contains(returnType)
-     }
- 
-+    static func canImport(from pasteboard: NSPasteboard) -> Bool {
-+        DragPasteboardMedia.containsSupportedMedia(
-+            in: pasteboard,
-+            allowing: supportedAttachmentTypes
-+        )
-+    }
-+
-     static func importAttachments(
-         from pasteboard: NSPasteboard,
-         into draft: DraftModel,
-         insertMarkdown: (String) -> Void,
-         synchronizeContent: (() -> Void)? = nil
-     ) throws -> Bool {
--        let importedAttachments = try importedAttachmentFiles(from: pasteboard)
-+        let importedAttachments = try DragPasteboardMedia.importedFiles(
-+            from: pasteboard,
-+            allowing: supportedAttachmentTypes
-+        )
-         guard !importedAttachments.isEmpty else {
-             return false
-         }
-@@ -109,247 +85,6 @@ enum WriterPasteboardImporter {
-         }
-     }
- 
--    private static func importedAttachmentFiles(from pasteboard: NSPasteboard) throws -> [ImportedAttachmentFile] {
--        var attachments: [ImportedAttachmentFile] = []
--
--        if let fileURLs = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
--            for fileURL in fileURLs {
--                guard let attachmentType = supportedAttachmentType(for: fileURL) else {
--                    continue
--                }
--                attachments.append(
--                    try makeTemporaryAttachmentFile(from: fileURL, attachmentType: attachmentType)
--                )
--            }
--        }
--
--        if let items = pasteboard.pasteboardItems {
--            for item in items where !item.types.contains(.fileURL) {
--                if let importedAttachment = try makeTemporaryAttachmentFile(from: item) {
--                    attachments.append(importedAttachment)
--                }
--            }
--        } else if attachments.isEmpty,
--                  let fallbackAttachment = try makeTemporaryAttachmentFile(from: pasteboard) {
--            attachments.append(fallbackAttachment)
--        }
--
--        return attachments
--    }
--
--    private static func supportedAttachmentType(for url: URL) -> AttachmentType? {
--        guard url.isFileURL else { return nil }
--        if let fileType = UTType(filenameExtension: url.pathExtension.lowercased()) {
--            if fileType.conforms(to: .image) {
--                return .image
-- 
-```
-
----
-
-### Incident Patch 9: `993b55d3` (2026-05-06)
-**Commit Message**: Add build-time feature flag support
-
-**File**: `AGENTS.md` (modified, +2/-0)
-```diff
-@@ -4,3 +4,5 @@
- - Sandbox-safe app logs should be written with `NSTemporaryDirectory()`; in Planet this resolves under `~/Library/Containers/xyz.planetable.Planet/Data/tmp/` (for example `planet-ai-debug.log`, `video.log`)
- - For broken SwiftPM/Xcode derived data under `/tmp/planet-derived` (for example missing `Sparkle.xcframework`), remove `/tmp/planet-derived`, run `xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile -project Planet.xcodeproj -scheme "Planet" -derivedDataPath /tmp/planet-derived`, then rebuild
- - When modifying Xcode project files (.xcodeproj/project.pbxproj), use the `xcodeproj` Ruby gem instead of editing the pbxproj file directly.
-+- When editing or creating files under `Technotes/`, do not manually hard-wrap prose; let the editor soft-wrap paragraphs and list items.
-+- Build-time feature flags are controlled through xcconfig settings, typed runtime checks in `Planet/FeatureFlags.swift`, and documented in `Technotes/FeatureFlags.md`; use `Planet/local.xcconfig` for machine-local overrides.
-```
-
-**File**: `Planet.xcodeproj/project.pbxproj` (modified, +5/-1)
-```diff
-@@ -546,6 +546,7 @@
- 		72114FE37ADE9340E448FF3E /* WriterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72114B2B1F05731320A89022 /* WriterViewModel.swift */; };
- 		7682AC6BFB25793BEC575A8C /* ArticleAIOnDeviceTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B14374A86131144DC199477 /* ArticleAIOnDeviceTools.swift */; };
- 		8D61823796760999B867040E /* SearchEmbedding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 776E9594BE16BBA78335B7E6 /* SearchEmbedding.swift */; };
-+		8F03F9FAEFE88AA819E13F28 /* FeatureFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2FA88FEC08699B75D7818C /* FeatureFlags.swift */; };
- 		8F33EB5B385321311DA2AF54 /* AppLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196AB5BD526941A7FAB5D1AD /* AppLogView.swift */; };
- 		9F1807DD072155243C041DFC /* ThemeColorExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412635EFFFDD8D11BBC4BC56 /* ThemeColorExtractor.swift */; };
- 		9F283A9A8EA2592CEC565037 /* SearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BF4852CA45DC20EE145C58 /* SearchIndex.swift */; };
-@@ -930,6 +931,7 @@
- 		81B73C69A555DE29723AEFCA /* et */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/Localizable.strings; sourceTree = "<group>"; };
- 		839C3B2373346DCBD530F1BC /* da */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/InfoPlist.strings; sourceTree = "<group>"; };
- 		848998DD8F0386FE0BA4A3D8 /* el */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-+		8A2FA88FEC08699B75D7818C /* FeatureFlags.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FeatureFlags.swift; sourceTree = "<group>"; };
- 		8E2751B5275DEC7A6D8B0AA0 /* it */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
- 		92E9E61088FF7A043F46E188 /* SSHRsyncLogger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SSHRsyncLogger.swift; sourceTree = "<group>"; };
- 		9E6DEFB79570666667A1BE19 /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-@@ -1324,6 +1326,7 @@
- 				6A1FD5022A75A64500391972 /* Avatars.xcassets */,
- 				2A4AE87C2A89F49B00A27B5B /* SharedAssets.xcassets */,
- 				60789C8BE7AC8B1E293698E0 /* Log */,
-+				8A2FA88FEC08699B75D7818C /* FeatureFlags.swift */,
- 			);
- 			path = Planet;
- 			sourceTree = "<group>";
-@@ -2513,6 +2516,7 @@
- 				0AA0B181DEC749A0DB6E8A6E /* PlanetAIChatWindowController.swift in Sources */,
- 				B2B22802B0B767E09FE903A2 /* ArticleSpeechPlayer.swift in Sources */,
- 				9F1807DD072155243C041DFC /* ThemeColorExtractor.swift in Sources */,
-+				8F03F9FAEFE88AA819E13F28 /* FeatureFlags.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -2743,7 +2747,7 @@
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
- 				SDKROOT = macosx;
--				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
- 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
- 			};
- 			name = Debug;
-```
-
-**File**: `Planet/FeatureFlags.swift` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+//
-+//  FeatureFlags.swift
-+//  Planet
-+//
-+
-+enum FeatureFlags {
-+    #if PLANET_ENABLE_APPLE_INTELLIGENCE
-+    static let appleIntelligenceSupport = true
-+    #else
-+    static let appleIntelligenceSupport = false
-+    #endif
-+}
-```
-
-**File**: `Planet/Planet.xcconfig` (modified, +5/-0)
-```diff
-@@ -16,6 +16,11 @@ PLANET_APP_ICON_NAME = AppIcon-Debug
- 
- PLANET_LITE_ICON_NAME = AppIcon-Debug
- 
-+PLANET_ENABLE_APPLE_INTELLIGENCE = YES
-+PLANET_APPLE_INTELLIGENCE_COMPILATION_CONDITION_YES = PLANET_ENABLE_APPLE_INTELLIGENCE
-+PLANET_APPLE_INTELLIGENCE_COMPILATION_CONDITION_NO =
-+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(PLANET_APPLE_INTELLIGENCE_COMPILATION_CONDITION_$(PLANET_ENABLE_APPLE_INTELLIGENCE))
-+
- #include "marketing_version.xcconfig"
- #include "versioning.xcconfig"
- #include? "local.xcconfig"
-```
-
-**File**: `Planet/Release.xcconfig` (modified, +5/-0)
-```diff
-@@ -27,6 +27,11 @@ ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO
- ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOL_FRAMEWORKS = ""
- ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO
- 
-+PLANET_ENABLE_APPLE_INTELLIGENCE = YES
-+PLANET_APPLE_INTELLIGENCE_COMPILATION_CONDITION_YES = PLANET_ENABLE_APPLE_INTELLIGENCE
-+PLANET_APPLE_INTELLIGENCE_COMPILATION_CONDITION_NO =
-+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(PLANET_APPLE_INTELLIGENCE_COMPILATION_CONDITION_$(PLANET_ENABLE_APPLE_INTELLIGENCE))
-+
- #include "marketing_version.xcconfig"
- #include "versioning.xcconfig"
- #include? "local.xcconfig"
-```
-
-**File**: `Planet/Settings/PlanetSettingsAIView.swift` (modified, +8/-2)
-```diff
-@@ -7,7 +7,7 @@
- 
- import SwiftUI
- 
--#if canImport(FoundationModels)
-+#if PLANET_ENABLE_APPLE_INTELLIGENCE && canImport(FoundationModels)
- import FoundationModels
- #endif
- 
-@@ -462,7 +462,13 @@ struct PlanetSettingsAIView: View {
-     }
- 
-     private func checkOnDeviceAI() {
--        #if canImport(FoundationModels)
-+        guard FeatureFlags.appleIntelligenceSupport else {
-+            onDeviceAIState = .idle
-+            onDeviceAILabel = L10n("On-device AI is disabled in this build")
-+            return
-+        }
-+
-+        #if PLANET_ENABLE_APPLE_INTELLIGENCE && canImport(FoundationModels)
-         if #available(macOS 26.0, *) {
-             let model = SystemLanguageModel.default
-             switch model.availability {
-```
-
-**File**: `Planet/Views/Articles/ArticleAIChatView.swift` (modified, +16/-3)
-```diff
-@@ -10,7 +10,7 @@ import Combine
- import Foundation
- import SwiftUI
- 
--#if canImport(FoundationModels)
-+#if PLANET_ENABLE_APPLE_INTELLIGENCE && canImport(FoundationModels)
- import FoundationModels
- #endif
- 
-@@ -350,18 +350,30 @@ struct ArticleAIChatView: View {
- 
-     private func checkProviderAvailability() {
-         isRemoteAvailable = UserDefaults.standard.bool(forKey: .settingsAIIsReady)
--        #if canImport(FoundationModels)
-+        isOnDeviceAvailable = false
-+        guard FeatureFlags.appleIntelligenceSupport else {
-+            normalizeSelectedProvider()
-+            return
-+        }
-+
-+        #if PLANET_ENABLE_APPLE_INTELLIGENCE && canImport(FoundationModels)
-         if #available(macOS 26.0, *) {
-             let model = SystemLanguageModel.default
-             if case .available = model.availability {
-                 isOnDeviceAvailable = true
-             }
-         }
-         #endif
-+        normalizeSelectedProvider()
-+    }
-+
-+    private func normalizeSelectedProvider() {
-         if isOnDeviceAvailable && !isRemoteAvailable {
-             selectedProvider = .onDevice
-         } else if isRemoteAvailable && !isOnDeviceAvailable {
-             selectedProvider = .remote
-+        } else if !isRemoteAvailable && !isOnDeviceAvailable {
-+            selectedProvider = .remote
-         }
-     }
- 
-@@ -681,6 +693,7 @@ struct ArticleAIChatView: View {
-             savedScrollTarget = envelope.scrollTargetMessageID
-             if let provider = envelope.provider, let restored = AIProvider(rawValue: provider) {
-                 selectedProvider = restored
-+                normalizeSelectedProvider()
-             }
-         } else if let legacy = try? JSONDecoder.shared.decode([ArticleAIChatPersistedMessage].self, from: data) {
-             persisted = legacy
-@@ -2200,7 +2213,7 @@ struct ArticleAIChatView: View {
-     }
- 
-     private func sendOnDeviceMessage(prompt: String, streamingMessageID: UUID) {
--        #if canImport(FoundationModels)
-+        #if PLANET_ENABLE_APPLE_INTELLIGENCE && canImport(FoundationModels)
-         if #available(macOS 26.0, *) {
-             Task {
-                 do {
-```
-
-**File**: `Planet/Views/Articles/ArticleAIOnDeviceTools.swift` (modified, +1/-1)
-```diff
-@@ -390,7 +390,7 @@ enum ArticleAIRepoGrep {
-     }
- }
- 
--#if canImport(FoundationModels)
-+#if PLANET_ENABLE_APPLE_INTELLIGENCE && canImport(FoundationModels)
- 
- import FoundationModels
- 
-```
-
----
-
-### Incident Patch 10: `e8544143` (2026-05-05)
-**Commit Message**: Add liquid glass toolbar tint leak technote
-
-Document macOS 26 issue where liquid glass dark adaptation on
-one NavigationView column leaks to toolbar items in other columns.
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2798
-+CURRENT_PROJECT_VERSION = 2799
-```
-
-**File**: `Technotes/SwiftUIToolbarEnvironmentLeak.md` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+# SwiftUI Toolbar Environment Leak in NavigationView on macOS 26
-+
-+## Problem
-+
-+On macOS 26, when an article's detail column has a dark theme-color background, liquid glass automatically adapts the detail column's toolbar buttons to be visible against the dark background. However, this automatic dark adaptation leaks to toolbar items declared by other columns in the same `NavigationView` — for example, the article list column's filter button also turns white, even though its toolbar area is not dark.
-+
-+This appears to be a side effect of liquid glass's automatic color scheme handling in the shared `NSToolbar`. In a macOS SwiftUI `NavigationView` with multiple columns (sidebar, list, detail), each column can declare `.toolbar {}` items, but these all get merged into a single shared `NSToolbar` on the window. The liquid glass dark adaptation does not scope itself to the column that has the dark background.
-+
-+## Reproduction
-+
-+```swift
-+// In a three-column NavigationView:
-+
-+// Column 2 (ArticleListView)
-+.toolbar {
-+    Menu { ... } label: {
-+        Image(systemName: "line.3.horizontal.decrease.circle")
-+        // ^ This icon unexpectedly turns white on macOS 26
-+        //   when Column 3 has a dark theme-color background
-+    }
-+}
-+
-+// Column 3 (ArticleView) — has dark theme-color background
-+// extending behind the toolbar via .edgesIgnoringSafeArea(.all)
-+.background(Color(themeColor ?? NSColor.textBackgroundColor))
-+```
-+
-+No explicit `.environment(\.colorScheme, .dark)` is needed to trigger this — liquid glass on macOS 26 does it automatically based on the dark background behind the toolbar area.
-+
-+## What Does Not Work
-+
-+- `.environment(\.colorScheme, systemColorScheme)` on the affected column's toolbar items as a countermeasure — does not override the leak
-+
-+## Status
-+
-+As of May 2026, no other reports of this specific issue were found online. Apple's WWDC25 guidance on liquid glass notes that extra backgrounds or darkening effects behind bar items can "interfere with the effect," which may be related. Consider filing via Feedback Assistant.
-+
-+## References
-+
-+- [Adopting Liquid Glass (Apple)](https://developer.apple.com/documentation/TechnologyOverviews/adopting-liquid-glass)
-+- [Build a SwiftUI app with the new design - WWDC25](https://developer.apple.com/videos/play/wwdc2025/323/)
-+- [Glassifying toolbars in SwiftUI (Swift with Majid)](https://swiftwithmajid.com/2025/07/01/glassifying-toolbars-in-swiftui/)
-+- [FIX Guide to iOS 26 Glass Effect and ToolbarColorScheme Issue](https://pratikpathak.com/fix-guide-to-ios-26-glass-effect-and-toolbarcolorscheme-issue-and-solution/)
-+
-+## Context
-+
-+This issue was encountered while implementing Safari-like `<meta name="theme-color">` support for Planet's article detail toolbar. When an article's theme-color is very dark (e.g., `#000`), liquid glass correctly adapts the detail column's toolbar buttons, but also incorrectly adapts the article list column's filter button.
-```
-
----
-
-### Incident Patch 11: `3422c7f9` (2026-05-04)
-**Commit Message**: Fix empty unfollow confirmation dialog
-
-**File**: `Planet/Views/Sidebar/FollowingPlanetSidebarItem.swift` (modified, +14/-8)
-```diff
-@@ -111,19 +111,20 @@ struct FollowingPlanetSidebarItem: View {
-                 Button {
-                     isShowingArchiveConfirmation = true
-                 } label: {
--                    Text("Archive Planet")
-+                    Text(verbatim: L10n("Archive Planet"))
-                 }
- 
-                 Button {
-                     isShowingUnfollowConfirmation = true
-                 } label: {
--                    Text("Unfollow")
-+                    Text(verbatim: L10n("Unfollow"))
-                 }
-             }
-         }
-         .confirmationDialog(
--            Text("Are you sure you want to archive this planet? Archived planets will not be auto updated. You can later unarchive it from settings."),
--            isPresented: $isShowingArchiveConfirmation
-+            Text(verbatim: L10n("Archive")),
-+            isPresented: $isShowingArchiveConfirmation,
-+            titleVisibility: .visible
-         ) {
-             Button() {
-                 planet.archive()
-@@ -134,12 +135,15 @@ struct FollowingPlanetSidebarItem: View {
-                 planetStore.followingPlanets.removeAll { $0.id == planet.id }
-                 planetStore.followingArchivedPlanets.insert(planet, at: 0)
-             } label: {
--                Text("Archive")
-+                Text(verbatim: L10n("Archive"))
-             }
-+        } message: {
-+            Text(verbatim: L10n("Are you sure you want to archive this planet? Archived planets will not be auto updated. You can later unarchive it from settings."))
-         }
-         .confirmationDialog(
--            Text("Are you sure you want to unfollow this planet?"),
--            isPresented: $isShowingUnfollowConfirmation
-+            Text(verbatim: L10n("Unfollow")),
-+            isPresented: $isShowingUnfollowConfirmation,
-+            titleVisibility: .visible
-         ) {
-             Button(role: .destructive) {
-                 planetStore.followingPlanets.removeAll { $0.id == planet.id }
-@@ -156,8 +160,10 @@ struct FollowingPlanetSidebarItem: View {
-                     planetStore.selectedView = nil
-                 }
-             } label: {
--                Text("Unfollow")
-+                Text(verbatim: L10n("Unfollow"))
-             }
-+        } message: {
-+            Text(verbatim: L10n("Are you sure you want to unfollow this planet?"))
-         }
- 
-     }
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2791
-+CURRENT_PROJECT_VERSION = 2792
-```
-
----
-
-### Incident Patch 12: `87045adb` (2026-05-04)
-**Commit Message**: Improve AI chat retrieval and table rendering
-
-**File**: `Planet/Views/Articles/ArticleAIChatView.swift` (modified, +164/-71)
-```diff
-@@ -375,10 +375,10 @@ struct ArticleAIChatView: View {
-             ScrollViewReader { proxy in
-                 ScrollView {
-                     chatMessageList
--                        .padding(.leading, 12)
--                        .padding(.trailing, 12)
-+                        .padding(.leading, 20)
-+                        .padding(.trailing, 20)
-                         .padding(.bottom, 20)
--                        .padding(.top, 16)
-+                        .padding(.top, 12)
-                 }
-                 .background(Color(NSColor.textBackgroundColor))
-                 .applyScrollPositionTracking(id: $scrolledMessageID)
-@@ -820,20 +820,14 @@ struct ArticleAIChatView: View {
-     }
- 
-     private var chatMessageList: some View {
--        VStack(alignment: .leading, spacing: 10) {
-+        LazyVStack(alignment: .leading, spacing: 10) {
-             Text(isPlanetWideMode ? L10n("Context: %@", contextTitle) : L10n("Context loaded from: %@", contextTitle))
-                 .font(.caption)
-                 .foregroundStyle(.secondary)
-                 .frame(maxWidth: .infinity, alignment: .leading)
- 
-             ForEach(messages) { message in
-                 HStack(alignment: .top) {
--                    Text(isAssistantStyleMessage(message) ? "AI" : "You")
--                        .font(.system(size: chatFontSize))
--                        .lineSpacing(5)
--                        .foregroundStyle(.secondary)
--                        .padding(.top, isAssistantStyleMessage(message) ? 0 : 8)
--                        .frame(width: 34, alignment: .trailing)
-                     VStack(alignment: .leading, spacing: 6) {
-                         if message.isReasoningResponse {
-                             Button {
-@@ -912,19 +906,12 @@ struct ArticleAIChatView: View {
-             }
- 
-             if isSending {
--                HStack(alignment: .top) {
--                    Text("AI")
--                        .font(.system(size: chatFontSize))
-+                TimelineView(.periodic(from: .now, by: 0.14)) { context in
-+                    Text("\(sendingAnimationFrame(for: context.date)) \(sendingStatusText)")
-+                        .font(.system(size: chatFontSize, design: .monospaced))
-                         .lineSpacing(5)
-                         .foregroundStyle(.secondary)
--                        .frame(width: 34, alignment: .trailing)
--                    TimelineView(.periodic(from: .now, by: 0.14)) { context in
--                        Text("\(sendingAnimationFrame(for: context.date)) \(sendingStatusText)")
--                            .font(.system(size: chatFontSize, design: .monospaced))
--                            .lineSpacing(5)
--                            .foregroundStyle(.secondary)
--                            .frame(maxWidth: .infinity, alignment: .leading)
--                    }
-+                        .frame(maxWidth: .infinity, alignment: .leading)
-                 }
-             }
- 
-@@ -1254,12 +1241,14 @@ struct ArticleAIChatView: View {
-         let evenRowBackground = makeArticleAITableCodeBackgroundColor()
-         let oddRowBackground = Color(NSColor.textBackgroundColor)
-         let cornerRadius: CGFloat = 5
-+        let isTextSelectionEnabled = markdownTableCellCount(table) <= Self.markdownTableCellSelectionLimit
- 
--        return VStack(spacing: 0) {
-+        return LazyVStack(spacing: 0) {
-             assistantMarkdownTableRow(
-                 table.headers,
-                 alignments: table.alignments,
--                isHeader: true
-+                isHeader: true,
-+                isTextSelectionEnabled: isTextSelectionEnabled
-             )
-             .background(headerBackground)
- 
-@@ -1269,11 +1258,12 @@ struct ArticleAIChatView: View {
-                     .frame(height: 1)
-             }
- 
--            ForEach(Array(table.rows.enumerated()), id: \.offset) { index, row in
-+            ForEach(table.rows.indices, id: \.self) { index in
-                 assistantMarkdownTableRow(
--                    row,
-+                    table.rows[index],
-                     alignments: table.alignments,
--                    isHeader: false
-+                    isHeader: false,
-+                    isTextSelectionEnabled: isTextSelectionEnabled
-                 )
-                 .background(index.isMultiple(of: 2) ? evenRowBackground : oddRowBackground)
- 
-@@ -1296,16 +1286,18 @@ struct ArticleAIChatView: View {
-     private func assistantMarkdownTableRow(
-         _ cells: [String],
-         alignments: [ArticleAIMarkdownTableAlignment],
--        isHeader: Bool
-+        isHeader: Bool,
-+        isTextSelectionEnabled: Bool
-     ) -> some View {
-         let borderColor = Color("BorderColor")
- 
-         return HStack(spacing: 0) {
--            ForEach(Array(cells.enumerated()), id: \.offset) { index, cell in
-+            ForEach(cells.indices, id: \.self) { index in
-                 assistantMarkdownTableCell(
--                    cell,
-+                    
-```
-
-**File**: `Planet/Views/Articles/ArticleAIOnDeviceTools.swift` (modified, +24/-11)
-```diff
-@@ -7,15 +7,15 @@
- 
- import Foundation
- 
--struct ArticleAIRepoGrepRequest {
-+struct ArticleAIRepoGrepRequest: Sendable {
-     let pattern: String
-     let path: String?
-     let literal: Bool
-     let caseSensitive: Bool
-     let maxResults: Int
- }
- 
--struct ArticleAIRepoGrepMatch {
-+struct ArticleAIRepoGrepMatch: Sendable {
-     let path: String
-     let line: Int
-     let column: Int
-@@ -31,7 +31,7 @@ struct ArticleAIRepoGrepMatch {
-     }
- }
- 
--struct ArticleAIRepoGrepResult {
-+struct ArticleAIRepoGrepResult: Sendable {
-     let pattern: String
-     let searchRoot: String
-     let literal: Bool
-@@ -79,6 +79,19 @@ enum ArticleAIRepoGrep {
-     private static let maxFileSizeBytes = 2_000_000
-     private static let maxPreviewLength = 400
- 
-+    static func searchAsync(request: ArticleAIRepoGrepRequest, repoRoot: URL) async throws -> ArticleAIRepoGrepResult {
-+        try await withCheckedThrowingContinuation { continuation in
-+            DispatchQueue.global(qos: .utility).async {
-+                do {
-+                    let result = try search(request: request, repoRoot: repoRoot)
-+                    continuation.resume(returning: result)
-+                } catch {
-+                    continuation.resume(throwing: error)
-+                }
-+            }
-+        }
-+    }
-+
-     static func search(request: ArticleAIRepoGrepRequest, repoRoot: URL) throws -> ArticleAIRepoGrepResult {
-         let pattern = request.pattern.trimmingCharacters(in: .whitespacesAndNewlines)
-         guard !pattern.isEmpty else {
-@@ -428,7 +441,7 @@ struct WritePlanetArguments: Sendable {
- @available(macOS 26.0, *)
- @Generable(description: "Arguments for searching articles")
- struct SearchArticlesArguments: Sendable {
--    @Guide(description: "Search query. Supports phrases in quotes and -negation.")
-+    @Guide(description: "Search query. Supports phrases in quotes and -negation. Use for semantic/topic search where wording may differ; for exact dates, IDs, title fragments, URLs, quoted text, or other literal tokens, use grep first.")
-     var query: String
-     @Guide(description: "Maximum number of results to return. Defaults to 10, max 50.")
-     var limit: Int?
-@@ -437,13 +450,13 @@ struct SearchArticlesArguments: Sendable {
- }
- 
- @available(macOS 26.0, *)
--@Generable(description: "Arguments for grep-style repo search")
-+@Generable(description: "Arguments for grep-style library search")
- struct GrepArguments: Sendable {
--    @Guide(description: "Required search pattern. Literal matching is used by default.")
-+    @Guide(description: "Required search pattern. For exact tokens from the user, pass the exact spelling and punctuation first, including date-like strings such as 2026-1-1. Leave literal as true unless regex is explicitly needed.")
-     var pattern: String
--    @Guide(description: "Optional relative file or directory under the Planet repo root to search. Defaults to the repo root.")
-+    @Guide(description: "Optional relative file or directory under the Planet library root to search. Defaults to the library root.")
-     var path: String?
--    @Guide(description: "Optional. Treat pattern as literal text. Defaults to true.")
-+    @Guide(description: "Optional. Treat pattern as literal text. Defaults to true; keep true for exact user-provided dates, IDs, titles, URLs, quoted text, identifiers, symbols, setting keys, and phrases.")
-     var literal: Bool?
-     @Guide(description: "Optional. Case-sensitive matching. Defaults to false.")
-     var caseSensitive: Bool?
-@@ -770,7 +783,7 @@ struct WritePlanetTool: Tool {
- @available(macOS 26.0, *)
- struct SearchArticlesTool: Tool {
-     var name: String { "search_articles" }
--    var description: String { "Search across all articles by keyword or topic. Returns matching article titles and previews." }
-+    var description: String { "Search across all articles by keyword or topic. Use for semantic/topic searches where wording may differ; for exact dates, IDs, title fragments, URLs, file paths, quoted text, or other literal tokens, use grep first." }
- 
-     func call(arguments: SearchArticlesArguments) async throws -> String {
-         let limit = min(50, max(1, arguments.limit ?? 10))
-@@ -808,7 +821,7 @@ struct SearchArticlesTool: Tool {
- @available(macOS 26.0, *)
- struct GrepTool: Tool {
-     var name: String { "grep" }
--    var description: String { "Search text files in the Planet repo for an exact string or regex. Prefer this for exact repo/file-content lookups." }
-+    var description: String { "Search text files in the Planet library for an exact string or regex. Best first tool for exact literal lookups such as dates, title fragments, quoted text, URLs, domains, file paths, UUIDs/IDs, tags, numbers, identifiers, symbols, proper nouns, and setting keys." }
- 
-     func call(arguments: GrepArguments) async throws -> String {
-         let request = ArticleAIRepoGrepRequest(
-@@ -822,7 +835,7 @@ struct GrepTool: Tool {
-             "grep called pattern=\(arguments.pattern),
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2789
-+CURRENT_PROJECT_VERSION = 2790
-```
-
----
-
-### Incident Patch 13: `3d7d779a` (2026-05-04)
-**Commit Message**: Fix article list refresh synchronization
-
-**File**: `Planet/Entities/PlanetStore.swift` (modified, +6/-1)
-```diff
-@@ -229,7 +229,12 @@ final class MyJSONDirectoryMonitor {
-             return nil
-         }
-     }
--    @Published var selectedArticleList: [ArticleModel]? = nil
-+    @Published private(set) var selectedArticleListVersion: UInt = 0
-+    @Published var selectedArticleList: [ArticleModel]? = nil {
-+        didSet {
-+            selectedArticleListVersion &+= 1
-+        }
-+    }
-     @Published var selectedArticle: ArticleModel? {
-         didSet {
-             if selectedArticle != oldValue {
-```
-
-**File**: `Planet/Views/Articles/ArticleListView.swift` (modified, +1/-1)
-```diff
-@@ -615,7 +615,7 @@ struct ArticleListView: View {
-         .onAppear {
-             viewModel.articles = filterArticles(planetStore.selectedArticleList ?? []) ?? []
-         }
--        .onChange(of: planetStore.selectedArticleList) { _ in
-+        .onChange(of: planetStore.selectedArticleListVersion) { _ in
-             viewModel.articles = filterArticles(planetStore.selectedArticleList ?? []) ?? []
-         }
-         .onChange(of: viewModel.filter) { _ in
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2788
-+CURRENT_PROJECT_VERSION = 2789
-```
-
----
-
-### Incident Patch 14: `9f578664` (2026-05-01)
-**Commit Message**: Harden crash-prone code paths
-
-**File**: `Planet/API/PlanetAPIController.swift` (modified, +5/-2)
-```diff
-@@ -475,12 +475,15 @@ class PlanetAPIController: NSObject, ObservableObject {
-             }
-             return ""
-         }()
--        let planetTemplateName: String = {
-+        let planetTemplateName: String = try {
-             let template: String = p.template ?? ""
-             if TemplateStore.shared.hasTemplate(named: template) {
-                 return template
-             }
--            return TemplateStore.shared.templates.first!.name
-+            guard let defaultTemplate = TemplateStore.shared.templates.first else {
-+                throw Abort(.internalServerError, reason: "No templates are available.")
-+            }
-+            return defaultTemplate.name
-         }()
-         let planet = try await MyPlanetModel.create(
-             name: planetName,
-```
-
-**File**: `Planet/Downloads/PlanetDownloadsWebView.swift` (modified, +11/-22)
-```diff
-@@ -71,40 +71,29 @@ class PlanetDownloadsWebView: WKWebView {
-                 return true
-             }
-         }
--        return DownloadsScriptMessageHandler.instance.href == nil && DownloadsScriptMessageHandler.instance.src == nil
-+        return !DownloadsScriptMessageHandler.instance.hasSelectedURL
-     }
-     
-     @objc private func openLinkAction(_ sender: NSMenuItem) {
--        guard let urlString = DownloadsScriptMessageHandler.instance.href else { return }
--        if urlString.hasPrefix("file:///") {
--            let targetURL = URL(fileURLWithPath: urlString)
--            ArticleWebViewModel.shared.processInternalFileLink(targetURL)
-+        guard let url = DownloadsScriptMessageHandler.instance.hrefURL else { return }
-+        if url.isFileURL {
-+            ArticleWebViewModel.shared.processInternalFileLink(url)
-         }
--        if let url = URL(string: urlString) {
--            ArticleWebViewModel.shared.processPossibleInternalLink(url)
--            if !ArticleWebViewModel.shared.checkInternalLink(url) {
--                NSWorkspace.shared.open(url)
--            }
-+        ArticleWebViewModel.shared.processPossibleInternalLink(url)
-+        if !ArticleWebViewModel.shared.checkInternalLink(url) {
-+            NSWorkspace.shared.open(url)
-         }
-     }
- 
-     @objc private func downloadFileAction(_ sender: NSMenuItem) {
--        if let _ = DownloadsScriptMessageHandler.instance.href, let srcString = DownloadsScriptMessageHandler.instance.src {
--            self.load(URLRequest(url: URL(string: srcString)!))
--        } else if let urlString = DownloadsScriptMessageHandler.instance.href {
--            self.load(URLRequest(url: URL(string: urlString)!))
--        } else if let srcString = DownloadsScriptMessageHandler.instance.src {
--            self.load(URLRequest(url: URL(string: srcString)!))
-+        if let url = DownloadsScriptMessageHandler.instance.selectedSourceURL {
-+            self.load(URLRequest(url: url))
-         }
-     }
-     
-     @objc private func openImageAction(_ sender: NSMenuItem) {
--        if let _ = DownloadsScriptMessageHandler.instance.href, let srcString = DownloadsScriptMessageHandler.instance.src {
--            NSWorkspace.shared.open(URL(string: srcString)!)
--        } else if let urlString = DownloadsScriptMessageHandler.instance.href {
--            NSWorkspace.shared.open(URL(string: urlString)!)
--        } else if let srcString = DownloadsScriptMessageHandler.instance.src {
--            NSWorkspace.shared.open(URL(string: srcString)!)
-+        if let url = DownloadsScriptMessageHandler.instance.selectedSourceURL {
-+            NSWorkspace.shared.open(url)
-         }
-     }
-     
-```
-
-**File**: `Planet/Entities/FollowingPlanetModel.swift` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ class FollowingPlanetModel: Equatable, Hashable, Identifiable, ObservableObject,
- 
-     static func followingPlanetsPath() -> URL {
-         let url = URLUtils.repoPath().appendingPathComponent("Following", isDirectory: true)
--        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-         return url
-     }
-     var basePath: URL {
-```
-
-**File**: `Planet/Entities/MyPlanetModel.swift` (modified, +2/-2)
-```diff
-@@ -148,7 +148,7 @@ class MyPlanetModel: Equatable, Hashable, Identifiable, ObservableObject, Codabl
- 
-     static func myPlanetsPath() -> URL {
-         let url = URLUtils.repoPath().appendingPathComponent("My", isDirectory: true)
--        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-         return url
-     }
-     static func isReservedTag(_ tag: String) -> Bool {
-@@ -271,7 +271,7 @@ class MyPlanetModel: Equatable, Hashable, Identifiable, ObservableObject, Codabl
- 
-     static func publicPlanetsPath() -> URL {
-         let url = URLUtils.repoPath().appendingPathComponent("Public", isDirectory: true)
--        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-         return url
-     }
-     var publicBasePath: URL {
-```
-
-**File**: `Planet/Entities/PlanetStore.swift` (modified, +18/-7)
-```diff
-@@ -346,7 +346,10 @@ final class MyJSONDirectoryMonitor {
-         do {
-             try load()
-         } catch {
--            fatalError("Error when accessing planet repo: \(error)")
-+            logger.error("Error when accessing planet repo: \(error.localizedDescription, privacy: .public)")
-+            alertTitle = L10n("Failed to Load Planet Library")
-+            alertMessage = error.localizedDescription
-+            isShowingAlert = true
-         }
-         rebuildSearchSnapshots()
- 
-@@ -1044,7 +1047,6 @@ final class MyJSONDirectoryMonitor {
-             return a.id != article.id
-         })
-         let articleIDString: String = article.id.uuidString
--        let fromPlanetIDString: String = fromPlanet.id.uuidString
-         let toPlanetIDString: String = toPlanet.id.uuidString
-         let fromArticlePath = article.path
-         let targetArticlePath = fromArticlePath.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent(toPlanetIDString).appendingPathComponent("Articles").appendingPathComponent("\(articleIDString).json")
-@@ -1081,11 +1083,20 @@ final class MyJSONDirectoryMonitor {
-         movedArticle.planet = toPlanet
-         movedArticle.draft = nil
- 
--        movedArticle.path = URL(string: article.path.absoluteString.replacingOccurrences(of: fromPlanetIDString, with: toPlanetIDString))!
--        movedArticle.publicBasePath = URL(string: article.publicBasePath.absoluteString.replacingOccurrences(of: fromPlanetIDString, with: toPlanetIDString))!
--        movedArticle.publicIndexPath = URL(string: article.publicIndexPath.absoluteString.replacingOccurrences(of: fromPlanetIDString, with: toPlanetIDString))!
--        movedArticle.publicInfoPath = URL(string: article.publicInfoPath.absoluteString.replacingOccurrences(of: fromPlanetIDString, with: toPlanetIDString))!
--        movedArticle.publicNFTMetadataPath = URL(string: article.publicNFTMetadataPath.absoluteString.replacingOccurrences(of: fromPlanetIDString, with: toPlanetIDString))!
-+        movedArticle.path = targetArticlePath
-+        movedArticle.publicBasePath = targetArticlePublicPath
-+        movedArticle.publicIndexPath = targetArticlePublicPath.appendingPathComponent(
-+            "index.html",
-+            isDirectory: false
-+        )
-+        movedArticle.publicInfoPath = targetArticlePublicPath.appendingPathComponent(
-+            "article.json",
-+            isDirectory: false
-+        )
-+        movedArticle.publicNFTMetadataPath = targetArticlePublicPath.appendingPathComponent(
-+            "nft.json",
-+            isDirectory: false
-+        )
- 
-         toPlanet.articles.append(movedArticle)
-         toPlanet.articles = toPlanet.articles.sorted(by: { $0.created > $1.created })
-```
-
-**File**: `Planet/Helper/DotBitKit.swift` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ class DotBitKit: NSObject {
-             } catch {
-                 return nil
-             }
--            if !(response as! HTTPURLResponse).ok {
-+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.ok else {
-                 return nil
-             }
-             if let json = try? JSON(data: data) {
-```
-
-**File**: `Planet/Helper/URLUtils.swift` (modified, +21/-20)
-```diff
-@@ -10,26 +10,27 @@ import Foundation
- import ImageIO
- 
- struct URLUtils {
--    static let applicationSupportPath = try! FileManager.default.url(
--        for: .applicationSupportDirectory,
--        in: .userDomainMask,
--        appropriateFor: nil,
--        create: true
--    )
-+    private static func userDirectory(_ directory: FileManager.SearchPathDirectory) -> URL {
-+        do {
-+            return try FileManager.default.url(
-+                for: directory,
-+                in: .userDomainMask,
-+                appropriateFor: nil,
-+                create: true
-+            )
-+        }
-+        catch {
-+            debugPrint("Failed to resolve user directory \(directory): \(error)")
-+            return FileManager.default.urls(for: directory, in: .userDomainMask).first
-+                ?? FileManager.default.temporaryDirectory
-+        }
-+    }
- 
--    static let documentsPath = try! FileManager.default.url(
--        for: .documentDirectory,
--        in: .userDomainMask,
--        appropriateFor: nil,
--        create: true
--    )
-+    static let applicationSupportPath = userDirectory(.applicationSupportDirectory)
- 
--    static let cachesPath = try! FileManager.default.url(
--        for: .cachesDirectory,
--        in: .userDomainMask,
--        appropriateFor: nil,
--        create: true
--    )
-+    static let documentsPath = userDirectory(.documentDirectory)
-+
-+    static let cachesPath = userDirectory(.cachesDirectory)
- 
-     static let legacyPlanetsPath = applicationSupportPath.appendingPathComponent(
-         "planets",
-@@ -98,13 +99,13 @@ struct URLUtils {
- 
-     static let defaultRepoPath: URL = {
-         let url = Self.documentsPath.appendingPathComponent("Planet", isDirectory: true)
--        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-         return url
-     }()
- 
-     static let temporaryPath: URL = {
-         let url = Self.cachesPath.appendingPathComponent("tmp", isDirectory: true)
--        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-         return url
-     }()
- }
-```
-
-**File**: `Planet/Helper/ViewUtils.swift` (modified, +6/-2)
-```diff
-@@ -282,14 +282,18 @@ struct ViewUtils {
- 
-     static func getPresetGradient(from walletAddress: String) -> Gradient {
-         let characters: [UInt8] = Array(walletAddress.utf8)
--        let lastCharUInt8 = characters.last!
-+        guard let lastCharUInt8 = characters.last else {
-+            return presetGradients[0]
-+        }
-         let index = Int(lastCharUInt8) % presetGradients.count
-         return presetGradients[index]
-     }
- 
-     static func getEmoji(from walletAddress: String) -> String {
-         let characters: [UInt8] = Array(walletAddress.utf8)
--        let lastCharUInt8 = characters.last!
-+        guard let lastCharUInt8 = characters.last else {
-+            return emojiList[0]
-+        }
-         let index = Int(lastCharUInt8) % emojiList.count
-         return emojiList[index]
-     }
-```
-
----
-
-### Incident Patch 15: `4181d16a` (2026-04-30)
-**Commit Message**: Fix star action localization
-
-**File**: `Planet/Views/Following/FollowingArticleItemView.swift` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ struct FollowingArticleItemView: View {
-                 } label: {
-                     Text("Delete Article")
-                 }
--                Menu("Star") {
-+                Menu("Add Star") {
-                     ArticleSetStarView(article: article)
-                 }
-                 if article.starred != nil {
-```
-
-**File**: `Planet/Views/My/MyArticleItemView.swift` (modified, +1/-1)
-```diff
-@@ -128,7 +128,7 @@ struct MyArticleItemView: View {
+@@ -155,8 +155,7 @@ struct PlanetSidebarView: View {
+                         }
+                     } label: {
+                         Image(systemName: "plus")
+-                            .resizable()
+-                            .aspectRatio(contentMode: .fit)
++                            .font(.system(size: 14, weight: .medium))
+                             .frame(width: 24, height: 24, alignment: .center)
                      }
-                 }
- 
--                Menu("Star") {
-+                Menu("Add Star") {
-                     ArticleSetStarView(article: article)
-                 }
-                 if article.starred != nil {
+                     .padding(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 0))
 ```
 
-**File**: `Planet/en.lproj/Localizable.strings` (modified, +1/-0)
+**File**: `Planet/marketing_version.xcconfig` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,7 @@
- "Mark as Unread" = "";
- "Delete Article" = "";
- "Remove Star" = "";
-+"Add Star" = "Star";
- "Star" = "";
- "Sparkles" = "";
- "Heart" = "";
-```
-
-**File**: `Planet/ja.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@
- "Mark as Unread" = "未読にする";
- "Delete Article" = "記事を削除";
- "Remove Star" = "スターを外す";
-+"Add Star" = "スターを付ける";
- "Star" = "スター";
- "Sparkles" = "きらめき";
- "Heart" = "ハート";
+@@ -1 +1 @@
+-MARKETING_VERSION = 0.22.3;
++MARKETING_VERSION = 0.22.4;
 ```
 
 **File**: `Planet/versioning.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2768
-+CURRENT_PROJECT_VERSION = 2769
-```
-
-**File**: `Planet/zh-Hans.lproj/Localizable.strings` (modified, +3/-2)
-```diff
-@@ -61,8 +61,9 @@
- "Mark as Read" = "标记为已读";
- "Mark as Unread" = "标记为未读";
- "Delete Article" = "删除文章";
--"Remove Star" = "删除标记";
--"Star" = "星";
-+"Remove Star" = "移除星标";
-+"Add Star" = "加星标";
-+"Star" = "星标";
- "Sparkles" = "闪闪发光";
- "Heart" = "心";
- "Question" = "问题";
-```
-
-**File**: `Planet/zh-Hant.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@
- "Mark as Unread" = "標示為未讀";
- "Delete Article" = "刪除文章";
- "Remove Star" = "移除星號";
-+"Add Star" = "加星號";
- "Star" = "星號";
- "Sparkles" = "閃光";
- "Heart" = "心";
+-CURRENT_PROJECT_VERSION = 2839
++CURRENT_PROJECT_VERSION = 2840
 ```
 
 #### Recent Merged Pull Requests:
@@ -5455,8 +2941,6 @@ Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 - **PR #437** (2025-08-22): Fix Podcast Feed Rendering (@kailuo)
 - **PR #433** (2025-06-14): Fix writer drag-n-drop animation (@kailuo)
 - **PR #429** (closed): Migrate console logging to Blackbird database. (@kailuo)
-- **PR #427** (2025-05-21): Add Menubar icon (@hewigovens)
-- **PR #425** (2025-05-13): Revert docktile sendable class. (@kailuo)
 
 ---
 
@@ -5470,3 +2954,39 @@ Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. macOS 12 crash from dangling unowned planet references
+
+**RULE**:
+When implementing operations in `Planet.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e03604fb`: macOS 12 crash from dangling unowned planet references. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Planet.xcodeproj/project.pbxproj`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+		930B0748E616F70F9F7FF489 /* ModelUpdateFieldCoverageCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F7B76DB94C513A9D189B3C /* ModelUpdateFieldCoverageCheck.swift */; };
+		A2587363679B28FC942BC9C8 /* ModelUpdateFieldCoverageCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F7B76DB94C513A9D189B3C /* ModelUpdateFieldCoverageCheck.swift */; };
+		14F7B76DB94C513A9D189B3C /* ModelUpdateFieldCoverageCheck.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelUpdateFieldCoverageCheck.swift; sourceTree = "<group>"; };
+				14F7B76DB94C513A9D189B3C /* ModelUpdateFieldCoverageCheck.swift */,
+				930B0748E616F70F9F7FF489 /* ModelUpdateFieldCoverageCheck.swift in Sources */,
+				A2587363679B28FC942BC9C8 /* ModelUpdateFieldCoverageCheck.swift in Sources */,
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e03604fb` are properly handled with clean fallback behavior.

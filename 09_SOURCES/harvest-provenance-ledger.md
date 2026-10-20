@@ -3684,3 +3684,6 @@ Every entry in this ledger must capture:
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `e1b0d33f` | Multi-dimensional audit evidence | 2026-10-20T03:06:49.629Z |
 | `learn-github-mijick-popups` | `https://github.com/Mijick/Popups` | `3aa55233` | Multi-dimensional audit evidence | 2026-10-20T03:06:51.390Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `8d48a333` | Multi-dimensional audit evidence | 2026-10-20T03:07:00.754Z |
+| `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `4ae235c8` | Multi-dimensional audit evidence | 2026-10-20T03:13:11.852Z |
+| `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `0fd2b7fe` | Multi-dimensional audit evidence | 2026-10-20T03:13:13.841Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cc23e63f` | Multi-dimensional audit evidence | 2026-10-20T03:13:18.447Z |

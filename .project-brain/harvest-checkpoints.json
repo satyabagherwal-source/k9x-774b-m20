@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T03:07:00.761Z",
+  "last_updated": "2026-10-20T03:13:18.455Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5134,14 +5134,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "dd5f115f0dd12a88b14b3f2db18761bd5849972a2b8a63007a2786eb3fb9627e",
-      "verified_at": "2026-10-19T18:03:03.265Z",
+      "content_hash": "b72463d4d10eb2a8cebe298855aaa92f76fa25875c7ce11f2633d009bf9797d1",
+      "verified_at": "2026-10-20T03:13:18.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:03:03.265Z"
+      "last_updated": "2026-10-20T03:13:18.454Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -15237,6 +15237,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T03:06:51.398Z"
+    },
+    "DevExpress/testcafe": {
+      "repository": "DevExpress/testcafe",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-devexpress-testcafe",
+      "content_hash": "0a162a59fcb8a139c08dc541ea92aeb724774258583a114a354f80787c578879",
+      "verified_at": "2026-10-20T03:13:11.859Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:13:11.859Z"
+    },
+    "Planetable/Planet": {
+      "repository": "Planetable/Planet",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-planetable-planet",
+      "content_hash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
+      "verified_at": "2026-10-20T03:13:13.849Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:13:13.849Z"
     }
   },
   "repos": {
