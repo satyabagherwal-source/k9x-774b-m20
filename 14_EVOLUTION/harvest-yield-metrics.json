@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:40:45.921Z",
-  "total_cycles_completed": 3665,
-  "total_learnings_persisted": 3665,
-  "total_rules_promoted": 2831,
+  "last_updated": "2026-10-20T03:46:46.547Z",
+  "total_cycles_completed": 3668,
+  "total_learnings_persisted": 3668,
+  "total_rules_promoted": 2833,
   "history": [
-    {
-      "timestamp": "2026-10-19T20:53:23.138Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T20:54:24.265Z",
-      "repository": "graphprotocol/graph-node",
-      "learningId": "learn-github-graphprotocol-graph-node",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T21:02:24.007Z",
-      "repository": "Shubham0812/SwiftUI-Animations",
-      "learningId": "learn-github-shubham0812-swiftui-animations",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T21:02:31.435Z",
       "repository": "agamm/pseo-next",
@@ -1403,6 +1382,27 @@
       "repository": "testing-library/dom-testing-library",
       "learningId": "learn-github-testing-library-dom-testing-library",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:46:41.925Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:46:43.066Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T03:46:46.547Z",
+      "repository": "jestjs/jest",
+      "learningId": "learn-github-jestjs-jest",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T03:40:45.925Z",
+  "last_updated": "2026-10-20T03:46:46.549Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3109,14 +3109,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "4e69fa7e671eb5347718be25be638d16535c98afd0f46930d5669ac247b5ffb6",
-      "verified_at": "2026-10-19T16:56:06.738Z",
+      "content_hash": "14fa38036e60ac35856cc5b793905d43f1328967a01e69b164b4ae67d49587b6",
+      "verified_at": "2026-10-20T03:46:41.927Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:56:06.738Z"
+      "last_updated": "2026-10-20T03:46:41.927Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -4474,14 +4474,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "18c2cbaa43e53d92a2a210589028c5c1273e4bed9db8f2b7b92823c712dd27f8",
-      "verified_at": "2026-10-19T13:21:06.345Z",
+      "content_hash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
+      "verified_at": "2026-10-20T03:46:43.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:21:06.345Z"
+      "last_updated": "2026-10-20T03:46:43.068Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -15342,6 +15342,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T03:40:45.924Z"
+    },
+    "jestjs/jest": {
+      "repository": "jestjs/jest",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jestjs-jest",
+      "content_hash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
+      "verified_at": "2026-10-20T03:46:46.549Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T03:46:46.549Z"
     }
   },
   "repos": {

@@ -3695,3 +3695,6 @@ Every entry in this ledger must capture:
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `d584197e` | Multi-dimensional audit evidence | 2026-10-20T03:28:26.667Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `9b99a239` | Multi-dimensional audit evidence | 2026-10-20T03:36:22.336Z |
 | `learn-github-testing-library-dom-testing-library` | `https://github.com/testing-library/dom-testing-library` | `6049cc0b` | Multi-dimensional audit evidence | 2026-10-20T03:40:45.916Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `03002a00` | Multi-dimensional audit evidence | 2026-10-20T03:46:41.920Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `6bd99337` | Multi-dimensional audit evidence | 2026-10-20T03:46:43.063Z |
+| `learn-github-jestjs-jest` | `https://github.com/jestjs/jest` | `61050e93` | Multi-dimensional audit evidence | 2026-10-20T03:46:46.544Z |

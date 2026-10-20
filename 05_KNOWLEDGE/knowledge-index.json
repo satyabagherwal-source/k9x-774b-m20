@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T03:40:45.866Z",
-  "total_verified_learnings": 1035,
+  "last_updated": "2026-10-20T03:46:46.514Z",
+  "total_verified_learnings": 1036,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9499,8 +9499,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "fb3d516d",
-      "content_hash": "18c2cbaa43e53d92a2a210589028c5c1273e4bed9db8f2b7b92823c712dd27f8",
+      "source_version": "6bd99337",
+      "content_hash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -9513,6 +9513,11 @@
           "number": 2603,
           "title": "virtual keys of one graph can no longer share a name (#3286)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3026,
+          "title": "ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9520,7 +9525,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:21:06.295Z",
+      "verified_at": "2026-10-20T03:46:43.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9655,8 +9660,8 @@
       "slug": "fastapi-fastapi",
       "platform": "github",
       "source_url": "https://github.com/fastapi/fastapi",
-      "source_version": "e5fc7ef5",
-      "content_hash": "4e69fa7e671eb5347718be25be638d16535c98afd0f46930d5669ac247b5ffb6",
+      "source_version": "03002a00",
+      "content_hash": "14fa38036e60ac35856cc5b793905d43f1328967a01e69b164b4ae67d49587b6",
       "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
@@ -9691,7 +9696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:56:06.674Z",
+      "verified_at": "2026-10-20T03:46:41.875Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59891,20 +59896,35 @@
     "learn-github-jestjs-jest": {
       "learning_id": "learn-github-jestjs-jest",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jestjs/jest",
       "repository": "jestjs/jest",
       "slug": "jestjs-jest",
       "platform": "github",
       "source_url": "https://github.com/jestjs/jest",
-      "source_version": "main",
-      "content_hash": "391ed5f6cabde4c6657177e112db9dc74b2d59e86cc148e7425f8b6f13a0cf19",
+      "source_version": "61050e93",
+      "content_hash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
       "dossier_path": "07_PROJECT_LEARNING/jestjs-jest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jestjs-jest-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3027,
+          "title": "deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T03:46:46.507Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-avajs-ava": {
       "learning_id": "learn-github-avajs-ava",
@@ -97723,6 +97743,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T03:40:45.853Z"
+    },
+    "rule-3026": {
+      "learning_id": "rule-3026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3026,
+      "title": "ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "6bd99337",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:46:43.029Z"
+    },
+    "rule-3027": {
+      "learning_id": "rule-3027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3027,
+      "title": "deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399)",
+      "source_url": "https://github.com/jestjs/jest",
+      "source_version": "61050e93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T03:46:46.507Z"
     }
   },
   "aliases": {

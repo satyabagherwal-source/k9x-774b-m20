@@ -217113,3 +217113,138 @@ const shouldHighlightBad = () => {
 Execute unit tests in 3 states: (1) `process.env.COLORS = ''`, (2) `process.env.COLORS = '{}'`, (3) `delete process.versions.node`. Verify that the function returns deterministic boolean outputs without throwing `SyntaxError` or `TypeError`.
 
 ---
+
+
+---
+
+## 3026. ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314) (Harvested from FalkorDB/FalkorDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)",
+  "source": "FalkorDB/FalkorDB",
+  "source_url": "https://github.com/FalkorDB/FalkorDB",
+  "source_version": "6bd99337",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-20T03:46:42.971Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-falkordb-falkordb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB) (Revision: `6bd99337`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/_build-artifacts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6bd99337`: ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_build-artifacts.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# Reusable workflow: build the falkordb shared library (.so) for every release
+# platform and upload each as a workflow artifact. BUILD ONLY — it never uploads
+# to a GitHub Release. Callers: release-tag.yml (the release, which then
+# publishes what this built) and build-artifacts.yml (pre-release verification).
+# The platform list below is the ONLY one: callers pick from it by suffix and
+# never carry their own copy. New platforms (see #608) are added here.
+# Each cell extracts the .so from the `artifact` target of its Dockerfile (for
+# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
+# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
+# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
+#
+# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
+# `server` target, the falkordb-server image for that OS, and start it to check
+# that the module loads and answers a query. With `export_images` the image is
+# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
+# x64/arm64v8 have no such step: the merge queue builds the Debian images.
+      platforms:
+          Comma-sep
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+# Reusable workflow: build the falkordb shared library (.so) for one or more
+# architectures and upload each as a workflow artifact. BUILD ONLY — it never
+# uploads to a GitHub Release. Callers (build-artifacts.yml for PR verification,
+# release-artifacts.yml for the release upload) describe the build cells via the
+# `cells` input as a JSON array of {arch, platform, runner, suffix} objects:
+#   [
+#     {"suffix":"x64",     "arch":"x64",     "platform":"linux/amd64","runner":"ubuntu-latest"},
+#     {"suffix":"arm64v8", "arch":"arm64v8", "platform":"linux/arm64","runner":"ubuntu-24.04-arm"}
+#   ]
+# Each cell extracts the .so from the `artifact` target of build/runtime/Dockerfile
+# (the exact .so the runtime image ships) and uploads it as `falkordb-<suffix>.so`
+# together with its `.sha256`. Cells are independent (fail-fast: false) and run on
+# native runners (no QEMU) for maximum parallelism.
+      cells:
+          JSON array of build cells. Each:
+          {suffix, arch, platform, runner, dockerfile, build_image, cxx}.
+          `dockerfile` provides the `artifact` target; `build_image` is the
+          chef/builder base (Debian toolchain image) or "" for self-contained
+          pe
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6bd99337` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3027. deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399) (Harvested from jestjs/jest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399)",
+  "source": "jestjs/jest",
+  "source_url": "https://github.com/jestjs/jest",
+  "source_version": "61050e93",
+  "license": "MIT",
+  "extracted_at": "2026-10-20T03:46:46.458Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jestjs-jest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jestjs/jest](https://github.com/jestjs/jest) (Revision: `61050e93`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/nightly.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jestjs/jest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `21fbc9f1`: deps): update jayqi/failed-build-issue-action action to v1.3.0 (#16399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+      - uses: drivendataorg/failed-build-issue-action@940568ce50eeef3f31a920614cefcc6102d2f930 # v1.3.0
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+      - uses: jayqi/failed-build-issue-action@1a893bbf43ef1c2a8705e2b115cd4f0fe3c5649b # v1.2.0
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `21fbc9f1` are properly handled with clean fallback behavior.

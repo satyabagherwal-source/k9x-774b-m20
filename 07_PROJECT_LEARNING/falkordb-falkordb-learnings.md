@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `fb3d516d`  
+> **Source Version**: `6bd99337`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:21:06.124Z  
+> **Timestamp**: 2026-10-20T03:46:42.875Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:21:06.117Z  
+> **Harvest Timestamp**: 2026-10-20T03:46:42.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10497 stars
+- **Stars / Engagement**: 10499 stars
 
 ---
 
@@ -2305,11 +2305,11 @@ def render(cmp: Comparison) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3389** (2026-10-19): **[Rust] Back-to-back CREATE INDEX on one label can leave the last field unpopulated (index reports OPERATIONAL)**
+  *Symptoms*: ### Summary  Creating several indexes on the same label back to back can leave the last field permanently unpopulated, while `db.indexes()` reports the index `OPERATIONAL`. Index scans on that field then return no rows. Since #3330, unique constraints are enforced by index lookup, so an affected constraint also accepts duplicates. C is not affected.  ### Reproduction (release build, `main` @ 0f45a8685)  ```cypher UNWIND range(1, 1000000) AS x CREATE (:Huge {a: x, b: x, c: x}) CREATE INDEX FOR (n:Huge) ON (n.a) CREATE INDEX FOR (n:Huge) ON (n.b) CREATE INDEX FOR (n:Huge) ON (n.c) -- wait until CALL db.indexes() reports OPERATIONAL MATCH (n:Huge) WHERE n.c = 7 RETURN count(n)   -- 0, expected 1 ```  About 1 run in 3 fails. In a failing run, `n.a = 7` and `n.b = 7` return 1 and `n.c = 7` returns 0, and it stays that way: re-checking 10 seconds later gives the same result.  With a `UNIQUE` constraint on `(a, b, c)`, `CREATE (:Huge {a:1, b:1, c:1})` is accepted even though node 1 already has those values.  ### CI impact  This is the flake in `tests/flow/test_effects_ddl.py:545` (`testEffects_06_ConstraintSettlingRaces.test01_a_paused_escalation_is_retried_not_abandoned`, "a duplicate must be rejected, got None"). That test creates the three indexes back to back, then checks that the constraint rejects a duplicate.  It fails at random in the `release-flow-svc` jobs of unrelated PRs: 9 of the last 60 "Rust PR" runs, e.g. #3384. Locally it fails 3 runs out of 6.  ### Mechanism  - Eac
+
 - **Issue #3346** (2026-10-15): **accept index trimmed values**
   *Symptoms*: Resolve: #3345  <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Fixes a server crash when a UNIQUE constraint's value is empty, whitespace-only, or trimmed by RediSearch (for example `" abc"`). Resolves #3345.  The commit-time duplicate check looks the value up in the TAG index, but such values don't round-trip, so the lookup returns NULL; the code dereferenced it, and the guard was compiled out in release builds.  - The constraint is now treated as satisfied for values that can't be looked up, so they're accepted without duplicate detection. - Genuine duplicates with normal values are still rejected. - Adds regression tests for sync and async constraint creation.  <sup>Written for commit fb6bc957915eb323df7afcce407f2741b5cde0c5. Summary will update on new commits.</sup>  <a href="https://cubic.dev/pr/FalkorDB/FalkorDB/pull/3346?utm_source=github" target="_blank" rel="noopener noreferrer" data-no-image-dialog="true"><picture><source media="(prefers-color-scheme: dark)" srcset="https://www.cubic.dev/buttons/review-in-cubic-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://www.cubic.dev/buttons/review-in-cubic-light.svg"><img alt="View guided diff" src="https://www.cubic.dev/buttons/review-in-cubic-light.svg"></picture></a> <a href="https://www.cubic.dev/action/auto-fix/pr/FalkorDB/FalkorDB/3346?returnTo=https%3A%2F%2Fgithub.com%2FFalkorDB%2FFalkorDB%2Fpull%2F3346&source=description" target="_blank" rel="noopener noreferrer
-
-- **Issue #3345** (2026-10-17): **Segfault (NULL deref) in EnforceUniqueEntity when a UNIQUE-constrained string value is empty or whitespace-padded**
-  *Symptoms*: Creating or updating a node/edge whose UNIQUE-constrained string property is empty, all-whitespace, or has leading/trailing whitespace crashes the server with a segmentation fault during write-commit constraint enforcement.  These values don't round-trip through the RediSearch TAG index (it trims surrounding whitespace and can't store an empty token), so the "find myself in the index" lookup in EnforceUniqueEntity returns NULL and the result is dereferenced.  The guarding ASSERT is compiled out in release builds, so production hits the raw NULL deref.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2326,651 +2326,629 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf11a277` (2026-10-19)
-**Commit Message**: fix: virtual keys of one graph can no longer share a name (#3286)
+### Incident Patch 1: `6bd99337` (2026-10-19)
+**Commit Message**: ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)
 
-* fix(rdb): give every virtual key a distinct name
+* build(libomp): build through openmp/ again below LLVM 23
 
-uuid_v4 mixed the clock and the call counter as t ^ seq, so two calls whose
-clock and counter changed in the same bits (4 ^ 2 == 5 ^ 3) got one name and
-the second virtual key replaced the first one's slice of the graph.
+The rhel9 and amazonlinux2023 artifact images build libomp with their
+distro clang (21.1.8 and 19.1.7). Since #3163 libomp.sh builds every
+version through runtimes/, which fails at configure before LLVM 22:
+openmp chooses its header path by OPENMP_STANDALONE_BUILD, so under
+runtimes/ it calls get_clang_resource_dir, which reads the
+PACKAGE_VERSION only a full LLVM build sets:
 
-Keep them in separate fields: the clock in the first three, seq times an odd
-constant (a bijection mod 2^48) in the last 48 bits. A compile-time check
-pins the colliding pair, since this crate's unit tests cannot run outside
-Redis.
+  CMake Error at cmake/Modules/GetClangResourceDir.cmake:16 (string):
+    string sub-command REGEX, mode MATCH needs at least 5 arguments
 
-Closes #3284
+v6.0.2 shipped without both .so files because of it.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Choose by major: runtimes/ from 23 (standalone mode is gone there),
+openmp/ standalone below it, with the sparse checkout each needs. Both
+are the commands that already built: openmp/ produced v6.0.1's rhel9
+and amazonlinux2023 assets, runtimes/ builds the LLVM 23 toolchain.
 
-* vkey names: check the counter field is a bijection at compile time
+Refs #3193
 
-The const block checked one pair that differs only in the clock field.
-It now recovers seq from the last field (times the multiplier's inverse
-mod 2^48) at several clock readings and counters up to 2^48-1, plus
-consecutive seq at one clock reading and the reported pair. An even
-multiplier, a 44-bit mask or mixing the clock into the counter each
-fail the build.
+* ci(release): make release-tag.yml the only release pipeline
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Publishing a release drafted in the UI creates its tag, so one release
+fired three pipelines: release-tag.yml on the tag push, and
+release-a
 
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/redis_type.rs` (modified, +88/-10)
+**File**: `.github/workflows/_build-artifacts.yml` (modified, +159/-30)
 ```diff
-@@ -796,20 +796,98 @@ fn uuid_v4() -> String {
-         .unwrap_or_default()
-         .as_nanos();
-     let seq = COUNTER.fetch_add(1, Ordering::Relaxed);
--    let a = (t as u64) ^ seq;
--    let b = a
-+    let [f1, f2, f3, f4, f5] = uuid_fields(t as u64, seq);
-+    format!("{f1:08x}-{f2:04x}-4{f3:03x}-{f4:04x}-{f5:012x}")
-+}
-+
-+/// The five printed fields of the name [`uuid_v4`] gives for clock reading `t`
-+/// and call number `seq`.
-+///
-+/// The clock and the counter go in separate fields rather than being mixed:
-+/// `t ^ seq` gave two calls the same name whenever the clock moved by exactly
-+/// the bits the counter did (`4 ^ 2 == 5 ^ 3`), and the second virtual key then
-+/// replaced the first one's slice of the graph. The last 48 bits are `seq` times
-+/// an odd constant, a bijection modulo 2^48, so names differ for every call in
-+/// a process whatever the clock does; the clock keeps them apart across restarts.
-+const fn uuid_fields(
-+    t: u64,
-+    seq: u64,
-+) -> [u64; 5] {
-+    let a = t;
-+    let b = seq
-         .wrapping_mul(6_364_136_223_846_793_005)
-         .wrapping_add(1_442_695_040_888_963_407);
--    format!(
--        "{:08x}-{:04x}-4{:03x}-{:04x}-{:012x}",
--        (a >> 32) as u32,
--        (a >> 16) as u16,
--        (a & 0xFFF) as u16,
--        (0x8000 | (b & 0x3FFF)) as u16,
--        b & 0xFFFF_FFFF_FFFF
--    )
-+    [
-+        a >> 32,
-+        (a >> 16) & 0xFFFF,
-+        a & 0xFFF,
-+        0x8000 | (b & 0x3FFF),
-+        b & 0xFFFF_FFFF_FFFF,
-+    ]
- }
+@@ -1,33 +1,34 @@
+-# Reusable workflow: build the falkordb shared library (.so) for one or more
+-# architectures and upload each as a workflow artifact. BUILD ONLY — it never
+-# uploads to a GitHub Release. Callers (build-artifacts.yml for PR verification,
+-# release-artifacts.yml for the release upload) describe the build cells via the
+-# `cells` input as a JSON array of {arch, platform, runner, suffix} objects:
++# Reusable workflow: build the falkordb shared library (.so) for every release
++# platform and upload each as a workflow artifact. BUILD ONLY — it never uploads
++# to a GitHub Release. Callers: release-tag.yml (the release, which then
++# publishes what this built) and build-artifacts.yml (pre-release verification).
+ #
+-#   [
+-#     {"suffix":"x64",     "arch":"x64",     "platform":"linux/amd64","runner":"ubuntu-latest"},
+-#     {"suffix":"arm64v8", "arch":"arm64v8", "platform":"linux/arm64","runner":"ubuntu-24.04-arm"}
+-#   ]
++# The platform list below is the ONLY one: callers pick from it by suffix and
++# never carry their own copy. New platforms (see #608) are added here.
+ #
+-# Each cell extracts the .so from the `artifact` target of build/runtime/Dockerfile
+-# (the exact .so the runtime image ships) and uploads it as `falkordb-<suffix>.so`
+-# together with its `.sha256`. Cells are independent (fail-fast: false) and run on
+-# native runners (no QEMU) for maximum parallelism.
++# Each cell extracts the .so from the `artifact` target of its Dockerfile (for
++# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
++# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
++# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
++#
++# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
++# `server` target, the falkordb-server image for that OS, and start it to check
++# that the module loads and answers a query. With `export_images` the image is
++# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
++# x64/arm64v8 have no such step: the merge queue builds the Debian images.
  
-+/// Names must stay distinct, checked at compile time because this crate's unit
-+/// tests cannot run outside Redis: its global allocator is Redis's.
-+///
-+/// Consecutive calls can share a clock reading, so the invariant the fix relies
-+/// on is the counter's: the last field must be a bijection of `seq` modulo 2^48.
-+/// It is checked by recovering `seq` from that field (`f5 - add` times the
-+/// multiplier's inverse) at several clock readings, including counters past
-+/// 2^47; an even multiplier, a narrower mask or mixing the clock back in all
-+/// break the round trip.
-+const _: () = {
-+    const fn same_fields(
-+        a: [u64; 5],
-+        b: [u64; 5],
-+    ) -> bool {
-+        let mut i = 0;
-+        let mut same = true;
-+        while i < 5 {
-+            same &= a[i] == b[i];
-+            i += 1;
-+        }
-+        same
-+    }
-+    const MASK: u64 = 0xFFFF_FFFF_FFFF;
-+    // The counter field is `seq * MUL + ADD` (mod 2^48): MUL and ADD read back
-+    // from `uuid_fields` itself, so the check follows the code.
-+    let add = uuid_fields(0, 0)[4];
-+    let mul = uuid_fields(0, 1)[4].wrapping_sub(add) & MASK;
-+    // Inverse of `mul` modulo 2^64 by Newton's iteration; only exists if odd.
-+    let mut inv = mul;
-+    let mut k = 0;
-+    while k < 6 {
-+        inv = inv.wrapping_mul(2u64.wrapping_sub(mul.wrapping_mul(inv)));
-+        k += 1;
-+    }
-+    let clocks = [0u64, 4, 5, 1_700_000_000_000_000_000, u64::MAX];
-+    let seqs = [0u64, 1, 2, 3, 1 << 20, (1 << 47) + 1, MASK];
-+    let mut c = 0;
-+    while c < clocks.len() {
-+        let mut s = 0;
-+        while s < seqs.len() {
-+            let f5 = uuid_fields(clocks[c], seqs[s])[4];
-+            assert!(
-+                f5.wrapping_sub(add).wrapping_mul(inv) & MASK == seqs[s],
-+                "the counter field is not a bijection of seq modulo 2^48"
-+            );
-+            s += 1;
-+        }
-+        c += 1;
-+    }
-+    let t = 1_700_000_000_000_000_000u64;
-+    assert!(
-+        !same_fields(uuid_fields(t, 0), uuid_fields(t, 1))
-+            && !same_fields(uuid_fields(t, 1), uuid_fields(t, 2)),
-+        "virtual key names collide for consecutive seq at one clock reading"
-+    );
-+    // The reported regression pair still differs.
-+    assert!(
-+        !same_fields(uuid_fields(4, 2), uuid_fields(5, 3)),
-+        "virtual key names collide for (t=4, seq=2) and (t=5, seq=3)"
-+    );
-+};
-+
- // ---------------------------------------------------------------------------
- // Type statics
- // ---------------------------------------------------------------------------
+ name: Build artifacts (reusable)
+ 
+ on:
+   workflow_call:
+     inputs:
+-      cells:
++      platforms:
+         description: >-
+-          JSON array of build cells. Each:
+-          {suffix, arch, platform, runner, dockerfile, build_image, cxx}.
+-          `dockerfile` provides the `artifact` target; `build_image` is the
+-          chef/builder base (Debian toolchain image) or "" for self-contained
+-          per-OS Dockerfiles; `cxx` is the C++ compiler passed to the builder.
+-        required: true
++          Comma-separated platform suffixes to build (e.g. 'x64,arm64v8'), or
++          'all'. A suffix that is not in the platform list is an error.
++        required: false
+         type: string
++        default: all
+       revision:
+         description: "Git revision (commit SHA) to check out and build"
+         required: true
+@@ -42,17 +43,81 @@ on:
+         required: false
+         type: boolean
+         default: false
++      export_images:
++        description: >-
++          Upload the per-OS server images as workflow artifacts (the release
++          pushes them). Without it they are built and tested, then dropped.
++        required: false
++        type: boolean
++        default: false
++    outputs:
++      suffixes:
++        description: >-
++          JSON array of the suffixes this run built. The release's publish step
++          requires an artifact for every one of them.
++        value: ${{ jobs.cells.outputs.suffixes }}
++      image_suffixes:
++        description: >-
++          JSON array of the suffixes this run built a server image for. The
++          release's image push requires every one of them.
++        value: ${{ jobs.cells.outputs.image_suffixes }}
+ 
+ jobs:
++  cells:
++    runs-on: ubuntu-latest
++    permissions: {}
++    outputs:
++      cells: ${{ steps.select.outputs.cells }}
++      suffixes: ${{ steps.select.outputs.suffixes }}
++      image_suffixes: ${{ steps.select.outputs.image_suffixes }}
++    steps:
++      - name: Select platforms
++        id: select
++        env:
++          PLATFORMS: ${{ inputs.platforms }}
++        run: |
++          set -euo pipefail
++          # {suffix, arch, platform, runner, dockerfile, build_image, cxx, image}.
++          # `dockerfile` provides the `artifact` target; `build_image` is the
++          # chef/builder base (Debian toolchain image) or "" for self-contained
++          # per-OS Dockerfiles; `cxx` is the C++ compiler passed to the builder;
++          # `image` says the Dockerfile's `server` target is built here too.
++          ALL='[
++            {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23","image":false},
++            {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":
 ```
 
----
-
-### Incident Patch 2: `96375c23` (2026-10-19)
-**Commit Message**: fix: refuse a tensor section that breaks promotion completeness on decode (#3033)
-
-* fix: refuse a tensor section that breaks promotion completeness on decode
-
-`Tensor::decode` wrote a tensor-section entry's ids into `me` whatever the
-forward value of its pair, so a payload could give a pair with no forward
-entry (or a single edge) an `me` row: a phantom edge, an `edge_count`
-panic, and a graph the next save panics on. Require each entry's pair to
-hold the `MULTI_EDGE` marker, and every marker to have received ids.
-
-Closes #3031
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* review: count MULTI_EDGE markers with GrB_select, inline id_blob
-
-Decode now counts the forward matrix's MULTI_EDGE markers with
-GrB_Matrix_select (GrB_VALUEEQ_UINT64) + nvals instead of a Rust
-iterate-and-filter (1M-edge tensor, 100k multi-edge pairs: 5.0 ms ->
-1.5 ms for the count). The single-use id_blob test helper is inlined.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +34/-10)
+**File**: `.github/workflows/_ci-pipeline.yml` (modified, +2/-2)
 ```diff
-@@ -88,18 +88,19 @@ use super::{
-     GrB_Matrix_eWiseMult_Semiring, GrB_Matrix_extractElement_BOOL,
-     GrB_Matrix_extractElement_UINT64, GrB_Matrix_free, GrB_Matrix_get_INT32, GrB_Matrix_ncols,
-     GrB_Matrix_new, GrB_Matrix_nrows, GrB_Matrix_nvals, GrB_Matrix_removeElement,
--    GrB_Matrix_resize, GrB_Matrix_set_INT32, GrB_Matrix_setElement_BOOL,
-+    GrB_Matrix_resize, GrB_Matrix_select_UINT64, GrB_Matrix_set_INT32, GrB_Matrix_setElement_BOOL,
-     GrB_Matrix_setElement_UINT64, GrB_Matrix_wait, GrB_Mode, GrB_Orientation, GrB_SECOND_UINT64,
-     GrB_Scalar, GrB_Scalar_free, GrB_Scalar_new, GrB_Scalar_setElement_BOOL, GrB_Type, GrB_UINT64,
--    GrB_WaitMode, GrB_finalize, GrB_mxm, GrB_mxv, GrB_transpose, GxB_ANY_BOOL, GxB_ANY_PAIR_BOOL,
--    GxB_ANY_UINT64, GxB_Container_free, GxB_Container_new, GxB_Global_Option_set_INT32,
--    GxB_HYPERSPARSE, GxB_Iterator, GxB_Iterator_free, GxB_Iterator_get_UINT64, GxB_Iterator_new,
--    GxB_JIT_Control, GxB_Matrix_build_Scalar, GxB_Matrix_fprint, GxB_Matrix_isStoredElement,
--    GxB_Matrix_memoryUsage, GxB_Matrix_type, GxB_NTHREADS, GxB_ONE_BOOL, GxB_Option_Field,
--    GxB_PLUS_PAIR_UINT64, GxB_Print_Level, GxB_SPARSE, GxB_init, GxB_load_Matrix_from_Container,
--    GxB_rowIterator_attach, GxB_rowIterator_getColIndex, GxB_rowIterator_getRowIndex,
--    GxB_rowIterator_kount, GxB_rowIterator_nextCol, GxB_rowIterator_nextRow,
--    GxB_rowIterator_seekRow, GxB_unload_Matrix_into_Container,
-+    GrB_VALUEEQ_UINT64, GrB_WaitMode, GrB_finalize, GrB_mxm, GrB_mxv, GrB_transpose, GxB_ANY_BOOL,
-+    GxB_ANY_PAIR_BOOL, GxB_ANY_UINT64, GxB_Container_free, GxB_Container_new,
-+    GxB_Global_Option_set_INT32, GxB_HYPERSPARSE, GxB_Iterator, GxB_Iterator_free,
-+    GxB_Iterator_get_UINT64, GxB_Iterator_new, GxB_JIT_Control, GxB_Matrix_build_Scalar,
-+    GxB_Matrix_fprint, GxB_Matrix_isStoredElement, GxB_Matrix_memoryUsage, GxB_Matrix_type,
-+    GxB_NTHREADS, GxB_ONE_BOOL, GxB_Option_Field, GxB_PLUS_PAIR_UINT64, GxB_Print_Level,
-+    GxB_SPARSE, GxB_init, GxB_load_Matrix_from_Container, GxB_rowIterator_attach,
-+    GxB_rowIterator_getColIndex, GxB_rowIterator_getRowIndex, GxB_rowIterator_kount,
-+    GxB_rowIterator_nextCol, GxB_rowIterator_nextRow, GxB_rowIterator_seekRow,
-+    GxB_unload_Matrix_into_Container,
- };
- 
- /// Initializes the GraphBLAS library in non-blocking mode.
-@@ -1225,6 +1226,29 @@ impl<T> Dup<Self> for Matrix<T> {
- }
- 
- impl Matrix<u64> {
-+    /// How many stored entries equal `value`: `GrB_select` with
-+    /// `GrB_VALUEEQ_UINT64` into a scratch matrix, then its `nvals`.
-+    #[must_use]
-+    pub fn count_value_eq(
-+        &self,
-+        value: u64,
-+    ) -> u64 {
-+        let out = Self::new(self.nrows(), self.ncols());
-+        unsafe {
-+            let info = GrB_Matrix_select_UINT64(
-+                *out.m,
-+                null_mut(),
-+                null_mut(),
-+                GrB_VALUEEQ_UINT64,
-+                *self.m,
-+                value,
-+                null_mut(),
-+            );
-+            debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
-+        }
-+        out.nvals()
-+    }
-+
-     /// Create a new UINT64 matrix (for C-compatible tensor encoding and inline
-     /// edge-id storage).
-     pub fn new(
+@@ -49,7 +49,7 @@ on:
+           Gate the image vehicle. True in the merge queue, where the published
+           image is the thing being gated on. False on a pull request, where the
+           artifact vehicle has already run the same suites and publishing an
+-          image only exists so release-image.yml can retag one.
++          image only exists so release-tag.yml can retag one.
+         required: false
+         type: boolean
+         default: false
+@@ -209,7 +209,7 @@ jobs:
+   # Image vehicle only, like everything else that needs the RC image. Every
+   # merge still passes through it: a fork pull request skips it, but its
+   # merge-queue entry builds the image and scans it. And it scans what ships:
+-  # `:edge` (rust-push.yml) and releases (release-image.yml) retag the queue's
++  # `:edge` (rust-push.yml) and releases (release-tag.yml) retag the queue's
+   # rc-mg-<sha> image rather than rebuilding it.
+   #
+   # `full` is FROM `server` plus the bundled browser, so scanning `full` covers
 ```
 
-**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +87/-2)
+**File**: `.github/workflows/build-artifacts.yml` (modified, +58/-50)
 ```diff
-@@ -1606,6 +1606,15 @@ impl Decode<19> for Tensor {
-                 m.set(src, dst, MULTI_EDGE);
-             }
-         }
-+        // Settled before the tensor section is checked against it.
-+        m.wait();
-+
-+        // The payload is untrusted, and promotion completeness — a pair has
-+        // `me` ids exactly when its inline value is `MULTI_EDGE` — is what
-+        // `edge_count` and iteration rely on. So every tensor entry must land
-+        // on a marker (checked per entry below), and every marker must get
-+        // ids (checked at the end by counting `me`'s pairs).
-+        let markers = m.count_value_eq(MULTI_EDGE);
+@@ -1,19 +1,20 @@
+-# Manually-triggerable build of the shared-library (.so) artifacts for every
+-# wired architecture, so a maintainer can verify all platforms build correctly
+-# BEFORE a release. Uploads workflow artifacts only (no Release upload).
++# Build the shared-library (.so) artifacts for every release platform, and the
++# rhel9/amazonlinux2023 server images, WITHOUT releasing anything, so a broken
++# platform shows up on the pull request that broke it instead of at release
++# time. The images are started and queried, never pushed; only the .so files
++# are uploaded, as workflow artifacts.
+ #
+ # Triggers:
+-#   - workflow_dispatch  → the long-term manual trigger (works once this file is
+-#     on the default branch; also usable against any branch/tag thereafter).
+-#   - pull_request (labeled/synchronize/reopened), gated by the `verify-artifacts`
+-#     label → the path that makes this usable on a PR BEFORE it is merged.
+-#     workflow_dispatch cannot reach a workflow that exists only on a feature
+-#     branch, so to verify a PR that *introduces* this workflow, add the
+-#     `verify-artifacts` label: the build runs at the PR head and re-runs on each
+-#     push while the label is present. Remove + re-add the label to force a re-run.
++#   - pull_request → runs when the PR changes something the artifact builds
++#     depend on (PATTERN below), or carries the `verify-artifacts` label. The
++#     per-OS cells (rhel9, amazonlinux2023) build their own toolchain from
++#     source and nothing else in PR CI exercises them, so without this a change
++#     that breaks them (as #3163 did) surfaces only at release time.
++#     Re-runs on each push while either holds.
++#   - workflow_dispatch → a maintainer's check against any branch or tag, with an
++#     optional subset of platforms.
+ #
+-# Additional Linux platforms (alpine/musl, rhel8, rhel9, amazonlinux2023) land in
+-# the cell list below as their per-OS toolchain images are added — see issue #608.
++# The platform list lives in _build-artifacts.yml.
  
-         let total_tensor_count = r.read_unsigned()?;
-         if total_tensor_count > 0 {
-@@ -1620,6 +1629,11 @@ impl Decode<19> for Tensor {
-                     // the index. Reading the *values* instead collapsed every
-                     // pair written by C to the single edge id 1.
-                     let v = Vector::<bool>::decode_blob(r)?;
-+                    if src >= nrows || dst >= ncols || m.get(src, dst) != Some(MULTI_EDGE) {
-+                        return Err(format!(
-+                            "Tensor decode: edge ids for ({src}, {dst}), which is not a multi-edge pair"
-+                        ));
-+                    }
-                     // The blob stores endpoints, not row keys, so the on-disk
-                     // form says nothing about how they are blocked and needs no
-                     // version bump for this change: re-keying happens here.
-@@ -1648,9 +1662,15 @@ impl Decode<19> for Tensor {
-             }
-         }
+ name: Build artifacts (verify)
  
--        // The freshly built base must be materialized: the committed base is
-+        let with_ids: u64 = me.iter().map(|(_, b)| Self::multi_pairs_in(b)).sum();
-+        if with_ids != markers {
-+            return Err(format!(
-+                "Tensor decode: {markers} multi-edge pairs but edge ids for {with_ids}"
-+            ));
-+        }
-+
-+        // The freshly built base is materialized above: the committed base is
-         // never pending inside a transaction (see `wait_fwd`).
--        m.wait();
-         // Backward matrix is rebuilt by the caller (`rebuild_backward`) after
-         // decode, so leave it empty here.
-         Ok(Self {
-@@ -2512,6 +2532,71 @@ mod tests {
-         assert_eq!(back.multi_pairs(), t.multi_pairs());
-     }
+@@ -25,70 +26,77 @@ on:
+         required: false
+         default: "all"
+   pull_request:
+-    types: [labeled, synchronize, reopened]
++    types: [opened, labeled, synchronize, reopened]
  
-+    /// A tensor section entry for a pair the forward matrix does not mark as
-+    /// multi-edge used to decode into an `me` row, after which `edge_count`
-+    /// (and so the next save) panicked and iteration yielded a phantom edge.
-+    #[test]
-+    fn decode_rejects_edge_ids_for_a_pair_that_is_not_multi_edge() {
-+        ensure_init();
-+        // (7, 9) absent from the forward matrix, then (1, 2) holding a
-+        // single edge: neither may take ids (here, id 3) from the tensor
-+        // section.
-+        let mut ids = Vector::<bool>::new(GrB_INDEX_MAX);
-+        ids.set(3, true);
-+        for (src, dst) in [(7, 9), (1, 2)] {
-+            let mut t = Tensor::new(16, 16);
-+            t.set_all_from_slices(&[1], &[2], &[5]);
-+            let t = t.dup();
-+            t.wait();
-+            let mut tape = Tape::default();
-+            t.encode(&mut tape);
-+            // single-edge graph: ..., total edges, multi pair count 0, TDP 0
-+            tape.ops.pop_back();
-+            tape.ops.pop_back();
-+            // TM: one pair, (src, dst) with the ids blob, as `encode` writes
-+            // it; then an empty TDP.
-+            for v in [1, src, dst] {
-+                tape.ops.push_back(TapeOp::Unsigned(v));
-+            }
-+            ids.encode_blob(&mut tape);
-+            tape.ops.push_back(TapeOp::Unsigned(0));
-+            let err = Tensor::decode(&mut tape)
-+                .err()
-+                .unwrap_or_else(|| panic!("ids for ({src}, {dst}) accepted"));
-+            assert!(
-+                err.contains("not a multi-edge pair"),
-+                "unexpected error: {err}"
-+            );
-+        }
-+    }
-+
-+    /// The converse: a pair marked multi-edge whose ids never arrive.
-+    #[test]
-+    fn decode_rejects_a_multi_edge_pair_without_edge_ids() {
-+        ensure_init();
-+        let mut t = Tensor::new(16, 16);
-+        t.set_all_from_slices(&[1, 1, 3, 3], &[2, 2, 4, 4], &[10, 11, 12, 13]);
-+        let t = t.dup();
-+        t.wait();
-+        let mut tape = Tape::default();
-+        t.encode(&mut tape);
-+        // Tail: ..., 2 pairs, (src, dst, blob) x2, TDP 0. Drop the second
-+        // pair and say there is only one.
-+        let n = tape.ops.len();
-+        let tdp = tape.ops.pop_back().unwrap();
-+        tape.ops.truncate(n - 4);
-+        tape.ops.push_back(tdp);
-+        let count = tape.ops.len() - 5;
-+        tape.ops[count] = TapeOp::Unsigned(1);
-+        let err = Tensor::decode(&mut tape)
-+            .err()
-+            .expect("multi-edge pair without ids accepted");
-+        assert!(
-+            err.contains("2 multi-edge pairs but edge id
+ permissions:
+   contents: read
+-  packages: read
+ 
+ concurrency:
+   group: build-artifacts-${{ github.event.pull_request.number || github.ref }}
+   cancel-in-progress: true
+ 
+ jobs:
+-  prepare:
+-    # Run on manual dispatch, OR on a PR carrying the `verify-artifacts` label.
+-    if: >-
+-      github.event_name == 'workflow_dispatch' ||
+-      contains(github.event.pull_request.labels.*.name, 'verify-artifacts')
++  decide:
+     runs-on: ubuntu-latest
++    permissions:
++      contents: read
++      pull-requests: read
+     outputs:
+-      cells: ${{ steps.derive.outputs.cells }}
+-      commit_sha: ${{ steps.derive.outputs.commit_sha }}
++      run: ${{ steps.decide.outputs.run }}
++      commit_sha: ${{ steps.decide.outputs.commit_sha }}
+     steps:
+-      - name: Derive cells + commit SHA
+-        id: derive
++      - name: Decide whether to build
++        id: decide
+         env:
+           EVENT: ${{ github.event_name }}
+-          ARCHS: ${{ github.event.inputs.archs }}
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          REPO: ${{ github.repository }}
++          PR_NUMBER: ${{ github.event.pull_request.number }}
+           PR_SHA: ${{ github.event.pull_request.head.sha }}
++          HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'verify-artifacts') }}
+           GH_SHA: ${{ github.sha }}
+         run: |
+           set -euo pipefail
+-          # Master list of cells. Keep in sync with release-artifacts.yml.
+-          ALL='[
+-            {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
+-            {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
+-            {"suffix":"rhel9-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.rhel9","build_image":"","cxx":"clang++"},
+-            {"suffix":"amazonlinux2023-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.amazonlinux2023","build_image":"","cxx":"clang++-19"}
+-          ]'
+-          if [ "$EVENT" = "workflow_dispatch" ] && [ -n "${ARCHS:-}" ] && [ "$ARCHS" != "all" ]; then
+-            FILTER=$(printf '%s' "$ARCHS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' | jq -R . | jq -s -c .)
+-            CELLS=$(printf '%s' "$ALL" | jq -c --argjson f "$FILTER" '[ .[] | select(.suffix as $s | $f | index($s)) ]')
+-          else
+-            CELLS=$(printf '%s' "$ALL" | jq -c .)
++          if
 ```
 
----
-
-### Incident Patch 3: `d9986112` (2026-10-19)
-**Commit Message**: fix: refuse corrupt GRAPH.RESTORE / RDB payloads instead of panicking (#2996)
-
-`Vector::<bool>::decode_blob` and `Vector<u64>::decode` asserted the
-GrB_Info of `GxB_Vector_deserialize`, which is GrB_INVALID_OBJECT for a
-corrupt blob, so a bad multi-edge id blob in a RESTORE payload exited the
-server. Return an error instead, and pass the expected type so a
-well-formed blob of another type is refused too.
-
-Same sweep of the decode paths:
-- `RoaringTreemap::decode_with_count`: checked `count * 8` (a wrapped
-  product passed the length check and indexed past the buffer).
-- `Tensor::decode`: the forward delta layers must match the base's size.
-
-Closes #2994
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `graph/src/graph/graphblas/serialization.rs` (modified, +38/-1)
+**File**: `.github/workflows/cleanup-rc-images.yml` (modified, +1/-1)
 ```diff
-@@ -220,7 +220,12 @@ impl Decode<19> for RoaringTreemap {
-         _attr_limit: usize,
-     ) -> Result<(), String> {
-         let bytes = r.read_buffer()?;
--        let expected_len = count as usize * 8;
-+        // `count` is read from the payload: a product that overflows would
-+        // wrap to a small length, pass the check below and index past the end.
-+        let expected_len = usize::try_from(count)
-+            .ok()
-+            .and_then(|c| c.checked_mul(8))
-+            .ok_or_else(|| format!("deleted entities count {count} is out of range"))?;
-         if bytes.len() != expected_len {
-             return Err(format!(
-                 "deleted entities buffer length mismatch: got {} bytes, expected {} bytes",
-@@ -239,3 +244,35 @@ impl Decode<19> for RoaringTreemap {
-         Ok(())
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    struct OneBuffer(Option<Vec<u8>>);
-+
-+    impl Reader for OneBuffer {
-+        fn read_unsigned(&mut self) -> Result<u64, String> {
-+            Err("unused".to_string())
-+        }
-+        fn read_signed(&mut self) -> Result<i64, String> {
-+            Err("unused".to_string())
-+        }
-+        fn read_double(&mut self) -> Result<f64, String> {
-+            Err("unused".to_string())
-+        }
-+        fn read_buffer(&mut self) -> Result<Vec<u8>, String> {
-+            self.0.take().ok_or_else(|| "no buffer".to_string())
-+        }
-+    }
-+
-+    /// `count * 8` used to wrap for a payload count of `2^61`, match an empty
-+    /// buffer and index past its end.
-+    #[test]
-+    fn deleted_entities_count_that_overflows_is_rejected() {
-+        let mut bitmap = RoaringTreemap::new();
-+        let res = bitmap.decode_with_count(&mut OneBuffer(Some(Vec::new())), 1 << 61, 0);
-+        let err = res.expect_err("overflowing count accepted");
-+        assert!(err.contains("out of range"), "unexpected error: {err}");
-+    }
-+}
+@@ -4,7 +4,7 @@ name: Cleanup PR images
+ #
+ #   - falkordb / falkordb-server : `rc-pr-*` runtime images. They live past
+ #     PR close because they may be retagged into a release tag by
+-#     release-image.yml. 30 days is long enough to cut a release for a PR's
++#     release-tag.yml. 30 days is long enough to cut a release for a PR's
+ #     content but short enough that orphans from un-released PRs don't
+ #     accumulate indefinitely.
+ #
 ```
 
-**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +58/-0)
+**File**: `.github/workflows/release-artifacts.yml` (removed, +0/-172)
 ```diff
-@@ -1559,6 +1559,19 @@ impl Decode<19> for Tensor {
-         let fwd_dm = Matrix::<bool>::decode(r)?;
-         let nrows = fwd_m.nrows();
-         let ncols = fwd_m.ncols();
-+        // Encode writes the three layers at one size. A payload that doesn't
-+        // would have the merge below write outside `m`.
-+        for (layer, dims) in [
-+            ("delta-plus", (fwd_dp.nrows(), fwd_dp.ncols())),
-+            ("delta-minus", (fwd_dm.nrows(), fwd_dm.ncols())),
-+        ] {
-+            if dims != (nrows, ncols) {
-+                return Err(format!(
-+                    "Tensor decode: forward {layer} is {}x{}, base is {nrows}x{ncols}",
-+                    dims.0, dims.1
-+                ));
-+            }
-+        }
- 
-         // Inline representation: `m` is UINT64 inline edge ids with MULTI_EDGE
-         // sentinels; `me` holds all ids of multi-edge pairs. The on-disk forward
-@@ -2499,6 +2512,51 @@ mod tests {
-         assert_eq!(back.multi_pairs(), t.multi_pairs());
-     }
- 
-+    /// A `GRAPH.RESTORE` payload is untrusted: a corrupt multi-edge id blob has
-+    /// to fail the decode, not panic (the module's panic hook exits the server).
-+    #[test]
-+    fn decode_rejects_a_corrupt_multi_edge_blob() {
-+        ensure_init();
-+        let mut t = Tensor::new(16, 16);
-+        t.set_all_from_slices(&[1, 1], &[2, 2], &[10, 11]);
-+        let t = t.dup();
-+        t.wait();
-+        let mut tape = Tape::default();
-+        t.encode(&mut tape);
-+        // The id blob is the last buffer on the tape; keep only its header.
-+        let last = tape
-+            .ops
-+            .iter()
-+            .rposition(|op| matches!(op, TapeOp::Buffer(_)))
-+            .expect("no id blob on the tape");
-+        if let TapeOp::Buffer(blob) = &mut tape.ops[last] {
-+            blob.truncate(8);
-+        }
-+        let err = Tensor::decode(&mut tape)
-+            .err()
-+            .expect("corrupt blob accepted");
-+        assert!(
-+            err.contains("GxB_Vector_deserialize"),
-+            "unexpected error: {err}"
-+        );
-+    }
-+
-+    /// The forward delta layers must match the base's size: merging a larger
-+    /// delta would write outside the rebuilt forward matrix.
-+    #[test]
-+    fn decode_rejects_forward_layers_of_different_sizes() {
-+        ensure_init();
-+        let mut tape = Tape::default();
-+        Matrix::<u64>::new(4, 4).encode(&mut tape);
-+        Matrix::<u64>::new(8, 8).encode(&mut tape);
-+        Matrix::<bool>::new(4, 4).encode(&mut tape);
-+        tape.ops.push_back(TapeOp::Unsigned(0));
-+        let err = Tensor::decode(&mut tape)
-+            .err()
-+            .expect("mismatched layers accepted");
-+        assert!(err.contains("delta-plus is 8x8"), "unexpected error: {err}");
-+    }
-+
-     /// `me` is created with a narrow column space so GraphBLAS stores its
-     /// column indices — one per stored edge id, the largest array here — in 32
-     /// bits. An id past that width has to widen it rather than be dropped, and
+@@ -1,172 +0,0 @@
+-# Publish the shared-library (.so) artifacts to a GitHub Release.
+-#
+-# BUILD (fan-out) and PUBLISH (fan-in) are separated so a partial matrix failure
+-# never leaves a half-populated public Release: the per-arch build cells only
+-# produce workflow artifacts, and a single publish job downloads them, asserts
+-# the FULL expected set is present, generates SHA256SUMS, then uploads.
+-#
+-# Triggers:
+-#   - workflow_call        → the tag-push release pipeline (release-tag.yml), which
+-#     is the primary path for >= 6.0.0. Driven by the tag, so it does not depend on
+-#     the `release:` event (which only fires from the DEFAULT branch).
+-#   - release: published   → build at the release commit, upload to that release.
+-#   - workflow_dispatch    → repair/escape hatch: rebuild + (re)upload assets for
+-#     an existing tag at a given commit (uses --clobber so re-runs are idempotent).
+-#
+-# Keep the cell list in sync with build-artifacts.yml. New platforms (see #608)
+-# are added in both places.
+-
+-name: Release artifacts
+-
+-on:
+-  # `release:` is REF-scoped, not default-branch-scoped — GitHub reads the
+-  # workflow from the tagged ref's own tree (verified: the v4.20.1 release run's
+-  # head_sha is identical to branch 4.20, diverged from master). A C release tag
+-  # therefore carries only C's workflows and can never reach this file, so this
+-  # trigger stays safe after the Rust tree becomes the default branch.
+-  release:
+-    types: [published]
+-  workflow_dispatch:
+-    inputs:
+-      tag:
+-        description: "Existing release tag to build + upload assets for (e.g. v0.4.0)"
+-        required: true
+-      commit_sha:
+-        description: "Commit SHA to build"
+-        required: true
+-  workflow_call:
+-    inputs:
+-      tag:
+-        description: "Release tag to build + upload assets for (e.g. v6.0.0)"
+-        required: true
+-        type: string
+-      commit_sha:
+-        description: "Commit SHA to build"
+-        required: true
+-        type: string
+-
+-permissions:
+-  contents: read
+-
+-concurrency:
+-  group: release-artifacts-${{ github.event.release.tag_name || inputs.tag }}
+-  cancel-in-progress: false
+-
+-jobs:
+-  prepare:
+-    runs-on: ubuntu-latest
+-    outputs:
+-      cells: ${{ steps.derive.outputs.cells }}
+-      commit_sha: ${{ steps.derive.outputs.commit_sha }}
+-      tag: ${{ steps.derive.outputs.tag }}
+-      suffixes: ${{ steps.derive.outputs.suffixes }}
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+-        with:
+-          # Check out the requested commit (dispatch / workflow_call) or the
+-          # RELEASE TAG (release event). The resolved commit is then read back via
+-          # `git rev-parse` below — `github.sha` is NOT guaranteed to be the tagged
+-          # commit for a release event, so we never rely on it.
+-          # `inputs.*` covers workflow_dispatch AND workflow_call; it is empty on a
+-          # release event, so the `||` falls through to the release tag.
+-          ref: ${{ inputs.commit_sha || github.event.release.tag_name }}
+-          persist-credentials: false
+-
+-      - name: Derive tag, commit SHA, cells; validate Cargo.toml version
+-        id: derive
+-        env:
+-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+-          INPUT_TAG: ${{ inputs.tag }}
+-        run: |
+-          set -euo pipefail
+-          # Presence-based, not event-based: inputs.tag is set for both
+-          # workflow_dispatch and workflow_call, empty on a release event.
+-          if [ -n "$INPUT_TAG" ]; then
+-            TAG="$INPUT_TAG"
+-          else
+-            TAG="$RELEASE_TAG"
+-          fi
+-          # Resolve the actual commit from the checked-out ref (the tag/commit
+-          # above), never from github.sha.
+-          SHA="$(git rev-parse HEAD)"
+-          # Validate Cargo.toml version matches the (v-stripped) tag — fail loudly
+-          # so a mis-tagged release never ships mismatched binaries.
+-          SEMVER="${TAG#v}"
+-          CARGO_VERSION=$(cargo metadata --no-deps --format-version=1 \
+-            | jq -r '.packages[] | select(.name=="falkordb-rs") | .version')
+-          if [ "$CARGO_VERSION" != "$SEMVER" ]; then
+-            echo "::error::Cargo.toml version ($CARGO_VERSION) does not match tag ($TAG)"; exit 1
+-          fi
+-          ALL='[
+-            {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
+-            {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23"},
+-            {"suffix":"rhel9-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.rhel9","build_image":"","cxx":"clang++"},
+-            {"suffix":"amazonlinux2023-x64","ar
 ```
 
-**File**: `graph/src/graph/graphblas/vector.rs` (modified, +88/-12)
+**File**: `.github/workflows/release-image.yml` (modified, +24/-215)
 ```diff
-@@ -214,16 +214,18 @@ impl Vector<bool> {
-             let mut v: MaybeUninit<GrB_Vector> = MaybeUninit::uninit();
-             let info = GxB_Vector_deserialize(
-                 v.as_mut_ptr(),
--                null_mut(),
-+                GrB_BOOL,
-                 blob.as_ptr().cast(),
-                 blob.len() as u64,
-                 null_mut(),
-             );
--            assert_eq!(
--                info,
--                GrB_Info::GrB_SUCCESS,
--                "GxB_Vector_deserialize failed: {info:?}"
--            );
-+            // The blob comes from an RDB / `GRAPH.RESTORE` payload, so a
-+            // failure here is bad input, not a broken invariant: refuse the
-+            // load instead of taking the server down. Deserialize frees
-+            // whatever it allocated before returning an error.
-+            if info != GrB_Info::GrB_SUCCESS {
-+                return Err(format!("GxB_Vector_deserialize failed: {info:?}"));
-+            }
-             Ok(Self::from(v.assume_init()))
-         }
-     }
-@@ -257,16 +259,18 @@ impl Decode<19> for Vector<u64> {
-             let mut v: MaybeUninit<GrB_Vector> = MaybeUninit::uninit();
-             let info = GxB_Vector_deserialize(
-                 v.as_mut_ptr(),
--                null_mut(),
-+                GrB_UINT64,
-                 blob.as_ptr().cast(),
-                 blob.len() as u64,
-                 null_mut(),
-             );
--            assert_eq!(
--                info,
--                GrB_Info::GrB_SUCCESS,
--                "GxB_Vector_deserialize failed: {info:?}"
--            );
-+            // The blob comes from an RDB / `GRAPH.RESTORE` payload, so a
-+            // failure here is bad input, not a broken invariant: refuse the
-+            // load instead of taking the server down. Deserialize frees
-+            // whatever it allocated before returning an error.
-+            if info != GrB_Info::GrB_SUCCESS {
-+                return Err(format!("GxB_Vector_deserialize failed: {info:?}"));
-+            }
-             Ok(Self::from(v.assume_init()))
-         }
-     }
-@@ -705,6 +709,78 @@ mod decode_tests {
-         }
-     }
+@@ -1,18 +1,12 @@
+ name: Release image
  
-+    /// The blob of a multi-edge pair comes from an RDB / `GRAPH.RESTORE`
-+    /// payload: a corrupt one must fail the decode, not panic.
-+    #[test]
-+    fn decode_blob_rejects_a_corrupt_blob() {
-+        crate::graph::graphblas::test_init::ensure_init();
-+        let mut v = Vector::<bool>::new(64);
-+        v.set(3, true);
-+        v.set(7, true);
-+        let mut blob = Vec::new();
-+        v.encode_blob(&mut BlobWriter(&mut blob));
-+        blob.truncate(8);
-+        let mut r = MockReader {
-+            buffers: VecDeque::from(vec![blob]),
-+            ..MockReader::default()
-+        };
-+        let err = Vector::<bool>::decode_blob(&mut r)
-+            .err()
-+            .expect("truncated blob accepted");
-+        assert!(
-+            err.contains("GxB_Vector_deserialize"),
-+            "unexpected error: {err}"
-+        );
-+    }
++# Manual escape hatch: build the runtime images FROM SOURCE at a given commit and
++# publish them under a given tag. Releases do not come through here — the
++# release pipeline (release-tag.yml) retags the rc-mg-<sha> image the merge queue
++# already validated. Use this when that image is gone (swept by
++# cleanup-rc-images.yml), when the commit never went through the queue, or to
++# publish an ad-hoc tag.
+ on:
+-  # `release:` is REF-scoped, not default-branch-scoped: GitHub reads the
+-  # workflow from the tagged ref's own tree. Verified on this repo — the
+-  # release-event run for v4.20.1 has head_sha identical to branch 4.20 and
+-  # diverged from master. So a C release tag carries only C's workflows and can
+-  # never reach this file, and this trigger is safe to keep even after the Rust
+-  # tree becomes the default branch.
+-  #
+-  # The primary Rust entry point is still release-tag.yml (push: tags v[6-9].*),
+-  # which calls this workflow via workflow_call. This trigger covers a release
+-  # created by hand for an existing tag; workflow_dispatch is the manual re-run.
+-  release:
+-    types: [published]
+   workflow_dispatch:
+     inputs:
+       tag:
+@@ -25,62 +19,26 @@ on:
+         description: "Also tag :latest (moves the latest pointer — use with care)"
+         type: boolean
+         default: false
+-  workflow_call:
+-    inputs:
+-      tag:
+-        description: "Image tag (v prefix optional), e.g. 6.0.0"
+-        required: true
+-        type: string
+-      commit_sha:
+-        description: "Tagged commit SHA"
+-        required: true
+-        type: string
+-      mode:
+-        description: "retag (reuse the validated rc-pr-<N> manifest) or rebuild (build from source)"
+-        required: false
+-        type: string
+-        default: retag
+ 
+ permissions:
+   contents: read
+ 
+ concurrency:
+-  group: release-image-${{ github.event_name }}-${{ github.ref }}
++  group: release-image-${{ inputs.tag }}
+   cancel-in-progress: false
+ 
+-# Two modes:
+-#   - RETAG the validated rc-pr-<N> images to semver + maybe :latest. No source
+-#     rebuild — the artifact that PR CI tested is exactly what ships. Requires
+-#     the rc-pr-<N> tag to still exist on GHCR (lives for the TTL window set by
+-#     cleanup-rc-images.yml). Used by the release event and by workflow_call
+-#     from release-tag.yml (the tag-push pipeline, primary path for >= 6.0.0 —
+-#     tag-driven, so it does not depend on the DEFAULT-branch-only `release:`
+-#     event).
+-#   - REBUILD from source at the supplied commit (workflow_dispatch). Escape
+-#     hatch when the RC was swept, when the commit never had a PR, or when an
+-#     operator just wants to rebuild a specific SHA.
+ jobs:
+   prepare:
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+-      pull-requests: read
+     outputs:
+-      mode:              ${{ steps.derive.outputs.mode }}
+-      tag:               ${{ steps.derive.outputs.tag }}
+-      is_latest:         ${{ steps.derive.outputs.is_latest }}
+-      browser_tag:       ${{ steps.derive.outputs.browser_tag }}
+-      commit_sha:        ${{ steps.derive.outputs.commit_sha }}
+-      push_to_dockerhub: ${{ steps.derive.outputs.push_to_dockerhub }}
++      tag: ${{ steps.derive.outputs.tag }}
+     steps:
+-      # Refuse workflow_dispatch from anywhere except main or a version branch
+-      # (X.Y). Release
+-      # events and workflow_call (from release-tag.yml) are unaffected — those
+-      # are driven by a tag, which in practice only points at a trunk / version
+-      # branch anyway. This guards against a dispatch from a feature branch
+-      # pushing user-facing tags (latest, semver) built from un-merged code.
++      # Refuse a dispatch from anywhere except main or a version branch (X.Y).
++      # This guards against a dispatch from a feature branch pushing user-facing
++      # tags (latest, semver) built from un-merged code.
+       - name: Reject dispatch from non-release-bearing ref
+-        if: github.event_name == 'workflow_dispatch'
+         env:
+           REF_NAME: ${{ github.ref_name }}
+         run: |
+@@ -91,192 +49,43 @@ jobs:
+ 
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+-          # inputs.commit_sha covers workflow_dispatch AND workflow_call; on a
+-          # release event it is empty and github.sha is the release commit.
+-          ref: ${{ inputs.commit_sha || github.sha }}
++          ref: ${{ inputs.commit_sha }}
+           persist-credentials: false
+ 
+-      - name: Derive mode, tag, latest flag, commit SHA, RC PR number
++      # Validate Cargo.toml only against a semver-shaped tag, so operators can
++      # still dispatch ad-hoc tags like 'edge-test' without enforcement.
++      - name: Validate tag against Cargo.toml
+         id: derive
+         env:
+-          EVENT_NAME:     ${{ github.event_name }}
+-          GH_SHA:         ${{ github.sha }}
+-          REPO:           ${{ github.repository }}
+-  
+```
+
+**File**: `.github/workflows/release-tag.yml` (modified, +208/-45)
+```diff
+@@ -1,11 +1,19 @@
+-# Release the Rust engine (>= 6.0.0) by pushing a tag.
++# Release the Rust engine (>= 6.0.0). This is the ONLY release pipeline: it
++# creates the GitHub Release, builds and uploads the per-platform .so assets,
++# retags the runtime images, and pushes the per-OS server images. No other
++# workflow listens for a release.
+ #
+-# WHY TAG-PUSH: a tag push runs the workflow files from the TAGGED COMMIT'S OWN
+-# TREE, so this pipeline is immune to which branch is the repository default.
+-# `release:` and `workflow_run` are default-branch-only events — after the Rust
+-# tree becomes the default branch of FalkorDB/FalkorDB (with the C engine still
+-# on `master`), a `release:`-driven publish would fire the WRONG tree's workflows
+-# (or none at all). Routing on the tag makes engine selection automatic:
++# WHY ONE TRIGGER, AND WHY THE TAG
++# Publishing a release drafted in the UI also creates its tag, so a `release:`
++# listener and a tag-push listener BOTH fire for the same release. When the
++# image and artifact workflows listened for `release:` while also being called
++# from here, every release ran them twice side by side, and the two artifact
++# builds raced for the same build cache. The tag push is the one event every
++# release produces, whether it is cut with `git push` or from the UI, so it is
++# the only trigger.
++#
++# A tag push runs the workflow files from the TAGGED COMMIT'S OWN TREE, which
++# makes engine selection automatic:
+ #
+ #   git push origin v5.2.0   → C tree's workflows   (master lineage, no this file)
+ #   git push origin v6.0.0   → this pipeline        (Rust lineage)
+@@ -15,16 +23,21 @@
+ # a mis-tagged Rust release fails loudly instead of publishing as C.
+ #
+ # WHAT IT DOES
+-#   1. guard          — validate tag shape, major >= 6, Cargo.toml version match
+-#   2. create-release — create the GitHub Release for the tag (idempotent)
+-#   3. artifacts      — build + upload the per-platform .so assets
+-#   4. image          — retag the validated rc-pr-<N> manifest to semver
++#   1. guard             — validate tag shape, major >= 6, Cargo.toml version match
++#   2. create-release    — create the GitHub Release (idempotent)
++#   3. build-artifacts   — build the per-platform .so files, and the rhel9 and
++#                          amazonlinux2023 server images (_build-artifacts.yml)
++#   4. publish-artifacts — require the full set, checksum, upload to the release
++#   5. image             — retag the validated rc-mg-<sha> manifest to semver,
++#                          and to :latest if this is the highest release
++#   6. publish-images    — push the per-OS server images as <semver>-<os>-<arch>
++#   7. browser-tests     — exercise the published image
+ #
+-# Steps 3 and 4 reuse release-artifacts.yml / release-image.yml via workflow_call
+-# — the same code paths the `release:` event uses, so there is one publish
+-# implementation, not two. create-release runs BEFORE image because the
+-# latest-pointer decision in release-image.yml compares against the list of
+-# published releases.
++# workflow_dispatch re-runs all of it for an existing tag; every step is
++# idempotent (existing release reused, assets uploaded with --clobber, retag
++# overwrites). To rebuild the images from source instead of retagging — the
++# rc-mg-<sha> image was swept, or the commit never went through the merge
++# queue — use release-image.yml.
+ 
+ name: Release (tag)
+ 
+@@ -109,8 +122,10 @@ jobs:
+           } >> "$GITHUB_OUTPUT"
+           echo "Releasing $TAG (semver=$SEMVER prerelease=$PRERELEASE) at $(git rev-parse HEAD)"
+ 
+-  # Create the Release up front: release-artifacts.yml uploads assets to it, and
+-  # release-image.yml's :latest decision reads the published-release list.
 +
-+    /// A well-formed blob of the wrong type is refused too: `decode_blob` is
-+    /// read as a BOOL vector and `Vector<u64>::decode` as a UINT64 one.
-+    #[test]
-+    fn decode_blob_rejects_a_blob_of_another_type() {
-+        crate::graph::graphblas::test_init::ensure_init();
-+        let mut v = Vector::<u64>::new(64);
-+        v.set(3, 30);
-+        let mut blob = Vec::new();
-+        v.encode(&mut BlobWriter(&mut blob));
-+        let mut r = MockReader {
-+            buffers: VecDeque::from(vec![blob.clone()]),
-+            ..MockReader::default()
-+        };
-+        assert!(Vector::<bool>::decode_blob(&mut r).is_err());
-+        let mut r = MockReader {
-+            buffers: VecDeque::from(vec![blob]),
-+            ..MockReader::default()
-+        };
-+        assert!(<Vector<u64> as Decode<19>>::decode(&mut r).is_ok());
-+    }
-+
-+    /// Captures the single buffer an encoder writes.
-+    struct BlobWriter<'a>(&'a mut Vec<u8>);
-+
-+    impl Writer for BlobWriter<'_> {
-+        fn write_unsigned(
-+            &mut self,
-+            _: u64,
-+        ) {
-+        }
-+        fn write_signed(
-+            &mut self,
-+            _: i64,
-+        ) {
-+        }
-+        fn write_double(
-+            &mut self,
-+            _: f64,
-+        ) {
-+        }
-+        fn write_buffer(
-+            &mut self,
-+            data: &[u8],
-+        ) {
-+            self.0.extend_from_slice(data);
-+        }
-+    }
-+
-     #[test]
-     fn decode_rejects_n_bytes_buffer_length_mismatch() {
-         // arr_data is 3 bytes but the payload declares n_bytes = 999: copying
++  # Create the Release up front: publish-artifacts uploads assets to it, and the
++  # image job's :latest decision reads the published-release list, which must
++  # include this one.
+   create-release:
+     needs: guard
+     runs-on: ubuntu-latest
+@@ -134,43 +149,191 @@ jobs:
+           gh release create "$TAG" "${FLAGS[@]}"
+           echo "Created release $TAG"
+ 
+-  # Per-platform .so assets → uploaded to the release.
+-  artifacts:
+-    needs: [guard, create-release]
+-    uses: ./.github/workflows/release-artifacts.yml
++  # Per-platform .so assets. BUILD (fan-out) and PUBLISH (fan-in) are separate so
++  # a partial matrix failure never leaves a half-populated release: the build
++  # cells only produce workflow artifacts, and publish-artifacts downloads them,
++  # requires the FULL set, generates SHA256SUMS, then uploads.
++  build-artifacts:
++    needs: guard
++    uses: ./.github/workflows/_build-artifacts.yml
+     permissions:
+-      contents: write
++      contents: read
+       packages: read
+     with:
+-      tag: ${{ needs.guard.outputs.tag }}
+-      commit_sha: ${{ needs.guard.outputs.commit_sha }}
++      revision: ${{ needs.guard.outputs.commit_sha }}
++      # Release builds run on a tag that is already in this repository —
++      
+```
+
+**File**: `.github/workflows/rust-push.yml` (modified, +2/-2)
+```diff
+@@ -103,7 +103,7 @@ jobs:
+   # The C engine's rolling images moved to the `edge-c` family on `master`, and
+   # C never published to GHCR, so there is no contention on either registry.
+   # `:edge-rs` stays as a deprecated alias. Bare `:latest` is untouched — that
+-  # pointer only moves at 6.0 GA, via release-image.yml. See issue #2290.
++  # pointer moves only on a release, via release-tag.yml. See issue #2290.
+   promote-edge:
+     if: ${{ github.ref == 'refs/heads/main' }}
+     runs-on: ubuntu-latest
+@@ -138,7 +138,7 @@ jobs:
+           set -euo pipefail
+           # One imagetools call fans the SAME multi-arch manifest out to both
+           # registries — still a retag, never a rebuild, so the bytes PR CI
+-          # validated are the bytes that ship. Same pattern release-image.yml
++          # validated are the bytes that ship. Same pattern release-tag.yml
+           # uses for semver tags.
+           # `:edge` is the primary rolling channel now that this tree is the
+           # default branch. `:edge-rs` is kept as an alias so anything already
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3409** (2026-10-19): 4.22.2 (@swilly22)
 - **PR #3406** (2026-10-19): fix(reduce): avoid OOB record index when iterator shadows a bound ali… (@swilly22)
+- **PR #3390** (closed): fix: a superseded index population job yields, not whichever checks first (#3389) (@gkorland)
 - **PR #3346** (2026-10-15): accept index trimmed values (@swilly22)
 - **PR #3342** (2026-10-14): 4.22.1 (@swilly22)
 - **PR #3339** (2026-10-14): fix: bound value nesting on RDB/RESTORE decode, property writes and bulk insert (@AviAvni)
-- **PR #3336** (2026-10-15): fix: bound the nesting depth of UDF value conversion (@AviAvni)
 
 ---
 
@@ -2990,67 +2968,63 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. virtual keys of one graph can no longer share a name (#3286)
+## X. ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314)
 
 **RULE**:
-When implementing operations in `src/redis_type.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/_build-artifacts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf11a277`: virtual keys of one graph can no longer share a name (#3286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bd99337`: ci: one release pipeline; fix the rhel9/amazonlinux2023 artifacts (#3314). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redis_type.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_build-artifacts.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let [f1, f2, f3, f4, f5] = uuid_fields(t as u64, seq);
-    format!("{f1:08x}-{f2:04x}-4{f3:03x}-{f4:04x}-{f5:012x}")
-}
-
-/// The five printed fields of the name [`uuid_v4`] gives for clock reading `t`
-/// and call number `seq`.
-///
-/// The clock and the counter go in separate fields rather than being mixed:
-/// `t ^ seq` gave two calls the same name whenever the clock moved by exactly
-/// the bits the counter did (`4 ^ 2 == 5 ^ 3`), and the second virtual key then
-/// replaced the first one's slice of the graph. The last 48 bits are `seq` times
-/// an odd constant, a bijection modulo 2^48, so names differ for every call in
-/// a process whatever the clock does; the clock keeps them apart across restarts.
-const fn uuid_fields(
-    t: u64,
-    seq: u64,
-) -> [u64; 5] {
-    let a = t;
-    let b = seq
-    [
-        a >> 32,
-        (a >> 16) & 0xFFFF,
-        a & 0xFFF,
-        0x8000 | (b & 0x3FFF),
-        b & 0xFFFF_FFFF_FFFF,
-    ]
-/// Names must stay distinct, checked at compile time because this crate's unit
-/// tests cannot run outside Redis: its global allocator is Redis's.
-///
-/// Consecutive calls can share a clock reading, so the invariant the fix relies
-/// on is the cou
+# Reusable workflow: build the falkordb shared library (.so) for every release
+# platform and upload each as a workflow artifact. BUILD ONLY — it never uploads
+# to a GitHub Release. Callers: release-tag.yml (the release, which then
+# publishes what this built) and build-artifacts.yml (pre-release verification).
+# The platform list below is the ONLY one: callers pick from it by suffix and
+# never carry their own copy. New platforms (see #608) are added here.
+# Each cell extracts the .so from the `artifact` target of its Dockerfile (for
+# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
+# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
+# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
+#
+# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
+# `server` target, the falkordb-server image for that OS, and start it to check
+# that the module loads and answers a query. With `export_images` the image is
+# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
+# x64/arm64v8 have no such step: the merge queue builds the Debian images.
+      platforms:
+          Comma-sep
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let a = (t as u64) ^ seq;
-    let b = a
-    format!(
-        "{:08x}-{:04x}-4{:03x}-{:04x}-{:012x}",
-        (a >> 32) as u32,
-        (a >> 16) as u16,
-        (a & 0xFFF) as u16,
-        (0x8000 | (b & 0x3FFF)) as u16,
-        b & 0xFFFF_FFFF_FFFF
-    )
+# Reusable workflow: build the falkordb shared library (.so) for one or more
+# architectures and upload each as a workflow artifact. BUILD ONLY — it never
+# uploads to a GitHub Release. Callers (build-artifacts.yml for PR verification,
+# release-artifacts.yml for the release upload) describe the build cells via the
+# `cells` input as a JSON array of {arch, platform, runner, suffix} objects:
+#   [
+#     {"suffix":"x64",     "arch":"x64",     "platform":"linux/amd64","runner":"ubuntu-latest"},
+#     {"suffix":"arm64v8", "arch":"arm64v8", "platform":"linux/arm64","runner":"ubuntu-24.04-arm"}
+#   ]
+# Each cell extracts the .so from the `artifact` target of build/runtime/Dockerfile
+# (the exact .so the runtime image ships) and uploads it as `falkordb-<suffix>.so`
+# together with its `.sha256`. Cells are independent (fail-fast: false) and run on
+# native runners (no QEMU) for maximum parallelism.
+      cells:
+          JSON array of build cells. Each:
+          {suffix, arch, platform, runner, dockerfile, build_image, cxx}.
+          `dockerfile` provides the `artifact` target; `build_image` is the
+          chef/builder base (Debian toolchain image) or "" for self-contained
+          pe
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf11a277` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bd99337` are properly handled with clean fallback behavior.

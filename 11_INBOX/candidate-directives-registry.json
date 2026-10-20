@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T03:28:20.288Z",
+  "last_updated": "2026-10-20T03:46:41.924Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2114,6 +2114,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-sweetpad-dev-sweetpad"
+    },
+    {
+      "id": "CD-61Z8",
+      "directive_title": "🔖 Release version 0.150.0 (#16535)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "fastapi/fastapi",
+      "source_commit": "03002a00",
+      "date_staged": "2026-10-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-fastapi-fastapi"
     }
   ]
 }

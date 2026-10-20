@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-Z5A2",
-    "timestamp": "2026-10-19T11:21:33.050Z",
-    "repository": "sxyazi/yazi",
-    "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Z8XU",
-    "timestamp": "2026-10-19T11:21:37.794Z",
-    "repository": "ronitsingh10/FineTune",
-    "learningId": "learn-github-ronitsingh10-finetune",
-    "contentHash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-798Q",
-    "timestamp": "2026-10-19T11:27:51.434Z",
-    "repository": "herdrdev/herdr",
-    "learningId": "learn-github-herdrdev-herdr",
-    "contentHash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-7C61",
     "timestamp": "2026-10-19T11:27:55.225Z",
     "repository": "darrylmorley/whatcable",
@@ -7492,6 +7447,51 @@
     "contentHash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-61Z2",
+    "timestamp": "2026-10-20T03:46:41.918Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "14fa38036e60ac35856cc5b793905d43f1328967a01e69b164b4ae67d49587b6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-62UT",
+    "timestamp": "2026-10-20T03:46:43.061Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-65JI",
+    "timestamp": "2026-10-20T03:46:46.542Z",
+    "repository": "jestjs/jest",
+    "learningId": "learn-github-jestjs-jest",
+    "contentHash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

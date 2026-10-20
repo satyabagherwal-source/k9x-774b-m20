@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "fb3d516d",
+    "sourceVersion": "6bd99337",
     "license": "NOASSERTION",
-    "contentHash": "18c2cbaa43e53d92a2a210589028c5c1273e4bed9db8f2b7b92823c712dd27f8",
-    "lastHarvestedAt": "2026-10-19T13:21:06.340Z",
+    "contentHash": "b70eeeafb6047545319fe65a12def319d242d9fc78fb870e6dbdbabd6229b541",
+    "lastHarvestedAt": "2026-10-20T03:46:43.063Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -6333,10 +6333,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/fastapi/fastapi",
-    "sourceVersion": "e5fc7ef5",
+    "sourceVersion": "03002a00",
     "license": "MIT",
-    "contentHash": "4e69fa7e671eb5347718be25be638d16535c98afd0f46930d5669ac247b5ffb6",
-    "lastHarvestedAt": "2026-10-19T16:56:06.732Z",
+    "contentHash": "14fa38036e60ac35856cc5b793905d43f1328967a01e69b164b4ae67d49587b6",
+    "lastHarvestedAt": "2026-10-20T03:46:41.920Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "ataraxy-labs-sem": {
@@ -10208,5 +10208,15 @@
     "contentHash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
     "lastHarvestedAt": "2026-10-20T03:40:45.916Z",
     "learningId": "learn-github-testing-library-dom-testing-library"
+  },
+  "jestjs-jest": {
+    "repository": "jestjs/jest",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jestjs/jest",
+    "sourceVersion": "61050e93",
+    "license": "MIT",
+    "contentHash": "457327bdf5a0db775c76880a729a3c41a4b656cfb74a3af32ae2603452e72e62",
+    "lastHarvestedAt": "2026-10-20T03:46:46.544Z",
+    "learningId": "learn-github-jestjs-jest"
   }
 }
