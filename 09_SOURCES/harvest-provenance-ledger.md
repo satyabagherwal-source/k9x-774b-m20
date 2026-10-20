@@ -3810,3 +3810,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-20T12:31:03.096Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `99c44018` | Multi-dimensional audit evidence | 2026-10-20T12:31:13.447Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `bd5b94d1` | Multi-dimensional audit evidence | 2026-10-20T12:31:17.217Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `951736ef` | Multi-dimensional audit evidence | 2026-10-20T12:40:40.929Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-20T12:40:45.648Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `e3001611` | Multi-dimensional audit evidence | 2026-10-20T12:40:47.941Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `ac888c8b` | Multi-dimensional audit evidence | 2026-10-20T12:40:51.922Z |

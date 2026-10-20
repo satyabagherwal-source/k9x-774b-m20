@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `08e1aba1`  
+> **Source Version**: `ac888c8b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:29:00.299Z  
+> **Timestamp**: 2026-10-20T12:40:51.558Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:29:00.294Z  
+> **Harvest Timestamp**: 2026-10-20T12:40:51.550Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25316 stars
+- **Stars / Engagement**: 25321 stars
 
 ---
 
@@ -810,30 +810,26 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08e1aba1` (2026-10-19)
-**Commit Message**: Enable simplified arguments for views (#6324)
+### Incident Patch 1: `ac888c8b` (2026-10-19)
+**Commit Message**: [T3 Connect] TypeScript SDK: generated schemas typecheck under exactOptionalPropertyTypes (#6096)
+
+> Part of the work to move T3 Code's T3 Connect relay onto SpacetimeDB.
+**Non-blocking.** T3's workaround: turn off `exactOptionalPropertyTypes`
+in the packages that use the bindings.
 
 # Description of Changes
 
-Views can now take arguments, called from SQL as `SELECT * FROM
-my_view(1, 'a')`.
+With `exactOptionalPropertyTypes` on, generated bindings fail the SDK's
+own `UntypedSchemaDef` constraint, and `conn.reducers` becomes `never`.
 
-**Limitation:** a view with arguments can only be queried with `SELECT
-*`. Filters, column lists, and joins on it are rejected. Views without
-arguments and tables are unchanged. Primary keys, currently, create
-caching issues and are rejected. Floats are also rejected for now.
-
-- Rust, TypeScript and C# modules can declare view arguments
-- Rust clients have a typed query builder for view calls; TypeScript and
-C# clients use raw SQL for now
-- Subscribe-all skips views with arguments in every client
-
-This is a reduced version of the view args draft (#6015). Filtering,
-joins and typed TypeScript/C# client builders are left for follow-ups.
+`ConstraintOpts` and `IndexOpts` declare `name?: string`, but the SDK
+fills them with `string | undefined`
+([table_schema.ts](https://github.com/clockworklabs/SpacetimeDB/blob/f4c96c47d1c53bc0028cc34984469b69534b6c8d/crates/bindings-typescript/src/lib/table_schema.ts#L73)).
+Both now declare `name?: string | undefined`. No runtime change.
 
 # API and ABI breaking changes
 
-None
+None.
 
 # Rollback safety impact
 
@@ -841,438 +837,97 @@ n/a
 
 # Expected complexity level and risk
 
-3 - Tried to keep this as light as possible but it expands view
-instances to be keyed by the arguments, but with no column list (SELECT
-* only) the query side should be one index lookup per call.
+1.
 
 # Testing
-- [x] Unit tests and smoketests for Rust, C# and TypeScript modules
-- [x] Throwaway e2
 
-**File**: `crates/bindings-csharp/Codegen.Tests/fixtures/diag/snapshots/ExtraCompilationErrors.net10.verified.txt` (modified, +2/-2)
+- [x] New consumer test: generated bindings typecheck with the option
+on. Fails without the fix.
+- [x] `pnpm build`, `pnpm test` (477 passing) and `pnpm lint` in
+`crates/bindings-typescript`
+
+**File**: `crates/bindings-typescript/src/lib/constraints.ts` (modified, +1/-1)
 ```diff
-@@ -299,7 +299,7 @@ public partial struct TestDefaultFieldValues
-     }
-   },
-   {/*
--
-+        try {
-             var returnValue = Module.ViewDefWrongContext((SpacetimeDB.ViewContext)ctx);
-                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                 var listSerializer = new SpacetimeDB.BSATN.List<Player, Player.BSATN>();
-@@ -368,7 +368,7 @@ public partial struct TestDefaultFieldValues
-     }
-   },
-   {/*
--
-+        try {
-             var returnValue = Module.ViewDefNoContext((SpacetimeDB.ViewContext)ctx);
-                                      ^^^^^^^^^^^^^^^^
-                 var listSerializer = new SpacetimeDB.BSATN.List<Player, Player.BSATN>();
+@@ -44,5 +44,5 @@ export type ColumnIsUnique<M extends ColumnMetadata<any>> = M extends
+  * of constraint definitions.
+  */
+ export type ConstraintOpts<AllowedCol extends string> = {
+-  name?: string;
++  name?: string | undefined;
+ } & { constraint: 'unique'; columns: [AllowedCol] };
 ```
 
-**File**: `crates/bindings-csharp/Codegen.Tests/fixtures/diag/snapshots/ExtraCompilationErrors.verified.txt` (modified, +2/-2)
+**File**: `crates/bindings-typescript/src/lib/indexes.ts` (modified, +1/-1)
 ```diff
-@@ -253,7 +253,7 @@ public partial struct TestDefaultFieldValues
-     }
-   },
-   {/*
--
-+        try {
-             var returnValue = Module.ViewDefWrongContext((SpacetimeDB.ViewContext)ctx);
-                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                 var listSerializer = new SpacetimeDB.BSATN.List<Player, Player.BSATN>();
-@@ -322,7 +322,7 @@ public partial struct TestDefaultFieldValues
-     }
-   },
-   {/*
--
-+        try {
-             var returnValue = Module.ViewDefNoContext((SpacetimeDB.ViewContext)ctx);
-                                      ^^^^^^^^^^^^^^^^
-                 var listSerializer = new SpacetimeDB.BSATN.List<Player, Player.BSATN>();
+@@ -10,7 +10,7 @@ import type { ColumnIsUnique } from './constraints';
+  */
+ export type IndexOpts<AllowedCol extends string> = {
+   accessor: string;
+-  name?: string;
++  name?: string | undefined;
+ } & (
+   | { algorithm: 'btree'; columns: readonly AllowedCol[] }
+   | { algorithm: 'hash'; columns: readonly AllowedCol[] }
 ```
 
-**File**: `crates/bindings-csharp/Codegen/Diag.cs` (modified, +1/-9)
+**File**: `crates/bindings-typescript/tests/consumer/app.ts` (added, +15/-0)
 ```diff
-@@ -231,15 +231,7 @@ string typeName
-             method => method
-         );
- 
--    // TODO: Remove once Views support arguments: Views must have no arguments beyond the context.
--    public static readonly ErrorDescriptor<MethodDeclarationSyntax> ViewArgsUnsupported =
--        new(
--            group,
--            "Views must have no arguments beyond the context.",
--            method =>
--                $"View '{method.Identifier}' must have no arguments beyond the context. This is a temporary limitation.",
--            method => method
--        );
-+    public static readonly UnusedErrorDescriptor ViewArgsUnsupported = new(group);
- 
-     public static readonly ErrorDescriptor<IFieldSymbol> SettingsMustBeConstCaseConversionPolicy =
-         new(
+@@ -0,0 +1,15 @@
++// A strict app on generated bindings that import the built package, typechecked
++// by tests/consumer_types.test.ts. Generated schemas must keep satisfying the
++// SDK's own constraints under exactOptionalPropertyTypes.
++import { DbConnection } from '../../case-conversion-test-client/src/module_bindings';
++
++const conn = DbConnection.builder()
++  .withUri('ws://localhost:3000')
++  .withDatabaseName('test')
++  .build();
++
++export const created: Promise<void> = conn.reducers.createPlayer1({
++  player1Name: 'player',
++  start2Level: 1,
++});
++export const players = [...conn.db.player1.iter()];
 ```
 
-**File**: `crates/bindings-csharp/Codegen/Module.cs` (modified, +4/-17)
+**File**: `crates/bindings-typescript/tests/consumer/tsconfig.json` (added, +13/-0)
 ```diff
-@@ -1420,7 +1420,6 @@ public ViewDeclaration(GeneratorAttributeSyntaxContext context, DiagReporter dia
-         var hasContextParam = method.Parameters.Length > 0;
-         var firstParamType = hasContextParam ? method.Parameters[0].Type : null;
-         var isAnonymousContext = firstParamType?.Name == "AnonymousViewContext";
--        var hasArguments = method.Parameters.Length > 1;
- 
-         if (string.IsNullOrEmpty(attr.Accessor))
-         {
-@@ -1431,10 +1430,6 @@ public ViewDeclaration(GeneratorAttributeSyntaxContext context, DiagReporter dia
-         {
-             diag.Report(ErrorDescriptor.ViewMustBePublic, methodSyntax);
-         }
--        if (hasArguments)
--        {
--            diag.Report(ErrorDescriptor.ViewArgsUnsupported, methodSyntax);
--        }
- 
-         Name = attr.Accessor ?? method.Name;
-         CanonicalName = attr.Name;
-@@ -1612,13 +1607,6 @@ public string GenerateViewDef(uint Index)
-     /// </summary>
-     public string GenerateDispatcherClass(uint index)
-     {
--        var paramReads = string.Join(
--            "\n                        ",
--            Parameters.Select(p =>
--                $"var {p.Identifier} = {p.Identifier}{TypeUse.BsatnFieldSuffix}.Read(reader);"
--            )
--        );
--
-         var makeViewDefMethod = IsAnonymous ? "MakeAnonymousViewDef" : "MakeViewDef";
- 
-         var interfaceName = IsAnonymous
-@@ -1680,10 +1668,10 @@ public string GenerateDispatcherClass(uint index)
-                     return output.ToArray();            
-                 """;
- 
--        var invocationArgs =
--            Parameters.Length == 0
--                ? ""
--                : ", " + string.Join(", ", Parameters.Select(p => p.Identifier));
-+        // Read each arg inline, as reducers do, so a param's name can't collide with a local.
-+        var invocationArgs = string.Concat(
-+            Parameters.Select(p => $", {p.Identifier}{TypeUse.BsatnFieldSuffix}.Read(reader)")
-+        );
-         return $$$"""
-             sealed class {{{Name}}}ViewDispatcher : {{{interfaceName}}} {
-                 {{{MemberDeclaration.GenerateBsatnFields(Accessibility.Private, Parameters)}}}
-@@ -1696,7 +1684,6 @@ public static byte[] Invoke(
-                     {{{interfaceContext}}} ctx
-                 ) {
-                     try {
--                        {{{paramReads}}}
-                         var returnValue = {{{FullName}}}(({{{concreteContext}}})ctx{{{invocationArgs}}});
-                         {{{writeOutput}}}
-                     } catch (System.Exception e) {
-```
-
-**File**: `crates/bindings-macro/src/view.rs` (modified, +21/-4)
-```diff
-@@ -96,6 +96,22 @@ impl ViewArgs {
-     }
- }
- 
-+/// Is `ty` a view context, `ViewContext` or `AnonymousViewContext`
-+fn is_view_context(ty: &syn::Type) -> bool {
-+    let ty = if let syn::Type::Reference(reference) = ty {
-+        &*reference.elem
-+    } else {
-+        ty
-+    };
-+    let syn::Type::Path(path) = ty else {
-+        return false;
-+    };
-+    path.path
-+        .segments
-+        .last()
-+        .is_some_and(|seg| seg.ident == "ViewContext" || seg.ident == "AnonymousViewContext")
+@@ -0,0 +1,13 @@
++{
++  "compilerOptions": {
++    "strict": true,
++    "exactOptionalPropertyTypes": true,
++    "skipLibCheck": true,
++    "noEmit": true,
++    "target": "ES2022",
++    "lib": ["ES2022", "DOM"],
++    "module": "ESNext",
++    "moduleResolution": "Bundler"
++  },
++  "files": ["app.ts"]
 +}
-+
- /// If `ty` is `impl Query<T>`, returns `Some(T)`. Otherwise `None`.
- fn extract_impl_query_inner(ty: &syn::Type) -> Option<&syn::Type> {
-     if let syn::Type::ImplTrait(impl_trait) = ty {
-@@ -185,11 +201,12 @@ pub(crate) fn view_impl(args: ViewArgs, original_function: &ItemFn) -> syn::Resu
-         ));
-     };
- 
--    // TODO: Re-enable parameterized views once we can pass args from sql
--    if !arg_tys.is_empty() {
-+    // Views can take params after the context, so a context out of place would otherwise
-+    // only surface as trait errors in the generated code.
-+    if let Some(misplaced) = arg_tys.iter().find(|ty| is_view_context(ty)) {
-         return Err(syn::Error::new_spanned(
--            &original_function.sig,
--            "Views do not take parameters other than `&ViewContext` or `&AnonymousViewContext`",
-+            misplaced,
-+            "The context must be the first parameter of a view: `&ViewContext` or `&AnonymousViewContext`",
-         ));
-     }
- 
 ```
 
-**File**: `crates/bindings-typescript/src/sdk/spacetime_module.ts` (modified, +5/-0)
+**File**: `crates/bindings-typescript/tests/consumer_types.test.ts` (added, +17/-0)
 ```diff
-@@ -13,6 +13,11 @@ export type RemoteModule<
-     versionInfo: {
-       cliVersion: CLI;
-     };
-+    /**
-+     * Source names of the views that take arguments.
-+     * `subscribeToAllTables` leaves these out, as it has no arguments to pass them.
-+     */
-+    viewsWithArgs?: readonly string[];
-   };
- 
- export type UntypedRemoteModule = RemoteModule<
-```
-
-**File**: `crates/bindings-typescript/src/sdk/subscription_builder_impl.ts` (modified, +6/-3)
-```diff
-@@ -148,12 +148,15 @@ export class SubscriptionBuilderImpl<RemoteModule extends UntypedRemoteModule> {
-    * on a `DbConnection` that has previously used `subscribeToAllTables`,
-    * or vice versa, may misbehave in any number of ways,
-    * including dropping subscriptions, corrupting the client cache, or throwing errors.
-+   *
-+   * Views that take arguments are left out, as there are no arguments to pass them.
-    */
-   subscribeToAllTables(): void {
-     const remoteModule = this.db[INTERNAL_REMOTE_MODULE]();
--    const queries = Object.values(remoteModule.tables).map(
--      table => `SELECT * FROM ${table.sourceName}`
--    );
-+    const viewsWithArgs = new Set(remoteModule.viewsWithArgs);
-+    const queries = Object.values(remoteModule.tables)
-+      .filter(table => !viewsWithArgs.has(table.sourceName))
-+      .map(table => `SELECT * FROM ${table.sourceName}`);
-     this.subscribe(queries);
-   }
- }
-```
-
-**File**: `crates/bindings-typescript/src/server/schema.ts` (modified, +68/-56)
-```diff
-@@ -536,34 +536,37 @@ export class Schema<S extends UntypedSchemaDef> implements ModuleDefaultExport {
-     // builders, but becomes a required error tuple when a returned row builder
-     // marks more than one column with `.primaryKey()`.
-     ..._: ValidateViewPrimaryKey<Ret>
--  ): ViewExport<F> {
--    return makeViewExport<S, {}, Ret, F>(this.#ctx, opts, {}, ret, fn);
--  }
--
--  // TODO: re-enable once parameterized views are supported in SQL
--  // view<Ret extends ViewReturnTypeBuilder>(
--  //   opts: ViewOpts,
--  //   ret: Ret,
--  //   fn: ViewFn<S, {}, Ret>
--  // ): void;
--  // view<Params extends ParamsObj, Ret extends ViewReturnTypeBuilder>(
--  //   opts: ViewOpts,
--  //   params: Params,
--  //   ret: Ret,
--  //   fn: ViewFn<S, {}, Ret>
--  // ): void;
--  // view<Params extends ParamsObj, Ret extends ViewReturnTypeBuilder>(
--  //   opts: ViewOpts,
--  //   paramsOrRet: Ret | Params,
--  //   retOrFn: ViewFn<S, {}, Ret> | Ret,
--  //   maybeFn?: ViewFn<S, Params, Ret>
--  // ): void {
--  //   if (typeof retOrFn === 'function') {
--  //     defineView(name, false, {}, paramsOrRet as Ret, retOrFn);
--  //   } else {
--  //     defineView(name, false, paramsOrRet as Params, retOrFn, maybeFn!);
--  //   }
--  // }
-+  ): ViewExport<F>;
-+  view<
-+    Params extends ParamsObj,
-+    Ret extends ViewReturnTypeBuilder,
-+    F extends ViewFn<S, Params, Ret>,
-+  >(
-+    opts: ViewOpts,
-+    params: Params,
-+    ret: Ret,
-+    fn: F,
-+    // The same primary-key guard as above.
-+    ..._: ValidateViewPrimaryKey<Ret>
-+  ): ViewExport<F>;
-+  view<
-+    Params extends ParamsObj,
-+    Ret extends ViewReturnTypeBuilder,
-+    F extends ViewFn<S, Params, Ret>,
-+  >(opts: ViewOpts, ...args: [Ret, F] | [Params, Ret, F]): ViewExport<F> {
-+    let params = {} as Params,
-+      ret: Ret,
-+      fn: F;
-+    switch (args.length) {
-+      case 2:
-+        [ret, fn] = args;
-+        break;
-+      case 3:
-+        [params, ret, fn] = args;
-+        break;
-+    }
-+    return makeViewExport<S, Params, Ret, F>(this.#ctx, opts, params, ret, fn);
-+  }
- 
-   anonymousView<
-     Ret extends ViewReturnTypeBuilder,
-@@ -576,34 +579,43 @@ export class Schema<S extends UntypedSchemaDef> implements ModuleDefaultExport {
-     // builders, but becomes a required error tuple when a returned row builder
-     // marks more than one column with `.primaryKey()`.
-     ..._: ValidateViewPrimaryKey<Ret>
--  ): ViewExport<F> {
--    return makeAnonViewExport<S, {}, Ret, F>(this.#ctx, opts, {}, ret, fn);
--  }
--
--  // TODO: re-enable once parameterized views are supported in SQL
--  // anonymousView<Ret extends ViewReturnTypeBuilder>(
--  //   opts: ViewOpts,
--  //   ret: Ret,
--  //   fn: AnonymousViewFn<S, {}, Ret>
--  // ): void;
--  // anonymousView<Params extends ParamsObj, Ret extends ViewReturnTypeBuilder>(
--  //   opts: ViewOpts,
--  //   params: Params,
--  //   ret: Ret,
--  //   fn: AnonymousViewFn<S, {}, Ret>
--  // ): void;
--  // anonymousView<Params extends ParamsObj, Ret extends ViewReturnTypeBuilder>(
--  //   opts: ViewOpts,
--  //   paramsOrRet: Ret | Params,
--  //   retOrFn: AnonymousViewFn<S, {}, Ret> | Ret,
--  //   maybeFn?: AnonymousViewFn<S, Params, Ret>
--  // ): void {
--  //   if (typeof retOrFn === 'function') {
--  //     defineView(name, true, {}, paramsOrRet as Ret, retOrFn);
--  //   } else {
--  //     defineView(name, true, paramsOrRet as Params, retOrFn, maybeFn!);
--  //   }
--  // }
-+  ): ViewExport<F>;
-+  anonymousView<
-+    Params extends ParamsObj,
-+    Ret extends ViewReturnTypeBuilder,
-+    F extends AnonymousViewFn<S, Params, Ret>,
-+  >(
-+    opts: ViewOpts,
-+    params: Params,
-+    ret: Ret,
-+    fn: F,
-+    // The same primary-key guard as above.
-+    ..._: ValidateViewPrimaryKey<Ret>
-+  ): ViewExport<F>;
-+  anonymousView<
-+    Params extends ParamsObj,
-+    Ret extends ViewReturnTypeBuilder,
-+    F extends AnonymousViewFn<S, Params, Ret>,
-+  >(opts: ViewOpts, ...args: [Ret, F] | [Params, Ret, F]): ViewExport<F> {
-+    let params = {} as Params,
-+      ret: Ret,
-+      fn: F;
-+    switch (args.length) {
-+      case 2:
-+        [ret, fn] = args;
-+        break;
-+      case 3:
-+        [params, ret, fn] = args;
-+        break;
-+    }
-+    return makeAnonViewExport<S, Params, Ret, F>(
-+      this.#ctx,
-+      opts,
-+      params,
-+      ret,
-+      fn
-+    );
-+  }
- 
-   procedure<Params extends ParamsObj, Ret extends TypeBuilder<any, any>>(
-     params: Params,
-```
-
----
-
-### Incident Patch 2: `85fc019b` (2026-10-19)
-**Commit Message**: docs: explain losing access to a local database after spacetime login (#6116)
-
-# Description of Changes
-
-Adds a Troubleshooting entry for losing access to a local database after
-running `spacetime login`.
-
-Publishing to a local server before logging in (e.g. with `-y`) creates
-a server-issued identity that owns the database. A later `spacetime
-login` discards that token as soon as it starts, without a prompt, so
-the CLI can no longer manage the database. The entry explains how to
-avoid this (log in first; a GitHub or Google login works on both local
-and Maincloud) and how to recover.
-
-# API and ABI breaking changes
-
-None. Docs only.
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-
-- [x] Reproduced with CLI 2.11.0: published to a local server with `-y`
-before logging in, then confirmed `spacetime login` logs out the
-server-issued identity as soon as it starts.
-- [x] Confirmed a spacetimedb.com login can own a local database and
-read a Maincloud database.
-- [ ] Reviewer: check the wording and placement under Troubleshooting >
-Credentials.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `docs/docs/00300-resources/00100-how-to/00050-troubleshooting.md` (modified, +23/-0)
-```diff
-@@ -22,6 +22,29 @@ spacetime login
- `spacetime logout` will discard your previous server-issued token, resulting in you no longer being able to manage any databases you previously published owned by that identity. If you still need access to the server-issued token, view it with `spacetime login show --token` and save it. You can then log back in with that token using `spacetime login --token`.
- :::
- 
-+### Lost access to a local database after `spacetime login`
+@@ -0,0 +1,17 @@
++import { spawnSync } from 'node:child_process';
++import { createRequire } from 'node:module';
++import { fileURLToPath } from 'node:url';
++import { expect, test } from 'vitest';
 +
-+If commands like `spacetime publish`, `spacetime call` or `spacetime delete` stop working for a local database after you ran `spacetime login`, the database is probably owned by a server-issued identity that the login replaced.
-+
-+This happens when you publish to a local server before logging in. If the CLI has no token and doesn't log you in with spacetimedb.com (for example because you passed `-y`), it logs in directly to the local server instead and prints:
-+
-+```
-+We have logged in directly to your target server.
-+WARNING: This login will NOT work for any other servers.
-+```
-+
-+The database you publish is then owned by that server-issued identity. The CLI keeps only one login. A later `spacetime login` discards the server-issued token as soon as it starts, without asking and before you finish logging in, and the new identity isn't the database's owner.
-+
-+To avoid this, run `spacetime login` before you publish anything. A GitHub or Google login works with any SpacetimeDB server, including your local one and Maincloud, so one login can own your local and Maincloud databases.
-+
-+If you have already published with a server-issued identity and want to switch to your spacetimedb.com login:
-+
-+1. Save the server-issued token: `spacetime login show --token`.
-+2. Run `spacetime login`.
-+3. To manage the old database, log back in with the saved token (`spacetime login --token <token>`), or delete the database while logged in with it and publish it again with your spacetimedb.com login. Deleting a database deletes its data.
-+
-+If the server-issued token is already gone, it can't be recovered. Publish the module again under a new database name.
-+
- ### Client connection rejected
- 
- If SpacetimeDB rejects connections from your application's client, it's most likely because you're supplying a token that was issued by a different SpacetimeDB server, or has expired. Clear the invalid token:
++// Checks the built `dist` typings, so run `pnpm build` first (CI does).
++test('a strict consumer typechecks against the package', () => {
++  const tsc = createRequire(import.meta.url).resolve('typescript/bin/tsc');
++  const project = fileURLToPath(
++    new URL('./consumer/tsconfig.json', import.meta.url)
++  );
++  const result = spawnSync(process.execPath, [tsc, '-p', project], {
++    encoding: 'utf8',
++  });
++  expect(result.stdout + result.stderr).toBe('');
++  expect(result.status).toBe(0);
++}, 60_000);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1301,30 +956,28 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable simplified arguments for views (#6324)
+## X. [T3 Connect] TypeScript SDK: generated schemas typecheck under exactOptionalProp
 
 **RULE**:
-When implementing operations in `crates/bindings-csharp/Codegen.Tests/fixtures/diag/snapshots/ExtraCompilationErrors.net10.verified.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bindings-typescript/src/lib/constraints.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08e1aba1`: Enable simplified arguments for views (#6324). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac888c8b`: [T3 Connect] TypeScript SDK: generated schemas typecheck under exactOptionalPropertyTypes (#6096). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-csharp/Codegen.Tests/fixtures/diag/snapshots/ExtraCompilationErrors.net10.verified.txt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/lib/constraints.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        try {
-        try {
+  name?: string | undefined;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-
-
+  name?: string;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08e1aba1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac888c8b` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T12:31:17.234Z",
+  "last_updated": "2026-10-20T12:40:51.930Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
-      "verified_at": "2026-10-18T23:20:33.225Z",
+      "content_hash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
+      "verified_at": "2026-10-20T12:40:45.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:20:33.225Z"
+      "last_updated": "2026-10-20T12:40:45.655Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
-      "verified_at": "2026-10-19T09:35:22.650Z",
+      "content_hash": "87b3a1f4a5b3705ff64f4a052e0dcbe2d3dae0cf2bdeb0c4d5c665d1b417b31b",
+      "verified_at": "2026-10-20T12:40:47.948Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:35:22.650Z"
+      "last_updated": "2026-10-20T12:40:47.948Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
-      "verified_at": "2026-10-19T03:32:56.929Z",
+      "content_hash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
+      "verified_at": "2026-10-20T12:40:40.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:32:56.929Z"
+      "last_updated": "2026-10-20T12:40:40.936Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
-      "verified_at": "2026-10-19T20:29:00.478Z",
+      "content_hash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
+      "verified_at": "2026-10-20T12:40:51.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:29:00.478Z"
+      "last_updated": "2026-10-20T12:40:51.929Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

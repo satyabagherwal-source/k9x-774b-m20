@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
-    "lastHarvestedAt": "2026-10-18T23:20:33.219Z",
+    "contentHash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
+    "lastHarvestedAt": "2026-10-20T12:40:45.648Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "48feb970",
+    "sourceVersion": "e3001611",
     "license": "Apache-2.0",
-    "contentHash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
-    "lastHarvestedAt": "2026-10-19T09:35:22.645Z",
+    "contentHash": "87b3a1f4a5b3705ff64f4a052e0dcbe2d3dae0cf2bdeb0c4d5c665d1b417b31b",
+    "lastHarvestedAt": "2026-10-20T12:40:47.941Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "262fdba5",
+    "sourceVersion": "951736ef",
     "license": "Apache-2.0",
-    "contentHash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
-    "lastHarvestedAt": "2026-10-19T03:32:56.923Z",
+    "contentHash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
+    "lastHarvestedAt": "2026-10-20T12:40:40.929Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "08e1aba1",
+    "sourceVersion": "ac888c8b",
     "license": "NOASSERTION",
-    "contentHash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
-    "lastHarvestedAt": "2026-10-19T20:29:00.474Z",
+    "contentHash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
+    "lastHarvestedAt": "2026-10-20T12:40:51.922Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

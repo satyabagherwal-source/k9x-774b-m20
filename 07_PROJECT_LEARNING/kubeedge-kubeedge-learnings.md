@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `48feb970`  
+> **Source Version**: `e3001611`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:35:22.434Z  
+> **Timestamp**: 2026-10-20T12:40:47.573Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:35:22.428Z  
+> **Harvest Timestamp**: 2026-10-20T12:40:47.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7608 stars
+- **Stars / Engagement**: 7611 stars
 
 ---
 
@@ -1233,196 +1233,842 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48feb970` (2026-10-19)
-**Commit Message**: Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake
+### Incident Patch 1: `e3001611` (2026-10-20)
+**Commit Message**: Merge pull request #7334 from adity1raut/fix/configupdatejob-report-after-restart
 
-tests/e2e: poll for running pods instead of watching for updates
+edge/taskmanager: report ConfigUpdateJob result after edgecore restart
 
-**File**: `tests/e2e/utils/pod.go` (modified, +20/-61)
+**File**: `edge/pkg/metamanager/dao/dbclient/configupdate.go` (added, +119/-0)
 ```diff
-@@ -28,7 +28,6 @@ import (
- 	"k8s.io/apimachinery/pkg/labels"
- 	"k8s.io/apimachinery/pkg/util/wait"
- 	clientset "k8s.io/client-go/kubernetes"
--	"k8s.io/client-go/tools/cache"
- 	"k8s.io/client-go/tools/clientcmd"
- 	"k8s.io/klog/v2"
+@@ -0,0 +1,119 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package dbclient
++
++import (
++	"encoding/json"
++	"fmt"
++	"strings"
++
++	"gorm.io/gorm"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++
++	operationv1alpha2 "github.com/kubeedge/api/apis/operations/v1alpha2"
++	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao"
++	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/models"
++)
++
++var MetaGVRConfigUpdate = schema.GroupVersionResource{
++	Group:    operationv1alpha2.GroupName,
++	Version:  operationv1alpha2.Version,
++	Resource: "configupdatejobspecs",
++}
++
++// ConfigUpdate is a dao wrapper for config update job record.
++// keadm config-update restarts EdgeCore before the Update action can report its result,
++// so the record is used to report the result after EdgeCore is restarted.
++type ConfigUpdate struct {
++	db *gorm.DB
++}
++
++func NewConfigUpdate() *ConfigUpdate {
++	return &ConfigUpdate{db: dao.GetDB()}
++}
++
++// Generates the key for meta_v2 table. The format is:
++// /{group}/{version}/{resource}/{jobname}/nodes/{nodename}
++func (dao *ConfigUpdate) key(jobname, nodename string) string {
++	items := []string{
++		"/" + MetaGVRConfigUpdate.Group, // Start with '/'
++		MetaGVRConfigUpdate.Version,
++		MetaGVRConfigUpdate.Resource,
++		jobname,
++		"nodes",
++		nodename,
++	}
++	return strings.Join(items, "/")
++}
++
++// Get returns jobname, nodename and ConfigUpdateJobSpec that query by GVR.
++// The return values jobname and nodename are parsed from 'meta_v2.key'.
++// The ConfigUpdateJobSpec is parsed from 'meta_v2.value'.
++// Usually, only 1 or 0 rows of data should be queried by GVR.
++func (dao *ConfigUpdate) Get() (string, string, *operationv1alpha2.ConfigUpdateJobSpec, error) {
++	row, err := onlyOneUpgradeRowByGVR(dao.db, MetaGVRConfigUpdate.String())
++	if err != nil {
++		return "", "", nil, err
++	}
++	if row == nil {
++		return "", "", nil, nil
++	}
++	arrs := strings.Split(row.Key, "/")
++	jobname, nodename := arrs[len(arrs)-3], arrs[len(arrs)-1]
++	if row.Value == "" {
++		return jobname, nodename, nil, nil
++	}
++	var spec operationv1alpha2.ConfigUpdateJobSpec
++	if err := json.Unmarshal([]byte(row.Value), &spec); err != nil {
++		return jobname, nodename, nil, fmt.Errorf("failed to unmarshal metav2 value to ConfigUpdateJobSpec, err: %v", err)
++	}
++	return jobname, nodename, &spec, nil
++}
++
++// Save saves jobname, nodename and ConfigUpdateJobSpec to metav2 table.
++// A node will only retain one piece of config update data.
++func (dao *ConfigUpdate) Save(jobname, nodename string, spec *operationv1alpha2.ConfigUpdateJobSpec) error {
++	// Cleaning up historical configupdatejobspecs data
++	if err := dao.Delete(); err != nil {
++		return err
++	}
++
++	buff, err := json.Marshal(spec)
++	if err != nil {
++		return fmt.Errorf("failed to marshal ConfigUpdateJobSpec to json, err: %v", err)
++	}
++	meta := models.MetaV2{
++		Key:                  dao.key(jobname, nodename),
++		Name:                 jobname,
++		Namespace:            models.NullNamespace,
++		GroupVersionResource: MetaGVRConfigUpdate.String(),
++		Value:                string(buff),
++	}
++	return NewMetaV2Service().InsertOrReplaceMetaV2(&meta)
++}
++
++// Delete deletes configupdatejobspecs resources from metav2 table.
++func (dao *ConfigUpdate) Delete() error {
++	row, err := onlyOneUpgradeRowByGVR(dao.db, MetaGVRConfigUpdate.String())
++	if err != nil {
++		return err
++	}
++	if row == nil {
++		return nil
++	}
++	return NewMetaV2Service().DeleteByKey(row.Key)
++}
+```
+
+**File**: `edge/pkg/metamanager/dao/dbclient/configupdate_test.go` (added, +144/-0)
+```diff
+@@ -0,0 +1,144 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package dbclient
++
++import (
++	"errors"
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/agiledragon/gomonkey/v2"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"gorm.io/gorm"
++
++	edgecorev1alpha2 "github.com/kubeedge/api/apis/componentconfig/edgecore/v1alpha2"
++	operationv1alpha2 "github.com/kubeedge/api/apis/operations/v1alpha2"
++	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao"
++	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/models"
++)
++
++// TestMain initializes the database once for the package, because dao.Init
++// only opens the database on the first call.
++func TestMain(m *testing.M) {
++	dir, err := os.MkdirTemp("", "dbclient-test")
++	if err != nil {
++		panic(err)
++	}
++	dao.Init(filepath.Join(dir, "edgecore.db"), &edgecorev1alpha2.MetaManager{Enable: true})
++	code := m.Run()
++	_ = os.RemoveAll(dir)
++	os.Exit(code)
++}
++
++func TestConfigUpdate(t *testing.T) {
++	configUpdateDao := NewConfigUpdate()
++
++	insertRecord := func(t *testing.T, jobname, nodename, value string) {
++		require.NoError(t, NewMetaV2Service().InsertOrReplaceMetaV2(&models.MetaV2{
++			Key:                  configUpdateDao.key(jobname, nodename),
++			Name:                 jobname,
++			Namespace:            models.NullNamespace,
++			GroupVersionResource: MetaGVRConfigUpdate.String(),
++			Value:                value,
++		}))
++	}
++
++	t.Run("save, get and delete", func(t *testing.T) {
++		jobname, nodename, spec, err := configUpdateDao.Get()
++		require.NoError(t, err)
++		assert.Empty(t, jobname)
++		assert.Empty(t, nodename)
++		assert.Nil(t, spec)
++
++		firstSpec := &operationv1alpha2.ConfigUpdateJobSpec{
++			UpdateFields: map[string]string{"modules.edged.tailoredKubeletConfig.imageGCHighThresholdPercent": "90"},
++		}
++		require.NoError(t, configUpdateDao.Save("job-1", "node-1", firstSpec))
++		jobname, nodename, spec, err = configUpdateDao.Get()
++		require.NoError(t, err)
++		assert.Equal(t, "job-1", jobname)
++		assert.Equal(t, "node-1", nodename)
++		assert.Equal(t, firstSpec, spec)
++
++		// A node only retains one config update record.
++		secondSpec := &operationv1alpha2.ConfigUpdateJobSpec{
++			UpdateFields: map[string]string{"modules.edgehub.heartbeat": "20"},
++		}
++		require.NoError(t, configUpdateDao.Save("job-2", "node-1", secondSpec))
++		jobname, nodename, spec, err = configUpdateDao.Get()
++		require.NoError(t, err)
++		assert.Equal(t, "job-2", jobname)
++		assert.Equal(t, "node-1", nodename)
++		assert.Equal(t, secondSpec, spec)
++
++		// Deleting the config update record does not touch the node upgrade record.
++		upgradeDao := NewUpgrade()
++		require.NoError(t, upgradeDao.Save("upgrade-job", "node-1", &operationv1alpha2.NodeUpgradeJobSpec{Version: "v1.21.0"}))
++		require.NoError(t, configUpdateDao.Delete())
++
++		jobname, nodename, spec, err = configUpdateDao.Get()
++		require.NoError(t, err)
++		assert.Empty(t, jobname)
++		assert.Empty(t, nodename)
++		assert.Nil(t, spec)
++
++		upgradeJobname, upgradeNodename, upgradeSpec, err := upgradeDao.Get()
++		require.NoError(t, err)
++		assert.Equal(t, "upgrade-job", upgradeJobname)
++		assert.Equal(t, "node-1", upgradeNodename)
++		assert.Equal(t, "v1.21.0", upgradeSpec.Version)
++		require.NoError(t, upgradeDao.Delete())
++	})
++
++	t.Run("record without spec", func(t *testing.T) {
++		insertRecord(t, "job-3", "node-1", "")
++		defer func() { require.NoError(t, configUpdateDao.Delete()) }()
++
++		jobname, nodename, spec, err := configUpdateDao.Get()
++		require.NoError(t, err)
++		assert.Equal(t, "job-3", jobname)
++		assert.Equal(t, "node-1", nodename)
++		assert.Nil(t, spec)
++	})
++
++	t.Run("record with invalid spec", func(t *testing.T) {
++		insertRecord(t, "job-4", "node-1", "{")
++		defer func() { require.NoError(t, configUpdateDao.Delete()) }()
++
++		jobname, nodename, spec, err := configUpdateDao.Get()
++		require.ErrorContains(t, err, "failed to unmarshal metav2 value to ConfigUpdateJobSpec")
++		assert.Equal(t, "job-4", jobname)
++		assert.Equal(t, "node-1", nodename)
++		assert.Nil(t, spec)
++	})
++
++	t.Run("failed to query record", func(t *testing.T) {
++		patches := gomonkey.ApplyFunc(onlyOneUpgradeRowByGVR, func(*gorm.DB, string) (*models.MetaV2, error) {
++			return nil, errors.New("test error")
++		})
++		defer patches.Reset()
++
++		_, _, _, err := configUpdateDao.Get()
++		require.ErrorContains(t, err, "test error")
++		// Save cleans up the historical record first, so it f
+```
+
+**File**: `edge/pkg/taskmanager/actions/configupdatejob.go` (modified, +15/-1)
+```diff
+@@ -29,6 +29,7 @@ import (
  
-@@ -147,67 +146,27 @@ func WaitForPodsRunning(c clientset.Interface, podList *v1.PodList, timeout time
- 		Fatalf("podList should not be empty")
+ 	operationsv1alpha2 "github.com/kubeedge/api/apis/operations/v1alpha2"
+ 	"github.com/kubeedge/kubeedge/edge/pkg/common/message"
++	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/dbclient"
+ 	"github.com/kubeedge/kubeedge/pkg/nodetask/actionflow"
+ 	taskmsg "github.com/kubeedge/kubeedge/pkg/nodetask/message"
+ 	"github.com/kubeedge/kubeedge/pkg/util/execs"
+@@ -90,7 +91,7 @@ func (h *configUpdateJobActionHandler) backup(
+ 
+ func (h *configUpdateJobActionHandler) updateConfig(
+ 	_ctx context.Context,
+-	_jobname, _nodename string,
++	jobname, nodename string,
+ 	specser SpecSerializer,
+ ) ActionResponse {
+ 	resp := new(configUpdateJobActionResponse)
+@@ -100,9 +101,22 @@ func (h *configUpdateJobActionHandler) updateConfig(
+ 		return resp
  	}
  
--	podRunningCount := 0
--	for _, pod := range podList.Items {
--		if pod.Status.Phase == v1.PodRunning {
--			podRunningCount++
-+	gomega.Eventually(func() int {
-+		var count int
-+		for i := range podList.Items {
-+			pod := &podList.Items[i]
-+			current, err := GetPod(c, pod.Namespace, pod.Name)
-+			if err != nil {
-+				Errorf("get pod %s/%s error: %v", pod.Namespace, pod.Name, err)
-+				continue
-+			}
++	// keadm config-update restarts EdgeCore, which stops this process before the result
++	// of the action is reported. Save a record so that the result can be reported from
++	// the config-update report after EdgeCore is restarted(hub_connected_hooker.go).
++	configUpdateDao := dbclient.NewConfigUpdate()
++	if err := configUpdateDao.Save(jobname, nodename, spec); err != nil {
++		resp.err = fmt.Errorf("failed to save config update record, err: %w", err)
++		return resp
++	}
 +
-+			pod.Status = current.Status
-+			if pod.Status.Phase == v1.PodRunning {
-+				count++
-+				continue
-+			}
+ 	args := buildConfigUpdateArgs(spec.UpdateFields)
+ 	cmd := exec.Command("keadm", args...)
+ 	out, err := cmd.CombinedOutput()
++	// EdgeCore was not restarted, the result is reported by the action runner.
++	if delErr := configUpdateDao.Delete(); delErr != nil {
++		h.logger.Error(delErr, "failed to delete config update record")
++	}
+ 	if err != nil {
+ 		resp.err = fmt.Errorf("update config failed, err: %w, output: %s", err, out)
+ 		return resp
+```
+
+**File**: `edge/pkg/taskmanager/actions/configupdatejob_test.go` (modified, +116/-0)
+```diff
+@@ -17,8 +17,20 @@ limitations under the License.
+ package actions
+ 
+ import (
++	"context"
++	"errors"
++	"os/exec"
++	"reflect"
+ 	"strings"
+ 	"testing"
 +
-+			Infof("Pod %s/%s is still %s", pod.Namespace, pod.Name, pod.Status.Phase)
- 		}
--	}
++	"github.com/agiledragon/gomonkey/v2"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"k8s.io/klog/v2"
++
++	operationsv1alpha2 "github.com/kubeedge/api/apis/operations/v1alpha2"
++	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/dbclient"
+ )
  
--	if podRunningCount == len(podList.Items) {
--		Infof("All pods come into running status")
--		return
--	}
-+		return count
-+	}, timeout, 4*time.Second).Should(gomega.Equal(len(podList.Items)), "not all pods reached the Running phase")
- 
--	// define signal
--	signal := make(chan struct{})
--
--	// define list watcher
--	listWatcher := cache.NewListWatchFromClient(c.CoreV1().RESTClient(), "pods", v1.NamespaceAll, fields.Everything())
--
--	// new controller
--	_, controller := cache.NewInformer(listWatcher, &v1.Pod{}, 0,
--		cache.ResourceEventHandlerFuncs{
--			// receive update events
--			UpdateFunc: func(oldObj, newObj interface{}) {
--				// check update obj
--				p, ok := newObj.(*v1.Pod)
--				if !ok {
--					Fatalf("Failed to cast observed object to pod")
--				}
--
--				// calculate the pods in running status
--				count := 0
--				for i := range podList.Items {
--					// update pod status in podList
--					if podList.Items[i].Name == p.Name {
--						Infof("PodName: %s PodStatus: %s", p.Name, p.Status.Phase)
--						podList.Items[i].Status = p.Status
--					}
--					// check if the pod is in running status
--					if podList.Items[i].Status.Phase == v1.PodRunning {
--						count++
--					}
--				}
--
--				// send an end signal when all pods are in running status
--				if len(podList.Items) == count {
--					signal <- struct{}{}
--				}
--			},
--		},
--	)
--
--	// run controller
--	podChan := make(chan struct{})
--	go controller.Run(podChan)
--	defer close(podChan)
--
--	// wait for a signal or timeout
--	select {
--	case <-signal:
--		Infof("All pods come into running status")
--	case <-time.After(timeout):
--		Fatalf("Wait for pods come into running status timeout: %v", timeout)
--	}
-+	Infof("All pods come into running status")
+ const (
+@@ -85,3 +97,107 @@ func TestBuildConfigUpdateArgsEmptyFields(t *testing.T) {
+ 		t.Fatalf("unexpected args for empty update fields: %v", args)
+ 	}
  }
++
++func TestConfigUpdateJobUpdateConfig(t *testing.T) {
++	var (
++		ctx      = context.TODO()
++		jobName  = "test-job"
++		nodeName = "test-node"
++		spec     = &operationsv1alpha2.ConfigUpdateJobSpec{
++			UpdateFields: map[string]string{"modules.edgehub.heartbeat": "20"},
++		}
++		specser = &cachedSpecSerializer{spec: spec}
++		h       = configUpdateJobActionHandler{logger: klog.Background()}
++	)
++
++	t.Run("failed to save config update record", func(t *testing.T) {
++		var runCmdCalled bool
++		patches := gomonkey.NewPatches()
++		defer patches.Reset()
++
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Save",
++			func(string, string, *operationsv1alpha2.ConfigUpdateJobSpec) error {
++				return errors.New("test error")
++			})
++		patches.ApplyMethod(reflect.TypeOf((*exec.Cmd)(nil)), "CombinedOutput",
++			func(*exec.Cmd) ([]byte, error) {
++				runCmdCalled = true
++				return nil, nil
++			})
++
++		resp := h.updateConfig(ctx, jobName, nodeName, specser)
++		require.ErrorContains(t, resp.Error(), "failed to save config update record")
++		assert.False(t, runCmdCalled)
++	})
++
++	t.Run("edgecore is not restarted", func(t *testing.T) {
++		for _, tc := range []struct {
++			name   string
++			cmdErr error
++		}{
++			{name: "config update successful"},
++			{name: "config update failed", cmdErr: errors.New("exit status 1")},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				var (
++					savedJob, savedNode string
++					savedSpec           *operationsv1alpha2.ConfigUpdateJobSpec
++					deleteCalled        bool
++				)
++				patches := gomonkey.NewPatches()
++				defer patches.Reset()
++
++				patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Save",
++					func(jobname, nodename string, spec *operationsv1alpha2.ConfigUpdateJobSpec) error {
++						savedJob, savedNode, savedSpec = jobname, nodename, spec
++						return nil
++					})
++				patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Delete",
++					func() error {
++						deleteCalled = true
++						return nil
++					})
++				patches.ApplyMethod(reflect.TypeOf((*exec.Cmd)(nil)), "CombinedOutput",
++					func(*exec.Cmd) ([]byte, error) {
++						// The record must be saved before keadm config-update restarts edgecore.
++						assert.Equal(t, jobName, savedJob)
++						return []byte("output"), tc.cmdErr
++					})
++
++				resp := h.updateConfig(ctx, jobName, nodeName, specser)
++				if tc.cmdErr != nil {
++					require.ErrorContains(t, resp.Error(), "update config failed")
++				} else {
++					require.NoError(t, resp.Error())
++				}
++				assert.Equal(t, jobName, savedJob)
++				assert.Equal(t, nodeName, savedNode)
++				assert.Equal(t, spec, savedSpec)
++				// The action reports the result itself, so the record is no longer needed.
++				assert.True(t, deleteCalled)
++			})
++		}
++	})
++
++	t.Run("failed to delete config update record", func(t *testing.T) {
++		patches := gomonkey.NewPatches()
++		defer patches.Reset()
++
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Save",
++			func(string, string, *operationsv1alpha2.ConfigUpdateJobSpec) error {
++				return nil
++			})
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Delete",
++			func() error {
++				return errors.New("test error")
++			})
++		patches.ApplyMethod(reflect.TypeOf((*exec.Cmd)(nil)), "CombinedOutput",
++			func(*exec.Cmd) ([]byte, error) {
++				return nil, nil
++			})
++
++		// The record is only used after a restart, failing to delete it must not fail the action.
++		resp := h.updateConfig(ctx, jobName, nodeName, specser)
++		require.NoError(t, resp.Error())
++	})
++}
+```
+
+**File**: `edge/pkg/taskmanager/hub_connected_hooker.go` (modified, +59/-0)
+```diff
+@@ -45,6 +45,9 @@ func ReportUpgradeStatus(ctx context.Context) error {
+ 	if err != nil {
+ 		return fmt.Errorf("failed to parse json reporter info, err: %v", err)
+ 	}
++	if info.EventType == upgradeedge.EventTypeConfigUpdate {
++		return reportConfigUpdateStatus(ctx, info)
++	}
+ 
+ 	upgrede := dbclient.NewUpgrade()
+ 	jobname, nodename, spec, err := upgrede.Get()
+@@ -107,3 +110,59 @@ func ReportUpgradeStatus(ctx context.Context) error {
+ 	}
+ 	return nil
+ }
++
++// reportConfigUpdateStatus reports the result of the Update action of ConfigUpdateJob.
++// keadm config-update restarts EdgeCore before the action can report its result,
++// so the result is taken from the config-update report after EdgeCore is restarted.
++func reportConfigUpdateStatus(ctx context.Context, info upgradeedge.JSONReporterInfo) error {
++	logger := klog.FromContext(ctx).WithName("report-config-update-status")
++	configUpdateDao := dbclient.NewConfigUpdate()
++	jobname, nodename, spec, err := configUpdateDao.Get()
++	if err != nil {
++		return fmt.Errorf("failed to get config update record, err: %v", err)
++	}
++	if jobname == "" || nodename == "" {
++		// The result has already been reported by the Update action because EdgeCore
++		// was not restarted, or keadm config-update was not run by a ConfigUpdateJob.
++		// Remove the report file, otherwise it is parsed on every connection to the cloud.
++		logger.Info("no config update record found, skip report config update status")
++		if err := upgradeedge.RemoveJSONReporterInfo(); err != nil {
++			logger.Error(err, "failed to remove json reporter info")
++		}
++		return nil
++	}
++
++	res := taskmsg.Resource{
++		APIVersion:   operationsv1alpha2.SchemeGroupVersion.String(),
++		ResourceType: operationsv1alpha2.ResourceConfigUpdateJob,
++		JobName:      jobname,
++		NodeName:     nodename,
++	}
++	body := taskmsg.UpstreamMessage{
++		Action:     string(operationsv1alpha2.ConfigUpdateJobActionUpdate),
++		Succ:       info.Success,
++		Reason:     info.ErrorMessage,
++		FinishTime: time.Now().UTC().Format(time.RFC3339),
++	}
++	message.ReportNodeTaskStatus(res, body)
++
++	if err := upgradeedge.RemoveJSONReporterInfo(); err != nil {
++		logger.Error(err, "failed to remove json reporter info")
++	}
++	if err := configUpdateDao.Delete(); err != nil {
++		logger.Error(err, "failed to delete config update record")
++	}
++
++	// Run rollback after config update failed, as the action flow does when EdgeCore
++	// is not restarted. Rollback command will interrupt the edgecore process,
++	// so put it at the end of the function.
++	if !info.Success {
++		specData, err := json.Marshal(spec)
++		if err != nil {
++			return fmt.Errorf("failed to marshal spec to json, err: %v", err)
++		}
++		actions.GetRunner(operationsv1alpha2.ResourceConfigUpdateJob).
++			RunAction(ctx, jobname, nodename, string(operationsv1alpha2.ConfigUpdateJobActionRollBack), specData)
++	}
++	return nil
++}
+```
+
+**File**: `edge/pkg/taskmanager/hub_connected_hooker_test.go` (modified, +244/-0)
+```diff
+@@ -18,6 +18,8 @@ package taskmanager
+ 
+ import (
+ 	"context"
++	"encoding/json"
++	"errors"
+ 	"reflect"
+ 	"testing"
+ 
+@@ -194,3 +196,245 @@ func TestReportUpgradeStatus(t *testing.T) {
+ 		assert.False(t, runActionCalled)
+ 	})
+ }
++
++func TestReportConfigUpdateStatus(t *testing.T) {
++	var (
++		jobName  = "test-job"
++		nodeName = "test-node"
++		ctx      = context.Background()
++		spec     = &operationsv1alpha2.ConfigUpdateJobSpec{
++			UpdateFields: map[string]string{"modules.edgehub.heartbeat": "20"},
++		}
++	)
++
++	globpatches := gomonkey.NewPatches()
++	defer globpatches.Reset()
++
++	globpatches.ApplyFunc(upgradeedge.JSONReporterInfoExists, func() bool {
++		return true
++	})
++	globpatches.ApplyMethodFunc(reflect.TypeOf((*dbclient.Upgrade)(nil)), "Get",
++		func() (string, string, *operationsv1alpha2.NodeUpgradeJobSpec, error) {
++			t.Error("node upgrade record should not be used for config update report")
++			return "", "", nil, nil
++		})
++
++	t.Run("no config update record found", func(t *testing.T) {
++		var (
++			removeReporterInfoCalled bool
++			reportStatusCalled       bool
++		)
++		patches := gomonkey.NewPatches()
++		defer patches.Reset()
++
++		patches.ApplyFunc(upgradeedge.ParseJSONReporterInfo, func() (upgradeedge.JSONReporterInfo, error) {
++			return upgradeedge.JSONReporterInfo{EventType: upgradeedge.EventTypeConfigUpdate, Success: true}, nil
++		})
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Get",
++			func() (string, string, *operationsv1alpha2.ConfigUpdateJobSpec, error) {
++				return "", "", nil, nil
++			})
++		patches.ApplyFunc(upgradeedge.RemoveJSONReporterInfo, func() error {
++			removeReporterInfoCalled = true
++			return nil
++		})
++		patches.ApplyFunc(message.ReportNodeTaskStatus, func(_res taskmsg.Resource, _msgbody taskmsg.UpstreamMessage) {
++			reportStatusCalled = true
++		})
++
++		err := ReportUpgradeStatus(ctx)
++		require.NoError(t, err)
++		assert.False(t, reportStatusCalled)
++		// The stale report file must be removed, otherwise it is parsed on every connection.
++		assert.True(t, removeReporterInfoCalled)
++	})
++
++	t.Run("failed to get config update record", func(t *testing.T) {
++		var removeReporterInfoCalled bool
++		patches := gomonkey.NewPatches()
++		defer patches.Reset()
++
++		patches.ApplyFunc(upgradeedge.ParseJSONReporterInfo, func() (upgradeedge.JSONReporterInfo, error) {
++			return upgradeedge.JSONReporterInfo{EventType: upgradeedge.EventTypeConfigUpdate, Success: true}, nil
++		})
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Get",
++			func() (string, string, *operationsv1alpha2.ConfigUpdateJobSpec, error) {
++				return "", "", nil, errors.New("test error")
++			})
++		patches.ApplyFunc(upgradeedge.RemoveJSONReporterInfo, func() error {
++			removeReporterInfoCalled = true
++			return nil
++		})
++
++		err := ReportUpgradeStatus(ctx)
++		require.ErrorContains(t, err, "failed to get config update record")
++		// Keep the report file so that the result can be reported on the next connection.
++		assert.False(t, removeReporterInfoCalled)
++	})
++
++	t.Run("config update successful", func(t *testing.T) {
++		var (
++			reportStatusCalled       bool
++			removeReporterInfoCalled bool
++			deleteRecordCalled       bool
++			runActionCalled          bool
++		)
++		patches := gomonkey.NewPatches()
++		defer patches.Reset()
++
++		patches.ApplyFunc(upgradeedge.ParseJSONReporterInfo, func() (upgradeedge.JSONReporterInfo, error) {
++			return upgradeedge.JSONReporterInfo{EventType: upgradeedge.EventTypeConfigUpdate, Success: true}, nil
++		})
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Get",
++			func() (string, string, *operationsv1alpha2.ConfigUpdateJobSpec, error) {
++				return jobName, nodeName, spec, nil
++			})
++		patches.ApplyMethodFunc(reflect.TypeOf((*dbclient.ConfigUpdate)(nil)), "Delete",
++			func() error {
++				deleteRecordCalled = true
++				return nil
++			})
++		patches.ApplyFunc(upgradeedge.RemoveJSONReporterInfo, func() error {
++			removeReporterInfoCalled = true
++			return nil
++		})
++		patches.ApplyFunc(message.ReportNodeTaskStatus, func(res taskmsg.Resource, msgbody taskmsg.UpstreamMessage) {
++			reportStatusCalled = true
++			assert.Equal(t, operationsv1alpha2.ResourceConfigUpdateJob, res.ResourceType)
++			assert.Equal(t, jobName, res.JobName)
++			assert.Equal(t, nodeName, res.NodeName)
++			assert.Equal(t, string(operationsv1alpha2.ConfigUpdateJobActionUpdate), msgbody.Action)
++			assert.True(t, msgbody.Succ)
++			assert.NotEmpty(t, msgbody.FinishTime)
++		})
++		patches.ApplyFunc(actions.GetRunner, func(name string) *actions.ActionRunner {
++			return &actions.ActionRunner{}
++		})
++		patches.ApplyMethodFunc(reflect.TypeOf((*actions.ActionRunner)(nil)), "RunAction",
++			func(ctx context.Context, jobname, nodename, action string, specData []byte) {
++				runActionCalled = true
++			})
++
++		err := ReportUpgradeStatus(ctx)
++		require.NoError(t, err)
++		assert.True(t, reportStatusCalled)
++		assert.True(t, removeReporterInfoCalled)
++		as
 ```
 
 ---
 
-### Incident Patch 2: `615ad009` (2026-10-19)
-**Commit Message**: Merge pull request #7291 from adity1raut/fix/node-upgrade-report-precedence
+### Incident Patch 2: `1c9b202a` (2026-10-20)
+**Commit Message**: Merge pull request #7351 from vidhisingh24/fix/nodegroup-empty-matchlabels
 
-edge/taskmanager: fix operator precedence in node upgrade reportActionStatus
+nodegroup: do not match every node when matchLabels is nil
 
-**File**: `edge/pkg/taskmanager/actions/nodeupgradejob.go` (modified, +3/-3)
+**File**: `cloud/pkg/controllermanager/nodegroup/nodegroupcontroller.go` (modified, +5/-0)
 ```diff
-@@ -322,9 +322,9 @@ func (nodeUpgradeJobActionHandler) reportActionStatus(jobname, nodename, action
+@@ -408,6 +408,11 @@ func IfMatchNodeGroup(node *corev1.Node, nodegroup *appsv1alpha1.NodeGroup) bool
+ 			return true
+ 		}
  	}
- 	var extend string
- 	if resp, ok := resp.(*nodeUpgradeJobActionResponse); ok &&
--		action == string(operationsv1alpha2.NodeUpgradeJobActionBackUp) ||
--		action == string(operationsv1alpha2.NodeUpgradeJobActionUpgrade) ||
--		action == string(operationsv1alpha2.NodeUpgradeJobActionRollBack) {
-+		(action == string(operationsv1alpha2.NodeUpgradeJobActionBackUp) ||
-+			action == string(operationsv1alpha2.NodeUpgradeJobActionUpgrade) ||
-+			action == string(operationsv1alpha2.NodeUpgradeJobActionRollBack)) {
- 		extend = taskmsg.FormatNodeUpgradeJobExtend(resp.FromVersion, resp.ToVersion)
- 	}
- 	body := taskmsg.UpstreamMessage{
++	// A nil selector matches every node, return false when MatchLabels is nil
++	// to select the same nodes as getNodesByLabels.
++	if nodegroup.Spec.MatchLabels == nil {
++		return false
++	}
+ 	// check if labels of this node selected by nodegroup.Spec.MatchLabels
+ 	selector := labels.SelectorFromSet(nodegroup.Spec.MatchLabels)
+ 	return selector.Matches(labels.Set(node.Labels))
 ```
 
-**File**: `edge/pkg/taskmanager/actions/nodeupgradejob_test.go` (modified, +24/-1)
+**File**: `cloud/pkg/controllermanager/nodegroup/nodegroupcontroller_test.go` (modified, +120/-0)
 ```diff
-@@ -362,17 +362,37 @@ func TestNodeUpgradeJobReportActionStatus(t *testing.T) {
- 			},
- 			action: string(operationsv1alpha2.NodeUpgradeJobActionBackUp),
- 		},
-+		{
-+			name:        "backup pre-run failed",
-+			resp:        &baseActionResponse{err: errors.New("test error")},
-+			action:      string(operationsv1alpha2.NodeUpgradeJobActionBackUp),
-+			extendEmpty: true,
-+		},
-+		{
-+			name:        "upgrade pre-run failed",
-+			resp:        &baseActionResponse{err: errors.New("test error")},
-+			action:      string(operationsv1alpha2.NodeUpgradeJobActionUpgrade),
-+			extendEmpty: true,
-+		},
-+		{
-+			name:        "rollback pre-run failed",
-+			resp:        &baseActionResponse{err: errors.New("test error")},
-+			action:      string(operationsv1alpha2.NodeUpgradeJobActionRollBack),
-+			extendEmpty: true,
-+		},
- 	}
+@@ -1,12 +1,19 @@
+ package nodegroup
  
- 	h := nodeUpgradeJobActionHandler{
- 		logger: klog.Background(),
- 	}
- 	for _, c := range cases {
- 		t.Run(c.name, func(t *testing.T) {
-+			var reported bool
- 			patches := gomonkey.NewPatches()
- 			defer patches.Reset()
+ import (
++	"context"
+ 	"sort"
+ 	"testing"
  
- 			patches.ApplyFunc(message.ReportNodeTaskStatus, func(_res taskmsg.Resource, msgbody taskmsg.UpstreamMessage) {
-+				reported = true
- 				assert.Equal(t, c.action, msgbody.Action)
- 				if c.extendEmpty {
- 					assert.Empty(t, msgbody.Extend)
-@@ -387,7 +407,10 @@ func TestNodeUpgradeJobReportActionStatus(t *testing.T) {
- 				}
- 			})
+ 	corev1 "k8s.io/api/core/v1"
+ 	"k8s.io/apimachinery/pkg/api/equality"
+ 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	controllerruntime "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++
++	appsv1alpha1 "github.com/kubeedge/api/apis/apps/v1alpha1"
+ )
  
--			h.reportActionStatus(jobName, nodeName, c.action, c.resp)
-+			require.NotPanics(t, func() {
-+				h.reportActionStatus(jobName, nodeName, c.action, c.resp)
-+			})
-+			assert.True(t, reported)
- 		})
+ func TestNodesUnion(t *testing.T) {
+@@ -124,3 +131,116 @@ func TestNodesUnion(t *testing.T) {
+ 		}
  	}
  }
++
++func TestIfMatchNodeGroup(t *testing.T) {
++	node := &corev1.Node{
++		ObjectMeta: v1.ObjectMeta{
++			Name:   "edge-x",
++			Labels: map[string]string{"zone": "b"},
++		},
++	}
++	cases := map[string]struct {
++		spec appsv1alpha1.NodeGroupSpec
++		want bool
++	}{
++		"selected by name": {
++			spec: appsv1alpha1.NodeGroupSpec{Nodes: []string{"edge-1", "edge-x"}},
++			want: true,
++		},
++		"not selected by name, nil matchLabels": {
++			spec: appsv1alpha1.NodeGroupSpec{Nodes: []string{"edge-1"}},
++			want: false,
++		},
++		"empty spec": {
++			spec: appsv1alpha1.NodeGroupSpec{},
++			want: false,
++		},
++		"selected by labels": {
++			spec: appsv1alpha1.NodeGroupSpec{MatchLabels: map[string]string{"zone": "b"}},
++			want: true,
++		},
++		"not selected by labels": {
++			spec: appsv1alpha1.NodeGroupSpec{MatchLabels: map[string]string{"zone": "a"}},
++			want: false,
++		},
++		"not selected by name, selected by labels": {
++			spec: appsv1alpha1.NodeGroupSpec{
++				Nodes:       []string{"edge-1"},
++				MatchLabels: map[string]string{"zone": "b"},
++			},
++			want: true,
++		},
++	}
++	for name, c := range cases {
++		t.Run(name, func(t *testing.T) {
++			nodegroup := &appsv1alpha1.NodeGroup{
++				ObjectMeta: v1.ObjectMeta{Name: "nodegroup"},
++				Spec:       c.spec,
++			}
++			if got := IfMatchNodeGroup(node, nodegroup); got != c.want {
++				t.Errorf("IfMatchNodeGroup() = %v, want %v", got, c.want)
++			}
++		})
++	}
++}
++
++func TestNodeMapFunc(t *testing.T) {
++	scheme := runtime.NewScheme()
++	if err := appsv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatal(err)
++	}
++	// a-by-name is listed before b-by-label and only selects nodes by name.
++	nodegroups := []runtime.Object{
++		&appsv1alpha1.NodeGroup{
++			ObjectMeta: v1.ObjectMeta{Name: "a-by-name"},
++			Spec:       appsv1alpha1.NodeGroupSpec{Nodes: []string{"edge-1"}},
++		},
++		&appsv1alpha1.NodeGroup{
++			ObjectMeta: v1.ObjectMeta{Name: "b-by-label"},
++			Spec:       appsv1alpha1.NodeGroupSpec{MatchLabels: map[string]string{"zone": "b"}},
++		},
++	}
++	c := NewController(fake.NewClientBuilder().WithScheme(scheme).WithRuntimeObjects(nodegroups...).Build())
++
++	request := func(name string) []controllerruntime.Request {
++		return []controllerruntime.Request{{NamespacedName: types.NamespacedName{Name: name}}}
++	}
++	cases := map[string]struct {
++		node *corev1.Node
++		want []controllerruntime.Request
++	}{
++		"node with belonging label": {
++			node: &corev1.Node{ObjectMeta: v1.ObjectMeta{
++				Name:   "edge-y",
++				Labels: map[string]string{LabelBelongingTo: "a-by-name"},
++			}},
++			want: request("a-by-name"),
++		},
++		"node selected by name": {
++			node: &corev1.Node{ObjectMeta: v1.ObjectMeta{Name: "edge-1"}},
++			want: request("a-by-name"),
++		},
++		"node selected by labels": {
++			node: &corev1.Node{ObjectMeta: v1.ObjectMeta{
++				Name:   "edge-x",
++				Labels: map[string]string{"zone": "b"},
++			}},
++			want: request("b-by-label"),
++		},
++		"orphan node": {
++			node: &corev1.Node{ObjectMeta: v1.ObjectMeta{
++				Name:   "edge-z",
++				Labels: map[string]string{"zone": "c"},
++			}},
++			want: []controllerruntime.Request{},
++		},
++	}
++	for name, tc := range cases {
++		t.Run(name, func(t *testing.T) {
++			got := c.nodeMapFunc(context.TODO(), tc.node)
++			if !equality.Semantic.DeepEqual(got, tc.want) {
++				t.Errorf("nodeMapFunc() = %v, want %v", got, tc.want)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7357** (2026-10-19): tests/e2e: poll for running pods instead of watching for updates (@ryoheimorimoto)
 - **PR #7354** (2026-10-16): nodetask: add unit tests for the ConfigUpdateJob reconcile handler (@adity1raut)
+- **PR #7351** (2026-10-20): nodegroup: do not match every node when matchLabels is nil (@vidhisingh24)
 - **PR #7343** (closed): controllermanager: escape resource names in JSON patch paths (@nzy0804)
 - **PR #7342** (closed): controllermanager: escape resource names in JSON patch paths (@nzy0804)
-- **PR #7329** (2026-10-16): fix(viaduct): make fifo teardown safe and release parked QUIC readers (@ryoheimorimoto)
-- **PR #7324** (2026-09-23): Upgrade golang to 1.25.14 (@Shelley-BaoYue)
+- **PR #7334** (2026-10-20): edge/taskmanager: report ConfigUpdateJob result after edgecore restart (@adity1raut)
 
 ---
 
@@ -1442,88 +2088,66 @@ edge/taskmanager: fix operator precedence in node upgrade reportActionStatus
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake
+## X. Merge pull request #7334 from adity1raut/fix/configupdatejob-report-after-restar
 
 **RULE**:
-When implementing operations in `tests/e2e/utils/pod.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `edge/pkg/metamanager/dao/dbclient/configupdate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48feb970`: Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3001611`: Merge pull request #7334 from adity1raut/fix/configupdatejob-report-after-restart. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/utils/pod.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/metamanager/dao/dbclient/configupdate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	gomega.Eventually(func() int {
-		var count int
-		for i := range podList.Items {
-			pod := &podList.Items[i]
-			current, err := GetPod(c, pod.Namespace, pod.Name)
-			if err != nil {
-				Errorf("get pod %s/%s error: %v", pod.Namespace, pod.Name, err)
-				continue
-			}
+/*
+Copyright 2026 The KubeEdge Authors.
 
-			pod.Status = current.Status
-			if pod.Status.Phase == v1.PodRunning {
-				count++
-				continue
-			}
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-			Infof("Pod %s/%s is still %s", pod.Namespace, pod.Name, pod.Status.Phase)
-		return count
-	}, timeout, 4*time.Second).Should(gomega.Equal(len(podList.Items)), "not all pods reached the Running phase")
-	Infof("All pods come into running status")
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package dbclient
+
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"gorm.io/gorm"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	operationv1alpha2 "github.com/kubeedge/api/apis/operations/v1alpha2"
+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao"
+	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao/models"
+)
+
+var MetaGVRConfigUpdate = schema.GroupVersionResource{
+	Group:    operationv1alpha2.GroupName,
+	Version:  operationv1alpha2.Version,
+	Resource: "configupdatejobspecs",
+}
+
+// ConfigUpdate is a dao wrapper for config update job record.
+// keadm config-update restarts EdgeCore before the Update action can report its 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	"k8s.io/client-go/tools/cache"
-	podRunningCount := 0
-	for _, pod := range podList.Items {
-		if pod.Status.Phase == v1.PodRunning {
-			podRunningCount++
-	}
-	if podRunningCount == len(podList.Items) {
-		Infof("All pods come into running status")
-		return
-	}
-	// define signal
-	signal := make(chan struct{})
-
-	// define list watcher
-	listWatcher := cache.NewListWatchFromClient(c.CoreV1().RESTClient(), "pods", v1.NamespaceAll, fields.Everything())
-
-	// new controller
-	_, controller := cache.NewInformer(listWatcher, &v1.Pod{}, 0,
-		cache.ResourceEventHandlerFuncs{
-			// receive update events
-			UpdateFunc: func(oldObj, newObj interface{}) {
-				// check update obj
-				p, ok := newObj.(*v1.Pod)
-				if !ok {
-					Fatalf("Failed to cast observed object to pod")
-				}
-
-				// calculate the pods in running status
-				count := 0
-				for i := range podList.Items {
-					// update pod status in podList
-					if podList.Items[i].Name == p.Name {
-						Infof("PodName: %s PodStatus: %s", p.Name, p.Status.Phase)
-						podList.Items[i].Status = p.Status
-					}
-					// check if the pod is in running status
-					if podList.Items[i].Status.Phase == v1.PodRunning {
-						count++
-					}
-				}
-
-				// send a
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48feb970` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3001611` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T12:31:17.164Z",
+  "last_updated": "2026-10-20T12:40:51.863Z",
   "total_verified_learnings": 1054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5603,8 +5603,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "08e1aba1",
-      "content_hash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
+      "source_version": "ac888c8b",
+      "content_hash": "cae543f4a9b477208b4c803457518daf38f30e8706b59014738b0fd944398faf",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -5627,6 +5627,11 @@
           "number": 2798,
           "title": "Enable simplified arguments for views (#6324)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3168,
+          "title": "[T3 Connect] TypeScript SDK: generated schemas typecheck under exactOptionalProp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5634,7 +5639,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:29:00.438Z",
+      "verified_at": "2026-10-20T12:40:51.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8646,14 +8651,19 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "262fdba5",
-      "content_hash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
+      "source_version": "951736ef",
+      "content_hash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
         {
           "number": 2076,
           "title": "use process_block inside process_blocks_padded",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3165,
+          "title": "make panic handlers consistent.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8662,7 +8672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:32:56.866Z",
+      "verified_at": "2026-10-20T12:40:40.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14517,13 +14527,18 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
+      "content_hash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
         {
           "number": 314,
           "title": "Semantic Embedding Dimensionality & Precision Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 315,
+          "title": "Tokenizer Truncation & Padding Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -14545,6 +14560,11 @@
           "number": 1840,
           "title": "Maximum Sequence Length Truncation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3166,
+          "title": "Semantic Vector Dimensionality & Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14564,7 +14584,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-18T23:20:33.182Z",
+      "verified_at": "2026-10-20T12:40:45.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28351,8 +28371,8 @@
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "48feb970",
-      "content_hash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
+      "source_version": "e3001611",
+      "content_hash": "87b3a1f4a5b3705ff64f4a052e0dcbe2d3dae0cf2bdeb0c4d5c665d1b417b31b",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "promoted_rules": [
@@ -28365,6 +28385,11 @@
           "number": 2469,
           "title": "Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3167,
+          "title": "Merge pull request #7334 from adity1raut/fix/configupdatejob-report-after-restar",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28372,7 +28397,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:35:22.594Z",
+      "verified_at": "2026-10-20T12:40:47.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52427,15 +52452,15 @@
       "learning_id": "rule-315",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 315,
-      "title": "Tokenizer Truncation & Padding Invariant (Harvested from intfloat/multilingual-e5-small)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer Truncation & Padding Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-20T12:40:45.571Z"
     },
     "rule-316": {
       "learning_id": "rule-316",
@@ -100636,6 +100661,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T12:31:17.154Z"
+    },
+    "rule-3165": {
+      "learning_id": "rule-3165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3165,
+      "title": "make panic handlers consistent.",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "951736ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:40:40.854Z"
+    },
+    "rule-3166": {
+      "learning_id": "rule-3166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3166,
+      "title": "Semantic Vector Dimensionality & Precision Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:40:45.571Z"
+    },
+    "rule-3167": {
+      "learning_id": "rule-3167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3167,
+      "title": "Merge pull request #7334 from adity1raut/fix/configupdatejob-report-after-restar",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "e3001611",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:40:47.864Z"
+    },
+    "rule-3168": {
+      "learning_id": "rule-3168",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3168,
+      "title": "[T3 Connect] TypeScript SDK: generated schemas typecheck under exactOptionalProp",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "ac888c8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T12:40:51.848Z"
     }
   },
   "aliases": {

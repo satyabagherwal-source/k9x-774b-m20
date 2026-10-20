@@ -3803,3 +3803,7 @@
 | `CYCLE-20261020-WDKL` | `2026-10-20T12:31:03.093Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`53fc4515...`) |
 | `CYCLE-20261020-WLK4` | `2026-10-20T12:31:13.444Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3163` | Yes (`3d469295...`) |
 | `CYCLE-20261020-WOGQ` | `2026-10-20T12:31:17.210Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3164` | Yes (`b40c47b4...`) |
+| `CYCLE-20261020-8RFE` | `2026-10-20T12:40:40.922Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3165` | Yes (`a00d26e1...`) |
+| `CYCLE-20261020-8V2G` | `2026-10-20T12:40:45.640Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3166, Rule 315` | Yes (`6741cb9b...`) |
+| `CYCLE-20261020-8WU6` | `2026-10-20T12:40:47.934Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3167` | Yes (`87b3a1f4...`) |
+| `CYCLE-20261020-8ZWR` | `2026-10-20T12:40:51.915Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3168` | Yes (`cae543f4...`) |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T12:31:17.230Z",
-  "total_cycles_completed": 3780,
-  "total_learnings_persisted": 3780,
-  "total_rules_promoted": 2975,
+  "last_updated": "2026-10-20T12:40:51.926Z",
+  "total_cycles_completed": 3784,
+  "total_learnings_persisted": 3784,
+  "total_rules_promoted": 2980,
   "history": [
-    {
-      "timestamp": "2026-10-20T00:51:38.232Z",
-      "repository": "RDFLib/rdflib",
-      "learningId": "learn-github-rdflib-rdflib",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:51:42.795Z",
-      "repository": "KartikLabhshetwar/better-shot",
-      "learningId": "learn-github-kartiklabhshetwar-better-shot",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:51:44.419Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T00:51:47.760Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T00:58:02.271Z",
       "repository": "RDFLib/pySHACL",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-20T12:31:17.230Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:40:40.933Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:40:45.652Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:40:47.945Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T12:40:51.926Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `262fdba5`  
+> **Source Version**: `951736ef`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:32:56.691Z  
+> **Timestamp**: 2026-10-20T12:40:40.557Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:32:56.684Z  
+> **Harvest Timestamp**: 2026-10-20T12:40:40.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9979 stars
+- **Stars / Engagement**: 9983 stars
 
 ---
 
@@ -172,12 +172,41 @@ use std::fmt::Display;
 
 use proc_macro2::{TokenStream, TokenTree};
 use quote::{ToTokens, TokenStreamExt};
+use syn::meta::ParseNestedMeta;
 use syn::parse::{Parse, ParseStream};
-use syn::{AttrStyle, Attribute, Signature, Token, Visibility, braced, bracketed, token};
+use syn::{AttrStyle, Attribute, Expr, ExprLit, Lit, LitStr, Signature, Token, Visibility, braced, bracketed, token};
 
 pub fn token_stream_with_error(mut tokens: TokenStream, error: syn::Error) -> TokenStream {
     tokens.extend(error.into_compile_error());
     tokens
+}
+
+/// Parse the value of a `name = value` macro argument, which is either an expression
+/// or a string literal containing one.
+pub fn parse_expr_arg(meta: &ParseNestedMeta) -> syn::Result<Expr> {
+    let mut expr: Expr = meta.value()?.parse()?;
+    while let Expr::Group(g) = expr {
+        expr = *g.expr;
+    }
+    match expr {
+        Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) => s.parse(),
+        expr => Ok(expr),
+    }
+}
+
+/// Parse the value of a `name = "value"` macro argument.
+pub fn parse_str_arg(meta: &ParseNestedMeta) -> syn::Result<String> {
+    let s: LitStr = meta.value()?.parse()?;
+    Ok(s.value())
+}
+
+/// Store a parsed macro argument, erroring if it was already given.
+pub fn set_arg<T>(meta: &ParseNestedMeta, slot: &mut Option<T>, value: T) -> syn::Result<()> {
+    if slot.is_some() {
+        return Err(meta.error("duplicate argument"));
+    }
+    *slot = Some(value);
+    Ok(())
 }
 
 pub fn error<A: ToTokens, T: Display>(s: &mut TokenStream, obj: A, msg: T) {
@@ -189,7 +218,7 @@ pub fn error<A: ToTokens, T: Display>(s: &mut TokenStream, obj: A, msg: T) {
 /// Same as `syn`'s `ItemFn` except we keep the body as a TokenStream instead of
 /// parsing it. This makes the macro not error if there's a syntax error in the body,
 /// which helps IDE autocomplete work better.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct ItemFn {
     pub attrs: Vec<Attribute>,
     pub vis: Visibility,
@@ -1406,11 +1435,14 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7304** (2026-10-18): **stm32/adc: Add proper support for STM32H72x/H73x ADC3**
-  *Symptoms*: This is a case similar to U5 ADC4, except that one is v2+v3 while this one is v3 + different v3. The U5 case worked kind of naturally by including both v2.rs and v3.rs, but that trick doesn't work here.  I've chosen to copypaste the entire v3.rs. It sucks, but the alternatives (like putting most of v3.rs inside a huge macro) are worse.  I'll add nucleo-h723zg to HIL test tomorrow. 
+- **Issue #7319** (2026-10-20): **rp235x examples: .text is not a multiple of alignment (8)**
+  *Symptoms*: Spits out a warn ``` warning: linker stderr: rust-lld: address (0x1000013c) of section .text is not a multiple of alignment (8) ```  From cargo run --bin any through the examples under examples/rp235x  Compiler host is aarch64-apple-darwin using the toolchain file's stable-1.97  Is this some of those memory.x things?
+  **Post-Mortem & Fix Analysis**:
+  > this is https://github.com/rust-embedded/cortex-m/issues/678 , fixed in cortex-m-rt 0.7.7  do `cargo update`, it should pick up latest cortex-m-rt
+  > fwiw It was already at 0.7.7 as I cloned fresh and had generated new lock too - still happens on my stable 1.97 ``` % cargo tree -i -p cortex-m-rt cortex-m-rt v0.7.7 ├── embassy-rp v0.10.0 (/Users/foobar/code/sleuth/embassy/embassy-rp) │   ├── cyw43-pio v0.10.0 (/Users/foobar/code/sleuth/embassy/cyw43-pio) │   │   └── embassy-rp2350-examples v0.1.0 (/Users/foobar/code/sleuth/embassy/examples/rp235x) │   └── embassy-rp2350-examples v0.1.0 (/Users/foobar/code/sleuth/embassy/examples/rp235x) ├── embassy-rp2350-examples v0.1.0 (/Users/foobar/code/sleuth/embassy/examples/rp235x) └── rp-pac v7.0.0 (https://github.com/embassy-rs/rp-pac?rev=c2e27609b021c444f634673155318977d7f0bdf6#c2e27609)     └── embassy-rp v0.10.0 (/Users/foobar/code/sleuth/embassy/embassy-rp)  ``` 
 
-- **Issue #7301** (2026-10-18): **stm32/eth: wait for DMA to stop on drop for ETHv1**
-  *Symptoms*: - **stm32/eth: return errors for bounded MAC and PHY waits** - **stm32/eth: time the bounded ethernet waits with the time driver** - **stm32/eth: skip MDIO addresses without a PHY ID when probing** - **stm32/eth: wait for DMA to stop on drop on ETHv1.** - **stm32/eth: add drop+reinit test.** 
+- **Issue #7318** (2026-10-19): **Nuke more unnecessary deps.**
+  *Symptoms*: see individual commits
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1427,112 +1459,355 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e62ff911` (2026-10-09)
-**Commit Message**: fix: use process_block inside process_blocks_padded
+### Incident Patch 1: `0d6e9079` (2026-10-19)
+**Commit Message**: make panic handlers consistent.
 
-**File**: `embassy-nxp/src/hashcrypt/lpc55.rs` (modified, +6/-13)
+**File**: `embassy-mspm0/src/trng.rs` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,5 @@
- //! Driver for the HASHCRYPT peripheral, mode switch skeleton
-+use embassy_futures::block_on;
- use embassy_hal_internal::Peri;
- use nxp_pac::hashcrypt::vals::{Aesdecrypt, Aeskeysz, Aesmode, Aessecret, Mode};
- use nxp_pac::syscon::vals::HashAesRst::Released;
-@@ -273,11 +274,9 @@ impl<'d> GenericHashcrypt<'d> {
-         let mut offset = 0;
-         let mut blocks = data.chunks_exact(16);
-         for block in &mut blocks {
--            for word in block.chunks_exact(4) {
--                Self::feed_word(u32::from_le_bytes(word.try_into().unwrap()));
--            }
--
--            Self::read_digest(4, &mut output[offset..offset + 16]);
-+            let block: [u8; 16] = block.try_into().unwrap();
-+            let out: &mut [u8; 16] = (&mut output[offset..offset + 16]).try_into().unwrap();
-+            Self::process_block(&block, out, false);
-             offset += 16;
+@@ -154,7 +154,7 @@ impl core::error::Error for Error {}
+ /// use embassy_mspm0::Config;
+ /// use embassy_mspm0::trng::Trng;
+ /// use rand_core::TryRng;
+-/// use {defmt_rtt as _, panic_halt as _};
++/// use {defmt_rtt as _, panic_probe as _};
+ ///
+ /// #[embassy_executor::main]
+ /// async fn main(_spawner: Spawner) -> ! {
+```
+
+**File**: `examples/boot/application/nrf/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -16,7 +16,6 @@ embassy-embedded-hal = { version = "0.6.0", path = "../../../../embassy-embedded
+ 
+ defmt = { version = "1.0.1", optional = true }
+ defmt-rtt = { version = "1.0.0", optional = true }
+-panic-reset = { version = "0.1.1" }
+ 
+ cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-single-core"] }
+ cortex-m-rt = "0.7.0"
+```
+
+**File**: `examples/boot/application/nrf/src/bin/a.rs` (modified, +5/-1)
+```diff
+@@ -12,7 +12,6 @@ use embassy_nrf::gpio::{Input, Level, Output, OutputDrive, Pull};
+ use embassy_nrf::nvmc::Nvmc;
+ use embassy_nrf::wdt::{self, Watchdog};
+ use embassy_sync::mutex::Mutex;
+-use panic_reset as _;
+ 
+ #[cfg(feature = "skip-include")]
+ static APP_B: &[u8] = &[0, 1, 2, 3];
+@@ -104,3 +103,8 @@ async fn main(_spawner: Spawner) {
          }
- 
-@@ -288,14 +287,8 @@ impl<'d> GenericHashcrypt<'d> {
-         final_block[..tail.len()].copy_from_slice(tail);
-         final_block[tail.len()..].fill(pad);
- 
--        pac::HASHCRYPT.cryptcfg().modify(|w| {
--            w.set_streamlast(true);
--        });
--
--        for chunks in final_block.chunks_exact(4) {
--            Self::feed_word(u32::from_le_bytes(chunks.try_into().unwrap()));
--        }
--        Self::read_digest(4, &mut output[offset..offset + 16]);
-+        let out: &mut [u8; 16] = (&mut output[offset..offset + 16]).try_into().unwrap();
-+        Self::process_block(&final_block, out, true);
      }
- 
-     pub(crate) fn process_blocks_ctr(data: &[u8], output: &mut [u8]) {
+ }
++
++#[panic_handler]
++fn panic(_info: &core::panic::PanicInfo) -> ! {
++    cortex_m::peripheral::SCB::sys_reset();
++}
 ```
 
----
-
-### Incident Patch 2: `47388992` (2026-10-12)
-**Commit Message**: fix: change test to example
-
-**File**: `examples/lpc55s69/src/bin/hashcrypt_aes.rs` (modified, +2/-2)
+**File**: `examples/boot/application/nrf/src/bin/b.rs` (modified, +5/-1)
 ```diff
-@@ -65,7 +65,7 @@ async fn main(_spawner: Spawner) -> ! {
-         Err(e) => error!("{}", &e),
-     }
- 
--    info!("Test3: Arbitrary length encrypt");
-+    info!("Example3: Arbitrary length encrypt");
-     let key3 = [0x42u8; 16];
-     let pt3: &[u8; 34] = b"hello world! this is my plaintext.";
-     let ct3: [u8; 48] = [
-@@ -227,7 +227,7 @@ async fn main(_spawner: Spawner) -> ! {
-         Err(e) => error!("{}", &e),
-     }
- 
--    info!("Test2: F.5.2 CTR-AES128.Decrypt, blocks 1-2");
-+    info!("Example2: F.5.2 CTR-AES128.Decrypt, blocks 1-2");
-     // Reuses key1, counter1 and ct1 from Test1
-     let mut out = [0u8; 32];
-     match ctr.decrypt(&ct1, &mut out) {
-```
-
----
-
-### Incident Patch 3: `e78700bf` (2026-10-10)
-**Commit Message**: fix: change GenericDriver to GenericHashcrypt in aes example
-
-**File**: `examples/lpc55s69/src/bin/hashcrypt_aes.rs` (modified, +2/-2)
-```diff
-@@ -5,7 +5,7 @@ use cortex_m as _;
- use defmt::{error, info};
- use defmt_rtt as _;
+@@ -5,7 +5,6 @@
  use embassy_executor::Spawner;
--use embassy_nxp::hashcrypt::{Aes, AesPadded, GenericDriver, KeySize};
-+use embassy_nxp::hashcrypt::{Aes, AesPadded, GenericHashcrypt, KeySize};
+ use embassy_nrf::gpio::{Level, Output, OutputDrive};
  use embassy_time::Timer;
+-use panic_reset as _;
+ 
+ #[embassy_executor::main]
+ async fn main(_spawner: Spawner) {
+@@ -27,3 +26,8 @@ async fn main(_spawner: Spawner) {
+         Timer::after_millis(300).await;
+     }
+ }
++
++#[panic_handler]
++fn panic(_info: &core::panic::PanicInfo) -> ! {
++    cortex_m::peripheral::SCB::sys_reset();
++}
+```
+
+**File**: `examples/boot/application/rp/Cargo.toml` (modified, +0/-2)
+```diff
+@@ -15,14 +15,12 @@ embassy-boot-rp = { version = "0.10.0", path = "../../../../embassy-boot-rp", fe
+ defmt = "1.0.1"
+ defmt-rtt = "1.0.0"
+ panic-probe = { version = "1.0.0", features = ["print-defmt"], optional = true }
+-panic-reset = { version = "0.1.1", optional = true }
+ 
+ cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-single-core"] }
+ cortex-m-rt = "0.7.0"
+ embedded-storage = "0.3.1"
+ 
+ [features]
+-default = ["panic-reset"]
+ debug = [
+     "embassy-rp/defmt",
+     "embassy-boot-rp/defmt",
+```
+
+**File**: `examples/boot/application/rp/src/bin/a.rs` (modified, +6/-2)
+```diff
+@@ -14,8 +14,6 @@ use embassy_time::{Duration, Timer};
+ use embedded_storage::nor_flash::NorFlash;
+ #[cfg(feature = "panic-probe")]
  use panic_probe as _;
+-#[cfg(feature = "panic-reset")]
+-use panic_reset as _;
  
-@@ -14,7 +14,7 @@ async fn main(_spawner: Spawner) -> ! {
-     let p = embassy_nxp::init(Default::default());
-     info!("Device started !");
+ #[cfg(feature = "skip-include")]
+ static APP_B: &[u8] = &[0, 1, 2, 3];
+@@ -66,3 +64,9 @@ async fn main(_s: Spawner) {
+     defmt::info!("update marked, resetting");
+     cortex_m::peripheral::SCB::sys_reset();
+ }
++
++#[cfg(not(feature = "panic-probe"))]
++#[panic_handler]
++fn panic(_info: &core::panic::PanicInfo) -> ! {
++    cortex_m::peripheral::SCB::sys_reset();
++}
+```
+
+**File**: `examples/boot/application/rp/src/bin/b.rs` (modified, +5/-1)
+```diff
+@@ -6,7 +6,6 @@ use embassy_executor::Spawner;
+ use embassy_rp::gpio;
+ use embassy_time::Timer;
+ use gpio::{Level, Output};
+-use panic_reset as _;
  
--    let mut generic = GenericDriver::new(p.HASHCRYPT);
-+    let mut generic = GenericHashcrypt::new(p.HASHCRYPT);
+ #[embassy_executor::main]
+ async fn main(_s: Spawner) {
+@@ -21,3 +20,8 @@ async fn main(_s: Spawner) {
+         Timer::after_millis(100).await;
+     }
+ }
++
++#[panic_handler]
++fn panic(_info: &core::panic::PanicInfo) -> ! {
++    cortex_m::peripheral::SCB::sys_reset();
++}
+```
+
+**File**: `examples/boot/application/rp235x/Cargo.toml` (modified, +0/-2)
+```diff
+@@ -15,14 +15,12 @@ embassy-boot-rp = { version = "0.10.0", path = "../../../../embassy-boot-rp", fe
+ defmt = "1.0.1"
+ defmt-rtt = "1.0.0"
+ panic-probe = { version = "1.0.0", features = ["print-defmt"], optional = true }
+-panic-reset = { version = "0.1.1", optional = true }
  
-     info!("ECB Example");
-     // F.1.1 ECB-AES128.Encrypt / F.1.2 ECB-AES128.Decrypt (NIST SP 800-38A)
+ cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-single-core"] }
+ cortex-m-rt = "0.7.0"
+ embedded-storage = "0.3.1"
+ 
+ [features]
+-default = ["panic-reset"]
+ debug = [
+     "embassy-rp/defmt",
+     "embassy-boot-rp/defmt",
+```
+
+---
+
+### Incident Patch 2: `eea0c031` (2026-10-19)
+**Commit Message**: stm32/dma: GPDMA: panic when a linked-list Table straddles 64 KiB
+
+The channel takes the upper 16 bits of every item's address from LBAR,
+which holds the first item's, and each link carries only the lower 16. An
+item past a 64 KiB boundary was fetched from 64 KiB away: for a chain that
+writes peripheral registers, arbitrary memory written into them.
+offset_address() now checks that each item, first byte to last, shares the
+first item's upper bits, and panics otherwise.
+
+**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -104,6 +104,7 @@ DMA:
+ - fix: stm32/dma: compute GPDMA `BR1.BNDT` from the memory-side width regardless of direction, fixing destination overrun on reads with peripheral width > memory width
+ - feat: stm32/dma: GPDMA: allow access to construct custom LinkedList chains for scatter/gather DMA
+ - feat: stm32/dma: add `TwoDItem`, `TwoDConfig`, and `LinkedListItem` trait; `Table` is now generic over item type
++- fix: stm32/dma: GPDMA: panic when a linked-list `Table` straddles a 64 KiB boundary
+ 
+ I2S:
+ - feat: stm32/i2s: add `I2S::rx_len()` returning the number of samples buffered in the RX DMA ring buffer
+```
+
+**File**: `embassy-stm32/src/dma/gpdma/linked_list.rs` (modified, +14/-2)
+```diff
+@@ -419,14 +419,26 @@ impl<T: LinkedListItem, const N: usize> Table<T, N> {
+     }
+ 
+     /// Linked list offset address (lower 16 address bits) at the selected index.
++    ///
++    /// The channel takes the upper 16 bits of every item's address from `LBAR`, which holds
++    /// [`Self::base_address`]: all items must lie in the same 64 KiB as the first. Panics for an
++    /// item outside it, which the channel would otherwise fetch from 64 KiB away. Aligning the
++    /// table to a power of two no smaller than itself rules this out.
+     pub fn offset_address(&self, index: usize) -> u16 {
+         assert!(self.items.len() > index);
+ 
+-        let address = &raw const self.items[index] as _;
++        let address = &raw const self.items[index] as u32;
+ 
+         // Ensure 32 bit address alignment.
+         assert_eq!(address & 0b11, 0);
+ 
+-        address
++        let last = address + core::mem::size_of::<T>() as u32 - 1;
++        assert!(
++            address >> 16 == self.base_address() as u32 && last >> 16 == self.base_address() as u32,
++            "linked-list item {} is not in the table's first 64 KiB",
++            index
++        );
++
++        address as u16
+     }
+ }
+```
+
+---
+
+### Incident Patch 3: `469638cc` (2026-10-19)
+**Commit Message**: stm32/adc: account for the fixed /2 in front of the H7 ADC converter, fixes #7310
+
+**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -117,6 +117,7 @@ I2C:
+ 
+ ADC:
+ - feat: stm32/adc: add `VrefInt::calibrated_value()` for additional chips
++- fix: stm32/adc: account for the fixed /2 in front of the H7 ADC1/ADC2/ADC3 converter in the automatic prescaler, `clock()`, the maximum-clock check and `BOOST`, and set the single `BOOST` bit of revision Y H742/H743/H750/H753 above 20 MHz.
+ 
+ RNG:
+ - feat: stm32/rng: add configurable initialization policy (`RngConfig`) with `new_with_config` and health-test profile control
+```
+
+**File**: `embassy-stm32/src/adc/v3.rs` (modified, +35/-8)
+```diff
+@@ -63,6 +63,30 @@ const MAX_CLOCK: Hertz = Hertz::mhz(70);
+ #[cfg(stm32c5)]
+ const MAX_CLOCK: Hertz = Hertz::mhz(70);
+ 
++/// Whether this is a revision Y (or older) H742/H743/H750/H753, which has no /2 in front of the
++/// converter and a single `BOOST` bit. RM0433 §25.4.3.
++#[cfg(adc_v3_h7)]
++fn rev_y() -> bool {
++    #[cfg(any(stm32h742, stm32h743, stm32h750, stm32h753))]
++    return crate::pac::DBGMCU.idc().read().rev_id() <= 0x1003;
++    #[cfg(not(any(stm32h742, stm32h743, stm32h750, stm32h753)))]
++    false
++}
++
++/// The clock of the converter, from the clock selected by `CKMODE`/`PRESC`.
++///
++/// On the H7 a fixed /2 sits in between, except on revision Y. `MAX_CLOCK`, `BOOST` and the sample
++/// and conversion times all refer to the divided clock. RM0433 §25.4.3, RM0399 §26.4.3, RM0455
++/// §27.4.3, RM0468 §28.4.3.
++#[cfg(any(adc_v3_l4, adc_v3_g4, adc_v3_h7, adc_v3_u5, adc_v3_u3))]
++fn analog_clock(clock: Hertz) -> Hertz {
++    #[cfg(adc_v3_h7)]
++    if !rev_y() {
++        return clock / 2u32;
++    }
++    clock
++}
++
+ /// Sample times as half ADC clock cycles, indexed by the `SMP` field value.
+ #[cfg(adc_v3_f3)]
+ const SAMPLE_TIME_HALF_CYCLES: [u32; 8] = [3, 5, 9, 15, 39, 123, 363, 1203];
+@@ -199,7 +223,7 @@ impl AdcRegs for Regs {
+                     let presc = PRESCALERS
+                         .iter()
+                         .copied()
+-                        .find(|p| kernel_clock / p.divisor() <= MAX_CLOCK)
++                        .find(|p| analog_clock(kernel_clock / p.divisor()) <= MAX_CLOCK)
+                         .expect("ADC kernel clock too fast, change 'config.rcc.mux' to a slower clock");
+                     critical_section::with(|_| {
+                         common.ccr().modify(|w| {
+@@ -239,11 +263,14 @@ impl AdcRegs for Regs {
+ 
+         #[cfg(adc_v3_h7)]
+         self.cr().modify(|w| {
+-            w.set_boost(if clock < Hertz::khz(6_250) {
++            w.set_boost(if rev_y() {
++                // A single bit, the low bit of the field, required above 20 MHz.
++                Boost::from_bits((clock > Hertz::mhz(20)) as u8)
++            } else if clock <= Hertz::khz(6_250) {
+                 Boost::Lt625
+-            } else if clock < Hertz::khz(12_500) {
++            } else if clock <= Hertz::khz(12_500) {
+                 Boost::Lt125
+-            } else if clock < Hertz::mhz(25) {
++            } else if clock <= Hertz::mhz(25) {
+                 Boost::Lt25
+             } else {
+                 Boost::Lt50
+@@ -319,9 +346,9 @@ impl AdcRegs for Regs {
+     fn clock(self, common: AdcCommon, kernel_clock: Hertz) -> Hertz {
+         #[cfg(any(adc_v3_l4, adc_v3_g4, adc_v3_h7))]
+         match common.ccr().read().ckmode() {
+-            Ckmode::SyncDiv1 => return kernel_clock,
+-            Ckmode::SyncDiv2 => return kernel_clock / 2u32,
+-            Ckmode::SyncDiv4 => return kernel_clock / 4u32,
++            Ckmode::SyncDiv1 => return analog_clock(kernel_clock),
++            Ckmode::SyncDiv2 => return analog_clock(kernel_clock / 2u32),
++            Ckmode::SyncDiv4 => return analog_clock(kernel_clock / 4u32),
+             Ckmode::Asynchronous => {}
+         }
+         #[cfg(adc_v3_f3)]
+@@ -337,7 +364,7 @@ impl AdcRegs for Regs {
+         }
+         #[cfg(any(adc_v3_l4, adc_v3_g4, adc_v3_h7, adc_v3_u5, adc_v3_u3))]
+         {
+-            kernel_clock / PRESCALERS[common.ccr().read().presc().to_bits() as usize].divisor()
++            analog_clock(kernel_clock / PRESCALERS[common.ccr().read().presc().to_bits() as usize].divisor())
+         }
+         #[cfg(any(adc_v3_n6, adc_v3_c5))]
+         {
+```
+
+**File**: `tests/stm32/src/bin/dac.rs` (modified, +6/-5)
+```diff
+@@ -45,10 +45,14 @@ async fn main(_spawner: Spawner) {
+     ))]
+     let normalization_factor: i32 = 16;
+ 
++    // A long sample time. The shortest one is too short for PA4 (a slow channel) when the
++    // converter runs at its maximum clock, e.g. 50 MHz on the H755.
++    let sample_time = SampleTime::from_bits(5);
++
+     dac.set(0);
+     // Now wait a little to obtain a stable value
+     Timer::after_millis(30).await;
+-    let offset = adc.blocking_read(&mut adc_pin, SampleTime::from_bits(0));
++    let offset = adc.blocking_read(&mut adc_pin, sample_time);
+ 
+     for v in 0..=255 {
+         // First set the DAC output value
+@@ -59,10 +63,7 @@ async fn main(_spawner: Spawner) {
+         Timer::after_millis(30).await;
+ 
+         // Need to steal the peripherals here because PA4 is obviously in use already
+-        let measured = adc.blocking_read(
+-            &mut unsafe { embassy_stm32::Peripherals::steal() }.PA4,
+-            SampleTime::from_bits(0),
+-        );
++        let measured = adc.blocking_read(&mut unsafe { embassy_stm32::Peripherals::steal() }.PA4, sample_time);
+         // Calibrate and normalize the measurement to get close to the dac_output_val
+         let measured_normalized = ((measured as i32 - offset as i32) / normalization_factor) as i16;
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7304** (2026-10-18): stm32/adc: Add proper support for STM32H72x/H73x ADC3 (@Dirbaio)
-- **PR #7301** (2026-10-18): stm32/eth: wait for DMA to stop on drop for ETHv1 (@Dirbaio)
-- **PR #7300** (2026-10-18): stm32/eth: skip MDIO addresses without a PHY ID when probing (@Dirbaio)
-- **PR #7299** (2026-10-18): embassy-net-wiznet: yield while waiting on the controller (@BIOS9)
-- **PR #7297** (closed): stm32/uid: read U_ID(95:64) at offset 0x14 on STM32L0 (@hubpav)
-- **PR #7296** (closed): stm32/eth: skip MDIO addresses without a PHY ID when probing (@Abrahamh08)
+- **PR #7318** (2026-10-19): Nuke more unnecessary deps. (@Dirbaio)
+- **PR #7317** (2026-10-20): stm32/dma: GPDMA: panic when a linked-list Table straddles 64 KiB (@fbrozovic)
+- **PR #7314** (2026-10-20): stm32/adc: account for the fixed /2 in front of the H7 ADC converter, fixes #7310 (@Dirbaio)
+- **PR #7312** (2026-10-19): usb/hid: add keyboard/mouse reports usable for device side, remove usbd-hid dep. (@Dirbaio)
+- **PR #7311** (2026-10-19): stm32/mdma: fix transfer errors caused by invalid buffer length (@datdenkikniet)
+- **PR #7309** (2026-10-19): Nuke unneeded deps. (@Dirbaio)
 
 ---
 
@@ -1552,45 +1827,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use process_block inside process_blocks_padded
+## X. make panic handlers consistent.
 
 **RULE**:
-When implementing operations in `embassy-nxp/src/hashcrypt/lpc55.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-mspm0/src/trng.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e62ff911`: use process_block inside process_blocks_padded. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d6e9079`: make panic handlers consistent.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-nxp/src/hashcrypt/lpc55.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-mspm0/src/trng.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use embassy_futures::block_on;
-            let block: [u8; 16] = block.try_into().unwrap();
-            let out: &mut [u8; 16] = (&mut output[offset..offset + 16]).try_into().unwrap();
-            Self::process_block(&block, out, false);
-        let out: &mut [u8; 16] = (&mut output[offset..offset + 16]).try_into().unwrap();
-        Self::process_block(&final_block, out, true);
+/// use {defmt_rtt as _, panic_probe as _};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            for word in block.chunks_exact(4) {
-                Self::feed_word(u32::from_le_bytes(word.try_into().unwrap()));
-            }
-
-            Self::read_digest(4, &mut output[offset..offset + 16]);
-        pac::HASHCRYPT.cryptcfg().modify(|w| {
-            w.set_streamlast(true);
-        });
-
-        for chunks in final_block.chunks_exact(4) {
-            Self::feed_word(u32::from_le_bytes(chunks.try_into().unwrap()));
-        }
-        Self::read_digest(4, &mut output[offset..offset + 16]);
+/// use {defmt_rtt as _, panic_halt as _};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e62ff911` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d6e9079` are properly handled with clean fallback behavior.
