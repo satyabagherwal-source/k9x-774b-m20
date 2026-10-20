@@ -3599,3 +3599,6 @@
 | `CYCLE-20261020-FHN6` | `2026-10-20T00:38:04.818Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2927` | Yes (`8dc31bfe...`) |
 | `CYCLE-20261020-FJ7H` | `2026-10-20T00:38:06.845Z` | `digitalbazaar/jsonld.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2928` | Yes (`a6b2fa14...`) |
 | `CYCLE-20261020-FL6E` | `2026-10-20T00:38:09.398Z` | `jtrivedi/Wave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2929` | Yes (`6deb64c2...`) |
+| `CYCLE-20261020-N4AV` | `2026-10-20T00:44:00.775Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2930` | Yes (`c6dee052...`) |
+| `CYCLE-20261020-N4ZT` | `2026-10-20T00:44:01.673Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2931` | Yes (`a0c5b759...`) |
+| `CYCLE-20261020-N7GT` | `2026-10-20T00:44:04.877Z` | `iziz/libPhoneNumber-iOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2932` | Yes (`db38d84d...`) |

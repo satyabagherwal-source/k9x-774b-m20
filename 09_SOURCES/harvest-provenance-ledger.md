@@ -3606,3 +3606,6 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `3880151f` | Multi-dimensional audit evidence | 2026-10-20T00:38:04.821Z |
 | `learn-github-digitalbazaar-jsonld-js` | `https://github.com/digitalbazaar/jsonld.js` | `7a93609e` | Multi-dimensional audit evidence | 2026-10-20T00:38:06.848Z |
 | `learn-github-jtrivedi-wave` | `https://github.com/jtrivedi/Wave` | `27b7e1d2` | Multi-dimensional audit evidence | 2026-10-20T00:38:09.401Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `9d67cb94` | Multi-dimensional audit evidence | 2026-10-20T00:44:00.777Z |
+| `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `407fa7c6` | Multi-dimensional audit evidence | 2026-10-20T00:44:01.675Z |
+| `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `85d5486d` | Multi-dimensional audit evidence | 2026-10-20T00:44:04.880Z |

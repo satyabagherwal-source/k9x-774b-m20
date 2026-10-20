@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T00:38:09.335Z",
-  "total_verified_learnings": 986,
+  "last_updated": "2026-10-20T00:44:04.844Z",
+  "total_verified_learnings": 988,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -25865,22 +25865,35 @@
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "iziz-libphonenumber-ios",
+      "source": "iziz/libPhoneNumber-iOS",
+      "repository": "iziz/libPhoneNumber-iOS",
       "slug": "iziz-libphonenumber-ios",
       "platform": "github",
       "source_url": "https://github.com/iziz/libPhoneNumber-iOS",
-      "source_version": "HEAD",
-      "content_hash": "bf704c9676ee32738b18d013b9fb5fb3abe7857ea82bfa8d0c3196ac2418a27b",
+      "source_version": "85d5486d",
+      "content_hash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
       "dossier_path": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2932,
+          "title": "docs: add changelog, contributing guide, security policy, and DocC",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.642Z"
+      "verified_at": "2026-10-20T00:44:04.834Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jacklandrin-onlyswitch": {
       "learning_id": "learn-github-jacklandrin-onlyswitch",
@@ -35038,14 +35051,19 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "ce6a0880",
-      "content_hash": "e188fc63a71c188e2c200a1455d4170c0ab3fc79ae786fcc6e9b3188f9cc2ac6",
+      "source_version": "9d67cb94",
+      "content_hash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
         {
           "number": 2494,
           "title": "formatter): treat static block with only empty statements as empty (#27945)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2930,
+          "title": "linter/arrow-body-style): keep type assertions when adding a block body (#27978)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35054,7 +35072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:34:49.544Z",
+      "verified_at": "2026-10-20T00:44:00.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95432,6 +95450,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T00:38:09.323Z"
+    },
+    "rule-2930": {
+      "learning_id": "rule-2930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2930,
+      "title": "linter/arrow-body-style): keep type assertions when adding a block body (#27978)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "9d67cb94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:44:00.720Z"
+    },
+    "learn-github-rdfjs-n3-js": {
+      "learning_id": "learn-github-rdfjs-n3-js",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rdfjs/N3.js",
+      "repository": "rdfjs/N3.js",
+      "slug": "rdfjs-n3.js",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "407fa7c6",
+      "content_hash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2931,
+          "title": "ci: announce each fix once and close issues fixed on next-major (#843)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-20T00:44:01.618Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2931": {
+      "learning_id": "rule-2931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2931,
+      "title": "ci: announce each fix once and close issues fixed on next-major (#843)",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "407fa7c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:44:01.618Z"
+    },
+    "rule-2932": {
+      "learning_id": "rule-2932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2932,
+      "title": "docs: add changelog, contributing guide, security policy, and DocC",
+      "source_url": "https://github.com/iziz/libPhoneNumber-iOS",
+      "source_version": "85d5486d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T00:44:04.834Z"
     }
   },
   "aliases": {

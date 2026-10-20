@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "ce6a0880",
+    "sourceVersion": "9d67cb94",
     "license": "MIT",
-    "contentHash": "e188fc63a71c188e2c200a1455d4170c0ab3fc79ae786fcc6e9b3188f9cc2ac6",
-    "lastHarvestedAt": "2026-10-19T10:34:49.582Z",
+    "contentHash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
+    "lastHarvestedAt": "2026-10-20T00:44:00.777Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -9708,5 +9708,25 @@
     "contentHash": "6deb64c2e847463e4801ed9b14880219ff41c5f2e1c69cca68533d8095915cd4",
     "lastHarvestedAt": "2026-10-20T00:38:09.401Z",
     "learningId": "learn-github-jtrivedi-wave"
+  },
+  "rdfjs-n3.js": {
+    "repository": "rdfjs/N3.js",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rdfjs/N3.js",
+    "sourceVersion": "407fa7c6",
+    "license": "NOASSERTION",
+    "contentHash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
+    "lastHarvestedAt": "2026-10-20T00:44:01.675Z",
+    "learningId": "learn-github-rdfjs-n3-js"
+  },
+  "iziz-libphonenumber-ios": {
+    "repository": "iziz/libPhoneNumber-iOS",
+    "platform": "github",
+    "sourceUrl": "https://github.com/iziz/libPhoneNumber-iOS",
+    "sourceVersion": "85d5486d",
+    "license": "Apache-2.0",
+    "contentHash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
+    "lastHarvestedAt": "2026-10-20T00:44:04.880Z",
+    "learningId": "learn-github-iziz-libphonenumber-ios"
   }
 }

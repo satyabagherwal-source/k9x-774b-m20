@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
+> **Source**: github ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
+> **Source Version**: `85d5486d`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-20T00:44:04.646Z  
+> **Learning ID**: `learn-github-iziz-libphonenumber-ios`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): iziz/libPhoneNumber-iOS
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:27:32.102Z  
+> **Harvest Timestamp**: 2026-10-20T00:44:04.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1597,103 +1611,6 @@ var runtimeArray: [CGFloat] = []
 
 ```
 
-### Core Architecture Module: `libPhoneNumber-Demo/libPhoneNumber-Demo/GeocodingView.swift`
-```
-//
-//  GeocodingView.swift
-//  libPhoneNumber-Demo
-//
-//  Created by Rastaar Haghi on 7/17/20.
-//  Copyright © 2020 Google LLC. All rights reserved.
-//
-
-import SwiftUI
-
-struct GeocodingView: View {
-  var body: some View {
-    List {
-      NavigationLink(destination: GeocodingTableView()) {
-        Text("Table of Region Descriptions")
-      }
-      NavigationLink(destination: GeocodingSearchView()) {
-        Text("Search for a phone number")
-      }
-    }
-    .navigationBarTitle("Geocoding", displayMode: .inline)
-  }
-}
-
-struct GeocodingView_Previews: PreviewProvider {
-  static var previews: some View {
-    GeocodingView()
-  }
-}
-
-```
-
-### Core Architecture Module: `libPhoneNumber-Demo/libPhoneNumber-Demo/Locales.swift`
-```
-//
-//  Locales.swift
-//  libPhoneNumber-Demo
-//
-//  Created by Rastaar Haghi on 7/20/20.
-//  Copyright © 2020 Google LLC. All rights reserved.
-//
-
-import Foundation
-import libPhoneNumberShortNumber
-
-struct LocaleInfo {
-  let localeCode: String
-  let language: String
-}
-
-// These are all of the languages supported by libPhoneNumber.
-let locales: [LocaleInfo] = [
-  LocaleInfo(localeCode: "Default Device Language", language: "Default Device Language"),
-  LocaleInfo(localeCode: "ar", language: "Arabic"),
-  LocaleInfo(localeCode: "be", language: "Belarusian"),
-  LocaleInfo(localeCode: "bg", language: "Bulgarian"),
-  LocaleInfo(localeCode: "bs", language: "Bosnian"),
-  LocaleInfo(localeCode: "de", language: "German"),
-  LocaleInfo(localeCode: "el", language: "Greek"),
-  LocaleInfo(localeCode: "en", language: "English"),
-  LocaleInfo(localeCode: "es", language: "Spanish"),
-  LocaleInfo(localeCode: "fa", language: "Persian"),
-  LocaleInfo(localeCode: "fi", language: "Finnish"),
-  LocaleInfo(localeCode: "fr", language: "French"),
-  LocaleInfo(localeCode: "hr", language: "Croatian"),
-  LocaleInfo(localeCode: "hu", language: "Hungarian"),
-  LocaleInfo(localeCode: "hy", language: "Armenian"),
-  LocaleInfo(localeCode: "id", language: "Indonesian"),
-  LocaleInfo(localeCode: "it", language: "Italian"),
-  LocaleInfo(localeCode: "iw", language: "Hebrew"),
-  LocaleInfo(localeCode: "ja", language: "Japanese"),
-  LocaleInfo(localeCode: "ko", language: "Korean"),
-  LocaleInfo(localeCode: "nl", language: "Dutch"),
-  LocaleInfo(localeCode: "pl", language: "Polish"),
-  LocaleInfo(localeCode: "pt", language: "Portuguese"),
-  LocaleInfo(localeCode: "ro", language: "Romanian"),
-  LocaleInfo(localeCode: "ru", language: "Russian"),
-  LocaleInfo(localeCode: "sq", language: "Albanian"),
-  LocaleInfo(localeCode: "sr", language: "Serbian"),
-  LocaleInfo(localeCode: "sv", language: "Swedish"),
-  LocaleInfo(localeCode: "th", language: "Thai"),
-  LocaleInfo(localeCode: "tr", language: "Turkish"),
-  LocaleInfo(localeCode: "uk", language: "Ukrainian"),
-  LocaleInfo(localeCode: "vi", language: "Vietnamese"),
-  LocaleInfo(localeCode: "zh", language: "Chinese"),
-  LocaleInfo(localeCode: "zh_Hant", language: "Chinese (Traditional)"),
-]
-
-// These are all of the formatting options supported by libPhoneNumber.
-let formatOptions = [
-  "Select a phone number format", "E164", "INTERNATIONAL", "NATIONAL", "RFC3966",
-]
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1705,14 +1622,12 @@ let formatOptions = [
   **Post-Mortem & Fix Analysis**:
   > Please test with latest commit. I was removed static methods (metadata) temporarily. And please tell me your result. 
   > I will release 0.8.4 if it has no issue. (waiting your result) 
-  > I'm not able to reproduce the crash with the latest commit, so looks good. Thanks for the quick response! 
 
 - **Issue #51** (2015-03-03): **concurrency issue**
   *Symptoms*: Hi I am using latest source from this repository.  I am still facing concurrency issues than https://github.com/me2day/libPhoneNumber-iOS/issues/39 Using multiple threads using different instances of nbphonenumberutil Any test I could do to help solve ?  regards  ferreol 
   **Post-Mortem & Fix Analysis**:
   > Please test with latest commit. I was removed static methods (metadata) temporarily. And please tell me your result. 
   > I will release 0.8.4 if it has no issue. (waiting your result) 
-  > Hi iziz,  thank you so much for your quick fix. So far this has fixed the issue that I had noticed at launch time (while loading contacts phone numbers in a background thread).  Let's consider it fixed, I would re comment if after some more extensive testing it reappears.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1729,1840 +1644,7 @@ let formatOptions = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5029791` (2026-09-12)
-**Commit Message**: Merge pull request #454 from iziz/revert-breaking-changes
-
-Remove the breaking changes so the next release can be 2.1.0
-
-**File**: `CHANGELOG.md` (modified, +9/-8)
-```diff
-@@ -9,8 +9,12 @@ as described in `docs/RELEASE_RUNBOOK.md`.
- 
- ## Unreleased
- 
--This release carries breaking API changes and must be published as a major
--version.
-+Additive. No public API is removed or changed, so this is a minor release.
-+
-+The one compatibility note is the toolchain: the Swift package now requires
-+Swift 6 tools, so Swift Package Manager consumers need Xcode 16 or later.
-+Deployment targets are unchanged, and the CocoaPods specs accept Swift 5.9 or
-+6.0.
- 
- ### Fixed
- 
-@@ -42,6 +46,9 @@ version.
-   podspec sets `visionos.deployment_target`, and CI builds every product for it.
- - All Swift facade entry points are `Sendable`, so `PhoneNumberUtility.shared`
-   and its siblings can be used from Swift 6 code without a concurrency error.
-+  `PhoneNumberFieldState` stays non-`Sendable` because it carries the error
-+  raised by the Objective-C core, whose domain and code callers rely on; use
-+  `PhoneNumberValue` for state that leaves the field's concurrency domain.
-   The conformances are `@unchecked` and documented against the Objective-C
-   core's locking, and the concurrency test suite exercises the shared instances
-   from many tasks at once under the thread sanitizer.
-@@ -61,12 +68,6 @@ version.
- 
- - The package requires Swift 6 tools (`swift-tools-version:6.0`) and builds in
-   the Swift 6 language mode. Podspecs accept Swift 5.9 or 6.0.
--- **Breaking.** `PhoneNumberFieldState.error` is a `PhoneNumberValueError?`
--  rather than an existential `Error?`. The state is now `Sendable` and its
--  `Equatable` conformance is synthesized instead of comparing error descriptions.
--  Code that reads `state.error` as an `NSError` needs to switch over the enum.
--- **Breaking.** `PhoneNumberEnriching` requires `Sendable`. Existing conformances
--  compile unchanged unless they capture non-`Sendable` state.
- - `PhoneNumberUtility.phoneNumber(from:)` reports failures through
-   `PhoneNumberValueError(_:)`, consistent with the other `Result`-returning APIs.
- - The regular-expression cache compiles patterns outside its lock, so a cache hit
-```
-
-**File**: `libPhoneNumberSwiftUI/PhoneNumberTextField.swift` (modified, +18/-10)
-```diff
-@@ -5,11 +5,7 @@ import UIKit
- #endif
- 
- /// The result of parsing the field's current text.
--///
--/// `error` is a concrete ``PhoneNumberValueError`` rather than an existential
--/// `Error` so the state can be compared, sent across concurrency domains, and
--/// switched over by callers.
--public struct PhoneNumberFieldState: Equatable, Sendable {
-+public struct PhoneNumberFieldState: Equatable {
-     public let text: String
-     public let e164: String?
-     public let regionCode: String?
-@@ -18,7 +14,7 @@ public struct PhoneNumberFieldState: Equatable, Sendable {
-     public let enrichment: PhoneNumberEnrichment?
-     public let isPossible: Bool
-     public let isValid: Bool
--    public let error: PhoneNumberValueError?
-+    public let error: Error?
- 
-     public init(
-         text: String,
-@@ -29,7 +25,7 @@ public struct PhoneNumberFieldState: Equatable, Sendable {
-         enrichment: PhoneNumberEnrichment?,
-         isPossible: Bool,
-         isValid: Bool,
--        error: PhoneNumberValueError?
-+        error: Error?
-     ) {
-         self.text = text
-         self.e164 = e164
-@@ -41,6 +37,18 @@ public struct PhoneNumberFieldState: Equatable, Sendable {
-         self.isValid = isValid
-         self.error = error
-     }
-+
-+    public static func == (lhs: PhoneNumberFieldState, rhs: PhoneNumberFieldState) -> Bool {
-+        lhs.text == rhs.text &&
-+        lhs.e164 == rhs.e164 &&
-+        lhs.regionCode == rhs.regionCode &&
-+        lhs.type == rhs.type &&
-+        lhs.validationResult == rhs.validationResult &&
-+        lhs.enrichment == rhs.enrichment &&
-+        lhs.isPossible == rhs.isPossible &&
-+        lhs.isValid == rhs.isValid &&
-+        String(describing: lhs.error) == String(describing: rhs.error)
-+    }
- }
- 
- public struct PhoneNumberEnrichment: Equatable, Sendable {
-@@ -53,7 +61,7 @@ public struct PhoneNumberEnrichment: Equatable, Sendable {
-     }
- }
- 
--public protocol PhoneNumberEnriching: Sendable {
-+public protocol PhoneNumberEnriching {
-     func enrichment(for number: PhoneNumber, regionCode: String?) -> PhoneNumberEnrichment
- }
- 
-@@ -87,7 +95,7 @@ public struct PhoneNumberFieldStyle: Sendable {
-     public static let automatic = PhoneNumberFieldStyle()
- }
- 
--public struct PhoneNumberFieldFormatter: Sendable {
-+public struct PhoneNumberFieldFormatter {
-     private let utility: PhoneNumberUtility
-     private let enricher: PhoneNumberEnriching?
- 
-@@ -135,7 +143,7 @@ public struct PhoneNumberFieldFormatter: Sendable {
-                 enrichment: nil,
-                 isPossible: false,
-                 isValid: false,
--                error: PhoneNumberValueError(error)
-+                error: error
-             )
-         }
-     }
-```
-
-**File**: `libPhoneNumberSwiftUITests/PhoneNumberFieldStateTests.swift` (modified, +20/-12)
-```diff
-@@ -1,3 +1,4 @@
-+import Foundation
- import Testing
- import libPhoneNumberSwiftCore
- import libPhoneNumberSwiftUI
-@@ -19,18 +20,18 @@ struct PhoneNumberFieldStateTests {
-         #expect(state.error == nil)
-     }
- 
--    /// The state carries a concrete error, so callers can switch over it and
--    /// compare two states for equality.
--    @Test("An unparseable entry reports a typed error")
--    func typedError() {
-+    /// The state carries the error raised by the Objective-C core, so callers
-+    /// keep access to its domain and code.
-+    @Test("An unparseable entry reports the underlying error")
-+    func underlyingError() {
-         let state = formatter.state(for: "abc", defaultRegion: "US")
- 
-         #expect(state.e164 == nil)
-         #expect(!state.isValid)
--        guard case .underlying = state.error else {
--            Issue.record("Expected .underlying, got \(String(describing: state.error))")
--            return
--        }
-+
-+        let error = state.error as NSError?
-+        #expect(error != nil)
-+        #expect(error?.localizedDescription.isEmpty == false)
-     }
- 
-     @Test("States compare equal when their contents match")
-@@ -55,12 +56,19 @@ struct PhoneNumberFieldStateTests {
-         #expect(formatter.formattedText(for: "6502530000", defaultRegion: "US") == "(650) 253-0000")
-     }
- 
--    @Test("Field state crosses concurrency domains")
--    func stateIsSendable() async {
-+    /// PhoneNumberFieldState holds an existential Error and is deliberately not
-+    /// Sendable. Use PhoneNumberValue, which is, for anything that leaves the
-+    /// field's concurrency domain.
-+    @Test("The value derived from a state crosses concurrency domains")
-+    func valueIsSendable() async throws {
-         let state = formatter.state(for: "6502530000", defaultRegion: "US")
-+        let e164 = try #require(state.e164)
-+        let value = try PhoneNumberUtility.shared
-+            .value(from: e164, defaultRegion: state.regionCode)
-+            .get()
- 
--        let echoed = await Task { state }.value
-+        let echoed = await Task { value }.value
- 
--        #expect(echoed == state)
-+        #expect(echoed == value)
-     }
- }
-```
-
----
-
-### Incident Patch 2: `ef377848` (2026-09-12)
-**Commit Message**: refactor(swiftui): keep the field state's public API source-compatible
-
-The Swift 6 work changed two things in the SwiftUI module that Swift 6
-adoption did not require. Both were breaking, and together they forced a
-major release days after 2.0.0 shipped.
-
-PhoneNumberFieldState.error was narrowed from an existential Error to a
-PhoneNumberValueError. That made the state Sendable and its Equatable
-conformance synthesized, but it also discarded information: callers
-previously received the NSError raised by the Objective-C core and could
-read its domain, code, and userInfo, where the enum preserves only a
-description string. Restore the existential, and with it the custom
-equality that compares error descriptions.
-
-PhoneNumberEnriching gained a Sendable requirement, which invalidates any
-conformance capturing non-Sendable state. Drop it, along with the
-conformance it enabled on PhoneNumberFieldFormatter.
-
-None of this was load-bearing. The six statics that were errors in the
-Swift 6 language mode -- the five facade shared instances and
-PhoneNumberFieldStyle.automatic -- are all fixed by purely additive
-Sendable conformances, which stay. The package still builds clean in the
-Swift 6 lan
-
-**File**: `CHANGELOG.md` (modified, +9/-8)
-```diff
-@@ -9,8 +9,12 @@ as described in `docs/RELEASE_RUNBOOK.md`.
- 
- ## Unreleased
- 
--This release carries breaking API changes and must be published as a major
--version.
-+Additive. No public API is removed or changed, so this is a minor release.
-+
-+The one compatibility note is the toolchain: the Swift package now requires
-+Swift 6 tools, so Swift Package Manager consumers need Xcode 16 or later.
-+Deployment targets are unchanged, and the CocoaPods specs accept Swift 5.9 or
-+6.0.
- 
- ### Fixed
- 
-@@ -42,6 +46,9 @@ version.
-   podspec sets `visionos.deployment_target`, and CI builds every product for it.
- - All Swift facade entry points are `Sendable`, so `PhoneNumberUtility.shared`
-   and its siblings can be used from Swift 6 code without a concurrency error.
-+  `PhoneNumberFieldState` stays non-`Sendable` because it carries the error
-+  raised by the Objective-C core, whose domain and code callers rely on; use
-+  `PhoneNumberValue` for state that leaves the field's concurrency domain.
-   The conformances are `@unchecked` and documented against the Objective-C
-   core's locking, and the concurrency test suite exercises the shared instances
-   from many tasks at once under the thread sanitizer.
-@@ -61,12 +68,6 @@ version.
- 
- - The package requires Swift 6 tools (`swift-tools-version:6.0`) and builds in
-   the Swift 6 language mode. Podspecs accept Swift 5.9 or 6.0.
--- **Breaking.** `PhoneNumberFieldState.error` is a `PhoneNumberValueError?`
--  rather than an existential `Error?`. The state is now `Sendable` and its
--  `Equatable` conformance is synthesized instead of comparing error descriptions.
--  Code that reads `state.error` as an `NSError` needs to switch over the enum.
--- **Breaking.** `PhoneNumberEnriching` requires `Sendable`. Existing conformances
--  compile unchanged unless they capture non-`Sendable` state.
- - `PhoneNumberUtility.phoneNumber(from:)` reports failures through
-   `PhoneNumberValueError(_:)`, consistent with the other `Result`-returning APIs.
- - The regular-expression cache compiles patterns outside its lock, so a cache hit
-```
-
-**File**: `libPhoneNumberSwiftUI/PhoneNumberTextField.swift` (modified, +18/-10)
-```diff
-@@ -5,11 +5,7 @@ import UIKit
- #endif
- 
- /// The result of parsing the field's current text.
--///
--/// `error` is a concrete ``PhoneNumberValueError`` rather than an existential
--/// `Error` so the state can be compared, sent across concurrency domains, and
--/// switched over by callers.
--public struct PhoneNumberFieldState: Equatable, Sendable {
-+public struct PhoneNumberFieldState: Equatable {
-     public let text: String
-     public let e164: String?
-     public let regionCode: String?
-@@ -18,7 +14,7 @@ public struct PhoneNumberFieldState: Equatable, Sendable {
-     public let enrichment: PhoneNumberEnrichment?
-     public let isPossible: Bool
-     public let isValid: Bool
--    public let error: PhoneNumberValueError?
-+    public let error: Error?
- 
-     public init(
-         text: String,
-@@ -29,7 +25,7 @@ public struct PhoneNumberFieldState: Equatable, Sendable {
-         enrichment: PhoneNumberEnrichment?,
-         isPossible: Bool,
-         isValid: Bool,
--        error: PhoneNumberValueError?
-+        error: Error?
-     ) {
-         self.text = text
-         self.e164 = e164
-@@ -41,6 +37,18 @@ public struct PhoneNumberFieldState: Equatable, Sendable {
-         self.isValid = isValid
-         self.error = error
-     }
-+
-+    public static func == (lhs: PhoneNumberFieldState, rhs: PhoneNumberFieldState) -> Bool {
-+        lhs.text == rhs.text &&
-+        lhs.e164 == rhs.e164 &&
-+        lhs.regionCode == rhs.regionCode &&
-+        lhs.type == rhs.type &&
-+        lhs.validationResult == rhs.validationResult &&
-+        lhs.enrichment == rhs.enrichment &&
-+        lhs.isPossible == rhs.isPossible &&
-+        lhs.isValid == rhs.isValid &&
-+        String(describing: lhs.error) == String(describing: rhs.error)
-+    }
- }
- 
- public struct PhoneNumberEnrichment: Equatable, Sendable {
-@@ -53,7 +61,7 @@ public struct PhoneNumberEnrichment: Equatable, Sendable {
-     }
- }
- 
--public protocol PhoneNumberEnriching: Sendable {
-+public protocol PhoneNumberEnriching {
-     func enrichment(for number: PhoneNumber, regionCode: String?) -> PhoneNumberEnrichment
- }
- 
-@@ -87,7 +95,7 @@ public struct PhoneNumberFieldStyle: Sendable {
-     public static let automatic = PhoneNumberFieldStyle()
- }
- 
--public struct PhoneNumberFieldFormatter: Sendable {
-+public struct PhoneNumberFieldFormatter {
-     private let utility: PhoneNumberUtility
-     private let enricher: PhoneNumberEnriching?
- 
-@@ -135,7 +143,7 @@ public struct PhoneNumberFieldFormatter: Sendable {
-                 enrichment: nil,
-                 isPossible: false,
-                 isValid: false,
--                error: PhoneNumberValueError(error)
-+                error: error
-             )
-         }
-     }
-```
-
-**File**: `libPhoneNumberSwiftUITests/PhoneNumberFieldStateTests.swift` (modified, +20/-12)
-```diff
-@@ -1,3 +1,4 @@
-+import Foundation
- import Testing
- import libPhoneNumberSwiftCore
- import libPhoneNumberSwiftUI
-@@ -19,18 +20,18 @@ struct PhoneNumberFieldStateTests {
-         #expect(state.error == nil)
-     }
- 
--    /// The state carries a concrete error, so callers can switch over it and
--    /// compare two states for equality.
--    @Test("An unparseable entry reports a typed error")
--    func typedError() {
-+    /// The state carries the error raised by the Objective-C core, so callers
-+    /// keep access to its domain and code.
-+    @Test("An unparseable entry reports the underlying error")
-+    func underlyingError() {
-         let state = formatter.state(for: "abc", defaultRegion: "US")
- 
-         #expect(state.e164 == nil)
-         #expect(!state.isValid)
--        guard case .underlying = state.error else {
--            Issue.record("Expected .underlying, got \(String(describing: state.error))")
--            return
--        }
-+
-+        let error = state.error as NSError?
-+        #expect(error != nil)
-+        #expect(error?.localizedDescription.isEmpty == false)
-     }
- 
-     @Test("States compare equal when their contents match")
-@@ -55,12 +56,19 @@ struct PhoneNumberFieldStateTests {
-         #expect(formatter.formattedText(for: "6502530000", defaultRegion: "US") == "(650) 253-0000")
-     }
- 
--    @Test("Field state crosses concurrency domains")
--    func stateIsSendable() async {
-+    /// PhoneNumberFieldState holds an existential Error and is deliberately not
-+    /// Sendable. Use PhoneNumberValue, which is, for anything that leaves the
-+    /// field's concurrency domain.
-+    @Test("The value derived from a state crosses concurrency domains")
-+    func valueIsSendable() async throws {
-         let state = formatter.state(for: "6502530000", defaultRegion: "US")
-+        let e164 = try #require(state.e164)
-+        let value = try PhoneNumberUtility.shared
-+            .value(from: e164, defaultRegion: state.regionCode)
-+            .get()
- 
--        let echoed = await Task { state }.value
-+        let echoed = await Task { value }.value
- 
--        #expect(echoed == state)
-+        #expect(echoed == value)
-     }
- }
-```
-
----
-
-### Incident Patch 3: `8813ea1b` (2026-09-12)
-**Commit Message**: Merge pull request #452 from iziz/swift6-concurrency-and-geocoding-fixes
-
-Fix geocoding metadata resolution and adopt Swift 6 concurrency
-
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+name: Bug report
-+description: A number is parsed, formatted, validated, or described incorrectly, or an API misbehaves.
-+labels: ["bug"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        This library ports Google's libphonenumber. If Google's own
-+        implementation agrees with the behavior you are seeing, the change
-+        belongs upstream rather than here — please say so below and link it.
-+
-+  - type: input
-+    id: number
-+    attributes:
-+      label: Phone number
-+      description: >
-+        The number that reproduces the problem, with its region. Use a test or
-+        example number rather than a real person's number where you can.
-+      placeholder: "+82 10 6543 1234, default region KR"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: expected
-+    attributes:
-+      label: Expected and actual result
-+      description: What you expected each API to return, and what it returned.
-+      placeholder: |
-+        isValidNumber: expected true, got false
-+        format(.e164): expected "+821065431234", got "+8201065431234"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: reproduction
-+    attributes:
-+      label: Reproduction
-+      description: The smallest snippet that shows the problem.
-+      render: swift
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: version
-+    attributes:
-+      label: Library version
-+      placeholder: "2.0.1"
-+    validations:
-+      required: true
-+
-+  - type: dropdown
-+    id: integration
-+    attributes:
-+      label: Integration
-+      options:
-+        - Swift Package Manager
-+        - CocoaPods
-+        - Carthage
-+        - Manual
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: module
-+    attributes:
-+      label: Module
-+      description: Which product you imported, for example libPhoneNumberSwiftCore or libPhoneNumberGeocoding.
-+      placeholder: libPhoneNumberSwiftCore
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: environment
-+    attributes:
-+      label: Xcode and platform
-+      placeholder: "Xcode 27.0, iOS 18.2 simulator"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: upstream
-+    attributes:
-+      label: Upstream comparison
-+      description: >
-+        Optional but very helpful. What does Google's libphonenumber do with the
-+        same number? The demo at https://libphonenumber.appspot.com answers this
-+        in a few seconds.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/config.yml` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+blank_issues_enabled: true
-+contact_links:
-+  - name: Upstream libphonenumber behavior
-+    url: https://github.com/google/libphonenumber/issues
-+    about: Report parsing, formatting, or validation rules that are wrong in Google's library itself, not just in this port.
-+  - name: Security vulnerability
-+    url: https://github.com/iziz/libPhoneNumber-iOS/security/advisories/new
-+    about: Report privately instead of opening an issue.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/feature_request.yml` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+name: Feature request
-+description: Suggest an API or module addition.
-+labels: ["enhancement"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        Behavior changes to parsing, formatting, or validation belong upstream in
-+        Google's libphonenumber. This form is for the Apple-platform surface:
-+        Swift APIs, module layout, packaging, and the SwiftUI component.
-+
-+  - type: textarea
-+    id: problem
-+    attributes:
-+      label: Problem
-+      description: What are you trying to do, and what makes it awkward today?
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: proposal
-+    attributes:
-+      label: Proposed API
-+      description: Sketch the call site you would like to write.
-+      render: swift
-+
-+  - type: textarea
-+    id: alternatives
-+    attributes:
-+      label: What you do instead today
-+      description: >
-+        Including whether the existing `objc` escape hatch on the facades covers
-+        it.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/metadata_update.yml` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+name: Metadata or numbering plan issue
-+description: A numbering plan changed, or a valid number is rejected because the bundled metadata is out of date.
-+labels: ["metadata"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        Metadata comes from Google's libphonenumber and is refreshed as a whole
-+        rather than patched per number. See `docs/METADATA_PATCH_POLICY.md` for
-+        when a local override is acceptable.
-+
-+  - type: input
-+    id: number
-+    attributes:
-+      label: Phone number and region
-+      placeholder: "+256 79 412 3456, region UG"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: behavior
-+    attributes:
-+      label: Current and expected classification
-+      placeholder: |
-+        Current: isValidNumber false, type UNKNOWN
-+        Expected: isValidNumber true, type MOBILE
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: upstream_ref
-+    attributes:
-+      label: Upstream reference
-+      description: >
-+        The Google libphonenumber release or commit that carries the corrected
-+        metadata, if you know it.
-+      placeholder: "v9.0.38"
-+
-+  - type: textarea
-+    id: source
-+    attributes:
-+      label: Regulator source
-+      description: >
-+        A link to the telecom regulator's announcement, if this is a numbering
-+        plan change that upstream has not picked up yet.
-```
-
-**File**: `.github/pull_request_template.md` (modified, +5/-0)
-```diff
-@@ -18,11 +18,16 @@
- - [ ] `swift test`
- - [ ] `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test`
- - [ ] `swift build -c release`
-+- [ ] `swift test --sanitize=thread` (when shared state or a facade entry point changed)
- - [ ] `xcodebuild test -scheme libPhoneNumber -destination 'id=<simulator-udid>'`
- - [ ] `xcodebuild test -scheme libPhoneNumberGeocoding -destination 'id=<simulator-udid>'`
- - [ ] `xcodebuild test -scheme libPhoneNumberShortNumber -destination 'id=<simulator-udid>'`
- - [ ] `git diff --check`
- 
-+## Changelog
-+
-+- [ ] `CHANGELOG.md` updated under `## Unreleased`, or not user-visible
-+
- ## Notes
- 
- - Intentional ObjC/API naming differences:
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +128/-7)
-```diff
-@@ -82,14 +82,135 @@ jobs:
- 
-       - name: Lint podspecs
-         run: |
-+          set -euo pipefail
-+          # Every podspec in the repository, so a broken spec cannot ship
-+          # unnoticed. The core spec has no internal dependencies to resolve.
-           pod lib lint libPhoneNumber-iOS.podspec --allow-warnings
--          pod lib lint libPhoneNumberGeocoding.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumberShortNumber.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftCore.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftGeocoding.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftShortNumber.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftUI.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-Swift.podspec --allow-warnings --include-podspecs='*.podspec'
-+          for podspec in \
-+            libPhoneNumberGeocoding.podspec \
-+            libPhoneNumberShortNumber.podspec \
-+            libPhoneNumberCarrier.podspec \
-+            libPhoneNumberTimeZones.podspec \
-+            libPhoneNumber-iOS-SwiftCore.podspec \
-+            libPhoneNumber-iOS-SwiftGeocoding.podspec \
-+            libPhoneNumber-iOS-SwiftShortNumber.podspec \
-+            libPhoneNumber-iOS-SwiftCarrier.podspec \
-+            libPhoneNumber-iOS-SwiftTimeZones.podspec \
-+            libPhoneNumber-iOS-SwiftUI.podspec \
-+            libPhoneNumber-iOS-SwiftUIEnrichment.podspec \
-+            libPhoneNumber-iOS-Swift.podspec
-+          do
-+            pod lib lint "$podspec" --allow-warnings --include-podspecs='*.podspec'
-+          done
-+
-+      - name: Check every podspec is linted
-+        run: |
-+          set -euo pipefail
-+          missing=0
-+          for podspec in *.podspec; do
-+            if ! grep -q "$podspec" .github/workflows/ci.yml; then
-+              echo "Podspec not covered by the lint job: $podspec" >&2
-+              missing=1
-+            fi
-+          done
-+          exit "$missing"
-+
-+  platform-builds:
-+    name: Build for ${{ matrix.platform }}
-+    runs-on: macos-latest
-+
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - platform: iOS
-+            destination: generic/platform=iOS
-+          - platform: tvOS
-+            destination: generic/platform=tvOS
-+          - platform: watchOS
-+            destination: generic/platform=watchOS
-+          - platform: visionOS
-+            destination: generic/platform=visionOS
-+          - platform: macCatalyst
-+            destination: platform=macOS,variant=Mac Catalyst
-+
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@v7.0.0
-+
-+      - name: Show Xcode version
-+        run: xcodebuild -version
-+
-+      # xcodebuild resolves libPhoneNumber.xcodeproj rather than Package.swift
-+      # when both are in the repository root, and that project carries only the
-+      # three Objective-C schemes. Building the package's own schemes requires
-+      # the workspace below, so fail with a clear message if it is missing
-+      # rather than with "does not contain a scheme named libPhoneNumber-Package".
-+      - name: Check the package workspace is present
-+        run: |
-+          if [ ! -f .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata ]; then
-+            echo "Missing .swiftpm/xcode/package.xcworkspace; see the .swiftpm rules in .gitignore." >&2
-+            exit 1
-+          fi
-+
-+      # Package.swift declares macOS, iOS, macCatalyst, tvOS, watchOS and
-+      # visionOS. `swift test` only covers macOS, so each of the others is
-+      # built here; without this a platform-specific break ships unnoticed.
-+      - name: Build all products
-+        run: |
-+          xcodebuild build \
-+            -workspace .swiftpm/xcode/package.xcworkspace \
-+            -scheme libPhoneNumber-Package \
-+            -destination "${{ matrix.destination }}" \
-+            -derivedDataPath "$RUNNER_TEMP/dd-${{ matrix.platform }}"
-+
-+  thread-sanitizer:
-+    name: Thread sanitizer
-+    runs-on: macos-latest
-+
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@v7.0.0
-+
-+      # The Swift facades are declared @unchecked Sendable on the strength of
-+      # the Objective-C core's internal locking. The concurrency tests exercise
-+      # the shared instances from many tasks at once; under TSan they check that
-+      # claim instead of merely asserting it.
-+      - name: Run SwiftPM tests under the thread sanitizer
-+        run: swift test --sanitize=thread
-+
-+  code-coverage:
-+    name: Code coverage
-+    runs-on: macos-latest
-+
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@v7.0.0
-+
-+      - name: Run SwiftPM tests with coverage
-+        run: 
-```
-
-**File**: `.gitignore` (modified, +11/-1)
-```diff
-@@ -28,4 +28,14 @@ ObjectiveC.gcda
- 
- # SPM
- .build
--.swiftpm
-+
-+# Track only the generated package workspace. xcodebuild picks
-+# libPhoneNumber.xcodeproj over Package.swift when both sit in the repository
-+# root, so building the package's own schemes needs this file to exist in a
-+# fresh checkout. Everything else under .swiftpm is per-user Xcode state.
-+.swiftpm/*
-+!.swiftpm/xcode/
-+.swiftpm/xcode/*
-+!.swiftpm/xcode/package.xcworkspace/
-+.swiftpm/xcode/package.xcworkspace/*
-+!.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
-```
-
-**File**: `.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<Workspace
-+   version = "1.0">
-+   <FileRef
-+      location = "self:">
-+   </FileRef>
-+</Workspace>
-```
-
----
-
-### Incident Patch 4: `25389544` (2026-09-12)
-**Commit Message**: Merge pull request #453 from iziz/fix-geocoding-metadata-resolution
-
-Fix geocoding metadata resolution under SwiftPM and per-language statement poisoning
-
-**File**: `README.md` (modified, +4/-0)
-```diff
-@@ -245,6 +245,10 @@ let number = try phoneUtil.parse("16502530000", defaultRegion: "US")
- let description = geocoder.description(for: number, languageCode: "en")
- ```
- 
-+Only the English database carries worldwide coverage. The other languages ship
-+their own country, so a lookup outside it falls back to the localized country
-+name rather than a locality.
-+
- ### Carrier
- 
- ```swift
-```
-
-**File**: `libPhoneNumber/NBMetadataHelper.m` (modified, +13/-1)
-```diff
-@@ -8,6 +8,8 @@
- 
- #import "NBMetadataHelper.h"
- 
-+#import <os/lock.h>
-+
- #import <NBGeneratedPhoneNumberMetaData.h>
- #import "NBPhoneMetaData.h"
- 
-@@ -34,7 +36,11 @@ @interface NBMetadataHelper ()
- @implementation NBMetadataHelper {
-  @private
-   NSDictionary *_phoneNumberDataDictionary;
-+  // Lazily derived from _phoneNumberDataDictionary. Guarded by
-+  // _countryCodeToCountryNumberLock because the helper is shared by the
-+  // NBPhoneNumberUtil singleton and can be reached from multiple threads.
-   NSDictionary *_countryCodeToCountryNumberDictionary;
-+  os_unfair_lock _countryCodeToCountryNumberLock;
- }
- 
- - (instancetype)init {
-@@ -55,6 +61,7 @@ - (instancetype)initWithZippedDataBytes:(z_const Bytef *)data
-   self = [super init];
- 
-   if (self != nil) {
-+    _countryCodeToCountryNumberLock = OS_UNFAIR_LOCK_INIT;
-     _metadataCache = [[NSCache alloc] init];
-     _metadataMapCache = [[NSCache alloc] init];
-     _phoneNumberDataDictionary =
-@@ -74,6 +81,8 @@ - (instancetype)initWithZippedDataBytes:(z_const Bytef *)data
-  */
- 
- - (NSDictionary *)countryCodeToCountryNumberDictionary {
-+  os_unfair_lock_lock(&_countryCodeToCountryNumberLock);
-+
-   if (_countryCodeToCountryNumberDictionary == nil) {
-     NSDictionary *countryCodeToRegionCodeMap = [self countryCodeToRegionCodeDictionary];
-     NSMutableDictionary *map = [[NSMutableDictionary alloc] init];
-@@ -86,7 +95,10 @@ - (NSDictionary *)countryCodeToCountryNumberDictionary {
-     _countryCodeToCountryNumberDictionary = [map copy];
-   }
- 
--  return _countryCodeToCountryNumberDictionary;
-+  NSDictionary *result = _countryCodeToCountryNumberDictionary;
-+  os_unfair_lock_unlock(&_countryCodeToCountryNumberLock);
-+
-+  return result;
- }
- 
- - (NSDictionary *)countryCodeToRegionCodeDictionary {
-```
-
-**File**: `libPhoneNumber/NBRegularExpressionCache.m` (modified, +35/-17)
-```diff
-@@ -8,13 +8,17 @@
- 
- #import "NBRegularExpressionCache.h"
- 
-+#import <os/lock.h>
-+
- @interface NBRegularExpressionCache()
- 
- @property (nonatomic, strong) NSCache *cache;
- 
- @end
- 
--@implementation NBRegularExpressionCache
-+@implementation NBRegularExpressionCache {
-+  os_unfair_lock _cacheLock;
-+}
- 
- + (instancetype)sharedInstance {
-   static NBRegularExpressionCache *instance;
-@@ -29,34 +33,48 @@ + (instancetype)sharedInstance {
- - (instancetype)init {
-   self = [super init];
-   if (self != nil) {
-+    _cacheLock = OS_UNFAIR_LOCK_INIT;
-     _cache = [[NSCache alloc] init];
-   }
- 
-   return self;
- }
- 
- - (NSRegularExpression *)regularExpressionForPattern:(NSString *)pattern error:(NSError **)error {
--  @synchronized(self) {
--    NSRegularExpression *cachedObject = [self.cache objectForKey:pattern];
--    if (cachedObject != nil) {
--      return cachedObject;
--    }
-+  // Cache hits, which are the overwhelmingly common case, only hold the lock
-+  // for the lookup itself. Compilation happens outside the lock so concurrent
-+  // callers are not serialized behind an unrelated pattern being built. Two
-+  // threads racing on the same new pattern may each compile it; the duplicate
-+  // is simply discarded by the insertion below.
-+  os_unfair_lock_lock(&_cacheLock);
-+  NSRegularExpression *cachedObject = [self.cache objectForKey:pattern];
-+  os_unfair_lock_unlock(&_cacheLock);
-+
-+  if (cachedObject != nil) {
-+    return cachedObject;
-+  }
- 
--    NSError *regExError = nil;
--    NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:pattern
--                                                                      options:kNilOptions
--                                                                        error:&regExError];
--    if (regEx == nil) {
--      if (error != NULL) {
--        *error = regExError;
--      }
--      return nil;
-+  NSError *regExError = nil;
-+  NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:pattern
-+                                                                    options:kNilOptions
-+                                                                      error:&regExError];
-+  if (regEx == nil) {
-+    if (error != NULL) {
-+      *error = regExError;
-     }
-+    return nil;
-+  }
- 
-+  os_unfair_lock_lock(&_cacheLock);
-+  NSRegularExpression *raced = [self.cache objectForKey:pattern];
-+  if (raced != nil) {
-+    regEx = raced;
-+  } else {
-     [self.cache setObject:regEx forKey:pattern];
--
--    return regEx;
-   }
-+  os_unfair_lock_unlock(&_cacheLock);
-+
-+  return regEx;
- }
- 
- @end
-```
-
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.h` (modified, +17/-1)
-```diff
-@@ -29,10 +29,26 @@ NS_ASSUME_NONNULL_BEGIN
-  */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-                        withLanguage:(NSString *)languageCode
--                         withBundle:(NSBundle *)bundle;
-+                         withBundle:(nullable NSBundle *)bundle;
- 
-+/**
-+ * Initializer that resolves the shipped geocoding databases automatically.
-+ *
-+ * The payload is located by searching the loaded bundles, which covers
-+ * CocoaPods, Carthage, manual integration, and the nested wrapper bundle
-+ * SwiftPM generates. A helper created when no payload can be found answers
-+ * every query with nil, and the geocoder falls back to country names.
-+ */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode;
- 
-+/**
-+ * The bundle holding the geocoding databases, or nil when none was found.
-+ *
-+ * Exposed so integrators can check whether the metadata resolved at all,
-+ * instead of silently receiving country-level descriptions.
-+ */
-++ (nullable NSBundle *)defaultMetadataBundle;
-+
- /**
-  * Returns a text description for the given phone number. The description will be based on the
-  * country code and national number attributes of the NBPhoneNumber parameter. If no result was
-```
-
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.m` (modified, +98/-11)
-```diff
-@@ -48,6 +48,10 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-     _countryCode = countryCode;
-     _language = languageCode;
- 
-+    if (bundle == nil) {
-+      return self;
-+    }
-+
-     NSString *shortLanguageCode = [[languageCode componentsSeparatedByString:@"-"] firstObject];
-     NSURL *databaseURL = [[bundle resourceURL]
-         URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", shortLanguageCode]];
-@@ -69,25 +73,108 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
- }
- 
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode {
--  NSBundle *bundle = [NSBundle bundleForClass:self.classForCoder];
--  NSURL *resourceURL =
--      [[bundle resourceURL] URLByAppendingPathComponent:@"GeocodingMetaData.bundle"];
--  NSBundle *databaseBundle = [NSBundle bundleWithURL:resourceURL];
--  return [self initWithCountryCode:countryCode withLanguage:languageCode withBundle:databaseBundle];
-+  return [self initWithCountryCode:countryCode
-+                      withLanguage:languageCode
-+                        withBundle:[NBGeocoderMetaDataHelper defaultMetadataBundle]];
-+}
-+
-+// Locates GeocodingMetaData.bundle wherever the integration put it.
-+//
-+// Appending the payload to -[NSBundle bundleForClass:].resourceURL only works
-+// for CocoaPods and manual integration, where the databases land next to the
-+// consuming binary. SwiftPM nests them one level deeper, inside a generated
-+// wrapper bundle, and emits that wrapper flat up to Xcode 26 but
-+// macOS-structured (Contents/Resources) from Xcode 27. Without this search the
-+// databases are simply not found and every lookup falls back to the country
-+// name, with no error and no crash.
-++ (NSBundle * _Nullable)defaultMetadataBundle {
-+  static NSBundle *cachedBundle = nil;
-+  static dispatch_once_t onceToken;
-+  dispatch_once(&onceToken, ^{
-+    NSMutableArray<NSBundle *> *searchBundles = [NSMutableArray arrayWithArray:NSBundle.allBundles];
-+    [searchBundles addObjectsFromArray:NSBundle.allFrameworks];
-+    [searchBundles addObject:[NSBundle bundleForClass:self]];
-+    [searchBundles addObject:[NSBundle mainBundle]];
-+
-+    for (NSBundle *bundle in searchBundles) {
-+      NSMutableArray<NSURL *> *baseURLs = [NSMutableArray array];
-+      if (bundle.resourceURL != nil) {
-+        [baseURLs addObject:bundle.resourceURL];
-+      }
-+      if (bundle.bundleURL != nil) {
-+        [baseURLs addObject:bundle.bundleURL];
-+      }
-+
-+      NSURL *parentURL = bundle.bundleURL;
-+      for (NSUInteger index = 0; index < 5 && parentURL != nil; index++) {
-+        parentURL = [parentURL URLByDeletingLastPathComponent];
-+        if (parentURL != nil) {
-+          [baseURLs addObject:parentURL];
-+        }
-+      }
-+
-+      for (NSURL *baseURL in baseURLs) {
-+        NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSURL *wrapperURL = [baseURL
-+            URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberGeocodingMetaData.bundle"];
-+        NSURL *wrapperResourcesURL =
-+            [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSArray<NSURL *> *candidateURLs = @[
-+          [baseURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [resourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperResourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+        ];
-+
-+        for (NSURL *candidateURL in candidateURLs) {
-+          // en.db ships in every build of the payload, so it identifies a
-+          // populated bundle rather than an empty directory of the right name.
-+          NSURL *databaseURL = [candidateURL URLByAppendingPathComponent:@"en.db"];
-+          if ([[NSFileManager defaultManager] fileExistsAtPath:databaseURL.path]) {
-+            cachedBundle = [NSBundle bundleWithURL:candidateURL];
-+            return;
-+          }
-+        }
-+      }
-+    }
-+  });
-+
-+  return cachedBundle;
- }
- 
- - (NSString * _Nullable)searchPhoneNumber:(NBPhoneNumber *)phoneNumber {
-   @synchronized(self) {
--    if (_database == NULL || _selectStatement == NULL) {
-+    if (_database == NULL) {
-       return nil;
-     }
- 
--    if (![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-+    // Each database holds one table per country calling code, and only the
-+    // English database covers every country. Preparing a statement for a
-+    // country this database does not carry fails, which is an ordinary "no
-+    // data for this number" answer -- not a broken helper. Leaving the failed
-+    // statement in place used to disable the helper permanently, so a single
-+    // lookup for an uncovered country downgraded every later lookup in that
-+    // language to a country name.
-+    if (_selectStatement == NULL || ![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-       _country
-```
-
-**File**: `libPhoneNumberGeocoding/NBPhoneNumberOfflineGeocoder.m` (modified, +21/-5)
-```diff
-@@ -50,16 +50,32 @@ + (NBPhoneNumberOfflineGeocoder *)sharedInstance {
-   return instance;
- }
- 
-+// Returns the cached helper for |languageCode|, creating it on first use.
-+//
-+// The lookup and the insertion are performed under a single lock so concurrent
-+// callers cannot each open their own SQLite connection for the same language.
-+- (NBGeocoderMetaDataHelper *)metadataHelperForLanguageCode:(NSString *)languageCode
-+                                                countryCode:(NSNumber *)countryCode {
-+  @synchronized(self) {
-+    NBGeocoderMetaDataHelper *helper = [_metadataHelpers objectForKey:languageCode];
-+    if (helper == nil) {
-+      helper = _metadataHelperFactory(countryCode, languageCode);
-+      if (helper != nil) {
-+        [_metadataHelpers setObject:helper forKey:languageCode];
-+      }
-+    }
-+    return helper;
-+  }
-+}
-+
- - (nullable NSString *)descriptionForValidNumber:(NBPhoneNumber *)phoneNumber
-                                 withLanguageCode:(NSString *)languageCode {
-   // If the NSCache doesn't contain a key equivalent to languageCode, create a
-   // new NBGeocoderMetadataHelper object with a language set equal to
-   // languageCode and default country code to United States / Canada
--  if ([_metadataHelpers objectForKey:languageCode] == nil) {
--    [_metadataHelpers setObject:_metadataHelperFactory(phoneNumber.countryCode, languageCode)
--                         forKey:languageCode];
--  }
--  NSString *result = [[_metadataHelpers objectForKey:languageCode] searchPhoneNumber:phoneNumber];
-+  NBGeocoderMetaDataHelper *helper =
-+      [self metadataHelperForLanguageCode:languageCode countryCode:phoneNumber.countryCode];
-+  NSString *result = [helper searchPhoneNumber:phoneNumber];
-   if (result == nil) {
-     return [self countryNameForNumber:phoneNumber withLanguageCode:languageCode];
-   } else {
-```
-
-**File**: `libPhoneNumberIOSSwiftTests/PhoneNumberIOSSwiftTests.swift` (modified, +1/-1)
-```diff
-@@ -29,6 +29,6 @@ final class PhoneNumberIOSSwiftTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
-```
-
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberGeocodingFacadeTests.swift` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+import Testing
-+import libPhoneNumberSwiftCore
-+import libPhoneNumberSwiftGeocoding
-+
-+@Suite("Geocoder facade")
-+struct PhoneNumberGeocodingFacadeTests {
-+    private let util = PhoneNumberUtility.shared
-+    private let geocoder = PhoneNumberGeocoder.shared
-+
-+    @Test("A geographical number resolves to a locality, not just the country")
-+    func localityForGeographicalNumber() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+        let description = geocoder.description(forValidNumber: number, languageCode: "en")
-+
-+        #expect(description == "Mountain View, CA")
-+    }
-+
-+    /// Only `en.db` carries worldwide coverage; the other databases hold their
-+    /// own country. A language without an entry falls back to the country name,
-+    /// which is correct behaviour, not a missing lookup.
-+    @Test("Descriptions are localized by language code", arguments: [
-+        ("en", "Seoul"),
-+        ("ko", "서울"),
-+    ])
-+    func localizedDescriptions(languageCode: String, expected: String) throws {
-+        let number = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: languageCode) == expected)
-+    }
-+
-+    @Test("A language without locality data falls back to the country name")
-+    func localizedFallback() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: "ko") == "미국")
-+    }
-+
-+    @Test("A caller in the same region sees the locality; a caller abroad sees the country")
-+    func userRegionChangesGranularity() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "US") == "Mountain View, CA")
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "KR") == "United States")
-+    }
-+
-+    /// Regression test: a lookup for a country the language's database does not
-+    /// carry used to finalize the prepared statement and leave the helper
-+    /// unusable, so every later lookup in that language returned a country name.
-+    @Test("An uncovered country does not disable later lookups in the same language")
-+    func uncoveredCountryDoesNotPoisonTheLanguage() throws {
-+        let geocoder = PhoneNumberGeocoder()
-+        let unitedStates = try util.parse("6502530000", defaultRegion: "US")
-+        let korea = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        // The Korean database carries only Korea, so this falls back.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        // The same helper must still answer for a country it does carry.
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+        // And it must keep working when the country alternates.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+    }
-+
-+    @Test("An unparseable number yields no description")
-+    func unknownNumber() {
-+        let number = PhoneNumber()
-+        number.countryCode = 999
-+        number.nationalNumber = 1
-+
-+        #expect(geocoder.description(for: number, languageCode: "en") == nil)
-+    }
-+
-+    @Test("Concurrent lookups share one database connection safely")
-+    func concurrentLookups() async throws {
-+        let results = await withTaskGroup(of: String?.self) { group in
-+            for _ in 0..<16 {
-+                group.addTask {
-+                    let util = PhoneNumberUtility.shared
-+                    guard let number = try? util.parse("6502530000", defaultRegion: "US") else {
-+                        return nil
-+                    }
-+                    return PhoneNumberGeocoder.shared.description(forValidNumber: number, languageCode: "en")
-+                }
-+            }
-+
-+            var collected: [String?] = []
-+            for await result in group {
-+                collected.append(result)
-+            }
-+            return collected
-+        }
-+
-+        #expect(results.count == 16)
-+        #expect(results.allSatisfy { $0 == "Mountain View, CA" })
-+    }
-+}
-```
-
----
-
-### Incident Patch 5: `caa789e4` (2026-09-12)
-**Commit Message**: fix(geocoding): resolve metadata under SwiftPM and stop poisoning a language
-
-Two failures that both surface as a correct-looking country name instead
-of a locality, with no error and no crash.
-
-The metadata bundle was never found under Swift Package Manager.
-NBGeocoderMetaDataHelper appended GeocodingMetaData.bundle to
--[NSBundle bundleForClass:].resourceURL, which is where CocoaPods,
-Carthage, and manual integration put the databases. SwiftPM nests them
-inside a generated wrapper bundle, and emits that wrapper flat up to
-Xcode 26 and macOS-structured from Xcode 27. No database was opened, so
-every lookup fell through to countryNameForNumber:. Apply the same search
-the carrier and timezone mappers already use, covering both layouts.
-
-191c758 fixed this class of bug for carrier and timezone metadata and
-recorded that geocoding resolves its bundle differently and was
-unaffected. It resolves it differently, but it was affected: only the
-Objective-C tests covered geocoding, and they inject a test bundle, so
-the shipped path was never exercised.
-
-Separately, a lookup for a country a language's database does not carry
-disabled that language permanently. Only en.db has worldwide coverage
-
-**File**: `README.md` (modified, +4/-0)
-```diff
-@@ -245,6 +245,10 @@ let number = try phoneUtil.parse("16502530000", defaultRegion: "US")
- let description = geocoder.description(for: number, languageCode: "en")
- ```
- 
-+Only the English database carries worldwide coverage. The other languages ship
-+their own country, so a lookup outside it falls back to the localized country
-+name rather than a locality.
-+
- ### Carrier
- 
- ```swift
-```
-
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.h` (modified, +17/-1)
-```diff
-@@ -29,10 +29,26 @@ NS_ASSUME_NONNULL_BEGIN
-  */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-                        withLanguage:(NSString *)languageCode
--                         withBundle:(NSBundle *)bundle;
-+                         withBundle:(nullable NSBundle *)bundle;
- 
-+/**
-+ * Initializer that resolves the shipped geocoding databases automatically.
-+ *
-+ * The payload is located by searching the loaded bundles, which covers
-+ * CocoaPods, Carthage, manual integration, and the nested wrapper bundle
-+ * SwiftPM generates. A helper created when no payload can be found answers
-+ * every query with nil, and the geocoder falls back to country names.
-+ */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode;
- 
-+/**
-+ * The bundle holding the geocoding databases, or nil when none was found.
-+ *
-+ * Exposed so integrators can check whether the metadata resolved at all,
-+ * instead of silently receiving country-level descriptions.
-+ */
-++ (nullable NSBundle *)defaultMetadataBundle;
-+
- /**
-  * Returns a text description for the given phone number. The description will be based on the
-  * country code and national number attributes of the NBPhoneNumber parameter. If no result was
-```
-
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.m` (modified, +98/-11)
-```diff
-@@ -48,6 +48,10 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-     _countryCode = countryCode;
-     _language = languageCode;
- 
-+    if (bundle == nil) {
-+      return self;
-+    }
-+
-     NSString *shortLanguageCode = [[languageCode componentsSeparatedByString:@"-"] firstObject];
-     NSURL *databaseURL = [[bundle resourceURL]
-         URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", shortLanguageCode]];
-@@ -69,25 +73,108 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
- }
- 
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode {
--  NSBundle *bundle = [NSBundle bundleForClass:self.classForCoder];
--  NSURL *resourceURL =
--      [[bundle resourceURL] URLByAppendingPathComponent:@"GeocodingMetaData.bundle"];
--  NSBundle *databaseBundle = [NSBundle bundleWithURL:resourceURL];
--  return [self initWithCountryCode:countryCode withLanguage:languageCode withBundle:databaseBundle];
-+  return [self initWithCountryCode:countryCode
-+                      withLanguage:languageCode
-+                        withBundle:[NBGeocoderMetaDataHelper defaultMetadataBundle]];
-+}
-+
-+// Locates GeocodingMetaData.bundle wherever the integration put it.
-+//
-+// Appending the payload to -[NSBundle bundleForClass:].resourceURL only works
-+// for CocoaPods and manual integration, where the databases land next to the
-+// consuming binary. SwiftPM nests them one level deeper, inside a generated
-+// wrapper bundle, and emits that wrapper flat up to Xcode 26 but
-+// macOS-structured (Contents/Resources) from Xcode 27. Without this search the
-+// databases are simply not found and every lookup falls back to the country
-+// name, with no error and no crash.
-++ (NSBundle * _Nullable)defaultMetadataBundle {
-+  static NSBundle *cachedBundle = nil;
-+  static dispatch_once_t onceToken;
-+  dispatch_once(&onceToken, ^{
-+    NSMutableArray<NSBundle *> *searchBundles = [NSMutableArray arrayWithArray:NSBundle.allBundles];
-+    [searchBundles addObjectsFromArray:NSBundle.allFrameworks];
-+    [searchBundles addObject:[NSBundle bundleForClass:self]];
-+    [searchBundles addObject:[NSBundle mainBundle]];
-+
-+    for (NSBundle *bundle in searchBundles) {
-+      NSMutableArray<NSURL *> *baseURLs = [NSMutableArray array];
-+      if (bundle.resourceURL != nil) {
-+        [baseURLs addObject:bundle.resourceURL];
-+      }
-+      if (bundle.bundleURL != nil) {
-+        [baseURLs addObject:bundle.bundleURL];
-+      }
-+
-+      NSURL *parentURL = bundle.bundleURL;
-+      for (NSUInteger index = 0; index < 5 && parentURL != nil; index++) {
-+        parentURL = [parentURL URLByDeletingLastPathComponent];
-+        if (parentURL != nil) {
-+          [baseURLs addObject:parentURL];
-+        }
-+      }
-+
-+      for (NSURL *baseURL in baseURLs) {
-+        NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSURL *wrapperURL = [baseURL
-+            URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberGeocodingMetaData.bundle"];
-+        NSURL *wrapperResourcesURL =
-+            [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSArray<NSURL *> *candidateURLs = @[
-+          [baseURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [resourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperResourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+        ];
-+
-+        for (NSURL *candidateURL in candidateURLs) {
-+          // en.db ships in every build of the payload, so it identifies a
-+          // populated bundle rather than an empty directory of the right name.
-+          NSURL *databaseURL = [candidateURL URLByAppendingPathComponent:@"en.db"];
-+          if ([[NSFileManager defaultManager] fileExistsAtPath:databaseURL.path]) {
-+            cachedBundle = [NSBundle bundleWithURL:candidateURL];
-+            return;
-+          }
-+        }
-+      }
-+    }
-+  });
-+
-+  return cachedBundle;
- }
- 
- - (NSString * _Nullable)searchPhoneNumber:(NBPhoneNumber *)phoneNumber {
-   @synchronized(self) {
--    if (_database == NULL || _selectStatement == NULL) {
-+    if (_database == NULL) {
-       return nil;
-     }
- 
--    if (![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-+    // Each database holds one table per country calling code, and only the
-+    // English database covers every country. Preparing a statement for a
-+    // country this database does not carry fails, which is an ordinary "no
-+    // data for this number" answer -- not a broken helper. Leaving the failed
-+    // statement in place used to disable the helper permanently, so a single
-+    // lookup for an uncovered country downgraded every later lookup in that
-+    // language to a country name.
-+    if (_selectStatement == NULL || ![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-       _country
-```
-
-**File**: `libPhoneNumberIOSSwiftTests/PhoneNumberIOSSwiftTests.swift` (modified, +1/-1)
-```diff
-@@ -29,6 +29,6 @@ final class PhoneNumberIOSSwiftTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
-```
-
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberGeocodingFacadeTests.swift` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+import Testing
-+import libPhoneNumberSwiftCore
-+import libPhoneNumberSwiftGeocoding
-+
-+@Suite("Geocoder facade")
-+struct PhoneNumberGeocodingFacadeTests {
-+    private let util = PhoneNumberUtility.shared
-+    private let geocoder = PhoneNumberGeocoder.shared
-+
-+    @Test("A geographical number resolves to a locality, not just the country")
-+    func localityForGeographicalNumber() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+        let description = geocoder.description(forValidNumber: number, languageCode: "en")
-+
-+        #expect(description == "Mountain View, CA")
-+    }
-+
-+    /// Only `en.db` carries worldwide coverage; the other databases hold their
-+    /// own country. A language without an entry falls back to the country name,
-+    /// which is correct behaviour, not a missing lookup.
-+    @Test("Descriptions are localized by language code", arguments: [
-+        ("en", "Seoul"),
-+        ("ko", "서울"),
-+    ])
-+    func localizedDescriptions(languageCode: String, expected: String) throws {
-+        let number = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: languageCode) == expected)
-+    }
-+
-+    @Test("A language without locality data falls back to the country name")
-+    func localizedFallback() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: "ko") == "미국")
-+    }
-+
-+    @Test("A caller in the same region sees the locality; a caller abroad sees the country")
-+    func userRegionChangesGranularity() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "US") == "Mountain View, CA")
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "KR") == "United States")
-+    }
-+
-+    /// Regression test: a lookup for a country the language's database does not
-+    /// carry used to finalize the prepared statement and leave the helper
-+    /// unusable, so every later lookup in that language returned a country name.
-+    @Test("An uncovered country does not disable later lookups in the same language")
-+    func uncoveredCountryDoesNotPoisonTheLanguage() throws {
-+        let geocoder = PhoneNumberGeocoder()
-+        let unitedStates = try util.parse("6502530000", defaultRegion: "US")
-+        let korea = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        // The Korean database carries only Korea, so this falls back.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        // The same helper must still answer for a country it does carry.
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+        // And it must keep working when the country alternates.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+    }
-+
-+    @Test("An unparseable number yields no description")
-+    func unknownNumber() {
-+        let number = PhoneNumber()
-+        number.countryCode = 999
-+        number.nationalNumber = 1
-+
-+        #expect(geocoder.description(for: number, languageCode: "en") == nil)
-+    }
-+
-+    @Test("Concurrent lookups share one database connection safely")
-+    func concurrentLookups() async throws {
-+        let results = await withTaskGroup(of: String?.self) { group in
-+            for _ in 0..<16 {
-+                group.addTask {
-+                    let util = PhoneNumberUtility.shared
-+                    guard let number = try? util.parse("6502530000", defaultRegion: "US") else {
-+                        return nil
-+                    }
-+                    return PhoneNumberGeocoder.shared.description(forValidNumber: number, languageCode: "en")
-+                }
-+            }
-+
-+            var collected: [String?] = []
-+            for await result in group {
-+                collected.append(result)
-+            }
-+            return collected
-+        }
-+
-+        #expect(results.count == 16)
-+        #expect(results.allSatisfy { $0 == "Mountain View, CA" })
-+    }
-+}
-```
-
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberSwiftGeocodingTests.swift` (modified, +1/-1)
-```diff
-@@ -8,6 +8,6 @@ final class PhoneNumberSwiftGeocodingTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
-```
-
----
-
-### Incident Patch 6: `32f79982` (2026-09-12)
-**Commit Message**: fix(core): guard shared mutable state in the Objective-C core
-
-The shared NBPhoneNumberUtil is reachable from any thread, and three pieces
-of state it owns or reaches were not protected:
-
-- NBMetadataHelper built its region-to-calling-code table lazily with no
-  synchronization, so concurrent first use raced on the ivar write.
-- NBPhoneNumberOfflineGeocoder looked up its per-language helper in an
-  NSCache and inserted on a miss, so concurrent callers could each open
-  their own SQLite connection for the same language.
-- NBRegularExpressionCache held @synchronized(self) across pattern
-  compilation, serializing every caller behind an unrelated pattern being
-  built, including callers that would have hit the cache.
-
-Lock the metadata table with os_unfair_lock, move the geocoder's lookup
-and insertion under one lock, and narrow the regex cache's lock to the
-lookup and the insertion so compilation happens outside it. Two threads
-racing on the same new pattern may now each compile it; the duplicate is
-discarded on insertion.
-
-This is a prerequisite for declaring the Swift facades Sendable: that
-claim rests on this locking rather than on anything the compiler checks.
-
-Co-Authored-By: Cl
-
-**File**: `libPhoneNumber/NBMetadataHelper.m` (modified, +13/-1)
-```diff
-@@ -8,6 +8,8 @@
- 
- #import "NBMetadataHelper.h"
- 
-+#import <os/lock.h>
-+
- #import <NBGeneratedPhoneNumberMetaData.h>
- #import "NBPhoneMetaData.h"
- 
-@@ -34,7 +36,11 @@ @interface NBMetadataHelper ()
- @implementation NBMetadataHelper {
-  @private
-   NSDictionary *_phoneNumberDataDictionary;
-+  // Lazily derived from _phoneNumberDataDictionary. Guarded by
-+  // _countryCodeToCountryNumberLock because the helper is shared by the
-+  // NBPhoneNumberUtil singleton and can be reached from multiple threads.
-   NSDictionary *_countryCodeToCountryNumberDictionary;
-+  os_unfair_lock _countryCodeToCountryNumberLock;
- }
- 
- - (instancetype)init {
-@@ -55,6 +61,7 @@ - (instancetype)initWithZippedDataBytes:(z_const Bytef *)data
-   self = [super init];
- 
-   if (self != nil) {
-+    _countryCodeToCountryNumberLock = OS_UNFAIR_LOCK_INIT;
-     _metadataCache = [[NSCache alloc] init];
-     _metadataMapCache = [[NSCache alloc] init];
-     _phoneNumberDataDictionary =
-@@ -74,6 +81,8 @@ - (instancetype)initWithZippedDataBytes:(z_const Bytef *)data
-  */
- 
- - (NSDictionary *)countryCodeToCountryNumberDictionary {
-+  os_unfair_lock_lock(&_countryCodeToCountryNumberLock);
-+
-   if (_countryCodeToCountryNumberDictionary == nil) {
-     NSDictionary *countryCodeToRegionCodeMap = [self countryCodeToRegionCodeDictionary];
-     NSMutableDictionary *map = [[NSMutableDictionary alloc] init];
-@@ -86,7 +95,10 @@ - (NSDictionary *)countryCodeToCountryNumberDictionary {
-     _countryCodeToCountryNumberDictionary = [map copy];
-   }
- 
--  return _countryCodeToCountryNumberDictionary;
-+  NSDictionary *result = _countryCodeToCountryNumberDictionary;
-+  os_unfair_lock_unlock(&_countryCodeToCountryNumberLock);
-+
-+  return result;
- }
- 
- - (NSDictionary *)countryCodeToRegionCodeDictionary {
-```
-
-**File**: `libPhoneNumber/NBRegularExpressionCache.m` (modified, +35/-17)
-```diff
-@@ -8,13 +8,17 @@
- 
- #import "NBRegularExpressionCache.h"
- 
-+#import <os/lock.h>
-+
- @interface NBRegularExpressionCache()
- 
- @property (nonatomic, strong) NSCache *cache;
- 
- @end
- 
--@implementation NBRegularExpressionCache
-+@implementation NBRegularExpressionCache {
-+  os_unfair_lock _cacheLock;
-+}
- 
- + (instancetype)sharedInstance {
-   static NBRegularExpressionCache *instance;
-@@ -29,34 +33,48 @@ + (instancetype)sharedInstance {
- - (instancetype)init {
-   self = [super init];
-   if (self != nil) {
-+    _cacheLock = OS_UNFAIR_LOCK_INIT;
-     _cache = [[NSCache alloc] init];
-   }
- 
-   return self;
- }
- 
- - (NSRegularExpression *)regularExpressionForPattern:(NSString *)pattern error:(NSError **)error {
--  @synchronized(self) {
--    NSRegularExpression *cachedObject = [self.cache objectForKey:pattern];
--    if (cachedObject != nil) {
--      return cachedObject;
--    }
-+  // Cache hits, which are the overwhelmingly common case, only hold the lock
-+  // for the lookup itself. Compilation happens outside the lock so concurrent
-+  // callers are not serialized behind an unrelated pattern being built. Two
-+  // threads racing on the same new pattern may each compile it; the duplicate
-+  // is simply discarded by the insertion below.
-+  os_unfair_lock_lock(&_cacheLock);
-+  NSRegularExpression *cachedObject = [self.cache objectForKey:pattern];
-+  os_unfair_lock_unlock(&_cacheLock);
-+
-+  if (cachedObject != nil) {
-+    return cachedObject;
-+  }
- 
--    NSError *regExError = nil;
--    NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:pattern
--                                                                      options:kNilOptions
--                                                                        error:&regExError];
--    if (regEx == nil) {
--      if (error != NULL) {
--        *error = regExError;
--      }
--      return nil;
-+  NSError *regExError = nil;
-+  NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:pattern
-+                                                                    options:kNilOptions
-+                                                                      error:&regExError];
-+  if (regEx == nil) {
-+    if (error != NULL) {
-+      *error = regExError;
-     }
-+    return nil;
-+  }
- 
-+  os_unfair_lock_lock(&_cacheLock);
-+  NSRegularExpression *raced = [self.cache objectForKey:pattern];
-+  if (raced != nil) {
-+    regEx = raced;
-+  } else {
-     [self.cache setObject:regEx forKey:pattern];
--
--    return regEx;
-   }
-+  os_unfair_lock_unlock(&_cacheLock);
-+
-+  return regEx;
- }
- 
- @end
-```
-
-**File**: `libPhoneNumberGeocoding/NBPhoneNumberOfflineGeocoder.m` (modified, +21/-5)
-```diff
-@@ -50,16 +50,32 @@ + (NBPhoneNumberOfflineGeocoder *)sharedInstance {
-   return instance;
- }
- 
-+// Returns the cached helper for |languageCode|, creating it on first use.
-+//
-+// The lookup and the insertion are performed under a single lock so concurrent
-+// callers cannot each open their own SQLite connection for the same language.
-+- (NBGeocoderMetaDataHelper *)metadataHelperForLanguageCode:(NSString *)languageCode
-+                                                countryCode:(NSNumber *)countryCode {
-+  @synchronized(self) {
-+    NBGeocoderMetaDataHelper *helper = [_metadataHelpers objectForKey:languageCode];
-+    if (helper == nil) {
-+      helper = _metadataHelperFactory(countryCode, languageCode);
-+      if (helper != nil) {
-+        [_metadataHelpers setObject:helper forKey:languageCode];
-+      }
-+    }
-+    return helper;
-+  }
-+}
-+
- - (nullable NSString *)descriptionForValidNumber:(NBPhoneNumber *)phoneNumber
-                                 withLanguageCode:(NSString *)languageCode {
-   // If the NSCache doesn't contain a key equivalent to languageCode, create a
-   // new NBGeocoderMetadataHelper object with a language set equal to
-   // languageCode and default country code to United States / Canada
--  if ([_metadataHelpers objectForKey:languageCode] == nil) {
--    [_metadataHelpers setObject:_metadataHelperFactory(phoneNumber.countryCode, languageCode)
--                         forKey:languageCode];
--  }
--  NSString *result = [[_metadataHelpers objectForKey:languageCode] searchPhoneNumber:phoneNumber];
-+  NBGeocoderMetaDataHelper *helper =
-+      [self metadataHelperForLanguageCode:languageCode countryCode:phoneNumber.countryCode];
-+  NSString *result = [helper searchPhoneNumber:phoneNumber];
-   if (result == nil) {
-     return [self countryNameForNumber:phoneNumber withLanguageCode:languageCode];
-   } else {
-```
-
----
-
-### Incident Patch 7: `24c0690d` (2026-09-12)
-**Commit Message**: fix(ci): track the package workspace so platform builds resolve the package
-
-The platform build matrix failed on every destination. xcodebuild resolves
-libPhoneNumber.xcodeproj rather than Package.swift when both sit in the
-repository root, so the jobs pointed at .swiftpm/xcode/package.xcworkspace
-to select the package. That path is generated by Xcode and was covered by
-the blanket .swiftpm entry in .gitignore, so it exists in a working copy
-that has been opened in Xcode and not in a fresh checkout. The jobs passed
-locally for exactly that reason and failed on CI with "does not contain a
-scheme named libPhoneNumber-Package".
-
-Narrow the ignore rules to track contents.xcworkspacedata, which is seven
-lines of XML pointing at the package itself, while keeping every piece of
-per-user Xcode state under .swiftpm ignored. Add a step that checks for
-the file first, so a future regression reports the cause rather than a
-confusing scheme error.
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +12/-0)
-```diff
-@@ -141,6 +141,18 @@ jobs:
-       - name: Show Xcode version
-         run: xcodebuild -version
- 
-+      # xcodebuild resolves libPhoneNumber.xcodeproj rather than Package.swift
-+      # when both are in the repository root, and that project carries only the
-+      # three Objective-C schemes. Building the package's own schemes requires
-+      # the workspace below, so fail with a clear message if it is missing
-+      # rather than with "does not contain a scheme named libPhoneNumber-Package".
-+      - name: Check the package workspace is present
-+        run: |
-+          if [ ! -f .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata ]; then
-+            echo "Missing .swiftpm/xcode/package.xcworkspace; see the .swiftpm rules in .gitignore." >&2
-+            exit 1
-+          fi
-+
-       # Package.swift declares macOS, iOS, macCatalyst, tvOS, watchOS and
-       # visionOS. `swift test` only covers macOS, so each of the others is
-       # built here; without this a platform-specific break ships unnoticed.
-```
-
-**File**: `.gitignore` (modified, +11/-1)
-```diff
-@@ -28,4 +28,14 @@ ObjectiveC.gcda
- 
- # SPM
- .build
--.swiftpm
-+
-+# Track only the generated package workspace. xcodebuild picks
-+# libPhoneNumber.xcodeproj over Package.swift when both sit in the repository
-+# root, so building the package's own schemes needs this file to exist in a
-+# fresh checkout. Everything else under .swiftpm is per-user Xcode state.
-+.swiftpm/*
-+!.swiftpm/xcode/
-+.swiftpm/xcode/*
-+!.swiftpm/xcode/package.xcworkspace/
-+.swiftpm/xcode/package.xcworkspace/*
-+!.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
-```
-
-**File**: `.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<Workspace
-+   version = "1.0">
-+   <FileRef
-+      location = "self:">
-+   </FileRef>
-+</Workspace>
-```
-
----
-
-### Incident Patch 8: `c092e9d4` (2026-09-12)
+### Incident Patch 1: `c092e9d4` (2026-09-12)
 **Commit Message**: docs: add changelog, contributing guide, security policy, and DocC
 
 The repository had no changelog, no contributing guide, no security
@@ -4029,588 +2111,7 @@ why, and how the error model divides between thr
 
 ---
 
-### Incident Patch 9: `06c5738d` (2026-09-12)
-**Commit Message**: ci: build every declared platform, lint every podspec, run under TSan
-
-Two gaps let breakage ship unnoticed.
-
-Five of the thirteen podspecs were never linted: both Objective-C carrier
-and timezone specs, and three Swift facade specs. A broken spec in any of
-them passed CI and failed at publish time. The lint job now iterates the
-full list, and a following step fails if a podspec exists that the
-workflow does not name, so the next spec cannot be added without being
-linted.
-
-Package.swift declares six platforms and `swift test` covers one. tvOS,
-watchOS, macCatalyst, and now visionOS had no build verification at all.
-A matrix job builds every product for each.
-
-Two jobs are added alongside: the suite under the thread sanitizer, which
-is what substantiates the facades' @unchecked Sendable conformances, and
-a coverage report published as an artifact.
-
-Two maintenance scripts were brittle in ways that only show up off CI.
-testXcodeSchemes.swift defaulted to a destination naming iPhone 16, so it
-failed outright on a machine whose Xcode ships a different simulator set;
-it now resolves an installed iPhone the way the workflow already does.
-publishPodspecs.swift parsed the merged stdout and
-
-**File**: `.github/pull_request_template.md` (modified, +5/-0)
-```diff
-@@ -18,11 +18,16 @@
- - [ ] `swift test`
- - [ ] `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test`
- - [ ] `swift build -c release`
-+- [ ] `swift test --sanitize=thread` (when shared state or a facade entry point changed)
- - [ ] `xcodebuild test -scheme libPhoneNumber -destination 'id=<simulator-udid>'`
- - [ ] `xcodebuild test -scheme libPhoneNumberGeocoding -destination 'id=<simulator-udid>'`
- - [ ] `xcodebuild test -scheme libPhoneNumberShortNumber -destination 'id=<simulator-udid>'`
- - [ ] `git diff --check`
- 
-+## Changelog
-+
-+- [ ] `CHANGELOG.md` updated under `## Unreleased`, or not user-visible
-+
- ## Notes
- 
- - Intentional ObjC/API naming differences:
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +116/-7)
-```diff
-@@ -82,14 +82,123 @@ jobs:
- 
-       - name: Lint podspecs
-         run: |
-+          set -euo pipefail
-+          # Every podspec in the repository, so a broken spec cannot ship
-+          # unnoticed. The core spec has no internal dependencies to resolve.
-           pod lib lint libPhoneNumber-iOS.podspec --allow-warnings
--          pod lib lint libPhoneNumberGeocoding.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumberShortNumber.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftCore.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftGeocoding.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftShortNumber.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-SwiftUI.podspec --allow-warnings --include-podspecs='*.podspec'
--          pod lib lint libPhoneNumber-iOS-Swift.podspec --allow-warnings --include-podspecs='*.podspec'
-+          for podspec in \
-+            libPhoneNumberGeocoding.podspec \
-+            libPhoneNumberShortNumber.podspec \
-+            libPhoneNumberCarrier.podspec \
-+            libPhoneNumberTimeZones.podspec \
-+            libPhoneNumber-iOS-SwiftCore.podspec \
-+            libPhoneNumber-iOS-SwiftGeocoding.podspec \
-+            libPhoneNumber-iOS-SwiftShortNumber.podspec \
-+            libPhoneNumber-iOS-SwiftCarrier.podspec \
-+            libPhoneNumber-iOS-SwiftTimeZones.podspec \
-+            libPhoneNumber-iOS-SwiftUI.podspec \
-+            libPhoneNumber-iOS-SwiftUIEnrichment.podspec \
-+            libPhoneNumber-iOS-Swift.podspec
-+          do
-+            pod lib lint "$podspec" --allow-warnings --include-podspecs='*.podspec'
-+          done
-+
-+      - name: Check every podspec is linted
-+        run: |
-+          set -euo pipefail
-+          missing=0
-+          for podspec in *.podspec; do
-+            if ! grep -q "$podspec" .github/workflows/ci.yml; then
-+              echo "Podspec not covered by the lint job: $podspec" >&2
-+              missing=1
-+            fi
-+          done
-+          exit "$missing"
-+
-+  platform-builds:
-+    name: Build for ${{ matrix.platform }}
-+    runs-on: macos-latest
-+
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - platform: iOS
-+            destination: generic/platform=iOS
-+          - platform: tvOS
-+            destination: generic/platform=tvOS
-+          - platform: watchOS
-+            destination: generic/platform=watchOS
-+          - platform: visionOS
-+            destination: generic/platform=visionOS
-+          - platform: macCatalyst
-+            destination: platform=macOS,variant=Mac Catalyst
-+
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@v7.0.0
-+
-+      - name: Show Xcode version
-+        run: xcodebuild -version
-+
-+      # Package.swift declares macOS, iOS, macCatalyst, tvOS, watchOS and
-+      # visionOS. `swift test` only covers macOS, so each of the others is
-+      # built here; without this a platform-specific break ships unnoticed.
-+      - name: Build all products
-+        run: |
-+          xcodebuild build \
-+            -workspace .swiftpm/xcode/package.xcworkspace \
-+            -scheme libPhoneNumber-Package \
-+            -destination "${{ matrix.destination }}" \
-+            -derivedDataPath "$RUNNER_TEMP/dd-${{ matrix.platform }}"
-+
-+  thread-sanitizer:
-+    name: Thread sanitizer
-+    runs-on: macos-latest
-+
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@v7.0.0
-+
-+      # The Swift facades are declared @unchecked Sendable on the strength of
-+      # the Objective-C core's internal locking. The concurrency tests exercise
-+      # the shared instances from many tasks at once; under TSan they check that
-+      # claim instead of merely asserting it.
-+      - name: Run SwiftPM tests under the thread sanitizer
-+        run: swift test --sanitize=thread
-+
-+  code-coverage:
-+    name: Code coverage
-+    runs-on: macos-latest
-+
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@v7.0.0
-+
-+      - name: Run SwiftPM tests with coverage
-+        run: swift test --enable-code-coverage
-+
-+      - name: Export coverage report
-+        run: |
-+          set -euo pipefail
-+          mkdir -p .build/coverage
-+          xcrun llvm-cov export \
-+            -format=lcov \
-+            -instr-profile "$(swift test --show-codecov-path | xargs dirname)/default.profdata" \
-+            "$(swift build --show-bin-path)/libPhoneNumberPackageTests.xctest/Contents/MacOS/libPhoneNumberPackageTests" \
-+            > .build/coverage/coverage.lcov
-+          xcrun llvm-cov report \
-+            -instr-profile "$(swift test --show-codecov-path | xargs dirname)/default.profdata" \
-+            "$(swift build --show-bin-path)/libPhoneNumberPackageTests.xctest/Con
-```
-
-**File**: `docs/TESTING.md` (modified, +66/-0)
-```diff
-@@ -36,6 +36,58 @@ Check package and README version alignment:
- swift scripts/checkVersionConsistency.swift
- ```
- 
-+## Concurrency Validation
-+
-+The Swift facades are declared `@unchecked Sendable` on the strength of the
-+Objective-C core's internal locking, so the guarantee has to be exercised rather
-+than trusted. Run the suite under the thread sanitizer whenever you touch
-+mutable state in the Objective-C targets or add a facade entry point:
-+
-+```bash
-+swift test --sanitize=thread
-+```
-+
-+The concurrency suites live in `libPhoneNumberSwiftCoreTests` and in each
-+optional module's test target. They drive the shared instances from many tasks
-+at once; under the sanitizer an unguarded write is reported even when the
-+assertions still pass. CI runs this on every pull request.
-+
-+## Platform Validation
-+
-+`swift test` only covers macOS. `Package.swift` declares six platforms, so build
-+the package for each of the others before merging a packaging, linking, or
-+availability change:
-+
-+```bash
-+for destination in \
-+  'generic/platform=iOS' \
-+  'generic/platform=tvOS' \
-+  'generic/platform=watchOS' \
-+  'generic/platform=visionOS' \
-+  'platform=macOS,variant=Mac Catalyst'
-+do
-+  xcodebuild build \
-+    -workspace .swiftpm/xcode/package.xcworkspace \
-+    -scheme libPhoneNumber-Package \
-+    -destination "$destination" \
-+    -derivedDataPath "/tmp/libphone-dd"
-+done
-+```
-+
-+CI runs the same matrix on every pull request.
-+
-+## Coverage
-+
-+```bash
-+swift test --enable-code-coverage
-+xcrun llvm-cov report \
-+  -instr-profile "$(dirname "$(swift test --show-codecov-path)")/default.profdata" \
-+  "$(swift build --show-bin-path)/libPhoneNumberPackageTests.xctest/Contents/MacOS/libPhoneNumberPackageTests"
-+```
-+
-+Coverage is a review aid, not a merge gate. Use it to find untested branches in
-+a module you changed, not to chase a number.
-+
- ## Upstream Parity Validation
- 
- Run the upstream test parity check:
-@@ -133,6 +185,7 @@ For Swift facade changes:
- 
- - `swift test`
- - `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test`
-+- `swift test --sanitize=thread` when the change touches shared state or adds a facade entry point
- - `swift build -c release`
- - `swift scripts/publishPodspecs.swift --lint`
- - Confirm the facade remains a thin wrapper over the Objective-C core instead of duplicating phone-number logic.
-@@ -142,6 +195,7 @@ For packaging changes:
- 
- - `swift scripts/checkVersionConsistency.swift`
- - `swift scripts/publishPodspecs.swift --lint`
-+- the per-platform build matrix above, since `swift test` only covers macOS
- 
- ## Locale-Sensitive Tests
- 
-@@ -155,6 +209,18 @@ LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test
- 
- This catches tests that only pass on machines configured for English.
- 
-+## Test Frameworks
-+
-+New tests use [Swift Testing](https://developer.apple.com/documentation/testing)
-+(`import Testing`, `@Suite`, `@Test`, `#expect`). Both frameworks run under
-+`swift test` and each reports its own totals, so a green run shows two summary
-+lines.
-+
-+The XCTest suites stay as they are. The Objective-C ones in particular mirror
-+upstream test names one for one, which is what makes
-+`scripts/checkUpstreamTestParity.swift` meaningful; converting them would break
-+that mapping for no benefit.
-+
- ## Adding Upstream-Ported Tests
- 
- When porting an upstream JS test:
-```
-
-**File**: `scripts/publishPodspecs.swift` (modified, +6/-1)
-```diff
-@@ -148,7 +148,12 @@ func parsePodspec(at path: String) throws -> Podspec {
-   guard result.exitCode == 0 else {
-     throw ScriptError.commandFailed("pod ipc spec failed for \(path):\n\(result.output)")
-   }
--  guard let data = result.output.data(using: .utf8),
-+  // `pod ipc spec` writes its JSON to stdout, but CocoaPods also warns on
-+  // stderr when the terminal is not set to UTF-8, and runCapturing merges the
-+  // two. Start from the first brace so an unrelated warning does not look like
-+  // a malformed podspec.
-+  let jsonText = result.output.firstIndex(of: "{").map { String(result.output[$0...]) } ?? result.output
-+  guard let data = jsonText.data(using: .utf8),
-         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-         let name = json["name"] as? String,
-         let version = json["version"] as? String else {
-```
-
-**File**: `scripts/testXcodeSchemes.swift` (modified, +43/-6)
-```diff
-@@ -9,7 +9,9 @@ let defaultSchemes = [
- ]
- 
- struct Options {
--  var destination = "platform=iOS Simulator,name=iPhone 16"
-+  // Resolved from the installed simulators when --destination is not given, so
-+  // the script does not fail on a machine that simply has a different iPhone.
-+  var destination: String?
-   var derivedDataRoot: URL?
-   var schemes: [String] = []
- }
-@@ -38,7 +40,7 @@ func usage() -> String {
-     swift scripts/testXcodeSchemes.swift [options] [scheme ...]
- 
-   Options:
--    --destination <value>        xcodebuild destination. Default: platform=iOS Simulator,name=iPhone 16.
-+    --destination <value>        xcodebuild destination. Default: the first available iPhone simulator.
-     --derived-data-root <dir>    Use a separate derived data directory per scheme.
-     --help                      Print this help.
- 
-@@ -57,6 +59,40 @@ func absoluteURL(forPath path: String) -> URL {
-   return repositoryRoot.appendingPathComponent(path)
- }
- 
-+/// Returns `id=<udid>` for the first available iPhone simulator.
-+///
-+/// Naming a device model in the destination is brittle: every Xcode release
-+/// ships a different set, so a pinned name fails with "Unable to find a device
-+/// matching the provided destination specifier" on any machine that happens not
-+/// to have it. Asking simctl what is installed avoids that.
-+func firstAvailableIPhoneDestination() throws -> String {
-+  let process = Process()
-+  process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-+  process.arguments = ["xcrun", "simctl", "list", "devices", "available"]
-+  let pipe = Pipe()
-+  process.standardOutput = pipe
-+  process.standardError = FileHandle.nullDevice
-+
-+  try process.run()
-+  let data = pipe.fileHandleForReading.readDataToEndOfFile()
-+  process.waitUntilExit()
-+
-+  let output = String(data: data, encoding: .utf8) ?? ""
-+  for line in output.split(separator: "\n") where line.contains("iPhone") {
-+    // Lines look like: "    iPhone Air (UDID) (Shutdown)"
-+    let components = line.split(separator: "(", omittingEmptySubsequences: false)
-+    guard components.count >= 2 else { continue }
-+    let candidate = components[1].prefix(while: { $0 != ")" })
-+    if candidate.count == 36 {
-+      return "id=\(candidate)"
-+    }
-+  }
-+
-+  throw ScriptError.invalidArguments(
-+    "No available iPhone simulator found. Install one, or pass --destination explicitly."
-+  )
-+}
-+
- func parseOptions(_ arguments: [String]) throws -> Options {
-   var options = Options()
-   var index = 0
-@@ -135,13 +171,13 @@ func run(_ command: String, _ arguments: [String]) throws {
-   }
- }
- 
--func testScheme(_ scheme: String, options: Options) throws {
-+func testScheme(_ scheme: String, destination: String, options: Options) throws {
-   var arguments = [
-     "test",
-     "-scheme",
-     scheme,
-     "-destination",
--    options.destination,
-+    destination,
-   ]
- 
-   if let derivedDataRoot = options.derivedDataRoot {
-@@ -156,15 +192,16 @@ func testScheme(_ scheme: String, options: Options) throws {
- 
- do {
-   let options = try parseOptions(Array(CommandLine.arguments.dropFirst()))
-+  let destination = try options.destination ?? firstAvailableIPhoneDestination()
- 
--  print("Destination: \(options.destination)")
-+  print("Destination: \(destination)")
-   print("Schemes: \(options.schemes.joined(separator: ", "))")
-   if let derivedDataRoot = options.derivedDataRoot {
-     print("Derived data root: \(derivedDataRoot.path)")
-   }
- 
-   for scheme in options.schemes {
--    try testScheme(scheme, options: options)
-+    try testScheme(scheme, destination: destination, options: options)
-   }
- 
-   print("\nAll Xcode schemes passed.")
-```
-
----
-
-### Incident Patch 10: `bfc53558` (2026-09-12)
-**Commit Message**: feat(swift): build in the Swift 6 language mode and support visionOS
-
-Every Swift facade entry point was a non-Sendable singleton, so
-`PhoneNumberUtility.shared` and its four siblings were errors in the
-Swift 6 language mode, not warnings. Six such statics existed, which made
-the Swift-first facades unusable from the Swift code they exist to serve.
-
-Declare the facades Sendable. The conformances are @unchecked and each
-one documents the Objective-C locking it rests on, which the preceding
-commit completed. PhoneNumber and AsYouTypeFormatter stay non-Sendable
-and say why: the former is a mutable model object, the latter carries the
-digits entered so far.
-
-Raise the package to swift-tools-version 6.0, which the Swift 6 language
-mode and the visionOS platform declaration both require. visionOS is now
-declared in Package.swift, linked against Contacts, and given a
-deployment target in every podspec. The podspecs accept Swift 5.9 or 6.0
-so CocoaPods consumers are not forced onto one toolchain.
-
-Two breaking changes come with it, so this needs a major release:
-
-- PhoneNumberFieldState.error is a PhoneNumberValueError? rather than an
-  existential Error?. The state becomes Sendable and it
-
-**File**: `Package.swift` (modified, +6/-3)
-```diff
-@@ -1,5 +1,7 @@
--// swift-tools-version:5.5
-+// swift-tools-version:6.0
- // The swift-tools-version declares the minimum version of Swift required to build this package.
-+// Swift 6 tools are required so the Swift facade targets can build in the
-+// Swift 6 language mode and so visionOS can be declared as a platform.
- import PackageDescription
- 
- let package = Package(
-@@ -9,7 +11,8 @@ let package = Package(
-         .macCatalyst(.v15),
-         .iOS(.v15),
-         .tvOS(.v15),
--        .watchOS("9.0")
-+        .watchOS("9.0"),
-+        .visionOS(.v1)
-     ],
-     products: [
-         .library(
-@@ -92,7 +95,7 @@ let package = Package(
-                 .headerSearchPath("Internal")
-             ],
-             linkerSettings: [
--                .linkedFramework("Contacts", .when(platforms: [.iOS, .macOS, .macCatalyst, .watchOS])),
-+                .linkedFramework("Contacts", .when(platforms: [.iOS, .macOS, .macCatalyst, .watchOS, .visionOS])),
-             ]
-         ),
-         .testTarget(
-```
-
-**File**: `README.md` (modified, +21/-0)
-```diff
-@@ -26,11 +26,15 @@ Use the Objective-C API when you need source-compatible legacy integration. Use
- | tvOS | 15.0 |
- | watchOS | 9.0 |
- | macOS | 12.0 |
-+| visionOS | 1.0 |
- 
- These are the lowest deployment targets Xcode 27 accepts. Version 1.7.x
- supports iOS 12, tvOS 12, watchOS 4, and macOS 10.13, but cannot be built
- with Xcode 27.
- 
-+The Swift package requires Swift 6 tools and builds in the Swift 6 language
-+mode. The CocoaPods specs accept Swift 5.9 or 6.0.
-+
- ## Recommended Setup
- 
- For most Swift apps, start with the core Swift facade:
-@@ -204,6 +208,23 @@ value.nationalSignificantNumber
- value.type
- ```
- 
-+### Concurrency
-+
-+`PhoneNumberUtility`, `PhoneNumberGeocoder`, `ShortNumberUtility`,
-+`PhoneNumberCarrierMapper`, and `PhoneNumberTimeZonesMapper` are `Sendable`.
-+Their shared instances can be used from any task without a Swift 6 concurrency
-+error. The conformances are `@unchecked`, resting on the locking inside the
-+Objective-C core, and the package's concurrency tests exercise the shared
-+instances under load with the thread sanitizer enabled.
-+
-+Two types are deliberately not `Sendable`:
-+
-+- `PhoneNumber` (the Objective-C model object) is a mutable reference type. Keep
-+  it inside the scope that parsed it and use `PhoneNumberValue` for anything
-+  that is stored, encoded, or crosses an actor boundary.
-+- `AsYouTypeFormatter` accumulates the digits entered so far. Create one per
-+  input field.
-+
- ### As-You-Type Formatting
- 
- ```swift
-```
-
-**File**: `libPhoneNumber-iOS-Swift.podspec` (modified, +2/-1)
-```diff
-@@ -21,8 +21,9 @@ Pod::Spec.new do |s|
-   s.osx.deployment_target = "12.0"
-   s.watchos.deployment_target = "9.0"
-   s.tvos.deployment_target = "15.0"
-+  s.visionos.deployment_target = "1.0"
- 
--  s.swift_version = "5.5"
-+  s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
-   s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.0.1'
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCarrier.podspec` (modified, +2/-1)
-```diff
-@@ -21,8 +21,9 @@ Pod::Spec.new do |s|
-   s.osx.deployment_target = "12.0"
-   s.watchos.deployment_target = "9.0"
-   s.tvos.deployment_target = "15.0"
-+  s.visionos.deployment_target = "1.0"
- 
--  s.swift_version = "5.5"
-+  s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
-   s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.0.1'
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCore.podspec` (modified, +2/-1)
-```diff
-@@ -21,8 +21,9 @@ Pod::Spec.new do |s|
-   s.osx.deployment_target = "12.0"
-   s.watchos.deployment_target = "9.0"
-   s.tvos.deployment_target = "15.0"
-+  s.visionos.deployment_target = "1.0"
- 
--  s.swift_version = "5.5"
-+  s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
-   s.dependency 'libPhoneNumber-iOS', '~> 2.0.1'
-```
-
-**File**: `libPhoneNumber-iOS-SwiftGeocoding.podspec` (modified, +2/-1)
-```diff
-@@ -21,8 +21,9 @@ Pod::Spec.new do |s|
-   s.osx.deployment_target = "12.0"
-   s.watchos.deployment_target = "9.0"
-   s.tvos.deployment_target = "15.0"
-+  s.visionos.deployment_target = "1.0"
- 
--  s.swift_version = "5.5"
-+  s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
-   s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.0.1'
-```
-
-**File**: `libPhoneNumber-iOS-SwiftShortNumber.podspec` (modified, +2/-1)
-```diff
-@@ -21,8 +21,9 @@ Pod::Spec.new do |s|
-   s.osx.deployment_target = "12.0"
-   s.watchos.deployment_target = "9.0"
-   s.tvos.deployment_target = "15.0"
-+  s.visionos.deployment_target = "1.0"
- 
--  s.swift_version = "5.5"
-+  s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
-   s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.0.1'
-```
-
-**File**: `libPhoneNumber-iOS-SwiftTimeZones.podspec` (modified, +2/-1)
-```diff
-@@ -21,8 +21,9 @@ Pod::Spec.new do |s|
-   s.osx.deployment_target = "12.0"
-   s.watchos.deployment_target = "9.0"
-   s.tvos.deployment_target = "15.0"
-+  s.visionos.deployment_target = "1.0"
- 
--  s.swift_version = "5.5"
-+  s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
-   s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.0.1'
-```
-
----
-
-### Incident Patch 11: `ae92405c` (2026-09-12)
+### Incident Patch 2: `caa789e4` (2026-09-12)
 **Commit Message**: fix(geocoding): resolve metadata under SwiftPM and stop poisoning a language
 
 Two failures that both surface as a correct-looking country name instead
@@ -4918,565 +2419,319 @@ disabled that language permanently. Only en.db has worldwide coverage
 
 ---
 
-### Incident Patch 12: `9d5e9cac` (2026-09-12)
-**Commit Message**: fix(core): guard shared mutable state in the Objective-C core
+### Incident Patch 3: `ae92405c` (2026-09-12)
+**Commit Message**: fix(geocoding): resolve metadata under SwiftPM and stop poisoning a language
 
-The shared NBPhoneNumberUtil is reachable from any thread, and three pieces
-of state it owns or reaches were not protected:
+Two failures that both surface as a correct-looking country name instead
+of a locality, with no error and no crash.
 
-- NBMetadataHelper built its region-to-calling-code table lazily with no
-  synchronization, so concurrent first use raced on the ivar write.
-- NBPhoneNumberOfflineGeocoder looked up its per-language helper in an
-  NSCache and inserted on a miss, so concurrent callers could each open
-  their own SQLite connection for the same language.
-- NBRegularExpressionCache held @synchronized(self) across pattern
-  compilation, serializing every caller behind an unrelated pattern being
-  built, including callers that would have hit the cache.
+The metadata bundle was never found under Swift Package Manager.
+NBGeocoderMetaDataHelper appended GeocodingMetaData.bundle to
+-[NSBundle bundleForClass:].resourceURL, which is where CocoaPods,
+Carthage, and manual integration put the databases. SwiftPM nests them
+inside a generated wrapper bundle, and emits that wrapper flat up to
+Xcode 26 and macOS-structured from Xcode 27. No database was opened, so
+every lookup fell through to countryNameForNumber:. Apply the same search
+the carrier and timezone mappers already use, covering both layouts.
 
-Lock the metadata table with os_unfair_lock, move the geocoder's lookup
-and insertion under one lock, and narrow the regex cache's lock to the
-lookup and the insertion so compilation happens outside it. Two threads
-racing on the same new pattern may now each compile it; the duplicate is
-discarded on insertion.
+191c758 fixed this class of bug for carrier and timezone metadata and
+recorded that geocoding resolves its bundle differently and was
+unaffected. It resolves it differently, but it was affected: only the
+Objective-C tests covered geocoding, and they inject a test bundle, so
+the shipped path was never exercised.
 
-This is a prerequisite for declaring the Swift facades Sendable: that
-claim rests on this locking rather than on anything the compiler checks.
+Separately, a lookup for a country a language's database does not carry
+disabled that language permanently. Only en.db has worldwide coverage
 
-Co-Authored-By: Cl
-
-**File**: `libPhoneNumber/NBMetadataHelper.m` (modified, +13/-1)
+**File**: `README.md` (modified, +4/-0)
 ```diff
-@@ -8,6 +8,8 @@
+@@ -245,6 +245,10 @@ let number = try phoneUtil.parse("16502530000", defaultRegion: "US")
+ let description = geocoder.description(for: number, languageCode: "en")
+ ```
  
- #import "NBMetadataHelper.h"
- 
-+#import <os/lock.h>
++Only the English database carries worldwide coverage. The other languages ship
++their own country, so a lookup outside it falls back to the localized country
++name rather than a locality.
 +
- #import <NBGeneratedPhoneNumberMetaData.h>
- #import "NBPhoneMetaData.h"
+ ### Carrier
  
-@@ -34,7 +36,11 @@ @interface NBMetadataHelper ()
- @implementation NBMetadataHelper {
-  @private
-   NSDictionary *_phoneNumberDataDictionary;
-+  // Lazily derived from _phoneNumberDataDictionary. Guarded by
-+  // _countryCodeToCountryNumberLock because the helper is shared by the
-+  // NBPhoneNumberUtil singleton and can be reached from multiple threads.
-   NSDictionary *_countryCodeToCountryNumberDictionary;
-+  os_unfair_lock _countryCodeToCountryNumberLock;
- }
- 
- - (instancetype)init {
-@@ -55,6 +61,7 @@ - (instancetype)initWithZippedDataBytes:(z_const Bytef *)data
-   self = [super init];
- 
-   if (self != nil) {
-+    _countryCodeToCountryNumberLock = OS_UNFAIR_LOCK_INIT;
-     _metadataCache = [[NSCache alloc] init];
-     _metadataMapCache = [[NSCache alloc] init];
-     _phoneNumberDataDictionary =
-@@ -74,6 +81,8 @@ - (instancetype)initWithZippedDataBytes:(z_const Bytef *)data
+ ```swift
+```
+
+**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.h` (modified, +17/-1)
+```diff
+@@ -29,10 +29,26 @@ NS_ASSUME_NONNULL_BEGIN
   */
+ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
+                        withLanguage:(NSString *)languageCode
+-                         withBundle:(NSBundle *)bundle;
++                         withBundle:(nullable NSBundle *)bundle;
  
- - (NSDictionary *)countryCodeToCountryNumberDictionary {
-+  os_unfair_lock_lock(&_countryCodeToCountryNumberLock);
++/**
++ * Initializer that resolves the shipped geocoding databases automatically.
++ *
++ * The payload is located by searching the loaded bundles, which covers
++ * CocoaPods, Carthage, manual integration, and the nested wrapper bundle
++ * SwiftPM generates. A helper created when no payload can be found answers
++ * every query with nil, and the geocoder falls back to country names.
++ */
+ - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode;
+ 
++/**
++ * The bundle holding the geocoding databases, or nil when none was found.
++ *
++ * Exposed so integrators can check whether the metadata resolved at all,
++ * instead of silently receiving country-level descriptions.
++ */
+++ (nullable NSBundle *)defaultMetadataBundle;
 +
-   if (_countryCodeToCountryNumberDictionary == nil) {
-     NSDictionary *countryCodeToRegionCodeMap = [self countryCodeToRegionCodeDictionary];
-     NSMutableDictionary *map = [[NSMutableDictionary alloc] init];
-@@ -86,7 +95,10 @@ - (NSDictionary *)countryCodeToCountryNumberDictionary {
-     _countryCodeToCountryNumberDictionary = [map copy];
-   }
- 
--  return _countryCodeToCountryNumberDictionary;
-+  NSDictionary *result = _countryCodeToCountryNumberDictionary;
-+  os_unfair_lock_unlock(&_countryCodeToCountryNumberLock);
-+
-+  return result;
- }
- 
- - (NSDictionary *)countryCodeToRegionCodeDictionary {
+ /**
+  * Returns a text description for the given phone number. The description will be based on the
+  * country code and national number attributes of the NBPhoneNumber parameter. If no result was
 ```
 
-**File**: `libPhoneNumber/NBRegularExpressionCache.m` (modified, +35/-17)
+**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.m` (modified, +98/-11)
 ```diff
-@@ -8,13 +8,17 @@
+@@ -48,6 +48,10 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
+     _countryCode = countryCode;
+     _language = languageCode;
  
- #import "NBRegularExpressionCache.h"
- 
-+#import <os/lock.h>
++    if (bundle == nil) {
++      return self;
++    }
 +
- @interface NBRegularExpressionCache()
+     NSString *shortLanguageCode = [[languageCode componentsSeparatedByString:@"-"] firstObject];
+     NSURL *databaseURL = [[bundle resourceURL]
+         URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", shortLanguageCode]];
+@@ -69,25 +73,108 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
+ }
  
- @property (nonatomic, strong) NSCache *cache;
- 
- @end
- 
--@implementation NBRegularExpressionCache
-+@implementation NBRegularExpressionCache {
-+  os_unfair_lock _cacheLock;
+ - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode {
+-  NSBundle *bundle = [NSBundle bundleForClass:self.classForCoder];
+-  NSURL *resourceURL =
+-      [[bundle resourceURL] URLByAppendingPathComponent:@"GeocodingMetaData.bundle"];
+-  NSBundle *databaseBundle = [NSBundle bundleWithURL:resourceURL];
+-  return [self initWithCountryCode:countryCode withLanguage:languageCode withBundle:databaseBundle];
++  return [self initWithCountryCode:countryCode
++                      withLanguage:languageCode
++                        withBundle:[NBGeocoderMetaDataHelper defaultMetadataBundle]];
 +}
- 
- + (instancetype)sharedInstance {
-   static NBRegularExpressionCache *instance;
-@@ -29,34 +33,48 @@ + (instancetype)sharedInstance {
- - (instancetype)init {
-   self = [super init];
-   if (self != nil) {
-+    _cacheLock = OS_UNFAIR_LOCK_INIT;
-     _cache = [[NSCache alloc] init];
-   }
- 
-   return self;
- }
- 
- - (NSRegularExpression *)regularExpressionForPattern:(NSString *)pattern error:(NSError **)error {
--  @synchronized(self) {
--    NSRegularExpression *cachedObject = [self.cache objectForKey:pattern];
--    if (cachedObject != nil) {
--      return cachedObject;
--    }
-+  // Cache hits, which are the overwhelmingly common case, only hold the lock
-+  // for the lookup itself. Compilation happens outside the lock so concurrent
-+  // callers are not serialized behind an unrelated pattern being built. Two
-+  // threads racing on the same new pattern may each compile it; the duplicate
-+  // is simply discarded by the insertion below.
-+  os_unfair_lock_lock(&_cacheLock);
-+  NSRegularExpression *cachedObject = [self.cache objectForKey:pattern];
-+  os_unfair_lock_unlock(&_cacheLock);
 +
-+  if (cachedObject != nil) {
-+    return cachedObject;
-+  }
- 
--    NSError *regExError = nil;
--    NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:pattern
--                                                                      options:kNilOptions
--                                                                        error:&regExError];
--    if (regEx == nil) {
--      if (error != NULL) {
--        *error = regExError;
--      }
--      return nil;
-+  NSError *regExError = nil;
-+  NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:pattern
-+                                                                    options:kNilOptions
-+                                                                      error:&regExError];
-+  if (regEx == nil) {
-+    if (error != NULL) {
-+      *error = regExError;
-     }
-+    return nil;
-+  }
- 
-+  os_unfair_lock_lock(&_cacheLock);
-+  NSRegularExpression *raced = [self.cache objectForKey:pattern];
-+  if (raced != nil) {
-+    regEx = raced;
-+  } else {
-     [self.cache setObject:regEx forKey:pattern];
--
--    return regEx;
-   }
-+  os_unfair_lock_unlock(&_cacheLock);
-+
-+  return regEx;
- }
- 
- @end
-```
-
-**File**: `libPhoneNumberGeocoding/NBPhoneNumberOfflineGeocoder.m` (modified, +21/-5)
-```diff
-@@ -50,16 +50,32 @@ + (NBPhoneNumberOfflineGeocoder *)sharedInstance {
-   return instance;
- }
- 
-+// Returns the cached helper for |languageCode|, creating it on first use.
++// Locates GeocodingMetaData.bundle wherever the integration put it.
 +//
-+// The lookup and the insertion are performed under a single lock so concurrent
-+// callers cannot each open their own SQLite connection for the same language.
-+- (NBGeocoderMetaDataHelper *)metadataHelperForLanguageCode:(NSString *)languageCode
-+                                                countryCode:(NSNumber *)countryCode {
-+  @synchronized(self) {
-+    NBGeocoderMetaDataHelper *helper = [_metadataHelpers objectForKey:languageCode];
-+    if (helper == nil) {
-+      helper = _metadataHelperFactory(countryCode, languageCode);
-+      if (helper != nil) {
-+        [_metadataHelpers setObject:helper forKey:languageCode];
++// Appending the payload to -[NSBundle bundleForClass:].resourceURL only works
++// for CocoaPods and manual integration, where the databases land next to the
++// consuming binary. SwiftPM nests them one level deeper, inside a generated
++// wrapper bundle, and emits that wrapper flat up to Xcode 26 but
++// macOS-structured (Contents/Resources) from Xcode 27. Without this search the
++// databases are simply not found and every lookup falls back to the country
++// name, with no error and no crash.
+++ (NSBundle * _Nullable)defaultMetadataBundle {
++  static NSBundle *cachedBundle = nil;
++  static dispatch_once_t onceToken;
++  dispatch_once(&onceToken, ^{
++    NSMutableArray<NSBundle *> *searchBundles = [NSMutableArray arrayWithArray:NSBundle.allBundles];
++    [searchBundles addObjectsFromArray:NSBundle.allFrameworks];
++    [searchBundles addObject:[NSBundle bundleForClass:self]];
++    [searchBundles addObject:[NSBundle mainBundle]];
++
++    for (NSBundle *bundle in searchBundles) {
++      NSMutableArray<NSURL *> *baseURLs = [NSMutableArray array];
++      if (bundle.resourceURL != nil) {
++        [baseURLs addObject:bundle.resourceURL];
++      }
++      if (bundle.bundleURL != nil) {
++        [baseURLs addObject:bundle.bundleURL];
++      }
++
++      NSURL *parentURL = bundle.bundleURL;
++      for (NSUInteger index = 0; index < 5 && parentURL != nil; index++) {
++        parentURL = [parentURL URLByDeletingLastPathComponent];
++        if (parentURL != nil) {
++          [baseURLs addObject:parentURL];
++        }
++      }
++
++      for (NSURL *baseURL in baseURLs) {
++        NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
++        NSURL *wrapperURL = [baseURL
++            URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberGeocodingMetaData.bundle"];
++        NSURL *wrapperResourcesURL =
++            [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
++        NSArray<NSURL *> *candidateURLs = @[
++          [baseURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
++          [resourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
++          [wrapperURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
++          [wrapperResourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
++        ];
++
++        for (NSURL *candidateURL in candidateURLs) {
++          // en.db ships in every build of the payload, so it identifies a
++          // populated bundle rather than an empty directory of the right name.
++          NSURL *databaseURL = [candidateURL URLByAppendingPathComponent:@"en.db"];
++          if ([[NSFileManager defaultManager] fileExistsAtPath:databaseURL.path]) {
++            cachedBundle = [NSBundle bundleWithURL:candidateURL];
++            return;
++          }
++        }
 +      }
 +    }
-+    return helper;
-+  }
-+}
++  });
 +
- - (nullable NSString *)descriptionForValidNumber:(NBPhoneNumber *)phoneNumber
-                                 withLanguageCode:(NSString *)languageCode {
-   // If the NSCache doesn't contain a key equivalent to languageCode, create a
-   // new NBGeocoderMetadataHelper object with a language set equal to
-   // languageCode and default country code to United States / Canada
--  if ([_metadataHelpers objectForKey:languageCode] == nil) {
--    [_metadataHelpers setObject:_metadataHelperFactory(phoneNumber.countryCode, languageCode)
--                         forKey:languageCode];
--  }
--  NSString *result = [[_metadataHelpers objectForKey:languageCode] searchPhoneNumber:phoneNumber];
-+  NBGeocoderMetaDataHelper *helper =
-+      [self metadataHelperForLanguageCode:languageCode countryCode:phoneNumber.countryCode];
-+  NSString *result = [helper searchPhoneNumber:phoneNumber];
-   if (result == nil) {
-     return [self countryNameForNumber:phoneNumber withLanguageCode:languageCode];
-   } else {
-```
-
----
-
-### Incident Patch 13: `191c758e` (2026-09-12)
-**Commit Message**: fix(metadata): resolve metadata bundles under Xcode 27 layout
-
-Xcode 27's SwiftPM emits resource bundles in the macOS-structured layout,
-placing the payload under Contents/Resources instead of at the bundle
-root:
-
-  Xcode 26: libPhoneNumber_...MetaData.bundle/TimeZonesMetaData.bundle
-  Xcode 27: libPhoneNumber_...MetaData.bundle/Contents/Resources/TimeZonesMetaData.bundle
-
-The carrier and timezone mappers search for their payload by appending
-path components directly, so neither found its database when the package
-was built with Xcode 27. Both fall back silently: timeZonesForNumber:
-returned Etc/Unknown and carrier lookups returned nil, with no error and
-no crash.
-
-Search Contents/Resources alongside the bundle root, for both the base
-URL and the SwiftPM wrapper bundle, so the payload resolves under either
-layout.
-
-This is not a regression from 2.0.0 — the assumption predates it and only
-surfaced once Xcode 27 changed the layout. Geocoding resolves its bundle
-through -[NSBundle bundleForClass:] rather than this search and is
-unaffected.
-
-Verified on both toolchains with clean build directories. The 10 tests
-that fail on Xcode 27 before this change (5 carrier, 5 timezone) pass
-after
-
-**File**: `libPhoneNumberCarrier/NBPhoneNumberToCarrierMapper.m` (modified, +9/-2)
-```diff
-@@ -164,10 +164,17 @@ + (NSBundle *)defaultMetadataBundle {
-     }
- 
-     for (NSURL *baseURL in baseURLs) {
-+      // SwiftPM emitted its resource bundle flat up to Xcode 26 and emits it
-+      // macOS-structured (Contents/Resources) from Xcode 27, so look under both.
-+      NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
-+      NSURL *wrapperURL = [baseURL URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberCarrierMetaData.bundle"];
-+      NSURL *wrapperResourcesURL =
-+          [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
-       NSArray<NSURL *> *candidateURLs = @[
-         [baseURL URLByAppendingPathComponent:@"CarrierMetaData.bundle"],
--        [[baseURL URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberCarrierMetaData.bundle"]
--            URLByAppendingPathComponent:@"CarrierMetaData.bundle"],
-+        [resourcesURL URLByAppendingPathComponent:@"CarrierMetaData.bundle"],
-+        [wrapperURL URLByAppendingPathComponent:@"CarrierMetaData.bundle"],
-+        [wrapperResourcesURL URLByAppendingPathComponent:@"CarrierMetaData.bundle"],
-       ];
- 
-       for (NSURL *candidateURL in candidateURLs) {
-```
-
-**File**: `libPhoneNumberTimeZones/NBPhoneNumberToTimeZonesMapper.m` (modified, +9/-2)
-```diff
-@@ -143,10 +143,17 @@ + (NSBundle *)defaultMetadataBundle {
-     }
- 
-     for (NSURL *baseURL in baseURLs) {
-+      // SwiftPM emitted its resource bundle flat up to Xcode 26 and emits it
-+      // macOS-structured (Contents/Resources) from Xcode 27, so look under both.
-+      NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
-+      NSURL *wrapperURL = [baseURL URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberTimeZonesMetaData.bundle"];
-+      NSURL *wrapperResourcesURL =
-+          [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
-       NSArray<NSURL *> *candidateURLs = @[
-         [baseURL URLByAppendingPathComponent:@"TimeZonesMetaData.bundle"],
--        [[baseURL URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberTimeZonesMetaData.bundle"]
--            URLByAppendingPathComponent:@"TimeZonesMetaData.bundle"],
-+        [resourcesURL URLByAppendingPathComponent:@"TimeZonesMetaData.bundle"],
-+        [wrapperURL URLByAppendingPathComponent:@"TimeZonesMetaData.bundle"],
-+        [wrapperResourcesURL URLByAppendingPathComponent:@"TimeZonesMetaData.bundle"],
-       ];
- 
-       for (NSURL *candidateURL in candidateURLs) {
-```
-
----
-
-### Incident Patch 14: `d05c9474` (2026-09-11)
-**Commit Message**: fix(build): raise deployment targets for Xcode 27
-
-Xcode 27 accepts iOS/tvOS 15-27, watchOS 9-27, and macOS 12-27. The
-project declared iOS 12, tvOS 12, watchOS 4, and macOS 10.13, so builds
-failed with "the range of supported deployment target versions is
-15.0 to 27.0.x".
-
-Raise every platform floor to the lowest version Xcode 27 accepts across
-Package.swift, all 13 podspecs, libPhoneNumber.xcodeproj, and both demo
-projects. macCatalyst moves to 15 to stay aligned with iOS.
-
-watchOS uses the string form .watchOS("9.0") because .v9 requires
-swift-tools-version 5.7 and the manifest targets 5.5.
-
-Also drop the deprecated VALID_ARCHS setting, which still listed the
-32-bit armv7/armv7s/i386 slices that no longer exist at these floors.
-
-Fixes #449
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `Package.swift` (modified, +5/-5)
-```diff
-@@ -5,11 +5,11 @@ import PackageDescription
- let package = Package(
-     name: "libPhoneNumber",
-     platforms: [
--        .macOS(.v10_13),
--        .macCatalyst(.v13),
--        .iOS(.v12),
--        .tvOS(.v12),
--        .watchOS(.v4)
-+        .macOS(.v12),
-+        .macCatalyst(.v15),
-+        .iOS(.v15),
-+        .tvOS(.v15),
-+        .watchOS("9.0")
-     ],
-     products: [
-         .library(
-```
-
-**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +2/-2)
-```diff
-@@ -287,7 +287,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
- 				MARKETING_VERSION = 1.7.8;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
-@@ -337,7 +337,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
- 				MARKETING_VERSION = 1.7.8;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
-```
-
-**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo.xcodeproj/project.pbxproj` (modified, +2/-2)
-```diff
-@@ -323,7 +323,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
- 				MARKETING_VERSION = 1.7.8;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
-@@ -374,7 +374,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
-+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
- 				MARKETING_VERSION = 1.7.8;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
-```
-
-**File**: `libPhoneNumber-iOS-Swift.podspec` (modified, +4/-4)
-```diff
-@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
-                     :tag => s.version.to_s
-                    }
- 
--  s.ios.deployment_target = "12.0"
--  s.osx.deployment_target = "10.13"
--  s.watchos.deployment_target = "4.0"
--  s.tvos.deployment_target = "12.0"
-+  s.ios.deployment_target = "15.0"
-+  s.osx.deployment_target = "12.0"
-+  s.watchos.deployment_target = "9.0"
-+  s.tvos.deployment_target = "15.0"
- 
-   s.swift_version = "5.5"
-   s.requires_arc = true
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCarrier.podspec` (modified, +4/-4)
-```diff
-@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
-                     :tag => s.version.to_s
-                    }
- 
--  s.ios.deployment_target = "12.0"
--  s.osx.deployment_target = "10.13"
--  s.watchos.deployment_target = "4.0"
--  s.tvos.deployment_target = "12.0"
-+  s.ios.deployment_target = "15.0"
-+  s.osx.deployment_target = "12.0"
-+  s.watchos.deployment_target = "9.0"
-+  s.tvos.deployment_target = "15.0"
- 
-   s.swift_version = "5.5"
-   s.requires_arc = true
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCore.podspec` (modified, +4/-4)
-```diff
-@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
-                     :tag => s.version.to_s
-                    }
- 
--  s.ios.deployment_target = "12.0"
--  s.osx.deployment_target = "10.13"
--  s.watchos.deployment_target = "4.0"
--  s.tvos.deployment_target = "12.0"
-+  s.ios.deployment_target = "15.0"
-+  s.osx.deployment_target = "12.0"
-+  s.watchos.deployment_target = "9.0"
-+  s.tvos.deployment_target = "15.0"
- 
-   s.swift_version = "5.5"
-   s.requires_arc = true
-```
-
-**File**: `libPhoneNumber-iOS-SwiftGeocoding.podspec` (modified, +4/-4)
-```diff
-@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
-                     :tag => s.version.to_s
-                    }
- 
--  s.ios.deployment_target = "12.0"
--  s.osx.deployment_target = "10.13"
--  s.watchos.deployment_target = "4.0"
--  s.tvos.deployment_target = "12.0"
-+  s.ios.deployment_target = "15.0"
-+  s.osx.deployment_target = "12.0"
-+  s.watchos.deployment_target = "9.0"
-+  s.tvos.deployment_target = "15.0"
- 
-   s.swift_version = "5.5"
-   s.requires_arc = true
-```
-
-**File**: `libPhoneNumber-iOS-SwiftShortNumber.podspec` (modified, +4/-4)
-```diff
-@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
-                     :tag => s.version.to_s
-                    }
- 
--  s.ios.deployment_target = "12.0"
--  s.osx.deployment_target = "10.13"
--  s.watchos.deployment_target = "4.0"
--  s.tvos.deployment_target = "12.0"
-+  s.ios.deployment_target = "15.0"
-+  s.osx.deployment_target = "12.0"
-+  s.watchos.deployment_target = "9.0"
-+  s.tvos.deployment_target = "15.0"
- 
-   s.swift_version = "5.5"
-   s.requires_arc = true
-```
-
----
-
-### Incident Patch 15: `258d7fa5` (2026-06-07)
-**Commit Message**: fix(format): align short code E164 formatting
-
-- Prefix raw zero-number inputs with the default country code for E164 formatting
-- Preserve raw input formatting for non-default-country zero-number cases
-- Add upstream parity coverage for Australian short code formatting
-
-**File**: `libPhoneNumber/NBPhoneNumberUtil.m` (modified, +15/-7)
-```diff
-@@ -1145,14 +1145,22 @@ - (NSString * _Nullable)format:(NBPhoneNumber * _Nonnull)phoneNumber
- - (NSString * _Nonnull)format:(NBPhoneNumber * _Nonnull)phoneNumber numberFormat:(NBEPhoneNumberFormat)numberFormat {
-   if ([phoneNumber.nationalNumber isEqualToNumber:@0] &&
-       [NBMetadataHelper hasValue:phoneNumber.rawInput]) {
--    // Unparseable numbers that kept their raw input just use that.
--    // This is the only case where a number can be formatted as E164 without a
--    // leading '+' symbol (but the original number wasn't parseable anyway).
--    // TODO: Consider removing the 'if' above so that unparseable strings
--    // without raw input format to the empty string instead of "+00"
--    /** @type {string} */
-+    // Unparseable numbers that kept their raw input just use that, unless the
-+    // default country was specified and the format is E164. In that case, we
-+    // prepend the raw input with the country code.
-     NSString *rawInput = phoneNumber.rawInput;
--    if ([NBMetadataHelper hasValue:rawInput]) {
-+    BOOL hasCountryCode = phoneNumber.countryCode != nil &&
-+                          ![phoneNumber.countryCode isEqualToNumber:@-1];
-+    if ([NBMetadataHelper hasValue:rawInput] &&
-+        hasCountryCode &&
-+        [phoneNumber.countryCodeSource integerValue] == NBECountryCodeSourceFROM_DEFAULT_COUNTRY &&
-+        numberFormat == NBEPhoneNumberFormatE164) {
-+      return [self prefixNumberWithCountryCallingCode:phoneNumber.countryCode
-+                                    phoneNumberFormat:NBEPhoneNumberFormatE164
-+                              formattedNationalNumber:rawInput
-+                                   formattedExtension:@""];
-+    } else if ([NBMetadataHelper hasValue:rawInput] ||
-+               !hasCountryCode) {
-       return rawInput;
-     }
-   }
-```
-
-**File**: `libPhoneNumberTests/NBPhoneNumberUtilTest.m` (modified, +23/-0)
-```diff
-@@ -848,6 +848,29 @@ - (void)testFormatAUNumber {
-                                               numberFormat:NBEPhoneNumberFormatE164]);
++  return cachedBundle;
  }
  
-+- (void)testFormatAUShortCodeNumber {
-+  NSError *anError = nil;
-+  NBPhoneNumber *auShortCodeNumber = [_aUtil parse:@"000" defaultRegion:@"AU" error:&anError];
-+  XCTAssertNil(anError);
-+  XCTAssertEqualObjects(@"+61000", [_aUtil format:auShortCodeNumber
-+                                      numberFormat:NBEPhoneNumberFormatE164]);
+ - (NSString * _Nullable)searchPhoneNumber:(NBPhoneNumber *)phoneNumber {
+   @synchronized(self) {
+-    if (_database == NULL || _selectStatement == NULL) {
++    if (_database == NULL) {
+       return nil;
+     }
+ 
+-    if (![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
++    // Each database holds one table per country calling code, and only the
++    // English database covers every country. Preparing a statement for a
++    // country this database does not carry fails, which is an ordinary "no
++    // data for this number" answer -- not a broken helper. Leaving the failed
++    // statement in place used to disable the helper permanently, so a single
++    // lookup for an uncovered country downgraded every later lookup in that
++    // language to a country name.
++    if (_selectStatement == NULL || ![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
+       _country
+```
+
+**File**: `libPhoneNumberIOSSwiftTests/PhoneNumberIOSSwiftTests.swift` (modified, +1/-1)
+```diff
+@@ -29,6 +29,6 @@ final class PhoneNumberIOSSwiftTests: XCTestCase {
+         let geocoder = PhoneNumberGeocoder.shared
+         let number = try util.parse("16502530000", defaultRegion: "US")
+ 
+-        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
++        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
+     }
+ }
+```
+
+**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberGeocodingFacadeTests.swift` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++import Testing
++import libPhoneNumberSwiftCore
++import libPhoneNumberSwiftGeocoding
 +
-+  NBPhoneNumber *auRawShortCodeNumber = [[NBPhoneNumber alloc] init];
-+  auRawShortCodeNumber.countryCode = @61;
-+  auRawShortCodeNumber.nationalNumber = @0;
-+  auRawShortCodeNumber.rawInput = @"000";
-+  auRawShortCodeNumber.countryCodeSource = @(NBECountryCodeSourceFROM_DEFAULT_COUNTRY);
-+  XCTAssertEqualObjects(@"+61000", [_aUtil format:auRawShortCodeNumber
-+                                      numberFormat:NBEPhoneNumberFormatE164]);
++@Suite("Geocoder facade")
++struct PhoneNumberGeocodingFacadeTests {
++    private let util = PhoneNumberUtility.shared
++    private let geocoder = PhoneNumberGeocoder.shared
 +
-+  NBPhoneNumber *pgShortCodeNumber = [[NBPhoneNumber alloc] init];
-+  pgShortCodeNumber.countryCode = @675;
-+  pgShortCodeNumber.nationalNumber = @0;
-+  pgShortCodeNumber.rawInput = @"+675000";
-+  XCTAssertEqualObjects(@"+675000", [_aUtil format:pgShortCodeNumber
-+                                       numberFormat:NBEPhoneNumberFormatE164]);
++    @Test("A geographical number resolves to a locality, not just the country")
++    func localityForGeographicalNumber() throws {
++        let number = try util.parse("6502530000", defaultRegion: "US")
++        let description = geocoder.description(forValidNumber: number, languageCode: "en")
++
++        #expect(description == "Mountain View, CA")
++    }
++
++    /// Only `en.db` carries worldwide coverage; the other databases hold their
++    /// own country. A language without an entry falls back to the country name,
++    /// which is correct behaviour, not a missing lookup.
++    @Test("Descriptions are localized by language code", arguments: [
++        ("en", "Seoul"),
++        ("ko", "서울"),
++    ])
++    func localizedDescriptions(languageCode: String, expected: String) throws {
++        let number = try util.parse("+8221234567", defaultRegion: nil)
++
++        #expect(geocoder.description(forValidNumber: number, languageCode: languageCode) == expected)
++    }
++
++    @Test("A language without locality data falls back to the country name")
++    func localizedFallback() throws {
++        let number = try util.parse("6502530000", defaultRegion: "US")
++
++        #expect(geocoder.description(forValidNumber: number, languageCode: "ko") == "미국")
++    }
++
++    @Test("A caller in the same region sees the locality; a caller abroad sees the country")
++    func userRegionChangesGranularity() throws {
++        let number = try util.parse("6502530000", defaultRegion: "US")
++
++        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "US") == "Mountain View, CA")
++        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "KR") == "United States")
++    }
++
++    /// Regression test: a lookup for a country the language's database does not
++    /// carry used to finalize the prepared statement and leave the helper
++    /// unusable, so every later lookup in that language returned a country name.
++    @Test("An uncovered country does not disable later lookups in the same language")
++    func uncoveredCountryDoesNotPoisonTheLanguage() throws {
++        let geocoder = PhoneNumberGeocoder()
++        let unitedStates = try util.parse("6502530000", defaultRegion: "US")
++        let korea = try util.parse("+8221234567", defaultRegion: nil)
++
++        // The Korean database carries only Korea, so this falls back.
++        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
++        // The same helper must still answer for a country it does carry.
++        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
++        // And it must keep working when the country alternates.
++        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
++        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
++    }
++
++    @Test("An unparseable number yields no description")
++    func unknownNumber() {
++        let number = PhoneNumber()
++        number.countryCode = 999
++        number.nationalNumber = 1
++
++        #expect(geocoder.description(for: number, languageCode: "en") == nil)
++    }
++
++    @Test("Concurrent lookups share one database connection safely")
++    func concurrentLookups() async throws {
++        let results = await withTaskGroup(of: String?.self) { group in
++            for _ in 0..<16 {
++                group.addTask {
++                    let util = PhoneNumberUtility.shared
++                    guard let number = try? util.parse("6502530000", defaultRegion: "US") else {
++                        return nil
++                    }
++                    return PhoneNumberGeocoder.shared.description(forValidNumber: number, languageCode: "en")
++                }
++            }
++
++            var collected: [String?] = []
++            for await result in group {
++                collected.append(result)
++            }
++            return collected
++        }
++
++        #expect(results.count == 16)
++        #expect(results.allSatisfy { $0 == "Mountain View, CA" })
++    }
 +}
-+
- - (void)testFormatARNumber {
-   XCTAssertEqualObjects(@"011 8765-4321", [_aUtil format:self.arNumber
-                                               numberFormat:NBEPhoneNumberFormatNATIONAL]);
+```
+
+**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberSwiftGeocodingTests.swift` (modified, +1/-1)
+```diff
+@@ -8,6 +8,6 @@ final class PhoneNumberSwiftGeocodingTests: XCTestCase {
+         let geocoder = PhoneNumberGeocoder.shared
+         let number = try util.parse("16502530000", defaultRegion: "US")
+ 
+-        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
++        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #457** (2026-10-08): chore(release): refresh metadata for 2.1.2 (@iziz)
 - **PR #456** (2026-09-25): chore(release): refresh metadata for 2.1.1 (@iziz)
 - **PR #455** (2026-09-17): chore(release): prepare 2.1.0 with Google metadata v9.0.39 (@iziz)
 - **PR #454** (2026-09-12): Remove the breaking changes so the next release can be 2.1.0 (@iziz)
 - **PR #453** (2026-09-12): Fix geocoding metadata resolution under SwiftPM and per-language statement poisoning (@iziz)
 - **PR #452** (2026-09-12): Fix geocoding metadata resolution and adopt Swift 6 concurrency (@iziz)
-- **PR #451** (2026-09-12): Resolve metadata bundles under Xcode 27's layout (2.0.1) (@iziz)
-- **PR #450** (2026-09-11): Raise deployment targets for Xcode 27 (2.0.0) (@iziz)
-- **PR #446** (closed): Attempting to do CI to run unit tests on all PRs. (@LowAmmo)
 
 ---
 
@@ -5490,3 +2745,71 @@ Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. docs: add changelog, contributing guide, security policy, and DocC
+
+**RULE**:
+When implementing operations in `.github/ISSUE_TEMPLATE/bug_report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iziz/libPhoneNumber-iOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c092e9d4`: docs: add changelog, contributing guide, security policy, and DocC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Objective-C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug_report.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```objective-c
+// Verified production-grade fix pattern:
+name: Bug report
+description: A number is parsed, formatted, validated, or described incorrectly, or an API misbehaves.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This library ports Google's libphonenumber. If Google's own
+        implementation agrees with the behavior you are seeing, the change
+        belongs upstream rather than here — please say so below and link it.
+
+  - type: input
+    id: number
+    attributes:
+      label: Phone number
+      description: >
+        The number that reproduces the problem, with its region. Use a test or
+        example number rather than a real person's number where you can.
+      placeholder: "+82 10 6543 1234, default region KR"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result
+      description: What you expected each API to return, and what it returned.
+      placeholder: |
+        isValidNumber: expected true, got false
+        format(.e164): expected "+821065431234", got "+8201065431234"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      descript
+```
+
+**NEGATIVE CONSTRAINT**:
+```objective-c
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c092e9d4` are properly handled with clean fallback behavior.

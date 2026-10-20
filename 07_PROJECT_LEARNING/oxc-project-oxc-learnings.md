@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `ce6a0880`  
+> **Source Version**: `9d67cb94`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:34:49.417Z  
+> **Timestamp**: 2026-10-20T00:44:00.536Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:34:49.146Z  
+> **Harvest Timestamp**: 2026-10-20T00:43:59.237Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23113 stars
+- **Stars / Engagement**: 23119 stars
 
 ---
 
@@ -1229,14 +1229,11 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #27960** (2026-10-19): **oxfmt: resolve the CLI config for a file from the Node API**
-  *Symptoms*: Hey! My suggestion is a way to format a string with the same options the `oxfmt` CLI would use for a given path. `format()` only uses the options passed to it, so any tool that generates code in memory and wants it to match the project's formatting has to find and merge the config itself.  This comes up for code generators. In Backstage, `@backstage/repo-tools` generates API reports and OpenAPI clients and formats them with the project's formatter before comparing or writing them ([backstage/backstage#36222](https://github.com/backstage/backstage/pull/36222)). With Prettier we call `resolveConfig()` and `format()` in-process. With oxfmt, the only way I found to get the CLI's config is to write each file to a temp directory and run the CLI on it.  That costs a process start per file, around 45 to 90 ms depending on the Node.js version, against well under 1 ms for `format()` itself. Over the 67 API reports in the Backstage repo, it adds about 6 seconds to a run that takes 19 seconds with Prettier.  Doing the resolution ourselves would mean reimplementing config file lookup, loading `oxfmt.config.ts`, `extends`, `overrides`, and `.editorconfig`. That's oxfmt's logic, and a copy of it would fall behind.  Something like Prettier's [`resolveConfig`](https://prettier.io/docs/api#prettierresolveconfigfileurlorpath--options) would solve it:  ```ts export declare function resolveConfig(   filePath: string, ): Promise<FormatConfig | null>; ```  It would return the merged options the CLI
+- **Issue #27980** (2026-10-19): **chore(deps): update dependency oxlint to v1.89.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [oxlint](https://oxc.rs/docs/guide/usage/linter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxlint)) | [`1.88.0` → `1.89.0`](https://renovatebot.com/diffs/npm/oxlint/1.88.0/1.89.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxlint/1.89.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/oxlint/1.89.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/oxlint/1.88.0/1.89.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxlint/1.88.0/1.89.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxlint)</summary>  ### [`v1.89.0`](https://redirect.github.com/oxc-project/oxc/blob/HEAD/npm/oxlint/CHANGELOG.md#1890---2026-10-19)  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxlint_v1.88.0...oxlint_v1.89.0)  ##### 🐛 Bug Fixes  - [`9a424c2`](https://redirect.github.com/oxc-project/oxc/commit/9a424c2) oxlint,oxfmt: Correct Node.js TypeScript support range ([#&#8203;27699](https://redirect.github.com/oxc-project/oxc/issues/27699)) (camc314)  </details>  ---  ### Configuration  📅 **Schedule
 
-- **Issue #27957** (2026-10-19): **fix(formatter_tests): skip conformance spec calls with non-literal options**
-  *Symptoms*: Skip invalid spec like `printWidth: Infinity`. 
-  **Post-Mortem & Fix Analysis**:
-  > * **#27957** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27957?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27957?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-in-stack-comment&prId=27957).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in 
-  > ### Merge activity  * **Oct 19, 7:50 AM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Oct 19, 7:56 AM UTC**: `leaysgur` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Oct 19, 8:02 AM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+- **Issue #27979** (2026-10-19): **chore(deps): update dependency oxfmt to ^0.74.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [oxfmt](https://oxc.rs/docs/guide/usage/formatter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt)) | [`^0.73.0` → `^0.74.0`](https://renovatebot.com/diffs/npm/oxfmt/0.73.0/0.74.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.74.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/oxfmt/0.74.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/oxfmt/0.73.0/0.74.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.73.0/0.74.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxfmt)</summary>  ### [`v0.74.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.74.0): oxfmt v0.74.0  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.73.0...oxfmt_v0.74.0)  ##### 🐛 Bug Fixes  - [`e236de0`](https://redirect.github.com/oxc-project/oxc/commit/e236de0) formatter_tests: Skip conformance spec calls with non-literal options ([#&#8203;27957](https://redirect.github.com/oxc-project/oxc/issues/27957)) (leaysgur) - [`782ab6e`](https://redirect.github.com/oxc-pro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1253,279 +1250,228 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c22a9b27` (2026-10-19)
-**Commit Message**: fix(formatter): treat static block with only empty statements as empty (#27945)
+### Incident Patch 1: `0298062d` (2026-10-19)
+**Commit Message**: fix(linter/arrow-body-style): keep type assertions when adding a block body (#27978)
 
-Fixed panic on `{ ; }`.
+Closes #27977
 
-`EmptyStatement` is removed, then `group` for `StaticBlock` failed to get its content.
+With `arrow-body-style: ["error", "always"]`, the fix unwrapped the
+concise body with `get_inner_expression`, which strips TS wrappers
+together with the parentheses, so the type assertion was lost. Now only
+the parentheses around the leading object literal are removed (the same
+tokens ESLint removes) and the rest of the expression is kept.
 
-**File**: `crates/oxc_formatter/src/print/class.rs` (modified, +2/-1)
+| Input | Before | After |
+| --- | --- | --- |
+| `() => <T>{ id }` | `() => {return { id }}` | `() => {return <T>{ id
+}}` |
+| `() => <T>({ id })` | `() => {return { id }}` | `() => {return <T>({
+id })}` |
+| `() => ({ id }) as T` | `() => {return { id }}` | `() => {return { id
+} as T}` |
+| `() => ({ id }) satisfies T` | `() => {return { id }}` | `() =>
+{return { id } satisfies T}` |
+
+Plain `() => ({ id })` still becomes `() => {return { id }}`.
+
+Tests: added a `.ts` test (`test_typescript`) with pass/fail/fix cases
+(also `({ id })!`, `(({ id }) as T)` and
+`requireReturnForObjectLiteral`) and its snapshot. `cargo test
+--all-features -p oxc_linter` and `just lint -p oxc_linter` pass.
+
+AI disclosure: this PR was prepared with the help of an AI assist
+
+**File**: `crates/oxc_linter/src/rules/eslint/arrow_body_style.rs` (modified, +102/-11)
 ```diff
-@@ -18,6 +18,7 @@ use crate::{
-     },
-     parentheses::NeedsParentheses,
-     print::{
-+        block_statement::is_empty_block,
-         function::{
-             function_content_end, function_signature_end, should_group_function_parameters,
-         },
-@@ -174,7 +175,7 @@ impl<'a> FormatWrite<'a> for AstNode<'a, StaticBlock<'a>> {
-     fn write(&self, f: &mut JsFormatter<'_, 'a>) {
-         write!(f, ["static", space(), "{"]);
+@@ -4,7 +4,9 @@ use serde_json::Value;
  
--        if self.body.is_empty() {
-+        if is_empty_block(&self.body) {
-             write!(f, [format_dangling_comments(self.span).with_block_indent()]);
-         } else {
-             write!(f, [block_indent(&self.body())]);
-```
-
-**File**: `crates/oxc_formatter/tests/fixtures/js/class/static-block-empty-statements.js` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+class A {
-+  static {
-+    ;
-+  }
-+}
-+class B {
-+  static {
-+    ;
-+    // comment
-+    ;
-+  }
-+}
-+class C {
-+  static {}
-+}
-```
-
-**File**: `crates/oxc_formatter/tests/fixtures/js/class/static-block-empty-statements.js.snap` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+---
-+source: crates/oxc_formatter/tests/fixtures/mod.rs
-+---
-+==================== Input ====================
-+class A {
-+  static {
-+    ;
-+  }
-+}
-+class B {
-+  static {
-+    ;
-+    // comment
-+    ;
-+  }
-+}
-+class C {
-+  static {}
-+}
+ use oxc_ast::{
+     AstKind,
+-    ast::{ArrowFunctionExpression, Expression, ReturnStatement, Statement},
++    ast::{
++        ArrowFunctionExpression, Expression, ParenthesizedExpression, ReturnStatement, Statement,
++    },
+ };
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+@@ -318,21 +320,37 @@ impl ArrowBodyStyle {
+             return fixer.noop();
+         };
+ 
+-        let expr_text = ctx.source_range(expr.span());
+-
+-        // Check if the expression is a parenthesized object literal: `() => ({ ... })`
+-        // In that case, we need to remove the outer parens when converting to block:
+-        // `() => ({ ... })` → `() => { return { ... } }`
+-        let inner_expr = expr.get_inner_expression();
+-        if matches!(inner_expr, Expression::ObjectExpression(_)) {
+-            let inner_text = ctx.source_range(inner_expr.span());
+-            return fixer.replace(body.span(), format!("{{return {inner_text}}}"));
++        // Only the parens around the object literal can be dropped; a type assertion wrapping it
++        // must be kept: `() => ({ ... }) as T` → `() => { return { ... } as T }`
++        if let Some(paren) = Self::leading_parenthesized_object(expr) {
++            let object_text = ctx.source_range(paren.expression.without_parentheses().span());
++            let rest_text = ctx.source_range(Span::new(paren.span.end, expr.span().end));
++            return fixer.replace(body.span(), format!("{{return {object_text}{rest_text}}}"));
+         }
+ 
+-        // For all other expressions, just wrap in `{ return ... }`
++        let expr_text = ctx.source_range(expr.span());
+         fixer.replace(body.span(), format!("{{return {expr_text}}}"))
+     }
+ 
++    /// Find the parenthesized object literal a concise body starts with, looking through
++    /// postfix TS wrappers: `({ ... })`, `({ ... }) as T`, `({ ... }) satisfies T`, `({ ... })!`
++    fn leading_parenthesized_object<'b, 'a>(
++        expr: &'b Expression<'a>,
++    ) -> Option<&'b ParenthesizedExpression<'a>> {
++        match expr {
++            Expression::ParenthesizedExpression(paren) => {
++                matches!(paren.expression.without_parentheses(), Expression::ObjectExpression(_))
++                    .then_some(&**paren)
++            }
++            Expression::TSAsExpression(e) => Self::leading_parenthesized_object(&e.expression),
++            Expression::TSSatisfiesExpression(e) => {
++                Self::leading_parenthesized_object(&e.expression)
++            }
++            Expression::TSNonNullExpression(e) => Self::leading_parenthesized_object(&e.expression),
++            _ => None,
++        }
++    }
 +
-+==================== Output ====================
-+------------------
-+{ printWidth: 80 }
-+------------------
-+class A {
-+  static {}
-+}
-+class B {
-+  static {
-+    // comment
-+  }
-+}
-+class C {
-+  static {}
-+}
-+
-+-------------------
-+{ printWidth: 100 }
-+-------------------
-+class A {
-+  static {}
-+}
-+class B {
-+  static {
-+    // comment
-+  }
-+}
-+class C {
-+  static {}
-+}
-+
-+===================== End =====================
-```
-
----
-
-### Incident Patch 2: `03d6f656` (2026-10-19)
-**Commit Message**: perf(linter): disable papaya's `fast-barrier` to avoid a `membarrier` wait on Linux (#27954)
-
-## Summary
-
-On Linux, every `oxlint` run waits 20–40 ms when it creates its first
-papaya map. This PR removes the wait for both the CLI and the npm
-package by disabling `fast-barrier` feature of the papaya crate. It also
-adds a `cargo deny` rule that fails if any crate enables the feature
-again so we can notice it.
-
-## Why it waits
-
-With `fast-barrier`, `seize::Collector::new()` calls
-`membarrier(MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED)`. If the process
-already has more than one thread, the kernel waits for an RCU grace
-period before it returns
-([kernel/sched/membarrier.c](https://github.com/torvalds/linux/blob/v6.12/kernel/sched/membarrier.c#L442-L470)).
-
-`oxc_linter` has one papaya map:
-[`modules_by_path`](https://github.com/oxc-project/oxc/blob/faa75d8a8dff299eb9607ae65d04dfb163c28a8c/crates/oxc_linter/src/service/runtime.rs#L59-L66),
-the module graph that the import plugin uses for rules across files,
-such as `import/no-cycle`. The map is a field of
-[`Runtime`](https://github.com/oxc-project/oxc/blob/faa75d8a8dff299eb9607ae65d04dfb163c28a8c/crates/oxc_linter/src/service/runtime.rs#L4
-
-**File**: `Cargo.lock` (modified, +0/-4)
-```diff
-@@ -3507,10 +3507,6 @@ name = "seize"
- version = "0.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5b55fb86dfd3a2f5f76ea78310a88f96c4ea21a3031f8d212443d56123fd0521"
--dependencies = [
-- "libc",
-- "windows-sys 0.61.2",
--]
- 
- [[package]]
- name = "self_cell"
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -246,7 +246,7 @@ oxc-graphql-parser = "0.0.9" # GraphQL parser (direct AST; apollo-parser 0.8.6 f
- oxc-markdown-parser = "0.0.3" # CommonMark + GFM parser (span-faithful, style-preserving typed AST)
- oxc-toml = "0.15.1" # TOML parser and formatter
- oxc-yaml-parser = "0.0.7" # YAML 1.2 parser (comment-preserving typed AST, node naming from `yaml-unist-parser`)
--papaya = "0.2.4" # Concurrent hash map
-+papaya = { version = "0.2.5", default-features = false } # Concurrent hash map
- pastey = "0.2.3" # Identifier concatenation in declarative macros
- percent-encoding = "2.3.2" # URL encoding
- petgraph = { version = "0.8.3", default-features = false } # Graph data structures
-```
-
-**File**: `deny.toml` (modified, +9/-0)
-```diff
-@@ -180,6 +180,15 @@ skip-tree = [
-   # { name = "ansi_term", version = "=0.11.0", depth = 20 },
- ]
- 
-+# papaya enables seize's `fast-barrier` feature by default. On Linux it makes seize register
-+# `MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED` when the first collector is created, and in a
-+# multi-threaded process the kernel then waits for an RCU grace period (tens of ms, on every
-+# oxlint run). The workspace disables papaya's default features. Cargo features are additive,
-+# so this rule fails if any other crate enables the feature again and helps us notice that.
-+[[bans.features]]
-+crate = "seize"
-+deny = ["fast-barrier"]
-+
- # This section is considered when running `cargo deny check sources`.
- # More documentation about the 'sources' section can be found here:
- # https://embarkstudios.github.io/cargo-deny/checks/sources/cfg.html
-```
-
----
-
-### Incident Patch 3: `bd37e78d` (2026-10-19)
-**Commit Message**: fix(ecmascript): look through sequence expressions in `to_primitive` (#27837)
-
-Closes #27836
-
-`to_primitive` gave `Undetermined` for a sequence ending in an array or
-object literal, so constant evaluation of `+` took the numeric path (it
-only needs one operand to be numeric), and `evaluate_value_to_number`,
-which does look through the sequence, turned `[]` into `0`:
-
-```js
-const u = true + (globalThis.x, []);
-console.log(u);
-// before: !0+(globalThis.x,[]),console.log(1);       -> 1
-// after:  !0+(globalThis.x,[]),console.log(`true`);  -> true
-```
-
-`to_primitive` now uses the last expression of a sequence, as
-`value_type` and `to_boolean` already do. Added
-`test_fold_add_sequence_ending_in_object`, which fails without the fix.
-No snapshot changes.
-
-Found with a differential fuzzer. Written with AI assistance; verified
-with `cargo test`, `clippy`, `fmt --check`, `minsize`, `allocs` and
-`coverage -- minifier`. I reviewed the diff.
-
----------
-
-Co-authored-by: Cameron <[REDACTED_EMAIL]>
-
-**File**: `crates/oxc_ecmascript/src/to_primitive.rs` (modified, +4/-0)
-```diff
-@@ -61,6 +61,10 @@ impl<'a> ToPrimitive<'a> for Expression<'a> {
-                     Expression::RegExpLiteral(_) | Expression::ArrayExpression(_) => {
-                         ToPrimitiveResult::String
-                     }
-+                    Expression::SequenceExpression(e) => e
-+                        .expressions
-+                        .last()
-+                        .map_or(ToPrimitiveResult::Undetermined, |e| e.to_primitive(ctx)),
-                     // unless `Symbol.toPrimitive`, `valueOf`, `toString` is overridden,
-                     // ToPrimitive for an object returns `"[object Object]"`
-                     Expression::ObjectExpression(obj) => {
-```
-
-**File**: `crates/oxc_minifier/tests/peephole/fold_constants.rs` (modified, +20/-1)
-```diff
-@@ -4,7 +4,7 @@ static NEG_MAX_SAFE_FLOAT: f64 = -9_007_199_254_740_991_f64;
- static MAX_SAFE_INT: i64 = 9_007_199_254_740_991_i64;
- static NEG_MAX_SAFE_INT: i64 = -9_007_199_254_740_991_i64;
- 
--use crate::{test, test_same};
-+use crate::{test, test_same, test_smallest};
- 
- fn fold(source_text: &str, expected: &str) {
-     let source_text = format!("NOOP({source_text})");
-@@ -1034,6 +1034,25 @@ fn test_fold_add() {
-     fold("x = null + 1", "x = 1");
+     /// Fix: Convert block body to concise body
+     /// `() => { return expr }` → `() => expr`
+     fn fix_block_to_concise<'a>(
+@@ -1104,3 +1122,76 @@ var foo = () =>
+         .expect_fix(fix)
+         .test_and_snapshot();
  }
- 
-+#[test]
-+fn test_fold_add_sequence_ending_in_object() {
-+    test_smallest("const u = true + (foo, []); log(u)", "!0 + (foo, []), log('true')");
-+    test_smallest("const u = true + (foo, [void 0]); log(u)", "!0 + (foo, [void 0]), log('true')");
-+    test_smallest("const u = true + (foo, [null]); log(u)", "!0 + (foo, [null]), log('true')");
-+    test_smallest("const u = true + (foo, [,]); log(u)", "!0 + (foo, [,]), log('true')");
-+    test_smallest("const u = true + (foo, [1]); log(u)", "!0 + (foo, [1]), log('true1')");
-+    test_smallest(
-+        "const u = true + (foo, {}); log(u)",
-+        "!0 + (foo, {}), log('true[object Object]')",
-+    );
-+    test_smallest("const u = null + (foo, [1]); log(u)", "null + (foo, [1]), log('null1')");
-+    test_smallest(
-+        "const u = undefined + (foo, {}); log(u)",
-+        "void 0 + (foo, {}), log('undefined[object Object]')",
-+    );
-+    test_smallest("const u = 1 + (foo, []); log(u)", "1 + (foo, []), log('1')");
-+}
 +
- #[test]
- fn test_fold_numeric_expression_only_if_shorter() {
-     // https://github.com/oxc-project/oxc/issues/24863
++#[test]
++fn test_typescript() {
++    use crate::tester::Tester;
++
++    let pass = vec![
++        ("var foo = () => { return <Foo>{ id }; };", Some(serde_json::json!(["always"]))),
++        ("var foo = () => { return { id } as Foo; };", Some(serde_json::json!(["always"]))),
++    ];
++
++    let fail = vec![
++        ("var foo = () => <Foo>{ id };", Some(serde_json::json!(["always"]))),
++        ("var foo = () => <Foo>({ id });", Some(serde_json::json!(["always"]))),
++        ("var foo = () => ({ id }) as Foo;", Some(serde_json::json!(["always"]))),
++        ("var foo = () => ({ id }) satisfies Foo;", Some(serde_json::json!(["always"]))),
++        ("var foo = () => ({ id })!;", Some(serde_json::json!(["always"]))),
++        ("var foo = () => (({ id }) as Foo);", Some(serde_json::json!(["always"]))),
++        ("var foo = () => <Foo>JSON.parse(id);", Some(serde_json::json!(["always"]))),
++        (
++            "var foo = () => ({ id }) as Foo;",
++            Some(serde_json::json!(["as-needed", { "requireReturnForObjectLiteral": true }])),
++        ),
++    ];
++
++    let fix = vec![
++        (
++            "var foo = () => <Foo>{ id };",
++            "var foo = () => {return <Foo>{ id }};",
++            Some(serde_json::json!(["always"])),
++        ),
++        (
++            "var foo = () => <Foo>({ id });",
++            "var foo = () => {return <Foo>({ id })};",
++            Some(serde_json::json!(["always"])),
++        ),
++        (
++            "var foo = () => ({ id }) as Foo;",
++            "var foo = () => {return { id } as Foo};",
++            Some(serde_json::json!(["always"])),
++        ),
++        (
++            "var foo = () => ({ id }) satisfies Foo;",
++            "var foo = () => {return { id } satisfies Foo};",
++            Some(serde_json::json!(["always"])),
++        ),
++        (
++            "var foo = () => ({ id })!;",
++            "var foo = () => {return { id }!};",
++            Some(serde_json::json!(["always"])),
++        ),
++        (
++            "var foo = () => (({ id }) as Foo);",
++            "var foo = () 
+```
+
+**File**: `crates/oxc_linter/src/snapshots/eslint_arrow_body_style@ts.snap` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++---
++source: crates/oxc_linter/src/tester.rs
++---
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => <Foo>{ id };
++   ·                 ───────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => <Foo>({ id });
++   ·                 ─────────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => ({ id }) as Foo;
++   ·                 ───────────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => ({ id }) satisfies Foo;
++   ·                 ──────────────────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => ({ id })!;
++   ·                 ─────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => (({ id }) as Foo);
++   ·                 ─────────────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => <Foo>JSON.parse(id);
++   ·                 ───────────────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
++
++  ⚠ eslint(arrow-body-style): Expected block statement surrounding arrow body.
++   ╭─[arrow_body_style.ts:1:17]
++ 1 │ var foo = () => ({ id }) as Foo;
++   ·                 ───────────────
++   ╰────
++  help: Surround the arrow body with braces and use a return statement.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27957** (2026-10-19): fix(formatter_tests): skip conformance spec calls with non-literal options (@leaysgur)
-- **PR #27956** (2026-10-19): docs(oxfmt): update useless comment prefix (@leaysgur)
-- **PR #27955** (2026-10-19): fix(jsdoc): parse code spans after quotes in descriptions (@leaysgur)
-- **PR #27954** (2026-10-19): perf(linter): disable papaya's `fast-barrier` to avoid a `membarrier` wait on Linux (@magurotuna)
-- **PR #27952** (2026-10-19): perf(formatter): check only the operator suppression mark in `is_quiet` (@leaysgur)
-- **PR #27951** (closed): chore(ast): assert at compile time that the AST is covariant in `'a` (@Dunqing)
+- **PR #27980** (2026-10-19): chore(deps): update dependency oxlint to v1.89.0 (@renovate[bot])
+- **PR #27979** (2026-10-19): chore(deps): update dependency oxfmt to ^0.74.0 (@renovate[bot])
+- **PR #27978** (2026-10-19): fix(linter/arrow-body-style): keep type assertions when adding a block body (@yan-almeida)
+- **PR #27973** (2026-10-19): chore(deps): update oxc to ^0.155.0 (@renovate[bot])
+- **PR #27971** (closed): refactor(linter): remove unreachable from disable directive parsing (@camchenry)
+- **PR #27967** (2026-10-19): refactor(linter/eslint/no-restricted-imports): remove use of `unreachable!` (@camchenry)
 
 ---
 
@@ -1545,29 +1491,56 @@ Co-authored-by: Cameron <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. formatter): treat static block with only empty statements as empty (#27945)
+## X. linter/arrow-body-style): keep type assertions when adding a block body (#27978)
 
 **RULE**:
-When implementing operations in `crates/oxc_formatter/src/print/class.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/arrow_body_style.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c22a9b27`: formatter): treat static block with only empty statements as empty (#27945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0298062d`: linter/arrow-body-style): keep type assertions when adding a block body (#27978). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_formatter/src/print/class.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/arrow_body_style.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        block_statement::is_empty_block,
-        if is_empty_block(&self.body) {
+    ast::{
+        ArrowFunctionExpression, Expression, ParenthesizedExpression, ReturnStatement, Statement,
+    },
+        // Only the parens around the object literal can be dropped; a type assertion wrapping it
+        // must be kept: `() => ({ ... }) as T` → `() => { return { ... } as T }`
+        if let Some(paren) = Self::leading_parenthesized_object(expr) {
+            let object_text = ctx.source_range(paren.expression.without_parentheses().span());
+            let rest_text = ctx.source_range(Span::new(paren.span.end, expr.span().end));
+            return fixer.replace(body.span(), format!("{{return {object_text}{rest_text}}}"));
+        let expr_text = ctx.source_range(expr.span());
+    /// Find the parenthesized object literal a concise body starts with, looking through
+    /// postfix TS wrappers: `({ ... })`, `({ ... }) as T`, `({ ... }) satisfies T`, `({ ... })!`
+    fn leading_parenthesized_object<'b, 'a>(
+        expr: &'b Expression<'a>,
+    ) -> Option<&'b ParenthesizedExpression<'a>> {
+        match expr {
+            Expression::ParenthesizedExpression(paren) => {
+                matches!(paren.expression.without_parentheses(), Expression::ObjectExpression(_))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if self.body.is_empty() {
+    ast::{ArrowFunctionExpression, Expression, ReturnStatement, Statement},
+        let expr_text = ctx.source_range(expr.span());
+
+        // Check if the expression is a parenthesized object literal: `() => ({ ... })`
+        // In that case, we need to remove the outer parens when converting to block:
+        // `() => ({ ... })` → `() => { return { ... } }`
+        let inner_expr = expr.get_inner_expression();
+        if matches!(inner_expr, Expression::ObjectExpression(_)) {
+            let inner_text = ctx.source_range(inner_expr.span());
+            return fixer.replace(body.span(), format!("{{return {inner_text}}}"));
+        // For all other expressions, just wrap in `{ return ... }`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c22a9b27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0298062d` are properly handled with clean fallback behavior.

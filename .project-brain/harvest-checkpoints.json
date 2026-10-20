@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T00:38:09.409Z",
+  "last_updated": "2026-10-20T00:44:04.885Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11629,14 +11629,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "e188fc63a71c188e2c200a1455d4170c0ab3fc79ae786fcc6e9b3188f9cc2ac6",
-      "verified_at": "2026-10-19T10:34:49.587Z",
+      "content_hash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
+      "verified_at": "2026-10-20T00:44:00.782Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:34:49.587Z"
+      "last_updated": "2026-10-20T00:44:00.782Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -14607,6 +14607,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-20T00:38:09.408Z"
+    },
+    "rdfjs/N3.js": {
+      "repository": "rdfjs/N3.js",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rdfjs-n3-js",
+      "content_hash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
+      "verified_at": "2026-10-20T00:44:01.679Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:44:01.679Z"
+    },
+    "iziz/libPhoneNumber-iOS": {
+      "repository": "iziz/libPhoneNumber-iOS",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-iziz-libphonenumber-ios",
+      "content_hash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
+      "verified_at": "2026-10-20T00:44:04.885Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-20T00:44:04.885Z"
     }
   },
   "repos": {

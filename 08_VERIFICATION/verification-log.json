@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-8RN4",
-    "timestamp": "2026-10-19T08:41:04.240Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "e550d81c9704548cd19c51e42f6e8de4a333c3c74814f4a01d81ed8b097d8b91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-92I4",
-    "timestamp": "2026-10-19T08:41:18.316Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "64fe942bcbf83d68d5310ecffbf8ed423234868b2d1b1c7e1c8a0ec549a7d14b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-AN19",
-    "timestamp": "2026-10-19T08:42:31.581Z",
-    "repository": "railwayapp/nixpacks",
-    "learningId": "learn-github-railwayapp-nixpacks",
-    "contentHash": "90c7c2750f953f5d010019e64bf891c7a36cab71ca1f714d686f631958a0bdad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-IT6V",
     "timestamp": "2026-10-19T08:48:52.807Z",
     "repository": "tw93/Mole",
@@ -7490,6 +7445,51 @@
     "repository": "jtrivedi/Wave",
     "learningId": "learn-github-jtrivedi-wave",
     "contentHash": "6deb64c2e847463e4801ed9b14880219ff41c5f2e1c69cca68533d8095915cd4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N4AV",
+    "timestamp": "2026-10-20T00:44:00.775Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "c6dee0524632c22a39dc41ff2719af38f8c1f2d08bf0c427495148b958538173",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N4ZT",
+    "timestamp": "2026-10-20T00:44:01.673Z",
+    "repository": "rdfjs/N3.js",
+    "learningId": "learn-github-rdfjs-n3-js",
+    "contentHash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-N7GT",
+    "timestamp": "2026-10-20T00:44:04.877Z",
+    "repository": "iziz/libPhoneNumber-iOS",
+    "learningId": "learn-github-iziz-libphonenumber-ios",
+    "contentHash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
