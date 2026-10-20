@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-DY2O",
-    "timestamp": "2026-10-19T14:21:01.248Z",
-    "repository": "lobehub/lobe-ui",
-    "learningId": "learn-github-lobehub-lobe-ui",
-    "contentHash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-E2XJ",
-    "timestamp": "2026-10-19T14:21:07.543Z",
-    "repository": "vanniktech/Emoji",
-    "learningId": "learn-github-vanniktech-emoji",
-    "contentHash": "a6b95a80db7f5d99c070e9255a7cb819859ae9e551429e3066b41a0863c27500",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-E5D1",
-    "timestamp": "2026-10-19T14:21:10.693Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-M0WG",
     "timestamp": "2026-10-19T14:27:18.160Z",
     "repository": "zacharee/Bifrost",
@@ -7490,6 +7445,51 @@
     "repository": "goharbor/harbor",
     "learningId": "learn-github-goharbor-harbor",
     "contentHash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-TR21",
+    "timestamp": "2026-10-20T11:33:01.369Z",
+    "repository": "CrawlCove/hreflang-checker",
+    "learningId": "learn-github-crawlcove-hreflang-checker",
+    "contentHash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-TTJY",
+    "timestamp": "2026-10-20T11:33:04.606Z",
+    "repository": "go-kratos/kratos",
+    "learningId": "learn-github-go-kratos-kratos",
+    "contentHash": "42ca030d90486845aa27975b470b0c1751ff79ccb14d67672ca7ca475f05aba2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261020-TZ2A",
+    "timestamp": "2026-10-20T11:33:11.746Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

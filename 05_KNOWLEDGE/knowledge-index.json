@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-20T11:26:54.502Z",
+  "last_updated": "2026-10-20T11:33:11.689Z",
   "total_verified_learnings": 1053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11351,8 +11351,8 @@
       "slug": "go-kratos-kratos",
       "platform": "github",
       "source_url": "https://github.com/go-kratos/kratos",
-      "source_version": "668db92c",
-      "content_hash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
+      "source_version": "c8c129b5",
+      "content_hash": "42ca030d90486845aa27975b470b0c1751ff79ccb14d67672ca7ca475f05aba2",
       "dossier_path": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
       "promoted_rules": [
@@ -11370,6 +11370,11 @@
           "number": 2384,
           "title": "Asymmetric Codec Framing Parity in Multiplexed Streaming Transports",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3146,
+          "title": "config): resolve bool placeholders to bool (#3891)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11377,7 +11382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:14:30.842Z",
+      "verified_at": "2026-10-20T11:33:04.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31828,8 +31833,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "b7b227fe",
-      "content_hash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
+      "source_version": "3f58efbb",
+      "content_hash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -31842,6 +31847,11 @@
           "number": 2773,
           "title": "account Tantivy snapshot sizes from retained components (#54377)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3147,
+          "title": "share AWS SDK and CRT runtime across native targets (#54118)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31849,7 +31859,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:29:58.383Z",
+      "verified_at": "2026-10-20T11:33:11.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57407,7 +57417,7 @@
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
       "source_version": "68a78d31",
-      "content_hash": "705f619c014ee293a4d6914a76acdf1ca3a24b4e57b7c1e3a205ac97f7ef87fd",
+      "content_hash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "promoted_rules": [
@@ -57415,7 +57425,7 @@
         {
           "number": 1775,
           "title": "repository renamed to CrawlCove/hreflang-checker; point links, install commands",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57423,7 +57433,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:23:14.334Z",
+      "verified_at": "2026-10-20T11:33:01.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80476,7 +80486,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T22:23:14.334Z"
+      "verified_at": "2026-10-20T11:33:01.312Z"
     },
     "rule-1776": {
       "learning_id": "rule-1776",
@@ -100248,6 +100258,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-20T11:26:54.491Z"
+    },
+    "rule-3146": {
+      "learning_id": "rule-3146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3146,
+      "title": "config): resolve bool placeholders to bool (#3891)",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "c8c129b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:33:04.537Z"
+    },
+    "rule-3147": {
+      "learning_id": "rule-3147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3147,
+      "title": "share AWS SDK and CRT runtime across native targets (#54118)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "3f58efbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-20T11:33:11.678Z"
     }
   },
   "aliases": {

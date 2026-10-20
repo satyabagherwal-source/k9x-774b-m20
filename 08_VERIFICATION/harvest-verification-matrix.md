@@ -3784,3 +3784,6 @@
 | `CYCLE-20261020-Z5XP` | `2026-10-20T11:09:14.317Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`222a37e7...`) |
 | `CYCLE-20261020-FKBD` | `2026-10-20T11:21:59.449Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3144` | Yes (`50c5e54a...`) |
 | `CYCLE-20261020-LW0N` | `2026-10-20T11:26:54.551Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3145` | Yes (`f0a4d742...`) |
+| `CYCLE-20261020-TR21` | `2026-10-20T11:33:01.369Z` | `CrawlCove/hreflang-checker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1775` | Yes (`f2dfb31b...`) |
+| `CYCLE-20261020-TTJY` | `2026-10-20T11:33:04.606Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3146` | Yes (`42ca030d...`) |
+| `CYCLE-20261020-TZ2A` | `2026-10-20T11:33:11.746Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3147` | Yes (`3fec38bc...`) |

@@ -3791,3 +3791,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `95901ef6` | Multi-dimensional audit evidence | 2026-10-20T11:09:14.320Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `5d9136e9` | Multi-dimensional audit evidence | 2026-10-20T11:21:59.456Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `43dfe11b` | Multi-dimensional audit evidence | 2026-10-20T11:26:54.558Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `68a78d31` | Multi-dimensional audit evidence | 2026-10-20T11:33:01.372Z |
+| `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `c8c129b5` | Multi-dimensional audit evidence | 2026-10-20T11:33:04.609Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3f58efbb` | Multi-dimensional audit evidence | 2026-10-20T11:33:11.752Z |

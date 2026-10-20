@@ -1875,8 +1875,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
     "sourceVersion": "68a78d31",
     "license": "MIT",
-    "contentHash": "705f619c014ee293a4d6914a76acdf1ca3a24b4e57b7c1e3a205ac97f7ef87fd",
-    "lastHarvestedAt": "2026-10-18T22:23:14.382Z",
+    "contentHash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
+    "lastHarvestedAt": "2026-10-20T11:33:01.372Z",
     "learningId": "learn-github-crawlcove-hreflang-checker"
   },
   "alecxe-scrapy-fake-useragent": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "b7b227fe",
+    "sourceVersion": "3f58efbb",
     "license": "Apache-2.0",
-    "contentHash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
-    "lastHarvestedAt": "2026-10-19T19:29:58.443Z",
+    "contentHash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
+    "lastHarvestedAt": "2026-10-20T11:33:11.752Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -7223,10 +7223,10 @@
     "repository": "go-kratos/kratos",
     "platform": "github",
     "sourceUrl": "https://github.com/go-kratos/kratos",
-    "sourceVersion": "668db92c",
+    "sourceVersion": "c8c129b5",
     "license": "MIT",
-    "contentHash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
-    "lastHarvestedAt": "2026-10-19T08:14:30.877Z",
+    "contentHash": "42ca030d90486845aa27975b470b0c1751ff79ccb14d67672ca7ca475f05aba2",
+    "lastHarvestedAt": "2026-10-20T11:33:04.609Z",
     "learningId": "learn-github-go-kratos-kratos"
   },
   "tencent-tds-kuiklyui": {

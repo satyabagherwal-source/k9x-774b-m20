@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T11:26:54.566Z",
+  "last_updated": "2026-10-20T11:33:11.759Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2946,14 +2946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-hreflang-checker",
-      "content_hash": "705f619c014ee293a4d6914a76acdf1ca3a24b4e57b7c1e3a205ac97f7ef87fd",
-      "verified_at": "2026-10-18T22:23:14.391Z",
+      "content_hash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
+      "verified_at": "2026-10-20T11:33:01.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:23:14.391Z"
+      "last_updated": "2026-10-20T11:33:01.379Z"
     },
     "alecxe/scrapy-fake-useragent": {
       "repository": "alecxe/scrapy-fake-useragent",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
-      "verified_at": "2026-10-19T19:29:58.451Z",
+      "content_hash": "3fec38bc36d36aeb2286c625aec742eba4aa76a516001709e58271331af2c54e",
+      "verified_at": "2026-10-20T11:33:11.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:29:58.451Z"
+      "last_updated": "2026-10-20T11:33:11.758Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -10881,14 +10881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-go-kratos-kratos",
-      "content_hash": "9127db13cf7a753d81dc8a4fff1d2260d8d2521c6fed86f95fc02d3d6018aa4d",
-      "verified_at": "2026-10-19T08:14:30.882Z",
+      "content_hash": "42ca030d90486845aa27975b470b0c1751ff79ccb14d67672ca7ca475f05aba2",
+      "verified_at": "2026-10-20T11:33:04.615Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:14:30.882Z"
+      "last_updated": "2026-10-20T11:33:04.615Z"
     },
     "Tencent-TDS/KuiklyUI": {
       "repository": "Tencent-TDS/KuiklyUI",

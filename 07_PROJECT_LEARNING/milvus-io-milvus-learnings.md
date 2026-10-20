@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `b7b227fe`  
+> **Source Version**: `3f58efbb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:29:58.167Z  
+> **Timestamp**: 2026-10-20T11:33:11.418Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:29:58.159Z  
+> **Harvest Timestamp**: 2026-10-20T11:33:10.447Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46434 stars
+- **Stars / Engagement**: 46442 stars
 
 ---
 
@@ -1412,14 +1412,17 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54423** (2026-10-19): **enhance: [hotfix-2.6.24] cache sealed JSON index validity**
-  *Symptoms*: Backport #54422 to `hotfix-2.6.24`.  Cache the comparable-value bitmap once per sealed JSON reader to avoid repeated Tantivy scans for null checks. No index format change.  Validation: identical patch to #54422, whose C++/Go unit and integration CI passed. Formatting/diff checks passed; local native tests and lint are blocked by native dependencies.  issue: #50976 pr: #54422 
+- **Issue #54431** (2026-10-20): **fix: [3.0] preserve runtime library symlinks during installation**
+  *Symptoms*: ## What  Backport #54410 to 3.0. Preserve shared-library symbolic links when installing runtime libraries, including `.so*`, `.dylib*`, and `lib64` aliases. Adapt the regression test to omit PyUDF wheel checks, which do not apply to this branch.  ## Related  issue: #54409 pr: #54410  ## Verification  - The regression test passes with macOS cp and GNU cp. - The parent installer fails the symbolic-link assertion. - Shell syntax and diff checks pass. - Image-size and runtime-loader verification remain pending. 
   **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **chyezh** after the PR has been reviewed. You can assign the PR to them by writing `/assign @chyezh` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[internal/core/OWNERS](https://github.com/milvus-io/milvus/blob/hotfix-2.6.24/internal/core/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["chyezh"]} -->
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
+  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-amd-gray  // for ci-v2/e2e-amd-gray (TC pool shadow; non-gating) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
+  > [INFO] PR Label Summary by Default [SUCCESS] PR #54410 merged to master - Title: fix: preserve runtime library symlinks during installation - Link: https://github.com/milvus-io/milvus/pull/54410   [WARNING] Milestone not set - PR: #54431 - Title: fix: [3.0] preserve runtime library symlinks during installation Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
 
-- **Issue #54420** (2026-10-19): **enhance: reuse JSON null offsets in packed indexes**
-  *Symptoms*: Scalar JSON path INVERTED indexes need a complete comparable-row mask for null and negated predicates. Historical packed artifacts can contain only whole-field null offsets; newer nullable projections alone do not identify whether an old artifact is complete.  Add the optional `json_null_offsets_complete` boolean to the existing V3 packed metadata. Marked indexes reuse the existing null-offset payload and validity bitmap. Unmarked/false artifacts reconstruct validity once during loading, before reader publication. Keep EXISTS metadata separate and leave ARRAY, ordinary scalar indexes, JSON flat, NGRAM, and HYBRID outside this capability. No global engine-version bump or additional bitmap entry is introduced.  Numeric comparability follows the historical finite-range mask, including STRING_TO_DOUBLE NaN/infinity. Reloading an old artifact repeats recovery; remote artifacts are not rewritten.  The master loader performs legacy recovery on the local I/O executor and moves the result into the existing reader validity bitmap. Newly built scalar JSON INVERTED projections reject non-finite cast results; because projection is shared, this also applies to new scattered-format builds.  issue: #50976 Design: [Persist complete JSON path null offsets](https://github.com/sunby/milvus/blob/e136f5f1f5f4eaca6d37269bf8072865d924522b/docs/design-docs/design_docs/20261019-json-path-packed-null-offsets.md)  Validation: - Built the native `index_tests` target on macOS ARM64; all 23 tests passed wi
+- **Issue #54429** (2026-10-20): **enhance: preallocate REST FloatVector decode buffers**
+  *Symptoms*: ## Summary  Follow up to #54174. Preallocate the FloatVector decode slice when the JSON payload is large enough to plausibly contain the schema-declared dimension. This targets Sonic slice growth during REST insert/upsert decoding; short or malformed payloads do not trigger a full-dimension reservation.  ## Validation  - Remote incremental Go unit tests passed. - Tencent Cloud A/B: base image `master-20261020-5bd2f5b` (base commit `5bd2f5bf2c4c0de2c74bd60e50ae2d70d6916873`) vs. this PR image `pr-54429-593fb25` (commit `593fb251f2d949a55cbcd282b78bdf3f58cf9b41`); same 4 CPU / 16 GiB pod limit. - Workload: three paired rounds each at concurrency 3 and 4; each request inserted 10,000 rows with five 768-d FloatVector fields (about 405.4 MiB JSON). All requests succeeded with `insertCount=10000`. - In all three repeated concurrency-3 allocation profiles, base showed 1.29–1.40 GiB under `sonic/internal/rt.GrowSlice`; this stack was absent from the test profiles. Cumulative allocation attributed to `httpserver.checkAndSetData` was 1.54–1.66 GiB on base vs. 0.66–0.68 GiB on test (about 59% lower median). `io.ReadAll` allocation remained about 2.58 GiB on both sides. - End-to-end peak memory was variable: at concurrency 3, median cgroup peak was 7.69 GiB base vs. 6.87 GiB test, with a 9.22 GiB test outlier. At concurrency 4, median cgroup peak was 9.16 GiB base vs. 10.07 GiB test; process RSS medians were 8.49 vs. 8.67 GiB. Therefore this run confirms the targeted allocation reduction
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **congqixia** after the PR has been reviewed. You can assign the PR to them by writing `/assign @congqixia` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[internal/distributed/OWNERS](https://github.com/milvus-io/milvus/blob/master/internal/distributed/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["congqixia"]} -->
+  > ## Controlled A/B retest and closure  Closing this PR based on the current evidence: preallocation clearly reduces the targeted Sonic slice-growth allocations, but the end-to-end tests have not demonstrated a reliable reduction in peak memory or a stable latency improvement.  ### Setup  - Tencent Cloud; both standalone instances limited to 4 vCPU / 16 GiB. - Base image: `master-20261020-5bd2f5b`; Test image: `pr-54429-244d86d` (this PR's current head, `244d86d2d5db27f64baba9d0af0e6ce44fadfec7`). - Each request inserted 10,000 rows, with five 768-dimensional FloatVector fields, 19 VarChar fields, and an Int64 primary key. JSON body: 425,148,945 bytes (~405.4 MiB). - Three concurrent requests per wave, **not 3 QPS**; five paired waves with alternating A/B order, a fresh collection for each wave, and separate warm-up. - Temporarily set `dataCoord.segment.maxSize=2048` MB and `dataCoord.segment.sealProportion=0.5` on both sides to avoid capacity-driven sealing during measurement. No explic
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,353 +1439,662 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8a19994` (2026-10-19)
-**Commit Message**: fix: account Tantivy snapshot sizes from retained components (#54377)
+### Incident Patch 1: `3f58efbb` (2026-10-20)
+**Commit Message**: fix: share AWS SDK and CRT runtime across native targets (#54118)
 
-issue: #54239
+When a Release native test executable instantiates CRT endpoint code,
+static AWS archives can embed private CRT/JSON state in both the
+executable and shared libraries. `Aws::InitAPI` initializes one copy
+while another copy can abort in `aws_mem_acquire` with an uninitialized
+allocator. Compiler inlining can hide this failure in other builds.
 
-Growing text snapshot publication asks Tantivy for its payload size
-while writers and background merges remain active. Walking every managed
-file can parse unfinished 4–7-byte output and abort across the Rust C
-ABI. It also counts files outside the reader's snapshot. Reopening
-snapshot filenames alone is insufficient because garbage collection can
-remove those paths while the reader still owns their data.
+Use one shared AWS SDK/CRT/C-library graph for Milvus, milvus-storage,
+Arrow and tests:
 
-Sum component lengths retained by one captured searcher instead. Use the
-merged https://github.com/zilliztech/tantivy/pull/36, with commit
-`f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14` recorded in `Cargo.lock`. It
-records footer-stripped lengths as each segment opens, including its
-exact deletion generation, without additional I/O, and rejects truncated
-footer metadata before slicing it. Remove the redundant `rand = "0.7"`
-dev dependency, which conflicted with the existing production rand
-dependency and prevented the regression target from compiling.
+- Enable shared libraries for the SDK, CRT C++, every `aws-c-*` package
+and `aws-checksums`. Root Conan validation always rejects static
+overrides.
+- Keep the direct CRT requirement needed by tests to expose link
+libraries, without `force=True`; document that its version must track
+the SDK recipe. Resolve its target through `find_package(AWSSDK)`
+without a redundant CRT find.
+- Add `MILVUS_AUDIT_AWS_RUNTIME` for Linux linker-map and full,
+unstripped symbol checks on milvus-storage, milvus_core and all_tests.
+Normal development builds default OFF; unit/coverage builds and `make
+install` / `make gpu-install` default ON. Successful FetchContent
+storage checks use a stamp, invalidated by librar
 
-`Cargo.toml` keeps the Git URL without an explicit `rev`; the checked-in
-lockfile selects the merged commit.
-
-A TODO at snapshot creation documents f
-
-**File**: `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock` (modified, +9/-68)
+**File**: `Makefile` (modified, +4/-0)
 ```diff
-@@ -1151,17 +1151,6 @@ dependencies = [
-  "byteorder",
- ]
+@@ -545,6 +545,10 @@ codecov-cpp: build-cpp-with-coverage
+ 	@(env bash $(PWD)/scripts/run_cpp_codecov.sh)
  
--[[package]]
--name = "getrandom"
--version = "0.1.16"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc3cb4d91f53b50155bdcfd23f6a4c39ae1969c2ae85982b135750cccaf5fce"
--dependencies = [
-- "cfg-if",
-- "libc",
-- "wasi 0.9.0+wasi-snapshot-preview1",
--]
--
- [[package]]
- name = "getrandom"
- version = "0.2.16"
-@@ -3003,7 +2992,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.7.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -3334,19 +3323,6 @@ version = "5.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
- 
--[[package]]
--name = "rand"
--version = "0.7.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
--dependencies = [
-- "getrandom 0.1.16",
-- "libc",
-- "rand_chacha 0.2.2",
-- "rand_core 0.5.1",
-- "rand_hc",
--]
--
- [[package]]
- name = "rand"
- version = "0.8.5"
-@@ -3368,16 +3344,6 @@ dependencies = [
-  "rand_core 0.9.3",
- ]
- 
--[[package]]
--name = "rand_chacha"
--version = "0.2.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f4c8ed856279c9737206bf725bf36935d8666ead7aa69b52be55af369d193402"
--dependencies = [
-- "ppv-lite86",
-- "rand_core 0.5.1",
--]
--
- [[package]]
- name = "rand_chacha"
- version = "0.3.1"
-@@ -3398,15 +3364,6 @@ dependencies = [
-  "rand_core 0.9.3",
- ]
- 
--[[package]]
--name = "rand_core"
--version = "0.5.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
--dependencies = [
-- "getrandom 0.1.16",
--]
--
- [[package]]
- name = "rand_core"
- version = "0.6.4"
-@@ -3435,15 +3392,6 @@ dependencies = [
-  "rand 0.8.5",
- ]
- 
--[[package]]
--name = "rand_hc"
--version = "0.2.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ca3129af7b92a17112d59ad498c6f81eaf463253766b90396d39ea7a39d6613c"
--dependencies = [
-- "rand_core 0.5.1",
--]
--
- [[package]]
- name = "rayon"
- version = "1.11.0"
-@@ -3978,7 +3926,7 @@ dependencies = [
- [[package]]
- name = "tantivy"
- version = "0.23.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -4054,7 +4002,6 @@ dependencies = [
-  "once_cell",
-  "pinyin",
-  "prost",
-- "rand 0.7.3",
-  "rand 0.9.2",
-  "regex",
-  "reqwest",
-@@ -4086,7 +4033,7 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.6.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "bitpacking 0.9.2",
- ]
-@@ -4109,7 +4056,7 @@ dependencies = [
- [[package]]
- name = "tantivy-columnar"
- version = "0.3.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -4136,7 +4083,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.7.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -4179,7 +4126,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.22.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "nom",
- ]
-@@ -4197,7 +4144,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.3.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -4219,7 +4166,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.3.0"
--source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
- dependencies = [
-  "murmurhash32",
-  "rand_distr",
-@@ -4237,7 +4184,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.3.0"
--sourc
+ # Build each component and install binary to $GOPATH/bin.
++# Package builds audit the AWS runtime even without native unit tests.
++# An explicit environment or command-line value can override this default.
++install gpu-install: export MILVUS_AUDIT_AWS_RUNTIME ?= ON
++
+ install: milvus build-pyudf-runtime-wheel
+ 	@echo "Installing binary to './bin'"
+ 	@(env GOPATH=$(GOPATH) LIBRARY_PATH=$(LIBRARY_PATH) bash $(PWD)/scripts/install_milvus.sh)
 ```
 
-**File**: `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.toml` (modified, +0/-1)
+**File**: `docs/design-docs/s3-endpoint-auth-guard.md` (modified, +56/-6)
 ```diff
-@@ -70,7 +70,6 @@ flate2 = "1.1.0"
- tar = "0.4.44"
+@@ -102,19 +102,18 @@ new guard changes the dangerous behavior.
+ integration test, `test_minio_endpoint_auth.cpp`, deliberately does **not** install
+ the guard in its setup. It invokes real PreCheck, ListObjects and the CStatus catch
+ tail, so it will detect removal of the production installation call. It is
+-registered in `all_tests`, but **has not been compiled or run locally** because the
+-full Milvus native dependency/build environment is unavailable.
++registered in `all_tests` alongside the SDK guard tests and the direct CRT
++regression described below.
  
- [dev-dependencies]
--rand = "0.7"
- criterion = "0.5"
- tempfile = "3.0"
+ Before merging, build Milvus with its pinned Conan dependencies and run:
+ 
+ ```sh
+ all_tests --gtest_filter='S3EndpointAuthGuardDeathTest.*:MinioEndpointAuthGuardDeathTest.*'
+ ```
+ 
+-The complete cgo/Go startup path and a Linux deployment smoke test remain to be
+-executed. No claim is made that the full Milvus build or production upgrade has
+-been verified. No shared merr code, wire projection, oldCode or metric label was
+-changed.
++The complete Go server startup path and a production upgrade remain unverified.
++The AWS runtime build policy does not change shared merr code, wire projection,
++oldCode or metric labels.
+ 
+ ## Limitations and follow-up
+ 
+@@ -126,3 +125,54 @@ changed.
+ - The generic null-signer guard and debug assertion behavior should still be
+   fixed upstream in AWS SDK and delivered through its dependency recipe.
+ - Keep the explicit valid region workaround in the affected deployment.
++
++## AWS runtime build invariant (#54101)
++
++The native build uses shared AWS SDK, CRT C++, `aws-c-*`, and `aws-checksums`
++libraries. All consumers, including Arrow, milvus-storage, milvus_core and the
++test executable, must use this same dependency graph. Embedding static CRT
++archives in multiple ELF objects creates private JSON allocator state;
++`Aws::InitAPI` can initialize one copy while an endpoint provider uses another.
++Whether the original provider tests expose this depends on compiler inlining.
++
++The root Conan recipe always rejects static AWS option overrides. With
++`MILVUS_AUDIT_AWS_RUNTIME=ON`, Linux builds also check linker maps for AWS
++archives and inspect the full, unstripped symbol table of milvus-storage,
++milvus_core and all_tests for embedded SDK/CRT functions. `nm -D` alone is
++insufficient because it omits hidden runtime copies. Successful storage audits
++are cached until the library or checker changes.
++
++The audit defaults to the unit-test build setting. `scripts/core_build.sh`
++passes that setting explicitly on every configure, so switching from a normal
++build to the CI unit/coverage build enables it even with an existing CMake
++cache. `make install` and `make gpu-install` also default the audit to ON for
++packaged builds. Developers can opt in or out with the
++`MILVUS_AUDIT_AWS_RUNTIME=ON/OFF` environment or make variable; direct CMake
++invocations use `-DMILVUS_AUDIT_AWS_RUNTIME=ON/OFF`.
++
++Tests need a direct CRT Conan requirement to expose its link libraries through
++the shared SDK dependency graph. Its version tracks the SDK recipe without
++`force=True`, so an incompatible SDK upgrade fails dependency resolution.
++`find_package(AWSSDK)` already loads the CRT CMake target.
++
++Regenerate Conan inputs and rebuild Arrow and the native consumers when changing
++this policy. Existing Conan shared-library imports and the native install step
++must ship the complete AWS shared-library closure, including SONAME symlinks;
++test the installed output with no Conan cache available. No milvus-common or
++milvus-storage source revision update is needed for this build policy.
++
++`CrtRuleEngineUsesSdkInitialization` directly constructs a real CRT RuleEngine
++from the test executable after SDK initialization and destroys it before SDK
++shutdown. This exercises the duplicate-runtime failure independently of
++endpoint-provider constructor inlining. The original guard tests are retained.
++The checksum test also balances its own SDK initialization after its client
++configuration is destroyed; leaving CRT workers alive during shared-library
++teardown can race with SDK logger destruction.
++Both the full C++ unit-test runner and the coverage runner execute the link
++checker's separate positive/negative CTest on Linux. A failed or missing test
++fails the runner. `MILVUS_CMAKE_BUILD_DIR` can select a nondefault build tree.
++To run it separately:
++
++```sh
++(cd cmake_build/unittest && ctest -R '^aws_runtime_link_check$' --output-on-failure --no-tests=error)
++```
+```
+
+**File**: `internal/core/CMakeLists.txt` (modified, +2/-1)
+```diff
+@@ -182,11 +182,12 @@ find_package(GTest REQUIRED)
+ find_package(benchmark REQUIRED)
+ find_package(googleapis REQUIRED)
+ find_package(libavrocpp REQUIRED)
+-find_package(AWSSDK REQUIRED)
++find_package(AWSSDK REQUIRED CONFIG)
+ find_package(Azure REQUIRED)
+ 
+ include( CTest )
+ include( BuildUtils )
++include( AwsRuntime )
+ include( DefineOptions )
+ 
+ # ---- Split DWARF (Linux only) ----
+```
+
+**File**: `internal/core/cmake/AwsRuntime.cmake` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++# Licensed to the LF AI & Data foundation under one
++# or more contributor license agreements. See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership. The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License. You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++function(milvus_check_aws_runtime target)
++    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR NOT MILVUS_AUDIT_AWS_RUNTIME)
++        return()
++    endif()
++
++    # Linker maps include archives from transitive targets and response files;
++    # GNU ld also lists archives from which no objects were extracted. Check
++    # before stripping: hidden CRT state is absent from the dynamic symbol table.
++    set(map_file "${CMAKE_CURRENT_BINARY_DIR}/${target}-$<CONFIG>.aws.map")
++    set(check_script "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/CheckAwsRuntime.cmake")
++    target_link_options(${target} PRIVATE "LINKER:-Map,${map_file}")
++    set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS "${check_script}")
++    set(check_command ${CMAKE_COMMAND}
++            "-DMAP_FILE=${map_file}"
++            "-DBINARY_FILE=$<TARGET_FILE:${target}>"
++            "-DNM=${CMAKE_NM}"
++            -P "${check_script}")
++    get_target_property(target_source_dir ${target} SOURCE_DIR)
++    if(target_source_dir STREQUAL CMAKE_CURRENT_SOURCE_DIR)
++        add_custom_command(TARGET ${target} POST_BUILD
++            COMMAND ${check_command}
++            COMMENT "Checking ${target} uses a shared AWS runtime"
++            VERBATIM)
++    else()
++        # A FetchContent target is defined in another directory, where CMake
++        # does not allow us to attach a POST_BUILD command. Consumers depend
++        # on this check so it also runs when building all_tests directly.
++        # Record successful checks to avoid rescanning unchanged libraries.
++        # CMAKE_CFG_INTDIR keeps configurations separate on CMake 3.18 too.
++        set(stamp_dir "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
++        set(stamp_file "${stamp_dir}/${target}.aws.checked")
++        add_custom_command(OUTPUT "${stamp_file}"
++            COMMAND ${check_command}
++            COMMAND ${CMAKE_COMMAND} -E make_directory "${stamp_dir}"
++            COMMAND ${CMAKE_COMMAND} -E touch "${stamp_file}"
++            DEPENDS ${target} "${check_script}"
++            COMMENT "Checking ${target} uses a shared AWS runtime"
++            VERBATIM)
++        add_custom_target(${target}_aws_runtime_check ALL DEPENDS "${stamp_file}")
++    endif()
++endfunction()
+```
+
+**File**: `internal/core/cmake/CheckAwsRuntime.cmake` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++# Licensed to the LF AI & Data foundation under one
++# or more contributor license agreements. See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership. The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License. You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++if(NOT EXISTS "${MAP_FILE}" OR NOT EXISTS "${BINARY_FILE}" OR NOT NM)
++    message(FATAL_ERROR "AWS runtime check requires a linker map, an unstripped binary and nm")
++endif()
++
++file(STRINGS "${MAP_FILE}" aws_archives
++    REGEX "libaws-(cpp-sdk-[^ /()\t]+|crt-cpp|c-[^ /()\t]+|checksums)\\.a([ ()\t]|$)")
++if(aws_archives)
++    list(GET aws_archives 0 first_archive)
++    message(FATAL_ERROR "Static AWS archive in ${BINARY_FILE}: ${first_archive}")
++endif()
++
++execute_process(COMMAND "${NM}" --defined-only --demangle "${BINARY_FILE}"
++    RESULT_VARIABLE nm_result
++    OUTPUT_VARIABLE defined_symbols
++    ERROR_VARIABLE nm_error)
++if(NOT nm_result EQUAL 0)
++    message(FATAL_ERROR "Cannot inspect AWS runtime in ${BINARY_FILE}: ${nm_error}")
++endif()
++if(NOT defined_symbols)
++    message(FATAL_ERROR "AWS runtime check requires an unstripped binary: ${BINARY_FILE}")
++endif()
++
++# These out-of-line functions belong to the shared SDK/CRT libraries. Finding
++# even a local definition here means the target embeds another runtime copy.
++set(runtime_symbols
++    aws_common_library_init
++    aws_json_module_init
++    aws_json_value_new_from_string
++    aws_json_value_get_from_object
++    aws_mem_acquire
++    aws_partitions_config_new_from_string
++    aws_s3_library_init
++    Aws::InitAPI
++    Aws::Crt::ApiHandle::ApiHandle)
++list(JOIN runtime_symbols "|" runtime_pattern)
++string(REGEX MATCH
++    "(^|\n)[^\n]*[ \t](${runtime_pattern})([ \t(]|\n|$)"
++    embedded_runtime "${defined_symbols}")
++if(embedded_runtime)
++    message(FATAL_ERROR "Embedded AWS runtime in ${BINARY_FILE}: ${embedded_runtime}")
++endif()
+```
+
+**File**: `internal/core/cmake/DefineOptions.cmake` (modified, +3/-0)
+```diff
+@@ -66,6 +66,9 @@ define_option(MILVUS_UNITY_BUILD "Use CMake unity (jumbo) build to speed up comp
+ define_option(MILVUS_USE_SPLIT_DWARF
+         "Split DWARF debug info into external .dwo files for build trees that preserve them" OFF)
+ 
++define_option(MILVUS_AUDIT_AWS_RUNTIME
++        "Audit Linux link maps and unstripped binaries for embedded AWS runtimes" "${BUILD_UNIT_TEST}")
++
+ define_option(MILVUS_VERBOSE_THIRDPARTY_BUILD
+         "Show output from ExternalProjects rather than just logging to files" ON)
  
 ```
 
-**File**: `internal/core/thirdparty/tantivy/tantivy-binding/src/index_reader.rs` (modified, +273/-16)
+**File**: `internal/core/conanfile.py` (modified, +21/-0)
 ```diff
-@@ -7,7 +7,7 @@ use tantivy::fastfield::FastValue;
- use tantivy::query::{BooleanQuery, Query, RangeQuery, RegexQuery, TermQuery, TermSetQuery};
- use tantivy::schema::{Field, IndexRecordOption};
- use tantivy::tokenizer::{NgramTokenizer, TokenStream, Tokenizer};
--use tantivy::{Directory, HasLen, Index, IndexReader, ReloadPolicy, Term};
-+use tantivy::{Index, IndexReader, ReloadPolicy, Term};
+@@ -1,6 +1,7 @@
+ required_conan_version = ">=2.0"
  
- use crate::bitset_wrapper::BitsetWrapper;
- use crate::docid_collector::{DocIdCollector, DocIdCollectorI64};
-@@ -95,6 +95,8 @@ impl IndexReaderWrapper {
-         index: Arc<Index>,
-         set_bitset: SetBitsetFn,
-     ) -> Result<IndexReaderWrapper> {
-+        // TODO: Reuse unchanged SegmentReaders upstream by (segment_id, delete_opstamp)
-+        // when creating a new snapshot, while keeping previously published snapshots fixed.
-         IndexReaderWrapper::from_index_with_policy(index, set_bitset, ReloadPolicy::Manual)
-     }
+ from conan import ConanFile
++from conan.errors import ConanInvalidConfiguration
+ from conan.tools.cmake import CMakeDeps, CMakeToolchain
+ from conan.tools.files import copy
+ import os
+@@ -42,6 +43,12 @@ class MilvusConan(ConanFile):
+     )
  
-@@ -149,21 +151,14 @@ impl IndexReaderWrapper {
-     }
+     default_options = {
++        # SDK initialization must reach the same CRT state in every shared
++        # library and executable. Static AWS archives create private copies.
++        "aws-sdk-cpp/*:shared": True,
++        "aws-crt-cpp/*:shared": True,
++        "aws-c-*/*:shared": True,
++        "aws-checksums/*:shared": True,
+         "openssl/*:shared": True,
+         "openssl/*:no_apps": True,
+         "libevent/*:shared": True,
+@@ -135,6 +142,11 @@ def requirements(self):
+         # Without this, find_package(Azure) can't find include directories.
+         self.requires("azure-sdk-for-cpp/1.16.4@milvus/dev#7c95e3df67cfea28b3cf6dbd60fbf137", force=True)
+         self.requires("aws-sdk-cpp/1.11.842@milvus/dev#363556887f622db23a10168c108dd55d", force=True)
++        # Tests call CRT APIs directly. A direct requirement exposes its link
++        # libraries even when the shared SDK hides transitive libraries.
++        # Keep this version in sync with the SDK recipe; do not force it, so
++        # an incompatible SDK upgrade produces a Conan dependency conflict.
++        self.requires("aws-crt-cpp/0.40.1#c85891382919486534ac53902c013750")
+         # Force snappy/lz4 versions to override Arrow's older transitive deps
+         # (arrow/*:with_snappy and arrow/*:with_lz4 are enabled for Parquet decoding)
+         self.requires("snappy/1.2.1#b940695c64ccbff63c1aabd4b1eee3f3", force=True)
+@@ -151,6 +163,15 @@ def requirements(self):
+         if self.settings.os in ["Linux", "FreeBSD"]:
+             self.requires("s2n/1.6.0#4fa3b751b92e126a55e45dce723f0384", force=True)
  
-     pub fn index_size_bytes(&self) -> Result<u64> {
--        let dir = self.index.directory();
--        let mut total: u64 = 0;
--        for path in dir.list_managed_files() {
--            match dir.open_read(&path) {
--                Ok(file_slice) => {
--                    total += file_slice.len() as u64;
--                }
--                Err(_e) => {
--                    // Some legacy/unsupported files may fail to open (e.g., old tantivy versions).
--                    // Skip unreadable files to provide a best-effort byte-size estimation instead of failing hard.
--                    continue;
--                }
--            }
--        }
--        Ok(total)
-+        // Read only retained, committed component lengths. Managed paths can
-+        // include unfinished merge outputs or disappear while an old reader lives.
-+        let searcher = self.reader.searcher();
-+        Ok(searcher
-+            .segment_readers()
-+            .iter()
-+            .map(|segment| segment.num_bytes())
-+            .sum())
-     }
++    def validate(self):
++        # Profiles and command-line options can override default_options.
++        # Reject a partially static runtime before generating linker inputs.
++        for dep in self.dependencies.host.values():
++            if dep.ref.name.startswith("aws-") and not dep.options.get_safe("shared"):
++                raise ConanInvalidConfiguration(
++                    f"{dep.ref.name} must use shared=True: Milvus requires a single AWS runtime"
++                )
++
+     def generate(self):
+         deps = CMakeDeps(self)
+         # Set cmake file names to match what downstream projects expect
+```
+
+**File**: `internal/core/src/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -213,5 +213,9 @@ if (ENABLE_GCP_NATIVE)
+ endif()
  
-     pub(crate) fn search(&self, q: &dyn Query, bitset: *mut c_void) -> Result<()> {
-@@ -942,6 +937,268 @@ mod test {
+ target_link_libraries(milvus_core ${LINK_TARGETS})
++milvus_check_aws_runtime(milvus_core)
++if(TARGET milvus-storage_aws_runtime_check)
++    add_dependencies(milvus_core milvus-storage_aws_runtime_check)
++endif()
  
-     use super::IndexReaderWrapper;
+ install(TARGETS milvus_core DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+```
+
+---
+
+### Incident Patch 2: `45b9c15a` (2026-10-20)
+**Commit Message**: fix: avoid false container memory limit warnings (#54120)
+
+Milvus logs `failed to get container memory limit` when a container has
+no memory limit, even though the read succeeded.
+
+The value used for an unlimited limit is larger than the machine's RAM,
+which incorrectly triggers the warning. Only warn when reading the limit
+returns an error. The reported memory size is unchanged.
+
+Added a regression test for the false warning and checked that real read
+failures still produce a warning. The hardware package tests pass on
+Linux and macOS.
+
+Fixes #54117
+
+Signed-off-by: Aadi Golchha <[REDACTED_EMAIL]>
+
+**File**: `pkg/util/hardware/hardware_info.go` (modified, +1/-1)
+```diff
+@@ -93,7 +93,7 @@ func GetMemoryCount() uint64 {
+ 		return limit
+ 	}
  
-+    #[test]
-+    fn test_index_size_bytes_ignores_incomplete_files() {
-+        use std::{io::Write, path::Path};
+-	if err != nil || limit > stats.Total {
++	if err != nil {
+ 		mlog.RatedWarn(context.TODO(), rate.Limit(3600), "failed to get container memory limit",
+ 			mlog.Uint64("containerLimit", limit),
+ 			mlog.Err(err))
+```
+
+**File**: `pkg/util/hardware/hardware_info_test.go` (modified, +43/-0)
+```diff
+@@ -13,9 +13,14 @@ package hardware
+ 
+ import (
+ 	"context"
++	"math"
++	"os"
+ 	"testing"
+ 
++	"github.com/bytedance/mockey"
++	"github.com/shirou/gopsutil/v4/mem"
+ 	"github.com/stretchr/testify/assert"
++	"golang.org/x/time/rate"
+ 
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ )
+@@ -37,6 +42,44 @@ func Test_GetMemoryCount(t *testing.T) {
+ 	assert.NotZero(t, GetMemoryCount())
+ }
+ 
++func TestGetMemoryCountWarnings(t *testing.T) {
++	const hostMemory = uint64(16 << 30)
++	cases := []struct {
++		name  string
++		limit uint64
++		err   error
++	}{
++		{name: "unlimited", limit: math.MaxUint64},
++		{name: "above_host", limit: hostMemory * 2},
++		{name: "container_read_error", err: os.ErrPermission},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			// Keep the package's background memory watcher outside these mocks.
++			hostMock := mockey.Mock(mem.VirtualMemory).IncludeCurrentGoRoutine().Return(&mem.VirtualMemoryStat{Total: hostMemory}, nil).Build()
++			t.Cleanup(func() { hostMock.UnPatch() })
++			containerMock := mockey.Mock(getContainerMemLimit).IncludeCurrentGoRoutine().Return(tc.limit, tc.err).Build()
++			t.Cleanup(func() { containerMock.UnPatch() })
++			var warnings []string
++			// Capture the call before rate limiting can suppress it.
++			warnMock := mockey.Mock(mlog.RatedWarn).IncludeCurrentGoRoutine().To(func(_ context.Context, _ rate.Limit, msg string, fields ...mlog.Field) {
++				warnings = append(warnings, msg)
++				if tc.err != nil {
++					assert.Contains(t, fields, mlog.Err(tc.err))
++				}
++			}).Build()
++			t.Cleanup(func() { warnMock.UnPatch() })
 +
-+        use tantivy::{directory::TerminatingWrite, Directory};
++			assert.Equal(t, hostMemory, GetMemoryCount())
++			if tc.err == nil {
++				assert.Empty(t, warnings)
++			} else {
++				assert.Equal(t, []string{"failed to get container memory limit"}, warnings)
++			}
++		})
++	}
++}
 +
-+        use crate::{
-+            array::{free_rust_result, Value},
-+            index_reader_c::tantivy_index_size_bytes,
-+            index_writer::IndexWriterWrapper,
-+            TantivyIndexVersion,
-+        };
+ func Test_GetUsedMemoryCount(t *testing.T) {
+ 	mlog.Info(context.TODO(), "TestGetUsedMemoryCount",
+ 		mlog.Uint64("UsedMemoryCount", GetUsedMemoryCount()))
+```
+
+---
+
+### Incident Patch 3: `5bd2f5bf` (2026-10-20)
+**Commit Message**: fix: preserve validity for all-null sparse vector inserts (#54382)
+
+An all-null nullable sparse-vector batch from older SDKs carries a
+legacy `valid_data=[false, false]` bitmap without a field payload.
+Normalization previously cleared that bitmap, so Proxy rejected the
+insert with `expected=2 / actual=0`.
+
+Materialize an empty sparse-vector payload before migrating legacy
+validity. Keep the bitmap unchanged so normal validation still rejects
+incorrect bitmap lengths, non-nullable nulls, and missing vectors for
+true bits. The change is limited to sparse fields with an absent payload
+and a non-empty legacy bitmap.
+
+issue: #54330
+
+Validation:
+- Confirmed both new regression tests fail before the fix, including the
+exact error reported in the issue.
+- Passed the full `pkg/util/typeutil` suite: `go test -tags dynamic,test
+-gcflags="all=-N -l" -count=1 ./util/typeutil` from `pkg/`.
+- Passed the full fieldvalidator suite: `LOCAL_STORAGE_SIZE=100 go test
+-p 2 -tags dynamic,test -gcflags="all=-N -l" -count=1
+./internal/proxy/fieldvalidator`. The environment override avoids the
+Linux `/var/lib/milvus` default on macOS.
+- Covered protobuf round trips, repeated normalization, null-preserving
+r
+
+**File**: `internal/proxy/fieldvalidator/validate_util_test.go` (modified, +40/-0)
+```diff
+@@ -9600,3 +9600,43 @@ func TestValidateNestedArrayFieldData(t *testing.T) {
+ 		assert.Contains(t, err.Error(), "max length")
+ 	})
+ }
 +
-+        for in_ram in [true, false] {
-+            let directory = tempfile::tempdir().unwrap();
-+            let mut writer = IndexWriterWrapper::create_text_writer(
-+                "text",
-+                directory.path().to_str().unwrap(),
-+                "default",
-+                "",
-+                "",
-+                1,
-+                15_000_000,
-+                in_ram,
-+                false,
-+                TantivyIndexVersion::V7,
-+            )
-+            .unwrap();
-+            writer.add("committed text", Some(0)).unwrap();
-+            writer.commit().unwrap();
-+            let mut reader = writer.create_snapshot_reader(set_bitset).unwrap();
-+            let expected = reader.index_size_bytes().unwrap();
-+            assert!(expected > 0);
++func TestValidateNullableSparseWithoutPayload(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		validData []bool
++		nullable  bool
++		wantErr   bool
++	}{
++		{"all null", []bool{false, false}, true, false},
++		{"wrong bitmap length", []bool{false}, true, true},
++		{"mixed validity without vectors", []bool{false, true}, true, true},
++		{"all valid without vectors", []bool{true, true}, true, true},
++		{"missing bitmap and vectors", nil, true, true},
++		{"nulls in non-nullable field", []bool{false, false}, false, true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			schema := &schemapb.CollectionSchema{Fields: []*schemapb.FieldSchema{{
++				FieldID: 102, Name: "sparse", DataType: schemapb.DataType_SparseFloatVector,
++				Nullable: tc.nullable,
++			}}}
++			helper, err := typeutil.CreateSchemaHelper(schema)
++			require.NoError(t, err)
++			field := &schemapb.FieldData{
++				Type: schemapb.DataType_SparseFloatVector, FieldName: "sparse", FieldId: 102,
++				ValidData: tc.validData,
++			}
++			// DML normalizes at entry before the full validation/fill/alignment path.
++			require.True(t, typeutil.ValidateAndNormalizeFieldDataValidData(field))
++			err = NewValidateUtil().Validate([]*schemapb.FieldData{field}, helper, 2)
++			if tc.wantErr {
++				require.ErrorIs(t, err, merr.ErrParameterInvalid)
++				return
++			}
++			require.NoError(t, err)
++			require.Equal(t, []bool{false, false}, typeutil.GetFieldDataValidData(field))
++			require.NotNil(t, field.GetVectors().GetSparseFloatVector())
++			require.Empty(t, field.GetVectors().GetSparseFloatVector().GetContents())
++		})
++	}
++}
+```
+
+**File**: `pkg/util/typeutil/field_data.go` (modified, +15/-0)
+```diff
+@@ -101,6 +101,21 @@ func normalizeFieldDataValidData(fieldData *schemapb.FieldData) {
+ 		return
+ 	}
+ 
++	// Older SDKs omit the sparse payload for an all-null batch. Materialize
++	// its empty container before moving legacy validity into VectorField,
++	// otherwise the default branch below discards the only null information.
++	// Keep the bitmap unchanged: row alignment still rejects missing vectors
++	// when any bit is true.
++	if fieldData.Field == nil && fieldData.GetType() == schemapb.DataType_SparseFloatVector && len(fieldData.GetValidData()) > 0 {
++		fieldData.Field = &schemapb.FieldData_Vectors{
++			Vectors: &schemapb.VectorField{
++				Data: &schemapb.VectorField_SparseFloatVector{
++					SparseFloatVector: &schemapb.SparseFloatArray{},
++				},
++			},
++		}
++	}
 +
-+            for size in [4, 5, 6, 7, 0, 1, 2, 3, 8] {
-+                // ManagedDirectory registers the path before creating the file.
-+                // Flushing without terminating exposes an unfinished merge output.
-+                let path = format!("unfinished-{size}.idx");
-+                let path = Path::new(&path);
-+                let mut output = reader.index.directory().open_write(path).unwrap();
-+                output.write_all(&vec![0; size]).unwrap();
-+                output.flush().unwrap();
-+                assert!(reader.index.directory().list_managed_files().contains(path));
-+                assert_eq!(
-+                    reader.index.directory().atomic_read(path).unwrap().len(),
-+                    size
-+                );
+ 	switch fieldData.Field.(type) {
+ 	case *schemapb.FieldData_Scalars, *schemapb.FieldData_Vectors:
+ 		if validData := GetFieldDataValidData(fieldData); len(validData) > 0 {
+```
+
+**File**: `pkg/util/typeutil/field_data_test.go` (modified, +38/-0)
+```diff
+@@ -4,6 +4,8 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/protobuf/proto"
+ 
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ )
+@@ -411,3 +413,39 @@ func TestFieldDataBuilder_Build(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+                // Exercise the same C ABI used while publishing growing text readers.
-+                let result = tantivy_index_size_bytes(&mut reader as *mut _ as *mut c_void);
-+                assert!(result.success);
-+                match result.value {
-+                    Value::U64(bytes) => assert_eq!(bytes, expected),
-+                    _ => panic!("expected a byte count"),
-+                }
-+                free_rust_result(result);
-+
-+                output.terminate().unwrap();
-+                assert_eq!(reader.index_size_bytes().unwrap(), expected);
-+            }
-+        }
-+    }
-+
-+    #[test]
-+    fn test_index_size_bytes_pins_committed_segments() {
-+        use tantivy::{merge_policy::NoMergePolicy, Directory};
-+
-+        for in_ram in [true, false] {
-+            let directory = tempfile::tempdir().unwrap();
-+            let mut s
++// Older SDKs omit the sparse payload entirely when every row is null.
++func TestNormalizeAllNullSparseFieldData(t *testing.T) {
++	field := &schemapb.FieldData{
++		Type:      schemapb.DataType_SparseFloatVector,
++		FieldName: "sparse", FieldId: 102,
++		ValidData: []bool{false, false},
++	}
++	// Match the input boundary, including protobuf's absent-oneof semantics.
++	wire, err := proto.Marshal(field)
++	require.NoError(t, err)
++	field = &schemapb.FieldData{}
++	require.NoError(t, proto.Unmarshal(wire, field))
++	require.Nil(t, field.Field)
++	for range 2 {
++		require.True(t, ValidateAndNormalizeFieldDataValidData(field))
++		require.Equal(t, []bool{false, false}, GetFieldDataValidData(field))
++		require.Empty(t, field.GetValidData())
++		require.NotNil(t, field.GetVectors().GetSparseFloatVector())
++		require.Empty(t, field.GetVectors().GetSparseFloatVector().GetContents())
++	}
++	// Repacking must retain null rows without adding empty non-null vectors.
++	dst := make([]*schemapb.FieldData, 1)
++	for row := range 2 {
++		AppendFieldData(dst, []*schemapb.FieldData{field}, int64(row), -1)
++	}
++	require.Equal(t, []bool{false, false}, GetFieldDataValidData(dst[0]))
++	require.Empty(t, dst[0].GetVectors().GetSparseFloatVector().GetContents())
++	wire, err = proto.Marshal(dst[0])
++	require.NoError(t, err)
++	decoded := &schemapb.FieldData{}
++	require.NoError(t, proto.Unmarshal(wire, decoded))
++	require.Equal(t, []bool{false, false}, GetFieldDataValidData(decoded))
++	ProjectFieldDataValidDataForLegacy(decoded)
++	require.Equal(t, []bool{false, false}, decoded.GetValidData())
++}
+```
+
+**File**: `tests/integration/ratelimit/db_properties_test.go` (modified, +12/-7)
+```diff
+@@ -46,10 +46,11 @@ type DBPropertiesSuite struct {
+ }
+ 
+ func (s *DBPropertiesSuite) prepareDatabase(ctx context.Context, dbName string, configKey string, configValue string) {
+-	timeoutCtx, cancelFunc := context.WithTimeout(ctx, 5*time.Second)
+-	defer cancelFunc()
++	// The first DDL may also wait for streaming channel assignment after startup.
++	createCtx, cancelCreate := context.WithTimeout(ctx, 30*time.Second)
++	defer cancelCreate()
+ 
+-	resp, err := s.Cluster.MilvusClient.CreateDatabase(timeoutCtx, &milvuspb.CreateDatabaseRequest{
++	resp, err := s.Cluster.MilvusClient.CreateDatabase(createCtx, &milvuspb.CreateDatabaseRequest{
+ 		DbName: dbName,
+ 		Properties: []*commonpb.KeyValuePair{
+ 			{
+@@ -58,10 +59,12 @@ func (s *DBPropertiesSuite) prepareDatabase(ctx context.Context, dbName string,
+ 			},
+ 		},
+ 	})
+-	s.NoError(merr.CheckRPCCall(resp, err))
++	s.Require().NoError(merr.CheckRPCCall(resp, err))
+ 
+-	resp2, err2 := s.Cluster.MilvusClient.DescribeDatabase(timeoutCtx, &milvuspb.DescribeDatabaseRequest{DbName: dbName})
+-	s.NoError(merr.CheckRPCCall(resp2, err2))
++	describeCtx, cancelDescribe := context.WithTimeout(ctx, 5*time.Second)
++	defer cancelDescribe()
++	resp2, err2 := s.Cluster.MilvusClient.DescribeDatabase(describeCtx, &milvuspb.DescribeDatabaseRequest{DbName: dbName})
++	s.Require().NoError(merr.CheckRPCCall(resp2, err2))
+ }
+ 
+ func (s *DBPropertiesSuite) prepareCollection(ctx context.Context, dbName string, collectionName string) {
+@@ -218,9 +221,11 @@ func TestLimitWithDBProperties(t *testing.T) {
+ 
+ func (s *DBPropertiesSuite) waitForSuccessOrTimeout(fn func() (error, bool), desc string) {
+ 	time.Sleep(3 * time.Second)
++	timer := time.NewTimer(15 * time.Second)
++	defer timer.Stop()
+ 	for {
+ 		select {
+-		case <-time.After(15 * time.Second):
++		case <-timer.C:
+ 			s.FailNow("waiting for " + desc + " timeout")
+ 		default:
+ 			err, ok := fn()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #54431** (2026-10-20): fix: [3.0] preserve runtime library symlinks during installation (@zhuwenxing)
+- **PR #54429** (closed): enhance: preallocate REST FloatVector decode buffers (@MrPresent-Han)
 - **PR #54423** (2026-10-19): enhance: [hotfix-2.6.24] cache sealed JSON index validity (@sunby)
+- **PR #54422** (2026-10-20): enhance: [2.6] cache sealed JSON index validity (@sunby)
 - **PR #54420** (closed): enhance: reuse JSON null offsets in packed indexes (@sunby)
-- **PR #54408** (2026-10-19): fix: [3.0] require root for telemetry administration (@liliu-z)
-- **PR #54398** (2026-10-19): test: [cp3.0] Backport data integrity diagnostics and nullable import coverage (@yanliang567)
-- **PR #54395** (2026-10-19): test: mock DqTaskQueue.Enqueue in proxy search tests (@sunby)
-- **PR #54387** (2026-10-19): enhance: [3.0] migrate result-fill helpers to snapshot (#54187) (@congqixia)
+- **PR #54416** (2026-10-20): enhance: [cp3.0] assign import ID ranges after preimport via a two-phase UpdateImport message (@xaxys)
 
 ---
 
@@ -1802,82 +2114,31 @@ A TODO at snapshot creation documents f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. account Tantivy snapshot sizes from retained components (#54377)
+## X. share AWS SDK and CRT runtime across native targets (#54118)
 
 **RULE**:
-When implementing operations in `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8a19994`: account Tantivy snapshot sizes from retained components (#54377). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f58efbb`: share AWS SDK and CRT runtime across native targets (#54118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
-source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+# Package builds audit the AWS runtime even without native unit tests.
+# An explicit environment or command-line value can override this default.
+install gpu-install: export MILVUS_AUDIT_AWS_RUNTIME ?= ON
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-[[package]]
-name = "getrandom"
-version = "0.1.16"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fc3cb4d91f53b50155bdcfd23f6a4c39ae1969c2ae85982b135750cccaf5fce"
-dependencies = [
- "cfg-if",
- "libc",
- "wasi 0.9.0+wasi-snapshot-preview1",
-]
-
-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
-[[package]]
-name = "rand"
-version = "0.7.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
-dependencies = [
- "getrandom 0.1.16",
- "libc",
- "rand_chacha 0.2.2",
- "rand_core 0.5.1",
- "rand_hc",
-]
-
-[[package]]
-name = "rand_chacha"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4c8ed856279c9737206bf725bf36935d8666ead7aa69b52be55af369d193402"
-dependencies = [
- "ppv-lite86",
- "rand_core 0.5.1",
-]
-
-[[package]]
-name = "rand_core"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
-dependencies = [
- "getrandom 0.1.16",
-]
-
-[[package]]
-name = "rand_hc"
-version = "0.2.0"
-source = "r
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8a19994` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f58efbb` are properly handled with clean fallback behavior.
