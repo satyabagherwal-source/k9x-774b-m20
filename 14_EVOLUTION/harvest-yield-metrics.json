@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-20T16:50:40.243Z",
-  "total_cycles_completed": 3890,
-  "total_learnings_persisted": 3890,
-  "total_rules_promoted": 3098,
+  "last_updated": "2026-10-20T16:57:22.717Z",
+  "total_cycles_completed": 3893,
+  "total_learnings_persisted": 3893,
+  "total_rules_promoted": 3100,
   "history": [
-    {
-      "timestamp": "2026-10-20T04:44:56.873Z",
-      "repository": "cosscom/ui",
-      "learningId": "learn-github-cosscom-ui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:50:47.307Z",
-      "repository": "vuetifyjs/vuetify",
-      "learningId": "learn-github-vuetifyjs-vuetify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T04:50:55.186Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T04:50:55.828Z",
       "repository": "cypress-io/cypress",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-20T16:50:40.243Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:57:09.843Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:57:17.028Z",
+      "repository": "react-native-webrtc/react-native-webrtc",
+      "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-20T16:57:22.717Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

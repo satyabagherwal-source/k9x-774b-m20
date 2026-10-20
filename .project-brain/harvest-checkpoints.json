@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-20T16:50:40.245Z",
+  "last_updated": "2026-10-20T16:57:22.721Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "3770482793cf60f5e7094b846bb06f78c294fadd7b7abf38aa4690bb6e7c7d35",
-      "verified_at": "2026-10-19T03:26:38.651Z",
+      "content_hash": "b7dfa3aa6df2bcba00e3df4499dcd0cbfa81473698371061917beb2edea6a437",
+      "verified_at": "2026-10-20T16:57:09.846Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:26:38.651Z"
+      "last_updated": "2026-10-20T16:57:09.846Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "c61cacedf367a3dc6b948e89fd251bb1fddaeafbb33f0b2042cefc3cecc1d600",
-      "verified_at": "2026-10-20T00:31:56.376Z",
+      "content_hash": "6ea6411fe87de9b4677ae0e799419d70cc6f2bd805c8ba068c7e3159dd244e2e",
+      "verified_at": "2026-10-20T16:57:22.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:31:56.376Z"
+      "last_updated": "2026-10-20T16:57:22.721Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -9051,14 +9051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
-      "content_hash": "441e6fac6b0089350f8c3a1e5ae93830f9405ccd16c3639f4b2c100e482e726d",
-      "verified_at": "2026-10-19T04:53:00.995Z",
+      "content_hash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
+      "verified_at": "2026-10-20T16:57:17.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:53:00.995Z"
+      "last_updated": "2026-10-20T16:57:17.031Z"
     },
     "rook/rook": {
       "repository": "rook/rook",

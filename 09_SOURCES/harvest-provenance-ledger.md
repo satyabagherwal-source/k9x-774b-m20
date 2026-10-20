@@ -3920,3 +3920,6 @@ Every entry in this ledger must capture:
 | `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-20T16:50:26.309Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `400d35c2` | Multi-dimensional audit evidence | 2026-10-20T16:50:37.072Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9e253c40` | Multi-dimensional audit evidence | 2026-10-20T16:50:40.239Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-20T16:57:09.838Z |
+| `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `fb662c9d` | Multi-dimensional audit evidence | 2026-10-20T16:57:17.024Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `952e0ba6` | Multi-dimensional audit evidence | 2026-10-20T16:57:22.713Z |

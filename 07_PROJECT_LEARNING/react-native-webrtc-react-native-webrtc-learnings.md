@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md`  
 > **Source**: github ([https://github.com/react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc))  
-> **Source Version**: `580735e4`  
+> **Source Version**: `fb662c9d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:53:00.832Z  
+> **Timestamp**: 2026-10-20T16:57:16.628Z  
 > **Learning ID**: `learn-github-react-native-webrtc-react-native-webrtc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:53:00.828Z  
+> **Harvest Timestamp**: 2026-10-20T16:57:16.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -511,283 +511,152 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78d3094d` (2026-07-29)
-**Commit Message**: fix(android): guard against duplicate onActivityResult in screen capture
+### Incident Patch 1: `423292b6` (2026-10-20)
+**Commit Message**: android: fix getDisplayMedia crash on API < 31
 
-Some hosts forward Activity results to every registered ActivityEventListener
-more than once (react-native-navigation is a common example). During the
-getDisplayMedia() screen-capture permission flow this makes onActivityResult
-fire twice for a single request: the first pass consumes displayMediaPromise
-(resolving it and nulling it) and the second pass calls resolve()/reject() on
-the now-null promise, crashing with a NullPointerException. It also spins up a
-second MediaProjection virtual display.
-
-Add null-guards so a duplicate dispatch is ignored: one at the top of the
-PERMISSION_REQUEST_CODE branch (covers the cancel path, which nulls the promise
-synchronously) and one at the top of createScreenStream() (covers the success
-path, since the single-threaded executor runs the duplicated callbacks in order).
-
-**File**: `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java` (modified, +17/-0)
+**File**: `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java` (modified, +12/-2)
 ```diff
-@@ -75,6 +75,15 @@ class GetUserMediaImpl {
-             public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-                 super.onActivityResult(activity, requestCode, resultCode, data);
-                 if (requestCode == PERMISSION_REQUEST_CODE) {
-+                    // Guard against a duplicate onActivityResult dispatch. Some hosts (e.g.
-+                    // react-native-navigation) forward the activity result to every registered
-+                    // ActivityEventListener more than once, so this callback can fire twice for a
-+                    // single getDisplayMedia() request. The first pass consumes displayMediaPromise;
-+                    // a second pass would call reject()/resolve() on a null promise and crash.
-+                    if (displayMediaPromise == null) {
-+                        return;
-+                    }
-+
-                     if (resultCode != Activity.RESULT_OK) {
-                         displayMediaPromise.reject("DOMException", "NotAllowedError");
-                         displayMediaPromise = null;
-@@ -357,6 +366,14 @@ public void run() {
-     }
+@@ -8,6 +8,8 @@
+ import android.util.DisplayMetrics;
+ import android.util.Log;
+ import android.os.Build;
++import android.os.Handler;
++import android.os.Looper;
  
-     private void createScreenStream() {
-+        // A duplicate onActivityResult dispatch (see onActivityResult above) can schedule this more
-+        // than once. The single-threaded executor runs them in order, so by the time a duplicate
-+        // runs the first has already consumed displayMediaPromise. Bail out instead of dereferencing
-+        // a null promise or creating a second screen stream.
-+        if (displayMediaPromise == null) {
-+            return;
-+        }
-+
-         VideoTrack track = createScreenTrack();
- 
-         if (track == null) {
-```
-
----
-
-### Incident Patch 2: `78904d27` (2026-03-20)
-**Commit Message**: android: fix race condition in getDisplayMedia
-
-Fixes: https://github.com/react-native-webrtc/react-native-webrtc/issues/1799
-
-**File**: `android/src/main/java/com/oney/WebRTCModule/AbstractVideoCaptureController.java` (modified, +5/-3)
-```diff
-@@ -1,5 +1,7 @@
- package com.oney.WebRTCModule;
- 
-+import android.util.Log;
-+
- import androidx.annotation.Nullable;
  import androidx.core.util.Consumer;
  
-@@ -10,6 +12,8 @@
- import org.webrtc.VideoCapturer;
- 
- public abstract class AbstractVideoCaptureController {
-+    private static final String TAG = AbstractVideoCaptureController.class.getSimpleName();
-+
-     protected int targetWidth;
-     protected int targetHeight;
-     protected int targetFps;
-@@ -78,9 +82,7 @@ public void startCapture() {
-         try {
-             videoCapturer.startCapture(targetWidth, targetHeight, targetFps);
-         } catch (RuntimeException e) {
--            // XXX This can only fail if we initialize the capturer incorrectly,
--            // which we don't. Thus, ignore any failures here since we trust
--            // ourselves.
-+            Log.e(TAG, "Failed to start capture", e);
-         }
-     }
- 
-```
-
-**File**: `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java` (modified, +14/-4)
-```diff
-@@ -34,6 +34,7 @@
+@@ -34,7 +36,9 @@
  import java.util.Map;
  import java.util.Objects;
  import java.util.UUID;
-+import java.util.concurrent.TimeUnit;
++import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.TimeUnit;
++import java.util.concurrent.TimeoutException;
  import java.util.stream.Collectors;
  
  /**
-@@ -82,10 +83,19 @@ public void onActivityResult(Activity activity, int requestCode, int resultCode,
+@@ -92,8 +96,14 @@ public void onActivityResult(Activity activity, int requestCode, int resultCode,
  
                      mediaProjectionPermissionResultData = data;
  
--                    ThreadUtils.runOnExecutor(() -> {
--                        MediaProjectionService.launch(activity);
--                        createScreenStream();
--                    });
-+                    MediaProjectionService.launch(activity)
-+                        .orTimeout(10, TimeUnit.SECONDS)
-+                        .whenCompleteAsync((value, error) -> {
-+                            if (error != null) {
-+                                Log.e(TAG, "Failed to start MediaProjection service", error);
-+                                displayMediaPromise.reject("DOMException", "AbortError");
-+                                displayMediaPromise = null;
-+                                mediaProjectionPermissionResultData = null;
-+                                return;
-+                            }
+-                    MediaProjectionService.launch(activity)
+-                        .orTimeout(10, TimeUnit.SECONDS)
++                    CompletableFuture<Void> launchFuture = MediaProjectionService.launch(activity);
 +
-+                            createScreenStream();
-+                        }, ThreadUtils.getExecutor());
-                 }
-             }
-         });
-```
-
-**File**: `android/src/main/java/com/oney/WebRTCModule/MediaProjectionService.java` (modified, +24/-3)
-```diff
-@@ -11,6 +11,7 @@
- import android.util.Log;
- 
- import java.util.Random;
-+import java.util.concurrent.CompletableFuture;
- 
- /**
-  * This class implements an Android {@link Service}, a foreground one specifically, and it's
-@@ -24,11 +25,17 @@ public class MediaProjectionService extends Service {
- 
-     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
- 
--    public static void launch(Context context) {
-+    private static volatile CompletableFuture<Void> startFuture;
++                    // CompletableFuture.orTimeout() requires API 31; this is a no-op if already completed.
++                    new Handler(Looper.getMainLooper()).postDelayed(
++                        () -> launchFuture.completeExceptionally(new TimeoutException()),
++                        TimeUnit.SECONDS.toMillis(10));
 +
-+    public static CompletableFuture<Void> launch(Context context) {
-         if (!WebRTCModuleOptions.getInstance().enableMediaProjectionService) {
--            return;
-+            return CompletableFuture.completedFuture(null);
-         }
- 
-+        CompletableFuture<Void> future = new CompletableFuture<>();
-+
-+        startFuture = future;
-+
-         MediaProjectionNotification.createNotificationChannel(context);
-         Intent intent = new Intent(context, MediaProjectionService.class);
-         ComponentName componentName;
-@@ -43,14 +50,21 @@ public static void launch(Context context) {
-             // Avoid crashing due to ForegroundServiceStartNotAllowedException (API level 31).
-             // See: https://developer.android.com/guide/components/foreground-services#background-start-restrictions
-             Log.w(TAG, "Media projection service not started", e);
--            return;
-+            startFuture = null;
-+            future.completeExceptionally(e);
-+
-+            return future;
-         }
- 
-         if (componentName == null) {
-             Log.w(TAG, "Media projection service not started");
-+            startFuture = null;
-+            future.completeExceptionally(new RuntimeException("Media projection service not started"));
-         } else {
-             Log.i(TAG, "Media projection service started");
-         }
-+
-+        return future;
-     }
- 
-     public static void abort(Context context) {
-@@ -77,6 +91,13 @@ public int onStartCommand(Intent intent, int flags, int startId) {
-             startForeground(NOTIFICATION_ID, notification);
-         }
- 
-+        CompletableFuture<Void> fut = startFuture;
-+
-+        if (fut != null) {
-+            startFuture = null;
-+            fut.complete(null);
-+        }
-+
-         return START_NOT_STICKY;
-     }
- }
-```
-
-**File**: `android/src/main/java/com/oney/WebRTCModule/ThreadUtils.java` (modified, +8/-0)
-```diff
-@@ -13,6 +13,14 @@ final class ThreadUtils {
-      */
-     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
- 
-+    /**
-+     * Gets the executor used to run all WebRTC PeerConnection APIs.
-+     * @return ExecutorService.
-+     */
-+    public static ExecutorService getExecutor() {
-+        return executor;
-+    }
-+
-     /**
-      * Runs the given {@link Runnable} on the executor.
-      * @param runnable
++                    launchFuture
+                         .whenCompleteAsync((value, error) -> {
+                             if (error != null) {
+                                 Log.e(TAG, "Failed to start MediaProjection service", error);
 ```
 
 ---
 
-### Incident Patch 3: `7266a9b2` (2026-09-09)
-**Commit Message**: build(deps-dev): bump js-yaml from 4.3.0 to 4.3.2
+### Incident Patch 2: `a5c66c72` (2026-10-20)
+**Commit Message**: Revert "ios(RCTWebRTC): enable Center Stage for devices that support it"
 
-Bumps [js-yaml](https://github.com/nodeca/js-yaml) from 4.3.0 to 4.3.2.
-- [Changelog](https://github.com/nodeca/js-yaml/blob/4.3.2/CHANGELOG.md)
-- [Commits](https://github.com/nodeca/js-yaml/compare/4.3.0...4.3.2)
+This reverts commit 5892a0f54d379605adaf8b44a3c541d45b998ae0.
+
+**File**: `ios/RCTWebRTC/VideoCaptureController.m` (modified, +1/-40)
+```diff
+@@ -51,23 +51,6 @@ - (void)startCapture {
+         return;
+     }
+ 
+-    // Enable Center Stage when the device supports it; cooperative with Control Center.
+-    if (@available(iOS 16.0, *)) {
+-        BOOL centerStageSupported = NO;
+-        for (AVCaptureDeviceFormat *fmt in [RTCCameraVideoCapturer supportedFormatsForDevice:self.device]) {
+-            if (fmt.isCenterStageSupported) {
+-                centerStageSupported = YES;
+-                break;
+-            }
+-        }
+-        if (centerStageSupported) {
+-            AVCaptureDevice.centerStageControlMode = AVCaptureCenterStageControlModeCooperative;
+-            AVCaptureDevice.centerStageEnabled = YES;
+-        } else if (AVCaptureDevice.isCenterStageEnabled) {
+-            AVCaptureDevice.centerStageEnabled = NO;
+-        }
+-    }
+-
+     AVCaptureDeviceFormat *format = [self selectFormatForDevice:self.device
+                                                 withTargetWidth:self.width
+                                                withTargetHeight:self.height];
+@@ -79,17 +62,6 @@ - (void)startCapture {
+ 
+     self.selectedFormat = format;
+ 
+-    // Clamp fps to the range Center Stage allows for this format.
+-    int fps = self.frameRate;
+-    if (@available(iOS 16.0, *)) {
+-        if (AVCaptureDevice.isCenterStageEnabled) {
+-            AVFrameRateRange *csRange = format.videoFrameRateRangeForCenterStage;
+-            if (csRange) {
+-                fps = MAX((int)csRange.minFrameRate, MIN(fps, (int)csRange.maxFrameRate));
+-            }
+-        }
+-    }
+-
+     AVCaptureSession *session = self.capturer.captureSession;
+     if (@available(iOS 16.0, *)) {
+         BOOL enable = self.enableMultitaskingCameraAccess;
+@@ -111,7 +83,7 @@ - (void)startCapture {
+     __weak VideoCaptureController *weakSelf = self;
+     [self.capturer startCaptureWithDevice:self.device
+                                    format:format
+-                                      fps:fps
++                                      fps:self.frameRate
+                         completionHandler:^(NSError *err) {
+                             if (err) {
+                                 RCTLogError(@"[VideoCaptureController] Error starting capture: %@", err);
+@@ -298,18 +270,7 @@ - (AVCaptureDeviceFormat *)selectFormatForDevice:(AVCaptureDevice *)device
+     AVCaptureDeviceFormat *selectedFormat = nil;
+     int currentDiff = INT_MAX;
+ 
+-    BOOL centerStageEnabled = NO;
+-    if (@available(iOS 16.0, *)) {
+-        centerStageEnabled = AVCaptureDevice.isCenterStageEnabled;
+-    }
+-
+     for (AVCaptureDeviceFormat *format in formats) {
+-        // Center Stage only permits supported formats.
+-        if (@available(iOS 16.0, *)) {
+-            if (centerStageEnabled && !format.isCenterStageSupported) {
+-                continue;
+-            }
+-        }
+         CMVideoDimensions dimension = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+         FourCharCode pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+         int diff = abs(targetWidth - dimension.width) + abs(targetHeight - dimension.height);
+```
 
 ---
-updated-dependencies:
-- dependency-name: js-yaml
-  dependency-version: 4.3.2
-  dependency-type: indirect
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+### Incident Patch 3: `d049d064` (2026-10-20)
+**Commit Message**: android(consumer-rules): cover SDK release builds who run R8
 
-**File**: `package-lock.json` (modified, +7/-6)
+**File**: `android/consumer-rules.pro` (modified, +3/-0)
 ```diff
-@@ -4231,9 +4231,9 @@
-       "dev": true
-     },
-     "node_modules/js-yaml": {
--      "version": "4.3.0",
--      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.0.tgz",
--      "integrity": "sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==",
-+      "version": "4.3.2",
-+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
-+      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
-       "dev": true,
-       "funding": [
-         {
-@@ -4245,6 +4245,7 @@
-           "url": "https://github.com/sponsors/nodeca"
-         }
-       ],
-+      "license": "MIT",
-       "dependencies": {
-         "argparse": "^2.0.1"
-       },
-@@ -8810,9 +8811,9 @@
-       "dev": true
-     },
-     "js-yaml": {
--      "version": "4.3.0",
--      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.0.tgz",
--      "integrity": "sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==",
-+      "version": "4.3.2",
-+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
-+      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
-       "dev": true,
-       "requires": {
-         "argparse": "^2.0.1"
+@@ -1,2 +1,5 @@
+ # WebRTC
+ -keep class org.webrtc.** { *; }
++-keep class org.jni_zero.** { *; }
++-keep class J.N { *; }
++-dontwarn org.jni_zero.**
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1852** (2026-10-20): android: fix getDisplayMedia crash on API < 31 (@Calinteodor)
+- **PR #1851** (2026-10-20): Revert "ios(RCTWebRTC): enable Center Stage for devices that support it" (@Calinteodor)
+- **PR #1850** (2026-10-20): android(consumer-rules): cover SDK release builds who run R8 (@Calinteodor)
+- **PR #1847** (closed): ios(RCTWebRTC): leave Center Stage under user control (@Calinteodor)
 - **PR #1846** (2026-10-13): Update WebRTC to M155 (@jallamsetty1)
 - **PR #1845** (closed): ios: keep call audio when other code deactivates the audio session (@Magmusacy)
-- **PR #1839** (2026-09-10): build(deps-dev): bump js-yaml from 4.3.0 to 4.3.2 (@dependabot[bot])
-- **PR #1837** (closed): docs: add architecture overview for new contributors (@nirajmatere)
-- **PR #1836** (2026-09-03): build(deps-dev): bump browserslist from 4.24.3 to 4.28.8 (@dependabot[bot])
-- **PR #1835** (2026-09-03): build(deps-dev): bump brace-expansion from 1.1.11 to 1.1.18 (@dependabot[bot])
 
 ---
 
@@ -807,13 +676,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): guard against duplicate onActivityResult in screen capture
+## X. android: fix getDisplayMedia crash on API < 31
 
 **RULE**:
 When implementing operations in `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78d3094d`: android): guard against duplicate onActivityResult in screen capture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `423292b6`: android: fix getDisplayMedia crash on API < 31. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/oney/WebRTCModule/GetUserMediaImpl.java`.
@@ -821,30 +690,26 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-                    // Guard against a duplicate onActivityResult dispatch. Some hosts (e.g.
-                    // react-native-navigation) forward the activity result to every registered
-                    // ActivityEventListener more than once, so this callback can fire twice for a
-                    // single getDisplayMedia() request. The first pass consumes displayMediaPromise;
-                    // a second pass would call reject()/resolve() on a null promise and crash.
-                    if (displayMediaPromise == null) {
-                        return;
-                    }
+import android.os.Handler;
+import android.os.Looper;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
+                    CompletableFuture<Void> launchFuture = MediaProjectionService.launch(activity);
 
-        // A duplicate onActivityResult dispatch (see onActivityResult above) can schedule this more
-        // than once. The single-threaded executor runs them in order, so by the time a duplicate
-        // runs the first has already consumed displayMediaPromise. Bail out instead of dereferencing
-        // a null promise or creating a second screen stream.
-        if (displayMediaPromise == null) {
-            return;
-        }
+                    // CompletableFuture.orTimeout() requires API 31; this is a no-op if already completed.
+                    new Handler(Looper.getMainLooper()).postDelayed(
+                        () -> launchFuture.completeExceptionally(new TimeoutException()),
+                        TimeUnit.SECONDS.toMillis(10));
 
+                    launchFuture
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                    MediaProjectionService.launch(activity)
+                        .orTimeout(10, TimeUnit.SECONDS)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78d3094d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `423292b6` are properly handled with clean fallback behavior.

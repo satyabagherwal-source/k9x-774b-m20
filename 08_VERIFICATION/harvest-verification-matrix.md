@@ -3913,3 +3913,6 @@
 | `CYCLE-20261020-5Y7Z` | `2026-10-20T16:50:26.303Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`e594c19f...`) |
 | `CYCLE-20261020-66J1` | `2026-10-20T16:50:37.069Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3277` | Yes (`ca4ebb54...`) |
 | `CYCLE-20261020-68YX` | `2026-10-20T16:50:40.233Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3278` | Yes (`665d20db...`) |
+| `CYCLE-20261020-ELL7` | `2026-10-20T16:57:09.835Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`b7dfa3aa...`) |
+| `CYCLE-20261020-ER4O` | `2026-10-20T16:57:17.016Z` | `react-native-webrtc/react-native-webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3279` | Yes (`572383bc...`) |
+| `CYCLE-20261020-EVIO` | `2026-10-20T16:57:22.704Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`6ea6411f...`) |

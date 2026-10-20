@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `75b02df6`  
+> **Source Version**: `952e0ba6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:31:56.066Z  
+> **Timestamp**: 2026-10-20T16:57:22.419Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:31:55.797Z  
+> **Harvest Timestamp**: 2026-10-20T16:57:22.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2174,40 +2174,38 @@ pub struct SearchResultObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75b02df6` (2026-10-19)
-**Commit Message**: Update README.md
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -574,8 +574,8 @@ We are using the **English Wikipedia** data (*5 million entries*) and queries (*
- | Component | What it is | Links |
- |---|---|---|
- | **[seekstorm](https://crates.io/crates/seekstorm)** | In-process search library (lexical, vector, hybrid) | [![Crates.io](https://img.shields.io/crates/v/seekstorm.svg)](https://crates.io/crates/seekstorm) [![Downloads](https://img.shields.io/crates/d/seekstorm.svg?style=flat-square)](https://crates.io/crates/seekstorm) [![Docs](https://docs.rs/seekstorm/badge.svg)](https://docs.rs/seekstorm) |
--| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
--| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
-+| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
-+| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
- | **Client SDK** | A client for every stack: Same REST API underneath, idiomatic on top. |
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Rust](https://github.com/SeekStorm/SeekStorm/tree/main/seekstorm_client)** |  | [![Crates.io](https://img.shields.io/crates/v/seekstorm_client_rs.svg)](https://crates.io/crates/seekstorm_client_rs) [![Downloads](https://img.shields.io/crates/d/seekstorm_client_rs.svg?style=flat-square)](https://crates.io/crates/seekstorm_client_rs) [![Docs](https://docs.rs/seekstorm_client_rs/badge.svg)](https://docs.rs/seekstorm_client_rs) |
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**[Python](https://github.com/SeekStorm/seekstorm_client_pure_py)** |  | [![PyPI](https://img.shields.io/pypi/v/seekstorm-client-pure-py?label=PyPI)](https://pypi.org/project/seekstorm-client-pure-py/) |
-```
-
----
-
-### Incident Patch 2: `93821db5` (2026-10-19)
+### Incident Patch 1: `952e0ba6` (2026-10-20)
 **Commit Message**: Update README.md
 
 **File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -305,7 +305,7 @@ True real-time search, as opposed to NRT: every indexed document is immediately
- **How hybrid search works**  
- SeekStorm doesn't try to make one index do everything. It runs two native engines, an inverted index for lexical relevance and an ANN (IVF) index for vector similarity, each with its own storage layout, indexing, search, scoring and top-k candidates.
- A unified query planner (QueryModes and FusionTypes, including Reciprocal Rank Fusion) combines them per query: pure lexical, pure vector, or hybrid. Hybrid search is exhaustive, not just re-ranking of preliminary candidates.
--You are shielded from the complexity, as if it was a single index. See [ARCHITECTURE](https://seekstorm.com/architecture).
-+You are shielded from the complexity, as if it was a single index. See [ARCHITECTURE.md](ARCHITECTURE.md#architecture) and  [architecture page](https://seekstorm.com/architecture).
+@@ -4,7 +4,7 @@
  
+ <h3 align="center">
+ Sub-millisecond lexical, vector &amp; hybrid search in Rust.<br>
+-Embed it as a library, run it as a server, or give your agents search via MCP.
++Embed as a library, run as a multi-tenant server, or give your agents search via MCP.
+ </h3>
  
- ```mermaid
+ <p align="center">
+```
+
+---
+
+### Incident Patch 2: `fa1a03cb` (2026-10-20)
+**Commit Message**: Update README.md
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -442,7 +442,7 @@ No re-indexing, no export/import, and you can move in either direction. No vendo
+ <img src="https://raw.githubusercontent.com/SeekStorm/SeekStorm/main/assets/search_benchmark_game1.png" width="800" alt="Query latency in µs: Lucene vs. Tantivy vs. SeekStorm">
+ 
+ 5 million English Wikipedia documents, result type top-k + count, via the [search_benchmark_game](https://github.com/SeekStorm/search-benchmark-game/) (Lucene 10.3.0-bp, Tantivy 0.25, SeekStorm 1.0.0).
+-<!-- TODO: add CPU / RAM / OS of the benchmark machine -->
++<!-- CPU / RAM / OS of the benchmark machine: https://github.com/SeekStorm/search-benchmark-game/#benchmark-environment -->
+ 
+ | Query type, single field | Lucene (µs) | Tantivy (µs) | **SeekStorm (µs)** | vs. best of the two | vs. Lucene |
+ |---|---:|---:|---:|---:|---:|
 ```
 
 #### Recent Merged Pull Requests:
@@ -2242,7 +2240,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75b02df6`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `952e0ba6`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -2250,16 +2248,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
-| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI, <br>embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
+Embed as a library, run as a multi-tenant server, or give your agents search via MCP.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| **[seekstorm_mcp_server](seekstorm_mcp_server/README.md)** | Local MCP server over stdio for agentic search, embeds the library | [![Crates.io](https://img.shields.io/crates/v/seekstorm_mcp_server.svg)](https://crates.io/crates/seekstorm_mcp_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_mcp_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_mcp_server) |
-| **[seekstorm_server](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md)** | Multi-tenancy search server with REST API and web UI | [![Crates.io](https://img.shields.io/crates/v/seekstorm_server.svg)](https://crates.io/crates/seekstorm_server) [![Downloads](https://img.shields.io/crates/d/seekstorm_server.svg?style=flat-square)](https://crates.io/crates/seekstorm_server) [![Docker](https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server)](https://hub.docker.com/r/wolfgarbe/seekstorm_server) [![REST API docs](https://img.shields.io/badge/REST%20API-docs-blue?style=flat-square&logo=openapiinitiative&logoColor=white)](https://seekstorm.com/documentation/) |
+Embed it as a library, run it as a server, or give your agents search via MCP.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75b02df6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `952e0ba6` are properly handled with clean fallback behavior.

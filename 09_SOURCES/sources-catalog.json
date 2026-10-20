@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "3770482793cf60f5e7094b846bb06f78c294fadd7b7abf38aa4690bb6e7c7d35",
-    "lastHarvestedAt": "2026-10-19T03:26:38.646Z",
+    "contentHash": "b7dfa3aa6df2bcba00e3df4499dcd0cbfa81473698371061917beb2edea6a437",
+    "lastHarvestedAt": "2026-10-20T16:57:09.838Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "75b02df6",
+    "sourceVersion": "952e0ba6",
     "license": "Apache-2.0",
-    "contentHash": "c61cacedf367a3dc6b948e89fd251bb1fddaeafbb33f0b2042cefc3cecc1d600",
-    "lastHarvestedAt": "2026-10-20T00:31:56.370Z",
+    "contentHash": "6ea6411fe87de9b4677ae0e799419d70cc6f2bd805c8ba068c7e3159dd244e2e",
+    "lastHarvestedAt": "2026-10-20T16:57:22.713Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -5953,10 +5953,10 @@
     "repository": "react-native-webrtc/react-native-webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "sourceVersion": "580735e4",
+    "sourceVersion": "fb662c9d",
     "license": "MIT",
-    "contentHash": "441e6fac6b0089350f8c3a1e5ae93830f9405ccd16c3639f4b2c100e482e726d",
-    "lastHarvestedAt": "2026-10-19T04:53:00.991Z",
+    "contentHash": "572383bc0d730e8216e197108d446703974a4f3afe2eb5f8dd5a3dbb635ddff0",
+    "lastHarvestedAt": "2026-10-20T16:57:17.024Z",
     "learningId": "learn-github-react-native-webrtc-react-native-webrtc"
   },
   "rook-rook": {
